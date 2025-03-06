@@ -1,6 +1,6 @@
 "use client";
 
-import { useConfig } from "@/app/config";
+import { useConfig } from "@/app/[locale]/config";
 import {
   Navbar,
   NavbarBrand,
