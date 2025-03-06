@@ -26,11 +26,12 @@ export async function generateStaticParams() {
 export default async function DiscoverListing({
   params,
 }: {
-  params: Promise<{ page: string }>;
+  params: Promise<{ page: string; locale: string }>;
 }) {
-  const rawPage = (await params).page;
+  const { page: rawPage, locale } = await params;
+
   const { start, page } = paginateMeta(rawPage);
-  const { items, categories, total, tags } = await fetchItems();
+  const { items, categories, total, tags } = await fetchItems({ lang: locale });
 
   return (
     <Listing
