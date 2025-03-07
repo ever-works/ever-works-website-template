@@ -1,25 +1,3 @@
 export const DEFAULT_LOCALE = "en";
 
-export const LOCALES = [
-  "bg",
-  "hr",
-  "cs",
-  "da",
-  "nl",
-  "en",
-  "es",
-  "et",
-  "fi",
-  "fr",
-  "de",
-  "el",
-  "hu",
-  "ga",
-  "it",
-  "lv",
-  "lt",
-  "mt",
-  "pl",
-  "pt",
-  "ro",
-];
+export const LOCALES = ["en", "fr", "es"];

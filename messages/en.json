@@ -1,1 +1,18 @@
-{}
+{
+  "common": {
+    "DISCOVER": "Discover",
+    "ABOUT": "About",
+    "LOGIN": "Login",
+    "SIGN_UP": "Sign up",
+    "NO_CONTENT_PROVIDED": "No content provided"
+  },
+  "listing": {
+    "ALL": "All",
+    "CATEGORIES": "Categories",
+    "BEST_DIRECTORY_WEBSITE_TEMPLATE": "The Best Directory Website Template",
+    "THIS_IS_A_DEMO_DIRECTORY_WEBSITE": "This is a demo directory website."
+  },
+  "footer": {
+    "ALL_RIGHTS_RESERVED": "All rights reserved"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "common": {
+    "NO_CONTENT_PROVIDED": "Aucun contenu fourni",
+    "ABOUT": "À propos",
+    "DISCOVER": "Découvrir",
+    "LOGIN": "Se connecter",
+    "SIGN_UP": "S'inscrire"
+  },
+  "footer": {
+    "ALL_RIGHTS_RESERVED": "Tous droits réservés"
+  },
+  "listing": {
+    "ALL": "Tous",
+    "BEST_DIRECTORY_WEBSITE_TEMPLATE": "Le meilleur modèle de site Web d'annuaire",
+    "CATEGORIES": "Catégories",
+    "THIS_IS_A_DEMO_DIRECTORY_WEBSITE": "Il s'agit d'un site Web d'annuaire de démonstration."
+  }
+}

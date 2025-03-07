@@ -3,6 +3,7 @@ import { MDX } from "@/components/mdx";
 import { notFound } from "next/navigation";
 import { getCategoriesName } from "@/lib/utils";
 import { LOCALES } from "@/lib/constants";
+import { getTranslations } from "next-intl/server";
 
 export const revalidate = 10;
 
@@ -18,13 +19,16 @@ export async function generateStaticParams() {
 export default async function ItemDetails({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }) {
-  const slug = (await params).slug;
-  const item = await fetchItem(slug);
+  const { slug, locale } = await params;
+
+  const item = await fetchItem(slug, { lang: locale });
   if (!item) {
     return notFound();
   }
+
+  const t = await getTranslations("common");
 
   const { meta, content } = item;
 
@@ -40,7 +44,7 @@ export default async function ItemDetails({
         {content ? (
           <MDX source={content} />
         ) : (
-          <p className="text-gray-400">No content provided</p>
+          <p className="text-gray-400">{t("NO_CONTENT_PROVIDED")}</p>
         )}
       </div>
     </div>

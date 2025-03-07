@@ -1,7 +1,15 @@
 "use client";
 
 import { Category, Tag } from "@/lib/content";
-import { Accordion, AccordionItem, Button, cn, Link, Pagination } from "@heroui/react";
+import {
+  Accordion,
+  AccordionItem,
+  Button,
+  cn,
+  Link,
+  Pagination,
+} from "@heroui/react";
+import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
 import { PropsWithChildren } from "react";
 
@@ -26,28 +34,48 @@ function BlockLink({
   );
 }
 
-export function CategoriesList({ categories, total }: { total: number, categories: Category[] }) {
+export function CategoriesList({
+  categories,
+  total,
+}: {
+  total: number;
+  categories: Category[];
+}) {
+  const t = useTranslations("listing");
   const pathname = usePathname();
 
-  return (<>
-    <BlockLink
-      isActive={pathname === '/' || pathname.startsWith('/discover')}
-      href="/">All ({total})</BlockLink>
-    {categories.map(category => {
-      if (!category.count) return null;
+  return (
+    <>
+      <BlockLink
+        isActive={pathname === "/" || pathname.startsWith("/discover")}
+        href="/"
+      >
+        {t("ALL")} ({total})
+      </BlockLink>
+      {categories.map((category) => {
+        if (!category.count) return null;
 
-      const href = `/categories/${category.id}`;
-      return (<BlockLink isActive={pathname.startsWith(encodeURI(href))}
-        key={category.id}
-        href={href}>
-          { category.icon_url && <img src={category.icon_url} className="w-5 h-5" alt="" /> }
-          {category.name} ({category.count || 0})
-      </BlockLink>)
-    })}
-  </>)
+        const href = `/categories/${category.id}`;
+        return (
+          <BlockLink
+            isActive={pathname.startsWith(encodeURI(href))}
+            key={category.id}
+            href={href}
+          >
+            {category.icon_url && (
+              <img src={category.icon_url} className="w-5 h-5" alt="" />
+            )}
+            {category.name} ({category.count || 0})
+          </BlockLink>
+        );
+      })}
+    </>
+  );
 }
 
-export function Categories(props: { total: number, categories: Category[] }) {
+export function Categories(props: { total: number; categories: Category[] }) {
+  const t = useTranslations("listing");
+
   return (
     <>
       <div className="md:hidden">
@@ -61,7 +89,7 @@ export function Categories(props: { total: number, categories: Category[] }) {
       </div>
 
       <div className="hidden md:flex flex-col w-full max-w-56 gap-2">
-        <h2 className="font-bold mb-2">Categories</h2>
+        <h2 className="font-bold mb-2">{t("CATEGORIES")}</h2>
         <CategoriesList {...props} />
       </div>
     </>
@@ -91,7 +119,8 @@ export function Paginate({
       initialPage={initialPage}
       total={total}
       onChange={redirect}
-    />);
+    />
+  );
 }
 
 export function Tags(props: { tags: Tag[] }) {
@@ -99,19 +128,25 @@ export function Tags(props: { tags: Tag[] }) {
 
   return (
     <div className="w-fill flex gap-2 flex-wrap">
-    { props.tags.map(tag => (
-        <Button 
+      {props.tags.map((tag) => (
+        <Button
           key={tag.id}
-          variant={pathname.startsWith(encodeURI(`/tags/${tag.id}`)) ? 'solid' : 'bordered'}
+          variant={
+            pathname.startsWith(encodeURI(`/tags/${tag.id}`))
+              ? "solid"
+              : "bordered"
+          }
           color="default"
           size="sm"
           as={Link}
           href={`/tags/${tag.id}`}
         >
-          { tag.icon_url && <img src={tag.icon_url} className="w-4 h-4" alt="" /> }
-          { tag.name}
+          {tag.icon_url && (
+            <img src={tag.icon_url} className="w-4 h-4" alt="" />
+          )}
+          {tag.name}
         </Button>
-    ))}
-</div>
+      ))}
+    </div>
   );
 }

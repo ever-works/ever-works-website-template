@@ -8,6 +8,7 @@ import {
   NavbarItem,
   Button,
 } from "@heroui/react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 export const AcmeLogo = () => {
@@ -24,6 +25,7 @@ export const AcmeLogo = () => {
 };
 
 export default function Header() {
+  const t = useTranslations("common");
   const config = useConfig();
 
   return (
@@ -37,27 +39,28 @@ export default function Header() {
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
           <Link aria-current="page" color="foreground" href="#">
-            Discover
+            {t("DISCOVER")}
           </Link>
         </NavbarItem>
         <NavbarItem>
           <Link color="foreground" href="#">
-            About
+            {t("ABOUT")}
           </Link>
         </NavbarItem>
         <NavbarItem>
           <Link color="foreground" href="#">
-            GitHub
+            {"GitHub"}
           </Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
+          <Link href="#">{t("LOGIN")}</Link>
         </NavbarItem>
+
         <NavbarItem>
           <Button as={Link} color="primary" href="#" variant="flat">
-            Sign Up
+            {t("SIGN_UP")}
           </Button>
         </NavbarItem>
       </NavbarContent>
