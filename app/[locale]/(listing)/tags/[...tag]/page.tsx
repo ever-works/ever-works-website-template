@@ -33,12 +33,13 @@ export async function generateStaticParams() {
 export default async function TagListing({
   params,
 }: {
-  params: Promise<{ tag: string[] }>;
+  params: Promise<{ tag: string[], locale: string }>;
 }) {
-  const [rawTag, rawPage] = (await params).tag;
+  const { tag: tagMeta, locale } = await params;
+  const [rawTag, rawPage] = tagMeta;
   const tag = decodeURI(rawTag);
   const { start, page } = paginateMeta(rawPage);
-  const { items, categories, total, tags } = await fetchByTag(tag);
+  const { items, categories, total, tags } = await fetchByTag(tag, { lang: locale });
 
   return (
     <Listing

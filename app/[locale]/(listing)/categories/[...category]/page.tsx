@@ -33,12 +33,12 @@ export async function generateStaticParams() {
 export default async function CategoryListing({
   params,
 }: {
-  params: Promise<{ category: string[] }>;
+  params: Promise<{ category: string[], locale: string }>;
 }) {
-  const cat = (await params).category;
+  const { category: cat, locale } = await params;
   const category = decodeURI(cat[0]);
   const { start, page } = paginateMeta(cat[1]);
-  const { items, categories, total, tags } = await fetchByCategory(category);
+  const { items, categories, total, tags } = await fetchByCategory(category, { lang: locale });
 
   return (
     <Listing

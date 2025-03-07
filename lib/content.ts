@@ -261,9 +261,9 @@ function eqID(value: string | { id: string }, id: string) {
     return value.id === id;
 }
 
-export async function fetchByCategory(raw: string) {
+export async function fetchByCategory(raw: string, options: FetchOptions = {}) {
     const category = decodeURI(raw);
-    const { categories, items, total, tags } = await fetchItems();
+    const { categories, items, total, tags } = await fetchItems(options);
     return {
         categories,
         tags,
@@ -277,9 +277,9 @@ export async function fetchByCategory(raw: string) {
     }
 }
 
-export async function fetchByTag(raw: string) {
+export async function fetchByTag(raw: string, options: FetchOptions = {}) {
     const tag = decodeURI(raw);
-    const { categories, items, total, tags } = await fetchItems();
+    const { categories, items, total, tags } = await fetchItems(options);
     return {
         categories,
         tags,
