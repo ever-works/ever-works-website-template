@@ -6,11 +6,10 @@ import {
   AccordionItem,
   Button,
   cn,
-  Link,
   Pagination,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
-import { usePathname, useRouter } from "next/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { PropsWithChildren } from "react";
 
 function BlockLink({

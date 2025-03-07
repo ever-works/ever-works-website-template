@@ -1,6 +1,7 @@
 "use client";
 
 import { useConfig } from "@/app/[locale]/config";
+import { Link } from "@/i18n/navigation";
 import {
   Navbar,
   NavbarBrand,
@@ -9,7 +10,6 @@ import {
   Button,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 
 export const AcmeLogo = () => {
   return (

@@ -1,3 +1,3 @@
 export const DEFAULT_LOCALE = "en";
 
-export const LOCALES = ["en", "fr", "es"];
+export const LOCALES: Readonly<string[]> = ["en", "fr", "es"];

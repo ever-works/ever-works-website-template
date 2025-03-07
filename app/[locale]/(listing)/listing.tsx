@@ -1,6 +1,6 @@
 import { Categories, Paginate, Tags } from "@/components/filters";
 import Item from "@/components/item";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Category, ItemData, Tag } from "@/lib/content";
 import { PER_PAGE, totalPages } from "@/lib/paginate";
 import { getItemPath } from "@/lib/utils";
