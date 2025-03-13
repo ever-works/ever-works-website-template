@@ -20,9 +20,10 @@ export async function comparePasswords(
 }
 
 export const credentialsProvider = Credentials({
+  name: "Credentials",
   credentials: {
-    email: {},
-    password: {},
+    email: { type: "email" },
+    password: { type: "password" },
   },
   authorize: async (credentials) => {
     try {

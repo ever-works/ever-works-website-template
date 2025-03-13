@@ -12,4 +12,14 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
     verificationTokensTable: verificationTokens,
   }),
   providers: [credentialsProvider],
+  callbacks: {
+    authorized: ({ auth }) => auth?.user != null,
+  },
+  pages: {
+    signIn: "/auth/login",
+    newUser: "/auth/register",
+    signOut: "/auth/signout",
+    error: "/auth/error",
+    verifyRequest: "/auth/verify-request",
+  },
 });
