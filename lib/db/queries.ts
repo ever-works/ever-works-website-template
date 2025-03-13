@@ -1,68 +1,70 @@
-import { desc, and, eq, isNull } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "./drizzle";
-import { activityLogs, users } from "./schema";
-import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/auth/session";
+import {
+  activityLogs,
+  ActivityType,
+  type NewActivityLog,
+  NewUser,
+  users,
+} from "./schema";
 
-export async function getUser() {
-  const sessionCookie = (await cookies()).get("session");
-  if (!sessionCookie || !sessionCookie.value) {
-    return null;
-  }
-
-  const sessionData = await verifyToken(sessionCookie.value);
-  if (
-    !sessionData ||
-    !sessionData.user ||
-    typeof sessionData.user.id !== "number"
-  ) {
-    return null;
-  }
-
-  if (new Date(sessionData.expires) < new Date()) {
-    return null;
-  }
-
-  const user = await db
+export async function getUserByEmail(email: string) {
+  const usersList = await db
     .select()
     .from(users)
-    .where(and(eq(users.id, sessionData.user.id), isNull(users.deletedAt)))
+    .where(eq(users.email, email))
     .limit(1);
 
-  if (user.length === 0) {
-    return null;
+  if (usersList.length === 0) {
+    throw new Error("User not found");
   }
 
-  return user[0];
+  return usersList[0];
 }
 
-export async function getUserWithTeam(userId: number) {
-  const result = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1);
+export async function logActivity(
+  userId: string,
+  type: ActivityType,
+  ipAddress?: string
+) {
+  const newActivity: NewActivityLog = {
+    userId,
+    action: type,
+    ipAddress: ipAddress || "",
+  };
 
-  return result[0];
+  await db.insert(activityLogs).values(newActivity);
 }
 
-export async function getActivityLogs() {
-  const user = await getUser();
-  if (!user) {
-    throw new Error("User not authenticated");
-  }
+export async function updateUserPassword(
+  newPasswordHash: string,
+  userId: string
+) {
+  return db
+    .update(users)
+    .set({ passwordHash: newPasswordHash })
+    .where(eq(users.id, userId));
+}
 
-  return await db
-    .select({
-      id: activityLogs.id,
-      action: activityLogs.action,
-      timestamp: activityLogs.timestamp,
-      ipAddress: activityLogs.ipAddress,
-      userName: users.name,
+export async function insertNewUser(user: NewUser) {
+  return db.insert(users).values(user).returning();
+}
+
+export async function softDeleteUser(userId: string) {
+  return db
+    .update(users)
+    .set({
+      deletedAt: sql`CURRENT_TIMESTAMP`,
+      email: sql`CONCAT(email, '-', id, '-deleted')`,
     })
-    .from(activityLogs)
-    .leftJoin(users, eq(activityLogs.userId, users.id))
-    .where(eq(activityLogs.userId, user.id))
-    .orderBy(desc(activityLogs.timestamp))
-    .limit(10);
+    .where(eq(users.id, userId));
 }
+
+export async function updateUser(
+  values: Pick<NewUser, "email" | "name">,
+  userId: string
+) {
+  return db.update(users).set(values).where(eq(users.id, userId));
+}
+
+export async function getActivityLogs() {}

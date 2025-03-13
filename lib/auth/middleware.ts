@@ -1,7 +1,6 @@
 import { z } from "zod";
-import { User } from "@/lib/db/schema";
-import { getUser } from "@/lib/db/queries";
-import { redirect } from "next/navigation";
+import { auth } from ".";
+import { User } from "next-auth";
 
 export type ActionState = {
   error?: string;
@@ -39,8 +38,8 @@ export function validatedActionWithUser<S extends z.ZodType<any, any>, T>(
   action: ValidatedActionWithUserFunction<S, T>
 ) {
   return async (prevState: ActionState, formData: FormData): Promise<T> => {
-    const user = await getUser();
-    if (!user) {
+    const session = await auth();
+    if (!session?.user) {
       throw new Error("User is not authenticated");
     }
 
@@ -49,19 +48,6 @@ export function validatedActionWithUser<S extends z.ZodType<any, any>, T>(
       return { error: result.error.errors[0].message } as T;
     }
 
-    return action(result.data, formData, user);
-  };
-}
-
-type ActionWithUserFunction<T> = (formData: FormData) => Promise<T>;
-
-export function withUser<T>(action: ActionWithUserFunction<T>) {
-  return async (formData: FormData): Promise<T> => {
-    const user = await getUser();
-    if (!user) {
-      redirect("/sign-in");
-    }
-
-    return action(formData);
+    return action(result.data, formData, session?.user);
   };
 }
