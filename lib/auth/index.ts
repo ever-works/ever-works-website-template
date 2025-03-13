@@ -16,10 +16,10 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
     authorized: ({ auth }) => auth?.user != null,
   },
   pages: {
-    signIn: "/auth/login",
-    newUser: "/auth/register",
+    signIn: "/auth/signin",
     signOut: "/auth/signout",
     error: "/auth/error",
     verifyRequest: "/auth/verify-request",
+    newUser: "/auth/register",
   },
 });

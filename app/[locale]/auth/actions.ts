@@ -136,7 +136,7 @@ export const deleteAccount = validatedActionWithUser(
 
     await signOut();
 
-    redirect("/auth/login");
+    redirect("/auth/signin");
   }
 );
 

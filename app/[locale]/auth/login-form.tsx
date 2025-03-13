@@ -238,7 +238,7 @@ export function AuthPage({ form }: { form: "login" | "signup" }) {
               <Button
                 as={Link}
                 className="text-blue-600 hover:text-blue-500 text-sm font-medium"
-                href={isLogin ? "/auth/register" : "/auth/login"}
+                href={isLogin ? "/auth/register" : "/auth/signin"}
                 variant="flat"
               >
                 {isLogin
