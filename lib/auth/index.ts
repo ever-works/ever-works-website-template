@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { accounts, sessions, users, verificationTokens } from "../db/schema.js";
-import { db } from "../db/drizzle.js";
-import { credentialsProvider } from "./credentials.js";
+import { accounts, sessions, users, verificationTokens } from "../db/schema";
+import { db } from "../db/drizzle";
+import { credentialsProvider } from "./credentials";
 
 export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   adapter: DrizzleAdapter(db, {
@@ -23,3 +23,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
     newUser: "/auth/register",
   },
 });
+
+export enum AuthProviders {
+  CREDENTIALS = "credentials",
+}

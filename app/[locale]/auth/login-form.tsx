@@ -1,12 +1,31 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { MapPin, Search, User, Lock, Mail, Building } from "lucide-react";
+import {
+  MapPin,
+  Search,
+  User,
+  Lock,
+  Mail,
+  Building,
+  Loader2,
+} from "lucide-react";
 import { Button, cn } from "@heroui/react";
+import { ActionState } from "@/lib/auth/middleware";
+import { useActionState } from "react";
+import { signInAction, signUp } from "./actions";
+import { useSearchParams } from "next/navigation";
 
 export function AuthPage({ form }: { form: "login" | "signup" }) {
   const isLogin = form === "login";
+
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
+
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(
+    isLogin ? signInAction : signUp,
+    { error: "" }
+  );
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -19,7 +38,7 @@ export function AuthPage({ form }: { form: "login" | "signup" }) {
               {/* Directory Logo */}
               <div className="flex items-center mb-6">
                 <MapPin className="h-8 w-8 text-blue-400" />
-                <span className="ml-2 text-2xl font-bold">DirectoryHub</span>
+                <span className="ml-2 text-2xl font-bold">Ever Directory</span>
               </div>
 
               <h2 className="text-2xl font-bold mb-3">
@@ -76,7 +95,9 @@ export function AuthPage({ form }: { form: "login" | "signup" }) {
             </div>
 
             {/* Form */}
-            <form className="space-y-4">
+            <form className="space-y-4" action={formAction}>
+              <input type="hidden" name="redirect" value={redirect || ""} />
+
               {!isLogin && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
@@ -90,6 +111,9 @@ export function AuthPage({ form }: { form: "login" | "signup" }) {
                       type="text"
                       className="pl-10 w-full px-4 py-2 border-gray-300 rounded-lg border-2 focus:border-blue-500"
                       placeholder="Enter your full name"
+                      name="name"
+                      defaultValue={state?.name}
+                      required
                     />
                   </div>
                 </div>
@@ -107,6 +131,9 @@ export function AuthPage({ form }: { form: "login" | "signup" }) {
                     type="email"
                     className="pl-10 w-full px-4 py-2 border-gray-300 rounded-lg border-2 focus:border-blue-500"
                     placeholder="Enter your email"
+                    name="email"
+                    defaultValue={state?.email}
+                    required
                   />
                 </div>
               </div>
@@ -123,11 +150,14 @@ export function AuthPage({ form }: { form: "login" | "signup" }) {
                     type="password"
                     className="pl-10 w-full px-4 py-2 border-gray-300 rounded-lg border-2 focus:border-blue-500"
                     placeholder="Enter your password"
+                    name="password"
+                    defaultValue={state?.password}
+                    required
                   />
                 </div>
               </div>
 
-              {!isLogin && (
+              {/* {!isLogin && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                     Confirm Password
@@ -138,11 +168,18 @@ export function AuthPage({ form }: { form: "login" | "signup" }) {
                     </div>
                     <input
                       type="password"
+                      required
                       className="pl-10 w-full px-4 py-2 border-gray-300 rounded-lg border-2 focus:border-blue-500"
                       placeholder="Confirm your password"
+                      name="confirmPassword"
+                      defaultValue={state?.confirmPassword}
                     />
                   </div>
                 </div>
+              )} */}
+
+              {state?.error && (
+                <div className="text-red-500 text-sm">{state?.error}</div>
               )}
 
               {isLogin && (
@@ -178,18 +215,24 @@ export function AuthPage({ form }: { form: "login" | "signup" }) {
                   "focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                 )}
               >
-                {isLogin ? "Sign In" : "Create Account"}
+                {pending && (
+                  <>
+                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                    Loading...
+                  </>
+                )}
+
+                {!pending && (isLogin ? "Sign In" : "Create Account")}
               </button>
 
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 text-gray-500 dark:text-gray-400">
+              <div className="relative my-6 flex items-center">
+                <div className="w-full border-t border-gray-300" />
+                <div className="relative flex justify-center text-sm px-2">
+                  <span className="px-2 text-gray-500 dark:text-gray-400 whitespace-nowrap">
                     Or continue with
                   </span>
                 </div>
+                <div className="w-full border-t border-gray-300" />
               </div>
 
               <div className="grid grid-cols-3 gap-3">

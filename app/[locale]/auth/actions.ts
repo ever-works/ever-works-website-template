@@ -16,12 +16,33 @@ import {
   updateUser,
   updateUserPassword,
 } from "@/lib/db/queries";
-import { signOut } from "@/lib/auth";
+import { AuthProviders, signIn, signOut } from "@/lib/auth";
+
+const PASSWORD_MIN_LENGTH = 8;
+
+const signInSchema = z.object({
+  email: z.string().email().min(3).max(255),
+  password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
+});
+
+export const signInAction = validatedAction(
+  signInSchema,
+  async (data, formData) => {
+    try {
+      await signIn(AuthProviders.CREDENTIALS, data);
+    } catch (err) {
+      return {
+        error:
+          "Invalid email or password. Please check your credentials and try again.",
+      };
+    }
+  }
+);
 
 const signUpSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
-  password: z.string().min(8),
+  password: z.string().min(PASSWORD_MIN_LENGTH),
 });
 
 export const signUp = validatedAction(signUpSchema, async (data, formData) => {
@@ -56,15 +77,17 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
 
   logActivity(createdUser.id, ActivityType.SIGN_UP);
 
+  signIn(AuthProviders.CREDENTIALS, { email, password });
+
   // redirect("/dashboard");
   return { success: "User created successfully" };
 });
 
 const updatePasswordSchema = z
   .object({
-    currentPassword: z.string().min(8).max(100),
-    newPassword: z.string().min(8).max(100),
-    confirmPassword: z.string().min(8).max(100),
+    currentPassword: z.string().min(PASSWORD_MIN_LENGTH).max(100),
+    newPassword: z.string().min(PASSWORD_MIN_LENGTH).max(100),
+    confirmPassword: z.string().min(PASSWORD_MIN_LENGTH).max(100),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",
@@ -109,7 +132,7 @@ export const updatePassword = validatedActionWithUser(
 );
 
 const deleteAccountSchema = z.object({
-  password: z.string().min(8).max(100),
+  password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
 });
 
 export const deleteAccount = validatedActionWithUser(
