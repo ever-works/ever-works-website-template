@@ -6,13 +6,14 @@ import { Button, cn } from "@heroui/react";
 import { ActionState } from "@/lib/auth/middleware";
 import { useActionState, useEffect } from "react";
 import { signInAction, signUp } from "./actions";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export function AuthPage({ form }: { form: "login" | "signup" }) {
-  const isLogin = form === "login";
-
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
+  const router = useRouter();
+
+  const isLogin = form === "login";
 
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
     isLogin ? signInAction : signUp,
@@ -20,8 +21,10 @@ export function AuthPage({ form }: { form: "login" | "signup" }) {
   );
 
   useEffect(() => {
-    console.log(state);
-  }, [state]);
+    if (state.success) {
+      router.push(redirect || "/dashboard");
+    }
+  }, [state, redirect, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">

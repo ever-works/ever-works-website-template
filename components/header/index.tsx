@@ -10,6 +10,8 @@ import {
   Button,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
+import { SessionProvider } from "next-auth/react";
+import { ProfileButton } from "./profile-button";
 
 export const AcmeLogo = () => {
   return (
@@ -29,41 +31,41 @@ export default function Header() {
   const config = useConfig();
 
   return (
-    <Navbar maxWidth="2xl">
-      <NavbarBrand>
-        <Link href="/" className="flex items-center">
-          <AcmeLogo />
-          <p className="font-bold text-inherit">{config.company_name}</p>
-        </Link>
-      </NavbarBrand>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link aria-current="page" color="foreground" href="#">
-            {t("DISCOVER")}
+    <SessionProvider>
+      <Navbar maxWidth="2xl">
+        <NavbarBrand>
+          <Link href="/" className="flex items-center">
+            <AcmeLogo />
+            <p className="font-bold text-inherit">{config.company_name}</p>
           </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            {t("ABOUT")}
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            {"GitHub"}
-          </Link>
-        </NavbarItem>
-      </NavbarContent>
-      <NavbarContent justify="end">
-        {/* <NavbarItem className="hidden lg:flex">
+        </NavbarBrand>
+        <NavbarContent className="hidden sm:flex gap-4" justify="center">
+          <NavbarItem>
+            <Link aria-current="page" color="foreground" href="#">
+              {t("DISCOVER")}
+            </Link>
+          </NavbarItem>
+          <NavbarItem>
+            <Link color="foreground" href="#">
+              {t("ABOUT")}
+            </Link>
+          </NavbarItem>
+          <NavbarItem>
+            <Link color="foreground" href="#">
+              {"GitHub"}
+            </Link>
+          </NavbarItem>
+        </NavbarContent>
+        <NavbarContent justify="end">
+          {/* <NavbarItem className="hidden lg:flex">
           <Link href="/auth/signin">{t("LOGIN")}</Link>
         </NavbarItem> */}
 
-        <NavbarItem>
-          <Button as={Link} color="primary" href="/auth/signin" variant="flat">
-            {t("LOGIN")}
-          </Button>
-        </NavbarItem>
-      </NavbarContent>
-    </Navbar>
+          <NavbarItem>
+            <ProfileButton />
+          </NavbarItem>
+        </NavbarContent>
+      </Navbar>
+    </SessionProvider>
   );
 }
