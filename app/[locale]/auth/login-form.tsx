@@ -214,7 +214,7 @@ export function AuthPage({ form }: { form: "login" | "signup" }) {
                   "w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none",
                   "focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                 )}
-                isLoading={pending}
+                isLoading={pending || !!state.success}
               >
                 {!pending && (isLogin ? "Sign In" : "Create Account")}
               </Button>
