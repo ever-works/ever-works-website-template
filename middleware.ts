@@ -3,7 +3,7 @@ import { routing } from "./i18n/routing";
 
 import { NextRequest } from "next/server";
 import NextAuth from "next-auth";
-import authConfig from "./lib/auth/auth.config";
+import authConfig from "./auth.config";
 
 const authPages = ["/dashboard"];
 
