@@ -44,6 +44,7 @@ export function ProfileButton() {
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="user-menu"
+            onClick={() => setIsProfileMenuOpen(false)}
           >
             <a
               href="#"
