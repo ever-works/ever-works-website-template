@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import {
   CheckCircle,
@@ -9,11 +11,18 @@ import {
   Settings,
   HelpCircle,
 } from "lucide-react";
+import { Session } from "next-auth";
 
-const LoginSuccessPage = () => {
+type Props = {
+  session: Session | null;
+};
+
+export const DashboardContent = ({ session }: Props) => {
   const [username, setUsername] = useState("John Doe");
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+  console.log(session);
 
   const handleLogout = () => {
     console.log("Logging out...");
@@ -252,5 +261,3 @@ const LoginSuccessPage = () => {
     </div>
   );
 };
-
-export default LoginSuccessPage;

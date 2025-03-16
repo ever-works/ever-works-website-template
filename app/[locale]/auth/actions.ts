@@ -7,7 +7,11 @@ import {
   validatedAction,
   validatedActionWithUser,
 } from "@/lib/auth/middleware";
-import { comparePasswords, hashPassword } from "@/lib/auth/credentials";
+import {
+  comparePasswords,
+  hashPassword,
+  AuthProviders,
+} from "@/lib/auth/credentials";
 import {
   getUserByEmail,
   insertNewUser,
@@ -16,7 +20,7 @@ import {
   updateUser,
   updateUserPassword,
 } from "@/lib/db/queries";
-import { AuthProviders, signIn, signOut } from "@/lib/auth";
+import { signIn, signOut } from "@/lib/auth";
 
 const PASSWORD_MIN_LENGTH = 8;
 
@@ -29,11 +33,17 @@ export const signInAction = validatedAction(
   signInSchema,
   async (data, formData) => {
     try {
-      await signIn(AuthProviders.CREDENTIALS, data);
+      await signIn(AuthProviders.CREDENTIALS, {
+        ...data,
+        redirect: false,
+      });
+
+      return { success: true };
     } catch (err) {
       return {
         error:
           "Invalid email or password. Please check your credentials and try again.",
+        ...data,
       };
     }
   }
@@ -46,21 +56,21 @@ const signUpSchema = z.object({
 });
 
 export const signUp = validatedAction(signUpSchema, async (data, formData) => {
-  const { email, password } = data;
+  const { name, email, password } = data;
 
   const existingUser = await getUserByEmail(email).catch(() => null);
 
   if (existingUser) {
     return {
       error: "Failed to create user. Please try again.",
-      email,
-      password,
+      ...data,
     };
   }
 
   const passwordHash = await hashPassword(password);
 
   const newUser: NewUser = {
+    name,
     email,
     passwordHash,
   };
@@ -70,17 +80,19 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   if (!createdUser) {
     return {
       error: "Failed to create user. Please try again.",
-      email,
-      password,
+      ...data,
     };
   }
 
   logActivity(createdUser.id, ActivityType.SIGN_UP);
 
-  signIn(AuthProviders.CREDENTIALS, { email, password });
+  await signIn(AuthProviders.CREDENTIALS, {
+    email,
+    password,
+    redirect: false,
+  });
 
-  // redirect("/dashboard");
-  return { success: "User created successfully" };
+  return { success: true };
 });
 
 const updatePasswordSchema = z

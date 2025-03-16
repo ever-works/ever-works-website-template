@@ -2,11 +2,14 @@ import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
 import { NextRequest } from "next/server";
-import { auth } from "./lib/auth";
+import NextAuth from "next-auth";
+import authConfig from "./lib/auth/auth.config";
 
 const authPages = ["/dashboard"];
 
 const intlMiddleware = createMiddleware(routing);
+
+const { auth } = NextAuth(authConfig);
 
 const authMiddleware = auth(
   // Note that this callback is only invoked if

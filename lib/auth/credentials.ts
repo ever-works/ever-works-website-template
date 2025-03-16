@@ -5,6 +5,10 @@ import { ActivityType } from "../db/schema";
 
 const SALT_ROUNDS = 10;
 
+export enum AuthProviders {
+  CREDENTIALS = "credentials",
+}
+
 export async function hashPassword(password: string) {
   return hash(password, SALT_ROUNDS);
 }
@@ -20,7 +24,7 @@ export async function comparePasswords(
 }
 
 export const credentialsProvider = Credentials({
-  name: "Credentials",
+  name: AuthProviders.CREDENTIALS,
   credentials: {
     email: { type: "email" },
     password: { type: "password" },

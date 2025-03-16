@@ -1,18 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import {
-  MapPin,
-  Search,
-  User,
-  Lock,
-  Mail,
-  Building,
-  Loader2,
-} from "lucide-react";
+import { MapPin, Search, User, Lock, Mail, Building } from "lucide-react";
 import { Button, cn } from "@heroui/react";
 import { ActionState } from "@/lib/auth/middleware";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { signInAction, signUp } from "./actions";
 import { useSearchParams } from "next/navigation";
 
@@ -24,8 +16,12 @@ export function AuthPage({ form }: { form: "login" | "signup" }) {
 
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
     isLogin ? signInAction : signUp,
-    { error: "" }
+    {}
   );
+
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -107,6 +103,7 @@ export function AuthPage({ form }: { form: "login" | "signup" }) {
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <User className="h-5 w-5 text-gray-400" />
                     </div>
+
                     <input
                       type="text"
                       className="pl-10 w-full px-4 py-2 border-gray-300 rounded-lg border-2 focus:border-blue-500"
@@ -208,22 +205,16 @@ export function AuthPage({ form }: { form: "login" | "signup" }) {
                 </div>
               )}
 
-              <button
+              <Button
                 type="submit"
                 className={cn(
                   "w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none",
                   "focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                 )}
+                isLoading={pending}
               >
-                {pending && (
-                  <>
-                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                    Loading...
-                  </>
-                )}
-
                 {!pending && (isLogin ? "Sign In" : "Create Account")}
-              </button>
+              </Button>
 
               <div className="relative my-6 flex items-center">
                 <div className="w-full border-t border-gray-300" />

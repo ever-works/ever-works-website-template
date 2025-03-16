@@ -2,19 +2,21 @@ import NextAuth from "next-auth";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { accounts, sessions, users, verificationTokens } from "../db/schema";
 import { db } from "../db/drizzle";
-import { credentialsProvider } from "./credentials";
+import authConfig from "./auth.config";
+
+const drizzle = DrizzleAdapter(db, {
+  usersTable: users,
+  accountsTable: accounts,
+  sessionsTable: sessions,
+  verificationTokensTable: verificationTokens,
+});
 
 export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
-  adapter: DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
-  }),
-  providers: [credentialsProvider],
+  adapter: drizzle,
   callbacks: {
     authorized: ({ auth }) => auth?.user != null,
   },
+  session: { strategy: "jwt" },
   pages: {
     signIn: "/auth/signin",
     signOut: "/auth/signout",
@@ -22,8 +24,5 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
     verifyRequest: "/auth/verify-request",
     newUser: "/auth/register",
   },
+  ...authConfig,
 });
-
-export enum AuthProviders {
-  CREDENTIALS = "credentials",
-}
