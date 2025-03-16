@@ -46,7 +46,8 @@ export const credentialsProvider = Credentials({
       logActivity(foundUser.id, ActivityType.SIGN_IN);
 
       return foundUser;
-    } catch (_) {
+    } catch (error: any) {
+      console.error(error);
       throw new Error("Invalid email or password. Please try again.");
     }
   },

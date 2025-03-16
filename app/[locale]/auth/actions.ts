@@ -29,25 +29,23 @@ const signInSchema = z.object({
   password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
 });
 
-export const signInAction = validatedAction(
-  signInSchema,
-  async (data, formData) => {
-    try {
-      await signIn(AuthProviders.CREDENTIALS, {
-        ...data,
-        redirect: false,
-      });
+export const signInAction = validatedAction(signInSchema, async (data) => {
+  try {
+    await signIn(AuthProviders.CREDENTIALS, {
+      ...data,
+      redirect: false,
+    });
 
-      return { success: true };
-    } catch (err) {
-      return {
-        error:
-          "Invalid email or password. Please check your credentials and try again.",
-        ...data,
-      };
-    }
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return {
+      error:
+        "Invalid email or password. Please check your credentials and try again.",
+      ...data,
+    };
   }
-);
+});
 
 const signUpSchema = z.object({
   name: z.string().min(2),
@@ -55,7 +53,7 @@ const signUpSchema = z.object({
   password: z.string().min(PASSWORD_MIN_LENGTH),
 });
 
-export const signUp = validatedAction(signUpSchema, async (data, formData) => {
+export const signUp = validatedAction(signUpSchema, async (data) => {
   const { name, email, password } = data;
 
   const existingUser = await getUserByEmail(email).catch(() => null);
