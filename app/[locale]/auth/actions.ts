@@ -198,3 +198,7 @@ export const updateAccount = validatedActionWithUser(
     return { success: "Account updated successfully." };
   }
 );
+
+export async function signOutAction() {
+  return signOut({ redirectTo: "/auth/signin" });
+}

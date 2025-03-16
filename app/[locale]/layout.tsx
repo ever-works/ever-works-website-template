@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
+import { auth } from "@/lib/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,8 +41,8 @@ export default async function RootLayout({
   }
 
   const config = await getCachedConfig();
-
   const messages = await getMessages();
+  const session = await auth();
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -50,7 +51,7 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider messages={messages}>
           <Providers config={config}>
-            <Header />
+            <Header session={session} />
             {children}
             <Footer />
           </Providers>

@@ -2,16 +2,10 @@
 
 import { useConfig } from "@/app/[locale]/config";
 import { Link } from "@/i18n/navigation";
-import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  Button,
-} from "@heroui/react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/react";
 import { useTranslations } from "next-intl";
-import { SessionProvider } from "next-auth/react";
 import { ProfileButton } from "./profile-button";
+import { SessionProps } from "@/lib/types";
 
 export const AcmeLogo = () => {
   return (
@@ -26,46 +20,40 @@ export const AcmeLogo = () => {
   );
 };
 
-export default function Header() {
+export default function Header({ session }: SessionProps) {
   const t = useTranslations("common");
   const config = useConfig();
 
   return (
-    <SessionProvider>
-      <Navbar maxWidth="2xl">
-        <NavbarBrand>
-          <Link href="/" className="flex items-center">
-            <AcmeLogo />
-            <p className="font-bold text-inherit">{config.company_name}</p>
+    <Navbar maxWidth="2xl">
+      <NavbarBrand>
+        <Link href="/" className="flex items-center">
+          <AcmeLogo />
+          <p className="font-bold text-inherit">{config.company_name}</p>
+        </Link>
+      </NavbarBrand>
+      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+        <NavbarItem>
+          <Link aria-current="page" color="foreground" href="#">
+            {t("DISCOVER")}
           </Link>
-        </NavbarBrand>
-        <NavbarContent className="hidden sm:flex gap-4" justify="center">
-          <NavbarItem>
-            <Link aria-current="page" color="foreground" href="#">
-              {t("DISCOVER")}
-            </Link>
-          </NavbarItem>
-          <NavbarItem>
-            <Link color="foreground" href="#">
-              {t("ABOUT")}
-            </Link>
-          </NavbarItem>
-          <NavbarItem>
-            <Link color="foreground" href="#">
-              {"GitHub"}
-            </Link>
-          </NavbarItem>
-        </NavbarContent>
-        <NavbarContent justify="end">
-          {/* <NavbarItem className="hidden lg:flex">
-          <Link href="/auth/signin">{t("LOGIN")}</Link>
-        </NavbarItem> */}
-
-          <NavbarItem>
-            <ProfileButton />
-          </NavbarItem>
-        </NavbarContent>
-      </Navbar>
-    </SessionProvider>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="#">
+            {t("ABOUT")}
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="#">
+            {"GitHub"}
+          </Link>
+        </NavbarItem>
+      </NavbarContent>
+      <NavbarContent justify="end">
+        <NavbarItem>
+          <ProfileButton session={session} />
+        </NavbarItem>
+      </NavbarContent>
+    </Navbar>
   );
 }

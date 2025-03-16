@@ -6,17 +6,17 @@ import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useState } from "react";
-import { signOut } from "@/lib/auth";
+import { signOutAction } from "@/app/[locale]/auth/actions";
+import { SessionProps } from "@/lib/types";
 
-export function ProfileButton() {
+export function ProfileButton({ session }: SessionProps) {
   const t = useTranslations("common");
-  const { data: session } = useSession();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   const user = session?.user;
 
   const handleLogout = () => {
-    signOut({ redirectTo: "/auth/signin" });
+    signOutAction();
   };
 
   if (user) {
