@@ -23,6 +23,7 @@ export function AuthPage({ form }: { form: "login" | "signup" }) {
   useEffect(() => {
     if (state.success) {
       router.push(redirect || "/dashboard");
+      router.refresh(); // force to refresh the root layout
     }
   }, [state, redirect, router]);
 
