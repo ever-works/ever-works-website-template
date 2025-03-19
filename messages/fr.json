@@ -4,7 +4,8 @@
     "ABOUT": "À propos",
     "DISCOVER": "Découvrir",
     "LOGIN": "Se connecter",
-    "SIGN_UP": "S'inscrire"
+    "SIGN_UP": "S'inscrire",
+    "OR_CONTINUE_WITH": "Ou continuer avec"
   },
   "footer": {
     "ALL_RIGHTS_RESERVED": "Tous droits réservés"
@@ -14,5 +15,21 @@
     "BEST_DIRECTORY_WEBSITE_TEMPLATE": "Le meilleur modèle de site Web d'annuaire",
     "CATEGORIES": "Catégories",
     "THIS_IS_A_DEMO_DIRECTORY_WEBSITE": "Il s'agit d'un site Web d'annuaire de démonstration."
+  },
+  "auth": {
+    "ALREADY_HAVE_AN_ACCOUNT": "Vous avez déjà un compte? \nSe connecter",
+    "CREATE_ACCOUNT": "Créer un compte",
+    "EMAIL_ADDRESS": "Adresse email",
+    "ENTER_YOUR_CREDENTIALS_HEADER": "Entrez vos informations d'identification pour accéder à votre compte",
+    "ENTER_YOUR_EMAIL": "Entrez votre e-mail",
+    "ENTER_YOUR_FULL_NAME": "Entrez votre nom complet",
+    "ENTER_YOUR_PASSWORD": "Entrez votre mot de passe",
+    "FILL_IN_OUR_DIRECTORY": "Remplissez le formulaire pour rejoindre notre répertoire",
+    "FORGOT_PASSWORD": "Mot de passe oublié?",
+    "FULL_NAME": "Nom et prénom",
+    "NEED_AN_ACCOUNT": "Besoin d'un compte? \nS'inscrire",
+    "PASSWORD": "Mot de passe",
+    "REMEMBER_ME": "Souviens-toi de moi",
+    "SIGN_IN": "Se connecter"
   }
 }

@@ -1,10 +1,27 @@
 {
+  "auth": {
+    "FULL_NAME": "Full Name",
+    "EMAIL_ADDRESS": "Email Address",
+    "PASSWORD": "Password",
+    "SIGN_IN": "Sign In",
+    "CREATE_ACCOUNT": "Create Account",
+    "FORGOT_PASSWORD": "Forgot password?",
+    "REMEMBER_ME": "Remember me",
+    "ENTER_YOUR_FULL_NAME": "Enter your full name",
+    "ENTER_YOUR_EMAIL": "Enter your email",
+    "ENTER_YOUR_PASSWORD": "Enter your password",
+    "ENTER_YOUR_CREDENTIALS_HEADER": "Enter your credentials to access your account",
+    "FILL_IN_OUR_DIRECTORY": "Fill in the form to join our directory",
+    "NEED_AN_ACCOUNT": "Need an account? Sign up",
+    "ALREADY_HAVE_AN_ACCOUNT": "Already have an account? Sign in"
+  },
   "common": {
     "DISCOVER": "Discover",
     "ABOUT": "About",
     "LOGIN": "Login",
     "SIGN_UP": "Sign up",
-    "NO_CONTENT_PROVIDED": "No content provided"
+    "NO_CONTENT_PROVIDED": "No content provided",
+    "OR_CONTINUE_WITH": "Or continue with"
   },
   "listing": {
     "ALL": "All",

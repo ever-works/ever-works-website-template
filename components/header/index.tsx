@@ -24,6 +24,11 @@ export default function Header({ session }: SessionProps) {
   const t = useTranslations("common");
   const config = useConfig();
 
+  const auth = config.auth;
+  const providers = Object.keys(auth || {}).filter((key) =>
+    auth ? auth[key as keyof typeof auth] : false
+  );
+
   return (
     <Navbar maxWidth="2xl">
       <NavbarBrand>
@@ -49,10 +54,13 @@ export default function Header({ session }: SessionProps) {
           </Link>
         </NavbarItem>
       </NavbarContent>
+
       <NavbarContent justify="end">
-        <NavbarItem>
-          <ProfileButton session={session} />
-        </NavbarItem>
+        {providers.length > 0 && (
+          <NavbarItem>
+            <ProfileButton session={session} />
+          </NavbarItem>
+        )}
       </NavbarContent>
     </Navbar>
   );

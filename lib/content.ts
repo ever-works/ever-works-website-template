@@ -35,12 +35,23 @@ export interface ItemData {
     updatedAt: Date;  // timestamp
 }
 
+export interface AuthOptions {
+    credentials?: boolean;
+    google?: boolean;
+    github?: boolean;
+    microsoft?:boolean;
+    fb?: boolean;
+    x?:boolean
+}
+
 export interface Config {
     company_name?: string;
     copyright_year?: number;
     content_table?: boolean;
     item_name?: string;
     items_name?: string;
+    app_url?: string;
+    auth?: false | AuthOptions
 }
 
 interface FetchOptions {
