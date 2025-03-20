@@ -22,7 +22,7 @@ export const generateVerificationToken = async (email: string) => {
   return db
     .insert(verificationTokens)
     .values({
-      identifier: "",
+      identifier: token,
       email,
       token,
       expires,
