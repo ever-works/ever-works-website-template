@@ -59,9 +59,7 @@ export const sessions = pgTable("sessions", {
 });
 
 export const verificationTokens = pgTable("verificationTokens", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+  identifier: text("identifier").notNull(),
   email: text("email").notNull(),
   token: text("token").notNull(),
   expires: timestamp("expires", { mode: "date" }).notNull(),

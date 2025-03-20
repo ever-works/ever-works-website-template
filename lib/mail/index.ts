@@ -19,7 +19,10 @@ export interface EmailServiceConfig {
   defaultFrom: string;
   apiKeys: Record<string, string>;
   domain: string;
-  novu?: { templateId?: string };
+  novu?: {
+    templateId?: string;
+    backendUrl?: string;
+  };
 }
 
 export class EmailService {
@@ -89,10 +92,13 @@ async function mailService() {
     provider: config.mail?.provider || "",
     defaultFrom: config.mail?.defaultFrom || "",
     domain: config.app_url || "",
-    novu: {
-      templateId:
-        config.mail?.provider === "novu" ? config.mail?.templateId : undefined,
-    },
+    novu:
+      config.mail?.provider === "novu"
+        ? {
+            templateId: config.mail?.templateId,
+            backendUrl: config.mail?.backendUrl,
+          }
+        : undefined,
   });
 }
 

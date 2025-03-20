@@ -1,5 +1,5 @@
 {
-  "id": "8e2f8ded-243b-4e21-8b53-ab5ba8a56d56",
+  "id": "781fbb01-0e6a-46ed-a5bd-e513bc7e8164",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -409,10 +409,10 @@
       "name": "verificationTokens",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
+        "identifier": {
+          "name": "identifier",
           "type": "text",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true
         },
         "email": {

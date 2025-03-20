@@ -16,12 +16,13 @@ export const generateVerificationToken = async (email: string) => {
   if (existingToken) {
     await db
       .delete(verificationTokens)
-      .where(eq(verificationTokens.id, existingToken.id));
+      .where(eq(verificationTokens.identifier, existingToken.identifier));
   }
 
   return db
     .insert(verificationTokens)
     .values({
+      identifier: "",
       email,
       token,
       expires,

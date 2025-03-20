@@ -48,6 +48,7 @@ export type NovuMail = {
     provider: "novu";
     templateId?: string;
     defaultFrom: string;
+    backendUrl?: string;
 }
 
 export type ResendMail = {

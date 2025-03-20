@@ -60,7 +60,7 @@ CREATE TABLE "users" (
 );
 --> statement-breakpoint
 CREATE TABLE "verificationTokens" (
-	"id" text PRIMARY KEY NOT NULL,
+	"identifier" text NOT NULL,
 	"email" text NOT NULL,
 	"token" text NOT NULL,
 	"expires" timestamp NOT NULL
