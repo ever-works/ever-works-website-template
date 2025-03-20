@@ -62,12 +62,10 @@ export class EmailService {
     });
   }
 
-  // Method to allow sending custom emails
   async sendCustomEmail(message: EmailMessage): Promise<any> {
     return this.provider.sendEmail(message);
   }
 
-  // Get current provider name
   getProviderName(): string {
     return this.provider.getName();
   }
@@ -90,6 +88,7 @@ async function mailService() {
     ...emailConfig,
     provider: config.mail?.provider || "",
     defaultFrom: config.mail?.defaultFrom || "",
+    domain: config.app_url || "",
     novu: {
       templateId:
         config.mail?.provider === "novu" ? config.mail?.templateId : undefined,
