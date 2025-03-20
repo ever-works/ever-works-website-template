@@ -44,6 +44,17 @@ export interface AuthOptions {
     x?:boolean
 }
 
+export type NovuMail = {
+    provider: "novu";
+    templateId?: string;
+    defaultFrom: string;
+}
+
+export type ResendMail = {
+    provider: "resend";
+    defaultFrom: string;
+}
+
 export interface Config {
     company_name?: string;
     copyright_year?: number;
@@ -52,6 +63,7 @@ export interface Config {
     items_name?: string;
     app_url?: string;
     auth?: false | AuthOptions
+    mail?: NovuMail | ResendMail;
 }
 
 interface FetchOptions {
