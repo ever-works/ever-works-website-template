@@ -58,21 +58,14 @@ export const sessions = pgTable("sessions", {
   expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 
-export const verificationTokens = pgTable(
-  "verificationTokens",
-  {
-    identifier: text("identifier").notNull(),
-    token: text("token").notNull(),
-    expires: timestamp("expires", { mode: "date" }).notNull(),
-  },
-  (verificationToken) => [
-    {
-      compositePk: primaryKey({
-        columns: [verificationToken.identifier, verificationToken.token],
-      }),
-    },
-  ]
-);
+export const verificationTokens = pgTable("verificationTokens", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  email: text("email").notNull(),
+  token: text("token").notNull(),
+  expires: timestamp("expires", { mode: "date" }).notNull(),
+});
 
 export const authenticators = pgTable(
   "authenticators",
@@ -106,7 +99,9 @@ export const activityLogs = pgTable("activityLogs", {
 });
 
 export const passwordResetTokens = pgTable("passwordResetTokens", {
-  id: serial("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   email: text("email").notNull(),
   token: text("token").notNull().unique(),
   expires: timestamp("expires", { mode: "date" }).notNull(),

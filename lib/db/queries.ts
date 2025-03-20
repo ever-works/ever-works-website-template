@@ -5,7 +5,9 @@ import {
   ActivityType,
   type NewActivityLog,
   NewUser,
+  passwordResetTokens,
   users,
+  verificationTokens,
 } from "./schema";
 
 export async function getUserByEmail(email: string) {
@@ -65,6 +67,26 @@ export async function updateUser(
   userId: string
 ) {
   return db.update(users).set(values).where(eq(users.id, userId));
+}
+
+export async function getVerificationTokenByEmail(email: string) {
+  const tokens = await db
+    .select()
+    .from(verificationTokens)
+    .where(eq(verificationTokens.email, email))
+    .limit(1);
+
+  return tokens[0];
+}
+
+export async function getPasswordResetTokenByEmail(email: string) {
+  const tokens = await db
+    .select()
+    .from(passwordResetTokens)
+    .where(eq(passwordResetTokens.email, email))
+    .limit(1);
+
+  return tokens[0];
 }
 
 export async function getActivityLogs() {}
