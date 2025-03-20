@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 
 export const generateVerificationToken = async (email: string) => {
   const token = crypto.randomUUID();
-  const expires = new Date(new Date().getTime() + 3600 * 1000);
+  const expires = new Date(new Date().getTime() + 3600 * 1000); // 1 hour
 
   const existingToken = await getVerificationTokenByEmail(email);
 
@@ -31,7 +31,7 @@ export const generateVerificationToken = async (email: string) => {
 
 export const generatePasswordResetToken = async (email: string) => {
   const token = crypto.randomUUID();
-  const expires = new Date(new Date().getTime() + 3600 * 1000);
+  const expires = new Date(new Date().getTime() + 3600 * 1000); // 1 hour
 
   const existingToken = await getPasswordResetTokenByEmail(email);
 
