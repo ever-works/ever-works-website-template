@@ -19,7 +19,7 @@ export const generateVerificationToken = async (email: string) => {
       .where(eq(verificationTokens.identifier, existingToken.identifier));
   }
 
-  return db
+  const items = await db
     .insert(verificationTokens)
     .values({
       identifier: token,
@@ -28,6 +28,8 @@ export const generateVerificationToken = async (email: string) => {
       expires,
     })
     .returning();
+
+  return items[0];
 };
 
 export const generatePasswordResetToken = async (email: string) => {
@@ -42,7 +44,7 @@ export const generatePasswordResetToken = async (email: string) => {
       .where(eq(passwordResetTokens.id, existingToken.id));
   }
 
-  return db
+  const items = await db
     .insert(passwordResetTokens)
     .values({
       email,
@@ -50,4 +52,6 @@ export const generatePasswordResetToken = async (email: string) => {
       expires,
     })
     .returning();
+
+  return items[0];
 };

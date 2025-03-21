@@ -21,6 +21,11 @@ import {
   updateUserPassword,
 } from "@/lib/db/queries";
 import { signIn, signOut } from "@/lib/auth";
+import {
+  generatePasswordResetToken,
+  generateVerificationToken,
+} from "@/lib/db/tokens";
+import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/mail";
 
 const PASSWORD_MIN_LENGTH = 8;
 
@@ -83,6 +88,10 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
   }
 
   logActivity(createdUser.id, ActivityType.SIGN_UP);
+
+  generateVerificationToken(email).then((item) => {
+    item && sendVerificationEmail(email, item.token);
+  });
 
   await signIn(AuthProviders.CREDENTIALS, {
     email,
@@ -200,3 +209,28 @@ export const updateAccount = validatedActionWithUser(
 export async function signOutAction() {
   return signOut({ redirectTo: "/auth/signin" });
 }
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+});
+
+export const forgotPassword = validatedAction(
+  forgotPasswordSchema,
+  async ({ email }) => {
+    const dbUser = await getUserByEmail(email).catch(() => null);
+    if (!dbUser) {
+      return { success: true, email };
+    }
+
+    const passwordResetToken = await generatePasswordResetToken(email);
+
+    if (passwordResetToken) {
+      await sendPasswordResetEmail(
+        passwordResetToken.email,
+        passwordResetToken.token
+      );
+    }
+
+    return { success: true, email };
+  }
+);
