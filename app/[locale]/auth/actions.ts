@@ -225,7 +225,7 @@ export const forgotPassword = validatedAction(
     const passwordResetToken = await generatePasswordResetToken(email);
 
     if (passwordResetToken) {
-      await sendPasswordResetEmail(
+      sendPasswordResetEmail(
         passwordResetToken.email,
         passwordResetToken.token
       );
