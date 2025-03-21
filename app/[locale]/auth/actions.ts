@@ -13,12 +13,15 @@ import {
   AuthProviders,
 } from "@/lib/auth/credentials";
 import {
+  deleteVerificationToken,
   getUserByEmail,
+  getVerificationTokenByToken,
   insertNewUser,
   logActivity,
   softDeleteUser,
   updateUser,
   updateUserPassword,
+  updateUserVerification,
 } from "@/lib/db/queries";
 import { signIn, signOut } from "@/lib/auth";
 import {
@@ -26,6 +29,7 @@ import {
   generateVerificationToken,
 } from "@/lib/db/tokens";
 import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/mail";
+import { db } from "@/lib/db/drizzle";
 
 const PASSWORD_MIN_LENGTH = 8;
 
@@ -236,3 +240,29 @@ export const forgotPassword = validatedAction(
     return { success: true, email };
   }
 );
+
+export const verifyEmailAction = async (token: string) => {
+  const existingToken = await getVerificationTokenByToken(token);
+  if (!existingToken) {
+    return { error: "Invalid token!" };
+  }
+
+  const hasExpired = existingToken.expires < new Date();
+  if (hasExpired) {
+    return { error: "The token has expired." };
+  }
+
+  const existingUser = await getUserByEmail(existingToken.email);
+  if (!existingUser) {
+    return { error: "No account is associated with this token!" };
+  }
+
+  await Promise.all([
+    updateUserVerification(existingToken.email, true),
+    deleteVerificationToken(existingToken.token),
+  ]);
+
+  logActivity(existingUser.id, ActivityType.VERIFY_EMAIL);
+
+  return { success: true };
+};

@@ -5,10 +5,10 @@ import { signInAction, signUp } from "../actions";
 import { ActionState } from "@/lib/auth/middleware";
 import { PropsWithChildren, useActionState, useEffect } from "react";
 import { User, Lock, Mail } from "lucide-react";
-import Link from "next/link";
 import { Button, cn } from "@heroui/react";
 import { useConfig } from "../../config";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 export function CredentialsForm({
   type,

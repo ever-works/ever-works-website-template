@@ -2,11 +2,11 @@
 
 import { Mail, ArrowLeft } from "lucide-react";
 import { useConfig } from "../../config";
-import Link from "next/link";
 import { useActionState } from "react";
 import { Button, Input } from "@heroui/react";
 import { ActionState } from "@/lib/auth/middleware";
 import { forgotPassword } from "../actions";
+import { Link } from "@/i18n/navigation";
 
 export default function ForgotPasswordPage() {
   const config = useConfig();

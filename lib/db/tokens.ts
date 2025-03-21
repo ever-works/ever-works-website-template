@@ -29,7 +29,7 @@ export const generateVerificationToken = async (email: string) => {
     })
     .returning();
 
-  return items[0];
+  return items.at(0);
 };
 
 export const generatePasswordResetToken = async (email: string) => {
@@ -53,5 +53,5 @@ export const generatePasswordResetToken = async (email: string) => {
     })
     .returning();
 
-  return items[0];
+  return items.at(0);
 };
