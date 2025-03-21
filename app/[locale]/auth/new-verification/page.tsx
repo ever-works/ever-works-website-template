@@ -33,6 +33,8 @@ export default function EmailVerificationPage() {
           setError(result.error);
         }
       } catch (error) {
+        console.error(error);
+
         setVerificationState("error");
         setError("An error occurred during verification");
       }

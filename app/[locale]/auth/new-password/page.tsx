@@ -80,6 +80,8 @@ export default function NewPasswordPage() {
 
         setIsLoading(false);
       } catch (error) {
+        console.error(error);
+
         setIsTokenValid(false);
         setIsLoading(false);
         setError("An error occurred while verifying the reset token");
@@ -110,6 +112,7 @@ export default function NewPasswordPage() {
 
       setIsLoading(false);
     } catch (error) {
+      console.error(error);
       setError("Failed to set new password. Please try again.");
       setIsLoading(false);
     }
@@ -229,7 +232,7 @@ export default function NewPasswordPage() {
                     Set New Password
                   </h3>
                   <p className="text-sm text-gray-500">
-                    Create a strong password that you don't use for other
+                    Create a strong password that you {"don't"} use for other
                     websites
                   </p>
                 </div>
