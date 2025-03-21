@@ -14,15 +14,17 @@ export interface EmailProvider {
   getName(): string;
 }
 
+export interface EmailNovuConfig {
+  templateId?: string;
+  backendUrl?: string;
+}
+
 export interface EmailServiceConfig {
   provider: "resend" | "novu" | string;
   defaultFrom: string;
   apiKeys: Record<string, string>;
   domain: string;
-  novu?: {
-    templateId?: string;
-    backendUrl?: string;
-  };
+  novu?: EmailNovuConfig;
 }
 
 export class EmailService {
@@ -90,8 +92,8 @@ async function mailService() {
   return new EmailService({
     ...emailConfig,
     provider: config.mail?.provider || "",
-    defaultFrom: config.mail?.defaultFrom || "",
-    domain: config.app_url || "",
+    defaultFrom: config.mail?.defaultFrom || emailConfig.defaultFrom,
+    domain: config.app_url || emailConfig.domain,
     novu:
       config.mail?.provider === "novu"
         ? {

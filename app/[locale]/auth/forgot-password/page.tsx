@@ -3,7 +3,7 @@
 import { Mail, ArrowLeft } from "lucide-react";
 import { useConfig } from "../../config";
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { Button, Input } from "@heroui/react";
 import { ActionState } from "@/lib/auth/middleware";
 import { forgotPassword } from "../actions";

@@ -1,15 +1,17 @@
 import { Novu } from "@novu/node";
-import { EmailMessage, EmailProvider } from ".";
+import { EmailMessage, EmailNovuConfig, EmailProvider } from ".";
 
 export class NovuProvider implements EmailProvider {
   private novu: Novu;
   private defaultFrom: string;
   private templateId: string;
 
-  constructor(apiKey: string, defaultFrom: string, templateId?: string) {
-    this.novu = new Novu(apiKey);
+  constructor(apiKey: string, defaultFrom: string, config?: EmailNovuConfig) {
+    this.novu = new Novu(apiKey, {
+      backendUrl: config?.backendUrl,
+    });
     this.defaultFrom = defaultFrom;
-    this.templateId = templateId || "email-default";
+    this.templateId = config?.templateId || "email-default";
   }
 
   async sendEmail(message: EmailMessage): Promise<any> {

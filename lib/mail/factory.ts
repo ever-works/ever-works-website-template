@@ -9,7 +9,11 @@ export class EmailProviderFactory {
       case "resend":
         return new ResendProvider(config.apiKeys.resend, config.defaultFrom);
       case "novu":
-        return new NovuProvider(config.apiKeys.novu, config.defaultFrom);
+        return new NovuProvider(
+          config.apiKeys.novu,
+          config.defaultFrom,
+          config.novu
+        );
       default:
         return new MockEmailProvider();
     }
