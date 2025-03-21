@@ -90,6 +90,22 @@ export async function getPasswordResetTokenByEmail(email: string) {
   return tokens[0];
 }
 
+export async function getPasswordResetTokenByToken(token: string) {
+  const tokens = await db
+    .select()
+    .from(passwordResetTokens)
+    .where(eq(passwordResetTokens.token, token))
+    .limit(1);
+
+  return tokens.at(0);
+}
+
+export async function deletePasswordResetToken(token: string) {
+  return db
+    .delete(passwordResetTokens)
+    .where(eq(passwordResetTokens.token, token));
+}
+
 // ######################### Verification Token Queries #########################
 
 export async function getVerificationTokenByEmail(email: string) {

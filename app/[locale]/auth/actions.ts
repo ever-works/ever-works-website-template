@@ -13,7 +13,9 @@ import {
   AuthProviders,
 } from "@/lib/auth/credentials";
 import {
+  deletePasswordResetToken,
   deleteVerificationToken,
+  getPasswordResetTokenByToken,
   getUserByEmail,
   getVerificationTokenByToken,
   insertNewUser,
@@ -29,7 +31,6 @@ import {
   generateVerificationToken,
 } from "@/lib/db/tokens";
 import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/mail";
-import { db } from "@/lib/db/drizzle";
 
 const PASSWORD_MIN_LENGTH = 8;
 
@@ -148,7 +149,6 @@ export const updatePassword = validatedActionWithUser(
 
     await Promise.all([
       updateUserPassword(newPasswordHash, dbUser.id),
-
       logActivity(dbUser.id, ActivityType.UPDATE_PASSWORD),
     ]);
 
@@ -266,3 +266,54 @@ export const verifyEmailAction = async (token: string) => {
 
   return { success: true };
 };
+
+export const verifyPasswordTokenAction = async (token: string) => {
+  const existingToken = await getPasswordResetTokenByToken(token);
+  if (!existingToken) {
+    return { error: "Invalid token!" };
+  }
+
+  const hasExpired = existingToken.expires < new Date();
+  if (hasExpired) {
+    return { error: "The token has expired." };
+  }
+
+  const existingUser = await getUserByEmail(existingToken.email);
+  if (!existingUser) {
+    return { error: "No account is associated with this token!" };
+  }
+
+  return { success: true, userId: existingUser.id };
+};
+
+const newPasswordSchema = z
+  .object({
+    token: z.string(),
+    newPassword: z.string().min(PASSWORD_MIN_LENGTH).max(100),
+    confirmPassword: z.string().min(PASSWORD_MIN_LENGTH).max(100),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
+export const newPasswordAction = validatedAction(
+  newPasswordSchema,
+  async (data) => {
+    const result = await verifyPasswordTokenAction(data.token);
+    if (!result.success) {
+      return result;
+    }
+
+    const hashedPassword = await hashPassword(data.newPassword);
+
+    await Promise.all([
+      updateUserPassword(hashedPassword, result.userId),
+      deletePasswordResetToken(data.token),
+    ]);
+
+    logActivity(result.userId, ActivityType.UPDATE_PASSWORD);
+
+    return { success: true };
+  }
+);
