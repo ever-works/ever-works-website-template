@@ -90,7 +90,9 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
   logActivity(createdUser.id, ActivityType.SIGN_UP);
 
   generateVerificationToken(email).then((item) => {
-    item && sendVerificationEmail(email, item.token);
+    if (item) {
+      sendVerificationEmail(email, item.token);
+    }
   });
 
   await signIn(AuthProviders.CREDENTIALS, {
