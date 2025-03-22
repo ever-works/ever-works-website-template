@@ -7,6 +7,7 @@ import { Button, Input } from "@heroui/react";
 import { ActionState } from "@/lib/auth/middleware";
 import { forgotPassword } from "../actions";
 import { Link } from "@/i18n/navigation";
+import { maskEmail } from "@/lib/utils";
 
 export default function ForgotPasswordPage() {
   const config = useConfig();
@@ -66,8 +67,10 @@ export default function ForgotPasswordPage() {
                   <p className="font-medium">Recovery email sent!</p>
                   <p className="text-sm mt-1">
                     Check your inbox at{" "}
-                    <span className="font-medium">{state.email}</span> for
-                    instructions to reset your password.
+                    <span className="font-medium">
+                      {maskEmail(state.email)}
+                    </span>{" "}
+                    for instructions to reset your password.
                   </p>
                 </div>
                 <div className="text-sm text-gray-600">
