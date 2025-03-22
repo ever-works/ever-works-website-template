@@ -91,14 +91,14 @@ async function mailService() {
 
   return new EmailService({
     ...emailConfig,
-    provider: config.mail?.provider || "",
-    defaultFrom: config.mail?.defaultFrom || emailConfig.defaultFrom,
+    provider: config.mail?.provider || emailConfig.provider,
+    defaultFrom: config.mail?.default_from || emailConfig.defaultFrom,
     domain: config.app_url || emailConfig.domain,
     novu:
       config.mail?.provider === "novu"
         ? {
-            templateId: config.mail?.templateId,
-            backendUrl: config.mail?.backendUrl,
+            templateId: config.mail?.template_id,
+            backendUrl: config.mail?.backend_url,
           }
         : undefined,
   });

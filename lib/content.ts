@@ -46,14 +46,14 @@ export interface AuthOptions {
 
 export type NovuMail = {
     provider: "novu";
-    templateId?: string;
-    defaultFrom: string;
-    backendUrl?: string;
+    template_id?: string;
+    default_from: string;
+    backend_url?: string;
 }
 
 export type ResendMail = {
     provider: "resend";
-    defaultFrom: string;
+    default_from: string;
 }
 
 export interface Config {
