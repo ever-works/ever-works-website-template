@@ -12,7 +12,7 @@ export function SocialLogin() {
     return null;
   }
 
-  const providers = Object.keys(auth || {})
+  const providers = Object.keys(auth)
     .filter((key) => key !== "credentials")
     .filter((key) => auth[key as keyof typeof auth]);
 

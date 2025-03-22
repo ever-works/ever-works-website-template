@@ -94,11 +94,10 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
 
   logActivity(createdUser.id, ActivityType.SIGN_UP);
 
-  generateVerificationToken(email).then((item) => {
-    if (item) {
-      sendVerificationEmail(email, item.token);
-    }
-  });
+  const verificationToken = await generateVerificationToken(email);
+  if (verificationToken) {
+    sendVerificationEmail(email, verificationToken.token);
+  }
 
   await signIn(AuthProviders.CREDENTIALS, {
     email,

@@ -5,7 +5,7 @@ import { useConfig } from "../../config";
 import { CredentialsForm } from "./credentials-form";
 import { SocialLogin } from "./social-login";
 
-export function AuthPage({ form }: { form: "login" | "signup" }) {
+export function AuthForm({ form }: { form: "login" | "signup" }) {
   const config = useConfig();
 
   const isLogin = form === "login";

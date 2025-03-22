@@ -1,4 +1,4 @@
-import { Resend } from "resend";
+import { CreateEmailResponse, Resend } from "resend";
 import { EmailMessage, EmailProvider } from ".";
 
 export class ResendProvider implements EmailProvider {
@@ -10,7 +10,7 @@ export class ResendProvider implements EmailProvider {
     this.defaultFrom = defaultFrom;
   }
 
-  async sendEmail(message: EmailMessage): Promise<any> {
+  async sendEmail(message: EmailMessage): Promise<CreateEmailResponse> {
     return this.resend.emails.send({
       from: message.from || this.defaultFrom,
       to: message.to,

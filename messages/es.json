@@ -17,7 +17,7 @@
     "THIS_IS_A_DEMO_DIRECTORY_WEBSITE": "Este es un sitio web de directorio de demostración."
   },
   "auth": {
-    "ALREADY_HAVE_AN_ACCOUNT": "¿Ya tienes una cuenta? \nIniciar sesión",
+    "ALREADY_HAVE_AN_ACCOUNT": "¿Ya tienes una cuenta? Iniciar sesión",
     "CREATE_ACCOUNT": "Crear una cuenta",
     "EMAIL_ADDRESS": "Dirección de correo electrónico",
     "ENTER_YOUR_CREDENTIALS_HEADER": "Ingrese sus credenciales para acceder a su cuenta",
@@ -27,7 +27,7 @@
     "FILL_IN_OUR_DIRECTORY": "Complete el formulario para unirse a nuestro directorio",
     "FORGOT_PASSWORD": "¿Has olvidado tu contraseña?",
     "FULL_NAME": "Nombre completo",
-    "NEED_AN_ACCOUNT": "¿Necesitas una cuenta? \nInscribirse",
+    "NEED_AN_ACCOUNT": "¿Necesitas una cuenta? Inscribirse",
     "PASSWORD": "Contraseña",
     "REMEMBER_ME": "Acuérdate de mí",
     "SIGN_IN": "Iniciar sesión"

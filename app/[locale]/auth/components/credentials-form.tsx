@@ -92,7 +92,6 @@ export function CredentialsForm({
             className="pl-10 w-full px-4 py-2 border-gray-300 rounded-lg border-2 focus:border-blue-500"
             placeholder={t("ENTER_YOUR_PASSWORD")}
             name="password"
-            defaultValue={state?.password}
             required
           />
         </div>

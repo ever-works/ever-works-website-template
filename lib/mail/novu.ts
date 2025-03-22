@@ -14,7 +14,7 @@ export class NovuProvider implements EmailProvider {
     this.templateId = config?.templateId || "email-default";
   }
 
-  async sendEmail(message: EmailMessage): Promise<any> {
+  async sendEmail(message: EmailMessage) {
     const email = Array.isArray(message.to) ? message.to[0] : message.to;
     return this.novu.trigger(this.templateId, {
       to: {
