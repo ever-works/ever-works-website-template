@@ -58,7 +58,7 @@ export default function NewPasswordPage() {
     } else {
       setPasswordStrength(0);
     }
-  }, [password]);
+  }, [password, passwordCriteria]);
 
   useEffect(() => {
     const verifyToken = async () => {
