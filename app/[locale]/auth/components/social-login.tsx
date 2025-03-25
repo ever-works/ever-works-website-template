@@ -67,8 +67,8 @@ export function SocialLogin() {
         {auth?.x && (
           <Button type="button" isIconOnly>
             <svg
-              width="1200"
-              height="1227"
+              width="24"
+              height="24"
               viewBox="0 0 1200 1227"
               className="h-5 w-5 dark:fill-white fill-black"
               fill="none"
