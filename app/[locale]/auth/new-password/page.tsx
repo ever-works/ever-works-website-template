@@ -99,6 +99,11 @@ export default function NewPasswordPage() {
       formData.append("token", token);
     }
 
+    if (passwordStrength < 60) {
+      setError("Please choose a stronger password");
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
