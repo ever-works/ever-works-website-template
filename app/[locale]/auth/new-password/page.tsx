@@ -62,6 +62,8 @@ export default function NewPasswordPage() {
   }, [password, passwordCriteria]);
 
   useEffect(() => {
+    let mounted = true;
+
     const verifyToken = async () => {
       if (!token) {
         setError("Missing reset token");
@@ -72,32 +74,36 @@ export default function NewPasswordPage() {
 
       try {
         const result = await verifyPasswordTokenAction(token);
-        if (result.success) {
+        if (result.success && mounted) {
           setIsTokenValid(true);
-        } else if (result.error) {
+        } else if (result.error && mounted) {
           setError(result.error);
           setIsTokenValid(false);
         }
 
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       } catch (error) {
         console.error(error);
 
-        setIsTokenValid(false);
-        setIsLoading(false);
-        setError("An error occurred while verifying the reset token");
+        if (mounted) {
+          setIsTokenValid(false);
+          setIsLoading(false);
+          setError("An error occurred while verifying the reset token");
+        }
       }
     };
 
     verifyToken();
+
+    return () => {
+      mounted = false;
+    };
   }, [token]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    if (token) {
-      formData.append("token", token);
-    }
 
     if (passwordStrength < 60) {
       setError("Please choose a stronger password");
@@ -107,6 +113,11 @@ export default function NewPasswordPage() {
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
+    }
+
+    const formData = new FormData(e.currentTarget);
+    if (token) {
+      formData.append("token", token);
     }
 
     setIsLoading(true);
