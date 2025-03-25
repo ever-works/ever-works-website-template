@@ -59,7 +59,7 @@ export const sessions = pgTable("sessions", {
 });
 
 export const verificationTokens = pgTable("verificationTokens", {
-  identifier: text("identifier").notNull(),
+  identifier: text("identifier").primaryKey(),
   email: text("email").notNull(),
   token: text("token").notNull(),
   expires: timestamp("expires", { mode: "date" }).notNull(),

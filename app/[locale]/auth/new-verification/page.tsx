@@ -13,34 +13,41 @@ export default function EmailVerificationPage() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
-  const [verificationState, setVerificationState] = useState("loading");
+  const [verificationState, setVerificationState] = useState<
+    "loading" | "success" | "error"
+  >("loading");
   const [error, setError] = useState("");
 
   useEffect(() => {
+    let mounted = true;
     const verifyEmail = async () => {
       if (!token) {
         setVerificationState("error");
         setError("Missing verification token");
         return;
       }
-
       try {
         const result = await verifyEmailAction(token);
-        if (result.success) {
-          setVerificationState("success");
-        } else if (result.error) {
-          setVerificationState("error");
-          setError(result.error);
+        if (mounted) {
+          if (result.success) {
+            setVerificationState("success");
+          } else if (result.error) {
+            setVerificationState("error");
+            setError(result.error);
+          }
         }
       } catch (error) {
         console.error(error);
-
-        setVerificationState("error");
-        setError("An error occurred during verification");
+        if (mounted) {
+          setVerificationState("error");
+          setError("An error occurred during verification");
+        }
       }
     };
-
     verifyEmail();
+    return () => {
+      mounted = false;
+    };
   }, [token]);
 
   return (

@@ -39,9 +39,9 @@ export interface AuthOptions {
     credentials?: boolean;
     google?: boolean;
     github?: boolean;
-    microsoft?:boolean;
+    microsoft?: boolean;
     fb?: boolean;
-    x?:boolean
+    x?: boolean
 }
 
 export type NovuMail = {

@@ -26,7 +26,7 @@ export default function Header({ session }: SessionProps) {
 
   const auth = config.auth;
   const providers = Object.keys(auth || {}).filter((key) =>
-    auth ? auth[key as keyof typeof auth] : false
+    auth ? !!auth[key as keyof typeof auth] : false
   );
 
   return (
