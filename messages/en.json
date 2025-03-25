@@ -4,6 +4,8 @@
     "EMAIL_ADDRESS": "Email Address",
     "PASSWORD": "Password",
     "SIGN_IN": "Sign In",
+    "LOGIN": "Login",
+    "SIGN_UP": "Sign up",
     "CREATE_ACCOUNT": "Create Account",
     "FORGOT_PASSWORD": "Forgot password?",
     "REMEMBER_ME": "Remember me",
@@ -18,8 +20,6 @@
   "common": {
     "DISCOVER": "Discover",
     "ABOUT": "About",
-    "LOGIN": "Login",
-    "SIGN_UP": "Sign up",
     "NO_CONTENT_PROVIDED": "No content provided",
     "OR_CONTINUE_WITH": "Or continue with"
   },

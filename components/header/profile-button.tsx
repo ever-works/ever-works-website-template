@@ -9,7 +9,7 @@ import { SessionProps } from "@/lib/types";
 import { Link } from "@/i18n/navigation";
 
 export function ProfileButton({ session }: SessionProps) {
-  const t = useTranslations("common");
+  const t = useTranslations();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   const user = session?.user;
@@ -86,7 +86,7 @@ export function ProfileButton({ session }: SessionProps) {
 
   return (
     <Button as={Link} color="primary" href="/auth/signin" variant="flat">
-      {t("LOGIN")}
+      {t("auth.LOGIN")}
     </Button>
   );
 }

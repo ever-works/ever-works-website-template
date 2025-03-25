@@ -1,21 +1,4 @@
 {
-  "common": {
-    "NO_CONTENT_PROVIDED": "Aucun contenu fourni",
-    "ABOUT": "À propos",
-    "DISCOVER": "Découvrir",
-    "LOGIN": "Se connecter",
-    "SIGN_UP": "S'inscrire",
-    "OR_CONTINUE_WITH": "Ou continuer avec"
-  },
-  "footer": {
-    "ALL_RIGHTS_RESERVED": "Tous droits réservés"
-  },
-  "listing": {
-    "ALL": "Tous",
-    "BEST_DIRECTORY_WEBSITE_TEMPLATE": "Le meilleur modèle de site Web d'annuaire",
-    "CATEGORIES": "Catégories",
-    "THIS_IS_A_DEMO_DIRECTORY_WEBSITE": "Il s'agit d'un site Web d'annuaire de démonstration."
-  },
   "auth": {
     "ALREADY_HAVE_AN_ACCOUNT": "Vous avez déjà un compte? \nSe connecter",
     "CREATE_ACCOUNT": "Créer un compte",
@@ -27,9 +10,26 @@
     "FILL_IN_OUR_DIRECTORY": "Remplissez le formulaire pour rejoindre notre répertoire",
     "FORGOT_PASSWORD": "Mot de passe oublié?",
     "FULL_NAME": "Nom et prénom",
+    "LOGIN": "Se connecter",
     "NEED_AN_ACCOUNT": "Besoin d'un compte? \nS'inscrire",
     "PASSWORD": "Mot de passe",
     "REMEMBER_ME": "Souviens-toi de moi",
-    "SIGN_IN": "Se connecter"
+    "SIGN_IN": "Se connecter",
+    "SIGN_UP": "S'inscrire"
+  },
+  "common": {
+    "ABOUT": "À propos",
+    "DISCOVER": "Découvrir",
+    "NO_CONTENT_PROVIDED": "Aucun contenu fourni",
+    "OR_CONTINUE_WITH": "Ou continuer avec"
+  },
+  "footer": {
+    "ALL_RIGHTS_RESERVED": "Tous droits réservés"
+  },
+  "listing": {
+    "ALL": "Tous",
+    "BEST_DIRECTORY_WEBSITE_TEMPLATE": "Le meilleur modèle de site Web d'annuaire",
+    "CATEGORIES": "Catégories",
+    "THIS_IS_A_DEMO_DIRECTORY_WEBSITE": "Il s'agit d'un site Web d'annuaire de démonstration."
   }
 }
