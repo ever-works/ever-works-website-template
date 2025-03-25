@@ -45,7 +45,7 @@ export default function NewPasswordPage() {
       {
         id: "special",
         label: "Special character",
-        test: (pwd: string) => /[!@#$%^&*]/.test(pwd),
+        test: (pwd: string) => /[!@#$%^&*~(){}[\]|;:'",<>.?]/.test(pwd),
       },
     ];
   }, []);
