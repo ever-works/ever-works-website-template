@@ -16,6 +16,7 @@ export default function NewPasswordPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordStrength, setPasswordStrength] = useState(0);
+
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -96,6 +97,11 @@ export default function NewPasswordPage() {
     const formData = new FormData(e.currentTarget);
     if (token) {
       formData.append("token", token);
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
     }
 
     setIsLoading(true);
