@@ -134,4 +134,4 @@ export async function deleteVerificationToken(token: string) {
     .where(eq(verificationTokens.token, token));
 }
 
-export async function getActivityLogs() {}
+// export async function getActivityLogs() {}
