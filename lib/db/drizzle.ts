@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
 
-// For now, let's comment this out to avoir a build error in the automated environment (e.g a GH actions)
+// For now, let's comment this out to avoid a build error in the automated environment (e.g a GH actions)
 // if (!process.env.DATABASE_URL) {
 //   throw new Error("DATABASE_URL environment variable is not set");
 // }
