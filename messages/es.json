@@ -31,5 +31,16 @@
     "BEST_DIRECTORY_WEBSITE_TEMPLATE": "La mejor plantilla de sitio web de directorio",
     "CATEGORIES": "Categorías",
     "THIS_IS_A_DEMO_DIRECTORY_WEBSITE": "Este es un sitio web de directorio de demostración."
+  },
+  "settings": {
+    "PROFILE": "Tu perfil",
+    "PAYMENT": "Pago",
+    "ACCOUNT": "Cuenta",
+    "BILLING": "Facturación",
+    "NOTIFICATIONS": "Notificaciones",
+    "SECURITY": "Seguridad",
+    "LEGAL": "Legal",
+    "HELP": "Ayuda Center",
+    "LOGOUT": "Cerrar sesión"
   }
 }

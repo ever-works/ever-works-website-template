@@ -31,5 +31,18 @@
   },
   "footer": {
     "ALL_RIGHTS_RESERVED": "All rights reserved"
-  }
+  },
+  "settings": {
+    "PROFILE": "Your Profile",
+    "PAYMENT": "Payment",
+    "ACCOUNT": "Account",
+    "BILLING": "Billing",
+    "NOTIFICATIONS": "Notifications",
+    "SETTINGS": "Settings",
+    "SECURITY": "Security",
+    "LEGAL": "Legal",
+    "HELP": "Help Center",
+    "LOGOUT": "Sign out"
+   }
 }
+

@@ -31,5 +31,17 @@
     "BEST_DIRECTORY_WEBSITE_TEMPLATE": "Le meilleur modèle de site Web d'annuaire",
     "CATEGORIES": "Catégories",
     "THIS_IS_A_DEMO_DIRECTORY_WEBSITE": "Il s'agit d'un site Web d'annuaire de démonstration."
+  },
+  "settings": {
+    "PROFILE": "Votre profil",
+    "PAYMENT": "Paiement",
+    "ACCOUNT": "Compte",
+    "BILLING": "Facturation",
+    "NOTIFICATIONS": "Notifications",
+    "SECURITY": "Sécurité",
+    "LEGAL": "Légal",
+    "HELP": "Aide Center",
+    "LOGOUT": "Se déconnecter"
   }
 }
+

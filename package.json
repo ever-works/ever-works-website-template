@@ -14,9 +14,11 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.8.0",
+    "@auth/supabase-adapter": "^1.9.0",
     "@heroui/react": "^2.6.14",
     "@next/env": "^15.3.1",
     "@novu/node": "^2.6.6",
+    "@supabase/supabase-js": "^2.49.4",
     "@tailwindcss/typography": "^0.5.16",
     "bcryptjs": "^3.0.2",
     "date-fns": "^4.1.0",
@@ -35,6 +37,7 @@
     "postgres": "^3.4.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
     "resend": "^4.1.2",
     "yaml": "^2.7.0",
     "zod": "^3.24.2"

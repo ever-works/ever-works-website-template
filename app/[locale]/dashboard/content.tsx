@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { CheckCircle } from "lucide-react";
 import { Session } from "next-auth";
 

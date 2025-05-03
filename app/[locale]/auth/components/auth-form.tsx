@@ -38,7 +38,7 @@ export function AuthForm({ form }: { form: "login" | "signup" }) {
               {/* Directory Feature List */}
               <ul className="space-y-3">
                 <li className="flex items-center">
-                  <div className="bg-blue-500/20 p-1 rounded-full mr-3">
+                  <div className="bg-blue-500/20 dark:bg-blue-800/20 p-1 rounded-full mr-3">
                     <Search className="h-4 w-4 text-blue-400" />
                   </div>
                   <span className="text-sm text-gray-300">

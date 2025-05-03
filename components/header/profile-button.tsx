@@ -50,29 +50,29 @@ export function ProfileButton({ session }: SessionProps) {
             aria-labelledby="user-menu"
             onClick={() => setIsProfileMenuOpen(false)}
           >
-            <a
-              href="#"
+            <Link
+              href="/settings/profile"
               className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               role="menuitem"
             >
               <User className="mr-3 h-4 w-4 text-gray-400" />
-              Your Profile
-            </a>
-            <a
-              href="#"
+              {t("settings.PROFILE")}
+            </Link>
+            <Link
+              href="/settings/"
               className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               role="menuitem"
             >
               <Settings className="mr-3 h-4 w-4 text-gray-400" />
-              Settings
-            </a>
+              {t("settings.SETTINGS")}
+            </Link>
             <a
               href="#"
               className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               role="menuitem"
             >
               <HelpCircle className="mr-3 h-4 w-4 text-gray-400" />
-              Help Center
+              {t("settings.HELP")}
             </a>
             <div className="border-t border-gray-100"></div>
             <button
@@ -81,7 +81,7 @@ export function ProfileButton({ session }: SessionProps) {
               role="menuitem"
             >
               <LogOut className="mr-3 h-4 w-4 text-gray-400" />
-              Sign out
+              {t("settings.LOGOUT")}
             </button>
           </div>
         )}
