@@ -38,9 +38,10 @@
     "ACCOUNT": "Cuenta",
     "BILLING": "Facturación",
     "NOTIFICATIONS": "Notificaciones",
+    "SETTINGS": "Configuración",
     "SECURITY": "Seguridad",
     "LEGAL": "Legal",
-    "HELP": "Ayuda Center",
+    "HELP": "Centro de ayuda",
     "LOGOUT": "Cerrar sesión"
   }
 }
