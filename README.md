@@ -18,7 +18,6 @@ This is a modern, full-stack website template built with [Next.js 15](https://ne
 ### Project Structure
 
 ```
-CopyEdit
 ├── .content/             # Content management directory
 │   ├── posts/            # Blog posts
 │   ├── categories/       # Category definitions
@@ -65,8 +64,6 @@ Automatic sync via GitHub integration:
 The `.content/config.yml` file controls main site settings:
 
 ```yaml
-yaml
-CopyEdit
 # Basic site settings
 company_name: Acme             # Company or site name
 content_table: false          # Enable/disable content table
@@ -128,14 +125,14 @@ AUTH_SECRET="your-secret-key"
 ### Define the data repository
 
 1. Fork the repository:
-    - Visit http://github.com/ever-works/awesome-data
+    - Visit https://github.com/ever-works/awesome-data
     - Click "Fork" to create a copy
     - This repo will hold `.content` data
 2. Configure GitHub integration:
 
 ```
 GH_TOKEN='your-github-token'
-DATA_REPOSITORY='http://github.com/ever-works/awesome-data'
+DATA_REPOSITORY='https://github.com/ever-works/awesome-data'
 ```
 
 > 💡 Important: The .content folder is created and synced automatically at startup with valid GitHub credentials.
