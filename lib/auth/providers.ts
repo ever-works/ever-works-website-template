@@ -1,128 +1,156 @@
-/**
- * Authentication providers configuration
- * This file configures all supported OAuth providers for the application
- */
-
-import { credentialsProvider } from "./credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import FacebookProvider from "next-auth/providers/facebook";
 import TwitterProvider from "next-auth/providers/twitter";
-import MicrosoftProvider from "next-auth/providers/azure-ad";
+import { credentialsProvider } from "./credentials";
+import { AuthConfig } from "./config";
+
 
 /**
  * Supported OAuth provider types
- * These are the OAuth providers that the application supports for authentication
  */
-export type OAuthProviderType = 'google' | 'github' | 'facebook' | 'twitter' | 'microsoft';
+export type OAuthProviderType = 'google' | 'github' | 'facebook' | 'twitter' | 'credentials';
 
 /**
  * OAuth provider configuration
- * Configuration for each OAuth provider including client credentials and additional options
- * - enabled: Whether this provider is enabled for authentication
- * - clientId: The OAuth client ID from the provider's developer console
- * - clientSecret: The OAuth client secret from the provider's developer console
- * - options: Additional provider-specific options
  */
 export interface OAuthProviderConfig {
   enabled: boolean;
   clientId?: string;
   clientSecret?: string;
+  // Provider-specific options
   options?: Record<string, any>;
 }
 
 /**
  * OAuth providers configuration
- * Complete configuration for all supported OAuth providers
- * Each provider can be individually configured or disabled
  */
 export interface OAuthProvidersConfig {
   google?: OAuthProviderConfig;
   github?: OAuthProviderConfig;
   facebook?: OAuthProviderConfig;
   twitter?: OAuthProviderConfig;
-  microsoft?: OAuthProviderConfig;
+  credentials?: OAuthProviderConfig;
 }
 
-
 /**
- * Common OAuth configuration options applied to all providers
- * 
- * - allowDangerousEmailAccountLinking: Allows users to link accounts with the same email address
- *   This is useful for users who sign up with different providers but use the same email
- * 
- * - authorization: Configuration for the OAuth authorization flow
- *   - access_type: "offline" allows the application to refresh tokens when the user is not present
- *   - prompt: "consent" ensures the user is always prompted for consent, even if they've authorized before
+ * Default OAuth providers configuration
+ * Uses environment variables if available
  */
-const commonOAuthOptions = {
-  allowDangerousEmailAccountLinking: true,
-  authorization: {
-    params: {
-      access_type: "offline",
-      prompt: "consent",
-    },
+export const defaultOAuthProvidersConfig: OAuthProvidersConfig = {
+  google: {
+    enabled: !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET,
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  },
+  github: {
+    enabled: !!process.env.GITHUB_CLIENT_ID && !!process.env.GITHUB_CLIENT_SECRET,
+    clientId: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  },
+  facebook: {
+    enabled: !!process.env.FACEBOOK_CLIENT_ID && !!process.env.FACEBOOK_CLIENT_SECRET,
+    clientId: process.env.FACEBOOK_CLIENT_ID,
+    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+  },
+  twitter: {
+    enabled: !!process.env.TWITTER_CLIENT_ID && !!process.env.TWITTER_CLIENT_SECRET,
+    clientId: process.env.TWITTER_CLIENT_ID,
+    clientSecret: process.env.TWITTER_CLIENT_SECRET,
   },
 };
 
 /**
- * Factory function to create OAuth provider instances with consistent configuration
- * 
- * @param Provider - The NextAuth provider class (GoogleProvider, GitHubProvider, etc.)
- * @param clientId - The OAuth client ID from environment variables
- * @param clientSecret - The OAuth client secret from environment variables
- * @returns Configured provider instance with common options applied
+ * Creates Next-Auth providers from configuration
+ * @param config OAuth providers configuration
+ * @returns Array of Next-Auth providers
  */
-const createProvider = (
-  Provider: any,
-  clientId: string | undefined,
-  clientSecret: string | undefined
-) =>
-  Provider({
-    clientId: clientId!,
-    clientSecret: clientSecret!,
-    ...commonOAuthOptions,
-  });
+export function createNextAuthProviders(config: OAuthProvidersConfig = defaultOAuthProvidersConfig) {
+  const providers = [];
+
+  // Google
+  if (config.google?.enabled && config.google.clientId && config.google.clientSecret) {
+    providers.push(
+      GoogleProvider({
+        clientId: config.google.clientId,
+        clientSecret: config.google.clientSecret,
+        ...config.google.options,
+      })
+    );
+  }
+
+  // GitHub
+  if (config.github?.enabled && config.github.clientId && config.github.clientSecret) {
+    providers.push(
+      GitHubProvider({
+        clientId: config.github.clientId,
+        clientSecret: config.github.clientSecret,
+        ...config.github.options,
+      })
+    );
+  }
+
+  // Facebook
+  if (config.facebook?.enabled && config.facebook.clientId && config.facebook.clientSecret) {
+    providers.push(
+      FacebookProvider({
+        clientId: config.facebook.clientId,
+        clientSecret: config.facebook.clientSecret,
+        ...config.facebook.options,
+      })
+    );
+  }
+
+  // Twitter
+  if (config.twitter?.enabled && config.twitter.clientId && config.twitter.clientSecret) {
+    providers.push(
+      TwitterProvider({
+        clientId: config.twitter.clientId,
+        clientSecret: config.twitter.clientSecret,
+        ...config.twitter.options,
+      })
+    );
+  }
+
+  // Credentials
+  if (config.credentials?.enabled) {
+    providers.push(
+      credentialsProvider
+    );
+  }
+
+  return providers;
+}
 
 /**
- * Array of configured authentication providers for NextAuth
- * These providers will be available for user authentication
- * 
- * Includes:
- * - Credentials provider (email/password)
- * - Google OAuth
- * - GitHub OAuth
- * - Facebook OAuth
- * - Twitter OAuth
- * - Microsoft OAuth
- * 
- * Environment variables for each provider must be set in .env.local
+ * Configures OAuth providers for authentication
+ * @param authConfig Authentication configuration
+ * @param oauthConfig OAuth providers configuration
  */
-export const providers = [
-  credentialsProvider,
-  createProvider(
-    GoogleProvider, 
-    process.env.GOOGLE_CLIENT_ID, 
-    process.env.GOOGLE_CLIENT_SECRET
-  ),
-  createProvider(
-    GitHubProvider, 
-    process.env.GITHUB_CLIENT_ID, 
-    process.env.GITHUB_CLIENT_SECRET
-  ),
-  createProvider(
-    FacebookProvider, 
-    process.env.FB_CLIENT_ID, 
-    process.env.FB_CLIENT_SECRET
-  ),
-  createProvider(
-    TwitterProvider, 
-    process.env.X_CLIENT_ID, 
-    process.env.X_CLIENT_SECRET
-  ),
-  createProvider(
-    MicrosoftProvider, 
-    process.env.MICROSOFT_CLIENT_ID, 
-    process.env.MICROSOFT_CLIENT_SECRET
-  ),
-];
+export function configureOAuthProviders(
+  authConfig: AuthConfig,
+  oauthConfig: OAuthProvidersConfig = defaultOAuthProvidersConfig
+) {
+  // Create a copy of the auth config to avoid modifying the original
+  const config = { ...authConfig };
+  
+  // Ensure nextAuth property exists
+  if (!config.nextAuth) {
+    config.nextAuth = {
+      enableCredentials: true,
+      enableOAuth: true,
+      providers: [],
+    };
+  }
+
+  // Create Next-Auth providers if Next-Auth is enabled
+  if (config.provider === 'next-auth' || config.provider === 'both') {
+    // Add OAuth providers to Next-Auth configuration
+    config.nextAuth.providers = [
+      ...(config.nextAuth.providers || []),
+      ...createNextAuthProviders(oauthConfig),
+    ];
+  }
+
+  return config;
+}

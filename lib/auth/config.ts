@@ -85,7 +85,7 @@ export function getAuthConfig(): AuthConfig {
     if (supabaseUrl && supabaseAnonKey) {
       return {
         ...defaultAuthConfig,
-        provider: defaultAuthConfig.provider === 'next-auth' ? 'both' : defaultAuthConfig.provider,
+        provider: defaultAuthConfig.provider === 'supabase' ? 'both' : defaultAuthConfig.provider,
         supabase: {
           url: supabaseUrl,
           anonKey: supabaseAnonKey,
