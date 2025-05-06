@@ -1,6 +1,6 @@
 import git, { GitAuth, Errors } from 'isomorphic-git';
 import * as http from 'isomorphic-git/http/node';
-import * as path from 'path'
+import * as path from 'path';
 import * as fs from 'fs';
 import { fsExists, getContentPath } from './lib';
 

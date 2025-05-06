@@ -1,3 +1,8 @@
+/**
+ * Main authentication configuration file
+ * Sets up NextAuth.js with Drizzle adapter and custom callbacks
+ */
+
 import NextAuth from "next-auth";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { accounts, sessions, users, verificationTokens } from "../db/schema";
