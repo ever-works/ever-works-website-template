@@ -4,7 +4,7 @@ import { Button } from "@heroui/react";
 import { useConfig } from "../../config";
 import { useTranslations } from "next-intl";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   IconFacebook,
   IconGithub,
@@ -12,16 +12,13 @@ import {
   IconMicrosoft,
   IconX,
 } from "@/components/icons/Icons";
-import { useActionState, useEffect } from "react";
-import { ActionState } from "@/lib/auth/middleware";
-import { signInWithProvider } from "../actions";
+
 
 export function SocialLogin() {
   
   const t = useTranslations("common");
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
-  const router = useRouter();
   const config = useConfig();
   const auth = config.auth || {};
 
@@ -33,21 +30,8 @@ export function SocialLogin() {
     { icons: <IconMicrosoft />, provider: "microsoft", isEnabled: auth.microsoft },
   ].filter((provider) => provider.isEnabled);
 
-  const [state] = useActionState<ActionState, FormData>(
-    signInWithProvider,
-    {}
-  );
 
-  useEffect(() => {
-    if (state.success) {
-      router.push(redirect || "/dashboard");
-      router.refresh(); // force to refresh the root layout
-    }
-  }, [state, redirect, router]);
 
-  if (typeof auth === "boolean") {
-    return null;
-  }
 
   const providers = Object.keys(auth)
     .filter((key) => key !== "credentials")
