@@ -15,8 +15,8 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   adapter: drizzle,
   callbacks: {
     authorized: ({ auth }) => auth?.user != null,
-    signIn: async () => {
-      return true;
+    signIn: async ({ user }) => {
+      return user != null;
     },
     session: async ({ session, token }) => {
       if (token && session.user) {
