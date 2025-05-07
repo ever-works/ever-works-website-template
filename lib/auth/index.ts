@@ -15,31 +15,18 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   adapter: drizzle,
   callbacks: {
     authorized: ({ auth }) => auth?.user != null,
-    signIn: async ({ user, account, profile }) => {
+    signIn: async ({ account }) => {
       // Allow all OAuth sign-ins
       if (account?.provider !== "credentials") {
         return true;
       }
-      return true;
-    },
-    jwt: async ({ token, user, account, profile, trigger }) => {
-      // Link accounts with the same email
-      if (user?.id) {
-        token.userId = user.id;
-      }
-      // Ensure userId is always set
-      if (!token.userId && token.sub) {
-        token.userId = token.sub;
-      }
-      token.provider = account?.provider || "credentials";
-      return token;
+      return false;
     },
     session: async ({ session, token }) => {
       if (token && session.user) {
         if (token.userId) {
           session.user.id = token.userId;
         }
-        session.user.provider = token.provider || "credentials";
       }
       return session;
     },

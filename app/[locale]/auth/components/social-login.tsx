@@ -33,7 +33,7 @@ export function SocialLogin() {
     { icons: <IconMicrosoft />, provider: "microsoft", isEnabled: auth.microsoft },
   ].filter((provider) => provider.isEnabled);
 
-  const [state, formAction, pending] = useActionState<ActionState, FormData>(
+  const [state] = useActionState<ActionState, FormData>(
     signInWithProvider,
     {}
   );
