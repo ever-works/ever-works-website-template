@@ -15,17 +15,13 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   adapter: drizzle,
   callbacks: {
     authorized: ({ auth }) => auth?.user != null,
-    signIn: async ({ account }) => {
-      // Allow all OAuth sign-ins
-      if (account?.provider !== "credentials") {
-        return true;
-      }
-      return false;
+    signIn: async () => {
+      return true;
     },
     session: async ({ session, token }) => {
       if (token && session.user) {
-        if (token.userId) {
-          session.user.id = token.userId;
+        if (token.sub) {
+          session.user.id = token.sub;
         }
       }
       return session;

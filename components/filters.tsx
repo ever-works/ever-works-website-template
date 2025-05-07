@@ -68,7 +68,7 @@ export function CategoriesList({
                 width={20}
                 height={20}
                 className="w-5 h-5"
-                alt=""
+                alt={`${category.name} icon`}
               />
             )}
             {category.name} ({category.count || 0})
