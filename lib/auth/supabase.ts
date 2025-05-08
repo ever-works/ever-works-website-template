@@ -1,4 +1,5 @@
 import { getAuthConfig } from './config';
+import { createClient } from './supabase/server';
 
 // Define types for Supabase client and auth methods
 interface SupabaseAuthResponse<T> {
@@ -19,36 +20,6 @@ interface SupabaseSession {
   user: SupabaseUser;
 }
 
-/**
- * Create a Supabase client with the configured URL and anonymous key
- * This function dynamically imports Supabase only when needed
- */
-export async function createSupabaseClient() {
-  const config = getAuthConfig();
-  
-  if (!config.supabase?.url || !config.supabase?.anonKey) {
-    throw new Error('Supabase configuration is missing. Please provide URL and anonymous key.');
-  }
-  
-  try {
-    const { createClient } = await import('@supabase/supabase-js');
-    
-    return createClient(
-      config.supabase.url,
-      config.supabase.anonKey,
-      {
-        auth: {
-          autoRefreshToken: true,
-          persistSession: true,
-          detectSessionInUrl: true
-        }
-      }
-    );
-  } catch (error) {
-    console.error('Failed to load Supabase client:', error);
-    throw new Error('Supabase client could not be loaded. Please install @supabase/supabase-js package.');
-  }
-}
 
 /**
  * Supabase authentication provider
@@ -60,7 +31,7 @@ export const supabaseAuth = {
    */
   signInWithPassword: async (email: string, password: string): Promise<SupabaseAuthResponse<{ session: SupabaseSession | null; user: SupabaseUser | null }>> => {
     try {
-      const supabase = await createSupabaseClient();
+      const supabase = await createClient();
       return supabase.auth.signInWithPassword({ email, password });
     } catch (error) {
       console.error('Supabase auth error:', error);
@@ -73,7 +44,7 @@ export const supabaseAuth = {
    */
   signInWithOAuth: async (provider: 'google' | 'github' | 'facebook' | 'twitter') => {
     try {
-      const supabase = await createSupabaseClient();
+      const supabase = await createClient();
       const config = getAuthConfig();
       return supabase.auth.signInWithOAuth({
         provider,
@@ -92,7 +63,7 @@ export const supabaseAuth = {
    */
   signUp: async (email: string, password: string) => {
     try {
-      const supabase = await createSupabaseClient();
+      const supabase = await createClient();
       return supabase.auth.signUp({ email, password });
     } catch (error) {
       console.error('Supabase signup error:', error);
@@ -105,7 +76,7 @@ export const supabaseAuth = {
    */
   signOut: async () => {
     try {
-      const supabase = await createSupabaseClient();
+      const supabase = await createClient();
       return supabase.auth.signOut();
     } catch (error) {
       console.error('Supabase signout error:', error);
@@ -118,7 +89,7 @@ export const supabaseAuth = {
    */
   getUser: async () => {
     try {
-      const supabase = await createSupabaseClient();
+      const supabase = await createClient();
       return supabase.auth.getUser();
     } catch (error) {
       console.error('Supabase get user error:', error);
@@ -131,7 +102,7 @@ export const supabaseAuth = {
    */
   getSession: async () => {
     try {
-      const supabase = await createSupabaseClient();
+      const supabase = await createClient();
       return supabase.auth.getSession();
     } catch (error) {
       console.error('Supabase get session error:', error);
@@ -144,7 +115,7 @@ export const supabaseAuth = {
    */
   resetPassword: async (email: string) => {
     try {
-      const supabase = await createSupabaseClient();
+      const supabase = await createClient();
       const config = getAuthConfig();
       return supabase.auth.resetPasswordForEmail(email, {
         redirectTo: config.supabase?.redirectUrl
@@ -160,7 +131,7 @@ export const supabaseAuth = {
    */
   updatePassword: async (password: string) => {
     try {
-      const supabase = await createSupabaseClient();
+      const supabase = await createClient();
       return supabase.auth.updateUser({ password });
     } catch (error) {
       console.error('Supabase update password error:', error);
@@ -173,7 +144,7 @@ export const supabaseAuth = {
    */
   updateUser: async (attributes: { email?: string; password?: string; data?: any }) => {
     try {
-      const supabase = await createSupabaseClient();
+      const supabase = await createClient();
       return supabase.auth.updateUser(attributes);
     } catch (error) {
       console.error('Supabase update user error:', error);

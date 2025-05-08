@@ -1,8 +1,14 @@
-import { createBrowserClient } from '@supabase/ssr'
+import { createBrowserClient } from '@supabase/ssr';
+import { getAuthConfig } from '../config';
 
 export function createClient() {
+    const config = getAuthConfig();
+    
+    if (!config.supabase?.url || !config.supabase?.anonKey) {
+      throw new Error('Supabase configuration is missing. Please provide URL and anonymous key.');
+    }
   return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    config.supabase.url,
+    config.supabase.anonKey
   )
 }

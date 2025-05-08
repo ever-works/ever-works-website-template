@@ -36,8 +36,13 @@ export function CredentialsForm({
     }
   }, [state, redirect, router]);
 
+  const handleFormAction = async (formData: FormData) => {
+    formData.append('provider', config.authConfig?.provider || 'next-auth');
+    return formAction(formData);
+  };
+
   const form = (
-    <form className="space-y-4" action={formAction}>
+    <form className="space-y-4" action={handleFormAction}>
       {!isLogin && (
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">

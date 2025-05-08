@@ -4,7 +4,7 @@ import 'server-only';
 import yaml from 'yaml';
 import * as fs from 'fs';
 import * as path from 'path';
-import { parse } from 'date-fns'
+import { parse } from 'date-fns';
 import { trySyncRepository } from './repository';
 import { dirExists, fsExists, getContentPath } from './lib';
 import { unstable_cache } from 'next/cache';
@@ -55,7 +55,30 @@ export type ResendMail = {
     provider: "resend";
     default_from: string;
 }
+export type AuthProviderType = 'supabase' | 'next-auth' | 'both';
 
+export interface AuthConfig {
+
+  provider: AuthProviderType;
+  
+  /**
+   * Supabase configuration
+   */
+  supabase?: {
+    url: string;
+    anonKey: string;
+    redirectUrl?: string;
+  };
+  
+  /**
+   * Next-Auth configuration
+   */
+  nextAuth?: {
+    enableCredentials?: boolean;
+    enableOAuth?: boolean;
+    providers?: any[];
+  };
+}
 export interface Config {
     company_name?: string;
     copyright_year?: number;
@@ -65,6 +88,7 @@ export interface Config {
     app_url?: string;
     auth?: false | AuthOptions
     mail?: NovuMail | ResendMail;
+    authConfig?: AuthConfig;
 }
 
 interface FetchOptions {

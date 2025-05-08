@@ -2,11 +2,14 @@
 
 import type { Config } from "@/lib/content";
 import { createContext, useContext } from "react";
+import { getAuthConfig } from "@/lib/auth/config";
 
 const ConfigContext = createContext<Config>({});
 
 export function ConfigProvider({ config, children }: { config: Config, children: React.ReactNode }) {
-    return <ConfigContext.Provider value={config}>{children}</ConfigContext.Provider>;
+    const authConfig = getAuthConfig();
+    const enhancedConfig = { ...config, authConfig };
+    return <ConfigContext.Provider value={enhancedConfig}>{children}</ConfigContext.Provider>;
 }
 
 export function useConfig() {

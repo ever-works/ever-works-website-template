@@ -31,21 +31,30 @@ import {
   generateVerificationToken,
 } from "@/lib/db/tokens";
 import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/mail";
+import { supabaseAuth } from "@/lib/auth/supabase";
 
 const PASSWORD_MIN_LENGTH = 8;
 
 const signInSchema = z.object({
   email: z.string().email().min(3).max(255),
   password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
+  provider: z.string().optional(),
 });
 
 export const signInAction = validatedAction(signInSchema, async (data) => {
   try {
-    await signIn(AuthProviders.CREDENTIALS, {
-      ...data,
-      redirect: false,
-    });
-
+    console.log("===============",data.provider)
+    if (data.provider === 'supabase') {
+      const { error } = await supabaseAuth.signInWithPassword(data.email, data.password);
+      if (error) {
+        throw error;
+      }
+    }else{
+      await signIn(AuthProviders.CREDENTIALS, {
+        ...data,
+        redirect: false,
+      });
+    }
     return { success: true };
   } catch (error) {
     console.error(error);
