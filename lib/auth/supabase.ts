@@ -81,12 +81,7 @@ export const supabaseAuth = {
   signOut: async (options?: { redirectTo?: string }) => {
     try {
       const supabase = await createClient();
-      return supabase.auth.signOut({
-        options: {
-          redirectTo: options?.redirectTo
-        }
-        
-      });
+      return supabase.auth.signOut();
     } catch (error) {
       console.error('Supabase signout error:', error);
       return { error: error as Error };

@@ -271,9 +271,6 @@ export const updateAccount = validatedActionWithUser(
     return { success: "Account updated successfully." };
   }
 );
-const signOutSchema = z.object({
-  provider: z.enum(authConfig).default('next-auth'),
-});
 export const signOutAction = async (provider?: string) => {
   if (provider === 'supabase') {
     const { error } = await supabaseAuth.signOut({ redirectTo: "/auth/signin" });
