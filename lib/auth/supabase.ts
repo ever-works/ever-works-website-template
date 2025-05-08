@@ -78,7 +78,7 @@ export const supabaseAuth = {
   /**
    * Sign out
    */
-  signOut: async (options?: { redirectTo?: string }) => {
+  signOut: async () => {
     try {
       const supabase = await createClient();
       return supabase.auth.signOut();

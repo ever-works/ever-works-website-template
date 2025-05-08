@@ -273,7 +273,7 @@ export const updateAccount = validatedActionWithUser(
 );
 export const signOutAction = async (provider?: string) => {
   if (provider === 'supabase') {
-    const { error } = await supabaseAuth.signOut({ redirectTo: "/auth/signin" });
+    const { error } = await supabaseAuth.signOut();
     if (error) {
       throw error;
     }
