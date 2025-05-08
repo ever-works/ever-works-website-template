@@ -59,7 +59,7 @@ export interface AuthConfig {
  * Default authentication configuration
  */
 export const defaultAuthConfig: AuthConfig = {
-  provider: "supabase",
+  provider: "next-auth",
   nextAuth: {
     enableCredentials: true,
     enableOAuth: true,
