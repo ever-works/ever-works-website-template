@@ -25,8 +25,8 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
           return false;
         }
         return true;
-      } catch (error) {
-        return false;
+      } catch (error: any) {
+        throw new Error("Failed to check for existing user", error);
       }
     },
     jwt: async ({ token, user, account }) => {
