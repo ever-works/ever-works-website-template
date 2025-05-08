@@ -6,7 +6,7 @@ interface ProfileInfoProps {
 }
 
 export function ProfileInfo({ session }: ProfileInfoProps) {
-    const joinDate = new Date().toLocaleDateString('fr-FR', {
+    const joinDate = new Date().toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
@@ -15,32 +15,32 @@ export function ProfileInfo({ session }: ProfileInfoProps) {
     return (
         <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 space-y-6">
             <h2 className="text-xl font-semibold text-gray-800 border-b pb-3 dark:text-gray-200">
-                Informations Personnelles
+                Personal Information
             </h2>
             
             <div className="space-y-4">
                 <InfoItem
                     icon={<FiUser className="w-5 h-5 text-blue-600 dark:text-blue-400" />}
-                    label="Nom complet"
-                    value={session?.user?.name || "Non renseigné"}
+                    label="Full Name"
+                    value={session?.user?.name || "Not provided"}
                 />
 
                 <InfoItem
                     icon={<FiMail className="w-5 h-5 text-blue-600 dark:text-blue-400" />}
-                    label="Adresse email"
+                    label="Email Address"
                     value={session?.user?.email || ""}
                 />
 
                 <InfoItem
                     icon={<FiKey className="w-5 h-5 text-blue-600 dark:text-blue-400" />}
-                    label="ID Utilisateur"
+                    label="User ID"
                     value={session?.user?.id || ""}
                     isMonospace
                 />
 
                 <InfoItem
                     icon={<FiCalendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />}
-                    label="Membre depuis"
+                    label="Member Since"
                     value={joinDate}
                 />
             </div>
