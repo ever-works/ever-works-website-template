@@ -8,15 +8,17 @@ import { signOutAction } from "@/app/[locale]/auth/actions";
 import { SessionProps } from "@/lib/types";
 import { Link } from "@/i18n/navigation";
 import { Avatar } from "./avatar";
+import { useConfig } from "@/app/[locale]/config";
 
 export function ProfileButton({ session }: SessionProps) {
   const t = useTranslations();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const config = useConfig();
 
   const user = session?.user;
 
   const handleLogout = () => {
-    signOutAction();
+    signOutAction(config.authConfig?.provider);
   };
 
   if (user) {

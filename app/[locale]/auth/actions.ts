@@ -34,26 +34,32 @@ import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/mail";
 import { supabaseAuth } from "@/lib/auth/supabase";
 
 const PASSWORD_MIN_LENGTH = 8;
+const authConfig = ['supabase', 'next-auth', 'both'] as const;
 
 const signInSchema = z.object({
   email: z.string().email().min(3).max(255),
   password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
-  provider: z.string().optional(),
+  provider: z.enum(authConfig).default('next-auth'),
 });
 
 export const signInAction = validatedAction(signInSchema, async (data) => {
   try {
-    console.log("===============",data.provider)
     if (data.provider === 'supabase') {
-      const { error } = await supabaseAuth.signInWithPassword(data.email, data.password);
+      const { error } = await supabaseAuth.signInWithPassword(
+        data.email,
+        data.password
+      );
       if (error) {
         throw error;
       }
-    }else{
-      await signIn(AuthProviders.CREDENTIALS, {
+    } else {
+      const { error } = await signIn(AuthProviders.CREDENTIALS, {
         ...data,
         redirect: false,
       });
+      if (error) {
+        throw error;
+      }
     }
     return { success: true };
   } catch (error) {
@@ -68,20 +74,31 @@ export const signInAction = validatedAction(signInSchema, async (data) => {
 
 export const signInWithProvider = validatedAction(
   z.object({
+    privider:z.enum(authConfig).default('next-auth'),
     provider: z.enum([
       AuthProviders.GOOGLE,
       AuthProviders.FACEBOOK,
       AuthProviders.GITHUB,
-      AuthProviders.X,
-      AuthProviders.MICROSOFT,
+      AuthProviders.TWITTER,
     ]),
   }),
   async (data) => {
     try {
-      await signIn(data.provider, {
-        redirect: false,
-      });
-
+      if (data.privider === 'supabase') {
+        const { error } = await supabaseAuth.signInWithOAuth(data.provider, {
+          redirectTo: '/auth/signin',
+        });
+        if (error) {
+          throw error;
+        }
+      } else {
+        const { error } = await signIn(data.provider, {
+          redirect: false,
+        });
+        if (error) {
+          throw error;
+        }
+      }
       return { success: true };
     } catch (error) {
       console.error(error);
@@ -98,10 +115,17 @@ const signUpSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
   password: z.string().min(PASSWORD_MIN_LENGTH),
+  provider: z.enum(authConfig).default('next-auth'),
 });
 
 export const signUp = validatedAction(signUpSchema, async (data) => {
   const { name, email, password } = data;
+  if (data.provider === 'supabase') {
+    const { error } = await supabaseAuth.signUp(email, password);
+    if (error) {
+      throw error;
+    }
+  }
 
   const existingUser = await getUserByEmail(email).catch(() => null);
 
@@ -194,13 +218,13 @@ export const updatePassword = validatedActionWithUser(
 
 const deleteAccountSchema = z.object({
   password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
+  provider: z.enum(authConfig).default('next-auth'),
 });
 
 export const deleteAccount = validatedActionWithUser(
   deleteAccountSchema,
   async (data, _, user) => {
     const { password } = data;
-
     const dbUser = await getUserByEmail(user.email!).catch(() => null);
     if (!dbUser) {
       return { error: "User not found" };
@@ -247,10 +271,24 @@ export const updateAccount = validatedActionWithUser(
     return { success: "Account updated successfully." };
   }
 );
-
-export async function signOutAction() {
-  return signOut({ redirectTo: "/auth/signin" });
-}
+const signOutSchema = z.object({
+  provider: z.enum(authConfig).default('next-auth'),
+});
+export const signOutAction = async (provider?: string) => {
+  if (provider === 'supabase') {
+    const { error } = await supabaseAuth.signOut({ redirectTo: "/auth/signin" });
+    if (error) {
+      throw error;
+    }
+    return { success: true };
+  } else {
+    const { error } = await signOut({ redirectTo: "/auth/signin" });
+    if (error) {
+      throw error;
+    }
+  }
+  return { success: true };
+};
 
 const forgotPasswordSchema = z.object({
   email: z.string().email(),

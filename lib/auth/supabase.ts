@@ -1,4 +1,3 @@
-import { getAuthConfig } from './config';
 import { createClient } from './supabase/server';
 
 // Define types for Supabase client and auth methods
@@ -42,14 +41,13 @@ export const supabaseAuth = {
   /**
    * Sign in with OAuth provider
    */
-  signInWithOAuth: async (provider: 'google' | 'github' | 'facebook' | 'twitter') => {
+  signInWithOAuth: async (provider: 'google' | 'github' | 'facebook' | 'twitter', options?: { redirectTo?: string }) => {
     try {
       const supabase = await createClient();
-      const config = getAuthConfig();
       return supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: config.supabase?.redirectUrl
+          redirectTo: options?.redirectTo 
         }
       });
     } catch (error) {
@@ -57,14 +55,20 @@ export const supabaseAuth = {
       return { data: { provider, url: null }, error: error as Error };
     }
   },
-  
+
   /**
    * Sign up with email and password
    */
-  signUp: async (email: string, password: string) => {
+  signUp: async (email: string, password: string, options?: { redirectTo?: string }) => {
     try {
       const supabase = await createClient();
-      return supabase.auth.signUp({ email, password });
+      return supabase.auth.signUp({ 
+        email, 
+        password,
+        options: { 
+          emailRedirectTo: options?.redirectTo 
+        } 
+      });
     } catch (error) {
       console.error('Supabase signup error:', error);
       return { data: { session: null, user: null }, error: error as Error };
@@ -74,10 +78,15 @@ export const supabaseAuth = {
   /**
    * Sign out
    */
-  signOut: async () => {
+  signOut: async (options?: { redirectTo?: string }) => {
     try {
       const supabase = await createClient();
-      return supabase.auth.signOut();
+      return supabase.auth.signOut({
+        options: {
+          redirectTo: options?.redirectTo
+        }
+        
+      });
     } catch (error) {
       console.error('Supabase signout error:', error);
       return { error: error as Error };
@@ -113,12 +122,11 @@ export const supabaseAuth = {
   /**
    * Reset password
    */
-  resetPassword: async (email: string) => {
+  resetPassword: async (email: string, options?: { redirectTo?: string }) => {
     try {
       const supabase = await createClient();
-      const config = getAuthConfig();
       return supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: config.supabase?.redirectUrl
+        redirectTo: options?.redirectTo
       });
     } catch (error) {
       console.error('Supabase reset password error:', error);
