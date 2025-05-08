@@ -18,6 +18,8 @@ export function ProfileHeader({ session }: ProfileHeaderProps) {
                                 alt="Photo de profil"
                                 fill
                                 className="object-cover"
+                                loading="eager"
+                                priority={true}
                             />
                         </div>
                     ) : (
