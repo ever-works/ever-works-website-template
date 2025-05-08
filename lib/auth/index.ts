@@ -3,7 +3,6 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { accounts, sessions, users, verificationTokens } from "../db/schema";
 import { db } from "../db/drizzle";
 import authConfig from "../../auth.config";
-import { getUserByEmail } from "../db/queries";
 
 const drizzle = DrizzleAdapter(db, {
   usersTable: users,
@@ -17,15 +16,18 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   callbacks: {
     authorized: ({ auth }) => auth?.user != null,
     signIn: async ({ user, account }) => {
-      // Allow all OAuth sign-ins
-      const existingUser = await getUserByEmail(user?.email || "");    
-      if (account?.provider !== "credentials") {
+      try {
+        if (account?.provider !== "credentials") {
+          return true;
+        }
+
+        if (!user?.email) {
+          return false;
+        }
         return true;
+      } catch (error) {
+        return false;
       }
-      if (existingUser) {
-        return true;
-      }
-      return false;
     },
     jwt: async ({ token, user, account }) => {
       // Link accounts with the same email
