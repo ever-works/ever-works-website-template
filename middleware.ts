@@ -44,11 +44,11 @@ const authMiddleware = auth(async (req) => {
   return response;
 });
 
-export default function middleware(req: NextRequest) {
+export default async function middleware(req: NextRequest) {
   const config = getAuthConfig();
   if (config.provider === "supabase") {
-
-    return updateSession(req);
+    const supabaseResponse = await updateSession(req);
+    return intlMiddleware(supabaseResponse as any);
   } else if (config.provider === "next-auth") {
     const authPaths = PRIVATE_PATHS.flatMap((p) =>
       p === "/" ? ["", "/"] : p
