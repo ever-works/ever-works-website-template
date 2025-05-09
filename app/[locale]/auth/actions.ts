@@ -84,7 +84,7 @@ export const signInWithProvider = validatedAction(
         ...data,
         callbackUrl: data.callbackUrl
       });
-      if (result && result.url) {
+      if (result.url) {
         return { 
           success: true,
           url: result.url
