@@ -8,6 +8,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { accounts, sessions, users, verificationTokens } from "../db/schema";
 import { db } from "../db/drizzle";
 import authConfig from "../../auth.config";
+import { getUserByEmail } from "../db/queries";
 
 const drizzle = DrizzleAdapter(db, {
   usersTable: users,
@@ -22,24 +23,30 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
     authorized: ({ auth }) => auth?.user != null,
     signIn: async ({ user, account }) => {
       try {
+        if (!user?.email) {
+          console.warn("Sign-in attempt without email", { provider: account?.provider });
+          return account?.provider !== "credentials";
+        }
+        const foundUser = await getUserByEmail(user.email);
+        if (foundUser) {
+          return true;
+        }
         if (account?.provider !== "credentials") {
           return true;
         }
-
-        if (!user?.email) {
-          return false;
+        return false;
+      } catch (error) {
+        console.error("Error during sign-in validation:", error);
+        if (error instanceof Error && error.message === "User not found") {
+          return account?.provider !== "credentials";
         }
-        return true;
-      } catch (error: any) {
-        throw new Error("Failed to check for existing user", error);
+        return false;
       }
     },
     jwt: async ({ token, user, account }) => {
-      // Link accounts with the same email
       if (user?.id) {
         token.userId = user.id;
       }
-      // Ensure userId is always set
       if (!token.userId && token.sub) {
         token.userId = token.sub;
       }
