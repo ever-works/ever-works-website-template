@@ -13,7 +13,6 @@ const PUBLIC_PATHS = ["/auth/signin", "/auth/register"];
 const intlMiddleware = createMiddleware(routing);
 
 const { auth } = NextAuth(authConfig);
-``
 const authMiddleware = auth(async (req) => {
   const response = await intlMiddleware(req);
   const url = new URL(response.headers.get("x-middleware-rewrite") || req.url);
