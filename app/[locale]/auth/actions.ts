@@ -25,7 +25,7 @@ import {
   updateUserPassword,
   updateUserVerification,
 } from "@/lib/db/queries";
-import { signIn, signOut } from "@/lib/auth";
+import { signIn } from "@/lib/auth";
 import {
   generatePasswordResetToken,
   generateVerificationToken,
@@ -218,7 +218,7 @@ const deleteAccountSchema = z.object({
 export const deleteAccount = validatedActionWithUser(
   deleteAccountSchema,
   async (data, _, user) => {
-    const { password } = data;
+    const { password, provider } = data;
     const dbUser = await getUserByEmail(user.email!).catch(() => null);
     if (!dbUser) {
       return { error: "User not found" };
@@ -235,8 +235,12 @@ export const deleteAccount = validatedActionWithUser(
     await logActivity(dbUser.id, ActivityType.DELETE_ACCOUNT);
 
     await softDeleteUser(dbUser.id);
-
-    await signOut();
+    const authService = authServiceFactory(provider);
+    const { error } = await authService.signOut();
+    
+    if (error) {
+      return { error: `Failed to sign out: ${error}` };
+    }
 
     redirect("/auth/signin");
   }
