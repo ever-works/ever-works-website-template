@@ -267,11 +267,9 @@ export const updateAccount = validatedActionWithUser(
 
 export const signOutAction = async (provider?: string) => {
   const authService = authServiceFactory(provider||'next-auth');
- const error = await authService.signOut();
-  if (error) {
-    throw error;
-    }
-    return { success: true };
+  const { error } = await authService.signOut();
+  if (error) return { error };
+  return { success: true };
 };
 
 const forgotPasswordSchema = z.object({

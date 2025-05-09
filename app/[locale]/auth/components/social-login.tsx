@@ -109,7 +109,7 @@ export function SocialLogin() {
               aria-label={`Se connecter avec ${provider.provider}`}
               className="hover:opacity-80 transition-opacity"
             >
-              {provider.icons}
+              {provider.icon}
             </Button>
           </form>
         ))}
