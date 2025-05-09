@@ -65,13 +65,17 @@ export function SocialLogin() {
         });
         return;
       } else {
-        formData.append("provider", provider.provider);
-        formData.append("callbackUrl", redirectUrl);
-        formData.append("authProvider", "supabase");
-        return formAction(formData);
+        const safeFormData = new FormData();
+        for (const [key, value] of formData.entries()) {
+          safeFormData.append(key, value);
+        }
+        safeFormData.append("provider", provider.provider);
+        safeFormData.append("callbackUrl", redirectUrl);
+        safeFormData.append("authProvider",config.authConfig?.provider||"supabase");
+        return formAction(safeFormData);
       }
     } catch (error) {
-      console.error(`Erreur lors de l'authentification avec ${provider.provider}:`, error);
+      console.error(`Error during authentication with ${provider.provider}:`, error);
     }
   };
   if (enabledProviders.length === 0) {

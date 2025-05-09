@@ -48,6 +48,7 @@ const authMiddleware = auth(async (req) => {
 export default function middleware(req: NextRequest) {
   const config = getAuthConfig();
   if (config.provider === "supabase") {
+    
     updateSession(req);
   } else if (config.provider === "next-auth") {
     const authPaths = PRIVATE_PATHS.flatMap((p) =>
