@@ -11,6 +11,7 @@ import {
 import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { PropsWithChildren } from "react";
+import Image from "next/image";
 
 function BlockLink({
   href,
@@ -62,7 +63,13 @@ export function CategoriesList({
             href={href}
           >
             {category.icon_url && (
-              <img src={category.icon_url} className="w-5 h-5" alt="" />
+              <Image 
+              width={20} 
+              height={20} 
+              src={category.icon_url} 
+              className="w-5 h-5" 
+              alt={category.name} 
+              />
             )}
             {category.name} ({category.count || 0})
           </BlockLink>
@@ -141,7 +148,12 @@ export function Tags(props: { tags: Tag[] }) {
           href={`/tags/${tag.id}`}
         >
           {tag.icon_url && (
-            <img src={tag.icon_url} className="w-4 h-4" alt="" />
+            <Image 
+            width={20} 
+            height={20} 
+            src={tag.icon_url} 
+            className="w-4 h-4" 
+            alt={tag.name} />
           )}
           {tag.name}
         </Button>
