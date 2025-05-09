@@ -62,9 +62,9 @@ export const signInAction = validatedAction(signInSchema, async (data) => {
 
 const signInWithProviderSchema = z.object({
   authProvider: z.enum(authProviderTypes).default('next-auth'),
-  // redirect: z.union([z.boolean(), z.string()]).transform(val => 
-  //   typeof val === 'string' ? val === 'true' : val
-  // ).default(true),
+  redirect: z.union([z.boolean(), z.string()]).transform(val => 
+    typeof val === 'string' ? val === 'true' : val
+  ).default(true),
   callbackUrl: z.string().default('/dashboard'),
   provider: z.enum([
     AuthProviders.GOOGLE,
