@@ -21,6 +21,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Base metadata that will be enhanced with dynamic locale
 export const metadata: Metadata = {
   title: "Ever Works | Professional Services",
   description: "Ever Works - Professional services and solutions for your business",
@@ -29,10 +30,19 @@ export const metadata: Metadata = {
     title: "Ever Works | Professional Services",
     description: "Ever Works - Professional services and solutions for your business",
     type: "website",
-    locale: "en",
     siteName: "Ever Works",
   },
 };
+
+export function generateMetadata({ params }: { params: { locale: string } }) {
+  return {
+    ...metadata,
+    openGraph: {
+      ...metadata.openGraph,
+      locale: params.locale,
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
@@ -41,7 +51,6 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }>) {
-  // Ensure that the incoming `locale` is valid
   const { locale } = await params;
 
   if (!routing.locales.includes(locale)) {
