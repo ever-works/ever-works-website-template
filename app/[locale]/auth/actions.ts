@@ -34,12 +34,12 @@ import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/mail";
 import { authServiceFactory } from "@/lib/auth/services";
 
 const PASSWORD_MIN_LENGTH = 8;
-const authConfig = ['supabase', 'next-auth', 'both'] as const;
+const authProviderTypes = ['supabase', 'next-auth', 'both'] as const;
 
 const signInSchema = z.object({
   email: z.string().email().min(3).max(255),
   password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
-  authProvider: z.enum(authConfig).default('next-auth'),
+  authProvider: z.enum(authProviderTypes).default('next-auth'),
 });
 
 export const signInAction = validatedAction(signInSchema, async (data) => {
@@ -61,7 +61,7 @@ export const signInAction = validatedAction(signInSchema, async (data) => {
 });
 
 const signInWithProviderSchema = z.object({
-  authProvider: z.enum(authConfig).default('next-auth'),
+  authProvider: z.enum(authProviderTypes).default('next-auth'),
   // redirect: z.union([z.boolean(), z.string()]).transform(val => 
   //   typeof val === 'string' ? val === 'true' : val
   // ).default(true),
@@ -108,7 +108,7 @@ const signUpSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
   password: z.string().min(PASSWORD_MIN_LENGTH),
-  authProvider: z.enum(authConfig).default('next-auth'),
+  authProvider: z.enum(authProviderTypes).default('next-auth'),
 });
 
 export const signUp = validatedAction(signUpSchema, async (data) => {
@@ -212,7 +212,7 @@ export const updatePassword = validatedActionWithUser(
 
 const deleteAccountSchema = z.object({
   password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
-  provider: z.enum(authConfig).default('next-auth'),
+  provider: z.enum(authProviderTypes).default('next-auth'),
 });
 
 export const deleteAccount = validatedActionWithUser(

@@ -34,15 +34,7 @@ export const metadata: Metadata = {
   },
 };
 
-export function generateMetadata({ params }: { params: { locale: string } }) {
-  return {
-    ...metadata,
-    openGraph: {
-      ...metadata.openGraph,
-      locale: params.locale,
-    },
-  };
-}
+
 
 export default async function RootLayout({
   children,
