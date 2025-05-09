@@ -17,7 +17,7 @@ import { ActionState } from "@/lib/auth/middleware";
 import { signIn } from "next-auth/react";
 
 type SocialProvider = {
-  icons: React.ReactNode;
+  icon: React.ReactNode;
   provider: string;
   isEnabled: boolean;
 };
@@ -37,11 +37,11 @@ export function SocialLogin() {
   );
 
   const socialProviders: SocialProvider[] = [
-    { icons: <IconGithub />, provider: "github", isEnabled: !!auth.github },
-    { icons: <IconGoogle />, provider: "google", isEnabled: !!auth.google },
-    { icons: <IconFacebook />, provider: "facebook", isEnabled: !!auth.fb },
-    { icons: <IconX />, provider: "x", isEnabled: !!auth.x },
-    { icons: <IconMicrosoft />, provider: "microsoft", isEnabled: !!auth.microsoft },
+    { icon: <IconGithub />, provider: "github", isEnabled: !!auth.github },
+    { icon: <IconGoogle />, provider: "google", isEnabled: !!auth.google },
+    { icon: <IconFacebook />, provider: "facebook", isEnabled: !!auth.fb },
+    { icon: <IconX />, provider: "x", isEnabled: !!auth.x },
+    { icon: <IconMicrosoft />, provider: "microsoft", isEnabled: !!auth.microsoft },
   ].filter((provider) => provider.isEnabled);
 
   useEffect(() => {
