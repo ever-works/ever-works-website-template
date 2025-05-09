@@ -37,29 +37,44 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth')
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
+  // Extraire la locale de l'URL (fr, en, etc.)
+  const locale = request.nextUrl.pathname.split('/')[1] || 'en';
+  
+  // Extraire le chemin sans la locale
+  const pathWithoutLocale = '/' + request.nextUrl.pathname.split('/').slice(2).join('/');
+  
+  // Chemins publics et privés (sans locale)
+  const PUBLIC_PATHS = [
+    '/auth/signin',
+    '/auth/register',
+    '/auth/forgot-password',
+    '/auth/reset-password',
+    '/auth/verify-email',
+  ];
+  const PRIVATE_PATHS = ['/dashboard'];
+
+  const isPrivatePath = PRIVATE_PATHS.some(path => 
+    pathWithoutLocale.startsWith(path) || 
+    pathWithoutLocale === path
+  );
+  
+  const isPublicPath = PUBLIC_PATHS.some(path => 
+    pathWithoutLocale.includes(path)
+  );
+
+
+  if (!user && isPrivatePath) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/auth/signin`;
+    url.searchParams.set('callbackUrl', request.nextUrl.pathname);
+    return NextResponse.redirect(url);
   }
 
-  // IMPORTANT: You *must* return the supabaseResponse object as it is.
-  // If you're creating a new response object with NextResponse.next() make sure to:
-  // 1. Pass the request in it, like so:
-  //    const myNewResponse = NextResponse.next({ request })
-  // 2. Copy over the cookies, like so:
-  //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
-  // 3. Change the myNewResponse object to fit your needs, but avoid changing
-  //    the cookies!
-  // 4. Finally:
-  //    return myNewResponse
-  // If this is not done, you may be causing the browser and server to go out
-  // of sync and terminate the user's session prematurely!
+  if (user && isPublicPath) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/dashboard`;
+    return NextResponse.redirect(url);
+  }
 
   return supabaseResponse
 }

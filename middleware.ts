@@ -4,6 +4,8 @@ import { routing } from "./i18n/routing";
 import { NextRequest, NextResponse } from "next/server";
 import NextAuth from "next-auth";
 import authConfig from "./auth.config";
+import { updateSession } from "./lib/auth/supabase/middleware";
+import { getAuthConfig } from "./lib/auth/config";
 
 const PRIVATE_PATHS = ["/dashboard"];
 const PUBLIC_PATHS = ["/auth/signin", "/auth/register"];
@@ -11,7 +13,7 @@ const PUBLIC_PATHS = ["/auth/signin", "/auth/register"];
 const intlMiddleware = createMiddleware(routing);
 
 const { auth } = NextAuth(authConfig);
-
+``
 const authMiddleware = auth(async (req) => {
   const response = await intlMiddleware(req);
   const url = new URL(response.headers.get("x-middleware-rewrite") || req.url);
@@ -44,22 +46,28 @@ const authMiddleware = auth(async (req) => {
 });
 
 export default function middleware(req: NextRequest) {
-  const authPaths = PRIVATE_PATHS.flatMap((p) =>
-    p === "/" ? ["", "/"] : p
-  ).join("|");
+  const config = getAuthConfig();
+  if (config.provider === "supabase") {
+    updateSession(req);
+  } else if (config.provider === "next-auth") {
+    const authPaths = PRIVATE_PATHS.flatMap((p) =>
+      p === "/" ? ["", "/"] : p
+    ).join("|");
 
-  const authPathnameRegex = RegExp(
-    `^(/(${routing.locales.join("|")}))?(${authPaths})/?$`,
-    "i"
-  );
-  const isAuthPage = authPathnameRegex.test(req.nextUrl.pathname);
+    const authPathnameRegex = RegExp(
+      `^(/(${routing.locales.join("|")}))?(${authPaths})/?$`,
+      "i"
+    );
+    const isAuthPage = authPathnameRegex.test(req.nextUrl.pathname);
 
-  if (isAuthPage) {
-    return (authMiddleware as any)(req);
-  } else {
-    return intlMiddleware(req);
+    if (isAuthPage) {
+      return (authMiddleware as any)(req);
+    }
   }
+  
+  return intlMiddleware(req);
 }
+
 export const config = {
   // Match all pathnames except for
   // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`

@@ -3,8 +3,7 @@
 import { Button } from "@heroui/react";
 import { useConfig } from "../../config";
 import { useTranslations } from "next-intl";
-import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   IconFacebook,
   IconGithub,
@@ -12,68 +11,103 @@ import {
   IconMicrosoft,
   IconX,
 } from "@/components/icons/Icons";
+import { useActionState, useEffect } from "react";
+import { signInWithProvider } from "../actions";
+import { ActionState } from "@/lib/auth/middleware";
+import { signIn } from "next-auth/react";
 
+type SocialProvider = {
+  icons: React.ReactNode;
+  provider: string;
+  isEnabled: boolean;
+};
 
 export function SocialLogin() {
-  
   const t = useTranslations("common");
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect");
+  const redirectUrl = searchParams.get("redirect") || "/dashboard";
+  const router = useRouter();
   const config = useConfig();
   const auth = config.auth || {};
+  const authProvider = config.authConfig?.provider || "next-auth";
+  
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(
+    signInWithProvider,
+    {}
+  );
 
-  const providerIcons = [
-    { icons: <IconGithub />, provider: "github", isEnabled: auth.github },
-    { icons: <IconGoogle />, provider: "google", isEnabled: auth.google },
-    { icons: <IconFacebook />, provider: "facebook", isEnabled: auth.fb },
-    { icons: <IconX />, provider: "x", isEnabled: auth.x },
-    { icons: <IconMicrosoft />, provider: "microsoft", isEnabled: auth.microsoft },
+  const socialProviders: SocialProvider[] = [
+    { icons: <IconGithub />, provider: "github", isEnabled: !!auth.github },
+    { icons: <IconGoogle />, provider: "google", isEnabled: !!auth.google },
+    { icons: <IconFacebook />, provider: "facebook", isEnabled: !!auth.fb },
+    { icons: <IconX />, provider: "x", isEnabled: !!auth.x },
+    { icons: <IconMicrosoft />, provider: "microsoft", isEnabled: !!auth.microsoft },
   ].filter((provider) => provider.isEnabled);
 
+  useEffect(() => {
+    if (state.success) {
+      router.push(redirectUrl);
+      router.refresh();
+    }
+  }, [state, redirectUrl, router]);
 
-
-
-  const providers = Object.keys(auth)
+  const enabledProviders = Object.keys(auth)
     .filter((key) => key !== "credentials")
     .filter((key) => auth[key as keyof typeof auth]);
 
-  const handleProviderSignIn = async (provider: string) => {
+ 
+  const handleSocialAuth = async (provider: SocialProvider, formData: FormData) => {
     try {
-      await signIn(provider, {
-        callbackUrl: redirect || "/dashboard",
-        redirect: true,
-      });
+      if (authProvider === "next-auth") {
+        await signIn(provider.provider, {
+          callbackUrl: redirectUrl,
+          redirect: true,
+        });
+        return;
+      } else {
+        formData.append("provider", provider.provider);
+        formData.append("callbackUrl", redirectUrl);
+        formData.append("authProvider", "supabase");
+        return formAction(formData);
+      }
     } catch (error) {
-      console.error("Error signing in with provider:", error);
+      console.error(`Erreur lors de l'authentification avec ${provider.provider}:`, error);
     }
   };
+  if (enabledProviders.length === 0) {
+    return null;
+  }
 
   return (
     <>
-      {providers.length > 0 && (
-        <div className="relative my-6 flex items-center">
-          <div className="w-full border-t border-gray-300" />
-          <div className="relative flex justify-center text-sm px-2">
-            <span className="px-2 text-gray-500 dark:text-gray-400 whitespace-nowrap">
-              {t("OR_CONTINUE_WITH")}
-            </span>
-          </div>
-          <div className="w-full border-t border-gray-300" />
+      <div className="relative my-6 flex items-center">
+        <div className="w-full border-t border-gray-300" />
+        <div className="relative flex justify-center text-sm px-2">
+          <span className="px-2 text-gray-500 dark:text-gray-400 whitespace-nowrap">
+            {t("OR_CONTINUE_WITH")}
+          </span>
         </div>
-      )}
+        <div className="w-full border-t border-gray-300" />
+      </div>
 
       <div className="flex justify-center items-center gap-5">
-        {providerIcons.map((provider, index) => (
-          <Button
-            key={index}
-            name="provider"
-            value={provider.provider}
-            type="button"
-            isIconOnly
-            className="hover:opacity-80 transition-opacity"
-            onPress={() => handleProviderSignIn(provider.provider)}  >
-            {provider.icons}
-          </Button>
+        {socialProviders.map((provider, index) => (
+          <form 
+            key={`social-provider-${provider.provider}-${index}`} 
+            action={(formData) => handleSocialAuth(provider, formData)}
+          >
+            <Button
+              name="provider"
+              value={provider.provider}
+              type="submit"
+              isIconOnly
+              disabled={pending}
+              aria-label={`Se connecter avec ${provider.provider}`}
+              className="hover:opacity-80 transition-opacity"
+            >
+              {provider.icons}
+            </Button>
+          </form>
         ))}
       </div>
     </>

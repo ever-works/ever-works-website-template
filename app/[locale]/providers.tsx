@@ -1,8 +1,8 @@
 "use client";
 
-import type { Config } from '@/lib/content'
-import { HeroUIProvider } from '@heroui/react'
-import { ConfigProvider } from './config'
+import type { Config } from '@/lib/content';
+import { HeroUIProvider } from '@heroui/react';
+import { ConfigProvider } from './config';
 import { ThemeProvider } from 'next-themes';
 
 export function Providers({ config, children}: { config: Config, children: React.ReactNode }) {

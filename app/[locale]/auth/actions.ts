@@ -31,7 +31,7 @@ import {
   generateVerificationToken,
 } from "@/lib/db/tokens";
 import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/mail";
-import { supabaseAuth } from "@/lib/auth/supabase";
+import { authServiceFactory } from "@/lib/auth/services";
 
 const PASSWORD_MIN_LENGTH = 8;
 const authConfig = ['supabase', 'next-auth', 'both'] as const;
@@ -39,27 +39,15 @@ const authConfig = ['supabase', 'next-auth', 'both'] as const;
 const signInSchema = z.object({
   email: z.string().email().min(3).max(255),
   password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
-  provider: z.enum(authConfig).default('next-auth'),
+  authProvider: z.enum(authConfig).default('next-auth'),
 });
 
 export const signInAction = validatedAction(signInSchema, async (data) => {
   try {
-    if (data.provider === 'supabase') {
-      const { error } = await supabaseAuth.signInWithPassword(
-        data.email,
-        data.password
-      );
-      if (error) {
-        throw error;
-      }
-    } else {
-      const { error } = await signIn(AuthProviders.CREDENTIALS, {
-        ...data,
-        redirect: false,
-      });
-      if (error) {
-        throw error;
-      }
+    const authService = authServiceFactory(data.authProvider);
+    const { error } = await authService.signIn(data.email, data.password);
+    if (error) {
+      throw error;
     }
     return { success: true };
   } catch (error) {
@@ -72,39 +60,44 @@ export const signInAction = validatedAction(signInSchema, async (data) => {
   }
 });
 
+const signInWithProviderSchema = z.object({
+  authProvider: z.enum(authConfig).default('next-auth'),
+  // redirect: z.union([z.boolean(), z.string()]).transform(val => 
+  //   typeof val === 'string' ? val === 'true' : val
+  // ).default(true),
+  callbackUrl: z.string().default('/dashboard'),
+  provider: z.enum([
+    AuthProviders.GOOGLE,
+    AuthProviders.FACEBOOK,
+    AuthProviders.GITHUB,
+    AuthProviders.TWITTER,
+  ]),
+})
+
 export const signInWithProvider = validatedAction(
-  z.object({
-    privider:z.enum(authConfig).default('next-auth'),
-    provider: z.enum([
-      AuthProviders.GOOGLE,
-      AuthProviders.FACEBOOK,
-      AuthProviders.GITHUB,
-      AuthProviders.TWITTER,
-    ]),
-  }),
+ signInWithProviderSchema,
   async (data) => {
     try {
-      if (data.privider === 'supabase') {
-        const { error } = await supabaseAuth.signInWithOAuth(data.provider, {
-          redirectTo: '/auth/signin',
-        });
-        if (error) {
-          throw error;
-        }
-      } else {
-        const { error } = await signIn(data.provider, {
-          redirect: false,
-        });
-        if (error) {
-          throw error;
-        }
+      const authService = authServiceFactory(data.authProvider);
+      
+      const result = await authService.signInWithOAuth(data.provider, {
+        ...data,
+        callbackUrl: data.callbackUrl
+      });
+      if (result && result.url) {
+        return { 
+          success: true,
+          url: result.url
+        };
       }
-      return { success: true };
+      
+      return { 
+        success: true
+      };
     } catch (error) {
       console.error(error);
       return {
-        error:
-          "Invalid email or password. Please check your credentials and try again.",
+        error: "Authentication failed. Please try again.",
         ...data,
       };
     }
@@ -115,13 +108,14 @@ const signUpSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
   password: z.string().min(PASSWORD_MIN_LENGTH),
-  provider: z.enum(authConfig).default('next-auth'),
+  authProvider: z.enum(authConfig).default('next-auth'),
 });
 
 export const signUp = validatedAction(signUpSchema, async (data) => {
   const { name, email, password } = data;
-  if (data.provider === 'supabase') {
-    const { error } = await supabaseAuth.signUp(email, password);
+  const authService = authServiceFactory(data.authProvider);
+  if (data.authProvider === 'supabase') {
+    const { error } = await authService.signUp(email, password);
     if (error) {
       throw error;
     }
@@ -262,7 +256,6 @@ export const updateAccount = validatedActionWithUser(
     if (!dbUser) {
       return { error: "User not found" };
     }
-
     await Promise.all([
       updateUser({ name, email }, dbUser.id),
       logActivity(dbUser.id, ActivityType.UPDATE_ACCOUNT),
@@ -271,20 +264,14 @@ export const updateAccount = validatedActionWithUser(
     return { success: "Account updated successfully." };
   }
 );
+
 export const signOutAction = async (provider?: string) => {
-  if (provider === 'supabase') {
-    const { error } = await supabaseAuth.signOut();
-    if (error) {
-      throw error;
+  const authService = authServiceFactory(provider||'next-auth');
+ const error = await authService.signOut();
+  if (error) {
+    throw error;
     }
     return { success: true };
-  } else {
-    const { error } = await signOut({ redirectTo: "/auth/signin" });
-    if (error) {
-      throw error;
-    }
-  }
-  return { success: true };
 };
 
 const forgotPasswordSchema = z.object({

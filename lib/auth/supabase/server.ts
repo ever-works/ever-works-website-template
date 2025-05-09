@@ -1,4 +1,4 @@
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, type CookieMethodsServer } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 export async function createClient() {
@@ -21,7 +21,7 @@ export async function createClient() {
             console.error('Failed to set cookies')
           }
         },
-      },
+      }  as CookieMethodsServer,
     }
   )
 }
