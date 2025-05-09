@@ -44,14 +44,14 @@ export class SupabaseService implements AuthService {
         if (error) {
             throw error;
         }
+        return error;
     }
     
     async signInWithOAuth(provider: any, options?: any): Promise<any> {
-        const { error } = await supabaseAuth.signInWithOAuth(provider, options);
+        const { data, error } = await supabaseAuth.signInWithOAuth(provider, options);
         if (error) {
             throw error;
         }
-        return error;
+        return data;
     }
-   
 }

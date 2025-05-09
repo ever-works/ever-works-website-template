@@ -32,14 +32,27 @@ export class NextAuthService implements AuthService {
     await signOut({ redirectTo: "/auth/signin" });
   }
 
+  /**
+   * NextAuth's credential provider automatically registers new users on first login.
+   * This method handles both registration and authentication in a single step.
+   * 
+   * @param email User's email address
+   * @param password User's password
+   * @returns Authentication result with error information if any
+   */
   async signUp(email: string, password: string): Promise<any> {
-    const { error } = await signIn(AuthProviders.CREDENTIALS, {
-      email,
-      password,
-      redirect: false,
-    });
-    if (error) {
-      throw error;
+    try {
+      // NextAuth will automatically create the user if they don't exist
+      // when using the credentials provider ("just-in-time" registration)
+      const result = await signIn(AuthProviders.CREDENTIALS, {
+        email,
+        password,
+        redirect: false,
+      });
+      return { error: result?.error || null };
+    } catch (error) {
+      console.error("Error in NextAuth signUp/registration:", error);
+      return { error };
     }
   }
 

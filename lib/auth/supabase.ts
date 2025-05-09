@@ -1,5 +1,9 @@
-import { createClient } from './supabase/server';
+import { createClient as _createClient } from './supabase/server';
 
+let _supabase: Awaited<ReturnType<typeof _createClient>> | undefined;
+async function getSupabase() {
+  return _supabase ??= await _createClient();
+}
 // Define types for Supabase client and auth methods
 interface SupabaseAuthResponse<T> {
   data: T;
@@ -30,7 +34,7 @@ export const supabaseAuth = {
    */
   signInWithPassword: async (email: string, password: string): Promise<SupabaseAuthResponse<{ session: SupabaseSession | null; user: SupabaseUser | null }>> => {
     try {
-      const supabase = await createClient();
+      const supabase = await getSupabase();
       return supabase.auth.signInWithPassword({ email, password });
     } catch (error) {
       console.error('Supabase auth error:', error);
@@ -43,7 +47,7 @@ export const supabaseAuth = {
    */
   signInWithOAuth: async (provider: 'google' | 'github' | 'facebook' | 'twitter', options?: { redirectTo?: string }) => {
     try {
-      const supabase = await createClient();
+      const supabase = await getSupabase();
       return supabase.auth.signInWithOAuth({
         provider,
         options: {
@@ -61,7 +65,7 @@ export const supabaseAuth = {
    */
   signUp: async (email: string, password: string, options?: { redirectTo?: string }) => {
     try {
-      const supabase = await createClient();
+      const supabase = await getSupabase();
       return supabase.auth.signUp({ 
         email, 
         password,
@@ -80,7 +84,7 @@ export const supabaseAuth = {
    */
   signOut: async () => {
     try {
-      const supabase = await createClient();
+      const supabase = await getSupabase();
       return supabase.auth.signOut();
     } catch (error) {
       console.error('Supabase signout error:', error);
@@ -93,7 +97,7 @@ export const supabaseAuth = {
    */
   getUser: async () => {
     try {
-      const supabase = await createClient();
+      const supabase = await getSupabase();
       return supabase.auth.getUser();
     } catch (error) {
       console.error('Supabase get user error:', error);
@@ -106,7 +110,7 @@ export const supabaseAuth = {
    */
   getSession: async () => {
     try {
-      const supabase = await createClient();
+      const supabase = await getSupabase();
       return supabase.auth.getSession();
     } catch (error) {
       console.error('Supabase get session error:', error);
@@ -119,7 +123,7 @@ export const supabaseAuth = {
    */
   resetPassword: async (email: string, options?: { redirectTo?: string }) => {
     try {
-      const supabase = await createClient();
+      const supabase = await getSupabase();
       return supabase.auth.resetPasswordForEmail(email, {
         redirectTo: options?.redirectTo
       });
@@ -134,7 +138,7 @@ export const supabaseAuth = {
    */
   updatePassword: async (password: string) => {
     try {
-      const supabase = await createClient();
+      const supabase = await getSupabase();
       return supabase.auth.updateUser({ password });
     } catch (error) {
       console.error('Supabase update password error:', error);
@@ -147,7 +151,7 @@ export const supabaseAuth = {
    */
   updateUser: async (attributes: { email?: string; password?: string; data?: any }) => {
     try {
-      const supabase = await createClient();
+      const supabase = await getSupabase();
       return supabase.auth.updateUser(attributes);
     } catch (error) {
       console.error('Supabase update user error:', error);

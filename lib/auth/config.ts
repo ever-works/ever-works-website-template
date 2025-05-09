@@ -60,10 +60,13 @@ export interface AuthConfig {
  */
 export const defaultAuthConfig: AuthConfig = {
   provider: "next-auth",
-  supabase: {
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  },
+  supabase: process.env.NEXT_PUBLIC_SUPABASE_URL &&
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    ? {
+        url: process.env.NEXT_PUBLIC_SUPABASE_URL,
+        anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      }
+    : undefined,
   nextAuth: {
     enableCredentials: true,
     enableOAuth: true,

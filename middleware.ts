@@ -4,8 +4,8 @@ import { routing } from "./i18n/routing";
 import { NextRequest, NextResponse } from "next/server";
 import NextAuth from "next-auth";
 import authConfig from "./auth.config";
-import { updateSession } from "./lib/auth/supabase/middleware";
-import { getAuthConfig } from "./lib/auth/config";
+import { updateSession } from "@/lib/auth/supabase/middleware";
+import { getAuthConfig } from "@/lib/auth/config";
 
 const PRIVATE_PATHS = ["/dashboard"];
 const PUBLIC_PATHS = ["/auth/signin", "/auth/register"];

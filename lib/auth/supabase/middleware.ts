@@ -1,14 +1,18 @@
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+import { createServerClient } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   })
-
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    throw new Error(
+      'Missing required Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY'
+    );
+  }
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
@@ -37,13 +41,13 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Extraire la locale de l'URL (fr, en, etc.)
+  // Extract locale from URL (fr, en, etc.)
   const locale = request.nextUrl.pathname.split('/')[1] || 'en';
   
-  // Extraire le chemin sans la locale
-  const pathWithoutLocale = '/' + request.nextUrl.pathname.split('/').slice(2).join('/');
+  // Extract path without locale
+  const pathWithoutLocale = `/${request.nextUrl.pathname.split('/').slice(2).join('/')}`;
   
-  // Chemins publics et privés (sans locale)
+    // Public and private paths (without locale)
   const PUBLIC_PATHS = [
     '/auth/signin',
     '/auth/register',
@@ -57,9 +61,9 @@ export async function updateSession(request: NextRequest) {
     pathWithoutLocale.startsWith(path) || 
     pathWithoutLocale === path
   );
-  
+
   const isPublicPath = PUBLIC_PATHS.some(path => 
-    pathWithoutLocale.includes(path)
+    pathWithoutLocale === path || pathWithoutLocale.startsWith(`${path}/`)
   );
 
 
