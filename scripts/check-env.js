@@ -9,9 +9,28 @@
  */
 
 // Load environment variables from .env files
-require('dotenv').config({ path: '.env.local' });
 const fs = require('fs');
 const path = require('path');
+const dotenv = require('dotenv');
+
+// Parse command line arguments
+const args = process.argv.slice(2);
+const silentMode = args.includes('--silent') || args.includes('-s');
+const quickMode = args.includes('--quick') || args.includes('-q');
+
+// Try to load from .env.local first, then fall back to .env if needed
+const envLocalPath = path.resolve(process.cwd(), '.env.local');
+const envPath = path.resolve(process.cwd(), '.env');
+
+// Check if .env.local exists and load it
+if (fs.existsSync(envLocalPath)) {
+  dotenv.config({ path: envLocalPath });
+}
+
+// Also load .env as fallback for any variables not in .env.local
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath, override: false });
+}
 
 // Console colors
 const colors = {
@@ -26,8 +45,15 @@ const colors = {
 };
 
 // Print colored message
-function print(color, message) {
-  console.log(`${colors[color]}${message}${colors.reset}`);
+function print(color, message, forceShow = false) {
+  if (!silentMode || forceShow) {
+    console.log(`${colors[color]}${message}${colors.reset}`);
+  }
+}
+
+// Helper function to print critical messages (always shown)
+function printCritical(message) {
+  print('red', message, true);
 }
 
 // Try to load .env.example if it exists
@@ -189,7 +215,7 @@ Object.entries(categorizedVars).forEach(([category, variables]) => {
       ];
       
       const configuredEmailSystems = emailVarPairs.filter(varSet => 
-        varSet.every(varName => variables.includes(varName))
+        varSet.every(varName => variables.includes(varName) && process.env[varName]?.trim())
       );
       
       if (configuredEmailSystems.length === 0) {
@@ -212,33 +238,42 @@ if (missingCriticalVars.length > 0) {
   allWarnings.push('   Application may not function correctly!');
 }
 
-// Print all warnings
-if (allWarnings.length > 0) {
-  allWarnings.forEach(warning => print('yellow', warning));
-}
+// Skip detailed checks in quick mode
+if (!quickMode) {
+  // Print all warnings
+  if (allWarnings.length > 0) {
+    allWarnings.forEach(warning => print('yellow', warning));
+  }
 
-// Print all success messages
-if (allSuccess.length > 0) {
-  allSuccess.forEach(success => print('green', success));
-}
+  // Print all success messages
+  if (allSuccess.length > 0) {
+    allSuccess.forEach(success => print('green', success));
+  }
 
-// Final message
-print('cyan', '🚀 Environment check complete');
+  // Final message
+  print('cyan', '🚀 Environment check complete');
+}
 
 // Decide exit code based on critical missing variables
 if (missingCriticalVars.length > 0) {
-  print('red', `⛔ Critical environment variables are missing: ${missingCriticalVars.join(', ')}`);
-  print('red', '   Application may not function correctly!');
+  // Always show critical errors, even in silent mode
+  printCritical(`⛔ Critical environment variables are missing: ${missingCriticalVars.join(', ')}`);
+  printCritical('   Application may not function correctly!');
   
-  // Check if DATA_REPOSITORY is missing and we're not in dev mode
+  // Check if DATA_REPOSITORY is missing and we're not in production mode
   if (missingCriticalVars.includes('DATA_REPOSITORY') && process.env.NODE_ENV !== 'production') {
     // In development mode, we'll just warn but continue
-    print('yellow', '⚠️ DATA_REPOSITORY is missing but continuing in development mode');
+    print('yellow', '⚠️ DATA_REPOSITORY is missing but continuing in development mode', true);
   } else if (missingCriticalVars.includes('DATA_REPOSITORY')) {
     // In production mode, exit with error
-    print('red', '❌ DATA_REPOSITORY is required for content management!');
+    printCritical('❌ DATA_REPOSITORY is required for content management!');
     process.exit(1);
   }
+}
+
+// Exit with error if any critical vars are missing in production
+if (process.env.NODE_ENV === 'production' && missingCriticalVars.length > 0) {
+  process.exit(1);
 }
 
 // Exit with success

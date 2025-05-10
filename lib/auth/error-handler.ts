@@ -1,48 +1,52 @@
-import { createAppError, ErrorType, validateEnvVariables, logError } from '../utils/error-handler';
-export { logError } from '../utils/error-handler';
+import {
+  createAppError,
+  ErrorType,
+  validateEnvVariables,
+  logError,
+} from "../utils/error-handler";
+export { logError } from "../utils/error-handler";
 
 /**
  * Validates required environment variables for authentication providers
  */
 export function validateAuthConfig() {
   // Base NextAuth environment variables
-  const baseNextAuthVars = [
-    'NEXTAUTH_SECRET',
-    'NEXTAUTH_URL'
-  ];
+  const baseNextAuthVars = ["NEXTAUTH_SECRET", "NEXTAUTH_URL"];
 
   // Provider-specific environment variables
   const providerEnvVars = {
-    google: ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'],
-    github: ['GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET'],
-    facebook: ['FACEBOOK_CLIENT_ID', 'FACEBOOK_CLIENT_SECRET'],
-    microsoft: ['MICROSOFT_CLIENT_ID', 'MICROSOFT_CLIENT_SECRET'],
-    supabase: ['NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY']
+    google: ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"],
+    github: ["GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"],
+    facebook: ["FACEBOOK_CLIENT_ID", "FACEBOOK_CLIENT_SECRET"],
+    microsoft: ["MICROSOFT_CLIENT_ID", "MICROSOFT_CLIENT_SECRET"],
+    supabase: ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"],
   };
 
   // Check base NextAuth variables
   const baseError = validateEnvVariables(baseNextAuthVars);
   if (baseError) {
-    logError(baseError, 'Auth Config');
+    logError(baseError, "Auth Config");
     throw baseError;
   }
 
   // Check which providers are enabled based on environment variables
   const enabledProviders: Record<string, boolean> = {};
-  
+
   Object.entries(providerEnvVars).forEach(([provider, vars]) => {
-    const hasAllVars = vars.every(varName => !!process.env[varName]);
+    const hasAllVars = vars.every((varName) => !!process.env[varName]);
     enabledProviders[provider] = hasAllVars;
-    
+
     // Log warning for partially configured providers
-    if (!hasAllVars && vars.some(varName => !!process.env[varName])) {
-      const missingVars = vars.filter(varName => !process.env[varName]);
+    if (!hasAllVars && vars.some((varName) => !!process.env[varName])) {
+      const missingVars = vars.filter((varName) => !process.env[varName]);
       const warning = createAppError(
-        `Partial configuration for ${provider} provider. Missing: ${missingVars.join(', ')}`,
+        `Partial configuration for ${provider} provider. Missing: ${missingVars.join(
+          ", "
+        )}`,
         ErrorType.CONFIG,
-        'ENV_PARTIAL'
+        "ENV_PARTIAL"
       );
-      logError(warning, 'Auth Config');
+      logError(warning, "Auth Config");
     }
   });
 
@@ -54,42 +58,48 @@ export function validateAuthConfig() {
  */
 export function configureOAuthProviders() {
   const enabledProviders = validateAuthConfig();
-  
-  const providers: any[] = [];
-  
-  // Only add providers that have all required environment variables
-  if (enabledProviders.google) {
-    providers.push({
-      id: 'google',
+
+  const providers: { id: string; clientId?: string; clientSecret?: string }[] =
+    [];
+
+  // Define provider configurations
+  const providerConfigs = [
+    {
+      id: "google",
+      enabled: enabledProviders.google,
       clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET
-    });
-  }
-  
-  if (enabledProviders.github) {
-    providers.push({
-      id: 'github',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    },
+    {
+      id: "github",
+      enabled: enabledProviders.github,
       clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET
-    });
-  }
-  
-  if (enabledProviders.facebook) {
-    providers.push({
-      id: 'facebook',
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    },
+    {
+      id: "facebook",
+      enabled: enabledProviders.facebook,
       clientId: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET
-    });
-  }
-  
-  if (enabledProviders.microsoft) {
-    providers.push({
-      id: 'microsoft',
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    },
+    {
+      id: "microsoft",
+      enabled: enabledProviders.microsoft,
       clientId: process.env.MICROSOFT_CLIENT_ID,
-      clientSecret: process.env.MICROSOFT_CLIENT_SECRET
-    });
-  }
-  
+      clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
+    },
+  ];
+
+  providerConfigs.forEach((config) => {
+    if (config.enabled) {
+      providers.push({
+        id: config.id,
+        clientId: config.clientId,
+        clientSecret: config.clientSecret,
+      });
+    }
+  });
+
   return providers;
 }
 
@@ -98,31 +108,42 @@ export function configureOAuthProviders() {
  */
 export function handleAuthError(error: any): { error: string } {
   let errorMessage = "An unknown authentication error occurred";
-  
+
   if (error instanceof Error) {
     // Handle specific error types
-    if (error.message.includes('GOOGLE_CLIENT_ID')) {
-      errorMessage = "Google authentication is not properly configured";
-    } else if (error.message.includes('GITHUB_CLIENT_ID')) {
-      errorMessage = "GitHub authentication is not properly configured";
-    } else if (error.message.includes('FACEBOOK_CLIENT_ID')) {
-      errorMessage = "Facebook authentication is not properly configured";
-    } else if (error.message.includes('MICROSOFT_CLIENT_ID')) {
-      errorMessage = "Microsoft authentication is not properly configured";
-    } else if (error.message.includes('SUPABASE')) {
-      errorMessage = "Supabase authentication is not properly configured";
-    } else if (error.message.includes('NEXTAUTH')) {
-      errorMessage = "NextAuth is not properly configured";
-    } else {
-      // Use the original error message if it's not related to configuration
-      errorMessage = error.message;
-    }
-    
-    // Log the error with context
-    logError(error, 'Authentication');
-  } else if (typeof error === 'string') {
+    const errorMessageMap = [
+      {
+        pattern: /GOOGLE_CLIENT_ID/i,
+        message: "Google authentication is not properly configured",
+      },
+      {
+        pattern: /GITHUB_CLIENT_ID/i,
+        message: "GitHub authentication is not properly configured",
+      },
+      {
+        pattern: /FACEBOOK_CLIENT_ID/i,
+        message: "Facebook authentication is not properly configured",
+      },
+      {
+        pattern: /MICROSOFT_CLIENT_ID/i,
+        message: "Microsoft authentication is not properly configured",
+      },
+      {
+        pattern: /SUPABASE/i,
+        message: "Supabase authentication is not properly configured",
+      },
+      { pattern: /NEXTAUTH/i, message: "NextAuth is not properly configured" },
+    ];
+    // Find matching pattern or use original message
+    const matchingError = errorMessageMap.find((item) =>
+      item.pattern.test(error.message)
+    );
+    errorMessage = matchingError ? matchingError.message : error.message;
+
+    logError(error, "Authentication");
+  } else if (typeof error === "string") {
     errorMessage = error;
   }
-  
+
   return { error: errorMessage };
 }

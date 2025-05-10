@@ -52,7 +52,7 @@ export function createApiErrorResponse(
  */
 export function handleApiError(
   error: unknown,
-  context: string = 'API'
+  context = 'API'
 ): NextResponse<ApiErrorResponse> {
   // Log the error with context
   if (error instanceof Error) {

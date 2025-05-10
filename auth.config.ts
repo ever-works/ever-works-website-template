@@ -3,13 +3,9 @@ import { createNextAuthProviders } from "./lib/auth/providers";
 import { configureOAuthProviders, logError } from "./lib/auth/error-handler";
 import { ErrorType, createAppError } from "./lib/utils/error-handler";
 
-// Configure providers safely with error handling
 const configureProviders = () => {
   try {
-    // Get safely configured OAuth providers based on available env vars
     const oauthProviders = configureOAuthProviders();
-    
-    // Always enable credentials provider as it doesn't require external config
     return createNextAuthProviders({
       google: oauthProviders.find(p => p.id === 'google') ? {
         enabled: true,

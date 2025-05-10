@@ -18,8 +18,8 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <html>
-      <body>
+    <html lang="en">
+    <body>
         <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
           <div className="mb-6">
             <AlertTriangle className="h-16 w-16 text-amber-500 mx-auto" />
