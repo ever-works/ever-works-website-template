@@ -1,3 +1,16 @@
-import { handlers } from "@/lib/auth";
+import { NextRequest } from 'next/server';
+import { handleWithErrorHandling } from './error-wrapper';
 
-export const { GET, POST } = handlers;
+/**
+ * GET handler with error handling
+ */
+export async function GET(req: NextRequest) {
+  return handleWithErrorHandling(req, 'GET');
+}
+
+/**
+ * POST handler with error handling
+ */
+export async function POST(req: NextRequest) {
+  return handleWithErrorHandling(req, 'POST');
+}
