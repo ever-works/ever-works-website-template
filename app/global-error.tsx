@@ -1,9 +1,8 @@
 'use client';
-
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { Button } from '@heroui/react';
 import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
-import Link from 'next/link';
 
 export default function GlobalError({
   error,
@@ -13,7 +12,6 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
     console.error('Global error:', error);
   }, [error]);
 

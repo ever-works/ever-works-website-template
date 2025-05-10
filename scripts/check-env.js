@@ -9,13 +9,13 @@
  */
 
 // Load environment variables from .env files
-const fs = require('fs');
-const path = require('path');
-const dotenv = require('dotenv');
+const fs = require("node:fs")
+const path = require("node:path")
+const dotenv = require("dotenv");
 
 // Parse command line arguments
 const args = process.argv.slice(2);
-const silentMode = args.includes('--silent') || args.includes('-s');
+const silentMode = args.includes("--silent") || args.includes("-s");
 const quickMode = args.includes('--quick') || args.includes('-q');
 
 // Try to load from .env.local first, then fall back to .env if needed
