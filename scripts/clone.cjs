@@ -43,8 +43,6 @@ async function main() {
 }
 
 main().catch(err => {
-  console.error('Failed to clone repository:', err);
-  // Exit with success code to not block the build process
-  console.warn("Continuing build without content repository.");
+  console.warn("Continuing build without content repository.", err);
   process.exit(0);
 });

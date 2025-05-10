@@ -46,7 +46,7 @@ export default function GlobalError({
           <div className="flex gap-4">
             <Button onPress={() => reset()} variant="solid">
               <RefreshCw className="mr-2 h-4 w-4" />
-              Try Again
+              Refresh
             </Button>
             <Link href="/" passHref>
               <Button variant="solid">

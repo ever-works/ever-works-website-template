@@ -107,7 +107,7 @@ export function logError(error: AppError | Error | unknown, context?: string): v
  * @throws AppError if the variable is required but not found
  */
 export function getEnvVariable(name: string, required = true): string | undefined {
-  const value = process.env[name];
+  const value = process.env[name]?.trim();
   
   if (!value && required) {
     const error = validateEnvVariables([name]);

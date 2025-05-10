@@ -35,6 +35,10 @@ export function createApiErrorResponse(
   status: number = HttpStatus.INTERNAL_SERVER_ERROR,
   code?: string
 ): NextResponse<ApiErrorResponse> {
+  // Ensure status is within valid range
+  if (status < 100 || status > 599) {
+    status = HttpStatus.INTERNAL_SERVER_ERROR;
+  }
   return NextResponse.json(
     {
       error: {

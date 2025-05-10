@@ -33,12 +33,12 @@ export function validateAuthConfig() {
   const enabledProviders: Record<string, boolean> = {};
 
   Object.entries(providerEnvVars).forEach(([provider, vars]) => {
-    const hasAllVars = vars.every((varName) => !!process.env[varName]);
+    const hasAllVars = vars.every((varName) => !!process.env[varName]?.trim());
     enabledProviders[provider] = hasAllVars;
 
     // Log warning for partially configured providers
-    if (!hasAllVars && vars.some((varName) => !!process.env[varName])) {
-      const missingVars = vars.filter((varName) => !process.env[varName]);
+    if (!hasAllVars && vars.some((varName) => !!process.env[varName]?.trim())) {
+      const missingVars = vars.filter((varName) => !process.env[varName]?.trim());
       const warning = createAppError(
         `Partial configuration for ${provider} provider. Missing: ${missingVars.join(
           ", "

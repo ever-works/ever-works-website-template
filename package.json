@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "node scripts/check-env.js --quick && next dev --turbopack",
     "dev:check": "node scripts/check-env.js && next dev --turbopack",
     "build": "node scripts/check-env.js --silent && next build",
     "start": "node scripts/check-env.js --silent --quick && next start",
