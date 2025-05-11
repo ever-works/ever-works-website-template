@@ -1,7 +1,7 @@
 import git, { GitAuth, Errors } from "isomorphic-git";
 import * as http from "isomorphic-git/http/node";
-import * as path from "path";
-import * as fs from "fs";
+import * as path from "node:path";
+import * as fs from "node:fs";
 import { fsExists, getContentPath } from "./lib";
 
 function getGitAuth(token?: string): GitAuth {
@@ -62,6 +62,11 @@ export async function pullChanges(url: string, dest: string, auth: GitAuth) {
 export async function trySyncRepository() {
   const token = process.env.GH_TOKEN;
   const url = process.env.DATA_REPOSITORY;
+  const DEFAULT_CONFIG = `site_name: Website
+  item_name: Item
+  items_name: Items
+  copyright_year: ${new Date().getFullYear()}
+  `;
 
   if (!url) {
     console.warn(
@@ -76,11 +81,7 @@ export async function trySyncRepository() {
     if (!(await fsExists(configPath))) {
       await fs.promises.writeFile(
         configPath,
-        `site_name: Website
-item_name: Item
-items_name: Items
-copyright_year: ${new Date().getFullYear()}
-`
+        DEFAULT_CONFIG
       );
     }
 
@@ -91,17 +92,20 @@ copyright_year: ${new Date().getFullYear()}
   const auth = getGitAuth(token);
 
   const exists = await fsExists(path.join(dest, ".git"));
-
-  if (exists && !shouldSync()) {
-    return;
-  }
-
-  if (exists) {
-    console.log("Pulling repository data...");
-    lastSynced = Date.now();
-    await pullChanges(url, dest, auth);
-    return;
-  }
+      try {
+        if (exists && !shouldSync()) {
+          return;
+        }
+        if (exists) {
+          console.log("Pulling repository data...");
+          lastSynced = Date.now();
+          await pullChanges(url, dest, auth);
+          return;
+        }
+      } catch (error) {
+        console.error("Error during repository sync check:", error);
+        // Continue with cloning as fallback or return based on your error handling strategy
+      }
 
   console.log("Clonning repository...");
   await fs.promises.mkdir(dest, { recursive: true });
