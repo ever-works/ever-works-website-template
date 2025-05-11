@@ -46,8 +46,12 @@ export async function getUserByEmail(email: string) {
 
     return usersList[0];
   } catch (error) {
-    console.error("Error in getUserByEmail:", error);
-    // Return null instead of throwing an error to allow the auth flow to continue
+        if (error instanceof Error && error.message === "User not found") {
+            console.warn(`User validation failed: No user found with email ${email}`);
+          } else {
+            console.error("Database error in getUserByEmail:", error);
+          }    
+          // Return null instead of throwing an error to allow the auth flow to continue
     return null;
   }
 }
