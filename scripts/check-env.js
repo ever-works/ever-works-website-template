@@ -76,7 +76,6 @@ try {
 
 // Define critical variable patterns
 const CRITICAL_PATTERNS = [
-  /^DATABASE_URL$/,
   /^DATA_REPOSITORY$/,
   /^NEXTAUTH_SECRET$/,
   /^NEXTAUTH_URL$/
