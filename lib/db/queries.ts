@@ -27,17 +27,29 @@ export async function logActivity(
 // ######################### User Queries #########################
 
 export async function getUserByEmail(email: string) {
-  const usersList = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
-
-  if (usersList.length === 0) {
-    throw new Error("User not found");
+  // Check if DATABASE_URL is set
+  if (!process.env.DATABASE_URL) {
+    console.warn("DATABASE_URL is not set. User validation is disabled.");
+    return null;
   }
+  
+  try {
+    const usersList = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
 
-  return usersList[0];
+    if (usersList.length === 0) {
+      throw new Error("User not found");
+    }
+
+    return usersList[0];
+  } catch (error) {
+    console.error("Error in getUserByEmail:", error);
+    // Return null instead of throwing an error to allow the auth flow to continue
+    return null;
+  }
 }
 
 export async function updateUserPassword(

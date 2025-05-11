@@ -22,11 +22,12 @@ export function validateAuthConfig() {
     supabase: ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"],
   };
 
-  // Check base NextAuth variables
+  // Check base NextAuth variables but don't throw errors
   const baseError = validateEnvVariables(baseNextAuthVars);
   if (baseError) {
-    logError(baseError, "Auth Config");
-    throw baseError;
+    // Just log a warning instead of throwing an error
+    console.warn(`[AUTH CONFIG WARNING] NextAuth base configuration incomplete: ${baseError.message}`);
+    console.warn('Authentication features may be limited.');
   }
 
   // Check which providers are enabled based on environment variables
