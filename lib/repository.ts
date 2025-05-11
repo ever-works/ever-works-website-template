@@ -63,10 +63,10 @@ export async function trySyncRepository() {
   const token = process.env.GH_TOKEN;
   const url = process.env.DATA_REPOSITORY;
   const DEFAULT_CONFIG = `site_name: Website
-  item_name: Item
-  items_name: Items
-  copyright_year: ${new Date().getFullYear()}
-  `;
++item_name: Item
++items_name: Items
++copyright_year: ${new Date().getFullYear()}
++`;
 
   if (!url) {
     console.warn(
