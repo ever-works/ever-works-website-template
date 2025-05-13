@@ -150,4 +150,16 @@ export async function deleteVerificationToken(token: string) {
     .where(eq(verificationTokens.token, token));
 }
 
+export async function getUserById(id: string) {
+    const usersList = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, id))
+    .limit(1);
+    if (usersList.length === 0) {
+      throw new Error("User not found");
+    }
+    return usersList[0];
+}
+
 // export async function getActivityLogs() {}
