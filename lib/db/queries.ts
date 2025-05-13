@@ -151,15 +151,29 @@ export async function deleteVerificationToken(token: string) {
 }
 
 export async function getUserById(id: string) {
-    const usersList = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, id))
-    .limit(1);
-    if (usersList.length === 0) {
-      throw new Error("User not found");
+  if (!process.env.DATABASE_URL) {
+    console.warn("DATABASE_URL is not set. User validation is disabled.");
+    return null;
+  }
+  try {
+      const usersList = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, id))
+        .limit(1);
+  
+      if (usersList.length === 0) {
+        throw new Error("User not found");
+      }
+      return usersList[0];
+  } catch (error) {
+    if (error instanceof Error && error.message === "User not found") {
+      console.warn(`User validation failed: No user found with id ${id}`);
+    } else {
+      console.error("Database error in getUserById:", error);
     }
-    return usersList[0];
+    return null;
+  }
 }
 
 // export async function getActivityLogs() {}

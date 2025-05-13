@@ -24,8 +24,8 @@ export class SupabaseService implements AuthService {
         const { error } = await supabaseAuth.signOut();
        return error;
     }
-    async signUp(email: string, password: string): Promise<any> {
-        const { error } = await supabaseAuth.signUp(email, password);
+    async signUp(email: string, password: string, options?: any): Promise<any> {
+        const { error } = await supabaseAuth.signUp(email, password, options);
         if (error) {
             throw error;
         }
