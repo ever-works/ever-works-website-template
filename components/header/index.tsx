@@ -26,6 +26,7 @@ export const AcmeLogo = () => {
 export default function Header({ session }: SessionProps) {
   const t = useTranslations("common");
   const config = useConfig();
+  const { layoutKey, setLayoutKey, themeKey, setThemeKey } = useLayoutTheme();
 
   const auth = config.auth;
   const providers = Object.keys(auth || {}).filter((key) =>
@@ -59,24 +60,17 @@ export default function Header({ session }: SessionProps) {
       </NavbarContent>
 
       <NavbarContent justify="end">
-        {(() => {
-          const { layoutKey, setLayoutKey, themeKey, setThemeKey } = useLayoutTheme();
-          return (
-            <>
-              <NavbarItem>
-                <LayoutSwitch value={layoutKey} onChange={setLayoutKey} />
-              </NavbarItem>
-              <NavbarItem>
-                <ThemeSwitch value={themeKey} onChange={setThemeKey} />
-              </NavbarItem>
-              {providers.length > 0 && (
-                <NavbarItem>
-                  <ProfileButton session={session} />
-                </NavbarItem>
-              )}
-            </>
-          );
-        })()}
+        <NavbarItem>
+          <LayoutSwitch value={layoutKey} onChange={setLayoutKey} />
+        </NavbarItem>
+        <NavbarItem>
+          <ThemeSwitch value={themeKey} onChange={setThemeKey} />
+        </NavbarItem>
+        {providers.length > 0 && (
+          <NavbarItem>
+            <ProfileButton session={session} />
+          </NavbarItem>
+        )}
       </NavbarContent>
     </Navbar>
   );
