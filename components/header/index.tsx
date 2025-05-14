@@ -6,6 +6,9 @@ import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { ProfileButton } from "./profile-button";
 import { SessionProps } from "@/lib/types";
+import LayoutSwitch from "./LayoutSwitch";
+import ThemeSwitch from "./ThemeSwitch";
+import { useLayoutTheme } from "@/components/context/LayoutThemeContext";
 
 export const AcmeLogo = () => {
   return (
@@ -56,11 +59,24 @@ export default function Header({ session }: SessionProps) {
       </NavbarContent>
 
       <NavbarContent justify="end">
-        {providers.length > 0 && (
-          <NavbarItem>
-            <ProfileButton session={session} />
-          </NavbarItem>
-        )}
+        {(() => {
+          const { layoutKey, setLayoutKey, themeKey, setThemeKey } = useLayoutTheme();
+          return (
+            <>
+              <NavbarItem>
+                <LayoutSwitch value={layoutKey} onChange={setLayoutKey} />
+              </NavbarItem>
+              <NavbarItem>
+                <ThemeSwitch value={themeKey} onChange={setThemeKey} />
+              </NavbarItem>
+              {providers.length > 0 && (
+                <NavbarItem>
+                  <ProfileButton session={session} />
+                </NavbarItem>
+              )}
+            </>
+          );
+        })()}
       </NavbarContent>
     </Navbar>
   );

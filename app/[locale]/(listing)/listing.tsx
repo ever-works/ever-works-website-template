@@ -5,6 +5,9 @@ import { Category, ItemData, Tag } from "@/lib/content";
 import { PER_PAGE, totalPages } from "@/lib/paginate";
 import { getItemPath } from "@/lib/utils";
 import { getTranslations } from "next-intl/server";
+import LayoutClassic from "@/components/layouts/LayoutClassic";
+import LayoutGrid from "@/components/layouts/LayoutGrid";
+import LayoutCards from "@/components/layouts/LayoutCards";
 
 type ListingProps = {
   total: number;
@@ -16,8 +19,20 @@ type ListingProps = {
   items: ItemData[];
 };
 
-export async function Listing(props: ListingProps) {
+
+
+type ListingPropsWithLayout = ListingProps & { layoutKey?: string };
+
+export async function Listing(props: ListingPropsWithLayout) {
   const t = await getTranslations("listing");
+  const layoutKey = props.layoutKey || "classic";
+
+  const LayoutComponent =
+    layoutKey === "grid"
+      ? LayoutGrid
+      : layoutKey === "cards"
+      ? LayoutCards
+      : LayoutClassic;
 
   return (
     <div className="container mx-auto p-8">
@@ -33,27 +48,31 @@ export async function Listing(props: ListingProps) {
         <Categories total={props.total} categories={props.categories} />
         <div className="w-full">
           <Tags tags={props.tags} />
-          <div className="py-8 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
-            {props.items
-              .slice(props.start, props.start + PER_PAGE)
-              .map((item) => (
-                <Link
-                  className="hover:opacity-90"
-                  prefetch={false}
-                  href={getItemPath(item.slug)}
-                  key={item.slug}
-                >
-                  <Item {...item} />
-                </Link>
-              ))}
-          </div>
-          <div className="mt-8 flex items-center justify-center">
-            <Paginate
-              basePath={props.basePath}
-              initialPage={props.page}
-              total={totalPages(props.items.length)}
-            />
-          </div>
+          <LayoutComponent>
+            <div className="py-8 w-full">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+                {props.items
+                  .slice(props.start, props.start + PER_PAGE)
+                  .map((item) => (
+                    <Link
+                      className="hover:opacity-90"
+                      prefetch={false}
+                      href={getItemPath(item.slug)}
+                      key={item.slug}
+                    >
+                      <Item {...item} />
+                    </Link>
+                  ))}
+              </div>
+            </div>
+            <div className="mt-8 flex items-center justify-center">
+              <Paginate
+                basePath={props.basePath}
+                initialPage={props.page}
+                total={totalPages(props.items.length)}
+              />
+            </div>
+          </LayoutComponent>
         </div>
       </div>
     </div>
