@@ -5,9 +5,7 @@ import { Category, ItemData, Tag } from "@/lib/content";
 import { PER_PAGE, totalPages } from "@/lib/paginate";
 import { getItemPath } from "@/lib/utils";
 import { getTranslations } from "next-intl/server";
-import LayoutClassic from "@/components/layouts/LayoutClassic";
-import LayoutGrid from "@/components/layouts/LayoutGrid";
-import LayoutCards from "@/components/layouts/LayoutCards";
+import { LayoutKey, layoutComponents } from "@/components/layouts";
 
 type ListingProps = {
   total: number;
@@ -19,20 +17,12 @@ type ListingProps = {
   items: ItemData[];
 };
 
-
-
-type ListingPropsWithLayout = ListingProps & { layoutKey?: string };
+type ListingPropsWithLayout = ListingProps & { layoutKey?: LayoutKey };
 
 export async function Listing(props: ListingPropsWithLayout) {
   const t = await getTranslations("listing");
   const layoutKey = props.layoutKey || "classic";
-
-  const LayoutComponent =
-    layoutKey === "grid"
-      ? LayoutGrid
-      : layoutKey === "cards"
-      ? LayoutCards
-      : LayoutClassic;
+  const LayoutComponent = layoutComponents[layoutKey];
 
   return (
     <div className="container mx-auto p-8">
