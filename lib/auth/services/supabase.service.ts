@@ -26,10 +26,10 @@ export class SupabaseService implements AuthService {
   }
   async signUp(email: string, password: string, options?: any): Promise<any> {
     const { data, error } = await supabaseAuth.signUp(email, password, options);
-    console.log("========+++++++==========>", data);
     if (error) {
       throw error;
     }
+    return data;
   }
 
   async getCurrentUser(): Promise<any | null> {

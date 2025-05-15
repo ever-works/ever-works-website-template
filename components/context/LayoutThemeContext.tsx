@@ -31,14 +31,9 @@ export const LayoutThemeProvider = ({
   }, []);
 
   const setLayoutKey = (key: LayoutKey) => {
-    console.log("LayoutThemeContext: Setting layout key to:", key);
     setLayoutKeyState(key);
     if (typeof window !== "undefined") {
       window.localStorage.setItem("layoutKey", key);
-      console.log(
-        "LayoutThemeContext: Saved to localStorage, current value:",
-        window.localStorage.getItem("layoutKey")
-      );
     }
   };
   const setThemeKey = (key: string) => {

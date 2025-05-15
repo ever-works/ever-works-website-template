@@ -1,8 +1,7 @@
+import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 import Image from "next/image";
 import { useCallback, useMemo, useState, memo, type FC } from "react";
-import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 
-// Définition du type pour un thème
 type Theme = {
   key: string;
   label: string;
@@ -11,27 +10,26 @@ type Theme = {
   secondaryColor: string;
 };
 
-// Définition des thèmes disponibles (constante en dehors du composant)
 const THEMES: Theme[] = [
   {
     key: "everworks",
     label: "Ever Works",
     preview: "/previews/theme-everworks.png",
-    color: "#0070f3", // Bleu vif
-    secondaryColor: "#00c853", // Vert
+    color: "#0070f3",
+    secondaryColor: "#00c853",
   },
   {
     key: "corporate",
     label: "Corporate",
     preview: "/previews/theme-corporate.png",
-    color: "#2c3e50", // Bleu foncé
-    secondaryColor: "#e74c3c", // Rouge
+    color: "#2c3e50",
+    secondaryColor: "#e74c3c",
   },
   {
     key: "material",
     label: "Material",
     preview: "/previews/theme-material.png",
-    color: "#673ab7", // Violet
+    color: "#673ab7",
     secondaryColor: "#ff9800", // Orange
   },
   {
@@ -51,37 +49,40 @@ type ThemeSwitchProps = {
 const ThemeSwitch: FC<ThemeSwitchProps> = ({ onChange, value }) => {
   const [open, setOpen] = useState(false);
   const ref = useOnClickOutside<HTMLDivElement>(() => setOpen(false));
-  
-  // Récupérer le thème actuel une seule fois
-  const currentTheme = useMemo(() => 
-    THEMES.find((t) => t.key === value), 
+
+  const currentTheme = useMemo(
+    () => THEMES.find((t) => t.key === value),
     [value]
   );
-  // Optimisation du gestionnaire d'événements avec useCallback
-  const handleThemeChange = useCallback((themeKey: string) => {
-    onChange(themeKey);
-    setOpen(false);
-  }, [onChange]);
 
-  // Rendu des indicateurs de couleur
-  const renderColorIndicators = useCallback((theme: Theme, size: "sm" | "lg") => {
-    const dimensions = size === "sm" ? "w-3 h-3" : "w-5 h-5";
-    
-    return (
-      <div className="flex items-center mr-3">
-        <div 
-          className={`${dimensions} rounded-full mr-1`}
-          style={{ backgroundColor: theme.color }}
-        />
-        <div 
-          className={`${dimensions} rounded-full`}
-          style={{ backgroundColor: theme.secondaryColor }}
-        />
-      </div>
-    );
-  }, []);
+  const handleThemeChange = useCallback(
+    (themeKey: string) => {
+      onChange(themeKey);
+      setOpen(false);
+    },
+    [onChange]
+  );
 
-  // Rendu des options de thème
+  const renderColorIndicators = useCallback(
+    (theme: Theme, size: "sm" | "lg") => {
+      const dimensions = size === "sm" ? "w-3 h-3" : "w-5 h-5";
+
+      return (
+        <div className="flex items-center mr-3">
+          <div
+            className={`${dimensions} rounded-full mr-1`}
+            style={{ backgroundColor: theme.color }}
+          />
+          <div
+            className={`${dimensions} rounded-full`}
+            style={{ backgroundColor: theme.secondaryColor }}
+          />
+        </div>
+      );
+    },
+    []
+  );
+
   const renderThemeOptions = useMemo(() => {
     return THEMES.map((theme) => (
       <button
@@ -90,6 +91,7 @@ const ThemeSwitch: FC<ThemeSwitchProps> = ({ onChange, value }) => {
           value === theme.key ? "bg-gray-100 dark:bg-gray-800" : ""
         }`}
         onClick={() => handleThemeChange(theme.key)}
+        role="menuitem"
       >
         {renderColorIndicators(theme, "lg")}
         <Image
@@ -116,19 +118,19 @@ const ThemeSwitch: FC<ThemeSwitchProps> = ({ onChange, value }) => {
       >
         {currentTheme && renderColorIndicators(currentTheme, "sm")}
         <span className="font-medium">Theme</span>
-        <svg 
-          width="16" 
-          height="16" 
-          fill="none" 
+        <svg
+          width="16"
+          height="16"
+          fill="none"
           viewBox="0 0 24 24"
           aria-hidden="true"
         >
           <path stroke="currentColor" strokeWidth="2" d="M6 9l6 6 6-6" />
         </svg>
       </button>
-      
+
       {open && (
-        <div 
+        <div
           className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-900 border rounded shadow-lg z-50"
           role="menu"
           aria-orientation="vertical"
@@ -140,5 +142,4 @@ const ThemeSwitch: FC<ThemeSwitchProps> = ({ onChange, value }) => {
   );
 };
 
-// Utiliser memo pour éviter les rendus inutiles
 export default memo(ThemeSwitch);
