@@ -1,18 +1,31 @@
 import Image from "next/image";
 import { useState } from "react";
+import { LayoutKey } from "@/components/layouts";
 
 const LAYOUTS = [
-  { key: "classic", label: "Classic", preview: "/previews/layout-classic.png" },
-  { key: "grid", label: "Grid", preview: "/previews/layout-grid.png" },
-  { key: "cards", label: "Cards", preview: "/previews/layout-cards.png" },
+  {
+    key: "classic" as LayoutKey,
+    label: "Classic",
+    preview: "/previews/layout-classic.png",
+  },
+  {
+    key: "grid" as LayoutKey,
+    label: "Grid",
+    preview: "/previews/layout-grid.png",
+  },
+  {
+    key: "cards" as LayoutKey,
+    label: "Cards",
+    preview: "/previews/layout-cards.png",
+  },
 ];
 
 export default function LayoutSwitch({
   onChange,
   value,
 }: {
-  onChange: (layout: string) => void;
-  value: string;
+  onChange: (layout: LayoutKey) => void;
+  value: LayoutKey;
 }) {
   const [open, setOpen] = useState(false);
   return (
