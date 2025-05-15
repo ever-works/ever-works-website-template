@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { LayoutKey } from "@/components/layouts";
+const DEFAULT_LAYOUT: LayoutKey = "classic";
 
 type LayoutThemeContextType = {
   layoutKey: LayoutKey;
@@ -18,13 +19,14 @@ export const LayoutThemeProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [layoutKey, setLayoutKeyState] = useState<LayoutKey>("classic");
+  const [layoutKey, setLayoutKeyState] = useState<LayoutKey>(DEFAULT_LAYOUT);
   const [themeKey, setThemeKeyState] = useState("everworks");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const savedLayout =
-        (window.localStorage.getItem("layoutKey") as LayoutKey) || "classic";
+        (window.localStorage.getItem("layoutKey") as LayoutKey) ||
+        DEFAULT_LAYOUT;
       setLayoutKeyState(savedLayout);
       setThemeKeyState(window.localStorage.getItem("themeKey") || "everworks");
     }
