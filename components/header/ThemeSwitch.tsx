@@ -50,6 +50,21 @@ const ThemeSwitch: FC<ThemeSwitchProps> = ({ onChange, value }) => {
   const [open, setOpen] = useState(false);
   const ref = useOnClickOutside<HTMLDivElement>(() => setOpen(false));
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+      } else if (e.key === "ArrowDown" && open) {
+        e.preventDefault();
+        const menuItems = ref.current?.querySelectorAll('[role="menuitem"]');
+        if (menuItems?.length) {
+          (menuItems[0] as HTMLElement).focus();
+        }
+      }
+    },
+    [open, ref]
+  );
+
   const currentTheme = useMemo(
     () => THEMES.find((t) => t.key === value),
     [value]
@@ -61,6 +76,28 @@ const ThemeSwitch: FC<ThemeSwitchProps> = ({ onChange, value }) => {
       setOpen(false);
     },
     [onChange]
+  );
+
+  const handleItemKeyDown = useCallback(
+    (e: React.KeyboardEvent, themeKey: string, index: number) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        handleThemeChange(themeKey);
+      } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        const menuItems = ref.current?.querySelectorAll('[role="menuitem"]');
+        if (!menuItems?.length) return;
+        const newIndex =
+          e.key === "ArrowDown"
+            ? (index + 1) % menuItems.length
+            : (index - 1 + menuItems.length) % menuItems.length;
+        (menuItems[newIndex] as HTMLElement).focus();
+      } else if (e.key === "Escape") {
+        setOpen(false);
+        ref.current?.querySelector("button")?.focus();
+      }
+    },
+    [handleThemeChange, ref]
   );
 
   const renderColorIndicators = useCallback(
@@ -84,19 +121,20 @@ const ThemeSwitch: FC<ThemeSwitchProps> = ({ onChange, value }) => {
   );
 
   const renderThemeOptions = useMemo(() => {
-    return THEMES.map((theme) => (
+    return THEMES.map((theme, index) => (
       <button
         key={theme.key}
         className={`flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 ${
           value === theme.key ? "bg-gray-100 dark:bg-gray-800" : ""
         }`}
+        onKeyDown={(e) => handleItemKeyDown(e, theme.key, index)}
         onClick={() => handleThemeChange(theme.key)}
         role="menuitem"
       >
         {renderColorIndicators(theme, "lg")}
         <Image
-          width={30}
-          height={30}
+          width={40}
+          height={32}
           src={theme.preview}
           alt={theme.label}
           className="w-10 h-8 mr-3 rounded border"
@@ -111,6 +149,7 @@ const ThemeSwitch: FC<ThemeSwitchProps> = ({ onChange, value }) => {
     <div className="relative" ref={ref}>
       <button
         className="flex items-center gap-2 px-3 py-1 rounded border bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow"
+        onKeyDown={handleKeyDown}
         onClick={() => setOpen((v) => !v)}
         aria-label="Switch Theme"
         aria-expanded={open}
