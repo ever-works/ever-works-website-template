@@ -1,7 +1,7 @@
 import { fetchByTag, fetchItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
-import { Listing } from "../../listing";
 import { LOCALES } from "@/lib/constants";
+import Listing from "../../listing";
 
 export const revalidate = 10;
 
@@ -33,13 +33,15 @@ export async function generateStaticParams() {
 export default async function TagListing({
   params,
 }: {
-  params: Promise<{ tag: string[], locale: string }>;
+  params: Promise<{ tag: string[]; locale: string }>;
 }) {
   const { tag: tagMeta, locale } = await params;
   const [rawTag, rawPage] = tagMeta;
   const tag = decodeURI(rawTag);
   const { start, page } = paginateMeta(rawPage);
-  const { items, categories, total, tags } = await fetchByTag(tag, { lang: locale });
+  const { items, categories, total, tags } = await fetchByTag(tag, {
+    lang: locale,
+  });
 
   return (
     <Listing

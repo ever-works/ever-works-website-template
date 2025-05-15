@@ -1,7 +1,7 @@
 import { fetchItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
-import { Listing } from "../../listing";
 import { LOCALES } from "@/lib/constants";
+import Listing from "../../listing";
 
 export const revalidate = 10;
 

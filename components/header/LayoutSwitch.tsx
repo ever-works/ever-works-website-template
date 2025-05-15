@@ -49,6 +49,7 @@ export default function LayoutSwitch({
                 value === layout.key ? "bg-gray-100 dark:bg-gray-800" : ""
               }`}
               onClick={() => {
+                console.log("Changing layout to:", layout.key);
                 onChange(layout.key);
                 setOpen(false);
               }}

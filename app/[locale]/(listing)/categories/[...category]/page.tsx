@@ -1,7 +1,7 @@
 import { fetchByCategory, fetchItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
-import { Listing } from "../../listing";
 import { LOCALES } from "@/lib/constants";
+import Listing from "../../listing";
 
 export const revalidate = 10;
 
@@ -33,12 +33,14 @@ export async function generateStaticParams() {
 export default async function CategoryListing({
   params,
 }: {
-  params: Promise<{ category: string[], locale: string }>;
+  params: Promise<{ category: string[]; locale: string }>;
 }) {
   const { category: cat, locale } = await params;
   const category = decodeURI(cat[0]);
   const { start, page } = paginateMeta(cat[1]);
-  const { items, categories, total, tags } = await fetchByCategory(category, { lang: locale });
+  const { items, categories, total, tags } = await fetchByCategory(category, {
+    lang: locale,
+  });
 
   return (
     <Listing
