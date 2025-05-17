@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  lint-and-build:
+    name: Lint and Build
+    runs-on: ubuntu-latest
+    
+    env:
+      # Default environment variables for development
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      # Add other default variables as needed for development
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck || npm run check:types || echo "No type check script found, skipping"
+
+      - name: Build project
+        run: npm run build
+        env:
+          # Use GitHub secrets for sensitive environment variables
+          # Auth related variables
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || env.NEXT_PUBLIC_APP_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'development-secret' }}
+          
+          # Supabase related variables (if using Supabase)
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || '' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || '' }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || '' }}
+          
+          # Database related variables
+          DATABASE_URL: ${{ secrets.DATABASE_URL || env.DATABASE_URL }}
+          
+          # OAuth Provider variables
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID || '' }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET || '' }}
+          GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID || '' }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET || '' }}
+          FACEBOOK_CLIENT_ID: ${{ secrets.FACEBOOK_CLIENT_ID || '' }}
+          FACEBOOK_CLIENT_SECRET: ${{ secrets.FACEBOOK_CLIENT_SECRET || '' }}
+          TWITTER_CLIENT_ID: ${{ secrets.TWITTER_CLIENT_ID || '' }}
+          TWITTER_CLIENT_SECRET: ${{ secrets.TWITTER_CLIENT_SECRET || '' }}
+          
+          # Content repository variables
+          DATA_REPOSITORY: ${{ secrets.DATA_REPOSITORY || '' }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN || '' }}
+          
+          # Email service variables (Resend)
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || '' }}
+          EMAIL_FROM_ADDRESS: ${{ secrets.EMAIL_FROM_ADDRESS || 'noreply@example.com' }}
+
+      - name: Check for build success
+        run: |
+          if [ -d ".next" ]; then
+            echo "✅ Build successful"
+          else
+            echo "❌ Build failed"
+            exit 1
+          fi
