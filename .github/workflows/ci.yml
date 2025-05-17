@@ -23,24 +23,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Check for lock file
-        id: check-lock
+      - name: Check for lock file existence
+        id: check-lock-file
         run: |
-          if [ -f "package-lock.json" ] || [ -f "npm-shrinkwrap.json" ]; then
+          if [ -f "package-lock.json" ] || [ -f "npm-shrinkwrap.json" ] || [ -f "yarn.lock" ]; then
             echo "lock_file_exists=true" >> $GITHUB_OUTPUT
           else
             echo "lock_file_exists=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Setup Node.js with cache
+        if: steps.check-lock-file.outputs.lock_file_exists == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Setup Node.js without cache
+        if: steps.check-lock-file.outputs.lock_file_exists != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Install dependencies
         run: |
-          if [ "${{ steps.check-lock.outputs.lock_file_exists }}" == "true" ]; then
+          if [ "${{ steps.check-lock-file.outputs.lock_file_exists }}" == "true" ]; then
             echo "Installing dependencies with npm ci (using lock file)"
             npm ci
           else
