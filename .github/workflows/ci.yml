@@ -1,5 +1,6 @@
 name: CI
-
+permissions:
+  contents: read
 on:
   push:
     branches: [main, develop]
@@ -59,12 +60,12 @@ jobs:
           # Use GitHub secrets for sensitive environment variables
           # Auth related variables
           NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || env.NEXT_PUBLIC_APP_URL }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'development-secret' }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET}}
           
           # Supabase related variables (if using Supabase)
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || '' }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || '' }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || '' }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           
           # Database related variables
           DATABASE_URL: ${{ secrets.DATABASE_URL || env.DATABASE_URL }}
