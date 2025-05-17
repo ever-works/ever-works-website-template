@@ -28,8 +28,24 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Check for lock file
+        id: check-lock
+        run: |
+          if [ -f "package-lock.json" ] || [ -f "npm-shrinkwrap.json" ]; then
+            echo "lock_file_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "lock_file_exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Install dependencies
-        run: npm ci
+        run: |
+          if [ "${{ steps.check-lock.outputs.lock_file_exists }}" == "true" ]; then
+            echo "Installing dependencies with npm ci (using lock file)"
+            npm ci
+          else
+            echo "No lock file found, using npm install instead"
+            npm install
+          fi
 
       - name: Run lint
         run: npm run lint
