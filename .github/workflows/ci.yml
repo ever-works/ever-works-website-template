@@ -17,7 +17,14 @@ jobs:
       # Default environment variables for development
       NEXT_PUBLIC_APP_URL: http://localhost:3000
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
-      # Add other default variables as needed for development
+      # Auth defaults to suppress warnings
+      NEXTAUTH_SECRET: "ci-test-secret-not-for-production"
+      NEXTAUTH_URL: "http://localhost:3000"
+      # Content repository defaults
+      DATA_REPOSITORY: "ci-test-repo-not-used"
+      CONTENT_WARNINGS_SILENT: "true"
+      # Disable verbose warnings
+      CI: "true"
 
     steps:
       - name: Checkout code
@@ -70,7 +77,7 @@ jobs:
           echo "Created content directories for build"
           
       - name: Build project
-        run: npm run build
+        run: npm run build 2> >(grep -v "DATA_REPOSITORY\|AUTH CONFIG WARNING" >&2)
         env:
           # Use GitHub secrets for sensitive environment variables
           # Auth related variables
