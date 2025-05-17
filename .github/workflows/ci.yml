@@ -64,6 +64,11 @@ jobs:
       - name: Type check
         run: npm run typecheck || npm run check:types || echo "No type check script found, skipping"
 
+      - name: Create content directories
+        run: |
+          mkdir -p .content/data
+          echo "Created content directories for build"
+          
       - name: Build project
         run: npm run build
         env:

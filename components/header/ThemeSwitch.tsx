@@ -143,7 +143,7 @@ const ThemeSwitch: FC<ThemeSwitchProps> = ({ onChange, value }) => {
         <span>{theme.label}</span>
       </button>
     ));
-  }, [value, handleThemeChange, renderColorIndicators, handleItemKeyDown, ref]);
+  }, [value, handleThemeChange, renderColorIndicators, handleItemKeyDown]);
 
   return (
     <div className="relative" ref={ref}>
