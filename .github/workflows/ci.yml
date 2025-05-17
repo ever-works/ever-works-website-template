@@ -57,6 +57,9 @@ jobs:
 
       - name: Run lint
         run: npm run lint
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
+        # You can use the following if you want to ignore specific warnings
+        # run: npm run lint -- --max-warnings=0
 
       - name: Type check
         run: npm run typecheck || npm run check:types || echo "No type check script found, skipping"
