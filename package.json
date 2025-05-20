@@ -26,6 +26,7 @@
     "@heroui/tooltip": "^2.2.16",
     "@next/env": "^15.3.1",
     "@novu/node": "^2.6.6",
+    "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.3",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",

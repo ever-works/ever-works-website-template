@@ -143,7 +143,6 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
                 "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-2 py-1 rounded text-xs font-medium max-w-xs",
             }}
           >
-<<<<<<< HEAD
             <div>
               <BlockLink isActive={isActive} href={href}>
                 <div className="flex items-center justify-between w-full px-3 py-2">
@@ -167,19 +166,6 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
               </BlockLink>
             </div>
           </Tooltip>
-=======
-            {category.icon_url && (
-              <Image
-                width={20}
-                height={20}
-                src={category.icon_url}
-                className="w-5 h-5"
-                alt={category.name}
-              />
-            )}
-            {category.name} ({category.count || 0})
-          </BlockLink>
->>>>>>> f0f3251 (feat: integrate shadcn UI components and Stripe configuration)
         );
       })}
     </div>
@@ -565,7 +551,6 @@ export function Tags(props: { tags: Tag[] }) {
   };
 
   return (
-<<<<<<< HEAD
     <div className="relative mb-6">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-lg font-bold text-default-900">Tags</h3>
@@ -587,30 +572,6 @@ export function Tags(props: { tags: Tag[] }) {
           className={cn(
             "w-full flex gap-2 flex-wrap",
             !showAllTags && "max-h-[120px] overflow-hidden"
-=======
-    <div className="w-fill flex gap-2 flex-wrap">
-      {props.tags.map((tag) => (
-        <Button
-          key={tag.id}
-          variant={
-            pathname.startsWith(encodeURI(`/tags/${tag.id}`))
-              ? "solid"
-              : "bordered"
-          }
-          color="default"
-          size="sm"
-          as={Link}
-          href={`/tags/${tag.id}`}
-        >
-          {tag.icon_url && (
-            <Image
-              width={20}
-              height={20}
-              src={tag.icon_url}
-              className="w-4 h-4"
-              alt={tag.name}
-            />
->>>>>>> f0f3251 (feat: integrate shadcn UI components and Stripe configuration)
           )}
         >
           {props.tags.map(renderTag)}
