@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 // Components
 import { PricingSection } from "@/components/pricing/pricing-section";
 import { PaymentSection } from "@/components/payment/payment-section";
@@ -13,8 +12,6 @@ type FormStep = "pricing" | "details" | "payment" | "publish";
 type PricingPlan = "free" | "pro" | "sponsor";
 
 function DirectoryPage() {
-  const t = useTranslations();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState<FormStep>("pricing");
   const [selectedPlan, setSelectedPlan] = useState<PricingPlan | null>(null);
@@ -27,18 +24,17 @@ function DirectoryPage() {
     introduction: "",
   });
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  // const handleInputChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  // ) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
 
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  // const handleSelectChange = (name: string, value: string) => {
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
 
-  // Vérifier les paramètres d'URL au chargement de la page
   useEffect(() => {
     const step = searchParams.get("step");
     const plan = searchParams.get("plan") as PricingPlan;
