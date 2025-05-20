@@ -22,7 +22,7 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 
   const handleContinue = () => {
     if (!selectedPlan) return;
-    
+
     if (selectedPlan === "free") {
       router.push("/directory?plan=free&step=details");
     } else {
@@ -30,7 +30,6 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
     }
   };
 
-  // Définition des fonctionnalités pour chaque plan
   const freePlanFeatures: PlanFeature[] = [
     { included: true, text: "Get 3 dofollow links to boost your SEO" },
     { included: true, text: "Permanent link with backlink maintenance" },

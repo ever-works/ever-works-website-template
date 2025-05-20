@@ -10,7 +10,14 @@ import { ReviewSection } from "@/components/directory/review-section";
 
 type FormStep = "pricing" | "details" | "payment" | "publish";
 type PricingPlan = "free" | "pro" | "sponsor";
-
+const formSchema = z.object({
+  link: z.string().url("Please enter a valid URL"),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  category: z.string().min(1, "Please select a category"),
+  tags: z.array(z.string()).min(1, "Please add at least one tag"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+  introduction: z.string().optional(),
+});
 function DirectoryPage() {
   const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState<FormStep>("pricing");
@@ -23,6 +30,21 @@ function DirectoryPage() {
     description: "",
     introduction: "",
   });
+
+  const stepTransitions = {
+    next: {
+      pricing: { free: "details", pro: "payment", sponsor: "payment" },
+      details: { free: "publish", pro: "payment", sponsor: "payment" },
+      payment: { free: "publish", pro: "publish", sponsor: "publish" },
+      publish: { free: "publish", pro: "publish", sponsor: "publish" },
+    },
+    prev: {
+      pricing: { free: "pricing", pro: "pricing", sponsor: "pricing" },
+      details: { free: "pricing", pro: "pricing", sponsor: "pricing" },
+      payment: { free: "details", pro: "details", sponsor: "details" },
+      publish: { free: "details", pro: "payment", sponsor: "payment" },
+    },
+  } as const;
 
   // const handleInputChange = (
   //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -50,47 +72,17 @@ function DirectoryPage() {
 
   const handleSelectPlan = (plan: PricingPlan) => {
     setSelectedPlan(plan);
-    if (plan === "free") {
-      setCurrentStep("details");
-    } else {
-      setCurrentStep("payment");
-    }
+    setCurrentStep(stepTransitions.next.pricing[plan]);
   };
 
   const handleNextStep = () => {
-    if (currentStep === "pricing") {
-      if (selectedPlan === "free") {
-        setCurrentStep("details");
-      } else {
-        setCurrentStep("payment");
-      }
-    } else if (currentStep === "details") {
-      if (selectedPlan === "free") {
-        setCurrentStep("publish");
-      } else {
-        setCurrentStep("payment");
-      }
-    } else if (currentStep === "payment") {
-      setCurrentStep("publish");
-    }
+    if (!selectedPlan) return;
+    setCurrentStep(stepTransitions.next[currentStep][selectedPlan]);
   };
 
   const handlePrevStep = () => {
-    if (currentStep === "publish") {
-      if (selectedPlan === "free") {
-        setCurrentStep("details");
-      } else {
-        setCurrentStep("payment");
-      }
-    } else if (currentStep === "payment") {
-      if (selectedPlan === "free") {
-        setCurrentStep("pricing");
-      } else {
-        setCurrentStep("details");
-      }
-    } else if (currentStep === "details") {
-      setCurrentStep("pricing");
-    }
+    if (!selectedPlan) return;
+    setCurrentStep(stepTransitions.prev[currentStep][selectedPlan]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

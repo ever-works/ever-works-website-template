@@ -40,7 +40,7 @@ const CATEGORIES = [
   "Productivity",
   "Security",
   "Social",
-  "Other"
+  "Other",
 ];
 
 const TAGS = [
@@ -58,14 +58,14 @@ const TAGS = [
   "No-Code",
   "Low-Code",
   "Developer Tools",
-  "Business Tools"
+  "Business Tools",
 ];
 
 export function DetailsForm({
   initialData = {},
   selectedPlan,
   onSubmit,
-  onBack
+  onBack,
 }: DetailsFormProps) {
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -74,19 +74,23 @@ export function DetailsForm({
     tags: [],
     description: "",
     introduction: "",
-    ...initialData
+    ...initialData,
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleTagToggle = (tag: string) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       const currentTags = [...prev.tags];
       if (currentTags.includes(tag)) {
-        return { ...prev, tags: currentTags.filter(t => t !== tag) };
+        return { ...prev, tags: currentTags.filter((t) => t !== tag) };
       } else {
         return { ...prev, tags: [...currentTags, tag] };
       }
@@ -126,9 +130,11 @@ export function DetailsForm({
           <Input
             id="link"
             name="link"
+            type="url"
             value={formData.link}
             onChange={handleInputChange}
             placeholder="https://yourproduct.com"
+            pattern="https?://.*"
             required
           />
         </div>
@@ -148,7 +154,7 @@ export function DetailsForm({
             <option value="" disabled>
               Select a category
             </option>
-            {CATEGORIES.map(category => (
+            {CATEGORIES.map((category) => (
               <option key={category} value={category}>
                 {category}
               </option>
@@ -159,7 +165,7 @@ export function DetailsForm({
         <div className="space-y-2">
           <label className="block font-medium">Tags</label>
           <div className="flex flex-wrap gap-2">
-            {TAGS.map(tag => (
+            {TAGS.map((tag) => (
               <button
                 key={tag}
                 type="button"
@@ -215,9 +221,7 @@ export function DetailsForm({
           Back
         </Button>
 
-        <Button type="submit">
-          Continue
-        </Button>
+        <Button type="submit">Continue</Button>
       </div>
     </form>
   );
