@@ -10,14 +10,6 @@ import { ReviewSection } from "@/components/directory/review-section";
 
 type FormStep = "pricing" | "details" | "payment" | "publish";
 type PricingPlan = "free" | "pro" | "sponsor";
-const formSchema = z.object({
-  link: z.string().url("Please enter a valid URL"),
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  category: z.string().min(1, "Please select a category"),
-  tags: z.array(z.string()).min(1, "Please add at least one tag"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  introduction: z.string().optional(),
-});
 function DirectoryPage() {
   const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState<FormStep>("pricing");
