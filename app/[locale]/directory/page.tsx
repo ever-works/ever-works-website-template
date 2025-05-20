@@ -3,17 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { cn } from "@/lib/utils";
-
-// UI Components
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-// Icons
-import { Bold, Italic, Underline, Code, Quote, List, ListOrdered, Link2, Image, HelpCircle, Check, X } from "lucide-react";
-
 // Components
 import { PricingSection } from "@/components/pricing/pricing-section";
 import { PaymentSection } from "@/components/payment/payment-section";
@@ -53,11 +42,11 @@ function DirectoryPage() {
   useEffect(() => {
     const step = searchParams.get("step");
     const plan = searchParams.get("plan") as PricingPlan;
-    
+
     if (step && ["details", "payment", "publish"].includes(step)) {
       setCurrentStep(step as FormStep);
     }
-    
+
     if (plan && ["free", "pro", "sponsor"].includes(plan)) {
       setSelectedPlan(plan);
     }
@@ -123,39 +112,57 @@ function DirectoryPage() {
       ) : (
         <>
           <h1 className="text-3xl font-bold mb-6">Submit</h1>
-          
+
           {/* Progress indicator */}
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === "details" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    currentStep === "details"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }`}
                 >
                   1
                 </div>
-                <span className={currentStep === "details" ? "font-medium" : ""}>
+                <span
+                  className={currentStep === "details" ? "font-medium" : ""}
+                >
                   Details
                 </span>
               </div>
               <div className="h-px w-12 bg-muted self-center" />
               <div className="flex items-center gap-2">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === "payment" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    currentStep === "payment"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }`}
                 >
                   2
                 </div>
-                <span className={currentStep === "payment" ? "font-medium" : ""}>
+                <span
+                  className={currentStep === "payment" ? "font-medium" : ""}
+                >
                   Payment
                 </span>
               </div>
               <div className="h-px w-12 bg-muted self-center" />
               <div className="flex items-center gap-2">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === "publish" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    currentStep === "publish"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }`}
                 >
                   3
                 </div>
-                <span className={currentStep === "publish" ? "font-medium" : ""}>
+                <span
+                  className={currentStep === "publish" ? "font-medium" : ""}
+                >
                   Publish
                 </span>
               </div>
