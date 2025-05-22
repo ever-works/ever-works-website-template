@@ -36,11 +36,11 @@ export default function Listing(props: ListingProps) {
           {t("THIS_IS_A_DEMO_DIRECTORY_WEBSITE")}
         </p>
       </div>
-      <div className="flex flex-col md:flex-row w-full gap-5">
+      <div className="flex flex-col md:flex-row w-full gap-5 ">
         <Categories total={props.total} categories={props.categories} />
         <div className="w-full">
           <Tags tags={props.tags} />
-          <div className="py-8 w-full">
+          <div className="w-full">
             <LayoutComponent>
               {props.items
                 .slice(props.start, props.start + PER_PAGE)

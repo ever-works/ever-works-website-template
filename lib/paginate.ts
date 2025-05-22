@@ -1,4 +1,4 @@
-export const PER_PAGE = 5;
+export const PER_PAGE = 9;
 
 export function totalPages(size: number) {
     return Math.ceil(size / PER_PAGE);

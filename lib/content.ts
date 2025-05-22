@@ -31,6 +31,7 @@ export interface ItemData {
     category: string | Category | Category[] | string[];
     tags: string[] | Tag[];
     featured?: boolean;
+    icon_url?: string;
     updated_at: string; // raw string timestamp
     updatedAt: Date;  // timestamp
 }
