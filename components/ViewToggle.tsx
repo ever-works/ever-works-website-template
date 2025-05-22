@@ -13,7 +13,7 @@ export default function ViewToggle({
   activeView = 'classic', 
   onViewChange 
 }: ViewToggleProps) {
-  const [isHovering, setIsHovering] = useState<string | null>(null);
+  const [isHovering, setIsHovering] = useState<ViewToggleProps['activeView'] | null>(null);
   
   const handleViewChange = (view: 'classic' | 'grid' | 'cards') => {
     if (onViewChange) {

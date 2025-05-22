@@ -22,9 +22,9 @@ type ListingProps = {
 };
 
 export default function Listing(props: ListingProps) {
-  const { layoutKey,setLayoutKey } = useLayoutTheme();
+  const { layoutKey, setLayoutKey } = useLayoutTheme();
   const t = useTranslations("listing");
-  
+
   const LayoutComponent = layoutComponents[layoutKey];
 
   return (

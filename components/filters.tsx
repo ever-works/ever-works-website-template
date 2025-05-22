@@ -199,17 +199,17 @@ export function Paginate({
             wrapper: "gap-1",
             item: cn(
               "flex items-center justify-center h-8 w-8 rounded-full transition-colors",
-              "hover:bg-default-100 dark:hover:bg-default-800 dark:bg-default-800 dark:hover:bg-default-700",
-              "data-[hover=true]:bg-default-50 dark:data-[hover=true]:bg-default-800 data-[hover=true]:text-default-700 dark:data-[hover=true]:text-default-300 data-[hover=true]:text-white dark:data-[hover=true]:text-white data-[hover=true]:font-medium dark:data-[hover=true]:font-medium"
+              "hover:bg-dark--theme-100 dark:hover:bg-dark--theme-800 dark:bg-dark--theme-800 dark:hover:bg-dark--theme-700",
+              "data-[hover=true]:bg-dark--theme-50 dark:data-[hover=true]:bg-dark--theme-800 data-[hover=true]:text-dark--theme-700 dark:data-[hover=true]:text-dark--theme-300 data-[hover=true]:font-medium"
             ),
             cursor: cn(
-              "text-default-600 dark:text-default-400 transition-colors cursor-pointer hover:text-default-700 dark:hover:text-default-300 dark:bg-default-800 dark:hover:bg-default-700 data-[hover=true]:text-default-700 dark:data-[hover=true]:text-default-300 data-[hover=true]:text-white dark:data-[hover=true]:text-white data-[hover=true]:font-medium dark:data-[hover=true]:font-medium"
+              "text-dark--theme-600 dark:text-dark--theme-400 transition-colors cursor-pointer hover:text-dark--theme-700 dark:hover:text-dark--theme-300 dark:bg-dark--theme-800 dark:hover:bg-dark--theme-700 data-[hover=true]:text-dark--theme-700 dark:data-[hover=true]:text-dark--theme-300 data-[hover=true]:font-medium"
             ),
             next: cn(
-              "text-default-600 dark:text-default-400 hover:text-default-700 dark:hover:text-default-300 transition-colors cursor-pointer dark:bg-default-800 dark:hover:bg-default-700 data-[hover=true]:text-default-700 dark:data-[hover=true]:text-default-300 data-[hover=true]:text-white dark:data-[hover=true]:text-white data-[hover=true]:font-medium dark:data-[hover=true]:font-medium"
+              "text-dark--theme-600 dark:text-dark--theme-400 hover:text-dark--theme-700 dark:hover:text-dark--theme-300 transition-colors cursor-pointer dark:bg-dark--theme-800 dark:hover:bg-dark--theme-700 data-[hover=true]:text-dark--theme-700 dark:data-[hover=true]:text-dark--theme-300 data-[hover=true]:font-medium"
             ),
             prev: cn(
-              "text-default-600 dark:text-default-400 hover:text-default-700 dark:hover:text-default-300 transition-colors cursor-pointer dark:bg-default-800 dark:hover:bg-default-700 data-[hover=true]:text-default-700 dark:data-[hover=true]:text-default-300 data-[hover=true]:text-white dark:data-[hover=true]:text-white data-[hover=true]:font-medium dark:data-[hover=true]:font-medium"
+              "text-dark--theme-600 dark:text-dark--theme-400 hover:text-dark--theme-700 dark:hover:text-dark--theme-300 transition-colors cursor-pointer dark:bg-dark--theme-800 dark:hover:bg-dark--theme-700 data-[hover=true]:text-dark--theme-700 dark:data-[hover=true]:text-dark--theme-300 data-[hover=true]:font-medium"
             ),
           }}
         />
