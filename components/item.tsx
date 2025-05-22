@@ -1,6 +1,6 @@
 "use client";
 
-import { ItemData } from "@/lib/content";
+import { ItemData, Tag } from "@/lib/content";
 import { getCategoriesName } from "@/lib/utils";
 import Link from "next/link";
 import {
@@ -18,7 +18,7 @@ import Image from "next/image";
 type ItemProps = ItemData;
 
 export default function Item(props: ItemProps) {
-  const getTagName = (tag: string | any): string => {
+  const getTagName = (tag: string | Tag): string => {
     if (typeof tag === "string") return tag;
     if (tag && typeof tag === "object" && "name" in tag) return tag.name;
     return "";
@@ -32,7 +32,8 @@ export default function Item(props: ItemProps) {
         month: "short",
         year: "numeric",
       }).format(date);
-    } catch (e) {
+    } catch (error) {
+      console.error("Error formatting date:", error);
       return "";
     }
   };
@@ -63,13 +64,12 @@ export default function Item(props: ItemProps) {
             )}
           >
             {props.icon_url ? (
-              <Image 
-                src={props.icon_url} 
-                alt={`${props.name} icon`} 
+              <Image
+                src={props.icon_url}
+                alt={`${props.name} icon`}
                 className="w-6 h-6 object-contain"
                 width={24}
                 height={24}
-
               />
             ) : (
               <FiFolder className="w-6 h-6" />
@@ -118,9 +118,10 @@ export default function Item(props: ItemProps) {
             props.tags.slice(0, 3).map((tag, index) => {
               const tagName = getTagName(tag);
               const tagId = typeof tag === "string" ? tag : tag.id;
+              if (!tagName) return null;
               return (
                 <Chip
-                  key={index}
+                  key={tagId || `tag-${index}`}
                   as={Link}
                   href={`/tags/${encodeURIComponent(tagId)}`}
                   size="sm"
