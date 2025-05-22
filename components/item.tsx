@@ -13,6 +13,7 @@ import {
   Badge,
 } from "@heroui/react";
 import { FiCalendar, FiStar, FiTag, FiFolder } from "react-icons/fi";
+import Image from "next/image";
 
 type ItemProps = ItemData;
 
@@ -26,7 +27,7 @@ export default function Item(props: ItemProps) {
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return new Intl.DateTimeFormat("en-EN", {
+      return new Intl.DateTimeFormat("en-US", {
         day: "2-digit",
         month: "short",
         year: "numeric",
@@ -62,10 +63,13 @@ export default function Item(props: ItemProps) {
             )}
           >
             {props.icon_url ? (
-              <img 
+              <Image 
                 src={props.icon_url} 
                 alt={`${props.name} icon`} 
-                className="w-6 h-6 object-contain" 
+                className="w-6 h-6 object-contain"
+                width={24}
+                height={24}
+
               />
             ) : (
               <FiFolder className="w-6 h-6" />

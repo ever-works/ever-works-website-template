@@ -180,7 +180,6 @@ export function Paginate({
   total: number;
 }) {
   const router = useRouter();
-  const t = useTranslations("listing");
 
   function redirect(page: number) {
     const path = basePath + (page === 1 ? "" : `/${page}`);
