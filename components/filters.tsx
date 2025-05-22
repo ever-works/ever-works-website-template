@@ -12,6 +12,8 @@ import {
 import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { PropsWithChildren, useState } from "react";
+import { Tooltip } from "@heroui/tooltip";
+
 import Image from "next/image";
 
 function BlockLink({
@@ -71,24 +73,32 @@ export function CategoriesList({
         return (
           <BlockLink isActive={isActive} key={category.id} href={href}>
             <div className="flex items-center justify-between w-full gap-2">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 min-w-0 max-w-[80%]">
                 {category.icon_url && (
                   <Image
                     width={20}
                     height={20}
                     src={category.icon_url}
                     className={cn(
-                      "w-5 h-5 transition-transform",
+                      "w-5 h-5 transition-transform flex-shrink-0",
                       isActive ? "brightness-110 dark:brightness-125" : ""
                     )}
                     alt={category.name}
                   />
                 )}
-                <span className="font-medium">{category.name}</span>
+                <Tooltip content={category.name} showArrow 
+                className="dark:bg-dark--theme-900"
+                placement="right">
+                  <div className="overflow-hidden">
+                    <span className="font-medium whitespace-nowrap overflow-hidden text-ellipsis block w-full">
+                      {category.name}
+                    </span>
+                  </div>
+                </Tooltip>
               </div>
               <span
                 className={cn(
-                  "font-medium text-sm",
+                  "font-medium text-sm flex-shrink-0",
                   isActive
                     ? "text-primary-600 dark:text-primary-400"
                     : "text-default-600 dark:text-default-400"
