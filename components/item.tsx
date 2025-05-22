@@ -39,7 +39,7 @@ export default function Item(props: ItemProps) {
   return (
     <Card
       className={cn(
-        "border shadow-sm transition-all duration-200 dark:bg-dark-900 dark:border-dark-800 min-h-[280px]",
+        "border shadow-sm transition-all duration-200 dark:bg-dark--theme-900 dark:border-dark--theme-800 min-h-[280px]",
         {
           "border-primary-500 dark:border-primary-600 hover:border-primary-600 dark:hover:border-primary-700":
             props.featured,
@@ -88,13 +88,13 @@ export default function Item(props: ItemProps) {
               </Badge>
             )}
           </div>
-          <div className="flex items-center gap-2 text-xs text-dark-500">
+          <div className="flex items-center gap-2 text-xs text-dark--theme-500">
             <div className="flex items-center gap-1">
               <FiFolder className="w-3 h-3" />
               <span>{getCategoriesName(props.category)}</span>
             </div>
             {props.updatedAt && (
-              <div className="flex items-center no-underline no-underline-offset-2 gap-1 ml-3 dark:text-dark-400 whitespace-nowrap">
+              <div className="flex items-center no-underline no-underline-offset-2 gap-1 ml-3 dark:text-dark--theme-400 whitespace-nowrap">
                 <FiCalendar className="w-3 h-3" />
                 <span>{formatDate(props.updated_at)}</span>
               </div>
@@ -104,7 +104,7 @@ export default function Item(props: ItemProps) {
       </CardHeader>
       <Divider />
       <CardBody className="px-5 py-4">
-        <p className="line-clamp-2 text-sm text-dark-700 leading-relaxed">
+        <p className="line-clamp-2 text-sm text-dark--theme-700 leading-relaxed">
           {props.description}
         </p>
 
@@ -115,21 +115,18 @@ export default function Item(props: ItemProps) {
               const tagName = getTagName(tag);
               const tagId = typeof tag === "string" ? tag : tag.id;
               return (
-                <Link 
-                  key={index} 
+                <Chip
+                  key={index}
+                  as={Link}
                   href={`/tags/${encodeURIComponent(tagId)}`}
-                  className="no-underline"
+                  size="sm"
+                  variant="flat"
+                  color={index % 2 === 0 ? "primary" : "secondary"}
+                  className="px-2 py-1 text-xs font-medium gap-1 cursor-pointer hover:shadow-sm transition-all no-underline"
+                  startContent={<FiTag className="w-3 h-3" />}
                 >
-                  <Chip
-                    size="sm"
-                    variant="flat"
-                    color={index % 2 === 0 ? "primary" : "secondary"}
-                    className="px-2 py-1 text-xs font-medium gap-1 cursor-pointer hover:shadow-sm transition-all"
-                    startContent={<FiTag className="w-3 h-3" />}
-                  >
-                    {tagName}
-                  </Chip>
-                </Link>
+                  {tagName}
+                </Chip>
               );
             })}
         </div>

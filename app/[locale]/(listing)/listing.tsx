@@ -9,6 +9,8 @@ import { PER_PAGE, totalPages } from "@/lib/paginate";
 import { useTranslations } from "next-intl";
 import { layoutComponents } from "@/components/layouts";
 import { Category, ItemData, Tag } from "@/lib/content";
+import { useState } from "react";
+import ViewToggle from "@/components/ViewToggle";
 
 type ListingProps = {
   total: number;
@@ -23,6 +25,7 @@ type ListingProps = {
 export default function Listing(props: ListingProps) {
   const { layoutKey } = useLayoutTheme();
   const t = useTranslations("listing");
+  const [view, setView] = useState<"classic" | "grid" | "card">("classic");
 
   const LayoutComponent = layoutComponents[layoutKey];
 
@@ -41,6 +44,10 @@ export default function Listing(props: ListingProps) {
         <div className="w-full">
           <Tags tags={props.tags} />
           <div className="w-full">
+            <ViewToggle
+              activeView={view}
+              onViewChange={(newView) => setView(newView)}
+            />
             <LayoutComponent>
               {props.items
                 .slice(props.start, props.start + PER_PAGE)

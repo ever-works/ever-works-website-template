@@ -13,7 +13,7 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        dark: {
+        'dark--theme': {
           DEFAULT: "#111827",
           50: "#f9fafb",
           100: "#f3f4f6",
@@ -27,6 +27,11 @@ export default {
           900: "#111827",
           950: "#0c1322",
         },
+        'light--theme': {
+					light: '#fff',
+					DEFAULT: '#f7f7f8',
+					dark: '#E7E7EA'
+				},
         white: {
           DEFAULT: "#ffffff",
           50: "#ffffff",
