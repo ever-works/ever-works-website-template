@@ -37,7 +37,7 @@ export default function Listing(props: ListingProps) {
           {t("THIS_IS_A_DEMO_DIRECTORY_WEBSITE")}
         </p>
       </div>
-      <div className="flex flex-col md:flex-row w-full gap-5 ">
+      <div className="flex flex-col md:flex-row w-full gap-5">
         <Categories total={props.total} categories={props.categories} />
         <div className="w-full">
           <Tags tags={props.tags} />
@@ -56,7 +56,7 @@ export default function Listing(props: ListingProps) {
                     href={getItemPath(item.slug)}
                     key={item.slug}
                   >
-                    <Item {...item} />
+                    <Item {...item} isWrappedInLink={true} />
                   </Link>
                 ))}
             </LayoutComponent>

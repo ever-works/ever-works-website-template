@@ -1,9 +1,9 @@
 import { fetchItems, fetchItem } from "@/lib/content";
-import { MDX } from "@/components/mdx";
 import { notFound } from "next/navigation";
 import { getCategoriesName } from "@/lib/utils";
 import { LOCALES } from "@/lib/constants";
 import { getTranslations } from "next-intl/server";
+import { ItemDetail } from "@/components/item-detail";
 
 export const revalidate = 10;
 
@@ -29,24 +29,15 @@ export default async function ItemDetails({
   }
 
   const t = await getTranslations("common");
-
   const { meta, content } = item;
+  const categoryName = getCategoriesName(meta.category);
 
   return (
-    <div className="container mx-auto p-8">
-      <h1 className="text-2xl font-extrabold">{meta.name}</h1>
-      <span className="text-foreground-600">
-        {getCategoriesName(meta.category)}
-      </span>
-      <p>{meta.description}</p>
-
-      <div className="mt-8 max-w-[900px]">
-        {content ? (
-          <MDX source={content} />
-        ) : (
-          <p className="text-gray-400">{t("NO_CONTENT_PROVIDED")}</p>
-        )}
-      </div>
-    </div>
+    <ItemDetail
+      meta={meta}
+      content={content}
+      categoryName={categoryName}
+      noContentMessage={t("NO_CONTENT_PROVIDED")}
+    />
   );
 }

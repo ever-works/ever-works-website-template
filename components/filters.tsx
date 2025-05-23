@@ -24,11 +24,12 @@ function BlockLink({
   return (
     <Button
       className={cn(
-        "text-default-700 dark:text-default-300 font-medium text-left justify-start items-center transition-colors",
+        "text-dark--theme-700 dark:text-dark--theme-300 font-medium text-left justify-start items-center transition-colors",
         {
           "bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 border-l-4 border-primary-500":
             isActive,
-          "hover:bg-default-100 dark:hover:bg-default-800": !isActive,
+          "hover:text-dark--theme-100 dark:hover:bg-thetext-dark--theme-800":
+            !isActive,
         }
       )}
       radius="md"
@@ -59,8 +60,12 @@ export function CategoriesList({
         href="/"
       >
         <div className="flex items-center justify-between w-full">
-          <span className="font-medium">{t("ALL")}</span>
-          <span className="font-medium text-sm">{total}</span>
+          <span className="font-medium text-dark--theme-900 dark:text-dark--theme-100">
+            {t("ALL")}
+          </span>
+          <span className="font-medium text-sm text-dark--theme-900 dark:text-dark--theme-100">
+            {total}
+          </span>
         </div>
       </BlockLink>
 
@@ -86,10 +91,13 @@ export function CategoriesList({
                     alt={category.name}
                   />
                 )}
-                <Tooltip content={category.name} showArrow 
-                className="dark:bg-dark--theme-900"
-                placement="right">
-                  <div className="overflow-hidden">
+                <Tooltip
+                  content={category.name}
+                  showArrow
+                  className="dark:bg-dark--theme-900"
+                  placement="right"
+                >
+                  <div className="overflow-hidden text-dark--theme-900 dark:text-dark--theme-100">
                     <span className="font-medium whitespace-nowrap overflow-hidden text-ellipsis block w-full">
                       {category.name}
                     </span>
@@ -100,8 +108,8 @@ export function CategoriesList({
                 className={cn(
                   "font-medium text-sm flex-shrink-0",
                   isActive
-                    ? "text-primary-600 dark:text-primary-400"
-                    : "text-default-600 dark:text-default-400"
+                    ? "text-primary-600 dark:text-primary-100 dark:text-dark--theme-100"
+                    : "text-dark--theme-600 dark:text-dark--theme-100"
                 )}
               >
                 {category.count || 0}
@@ -126,7 +134,7 @@ export function Categories(props: { total: number; categories: Category[] }) {
             aria-label="Category"
             title={
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-default-800 dark:text-default-200">
+                <span className="font-semibold text-dark--theme-800 dark:text-dark--theme-200">
                   {t("CATEGORIES")}
                 </span>
               </div>
@@ -134,9 +142,9 @@ export function Categories(props: { total: number; categories: Category[] }) {
             classNames={{
               title: "text-medium",
               content: "pt-2 pb-4",
-              base: "border border-default-100 dark:border-default-800 rounded-xl p-4",
+              base: "border border-dark--theme-100 dark:border-dark--theme-800 rounded-xl p-4",
               trigger:
-                "text-default-600 dark:text-default-400 hover:text-default-700 dark:hover:text-default-300 transition-colors cursor-pointer hover:bg-default-50 dark:hover:bg-default-800 hover:border-primary-50 dark:hover:border-primary-600",
+                "text-dark--theme-600 dark:text-dark--theme-400 hover:text-dark--theme-700 dark:hover:text-dark--theme-300 transition-colors cursor-pointer hover:bg-dark--theme-50 dark:hover:bg-dark--theme-800 hover:border-primary-50 dark:hover:border-primary-600",
             }}
           >
             <div className="flex flex-col gap-2 px-2">
@@ -149,7 +157,7 @@ export function Categories(props: { total: number; categories: Category[] }) {
       <div className="hidden md:flex flex-col w-full max-w-60 gap-3">
         <div className="flex items-center gap-2 mb-2">
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-bold text-default-900 dark:text-default-200">
+            <h2 className="text-lg font-bold text-dark--theme-900 dark:text-dark--theme-200">
               {t("CATEGORIES")}
             </h2>
           </div>
@@ -162,7 +170,7 @@ export function Categories(props: { total: number; categories: Category[] }) {
             {props.total}
           </Badge>
         </div>
-        <div className="text-default-600 dark:text-default-400 border border-default-100 dark:border-default-800 rounded-xl p-4">
+        <div className="text-dark--theme-600 dark:text-dark--theme-400 border border-dark--theme-100 dark:border-dark--theme-800 rounded-xl p-4">
           <CategoriesList {...props} />
         </div>
       </div>
@@ -239,7 +247,7 @@ export function Tags(props: { tags: Tag[] }) {
           "px-3 py-1 h-8 font-medium transition-all duration-200",
           isActive
             ? "bg-primary-500 text-white border-primary-500 shadow-sm"
-            : "border border-default-200 dark:border-default-800",
+            : "border border-thetext-dark--theme-200 dark:border-thetext-dark--theme-800",
           "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800"
         )}
       >
