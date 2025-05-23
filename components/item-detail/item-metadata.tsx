@@ -5,7 +5,11 @@ interface ItemMetadataProps {
   sourceUrl?: string;
 }
 
-export function ItemMetadata({ category, categoryName, updatedAt, sourceUrl }: ItemMetadataProps) {
+export function ItemMetadata({
+  categoryName,
+  updatedAt,
+  sourceUrl,
+}: ItemMetadataProps) {
   return (
     <div className="flex flex-wrap items-center gap-3 mt-6">
       <div className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-white/10 text-white backdrop-blur-sm">
@@ -27,7 +31,7 @@ export function ItemMetadata({ category, categoryName, updatedAt, sourceUrl }: I
       </div>
 
       {updatedAt && (
-        <div className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-white/10 text-white backdrop-blur-sm hover:bg-white/15 transition-all duration-300 dark:bg-dark--theme-800/30 dark:hover:bg-dark--theme-800 dark:hover:text-white dark:hover:border-white/10">
+        <div className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-white/10 text-white backdrop-blur-sm dark:bg-dark--theme-800/30">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-4 h-4 mr-2 opacity-70"

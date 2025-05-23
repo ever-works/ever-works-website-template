@@ -133,7 +133,7 @@ export default function Item(props: ItemProps) {
                     size="sm"
                     variant="flat"
                     color={index % 2 === 0 ? "primary" : "secondary"}
-                    className="px-2 py-1 text-xs font-medium gap-1 cursor-pointer hover:shadow-sm transition-all no-underline dark:text-dark--theme-200"
+                    className="px-2 py-1 text-xs font-medium gap-1 cursor-pointer hover:shadow-sm transition-all no-underline"
                     startContent={<FiTag className="w-3 h-3" />}
                   >
                     {tagName}

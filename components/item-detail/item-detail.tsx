@@ -31,7 +31,7 @@ export function ItemDetail({
 
   return (
     <div className="min-h-screen directory-bg dark:bg-dark--theme-950">
-      <div className="bg-dark--theme-950 dark:bg-dark--theme-950 dark:border-dark--theme-200 text-dark--theme-500 dark:text-white">
+      <div className="bg-dark--theme-950 dark:border-dark--theme-200 text-dark--theme-500 dark:text-white">
         <div className="container mx-auto px-4 py-16 sm:px-6 sm:py-24 lg:px-8 relative z-10 transition-all duration-500">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
             <div className="flex-1">

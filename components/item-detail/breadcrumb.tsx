@@ -6,7 +6,11 @@ interface BreadcrumbProps {
   categoryName: string;
 }
 
-export function ItemBreadcrumb({ name, category, categoryName }: BreadcrumbProps) {
+export function ItemBreadcrumb({
+  name,
+  category,
+  categoryName,
+}: BreadcrumbProps) {
   return (
     <nav className="flex mb-4" aria-label="Breadcrumb">
       <ol className="inline-flex items-center space-x-1 md:space-x-3">
@@ -45,8 +49,10 @@ export function ItemBreadcrumb({ name, category, categoryName }: BreadcrumbProps
               />
             </svg>
             <Link
-              href={`/categories/${typeof category === 'string' ? encodeURIComponent(category) : ''}`}
-              className="ml-1 text-sm font-medium dark:text-white md:ml-2 transition-colors duration-300 dark:text-dark--theme-200"
+              href={`/categories/${
+                typeof category === "string" ? encodeURIComponent(category) : ""
+              }`}
+              className="ml-1 text-sm font-medium dark:text-dark--theme-200 md:ml-2 transition-colors duration-300"
             >
               {categoryName}
             </Link>

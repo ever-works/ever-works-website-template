@@ -28,8 +28,7 @@ function BlockLink({
         {
           "bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 border-l-4 border-primary-500":
             isActive,
-          "hover:text-dark--theme-100 dark:hover:bg-thetext-dark--theme-800":
-            !isActive,
+          "hover:text-dark--theme-100 dark:hover:bg-dark--theme-800": !isActive,
         }
       )}
       radius="md"
@@ -247,7 +246,7 @@ export function Tags(props: { tags: Tag[] }) {
           "px-3 py-1 h-8 font-medium transition-all duration-200",
           isActive
             ? "bg-primary-500 text-white border-primary-500 shadow-sm"
-            : "border border-thetext-dark--theme-200 dark:border-thetext-dark--theme-800",
+            : "border border-dark--theme-200 dark:border-dark--theme-800",
           "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800"
         )}
       >

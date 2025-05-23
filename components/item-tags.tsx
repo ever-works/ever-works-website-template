@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FiTag, FiHash } from "react-icons/fi";
+import { cn } from "../lib/utils/index";
 
 function normalizeTagForUrl(tag: string): string {
   return tag
@@ -12,26 +13,35 @@ function normalizeTagForUrl(tag: string): string {
     .replace(/^-|-$/g, "");
 }
 
+const getTagClasses = () =>
+  cn(
+    "relative px-4 py-1.5 text-xs font-semibold rounded-full flex items-center gap-2",
+    "bg-gradient-to-r from-primary-50/80 to-primary-100/80",
+    "dark:from-primary-900/80 dark:to-primary-800/80",
+    "text-primary-700 dark:text-primary-300",
+    "border border-primary-200/60 dark:border-primary-700/60",
+    "backdrop-blur-sm shadow-sm hover:shadow-md",
+    "transition-all duration-300 hover:-translate-y-1 hover:border-primary-300 dark:hover:border-primary-600",
+    "group overflow-hidden"
+  );
+
 export function ItemTag({ name }: { name: string }) {
   const normalizedTag = normalizeTagForUrl(name);
 
   return (
     <div className="inline-block">
-      <Link href={`/tags/${normalizedTag}`} className="no-underline">
-        <div
-          className="relative px-4 py-1.5 text-xs font-semibold rounded-full flex items-center gap-2 
-      bg-gradient-to-r from-primary-50/80 to-primary-100/80 
-      dark:from-primary-900/80 dark:to-primary-800/80 
-      text-primary-700 dark:text-primary-300 
-      border border-primary-200/60 dark:border-primary-700/60 
-      backdrop-blur-sm shadow-sm hover:shadow-md 
-      transition-all duration-300 hover:-translate-y-1 hover:border-primary-300 dark:hover:border-primary-600 
-      group overflow-hidden"
-        >
+      <Link
+        href={`/tags/${normalizedTag}`}
+        className="no-underline"
+        aria-label={`View all items tagged with ${name}`}
+      >
+        <div className={getTagClasses()}>
           <span
-            className="relative flex items-center justify-center w-5 h-5 rounded-full bg-primary-100/60 dark:bg-primary-700/60 
-        group-hover:bg-primary-200/80 dark:group-hover:bg-primary-600/70 
-        transition-colors duration-300 ring-1 ring-inset ring-primary-300/20 dark:ring-primary-600/30"
+            className={cn(
+              "relative flex items-center justify-center w-5 h-5 rounded-full bg-primary-100/60 dark:bg-primary-700/60",
+              "group-hover:bg-primary-200/80 dark:group-hover:bg-primary-600/70",
+              "transition-colors duration-300 ring-1 ring-inset ring-primary-300/20 dark:ring-primary-600/30"
+            )}
           >
             <FiTag className="w-3 h-3 text-primary-700 dark:text-primary-200 group-hover:text-primary-900 dark:group-hover:text-primary-100 transition-colors duration-300" />
           </span>
@@ -67,47 +77,6 @@ export function ItemTags({ tags }: { tags: string[] }) {
   );
 }
 
-function AnimateCSS() {
-  return (
-    <style jsx global>{`
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(5px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .animate-fade-in > * {
-        animation: fadeIn 0.3s ease-out forwards;
-        opacity: 0;
-      }
-
-      .animate-fade-in > *:nth-child(1) {
-        animation-delay: 0.05s;
-      }
-      .animate-fade-in > *:nth-child(2) {
-        animation-delay: 0.1s;
-      }
-      .animate-fade-in > *:nth-child(3) {
-        animation-delay: 0.15s;
-      }
-      .animate-fade-in > *:nth-child(4) {
-        animation-delay: 0.2s;
-      }
-      .animate-fade-in > *:nth-child(5) {
-        animation-delay: 0.25s;
-      }
-      .animate-fade-in > *:nth-child(n + 6) {
-        animation-delay: 0.3s;
-      }
-    `}</style>
-  );
-}
-
 export function ItemTagsSection({
   title,
   tags,
@@ -124,7 +93,6 @@ export function ItemTagsSection({
         </h3>
       )}
       <ItemTags tags={tags} />
-      <AnimateCSS />
     </div>
   );
 }

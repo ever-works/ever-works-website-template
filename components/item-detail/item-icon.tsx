@@ -6,9 +6,12 @@ interface ItemIconProps {
 }
 
 export function ItemIcon({ iconUrl, name }: ItemIconProps) {
+  const iconContainerStyles =
+    "absolute inset-0 bg-white/5 backdrop-blur-xl rounded-xl overflow-hidden flex items-center justify-center p-4 shadow-lg border border-white/10 group transition-all duration-300 hover:bg-white/10 dark:bg-dark-800/20 dark:border-white/5 dark:hover:bg-dark-800/30 dark:shadow-dark-950/50 hover:scale-105 dark:hover-glow dark:glassmorphism dark:border-glow";
+
   return (
     <div className="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 relative">
-      <div className="absolute inset-0 bg-white/5 backdrop-blur-xl rounded-xl overflow-hidden flex items-center justify-center p-4 shadow-lg border border-white/10 group transition-all duration-300 hover:bg-white/10 dark:bg-dark-800/20 dark:border-white/5 dark:hover:bg-dark-800/30 dark:shadow-dark-950/50 hover:scale-105 dark:hover-glow dark:glassmorphism dark:border-glow">
+      <div className={iconContainerStyles}>
         {iconUrl ? (
           <Image
             src={iconUrl}

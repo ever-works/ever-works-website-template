@@ -7,7 +7,7 @@ interface ItemContentProps {
 
 export function ItemContent({ content, noContentMessage }: ItemContentProps) {
   return (
-    <div className="dark:bg-dark--theme-950 bg-white rounded-lg p-6" style={{ animationDelay: "0.1s" }}>
+    <div className="dark:bg-dark--theme-950 bg-white rounded-lg p-6 animate-delay-100">
       <div>
         {content ? (
           <MDX source={content} />

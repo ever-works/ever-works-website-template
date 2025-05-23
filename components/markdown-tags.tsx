@@ -34,7 +34,7 @@ export function MarkdownTags({ tags }: { tags: string[] }) {
   return (
     <div className="flex flex-wrap gap-2 my-4">
       {tags.map((tag, index) => (
-        <MarkdownTag key={index} name={tag} />
+        <MarkdownTag key={`${tag}-${index}`} name={tag} />
       ))}
     </div>
   );

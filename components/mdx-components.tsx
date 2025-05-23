@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 export function Tag({ name }: { name: string }) {
   const pathname = usePathname();
   const tagLink = `/tags/${encodeURIComponent(name)}`;
-  const isActive = pathname.startsWith(tagLink);
+  const isActive = pathname === tagLink || pathname.startsWith(`${tagLink}/`);
 
   return (
     <Link href={tagLink} passHref>
