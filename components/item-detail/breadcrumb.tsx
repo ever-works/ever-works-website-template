@@ -11,6 +11,9 @@ export function ItemBreadcrumb({
   category,
   categoryName,
 }: BreadcrumbProps) {
+  const categoryId =
+    typeof category === "string" ? category : (category as any)?.id || category;
+  const encodedCategory = encodeURIComponent(categoryId);
   return (
     <nav className="flex mb-4" aria-label="Breadcrumb">
       <ol className="inline-flex items-center space-x-1 md:space-x-3">
@@ -49,9 +52,7 @@ export function ItemBreadcrumb({
               />
             </svg>
             <Link
-              href={`/categories/${
-                typeof category === "string" ? encodeURIComponent(category) : ""
-              }`}
+              href={`/categories/${encodedCategory}`}
               className="ml-1 text-sm font-medium dark:text-dark--theme-200 md:ml-2 transition-colors duration-300"
             >
               {categoryName}

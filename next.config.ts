@@ -2,28 +2,37 @@ import { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
+  experimental: {
+    optimizePackageImports: ["@heroui/react", "lucide-react"],
+  },
+  trailingSlash: false,
+  generateEtags: false,
+  poweredByHeader: false,
+  swcMinify: true,
+
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'lh3.googleusercontent.com',
-        pathname: '/a/**',
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        pathname: "/a/**",
       },
       {
-        protocol: 'https',
-        hostname: 'avatars.githubusercontent.com',
-        pathname: '/u/**',
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+        pathname: "/u/**",
       },
       {
-        protocol: 'https',
-        hostname: 'platform-lookaside.fbsbx.com',
-        pathname: '/platform/**',
+        protocol: "https",
+        hostname: "platform-lookaside.fbsbx.com",
+        pathname: "/platform/**",
       },
       {
-        protocol: 'https',
-        hostname: 'pbs.twimg.com',
-        pathname: '/**',
-      }
+        protocol: "https",
+        hostname: "pbs.twimg.com",
+        pathname: "/**",
+      },
     ],
   },
   /* config options here */

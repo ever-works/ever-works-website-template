@@ -138,13 +138,6 @@ export function Categories(props: { total: number; categories: Category[] }) {
                 </span>
               </div>
             }
-            classNames={{
-              title: "text-medium",
-              content: "pt-2 pb-4",
-              base: "border border-dark--theme-100 dark:border-dark--theme-800 rounded-xl p-4",
-              trigger:
-                "text-dark--theme-600 dark:text-dark--theme-400 hover:text-dark--theme-700 dark:hover:text-dark--theme-300 transition-colors cursor-pointer hover:bg-dark--theme-50 dark:hover:bg-dark--theme-800 hover:border-primary-50 dark:hover:border-primary-600",
-            }}
           >
             <div className="flex flex-col gap-2 px-2">
               <CategoriesList {...props} />
@@ -241,6 +234,7 @@ export function Tags(props: { tags: Tag[] }) {
         radius="full"
         size="sm"
         as={Link}
+        prefetch={false}
         href={`/tags/${tag.id}`}
         className={cn(
           "px-3 py-1 h-8 font-medium transition-all duration-200",
@@ -277,16 +271,6 @@ export function Tags(props: { tags: Tag[] }) {
     );
   };
 
-  const sortedTags = [...props.tags].sort((a, b) => {
-    const aActive = pathname.startsWith(encodeURI(`/tags/${a.id}`));
-    const bActive = pathname.startsWith(encodeURI(`/tags/${b.id}`));
-    if (aActive && !bActive) return -1;
-    if (!aActive && bActive) return 1;
-    const aCount = a.count || 0;
-    const bCount = b.count || 0;
-    return bCount - aCount;
-  });
-
   return (
     <div className="relative mb-6">
       <div className="flex items-center justify-between mb-3">
@@ -311,7 +295,7 @@ export function Tags(props: { tags: Tag[] }) {
             !showAllTags && "max-h-[120px] overflow-hidden"
           )}
         >
-          {sortedTags.map(renderTag)}
+          {props.tags.map(renderTag)}
         </div>
       </div>
 
