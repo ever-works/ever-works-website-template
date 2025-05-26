@@ -9,8 +9,6 @@ const nextConfig: NextConfig = {
   trailingSlash: false,
   generateEtags: false,
   poweredByHeader: false,
-  swcMinify: true,
-
   images: {
     remotePatterns: [
       {
