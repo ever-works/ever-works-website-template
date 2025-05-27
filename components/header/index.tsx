@@ -26,7 +26,7 @@ export const AcmeLogo = () => {
 export default function Header({ session }: SessionProps) {
   const t = useTranslations("common");
   const config = useConfig();
-  const { layoutKey, setLayoutKey, themeKey, setThemeKey } = useLayoutTheme();
+  const { layoutKey, setLayoutKey } = useLayoutTheme();
 
   const auth = config.auth;
   const providers = Object.keys(auth || {}).filter((key) =>
