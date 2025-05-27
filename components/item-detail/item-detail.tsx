@@ -144,7 +144,13 @@ export function ItemDetail({
                     className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-300 dark:hover:text-indigo-200 transition-colors duration-200 font-medium"
                   >
                     {meta.source_url
-                      ? new URL(meta.source_url).hostname
+                      ? (() => {
+                          try {
+                            return new URL(meta.source_url).hostname;
+                          } catch {
+                            return "N/A";
+                          }
+                        })()
                       : "N/A"}
                   </a>
                 </div>
