@@ -7,8 +7,8 @@ import { useTranslations } from "next-intl";
 import { ProfileButton } from "./profile-button";
 import { SessionProps } from "@/lib/types";
 import LayoutSwitch from "./LayoutSwitch";
-import ThemeSwitch from "./ThemeSwitch";
 import { useLayoutTheme } from "@/components/context/LayoutThemeContext";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 export const AcmeLogo = () => {
   return (
@@ -64,7 +64,10 @@ export default function Header({ session }: SessionProps) {
           <LayoutSwitch value={layoutKey} onChange={setLayoutKey} />
         </NavbarItem>
         <NavbarItem>
-          <ThemeSwitch value={themeKey} onChange={setThemeKey} />
+          {/* <ThemeSwitch value={themeKey} onChange={setThemeKey} /> */}
+        </NavbarItem>
+        <NavbarItem>
+          <LanguageSwitcher />
         </NavbarItem>
         {providers.length > 0 && (
           <NavbarItem>
