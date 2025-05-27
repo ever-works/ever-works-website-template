@@ -20,13 +20,13 @@ export function ItemBreadcrumb({
   return (
     <nav className="flex mb-4" aria-label="Breadcrumb">
       <ol className="inline-flex items-center space-x-1 md:space-x-3">
-        <li className="inline-flex items-center">
+        <li className="inline-flex items-center text-black dark:text-white">
           <Link
             href="/"
-            className="inline-flex items-center text-sm font-medium text-white/70 dark:text-white/70 hover:text-white dark:hover:text-white transition-colors duration-300"
+            className="inline-flex items-center text-sm font-medium text-black dark:text-white hover:text-white dark:hover:text-white transition-colors duration-300"
           >
             <svg
-              className="w-3 h-3 mr-2.5"
+              className="w-3 h-3 mr-2.5 text-dark--theme-800 dark:text-white"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
@@ -40,7 +40,7 @@ export function ItemBreadcrumb({
         <li>
           <div className="flex items-center">
             <svg
-              className="w-3 h-3 text-white/50 mx-1"
+              className="w-3 h-3 text-dark--theme-800 dark:text-white mx-1 "
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -56,7 +56,7 @@ export function ItemBreadcrumb({
             </svg>
             <Link
               href={`/categories/${encodedCategory}`}
-              className="ml-1 text-sm font-medium dark:text-dark--theme-200 md:ml-2 transition-colors duration-300"
+              className="ml-1 text-sm font-medium text-gray-800 dark:text-white/50 md:ml-2 transition-colors duration-300"
             >
               {categoryName}
             </Link>
@@ -65,7 +65,7 @@ export function ItemBreadcrumb({
         <li aria-current="page">
           <div className="flex items-center">
             <svg
-              className="w-3 h-3 text-white/50 mx-1"
+              className="w-3 h-3 text-dark--theme-800 dark:text-white/50 mx-1"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -79,7 +79,7 @@ export function ItemBreadcrumb({
                 d="m1 9 4-4-4-4"
               />
             </svg>
-            <span className="ml-1 text-sm font-medium text-white md:ml-2 truncate max-w-[200px]">
+            <span className="ml-1 text-sm font-medium text-gray-800 dark:text-white md:ml-2 truncate max-w-[200px]">
               {name}
             </span>
           </div>

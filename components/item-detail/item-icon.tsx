@@ -7,7 +7,7 @@ interface ItemIconProps {
 
 export function ItemIcon({ iconUrl, name }: ItemIconProps) {
   const iconContainerStyles =
-    "absolute inset-0 bg-white/5 backdrop-blur-xl rounded-xl overflow-hidden flex items-center justify-center p-4 shadow-lg border border-white/10 group transition-all duration-300 hover:bg-white/10 dark:bg-dark-800/20 dark:border-white/5 dark:hover:bg-dark-800/30 dark:shadow-dark-950/50 hover:scale-105 dark:hover-glow dark:glassmorphism dark:border-glow";
+    "absolute inset-0 bg-gray-100/80 backdrop-blur-xl rounded-xl overflow-hidden flex items-center justify-center p-4 shadow-md border border-gray-200 group transition-all duration-300 hover:bg-gray-50 hover:border-indigo-100 dark:bg-gray-800/30 dark:border-gray-700/30 dark:hover:bg-gray-800/50 dark:hover:border-indigo-700/50 dark:shadow-lg dark:shadow-indigo-900/10 hover:scale-105";
 
   return (
     <div className="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 relative">
@@ -23,7 +23,7 @@ export function ItemIcon({ iconUrl, name }: ItemIconProps) {
         ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="w-12 h-12 text-white/70 group-hover:text-white transition-all duration-300 drop-shadow-sm group-hover:drop-shadow-md dark:text-white/80 dark:group-hover:text-white"
+            className="w-12 h-12 text-gray-600 group-hover:text-indigo-600 transition-all duration-300 drop-shadow-sm group-hover:drop-shadow-md dark:text-gray-300 dark:group-hover:text-indigo-300"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

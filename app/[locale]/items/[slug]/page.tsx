@@ -33,11 +33,13 @@ export default async function ItemDetails({
   const categoryName = getCategoriesName(meta.category);
 
   return (
-    <ItemDetail
-      meta={meta}
-      content={content}
-      categoryName={categoryName}
-      noContentMessage={t("NO_CONTENT_PROVIDED")}
-    />
+    <div className="container mx-auto p-8">
+      <ItemDetail
+        meta={meta}
+        content={content}
+        categoryName={categoryName}
+        noContentMessage={t("NO_CONTENT_PROVIDED")}
+      />
+    </div>
   );
 }
