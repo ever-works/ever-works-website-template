@@ -49,7 +49,8 @@ export function LanguageSwitcher() {
   return (
     <Popover placement="bottom-end" offset={8}>
       <PopoverTrigger asChild>
-        <button 
+        <button
+          type="button"
           className={`
             group relative flex items-center gap-2 px-3 py-2 
             bg-white dark:bg-gray-800 
@@ -62,6 +63,9 @@ export function LanguageSwitcher() {
           `}
           disabled={isPending}
           aria-label={`Current language: ${currentLanguage.fullName}`}
+        >
+          {/* … */}
+        </button>
         >
           <span 
             className="text-lg leading-none" 
