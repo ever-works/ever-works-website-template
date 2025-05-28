@@ -167,7 +167,7 @@ export function ItemDetail({
               </div>
             </div>
 
-            <div className="bg-white/90 dark:bg-gray-900/80 rounded-xl p-6   border border-gray-200 dark:border-gray-800 backdrop-blur-sm bg-opacity-80 dark:bg-opacity-70 backdrop-filter">
+            <div className="bg-white/90 dark:bg-gray-900/80 rounded-xl p-6 border border-gray-200 dark:border-gray-800 backdrop-blur-sm bg-opacity-80 dark:bg-opacity-70 backdrop-filter">
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-xl font-bold text-black dark:text-white flex items-center">
                   <svg
@@ -176,13 +176,15 @@ export function ItemDetail({
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
+                    aria-label="Categories"
+                    role="img"
                   >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth="2"
                       d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                    ></path>
+                    />
                   </svg>
                   Categories
                 </h2>
@@ -195,7 +197,7 @@ export function ItemDetail({
                   href={`/category/${meta.category}`}
                   className="px-4 py-2 bg-white hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-200 rounded-lg text-sm font-medium flex items-center group border border-gray-200 dark:border-gray-700 hover:border-indigo-500"
                 >
-                  <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2 group-hover:scale-125 transition-transform duration-200"></span>
+                  <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2 group-hover:scale-125 transition-transform duration-200" />
                   {categoryName}
                 </a>
               </div>
