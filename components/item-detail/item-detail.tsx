@@ -44,7 +44,7 @@ export function ItemDetail({
               <div className="flex items-center gap-5 mb-6">
                 <div className="relative">
                   <ItemIcon iconUrl={meta.icon_url} name={meta.name} />
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-900"></div>
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-900" />
                 </div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white tracking-tight">
                   {meta.name}
