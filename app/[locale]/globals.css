@@ -23,6 +23,15 @@
     --light-theme-light: #fff;
     --light-theme: #f7f7f8;
     --light-theme-dark: #E7E7EA;
+
+    /* Theme variables - defaults to everworks theme */
+    --theme-primary: #0070f3;
+    --theme-secondary: #00c853;
+    --theme-accent: #0056b3;
+    --theme-background: #ffffff;
+    --theme-surface: #f8f9fa;
+    --theme-text: #1a1a1a;
+    --theme-text-secondary: #6c757d;
   }
 
   .dark {
@@ -36,6 +45,82 @@
     color: var(--foreground);
     background: var(--background);
     font-family: Arial, Helvetica, sans-serif;
+  }
+}
+
+@layer utilities {
+  /* Theme-based utility classes */
+  .bg-theme-primary {
+    background-color: var(--theme-primary);
+  }
+  
+  .bg-theme-secondary {
+    background-color: var(--theme-secondary);
+  }
+  
+  .bg-theme-accent {
+    background-color: var(--theme-accent);
+  }
+  
+  .bg-theme-surface {
+    background-color: var(--theme-surface);
+  }
+  
+  .text-theme-primary {
+    color: var(--theme-primary);
+  }
+  
+  .text-theme-secondary {
+    color: var(--theme-secondary);
+  }
+  
+  .text-theme-accent {
+    color: var(--theme-accent);
+  }
+  
+  .text-theme-text {
+    color: var(--theme-text);
+  }
+  
+  .text-theme-text-secondary {
+    color: var(--theme-text-secondary);
+  }
+  
+  .border-theme-primary {
+    border-color: var(--theme-primary);
+  }
+  
+  .border-theme-secondary {
+    border-color: var(--theme-secondary);
+  }
+  
+  .border-theme-accent {
+    border-color: var(--theme-accent);
+  }
+  
+  /* Hover variants */
+  .hover\:bg-theme-primary:hover {
+    background-color: var(--theme-primary);
+  }
+  
+  .hover\:bg-theme-secondary:hover {
+    background-color: var(--theme-secondary);
+  }
+  
+  .hover\:text-theme-primary:hover {
+    color: var(--theme-primary);
+  }
+  
+  .hover\:text-theme-secondary:hover {
+    color: var(--theme-secondary);
+  }
+  
+  .hover\:border-theme-primary:hover {
+    border-color: var(--theme-primary);
+  }
+  
+  .hover\:border-theme-secondary:hover {
+    border-color: var(--theme-secondary);
   }
 }
 

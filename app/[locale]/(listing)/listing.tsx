@@ -1,4 +1,4 @@
-import { Categories, Paginate, Tags } from "@/components/filters";
+import { Categories, Paginate, Tags, FilterProvider } from "@/components/filters";
 import { totalPages } from "@/lib/paginate";
 import { getTranslations } from "next-intl/server";
 import { Category, ItemData, Tag } from "@/lib/content";
@@ -18,30 +18,64 @@ export default async function Listing(props: ListingProps) {
   const t = await getTranslations("listing");
 
   return (
-    <div className="container mx-auto p-8">
-      <div className="py-16 flex flex-col gap-2">
-        <h1 className="text-4xl font-bold text-center">
-          {t("BEST_DIRECTORY_WEBSITE_TEMPLATE")}
-        </h1>
-        <p className="text-lg text-foreground-600 text-center">
-          {t("THIS_IS_A_DEMO_DIRECTORY_WEBSITE")}
-        </p>
-      </div>
-      <div className="flex flex-col md:flex-row w-full gap-5">
-        <Categories total={props.total} categories={props.categories} />
-        <div className="w-full">
-          <Tags tags={props.tags} />
-          <ListingClient {...props} />
-          <div className="mt-8 flex items-center justify-center">
-            <Paginate
-              basePath={props.basePath}
-              initialPage={props.page}
-              total={totalPages(props.items.length)}
-            />
+    <FilterProvider>
+      <div className="w-full min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+        {/* Background Effects */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Gradient orbs */}
+          <div className="absolute top-0 -left-4 w-72 h-72 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-600/20 dark:to-purple-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+          <div className="absolute top-0 -right-4 w-72 h-72 bg-gradient-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-600/20 dark:to-pink-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 dark:from-blue-600/20 dark:to-cyan-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+        </div>
+
+        {/* Main Content */}
+        <div className="relative z-10">
+          {/* Header Section */}
+          <div className="container mx-auto px-6 py-12">
+            <div className="text-center mb-12">
+              {/* Introducing line */}
+              <div className="flex items-center justify-center mb-6">
+                <div className="flex items-center gap-2 text-sm md:text-base text-gray-600 dark:text-gray-400 font-medium">
+                  <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse"></div>
+                  {t("INTRODUCING_EVER_WORKS")}
+                </div>
+              </div>
+              
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent transition-colors duration-300">
+                {t("THE_BEST")} <br className="hidden md:block" />
+                <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 bg-clip-text text-transparent">
+                  {t("DIRECTORY_WEBSITE_TEMPLATE")}
+                </span>
+              </h1>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed transition-colors duration-300">
+                {t("DEMO_DESCRIPTION")}
+              </p>
+            </div>
+          </div>
+
+          {/* Filters and Content */}
+          <div className="container mx-auto px-6 pb-12">
+            <div className="flex flex-col md:flex-row w-full gap-5">
+              <Categories total={props.total} categories={props.categories} />
+              <div className="w-full">
+                <Tags tags={props.tags} />
+                <ListingClient {...props} />
+                <div className="mt-8 flex items-center justify-center">
+                  <Paginate
+                    basePath={props.basePath}
+                    initialPage={props.page}
+                    total={totalPages(props.items.length)}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Bottom fade effect */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-100 dark:from-gray-900 to-transparent pointer-events-none transition-colors duration-300"></div>
       </div>
-    </div>
+    </FilterProvider>
   );
 }
 

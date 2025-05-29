@@ -1,61 +1,199 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { LayoutKey } from "@/components/layouts";
-const DEFAULT_LAYOUT: LayoutKey = "classic";
 
-type LayoutThemeContextType = {
+// Constants
+const DEFAULT_LAYOUT: LayoutKey = "classic";
+const DEFAULT_THEME = "everworks";
+const STORAGE_KEYS = {
+  LAYOUT: "layoutKey",
+  THEME: "themeKey",
+} as const;
+
+// Types
+export interface ThemeConfig {
+  readonly primary: string;
+  readonly secondary: string;
+  readonly accent: string;
+  readonly background: string;
+  readonly surface: string;
+  readonly text: string;
+  readonly textSecondary: string;
+}
+
+export type ThemeKey = "everworks" | "corporate" | "material" | "funny";
+
+interface LayoutThemeContextType {
   layoutKey: LayoutKey;
   setLayoutKey: (key: LayoutKey) => void;
-  themeKey: string;
-  setThemeKey: (key: string) => void;
-};
+  themeKey: ThemeKey;
+  setThemeKey: (key: ThemeKey) => void;
+  currentTheme: ThemeConfig;
+}
 
-const LayoutThemeContext = createContext<LayoutThemeContextType | undefined>(
-  undefined
-);
+// Theme configurations with readonly properties
+export const THEME_CONFIGS: Record<ThemeKey, ThemeConfig> = {
+  everworks: {
+    primary: "#0070f3",
+    secondary: "#00c853",
+    accent: "#0056b3",
+    background: "#ffffff",
+    surface: "#f8f9fa",
+    text: "#1a1a1a",
+    textSecondary: "#6c757d",
+  },
+  corporate: {
+    primary: "#2c3e50",
+    secondary: "#e74c3c",
+    accent: "#34495e",
+    background: "#ffffff",
+    surface: "#ecf0f1",
+    text: "#2c3e50",
+    textSecondary: "#7f8c8d",
+  },
+  material: {
+    primary: "#673ab7",
+    secondary: "#ff9800",
+    accent: "#9c27b0",
+    background: "#fafafa",
+    surface: "#ffffff",
+    text: "#212121",
+    textSecondary: "#757575",
+  },
+  funny: {
+    primary: "#ff4081",
+    secondary: "#ffeb3b",
+    accent: "#e91e63",
+    background: "#fff8e1",
+    surface: "#ffffff",
+    text: "#3e2723",
+    textSecondary: "#8d6e63",
+  },
+} as const;
 
-export const LayoutThemeProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [layoutKey, setLayoutKeyState] = useState<LayoutKey>(DEFAULT_LAYOUT);
-  const [themeKey, setThemeKeyState] = useState("everworks");
+// CSS Custom Properties mapping
+const CSS_VARIABLES = {
+  "--theme-primary": "primary",
+  "--theme-secondary": "secondary",
+  "--theme-accent": "accent",
+  "--theme-background": "background",
+  "--theme-surface": "surface",
+  "--theme-text": "text",
+  "--theme-text-secondary": "textSecondary",
+} as const;
 
-  useEffect(() => {
+// Context
+const LayoutThemeContext = createContext<LayoutThemeContextType | undefined>(undefined);
+
+// Custom hook for theme management
+const useThemeManager = () => {
+  const [themeKey, setThemeKeyState] = useState<ThemeKey>(DEFAULT_THEME);
+
+  const applyThemeVariables = React.useCallback((theme: ThemeConfig) => {
+    if (typeof window === "undefined") return;
+
+    const root = document.documentElement;
+    Object.entries(CSS_VARIABLES).forEach(([cssVar, configKey]) => {
+      root.style.setProperty(cssVar, theme[configKey as keyof ThemeConfig]);
+    });
+  }, []);
+
+  const setThemeKey = React.useCallback((key: ThemeKey) => {
+    setThemeKeyState(key);
     if (typeof window !== "undefined") {
-      const savedLayout =
-        (window.localStorage.getItem("layoutKey") as LayoutKey) ||
-        DEFAULT_LAYOUT;
-      setLayoutKeyState(savedLayout);
-      setThemeKeyState(window.localStorage.getItem("themeKey") || "everworks");
+      localStorage.setItem(STORAGE_KEYS.THEME, key);
     }
   }, []);
 
-  const setLayoutKey = (key: LayoutKey) => {
+  // Apply theme variables when theme changes
+  React.useEffect(() => {
+    const theme = THEME_CONFIGS[themeKey];
+    if (theme) {
+      applyThemeVariables(theme);
+    }
+  }, [themeKey, applyThemeVariables]);
+
+  return {
+    themeKey,
+    setThemeKey,
+    currentTheme: THEME_CONFIGS[themeKey],
+  };
+};
+
+// Custom hook for layout management
+const useLayoutManager = () => {
+  const [layoutKey, setLayoutKeyState] = useState<LayoutKey>(DEFAULT_LAYOUT);
+
+  const setLayoutKey = React.useCallback((key: LayoutKey) => {
     setLayoutKeyState(key);
     if (typeof window !== "undefined") {
-      window.localStorage.setItem("layoutKey", key);
+      localStorage.setItem(STORAGE_KEYS.LAYOUT, key);
     }
+  }, []);
+
+  return {
+    layoutKey,
+    setLayoutKey,
   };
-  const setThemeKey = (key: string) => {
-    setThemeKeyState(key);
-    if (typeof window !== "undefined")
-      window.localStorage.setItem("themeKey", key);
-  };
+};
+
+// Provider component
+export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const layoutManager = useLayoutManager();
+  const themeManager = useThemeManager();
+
+  // Initialize from localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const savedLayout = localStorage.getItem(STORAGE_KEYS.LAYOUT) as LayoutKey;
+    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) as ThemeKey;
+
+    if (savedLayout && savedLayout !== layoutManager.layoutKey) {
+      layoutManager.setLayoutKey(savedLayout);
+    }
+
+    if (savedTheme && savedTheme !== themeManager.themeKey) {
+      themeManager.setThemeKey(savedTheme);
+    }
+  }, [layoutManager, themeManager]);
+
+  const contextValue = React.useMemo(
+    () => ({
+      ...layoutManager,
+      ...themeManager,
+    }),
+    [layoutManager, themeManager]
+  );
 
   return (
-    <LayoutThemeContext.Provider
-      value={{ layoutKey, setLayoutKey, themeKey, setThemeKey }}
-    >
+    <LayoutThemeContext.Provider value={contextValue}>
       {children}
     </LayoutThemeContext.Provider>
   );
 };
 
-export const useLayoutTheme = () => {
-  const ctx = useContext(LayoutThemeContext);
-  if (!ctx)
-    throw new Error("useLayoutTheme must be used within a LayoutThemeProvider");
-  return ctx;
+export const useLayoutTheme = (): LayoutThemeContextType => {
+  const context = useContext(LayoutThemeContext);
+  
+  if (!context) {
+    throw new Error(
+      "useLayoutTheme must be used within a LayoutThemeProvider. " +
+      "Make sure to wrap your component tree with <LayoutThemeProvider>."
+    );
+  }
+  
+  return context;
+};
+
+// Utility functions
+export const getThemeConfig = (themeKey: ThemeKey): ThemeConfig => {
+  return THEME_CONFIGS[themeKey];
+};
+
+export const getAllThemes = (): Array<{ key: ThemeKey; config: ThemeConfig }> => {
+  return Object.entries(THEME_CONFIGS).map(([key, config]) => ({
+    key: key as ThemeKey,
+    config,
+  }));
 };

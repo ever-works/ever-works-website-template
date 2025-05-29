@@ -5,11 +5,11 @@ import { useTheme } from "next-themes";
 import { Popover, PopoverContent, PopoverTrigger, Switch } from "@heroui/react";
 import { useEffect, useState } from "react";
 
-interface ThemeTogglerProps {
+interface ThemeSwitcherProps {
   compact?: boolean;
 }
 
-export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
+export function ThemeSwitcher({ compact = false }: ThemeSwitcherProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
