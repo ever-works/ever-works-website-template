@@ -6,11 +6,10 @@ import { useTheme } from "@/hooks/useTheme";
 import Link from "next/link";
 import { ThemeToggler } from "../theme-toggler";
 import {
-  Github,
-  Twitter,
-  Linkedin,
-  Mail, ArrowUp,
-  Sparkles
+    Github,
+    Twitter,
+    Linkedin,
+    Mail, ArrowUp
 } from "lucide-react";
 import Image from "next/image";
 
@@ -81,26 +80,19 @@ export function Footer() {
               <div className="space-y-4">
                 <Link
                   href="/"
-                  className="group inline-flex items-center gap-3 p-3 rounded-xl bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30 hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-300 hover:shadow-lg hover:scale-105"
+                  className="group inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-900/90 backdrop-blur-sm border border-gray-300 dark:border-gray-700/50 hover:border-gray-400 dark:hover:border-gray-600 transition-all duration-300 hover:shadow-lg w-fit"
                 >
+                  <span className="text-xs text-gray-600 dark:text-gray-300">{t("BUILT_WITH")}</span>
                   <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg blur opacity-75 group-hover:opacity-100 transition-opacity"></div>
-                    <div className="relative bg-white dark:bg-gray-800 p-2 rounded-lg">
-                      <Image
-                        src="/small-logo.png"
-                        alt="Works"
-                        width={24}
-                        height={24}
-                        className="w-6 h-6"
-                      />
-                    </div>
+                    <Image
+                      src="/small-logo.png"
+                      alt="Works"
+                      width={16}
+                      height={16}
+                      className="w-4 h-4"
+                    />
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-gray-500 dark:text-gray-400">{t("BUILT_WITH")}</span>
-                    <span className="font-bold text-lg text-gray-900 dark:text-white">Works</span>
-
-                  </div>
-                  <Sparkles className="w-4 h-4 text-primary-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="font-semibold text-sm text-gray-900 dark:text-white">Works</span>
                 </Link>
 
                 <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed max-w-md">
