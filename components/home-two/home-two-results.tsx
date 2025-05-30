@@ -6,12 +6,12 @@ import { getItemPath } from "@/lib/utils";
 import Item from "@/components/item";
 import { layoutComponents } from "../layouts";
 
-type Home2ResultsProps = {
+type HomeTwoResultsProps = {
   items: ItemData[];
   layoutKey: "classic" | "grid" | "cards";
 };
 
-export function HomeTwoResults({ items,layoutKey  }: Home2ResultsProps) {
+export function HomeTwoResults({ items,layoutKey  }: HomeTwoResultsProps) {
   const LayoutComponent = layoutComponents[layoutKey];
   return (
     <LayoutComponent>

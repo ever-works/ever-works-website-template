@@ -1,4 +1,7 @@
 export function slugify(text: string): string {
+  if (!text || typeof text !== "string") {
+    return "";
+  }
   return text
     .toString()
     .toLowerCase()
@@ -6,9 +9,13 @@ export function slugify(text: string): string {
     .replace(/\s+/g, "-")
     .replace(/&/g, "-and-")
     .replace(/[^\w\-]+/g, "")
-    .replace(/\-\-+/g, "-");
+    .replace(/\-\-+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 export function deslugify(slug: string): string {
-  return slug.replace(/-/g, " ");
+  if (!slug || typeof slug !== "string") {
+    return "";
+  }
+  return slug.replace(/-and-/g, "&").replace(/-/g, " ").trim();
 }
