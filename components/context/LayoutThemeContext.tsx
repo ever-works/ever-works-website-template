@@ -5,9 +5,11 @@ import { LayoutKey } from "@/components/layouts";
 // Constants
 const DEFAULT_LAYOUT: LayoutKey = "classic";
 const DEFAULT_THEME = "everworks";
+const DEFAULT_LAYOUT_HOME: LayoutHome = "Home_2";
 const STORAGE_KEYS = {
   LAYOUT: "layoutKey",
   THEME: "themeKey",
+  LAYOUT_HOME: "layoutHome",
 } as const;
 
 // Types
@@ -23,12 +25,16 @@ export interface ThemeConfig {
 
 export type ThemeKey = "everworks" | "corporate" | "material" | "funny";
 
+export type LayoutHome = "Home_1" | "Home_2" | "Home_3";
+
 interface LayoutThemeContextType {
   layoutKey: LayoutKey;
   setLayoutKey: (key: LayoutKey) => void;
   themeKey: ThemeKey;
   setThemeKey: (key: ThemeKey) => void;
   currentTheme: ThemeConfig;
+  layoutHome: LayoutHome;
+  setLayoutHome: (key: LayoutHome) => void;
 }
 
 // Theme configurations with readonly properties
@@ -105,6 +111,8 @@ const useThemeManager = () => {
     }
   }, []);
 
+ 
+
   // Apply theme variables when theme changes
   React.useEffect(() => {
     const theme = THEME_CONFIGS[themeKey];
@@ -119,6 +127,24 @@ const useThemeManager = () => {
     currentTheme: THEME_CONFIGS[themeKey],
   };
 };
+
+// Custom hook for layout home management
+const useLayoutHomeManager = () => {
+  const [layoutHome, setLayoutHomeState] = useState<LayoutHome>(DEFAULT_LAYOUT_HOME);
+  const setLayoutHome = React.useCallback((key: LayoutHome) => {
+    setLayoutHomeState(key);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STORAGE_KEYS.LAYOUT_HOME, key);
+    }
+  }, []);
+
+  return {
+    layoutHome,
+    setLayoutHome,
+  };
+};
+
+
 
 // Custom hook for layout management
 const useLayoutManager = () => {
@@ -141,6 +167,7 @@ const useLayoutManager = () => {
 export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const layoutManager = useLayoutManager();
   const themeManager = useThemeManager();
+  const layoutHomeManager = useLayoutHomeManager();
 
   // Initialize from localStorage
   useEffect(() => {
@@ -148,6 +175,7 @@ export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     const savedLayout = localStorage.getItem(STORAGE_KEYS.LAYOUT) as LayoutKey;
     const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) as ThemeKey;
+    const savedLayoutHome = localStorage.getItem(STORAGE_KEYS.LAYOUT_HOME) as LayoutHome;
 
     if (savedLayout && savedLayout !== layoutManager.layoutKey) {
       layoutManager.setLayoutKey(savedLayout);
@@ -156,14 +184,20 @@ export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (savedTheme && savedTheme !== themeManager.themeKey) {
       themeManager.setThemeKey(savedTheme);
     }
-  }, [layoutManager, themeManager]);
+
+    if (savedLayoutHome && savedLayoutHome !== layoutHomeManager.layoutHome) {
+      layoutHomeManager.setLayoutHome(savedLayoutHome);
+    }
+  }, [layoutManager, themeManager, layoutHomeManager]);
+
 
   const contextValue = React.useMemo(
     () => ({
       ...layoutManager,
       ...themeManager,
+      ...layoutHomeManager,
     }),
-    [layoutManager, themeManager]
+    [layoutManager, themeManager, layoutHomeManager]
   );
 
   return (

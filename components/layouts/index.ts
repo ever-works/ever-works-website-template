@@ -11,4 +11,4 @@ export const layoutComponents: Record<LayoutKey, ({ children }: { children: Reac
   classic: LayoutClassic,
 };
 
-export { LayoutClassic, LayoutGrid, LayoutCards };
+export { LayoutClassic, LayoutGrid, LayoutCards,  };

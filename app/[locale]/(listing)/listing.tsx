@@ -1,8 +1,7 @@
-import { Categories, Paginate, Tags, FilterProvider } from "@/components/filters";
-import { totalPages } from "@/lib/paginate";
+import { FilterProvider } from "@/components/filters";
 import { getTranslations } from "next-intl/server";
 import { Category, ItemData, Tag } from "@/lib/content";
-import { ListingClient } from "./listing-client";
+import GlobelsClient from "./globels-client";
 
 type ListingProps = {
   total: number;
@@ -52,28 +51,8 @@ export default async function Listing(props: ListingProps) {
               </p>
             </div>
           </div>
-
-          {/* Filters and Content */}
-          <div className="container mx-auto px-6 pb-12">
-            <div className="flex flex-col md:flex-row w-full gap-5">
-              <Categories total={props.total} categories={props.categories} />
-              <div className="w-full">
-                <Tags tags={props.tags} />
-                <ListingClient {...props} />
-                <div className="mt-8 flex items-center justify-center">
-                  <Paginate
-                    basePath={props.basePath}
-                    initialPage={props.page}
-                    total={totalPages(props.items.length)}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          <GlobelsClient {...props} />
         </div>
-
-        {/* Bottom fade effect */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-100 dark:from-gray-900 to-transparent pointer-events-none transition-colors duration-300"></div>
       </div>
     </FilterProvider>
   );

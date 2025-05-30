@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.font-poppins {
+	font-family: 'Poppins', sans-serif !important;
+}
+
 @layer base {
   :root {
     --background: #ffffff;

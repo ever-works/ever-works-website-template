@@ -17,9 +17,6 @@ import { ProfileButton } from "./profile-button";
 import { SessionProps } from "@/lib/types";
 import { LayoutSwitcher } from "@/components/layout-switcher";
 import { NavigationControls } from "../navigation-controls";
-import { LanguageSwitcher } from "../language-switcher";
-import { ThemeToggler } from "../theme-toggler";
-import { ThemeSwitcher } from "./ThemeSwitch";
 
 export const AcmeLogo = () => {
   return (
@@ -29,6 +26,7 @@ export const AcmeLogo = () => {
         d="M17.6482 10.1305L15.8785 7.02583L7.02979 22.5499H10.5278L17.6482 10.1305ZM19.8798 14.0457L18.11 17.1983L19.394 19.4511H16.8453L15.1056 22.5499H24.7272L19.8798 14.0457Z"
         fill="currentColor"
         fillRule="evenodd"
+        className="fill-black dark:fill-white"
       />
     </svg>
   );
@@ -77,22 +75,6 @@ export default function Header({ session }: SessionProps) {
                 <h3 className="text-lg font-semibold text-theme-primary mb-1">
                   {t("LAYOUT")}
                 </h3>
-              </div>
-
-              {/* Controls Section */}
-              <div className="flex items-center justify-between gap-4 px-4 py-3 bg-theme-surface rounded-lg border border-theme-primary/20">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-theme-text-secondary">Language</span>
-                  <LanguageSwitcher compact />
-                </div>
-                <div className="flex items-center gap-2">
-                  <ThemeToggler compact />
-                </div>
-              </div>
-
-              {/* Visual Theme Section */}
-              <div className="space-y-4">
-                <ThemeSwitcher compact />
               </div>
 
               {/* Layout Section */}

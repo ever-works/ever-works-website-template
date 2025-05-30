@@ -111,3 +111,18 @@ export const IconCard = () => {
     </svg>
   );
 };
+
+export const IconDirectory = () => {
+  return (
+    <svg
+      className="w-4 h-4"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path d="M3 3h7l2 3h9a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
+      <rect x="7" y="10" width="10" height="2" rx="1"/>
+      <rect x="7" y="13" width="6" height="1" rx="0.5"/>
+      <circle cx="5" cy="11" r="1"/>
+    </svg>
+  );
+};

@@ -69,6 +69,17 @@
     "OLDEST": "Oldest",
     "POPULARITY": "Popularity"
   },
+  "tagsModal": {
+    "SELECTED_TAGS": "Selected Tags",
+    "SELECTED": "selected",
+    "CLICK_TO_REMOVE": "Click on any tag to remove it from your selection",
+    "CLEAR_ALL": "Clear All",
+    "NO_TAGS_SELECTED": "No tags selected",
+    "SELECT_TAGS_TO_SEE": "Select some tags to see them here",
+    "REMOVE": "Remove",
+    "CLOSE": "Close",
+    "DONE": "Done"
+  },
   "itemDetail": {
     "ABOUT_THIS_TOOL": "About this tool",
     "INFORMATION": "Information",

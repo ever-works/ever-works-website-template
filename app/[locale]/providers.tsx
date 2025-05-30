@@ -21,7 +21,7 @@ export function Providers({
           <ThemeProvider
             enableSystem={true}
             attribute="class"
-            defaultTheme="dark"
+            defaultTheme="system"
           >
             <HeroUIProvider>{children}</HeroUIProvider>
           </ThemeProvider>

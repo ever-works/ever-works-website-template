@@ -95,6 +95,17 @@
     "OLDEST": "Más antiguo",
     "POPULARITY": "Popularidad"
   },
+  "tagsModal": {
+    "SELECTED_TAGS": "Etiquetas Seleccionadas",
+    "SELECTED": "seleccionadas",
+    "CLICK_TO_REMOVE": "Haga clic en cualquier etiqueta para eliminarla de su selección",
+    "CLEAR_ALL": "Limpiar Todo",
+    "NO_TAGS_SELECTED": "No hay etiquetas seleccionadas",
+    "SELECT_TAGS_TO_SEE": "Selecciona algunas etiquetas para verlas aquí",
+    "REMOVE": "Eliminar",
+    "CLOSE": "Cerrar",
+    "DONE": "Listo"
+  },
   "itemDetail": {
     "ABOUT_THIS_TOOL": "Acerca de esta herramienta",
     "INFORMATION": "Información",
