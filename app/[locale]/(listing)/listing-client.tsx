@@ -6,7 +6,7 @@ import { getItemPath } from "@/lib/utils";
 import { PER_PAGE } from "@/lib/paginate";
 import { layoutComponents } from "@/components/layouts";
 import { Category, ItemData, Tag } from "@/lib/content";
-import ViewToggle from "@/components/ViewToggle";
+import ViewToggle from "@/components/view-toggle";
 import { useLayoutTheme } from "@/components/context";
 import { useState, useMemo, useContext } from "react";
 import { Search, Filter } from "lucide-react";

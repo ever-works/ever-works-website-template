@@ -5,7 +5,7 @@ import {
   HomeTwoCategories,
   HomeTwoSearchBar, HomeTwoSortSelector, HomeTwoTagsSelector
 } from ".";
-import ViewToggle from "@/components/ViewToggle";
+import ViewToggle from "@/components/view-toggle";
 
 type Home2FiltersProps = {
   categories: Category[];
