@@ -1,22 +1,19 @@
 import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
+import { Button as HeroButton } from "@heroui/react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+// Define button variants for compatibility with existing code
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
@@ -34,19 +31,43 @@ const buttonVariants = cva(
   }
 )
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean
-}
+export interface ButtonProps extends Omit<React.ComponentPropsWithRef<typeof HeroButton>, 'variant' | 'size'>, VariantProps<typeof buttonVariants> {}
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
+  ({ className, variant, size, ...props }, ref) => {
+    // Map shadcn variants to HeroUI variants
+    const heroVariant = 
+      variant === "default" ? "solid" :
+      variant === "destructive" ? "solid" :
+      variant === "outline" ? "bordered" :
+      variant === "secondary" ? "flat" :
+      variant === "ghost" ? "ghost" :
+      variant === "link" ? "light" : "solid";
+    
+    // Map shadcn sizes to HeroUI sizes
+    const heroSize = 
+      size === "sm" ? "sm" :
+      size === "lg" ? "lg" :
+      "md";
+    
+    // Add custom classes for variants not directly supported by HeroUI
+    let additionalClassNames = "";
+    if (variant === "destructive") {
+      additionalClassNames += " bg-destructive text-destructive-foreground hover:bg-destructive/90";
+    }
+    if (variant === "link") {
+      additionalClassNames += " underline-offset-4 hover:underline";
+    }
+    if (size === "icon") {
+      additionalClassNames += " w-9 h-9 p-0";
+    }
+    
     return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+      <HeroButton
+        className={cn(buttonVariants({ variant, size }), additionalClassNames, className)}
         ref={ref}
+        variant={heroVariant}
+        size={heroSize}
         {...props}
       />
     )

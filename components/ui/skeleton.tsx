@@ -1,3 +1,4 @@
+import { Skeleton as HeroSkeleton } from "@heroui/react"
 import { cn } from "@/lib/utils"
 
 function Skeleton({
@@ -5,7 +6,7 @@ function Skeleton({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div
+    <HeroSkeleton
       className={cn("animate-pulse rounded-md bg-primary/10", className)}
       {...props}
     />

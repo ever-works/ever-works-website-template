@@ -26,9 +26,6 @@
     "@heroui/tooltip": "^2.2.16",
     "@next/env": "^15.3.1",
     "@novu/node": "^2.6.6",
-    "@radix-ui/react-select": "^2.2.5",
-    "@radix-ui/react-slot": "^1.2.3",
-    "@radix-ui/react-toast": "^1.2.14",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",
     "@tailwindcss/typography": "^0.5.16",
@@ -49,14 +46,8 @@
     "next-mdx-remote": "^5.0.0",
     "next-themes": "^0.4.4",
     "postgres": "^3.4.5",
-<<<<<<< HEAD
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-=======
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-hook-form": "^7.56.4",
->>>>>>> 5df9bd6 (fix: build)
     "react-icons": "^5.5.0",
     "react-share": "^5.2.2",
     "resend": "^4.1.2",
