@@ -28,9 +28,9 @@ export default async function Listing(props: ListingProps) {
         </div>
 
         {/* Main Content */}
-        <div className="relative z-10 max-w-7xl mx-auto">
+        <div className="relative z-10 container mx-auto px-4">
           {/* Header Section */}
-          <div className=" px-6 py-12">
+          <div className=" py-12">
             <div className="text-center mb-12">
               {/* Introducing line */}
               <div className="flex items-center justify-center mb-6">

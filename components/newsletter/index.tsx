@@ -20,7 +20,7 @@ export function Newsletter() {
       setIsSuccess(true);
       setEmail("");
     } catch (err) {
-      setError(t("ERROR_MESSAGE"));
+      console.error(err);
     } finally {
       setIsSubmitting(false);
     }
@@ -61,7 +61,7 @@ export function Newsletter() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={t("EMAIL_PLACEHOLDER" as any)}
+                  placeholder={t("EMAIL_PLACEHOLDER")}
                   required
                   className="flex-1 px-4 py-3 bg-gray-800/80 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
                 />
@@ -70,9 +70,7 @@ export function Newsletter() {
                   disabled={isSubmitting}
                   className="px-6 py-3 font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-colors duration-200 disabled:opacity-70"
                 >
-                  {isSubmitting
-                    ? t("SUBMITTING" as any)
-                    : t("SUBSCRIBE" as any)}
+                  {isSubmitting ? t("SUBMITTING") : t("SUBSCRIBE")}
                 </button>
               </div>
               {error && <p className="text-red-400 text-sm">{error}</p>}

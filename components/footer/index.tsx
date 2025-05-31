@@ -2,7 +2,6 @@
 
 import { useConfig } from "@/app/[locale]/config";
 import { useTranslations } from "next-intl";
-import { useTheme } from "@/hooks/use-theme";
 import Link from "next/link";
 import { ThemeToggler } from "../theme-toggler";
 import { Github, Twitter, Linkedin, Mail, ArrowUp } from "lucide-react";
@@ -11,7 +10,6 @@ import Image from "next/image";
 export function Footer() {
   const t = useTranslations("footer");
   const config = useConfig();
-  const { currentThemeInfo } = useTheme();
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });

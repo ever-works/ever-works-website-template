@@ -374,11 +374,11 @@ export function Categories(props: { total: number; categories: Category[] }) {
                 onChange={(e) => setSortBy(e.target.value)}
                 className="block w-full px-3 py-2 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent appearance-none cursor-pointer transition-colors duration-300"
               >
-                <option value="popularity">Popularity</option>
-                <option value="name-asc">Name (A-Z)</option>
-                <option value="name-desc">Name (Z-A)</option>
-                <option value="date-desc">Date (Newest)</option>
-                <option value="date-asc">Date (Oldest)</option>
+                <option value="popularity">{t("POPULARITY")}</option>
+                <option value="name-asc">{t("NAME_A_Z")}</option>
+                <option value="name-desc">{t("NAME_Z_A")}</option>
+                <option value="date-desc">{t("NEWEST")}</option>
+                <option value="date-asc">{t("OLDEST")}</option>
               </select>
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                 <ChevronDown className="h-4 w-4 text-gray-400 dark:text-gray-500" />

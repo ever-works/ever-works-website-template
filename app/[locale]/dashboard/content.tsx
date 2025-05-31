@@ -14,7 +14,7 @@ export const DashboardContent = ({ session }: Props) => {
     <div className="min-h-screen flex flex-col">
       {/* Main Content */}
       <main className="flex-grow">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
           {/* Welcome Card */}
           <div className="px-4 py-6 sm:px-0 border rounded-lg border-gray-200">
             <div className="overflow-hidden shadow rounded-lg">

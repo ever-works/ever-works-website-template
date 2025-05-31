@@ -6,17 +6,18 @@ export const themeClasses = {
   button: {
     primary: "bg-theme-primary hover:bg-theme-accent text-white",
     secondary: "bg-theme-secondary hover:bg-theme-secondary/80 text-white",
-    outline: "border-2 border-theme-primary text-theme-primary hover:bg-theme-primary hover:text-white",
+    outline:
+      "border-2 border-theme-primary text-theme-primary hover:bg-theme-primary hover:text-white",
     ghost: "text-theme-primary hover:bg-theme-primary/10",
   },
-  
+
   // Text variants
   text: {
     primary: "text-theme-text",
     secondary: "text-theme-text-secondary",
     accent: "text-theme-primary",
   },
-  
+
   // Background variants
   background: {
     primary: "bg-theme-primary",
@@ -24,7 +25,7 @@ export const themeClasses = {
     surface: "bg-theme-surface",
     accent: "bg-theme-accent",
   },
-  
+
   // Border variants
   border: {
     primary: "border-theme-primary",
@@ -44,7 +45,7 @@ export const animationClasses = {
 
 // Responsive classes
 export const responsiveClasses = {
-  container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+  container: "container mx-auto px-4 sm:px-6 lg:px-8",
   grid: {
     responsive: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
     auto: "grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4",
@@ -57,28 +58,33 @@ export const responsiveClasses = {
 } as const;
 
 // Theme-specific utility functions
-export const getThemeColor = (themeKey: ThemeKey, colorType: 'primary' | 'secondary') => {
+export const getThemeColor = (
+  themeKey: ThemeKey,
+  colorType: "primary" | "secondary"
+) => {
   const colorMap = {
     everworks: { primary: "#0070f3", secondary: "#00c853" },
     corporate: { primary: "#2c3e50", secondary: "#e74c3c" },
     material: { primary: "#673ab7", secondary: "#ff9800" },
     funny: { primary: "#ff4081", secondary: "#ffeb3b" },
   };
-  
+
   return colorMap[themeKey][colorType];
 };
 
 // Generate CSS custom properties for a theme
 export const generateThemeCSS = (themeKey: ThemeKey) => {
   return {
-    '--theme-primary': getThemeColor(themeKey, 'primary'),
-    '--theme-secondary': getThemeColor(themeKey, 'secondary'),
+    "--theme-primary": getThemeColor(themeKey, "primary"),
+    "--theme-secondary": getThemeColor(themeKey, "secondary"),
   };
 };
 
 // Utility to combine classes conditionally
-export const cn = (...classes: (string | undefined | null | false)[]): string => {
-  return classes.filter(Boolean).join(' ');
+export const cn = (
+  ...classes: (string | undefined | null | false)[]
+): string => {
+  return classes.filter(Boolean).join(" ");
 };
 
 // Theme-aware class builder
@@ -88,7 +94,7 @@ export const buildThemeClasses = (
   conditionalClasses?: Record<string, boolean>
 ): string => {
   const classes = [baseClasses, themeClasses];
-  
+
   if (conditionalClasses) {
     Object.entries(conditionalClasses).forEach(([className, condition]) => {
       if (condition) {
@@ -96,6 +102,6 @@ export const buildThemeClasses = (
       }
     });
   }
-  
+
   return cn(...classes);
-}; 
+};

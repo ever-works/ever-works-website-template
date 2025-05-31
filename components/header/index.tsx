@@ -48,7 +48,7 @@ export default function Header({ session }: SessionProps) {
       maxWidth="full"
       className="border-b border-gray-100 dark:border-gray-800 "
     >
-      <div className="flex items-center justify-between w-full container mx-auto">
+      <div className="flex items-center justify-between w-full container mx-auto px-4">
         <NavbarBrand>
           <Link href="/" className="flex items-center">
             <div className="p-2 rounded-lg  text-white mr-3">
