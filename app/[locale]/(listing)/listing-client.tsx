@@ -239,7 +239,6 @@ export function ListingClient(props: ListingClientProps) {
               </div>
             </div>
 
-            {/* Items Grid with Animation */}
             <div>
               <LayoutComponent>
                 {paginatedItems.map((item, index) => (

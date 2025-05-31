@@ -31,7 +31,7 @@ export default async function Listing(props: ListingProps) {
         <div className="relative z-10 container mx-auto px-4">
           {/* Header Section */}
           <div className=" py-12">
-            <div className="text-center mb-12">
+            <div className="text-center mb-12 py-6">
               {/* Introducing line */}
               <div className="flex items-center justify-center mb-6">
                 <div className="flex items-center text-gray-900 dark:text-gray-200 bg-gray-200 dark:bg-[#1F2937]  py-2 px-4 rounded-full gap-2 text-sm font-medium">
