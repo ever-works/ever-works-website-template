@@ -24,17 +24,17 @@ const geistMono = Geist_Mono({
 // Base metadata that will be enhanced with dynamic locale
 export const metadata: Metadata = {
   title: "Ever Works | Professional Services",
-  description: "Ever Works - Professional services and solutions for your business",
+  description:
+    "Ever Works - Professional services and solutions for your business",
   keywords: ["Ever Works", "Professional Services", "Business Solutions"],
   openGraph: {
     title: "Ever Works | Professional Services",
-    description: "Ever Works - Professional services and solutions for your business",
+    description:
+      "Ever Works - Professional services and solutions for your business",
     type: "website",
     siteName: "Ever Works",
   },
 };
-
-
 
 export default async function RootLayout({
   children,
@@ -56,7 +56,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-dark--theme-900`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-dark--theme-950`}
       >
         <NextIntlClientProvider messages={messages}>
           <Providers config={config}>

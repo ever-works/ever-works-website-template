@@ -21,7 +21,7 @@ export interface ThemeInfo {
 const THEME_INFO: Record<ThemeKey, ThemeInfo> = {
   everworks: {
     key: "everworks",
-    label: "Ever Works",
+    label: "Default",
     description: "Modern and professional theme with blue and green accents",
     colors: { primary: "#0070f3", secondary: "#00c853", accent: "#0056b3", background: "#ffffff", surface: "#f8f9fa", text: "#1a1a1a", textSecondary: "#6c757d" },
   },

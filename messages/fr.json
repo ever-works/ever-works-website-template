@@ -58,7 +58,8 @@
     "PRIVACY_POLICY": "Politique de confidentialité",
     "TERMS_OF_SERVICE": "Conditions d'utilisation",
     "SITEMAP": "Plan du site",
-    "DESCRIPTION": "Le meilleur modèle de site web d'annuaire pour présenter vos projets, outils et ressources avec style et fonctionnalité."
+    "DESCRIPTION": "Le meilleur modèle de site web d'annuaire pour présenter vos projets, outils et ressources avec style et fonctionnalité.",
+    "DISCLAIMER": "Tous les noms de produits, logos et marques sont la propriété de leurs détenteurs respectifs. Tous les noms d'entreprises, de produits et de services utilisés dans ce dépôt, les dépôts associés et les sites web connexes sont uniquement à des fins d'identification. L'utilisation de ces noms, logos et marques n'implique pas d'approbation, d'affiliation ou de parrainage. Ce répertoire peut inclure du contenu généré par intelligence artificielle (IA)"
   },
   "listing": {
     "ALL": "Tout",
@@ -125,6 +126,16 @@
     "LEGAL": "Légal",
     "HELP": "Centre d'aide",
     "LOGOUT": "Se déconnecter"
+  },
+  "newsletter": {
+    "NEWSLETTER": "NEWSLETTER",
+    "JOIN_COMMUNITY": "Rejoignez la Communauté",
+    "SUBSCRIBE_TEXT": "Inscrivez-vous à notre newsletter pour les dernières nouvelles et mises à jour",
+    "EMAIL_PLACEHOLDER": "jean.dupont@exemple.com",
+    "SUBSCRIBE": "S'abonner",
+    "SUBMITTING": "Envoi en cours...",
+    "SUCCESS_MESSAGE": "Merci de vous être inscrit à notre newsletter !",
+    "ERROR_MESSAGE": "Une erreur s'est produite. Veuillez réessayer plus tard."
   }
 }
 

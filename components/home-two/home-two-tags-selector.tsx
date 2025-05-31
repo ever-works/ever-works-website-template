@@ -41,12 +41,12 @@ const TagButton = ({ tag, isActive, href, onPress }: TagButtonProps) => {
       as={Link}
       href={href}
       className={cn(
-        "group w-full font-medium text-left justify-start items-center transition-all duration-200",
+        "group w-full font-medium text-left h-6 justify-start items-center transition-all duration-200",
         "hover:shadow-md hover:scale-[1.02] active:scale-[0.98]",
         {
           "bg-blue-500 dark:bg-blue-600 text-white border border-blue-500 dark:border-blue-600":
             isActive,
-          "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700/50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600":
+          "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700/50 bg-white dark:bg-gray-800 border border-gray-50 dark:border-gray-800":
             !isActive,
         }
       )}
@@ -105,16 +105,19 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
 
   const isTagPage = pathname.includes("/tags/");
   const currentTagId = isTagPage ? pathname.split("/tags/")[1] : null;
-  const currentTag = useMemo(() => 
-    currentTagId ? tags.find(tag => tag.id === currentTagId) : null,
+  const currentTag = useMemo(
+    () => (currentTagId ? tags.find((tag) => tag.id === currentTagId) : null),
     [currentTagId, tags]
   );
 
-  const handleClearTag = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    router.push("/");
-  }, [router]);
+  const handleClearTag = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      router.push("/");
+    },
+    [router]
+  );
 
   const filteredTags = useMemo(() => {
     if (!searchTerm) return tags;
@@ -155,7 +158,7 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
                   tabIndex={0}
                   aria-label="Clear tag selection"
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
+                    if (e.key === "Enter" || e.key === " ") {
                       handleClearTag(e as any);
                     }
                   }}
@@ -167,7 +170,7 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
             <ChevronDown className="h-3 w-3 text-gray-500 dark:text-gray-400 transition-all duration-300 group-hover:rotate-180" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent 
+        <PopoverContent
           className={cn(
             "p-0 max-h-[400px] w-[320px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl overflow-hidden",
             "animate-in fade-in-0 zoom-in-95 duration-200"
@@ -175,7 +178,7 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
         >
           <div className="p-4 space-y-4">
             {/* Search Bar */}
-            <div className="relative group">
+            <div className="relative group w-full">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-4 w-4 text-gray-400 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors" />
               </div>
@@ -189,7 +192,7 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
               {searchTerm && (
                 <Button
                   onClick={clearSearch}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors bg-transparent"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -197,7 +200,7 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
             </div>
 
             {/* Tags List */}
-            <div className="max-h-[300px] overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+            <div className="max-h-[250px] overflow-y-auto overflow-hidden space-y-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent scrollbar-none">
               {filteredTags.map((tag, index) => {
                 const href = `/tags/${tag.id}`;
                 const isActive = pathname.startsWith(encodeURI(href));

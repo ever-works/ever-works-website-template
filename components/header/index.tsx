@@ -1,7 +1,6 @@
 "use client";
 
 import { useConfig } from "@/app/[locale]/config";
-import { Link } from "@/i18n/navigation";
 import {
   Button,
   Navbar,
@@ -13,10 +12,11 @@ import {
   PopoverTrigger,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
-import { ProfileButton } from "./profile-button";
 import { SessionProps } from "@/lib/types";
-import { LayoutSwitcher } from "@/components/layout-switcher";
+import Link from "next/link";
+import { LayoutSwitcher } from "../layout-switcher";
 import { NavigationControls } from "../navigation-controls";
+import { ProfileButton } from "./profile-button";
 
 export const AcmeLogo = () => {
   return (
@@ -44,73 +44,88 @@ export default function Header({ session }: SessionProps) {
     chevron: <ChevronDown fill="currentColor" size={16} />,
   };
   return (
-    <Navbar maxWidth="2xl" className="border-b border-gray-200 dark:border-gray-700">
-      <NavbarBrand>
-        <Link href="/" className="flex items-center">
-          <div className="p-2 rounded-lg  text-white mr-3">
-            <AcmeLogo />
-          </div>
-          <p className="font-bold">{config.company_name}</p>
-        </Link>
-      </NavbarBrand>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <Popover placement="bottom" offset={10}>
-          <NavbarItem>
-            <PopoverTrigger>
-              <Button
-                disableRipple
-                className="p-0 bg-transparent data-[hover=true]:bg-transparent text-gray-700 dark:text-gray-300 hover:text-theme-primary"
-                endContent={icons.chevron}
-                radius="sm"
-                variant="light"
-              >
-                {t("LAYOUT")}
-              </Button>
-            </PopoverTrigger>
-          </NavbarItem>
-          <PopoverContent className="p-0 w-[420px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl overflow-hidden">
-            <div className="p-6 space-y-6">
-              {/* Header */}
-              <div className="text-center">
-                <h3 className="text-lg font-semibold text-theme-primary mb-1">
-                  {t("LAYOUT")}
-                </h3>
-              </div>
-
-              {/* Layout Section */}
-              <div className="space-y-4">
-                <LayoutSwitcher inline />
-              </div>
+    <Navbar
+      maxWidth="full"
+      className="border-b border-gray-100 dark:border-gray-800 "
+    >
+      <div className="flex items-center justify-between w-full container mx-auto">
+        <NavbarBrand>
+          <Link href="/" className="flex items-center">
+            <div className="p-2 rounded-lg  text-white mr-3">
+              <AcmeLogo />
             </div>
-          </PopoverContent>
-        </Popover>
-        <NavbarItem>
-          <Link aria-current="page" className="text-gray-700 dark:text-gray-300 hover:text-theme-primary transition-colors" href="#">
-            {t("DISCOVER")}
+            <p className="font-bold">{config.company_name}</p>
           </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link className="text-gray-700 dark:text-gray-300 hover:text-theme-primary transition-colors" href="#">
-            {t("ABOUT")}
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link className="text-gray-700 dark:text-gray-300 hover:text-theme-primary transition-colors" href="#">
-            {"GitHub"}
-          </Link>
-        </NavbarItem>
-      </NavbarContent>
+        </NavbarBrand>
+        <NavbarContent className="hidden sm:flex gap-4" justify="center">
+          <Popover placement="bottom" offset={10}>
+            <NavbarItem>
+              <PopoverTrigger>
+                <Button
+                  disableRipple
+                  className="p-0 bg-transparent data-[hover=true]:bg-transparent text-gray-700 dark:text-gray-300 hover:text-theme-primary"
+                  endContent={icons.chevron}
+                  radius="sm"
+                  variant="light"
+                >
+                  {t("LAYOUT")}
+                </Button>
+              </PopoverTrigger>
+            </NavbarItem>
+            <PopoverContent className="p-0 w-[420px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl overflow-hidden">
+              <div className="p-6 space-y-6">
+                {/* Header */}
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-theme-primary mb-1">
+                    {t("LAYOUT")}
+                  </h3>
+                </div>
 
-      <NavbarContent justify="end">
-        <NavbarItem>
-          <NavigationControls />
-        </NavbarItem>
-        {providers.length > 0 && (
+                {/* Layout Section */}
+                <div className="space-y-4">
+                  <LayoutSwitcher inline />
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
           <NavbarItem>
-            <ProfileButton session={session} />
+            <Link
+              aria-current="page"
+              className="text-gray-700 dark:text-gray-300 hover:text-theme-primary transition-colors"
+              href="#"
+            >
+              {t("DISCOVER")}
+            </Link>
           </NavbarItem>
-        )}
-      </NavbarContent>
+          <NavbarItem>
+            <Link
+              className="text-gray-700 dark:text-gray-300 hover:text-theme-primary transition-colors"
+              href="#"
+            >
+              {t("ABOUT")}
+            </Link>
+          </NavbarItem>
+          <NavbarItem>
+            <Link
+              className="text-gray-700 dark:text-gray-300 hover:text-theme-primary transition-colors"
+              href="#"
+            >
+              {"GitHub"}
+            </Link>
+          </NavbarItem>
+        </NavbarContent>
+
+        <NavbarContent justify="end">
+          <NavbarItem>
+            <NavigationControls />
+          </NavbarItem>
+          {providers.length > 0 && (
+            <NavbarItem>
+              <ProfileButton session={session} />
+            </NavbarItem>
+          )}
+        </NavbarContent>
+      </div>
     </Navbar>
   );
 }

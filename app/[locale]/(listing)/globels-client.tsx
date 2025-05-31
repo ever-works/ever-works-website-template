@@ -24,7 +24,7 @@ export default function GlobelsClient(props: ListingProps) {
     ...props,
   });
   return layoutHome === "Home_1" ? (
-    <div className="container mx-auto px-6 pb-12">
+    <div className=" px-6 pb-12">
       <div className="flex flex-col md:flex-row w-full gap-5">
         <Categories total={props.total} categories={props.categories} />
         <div className="w-full">

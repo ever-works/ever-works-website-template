@@ -64,11 +64,11 @@ function BlockLink({
   return (
     <Button
       className={cn(
-        "font-medium text-left justify-start items-center transition-all duration-200 mb-1",
+        "font-medium text-left justify-start items-center transition-all duration-200 mb-1 h-8",
         {
           "bg-blue-500 dark:bg-blue-600 text-white border border-blue-500 dark:border-blue-600":
             isActive,
-          "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700/50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600":
+          "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700/50 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700":
             !isActive,
         }
       )}
@@ -111,11 +111,11 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
             isActive={pathname === "/" || pathname.startsWith("/discover")}
             href="/"
           >
-            <div className="flex items-center justify-between w-full px-3 py-2">
+            <div className="flex items-center justify-between w-full  px-3 py-2">
               <span className="font-medium truncate pr-2">
                 {t("ALL_CATEGORIES")}
               </span>
-              <span className="text-xs font-semibold bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-2 py-1 rounded-full transition-colors duration-300 flex-shrink-0">
+              <span className="text-xs font-semibold bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-2 py-1 rounded-full transition-colors duration-300 flex-shrink-0">
                 {totalItems}
               </span>
             </div>
@@ -202,7 +202,7 @@ export function Categories(props: { total: number; categories: Category[] }) {
       <div className="md:hidden">
         <Accordion
           variant="bordered"
-          className="shadow-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl transition-colors duration-300"
+          className="shadow-sm bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl transition-colors duration-300"
         >
           <AccordionItem
             key="1"
@@ -227,34 +227,35 @@ export function Categories(props: { total: number; categories: Category[] }) {
 
       <div className="hidden md:flex flex-col w-full max-w-64 gap-6">
         {/* Search Bar */}
-        <div className="relative">
-          <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 p-4 shadow-sm dark:shadow-lg transition-colors duration-300">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
-              </div>
-              <Input
-                type="text"
-                placeholder="Search items..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-12"
-                classNames={{
-                  input:
-                    "bg-gray-50 dark:bg-gray-900/50 border-gray-300 dark:border-gray-600/50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400",
-                  inputWrapper:
-                    "bg-gray-50 dark:bg-gray-900/50 border-gray-300 dark:border-gray-600/50 hover:border-gray-400 dark:hover:border-gray-500 focus-within:border-blue-500 dark:focus-within:border-blue-400",
-                }}
-              />
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm("")}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
+        <div className="relative ">
+          <div className="bg-gray-200 dark:bg-gray-900 backdrop-blur-md rounded-full px-1 border border-gray-300/20 dark:border-gray-700/30 transition-all duration-300 hover:shadow-md">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 text-gray-500 dark:text-gray-400" />
             </div>
+            <Input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-8 "
+              style={{ background: "transparent" }}
+              maxLength={20}
+              classNames={{
+                base: "!bg-transparent",
+                input:
+                  "!bg-transparent text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm",
+                inputWrapper:
+                  "!bg-transparent border-none shadow-none focus-within:ring-0 focus-within:shadow-none hover:bg-transparent dark:hover:bg-transparent",
+              }}
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -315,7 +316,7 @@ export function Categories(props: { total: number; categories: Category[] }) {
                       return tag ? (
                         <span
                           key={tagId}
-                          className="inline-flex items-center px-3 py-1 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium border border-blue-200 dark:border-blue-700/50"
+                          className="inline-flex items-center px-3 py-1  rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium border border-blue-200 dark:border-blue-700/50"
                         >
                           {tag.name}
                           <button

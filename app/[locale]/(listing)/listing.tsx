@@ -28,18 +28,18 @@ export default async function Listing(props: ListingProps) {
         </div>
 
         {/* Main Content */}
-        <div className="relative z-10">
+        <div className="relative z-10 max-w-7xl mx-auto">
           {/* Header Section */}
-          <div className="container mx-auto px-6 py-12">
+          <div className=" px-6 py-12">
             <div className="text-center mb-12">
               {/* Introducing line */}
               <div className="flex items-center justify-center mb-6">
-                <div className="flex items-center gap-2 text-sm md:text-base text-gray-600 dark:text-gray-400 font-medium">
-                  <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse"></div>
+                <div className="flex items-center text-gray-900 dark:text-gray-200 bg-gray-200 dark:bg-[#1F2937]  py-2 px-4 rounded-full gap-2 text-sm font-medium">
+                  <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
                   {t("INTRODUCING_EVER_WORKS")}
                 </div>
               </div>
-              
+
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent transition-colors duration-300">
                 {t("THE_BEST")} <br className="hidden md:block" />
                 <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 bg-clip-text text-transparent">

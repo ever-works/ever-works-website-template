@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-@tailwind base;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -46,7 +45,7 @@
   body {
     color: var(--foreground);
     background: var(--background);
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif !important;
   }
 }
 
@@ -140,6 +139,16 @@
 .animate-fade-in > * {
   animation: fadeIn 0.3s ease-out forwards;
   opacity: 0;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  
 }
 
 .animate-fade-in > *:nth-child(1) { animation-delay: 0.05s; }

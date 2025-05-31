@@ -46,7 +46,7 @@ export const ThemePreviews: Record<ThemeKey, React.ReactNode> = {
 export const THEME_DEFINITIONS: Record<ThemeKey, Omit<ThemeMetadata, 'config'>> = {
   everworks: {
     key: "everworks",
-    label: "Ever Works",
+    label: "Default",
     description: "Modern and professional theme with blue and green accents",
     preview: ThemePreviews.everworks,
   },
