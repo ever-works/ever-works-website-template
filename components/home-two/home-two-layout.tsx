@@ -23,7 +23,7 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
   const { layoutKey, setLayoutKey } = useLayoutTheme();
   return (
     <div className="min-h-screen transition-colors duration-300">
-      <div className="container mx-auto px-4 flex flex-col gap-4 px-6 py-8 w-full">
+      <div className="container mx-auto px-4 flex flex-col gap-4 py-8 w-full">
         <HomeTwoFilters
           categories={props.categories}
           tags={props.tags}
