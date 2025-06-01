@@ -72,11 +72,6 @@ const TAGS = [
   "Business Tools",
 ];
 
-const LINK_TYPES = [
-  { label: "Website", icon: Globe, placeholder: "https://yourproduct.com" },
-  { label: "Additional Link", icon: Globe, placeholder: "https://example.com" },
-];
-
 export function DetailsForm({
   initialData = {},
   selectedPlan,
@@ -174,7 +169,7 @@ export function DetailsForm({
     }
   }, [formData.links]);
 
-  const addLink = useCallback((linkType: typeof LINK_TYPES[0]) => {
+  const addLink = useCallback(() => {
     const newId = `link-${Date.now()}`;
     setAnimatingLinkId(newId);
     
@@ -183,7 +178,7 @@ export function DetailsForm({
       links: [...prev.links, {
         id: newId,
         url: "",
-        label: linkType.label,
+        label: "Additional Link",
         type: "secondary" as const,
         icon: "Globe"
       }]
@@ -482,7 +477,7 @@ export function DetailsForm({
                   <div className="pt-4">
                     <button
                       type="button"
-                      onClick={() => addLink({ label: "Additional Link", icon: Globe, placeholder: "https://example.com" })}
+                      onClick={addLink}
                       className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors rounded-xl border-2 border-dashed border-blue-200 dark:border-blue-800 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                     >
                       <Plus className="w-4 h-4" />
