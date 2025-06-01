@@ -146,5 +146,51 @@
     "SUBMITTING": "Enviando...",
     "SUCCESS_MESSAGE": "¡Gracias por suscribirte a nuestro boletín!",
     "ERROR_MESSAGE": "Se produjo un error. Por favor, inténtalo de nuevo más tarde."
+  },
+  "pricing": {
+    "CHOOSE_YOUR_PERFECT_PLAN": "Elige Tu Plan Perfecto",
+    "START_YOUR_JOURNEY": "Comienza Tu Viaje",
+    "CHOOSE_WHAT_FITS_YOU": "Elige Lo Que Te Conviene",
+    "DESCRIPTION": "Desde exploración gratuita hasta características premium, encuentra el plan perfecto que coincida con tus ambiciones y crezca con tu éxito.",
+    "NO_HIDDEN_FEES": "Sin tarifas ocultas",
+    "INSTANT_ACTIVATION": "Activación instantánea",
+    "NO_SETUP_FEES": "Sin Tarifas de Configuración",
+    "PREMIUM_SUPPORT": "Soporte Premium",
+    "MOST_POPULAR": "Más Popular",
+    "GET_STARTED_FREE": "Comenzar Gratis",
+    "UPGRADE_TO_PRO": "Actualizar a Pro",
+    "GO_ENTERPRISE": "Ir a Empresa",
+    "SELECTED": "Seleccionado",
+    "GREAT_CHOICE": "¡Excelente elección! Has seleccionado el plan",
+    "PLAN": "plan",
+    "READY_TO_GET_STARTED": "¿Listo para comenzar con tu anuncio?",
+    "CONTINUE_TO_NEXT_STEP": "Continuar al Siguiente Paso",
+    "GET_STARTED_IMMEDIATELY": "Comienza inmediatamente",
+    "PAY_ONLY_WHAT_YOU_USE": "Paga solo lo que uses",
+    "EXPERT_ASSISTANCE": "Asistencia experta 24/7",
+    "FREE_PLAN_FEATURES": {
+      "GET_3_DOFOLLOW_LINKS": "Obtén 3 enlaces dofollow para impulsar tu SEO",
+      "PERMANENT_LINK_MAINTENANCE": "Enlace permanente con mantenimiento de backlinks",
+      "REVIEWED_WITHIN_72_HOURS": "Revisado y listado dentro de 72 horas",
+      "PUBLISH_WHEN_YOU_WANT": "Publica tu producto el día que quieras",
+      "BACKLINK_REQUIRED": "Se requiere enlace de retorno a nuestro sitio",
+      "NO_CUSTOMER_SUPPORT": "Sin soporte al cliente"
+    },
+    "PRO_PLAN_FEATURES": {
+      "GET_MORE_DOFOLLOW_LINKS": "Obtén > 3 enlaces dofollow para impulsar tu SEO",
+      "LIST_RIGHT_NOW": "Lista ahora mismo, publica cuando quieras",
+      "PERMANENT_LINK_NO_BACKLINK": "Enlace permanente, sin enlace de retorno requerido",
+      "FEATURED_PLACEMENT": "Colocación destacada en la parte superior de las listas",
+      "SHARE_SOCIAL_MEDIA": "Comparte a través de redes sociales y newsletters",
+      "PREMIUM_CUSTOMER_SUPPORT": "Soporte premium al cliente"
+    },
+    "SPONSOR_PLAN_FEATURES": {
+      "EVERYTHING_IN_PRO": "Todo lo del plan Pro",
+      "PROMOTE_ON_EVERY_PAGE": "Promociona tu producto en casi todas las páginas",
+      "AVAILABLE_FOR_ALL_PRODUCTS": "Disponible para todo tipo de productos",
+      "ONE_ADVERTISEMENT_PER_PERIOD": "Solo un anuncio por período",
+      "SCHEDULE_ADVERTISING": "Programa tu período publicitario",
+      "PREMIUM_CUSTOMER_SUPPORT": "Soporte premium al cliente"
+    }
   }
 }

@@ -6,7 +6,6 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-// Composants adaptateurs pour maintenir la compatibilité avec l'API shadcn
 const ToastProvider = ({ children }: { children?: React.ReactNode }) => <>{children}</>;
 ToastProvider.displayName = "ToastProvider";
 
@@ -37,8 +36,6 @@ const toastVariants = cva(
 );
 
 type ToastVariantProps = VariantProps<typeof toastVariants>;
-
-// Créer une interface personnalisée sans étendre HTMLAttributes pour éviter les conflits de types
 interface ToastProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'>, ToastVariantProps {
   title?: React.ReactNode;
   description?: React.ReactNode;

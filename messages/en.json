@@ -146,6 +146,52 @@
     "SUBMITTING": "Submitting...",
     "SUCCESS_MESSAGE": "Thank you for subscribing to our newsletter!",
     "ERROR_MESSAGE": "An error occurred. Please try again later."
+  },
+  "pricing": {
+    "CHOOSE_YOUR_PERFECT_PLAN": "Choose Your Perfect Plan",
+    "START_YOUR_JOURNEY": "Start Your Journey",
+    "CHOOSE_WHAT_FITS_YOU": "Choose What Fits You",
+    "DESCRIPTION": "From free exploration to premium features, find the perfect plan that matches your ambitions and grows with your success.",
+    "NO_HIDDEN_FEES": "No hidden fees",
+    "INSTANT_ACTIVATION": "Instant activation",
+    "NO_SETUP_FEES": "No Setup Fees",
+    "PREMIUM_SUPPORT": "Premium Support",
+    "MOST_POPULAR": "Most Popular",
+    "GET_STARTED_FREE": "Get Started Free",
+    "UPGRADE_TO_PRO": "Upgrade to Pro",
+    "GO_ENTERPRISE": "Go Enterprise",
+    "SELECTED": "Selected",
+    "GREAT_CHOICE": "Great choice! You selected the",
+    "PLAN": "plan",
+    "READY_TO_GET_STARTED": "Ready to get started with your listing?",
+    "CONTINUE_TO_NEXT_STEP": "Continue to Next Step",
+    "GET_STARTED_IMMEDIATELY": "Get started immediately",
+    "PAY_ONLY_WHAT_YOU_USE": "Pay only for what you use",
+    "EXPERT_ASSISTANCE": "24/7 expert assistance",
+    "FREE_PLAN_FEATURES": {
+      "GET_3_DOFOLLOW_LINKS": "Get 3 dofollow links to boost your SEO",
+      "PERMANENT_LINK_MAINTENANCE": "Permanent link with backlink maintenance",
+      "REVIEWED_WITHIN_72_HOURS": "Reviewed and listed within 72 hours",
+      "PUBLISH_WHEN_YOU_WANT": "Publish your product the day you want",
+      "BACKLINK_REQUIRED": "Backlink to our site is required",
+      "NO_CUSTOMER_SUPPORT": "No customer support"
+    },
+    "PRO_PLAN_FEATURES": {
+      "GET_MORE_DOFOLLOW_LINKS": "Get > 3 dofollow links to boost your SEO",
+      "LIST_RIGHT_NOW": "List right now, publish whenever you want",
+      "PERMANENT_LINK_NO_BACKLINK": "Permanent link, no backlink required",
+      "FEATURED_PLACEMENT": "Featured placement at the top of listings",
+      "SHARE_SOCIAL_MEDIA": "Share through social media and newsletters",
+      "PREMIUM_CUSTOMER_SUPPORT": "Premium customer support"
+    },
+    "SPONSOR_PLAN_FEATURES": {
+      "EVERYTHING_IN_PRO": "Everything in Pro plan",
+      "PROMOTE_ON_EVERY_PAGE": "Promote your product on almost every page",
+      "AVAILABLE_FOR_ALL_PRODUCTS": "Available for all kinds of product",
+      "ONE_ADVERTISEMENT_PER_PERIOD": "Only one advertisement per period",
+      "SCHEDULE_ADVERTISING": "Schedule your advertising period",
+      "PREMIUM_CUSTOMER_SUPPORT": "Premium customer support"
+    }
   }
 }
 

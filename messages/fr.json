@@ -146,6 +146,52 @@
     "SUBMITTING": "Envoi en cours...",
     "SUCCESS_MESSAGE": "Merci de vous être inscrit à notre newsletter !",
     "ERROR_MESSAGE": "Une erreur s'est produite. Veuillez réessayer plus tard."
+  },
+  "pricing": {
+    "CHOOSE_YOUR_PERFECT_PLAN": "Choisissez Votre Plan Parfait",
+    "START_YOUR_JOURNEY": "Commencez Votre Voyage",
+    "CHOOSE_WHAT_FITS_YOU": "Choisissez Ce Qui Vous Convient",
+    "DESCRIPTION": "De l'exploration gratuite aux fonctionnalités premium, trouvez le plan parfait qui correspond à vos ambitions et évolue avec votre succès.",
+    "NO_HIDDEN_FEES": "Aucun frais caché",
+    "INSTANT_ACTIVATION": "Activation instantanée",
+    "NO_SETUP_FEES": "Aucun Frais d'Installation",
+    "PREMIUM_SUPPORT": "Support Premium",
+    "MOST_POPULAR": "Le Plus Populaire",
+    "GET_STARTED_FREE": "Commencer Gratuitement",
+    "UPGRADE_TO_PRO": "Passer au Pro",
+    "GO_ENTERPRISE": "Passer à l'Entreprise",
+    "SELECTED": "Sélectionné",
+    "GREAT_CHOICE": "Excellent choix ! Vous avez sélectionné le plan",
+    "PLAN": "plan",
+    "READY_TO_GET_STARTED": "Prêt à commencer avec votre annonce ?",
+    "CONTINUE_TO_NEXT_STEP": "Continuer à l'Étape Suivante",
+    "GET_STARTED_IMMEDIATELY": "Commencez immédiatement",
+    "PAY_ONLY_WHAT_YOU_USE": "Payez seulement ce que vous utilisez",
+    "EXPERT_ASSISTANCE": "Assistance d'experts 24/7",
+    "FREE_PLAN_FEATURES": {
+      "GET_3_DOFOLLOW_LINKS": "Obtenez 3 liens dofollow pour booster votre SEO",
+      "PERMANENT_LINK_MAINTENANCE": "Lien permanent avec maintenance des backlinks",
+      "REVIEWED_WITHIN_72_HOURS": "Examiné et listé dans les 72 heures",
+      "PUBLISH_WHEN_YOU_WANT": "Publiez votre produit le jour que vous voulez",
+      "BACKLINK_REQUIRED": "Un lien retour vers notre site est requis",
+      "NO_CUSTOMER_SUPPORT": "Pas de support client"
+    },
+    "PRO_PLAN_FEATURES": {
+      "GET_MORE_DOFOLLOW_LINKS": "Obtenez > 3 liens dofollow pour booster votre SEO",
+      "LIST_RIGHT_NOW": "Listez maintenant, publiez quand vous voulez",
+      "PERMANENT_LINK_NO_BACKLINK": "Lien permanent, aucun lien retour requis",
+      "FEATURED_PLACEMENT": "Placement en vedette en haut des listes",
+      "SHARE_SOCIAL_MEDIA": "Partagez via les réseaux sociaux et newsletters",
+      "PREMIUM_CUSTOMER_SUPPORT": "Support client premium"
+    },
+    "SPONSOR_PLAN_FEATURES": {
+      "EVERYTHING_IN_PRO": "Tout ce qui est dans le plan Pro",
+      "PROMOTE_ON_EVERY_PAGE": "Promouvez votre produit sur presque toutes les pages",
+      "AVAILABLE_FOR_ALL_PRODUCTS": "Disponible pour tous types de produits",
+      "ONE_ADVERTISEMENT_PER_PERIOD": "Seulement une publicité par période",
+      "SCHEDULE_ADVERTISING": "Planifiez votre période publicitaire",
+      "PREMIUM_CUSTOMER_SUPPORT": "Support client premium"
+    }
   }
 }
 
