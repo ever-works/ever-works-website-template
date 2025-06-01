@@ -70,6 +70,14 @@
     color: var(--foreground);
     background: var(--background);
     font-family: 'Poppins', sans-serif !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Amélioration des transitions pour le changement de thème */
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
   }
 }
 
@@ -181,3 +189,36 @@
 .animate-fade-in > *:nth-child(4) { animation-delay: 0.2s; }
 .animate-fade-in > *:nth-child(5) { animation-delay: 0.25s; }
 .animate-fade-in > *:nth-child(n + 6) { animation-delay: 0.3s; }
+
+/* Animation pour le changement de thème */
+@keyframes theme-fade {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.theme-transition {
+  animation: theme-fade 0.3s ease-out forwards;
+}
+
+/* Effet de pulse pour le thème actif */
+@keyframes theme-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.3);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.theme-active-pulse {
+  animation: theme-pulse 2s infinite;
+}
