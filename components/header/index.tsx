@@ -113,7 +113,16 @@ export default function Header({ session }: SessionProps) {
               {"GitHub"}
             </Link>
           </NavbarItem>
+          <NavbarItem>
+            <Link
+              className="text-gray-700 dark:text-gray-300 hover:text-theme-primary transition-colors"
+              href="/directory"
+            >
+              {t("DIRECTORY")}
+            </Link>
+          </NavbarItem>
         </NavbarContent>
+        
 
         <NavbarContent justify="end">
           <NavbarItem>
