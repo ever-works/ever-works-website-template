@@ -59,7 +59,17 @@
     "TERMS_OF_SERVICE": "Conditions d'utilisation",
     "SITEMAP": "Plan du site",
     "DESCRIPTION": "Le meilleur modèle de site web d'annuaire pour présenter vos projets, outils et ressources avec style et fonctionnalité.",
-    "DISCLAIMER": "Tous les noms de produits, logos et marques sont la propriété de leurs détenteurs respectifs. Tous les noms d'entreprises, de produits et de services utilisés dans ce dépôt, les dépôts associés et les sites web connexes sont uniquement à des fins d'identification. L'utilisation de ces noms, logos et marques n'implique pas d'approbation, d'affiliation ou de parrainage. Ce répertoire peut inclure du contenu généré par intelligence artificielle (IA)"
+    "DISCLAIMER": "Tous les noms de produits, logos et marques sont la propriété de leurs détenteurs respectifs. Tous les noms d'entreprises, de produits et de services utilisés dans ce dépôt, les dépôts associés et les sites web connexes sont uniquement à des fins d'identification. L'utilisation de ces noms, logos et marques n'implique pas d'approbation, d'affiliation ou de parrainage. Ce répertoire peut inclure du contenu généré par intelligence artificielle (IA)",
+    "STAY_UPDATED": "Restez informé",
+    "NEWSLETTER_DESCRIPTION": "Recevez les dernières mises à jour et du contenu exclusif directement dans votre boîte de réception.",
+    "SUBSCRIBE": "S'abonner",
+    "CRAFTED_WITH_EXCELLENCE": "Conçu avec excellence",
+    "MADE_WITH_LOVE": "Fait avec",
+    "FOR_DEVELOPERS": "pour les développeurs du monde entier",
+    "VIEW_DETAILS": "Voir les détails",
+    "BUILDING_FUTURE": "Construire l'avenir des expériences numériques avec des solutions innovantes et un design exceptionnel.",
+    "ENTER_EMAIL": "Saisissez votre email",
+    "COOKIES": "Cookies"
   },
   "listing": {
     "ALL": "Tout",

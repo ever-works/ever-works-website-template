@@ -210,19 +210,19 @@ function Newsletter({ t }: { t: any }) {
   return (
     <div className="space-y-4 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
       <h4 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">
-        Stay Updated
+        {t("STAY_UPDATED")}
       </h4>
       <p className="text-sm text-gray-600 dark:text-gray-400">
-        Get the latest updates and exclusive content delivered to your inbox.
+        {t("NEWSLETTER_DESCRIPTION")}
       </p>
       <div className="flex gap-2">
         <input
           type="email"
-          placeholder="Enter your email"
+          placeholder={t("ENTER_EMAIL")}
           className="flex-1 px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-lg border border-white/30 dark:border-gray-700/40 focus:border-blue-300/50 dark:focus:border-blue-500/30 focus:outline-none transition-all duration-300 text-sm placeholder-gray-500 dark:placeholder-gray-400"
         />
         <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/25 hover:scale-105 text-sm">
-          Subscribe
+          {t("SUBSCRIBE")}
         </button>
       </div>
     </div>
@@ -325,7 +325,7 @@ function FooterBottom({
             {[
               { label: t("TERMS_OF_SERVICE"), href: "/terms" },
               { label: t("PRIVACY_POLICY"), href: "/privacy" },
-              { label: "Cookies", href: "/cookies" }
+              { label: t("COOKIES"), href: "/cookies" }
             ].map((item, index) => (
               <Link
                 key={index}
