@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   trailingSlash: false,
   generateEtags: false,
   poweredByHeader: false,
+  staticPageGenerationTimeout: 180,
   images: {
     remotePatterns: [
       {
