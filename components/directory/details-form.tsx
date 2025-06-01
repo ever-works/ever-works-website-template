@@ -119,7 +119,7 @@ export function DetailsForm({
   const getStepNumber = () => selectedPlan === "free" ? 1 : 2;
   const requiredFieldsCount = 4; // name, link, category, description
   const completedRequiredFields = ['name', 'link', 'category', 'description'].filter(field => 
-    formData[field] && formData[field].toString().trim()
+    formData[field]?.toString().trim()
   ).length;
   const progressPercentage = (completedRequiredFields / requiredFieldsCount) * 100;
 

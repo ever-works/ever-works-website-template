@@ -48,6 +48,8 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
   ({ className, variant, title, description, action, children, ...props }, ref) => {
     return (
       <div
+        role="status"
+        aria-live="polite"
         ref={ref}
         className={cn(toastVariants({ variant }), className)}
         {...props}
