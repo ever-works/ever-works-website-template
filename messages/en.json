@@ -158,13 +158,19 @@
     "DETAILS_FORM": {
       "TITLE": "Tell Us About Your Product",
       "DESCRIPTION": "Share the details that will help users discover and understand your amazing product",
+      "STEP_INDICATOR": "Step {step} of 3 · Product Details",
       "FORM_COMPLETION": "Form Completion",
-      "REQUIRED_FIELDS": "required fields",
+      "REQUIRED_FIELDS": "{completed}/{total} required fields",
       "BASIC_INFORMATION": "Basic Information",
       "PRODUCT_NAME": "Product Name",
       "PRODUCT_NAME_PLACEHOLDER": "Enter your amazing product name",
       "PRODUCT_LINK": "Product Links",
       "PRODUCT_LINK_PLACEHOLDER": "https://yourproduct.com",
+      "MAIN_WEBSITE_LABEL": "Main Website",
+      "LINK_LABEL_PLACEHOLDER": "Link label (e.g., GitHub, Facebook, Demo)",
+      "MAIN_WEBSITE_PLACEHOLDER": "https://yourproduct.com",
+      "ADDITIONAL_LINK_PLACEHOLDER": "https://github.com/yourproject",
+      "ADD_MORE_LINKS": "Add more links",
       "CATEGORY": "Category",
       "CATEGORY_PLACEHOLDER": "Select a category for your product",
       "TAGS_LABELS": "Tags & Labels",
@@ -177,7 +183,9 @@
       "DETAILED_INTRODUCTION_PLACEHOLDER": "Tell the full story of your product. What problem does it solve? What makes it unique? How does it help users?",
       "MARKDOWN_SUPPORT": "Markdown formatting supported for rich text styling",
       "GO_BACK": "Go Back",
-      "CONTINUE_NEXT_STEP": "Continue to Next Step"
+      "CONTINUE_NEXT_STEP": "Continue to Next Step",
+      "PRIMARY_BADGE": "Primary",
+      "LINKS_ADDED": "links added"
     },
     "PAYMENT": {
       "TITLE": "Complete Your Order",

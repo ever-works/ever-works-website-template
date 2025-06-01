@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { PricingPlan } from "@/components/pricing/plan-card";
 import { Check, ArrowLeft, ArrowRight, Sparkles, Tag, Type, FileText, Grid3X3, Star, Plus, X, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
+
 
 interface ProductLink {
   id: string;
@@ -81,6 +83,7 @@ export function DetailsForm({
   onSubmit,
   onBack,
 }: DetailsFormProps) {
+  const t = useTranslations("directory");
   const [formData, setFormData] = useState<FormData>(() => {
     const defaultData = {
       name: "",
@@ -250,7 +253,7 @@ export function DetailsForm({
     };
   }, [formData]);
 
-  const getIconComponent = (iconName: string) => {
+  const getIconComponent = () => {
     return Globe; // Simplified to always use Globe icon
   };
 
@@ -277,16 +280,16 @@ export function DetailsForm({
               <Sparkles className="w-4 h-4 text-white animate-pulse" />
             </div>
             <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-              Step {stepNumber} of 3 · Product Details
+              {t("DETAILS_FORM.STEP_INDICATOR", { step: stepNumber })}
             </span>
           </div>
           
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-            Tell Us About Your Product
+            {t("DETAILS_FORM.TITLE")}
           </h1>
           
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Share the details that will help users discover and understand your amazing product
+            {t("DETAILS_FORM.DESCRIPTION")}
           </p>
         </div>
 
@@ -299,11 +302,11 @@ export function DetailsForm({
                   <Check className="w-3 h-3 text-white" />
                 </div>
                 <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  Form Completion
+                  {t("DETAILS_FORM.FORM_COMPLETION")}
                 </span>
               </div>
               <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
-                {completedRequiredFields}/{requiredFieldsCount} required fields
+                {t("DETAILS_FORM.REQUIRED_FIELDS", { completed: completedRequiredFields, total: requiredFieldsCount })}
               </span>
             </div>
             
@@ -329,7 +332,7 @@ export function DetailsForm({
                   <Type className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  Basic Information
+                  {t("DETAILS_FORM.BASIC_INFORMATION")}
                 </h3>
               </div>
 
@@ -337,7 +340,7 @@ export function DetailsForm({
                 {/* Product Name */}
                 <div className="space-y-3">
                   <label htmlFor="name" className="block text-sm font-bold text-gray-700 dark:text-gray-300">
-                    Product Name *
+                    {t("DETAILS_FORM.PRODUCT_NAME")} *
                   </label>
                   <div className="relative">
                     <input
@@ -348,7 +351,7 @@ export function DetailsForm({
                       onChange={handleInputChange}
                       onFocus={() => setFocusedField('name')}
                       onBlur={() => setFocusedField(null)}
-                      placeholder="Enter your amazing product name"
+                      placeholder={t("DETAILS_FORM.PRODUCT_NAME_PLACEHOLDER")}
                       required
                       className={cn(
                         "w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400",
@@ -370,37 +373,37 @@ export function DetailsForm({
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
-                      Product Links *
+                      {t("DETAILS_FORM.PRODUCT_LINK")} *
                     </label>
                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {formData.links.length} link{formData.links.length !== 1 ? 's' : ''} added
+                      {formData.links.length} {t("DETAILS_FORM.LINKS_ADDED")}
                     </div>
                   </div>
 
                   {/* Links Container */}
                   <div className="space-y-4">
                     {formData.links.map((link, index) => {
-                      const IconComponent = getIconComponent(link.icon || 'Globe');
+                      const IconComponent = getIconComponent();
                       const isAnimating = animatingLinkId === link.id;
                       const isMain = link.type === 'main';
                       
                       return (
                         <div
-                          key={link.id}
+                          key={index}
                           className={cn(
-                            "group relative overflow-hidden rounded-2xl border-2 transition-all duration-500",
+                            "group relative overflow-hidden rounded-2xl border-2",
                             isMain 
                               ? "border-blue-200 dark:border-blue-800 bg-blue-50/30 dark:bg-blue-900/10" 
                               : "border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50",
                             isAnimating && "animate-pulse",
-                            "hover:shadow-lg hover:scale-[1.02] hover:border-blue-300 dark:hover:border-blue-600"
+                            "hover:border-blue-300 dark:hover:border-blue-600"
                           )}
                         >
                           {/* Link Type Badge */}
                           {isMain && (
                             <div className="absolute top-3 right-3 z-10">
                               <div className="px-2 py-1 text-xs font-semibold bg-blue-500 text-white rounded-full">
-                                Primary
+                                {t("DETAILS_FORM.PRIMARY_BADGE")}
                               </div>
                             </div>
                           )}
@@ -417,7 +420,7 @@ export function DetailsForm({
                                   type="text"
                                   value={link.label}
                                   onChange={(e) => handleLinkChange(link.id, 'label', e.target.value)}
-                                  placeholder={isMain ? "Main Website" : "Link label (e.g., GitHub, Demo)"}
+                                  placeholder={isMain ? t("DETAILS_FORM.MAIN_WEBSITE_LABEL") : t("DETAILS_FORM.LINK_LABEL_PLACEHOLDER")}
                                   className="w-full h-10 px-3 text-sm font-medium bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                                 />
                               </div>
@@ -441,7 +444,7 @@ export function DetailsForm({
                                 onChange={(e) => handleLinkChange(link.id, 'url', e.target.value)}
                                 onFocus={() => setFocusedField(`link-${link.id}`)}
                                 onBlur={() => setFocusedField(null)}
-                                placeholder={isMain ? "https://yourproduct.com" : "https://example.com"}
+                                placeholder={isMain ? t("DETAILS_FORM.MAIN_WEBSITE_PLACEHOLDER") : t("DETAILS_FORM.ADDITIONAL_LINK_PLACEHOLDER")}
                                 pattern="https?://.*"
                                 required={isMain}
                                 className={cn(
@@ -483,7 +486,7 @@ export function DetailsForm({
                       className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors rounded-xl border-2 border-dashed border-blue-200 dark:border-blue-800 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                     >
                       <Plus className="w-4 h-4" />
-                      Add more links
+                      {t("DETAILS_FORM.ADD_MORE_LINKS")}
                     </button>
                   </div>
                 </div>
@@ -491,7 +494,7 @@ export function DetailsForm({
                 {/* Category */}
                 <div className="space-y-3">
                   <label htmlFor="category" className="block text-sm font-bold text-gray-700 dark:text-gray-300">
-                    Category *
+                    {t("DETAILS_FORM.CATEGORY")} *
                   </label>
                   <div className="relative">
                     <select
@@ -509,7 +512,7 @@ export function DetailsForm({
                       )}
                     >
                       <option value="" disabled className="text-gray-500">
-                        Select a category for your product
+                        {t("DETAILS_FORM.CATEGORY_PLACEHOLDER")}
                       </option>
                       {CATEGORIES.map((category) => (
                         <option key={category} value={category} className="py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
@@ -542,10 +545,10 @@ export function DetailsForm({
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    Tags & Labels
+                    {t("DETAILS_FORM.TAGS_LABELS")}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Select relevant tags to help users find your product
+                    {t("DETAILS_FORM.TAGS_DESCRIPTION")}
                   </p>
                 </div>
               </div>
@@ -573,7 +576,7 @@ export function DetailsForm({
                   <div className="flex items-center gap-2 mb-2">
                     <Star className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                     <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
-                      Selected Tags ({formData.tags.length})
+                      {t("DETAILS_FORM.SELECTED_TAGS", { count: formData.tags.length })}
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -601,7 +604,7 @@ export function DetailsForm({
                   <FileText className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  Product Description
+                  {t("DETAILS_FORM.PRODUCT_DESCRIPTION")}
                 </h3>
               </div>
 
@@ -609,7 +612,7 @@ export function DetailsForm({
                 {/* Short Description */}
                 <div className="space-y-3">
                   <label htmlFor="description" className="block text-sm font-bold text-gray-700 dark:text-gray-300">
-                    Short Description *
+                    {t("DETAILS_FORM.SHORT_DESCRIPTION")} *
                   </label>
                   <div className="relative">
                     <textarea
@@ -619,7 +622,7 @@ export function DetailsForm({
                       onChange={handleInputChange}
                       onFocus={() => setFocusedField('description')}
                       onBlur={() => setFocusedField(null)}
-                      placeholder="A compelling description that captures what makes your product special (max 150 characters)"
+                      placeholder={t("DETAILS_FORM.SHORT_DESCRIPTION_PLACEHOLDER")}
                       maxLength={150}
                       required
                       rows={3}
@@ -645,7 +648,7 @@ export function DetailsForm({
                 {/* Introduction */}
                 <div className="space-y-3">
                   <label htmlFor="introduction" className="block text-sm font-bold text-gray-700 dark:text-gray-300">
-                    Detailed Introduction
+                    {t("DETAILS_FORM.DETAILED_INTRODUCTION")}
                   </label>
                   <div className="relative">
                     <textarea
@@ -655,7 +658,7 @@ export function DetailsForm({
                       onChange={handleInputChange}
                       onFocus={() => setFocusedField('introduction')}
                       onBlur={() => setFocusedField(null)}
-                      placeholder="Tell the full story of your product. What problem does it solve? What makes it unique? How does it help users?"
+                      placeholder={t("DETAILS_FORM.DETAILED_INTRODUCTION_PLACEHOLDER")}
                       rows={6}
                       className={cn(
                         "w-full px-6 py-4 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 resize-none outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400",
@@ -673,7 +676,7 @@ export function DetailsForm({
                   </div>
                   <p className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-2">
                     <FileText className="w-3 h-3" />
-                    Markdown formatting supported for rich text styling
+                    {t("DETAILS_FORM.MARKDOWN_SUPPORT")}
                   </p>
                 </div>
               </div>
@@ -689,7 +692,7 @@ export function DetailsForm({
               className="h-14 px-8 rounded-2xl border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500 transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-xl text-lg font-semibold"
             >
               <ArrowLeft className="w-5 h-5 mr-3" />
-              Go Back
+              {t("DETAILS_FORM.GO_BACK")}
             </Button>
 
             <Button 
@@ -703,7 +706,7 @@ export function DetailsForm({
               )}
             >
               <div className="flex items-center gap-3">
-                <span>Continue to Next Step</span>
+                <span>{t("DETAILS_FORM.CONTINUE_NEXT_STEP")}</span>
                 <ArrowRight className="w-5 h-5" />
               </div>
             </Button>
