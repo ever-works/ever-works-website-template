@@ -16,6 +16,7 @@ interface ProductLink {
 
 interface FormData {
   name: string;
+  link: string;
   links: ProductLink[];
   category: string;
   tags: string[];
@@ -80,22 +81,38 @@ export function DetailsForm({
   onSubmit,
   onBack,
 }: DetailsFormProps) {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    links: [
-      {
-        id: "main-link",
-        url: "",
-        label: "Main Website",
-        type: "main",
-        icon: "Globe"
-      }
-    ],
-    category: "",
-    tags: [],
-    description: "",
-    introduction: "",
-    ...initialData,
+  const [formData, setFormData] = useState<FormData>(() => {
+    const defaultData = {
+      name: "",
+      link: "",
+      links: [
+        {
+          id: "main-link",
+          url: "",
+          label: "Main Website",
+          type: "main" as const,
+          icon: "Globe"
+        }
+      ],
+      category: "",
+      tags: [],
+      description: "",
+      introduction: "",
+    };
+
+    // Merge with initialData and sync link field with main link
+    const mergedData = { ...defaultData, ...initialData };
+    
+    // If initialData has a link field, sync it with the main link
+    if (initialData.link && mergedData.links[0]) {
+      mergedData.links[0].url = initialData.link;
+    }
+    
+    // Ensure link field is synced with main link URL
+    const mainLink = mergedData.links.find(l => l.type === 'main');
+    mergedData.link = mainLink?.url || "";
+    
+    return mergedData;
   });
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -123,12 +140,21 @@ export function DetailsForm({
   }, []);
 
   const handleLinkChange = useCallback((id: string, field: 'url' | 'label', value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      links: prev.links.map((link) => 
+    setFormData(prev => {
+      const updatedLinks = prev.links.map((link) => 
         link.id === id ? { ...link, [field]: value } : link
-      )
-    }));
+      );
+      
+      // Sync main link URL with backward compatibility field
+      const mainLink = updatedLinks.find(l => l.type === 'main');
+      // const syncedLink = field === 'url' && mainLink?.id === id ? value : prev.link;
+      
+      return {
+        ...prev,
+        links: updatedLinks,
+        link: mainLink?.url || "" // Always sync with main link URL
+      };
+    });
 
     // Track main link completion
     const mainLink = formData.links.find(l => l.type === 'main');
@@ -193,7 +219,17 @@ export function DetailsForm({
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    
+    // Transform data to maintain compatibility with parent component
+    const mainLink = formData.links.find(l => l.type === 'main');
+    const transformedData = {
+      ...formData,
+      link: mainLink?.url || "", // Extract main link URL for backward compatibility
+      // Keep links for future use if needed
+      links: formData.links
+    };
+    
+    onSubmit(transformedData);
   }, [formData, onSubmit]);
 
   // Memoized calculations

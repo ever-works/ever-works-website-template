@@ -31,6 +31,7 @@ function DirectoryPage() {
       details: { free: "public", pro: "payment", sponsor: "payment" },
       payment: { free: "public", pro: "public", sponsor: "public" },
       public: { free: "public", pro: "public", sponsor: "public" },
+      
     },
     prev: {
       pricing: { free: "pricing", pro: "pricing", sponsor: "pricing" },
