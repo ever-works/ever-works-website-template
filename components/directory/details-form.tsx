@@ -1,14 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { PricingPlan } from "@/components/pricing/plan-card";
-import { Check, ArrowLeft, ArrowRight, Sparkles, Tag, Link, Type, FileText, Grid3X3, Star } from "lucide-react";
+import { Check, ArrowLeft, ArrowRight, Sparkles, Tag, Type, FileText, Grid3X3, Star, Plus, X, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+interface ProductLink {
+  id: string;
+  url: string;
+  label: string;
+  type: 'main' | 'secondary';
+  icon?: string;
+}
 
 interface FormData {
   name: string;
-  link: string;
+  links: ProductLink[];
   category: string;
   tags: string[];
   description: string;
@@ -61,6 +69,11 @@ const TAGS = [
   "Business Tools",
 ];
 
+const LINK_TYPES = [
+  { label: "Website", icon: Globe, placeholder: "https://yourproduct.com" },
+  { label: "Additional Link", icon: Globe, placeholder: "https://example.com" },
+];
+
 export function DetailsForm({
   initialData = {},
   selectedPlan,
@@ -69,7 +82,15 @@ export function DetailsForm({
 }: DetailsFormProps) {
   const [formData, setFormData] = useState<FormData>({
     name: "",
-    link: "",
+    links: [
+      {
+        id: "main-link",
+        url: "",
+        label: "Main Website",
+        type: "main",
+        icon: "Globe"
+      }
+    ],
     category: "",
     tags: [],
     description: "",
@@ -79,8 +100,9 @@ export function DetailsForm({
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [completedFields, setCompletedFields] = useState<Set<string>>(new Set());
+  const [animatingLinkId, setAnimatingLinkId] = useState<string | null>(null);
 
-  const handleInputChange = (
+  const handleInputChange = useCallback((
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
@@ -88,7 +110,7 @@ export function DetailsForm({
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Track completed fields
+    // Track completed fields with debouncing
     if (value.trim()) {
       setCompletedFields(prev => new Set([...prev, name]));
     } else {
@@ -98,9 +120,67 @@ export function DetailsForm({
         return newSet;
       });
     }
-  };
+  }, []);
 
-  const handleTagToggle = (tag: string) => {
+  const handleLinkChange = useCallback((id: string, field: 'url' | 'label', value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      links: prev.links.map((link) => 
+        link.id === id ? { ...link, [field]: value } : link
+      )
+    }));
+
+    // Track main link completion
+    const mainLink = formData.links.find(l => l.type === 'main');
+    if (mainLink?.id === id && field === 'url') {
+      if (value.trim()) {
+        setCompletedFields(prev => new Set([...prev, 'mainLink']));
+      } else {
+        setCompletedFields(prev => {
+          const newSet = new Set([...prev]);
+          newSet.delete('mainLink');
+          return newSet;
+        });
+      }
+    }
+  }, [formData.links]);
+
+  const addLink = useCallback((linkType: typeof LINK_TYPES[0]) => {
+    const newId = `link-${Date.now()}`;
+    setAnimatingLinkId(newId);
+    
+    setFormData(prev => ({
+      ...prev,
+      links: [...prev.links, {
+        id: newId,
+        url: "",
+        label: linkType.label,
+        type: "secondary" as const,
+        icon: "Globe"
+      }]
+    }));
+
+    // Remove animation after it completes
+    setTimeout(() => setAnimatingLinkId(null), 500);
+  }, []);
+
+  const removeLink = useCallback((id: string) => {
+    const linkToRemove = formData.links.find(l => l.id === id);
+    if (linkToRemove?.type === 'main') return; // Don't remove main link
+
+    setAnimatingLinkId(id);
+    
+    // Delay removal for exit animation
+    setTimeout(() => {
+      setFormData(prev => ({
+        ...prev,
+        links: prev.links.filter((link) => link.id !== id)
+      }));
+      setAnimatingLinkId(null);
+    }, 300);
+  }, [formData.links]);
+
+  const handleTagToggle = useCallback((tag: string) => {
     setFormData((prev) => {
       const currentTags = [...prev.tags];
       if (currentTags.includes(tag)) {
@@ -109,32 +189,48 @@ export function DetailsForm({
         return { ...prev, tags: [...currentTags, tag] };
       }
     });
-  };
+  }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
+  }, [formData, onSubmit]);
+
+  // Memoized calculations
+  const stepNumber = useMemo(() => selectedPlan === "free" ? 1 : 2, [selectedPlan]);
+  const { progressPercentage, completedRequiredFields, requiredFieldsCount } = useMemo(() => {
+    const required = 4; // name, mainLink, category, description
+    const completed = ['name', 'mainLink', 'category', 'description'].filter(field => {
+      if (field === 'mainLink') {
+        return formData.links.find(l => l.type === 'main')?.url?.trim();
+      }
+      return formData[field] && formData[field].toString().trim();
+    }).length;
+    
+    return {
+      requiredFieldsCount: required,
+      completedRequiredFields: completed,
+      progressPercentage: (completed / required) * 100
+    };
+  }, [formData]);
+
+  const getIconComponent = (iconName: string) => {
+    return Globe; // Simplified to always use Globe icon
   };
 
-  const getStepNumber = () => selectedPlan === "free" ? 1 : 2;
-  const requiredFieldsCount = 4; // name, link, category, description
-  const completedRequiredFields = ['name', 'link', 'category', 'description'].filter(field => 
-    formData[field]?.toString().trim()
-  ).length;
-  const progressPercentage = (completedRequiredFields / requiredFieldsCount) * 100;
-
   return (
-    <div >
+    <div className="relative min-h-screen overflow-hidden">
       {/* Enhanced Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Gradient orbs matching other sections */}
-        <div className="absolute top-0 -left-4 w-72 h-72 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-600/20 dark:to-purple-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        <div className="absolute top-0 -right-4 w-72 h-72 bg-gradient-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-600/20 dark:to-pink-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 dark:from-blue-600/20 dark:to-cyan-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+        {/* Advanced gradient orbs with better positioning */}
+        <div className="absolute top-0 -left-4 w-96 h-96 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 dark:from-blue-600/20 dark:via-purple-600/20 dark:to-cyan-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+        <div className="absolute top-0 -right-4 w-96 h-96 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 dark:from-purple-600/20 dark:via-pink-600/20 dark:to-orange-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-1/4 w-96 h-96 bg-gradient-to-r from-green-500/10 via-blue-500/10 to-indigo-500/10 dark:from-green-600/20 dark:via-blue-600/20 dark:to-indigo-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
         
-        {/* Additional floating elements */}
-        <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 dark:from-yellow-400/30 dark:to-orange-400/30 rounded-full blur-lg animate-float"></div>
-        <div className="absolute bottom-1/3 left-1/3 w-24 h-24 bg-gradient-to-r from-green-500/15 to-blue-500/15 dark:from-green-400/25 dark:to-blue-400/25 rounded-full blur-xl animate-float-slower"></div>
+        {/* Floating geometric elements */}
+        <div className="absolute top-1/4 right-1/4 w-20 h-20 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 dark:from-yellow-400/30 dark:to-orange-400/30 rounded-2xl rotate-45 blur-lg animate-float"></div>
+        <div className="absolute bottom-1/3 left-1/5 w-16 h-16 bg-gradient-to-r from-green-400/20 to-blue-400/20 dark:from-green-400/30 dark:to-blue-400/30 rounded-full blur-lg animate-float-slower"></div>
+        <div className="absolute top-2/3 right-1/3 w-12 h-12 bg-gradient-to-r from-pink-400/20 to-purple-400/20 dark:from-pink-400/30 dark:to-purple-400/30 rounded-lg rotate-12 blur-sm animate-pulse"></div>
       </div>
 
       <div className="relative z-10 container mx-auto px-6 py-12 max-w-4xl">
@@ -145,7 +241,7 @@ export function DetailsForm({
               <Sparkles className="w-4 h-4 text-white animate-pulse" />
             </div>
             <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-              Step {getStepNumber()} of 3 · Product Details
+              Step {stepNumber} of 3 · Product Details
             </span>
           </div>
           
@@ -234,37 +330,125 @@ export function DetailsForm({
                   </div>
                 </div>
 
-                {/* Product Link */}
-                <div className="space-y-3">
-                  <label htmlFor="link" className="block text-sm font-bold text-gray-700 dark:text-gray-300">
-                    Product Link *
-                  </label>
-                  <div className="relative">
-                    <input
-                      id="link"
-                      name="link"
-                      type="url"
-                      value={formData.link}
-                      onChange={handleInputChange}
-                      onFocus={() => setFocusedField('link')}
-                      onBlur={() => setFocusedField(null)}
-                      placeholder="https://yourproduct.com"
-                      pattern="https?://.*"
-                      required
-                      className={cn(
-                        "w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400",
-                        focusedField === 'link' && "scale-[1.02] shadow-xl ring-4 ring-blue-500/20",
-                        completedFields.has('link') && "border-green-500/70 bg-green-50/40 dark:bg-green-900/20 ring-2 ring-green-500/20"
-                      )}
-                    />
-                    <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center gap-3">
-                      {completedFields.has('link') && (
-                        <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center animate-scale-in">
-                          <Check className="h-4 w-4 text-white" />
-                        </div>
-                      )}
-                      <Link className="w-5 h-5 text-gray-400" />
+                {/* Product Links */}
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+                      Product Links *
+                    </label>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      {formData.links.length} link{formData.links.length !== 1 ? 's' : ''} added
                     </div>
+                  </div>
+
+                  {/* Links Container */}
+                  <div className="space-y-4">
+                    {formData.links.map((link, index) => {
+                      const IconComponent = getIconComponent(link.icon || 'Globe');
+                      const isAnimating = animatingLinkId === link.id;
+                      const isMain = link.type === 'main';
+                      
+                      return (
+                        <div
+                          key={link.id}
+                          className={cn(
+                            "group relative overflow-hidden rounded-2xl border-2 transition-all duration-500",
+                            isMain 
+                              ? "border-blue-200 dark:border-blue-800 bg-blue-50/30 dark:bg-blue-900/10" 
+                              : "border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50",
+                            isAnimating && "animate-pulse",
+                            "hover:shadow-lg hover:scale-[1.02] hover:border-blue-300 dark:hover:border-blue-600"
+                          )}
+                        >
+                          {/* Link Type Badge */}
+                          {isMain && (
+                            <div className="absolute top-3 right-3 z-10">
+                              <div className="px-2 py-1 text-xs font-semibold bg-blue-500 text-white rounded-full">
+                                Primary
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="p-4 space-y-3">
+                            {/* Link Label Row */}
+                            <div className="flex items-center gap-3">
+                              <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center group-hover:from-blue-100 group-hover:to-blue-200 dark:group-hover:from-blue-900 dark:group-hover:to-blue-800 transition-all duration-300">
+                                <IconComponent className="w-5 h-5 text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400" />
+                              </div>
+                              
+                              <div className="flex-1">
+                                <input
+                                  type="text"
+                                  value={link.label}
+                                  onChange={(e) => handleLinkChange(link.id, 'label', e.target.value)}
+                                  placeholder={isMain ? "Main Website" : "Link label (e.g., GitHub, Demo)"}
+                                  className="w-full h-10 px-3 text-sm font-medium bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                                />
+                              </div>
+
+                              {!isMain && (
+                                <button
+                                  type="button"
+                                  onClick={() => removeLink(link.id)}
+                                  className="flex-shrink-0 w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 transition-all duration-200 opacity-0 group-hover:opacity-100 flex items-center justify-center"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              )}
+                            </div>
+
+                            {/* URL Input */}
+                            <div className="relative">
+                              <input
+                                type="url"
+                                value={link.url}
+                                onChange={(e) => handleLinkChange(link.id, 'url', e.target.value)}
+                                onFocus={() => setFocusedField(`link-${link.id}`)}
+                                onBlur={() => setFocusedField(null)}
+                                placeholder={isMain ? "https://yourproduct.com" : "https://example.com"}
+                                pattern="https?://.*"
+                                required={isMain}
+                                className={cn(
+                                  "w-full h-12 px-4 pr-12 text-base bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl transition-all duration-300 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400",
+                                  focusedField === `link-${link.id}` && "border-blue-500 dark:border-blue-400 ring-4 ring-blue-500/20 scale-[1.01]",
+                                  isMain && completedFields.has('mainLink') && "border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-900/20",
+                                  "focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20"
+                                )}
+                              />
+                              
+                              {/* Validation Icon */}
+                              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                {isMain && completedFields.has('mainLink') && (
+                                  <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center animate-scale-in">
+                                    <Check className="h-3 w-3 text-white" />
+                                  </div>
+                                )}
+                                {link.url && !link.url.match(/^https?:\/\//) && (
+                                  <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center">
+                                    <span className="text-white text-xs">!</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Hover Effect Gradient */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" />
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Add Link Section */}
+                  <div className="pt-4">
+                    <button
+                      type="button"
+                      onClick={() => addLink({ label: "Additional Link", icon: Globe, placeholder: "https://example.com" })}
+                      className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors rounded-xl border-2 border-dashed border-blue-200 dark:border-blue-800 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add more links
+                    </button>
                   </div>
                 </div>
 

@@ -233,7 +233,7 @@ export function PaymentSection({
                       <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
                         {getPlanPrice()}
                       </div>
-                      {selectedPlan === "sponsor" && (
+          {selectedPlan === "sponsor" && (
                         <p className="text-sm text-gray-500 dark:text-gray-400">per week</p>
                       )}
                     </div>
@@ -383,11 +383,11 @@ export function PaymentSection({
                               <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center animate-scale-in">
                                 <Check className="h-4 w-4 text-white" />
                               </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
+            </div>
+          )}
+        </div>
+      </div>
+      
                       <div className="space-y-3">
                         <label htmlFor="cvc" className="block text-sm font-bold text-gray-700 dark:text-gray-300">
                           CVC
