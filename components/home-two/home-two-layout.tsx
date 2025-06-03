@@ -35,7 +35,7 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
           ref={targetRef}
           className={`md:sticky md:top-4 md:self-start z-10 md:transition-all md:duration-300  ${
             isSticky
-              ? "md:bg-white md:dark:bg-gray-900 md:shadow-lg md:rounded-lg md:p-4 !pt-24"
+              ? "md:bg-white md:dark:bg-gray-900 md:shadow-lg md:rounded-lg md:p-4 md:pt-24"
               : "md:bg-transparent md:p-0"
           }`}
         >
