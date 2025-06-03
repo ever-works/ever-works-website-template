@@ -23,12 +23,13 @@ export default function GlobelsClient(props: ListingProps) {
     ...props,
   });
   const sortedTags = sortByNumericProperty(props.tags);
+  const sortedCategories = sortByNumericProperty(props.categories);
 
   return layoutHome === "Home_1" ? (
     <div className=" px-4 pb-12">
       <div className="flex flex-col md:flex-row w-full gap-5">
         <div className="md:sticky md:top-4 md:self-start">
-          <Categories total={props.total} categories={props.categories} />
+          <Categories total={props.total} categories={sortedCategories} />
         </div>
         <div className="w-full">
           <Tags tags={sortedTags} />
@@ -46,6 +47,8 @@ export default function GlobelsClient(props: ListingProps) {
   ) : layoutHome === "Home_2" ? (
     <HomeTwoLayout
       {...props}
+      categories={sortedCategories}
+      tags={sortedTags}
       filteredAndSortedItems={homeTwoLogic.items}
       paginatedItems={homeTwoLogic.paginatedItems}
     />
@@ -53,6 +56,8 @@ export default function GlobelsClient(props: ListingProps) {
     <div>
       <HomeTwoLayout
         {...props}
+        categories={sortedCategories}
+        tags={sortedTags}
         filteredAndSortedItems={homeTwoLogic.items}
         paginatedItems={homeTwoLogic.paginatedItems}
       />
