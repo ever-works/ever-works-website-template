@@ -6,6 +6,7 @@ import { sortByNumericProperty } from "@/lib/utils";
 import { totalPages } from "@/lib/paginate";
 import { ListingClient } from "./listing-client";
 import { HomeTwoLayout, useHomeTwoLogic } from "@/components/home-two";
+import { useStickyState } from "@/hooks/use-sticky-state";
 
 type ListingProps = {
   total: number;
@@ -19,6 +20,9 @@ type ListingProps = {
 
 export default function GlobelsClient(props: ListingProps) {
   const { layoutHome } = useLayoutTheme();
+  const { isSticky, sentinelRef, targetRef } = useStickyState({
+    threshold: 0,
+  });
   const homeTwoLogic = useHomeTwoLogic({
     ...props,
   });
@@ -26,7 +30,7 @@ export default function GlobelsClient(props: ListingProps) {
   const sortedCategories = sortByNumericProperty(props.categories);
 
   return layoutHome === "Home_1" ? (
-    <div className=" px-4 pb-12 bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+    <div className=" px-4 pb-12">
       <div className="flex flex-col md:flex-row w-full gap-5">
         <div className="md:sticky md:top-4 md:self-start">
           <Categories total={props.total} categories={sortedCategories} />
