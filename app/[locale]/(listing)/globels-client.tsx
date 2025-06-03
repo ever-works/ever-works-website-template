@@ -7,6 +7,7 @@ import { totalPages } from "@/lib/paginate";
 import { ListingClient } from "./listing-client";
 import { HomeTwoLayout, useHomeTwoLogic } from "@/components/home-two";
 import { useStickyState } from "@/hooks/use-sticky-state";
+import { useEffect } from "react";
 
 type ListingProps = {
   total: number;
@@ -23,6 +24,8 @@ export default function GlobelsClient(props: ListingProps) {
 
   const { isSticky, sentinelRef, targetRef } = useStickyState({
     threshold: 0,
+    rootMargin: "-20px 0px 0px 0px",
+    debug: false,
   });
 
   const homeTwoLogic = useHomeTwoLogic({
@@ -31,41 +34,37 @@ export default function GlobelsClient(props: ListingProps) {
   const sortedTags = sortByNumericProperty(props.tags);
   const sortedCategories = sortByNumericProperty(props.categories);
 
-  const {
-    isSticky: isCategoriesSticky,
-    sentinelRef: categoriesSentinelRef,
-    targetRef: categoriesTargetRef,
-  } = useStickyState({
-    threshold: 0,
-    rootMargin: "-20px 0px 0px 0px",
-  });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const container = document.getElementById("sticky-tags-container");
+      if (container) {
+        if (isSticky) {
+          const isDarkMode =
+            document.documentElement.classList.contains("dark");
+          container.style.backgroundColor = isDarkMode ? "#111827" : "#ffffff";
+        } else {
+          container.style.backgroundColor = "transparent";
+        }
+      }
+    }
+  }, [isSticky]);
 
   return layoutHome === "Home_1" ? (
     <div className=" px-4 pb-12">
       <div className="flex flex-col md:flex-row w-full gap-5">
         <div className="md:sticky md:top-4 md:self-start">
-          <div ref={categoriesSentinelRef} className="md:h-4 md:w-full" />
-          {/* 0788968051 */}
-          <div
-            ref={categoriesTargetRef}
-            className={`sticky top-4 z-10 transition-all duration-300 ${
-              isCategoriesSticky
-                ? "bg-white dark:bg-gray-900 shadow-lg rounded-lg p-4 mb-4 border-2"
-                : "bg-transparent p-0"
-            }`}
-          >
-            <Categories total={props.total} categories={sortedCategories} />
-          </div>
+          <Categories total={props.total} categories={sortedCategories} />
         </div>
         <div className="w-full">
           <div ref={sentinelRef} className="md:h-4 md:w-full" />
           <div
             ref={targetRef}
-            className={`sticky top-4 z-10 transition-all duration-300 ${
+            className={`md:sticky md:top-4 z-10 transition-all duration-300 ${
               isSticky
-                ? "bg-white dark:bg-gray-900 shadow-lg rounded-lg p-4 mb-4 border-2"
+                ? "bg-white dark:bg-gray-900 shadow-lg rounded-lg p-4 mb-4"
                 : "bg-transparent p-0"
             }`}
+            id="sticky-tags-container"
           >
             <Tags tags={sortedTags} />
           </div>
