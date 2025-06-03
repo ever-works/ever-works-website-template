@@ -11,10 +11,11 @@ import {
   Tooltip,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { PropsWithChildren, useState, createContext, useContext } from "react";
 import { Search, X, ChevronDown } from "lucide-react";
 import Image from "next/image";
+import { useScrollToTop } from "@/hooks/use-scroll-to-top";
 
 type FilterContextType = {
   searchTerm: string;
@@ -400,11 +401,17 @@ export function Paginate({
   initialPage: number;
   total: number;
 }) {
-  const router = useRouter();
+  const { navigateWithScroll } = useScrollToTop({
+    easing: 'easeInOut',
+    duration: 600,
+    threshold: 100
+  });
 
   function redirect(page: number) {
     const path = basePath + (page === 1 ? "" : `/${page}`);
-    router.push(path);
+    
+    // Add smooth transition with longer duration for better UX
+    navigateWithScroll(path, 800);
   }
 
   return (
@@ -424,11 +431,11 @@ export function Paginate({
       </div>
 
       {/* Enhanced Pagination */}
-      <div className="relative">
+      <div className="relative group">
         {/* Background glow effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 via-primary-600/5 to-primary-500/10 rounded-2xl blur-xl opacity-60"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 via-primary-600/5 to-primary-500/10 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
 
-        <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-2 shadow-lg">
+        <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-2 shadow-lg hover:shadow-xl transition-all duration-300">
           <Pagination
             showControls
             total={total}
@@ -446,7 +453,8 @@ export function Paginate({
                 "border border-transparent hover:border-primary-200 dark:hover:border-primary-700/50",
                 "hover:shadow-md hover:scale-105 active:scale-95",
                 "data-[hover=true]:bg-gradient-to-r data-[hover=true]:from-primary-50 data-[hover=true]:to-primary-100",
-                "dark:data-[hover=true]:from-primary-900/30 dark:data-[hover=true]:to-primary-800/30"
+                "dark:data-[hover=true]:from-primary-900/30 dark:data-[hover=true]:to-primary-800/30",
+                "cursor-pointer relative overflow-hidden"
               ),
               cursor: cn(
                 "bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold",

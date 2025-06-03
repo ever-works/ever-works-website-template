@@ -1,4 +1,5 @@
 import { FilterProvider } from "@/components/filters";
+import { ScrollToTopButton } from "@/components/scroll-to-top-button";
 import { getTranslations } from "next-intl/server";
 import { Category, ItemData, Tag } from "@/lib/content";
 import GlobelsClient from "./globels-client";
@@ -53,6 +54,13 @@ export default async function Listing(props: ListingProps) {
           </div>
           <GlobelsClient {...props} />
         </div>
+
+        <ScrollToTopButton
+          variant="elegant"
+          easing="easeInOut"
+          showAfter={400}
+          size="md"
+        />
       </div>
     </FilterProvider>
   );

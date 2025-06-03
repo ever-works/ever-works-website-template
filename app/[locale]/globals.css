@@ -488,3 +488,104 @@
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.5);
   border-color: #667eea;
 }
+
+/* Elegant scroll animations */
+@keyframes scroll-indicator {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes smooth-bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-8px);
+  }
+  60% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes elegant-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes scroll-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes scroll-progress {
+  from {
+    stroke-dasharray: 0, 100;
+  }
+  to {
+    stroke-dasharray: 100, 100;
+  }
+}
+
+/* Scroll utility classes */
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+.animate-scroll-indicator {
+  animation: scroll-indicator 0.3s ease-out;
+}
+
+.animate-smooth-bounce {
+  animation: smooth-bounce 1s ease-in-out;
+}
+
+.animate-elegant-pulse {
+  animation: elegant-pulse 2s ease-in-out infinite;
+}
+
+.animate-scroll-fade-in {
+  animation: scroll-fade-in 0.6s ease-out forwards;
+}
+
+/* Enhanced glassmorphism for scroll elements */
+.glass-scroll {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.dark .glass-scroll {
+  background: rgba(17, 24, 39, 0.8);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+/* Elegant transition utilities */
+.transition-elegant {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-bounce {
+  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+html {
+  scroll-behavior: smooth;
+}
