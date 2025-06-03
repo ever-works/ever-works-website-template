@@ -98,18 +98,25 @@ export function ScrollToTopButton({
       )}
       
       <button
-        onClick={handleClick}
-        className={cn(
-          "relative rounded-full transition-all duration-500 ease-out",
-          "flex items-center justify-center",
-          "hover:scale-110 active:scale-95",
-          "animate-fadeInUp",
-          "group",
-          sizeClasses[size],
-          variants[variant],
-          className
-        )}
-        aria-label="Scroll to top"
+       
+       onClick={handleClick}
+       onKeyDown={(e) => {
+         if (e.key === 'Enter' || e.key === ' ') {
+           e.preventDefault();
+           handleClick();
+         }
+       }}
+       className={cn(
+         "relative rounded-full transition-all duration-500 ease-out",
+         "flex items-center justify-center",
+         "hover:scale-110 active:scale-95",
+         "animate-fadeInUp",
+         "group",
+         sizeClasses[size],
+         variants[variant],
+         className
+       )}
+       aria-label="Scroll to top"
       >
         {/* Background glow effect */}
         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary-400/20 to-primary-600/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />

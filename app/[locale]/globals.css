@@ -73,7 +73,6 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
   
-  /* Amélioration des transitions pour le changement de thème */
   *, *::before, *::after {
     transition-property: background-color, border-color, color, fill, stroke;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -588,4 +587,9 @@
 
 html {
   scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

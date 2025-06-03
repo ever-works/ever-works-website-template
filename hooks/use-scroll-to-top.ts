@@ -43,9 +43,11 @@ export function useScrollToTop(options: UseScrollToTopOptions = {}) {
   const router = useRouter();
   const isNavigatingRef = useRef(false);
   const animationFrameRef = useRef<number>(0);
+  const isScrolled = useCallback(() => window.scrollY > threshold, [threshold]);
 
   const smoothScrollTo = useCallback(
     (targetY: number, customDuration?: number) => {
+      if (typeof window === 'undefined') return;
       const startY = window.scrollY;
       const distance = targetY - startY;
       const animationDuration = customDuration || duration;
@@ -77,7 +79,7 @@ export function useScrollToTop(options: UseScrollToTopOptions = {}) {
 
   const scrollToTop = useCallback(
     (customDuration?: number) => {
-      if (behavior === "smooth" && easing !== "linear") {
+      if (behavior === "smooth") {
         smoothScrollTo(offset, customDuration);
       } else {
         window.scrollTo({
@@ -91,6 +93,9 @@ export function useScrollToTop(options: UseScrollToTopOptions = {}) {
 
   const navigateWithScroll = useCallback(
     (path: string, scrollDuration?: number) => {
+      const SCROLL_DELAY_FACTOR = 10;
+      const MAX_DYNAMIC_DELAY = 1000;
+      const NAVIGATION_RESET_DELAY = 300;
       if (isNavigatingRef.current) return;
 
       const isScrolled = window.scrollY > threshold;
@@ -103,7 +108,7 @@ export function useScrollToTop(options: UseScrollToTopOptions = {}) {
         scrollToTop(scrollDuration);
 
         const scrollDistance = window.scrollY;
-        const dynamicDelay = Math.min(delay + scrollDistance / 10, 1000);
+        const dynamicDelay = Math.min(delay + scrollDistance / SCROLL_DELAY_FACTOR, MAX_DYNAMIC_DELAY);
 
         setTimeout(() => {
           document.body.style.cursor = "";
@@ -111,10 +116,9 @@ export function useScrollToTop(options: UseScrollToTopOptions = {}) {
 
           setTimeout(() => {
             isNavigatingRef.current = false;
-          }, 300);
+          }, NAVIGATION_RESET_DELAY);
         }, dynamicDelay);
       } else {
-        router.push(path);
         router.push(path);
       }
     },
@@ -134,7 +138,7 @@ export function useScrollToTop(options: UseScrollToTopOptions = {}) {
   return {
     scrollToTop,
     navigateWithScroll,
-    isScrolled: () => window.scrollY > threshold,
+    isScrolled,
     smoothScrollTo,
   };
 }

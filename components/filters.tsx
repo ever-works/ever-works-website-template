@@ -409,9 +409,7 @@ export function Paginate({
 
   function redirect(page: number) {
     const path = basePath + (page === 1 ? "" : `/${page}`);
-    
-    // Add smooth transition with longer duration for better UX
-    navigateWithScroll(path, 800);
+        navigateWithScroll(path, 800);
   }
 
   return (
