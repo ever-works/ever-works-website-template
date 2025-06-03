@@ -1,4 +1,8 @@
-import { fetchByCategory, fetchItems } from "@/lib/content";
+import {
+  fetchByCategory,
+  fetchItems,
+} from "@/lib/content";
+import { sortByNumericProperty } from "@/lib/utils";
 import { paginateMeta, totalPages } from "@/lib/paginate";
 import { LOCALES } from "@/lib/constants";
 import Listing from "../../listing";
@@ -42,9 +46,11 @@ export default async function CategoryListing({
     lang: locale,
   });
 
+  const sortedCategories = sortByNumericProperty(categories);
+
   return (
     <Listing
-      categories={categories}
+      categories={sortedCategories}
       tags={tags}
       items={items}
       start={start}

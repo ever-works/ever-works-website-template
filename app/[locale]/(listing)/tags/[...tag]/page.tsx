@@ -2,6 +2,7 @@ import { fetchByTag, fetchItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
 import { LOCALES } from "@/lib/constants";
 import Listing from "../../listing";
+import { sortByNumericProperty } from "@/lib/utils";
 
 export const revalidate = 10;
 
@@ -42,11 +43,11 @@ export default async function TagListing({
   const { items, categories, total, tags } = await fetchByTag(tag, {
     lang: locale,
   });
-
+  const sortedTags = sortByNumericProperty(tags);
   return (
     <Listing
       categories={categories}
-      tags={tags}
+      tags={sortedTags}
       items={items}
       start={start}
       page={page}
