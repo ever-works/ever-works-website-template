@@ -136,7 +136,8 @@ export const IconEverworks = (props?: SVGProps<SVGSVGElement>) => {
       viewBox="0 0 166 61"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-    >
+      className={cn("w-full h-full", className)}
+     >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -172,15 +173,12 @@ export const IconEverworks = (props?: SVGProps<SVGSVGElement>) => {
 
 export const IconEverworksSimple = (
   props?: SVGProps<SVGSVGElement>,
-  width?: string,
-  height?: string
+
 ) => {
   const { className, ...rest } = props || {};
   return (
     <svg
       {...rest}
-      width={width ?? "50"}
-      height={height ?? "50"}
       viewBox="0 0 134 134"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -206,3 +204,5 @@ export const IconEverworksSimple = (
     </svg>
   );
 };
+
+ 
