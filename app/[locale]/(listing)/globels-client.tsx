@@ -26,7 +26,7 @@ export default function GlobelsClient(props: ListingProps) {
   const sortedCategories = sortByNumericProperty(props.categories);
 
   return layoutHome === "Home_1" ? (
-    <div className=" px-4 pb-12">
+    <div className=" px-4 pb-12 bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
       <div className="flex flex-col md:flex-row w-full gap-5">
         <div className="md:sticky md:top-4 md:self-start">
           <Categories total={props.total} categories={sortedCategories} />
