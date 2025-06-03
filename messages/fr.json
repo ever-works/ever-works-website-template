@@ -222,8 +222,8 @@
     },
     "REVIEW": {
       "TITLE": "Révisez votre soumission",
-      "DESCRIPTION": "Tout semble parfait ! Révisez vos détails et soumettez votre produit à notre annuaire",
-      "REVIEW_SELECTED_PLAN": "Plan sélectionné",
+      "SUMMARY": "Tout semble parfait ! Révisez vos détails et soumettez votre produit à notre annuaire",
+      "SELECTED_PLAN": "Plan sélectionné",
       "PRODUCT_INFORMATION": "Informations du produit",
       "PRODUCT_NAME": "Nom du produit",
       "CATEGORY": "Catégorie",
@@ -232,7 +232,7 @@
       "DESCRIPTION": "Description",
       "REVIEW_DETAILED_INTRO": "Introduction détaillée",
       "PUBLICATION_STATUS": "Statut de publication",
-      "CURRENT_STATUS": "Statut actuel",
+      "STATUS": "Statut actuel",
       "PROCESSING_TIME": "Temps de traitement",
       "PENDING_REVIEW": "En attente de révision",
       "READY_TO_PUBLISH": "Prêt à publier",
@@ -320,4 +320,3 @@
     }
   }
 }
-

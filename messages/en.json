@@ -97,7 +97,7 @@
     "CONNECT_WITH_US": "Connect with us",
     "CURRENT_THEME": "Current theme",
     "PRODUCT": "Product",
-    "RESOURCES": "Resources", 
+    "RESOURCES": "Resources",
     "PAGES": "Pages",
     "COMPANY": "Company",
     "SEARCH": "Search",
@@ -139,7 +139,7 @@
     "LEGAL": "Legal",
     "HELP": "Help Center",
     "LOGOUT": "Sign out"
-   },
+  },
   "newsletter": {
     "NEWSLETTER": "NEWSLETTER",
     "JOIN_COMMUNITY": "Join the Community",
@@ -154,7 +154,7 @@
     "STEPS": {
       "STEP_OF": "Step {current} of {total}",
       "PRODUCT_DETAILS": "Product Details",
-      "PAYMENT_DETAILS": "Payment Details", 
+      "PAYMENT_DETAILS": "Payment Details",
       "REVIEW_PUBLISH": "Review & Publish"
     },
     "DETAILS_FORM": {
@@ -222,17 +222,17 @@
     },
     "REVIEW": {
       "TITLE": "Review Your Submission",
-      "DESCRIPTION": "Everything looks great! Review your details and submit your product to our directory",
-      "REVIEW_SELECTED_PLAN": "Selected Plan",
+      "SUMMARY": "Everything looks great! Review your details and submit your product to our directory",
+      "SELECTED_PLAN": "Selected Plan",
       "PRODUCT_INFORMATION": "Product Information",
       "PRODUCT_NAME": "Product Name",
-      "CATEGORY": "Category", 
+      "CATEGORY": "Category",
       "PRODUCT_LINK": "Product Links",
       "TAGS": "Tags",
       "DESCRIPTION": "Description",
       "REVIEW_DETAILED_INTRO": "Detailed Introduction",
       "PUBLICATION_STATUS": "Publication Status",
-      "CURRENT_STATUS": "Current Status",
+      "STATUS": "Current Status",
       "PROCESSING_TIME": "Processing Time",
       "PENDING_REVIEW": "Pending Review",
       "READY_TO_PUBLISH": "Ready to Publish",
@@ -250,7 +250,7 @@
     },
     "PLANS": {
       "FREE_PLAN": "Free Plan",
-      "PRO_PLAN": "Pro Plan", 
+      "PRO_PLAN": "Pro Plan",
       "SPONSOR_PLAN": "Sponsor Plan",
       "FREE_FEATURES": "Free forever • Basic features",
       "PRO_FEATURES": "One-time payment • Pro features",
@@ -320,4 +320,3 @@
     }
   }
 }
-

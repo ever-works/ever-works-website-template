@@ -45,3 +45,98 @@ export function maskEmail(email: string) {
 
   return `${maskedUsername}@${domain}`;
 }
+
+/**
+ * Sorts an array of objects by a specified property (universal for all data types)
+ *
+ * @template T - Generic type for array elements
+ * @template K - Generic type for object keys (must be a key of T)
+ *
+ * @param items - The array of objects to sort
+ * @param property - The property to sort by (default: 'count')
+ * @param order - Sort order: 'desc' (descending) or 'asc' (ascending) (default: 'desc')
+ * @param valueType - The type of value to sort: 'number', 'string', 'date', 'boolean' or 'auto' (default: 'auto')
+ * @param customCompare - Optional custom comparison function for complex cases
+ * @returns The sorted array
+ */
+export function sortByProperty<T, K extends keyof T>(
+  items: T[],
+  property: K = "count" as unknown as K,
+  order: "desc" | "asc" = "desc",
+  valueType: "number" | "string" | "date" | "boolean" | "auto" = "auto",
+  customCompare?: (a: any, b: any) => number
+): T[] {
+  if (!items || !items.length) return items;
+
+  // Create a copy of the array to avoid modifying the original
+  return [...items].sort((a, b) => {
+    // Use the custom comparison function if provided
+    if (customCompare) {
+      return order === "desc"
+        ? customCompare(b[property], a[property])
+        : customCompare(a[property], b[property]);
+    }
+
+    const valueA = a[property] ?? (valueType === "number" ? 0 : "");
+    const valueB = b[property] ?? (valueType === "number" ? 0 : "");
+
+    const detectedType =
+      valueType === "auto"
+        ? typeof valueA === "number"
+          ? "number"
+          : valueA instanceof Date
+          ? "date"
+          : typeof valueA === "boolean"
+          ? "boolean"
+          : "string"
+        : valueType;
+
+    let comparison = 0;
+
+    switch (detectedType) {
+      case "number":
+        comparison = (valueA as number) - (valueB as number);
+        break;
+      case "string":
+        comparison = String(valueA).localeCompare(String(valueB));
+        break;
+      case "date":
+        const dateA =
+          valueA instanceof Date
+            ? valueA
+            : typeof valueA === "string" || typeof valueA === "number"
+            ? new Date(valueA)
+            : new Date(0);
+        const dateB =
+          valueB instanceof Date
+            ? valueB
+            : typeof valueB === "string" || typeof valueB === "number"
+            ? new Date(valueB)
+            : new Date(0);
+        // Check for invalid dates
+        if (isNaN(dateA.getTime())) dateA.setTime(0);
+        if (isNaN(dateB.getTime())) dateB.setTime(0);
+        comparison = dateA.getTime() - dateB.getTime();
+        break;
+      case "boolean":
+        comparison = (valueA ? 1 : 0) - (valueB ? 1 : 0);
+        break;
+      default:
+        // Fallback for unknown types - convert to string
+        comparison = String(valueA).localeCompare(String(valueB));
+    }
+
+    // Invert comparison if order is descending
+    return order === "desc" ? -comparison : comparison;
+  });
+}
+
+/**
+ * Alias of sortByProperty for backward compatibility
+ */
+export function sortByNumericProperty<
+  T extends { [key: string]: any },
+  K extends keyof T
+>(items: T[], property: K = "count" as K, order: "desc" | "asc" = "desc"): T[] {
+  return sortByProperty<T, K>(items, property, order, "number");
+}
