@@ -33,7 +33,9 @@
     "CATEGORY": "Catégorie",
     "ITEM": "élément",
     "ITEMS": "éléments",
-    "DIRECTORY": "Annuaire"
+    "DIRECTORY": "Annuaire",
+    "GITHUB": "GitHub",
+    "TAG": "Étiquette"
   },
   "footer": {
     "ALL_RIGHTS_RESERVED": "Tous droits réservés",
@@ -221,14 +223,14 @@
     "REVIEW": {
       "TITLE": "Révisez votre soumission",
       "DESCRIPTION": "Tout semble parfait ! Révisez vos détails et soumettez votre produit à notre annuaire",
-      "SELECTED_PLAN": "Plan sélectionné",
+      "REVIEW_SELECTED_PLAN": "Plan sélectionné",
       "PRODUCT_INFORMATION": "Informations du produit",
       "PRODUCT_NAME": "Nom du produit",
       "CATEGORY": "Catégorie",
       "PRODUCT_LINK": "Liens du produit",
       "TAGS": "Étiquettes",
       "DESCRIPTION": "Description",
-      "DETAILED_INTRODUCTION": "Introduction détaillée",
+      "REVIEW_DETAILED_INTRO": "Introduction détaillée",
       "PUBLICATION_STATUS": "Statut de publication",
       "CURRENT_STATUS": "Statut actuel",
       "PROCESSING_TIME": "Temps de traitement",

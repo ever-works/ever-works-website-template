@@ -33,7 +33,9 @@
     "CATEGORY": "Category",
     "ITEM": "item",
     "ITEMS": "items",
-    "DIRECTORY": "Directory"
+    "DIRECTORY": "Directory",
+    "GITHUB": "GitHub",
+    "TAG": "Tag"
   },
   "listing": {
     "ALL": "All",
@@ -221,14 +223,14 @@
     "REVIEW": {
       "TITLE": "Review Your Submission",
       "DESCRIPTION": "Everything looks great! Review your details and submit your product to our directory",
-      "SELECTED_PLAN": "Selected Plan",
+      "REVIEW_SELECTED_PLAN": "Selected Plan",
       "PRODUCT_INFORMATION": "Product Information",
       "PRODUCT_NAME": "Product Name",
       "CATEGORY": "Category", 
       "PRODUCT_LINK": "Product Links",
       "TAGS": "Tags",
       "DESCRIPTION": "Description",
-      "DETAILED_INTRODUCTION": "Detailed Introduction",
+      "REVIEW_DETAILED_INTRO": "Detailed Introduction",
       "PUBLICATION_STATUS": "Publication Status",
       "CURRENT_STATUS": "Current Status",
       "PROCESSING_TIME": "Processing Time",
