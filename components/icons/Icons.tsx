@@ -1,4 +1,4 @@
-import { cn } from "@heroui/react";
+import { cn } from "@/lib/utils";
 import { SVGProps } from "react";
 
 export const IconGithub = () => {
@@ -126,13 +126,18 @@ export const IconDirectory = () => {
   );
 };
 
-export const IconEverworks = (props?: SVGProps<SVGSVGElement>) => {
-  const { className, ...rest } = props || {};
+interface IconEverworksSimpleProps extends SVGProps<SVGSVGElement> {
+    width?: string;
+    height?: string;
+  }
+  
+export const IconEverworks = (props?: IconEverworksSimpleProps) => {
+  const { className, height, width, ...rest } = props || {};
   return (
     <svg
       {...rest}
-      width="166"
-      height="61"
+      width={width??"166"}
+      height={height??"61"}
       viewBox="0 0 166 61"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -172,14 +177,16 @@ export const IconEverworks = (props?: SVGProps<SVGSVGElement>) => {
 };
 
 export const IconEverworksSimple = (
-  props?: SVGProps<SVGSVGElement>,
+  props?:IconEverworksSimpleProps,
 
 ) => {
-  const { className, ...rest } = props || {};
+  const { className,height, width, ...rest } = props || {};
   return (
     <svg
       {...rest}
       viewBox="0 0 134 134"
+      width={width}
+      height={height}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={cn("w-full h-full", className)}
