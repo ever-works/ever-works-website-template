@@ -5,8 +5,7 @@ import { LOCALES } from "@/lib/constants";
 
 export const revalidate = 10;
 export async function generateStaticParams() {
-  const params = LOCALES.map((locale) => fetchItems({ lang: locale }));
-  return (await Promise.all(params)).flat();
+  return LOCALES.map((locale) => ({ locale }));
 }
 
 export default async function TagIndexPage({

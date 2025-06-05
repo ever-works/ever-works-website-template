@@ -67,7 +67,7 @@ function ListingTags(props: ListingTagsProps) {
     <div className="text-center mb-12 py-6 container mx-auto px-4 mt-8">
       <div className="flex items-center justify-center mb-6">
         <div className="flex items-center text-gray-900 dark:text-gray-200 bg-gray-200 dark:bg-[#1F2937] py-2 px-4 rounded-full gap-2 text-sm font-medium">
-          <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+          <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"/>
           Tags
         </div>
       </div>
@@ -107,7 +107,6 @@ function ListingTags(props: ListingTagsProps) {
             className="block duration-300 capitalize"
             prefetch={false}
             href={getItemPath(item.slug)}
-            onClick={() => null}
           >
             <Item {...item} isWrappedInLink={true} />
           </Link>
