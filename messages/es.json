@@ -33,7 +33,13 @@
     "CATEGORY": "Categoría",
     "ITEM": "elemento",
     "ITEMS": "elementos",
-    "DIRECTORY": "Directorio"
+    "DIRECTORY": "Directorio",
+    "GITHUB": "GitHub",
+    "TAG": "Etiqueta",
+    "BROWSE_CATEGORIES": "Explorar categorías",
+    "BROWSE_TAGS": "Explorar etiquetas",
+    "CATEGORIES_DESCRIPTION": "Explore nuestra colección de categorías para encontrar lo que busca.",
+    "TAGS_DESCRIPTION": "Explore nuestra colección de etiquetas para encontrar lo que busca."
   },
   "footer": {
     "ALL_RIGHTS_RESERVED": "Todos los derechos reservados",
