@@ -10,6 +10,7 @@ import SortMenu, { SortOption } from "@/components/sort-menu";
 import { useLayoutTheme } from "@/components/context/LayoutThemeContext";
 import { layoutComponents } from "@/components/layouts";
 import ViewToggle from "@/components/view-toggle";
+import { useTranslations } from "next-intl";
 
 type ListingTagsProps = {
   total: number;
@@ -24,6 +25,7 @@ type ListingTagsProps = {
 function ListingTags(props: ListingTagsProps) {
   const { layoutKey, setLayoutKey } = useLayoutTheme();
   const LayoutComponent = layoutComponents[layoutKey];
+  const t = useTranslations("listing");
 
   const { items, start, tags } = props;
   const [sortBy, setSortBy] = useState("popularity");
@@ -68,7 +70,7 @@ function ListingTags(props: ListingTagsProps) {
       <div className="flex items-center justify-center mb-6">
         <div className="flex items-center text-gray-900 dark:text-gray-200 bg-gray-200 dark:bg-[#1F2937] py-2 px-4 rounded-full gap-2 text-sm font-medium">
           <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"/>
-          Tags
+          {t("TAGS")}
         </div>
       </div>
 
