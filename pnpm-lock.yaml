@@ -92,9 +92,6 @@ importers:
       postgres:
         specifier: ^3.4.5
         version: 3.4.7
-      prettier:
-        specifier: ^3.5.3
-        version: 3.5.3
       react:
         specifier: ^19.1.0
         version: 19.1.0
@@ -147,6 +144,9 @@ importers:
       postcss:
         specifier: ^8
         version: 8.5.4
+      prettier:
+        specifier: ^3.5.3
+        version: 3.5.3
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.17(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.8.3))

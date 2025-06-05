@@ -119,7 +119,8 @@ export default function Header({ session }: SessionProps) {
       key: item.key,
       href: item.href,
       label: item.translationKey 
-        ? (item.translationNamespace === 'listing' ? tListing(item.translationKey as any) : t(item.translationKey as any))
+        ? (item.translationNamespace === 'listing' ? tListing(item.translationKey as any) 
+        : t(item.translationKey as any))
         : item.staticLabel || item.key,
     }));
   }, [t, tListing]);
@@ -194,12 +195,12 @@ export default function Header({ session }: SessionProps) {
       <Link
         className={getLinkClasses(item.href)}
         href={item.href}
-        {...(item.key === "discover" && { "aria-current": "page" })}
+        {...(isActiveLink(item.href) && { "aria-current": "page" })}
       >
         {item.label}
       </Link>
     </NavbarItem>
-  ), [getLinkClasses]);
+  ), [getLinkClasses, isActiveLink]);
 
   const renderNavigationItems = useCallback(() => 
     navigationItems.map(renderNavigationItem),
