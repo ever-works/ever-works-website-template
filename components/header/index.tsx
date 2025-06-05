@@ -135,7 +135,7 @@ export default function Header({ session }: SessionProps) {
     }
     if (href === "#") return false;
     
-    return pathname.startsWith(href);
+    return pathname === href || pathname.startsWith(`${href}/`);
   }, [pathname]);
 
   const getLinkClasses = useCallback((href: string): string => {
