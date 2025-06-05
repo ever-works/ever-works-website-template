@@ -342,12 +342,12 @@ export function Categories(props: { total: number; categories: Category[] }) {
                     {sortBy === "name-asc"
                       ? "Name (A-Z)"
                       : sortBy === "name-desc"
-                      ? "Name (Z-A)"
-                      : sortBy === "date-desc"
-                      ? "Date (Newest)"
-                      : sortBy === "date-asc"
-                      ? "Date (Oldest)"
-                      : "Popularity"}
+                        ? "Name (Z-A)"
+                        : sortBy === "date-desc"
+                          ? "Date (Newest)"
+                          : sortBy === "date-asc"
+                            ? "Date (Oldest)"
+                            : "Popularity"}
                     <button
                       onClick={() => setSortBy("popularity")}
                       className="ml-2 text-green-600/70 dark:text-green-300/70 hover:text-green-800 dark:hover:text-green-100"
@@ -402,14 +402,14 @@ export function Paginate({
   total: number;
 }) {
   const { navigateWithScroll } = useScrollToTop({
-    easing: 'easeInOut',
+    easing: "easeInOut",
     duration: 600,
-    threshold: 100
+    threshold: 100,
   });
 
   function redirect(page: number) {
     const path = basePath + (page === 1 ? "" : `/${page}`);
-        navigateWithScroll(path, 800);
+    navigateWithScroll(path, 800);
   }
 
   return (
@@ -488,7 +488,11 @@ export function Paginate({
   );
 }
 
-export function Tags(props: { tags: Tag[] }) {
+export function Tags(props: { 
+  tags: Tag[]; 
+  basePath?: string;
+  resetPath?: string;
+}) {
   const pathname = usePathname();
   const [showAllTags, setShowAllTags] = useState(false);
 
@@ -496,7 +500,11 @@ export function Tags(props: { tags: Tag[] }) {
   const hasMoreTags = props.tags.length > MAX_VISIBLE_TAGS;
 
   const renderTag = (tag: Tag, index: number) => {
-    const isActive = pathname.startsWith(encodeURI(`/tags/${tag.id}`));
+    const basePath = props.basePath
+      ? `${props.basePath}/${tag.id}`
+      : `/tags/${tag.id}`;
+      
+    const isActive = pathname.startsWith(encodeURI(basePath));
     return (
       <Button
         key={tag.id || index}
@@ -505,7 +513,7 @@ export function Tags(props: { tags: Tag[] }) {
         size="sm"
         as={Link}
         prefetch={false}
-        href={`/tags/${tag.id}`}
+        href={basePath}
         className={cn(
           "px-3 py-1 h-8 font-medium transition-all duration-200",
           isActive
@@ -556,6 +564,13 @@ export function Tags(props: { tags: Tag[] }) {
     );
   };
 
+  const isAnyTagActive = props.tags.some(tag => {
+    const basePath = props.basePath
+      ? `${props.basePath}/${tag.id}`
+      : `/tags/${tag.id}`;
+    return pathname.startsWith(encodeURI(basePath));
+  });
+
   return (
     <div className="relative mb-6">
       <div className="flex items-center justify-between mb-3">
@@ -580,6 +595,46 @@ export function Tags(props: { tags: Tag[] }) {
             !showAllTags && "max-h-[120px] overflow-hidden"
           )}
         >
+          <Button
+            variant={!isAnyTagActive ? "solid" : "bordered"}
+            radius="full"
+            size="sm"
+            as={Link}
+            prefetch={false}
+            href={props.resetPath || props.basePath || "/"}
+            className={cn(
+              "px-3 py-1 h-8 font-medium transition-all duration-200",
+              !isAnyTagActive
+                ? "bg-primary-500 text-white border-primary-500 shadow-sm"
+                : "border border-dark--theme-200 dark:border-dark--theme-800",
+              "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800"
+            )}
+          >
+            {!isAnyTagActive && (
+              <svg
+                className="w-3 h-3 mr-1.5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="3"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            )}
+            <span>All Tags</span>
+            <span
+              className={cn(
+                "ml-1.5 text-xs font-normal",
+                !isAnyTagActive ? "text-white" : "text-dark-500 dark:text-dark-400"
+              )}
+            >
+              ({props.tags.length})
+            </span>
+          </Button>
           {props.tags.map(renderTag)}
         </div>
       </div>

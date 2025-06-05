@@ -2,7 +2,7 @@ import { FilterProvider } from "@/components/filters";
 import { ScrollToTopButton } from "@/components/scroll-to-top-button";
 import { getTranslations } from "next-intl/server";
 import { Category, ItemData, Tag } from "@/lib/content";
-import GlobelsClient from "./globels-client";
+import GlobalsClient from "./globals-client";
 
 type ListingProps = {
   total: number;
@@ -52,7 +52,7 @@ export default async function Listing(props: ListingProps) {
               </p>
             </div>
           </div>
-          <GlobelsClient {...props} />
+          <GlobalsClient {...props} />
         </div>
 
         <ScrollToTopButton
