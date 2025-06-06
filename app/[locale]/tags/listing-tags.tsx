@@ -11,6 +11,8 @@ import { useLayoutTheme } from "@/components/context/LayoutThemeContext";
 import { layoutComponents } from "@/components/layouts";
 import ViewToggle from "@/components/view-toggle";
 import { useTranslations } from "next-intl";
+import { Container } from "@/components/ui/container";
+import Hero from "@/components/hero";
 
 type ListingTagsProps = {
   total: number;
@@ -66,62 +68,64 @@ function ListingTags(props: ListingTagsProps) {
   ];
 
   return (
-    <div className="text-center mb-12 py-6 container mx-auto px-4 mt-8">
-      <div className="flex items-center justify-center mb-6">
-        <div className="flex items-center text-gray-900 dark:text-gray-200 bg-gray-200 dark:bg-[#1F2937] py-2 px-4 rounded-full gap-2 text-sm font-medium">
-          <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"/>
-          {t("TAGS")}
-        </div>
-      </div>
-
-      <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent transition-colors duration-300">
+    <Hero
+      badgeText={t("TAGS")}
+      title={
         <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 bg-clip-text text-transparent">
           Discover Tags
         </span>
-      </h1>
-      <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed transition-colors duration-300">
-        Browse all tags in our directory
-      </p>
-      <div className="mt-8">
-      <div className="flex justify-between mb-6">
-        <SortMenu
-        className="h-8 min-w-[180px] text-sm"
-          options={sortOptions}
-          value={sortBy}
-          onSortChange={setSortBy}
-          ariaLabel="Sort items"
-        />
-        <ViewToggle
-          activeView={layoutKey}
-          onViewChange={(newView) => setLayoutKey(newView)}
-        />
-      </div>
-        <div className="md:sticky md:top-4 md:self-start">
-          <Tags tags={sortedTags} basePath={`/tag/tags`} resetPath={`/tag`} />
+      }
+      description="Browse all tags in our directory"
+      className="min-h-screen"
+    >
+      <Container>
+        <div className="mt-8">
+          <div className="flex justify-between mb-6">
+            <SortMenu
+              className="h-8 min-w-[180px] text-sm"
+              options={sortOptions}
+              value={sortBy}
+              onSortChange={setSortBy}
+              ariaLabel="Sort items"
+            />
+            <ViewToggle
+              activeView={layoutKey}
+              onViewChange={(newView) => setLayoutKey(newView)}
+            />
+          </div>
+
+          <div className="md:sticky md:top-4 md:self-start">
+            <Tags
+              tags={sortedTags}
+              basePath={`/tags/tag`}
+              resetPath={`/tags`}
+            />
+          </div>
+          <div className="md:h-4 md:w-full" />
         </div>
-        <div className="md:h-4 md:w-full" />
-      </div>
-    
-      <LayoutComponent>
-        {sortedItems.map((item) => (
-          <Link
-            key={item.slug}
-            className="block duration-300 capitalize"
-            prefetch={false}
-            href={getItemPath(item.slug)}
-          >
-            <Item {...item} isWrappedInLink={true} />
-          </Link>
-        ))}
-      </LayoutComponent>
-      <footer className="flex items-center justify-center">
-        <Paginate
-          basePath={props.basePath}
-          initialPage={props.page}
-          total={totalPages(props.items.length)}
-        />
-      </footer>
-    </div>
+
+        <LayoutComponent>
+          {sortedItems.map((item) => (
+            <Link
+              key={item.slug}
+              className="block duration-300 capitalize"
+              prefetch={false}
+              href={getItemPath(item.slug)}
+            >
+              <Item {...item} isWrappedInLink={true} />
+            </Link>
+          ))}
+        </LayoutComponent>
+
+        <footer className="flex items-center justify-center">
+          <Paginate
+            basePath={props.basePath}
+            initialPage={props.page}
+            total={totalPages(props.items.length)}
+          />
+        </footer>
+      </Container>
+    </Hero>
   );
 }
 export default ListingTags;

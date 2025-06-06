@@ -337,7 +337,7 @@ export function ItemDetail({
                     </a>
                   ))
                 ) : (
-                  <div className="w-full text-center py-8 text-gray-500 dark:text-gray-400">
+                  <div className="w-full text-center py-4 sm:py-6 text-gray-500 dark:text-gray-400">
                     <svg
                       className="w-8 h-8 mx-auto mb-3 opacity-50"
                       fill="none"

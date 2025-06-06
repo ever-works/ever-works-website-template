@@ -206,8 +206,6 @@ export function DetailsForm({
         },
       ],
     }));
-
-    // Remove animation after it completes
     setTimeout(() => setAnimatingLinkId(null), 500);
   }, []);
 
@@ -245,12 +243,10 @@ export function DetailsForm({
     (e: React.FormEvent) => {
       e.preventDefault();
 
-      // Transform data to maintain compatibility with parent component
       const mainLink = formData.links.find((l) => l.type === "main");
       const transformedData = {
         ...formData,
-        link: mainLink?.url || "", // Extract main link URL for backward compatibility
-        // Keep links for future use if needed
+        link: mainLink?.url || "",
         links: formData.links,
       };
 

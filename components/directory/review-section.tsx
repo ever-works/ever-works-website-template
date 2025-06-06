@@ -2,7 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import { PricingPlan } from "@/components/pricing/plan-card";
-import { ArrowLeft, Send, Star, Globe, Clock, Shield, Eye, Zap, CheckCircle2, AlertCircle } from "lucide-react";
+
+import {
+  ArrowLeft,
+  Send,
+  Star,
+  Globe,
+  Clock,
+  Shield,
+  Eye,
+  Zap,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface FormData {
@@ -68,7 +80,8 @@ export function ReviewSection({
         icon: Clock,
         color: "text-yellow-500 dark:text-yellow-400",
         bgColor: "bg-yellow-100 dark:bg-yellow-900/30",
-        description: "Your listing will be reviewed by our team within 1-2 business days"
+        description:
+          "Your listing will be reviewed by our team within 1-2 business days",
       };
     }
     return {
@@ -76,7 +89,8 @@ export function ReviewSection({
       icon: CheckCircle2,
       color: "text-green-500 dark:text-green-400",
       bgColor: "bg-green-100 dark:bg-green-900/30",
-      description: "Your listing will be published immediately after submission"
+      description:
+        "Your listing will be published immediately after submission",
     };
   };
 
@@ -89,14 +103,14 @@ export function ReviewSection({
   const StatusIcon = statusInfo.icon;
 
   return (
-    <div >
+    <div>
       {/* Enhanced Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Gradient orbs */}
         <div className="absolute top-0 -left-4 w-72 h-72 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-600/20 dark:to-purple-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
         <div className="absolute top-0 -right-4 w-72 h-72 bg-gradient-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-600/20 dark:to-pink-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
         <div className="absolute -bottom-8 left-20 w-72 h-72 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 dark:from-blue-600/20 dark:to-cyan-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
-        
+
         {/* Additional floating elements */}
         <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 dark:from-yellow-400/30 dark:to-orange-400/30 rounded-full blur-lg animate-float"></div>
         <div className="absolute bottom-1/3 left-1/3 w-24 h-24 bg-gradient-to-r from-green-500/15 to-blue-500/15 dark:from-green-400/25 dark:to-blue-400/25 rounded-full blur-xl animate-float-slower"></div>
@@ -113,21 +127,25 @@ export function ReviewSection({
               Step 3 of 3 · Review & Publish
             </span>
           </div>
-          
+
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
             Review Your Submission
           </h1>
-          
+
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Everything looks great! Review your details and submit your product to our directory
+            Everything looks great! Review your details and submit your product
+            to our directory
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Plan Summary Card */}
-          <div className="relative group animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+          <div
+            className="relative group animate-fade-in-up"
+            style={{ animationDelay: "0.1s" }}
+          >
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 dark:from-blue-400/30 dark:to-purple-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            
+
             <div className="relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/30 p-8 shadow-2xl">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
@@ -144,8 +162,12 @@ export function ReviewSection({
                     <Star className="w-8 h-8 text-white" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-gray-900 dark:text-white">{getPlanName()}</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{getPlanDescription()}</p>
+                    <h4 className="text-xl font-bold text-gray-900 dark:text-white">
+                      {getPlanName()}
+                    </h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {getPlanDescription()}
+                    </p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -153,7 +175,9 @@ export function ReviewSection({
                     {getPlanPrice()}
                   </div>
                   {selectedPlan === "sponsor" && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">per week</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      per week
+                    </p>
                   )}
                 </div>
               </div>
@@ -161,9 +185,12 @@ export function ReviewSection({
           </div>
 
           {/* Product Details Card */}
-          <div className="relative group animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <div
+            className="relative group animate-fade-in-up"
+            style={{ animationDelay: "0.2s" }}
+          >
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 dark:from-purple-400/30 dark:to-pink-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            
+
             <div className="relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/30 p-8 shadow-2xl">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
@@ -230,7 +257,9 @@ export function ReviewSection({
                         ))}
                       </div>
                     ) : (
-                      <p className="text-lg text-gray-500 dark:text-gray-400">None selected</p>
+                      <p className="text-lg text-gray-500 dark:text-gray-400">
+                        None selected
+                      </p>
                     )}
                   </div>
                 </div>
@@ -265,9 +294,12 @@ export function ReviewSection({
           </div>
 
           {/* Status Information Card */}
-          <div className="relative group animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+          <div
+            className="relative group animate-fade-in-up"
+            style={{ animationDelay: "0.3s" }}
+          >
             <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 dark:from-green-400/30 dark:to-emerald-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            
+
             <div className="relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/30 p-8 shadow-2xl">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
@@ -284,7 +316,12 @@ export function ReviewSection({
                     Current Status
                   </h4>
                   <div className="flex items-center gap-3 p-4 bg-gray-50/80 dark:bg-gray-900/50 rounded-xl border border-gray-200/50 dark:border-gray-700/50">
-                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", statusInfo.bgColor)}>
+                    <div
+                      className={cn(
+                        "w-10 h-10 rounded-xl flex items-center justify-center",
+                        statusInfo.bgColor
+                      )}
+                    >
                       <StatusIcon className={cn("w-5 h-5", statusInfo.color)} />
                     </div>
                     <span className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -302,25 +339,31 @@ export function ReviewSection({
                       <Zap className="w-5 h-5 text-blue-500 dark:text-blue-400" />
                     </div>
                     <span className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {selectedPlan === "free" ? "1-2 Business Days" : "Instant"}
+                      {selectedPlan === "free"
+                        ? "1-2 Business Days"
+                        : "Instant"}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className={cn(
-                "mt-6 p-6 rounded-2xl border",
-                selectedPlan === "free" 
-                  ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200/50 dark:border-yellow-700/30"
-                  : "bg-green-50 dark:bg-green-900/20 border-green-200/50 dark:border-green-700/30"
-              )}>
+              <div
+                className={cn(
+                  "mt-6 p-6 rounded-2xl border",
+                  selectedPlan === "free"
+                    ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200/50 dark:border-yellow-700/30"
+                    : "bg-green-50 dark:bg-green-900/20 border-green-200/50 dark:border-green-700/30"
+                )}
+              >
                 <div className="flex items-start gap-4">
-                  <div className={cn(
-                    "w-10 h-10 rounded-xl flex items-center justify-center",
-                    selectedPlan === "free" 
-                      ? "bg-yellow-500/20 dark:bg-yellow-400/30"
-                      : "bg-green-500/20 dark:bg-green-400/30"
-                  )}>
+                  <div
+                    className={cn(
+                      "w-10 h-10 rounded-xl flex items-center justify-center",
+                      selectedPlan === "free"
+                        ? "bg-yellow-500/20 dark:bg-yellow-400/30"
+                        : "bg-green-500/20 dark:bg-green-400/30"
+                    )}
+                  >
                     {selectedPlan === "free" ? (
                       <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
                     ) : (
@@ -328,20 +371,26 @@ export function ReviewSection({
                     )}
                   </div>
                   <div>
-                    <h5 className={cn(
-                      "font-bold mb-1",
-                      selectedPlan === "free" 
-                        ? "text-yellow-800 dark:text-yellow-300"
-                        : "text-green-800 dark:text-green-300"
-                    )}>
-                      {selectedPlan === "free" ? "Review Process" : "Instant Publishing"}
+                    <h5
+                      className={cn(
+                        "font-bold mb-1",
+                        selectedPlan === "free"
+                          ? "text-yellow-800 dark:text-yellow-300"
+                          : "text-green-800 dark:text-green-300"
+                      )}
+                    >
+                      {selectedPlan === "free"
+                        ? "Review Process"
+                        : "Instant Publishing"}
                     </h5>
-                    <p className={cn(
-                      "text-sm leading-relaxed",
-                      selectedPlan === "free" 
-                        ? "text-yellow-700 dark:text-yellow-400"
-                        : "text-green-700 dark:text-green-400"
-                    )}>
+                    <p
+                      className={cn(
+                        "text-sm leading-relaxed",
+                        selectedPlan === "free"
+                          ? "text-yellow-700 dark:text-yellow-400"
+                          : "text-green-700 dark:text-green-400"
+                      )}
+                    >
                       {statusInfo.description}
                     </p>
                   </div>
@@ -351,10 +400,13 @@ export function ReviewSection({
           </div>
 
           {/* Enhanced Action Buttons */}
-          <div className="flex flex-col sm:flex-row justify-between gap-6 pt-8 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-            <Button 
-              type="button" 
-              variant="outline" 
+          <div
+            className="flex flex-col sm:flex-row justify-between gap-6 pt-8 animate-fade-in-up"
+            style={{ animationDelay: "0.4s" }}
+          >
+            <Button
+              type="button"
+              variant="outline"
               onClick={onBack}
               className="h-14 px-8 rounded-2xl border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500 transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-xl text-lg font-semibold"
             >
@@ -362,7 +414,7 @@ export function ReviewSection({
               Back to Edit
             </Button>
 
-            <Button 
+            <Button
               type="submit"
               className="h-14 px-12 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl min-w-[200px] bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:via-emerald-600 hover:to-green-700 text-white hover:shadow-green-500/30"
             >

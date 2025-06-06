@@ -13,19 +13,19 @@ export default async function TagIndexPage({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } =await params
+  const { locale } = await params;
   const { start, page } = paginateMeta();
   const { tags, total, items, categories } = await fetchItems({ lang: locale });
 
   return (
-      <ListingTags
-        total={total}
-        start={start}
-        page={page}
-        basePath="/tag/paging"
-        categories={categories}
-        tags={tags}
-        items={items}
-      />
+    <ListingTags
+      total={total}
+      start={start}
+      page={page}
+      basePath="/tags/paging"
+      categories={categories}
+      tags={tags}
+      items={items}
+    />
   );
-} 
+}

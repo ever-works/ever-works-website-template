@@ -336,7 +336,7 @@ export function EmptyState({
   const hasFilters = searchTerm || selectedTags.length > 0;
 
   return (
-    <div className={`text-center py-16 ${className}`}>
+    <div className={`text-center py-8 sm:py-10 ${className}`}>
       <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center transition-colors duration-300">
         <Search className="w-8 h-8 text-gray-400 dark:text-gray-500" />
       </div>

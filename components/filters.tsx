@@ -488,22 +488,22 @@ export function Paginate({
   );
 }
 
-export function Tags(props: { 
-  tags: Tag[]; 
+export function Tags(props: {
+  tags: Tag[];
   basePath?: string;
   resetPath?: string;
 }) {
   const pathname = usePathname();
   const [showAllTags, setShowAllTags] = useState(false);
 
-  const MAX_VISIBLE_TAGS = 15;
+  const MAX_VISIBLE_TAGS = 5;
   const hasMoreTags = props.tags.length > MAX_VISIBLE_TAGS;
 
   const renderTag = (tag: Tag, index: number) => {
     const basePath = props.basePath
       ? `${props.basePath}/${tag.id}`
       : `/tags/${tag.id}`;
-      
+
     const isActive = pathname.startsWith(encodeURI(basePath));
     return (
       <Button
@@ -564,7 +564,7 @@ export function Tags(props: {
     );
   };
 
-  const isAnyTagActive = props.tags.some(tag => {
+  const isAnyTagActive = props.tags.some((tag) => {
     const basePath = props.basePath
       ? `${props.basePath}/${tag.id}`
       : `/tags/${tag.id}`;
@@ -629,7 +629,9 @@ export function Tags(props: {
             <span
               className={cn(
                 "ml-1.5 text-xs font-normal",
-                !isAnyTagActive ? "text-white" : "text-dark-500 dark:text-dark-400"
+                !isAnyTagActive
+                  ? "text-white"
+                  : "text-dark-500 dark:text-dark-400"
               )}
             >
               ({props.tags.length})
