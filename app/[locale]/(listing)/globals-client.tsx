@@ -25,13 +25,13 @@ export default function GlobalsClient(props: ListingProps) {
 
   if (layoutHome === "Home_1") {
     return (
-      <div className="px-4 pb-12">
+      <div className="pb-12">
         <div className="flex flex-col md:flex-row w-full gap-5">
           <div className="md:sticky md:top-4 md:self-start">
             <Categories total={props.total} categories={sortedCategories} />
           </div>
           <div className="w-full">
-            <Tags tags={sortedTags} enableSticky={true} />
+            <Tags tags={sortedTags} enableSticky={true} maxVisibleTags={5} />
             <ListingClient {...props} />
             <div className="flex items-center justify-center">
               <Paginate

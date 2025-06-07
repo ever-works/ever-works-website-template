@@ -88,7 +88,7 @@ const NAVIGATION_CONFIG: Array<{
 const STYLES = {
   navbar: "border-b border-gray-100 dark:border-gray-800",
   container:
-    "flex items-center justify-between w-full container mx-auto px-4 sm:px-6 py-2",
+    "flex items-center justify-between w-full container max-w-7xl px-4 sm:px-6 py-2 h-16",
   brand: "flex items-center group",
   brandIcon: "relative font-bold mr-2 sm:mr-4",
   brandIconSvg:

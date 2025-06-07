@@ -499,7 +499,6 @@ export function Tags(props: {
   basePath?: string;
   resetPath?: string;
   enableSticky?: boolean;
-  maxVisibleTags?: number;
 }) {
   const [showAllTags, setShowAllTags] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
@@ -520,21 +519,6 @@ export function Tags(props: {
       window.addEventListener("scroll", handleScroll);
       return () => {
         window.removeEventListener("scroll", handleScroll);
-      };
-    }
-    return undefined;
-  }, [isSticky, props.enableSticky]);
-
-  const MAX_VISIBLE_TAGS = props.maxVisibleTags || 8;
-  const hasMoreTags = props.tags.length > MAX_VISIBLE_TAGS;
-
-  const renderTag = (tag: Tag, index: number) => {
-    const basePath = props.basePath
-      ? `${props.basePath}/${tag.id}`
-      : `/tags/${tag.id}`;
-
-    const isActive = pathname.startsWith(encodeURI(basePath));
-    return (
       <Button
         key={tag.id || index}
         variant={isActive ? "solid" : "bordered"}

@@ -48,10 +48,10 @@ export default function Hero({
       )}
 
       {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-4">
+      <div className="relative z-10 w-full">
         {/* Header Section */}
         <div className="pt-2 pb-1 sm:pt-3 sm:pb-2">
-          <div className="text-center mb-2 sm:mb-3">
+          <div className="text-center mb-2 sm:mb-3 flex flex-col items-center justify-center container max-w-7xl px-4">
             {/* Introducing badge */}
             {badgeText && (
               <div className="flex items-center justify-center mb-3 sm:mb-4">

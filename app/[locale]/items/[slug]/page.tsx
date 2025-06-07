@@ -33,7 +33,7 @@ export default async function ItemDetails({
   const categoryName = getCategoriesName(meta.category);
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="container max-w-7xl px-4 p-8">
       <ItemDetail
         meta={meta}
         content={content}

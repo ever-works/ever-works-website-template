@@ -105,7 +105,7 @@ export function Footer() {
       <div className="relative z-10">
         {/* Main footer content with glassmorphism */}
         <div className="backdrop-blur-xl bg-white/10 dark:bg-black/10 border-t border-white/20 dark:border-gray-700/30">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 md:pt-20 pb-8 sm:pb-10 md:pb-12">
+          <div className="container max-w-7xl px-4 pt-12 sm:pt-16 md:pt-20 pb-8 sm:pb-10 md:pb-12">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 lg:gap-8">
               {/* Enhanced Brand and social section */}
               <div className="sm:col-span-2 lg:col-span-2 space-y-6 sm:space-y-8">

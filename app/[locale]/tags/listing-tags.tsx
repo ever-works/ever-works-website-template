@@ -11,7 +11,6 @@ import { useLayoutTheme } from "@/components/context/LayoutThemeContext";
 import { layoutComponents } from "@/components/layouts";
 import ViewToggle from "@/components/view-toggle";
 import { useTranslations } from "next-intl";
-import { Container } from "@/components/ui/container";
 import Hero from "@/components/hero";
 
 type ListingTagsProps = {
@@ -78,7 +77,7 @@ function ListingTags(props: ListingTagsProps) {
       description="Browse all tags in our directory"
       className="min-h-screen"
     >
-      <Container>
+      <div className="mt-4 max-w-7xl px-4 container">
         <div className="mt-8">
           <div className="flex justify-between mb-6">
             <SortMenu
@@ -124,7 +123,7 @@ function ListingTags(props: ListingTagsProps) {
             total={totalPages(props.items.length)}
           />
         </footer>
-      </Container>
+      </div>
     </Hero>
   );
 }
