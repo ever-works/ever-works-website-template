@@ -2,6 +2,7 @@
 
 import { useConfig } from "@/app/[locale]/config";
 import { useTranslations } from "next-intl";
+import React, { memo } from "react";
 import Link from "next/link";
 import { ThemeToggler } from "../theme-toggler";
 import { FiFacebook, FiLinkedin, FiBookOpen, FiMail } from "react-icons/fi";
@@ -21,12 +22,12 @@ export function Footer() {
     product: [
       { label: t("footer.SEARCH"), href: "#" },
       { label: t("footer.COLLECTION"), href: "#" },
-      { label: t("footer.TAG"), href: "#" },
+      { label: t("footer.TAG"), href: "/tags" },
     ],
     resources: [
       { label: t("footer.BLOG"), href: "#" },
       { label: t("footer.PRICING"), href: "#" },
-      { label: t("footer.SUBMIT"), href: "#" },
+      { label: t("footer.SUBMIT"), href: "/submit" },
       { label: t("footer.STUDIO"), href: "#" },
     ],
     pages: [
@@ -51,6 +52,7 @@ export function Footer() {
       label: "GitHub",
       target: "_blank",
       rel: "noopener noreferrer",
+      isExternal: true,
     },
     {
       icon: IconX,
@@ -58,6 +60,7 @@ export function Footer() {
       label: "X",
       target: "_blank",
       rel: "noopener noreferrer",
+      isExternal: true,
     },
     {
       icon: FiLinkedin,
@@ -65,6 +68,7 @@ export function Footer() {
       label: "LinkedIn",
       target: "_blank",
       rel: "noopener noreferrer",
+      isExternal: true,
     },
     {
       icon: FiFacebook,
@@ -72,6 +76,7 @@ export function Footer() {
       label: "Facebook",
       target: "_blank",
       rel: "noopener noreferrer",
+      isExternal: true,
     },
     {
       icon: FiBookOpen,
@@ -79,11 +84,13 @@ export function Footer() {
       label: "Blog",
       target: "_blank",
       rel: "noopener noreferrer",
+      isExternal: true,
     },
     {
       icon: FiMail,
       href: "mailto:ever@ever.works",
       label: "Email",
+      isMailto: true,
     },
   ];
 
@@ -113,7 +120,7 @@ export function Footer() {
               {/* Enhanced Brand and social section */}
               <div className="sm:col-span-2 lg:col-span-2 space-y-6 sm:space-y-8">
                 <BrandLink t={t} />
-                <SocialLinks t={t} socialLinks={socialLinks} />
+                <SocialLinks socialLinks={socialLinks} t={t} />
                 <Newsletter t={t} />
               </div>
 
@@ -176,18 +183,67 @@ function BrandLink({ t }: { t: any }) {
 /**
  * Enhanced Social links component
  */
-function SocialLinks({
-  t,
-  socialLinks,
-}: {
+type SocialLinkItemProps = {
+  icon: React.ElementType;
+  href: string;
+  label: string;
+  target?: string;
+  rel?: string;
+  isExternal?: boolean;
+  isMailto?: boolean;
+  animationDelay: string;
+};
+
+const SocialLinkItem = memo(({ 
+  icon: Icon, 
+  href, 
+  label, 
+  target, 
+  rel, 
+  isExternal, 
+  isMailto,
+  animationDelay 
+}: SocialLinkItemProps) => {
+  const linkProps = {
+    href: href.trim(),
+    className: "group relative p-3 rounded-2xl bg-gradient-to-br from-white/50 to-white/30 dark:from-gray-800/50 dark:to-gray-900/30 backdrop-blur-lg border border-white/30 dark:border-gray-700/40 hover:border-blue-300/50 dark:hover:border-blue-500/30 transition-all duration-500 hover:shadow-xl hover:shadow-blue-500/10 hover:scale-110 hover:-translate-y-1",
+    'aria-label': label,
+    style: { animationDelay }
+  };
+  
+  const iconElement = (
+    <>
+      <Icon className="w-5 h-5 text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300 group-hover:scale-110" />
+      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute inset-0 rounded-2xl bg-blue-500/20 animate-ping" />
+      </div>
+    </>
+  );
+
+  if (isMailto) {
+    return <a {...linkProps}>{iconElement}</a>;
+  }
+  
+  if (isExternal) {
+    return (
+      <a 
+        {...linkProps} 
+        target={target?.trim() || '_blank'} 
+        rel={rel?.trim() || 'noopener noreferrer'}
+      >
+        {iconElement}
+      </a>
+    );
+  }
+  
+  return <Link {...linkProps}>{iconElement}</Link>;
+});
+
+SocialLinkItem.displayName = 'SocialLinkItem';
+
+function SocialLinks({ socialLinks, t }: {
+  socialLinks: Array<Omit<SocialLinkItemProps, 'animationDelay'>>;
   t: any;
-  socialLinks: Array<{
-    icon: any;
-    href: string;
-    label: string;
-    target?: string;
-    rel?: string;
-  }>;
 }) {
   return (
     <div
@@ -199,25 +255,11 @@ function SocialLinks({
       </h4>
       <div className="flex flex-wrap items-center gap-3 sm:gap-4">
         {socialLinks.map((social, index) => (
-          <a
+          <SocialLinkItem
             key={index}
-            href={social.href.trim()}
-            className="group relative p-3 rounded-2xl bg-gradient-to-br from-white/50 to-white/30 dark:from-gray-800/50 dark:to-gray-900/30 backdrop-blur-lg border border-white/30 dark:border-gray-700/40 hover:border-blue-300/50 dark:hover:border-blue-500/30 transition-all duration-500 hover:shadow-xl hover:shadow-blue-500/10 hover:scale-110 hover:-translate-y-1"
-            aria-label={social.label}
-            style={{ animationDelay: `${0.3 + index * 0.1}s` }}
-            target={social.target?.trim()}
-            rel={social.rel?.trim()}
-          >
-            <social.icon className="w-5 h-5 text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300 group-hover:scale-110" />
-
-            {/* Hover effect overlay */}
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-500" />
-
-            {/* Ripple effect */}
-            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="absolute inset-0 rounded-2xl bg-blue-500/20 animate-ping" />
-            </div>
-          </a>
+            {...social}
+            animationDelay={`${0.3 + index * 0.1}s`}
+          />
         ))}
       </div>
     </div>
