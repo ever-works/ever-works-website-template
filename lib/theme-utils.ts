@@ -45,7 +45,7 @@ export const animationClasses = {
 
 // Responsive classes
 export const responsiveClasses = {
-  container: "container mx-auto px-4 sm:px-6 lg:px-8",
+  container: "container max-w-7xl px-4 sm:px-6 lg:px-8",
   grid: {
     responsive: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
     auto: "grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4",

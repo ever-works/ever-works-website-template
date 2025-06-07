@@ -298,7 +298,7 @@ export function DetailsForm({
         <div className="absolute top-2/3 right-1/3 w-12 h-12 bg-gradient-to-r from-pink-400/20 to-purple-400/20 dark:from-pink-400/30 dark:to-purple-400/30 rounded-lg rotate-12 blur-sm animate-pulse"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-6 py-12 max-w-4xl">
+      <div className="relative z-10 container max-w-7xl px-6 py-12">
         {/* Enhanced Header Section */}
         <div className="text-center mb-16 animate-fade-in-up">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 mb-6 shadow-lg">

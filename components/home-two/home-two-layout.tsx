@@ -29,7 +29,7 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
 
   return (
     <div className="min-h-screen transition-colors duration-300">
-      <div className="container mx-auto px-4 flex flex-col gap-4 py-8 w-full">
+      <div className="container max-w-7xl px-4 flex flex-col gap-4 py-8 w-full">
         <div ref={sentinelRef} className="md:h-4 md:w-full" />
         <div
           ref={targetRef}

@@ -77,7 +77,7 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
     <div>
       {/* Background Effects */}
 
-      <div className="relative z-10 container mx-auto px-6 max-w-7xl">
+      <div className="relative z-10 container max-w-7xl px-6 max-w-7xl">
         {/* Enhanced Header */}
         <div className="text-center mb-16 animate-fade-in-up">
           <div className="flex items-center justify-center mb-6">

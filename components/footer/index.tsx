@@ -16,11 +16,6 @@ export function Footer() {
   const t = useTranslations();
   const config = useConfig();
 
-  // Scroll to top handler
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   // Data structure for footer navigation links
   const footerNavigation = {
     product: [
@@ -296,7 +291,7 @@ function FooterBottom({ config, t }: { config: any; t: any }) {
       {/* Subtle animated background */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/5 to-transparent animate-shimmer-slow" />
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="relative container max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Enhanced Disclaimer and utilities */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pt-2 sm:pt-4 md:pt-6">
           <div className="flex items-center gap-1 w-[140px] sm:w-[165px] mb-4 lg:mb-0">
