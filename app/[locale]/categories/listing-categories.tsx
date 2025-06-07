@@ -14,7 +14,7 @@ import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
 import { HomeTwoCategories } from "@/components/home-two";
 
-type ListingTagsProps = {
+type ListingCategoriesProps = {
   total: number;
   start: number;
   page: number;
@@ -24,7 +24,7 @@ type ListingTagsProps = {
   items: ItemData[];
 };
 
-function ListingCategories(props: ListingTagsProps) {
+function ListingCategories(props: ListingCategoriesProps) {
   const { layoutKey, setLayoutKey } = useLayoutTheme();
   const LayoutComponent = layoutComponents[layoutKey];
   const t = useTranslations("listing");

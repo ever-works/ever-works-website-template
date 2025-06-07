@@ -49,21 +49,29 @@ export function Footer() {
       icon: IconGithub,
       href: "https://github.com/ever-works",
       label: "GitHub",
+      target: "_blank",
+      rel: "noopener noreferrer",
     },
     {
       icon: IconX,
       href: "https://x.com/everplatform",
       label: "X",
+      target: "_blank",
+      rel: "noopener noreferrer",
     },
     {
       icon: FiLinkedin,
-      href: "https://www.linkedin.com/company/everhq.",
+      href: "https://www.linkedin.com/company/everhq",
       label: "LinkedIn",
+      target: "_blank",
+      rel: "noopener noreferrer",
     },
     {
       icon: FiFacebook,
       href: "https://www.facebook.com/everplatform",
       label: "Facebook",
+      target: "_blank",
+      rel: "noopener noreferrer",
     },
     {
       icon: FiBookOpen,
@@ -193,12 +201,12 @@ function SocialLinks({
         {socialLinks.map((social, index) => (
           <a
             key={index}
-            href={social.href}
+            href={social.href.trim()}
             className="group relative p-3 rounded-2xl bg-gradient-to-br from-white/50 to-white/30 dark:from-gray-800/50 dark:to-gray-900/30 backdrop-blur-lg border border-white/30 dark:border-gray-700/40 hover:border-blue-300/50 dark:hover:border-blue-500/30 transition-all duration-500 hover:shadow-xl hover:shadow-blue-500/10 hover:scale-110 hover:-translate-y-1"
             aria-label={social.label}
             style={{ animationDelay: `${0.3 + index * 0.1}s` }}
-            target={social.target}
-            rel={social.rel}
+            target={social.target?.trim()}
+            rel={social.rel?.trim()}
           >
             <social.icon className="w-5 h-5 text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300 group-hover:scale-110" />
 
