@@ -13,6 +13,8 @@ const MAX_NAME_LENGTH = 20;
 // Types
 type Home2CategoriesProps = {
   categories: Category[];
+  basePath?: string;
+  resetPath?: string;
 };
 
 type CategoryButtonProps = {
@@ -118,13 +120,19 @@ const CategoryButton = memo(
 
 CategoryButton.displayName = "CategoryButton";
 
-export function HomeTwoCategories({ categories }: Home2CategoriesProps) {
+export function HomeTwoCategories({
+  categories,
+  basePath,
+  resetPath,
+}: Home2CategoriesProps) {
   const t = useTranslations("listing");
   const { totalItems, isHomeActive, pathname } = useCategoryState(categories);
 
   const renderCategory = useCallback(
     (category: Category) => {
-      const href = `/categories/${category.id}`;
+      const href = basePath
+        ? `${basePath}/${category.id}`
+        : `/categories/${category.id}`;
       const isActive = pathname.startsWith(encodeURI(href));
       const displayName = category.name;
       const isTextTruncated = category.name.length > MAX_NAME_LENGTH;
@@ -151,12 +159,9 @@ export function HomeTwoCategories({ categories }: Home2CategoriesProps) {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider transition-colors duration-300">
-        {t("CATEGORIES")}
-      </h3>
       <div className="flex flex-wrap gap-2">
         <CategoryButton
-          href="/"
+          href={resetPath || "/"}
           isActive={isHomeActive}
           displayName={t("ALL_CATEGORIES")}
           count={totalItems}

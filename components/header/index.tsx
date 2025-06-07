@@ -67,7 +67,7 @@ const NAVIGATION_CONFIG: Array<{
   },
   {
     key: "categories",
-    href: "/category",
+    href: "/categories",
     translationKey: "CATEGORY",
     translationNamespace: "common",
   },
