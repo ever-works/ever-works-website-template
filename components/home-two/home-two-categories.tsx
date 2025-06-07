@@ -5,7 +5,8 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@heroui/react";
 import { cn } from "@/lib/utils/index";
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { Select, SelectItem } from "@/components/ui/select";
 
 // Constants
 const MAX_NAME_LENGTH = 20;
@@ -35,7 +36,10 @@ const useCategoryState = (categories: Category[]) => {
   );
 
   const isHomeActive = useMemo(
-    () => pathname === "/" || pathname.startsWith("/discover"),
+    () =>
+      pathname === "/" ||
+      pathname === "/categories" ||
+      pathname.startsWith("/discover"),
     [pathname]
   );
 
@@ -60,12 +64,15 @@ const CategoryButton = memo(
     const buttonContent = useMemo(
       () => (
         <>
-          <span className="text-sm truncate" title={fullName}>
+          <span
+            className="text-xs sm:text-sm truncate max-w-[80px] sm:max-w-[100px] md:max-w-full"
+            title={fullName}
+          >
             {displayName}
           </span>
           <span
             className={cn(
-              "ml-2 px-2 py-1 rounded-full text-xs  transition-colors duration-300",
+              "ml-1 sm:ml-2 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs transition-colors duration-300",
               isActive
                 ? "bg-white/20 text-white"
                 : "bg-gray-200 dark:bg-gray-200/10 text-gray-600 dark:text-gray-400"
@@ -85,7 +92,7 @@ const CategoryButton = memo(
           href={href}
           onPress={onClick}
           className={cn(
-            "font-medium text-left justify-start items-center transition-all duration-200 h-8 mb-1",
+            "group h-7 sm:h-9 whitespace-nowrap py-1 sm:py-1.5 px-2 sm:px-3 text-xs sm:text-sm",
             {
               "bg-blue-500 dark:bg-blue-600 text-white border border-blue-500 dark:border-blue-600":
                 isActive,
@@ -127,6 +134,17 @@ export function HomeTwoCategories({
 }: Home2CategoriesProps) {
   const t = useTranslations("listing");
   const { totalItems, isHomeActive, pathname } = useCategoryState(categories);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkIfMobile();
+    window.addEventListener("resize", checkIfMobile);
+    return () => window.removeEventListener("resize", checkIfMobile);
+  }, []);
 
   const renderCategory = useCallback(
     (category: Category) => {
@@ -149,17 +167,87 @@ export function HomeTwoCategories({
         />
       );
     },
-    [pathname]
+    [pathname, basePath]
   );
+
+  // Handle category change from select
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setSelectedCategory(value);
+
+    // Redirect to the selected category
+    if (value === "all") {
+      window.location.href = resetPath || "/";
+    } else {
+      const category = categories.find((c) => c.id === value);
+      if (category) {
+        const href = basePath
+          ? `${basePath}/${category.id}`
+          : `/categories/${category.id}`;
+        window.location.href = href;
+      }
+    }
+  };
 
   const categoriesList = useMemo(
     () => categories.map(renderCategory),
     [categories, renderCategory]
   );
 
+  // Generate select items
+  const selectItems = useMemo(() => {
+    const items = [
+      <SelectItem key="all" value="all">
+        {t("ALL_CATEGORIES")} ({totalItems})
+      </SelectItem>,
+    ];
+
+    categories.forEach((category) => {
+      items.push(
+        <SelectItem key={category.id} value={category.id}>
+          {category.name} ({category.count || 0})
+        </SelectItem>
+      );
+    });
+
+    return items;
+  }, [categories, t, totalItems]);
+
+  // Set initial selected value based on current path
+  useEffect(() => {
+    if (isHomeActive) {
+      setSelectedCategory("all");
+    } else {
+      const currentCategory = categories.find((category) => {
+        const href = basePath
+          ? `${basePath}/${category.id}`
+          : `/categories/${category.id}`;
+        return pathname.startsWith(encodeURI(href));
+      });
+
+      if (currentCategory) {
+        setSelectedCategory(currentCategory.id);
+      }
+    }
+  }, [categories, pathname, isHomeActive, basePath]);
+
   return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap gap-2">
+    <div className="space-y-1 sm:space-y-2">
+      {/* Mobile: Select dropdown */}
+      <div className="md:hidden w-full">
+        <Select>
+          <select
+            className="w-full p-2 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+          >
+            {selectItems}
+          </select>
+        </Select>
+      </div>
+
+      {/* Desktop: Buttons */}
+      <div className="hidden md:flex flex-wrap gap-1 sm:gap-2">
         <CategoryButton
           href={resetPath || "/"}
           isActive={isHomeActive}

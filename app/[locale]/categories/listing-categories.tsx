@@ -97,7 +97,7 @@ function ListingCategories(props: ListingTagsProps) {
             />
           </div>
 
-          <div className="md:sticky md:top-4 md:self-start">
+          <div className="md:sticky md:top-4 md:self-start py-4">
             <HomeTwoCategories
               resetPath={`/categories`}
               categories={sortedCategories}
