@@ -63,10 +63,10 @@ export async function trySyncRepository() {
   const token = process.env.GH_TOKEN;
   const url = process.env.DATA_REPOSITORY;
   const DEFAULT_CONFIG = `site_name: Website
-+item_name: Item
-+items_name: Items
-+copyright_year: ${new Date().getFullYear()}
-+`;
+item_name: Item
+items_name: Items
+copyright_year: ${new Date().getFullYear()}
+`;
 
   if (!url) {
     console.warn(
@@ -79,10 +79,7 @@ export async function trySyncRepository() {
     // Create a minimal config.yml file if it doesn't exist
     const configPath = path.join(dest, "config.yml");
     if (!(await fsExists(configPath))) {
-      await fs.promises.writeFile(
-        configPath,
-        DEFAULT_CONFIG
-      );
+      await fs.promises.writeFile(configPath, DEFAULT_CONFIG);
     }
 
     return;
@@ -92,20 +89,20 @@ export async function trySyncRepository() {
   const auth = getGitAuth(token);
 
   const exists = await fsExists(path.join(dest, ".git"));
-      try {
-        if (exists && !shouldSync()) {
-          return;
-        }
-        if (exists) {
-          console.log("Pulling repository data...");
-          lastSynced = Date.now();
-          await pullChanges(url, dest, auth);
-          return;
-        }
-      } catch (error) {
-        console.error("Error during repository sync check:", error);
-        // Continue with cloning as fallback or return based on your error handling strategy
-      }
+  try {
+    if (exists && !shouldSync()) {
+      return;
+    }
+    if (exists) {
+      console.log("Pulling repository data...");
+      lastSynced = Date.now();
+      await pullChanges(url, dest, auth);
+      return;
+    }
+  } catch (error) {
+    console.error("Error during repository sync check:", error);
+    // Continue with cloning as fallback or return based on your error handling strategy
+  }
 
   console.log("Clonning repository...");
   await fs.promises.mkdir(dest, { recursive: true });
