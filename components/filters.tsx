@@ -12,7 +12,13 @@ import {
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-import { PropsWithChildren, useState, createContext, useContext } from "react";
+import {
+  PropsWithChildren,
+  useState,
+  createContext,
+  useContext,
+  useEffect,
+} from "react";
 import { Search, X, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useScrollToTop } from "@/hooks/use-scroll-to-top";
@@ -492,9 +498,31 @@ export function Tags(props: {
   tags: Tag[];
   basePath?: string;
   resetPath?: string;
+  enableSticky?: boolean;
 }) {
-  const pathname = usePathname();
   const [showAllTags, setShowAllTags] = useState(false);
+  const [isSticky, setIsSticky] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (props.enableSticky) {
+      const handleScroll = () => {
+        const scrollPosition = window.scrollY;
+        const scrollThreshold = 100;
+        if (scrollPosition > scrollThreshold && !isSticky) {
+          setIsSticky(true);
+        } else if (scrollPosition <= scrollThreshold && isSticky) {
+          setIsSticky(false);
+        }
+      };
+
+      window.addEventListener("scroll", handleScroll);
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+      };
+    }
+    return undefined;
+  }, [isSticky, props.enableSticky]);
 
   const MAX_VISIBLE_TAGS = 5;
   const hasMoreTags = props.tags.length > MAX_VISIBLE_TAGS;
@@ -572,127 +600,129 @@ export function Tags(props: {
   });
 
   return (
-    <div className="relative mb-6">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-lg font-bold text-default-900">Tags</h3>
-        {hasMoreTags && (
-          <Button
-            variant="light"
-            color="primary"
-            size="sm"
-            className="px-2 py-0 h-6 font-medium text-xs"
-            onPress={() => setShowAllTags(!showAllTags)}
-          >
-            {showAllTags ? "Show less" : "Show all"}
-          </Button>
-        )}
-      </div>
-
-      <div className="relative">
-        <div
-          className={cn(
-            "w-full flex gap-2 flex-wrap",
-            !showAllTags && "max-h-[120px] overflow-hidden"
-          )}
-        >
-          <Button
-            variant={!isAnyTagActive ? "solid" : "bordered"}
-            radius="full"
-            size="sm"
-            as={Link}
-            prefetch={false}
-            href={props.resetPath || props.basePath || "/"}
+    <div
+      className={cn(
+        "mb-6 p-4 transition-all duration-300",
+        props.enableSticky
+          ? cn(
+              "sticky top-4 z-20",
+              isSticky
+                ? "bg-white/95 dark:bg-gray-800/95 shadow-sm backdrop-blur-sm"
+                : "bg-transparent"
+            )
+          : "bg-inherit"
+      )}
+    >
+      <div className="relative z-10 ">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-bold text-default-900">Tags</h3>
+        </div>
+        <div className="relative">
+          <div
             className={cn(
-              "px-3 py-1 h-8 font-medium transition-all duration-200",
-              !isAnyTagActive
-                ? "bg-primary-500 text-white border-primary-500 shadow-sm"
-                : "border border-dark--theme-200 dark:border-dark--theme-800",
-              "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800"
+              "w-full flex gap-2 flex-wrap",
+              !showAllTags && "max-h-[120px] overflow-hidden"
             )}
           >
-            {!isAnyTagActive && (
-              <svg
-                className="w-3 h-3 mr-1.5 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="3"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            )}
-            <span>All Tags</span>
-            <span
+            <Button
+              variant={!isAnyTagActive ? "solid" : "bordered"}
+              radius="full"
+              size="sm"
+              as={Link}
+              prefetch={false}
+              href={props.resetPath || props.basePath || "/"}
               className={cn(
-                "ml-1.5 text-xs font-normal",
+                "px-3 py-1 h-8 font-medium transition-all duration-200",
                 !isAnyTagActive
-                  ? "text-white"
-                  : "text-dark-500 dark:text-dark-400"
+                  ? "bg-primary-500 text-white border-primary-500 shadow-sm"
+                  : "border border-dark--theme-200 dark:border-dark--theme-800",
+                "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800"
               )}
             >
-              ({props.tags.length})
-            </span>
-          </Button>
-          {props.tags.map(renderTag)}
+              {!isAnyTagActive && (
+                <svg
+                  className="w-3 h-3 mr-1.5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              )}
+              <span>All Tags</span>
+              <span
+                className={cn(
+                  "ml-1.5 text-xs font-normal",
+                  !isAnyTagActive
+                    ? "text-white"
+                    : "text-dark-500 dark:text-dark-400"
+                )}
+              >
+                ({props.tags.length})
+              </span>
+            </Button>
+            {props.tags.map(renderTag)}
+          </div>
         </div>
-      </div>
 
-      {hasMoreTags && (
-        <div className="flex justify-center mt-3">
-          <Button
-            variant="flat"
-            color="primary"
-            radius="full"
-            size="sm"
-            className="px-4 py-1 font-medium shadow-sm group"
-            onPress={() => setShowAllTags(!showAllTags)}
-          >
-            {showAllTags ? (
-              <>
-                <span>Show less</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  className="ml-1.5 transition-transform group-hover:-translate-y-0.5 dark:text-default-300 "
-                >
-                  <path
-                    d="M18 15L12 9L6 15"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </>
-            ) : (
-              <>
-                <span>Show all {props.tags.length} tags</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  className="ml-1.5 transition-transform group-hover:translate-y-0.5 dark:text-default-300"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </>
-            )}
-          </Button>
-        </div>
-      )}
+        {hasMoreTags && (
+          <div className="flex justify-center mt-3">
+            <Button
+              variant="flat"
+              color="primary"
+              radius="full"
+              size="sm"
+              className="px-4 py-1 font-medium shadow-sm group"
+              onPress={() => setShowAllTags(!showAllTags)}
+            >
+              {showAllTags ? (
+                <>
+                  <span>Show less</span>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="ml-1.5 transition-transform group-hover:-translate-y-0.5 dark:text-default-300 "
+                  >
+                    <path
+                      d="M18 15L12 9L6 15"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </>
+              ) : (
+                <>
+                  <span>Show all {props.tags.length} tags</span>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="ml-1.5 transition-transform group-hover:translate-y-0.5 dark:text-default-300"
+                  >
+                    <path
+                      d="M6 9L12 15L18 9"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </>
+              )}
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
