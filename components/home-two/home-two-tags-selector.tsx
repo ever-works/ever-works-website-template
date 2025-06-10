@@ -70,7 +70,7 @@ const TagButton = ({ tag, isActive, href, onPress }: TagButtonProps) => {
           )}
           <span
             className={cn(
-              "text-sm transition-colors truncate pr-2",
+              "text-sm transition-colors truncate pr-2 capitalize",
               isActive
                 ? "text-white"
                 : "text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400"
@@ -83,10 +83,10 @@ const TagButton = ({ tag, isActive, href, onPress }: TagButtonProps) => {
         {tag.count && (
           <span
             className={cn(
-              "text-xs font-medium px-2 py-0.5 rounded-full transition-colors",
+              "text-xs font-medium px-2 py-0.5 rounded-md transition-colors capitalize",
               isActive
-                ? "bg-white/20 text-white"
-                : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                ? "bg-white/20 text-white capitalize"
+                : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 group-hover:text-blue-600 dark:group-hover:text-blue-400 capitalize"
             )}
           >
             {tag.count}
@@ -143,7 +143,7 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
             variant="light"
           >
             <TagIcon className="w-4 h-4 transition-transform group-hover:scale-110" />
-            <span className="text-sm font-bold">
+            <span className="text-sm font-bold capitalize">
               {currentTag ? currentTag.name : t("listing.TAGS")}
             </span>
             {currentTag && (
@@ -153,7 +153,7 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
                 </span>
                 <span
                   onClick={handleClearTag}
-                  className="ml-1 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                  className="ml-1 p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
                   role="button"
                   tabIndex={0}
                   aria-label="Clear tag selection"
@@ -172,7 +172,7 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
         </PopoverTrigger>
         <PopoverContent
           className={cn(
-            "p-0 max-h-[400px] w-[320px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl overflow-hidden",
+            "p-0 max-h-[400px] w-[320px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-2xl overflow-hidden",
             "animate-in fade-in-0 zoom-in-95 duration-200"
           )}
         >
@@ -191,7 +191,7 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
               />
               {searchTerm && (
                 <Button
-                  onClick={clearSearch}
+                  onPress={clearSearch}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors bg-transparent"
                 >
                   <X className="h-4 w-4" />

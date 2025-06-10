@@ -38,6 +38,14 @@ const ThemePreview: React.FC<{ themeKey: ThemeKey }> = React.memo(
           <div className="absolute top-1 right-1 w-1 h-1 bg-white/60 rounded-full" />
         </div>
       ),
+      modern:(
+        <div className="w-12 h-8 bg-gradient-to-br from-indigo-500 to-emerald-500 rounded overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-emerald-600/20" />
+          <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-sm" />
+          <div className="absolute top-1 right-1 w-1 h-1 bg-white/60 rounded-full" />
+        </div>
+      )
+
     };
 
     return <>{previews[themeKey]}</>;

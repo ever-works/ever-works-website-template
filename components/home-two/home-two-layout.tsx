@@ -7,6 +7,7 @@ import { HomeTwoFilters } from "./home-two-filters";
 import { HomeTwoResults } from "./home-two-results";
 import { useLayoutTheme } from "../context";
 import { useStickyState } from "@/hooks/use-sticky-state";
+import { useState } from "react";
 
 type Home2LayoutProps = {
   total: number;
@@ -22,6 +23,7 @@ type Home2LayoutProps = {
 
 export function HomeTwoLayout(props: Home2LayoutProps) {
   const { layoutKey, setLayoutKey } = useLayoutTheme();
+  const [search, setSearch]=useState('')
   const { isSticky, sentinelRef, targetRef } = useStickyState({
     threshold: 0,
     rootMargin: "-20px 0px 0px 0px",
@@ -29,22 +31,25 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
 
   return (
     <div className="min-h-screen transition-colors duration-300">
-      <div className="container max-w-7xl px-4 flex flex-col gap-4 py-8 w-full">
+      <div className="max-w-7xl flex flex-col gap-4 py-8 w-full">
         <div ref={sentinelRef} className="md:h-4 md:w-full" />
         <div
           ref={targetRef}
-          className={`md:sticky md:top-4 md:self-start z-10 md:transition-all md:duration-300  ${
+          className={`sticky top-4 z-10 ${
             isSticky
-              ? "md:bg-white md:dark:bg-gray-900 md:shadow-lg md:rounded-lg md:p-4 md:pt-24"
-              : "md:bg-transparent md:p-0"
-          }`}
-        >
+             ? "bg-white/95 dark:bg-gray-800/95 shadow-md backdrop-blur-sm"
+                : "bg-transparent"
+          }`}>
+
           <HomeTwoFilters
             categories={props.categories}
             tags={props.tags}
             items={props.items}
             layoutKey={layoutKey}
             setLayoutKey={setLayoutKey}
+            setSearchTerm={setSearch}
+            className={search}
+
           />
         </div>
         <HomeTwoResults items={props.paginatedItems} layoutKey={layoutKey} />

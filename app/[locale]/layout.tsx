@@ -57,23 +57,22 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-dark--theme-950`}
-      >
-        <NextIntlClientProvider messages={messages}>
-          <Providers config={config}>
-            <Header session={session} />
-            {children}
-            <Footer />
-            <div className="fixed bottom-6 right-6 z-50">
-              <ScrollToTopButton
-                variant="elegant"
-                easing="easeInOut"
-                showAfter={400}
-                size="md"
-              />
-            </div>
-          </Providers>
-        </NextIntlClientProvider>
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-dark--theme-950`}>
+          <NextIntlClientProvider messages={messages}>
+            <Providers config={config}>
+              <Header session={session} />
+              {children}
+              <Footer />
+              <div className="fixed bottom-6 right-6 z-50">
+                <ScrollToTopButton
+                  variant="elegant"
+                  easing="easeInOut"
+                  showAfter={400}
+                  size="md"
+                />
+              </div>
+            </Providers>
+          </NextIntlClientProvider>
       </body>
     </html>
   );

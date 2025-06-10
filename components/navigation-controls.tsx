@@ -12,9 +12,9 @@ export function NavigationControls() {
         <LayoutSwitcher inline={false} />
       </div>
       <LanguageSwitcher />
-      <div className="block sm:hidden">
-        <ThemeToggler compact />
-      </div>
+      {/* <div className="block sm:hidden"> */}
+        <ThemeToggler />
+      {/* </div> */}
       <div className="sm:block hidden">
         <ThemeSwitcher />
       </div>

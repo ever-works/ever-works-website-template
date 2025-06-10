@@ -1,7 +1,7 @@
 "use client";
 import { Category, ItemData, Tag } from "@/lib/content";
 import { Link } from "@/i18n/navigation";
-import { Paginate } from "@/components/filters";
+import { Paginate, Tags } from "@/components/filters";
 import { PER_PAGE, totalPages } from "@/lib/paginate";
 import Item from "@/components/item";
 import { getItemPath, sortByNumericProperty } from "@/lib/utils";
@@ -12,9 +12,9 @@ import { layoutComponents } from "@/components/layouts";
 import ViewToggle from "@/components/view-toggle";
 import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
-import { HomeTwoCategories } from "@/components/home-two";
+import { StickyHeader } from "@/components/ui/sticky-header";
 
-type ListingCategoriesProps = {
+type ListingTagsProps = {
   total: number;
   start: number;
   page: number;
@@ -24,21 +24,18 @@ type ListingCategoriesProps = {
   items: ItemData[];
 };
 
-function ListingCategories(props: ListingCategoriesProps) {
+function ListingTags(props: ListingTagsProps) {
   const { layoutKey, setLayoutKey } = useLayoutTheme();
   const LayoutComponent = layoutComponents[layoutKey];
   const t = useTranslations("listing");
 
-  const { items, start, categories } = props;
+  const { items, start, tags } = props;
   const [sortBy, setSortBy] = useState("popularity");
-  const paginatedCategories = items.slice(start, start + PER_PAGE);
-  const sortedCategories = useMemo(
-    () => sortByNumericProperty(categories),
-    [categories]
-  );
+  const paginatedTags = items.slice(start, start + PER_PAGE);
+  const sortedTags = useMemo(() => sortByNumericProperty(tags), [tags]);
 
   const sortedItems = useMemo(() => {
-    const arr = [...paginatedCategories];
+    const arr = [...paginatedTags];
     switch (sortBy) {
       case "name-asc":
         return arr.sort((a, b) => a.name.localeCompare(b.name));
@@ -60,7 +57,7 @@ function ListingCategories(props: ListingCategoriesProps) {
       default:
         return arr;
     }
-  }, [paginatedCategories, sortBy]);
+  }, [paginatedTags, sortBy]);
 
   const sortOptions: SortOption[] = [
     { value: "popularity", label: "Popularity" },
@@ -72,18 +69,18 @@ function ListingCategories(props: ListingCategoriesProps) {
 
   return (
     <Hero
-      badgeText={t("CATEGORIES")}
+      badgeText={t("TAGS")}
       title={
         <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 bg-clip-text text-transparent">
-          Discover Categories
+          Discover Tags
         </span>
       }
-      description="Browse all categories in our directory"
+      description="Browse all tags in our directory"
       className="min-h-screen"
     >
-      <div className="mt-4 max-w-7xl px-4 container">
+      <div className="mt-4 max-w-7xl px-4 lg:px-8">
         <div className="mt-8">
-          <div className="flex justify-between mb-6">
+          <div className="flex justify-between mb-6 p-1">
             <SortMenu
               className="h-8 min-w-[180px] text-sm"
               options={sortOptions}
@@ -96,15 +93,15 @@ function ListingCategories(props: ListingCategoriesProps) {
               onViewChange={(newView) => setLayoutKey(newView)}
             />
           </div>
-
-          <div className="md:sticky md:top-4 md:self-start py-4">
-            <HomeTwoCategories
-              resetPath={`/categories`}
-              categories={sortedCategories}
-              basePath={`/categories/category`}
+          <StickyHeader withBlur withShadow withBorder top={4}>
+            <Tags
+              tags={sortedTags}
+              basePath={`/tags/tag`}
+              resetPath={`/tags`}
+              enableSticky={false}
+              maxVisibleTags={7}
             />
-          </div>
-          <div className="md:h-4 md:w-full" />
+          </StickyHeader>
         </div>
 
         <LayoutComponent>
@@ -131,4 +128,4 @@ function ListingCategories(props: ListingCategoriesProps) {
     </Hero>
   );
 }
-export default ListingCategories;
+export default ListingTags;

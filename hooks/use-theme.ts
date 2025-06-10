@@ -43,6 +43,12 @@ const THEME_INFO: Record<ThemeKey, ThemeInfo> = {
     description: "Playful and vibrant theme with pink and yellow colors",
     colors: { primary: "#ff4081", secondary: "#ffeb3b", accent: "#c51162", background: "#ffffff", surface: "#fafafa", text: "#212121", textSecondary: "#616161" },
   },
+  modern: {
+    key: "modern",
+    label: "Modern",
+    description: "Contemporary theme with indigo and emerald accents",
+    colors: { primary: "#6366f1", secondary: "#10b981", accent: "#4f46e5", background: "#ffffff", surface: "#f9fafb", text: "#111827", textSecondary: "#4b5563" },
+  },
 } as const;
 
 // Custom hook for theme management

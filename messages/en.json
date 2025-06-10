@@ -19,6 +19,7 @@
   },
   "common": {
     "DISCOVER": "Discover",
+    "HOME": "Home",
     "ABOUT": "About",
     "LAYOUT": "Layout",
     "NO_CONTENT_PROVIDED": "No content provided",

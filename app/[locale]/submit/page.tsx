@@ -108,7 +108,7 @@ function SubmitPage() {
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300 py-20">
-      <Container className="container max-w-7xl px-4">
+      <Container className="mt-4 px-4">
         {currentStep === "pricing" ? (
           <PricingSection onSelectPlan={handleSelectPlan} />
         ) : (

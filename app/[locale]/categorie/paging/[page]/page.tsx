@@ -38,7 +38,7 @@ export default async function CategoryPagingPage({
         total={total}
         start={start}
         page={page}
-        basePath="/categories/paging"
+        basePath="/categorie/paging"
         categories={categories}
         tags={tags}
         items={items}

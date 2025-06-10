@@ -152,7 +152,7 @@ export function LanguageSwitcher({ compact = false }: LanguageSwitcherProps) {
             return (
               <button
                 key={locale}
-                className={`flex items-center gap-3 py-2.5 transition-all duration-200 rounded-none
+                className={`flex items-center gap-3 py-2.5 transition-all duration-200 rounded-none cursor-pointer
                   ${
                     isPending
                       ? "opacity-50 cursor-not-allowed"
@@ -162,7 +162,7 @@ export function LanguageSwitcher({ compact = false }: LanguageSwitcherProps) {
                 disabled={isPending || isActive}
                 aria-label={`Switch to ${language.fullName}`}
               >
-                <div className="relative w-6 h-5 overflow-hidden shadow-sm">
+                <div className="relative w-5 h-4 overflow-hidden shadow-sm">
                   <Image
                     src={language.flagSrc}
                     alt={language.fullName}
@@ -170,7 +170,7 @@ export function LanguageSwitcher({ compact = false }: LanguageSwitcherProps) {
                     className="object-cover"
                   />
                 </div>
-                <span className="dark:text-white  font-bold text-sm ml-1">
+                <span className="dark:text-white  font-medium text-sm ml-1">
                   {locale.toUpperCase()}
                 </span>
               </button>

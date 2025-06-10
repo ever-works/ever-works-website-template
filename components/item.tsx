@@ -5,10 +5,10 @@ import { getCategoriesName } from "@/lib/utils";
 import Link from "next/link";
 import { Card, CardHeader, CardBody, cn, Badge } from "@heroui/react";
 import {
-  FiStar,
-  FiExternalLink,
-  FiFolder,
-  FiArrowUpRight,
+    FiStar,
+    FiExternalLink,
+    FiFolder,
+    FiArrowUpRight,
 } from "react-icons/fi";
 import { useTranslations } from "next-intl";
 import Image from "next/image";

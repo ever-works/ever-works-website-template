@@ -4,6 +4,7 @@ import { getCategoriesName } from "@/lib/utils";
 import { LOCALES } from "@/lib/constants";
 import { getTranslations } from "next-intl/server";
 import { ItemDetail } from "@/components/item-detail";
+import { Container } from "@/components/ui/container";
 
 export const revalidate = 10;
 
@@ -33,13 +34,13 @@ export default async function ItemDetails({
   const categoryName = getCategoriesName(meta.category);
 
   return (
-    <div className="container max-w-7xl px-4 p-8">
+    <Container className="px-4">
       <ItemDetail
         meta={meta}
         content={content}
         categoryName={categoryName}
         noContentMessage={t("NO_CONTENT_PROVIDED")}
       />
-    </div>
+    </Container>
   );
 }

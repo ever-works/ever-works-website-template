@@ -1,9 +1,9 @@
 "use client";
 
 import {
-  Card,
-  CardPresets,
-  type BaseCardProps,
+    Card,
+    CardPresets,
+    type BaseCardProps,
 } from "@/components/shared-card";
 import { Category, ItemData, Tag } from "@/lib/content";
 

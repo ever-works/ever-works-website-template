@@ -2,7 +2,6 @@
 
 import { useConfig } from "@/app/[locale]/config";
 import {
-  Button,
   Navbar,
   NavbarBrand,
   NavbarContent,
@@ -10,9 +9,6 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { SessionProps } from "@/lib/types";
@@ -49,31 +45,37 @@ const NAVIGATION_CONFIG: Array<{
   staticLabel?: string;
 }> = [
   {
-    key: "discover",
-    href: "#",
-    translationKey: "DISCOVER",
+    key: "home",
+    href: "/",
+    translationKey: "HOME",
     translationNamespace: "common",
   },
-  {
-    key: "about",
-    href: "#",
-    translationKey: "ABOUT",
-    translationNamespace: "common",
-  },
-  {
-    key: "github",
-    href: "#",
-    staticLabel: "GitHub",
-  },
+  // {
+  //   key: "discover",
+  //   href: "#",
+  //   translationKey: "DISCOVER",
+  //   translationNamespace: "common",
+  // },
+  // {
+  //   key: "about",
+  //   href: "#",
+  //   translationKey: "ABOUT",
+  //   translationNamespace: "common",
+  // },
+  // {
+  //   key: "github",
+  //   href: "#",
+  //   staticLabel: "GitHub",
+  // },
   {
     key: "categories",
-    href: "/categories",
+    href: "/categorie",
     translationKey: "CATEGORY",
     translationNamespace: "common",
   },
   {
     key: "tags",
-    href: "/tags",
+    href: "/tag",
     translationKey: "TAG",
     translationNamespace: "common",
   },
@@ -88,7 +90,7 @@ const NAVIGATION_CONFIG: Array<{
 const STYLES = {
   navbar: "border-b border-gray-100 dark:border-gray-800",
   container:
-    "flex items-center justify-between w-full container max-w-7xl px-4 sm:px-6 py-2 h-16",
+    "flex items-center justify-between w-full max-w-7xl px-4 sm:px-6 py-2 h-16 mx-auto",
   brand: "flex items-center group",
   brandIcon: "relative font-bold mr-2 sm:mr-4",
   brandIconSvg:
@@ -136,11 +138,6 @@ export default function Header({ session }: SessionProps) {
     }));
   }, [t, tListing]);
 
-  const chevronIcon = useMemo(
-    () => <ChevronDown fill="currentColor" size={16} />,
-    []
-  );
-
   const isActiveLink = useCallback(
     (href: string): boolean => {
       if (href === "/") {
@@ -177,37 +174,6 @@ export default function Header({ session }: SessionProps) {
       </NavbarBrand>
     ),
     [config.company_name]
-  );
-
-  const renderLayoutPopover = useCallback(
-    () => (
-      <Popover placement="bottom" offset={10}>
-        <NavbarItem>
-          <PopoverTrigger>
-            <Button
-              disableRipple
-              className={STYLES.layoutButton}
-              endContent={chevronIcon}
-              radius="sm"
-              variant="light"
-            >
-              {t("LAYOUT")}
-            </Button>
-          </PopoverTrigger>
-        </NavbarItem>
-        <PopoverContent className={STYLES.popoverContent}>
-          <div className={STYLES.popoverInner}>
-            <div className={STYLES.popoverHeader}>
-              <h3 className={STYLES.popoverTitle}>{t("LAYOUT")}</h3>
-            </div>
-            <div className={STYLES.popoverSection}>
-              <LayoutSwitcher inline />
-            </div>
-          </div>
-        </PopoverContent>
-      </Popover>
-    ),
-    [t, chevronIcon]
   );
 
   const renderNavigationItem = useCallback(
@@ -261,7 +227,6 @@ export default function Header({ session }: SessionProps) {
         {renderBrand()}
 
         <NavbarContent className={STYLES.navContent} justify="center">
-          {renderLayoutPopover()}
           {renderNavigationItems()}
         </NavbarContent>
 

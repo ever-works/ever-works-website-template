@@ -65,14 +65,14 @@ const CategoryButton = memo(
       () => (
         <>
           <span
-            className="text-xs sm:text-sm truncate max-w-[80px] sm:max-w-[100px] md:max-w-full"
+            className="text-xs sm:text-sm truncate max-w-[80px] sm:max-w-[100px] md:max-w-full !capitalize"
             title={fullName}
           >
             {displayName}
           </span>
           <span
             className={cn(
-              "ml-1 sm:ml-2 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs transition-colors duration-300",
+              "ml-1 sm:ml-2 px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs transition-colors duration-300 capitalize",
               isActive
                 ? "bg-white/20 text-white"
                 : "bg-gray-200 dark:bg-gray-200/10 text-gray-600 dark:text-gray-400"
@@ -112,7 +112,7 @@ const CategoryButton = memo(
         <div className="relative group" title={fullName}>
           {button}
           <div
-            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 dark:bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10"
+            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 dark:bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10 !capitalize"
             role="tooltip"
           >
             {fullName}
@@ -133,8 +133,10 @@ export function HomeTwoCategories({
   resetPath,
 }: Home2CategoriesProps) {
   const t = useTranslations("listing");
+  const tCommon = useTranslations("common");
   const { totalItems, isHomeActive, pathname } = useCategoryState(categories);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [showAll, setShowAll] = useState(false);
 
   const renderCategory = useCallback(
     (category: Category) => {
@@ -222,12 +224,12 @@ export function HomeTwoCategories({
   }, [categories, pathname, isHomeActive, basePath]);
 
   return (
-    <div className="space-y-1 sm:space-y-2">
+    <div className="space-y-2 sm:space-y-4">
       {/* Mobile: Select dropdown */}
       <div className="md:hidden w-full">
         <Select>
           <select
-            className="w-full p-2 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+            className="w-full p-3 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
             value={selectedCategory}
             onChange={handleCategoryChange}
           >
@@ -237,14 +239,60 @@ export function HomeTwoCategories({
       </div>
 
       {/* Desktop: Buttons */}
-      <div className="hidden md:flex flex-wrap gap-1 sm:gap-2">
-        <CategoryButton
-          href={resetPath || "/"}
-          isActive={isHomeActive}
-          displayName={t("ALL_CATEGORIES")}
-          count={totalItems}
-        />
-        {categoriesList}
+      <div className="hidden md:block max-w-7xl mx-auto">
+        <div className="flex flex-col gap-4">
+          {/* Horizontal view for initial display */}
+          <div className={cn(
+            "flex items-center gap-3 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+            showAll && "hidden"
+          )}>
+            <div className="flex items-center gap-2 sm:gap-3 flex-nowrap">
+              <div className="sticky left-0 flex-shrink-0 bg-gradient-to-r from-white dark:from-gray-900 via-white dark:via-gray-900 to-transparent pr-6 z-10">
+                <CategoryButton
+                  href={resetPath || "/"}
+                  isActive={isHomeActive}
+                  displayName={t("ALL_CATEGORIES")}
+                  count={totalItems}
+                />
+              </div>
+              {categoriesList.slice(0, 6)}
+            </div>
+            {categories.length > 6 && (
+              <div className="sticky right-0 flex-shrink-0 bg-gradient-to-l from-white dark:from-gray-900 via-white dark:via-gray-900 to-transparent pl-6">
+                <Button
+                  className="h-7 sm:h-9 px-3 sm:px-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700/50 bg-white dark:bg-gray-800 border border-gray-50 dark:border-gray-700"
+                  onPress={() => setShowAll(true)}
+                >
+                  {tCommon("SHOW_ALL")}
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Vertical view when showAll is true */}
+          <div className={cn(
+            "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 transition-all duration-300",
+            !showAll && "hidden"
+          )}>
+            <div className="col-span-full mb-2">
+              <CategoryButton
+                href={resetPath || "/"}
+                isActive={isHomeActive}
+                displayName={t("ALL_CATEGORIES")}
+                count={totalItems}
+              />
+            </div>
+            {categoriesList}
+            <div className="col-span-full flex justify-center mt-4">
+              <Button
+                className="h-7 sm:h-9 px-3 sm:px-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700/50 bg-white dark:bg-gray-800 border border-gray-50 dark:border-gray-700"
+                onPress={() => setShowAll(false)}
+              >
+                {tCommon("SHOW_LESS")}
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -49,7 +49,7 @@ export default async function CategoryListing({
       total={total}
       start={start}
       page={page}
-      basePath={`/categories/category/${categorie}`}
+      basePath={`/categorie/category/${categorie}`}
       categories={categories}
       tags={[]}
       items={items}

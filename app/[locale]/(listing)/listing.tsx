@@ -33,7 +33,7 @@ export default async function Listing(props: ListingProps) {
         description={t("DEMO_DESCRIPTION")}
         className="min-h-screen text-center"
       >
-        <Container className="mt-4 container max-w-7xl px-4">
+        <Container className="mt-4 px-4">
           <GlobalsClient {...props} />
         </Container>
       </Hero>

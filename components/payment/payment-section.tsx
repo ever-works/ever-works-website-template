@@ -161,7 +161,7 @@ export function PaymentSection({
         <div className="absolute bottom-1/3 left-1/3 w-24 h-24 bg-gradient-to-r from-green-500/15 to-blue-500/15 dark:from-green-400/25 dark:to-blue-400/25 rounded-full blur-xl animate-float-slower"></div>
       </div>
 
-      <div className="relative z-10 container max-w-7xl px-6 py-12">
+      <div className="relative z-10 px-6 py-12">
         {/* Enhanced Header Section */}
         <div className="text-center mb-16 animate-fade-in-up">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 mb-6 shadow-lg">

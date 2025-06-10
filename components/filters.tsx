@@ -7,7 +7,6 @@ import {
   Button,
   cn,
   Pagination,
-  Input,
   Tooltip,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
@@ -19,9 +18,10 @@ import {
   useContext,
   useEffect,
 } from "react";
-import { Search, X, ChevronDown } from "lucide-react";
+import { X, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useScrollToTop } from "@/hooks/use-scroll-to-top";
+import { SearchInput } from "./ui/search-input";
 
 type FilterContextType = {
   searchTerm: string;
@@ -63,23 +63,30 @@ function useFilters() {
   return context;
 }
 
+interface BlockLinkProps
+  extends PropsWithChildren<{ href: string; isActive: boolean }> {
+  isAllCategories?: boolean;
+}
+
 function BlockLink({
   href,
   isActive,
   children,
-}: PropsWithChildren<{ href: string; isActive: boolean }>) {
+  isAllCategories,
+}: BlockLinkProps) {
   return (
     <Button
       className={cn(
-        "font-medium text-left justify-start items-center transition-all duration-200 mb-1 h-8 w-full px-2 font-sans",
+        "font-medium text-left justify-start items-center transition-colors duration-300 mb-1 h-10 px-3",
+        "hover:transform-none active:transform-none",
         {
-          "bg-blue-500 dark:bg-blue-600 text-white border border-blue-500 dark:border-blue-600":
-            isActive,
-          "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700/50 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700":
-            !isActive,
+          "bg-blue-500 text-white": isActive,
+          "bg-gray-800 text-white": !isActive && isAllCategories,
+          "bg-transparent text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800":
+            !isActive && !isAllCategories,
         }
       )}
-      radius="lg"
+      radius="md"
       variant="light"
       as={Link}
       href={href}
@@ -110,7 +117,7 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
         closeDelay={100}
         classNames={{
           content:
-            "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-2 py-1.5 rounded-lg text-sm font-medium shadow-lg",
+            "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-2.5 py-1.5 rounded-md text-sm font-medium shadow-lg",
         }}
       >
         <div>
@@ -118,11 +125,11 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
             isActive={pathname === "/" || pathname.startsWith("/discover")}
             href="/"
           >
-            <div className="flex items-center justify-between w-full py-2 group">
+            <div className="flex items-center justify-between w-full group">
               <span className="font-medium truncate pr-2 text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
                 {t("ALL_CATEGORIES")}
               </span>
-              <span className="text-xs font-semibold bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full transition-all duration-300 flex-shrink-0 group-hover:scale-105 border border-blue-200/50 dark:border-blue-700/50">
+              <span className="text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 px-2 py-0.5 rounded-full transition-all duration-300 flex-shrink-0 group-hover:scale-105">
                 {totalItems}
               </span>
             </div>
@@ -152,7 +159,7 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
           >
             <div>
               <BlockLink isActive={isActive} href={href}>
-                <div className="flex items-center justify-between w-full py-2 group">
+                <div className="flex items-center justify-between w-full group">
                   <span
                     className="font-medium truncate pr-2 text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300"
                     title={isTextTruncated ? category.name : undefined}
@@ -163,8 +170,8 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
                     className={cn(
                       "text-xs font-semibold px-2 py-0.5 rounded-full transition-all duration-300 flex-shrink-0 group-hover:scale-105",
                       isActive
-                        ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md border border-blue-400/50"
-                        : "bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200/50 dark:border-gray-700/50"
+                        ? "text-white"
+                        : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
                     )}
                   >
                     {category.count}
@@ -209,7 +216,7 @@ export function Categories(props: { total: number; categories: Category[] }) {
       <div className="md:hidden">
         <Accordion
           variant="bordered"
-          className="shadow-sm bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl transition-colors duration-300"
+          className="shadow-sm bg-white dark:bg-gray-900/90 border border-gray-100 dark:border-gray-700 rounded-xl transition-colors duration-300"
         >
           <AccordionItem
             key="1"
@@ -219,7 +226,7 @@ export function Categories(props: { total: number; categories: Category[] }) {
                 <span className="font-bold text-gray-800 dark:text-gray-200 transition-colors duration-300">
                   {t("CATEGORIES")}
                 </span>
-                <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full text-xs font-bold border border-blue-200 dark:border-blue-700/50">
+                <span className="bg-blue-100 dark:bg-gray-800 text-blue-700 dark:text-gray-300 px-2 py-1 rounded-full text-xs font-bold border border-blue-200 dark:border-gray-700/50">
                   {props.total}
                 </span>
               </div>
@@ -234,42 +241,11 @@ export function Categories(props: { total: number; categories: Category[] }) {
 
       <div className="hidden md:flex flex-col w-full max-w-64 gap-6">
         {/* Search Bar */}
-        <div className="relative ">
-          <div className="bg-gray-200 dark:bg-gray-900 backdrop-blur-md rounded-full px-1 border border-gray-300/20 dark:border-gray-700/30 transition-all duration-300 hover:shadow-md">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-            </div>
-            <Input
-              type="text"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8 "
-              style={{ background: "transparent" }}
-              maxLength={20}
-              classNames={{
-                base: "!bg-transparent",
-                input:
-                  "!bg-transparent text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm",
-                inputWrapper:
-                  "!bg-transparent border-none shadow-none focus-within:ring-0 focus-within:shadow-none hover:bg-transparent dark:hover:bg-transparent",
-              }}
-            />
-            {searchTerm && (
-              <button
-                onClick={() => setSearchTerm("")}
-                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
-        </div>
-
+        <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         {/* Categories Section */}
-        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden shadow-sm dark:shadow-lg transition-colors duration-300">
+        <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden shadow-sm dark:shadow-lg transition-colors duration-300">
           <div className="p-4 border-b border-gray-200/50 dark:border-gray-700/50">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-200 transition-colors duration-300">
               {t("CATEGORIES")}
             </h2>
           </div>
@@ -278,10 +254,11 @@ export function Categories(props: { total: number; categories: Category[] }) {
           </div>
         </div>
 
+        {/* Active Filters Section */}
         {(searchTerm || selectedTags.length > 0 || sortBy !== "popularity") && (
-          <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden shadow-sm dark:shadow-lg transition-colors duration-300">
+          <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden shadow-sm dark:shadow-lg transition-colors duration-300">
             <div className="p-4 border-b border-gray-200/50 dark:border-gray-700/50 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-200 transition-colors duration-300">
                 Active Filters
               </h2>
               <Button
@@ -300,11 +277,11 @@ export function Categories(props: { total: number; categories: Category[] }) {
                   <span className="text-xs text-gray-500 dark:text-gray-400">
                     Search:
                   </span>
-                  <span className="inline-flex items-center px-3 py-1 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium border border-blue-200 dark:border-blue-700/50">
+                  <span className="inline-flex items-center px-3 py-1 rounded-lg bg-blue-100 dark:bg-gray-800 text-blue-700 dark:text-blue-400 text-sm font-medium border border-blue-200 dark:border-gray-700">
                     {searchTerm}
                     <button
                       onClick={() => setSearchTerm("")}
-                      className="ml-2 text-blue-600/70 dark:text-blue-300/70 hover:text-blue-800 dark:hover:text-blue-100"
+                      className="ml-2 text-blue-600/70 dark:text-blue-400/70 hover:text-blue-800 dark:hover:text-blue-300"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -323,12 +300,12 @@ export function Categories(props: { total: number; categories: Category[] }) {
                       return tag ? (
                         <span
                           key={tagId}
-                          className="inline-flex items-center px-3 py-1  rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium border border-blue-200 dark:border-blue-700/50"
+                          className="inline-flex items-center px-3 py-1  rounded-lg bg-blue-100 dark:bg-gray-800 text-blue-700 dark:text-blue-400 text-sm font-medium border border-blue-200 dark:border-gray-700"
                         >
                           {tag.name}
                           <button
                             onClick={() => removeSelectedTag(tagId)}
-                            className="ml-2 text-blue-600/70 dark:text-blue-300/70 hover:text-blue-800 dark:hover:text-blue-100"
+                            className="ml-2 text-blue-600/70 dark:text-blue-400/70 hover:text-blue-800 dark:hover:text-blue-300"
                           >
                             <X className="w-3 h-3" />
                           </button>
@@ -344,19 +321,19 @@ export function Categories(props: { total: number; categories: Category[] }) {
                   <span className="text-xs text-gray-500 dark:text-gray-400">
                     Sort:
                   </span>
-                  <span className="inline-flex items-center px-3 py-1 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-sm font-medium border border-green-200 dark:border-green-700/50">
+                  <span className="inline-flex items-center px-3 py-1 rounded-lg bg-green-100 dark:bg-gray-800 text-green-700 dark:text-green-400 text-sm font-medium border border-green-200 dark:border-gray-700">
                     {sortBy === "name-asc"
                       ? "Name (A-Z)"
                       : sortBy === "name-desc"
                         ? "Name (Z-A)"
                         : sortBy === "date-desc"
-                          ? "Date (Newest)"
+                          ? "Newest"
                           : sortBy === "date-asc"
-                            ? "Date (Oldest)"
+                            ? "Oldest"
                             : "Popularity"}
                     <button
                       onClick={() => setSortBy("popularity")}
-                      className="ml-2 text-green-600/70 dark:text-green-300/70 hover:text-green-800 dark:hover:text-green-100"
+                      className="ml-2 text-green-600/70 dark:text-green-400/70 hover:text-green-800 dark:hover:text-green-300"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -368,10 +345,10 @@ export function Categories(props: { total: number; categories: Category[] }) {
         )}
 
         {/* Sort By Section */}
-        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden shadow-sm dark:shadow-lg transition-colors duration-300">
-          <div className="p-4 border-b border-gray-200/50 dark:border-gray-700/50">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-300">
-              Sort By
+        <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden shadow-sm dark:shadow-lg transition-colors duration-300">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700/50">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-200 transition-colors duration-300">
+              {t("CATEGORIES")}
             </h2>
           </div>
           <div className="p-4">
@@ -509,7 +486,7 @@ export function Tags(props: {
     if (props.enableSticky) {
       const handleScroll = () => {
         const scrollPosition = window.scrollY;
-        const scrollThreshold = 100;
+        const scrollThreshold = 250;
         if (scrollPosition > scrollThreshold && !isSticky) {
           setIsSticky(true);
         } else if (scrollPosition <= scrollThreshold && isSticky) {
@@ -579,7 +556,16 @@ export function Tags(props: {
             alt={tag.name}
           />
         )}
-        <span>{tag.name}</span>
+        <span
+          className={cn(
+            "text-sm font-medium transition-all duration-300",
+            isActive
+              ? "text-white tracking-wide"
+              : "text-gray-700 dark:text-gray-300 group-hover:text-blue-700 dark:group-hover:text-blue-300"
+          )}
+        >
+          {tag.name}
+        </span>
         {tag.count && (
           <span
             className={cn(
@@ -594,6 +580,10 @@ export function Tags(props: {
     );
   };
 
+  const visibleTags = showAllTags
+    ? props.tags
+    : props.tags.slice(0, MAX_VISIBLE_TAGS);
+
   const isAnyTagActive = props.tags.some((tag) => {
     const basePath = props.basePath
       ? `${props.basePath}/${tag.id}`
@@ -601,31 +591,93 @@ export function Tags(props: {
     return pathname.startsWith(encodeURI(basePath));
   });
 
-  const visibleTags = showAllTags
-    ? props.tags
-    : props.tags.slice(0, MAX_VISIBLE_TAGS);
-
   return (
     <div
       className={cn(
         "p-4 transition-all duration-300",
         props.enableSticky
           ? cn(
-              "sticky top-4 z-20",
+              "sticky top-4 z-10",
               isSticky
-                ? "bg-white/95 dark:bg-gray-800/95 shadow-sm backdrop-blur-sm"
+                ? "bg-white/95 dark:bg-gray-800/95 shadow-md backdrop-blur-sm"
                 : "bg-transparent"
             )
           : "bg-inherit"
       )}
     >
-      <div className="relative z-10 ">
+      <div className="relative z-10">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-bold text-default-900">Tags</h3>
+          <h3
+            className={cn(
+              "text-lg font-bold transition-colors duration-300",
+              isSticky
+                ? "text-blue-600 dark:text-blue-400"
+                : "text-gray-900 dark:text-white"
+            )}
+          >
+            Tags
+          </h3>
+          {hasMoreTags && (
+            <Button
+              variant="flat"
+              color="primary"
+              radius="full"
+              size="sm"
+              className={cn(
+                "px-4 py-1 font-medium transition-all duration-300",
+                isSticky && "shadow-sm"
+              )}
+              onPress={() => setShowAllTags(!showAllTags)}
+            >
+              {showAllTags ? (
+                <>
+                  <span className="hidden sm:inline">Show as single row</span>
+                  <span className="sm:hidden">Single row</span>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="ml-1.5 transition-transform group-hover:-translate-y-0.5 dark:text-default-300"
+                  >
+                    <path
+                      d="M3 10h18M3 14h18"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </>
+              ) : (
+                <>
+                  <span className="hidden sm:inline">
+                    Show all {props.tags.length} tags
+                  </span>
+                  <span className="sm:hidden">All tags</span>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="ml-1.5 transition-transform group-hover:translate-y-0.5 dark:text-default-300"
+                  >
+                    <path
+                      d="M4 4h16v7H4V4zm0 9h16v7H4v-7z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </>
+              )}
+            </Button>
+          )}
         </div>
         <div className="relative">
           {!showAllTags && (
-            <div className="w-full flex flex-nowrap gap-2 overflow-x-auto pb-2 hide-scrollbar">
+            <div className="w-full flex flex-nowrap gap-2 overflow-x-auto pb-2 hide-scrollbar scrollbar-thin scrollbar-thumb-blue-500/30 dark:scrollbar-thumb-blue-700/30 scrollbar-track-transparent">
               <Button
                 variant={!isAnyTagActive ? "solid" : "bordered"}
                 radius="full"
@@ -634,7 +686,7 @@ export function Tags(props: {
                 prefetch={false}
                 href={props.resetPath || props.basePath || "/"}
                 className={cn(
-                  "px-3 py-1 h-8 font-medium transition-all duration-200 flex-shrink-0",
+                  "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group",
                   !isAnyTagActive
                     ? "bg-primary-500 text-white border-primary-500 shadow-sm"
                     : "border border-dark--theme-200 dark:border-dark--theme-800",
@@ -720,59 +772,6 @@ export function Tags(props: {
             </div>
           )}
         </div>
-
-        {hasMoreTags && (
-          <div className="flex justify-center mt-3">
-            <Button
-              variant="flat"
-              color="primary"
-              radius="full"
-              size="sm"
-              className="px-4 py-1 font-medium shadow-sm group"
-              onPress={() => setShowAllTags(!showAllTags)}
-            >
-              {showAllTags ? (
-                <>
-                  <span>Show as single row</span>
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="ml-1.5 transition-transform group-hover:-translate-y-0.5 dark:text-default-300"
-                  >
-                    <path
-                      d="M3 10h18M3 14h18"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </>
-              ) : (
-                <>
-                  <span>Show all {props.tags.length} tags</span>
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="ml-1.5 transition-transform group-hover:translate-y-0.5 dark:text-default-300"
-                  >
-                    <path
-                      d="M4 4h16v7H4V4zm0 9h16v7H4v-7z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </>
-              )}
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );
