@@ -12,7 +12,7 @@ import { layoutComponents } from "@/components/layouts";
 import ViewToggle from "@/components/view-toggle";
 import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
-import { StickyHeader } from "@/components/ui/sticky-header";
+import { useStickyHeader } from "@/hooks/use-sticky-state";
 
 type ListingTagsProps = {
   total: number;
@@ -28,6 +28,7 @@ function ListingTags(props: ListingTagsProps) {
   const { layoutKey, setLayoutKey } = useLayoutTheme();
   const LayoutComponent = layoutComponents[layoutKey];
   const t = useTranslations("listing");
+  const { isSticky } = useStickyHeader({ enableSticky: true });
 
   const { items, start, tags } = props;
   const [sortBy, setSortBy] = useState("popularity");
@@ -77,8 +78,14 @@ function ListingTags(props: ListingTagsProps) {
       className="min-h-screen"
     >
       <div className="mt-4 max-w-7xl px-4 lg:px-8">
-        <div className="mt-8">
-          <div className="flex justify-between mb-6 p-1">
+        <div
+          className={`md:sticky md:top-4 md:self-start py-11 z-10 ${
+            isSticky
+              ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm"
+              : "bg-transparent"
+          }`}
+        >
+          <div className="flex justify-between  p-1">
             <SortMenu
               className="h-8 min-w-[180px] text-sm"
               options={sortOptions}
@@ -91,15 +98,15 @@ function ListingTags(props: ListingTagsProps) {
               onViewChange={(newView) => setLayoutKey(newView)}
             />
           </div>
-          <StickyHeader withBlur withShadow withBorder top={4}>
+          <div>
             <Tags
               tags={sortedTags}
-              basePath={`/tags/tag`}
-              resetPath={`/tags`}
+              basePath={`/tag/tag`}
+              resetPath={`/tag`}
               enableSticky={false}
               maxVisibleTags={7}
             />
-          </StickyHeader>
+          </div>
         </div>
 
         <LayoutComponent>

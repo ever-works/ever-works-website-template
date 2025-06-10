@@ -49,7 +49,7 @@ export default async function TagListing({
       total={total}
       start={start}
       page={page}
-      basePath={`/tags/tag/${tag}`}
+      basePath={`/tag/tag/${tag}`}
       categories={categories}
       tags={tags}
       items={items}

@@ -561,7 +561,7 @@ export function Tags(props: {
             "text-sm font-medium transition-all duration-300",
             isActive
               ? "text-white tracking-wide"
-              : "text-gray-700 dark:text-gray-300 group-hover:text-blue-700 dark:group-hover:text-blue-300"
+              : "text-gray-700 dark:text-gray-300 group-hover:text-blue-700 dark:group-hover:text-blue-300 capitalize"
           )}
         >
           {tag.name}
