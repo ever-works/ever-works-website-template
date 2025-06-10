@@ -13,7 +13,7 @@ export function NavigationControls() {
       </div>
       <LanguageSwitcher />
       {/* <div className="block sm:hidden"> */}
-        <ThemeToggler />
+      <ThemeToggler />
       {/* </div> */}
       <div className="sm:block hidden">
         <ThemeSwitcher />

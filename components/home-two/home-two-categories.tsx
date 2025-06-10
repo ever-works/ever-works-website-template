@@ -15,19 +15,6 @@ import React, {
 } from "react";
 import { Select, SelectItem } from "@/components/ui/select";
 
-// Constants
-const MAX_NAME_LENGTH = 20;
-
-// Animation de pulsation subtile pour l'indicateur
-const pulseAnimation = {
-  "@keyframes pulse-subtle": {
-    "0%, 100%": { opacity: 0.8 },
-    "50%": { opacity: 1 },
-  },
-  ".animate-pulse-subtle": {
-    animation: "pulse-subtle 2s ease-in-out infinite",
-  },
-};
 
 // Types
 type Home2CategoriesProps = {
@@ -159,9 +146,6 @@ export function HomeTwoCategories({
   const tCommon = useTranslations("common");
   const { totalItems, isHomeActive, pathname } = useCategoryState(categories);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const [maxScroll, setMaxScroll] = useState(0);
-  const [visibleCategories, setVisibleCategories] = useState<string[]>([]);
   const [hiddenCategories, setHiddenCategories] = useState<Category[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const categoriesRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -237,7 +221,6 @@ export function HomeTwoCategories({
     return items;
   }, [categories, t, totalItems]);
 
-  // Set initial selected value based on current path
   useEffect(() => {
     if (isHomeActive) {
       setSelectedCategory("all");
@@ -276,14 +259,8 @@ export function HomeTwoCategories({
             onScroll={(e) => {
               if (scrollContainerRef.current) {
                 const container = e.currentTarget;
-                const scrollLeft = container.scrollLeft;
-                const containerWidth = container.clientWidth;
-                const scrollWidth = container.scrollWidth;
+         
 
-                setScrollPosition(scrollLeft);
-                setMaxScroll(scrollWidth - containerWidth);
-
-                // Déterminer quelles catégories sont visibles
                 const visible: string[] = [];
                 const hidden: Category[] = [];
 
@@ -293,7 +270,6 @@ export function HomeTwoCategories({
                     const rect = el.getBoundingClientRect();
                     const containerRect = container.getBoundingClientRect();
 
-                    // Une catégorie est visible si elle est dans le viewport du conteneur
                     if (
                       rect.left >= containerRect.left &&
                       rect.right <= containerRect.right
@@ -305,7 +281,6 @@ export function HomeTwoCategories({
                   }
                 });
 
-                setVisibleCategories(visible);
                 setHiddenCategories(hidden);
               }
             }}
@@ -330,11 +305,11 @@ export function HomeTwoCategories({
               </div>
               {categoriesList}
             </div>
-            <div className="sticky right-0 flex-shrink-0 bg-gradient-to-l from-white dark:from-gray-900 via-white dark:via-gray-900 to-transparent pl-4 pr-1 py-1 flex items-center">
+            <div className="sticky right-0 flex-shrink-0 bg-gradient-to-l ">
               {hiddenCategories.length > 0 && (
                 <Popover>
                   <PopoverTrigger>
-                    <Button className="h-8 py-1.5 px-2.5 text-xs flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-800/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 shadow-sm hover:shadow transition-all rounded-md">
+                    <Button className="h-8 py-1.5 text-xs flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-800/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 shadow-sm hover:shadow transition-all rounded-md">
                       <span className="font-medium">
                         +{hiddenCategories.length}
                       </span>

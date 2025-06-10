@@ -92,7 +92,7 @@ export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
           <button
             className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
               theme === "dark"
-                ? "bg-blue-100 dark:bg-blue-600/80 text-blue-800 dark:text-white shadow-md"
+                ? "bg-blue-100 dark:bg-blue-500 text-blue-800 dark:text-white shadow-md"
                 : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800/60 hover:text-gray-900 dark:hover:text-white"
             } hover:scale-[1.02]`}
             onClick={() => setTheme("dark")}
@@ -100,7 +100,7 @@ export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
             <Moon className="h-4 w-4 text-blue-500 dark:text-blue-400" />
             <span className="font-medium">Dark</span>
             {theme === "dark" && (
-              <div className="ml-auto w-2 h-2 bg-blue-600 dark:bg-white rounded-full"></div>
+              <div className="ml-auto w-2 h-2 bg-blue-800 dark:bg-white rounded-full"></div>
             )}
           </button>
         </div>

@@ -20,7 +20,6 @@ type Home2FiltersProps = {
 export function HomeTwoFilters({
   categories,
   tags,
-  items,
   layoutKey,
   setLayoutKey,
 }: Home2FiltersProps) {

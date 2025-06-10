@@ -50,12 +50,12 @@ const NAVIGATION_CONFIG: Array<{
     translationKey: "HOME",
     translationNamespace: "common",
   },
-  // {
-  //   key: "discover",
-  //   href: "#",
-  //   translationKey: "DISCOVER",
-  //   translationNamespace: "common",
-  // },
+  {
+    key: "discover",
+    href: "/discover",
+    translationKey: "DISCOVER",
+    translationNamespace: "common",
+  },
   // {
   //   key: "about",
   //   href: "#",
@@ -98,16 +98,16 @@ const STYLES = {
   brandText: "font-bold text-base sm:text-lg md:text-xl",
   navContent: "hidden md:flex gap-4 mx-8",
   layoutButton:
-    "p-0 bg-transparent data-[hover=true]:bg-transparent text-gray-700 dark:text-gray-300 hover:text-theme-primary",
+    "p-0 bg-transparent data-[hover=true]:bg-transparent text-gray-700 dark:text-gray-300 hover:text-blue-500",
   popoverContent:
     "p-0 w-full md:w-[420px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl overflow-hidden",
   popoverInner: "p-4 sm:p-6 space-y-6",
   popoverHeader: "text-center",
-  popoverTitle: "text-lg font-semibold text-theme-primary mb-1",
+  popoverTitle: "text-lg font-semibold text-blue-500 mb-1",
   popoverSection: "space-y-4",
   linkBase: "transition-colors font-medium",
-  linkActive: "text-theme-primary border-b-2 border-theme-primary pb-1",
-  linkInactive: "text-gray-700 dark:text-gray-300 hover:text-theme-primary",
+  linkActive: "text-blue-500 border-b-2 border-blue-500 pb-1",
+  linkInactive: "text-gray-700 dark:text-gray-300 hover:text-blue-500",
   navbarMenuToggle: "text-gray-700 dark:text-gray-300 md:hidden",
   mobileMenuItem: "py-2 w-full",
 } as const;

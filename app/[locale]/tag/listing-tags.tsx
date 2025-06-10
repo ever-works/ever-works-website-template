@@ -42,12 +42,10 @@ function ListingTags(props: ListingTagsProps) {
       case "name-desc":
         return arr.sort((a, b) => b.name.localeCompare(a.name));
       case "date-desc":
-        return arr
-          .sort(
-            (a, b) =>
-              (b.updatedAt?.getTime?.() || 0) - (a.updatedAt?.getTime?.() || 0)
-          )
-          .reverse();
+        return arr.sort(
+          (a, b) =>
+            (b.updatedAt?.getTime?.() || 0) - (a.updatedAt?.getTime?.() || 0)
+        );
       case "date-asc":
         return arr.sort(
           (a, b) =>

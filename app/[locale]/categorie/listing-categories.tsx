@@ -1,9 +1,9 @@
 "use client";
 import { Category, ItemData, Tag } from "@/lib/content";
 import { Categories, FilterProvider, Paginate } from "@/components/filters";
-import { PER_PAGE, totalPages } from "@/lib/paginate";
+import { totalPages } from "@/lib/paginate";
 import { sortByNumericProperty } from "@/lib/utils";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useLayoutTheme } from "@/components/context/LayoutThemeContext";
 import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
@@ -25,40 +25,13 @@ type ListingCategoriesProps = {
 function ListingCategories(props: ListingCategoriesProps) {
   const { layoutHome = "Home_1" } = useLayoutTheme();
   const t = useTranslations("listing");
-  const { items, start, categories } = props;
-  const [sortBy, setSortBy] = useState("popularity");
-  const paginatedCategories = items.slice(start, start + PER_PAGE);
+  const {  categories } = props;
   const { isSticky } = useStickyHeader({ enableSticky: true });
 
   const sortedCategories = useMemo(
     () => sortByNumericProperty(categories),
     [categories]
   );
-
-  const sortedItems = useMemo(() => {
-    const arr = [...paginatedCategories];
-    switch (sortBy) {
-      case "name-asc":
-        return arr.sort((a, b) => a.name.localeCompare(b.name));
-      case "name-desc":
-        return arr.sort((a, b) => b.name.localeCompare(a.name));
-      case "date-desc":
-        return arr
-          .sort(
-            (a, b) =>
-              (b.updatedAt?.getTime?.() || 0) - (a.updatedAt?.getTime?.() || 0)
-          )
-          .reverse();
-      case "date-asc":
-        return arr.sort(
-          (a, b) =>
-            (a.updatedAt?.getTime?.() || 0) - (b.updatedAt?.getTime?.() || 0)
-        );
-      case "popularity":
-      default:
-        return arr;
-    }
-  }, [paginatedCategories, sortBy]);
 
   return (
     <FilterProvider>

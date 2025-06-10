@@ -99,10 +99,10 @@ export function useStickyState(options: UseStickyStateOptions = {}) {
   return { isSticky, sentinelRef, targetRef };
 }
 
-interface StickyHeaderProps{
+interface StickyHeaderProps {
   enableSticky?: boolean;
-};
-export const useStickyHeader = ({enableSticky}: StickyHeaderProps) => {
+}
+export const useStickyHeader = ({ enableSticky }: StickyHeaderProps) => {
   const [isSticky, setIsSticky] = useState(false);
   useEffect(() => {
     if (enableSticky) {
@@ -116,13 +116,13 @@ export const useStickyHeader = ({enableSticky}: StickyHeaderProps) => {
         }
       };
 
-      window.addEventListener("scroll", handleScroll);
+      window.addEventListener("scroll", handleScroll, { passive: true });
       return () => {
         window.removeEventListener("scroll", handleScroll);
       };
     }
     return undefined;
-  }, [isSticky,enableSticky]);
+  }, [isSticky, enableSticky]);
 
-  return { isSticky}
+  return { isSticky };
 };

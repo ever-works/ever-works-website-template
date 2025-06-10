@@ -35,13 +35,13 @@ export default async function CategoryPagingPage({
 
   return (
     <ListingCategories
-        total={total}
-        start={start}
-        page={page}
-        basePath="/categorie/paging"
-        categories={categories}
-        tags={tags}
-        items={items}
-      />
+      total={total}
+      start={start}
+      page={page}
+      basePath="/categorie/paging"
+      categories={categories}
+      tags={tags}
+      items={items}
+    />
   );
 }
