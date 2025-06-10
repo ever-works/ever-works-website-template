@@ -10,6 +10,7 @@ import Hero from "@/components/hero";
 import { ListingClient } from "@/components/shared-card/listing-client";
 import { HomeTwoCategories } from "@/components/home-two";
 import { Container } from "@/components/ui/container";
+import { useStickyHeader } from "@/hooks/use-sticky-state";
 
 type ListingCategoriesProps = {
   total: number;
@@ -27,6 +28,8 @@ function ListingCategories(props: ListingCategoriesProps) {
   const { items, start, categories } = props;
   const [sortBy, setSortBy] = useState("popularity");
   const paginatedCategories = items.slice(start, start + PER_PAGE);
+  const { isSticky } = useStickyHeader({ enableSticky: true });
+
   const sortedCategories = useMemo(
     () => sortByNumericProperty(categories),
     [categories]
@@ -87,21 +90,15 @@ function ListingCategories(props: ListingCategoriesProps) {
           )}
           {layoutHome === "Home_2" && (
             <div className="mt-8 sticky top-0 z-10">
-              {/* <div className="flex justify-between mb-6"> */}
-              {/* <SortMenuenu
-                className="h-8 min-w-[180px] text-sm"
-                options={sortOptions}
-                value={sortBy}
-                onSortChange={setSortBy}
-                ariaLabel="Sort items"
-              /> */}
-              {/* <ViewToggle
-                    activeView={layoutKey}
-                    onViewChange={(newView) => setLayoutKey(newView)}
-                  />
-                </div> */}
-
-              <div className="md:sticky md:top-4 md:self-start py-4 ">
+              {/* <div ref={sentinelRef} className="md:h-4 md:w-full" /> */}
+              <div
+                // ref={targetRef}
+                className={`md:sticky md:top-4 md:self-start py-11 z-10 ${
+                  isSticky
+                    ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm"
+                    : "bg-transparent"
+                }`}
+              >
                 <HomeTwoCategories
                   resetPath={`/categorie`}
                   categories={sortedCategories}

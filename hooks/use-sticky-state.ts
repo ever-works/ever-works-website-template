@@ -98,3 +98,31 @@ export function useStickyState(options: UseStickyStateOptions = {}) {
 
   return { isSticky, sentinelRef, targetRef };
 }
+
+interface StickyHeaderProps{
+  enableSticky?: boolean;
+};
+export const useStickyHeader = ({enableSticky}: StickyHeaderProps) => {
+  const [isSticky, setIsSticky] = useState(false);
+  useEffect(() => {
+    if (enableSticky) {
+      const handleScroll = () => {
+        const scrollPosition = window.scrollY;
+        const scrollThreshold = 250;
+        if (scrollPosition > scrollThreshold && !isSticky) {
+          setIsSticky(true);
+        } else if (scrollPosition <= scrollThreshold && isSticky) {
+          setIsSticky(false);
+        }
+      };
+
+      window.addEventListener("scroll", handleScroll);
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+      };
+    }
+    return undefined;
+  }, [isSticky,enableSticky]);
+
+  return { isSticky}
+};

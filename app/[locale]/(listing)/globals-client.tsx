@@ -22,7 +22,6 @@ export default function GlobalsClient(props: ListingProps) {
   const homeTwoLogic = useHomeTwoLogic(props);
   const sortedTags = sortByNumericProperty(props.tags);
   const sortedCategories = sortByNumericProperty(props.categories);
-  console.log('=====+++++====',layoutHome)
 
   if (layoutHome === "Home_1") {
     return (
