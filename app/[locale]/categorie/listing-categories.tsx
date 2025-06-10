@@ -1,16 +1,21 @@
 "use client";
 import { Category, ItemData, Tag } from "@/lib/content";
 import { Categories, FilterProvider, Paginate } from "@/components/filters";
-import { totalPages } from "@/lib/paginate";
+import { PER_PAGE, totalPages } from "@/lib/paginate";
 import { sortByNumericProperty } from "@/lib/utils";
-import { useMemo } from "react";
-import { useLayoutTheme } from "@/components/context/LayoutThemeContext";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
 import { ListingClient } from "@/components/shared-card/listing-client";
 import { HomeTwoCategories } from "@/components/home-two";
 import { Container } from "@/components/ui/container";
 import { useStickyHeader } from "@/hooks/use-sticky-state";
+import { CardPresets } from "@/components/shared-card";
+import ViewToggle from "@/components/view-toggle";
+import { useLayoutTheme } from "@/components/context";
+import { SearchInput } from "@/components/ui/search-input";
+import { useFilters } from "@/hooks/use-filters";
+import SortMenu, { SortOption } from "@/components/sort-menu";
 
 type ListingCategoriesProps = {
   total: number;
@@ -39,7 +44,7 @@ function HomeOneLayout({
   start: number;
   page: number;
   basePath: string;
-  categories: Category[]; 
+  categories: Category[];
   tags: Tag[];
 }) {
   return (
@@ -82,16 +87,73 @@ function HomeTwoLayout({
   start: number;
   page: number;
   basePath: string;
-  categories: Category[]; 
+  categories: Category[];
   tags: Tag[];
 }) {
+  const { layoutKey, setLayoutKey } = useLayoutTheme();
+  const { searchTerm, setSearchTerm } = useFilters();
+  const [sortBy, setSortBy] = useState("popularity");
+  const paginatedCategorie = items.slice(start, start + PER_PAGE);
+  const sortedItems = useMemo(() => {
+    const arr = [...paginatedCategorie];
+    switch (sortBy) {
+      case "name-asc":
+        return arr.sort((a, b) => a.name.localeCompare(b.name));
+      case "name-desc":
+        return arr.sort((a, b) => b.name.localeCompare(a.name));
+      case "date-desc":
+        return arr.sort(
+          (a, b) =>
+            (b.updatedAt?.getTime?.() || 0) - (a.updatedAt?.getTime?.() || 0)
+        );
+      case "date-asc":
+        return arr.sort(
+          (a, b) =>
+            (a.updatedAt?.getTime?.() || 0) - (b.updatedAt?.getTime?.() || 0)
+        );
+      case "popularity":
+      default:
+        return arr;
+    }
+  }, [paginatedCategorie, sortBy]);
+
+  const sortOptions: SortOption[] = [
+    { value: "popularity", label: "Popularity" },
+    { value: "name-asc", label: "Name A-Z" },
+    { value: "name-desc", label: "Name Z-A" },
+    { value: "date-asc", label: "Oldest" },
+  ];
+
   return (
-    <div className="mt-8 sticky top-0 z-10">
+    <div>
       <div
-        className={`md:sticky md:top-4 md:self-start py-11 z-10 ${
-          isSticky ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm" : "bg-transparent"
+        className={`md:sticky md:top-4 md:self-start py-11 z-10 flex flex-col ${
+          isSticky
+            ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm"
+            : "bg-transparent"
         }`}
       >
+        <div className="flex items-center justify-between">
+          <div>
+          <SortMenu
+             className="h-8 min-w-[180px] text-sm"
+             options={sortOptions}
+             value={sortBy}
+             onSortChange={setSortBy}
+             ariaLabel="Sort items"
+           />
+          </div>
+          <div className="flex items-center gap-3">
+            <SearchInput
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
+            <ViewToggle
+              activeView={layoutKey}
+              onViewChange={(newView) => setLayoutKey(newView)}
+            />
+          </div>
+        </div>
         <HomeTwoCategories
           resetPath={`/categorie`}
           categories={sortedCategories}
@@ -100,13 +162,14 @@ function HomeTwoLayout({
       </div>
       <div className="md:h-4 md:w-full" />
       <ListingClient
-        items={items}
+        items={sortedItems}
         total={total}
         start={start}
         page={page}
         basePath={basePath}
         categories={allCategories}
         tags={tags}
+        config={CardPresets.showViewToggle}
       />
     </div>
   );
@@ -123,11 +186,14 @@ function ListingCategories(props: ListingCategoriesProps) {
     [categories]
   );
 
-  const heroTitle = useMemo(() => (
-    <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 bg-clip-text text-transparent">
-      Discover Categories
-    </span>
-  ), []);
+  const heroTitle = useMemo(
+    () => (
+      <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 bg-clip-text text-transparent">
+        Discover Categories
+      </span>
+    ),
+    []
+  );
 
   return (
     <FilterProvider>
@@ -137,7 +203,7 @@ function ListingCategories(props: ListingCategoriesProps) {
         description="Browse all categories in our directory"
         className="min-h-screen"
       >
-        <Container>
+        <Container className="relative">
           {layoutHome === "Home_1" && (
             <HomeOneLayout
               total={total}
@@ -162,6 +228,7 @@ function ListingCategories(props: ListingCategoriesProps) {
               categories={categories}
               tags={tags}
             />
+            
           )}
           <footer className="flex items-center justify-center">
             <Paginate

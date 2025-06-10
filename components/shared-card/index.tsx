@@ -595,6 +595,16 @@ export const CardPresets = {
     enableTagFilter: true,
     enableSorting: true,
   } as CardConfigOptions,
+  showViewToggle: {
+    showStats: true,
+    showViewToggle: false,
+    showFilters: true,
+    showPagination: true,
+    showEmptyState: true,
+    enableSearch: true,
+    enableTagFilter: true,
+    enableSorting: true,
+  } as CardConfigOptions,
 
   // Configuration for a simple section
   simple: {

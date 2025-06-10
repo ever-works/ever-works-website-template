@@ -13,6 +13,7 @@ import ViewToggle from "@/components/view-toggle";
 import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
 import { useStickyHeader } from "@/hooks/use-sticky-state";
+import { Container } from "@/components/ui/container";
 
 type ListingTagsProps = {
   total: number;
@@ -25,7 +26,7 @@ type ListingTagsProps = {
 };
 
 function ListingTags(props: ListingTagsProps) {
-  const { layoutKey, setLayoutKey } = useLayoutTheme();
+  const { layoutKey, setLayoutKey, layoutHome = "Home_1" } = useLayoutTheme();
   const LayoutComponent = layoutComponents[layoutKey];
   const t = useTranslations("listing");
   const { isSticky } = useStickyHeader({ enableSticky: true });
@@ -77,39 +78,43 @@ function ListingTags(props: ListingTagsProps) {
       description="Browse all tags in our directory"
       className="min-h-screen"
     >
-      <div className="mt-4 max-w-7xl px-4 lg:px-8">
-        <div
-          className={`md:sticky md:top-4 md:self-start py-11 z-10 ${
-            isSticky
-              ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm"
-              : "bg-transparent"
-          }`}
-        >
-          <div className="flex justify-between  p-1">
-            <SortMenu
-              className="h-8 min-w-[180px] text-sm"
-              options={sortOptions}
-              value={sortBy}
-              onSortChange={setSortBy}
-              ariaLabel="Sort items"
-            />
-            <ViewToggle
-              activeView={layoutKey}
-              onViewChange={(newView) => setLayoutKey(newView)}
-            />
-          </div>
-          <div>
-            <Tags
-              tags={sortedTags}
-              basePath={`/tag/tag`}
-              resetPath={`/tag`}
-              enableSticky={false}
-              maxVisibleTags={7}
-            />
-          </div>
-        </div>
+      <Container>
 
-        <LayoutComponent>
+       {layoutHome==='Home_2'&&(
+         <div
+         className={`md:sticky md:top-4 md:self-start py-11 z-10 ${
+           isSticky
+             ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm"
+             : "bg-transparent"
+         }`}
+       >
+         <div className="flex justify-between  p-1">
+           <SortMenu
+             className="h-8 min-w-[180px] text-sm"
+             options={sortOptions}
+             value={sortBy}
+             onSortChange={setSortBy}
+             ariaLabel="Sort items"
+           />
+           <ViewToggle
+             activeView={layoutKey}
+             onViewChange={(newView) => setLayoutKey(newView)}
+           />
+         </div>
+         <div>
+           <Tags
+             tags={sortedTags}
+             basePath={`/tag/tag`}
+             resetPath={`/tag`}
+             enableSticky={false}
+             maxVisibleTags={7}
+           />
+         </div>
+       </div>
+       )}
+
+       <div className="flex  items-center">
+       <LayoutComponent>
           {sortedItems.map((item) => (
             <Link
               key={item.slug}
@@ -121,6 +126,7 @@ function ListingTags(props: ListingTagsProps) {
             </Link>
           ))}
         </LayoutComponent>
+       </div>
 
         <footer className="flex items-center justify-center">
           <Paginate
@@ -129,7 +135,7 @@ function ListingTags(props: ListingTagsProps) {
             total={totalPages(props.items.length)}
           />
         </footer>
-      </div>
+      </Container>
     </Hero>
   );
 }

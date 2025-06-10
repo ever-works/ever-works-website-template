@@ -1,9 +1,9 @@
 "use client";
 
 import {
-    Card,
-    CardPresets,
-    type BaseCardProps,
+  Card,
+  CardConfigOptions,
+  CardPresets, type BaseCardProps
 } from "@/components/shared-card";
 import { Category, ItemData, Tag } from "@/lib/content";
 
@@ -15,13 +15,14 @@ interface ListingClientProps extends BaseCardProps {
   categories: Category[];
   tags: Tag[];
   items: ItemData[];
+  config?: CardConfigOptions;
 }
 
 export function ListingClient(props: ListingClientProps) {
   return (
     <Card
       {...props}
-      config={CardPresets.fullListing}
+      config={props.config|| CardPresets.fullListing}
       className="listing-client"
     />
   );
