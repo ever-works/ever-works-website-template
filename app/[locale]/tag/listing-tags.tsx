@@ -32,14 +32,16 @@ function ListingTags(props: ListingTagsProps) {
   const t = useTranslations("listing");
   const { isSticky } = useStickyHeader({ enableSticky: true });
 
-  const sortedTags = useMemo(() => sortByNumericProperty(props.tags), [props.tags]);
+  const sortedTags = useMemo(
+    () => sortByNumericProperty(props.tags),
+    [props.tags]
+  );
 
   const sortOptions: SortOption[] = [
-    { value: "popularity", label: "Popularity" },
-    { value: "name-asc", label: "Name A-Z" },
-    { value: "name-desc", label: "Name Z-A" },
-    { value: "date-desc", label: "Newest" },
-    { value: "date-asc", label: "Oldest" },
+    { value: "popularity", label: t("POPULARITY") },
+    { value: "name-asc", label: t("NAME_A_Z") },
+    { value: "name-desc", label: t("NAME_Z_A") },
+    { value: "date-asc", label: t("OLDEST") },
   ];
 
   return (
@@ -71,15 +73,15 @@ function ListingTags(props: ListingTagsProps) {
                 ariaLabel="Sort items"
               />
               <div className="flex items-center gap-3">
-            <SearchInput
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
-            <ViewToggle
-              activeView={layoutKey}
-              onViewChange={(newView) => setLayoutKey(newView)}
-            />
-          </div>
+                <SearchInput
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                />
+                <ViewToggle
+                  activeView={layoutKey}
+                  onViewChange={(newView) => setLayoutKey(newView)}
+                />
+              </div>
             </div>
             <div>
               <Tags
@@ -94,10 +96,7 @@ function ListingTags(props: ListingTagsProps) {
         )}
 
         <div className="flex  items-center">
-          <ListingClient
-          {...props}
-            config={CardPresets.showViewToggle}            
-          />
+          <ListingClient {...props} config={CardPresets.showViewToggle} />
         </div>
 
         <footer className="flex items-center justify-center">

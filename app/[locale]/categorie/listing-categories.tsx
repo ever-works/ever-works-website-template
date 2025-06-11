@@ -92,15 +92,16 @@ function HomeTwoLayout({
 }) {
   const { layoutKey, setLayoutKey } = useLayoutTheme();
   const { searchTerm, setSearchTerm, setSortBy, sortBy } = useFilters();
+  const t=useTranslations()
 
 
   const sortOptions: SortOption[] = [
-    { value: "popularity", label: "Popularity" },
-    { value: "name-asc", label: "Name A-Z" },
-    { value: "name-desc", label: "Name Z-A" },
-    { value: "date-asc", label: "Oldest" },
+    { value: "popularity", label: t("listing.POPULARITY") },
+    { value: "name-asc", label:t("listing.NAME_A_Z") },
+    { value: "name-desc", label:t("listing.NAME_Z_A")},
+    { value: "date-asc", label: t("listing.OLDEST")},
   ];
-
+  
   return (
     <div>
       <div
