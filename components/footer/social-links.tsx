@@ -60,7 +60,6 @@ export const categoryLabels = (t: any) => ({
 export const footerNavigation = (t: any) => {
   return {
     product: [
-      { label: t("footer.SEARCH"), href: "#" },
       { label: t("common.CATEGORY"), href: "/categorie" },
       { label: t("common.TAG"), href: "/tag" },
     ],
@@ -73,8 +72,6 @@ export const footerNavigation = (t: any) => {
     pages: [
       { label: t("common.HOME"), href: "/" },
       { label: t("common.DISCOVER"), href: "/discover" },
-      { label: t("common.CATEGORY"), href: "/categorie" },
-      { label: t("common.TAG"), href: "/tag" },
     ],
     company: [
       { label: t("footer.ABOUT_US"), href: "/about" },
