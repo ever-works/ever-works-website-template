@@ -1,9 +1,9 @@
 "use client";
 import { Category, ItemData, Tag } from "@/lib/content";
-import { Categories, FilterProvider, Paginate } from "@/components/filters";
-import { PER_PAGE, totalPages } from "@/lib/paginate";
+import { Categories, Paginate } from "@/components/filters";
+import { totalPages } from "@/lib/paginate";
 import { sortByNumericProperty } from "@/lib/utils";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
 import { ListingClient } from "@/components/shared-card/listing-client";
@@ -91,31 +91,8 @@ function HomeTwoLayout({
   tags: Tag[];
 }) {
   const { layoutKey, setLayoutKey } = useLayoutTheme();
-  const { searchTerm, setSearchTerm } = useFilters();
-  const [sortBy, setSortBy] = useState("popularity");
-  const paginatedCategorie = items.slice(start, start + PER_PAGE);
-  const sortedItems = useMemo(() => {
-    const arr = [...paginatedCategorie];
-    switch (sortBy) {
-      case "name-asc":
-        return arr.sort((a, b) => a.name.localeCompare(b.name));
-      case "name-desc":
-        return arr.sort((a, b) => b.name.localeCompare(a.name));
-      case "date-desc":
-        return arr.sort(
-          (a, b) =>
-            (b.updatedAt?.getTime?.() || 0) - (a.updatedAt?.getTime?.() || 0)
-        );
-      case "date-asc":
-        return arr.sort(
-          (a, b) =>
-            (a.updatedAt?.getTime?.() || 0) - (b.updatedAt?.getTime?.() || 0)
-        );
-      case "popularity":
-      default:
-        return arr;
-    }
-  }, [paginatedCategorie, sortBy]);
+  const { searchTerm, setSearchTerm, setSortBy, sortBy } = useFilters();
+
 
   const sortOptions: SortOption[] = [
     { value: "popularity", label: "Popularity" },
@@ -133,8 +110,7 @@ function HomeTwoLayout({
             : "bg-transparent"
         }`}
       >
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex items-center justify-between px-2">
           <SortMenu
              className="h-8 min-w-[180px] text-sm"
              options={sortOptions}
@@ -142,7 +118,6 @@ function HomeTwoLayout({
              onSortChange={setSortBy}
              ariaLabel="Sort items"
            />
-          </div>
           <div className="flex items-center gap-3">
             <SearchInput
               searchTerm={searchTerm}
@@ -162,7 +137,7 @@ function HomeTwoLayout({
       </div>
       <div className="md:h-4 md:w-full" />
       <ListingClient
-        items={sortedItems}
+        items={items}
         total={total}
         start={start}
         page={page}
@@ -196,7 +171,6 @@ function ListingCategories(props: ListingCategoriesProps) {
   );
 
   return (
-    <FilterProvider>
       <Hero
         badgeText={t("CATEGORIES")}
         title={heroTitle}
@@ -239,7 +213,6 @@ function ListingCategories(props: ListingCategoriesProps) {
           </footer>
         </Container>
       </Hero>
-    </FilterProvider>
   );
 }
 export default ListingCategories;

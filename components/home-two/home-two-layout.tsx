@@ -4,10 +4,10 @@ import { Category, ItemData, Tag } from "@/lib/content";
 import { totalPages } from "@/lib/paginate";
 import { Paginate } from "@/components/filters";
 import { HomeTwoFilters } from "./home-two-filters";
-import { HomeTwoResults } from "./home-two-results";
 import { useLayoutTheme } from "../context";
 import { useStickyState } from "@/hooks/use-sticky-state";
-import { useState } from "react";
+import { ListingClient } from "../shared-card/listing-client";
+import { CardPresets } from "../shared-card";
 
 type Home2LayoutProps = {
   total: number;
@@ -23,7 +23,6 @@ type Home2LayoutProps = {
 
 export function HomeTwoLayout(props: Home2LayoutProps) {
   const { layoutKey, setLayoutKey } = useLayoutTheme();
-  const [search, setSearch]=useState('')
   const { isSticky, sentinelRef, targetRef } = useStickyState({
     threshold: 0,
     rootMargin: "-20px 0px 0px 0px",
@@ -37,22 +36,19 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
           ref={targetRef}
           className={`sticky top-4 z-10 ${
             isSticky
-             ? "bg-white/95 dark:bg-gray-800/95 shadow-md backdrop-blur-sm"
-                : "bg-transparent"
-          }`}>
-
+              ? "bg-white/95 dark:bg-gray-800/95 shadow-md backdrop-blur-sm"
+              : "bg-transparent"
+          }`}
+        >
           <HomeTwoFilters
             categories={props.categories}
             tags={props.tags}
             items={props.items}
             layoutKey={layoutKey}
             setLayoutKey={setLayoutKey}
-            setSearchTerm={setSearch}
-            className={search}
-
           />
         </div>
-        <HomeTwoResults items={props.paginatedItems} layoutKey={layoutKey} />
+        <ListingClient {...props} config={CardPresets.showViewToggle} />
         <div className="mt-8 flex items-center justify-center">
           <Paginate
             basePath={props.basePath}

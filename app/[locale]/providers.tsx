@@ -6,6 +6,7 @@ import { ConfigProvider } from "./config";
 import { ThemeProvider } from "next-themes";
 import ErrorProvider from "@/components/error-provider";
 import { LayoutThemeProvider } from "@/components/context";
+import { FilterProvider } from "@/components/filters";
 
 export function Providers({
   config,
@@ -17,15 +18,17 @@ export function Providers({
   return (
     <LayoutThemeProvider>
       <ErrorProvider>
-        <ConfigProvider config={config}>
-          <ThemeProvider
-            enableSystem={true}
-            attribute="class"
-            defaultTheme="system"
-          >
-            <HeroUIProvider>{children}</HeroUIProvider>
-          </ThemeProvider>
-        </ConfigProvider>
+        <FilterProvider>
+          <ConfigProvider config={config}>
+            <ThemeProvider
+              enableSystem={true}
+              attribute="class"
+              defaultTheme="system"
+            >
+              <HeroUIProvider>{children}</HeroUIProvider>
+            </ThemeProvider>
+          </ConfigProvider>
+        </FilterProvider>
       </ErrorProvider>
     </LayoutThemeProvider>
   );

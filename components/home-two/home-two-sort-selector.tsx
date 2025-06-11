@@ -1,16 +1,21 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { useFilters } from "@/hooks/use-filters";
 import { ChevronDown } from "lucide-react";
 
-export function HomeTwoSortSelector() {
+interface ISortSelector {
+  setSortBy?: (sort: string) => void;
+  sortBy?: string;
+}
+
+export function HomeTwoSortSelector({ sortBy, setSortBy }: ISortSelector) {
   const t = useTranslations();
-  const { sortBy, setSortBy } = useFilters();
   return (
     <div className="relative inline-block w-full max-w-xs">
       <select
         value={sortBy}
-        onChange={(e) => setSortBy(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+          setSortBy && setSortBy(e.target.value)
+        }
         className="appearance-none bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 pr-10 text-sm text-blue-600 dark:text-blue-400 w-full"
       >
         <option value="popularity">{t("listing.POPULARITY")}</option>

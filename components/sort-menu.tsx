@@ -22,7 +22,7 @@ const SortMenu: React.FC<SortMenuProps> = ({
   className,
   label = "",
 }) => (
-  <div className={className ?? "relative inline-block min-w-[180px]"}>
+  <div className={className ?? "relative inline-block w-full max-w-xs"}>
     {label && (
       <label
         className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-200"
@@ -31,13 +31,13 @@ const SortMenu: React.FC<SortMenuProps> = ({
         {label}
       </label>
     )}
-    <div className="relative">
+    <div className="relative w-[130px]">
       <select
         id="sort-menu"
         value={value}
         onChange={e => onSortChange(e.target.value)}
         aria-label={ariaLabel}
-        className="block w-full appearance-none px-4 py-2 pr-10 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-all duration-200"
+        className="appearance-none bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-1.5 pr-10 text-sm text-blue-600 dark:text-blue-400 w-[130px] cursor-pointer"
       >
         {options.map(opt => (
           <option className="text-gray-900 dark:text-white cursor-pointer" key={opt.value} value={opt.value}>

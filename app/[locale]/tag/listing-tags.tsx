@@ -1,19 +1,20 @@
 "use client";
 import { Category, ItemData, Tag } from "@/lib/content";
-import { Link } from "@/i18n/navigation";
 import { Paginate, Tags } from "@/components/filters";
-import { PER_PAGE, totalPages } from "@/lib/paginate";
-import Item from "@/components/item";
-import { getItemPath, sortByNumericProperty } from "@/lib/utils";
-import { useMemo, useState } from "react";
+import { totalPages } from "@/lib/paginate";
+import { sortByNumericProperty } from "@/lib/utils";
+import { useMemo } from "react";
 import SortMenu, { SortOption } from "@/components/sort-menu";
 import { useLayoutTheme } from "@/components/context/LayoutThemeContext";
-import { layoutComponents } from "@/components/layouts";
 import ViewToggle from "@/components/view-toggle";
 import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
 import { useStickyHeader } from "@/hooks/use-sticky-state";
 import { Container } from "@/components/ui/container";
+import { ListingClient } from "@/components/shared-card/listing-client";
+import { CardPresets } from "@/components/shared-card";
+import { SearchInput } from "@/components/ui/search-input";
+import { useFilters } from "@/hooks/use-filters";
 
 type ListingTagsProps = {
   total: number;
@@ -26,38 +27,12 @@ type ListingTagsProps = {
 };
 
 function ListingTags(props: ListingTagsProps) {
+  const { searchTerm, setSearchTerm, setSortBy, sortBy } = useFilters();
   const { layoutKey, setLayoutKey, layoutHome = "Home_1" } = useLayoutTheme();
-  const LayoutComponent = layoutComponents[layoutKey];
   const t = useTranslations("listing");
   const { isSticky } = useStickyHeader({ enableSticky: true });
 
-  const { items, start, tags } = props;
-  const [sortBy, setSortBy] = useState("popularity");
-  const paginatedTags = items.slice(start, start + PER_PAGE);
-  const sortedTags = useMemo(() => sortByNumericProperty(tags), [tags]);
-
-  const sortedItems = useMemo(() => {
-    const arr = [...paginatedTags];
-    switch (sortBy) {
-      case "name-asc":
-        return arr.sort((a, b) => a.name.localeCompare(b.name));
-      case "name-desc":
-        return arr.sort((a, b) => b.name.localeCompare(a.name));
-      case "date-desc":
-        return arr.sort(
-          (a, b) =>
-            (b.updatedAt?.getTime?.() || 0) - (a.updatedAt?.getTime?.() || 0)
-        );
-      case "date-asc":
-        return arr.sort(
-          (a, b) =>
-            (a.updatedAt?.getTime?.() || 0) - (b.updatedAt?.getTime?.() || 0)
-        );
-      case "popularity":
-      default:
-        return arr;
-    }
-  }, [paginatedTags, sortBy]);
+  const sortedTags = useMemo(() => sortByNumericProperty(props.tags), [props.tags]);
 
   const sortOptions: SortOption[] = [
     { value: "popularity", label: "Popularity" },
@@ -79,54 +54,51 @@ function ListingTags(props: ListingTagsProps) {
       className="min-h-screen"
     >
       <Container>
+        {layoutHome === "Home_2" && (
+          <div
+            className={`md:sticky md:top-4 md:self-start py-11 z-10 ${
+              isSticky
+                ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm"
+                : "bg-transparent"
+            }`}
+          >
+            <div className="flex justify-between  px-3">
+              <SortMenu
+                className="h-8 min-w-[180px] text-sm"
+                options={sortOptions}
+                value={sortBy}
+                onSortChange={setSortBy}
+                ariaLabel="Sort items"
+              />
+              <div className="flex items-center gap-3">
+            <SearchInput
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
+            <ViewToggle
+              activeView={layoutKey}
+              onViewChange={(newView) => setLayoutKey(newView)}
+            />
+          </div>
+            </div>
+            <div>
+              <Tags
+                tags={sortedTags}
+                basePath={`/tag/tag`}
+                resetPath={`/tag`}
+                enableSticky={false}
+                maxVisibleTags={7}
+              />
+            </div>
+          </div>
+        )}
 
-       {layoutHome==='Home_2'&&(
-         <div
-         className={`md:sticky md:top-4 md:self-start py-11 z-10 ${
-           isSticky
-             ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm"
-             : "bg-transparent"
-         }`}
-       >
-         <div className="flex justify-between  p-1">
-           <SortMenu
-             className="h-8 min-w-[180px] text-sm"
-             options={sortOptions}
-             value={sortBy}
-             onSortChange={setSortBy}
-             ariaLabel="Sort items"
-           />
-           <ViewToggle
-             activeView={layoutKey}
-             onViewChange={(newView) => setLayoutKey(newView)}
-           />
-         </div>
-         <div>
-           <Tags
-             tags={sortedTags}
-             basePath={`/tag/tag`}
-             resetPath={`/tag`}
-             enableSticky={false}
-             maxVisibleTags={7}
-           />
-         </div>
-       </div>
-       )}
-
-       <div className="flex  items-center">
-       <LayoutComponent>
-          {sortedItems.map((item) => (
-            <Link
-              key={item.slug}
-              className="block duration-300 capitalize"
-              prefetch={false}
-              href={getItemPath(item.slug)}
-            >
-              <Item {...item} isWrappedInLink={true} />
-            </Link>
-          ))}
-        </LayoutComponent>
-       </div>
+        <div className="flex  items-center">
+          <ListingClient
+          {...props}
+            config={CardPresets.showViewToggle}            
+          />
+        </div>
 
         <footer className="flex items-center justify-center">
           <Paginate

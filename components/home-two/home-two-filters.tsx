@@ -12,8 +12,6 @@ type Home2FiltersProps = {
   items: ItemData[];
   layoutKey: "classic" | "grid" | "cards";
   setLayoutKey: (layoutKey: "classic" | "grid" | "cards") => void;
-  searchTerm?: string;
-  setSearchTerm?: (term: string) => void;
   className?: string;
 };
 
@@ -23,12 +21,12 @@ export function HomeTwoFilters({
   layoutKey,
   setLayoutKey,
 }: Home2FiltersProps) {
-  const { searchTerm, setSearchTerm } = useFilters();
+  const { searchTerm, setSearchTerm, setSortBy, sortBy } = useFilters();
   return (
     <div className="mb-6 space-y-4">
       <div className="flex flex-col md:flex-row justify-between gap-3 items-center w-full">
         <div className="flex items-center justify-center gap-3">
-          <HomeTwoSortSelector />
+          <HomeTwoSortSelector setSortBy={setSortBy} sortBy={sortBy} />
           <HomeTwoTagsSelector tags={tags} />
         </div>
         <div className="flex items-center justify-center gap-3 ">
