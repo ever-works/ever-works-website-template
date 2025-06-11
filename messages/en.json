@@ -40,7 +40,8 @@
     "BROWSE_CATEGORIES": "Browse Categories",
     "BROWSE_TAGS": "Browse Tags",
     "CATEGORIES_DESCRIPTION": "Explore our collection of categories to find what you're looking for.",
-    "TAGS_DESCRIPTION": "Explore our collection of tags to find what you're looking for."
+    "TAGS_DESCRIPTION": "Explore our collection of tags to find what you're looking for.",
+    "PRICING": "Pricing"
   },
   "listing": {
     "ALL": "All",
