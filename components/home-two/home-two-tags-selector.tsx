@@ -200,7 +200,7 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
             </div>
 
             {/* Tags List */}
-            <div className="max-h-[250px] overflow-y-auto overflow-hidden space-y-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent scrollbar-none">
+            <div className="max-h-[250px] overflow-y-auto overflow-hidden scrollbar-none space-y-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent scrollbar-none">
               {filteredTags.map((tag, index) => {
                 const href = `/tags/${tag.id}`;
                 const isActive = pathname.startsWith(encodeURI(href));

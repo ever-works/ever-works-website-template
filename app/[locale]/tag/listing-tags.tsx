@@ -15,6 +15,7 @@ import { ListingClient } from "@/components/shared-card/listing-client";
 import { CardPresets } from "@/components/shared-card";
 import { SearchInput } from "@/components/ui/search-input";
 import { useFilters } from "@/hooks/use-filters";
+import { TagItemsColumn } from "@/components/tag-items-column";
 
 type ListingTagsProps = {
   total: number;
@@ -58,13 +59,13 @@ function ListingTags(props: ListingTagsProps) {
       <Container>
         {layoutHome === "Home_2" && (
           <div
-            className={`md:sticky md:top-4 md:self-start py-11 z-10 ${
+            className={`md:sticky md:top-4 md:self-start py-8 z-10 w-full ${
               isSticky
                 ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm"
                 : "bg-transparent"
             }`}
           >
-            <div className="flex justify-between  px-3">
+            <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end px-3 gap-4 sm:gap-0">
               <SortMenu
                 className="h-8 min-w-[180px] text-sm"
                 options={sortOptions}
@@ -83,7 +84,7 @@ function ListingTags(props: ListingTagsProps) {
                 />
               </div>
             </div>
-            <div>
+            <div className="mt-4">
               <Tags
                 tags={sortedTags}
                 basePath={`/tag/tag`}
@@ -95,11 +96,16 @@ function ListingTags(props: ListingTagsProps) {
           </div>
         )}
 
-        <div className="flex  items-center">
-          <ListingClient {...props} config={CardPresets.showViewToggle} />
+        <div className="flex flex-col md:flex-row items-start gap-8 mt-8">
+          {layoutHome === "Home_1" && (
+            <div className="hidden md:block md:sticky md:top-4 md:self-start py-8 z-10 w-full md:max-w-64">
+              <TagItemsColumn tag={sortedTags} total={sortedTags.length} />
+            </div>
+          )}
+          <ListingClient {...props} config={CardPresets.fullListing} />
         </div>
 
-        <footer className="flex items-center justify-center">
+        <footer className="flex items-center justify-center mt-12">
           <Paginate
             basePath={props.basePath}
             initialPage={props.page}
