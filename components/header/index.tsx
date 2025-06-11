@@ -80,8 +80,14 @@ const NAVIGATION_CONFIG: Array<{
     translationNamespace: "common",
   },
   {
+    key: "pricing",
+    href: "/pricing",
+    translationKey: "PRICING",
+    translationNamespace: "common",
+  },
+  {
     key: "submit",
-    href: "/submit",
+    href: "/submit?step=details&plan=free",
     translationKey: "SUBMIT",
     translationNamespace: "common",
   },
@@ -140,12 +146,13 @@ export default function Header({ session }: SessionProps) {
 
   const isActiveLink = useCallback(
     (href: string): boolean => {
-      if (href === "/") {
-        return pathname === "/" || pathname === "";
+      const cleanedPathname = pathname.split('?')[0]; 
+      let cleanedHref = href.split('?')[0];
+      if (cleanedHref === "/") {
+        return cleanedPathname === "/" || cleanedPathname === "";
       }
-      if (href === "#") return false;
-
-      return pathname === href || pathname.startsWith(`${href}/`);
+      if (cleanedHref === "#") return false;
+      return cleanedPathname === cleanedHref || cleanedPathname.startsWith(`${cleanedHref}/`);
     },
     [pathname]
   );
