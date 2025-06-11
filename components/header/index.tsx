@@ -147,7 +147,7 @@ export default function Header({ session }: SessionProps) {
   const isActiveLink = useCallback(
     (href: string): boolean => {
       const cleanedPathname = pathname.split('?')[0]; 
-      let cleanedHref = href.split('?')[0];
+      const cleanedHref = href.split('?')[0];
       if (cleanedHref === "/") {
         return cleanedPathname === "/" || cleanedPathname === "";
       }
