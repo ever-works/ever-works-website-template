@@ -4,7 +4,11 @@ import { cn } from "@/lib/utils";
 
 function PricingPage() {
   return (
-    <div className={cn("w-full min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300 py-20")}>
+    <div
+      className={cn(
+        "w-full min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300 py-20"
+      )}
+    >
       <Container className="mt-4 px-4">
         <PricingSection />
       </Container>

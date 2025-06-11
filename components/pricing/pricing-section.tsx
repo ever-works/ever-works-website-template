@@ -74,10 +74,7 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
   ];
 
   return (
-    <div>
-      {/* Background Effects */}
-
-      <div className="relative z-10">
+      <div className="relative z-10 px-4">
         {/* Enhanced Header */}
         <div className="text-center mb-16 animate-fade-in-up">
           <div className="flex items-center justify-center mb-6">
@@ -287,6 +284,5 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
           </div>
         </div>
       </div>
-    </div>
   );
 }
