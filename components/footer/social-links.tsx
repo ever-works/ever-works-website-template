@@ -61,21 +61,20 @@ export const footerNavigation = (t: any) => {
   return {
     product: [
       { label: t("footer.SEARCH"), href: "#" },
-      { label: t("footer.COLLECTION"), href: "#" },
+      { label: t("common.CATEGORY"), href: "/categorie" },
       { label: t("common.TAG"), href: "/tag" },
     ],
     resources: [
-      { label: t("footer.BLOG"), href: "#" },
-      { label: t("footer.PRICING"), href: "#" },
-      { label: t("footer.SUBMIT"), href: "/submit" },
-      { label: t("footer.STUDIO"), href: "#" },
+      { label: t("footer.BLOG"), href: "https://blog.ever.works" },
+      { label: t("footer.PRICING"), href: "/pricing" },
+      { label: t("common.SUBMIT"), href: "/submit?step=details&plan=free" },
+
     ],
     pages: [
       { label: t("common.HOME"), href: "/" },
-      // { label: t("common.DISCOVER"), href: "/discover" },
+      { label: t("common.DISCOVER"), href: "/discover" },
       { label: t("common.CATEGORY"), href: "/categorie" },
       { label: t("common.TAG"), href: "/tag" },
-      { label: t("common.SUBMIT"), href: "/submit" },
     ],
     company: [
       { label: t("footer.ABOUT_US"), href: "/about" },
