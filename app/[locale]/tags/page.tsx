@@ -22,7 +22,7 @@ export default async function TagIndexPage({
       total={total}
       start={start}
       page={page}
-      basePath="/tag/paging"
+      basePath="/tags/paging"
       categories={categories}
       tags={tags}
       items={items}

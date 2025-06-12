@@ -109,7 +109,7 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
   };
 
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-1.5 max-h-lvh">
       <Tooltip
         content={t("ALL_CATEGORIES")}
         placement="right"
@@ -121,15 +121,19 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
         }}
       >
         <div>
-          <BlockLink
-            isActive={pathname === "/" || pathname.startsWith("/discover")}
-            href="/"
-          >
+          <BlockLink isActive={pathname === "/categories"} href="/categories">
             <div className="flex items-center justify-between w-full group">
               <span className="font-medium truncate pr-2 text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
-                {t("ALL_CATEGORIES")}
+                {t("ALL")}
               </span>
-              <span className="text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 px-2 py-0.5 rounded-full transition-all duration-300 flex-shrink-0 group-hover:scale-105">
+              <span
+                className={cn(
+                  "text-xs font-semibold px-2 py-0.5 rounded-full transition-all duration-300 flex-shrink-0 group-hover:scale-105",
+                  pathname === "/categories"
+                    ? "text-white"
+                    : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                )}
+              >
                 {totalItems}
               </span>
             </div>
@@ -137,51 +141,53 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
         </div>
       </Tooltip>
 
-      {categories.map((category) => {
-        if (!category.count) return null;
-        const href = `/categories/${category.id}`;
-        const isActive = pathname.startsWith(encodeURI(href));
-        const displayName = truncateText(category.name);
-        const isTextTruncated = category.name.length > 20;
+      <div className="overflow-y-auto scrollbar-none max-h-[650px]">
+        {categories.map((category) => {
+          if (!category.count) return null;
+          const href = `/categories/${category.id}`;
+          const isActive = pathname.startsWith(encodeURI(href));
+          const displayName = truncateText(category.name);
+          const isTextTruncated = category.name.length > 20;
 
-        return (
-          <Tooltip
-            key={category.id}
-            content={isTextTruncated ? category.name : null}
-            placement="right"
-            delay={300}
-            closeDelay={100}
-            isDisabled={!isTextTruncated}
-            classNames={{
-              content:
-                "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-2.5 py-1.5 rounded-lg text-sm font-medium shadow-lg max-w-xs",
-            }}
-          >
-            <div>
-              <BlockLink isActive={isActive} href={href}>
-                <div className="flex items-center justify-between w-full group">
-                  <span
-                    className="font-medium truncate pr-2 text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300"
-                    title={isTextTruncated ? category.name : undefined}
-                  >
-                    {displayName}
-                  </span>
-                  <span
-                    className={cn(
-                      "text-xs font-semibold px-2 py-0.5 rounded-full transition-all duration-300 flex-shrink-0 group-hover:scale-105",
-                      isActive
-                        ? "text-white"
-                        : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
-                    )}
-                  >
-                    {category.count}
-                  </span>
-                </div>
-              </BlockLink>
-            </div>
-          </Tooltip>
-        );
-      })}
+          return (
+            <Tooltip
+              key={category.id}
+              content={displayName}
+              placement="right"
+              delay={300}
+              closeDelay={100}
+              isDisabled={!isTextTruncated}
+              classNames={{
+                content:
+                  "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-2.5 py-1.5 rounded-lg text-sm font-medium shadow-lg max-w-xs",
+              }}
+            >
+              <div>
+                <BlockLink isActive={isActive} href={href}>
+                  <div className="flex items-center justify-between w-full group">
+                    <span
+                      className="font-medium truncate pr-2 text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300 capitalize"
+                      title={isTextTruncated ? category.name : undefined}
+                    >
+                      {displayName}
+                    </span>
+                    <span
+                      className={cn(
+                        "text-xs font-semibold px-2 py-0.5 rounded-full transition-all duration-300 flex-shrink-0 group-hover:scale-105",
+                        isActive
+                          ? "text-white"
+                          : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                      )}
+                    >
+                      {category.count}
+                    </span>
+                  </div>
+                </BlockLink>
+              </div>
+            </Tooltip>
+          );
+        })}
+      </div>
     </div>
   );
 }

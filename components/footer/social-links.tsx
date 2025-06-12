@@ -60,8 +60,8 @@ export const categoryLabels = (t: any) => ({
 export const footerNavigation = (t: any) => {
   return {
     product: [
-      { label: t("common.CATEGORY"), href: "/categorie" },
-      { label: t("common.TAG"), href: "/tag" },
+      { label: t("common.CATEGORY"), href: "/categories" },
+      { label: t("common.TAG"), href: "/tags" },
     ],
     resources: [
       { label: t("footer.BLOG"), href: "https://blog.ever.works" },

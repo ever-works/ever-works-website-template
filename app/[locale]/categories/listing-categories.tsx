@@ -131,9 +131,9 @@ function HomeTwoLayout({
           </div>
         </div>
         <HomeTwoCategories
-          resetPath={`/categorie`}
+          resetPath={`/categories`}
           categories={sortedCategories}
-          basePath={`/categorie/category`}
+          basePath={`/categories/category`}
         />
       </div>
       <div className="md:h-4 md:w-full" />
@@ -203,7 +203,6 @@ function ListingCategories(props: ListingCategoriesProps) {
               categories={categories}
               tags={tags}
             />
-            
           )}
           <footer className="flex items-center justify-center">
             <Paginate

@@ -69,13 +69,13 @@ const NAVIGATION_CONFIG: Array<{
   // },
   {
     key: "categories",
-    href: "/categorie",
+    href: "/categories",
     translationKey: "CATEGORY",
     translationNamespace: "common",
   },
   {
     key: "tags",
-    href: "/tag",
+    href: "/tags",
     translationKey: "TAG",
     translationNamespace: "common",
   },

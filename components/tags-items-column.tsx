@@ -41,7 +41,7 @@ function BlockLink({
   );
 }
 
-export function TagItemsColumn(props: { total: number; tag: Tag[] }) {
+export function TagsItemsColumn(props: { total: number; tag: Tag[] }) {
     const t = useTranslations("listing");
     const {
       searchTerm,
@@ -241,7 +241,7 @@ export function TagItemsColumn(props: { total: number; tag: Tag[] }) {
       return text.substring(0, maxLength) + "...";
     };
     return (
-      <div className="space-y-1 lg:space-y-1.5 max-h-[calc(100vh-200px)]">
+      <div className="space-y-1.5 max-h-lvh">
         <Tooltip
           content={t("ALL_CATEGORIES")}
           placement="right"
@@ -249,19 +249,26 @@ export function TagItemsColumn(props: { total: number; tag: Tag[] }) {
           closeDelay={100}
           classNames={{
             content:
-              "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-2 lg:px-2.5 py-1 lg:py-1.5 rounded-md text-xs lg:text-sm font-medium shadow-lg",
+              "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-2.5 py-1.5 rounded-md text-sm font-medium shadow-lg",
           }}
         >
           <div>
             <BlockLink
-              isActive={pathname === "/tag"}
-              href="/tag"
+              isActive={pathname === "/tags"}
+              href="/tags"
             >
               <div className="flex items-center justify-between w-full group">
-                <span className="font-medium truncate pr-1.5 lg:pr-2 text-sm lg:text-base text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
+                <span className="font-medium truncate pr-2 text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
                   {t("ALL")}
                 </span>
-                <span className="text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 px-1.5 lg:px-2 py-0.5 rounded-full transition-all duration-300 flex-shrink-0 group-hover:scale-105">
+                <span
+                  className={cn(
+                    "text-xs font-semibold px-2 py-0.5 rounded-full transition-all duration-300 flex-shrink-0 group-hover:scale-105",
+                    pathname === "/tags"
+                      ? "text-white"
+                      : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                  )}
+                >
                   {totalItems}
                 </span>
               </div>
@@ -269,10 +276,10 @@ export function TagItemsColumn(props: { total: number; tag: Tag[] }) {
           </div>
         </Tooltip>
   
-        <div className="overflow-y-auto overflow-hidden scrollbar-none max-h-[calc(100vh-300px)]">
+        <div className="overflow-y-auto scrollbar-none max-h-[650px]">
           {tag.map((tag) => {
             if (!tag.count) return null;
-            const href = `/tag/tag/${tag.id}`;
+            const href = `/tags/${tag.id}`;
             const isActive = pathname.startsWith(encodeURI(href));
             const displayName = truncateText(tag.name);
             const isTextTruncated = tag.name.length > 20;  

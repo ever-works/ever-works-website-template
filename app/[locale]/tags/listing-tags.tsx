@@ -15,7 +15,7 @@ import { ListingClient } from "@/components/shared-card/listing-client";
 import { CardPresets } from "@/components/shared-card";
 import { SearchInput } from "@/components/ui/search-input";
 import { useFilters } from "@/hooks/use-filters";
-import { TagItemsColumn } from "@/components/tag-items-column";
+import { TagsItemsColumn } from "@/components/tags-items-column";
 
 type ListingTagsProps = {
   total: number;
@@ -96,13 +96,13 @@ function ListingTags(props: ListingTagsProps) {
           </div>
         )}
 
-        <div className="flex flex-col md:flex-row items-start gap-8 mt-8">
+        <div className="flex flex-col md:flex-row items-start gap-8 ">
           {layoutHome === "Home_1" && (
-            <div className="hidden md:block md:sticky md:top-4 md:self-start py-8 z-10 w-full md:max-w-64">
-              <TagItemsColumn tag={sortedTags} total={sortedTags.length} />
+            <div className="hidden md:block md:sticky md:top-4 md:self-start  z-10 w-full md:max-w-64">
+              <TagsItemsColumn tag={sortedTags} total={sortedTags.length} />
             </div>
           )}
-          <ListingClient {...props} config={CardPresets.fullListing} />
+          <ListingClient {...props} config={CardPresets.showViewToggle} />
         </div>
 
         <footer className="flex items-center justify-center mt-12">

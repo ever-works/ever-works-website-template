@@ -1,7 +1,7 @@
 import { fetchItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
 import { LOCALES } from "@/lib/constants";
-import ListingCategories from "../../listing-categories";
+import ListingTags from "../../listing-tags";
 
 export const revalidate = 10;
 
@@ -23,7 +23,7 @@ export async function generateStaticParams() {
   return (await Promise.all(params)).flat();
 }
 
-export default async function CategoryPagingPage({
+export default async function TagPagingPage({
   params,
 }: {
   params: Promise<{ page: string; locale: string }>;
@@ -34,14 +34,14 @@ export default async function CategoryPagingPage({
   const { items, categories, total, tags } = await fetchItems({ lang: locale });
 
   return (
-    <ListingCategories
-      total={total}
-      start={start}
-      page={page}
-      basePath="/categorie/paging"
-      categories={categories}
-      tags={tags}
-      items={items}
-    />
+    <ListingTags
+        total={total}
+        start={start}
+        page={page}
+        basePath="/tags/paging"
+        categories={categories}
+        tags={tags}
+        items={items}
+      />
   );
 }
