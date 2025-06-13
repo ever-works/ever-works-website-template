@@ -31,7 +31,7 @@ export default function Item(props: ItemProps) {
       className={cn(
         "group relative border rounded-xl transition-all duration-500 transform hover:-translate-y-1 hover:rotate-[0.25deg] backdrop-blur-sm overflow-hidden max-h-[300px] cursor-pointer",
         "border-gray-100/70 shadow-lg hover:shadow-xl bg-white/90 hover:border-gray-200/80",
-        "dark:border-gray-800/40 dark:bg-gray-950/90 dark:hover:border-gray-700/60 dark:shadow-lg dark:hover:shadow-xl",
+        "dark:border-gray-800/40 dark:bg-gray-900/90 dark:hover:border-gray-700/60 dark:shadow-lg dark:hover:shadow-xl",
         "hover:shadow-gray-900/10 dark:hover:shadow-black/20",
         {
           "ring-1 shadow-blue-500/10 border-blue-300 dark:ring-blue-500/30 dark:border-blue-500/50 dark:shadow-blue-500/10 hover:ring-2 hover:ring-blue-400/40 dark:hover:ring-blue-400/50":
@@ -60,17 +60,17 @@ export default function Item(props: ItemProps) {
           <div className="flex justify-between items-start gap-3">
             <div className="flex items-center gap-3">
               <div className="relative flex-shrink-0">
-                <div className="w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 bg-gray-100 border border-gray-200 group-hover:bg-gray-200 dark:bg-gray-800/50 dark:border-gray-700/50 dark:group-hover:bg-gray-700/70 group-hover:scale-105 group-hover:rotate-1 shadow-md">
+              <div className="w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-300 bg-red-100 border border-red-200 group-hover:bg-red-200 dark:bg-red-500/20 dark:border-red-500/30 dark:group-hover:bg-red-500/30 group-hover:scale-110 group-hover:rotate-1">
                   {props.icon_url ? (
                     <Image
                       src={props.icon_url}
                       alt={`${props.name} icon`}
-                      className="w-5 h-5 object-contain transition-transform duration-300 group-hover:scale-105"
+                      className="w-5 h-5 object-contain transition-transform duration-300 group-hover:scale-110"
                       width={20}
                       height={20}
                     />
                   ) : (
-                    <FiFolder className="w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform duration-300 group-hover:scale-105" />
+                    <FiFolder className="w-5 h-5 text-red-600 dark:text-red-400 transition-transform duration-300 group-hover:scale-110" />
                   )}
                 </div>
               </div>
@@ -98,7 +98,7 @@ export default function Item(props: ItemProps) {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-700/50 dark:text-gray-300 dark:border-gray-700/50 transition-all duration-300 hover:scale-105 hover:bg-gray-200 dark:hover:bg-gray-700">
+          <span className="px-2.5 py-1.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500/30 transition-all duration-300 hover:scale-105 hover:bg-blue-150 dark:hover:bg-blue-500/25">
               {getCategoriesName(props.category)}
             </span>
             {props.tags &&
@@ -108,10 +108,9 @@ export default function Item(props: ItemProps) {
                 if (!tagName) return null;
                 return (
                   <span
-                    key={index}
-                    className="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-700/50 dark:text-gray-300 dark:border-gray-700/50 transition-all duration-300 hover:scale-105 hover:bg-gray-200 dark:hover:bg-gray-700"
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
+                  key={index}
+                  className="px-3 py-1.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500/30 transition-all duration-300 hover:scale-105 hover:bg-blue-150 dark:hover:bg-blue-500/25 capitalize"
+                  style={{ animationDelay: `${index * 0.1}s` }}>
                     {tagName}
                   </span>
                 );
