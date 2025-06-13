@@ -6,12 +6,12 @@ import { useTranslations } from "next-intl";
 import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { cn } from "@/lib/utils/index";
 import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
+    memo,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
 } from "react";
 import { Select, SelectItem } from "@/components/ui/select";
 

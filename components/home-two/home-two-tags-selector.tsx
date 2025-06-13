@@ -143,7 +143,7 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
             variant="light"
           >
             <TagIcon className="w-4 h-4 transition-transform group-hover:scale-110" />
-            <span className="text-sm font-bold capitalize">
+            <span className="text-sm font-normal capitalize">
               {currentTag ? currentTag.name : t("listing.TAGS")}
             </span>
             {currentTag && (
