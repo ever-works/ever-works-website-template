@@ -39,19 +39,21 @@ export default function Item(props: ItemProps) {
         }
       )}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-50/50 via-white/70 to-gray-100/70 dark:from-gray-900/50 dark:via-gray-950/70 dark:to-black/70 transition-all duration-700" />
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50/60 via-white/90 to-gray-100/80 dark:from-gray-900/60 dark:via-gray-800/80 dark:to-black/80 transition-all duration-700" />
 
       <div
-        className="absolute inset-0 opacity-5 dark:opacity-10"
+        className="absolute inset-0 opacity-10 dark:opacity-20"
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='M0 0h40v40H0V0zm1 1h38v38H1V1z' /%3E%3C/g%3E%3C/svg%3E\")",
         }}
       />
 
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/20 via-transparent to-purple-50/20 dark:from-blue-900/5 dark:via-transparent dark:to-purple-900/5 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
-        <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-blue-400/5 dark:bg-blue-400/2 blur-2xl group-hover:animate-pulse-slow opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-in-out"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-transparent to-purple-50/30 dark:from-blue-900/10 dark:via-transparent dark:to-purple-900/10 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
+        <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-blue-400/10 dark:bg-blue-400/5 blur-2xl group-hover:animate-pulse-slow opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-in-out"></div>
       </div>
+
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 to-purple-500 transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-700 ease-out opacity-70 dark:opacity-50" />
 
       <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-500 transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-700 ease-out opacity-70 dark:opacity-50" />
 
@@ -76,8 +78,8 @@ export default function Item(props: ItemProps) {
               </div>
 
               <div className="flex-1 min-w-0">
-                <h3 className="text-lg font-semibold leading-tight text-gray-900 dark:text-gray-100 mb-1 transition-colors duration-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                  {props.name}
+                <h3 className="text-lg font-semibold leading-tight text-gray-900 dark:text-gray-100 mb-1 transition-colors duration-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 capitalize">
+                  {props.name.toLowerCase()}
                 </h3>
                 <div className="w-0 h-0.5 bg-blue-400 dark:bg-blue-500 group-hover:w-12 transition-all duration-500 ease-out" />
               </div>
@@ -122,7 +124,7 @@ export default function Item(props: ItemProps) {
       <CardBody className="relative z-10 px-6 py-4 pt-0">
         <div className="space-y-4">
           {/* Enhanced Description */}
-          <p className="text-sm leading-relaxed line-clamp-3 text-gray-600 dark:text-gray-400 transition-colors duration-300 group-hover:text-gray-800 dark:group-hover:text-gray-200">
+          <p className="text-sm leading-relaxed line-clamp-3 text-gray-600 dark:text-gray-300 transition-colors duration-300 group-hover:text-gray-700 dark:group-hover:text-gray-200">
             {props.description}
           </p>
 
@@ -138,10 +140,10 @@ export default function Item(props: ItemProps) {
                 if (props.isWrappedInLink) {
                   return (
                     <div
-                      key={tagId || `tag-${index}`}
-                      className="text-xs transition-all duration-300 cursor-pointer text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 hover:scale-105"
-                      style={{ animationDelay: `${index * 0.05}s` }}
-                    >
+                    key={tagId || `tag-${index}`}
+                    className="text-xs transition-all duration-300 cursor-pointer text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 hover:scale-105"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
                       #{tagName}
                     </div>
                   );
@@ -165,7 +167,7 @@ export default function Item(props: ItemProps) {
 
       {/* Hover indicator */}
       <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-        <FiArrowUpRight className="w-4 h-4 text-blue-400 dark:text-blue-500" />
+        <FiArrowUpRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
       </div>
 
       {/* Subtle animated border */}
