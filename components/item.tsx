@@ -29,10 +29,10 @@ export default function Item(props: ItemProps) {
   return (
     <Card
       className={cn(
-        "group relative border rounded-xl transition-all duration-500 transform hover:-translate-y-1 hover:rotate-[0.25deg] backdrop-blur-sm overflow-hidden max-h-[300px] cursor-pointer",
-        "border-gray-100/70 shadow-lg hover:shadow-xl bg-white/90 hover:border-gray-200/80",
-        "dark:border-gray-800/40 dark:bg-gray-900/90 dark:hover:border-gray-700/60 dark:shadow-lg dark:hover:shadow-xl",
-        "hover:shadow-gray-900/10 dark:hover:shadow-black/20",
+        "group relative border rounded-xl transition-all duration-500 transform hover:-translate-y-2 hover:rotate-[0.5deg] backdrop-blur-sm overflow-hidden max-h-[300px]",
+        "border-gray-200/70 shadow-lg hover:shadow-2xl bg-white/95 hover:border-gray-300/80",
+        "dark:border-gray-800/40 dark:bg-gray-900/90 dark:hover:border-gray-700/60 dark:shadow-lg dark:hover:shadow-2xl",
+        "hover:shadow-xl hover:shadow-gray-900/15 dark:hover:shadow-black/30",
         {
           "ring-1 shadow-blue-500/10 border-blue-300 dark:ring-blue-500/30 dark:border-blue-500/50 dark:shadow-blue-500/10 hover:ring-2 hover:ring-blue-400/40 dark:hover:ring-blue-400/50":
             props.featured,
