@@ -59,7 +59,7 @@ function ListingTags(props: ListingTagsProps) {
       <Container>
         {layoutHome === "Home_2" && (
           <div
-            className={`md:sticky md:top-4 md:self-start py-8 z-10 w-full ${
+            className={`md:sticky md:top-4 md:self-start pt-12 z-10 w-full ${
               isSticky
                 ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm"
                 : "bg-transparent"
@@ -87,8 +87,8 @@ function ListingTags(props: ListingTagsProps) {
             <div className="mt-4">
               <Tags
                 tags={sortedTags}
-                basePath={`/tag/tag`}
-                resetPath={`/tag`}
+                basePath={`/tags/tag`}
+                resetPath={`/tags`}
                 enableSticky={false}
                 maxVisibleTags={7}
               />

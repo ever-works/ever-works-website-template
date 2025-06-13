@@ -144,7 +144,7 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
       <div className="overflow-y-auto scrollbar-none max-h-[650px]">
         {categories.map((category) => {
           if (!category.count) return null;
-          const href = `/categories/${category.id}`;
+          const href = `/categories/category/${category.id}`;
           const isActive = pathname.startsWith(encodeURI(href));
           const displayName = truncateText(category.name);
           const isTextTruncated = category.name.length > 20;

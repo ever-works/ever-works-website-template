@@ -243,7 +243,7 @@ export function TagsItemsColumn(props: { total: number; tag: Tag[] }) {
     return (
       <div className="space-y-1.5 max-h-lvh">
         <Tooltip
-          content={t("ALL_CATEGORIES")}
+          content={t("ALL")}
           placement="right"
           delay={300}
           closeDelay={100}
@@ -279,7 +279,7 @@ export function TagsItemsColumn(props: { total: number; tag: Tag[] }) {
         <div className="overflow-y-auto scrollbar-none max-h-[650px]">
           {tag.map((tag) => {
             if (!tag.count) return null;
-            const href = `/tags/${tag.id}`;
+            const href = `/tags/tag/${tag.id}`;
             const isActive = pathname.startsWith(encodeURI(href));
             const displayName = truncateText(tag.name);
             const isTextTruncated = tag.name.length > 20;  

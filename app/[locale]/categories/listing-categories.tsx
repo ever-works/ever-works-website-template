@@ -51,7 +51,7 @@ function HomeOneLayout({
     <div className="pb-12 w-full mt-8">
       <div className="flex flex-col md:flex-row w-full gap-5">
         <div className="md:sticky md:top-4 md:self-start">
-          <Categories total={total} categories={sortedCategories} />
+          <Categories total={total} categories={sortedCategories}  />
         </div>
         <div className="w-full">
           <ListingClient
@@ -105,7 +105,7 @@ function HomeTwoLayout({
   return (
     <div>
       <div
-        className={`md:sticky md:top-4 md:self-start py-11 z-10 flex flex-col ${
+        className={`md:sticky md:top-4 md:self-start pt-11 z-10 flex flex-col ${
           isSticky
             ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm"
             : "bg-transparent"
