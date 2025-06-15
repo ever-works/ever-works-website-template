@@ -3,7 +3,6 @@ import { getTranslations } from "next-intl/server";
 import { Category, ItemData, Tag } from "@/lib/content";
 import GlobalsClient from "./globals-client";
 import Hero from "@/components/hero";
-import { Container } from "@/components/ui/container";
 
 type ListingProps = {
   total: number;
@@ -33,9 +32,7 @@ export default async function Listing(props: ListingProps) {
         description={t("DEMO_DESCRIPTION")}
         className="min-h-screen text-center"
       >
-        <Container className="mt-4 px-4">
           <GlobalsClient {...props} />
-        </Container>
       </Hero>
     </FilterProvider>
   );

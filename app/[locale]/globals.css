@@ -28,13 +28,25 @@
     --light-theme-dark: #E7E7EA;
 
     /* Theme variables - defaults to everworks theme */
-    --theme-primary: #0070f3;
-    --theme-secondary: #00c853;
-    --theme-accent: #0056b3;
-    --theme-background: #ffffff;
-    --theme-surface: #f8f9fa;
-    --theme-text: #1a1a1a;
-    --theme-text-secondary: #6c757d;
+  /* Theme variables - defaults to everworks theme */
+  --theme-primary: #0070f3;
+  --theme-primary-50: #eff6ff;
+  --theme-primary-100: #dbeafe;
+  --theme-primary-200: #bfdbfe;
+  --theme-primary-300: #93c5fd;
+  --theme-primary-400: #60a5fa;
+  --theme-primary-500: #3b82f6;
+  --theme-primary-600: #2563eb;
+  --theme-primary-700: #1d4ed8;
+  --theme-primary-800: #1e40af;
+  --theme-primary-900: #1e3a8a;
+  --theme-primary-950: #172554;
+  --theme-secondary: #00c853;
+  --theme-accent: #0056b3;
+  --theme-background: #ffffff;
+  --theme-surface: #f8f9fa;
+  --theme-text: #1a1a1a;
+  --theme-text-secondary: #6c757d;
   }
 
   .dark {

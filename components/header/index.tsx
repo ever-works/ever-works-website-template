@@ -19,6 +19,7 @@ import { LayoutSwitcher } from "../layout-switcher";
 import { NavigationControls } from "../navigation-controls";
 import { ProfileButton } from "./profile-button";
 import { IconEverworksSimple } from "../icons/Icons";
+import { Container } from "../ui/container";
 
 interface NavigationItem {
   key: string;
@@ -95,8 +96,7 @@ const NAVIGATION_CONFIG: Array<{
 
 const STYLES = {
   navbar: "border-b border-gray-100 dark:border-gray-800",
-  container:
-    "flex items-center justify-between w-full max-w-7xl px-4 sm:px-6 py-2 h-16 mx-auto",
+  container:"flex items-center justify-between w-full  py-2 h-16",
   brand: "flex items-center group",
   brandIcon: "relative font-bold mr-2 sm:mr-4",
   brandIconSvg:
@@ -230,7 +230,7 @@ export default function Header({ session }: SessionProps) {
       onMenuOpenChange={setIsMenuOpen}
       isMenuOpen={isMenuOpen}
     >
-      <div className={STYLES.container}>
+      <Container maxWidth="7xl" padding="default" className={STYLES.container}>
         {renderBrand()}
 
         <NavbarContent className={STYLES.navContent} justify="center">
@@ -238,7 +238,7 @@ export default function Header({ session }: SessionProps) {
         </NavbarContent>
 
         {renderRightSection()}
-      </div>
+      </Container>
 
       <NavbarMenu>
         <div className="mt-6 flex flex-col gap-2">

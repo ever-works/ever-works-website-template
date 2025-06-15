@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Container } from "./ui/container";
 
 export interface HeroProps {
   /** Badge text displayed at the top */
@@ -33,7 +34,7 @@ export default function Hero({
   return (
     <div
       className={cn(
-        "w-full bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300 relative",
+        "w-full bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300 relative py-14",
         className
       )}
     >
@@ -48,10 +49,10 @@ export default function Hero({
       )}
 
       {/* Main Content */}
-      <div className="relative z-10 w-full">
+      <div className="relative z-10 w-full py-12">
         {/* Header Section */}
         <div className="pt-2 pb-1 sm:pt-3 sm:pb-2">
-          <div className="text-center mb-2 sm:mb-3 flex flex-col items-center justify-center container max-w-7xl px-4">
+          <Container maxWidth="7xl" padding="default" className="text-center mb-2 sm:mb-3 flex flex-col items-center justify-center px-4">
             {/* Introducing badge */}
             {badgeText && (
               <div className="flex items-center justify-center mb-3 sm:mb-4">
@@ -85,7 +86,7 @@ export default function Hero({
             )}
 
             {children}
-          </div>
+          </Container>
         </div>
       </div>
     </div>

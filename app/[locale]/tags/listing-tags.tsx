@@ -10,7 +10,6 @@ import ViewToggle from "@/components/view-toggle";
 import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
 import { useStickyHeader } from "@/hooks/use-sticky-state";
-import { Container } from "@/components/ui/container";
 import { ListingClient } from "@/components/shared-card/listing-client";
 import { CardPresets } from "@/components/shared-card";
 import { SearchInput } from "@/components/ui/search-input";
@@ -56,7 +55,6 @@ function ListingTags(props: ListingTagsProps) {
       description="Browse all tags in our directory"
       className="min-h-screen"
     >
-      <Container>
         {layoutHome === "Home_2" && (
           <div
             className={`md:sticky md:top-4 md:self-start pt-12 z-10 w-full ${
@@ -112,7 +110,6 @@ function ListingTags(props: ListingTagsProps) {
             total={totalPages(props.items.length)}
           />
         </footer>
-      </Container>
     </Hero>
   );
 }

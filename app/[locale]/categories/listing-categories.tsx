@@ -8,7 +8,6 @@ import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
 import { ListingClient } from "@/components/shared-card/listing-client";
 import { HomeTwoCategories } from "@/components/home-two";
-import { Container } from "@/components/ui/container";
 import { useStickyHeader } from "@/hooks/use-sticky-state";
 import { CardPresets } from "@/components/shared-card";
 import ViewToggle from "@/components/view-toggle";
@@ -178,7 +177,6 @@ function ListingCategories(props: ListingCategoriesProps) {
         description="Browse all categories in our directory"
         className="min-h-screen"
       >
-        <Container className="relative">
           {layoutHome === "Home_1" && (
             <HomeOneLayout
               total={total}
@@ -211,7 +209,6 @@ function ListingCategories(props: ListingCategoriesProps) {
               total={totalPages(items.length)}
             />
           </footer>
-        </Container>
       </Hero>
   );
 }

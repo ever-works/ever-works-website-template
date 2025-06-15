@@ -2,6 +2,7 @@ import Link from "next/link";
 import { IconEverworksSimple } from "../icons";
 import { Divider } from "@heroui/react";
 import { ThemeToggler } from "../theme-toggler";
+import { Container } from "../ui/container";
 
 export function FooterBottom({ config, t }: { config: any; t: any }) {
   return (
@@ -9,7 +10,7 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
       {/* Subtle animated background */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/5 to-transparent animate-shimmer-slow" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Container maxWidth="7xl" padding="default" className="relative px-4 sm:px-6 lg:px-8 py-8">
         {/* Enhanced Disclaimer and utilities */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pt-6">
           <div className="flex items-center gap-1 w-[165px]">
@@ -69,7 +70,7 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
             <ThemeToggler compact />
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 }

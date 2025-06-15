@@ -34,7 +34,7 @@ export default async function ItemDetails({
   const categoryName = getCategoriesName(meta.category);
 
   return (
-    <Container className="px-4">
+    <Container maxWidth="7xl" padding="default" className="py-12">
       <ItemDetail
         meta={meta}
         content={content}
