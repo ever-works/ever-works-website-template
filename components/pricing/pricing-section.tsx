@@ -148,7 +148,7 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
           >
             {/* Popular Badge */}
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
-              <div className="px-4 py-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 text-white text-sm font-semibold rounded-full shadow-lg animate-pulse">
+              <div className="px-4 py-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 text-white text-sm font-semibold rounded-full shadow-lg">
                 {t("MOST_POPULAR")}
               </div>
             </div>

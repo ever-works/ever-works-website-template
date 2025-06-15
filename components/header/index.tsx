@@ -51,12 +51,12 @@ const NAVIGATION_CONFIG: Array<{
     translationKey: "HOME",
     translationNamespace: "common",
   },
-  {
-    key: "discover",
-    href: "/discover",
-    translationKey: "DISCOVER",
-    translationNamespace: "common",
-  },
+  // {
+  //   key: "discover",
+  //   href: "/discover",
+  //   translationKey: "DISCOVER",
+  //   translationNamespace: "common",
+  // },
   // {
   //   key: "about",
   //   href: "#",

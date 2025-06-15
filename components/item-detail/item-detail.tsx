@@ -31,7 +31,6 @@ export function ItemDetail({
     ? meta.tags.map((tag) => (typeof tag === "string" ? tag : tag.name))
     : [];
 
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800 text-gray-800 dark:text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)]"></div>
@@ -71,6 +70,7 @@ export function ItemDetail({
 
               <div className="flex items-center space-x-4 mb-12">
                 <a
+                  target="_blank"
                   href={meta.source_url}
                   className="group relative inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:from-blue-700 dark:to-blue-800 dark:hover:from-blue-800 dark:hover:to-blue-900 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-blue-500/25 transform hover:-translate-y-0.5 overflow-hidden"
                 >
@@ -351,4 +351,3 @@ export function ItemDetail({
     </div>
   );
 }
-

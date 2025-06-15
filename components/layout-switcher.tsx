@@ -18,7 +18,7 @@ const getLayoutMap = (isDark: boolean) =>
       color: "blue",
       icon: <Layout className="w-4 h-4" />,
       preview: (
-        <div className="w-full h-32 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-xl overflow-hidden border-2 border-blue-300 dark:border-blue-600 relative group shadow-lg hover:shadow-xl transition-all duration-300">
+        <div className="w-full h-32 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-xl overflow-hidden border-2 border-blue-300 dark:border-blue-600 relative group shadow-lg hover:shadow-xl transition-all duration-300 group">
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <Image
             src={isDark ? "/home-1.png" : "/home-light-1.png"}
@@ -27,8 +27,8 @@ const getLayoutMap = (isDark: boolean) =>
             className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 768px) 100vw, 300px"
           />
-          <div className="absolute top-2 right-2 bg-blue-500/90 text-white px-2 py-1 rounded-lg text-xs font-medium">
-            Active
+          <div className="absolute top-2 right-2 bg-blue-500/90 text-white px-2 py-1 rounded-lg text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Preview
           </div>
         </div>
       ),

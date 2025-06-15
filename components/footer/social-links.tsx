@@ -71,13 +71,18 @@ export const footerNavigation = (t: any) => {
     ],
     pages: [
       { label: t("common.HOME"), href: "/" },
-      { label: t("common.DISCOVER"), href: "/discover" },
+      { label: t("common.CATEGORY"), href: "/categories" },
+      { label: t("common.TAG"), href: "/tags" },
     ],
     company: [
       { label: t("footer.ABOUT_US"), href: "/about" },
       { label: t("footer.PRIVACY_POLICY"), href: "/privacy-policy" },
       { label: t("footer.TERMS_OF_SERVICE"), href: "/terms-of-service" },
-      { label: t("footer.SITEMAP"), href: "/sitemap" },
+      { label: t("footer.SITEMAP"), href: "/sitemap.xml",
+         target: "_blank", 
+         rel: "noopener noreferrer", 
+         isExternal: true 
+      },
     ],
   };
 };
