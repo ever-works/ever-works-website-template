@@ -11,6 +11,7 @@ import { routing } from "@/i18n/routing";
 import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { auth } from "@/lib/auth";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -59,6 +60,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-dark--theme-950`}>
           <NextIntlClientProvider messages={messages}>
+          <Toaster position="bottom-right" richColors />
             <Providers config={config}>
               <Header session={session} />
               {children}
