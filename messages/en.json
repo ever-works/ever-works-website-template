@@ -41,7 +41,10 @@
     "BROWSE_TAGS": "Browse Tags",
     "CATEGORIES_DESCRIPTION": "Explore our collection of categories to find what you're looking for.",
     "TAGS_DESCRIPTION": "Explore our collection of tags to find what you're looking for.",
-    "PRICING": "Pricing"
+    "PRICING": "Pricing",
+    "COPY_LINK": "Copy Link",
+    "LINK_COPIED": "Link copied to clipboard!",
+    "SHARE_ERROR": "Error sharing content"
   },
   "listing": {
     "ALL": "All",
