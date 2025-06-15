@@ -52,7 +52,7 @@ export default function Hero({
       <div className="relative z-10 w-full py-12">
         {/* Header Section */}
         <div className="pt-2 pb-1 sm:pt-3 sm:pb-2">
-          <Container maxWidth="7xl" padding="default" className="text-center mb-2 sm:mb-3 flex flex-col items-center justify-center px-4">
+          <Container maxWidth="7xl" padding="default">
             {/* Introducing badge */}
             {badgeText && (
               <div className="flex items-center justify-center mb-3 sm:mb-4">

@@ -22,7 +22,7 @@ export default async function Listing(props: ListingProps) {
       <Hero
         badgeText={t("INTRODUCING_EVER_WORKS")}
         title={
-          <div className="max-w-5xl font-bold text-balance text-3xl sm:text-4xl md:text-5xl">
+          <div className=" font-bold text-balance text-3xl sm:text-4xl md:text-5xl text-center">
             {t("THE_BEST")} <br className="hidden md:block" />
             <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 bg-clip-text text-transparent">
               {t("DIRECTORY_WEBSITE_TEMPLATE")}

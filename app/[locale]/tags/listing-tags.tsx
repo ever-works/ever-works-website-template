@@ -53,7 +53,7 @@ function ListingTags(props: ListingTagsProps) {
         </span>
       }
       description="Browse all tags in our directory"
-      className="min-h-screen"
+      className="min-h-screen text-center"
     >
         {layoutHome === "Home_2" && (
           <div

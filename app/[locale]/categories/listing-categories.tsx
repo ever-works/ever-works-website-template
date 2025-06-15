@@ -175,7 +175,7 @@ function ListingCategories(props: ListingCategoriesProps) {
         badgeText={t("CATEGORIES")}
         title={heroTitle}
         description="Browse all categories in our directory"
-        className="min-h-screen"
+        className="min-h-screen text-center"
       >
           {layoutHome === "Home_1" && (
             <HomeOneLayout
