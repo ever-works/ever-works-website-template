@@ -1,0 +1,1 @@
+{"scripts": {"test:lighthouse": "lighthouse http://localhost:3000 --view --preset=desktop", "test:lighthouse:mobile": "lighthouse http://localhost:3000 --view --preset=mobile"}}

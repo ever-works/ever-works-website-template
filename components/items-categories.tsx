@@ -56,7 +56,7 @@ export function ItemsCategories(props: {
           prefetch={false}
           href={basePath}
           className={cn(
-            "px-1.5 py-1 h-8 font-medium transition-all duration-200",
+            "px-2 sm:px-3 py-1 h-7 sm:h-8 font-medium transition-all duration-200",
             isActive
               ? "bg-primary-500 text-white border-primary-500 shadow-sm"
               : "border border-dark--theme-200 dark:border-dark--theme-800",
@@ -66,7 +66,7 @@ export function ItemsCategories(props: {
         >
           {isActive && (
             <svg
-              className="w-3 h-3 mr-1.5 text-white"
+              className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1 sm:mr-1.5 text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -85,7 +85,7 @@ export function ItemsCategories(props: {
               height={20}
               src={category.icon_url}
               className={cn(
-                "w-4 h-4 mr-1.5 transition-transform",
+                "w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5 transition-transform",
                 isActive ? "brightness-200" : ""
               )}
               alt={category.name}
@@ -93,7 +93,7 @@ export function ItemsCategories(props: {
           )}
           <span
             className={cn(
-              "text-sm font-medium transition-all duration-300",
+              "text-xs sm:text-sm font-medium transition-all duration-300",
               isActive
                 ? "text-white tracking-wide"
                 : "text-gray-700 dark:text-gray-300 group-hover:text-blue-700 dark:group-hover:text-blue-300 capitalize"
@@ -104,7 +104,7 @@ export function ItemsCategories(props: {
           {category.count && (
             <span
               className={cn(
-                "ml-1.5 text-xs font-normal",
+                "ml-1 sm:ml-1.5 text-[10px] sm:text-xs font-normal",
                 isActive ? "text-white" : "text-dark-500 dark:text-dark-400"
               )}
             >
@@ -129,7 +129,7 @@ export function ItemsCategories(props: {
     return (
       <div
         className={cn(
-          "p-4 transition-all duration-300",
+          "p-3 sm:p-4 transition-all duration-300",
           props.enableSticky
             ? cn(
                 "sticky top-4 z-10",
@@ -141,10 +141,10 @@ export function ItemsCategories(props: {
         )}
       >
         <div className="relative z-10">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
             <h3
               className={cn(
-                "text-lg font-bold transition-colors duration-300",
+                "text-base sm:text-lg font-bold transition-colors duration-300",
                 isSticky
                   ? "text-blue-600 dark:text-blue-400"
                   : "text-gray-900 dark:text-white"
@@ -159,7 +159,7 @@ export function ItemsCategories(props: {
                 radius="full"
                 size="sm"
                 className={cn(
-                  "px-4 py-1 font-medium transition-all duration-300",
+                  "px-2 sm:px-4 py-0.5 sm:py-1 text-xs sm:text-sm font-medium transition-all duration-300",
                   isSticky && "shadow-sm"
                 )}
                 onPress={() => setShowAllCategories(!showAllCategories)}
@@ -169,11 +169,11 @@ export function ItemsCategories(props: {
                     <span className="hidden sm:inline">Show as single row</span>
                     <span className="sm:hidden">Single row</span>
                     <svg
-                      width="16"
-                      height="16"
+                      width="14"
+                      height="14"
                       viewBox="0 0 24 24"
                       fill="none"
-                      className="ml-1.5 transition-transform group-hover:-translate-y-0.5 dark:text-default-300"
+                      className="ml-1 sm:ml-1.5 transition-transform group-hover:-translate-y-0.5 dark:text-default-300"
                     >
                       <path
                         d="M3 10h18M3 14h18"
@@ -189,13 +189,13 @@ export function ItemsCategories(props: {
                     <span className="hidden sm:inline">
                       Show all {props.categories.length} categories
                     </span>
-                    <span className="sm:hidden">All categories</span>
+                    <span className="sm:hidden">All</span>
                     <svg
-                      width="16"
-                      height="16"
+                      width="14"
+                      height="14"
                       viewBox="0 0 24 24"
                       fill="none"
-                      className="ml-1.5 transition-transform group-hover:translate-y-0.5 dark:text-default-300"
+                      className="ml-1 sm:ml-1.5 transition-transform group-hover:translate-y-0.5 dark:text-default-300"
                     >
                       <path
                         d="M4 4h16v7H4V4zm0 9h16v7H4v-7z"
@@ -212,7 +212,7 @@ export function ItemsCategories(props: {
           </div>
           <div className="relative">
             {!showAllCategories && (
-              <div className="w-full flex flex-nowrap gap-2 overflow-x-auto pb-2 hide-scrollbar scrollbar-thin scrollbar-thumb-blue-500/30 dark:scrollbar-thumb-blue-700/30 scrollbar-track-transparent">
+              <div className="w-full flex flex-nowrap gap-1.5 sm:gap-2 overflow-x-auto pb-2 hide-scrollbar scrollbar-thin scrollbar-thumb-blue-500/30 dark:scrollbar-thumb-blue-700/30 scrollbar-track-transparent">
                 <Button
                   variant={!isAnyTagActive ? "solid" : "bordered"}
                   radius="full"
@@ -221,7 +221,7 @@ export function ItemsCategories(props: {
                   prefetch={false}
                   href={props.resetPath || props.basePath || "/"}
                   className={cn(
-                    "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group",
+                    "px-2 sm:px-3 py-1 h-7 sm:h-8 font-medium transition-all duration-300 flex-shrink-0 group",
                     !isAnyTagActive
                       ? "bg-primary-500 text-white border-primary-500 shadow-sm"
                       : "border border-dark--theme-200 dark:border-dark--theme-800",
@@ -230,7 +230,7 @@ export function ItemsCategories(props: {
                 >
                   {!isAnyTagActive && (
                     <svg
-                      className="w-3 h-3 mr-1.5 text-white"
+                      className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1 sm:mr-1.5 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -243,10 +243,10 @@ export function ItemsCategories(props: {
                       />
                     </svg>
                   )}
-                  <span>All Categories</span>
+                  <span className="text-xs sm:text-sm">All Categories</span>
                   <span
                     className={cn(
-                      "ml-1.5 text-xs font-normal",
+                      "ml-1 sm:ml-1.5 text-[10px] sm:text-xs font-normal",
                       !isAnyTagActive
                         ? "text-white"
                         : "text-dark-500 dark:text-dark-400"
@@ -260,7 +260,7 @@ export function ItemsCategories(props: {
             )}
   
             {showAllCategories && (
-              <div className="w-full flex flex-wrap gap-2">
+              <div className="w-full flex flex-wrap gap-1.5 sm:gap-2">
                 <Button
                   variant={!isAnyTagActive ? "solid" : "bordered"}
                   radius="full"
@@ -269,7 +269,7 @@ export function ItemsCategories(props: {
                   prefetch={false}
                   href={props.resetPath || props.basePath || "/"}
                   className={cn(
-                    "px-3 py-1 h-8 font-medium transition-all duration-200",
+                    "px-2 sm:px-3 py-1 h-7 sm:h-8 font-medium transition-all duration-200",
                     !isAnyTagActive
                       ? "bg-primary-500 text-white border-primary-500 shadow-sm"
                       : "border border-dark--theme-200 dark:border-dark--theme-800",
@@ -278,7 +278,7 @@ export function ItemsCategories(props: {
                 >
                   {!isAnyTagActive && (
                     <svg
-                      className="w-3 h-3 mr-1.5 text-white"
+                      className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1 sm:mr-1.5 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -291,10 +291,10 @@ export function ItemsCategories(props: {
                       />
                     </svg>
                   )}
-                  <span>All Categories</span>
+                  <span className="text-xs sm:text-sm">All Categories</span>
                   <span
                     className={cn(
-                      "ml-1.5 text-xs font-normal",
+                      "ml-1 sm:ml-1.5 text-[10px] sm:text-xs font-normal",
                       !isAnyTagActive
                         ? "text-white"
                         : "text-dark-500 dark:text-dark-400"

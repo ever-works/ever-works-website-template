@@ -13,7 +13,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Select, SelectItem } from "@/components/ui/select";
+import { SelectItem } from "@/components/ui/select";
 import Image from "next/image";
 
 
@@ -241,19 +241,34 @@ export function HomeTwoCategories({
 
   return (
     <div className="space-y-3 sm:space-y-5">
+      {/* Mobile Select Dropdown - Amélioré */}
       <div className="md:hidden w-full px-1">
-        <Select>
+        <div className="relative">
           <select
-            className="w-full p-3 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+            className="w-full p-3 pr-10 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             value={selectedCategory}
             onChange={handleCategoryChange}
+            aria-label="Select category"
           >
-            {selectItems}
+            <option value="all">
+              {t("ALL_CATEGORIES")} ({totalItems})
+            </option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name} ({category.count || 0})
+              </option>
+            ))}
           </select>
-        </Select>
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <svg className="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </div>
+        </div>
       </div>
 
-      <div className="hidden md:block max-w-7xl mx-auto px-1">
+      {/* Desktop Categories - Amélioré */}
+      <div className="hidden md:block">
         <div className="flex flex-col gap-4">
           <div
             ref={scrollContainerRef}

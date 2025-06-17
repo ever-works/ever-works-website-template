@@ -103,13 +103,41 @@ function HomeTwoLayout({
   return (
     <div>
       <div
-        className={`md:sticky md:top-4 md:self-start pt-11 z-10 flex flex-col ${
+        className={`md:sticky md:top-4 md:self-start pt-6 sm:pt-8 md:pt-11 z-10 flex flex-col ${
           isSticky
             ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm"
             : "bg-transparent"
         }`}
       >
-        <div className="flex items-center justify-between px-2">
+        {/* Mobile Layout */}
+        <div className="block md:hidden space-y-3 px-2">
+          {/* Search Bar - Full Width */}
+          <div className="w-full">
+            <SearchInput
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              className="w-full"
+            />
+          </div>
+          
+          {/* Sort and View in one row */}
+          <div className="flex items-center justify-between gap-2">
+            <SortMenu
+              className="h-8 flex-1 text-xs sm:text-sm"
+              options={sortOptions}
+              value={sortBy}
+              onSortChange={setSortBy}
+              ariaLabel="Sort items"
+            />
+            <ViewToggle
+              activeView={layoutKey}
+              onViewChange={(newView) => setLayoutKey(newView)}
+            />
+          </div>
+        </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden md:flex items-center justify-between px-2 gap-4">
           <SortMenu
             className="h-8 min-w-[180px] text-sm"
             options={sortOptions}
@@ -118,23 +146,29 @@ function HomeTwoLayout({
             ariaLabel="Sort items"
           />
           <div className="flex items-center gap-3">
-            <SearchInput
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
+            <div className="w-64 lg:w-80">
+              <SearchInput
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+            </div>
             <ViewToggle
               activeView={layoutKey}
               onViewChange={(newView) => setLayoutKey(newView)}
             />
           </div>
         </div>
-        <ItemsCategories
-          categories={sortedCategories}
-          basePath={`/categories/category`}
-          resetPath={`/categories`}
-          enableSticky={false}
-          maxVisibleTags={4}
-        />
+        
+        {/* Categories - Always visible */}
+        <div className="mt-3 sm:mt-4">
+          <ItemsCategories
+            categories={sortedCategories}
+            basePath={`/categories/category`}
+            resetPath={`/categories`}
+            enableSticky={false}
+            maxVisibleTags={4}
+          />
+        </div>
       </div>
       <div className="md:h-4 md:w-full" />
       <ListingClient

@@ -23,15 +23,62 @@ export function HomeTwoFilters({
   setLayoutKey,
 }: Home2FiltersProps) {
   const { searchTerm, setSearchTerm, setSortBy, sortBy } = useFilters();
+  
   return (
-    <div className="mb-6 space-y-4">
-      <div className="flex flex-col md:flex-row justify-between gap-3 items-center w-full">
-        <div className="flex items-center justify-center gap-3">
+    <div className="mb-4 sm:mb-6 space-y-3 sm:space-y-4">
+      <div className="block sm:hidden space-y-3">
+        <div className="w-full">
+          <SearchInput
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            className="w-full"
+          />
+        </div>
+        
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 flex-1">
+            <HomeTwoSortSelector setSortBy={setSortBy} sortBy={sortBy} />
+            <HomeTwoTagsSelector tags={tags} />
+          </div>
+          <ViewToggle
+            activeView={layoutKey}
+            onViewChange={(newView) => setLayoutKey(newView)}
+          />
+        </div>
+      </div>
+
+      <div className="hidden sm:block md:hidden">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <HomeTwoSortSelector setSortBy={setSortBy} sortBy={sortBy} />
+              <HomeTwoTagsSelector tags={tags} />
+            </div>
+            <ViewToggle
+              activeView={layoutKey}
+              onViewChange={(newView) => setLayoutKey(newView)}
+            />
+          </div>
+          
+          <div className="w-full">
+            <SearchInput
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              className="w-full"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="hidden md:flex justify-between items-center gap-4">
+        {/* Left Side: Sort and Tags */}
+        <div className="flex items-center gap-3">
           <HomeTwoSortSelector setSortBy={setSortBy} sortBy={sortBy} />
           <HomeTwoTagsSelector tags={tags} />
         </div>
-        <div className="flex items-center justify-center gap-3 ">
-          <div className="flex-1 md:flex-none w-full md:w-auto max-w-md">
+        
+        <div className="flex items-center gap-3">
+          <div className="w-64 lg:w-80 xl:w-96">
             <SearchInput
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
@@ -43,8 +90,10 @@ export function HomeTwoFilters({
           />
         </div>
       </div>
+
       <Categories categories={categories} 
-       maxVisibleTags={4} />
+      maxVisibleTags={4}
+      />
     </div>
   );
 }

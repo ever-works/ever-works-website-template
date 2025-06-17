@@ -44,6 +44,80 @@ function ListingTags(props: ListingTagsProps) {
     { value: "date-asc", label: t("OLDEST") },
   ];
 
+  // Render functions
+  const renderFilters = () => (
+    <div
+      className={`md:sticky md:top-4 md:self-start pt-8 sm:pt-10 md:pt-12 z-10 w-full ${
+        isSticky
+          ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm"
+          : "bg-transparent"
+      }`}
+    >
+      {/* Mobile Layout */}
+      <div className="block md:hidden space-y-3 px-3">
+        {/* Search Bar - Full Width */}
+        <div className="w-full">
+          <SearchInput
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            className="w-full"
+          />
+        </div>
+        
+        {/* Sort and View in one row */}
+        <div className="flex items-center justify-between gap-2">
+          <SortMenu
+            className="h-8 flex-1 text-xs sm:text-sm"
+            options={sortOptions}
+            value={sortBy}
+            onSortChange={setSortBy}
+            ariaLabel="Sort items"
+          />
+          <ViewToggle
+            activeView={layoutKey}
+            onViewChange={(newView) => setLayoutKey(newView)}
+          />
+        </div>
+      </div>
+
+      {/* Desktop Layout */}
+      <div className="hidden md:flex flex-col gap-4 px-3">
+        <div className="flex justify-between items-center">
+          <SortMenu
+            className="h-8 min-w-[180px] text-sm"
+            options={sortOptions}
+            value={sortBy}
+            onSortChange={setSortBy}
+            ariaLabel="Sort items"
+          />
+          <div className="flex items-center gap-3">
+            <div className="w-64 lg:w-80">
+              <SearchInput
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+            </div>
+            <ViewToggle
+              activeView={layoutKey}
+              onViewChange={(newView) => setLayoutKey(newView)}
+            />
+          </div>
+        </div>
+      </div>
+      
+      {/* Tags - Always visible */}
+      <div className="mt-3 sm:mt-4">
+        <Tags
+          tags={sortedTags}
+          basePath={`/tags/tag`}
+          resetPath={`/tags`}
+          enableSticky={false}
+          maxVisibleTags={5}
+        />
+      </div>
+    </div>
+  );
+
   return (
     <Hero
       badgeText={t("TAGS")}
@@ -55,44 +129,7 @@ function ListingTags(props: ListingTagsProps) {
       description="Browse all tags in our directory"
       className="min-h-screen text-center"
     >
-        {layoutHome === "Home_2" && (
-          <div
-            className={`md:sticky md:top-4 md:self-start pt-12 z-10 w-full ${
-              isSticky
-                ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm"
-                : "bg-transparent"
-            }`}
-          >
-            <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end px-3 gap-4 sm:gap-0">
-              <SortMenu
-                className="h-8 min-w-[180px] text-sm"
-                options={sortOptions}
-                value={sortBy}
-                onSortChange={setSortBy}
-                ariaLabel="Sort items"
-              />
-              <div className="flex items-center gap-3">
-                <SearchInput
-                  searchTerm={searchTerm}
-                  setSearchTerm={setSearchTerm}
-                />
-                <ViewToggle
-                  activeView={layoutKey}
-                  onViewChange={(newView) => setLayoutKey(newView)}
-                />
-              </div>
-            </div>
-            <div className="mt-4">
-              <Tags
-                tags={sortedTags}
-                basePath={`/tags/tag`}
-                resetPath={`/tags`}
-                enableSticky={false}
-                maxVisibleTags={7}
-              />
-            </div>
-          </div>
-        )}
+        {layoutHome === "Home_2" && renderFilters()}
 
         <div className="flex flex-col md:flex-row items-start gap-8 ">
           {layoutHome === "Home_1" && (

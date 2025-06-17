@@ -36,23 +36,6 @@ export interface ItemData {
   updatedAt: Date; // timestamp
 }
 
-export interface PRUpdate {
-  branch?: string;
-  title?: string;
-  body?: string;
-}
-
-export interface ContentConfig {
-  paging_mode?: PagingMode;
-  max_search_queries?: number;
-  max_results_per_query?: number;
-  max_pages_to_process?: number;
-  relevance_threshold_content?: number;
-  min_content_length_for_extraction?: number;
-  ai_first_generation_enabled?: boolean;
-  prompt_comparison_confidence_threshold?: number;
-}
-
 export interface AuthOptions {
   credentials?: boolean;
   google?: boolean;
@@ -74,7 +57,6 @@ export type ResendMail = {
   default_from: string;
 };
 export type AuthProviderType = "supabase" | "next-auth" | "both";
-export type PagingMode = "infinite_scroll" | "paging";
 
 export interface AuthConfig {
   provider: AuthProviderType;
@@ -107,9 +89,6 @@ export interface Config {
   auth?: false | AuthOptions;
   mail?: NovuMail | ResendMail;
   authConfig?: AuthConfig;
-  content_config?: ContentConfig;
-  generation_method?: "create-update";
-  pr_update?: PRUpdate;
 }
 
 interface FetchOptions {
