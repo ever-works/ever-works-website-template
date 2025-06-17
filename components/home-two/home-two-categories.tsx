@@ -420,7 +420,7 @@ export function Categories(props: {
         className={cn(
           "px-1.5 py-1 h-8 font-medium transition-all duration-200",
           isActive
-            ? "bg-primary-500 text-white border-primary-500 shadow-sm"
+            ? "bg-theme-primary text-white border-theme-primary shadow-sm"
             : "border border-dark--theme-200 dark:border-dark--theme-800",
           "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800",
           !showAllCategories && "flex-shrink-0"
@@ -458,7 +458,7 @@ export function Categories(props: {
             "text-sm font-medium transition-all duration-300",
             isActive
               ? "text-white tracking-wide"
-              : "text-gray-700 dark:text-gray-300 group-hover:text-blue-700 dark:group-hover:text-blue-300 capitalize"
+              : "text-gray-700 dark:text-gray-300 group-hover:text-theme-primary dark:group-hover:text-theme-primary capitalize"
           )}
         >
           {category.name}
@@ -508,7 +508,7 @@ export function Categories(props: {
             className={cn(
               "text-lg font-bold transition-colors duration-300",
               isSticky
-                ? "text-blue-600 dark:text-blue-400"
+                ? "text-theme-primary dark:text-theme-primary"
                 : "text-gray-900 dark:text-white"
             )}
           >
@@ -517,11 +517,11 @@ export function Categories(props: {
           {hasMoreTags && (
             <Button
               variant="flat"
-              color="primary"
+              // color="primary"
               radius="full"
               size="sm"
               className={cn(
-                "px-4 py-1 font-medium transition-all duration-300",
+                "px-4 py-1 font-medium transition-all duration-300  text-white bg-theme-primary dark:bg-theme-primary hover:bg-theme-primary hover:to-theme-primary",
                 isSticky && "shadow-sm"
               )}
               onPress={() => setShowAllCategories(!showAllCategories)}
@@ -585,9 +585,9 @@ export function Categories(props: {
                 className={cn(
                   "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group",
                   !isAnyTagActive
-                    ? "bg-primary-500 text-white border-primary-500 shadow-sm"
+                    ? "bg-theme-primary text-white border-theme-primary-500 shadow-sm"
                     : "border border-dark--theme-200 dark:border-dark--theme-800",
-                  "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800"
+                  "hover:shadow-md hover:border-theme-primary dark:hover:border-theme-primary"
                 )}
               >
                 {!isAnyTagActive && (

@@ -68,7 +68,7 @@ export default function Item(props: ItemProps) {
                         height={24}
                       />
                     ) : (
-                      <FiFolder className="w-6 h-6 text-blue-600 dark:text-blue-400 transition-transform duration-500 group-hover:scale-110" />
+                      <FiFolder className="w-6 h-6 text-theme-primary dark:text-theme-primary transition-transform duration-500 group-hover:scale-110" />
                     )}
                   </div>
                   {/* Pulse effect */}
@@ -100,7 +100,7 @@ export default function Item(props: ItemProps) {
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-3 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border border-blue-200/50 dark:from-blue-900/30 dark:to-indigo-900/30 dark:text-blue-300 dark:border-blue-700/30 transition-all duration-300 hover:scale-105 hover:shadow-md capitalize shadow-sm">
+              <span className="px-3 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-theme-primary-100 to-theme-primary-100 text-theme-primary border border-blue-200/50 dark:from-theme-primary-900/30 dark:to-theme-primary-900/30 dark:text-theme-primary dark:border-blue-700/30 transition-all duration-300 hover:scale-105 hover:shadow-md capitalize shadow-sm">
                 {getCategoriesName(props.category)}
               </span>
               {props.tags &&

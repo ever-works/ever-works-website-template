@@ -27,7 +27,7 @@ export function ProfileButton({ session }: SessionProps) {
         <div>
           <button
             type="button"
-            className="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-theme-primary"
             id="user-menu"
             aria-expanded="false"
             aria-haspopup="true"
@@ -39,7 +39,7 @@ export function ProfileButton({ session }: SessionProps) {
               alt={user.name || "User"}
               fallback={user.name?.charAt(0)}
               size="sm"
-              className="ring-2 ring-white ring-offset-2 ring-offset-indigo-600 transition-transform hover:scale-105"
+              className="ring-2 ring-white ring-offset-2 ring-offset-theme-primary transition-transform hover:scale-105"
             />
           </button>
         </div>

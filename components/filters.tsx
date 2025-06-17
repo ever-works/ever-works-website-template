@@ -407,11 +407,11 @@ export function Paginate({
       <div className="text-center">
         <p className="text-sm text-gray-600 dark:text-gray-400">
           Page{" "}
-          <span className="font-semibold text-primary-600 dark:text-primary-400">
+          <span className="font-semibold text-theme-primary dark:text-theme-primary">
             {initialPage}
           </span>{" "}
           of{" "}
-          <span className="font-semibold text-primary-600 dark:text-primary-400">
+          <span className="font-semibold text-theme-primary dark:text-theme-primary">
             {total}
           </span>
         </p>
@@ -422,7 +422,7 @@ export function Paginate({
         {/* Background glow effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 via-primary-600/5 to-primary-500/10 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
 
-        <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-2 shadow-lg hover:shadow-xl transition-all duration-300">
+        <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-2 shadow-lg hover:shadow-xl transition-all duration-300 dark:shadow-lg dark:shadow-theme-primary-500/20 dark:shadow-theme-primary-500/20">
           <Pagination
             showControls
             total={total}
@@ -434,39 +434,33 @@ export function Paginate({
               wrapper: "gap-2 p-2",
               item: cn(
                 "min-w-10 h-10 text-sm font-medium transition-all duration-300 ease-out",
-                "bg-transparent hover:bg-gradient-to-r hover:from-primary-50 hover:to-primary-100",
-                "dark:hover:from-primary-900/30 dark:hover:to-primary-800/30",
-                "text-gray-700 dark:text-gray-300 hover:text-primary-700 dark:hover:text-primary-300",
-                "border border-transparent hover:border-primary-200 dark:hover:border-primary-700/50",
+                "bg-transparent hover:bg-theme-primary hover:bg-theme-primary hover:to-theme-primary",
+                "dark:hover:bg-theme-primary dark:hover:to-theme-primary",
+                "text-gray-700 dark:text-gray-300 hover:text-theme-primary dark:hover:text-theme-primary",
+                "border border-transparent hover:border-theme-primary dark:hover:border-theme-primary",
                 "hover:shadow-md hover:scale-105 active:scale-95",
-                "data-[hover=true]:bg-gradient-to-r data-[hover=true]:from-primary-50 data-[hover=true]:to-primary-100",
-                "dark:data-[hover=true]:from-primary-900/30 dark:data-[hover=true]:to-primary-800/30",
+                "data-[hover=true]:bg-theme-primary data-[hover=true]:bg-theme-primary data-[hover=true]:bg-theme-primary",
+                "dark:data-[hover=true]:bg-theme-primary dark:data-[hover=true]:bg-theme-primary",
                 "cursor-pointer relative overflow-hidden"
               ),
               cursor: cn(
-                "bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold",
-                "shadow-lg shadow-primary-500/25 dark:shadow-primary-500/20",
-                "border-2 border-primary-400 dark:border-primary-500",
-                "hover:from-primary-600 hover:to-primary-700 hover:shadow-xl hover:shadow-primary-500/30",
-                "hover:scale-110 active:scale-95 transition-all duration-300",
+                "bg-theme-primary text-white font-semibold",
+                "shadow-lg shadow-theme-primary dark:shadow-theme-primary",
+                "border-2 border-theme-primary dark:border-theme-primary",
                 "relative overflow-hidden"
               ),
               prev: cn(
                 "min-w-12 h-10 font-medium transition-all duration-300",
-                "bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700",
-                "text-gray-600 dark:text-gray-300 hover:text-primary-700 dark:hover:text-primary-300",
-                "border border-gray-200 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-600",
-                "hover:from-primary-50 hover:to-primary-100 dark:hover:from-primary-900/20 dark:hover:to-primary-800/20",
-                "hover:shadow-md hover:scale-105 active:scale-95",
+                " from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700",
+                "text-gray-600 dark:text-gray-300 hover:text-theme-primary dark:hover:text-theme-primary",
+                "border border-gray-200 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
                 "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               ),
               next: cn(
                 "min-w-12 h-10 font-medium transition-all duration-300",
-                "bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700",
-                "text-gray-600 dark:text-gray-300 hover:text-primary-700 dark:hover:text-primary-300",
-                "border border-gray-200 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-600",
-                "hover:from-primary-50 hover:to-primary-100 dark:hover:from-primary-900/20 dark:hover:to-primary-800/20",
-                "hover:shadow-md hover:scale-105 active:scale-95",
+                " from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700",
+                "text-gray-600 dark:text-gray-300 hover:text-theme-primary dark:hover:text-theme-primary",
+                "border border-gray-200 dark:border-gray-600 hover:border-theme-primary  dark:hover:border-theme-primary",
                 "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               ),
             }}
@@ -567,7 +561,7 @@ export function Tags(props: {
             "text-sm font-medium transition-all duration-300",
             isActive
               ? "text-white tracking-wide"
-              : "text-gray-700 dark:text-gray-300 group-hover:text-blue-700 dark:group-hover:text-blue-300 capitalize"
+              : "text-gray-700 dark:text-gray-300 group-hover:text-theme-primary dark:group-hover:text-theme-primary capitalize"
           )}
         >
           {tag.name}
@@ -617,7 +611,7 @@ export function Tags(props: {
             className={cn(
               "text-lg font-bold transition-colors duration-300",
               isSticky
-                ? "text-blue-600 dark:text-blue-400"
+                ? "text-theme-primary dark:text-theme-primary"
                 : "text-gray-900 dark:text-white"
             )}
           >

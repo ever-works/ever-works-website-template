@@ -26,12 +26,12 @@ export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
       <div className="flex items-center gap-1.5">
         <Switch
           size="lg"
-          color="default"
+          color="primary"
           endContent={
             <Sun className="h-8 w-8 text-yellow-500 dark:text-yellow-1000" />
           }
           startContent={
-            <Moon className="h-8 w-8 text-blue-500 dark:text-blue-400" />
+            <Moon className="h-8 w-8 text-theme-primary dark:text-theme-primary" />
           }
           isSelected={theme === "dark"}
           onValueChange={(isSelected) =>
@@ -40,6 +40,7 @@ export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
           classNames={{
             wrapper: "bg-gray-300 group-data-[selected=true]:bg-blue-500",
             thumb: "shadow-sm",
+            thumbIcon: "bg-gray-300 group-data-[selected=true]:bg-theme-primary",
           }}
         />
       </div>
@@ -62,7 +63,7 @@ export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
             {theme === "light" ? (
               <Sun className="h-4 w-4 text-yellow-500 dark:text-yellow-400" />
             ) : (
-              <Moon className="h-4 w-4 text-blue-500 dark:text-blue-400" />
+              <Moon className="h-4 w-4 text-theme-primary dark:text-theme-primary" />
             )}
             <span className="text-gray-800 dark:text-white capitalize">
               {theme === "light" ? "Light" : "Dark"}
@@ -92,15 +93,15 @@ export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
           <button
             className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
               theme === "dark"
-                ? "bg-blue-100 dark:bg-blue-500 text-blue-800 dark:text-white shadow-md"
+                ? "bg-theme-primary-100 dark:bg-theme-primary text-theme-primary-800 dark:text-white shadow-md"
                 : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800/60 hover:text-gray-900 dark:hover:text-white"
             } hover:scale-[1.02]`}
             onClick={() => setTheme("dark")}
           >
-            <Moon className="h-4 w-4 text-blue-500 dark:text-blue-400" />
-            <span className="font-medium">Dark</span>
+            <Moon className="h-4 w-4 text-theme-primary dark:text-white" />
+            <span className="font-medium text-theme-primary dark:text-white">Dark</span>
             {theme === "dark" && (
-              <div className="ml-auto w-2 h-2 bg-blue-800 dark:bg-white rounded-full"></div>
+              <div className="ml-auto w-2 h-2 bg-theme-primary-800 dark:bg-white rounded-full"></div>
             )}
           </button>
         </div>
