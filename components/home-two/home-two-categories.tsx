@@ -13,7 +13,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { SelectItem } from "@/components/ui/select";
 import Image from "next/image";
 
 
@@ -179,48 +178,10 @@ export function HomeTwoCategories({
     [basePath, pathname]
   );
 
-  // Handle category change from select
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    setSelectedCategory(value);
-
-    // Redirect to the selected category
-    if (value === "all") {
-      window.location.href = resetPath || "/";
-    } else {
-      const category = categories.find((c) => c.id === value);
-      if (category) {
-        const href = basePath
-          ? `${basePath}/${category.id}`
-          : `/categories/${category.id}`;
-        window.location.href = href;
-      }
-    }
-  };
-
   const categoriesList = useMemo(
     () => categories.map((category, index) => renderCategory(category, index)),
     [categories, renderCategory]
   );
-
-  // Generate select items
-  const selectItems = useMemo(() => {
-    const items = [
-      <SelectItem key="all" value="all">
-        {t("ALL_CATEGORIES")} ({totalItems})
-      </SelectItem>,
-    ];
-
-    categories.forEach((category) => {
-      items.push(
-        <SelectItem key={category.id} value={category.id}>
-          {category.name} ({category.count || 0})
-        </SelectItem>
-      );
-    });
-
-    return items;
-  }, [categories, t, totalItems]);
 
   useEffect(() => {
     if (isHomeActive) {
@@ -238,6 +199,26 @@ export function HomeTwoCategories({
       }
     }
   }, [categories, pathname, isHomeActive, basePath]);
+
+  // Handle category change from select
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setSelectedCategory(value);
+
+    if (value === "all") {
+      window.location.href = resetPath || "/";
+    } else {
+      const category = categories.find((c) => c.id === value);
+      if (category) {
+        const href = basePath
+          ? `${basePath}/${category.id}`
+          : `/categories/${category.id}`;
+        window.location.href = href;
+      }
+    }
+  };
+
+
 
   return (
     <div className="space-y-3 sm:space-y-5">
