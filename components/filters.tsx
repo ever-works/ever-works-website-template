@@ -620,11 +620,10 @@ export function Tags(props: {
           {hasMoreTags && (
             <Button
               variant="flat"
-              // color="primary"
               radius="full"
               size="sm"
               className={cn(
-                "px-4 py-1 font-medium transition-all duration-300 bg-theme-primary-10 text-theme-primary-700",
+                "px-4 py-1 font-medium transition-all duration-300 bg-theme-primary-10 text-theme-primary",
                 isSticky && "shadow-sm"
               )}
               onPress={() => setShowAllTags(!showAllTags)}
@@ -677,7 +676,7 @@ export function Tags(props: {
         </div>
         <div className="relative">
           {!showAllTags && (
-            <div className="w-full flex flex-nowrap gap-2 overflow-x-auto pb-2 hide-scrollbar scrollbar-thin scrollbar-thumb-blue-500/30 dark:scrollbar-thumb-blue-700/30 scrollbar-track-transparent">
+            <div className="w-full flex flex-nowrap gap-2 overflow-x-auto pb-2 hide-scrollbar scrollbar-thin scrollbar-thumb-theme-primary-10 dark:scrollbar-thumb-theme-primary-10 scrollbar-track-transparent">
               <Button
                 variant={!isAnyTagActive ? "solid" : "bordered"}
                 radius="full"
@@ -689,7 +688,7 @@ export function Tags(props: {
                   "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group",
                   !isAnyTagActive
                     ? "bg-theme-primary-500 text-white border-theme-primary-500 shadow-sm"
-                    : "border border-dark--theme-200 dark:border-dark--theme-800",
+                    : "border border-dark--theme-200 dark:border-dark--theme-800 bg-theme-primary",
                   "hover:shadow-md hover:border-theme-primary-200 dark:hover:border-theme-primary-800"
                 )}
               >

@@ -72,11 +72,6 @@ const ColorIndicators: React.FC<ColorIndicatorsProps> = React.memo(
           style={{ backgroundColor: colors.primary }}
           aria-hidden="true"
         />
-        <div
-          className={`${dimensions} rounded-full`}
-          style={{ backgroundColor: colors.secondary }}
-          aria-hidden="true"
-        />
       </div>
     );
   }
