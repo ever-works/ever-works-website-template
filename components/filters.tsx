@@ -80,7 +80,7 @@ function BlockLink({
         "font-medium text-left justify-start items-center transition-colors duration-300 mb-1 h-10 px-3",
         "hover:transform-none active:transform-none",
         {
-          "bg-blue-500 text-white": isActive,
+          "bg-theme-primary-500 text-white": isActive,
           "bg-gray-800 text-white": !isActive && isAllCategories,
           "bg-transparent text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800":
             !isActive && !isAllCategories,
@@ -232,7 +232,7 @@ export function Categories(props: { total: number; categories: Category[] }) {
                 <span className="font-bold text-gray-800 dark:text-gray-200 transition-colors duration-300">
                   {t("CATEGORIES")}
                 </span>
-                <span className="bg-blue-100 dark:bg-gray-800 text-blue-700 dark:text-gray-300 px-2 py-1 rounded-full text-xs font-bold border border-blue-200 dark:border-gray-700/50">
+                <span className="bg-theme-primary-100 dark:bg-gray-800 text-theme-primary-700 dark:text-gray-300 px-2 py-1 rounded-full text-xs font-bold border border-theme-primary-200 dark:border-gray-700/50">
                   {props.total}
                 </span>
               </div>
@@ -283,11 +283,11 @@ export function Categories(props: { total: number; categories: Category[] }) {
                   <span className="text-xs text-gray-500 dark:text-gray-400">
                     Search:
                   </span>
-                  <span className="inline-flex items-center px-3 py-1 rounded-lg bg-blue-100 dark:bg-gray-800 text-blue-700 dark:text-blue-400 text-sm font-medium border border-blue-200 dark:border-gray-700">
+                  <span className="inline-flex items-center px-3 py-1 rounded-lg bg-theme-primary-100 dark:bg-gray-800 text-theme-primary-700 dark:text-theme-primary-400 text-sm font-medium border border-theme-primary-200 dark:border-gray-700">
                     {searchTerm}
                     <button
                       onClick={() => setSearchTerm("")}
-                      className="ml-2 text-blue-600/70 dark:text-blue-400/70 hover:text-blue-800 dark:hover:text-blue-300"
+                      className="ml-2 text-theme-primary-600/70 dark:text-theme-primary-400/70 hover:text-theme-primary-800 dark:hover:text-theme-primary-300"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -306,12 +306,12 @@ export function Categories(props: { total: number; categories: Category[] }) {
                       return tag ? (
                         <span
                           key={tagId}
-                          className="inline-flex items-center px-3 py-1  rounded-lg bg-blue-100 dark:bg-gray-800 text-blue-700 dark:text-blue-400 text-sm font-medium border border-blue-200 dark:border-gray-700"
+                          className="inline-flex items-center px-3 py-1  rounded-lg bg-theme-primary-100 dark:bg-gray-800 text-theme-primary-700 dark:text-theme-primary-400 text-sm font-medium border border-theme-primary-200 dark:border-gray-700"
                         >
                           {tag.name}
                           <button
                             onClick={() => removeSelectedTag(tagId)}
-                            className="ml-2 text-blue-600/70 dark:text-blue-400/70 hover:text-blue-800 dark:hover:text-blue-300"
+                            className="ml-2 text-theme-primary-600/70 dark:text-theme-primary-400/70 hover:text-theme-primary-800 dark:hover:text-theme-primary-300"
                           >
                             <X className="w-3 h-3" />
                           </button>
@@ -362,7 +362,7 @@ export function Categories(props: { total: number; categories: Category[] }) {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="block w-full px-3 py-2 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent appearance-none cursor-pointer transition-colors duration-300"
+                className="block w-full px-3 py-2 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary-500 dark:focus:ring-theme-primary-400 focus:border-transparent appearance-none cursor-pointer transition-colors duration-300"
               >
                 <option value="popularity">{t("POPULARITY")}</option>
                 <option value="name-asc">{t("NAME_A_Z")}</option>
@@ -523,9 +523,9 @@ export function Tags(props: {
         className={cn(
           "px-1.5 py-1 h-8 font-medium transition-all duration-200",
           isActive
-            ? "bg-primary-500 text-white border-primary-500 shadow-sm"
+            ? "bg-theme-primary-500 text-white border-theme-primary-500 shadow-sm"
             : "border border-dark--theme-200 dark:border-dark--theme-800",
-          "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800",
+          "hover:shadow-md hover:border-theme-primary-200 dark:hover:border-theme-primary-800",
           !showAllTags && "flex-shrink-0"
         )}
       >
@@ -620,11 +620,11 @@ export function Tags(props: {
           {hasMoreTags && (
             <Button
               variant="flat"
-              color="primary"
+              // color="primary"
               radius="full"
               size="sm"
               className={cn(
-                "px-4 py-1 font-medium transition-all duration-300",
+                "px-4 py-1 font-medium transition-all duration-300 bg-theme-primary-10 text-theme-primary-700",
                 isSticky && "shadow-sm"
               )}
               onPress={() => setShowAllTags(!showAllTags)}
@@ -688,9 +688,9 @@ export function Tags(props: {
                 className={cn(
                   "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group",
                   !isAnyTagActive
-                    ? "bg-primary-500 text-white border-primary-500 shadow-sm"
+                    ? "bg-theme-primary-500 text-white border-theme-primary-500 shadow-sm"
                     : "border border-dark--theme-200 dark:border-dark--theme-800",
-                  "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800"
+                  "hover:shadow-md hover:border-theme-primary-200 dark:hover:border-theme-primary-800"
                 )}
               >
                 {!isAnyTagActive && (

@@ -302,7 +302,7 @@ export function DetailsForm({
         {/* Enhanced Header Section */}
         <div className="text-center mb-16 animate-fade-in-up">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 mb-6 shadow-lg">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-theme-primary-500 to-purple-500 flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-white animate-pulse" />
             </div>
             <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -359,11 +359,11 @@ export function DetailsForm({
             className="relative group animate-fade-in-up"
             style={{ animationDelay: "0.2s" }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 dark:from-blue-400/30 dark:to-purple-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-r from-theme-primary-500/20 to-purple-500/20 dark:from-theme-primary-400/30 dark:to-purple-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
             <div className="relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/30 p-8 shadow-2xl">
               <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-theme-primary-500 to-purple-500 flex items-center justify-center">
                   <Type className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -392,9 +392,9 @@ export function DetailsForm({
                       placeholder={t("DETAILS_FORM.PRODUCT_NAME_PLACEHOLDER")}
                       required
                       className={cn(
-                        "w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400",
+                        "w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400",
                         focusedField === "name" &&
-                          "scale-[1.02] shadow-xl ring-4 ring-blue-500/20",
+                          "scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20",
                         completedFields.has("name") &&
                           "border-green-500/70 bg-green-50/40 dark:bg-green-900/20 ring-2 ring-green-500/20"
                       )}
@@ -433,16 +433,16 @@ export function DetailsForm({
                           className={cn(
                             "group relative overflow-hidden rounded-2xl border-2",
                             isMain
-                              ? "border-blue-200 dark:border-blue-800 bg-blue-50/30 dark:bg-blue-900/10"
+                              ? "border-theme-primary-200 dark:border-theme-primary-800 bg-blue-50/30 dark:bg-blue-900/10"
                               : "border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50",
                             isAnimating && "animate-pulse",
-                            "hover:border-blue-300 dark:hover:border-blue-600"
+                            "hover:border-blue-300 dark:hover:border-theme-primary-600"
                           )}
                         >
                           {/* Link Type Badge */}
                           {isMain && (
                             <div className="absolute top-3 right-3 z-10">
-                              <div className="px-2 py-1 text-xs font-semibold bg-blue-500 text-white rounded-full">
+                              <div className="px-2 py-1 text-xs font-semibold bg-theme-primary-500 text-white rounded-full">
                                 {t("DETAILS_FORM.PRIMARY_BADGE")}
                               </div>
                             </div>
@@ -451,8 +451,8 @@ export function DetailsForm({
                           <div className="p-4 space-y-3">
                             {/* Link Label Row */}
                             <div className="flex items-center gap-3">
-                              <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center group-hover:from-blue-100 group-hover:to-blue-200 dark:group-hover:from-blue-900 dark:group-hover:to-blue-800 transition-all duration-300">
-                                <IconComponent className="w-5 h-5 text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400" />
+                              <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center group-hover:from-theme-primary-100 group-hover:to-theme-primary-200 dark:group-hover:from-theme-primary-900 dark:group-hover:to-theme-primary-800 transition-all duration-300">
+                                <IconComponent className="w-5 h-5 text-gray-600 dark:text-gray-400 group-hover:text-theme-primary-600 dark:group-hover:text-theme-primary-400" />
                               </div>
 
                               <div className="flex-1">
@@ -471,7 +471,7 @@ export function DetailsForm({
                                       ? t("DETAILS_FORM.MAIN_WEBSITE_LABEL")
                                       : t("DETAILS_FORM.LINK_LABEL_PLACEHOLDER")
                                   }
-                                  className="w-full h-10 px-3 text-sm font-medium bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                                  className="w-full h-10 px-3 text-sm font-medium bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 focus:ring-2 focus:ring-theme-primary-20 transition-all duration-200"
                                 />
                               </div>
 
@@ -514,11 +514,10 @@ export function DetailsForm({
                                 className={cn(
                                   "w-full h-12 px-4 pr-12 text-base bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl transition-all duration-300 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400",
                                   focusedField === `link-${link.id}` &&
-                                    "border-blue-500 dark:border-blue-400 ring-4 ring-blue-500/20 scale-[1.01]",
-                                  isMain &&
+                                    "border-theme-primary-500 dark:border-theme-primary-400 ring-4 ring-theme-primary-20 scale-[1.01]",
                                     completedFields.has("mainLink") &&
                                     "border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-900/20",
-                                  "focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20"
+                                  "focus:border-theme-primary-500 dark:focus:border-theme-primary-400 focus:ring-4 focus:ring-theme-primary-20"
                                 )}
                               />
 
@@ -553,7 +552,7 @@ export function DetailsForm({
                     <button
                       type="button"
                       onClick={addLink}
-                      className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors rounded-xl border-2 border-dashed border-blue-200 dark:border-blue-800 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                      className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-theme-primary-600 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 transition-colors rounded-xl border-2 border-dashed border-theme-primary-200 dark:border-theme-primary-800 hover:border-theme-primary-300 dark:hover:border-theme-primary-700 hover:bg-theme-primary-50 dark:hover:bg-theme-primary-900/20"
                     >
                       <Plus className="w-4 h-4" />
                       {t("DETAILS_FORM.ADD_MORE_LINKS")}
@@ -579,9 +578,9 @@ export function DetailsForm({
                       onBlur={() => setFocusedField(null)}
                       required
                       className={cn(
-                        "w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 appearance-none cursor-pointer outline-none text-gray-900 dark:text-white",
+                        "w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 hover:border-gray-300 dark:hover:border-gray-500 appearance-none cursor-pointer outline-none text-gray-900 dark:text-white",
                         focusedField === "category" &&
-                          "scale-[1.02] shadow-xl ring-4 ring-blue-500/20",
+                          "scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20",
                         completedFields.has("category") &&
                           "border-green-500/70 bg-green-50/40 dark:bg-green-900/20 ring-2 ring-green-500/20"
                       )}
@@ -593,7 +592,7 @@ export function DetailsForm({
                         <option
                           key={category}
                           value={category}
-                          className="py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                          className="py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-theme-primary-500"
                         >
                           {category}
                         </option>
@@ -644,7 +643,7 @@ export function DetailsForm({
                     className={cn(
                       "px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover:scale-105 border-2",
                       formData.tags.includes(tag)
-                        ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white border-transparent shadow-lg hover:shadow-xl hover:from-blue-600 hover:to-purple-600"
+                        ? "bg-gradient-to-r from-theme-primary-500 to-purple-500 text-white border-transparent shadow-lg hover:shadow-xl hover:from-theme-primary-600 hover:to-purple-600"
                         : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
                     )}
                   >
@@ -654,10 +653,10 @@ export function DetailsForm({
               </div>
 
               {formData.tags.length > 0 && (
-                <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-200/50 dark:border-blue-700/30">
+                <div className="mt-6 p-4 bg-theme-primary-10 dark:bg-theme-primary-10 rounded-2xl border border-theme-primary-10 dark:border-theme-primary-20">
                   <div className="flex items-center gap-2 mb-2">
-                    <Star className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-                    <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                    <Star className="w-4 h-4 text-theme-primary-500 dark:text-theme-primary-400" />
+                    <span className="text-sm font-semibold text-theme-primary-700 dark:text-theme-primary-300">
                       {t("DETAILS_FORM.SELECTED_TAGS", {
                         count: formData.tags.length,
                       })}
@@ -667,7 +666,7 @@ export function DetailsForm({
                     {formData.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-3 py-1 text-xs font-medium bg-blue-500 text-white rounded-lg"
+                        className="px-3 py-1 text-xs font-medium bg-theme-primary-500 text-white rounded-lg"
                       >
                         {tag}
                       </span>
@@ -719,9 +718,9 @@ export function DetailsForm({
                       required
                       rows={3}
                       className={cn(
-                        "w-full px-6 py-4 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 resize-none outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400",
+                        "w-full px-6 py-4 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 hover:border-gray-300 dark:hover:border-gray-500 resize-none outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400",
                         focusedField === "description" &&
-                          "scale-[1.02] shadow-xl ring-4 ring-blue-500/20",
+                          "scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20",
                         completedFields.has("description") &&
                           "border-green-500/70 bg-green-50/40 dark:bg-green-900/20 ring-2 ring-green-500/20"
                       )}
@@ -760,9 +759,9 @@ export function DetailsForm({
                       )}
                       rows={6}
                       className={cn(
-                        "w-full px-6 py-4 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 resize-none outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400",
+                        "w-full px-6 py-4 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 hover:border-gray-300 dark:hover:border-gray-500 resize-none outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400",
                         focusedField === "introduction" &&
-                          "scale-[1.02] shadow-xl ring-4 ring-blue-500/20",
+                          "scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20",
                         formData.introduction.trim() &&
                           "border-green-500/70 bg-green-50/40 dark:bg-green-900/20 ring-2 ring-green-500/20"
                       )}
@@ -806,7 +805,7 @@ export function DetailsForm({
                 "h-14 px-12 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl min-w-[200px]",
                 completedRequiredFields < requiredFieldsCount
                   ? "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                  : "bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 hover:from-blue-600 hover:via-purple-600 hover:to-blue-700 text-white hover:shadow-blue-500/30"
+                  : "bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 hover:from-theme-primary-600 hover:via-purple-600 hover:to-theme-primary-700 text-white hover:shadow-theme-primary-500/30"
               )}
             >
               <div className="flex items-center gap-3">

@@ -144,11 +144,11 @@ export function ReviewSection({
             className="relative group animate-fade-in-up"
             style={{ animationDelay: "0.1s" }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 dark:from-blue-400/30 dark:to-purple-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-r from-theme-primary-500/20 to-purple-500/20 dark:from-theme-primary-400/30 dark:to-purple-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
             <div className="relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/30 p-8 shadow-2xl">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-theme-primary-500 to-purple-500 flex items-center justify-center">
                   <Star className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -156,9 +156,9 @@ export function ReviewSection({
                 </h3>
               </div>
 
-              <div className="flex justify-between items-center p-6 bg-gradient-to-r from-gray-50/80 to-blue-50/80 dark:from-gray-900/40 dark:to-blue-900/40 rounded-2xl border border-gray-200/30 dark:border-gray-700/30">
+              <div className="flex justify-between items-center p-6 bg-gradient-to-r from-gray-50/80 to-theme-primary-50/80 dark:from-gray-900/40 dark:to-theme-primary-900/40 rounded-2xl border border-gray-200/30 dark:border-gray-700/30">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-theme-primary-500 to-purple-500 flex items-center justify-center">
                     <Star className="w-8 h-8 text-white" />
                   </div>
                   <div>
@@ -171,7 +171,7 @@ export function ReviewSection({
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                  <div className="text-3xl font-bold bg-gradient-to-r from-theme-primary-600 to-purple-600 dark:from-theme-primary-400 dark:to-purple-400 bg-clip-text text-transparent">
                     {getPlanPrice()}
                   </div>
                   {selectedPlan === "sponsor" && (
@@ -233,7 +233,7 @@ export function ReviewSection({
                     Product Link
                   </h4>
                   <div className="p-4 bg-gray-50/80 dark:bg-gray-900/50 rounded-xl border border-gray-200/50 dark:border-gray-700/50">
-                    <p className="text-lg font-semibold text-blue-600 dark:text-blue-400 break-all">
+                    <p className="text-lg font-semibold text-theme-primary-600 dark:text-theme-primary-400 break-all">
                       {formData.link || "Not provided"}
                     </p>
                   </div>
@@ -250,7 +250,7 @@ export function ReviewSection({
                         {formData.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="px-3 py-1 text-sm font-medium bg-blue-500 text-white rounded-lg"
+                            className="px-3 py-1 text-sm font-medium bg-theme-primary-500 text-white rounded-lg"
                           >
                             {tag}
                           </span>
@@ -335,8 +335,8 @@ export function ReviewSection({
                     Processing Time
                   </h4>
                   <div className="flex items-center gap-3 p-4 bg-gray-50/80 dark:bg-gray-900/50 rounded-xl border border-gray-200/50 dark:border-gray-700/50">
-                    <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                      <Zap className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                    <div className="w-10 h-10 rounded-xl bg-theme-primary-100 dark:bg-theme-primary-900/30 flex items-center justify-center">
+                      <Zap className="w-5 h-5 text-theme-primary-500 dark:text-theme-primary-400" />
                     </div>
                     <span className="text-lg font-semibold text-gray-900 dark:text-white">
                       {selectedPlan === "free"
