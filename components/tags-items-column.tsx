@@ -24,7 +24,7 @@ function BlockLink({
         "font-medium text-left justify-start items-center transition-colors duration-300 mb-1 h-10 px-3",
         "hover:transform-none active:transform-none",
         {
-          "bg-blue-500 text-white": isActive,
+          "bg-theme-primary-500 text-white": isActive,
           "bg-gray-800 text-white": !isActive && isAlltags,
           "bg-transparent text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800":
             !isActive && !isAlltags,
@@ -81,7 +81,7 @@ export function TagsItemsColumn(props: { total: number; tag: Tag[] }) {
                   <span className="font-bold text-gray-800 dark:text-gray-200 transition-colors duration-300 text-sm sm:text-base">
                     {t("TAG")}
                   </span>
-                  <span className="bg-blue-100 dark:bg-gray-800 text-blue-700 dark:text-gray-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-bold border border-blue-200 dark:border-gray-700/50">
+                  <span className="bg-theme-primary-100 dark:bg-gray-800 text-theme-primary-700 dark:text-gray-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-bold border border-theme-primary-200 dark:border-gray-700/50">
                     {props.total}
                   </span>
                 </div>
@@ -132,11 +132,11 @@ export function TagsItemsColumn(props: { total: number; tag: Tag[] }) {
                     <span className="text-xs text-gray-500 dark:text-gray-400">
                       Search:
                     </span>
-                    <span className="inline-flex items-center px-2 lg:px-3 py-0.5 lg:py-1 rounded-lg bg-blue-100 dark:bg-gray-800 text-blue-700 dark:text-blue-400 text-xs lg:text-sm font-medium border border-blue-200 dark:border-gray-700">
+                    <span className="inline-flex items-center px-2 lg:px-3 py-0.5 lg:py-1 rounded-lg bg-theme-primary-100 dark:bg-gray-800 text-theme-primary-700 dark:text-theme-primary-400 text-xs lg:text-sm font-medium border border-theme-primary-200 dark:border-gray-700">
                       {searchTerm}
                       <button
                         onClick={() => setSearchTerm("")}
-                        className="ml-1.5 lg:ml-2 text-blue-600/70 dark:text-blue-400/70 hover:text-blue-800 dark:hover:text-blue-300"
+                        className="ml-1.5 lg:ml-2 text-theme-primary-600/70 dark:text-theme-primary-400/70 hover:text-theme-primary-800 dark:hover:text-theme-primary-300"
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -155,12 +155,12 @@ export function TagsItemsColumn(props: { total: number; tag: Tag[] }) {
                         return tag ? (
                           <span
                             key={tagId}
-                            className="inline-flex items-center px-2 lg:px-3 py-0.5 lg:py-1 rounded-lg bg-blue-100 dark:bg-gray-800 text-blue-700 dark:text-blue-400 text-xs lg:text-sm font-medium border border-blue-200 dark:border-gray-700"
+                            className="inline-flex items-center px-2 lg:px-3 py-0.5 lg:py-1 rounded-lg bg-theme-primary-100 dark:bg-gray-800 text-theme-primary-700 dark:text-theme-primary-400 text-xs lg:text-sm font-medium border border-theme-primary-200 dark:border-gray-700"
                           >
                             {tag.name}
                             <button
                               onClick={() => removeSelectedTag(tagId)}
-                              className="ml-1.5 lg:ml-2 text-blue-600/70 dark:text-blue-400/70 hover:text-blue-800 dark:hover:text-blue-300"
+                              className="ml-1.5 lg:ml-2 text-theme-primary-600/70 dark:text-theme-primary-400/70 hover:text-theme-primary-800 dark:hover:text-theme-primary-300"
                             >
                               <X className="w-3 h-3" />
                             </button>

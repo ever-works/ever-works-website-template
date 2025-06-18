@@ -9,7 +9,7 @@ import { ThemeConfig, ThemeKey } from '@/components/context/LayoutThemeContext';
 // Extended theme configurations with full color palettes
 export const EXTENDED_THEME_CONFIGS: Record<ThemeKey, ThemeConfig> = {
   everworks: {
-    primary: "#0548f1",
+    primary: "#3d70ef",
     secondary: "#00c853",
     accent: "#0056b3",
     background: "#ffffff",
@@ -18,7 +18,7 @@ export const EXTENDED_THEME_CONFIGS: Record<ThemeKey, ThemeConfig> = {
     textSecondary: "#6c757d",
   },
   corporate: {
-    primary: "#2c3e50",
+    primary: "#00c853",
     secondary: "#e74c3c",
     accent: "#34495e",
     background: "#ffffff",
