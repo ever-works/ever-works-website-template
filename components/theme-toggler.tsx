@@ -26,9 +26,8 @@ export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
       <div className="flex items-center gap-1.5">
         <Switch
           size="lg"
-          color="primary"
           endContent={
-            <Sun className="h-8 w-8 text-yellow-500 dark:text-yellow-1000" />
+            <Sun className="h-8 w-8 text-theme-primary dark:text-theme-primary" />
           }
           startContent={
             <Moon className="h-8 w-8 text-theme-primary dark:text-theme-primary" />
@@ -38,7 +37,7 @@ export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
             setTheme(isSelected ? "dark" : "light")
           }
           classNames={{
-            wrapper: "bg-gray-300 group-data-[selected=true]:bg-blue-500",
+            wrapper: "bg-gray-300 group-data-[selected=true]:bg-theme-primary",
             thumb: "shadow-sm",
             thumbIcon: "bg-gray-300 group-data-[selected=true]:bg-theme-primary",
           }}

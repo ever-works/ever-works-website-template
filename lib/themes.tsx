@@ -13,36 +13,36 @@ export interface ThemeMetadata {
 // Theme preview components
 export const ThemePreviews: Record<ThemeKey, React.ReactNode> = {
   everworks: (
-    <div className="w-12 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded overflow-hidden relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-blue-700/20"></div>
+    <div className="w-12 h-8 bg-[#3d70ef] rounded overflow-hidden relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/10"></div>
       <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-sm"></div>
       <div className="absolute top-1 right-1 w-1 h-1 bg-white/60 rounded-full"></div>
     </div>
   ),
   corporate: (
-    <div className="w-12 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded overflow-hidden relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-700/20 to-blue-800/20"></div>
+    <div className="w-12 h-8 bg-[#00c853] rounded overflow-hidden relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/10"></div>
       <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-sm"></div>
       <div className="absolute top-1 right-1 w-1 h-1 bg-white/60 rounded-full"></div>
     </div>
   ),
   material: (
-    <div className="w-12 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded overflow-hidden relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-blue-700/20"></div>
+    <div className="w-12 h-8 bg-[#673ab7] rounded overflow-hidden relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/10"></div>
       <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-sm"></div>
       <div className="absolute top-1 right-1 w-1 h-1 bg-white/60 rounded-full"></div>
     </div>
   ),
   funny: (
-    <div className="w-12 h-8 bg-gradient-to-br from-blue-400 to-blue-500 rounded overflow-hidden relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-blue-600/20"></div>
+    <div className="w-12 h-8 bg-[#ff4081] rounded overflow-hidden relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/10"></div>
       <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-sm"></div>
       <div className="absolute top-1 right-1 w-1 h-1 bg-white/60 rounded-full"></div>
     </div>
   ),
   modern: (
-    <div className="w-12 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded overflow-hidden relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-blue-700/20"></div>
+    <div className="w-12 h-8 bg-[#6366f1] rounded overflow-hidden relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/10"></div>
       <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-sm"></div>
       <div className="absolute top-1 right-1 w-1 h-1 bg-white/60 rounded-full"></div>
     </div>
