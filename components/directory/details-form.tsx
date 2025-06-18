@@ -327,14 +327,14 @@ export function DetailsForm({
           <div className="max-w-2xl mx-auto">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-theme-primary-500 to-purple-500 flex items-center justify-center">
                   <Check className="w-3 h-3 text-white" />
                 </div>
                 <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                   {t("DETAILS_FORM.FORM_COMPLETION")}
                 </span>
               </div>
-              <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+              <span className="text-sm font-bold text-theme-primary-600 dark:text-theme-primary-400">
                 {t("DETAILS_FORM.REQUIRED_FIELDS", {
                   completed: completedRequiredFields,
                   total: requiredFieldsCount,
@@ -344,7 +344,7 @@ export function DetailsForm({
 
             <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
               <div
-                className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 rounded-full transition-all duration-700 ease-out shadow-lg"
+                className="h-full bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 rounded-full transition-all duration-700 ease-out shadow-lg"
                 style={{ width: `${progressPercentage}%` }}
               >
                 <div className="absolute inset-0 bg-white/20 rounded-full animate-shimmer"></div>

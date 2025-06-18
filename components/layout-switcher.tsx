@@ -18,7 +18,7 @@ const getLayoutMap = (isDark: boolean) =>
       color: "blue",
       icon: <Layout className="w-4 h-4" />,
       preview: (
-        <div className="w-full h-32 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-xl overflow-hidden border-2 border-blue-300 dark:border-blue-600 relative group shadow-lg hover:shadow-xl transition-all duration-300 group">
+        <div className="w-full h-32 bg-gradient-to-br from-theme-primary-50 to-theme-primary-100 dark:from-theme-primary-950 dark:to-theme-primary-900 rounded-xl overflow-hidden border-2 border-theme-primary-300 dark:border-theme-primary-600 relative group shadow-lg hover:shadow-xl transition-all duration-300 group">
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <Image
             src={isDark ? "/home-1.png" : "/home-light-1.png"}
@@ -27,7 +27,7 @@ const getLayoutMap = (isDark: boolean) =>
             className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 768px) 100vw, 300px"
           />
-          <div className="absolute top-2 right-2 bg-blue-500/90 text-white px-2 py-1 rounded-lg text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute top-2 right-2 bg-theme-primary-500 text-white px-2 py-1 rounded-lg text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             Preview
           </div>
         </div>
@@ -39,7 +39,7 @@ const getLayoutMap = (isDark: boolean) =>
       color: "purple",
       icon: <Sparkles className="w-4 h-4" />,
       preview: (
-        <div className="w-full h-32 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 rounded-xl overflow-hidden border-2 border-purple-300 dark:border-purple-600 relative group shadow-lg hover:shadow-xl transition-all duration-300">
+        <div className="w-full h-32 bg-gradient-to-br from-theme-primary-20 to-theme-primary-100 dark:from-theme-primary-950 dark:to-theme-primary-900 rounded-xl overflow-hidden border-2 border-theme-primary-300 dark:border-theme-primary-600 relative group shadow-lg hover:shadow-xl transition-all duration-300">
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <Image
             src={isDark ? "/home-2.png" : "/home-light-2.png"}
@@ -48,7 +48,7 @@ const getLayoutMap = (isDark: boolean) =>
             className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 768px) 100vw, 300px"
           />
-          <div className="absolute top-2 right-2 bg-purple-500/90 text-white px-2 py-1 rounded-lg text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute top-2 right-2 bg-theme-primary-500 text-white px-2 py-1 rounded-lg text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             Preview
           </div>
         </div>
@@ -122,11 +122,11 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
     if (isActive) {
       switch (color) {
         case "blue":
-          return "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/50 border-blue-400 dark:border-blue-500 shadow-blue-200 dark:shadow-blue-900/50";
+          return "bg-gradient-to-br from-theme-primary-10 to-theme-primary-10 dark:from-theme-primary-20 dark:to-theme-primary-20 border-theme-primary-400 dark:border-theme-primary-500 ";
         case "purple":
-          return "bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border-purple-400 dark:border-purple-500 shadow-purple-200 dark:shadow-purple-900/50";
+          return "bg-gradient-to-br from-theme-primary-10 to-theme-primary-10 dark:from-theme-primary-20 dark:to-theme-primary-20 border-theme-primary-400 dark:border-theme-primary-500 shadow-theme-primary-400 dark:shadow-theme-primary-20";
         case "emerald":
-          return "bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/50 dark:to-emerald-900/50 border-emerald-400 dark:border-emerald-500 shadow-emerald-200 dark:shadow-emerald-900/50";
+          return "bg-gradient-to-br from-theme-primary-10 to-theme-primary-10 dark:from-theme-primary-20 dark:to-theme-primary-20 border-theme-primary-400 dark:border-theme-primary-500";
         default:
           return "bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/50 dark:to-gray-900/50 border-gray-400 dark:border-gray-500";
       }
@@ -148,22 +148,22 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
     if (isActive) {
       switch (color) {
         case "blue":
-          return "bg-blue-500 text-white";
+          return "bg-theme-primary-500 text-white";
         case "purple":
-          return "bg-purple-500 text-white";
+          return "bg-theme-primary-500 text-white";
         case "emerald":
-          return "bg-emerald-500 text-white";
+          return "bg-theme-primary-500 text-white";
         default:
           return "bg-gray-500 text-white";
       }
     } else {
       switch (color) {
         case "blue":
-          return "bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400";
+          return "bg-theme-primary-100 dark:bg-theme-primary-900/50 text-theme-primary-600 dark:text-theme-primary-400";
         case "purple":
-          return "bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400";
+          return "bg-theme-primary-100 dark:bg-theme-primary-900/50 text-theme-primary-600 dark:text-theme-primary-400";
         case "emerald":
-          return "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400";
+          return "bg-theme-primary-100 dark:bg-theme-primary-900/50 text-theme-primary-600 dark:text-theme-primary-400";
         default:
           return "bg-gray-100 dark:bg-gray-900/50 text-gray-600 dark:text-gray-400";
       }
@@ -175,18 +175,18 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
       switch (color) {
         case "blue":
           return {
-            title: "text-blue-700 dark:text-blue-300",
-            desc: "text-blue-600 dark:text-blue-400",
+            title: "text-theme-primary-700 dark:text-theme-primary-300",
+            desc: "text-theme-primary-600 dark:text-theme-primary-400",
           };
         case "purple":
           return {
-            title: "text-purple-700 dark:text-purple-300",
-            desc: "text-purple-600 dark:text-purple-400",
+            title: "text-theme-primary-700 dark:text-theme-primary-300",
+            desc: "text-theme-primary-600 dark:text-theme-primary-400",
           };
         case "emerald":
           return {
-            title: "text-emerald-700 dark:text-emerald-300",
-            desc: "text-emerald-600 dark:text-emerald-400",
+            title: "text-theme-primary-700 dark:text-theme-primary-300",
+            desc: "text-theme-primary-600 dark:text-theme-primary-400",
           };
         default:
           return {
@@ -205,13 +205,13 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
   const getBadgeClasses = (color: string) => {
     switch (color) {
       case "blue":
-        return "bg-blue-500 text-white";
+        return "bg-theme-primary-500 text-white";
       case "purple":
-        return "bg-purple-500 text-white";
+        return "bg-theme-primary-500 text-white";
       case "emerald":
-        return "bg-emerald-500 text-white";
+        return "bg-theme-primary-500 text-white";
       default:
-        return "bg-gray-500 text-white";
+        return "bg-theme-primary-500 text-white";
     }
   };
 
@@ -285,7 +285,7 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
           aria-label={`Current layout: ${currentLayout.name}`}
         >
           <div className="relative z-10 flex items-center gap-2">
-            <Layout className="h-4 w-4 text-blue-500 dark:text-blue-400" />
+            <Layout className="h-4 w-4 text-theme-primary-500 dark:text-theme-primary-400" />
             <span className="font-medium">Layout</span>
             <ChevronDown className="h-3.5 w-3.5 text-gray-500 dark:text-gray-400 transition-all duration-300 group-hover:rotate-180" />
           </div>
@@ -295,7 +295,7 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
       <PopoverContent className="p-4 w-96 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl backdrop-blur-md">
         <div className="space-y-4">
           <div className="flex items-center gap-3 pb-3 border-b border-gray-200 dark:border-gray-700">
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl">
+            <div className="p-2 bg-gradient-to-r from-theme-primary-500 to-purple-500 rounded-xl">
               <Layout className="h-5 w-5 text-white" />
             </div>
             <div>
