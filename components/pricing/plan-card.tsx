@@ -38,7 +38,6 @@ export function PlanCard({
   isSelected,
   onSelect,
   actionText,
-  actionVariant = "outline",
   actionHref,
   children,
 }: PlanCardProps) {
