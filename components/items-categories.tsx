@@ -58,9 +58,9 @@ export function ItemsCategories(props: {
           className={cn(
             "px-2 sm:px-3 py-1 h-7 sm:h-8 font-medium transition-all duration-200",
             isActive
-              ? "bg-primary-500 text-white border-primary-500 shadow-sm"
+              ? "bg-theme-primary text-white border-theme-primary shadow-sm"
               : "border border-dark--theme-200 dark:border-dark--theme-800",
-            "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800",
+            "hover:shadow-md hover:border-theme-primary dark:hover:border-theme-primary",
             !showAllCategories && "flex-shrink-0"
           )}
         >
@@ -155,12 +155,11 @@ export function ItemsCategories(props: {
             {hasMoreTags && (
               <Button
                 variant="flat"
-                color="primary"
                 radius="full"
                 size="sm"
                 className={cn(
-                  "px-2 sm:px-4 py-0.5 sm:py-1 text-xs sm:text-sm font-medium transition-all duration-300",
-                  isSticky && "shadow-sm"
+                  "px-3 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-theme-primary-100 to-theme-primary-100 text-theme-primary border border-theme-primary-500 dark:from-theme-primary-900/30 dark:to-theme-primary-900/30 dark:text-theme-primary dark:border-theme-primary-500 transition-all duration-300 hover:scale-105 hover:shadow-md capitalize shadow-sm bg-theme-primary-10",
+                  isSticky && "shadow-md"
                 )}
                 onPress={() => setShowAllCategories(!showAllCategories)}
               >
@@ -191,11 +190,12 @@ export function ItemsCategories(props: {
                     </span>
                     <span className="sm:hidden">All</span>
                     <svg
+
                       width="14"
                       height="14"
                       viewBox="0 0 24 24"
                       fill="none"
-                      className="ml-1 sm:ml-1.5 transition-transform group-hover:translate-y-0.5 dark:text-default-300"
+                      className="ml-1 sm:ml-1.5 transition-transform group-hover:translate-y-0.5 dark:text-default-300 text-white"
                     >
                       <path
                         d="M4 4h16v7H4V4zm0 9h16v7H4v-7z"
@@ -223,9 +223,9 @@ export function ItemsCategories(props: {
                   className={cn(
                     "px-2 sm:px-3 py-1 h-7 sm:h-8 font-medium transition-all duration-300 flex-shrink-0 group",
                     !isAnyTagActive
-                      ? "bg-primary-500 text-white border-primary-500 shadow-sm"
+                      ? "bg-theme-primary-500 text-white border-theme-primary-500 shadow-sm"
                       : "border border-dark--theme-200 dark:border-dark--theme-800",
-                    "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800"
+                    "hover:shadow-md hover:border-theme-primary-200 dark:hover:border-theme-primary-800"
                   )}
                 >
                   {!isAnyTagActive && (

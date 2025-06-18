@@ -29,7 +29,8 @@
 
     /* Theme variables - defaults to everworks theme */
     /* Theme variables - defaults to everworks theme */
-    --theme-primary: #4d88ca;
+    --theme-primary: #0548f1;
+    --theme-primary-rgb: 77, 136, 202;
     --theme-primary-50: #eff6ff;
     --theme-primary-100: #dbeafe;
     --theme-primary-200: #bfdbfe;
@@ -41,8 +42,35 @@
     --theme-primary-800: #1e40af;
     --theme-primary-900: #1e3a8a;
     --theme-primary-950: #172554;
+    
+    /* Theme Secondary - Green palette */
     --theme-secondary: #00c853;
-    --theme-accent: #0056b3;
+    --theme-secondary-50: #e8f5e9;
+    --theme-secondary-100: #c8e6c9;
+    --theme-secondary-200: #a5d6a7;
+    --theme-secondary-300: #81c784;
+    --theme-secondary-400: #66bb6a;
+    --theme-secondary-500: #4caf50;
+    --theme-secondary-600: #43a047;
+    --theme-secondary-700: #388e3c;
+    --theme-secondary-800: #2e7d32;
+    --theme-secondary-900: #1b5e20;
+    --theme-secondary-950: #0d3810;
+    
+    /* Theme Accent - Darker Blue palette */
+    --theme-accent: #0548f1;
+    --theme-accent-50: #e3f2fd;
+    --theme-accent-100: #bbdefb;
+    --theme-accent-200: #90caf9;
+    --theme-accent-300: #64b5f6;
+    --theme-accent-400: #42a5f5;
+    --theme-accent-500: #2196f3;
+    --theme-accent-600: #1e88e5;
+    --theme-accent-700: #1976d2;
+    --theme-accent-800: #1565c0;
+    --theme-accent-900: #0d47a1;
+    --theme-accent-950: #082a5e;
+    
     --theme-background: #ffffff;
     --theme-surface: #f8f9fa;
     --theme-text: #1a1a1a;
@@ -103,7 +131,27 @@
   .bg-theme-primary-100 {
     background-color: var(--theme-primary-100);
   }
-   
+  .bg-theme-primary-200 {
+    background-color: var(--theme-primary-200);
+  }
+  .bg-theme-primary-300 {
+    background-color: var(--theme-primary-300);
+  }
+  .bg-theme-primary-400 {
+    background-color: var(--theme-primary-400);
+  }
+  .bg-theme-primary-500 {
+    background-color: var(--theme-primary-500);
+  }
+  .bg-theme-primary-600 {
+    background-color: var(--theme-primary-600);   
+  }
+  .bg-theme-primary-700 {
+    background-color: var(--theme-primary-700);
+  }
+  .bg-theme-primary-800 {
+    background-color: var(--theme-primary-800);
+  }
   .to-theme-primary {
     --tw-gradient-to: var(--theme-primary) var(--tw-gradient-to-position);
   }
@@ -218,6 +266,15 @@
   
   .border-theme-accent {
     border-color: var(--theme-accent);
+  }
+  
+  /* Opacity variants */
+  .bg-theme-primary-10 {
+    background-color: rgba(var(--theme-primary-rgb), 0.1);
+  }
+  
+  .bg-theme-primary-20 {
+    background-color: rgba(var(--theme-primary-rgb), 0.2);
   }
   
   /* Hover variants */

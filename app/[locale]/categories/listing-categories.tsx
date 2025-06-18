@@ -198,7 +198,7 @@ function ListingCategories(props: ListingCategoriesProps) {
 
   const heroTitle = useMemo(
     () => (
-      <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 bg-clip-text text-transparent">
+      <span className="bg-gradient-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent">
         Discover Categories
       </span>
     ),

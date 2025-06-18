@@ -44,7 +44,7 @@ const TagButton = ({ tag, isActive, href, onPress }: TagButtonProps) => {
         "group w-full font-medium text-left h-6 justify-start items-center transition-all duration-200",
         "hover:shadow-md hover:scale-[1.02] active:scale-[0.98]",
         {
-          "bg-blue-500 dark:bg-blue-600 text-white border border-blue-500 dark:border-blue-600":
+          "bg-theme-primary-500 dark:bg-theme-primary-600 text-white border border-theme-primary-500 dark:border-theme-primary-600":
             isActive,
           "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700/50 bg-white dark:bg-gray-800 border border-gray-50 dark:border-gray-800":
             !isActive,
@@ -73,7 +73,7 @@ const TagButton = ({ tag, isActive, href, onPress }: TagButtonProps) => {
               "text-sm transition-colors truncate pr-2 capitalize",
               isActive
                 ? "text-white"
-                : "text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                : "text-gray-700 dark:text-gray-300 group-hover:text-theme-primary-600 dark:group-hover:text-theme-primary-400"
             )}
             title={isTextTruncated ? tag.name : undefined}
           >
@@ -86,7 +86,7 @@ const TagButton = ({ tag, isActive, href, onPress }: TagButtonProps) => {
               "text-xs font-medium px-2 py-0.5 rounded-md transition-colors capitalize",
               isActive
                 ? "bg-white/20 text-white capitalize"
-                : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 group-hover:text-blue-600 dark:group-hover:text-blue-400 capitalize"
+                : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 group-hover:bg-theme-primary-50 dark:group-hover:bg-theme-primary-900/30 group-hover:text-theme-primary-600 dark:group-hover:text-theme-primary-400 capitalize"
             )}
           >
             {tag.count}
@@ -136,7 +136,7 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
           <Button
             disableRipple
             className={cn(
-              "bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-2 sm:px-3 h-8 sm:h-9 text-xs sm:text-sm text-blue-600 dark:text-blue-400 transition-colors duration-300",
+              "bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-2 sm:px-3 h-8 sm:h-9 text-xs sm:text-sm text-theme-primary-600 dark:text-theme-primary-400 transition-colors duration-300",
               "group flex items-center gap-1 sm:gap-2 min-w-[80px] sm:min-w-[100px]"
             )}
             radius="sm"
@@ -180,14 +180,14 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
             {/* Search Bar */}
             <div className="relative group w-full">
               <div className="absolute inset-y-0 left-0 pl-2.5 sm:pl-3 flex items-center pointer-events-none">
-                <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors" />
+                <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400 group-focus-within:text-theme-primary-500 dark:group-focus-within:text-theme-primary-400 transition-colors" />
               </div>
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder={t("listing.SEARCH")}
-                className="w-full pl-8 sm:pl-9 pr-7 sm:pr-8 py-1.5 sm:py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-xs sm:text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-all duration-200"
+                className="w-full pl-8 sm:pl-9 pr-7 sm:pr-8 py-1.5 sm:py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-xs sm:text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-theme-primary-500 dark:focus:ring-theme-primary-400 transition-all duration-200"
               />
               {searchTerm && (
                 <Button

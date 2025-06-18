@@ -13,11 +13,12 @@ export function HomeTwoSortSelector({ sortBy, setSortBy, className }: ISortSelec
   return (
     <div className={`relative inline-block ${className || ""}`}>
       <select
+        
         value={sortBy}
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
           setSortBy && setSortBy(e.target.value)
         }
-        className="appearance-none bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-2 sm:px-3 py-1.5 pr-8 sm:pr-10 text-xs sm:text-sm text-blue-600 dark:text-blue-400 w-full min-w-[100px] sm:min-w-[120px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+        className="appearance-none bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-2 sm:px-3 py-1.5 pr-8 sm:pr-10 text-xs sm:text-sm text-theme-primary-600 dark:text-theme-primary-400 w-full min-w-[100px] sm:min-w-[120px] focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-transparent transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700"
         aria-label="Sort by"
       >
         <option value="popularity">{t("listing.POPULARITY")}</option>

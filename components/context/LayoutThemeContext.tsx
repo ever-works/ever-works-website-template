@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { LayoutKey } from "@/components/layouts";
+import { applyThemeWithPalettes } from "@/lib/theme-color-manager";
 
 // Constants
 const DEFAULT_LAYOUT: LayoutKey = "classic";
@@ -117,6 +118,8 @@ const useThemeManager = () => {
     setThemeKeyState(key);
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEYS.THEME, key);
+      // Apply theme with full color palettes
+      applyThemeWithPalettes(key);
     }
   }, []);
 
@@ -127,6 +130,10 @@ const useThemeManager = () => {
     const theme = THEME_CONFIGS[themeKey];
     if (theme) {
       applyThemeVariables(theme);
+      // Also apply the full color palettes
+      if (typeof window !== "undefined") {
+        applyThemeWithPalettes(themeKey);
+      }
     }
   }, [themeKey, applyThemeVariables]);
 

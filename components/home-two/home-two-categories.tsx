@@ -521,7 +521,7 @@ export function Categories(props: {
               radius="full"
               size="sm"
               className={cn(
-                "px-4 py-1 font-medium transition-all duration-300  text-white bg-theme-primary dark:bg-theme-primary hover:bg-theme-primary hover:to-theme-primary",
+                "px-4 py-1 font-medium transition-all duration-300  text-theme-primary bg-theme-primary-10 hover:to-theme-primary",
                 isSticky && "shadow-sm"
               )}
               onPress={() => setShowAllCategories(!showAllCategories)}

@@ -58,7 +58,7 @@ export default function Item(props: ItemProps) {
             <div className="flex justify-between items-start gap-3">
               <div className="flex items-center gap-4">
                 <div className="relative flex-shrink-0">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-500 bg-gradient-to-br from-blue-50 to-indigo-100 border border-blue-200/50 group-hover:from-blue-100 group-hover:to-indigo-200 dark:from-blue-900/30 dark:to-indigo-900/30 dark:border-blue-700/30 dark:group-hover:from-blue-800/40 dark:group-hover:to-indigo-800/40 group-hover:scale-110 group-hover:rotate-3 shadow-sm group-hover:shadow-md">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-500 bg-gradient-to-br from-theme-primary-10 to-indigo-100 border border-theme-primary-500 group-hover:from-theme-primary-10 group-hover:to-indigo-200 dark:from-theme-primary-10 dark:to-indigo-900/30 dark:border-theme-primary-700/30 dark:group-hover:from-theme-primary-800/40 dark:group-hover:to-indigo-800/40 group-hover:scale-110 group-hover:rotate-3 shadow-sm group-hover:shadow-md">
                     {props.icon_url ? (
                       <Image
                         src={props.icon_url}
@@ -72,7 +72,7 @@ export default function Item(props: ItemProps) {
                     )}
                   </div>
                   {/* Pulse effect */}
-                  <div className="absolute inset-0 rounded-2xl bg-blue-400/20 opacity-0 group-hover:opacity-100 group-hover:animate-ping transition-opacity duration-300" />
+                  <div className="absolute inset-0 rounded-2xl bg-theme-primary-10 opacity-0 group-hover:opacity-100 group-hover:animate-ping transition-opacity duration-300" />
                 </div>
 
               <div className="flex-1 min-w-0">
@@ -100,7 +100,7 @@ export default function Item(props: ItemProps) {
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-3 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-theme-primary-100 to-theme-primary-100 text-theme-primary border border-blue-200/50 dark:from-theme-primary-900/30 dark:to-theme-primary-900/30 dark:text-theme-primary dark:border-blue-700/30 transition-all duration-300 hover:scale-105 hover:shadow-md capitalize shadow-sm">
+              <span className="bg-theme-primary-10 px-3 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-theme-primary-100 to-theme-primary-100 text-theme-primary border border-theme-primary-500 dark:from-theme-primary-900/30 dark:to-theme-primary-900/30 dark:text-theme-primary dark:border-theme-primary-500 transition-all duration-300 hover:scale-105 hover:shadow-md capitalize shadow-sm">
                 {getCategoriesName(props.category)}
               </span>
               {props.tags &&
@@ -169,8 +169,8 @@ export default function Item(props: ItemProps) {
 
       {/* Enhanced hover indicator */}
       <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-2 group-hover:translate-x-0">
-        <div className="w-8 h-8 rounded-full bg-blue-500/10 dark:bg-blue-400/10 flex items-center justify-center backdrop-blur-sm border border-blue-200/30 dark:border-blue-700/30">
-          <FiArrowUpRight className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        <div className="w-8 h-8 rounded-full bg-theme-primary-500/10 dark:bg-theme-primary-400/10 flex items-center justify-center backdrop-blur-sm border border-theme-primary-10 dark:border-theme-primary">
+          <FiArrowUpRight className="w-4 h-4 text-theme-primary-600 dark:text-theme-primary-400" />
         </div>
       </div>
 
