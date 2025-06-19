@@ -111,7 +111,6 @@ const ErrorState = ({ error, retry }: { error: Error; retry: () => void }) => {
 
 // Main component
 export function InfinityScroll({
-  basePath,
   initialPage,
   total,
   onLoadMore,
