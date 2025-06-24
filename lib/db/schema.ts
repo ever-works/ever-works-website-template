@@ -1,12 +1,12 @@
 import {
-  boolean,
-  timestamp,
-  pgTable,
-  text,
-  primaryKey,
-  integer,
-  serial,
-  varchar,
+    boolean,
+    timestamp,
+    pgTable,
+    text,
+    primaryKey,
+    integer,
+    serial,
+    varchar,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
 
@@ -105,9 +105,23 @@ export const passwordResetTokens = pgTable("passwordResetTokens", {
   expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 
+export const newsletterSubscriptions = pgTable("newsletter_subscriptions", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  email: text("email").notNull().unique(),
+  isActive: boolean("is_active").notNull().default(true),
+  subscribedAt: timestamp("subscribed_at").notNull().defaultNow(),
+  unsubscribedAt: timestamp("unsubscribed_at"),
+  lastEmailSent: timestamp("last_email_sent"),
+  source: text("source").default("footer"), // footer, popup, etc.
+});
+
 export type NewUser = typeof users.$inferInsert;
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type NewActivityLog = typeof activityLogs.$inferInsert;
+export type NewsletterSubscription = typeof newsletterSubscriptions.$inferSelect;
+export type NewNewsletterSubscription = typeof newsletterSubscriptions.$inferInsert;
 
 export enum ActivityType {
   SIGN_UP = "SIGN_UP",

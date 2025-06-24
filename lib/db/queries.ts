@@ -8,6 +8,9 @@ import {
   passwordResetTokens,
   users,
   verificationTokens,
+  newsletterSubscriptions,
+  type NewNewsletterSubscription,
+  type NewsletterSubscription,
 } from "./schema";
 
 export async function logActivity(
@@ -173,6 +176,126 @@ export async function getUserById(id: string) {
       console.error("Database error in getUserById:", error);
     }
     return null;
+  }
+}
+
+// ######################### Newsletter Subscription Queries #########################
+
+export async function createNewsletterSubscription(
+  email: string,
+  source: string = "footer"
+): Promise<NewsletterSubscription | null> {
+  try {
+    const newSubscription: NewNewsletterSubscription = {
+      email: email.toLowerCase().trim(),
+      source,
+    };
+
+    const result = await db
+      .insert(newsletterSubscriptions)
+      .values(newSubscription)
+      .returning();
+
+    return result[0] || null;
+  } catch (error) {
+    console.error("Error creating newsletter subscription:", error);
+    return null;
+  }
+}
+
+export async function getNewsletterSubscriptionByEmail(email: string) {
+  try {
+    const subscriptions = await db
+      .select()
+      .from(newsletterSubscriptions)
+      .where(eq(newsletterSubscriptions.email, email.toLowerCase().trim()))
+      .limit(1);
+
+    return subscriptions[0] || null;
+  } catch (error) {
+    console.error("Error getting newsletter subscription:", error);
+    return null;
+  }
+}
+
+export async function updateNewsletterSubscription(
+  email: string,
+  updates: Partial<Pick<NewsletterSubscription, "isActive" | "unsubscribedAt">>
+) {
+  try {
+    const result = await db
+      .update(newsletterSubscriptions)
+      .set(updates)
+      .where(eq(newsletterSubscriptions.email, email.toLowerCase().trim()))
+      .returning();
+
+    return result[0] || null;
+  } catch (error) {
+    console.error("Error updating newsletter subscription:", error);
+    return null;
+  }
+}
+
+export async function unsubscribeFromNewsletter(email: string) {
+  try {
+    const result = await db
+      .update(newsletterSubscriptions)
+      .set({
+        isActive: false,
+        unsubscribedAt: new Date(),
+      })
+      .where(eq(newsletterSubscriptions.email, email.toLowerCase().trim()))
+      .returning();
+
+    return result[0] || null;
+  } catch (error) {
+    console.error("Error unsubscribing from newsletter:", error);
+    return null;
+  }
+}
+
+export async function resubscribeToNewsletter(email: string) {
+  try {
+    const result = await db
+      .update(newsletterSubscriptions)
+      .set({
+        isActive: true,
+        unsubscribedAt: null,
+      })
+      .where(eq(newsletterSubscriptions.email, email.toLowerCase().trim()))
+      .returning();
+
+    return result[0] || null;
+  } catch (error) {
+    console.error("Error resubscribing to newsletter:", error);
+    return null;
+  }
+}
+
+export async function getNewsletterStats() {
+  try {
+    const totalSubscriptions = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(newsletterSubscriptions)
+      .where(eq(newsletterSubscriptions.isActive, true));
+
+    const recentSubscriptions = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(newsletterSubscriptions)
+      .where(
+        sql`${newsletterSubscriptions.subscribedAt} >= NOW() - INTERVAL '30 days'`
+      );
+
+    return {
+      totalActive: totalSubscriptions[0]?.count || 0,
+      recentSubscriptions: recentSubscriptions[0]?.count || 0,
+    };
+  } catch (error) {
+    console.error("Error getting newsletter stats:", error);
+    return {
+      totalActive: 0,
+      recentSubscriptions: 0,
+    };
   }
 }
 

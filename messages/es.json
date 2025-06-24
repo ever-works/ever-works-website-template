@@ -76,8 +76,13 @@
     "FOR_DEVELOPERS": "para desarrolladores de todo el mundo",
     "VIEW_DETAILS": "Ver detalles",
     "BUILDING_FUTURE": "Construyendo el futuro de las experiencias digitales con soluciones innovadoras y diseño excepcional.",
-    "ENTER_EMAIL": "Ingresa tu correo electrónico",
-    "COOKIES": "Cookies"
+    "ENTER_EMAIL": "Ingresa tu email",
+    "COOKIES": "Cookies",
+    "INVALID_EMAIL": "Por favor ingresa una dirección de email válida",
+    "SUBSCRIPTION_ERROR": "Error al suscribirse. Por favor intenta de nuevo.",
+    "SUBSCRIPTION_SUCCESS": "¡Gracias por suscribirte! Revisa tu email para confirmación.",
+    "SUBMITTING": "Enviando...",
+    "SUBSCRIBE_AGAIN": "Suscribirse con otro email"
   },
   "listing": {
     "ALL": "Todo",
@@ -160,7 +165,20 @@
     "SUBSCRIBE": "Suscribirse",
     "SUBMITTING": "Enviando...",
     "SUCCESS_MESSAGE": "¡Gracias por suscribirte a nuestro boletín!",
-    "ERROR_MESSAGE": "Se produjo un error. Por favor, inténtalo de nuevo más tarde."
+    "ERROR_MESSAGE": "Se produjo un error. Por favor, inténtalo de nuevo más tarde.",
+    "INVALID_EMAIL": "Por favor ingresa una dirección de email válida",
+    "SUBSCRIPTION_ERROR": "Error al suscribirse. Por favor intenta de nuevo.",
+    "SUBSCRIPTION_SUCCESS": "¡Gracias por suscribirte! Revisa tu email para confirmación.",
+    "SUBSCRIBE_AGAIN": "Suscribirse con otro email",
+    "UNSUBSCRIBE": "Desuscribirse",
+    "UNSUBSCRIBING": "Desuscripción en curso...",
+    "UNSUBSCRIBE_FROM_NEWSLETTER": "Desuscribirse del boletín",
+    "UNSUBSCRIBE_DESCRIPTION": "Ingresa tu dirección de email para desuscribirte de nuestro boletín.",
+    "UNSUBSCRIBED_SUCCESSFULLY": "Desuscripción exitosa",
+    "UNSUBSCRIBE_CONFIRMATION": "Has sido desuscrito exitosamente de nuestro boletín. Ya no recibirás actualizaciones de nuestra parte.",
+    "BACK_TO_HOME": "Volver al inicio",
+    "EMAIL_ADDRESS": "Dirección de email",
+    "ENTER_YOUR_EMAIL": "Ingresa tu email"
   },
   "directory": {
     "STEPS": {

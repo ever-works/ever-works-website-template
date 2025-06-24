@@ -76,8 +76,13 @@
     "FOR_DEVELOPERS": "pour les développeurs du monde entier",
     "VIEW_DETAILS": "Voir les détails",
     "BUILDING_FUTURE": "Construire l'avenir des expériences numériques avec des solutions innovantes et un design exceptionnel.",
-    "ENTER_EMAIL": "Entrez votre e-mail",
-    "COOKIES": "Cookies"
+    "ENTER_EMAIL": "Entrez votre email",
+    "COOKIES": "Cookies",
+    "INVALID_EMAIL": "Veuillez entrer une adresse email valide",
+    "SUBSCRIPTION_ERROR": "Échec de l'abonnement. Veuillez réessayer.",
+    "SUBSCRIPTION_SUCCESS": "Merci de vous être abonné ! Vérifiez votre email pour confirmation.",
+    "SUBMITTING": "Envoi en cours...",
+    "SUBSCRIBE_AGAIN": "S'abonner avec un autre email"
   },
   "listing": {
     "ALL": "Tout",
@@ -160,7 +165,20 @@
     "SUBSCRIBE": "S'abonner",
     "SUBMITTING": "Envoi en cours...",
     "SUCCESS_MESSAGE": "Merci de vous être abonné à notre newsletter !",
-    "ERROR_MESSAGE": "Une erreur s'est produite. Veuillez réessayer plus tard."
+    "ERROR_MESSAGE": "Une erreur s'est produite. Veuillez réessayer plus tard.",
+    "INVALID_EMAIL": "Veuillez entrer une adresse email valide",
+    "SUBSCRIPTION_ERROR": "Échec de l'abonnement. Veuillez réessayer.",
+    "SUBSCRIPTION_SUCCESS": "Merci de vous être abonné ! Vérifiez votre email pour confirmation.",
+    "SUBSCRIBE_AGAIN": "S'abonner avec un autre email",
+    "UNSUBSCRIBE": "Se désabonner",
+    "UNSUBSCRIBING": "Désabonnement en cours...",
+    "UNSUBSCRIBE_FROM_NEWSLETTER": "Se désabonner de la newsletter",
+    "UNSUBSCRIBE_DESCRIPTION": "Entrez votre adresse email pour vous désabonner de notre newsletter.",
+    "UNSUBSCRIBED_SUCCESSFULLY": "Désabonnement réussi",
+    "UNSUBSCRIBE_CONFIRMATION": "Vous avez été désabonné avec succès de notre newsletter. Vous ne recevrez plus de mises à jour de notre part.",
+    "BACK_TO_HOME": "Retour à l'accueil",
+    "EMAIL_ADDRESS": "Adresse email",
+    "ENTER_YOUR_EMAIL": "Entrez votre email"
   },
   "directory": {
     "STEPS": {

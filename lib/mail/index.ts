@@ -48,6 +48,24 @@ export class EmailService {
     });
   }
 
+  async sendNewsletterSubscriptionEmail(email: string): Promise<any> {
+    return this.provider.sendEmail({
+      from: this.defaultFrom,
+      to: email,
+      subject: "Welcome to the newsletter",
+      html: `<p>Welcome to the newsletter.</p>`,
+    });
+  }
+
+  async sendNewsletterUnsubscriptionEmail(email: string): Promise<any> {
+    return this.provider.sendEmail({
+      from: this.defaultFrom,
+      to: email,
+      subject: "Unsubscribe from the newsletter",
+      html: `<p>You have been unsubscribed from the newsletter.</p>`,
+    });
+  }
+
   async sendPasswordResetEmail(email: string, token: string): Promise<any> {
     const resetLink = `${this.domain}/auth/new-password?token=${token}`;
     return this.provider.sendEmail({
@@ -112,6 +130,16 @@ export const sendVerificationEmail = async (email: string, token: string) => {
 export const sendPasswordResetEmail = async (email: string, token: string) => {
   const service = await mailService();
   return service.sendPasswordResetEmail(email, token);
+};
+
+export const sendNewsletterSubscriptionEmail = async (email: string) => {
+  const service = await mailService();
+  return service.sendNewsletterSubscriptionEmail(email);
+};
+
+export const sendNewsletterUnsubscriptionEmail = async (email: string) => {
+  const service = await mailService();
+  return service.sendNewsletterUnsubscriptionEmail(email);
 };
 
 export const sendTwoFactorTokenEmail = async (email: string, token: string) => {

@@ -169,7 +169,12 @@
     "VIEW_DETAILS": "View Details",
     "BUILDING_FUTURE": "Building the future of digital experiences with innovative solutions and exceptional design.",
     "ENTER_EMAIL": "Enter your email",
-    "COOKIES": "Cookies"
+    "COOKIES": "Cookies",
+    "INVALID_EMAIL": "Please enter a valid email address",
+    "SUBSCRIPTION_ERROR": "Failed to subscribe. Please try again.",
+    "SUBSCRIPTION_SUCCESS": "Thank you for subscribing! Check your email for confirmation.",
+    "SUBMITTING": "Submitting...",
+    "SUBSCRIBE_AGAIN": "Subscribe another email"
   },
   "settings": {
     "PROFILE": "Your Profile",
@@ -191,7 +196,20 @@
     "SUBSCRIBE": "Subscribe",
     "SUBMITTING": "Submitting...",
     "SUCCESS_MESSAGE": "Thank you for subscribing to our newsletter!",
-    "ERROR_MESSAGE": "An error occurred. Please try again later."
+    "ERROR_MESSAGE": "An error occurred. Please try again later.",
+    "INVALID_EMAIL": "Please enter a valid email address",
+    "SUBSCRIPTION_ERROR": "Failed to subscribe. Please try again.",
+    "SUBSCRIPTION_SUCCESS": "Thank you for subscribing! Check your email for confirmation.",
+    "SUBSCRIBE_AGAIN": "Subscribe another email",
+    "UNSUBSCRIBE": "Unsubscribe",
+    "UNSUBSCRIBING": "Unsubscribing...",
+    "UNSUBSCRIBE_FROM_NEWSLETTER": "Unsubscribe from Newsletter",
+    "UNSUBSCRIBE_DESCRIPTION": "Enter your email address to unsubscribe from our newsletter.",
+    "UNSUBSCRIBED_SUCCESSFULLY": "Unsubscribed Successfully",
+    "UNSUBSCRIBE_CONFIRMATION": "You have been successfully unsubscribed from our newsletter. You will no longer receive updates from us.",
+    "BACK_TO_HOME": "Back to Home",
+    "EMAIL_ADDRESS": "Email Address",
+    "ENTER_YOUR_EMAIL": "Enter your email"
   },
   "directory": {
     "STEPS": {
