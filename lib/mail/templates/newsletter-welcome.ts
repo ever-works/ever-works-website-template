@@ -240,7 +240,7 @@ export const getWelcomeEmailTemplate = (email: string, appName: string = "Ever W
             </div>
             
             <div class="cta-section">
-              <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://ever-works.com'}" class="cta-button">
+              <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://ever.works'}" class="cta-button">
                 Découvrir notre plateforme
               </a>
             </div>
@@ -248,8 +248,8 @@ export const getWelcomeEmailTemplate = (email: string, appName: string = "Ever W
           
           <div class="footer">
             <p>Cet email a été envoyé à <strong>${email}</strong></p>
-            <p>Si vous n'avez pas demandé cet abonnement, vous pouvez <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://ever-works.com'}/newsletter/unsubscribe">vous désabonner ici</a></p>
-            <p>© 2024 ${appName}. Tous droits réservés.</p>
+            <p>Si vous n'avez pas demandé cet abonnement, vous pouvez <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://ever.works'}/newsletter/unsubscribe">vous désabonner ici</a></p>
+            <p>© 2025 ${appName}. Tous droits réservés.</p>
             
             <div class="social-links">
               <a href="#">Twitter</a>
