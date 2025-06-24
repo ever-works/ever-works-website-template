@@ -5,7 +5,7 @@ import { EmailService } from '../index';
 export const sendRegularNewsletter = async (subscribers: string[]) => {
   const emailConfig = {
     provider: "resend",
-    defaultFrom: "newsletter@ever-works.com",
+    defaultFrom: "newsletter@ever.works",
     domain: process.env.NEXT_PUBLIC_APP_URL || "https://ever.works",
     apiKeys: {
       resend: process.env.RESEND_API_KEY || "",
