@@ -6,7 +6,7 @@ export const sendRegularNewsletter = async (subscribers: string[]) => {
   const emailConfig = {
     provider: "resend",
     defaultFrom: "newsletter@ever-works.com",
-    domain: process.env.NEXT_PUBLIC_APP_URL || "https://ever-works.com",
+    domain: process.env.NEXT_PUBLIC_APP_URL || "https://ever.works",
     apiKeys: {
       resend: process.env.RESEND_API_KEY || "",
       novu: process.env.NOVU_API_KEY || "",
@@ -22,7 +22,7 @@ export const sendRegularNewsletter = async (subscribers: string[]) => {
     featured: {
       title: "✨ New user interface",
       description: "We've completely redesigned our interface for an optimal user experience. Discover the new features and improvements.",
-      link: "https://ever-works.com/blog/new-ui",
+      link: "https://ever.works/blog/new-ui",
       cta: "Discover the new interface"
     },
     articles: [
@@ -30,19 +30,19 @@ export const sendRegularNewsletter = async (subscribers: string[]) => {
         title: "📊 Enhanced performance statistics",
         excerpt: "We've added new charts and metrics to better track your performance.",
         category: "Feature",
-        link: "https://ever-works.com/blog/performance-stats"
+        link: "https://ever.works/blog/performance-stats"
       },
       {
         title: "🔒 Enhanced security",
         excerpt: "Updated our security protocols to protect your data.",
         category: "Security",
-        link: "https://ever-works.com/blog/security-update"
+        link: "https://ever.works/blog/security-update"
       },
       {
         title: "📱 Mobile app available",
         excerpt: "Access all features from your smartphone.",
         category: "Mobile",
-        link: "https://ever-works.com/blog/mobile-app"
+        link: "https://ever.works/blog/mobile-app"
       }
     ],
     stats: {
@@ -76,8 +76,8 @@ export const sendRegularNewsletter = async (subscribers: string[]) => {
 export const sendWelcomeEmail = async (email: string, userName?: string) => {
   const emailConfig = {
     provider: "resend",
-    defaultFrom: "welcome@ever-works.com",
-    domain: process.env.NEXT_PUBLIC_APP_URL || "https://ever-works.com",
+    defaultFrom: "welcome@ever.works",
+    domain: process.env.NEXT_PUBLIC_APP_URL || "https://ever.works",
     apiKeys: {
       resend: process.env.RESEND_API_KEY || "",
       novu: process.env.NOVU_API_KEY || "",
