@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useActionState } from "react";
+import Link from "next/link";
 import { unsubscribeFromNewsletter } from "../actions";
 import { ActionState } from "@/lib/auth/middleware";
 import { useTranslations } from "next-intl";
@@ -37,12 +38,12 @@ export default function UnsubscribePage() {
               <p className="text-gray-600 dark:text-gray-400 mb-6">
                 {t("UNSUBSCRIBE_CONFIRMATION") || "You have been successfully unsubscribed from our newsletter. You will no longer receive updates from us."}
               </p>
-              <a
+              <Link
                 href="/"
                 className="inline-block bg-th-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-th-primary-hover transition-colors"
               >
                 {t("BACK_TO_HOME") || "Back to Home"}
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -95,12 +96,12 @@ export default function UnsubscribePage() {
           </form>
 
           <div className="text-center mt-6">
-            <a
+            <Link
               href="/"
               className="text-th-primary hover:text-th-primary-hover text-sm font-medium"
             >
               {t("BACK_TO_HOME") || "Back to Home"}
-            </a>
+            </Link>
           </div>
         </div>
       </div>
