@@ -1,13 +1,16 @@
-export const getWelcomeEmailTemplate = (email: string, appName: string = "Ever Works") => {
+export const getWelcomeEmailTemplate = (
+  email: string,
+  appName: string = "Ever Works"
+) => {
   return {
-    subject: `Bienvenue dans notre newsletter - ${appName}`,
+    subject: `Welcome to our newsletter - ${appName}`,
     html: `
       <!DOCTYPE html>
-      <html lang="fr">
+      <html lang="en">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Bienvenue dans notre newsletter</title>
+        <title>Welcome to our newsletter</title>
         <style>
           * {
             margin: 0;
@@ -208,48 +211,48 @@ export const getWelcomeEmailTemplate = (email: string, appName: string = "Ever W
       <body>
         <div class="container">
           <div class="header">
-            <h1>🎉 Bienvenue !</h1>
-            <p>Vous êtes maintenant membre de notre communauté</p>
+            <h1>🎉 Welcome!</h1>
+            <p>You are now a member of our community</p>
           </div>
           
           <div class="content">
             <div class="welcome-message">
-              <h2>Merci de vous être abonné !</h2>
-              <p>Nous sommes ravis de vous compter parmi nos abonnés.</p>
-              <p>Vous recevrez désormais nos dernières actualités, conseils exclusifs et offres spéciales directement dans votre boîte mail.</p>
+              <h2>Thank you for subscribing!</h2>
+              <p>We're excited to have you as part of our subscribers.</p>
+              <p>You'll now receive our latest news, exclusive tips, and special offers directly in your inbox.</p>
             </div>
             
             <div class="features">
-              <h3>Ce que vous allez recevoir :</h3>
+              <h3>What you'll receive:</h3>
               <div class="feature-item">
                 <div class="feature-icon">📰</div>
-                <div class="feature-text">Actualités et mises à jour de notre plateforme</div>
+                <div class="feature-text">News and updates from our platform</div>
               </div>
               <div class="feature-item">
                 <div class="feature-icon">💡</div>
-                <div class="feature-text">Conseils et astuces pour optimiser votre expérience</div>
+                <div class="feature-text">Tips and tricks to optimize your experience</div>
               </div>
               <div class="feature-item">
                 <div class="feature-icon">🎁</div>
-                <div class="feature-text">Offres exclusives et contenus premium</div>
+                <div class="feature-text">Exclusive offers and premium content</div>
               </div>
               <div class="feature-item">
                 <div class="feature-icon">🚀</div>
-                <div class="feature-text">Nouvelles fonctionnalités en avant-première</div>
+                <div class="feature-text">New features and sneak peeks</div>
               </div>
             </div>
             
             <div class="cta-section">
-              <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://ever.works'}" class="cta-button">
-                Découvrir notre plateforme
+              <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://ever.works"}" class="cta-button">
+                Discover our platform
               </a>
             </div>
           </div>
           
           <div class="footer">
-            <p>Cet email a été envoyé à <strong>${email}</strong></p>
-            <p>Si vous n'avez pas demandé cet abonnement, vous pouvez <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://ever.works'}/newsletter/unsubscribe">vous désabonner ici</a></p>
-            <p>© 2025 ${appName}. Tous droits réservés.</p>
+            <p>This email was sent to <strong>${email}</strong></p>
+            <p>If you didn't request this subscription, you can <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://ever.works"}/newsletter/unsubscribe">unsubscribe here</a></p>
+            <p>© 2025 ${appName}. All rights reserved.</p>
             
             <div class="social-links">
               <a href="#">Twitter</a>
@@ -262,22 +265,22 @@ export const getWelcomeEmailTemplate = (email: string, appName: string = "Ever W
       </html>
     `,
     text: `
-Bienvenue dans notre newsletter !
+Welcome to our newsletter!
 
-Merci de vous être abonné à notre newsletter. Nous sommes ravis de vous compter parmi nos abonnés.
+Thank you for subscribing to our newsletter. We're excited to have you as part of our subscribers.
 
-Ce que vous allez recevoir :
-• Actualités et mises à jour de notre plateforme
-• Conseils et astuces pour optimiser votre expérience  
-• Offres exclusives et contenus premium
-• Nouvelles fonctionnalités en avant-première
+What you'll receive:
+• News and updates from our platform
+• Tips and tricks to optimize your experience  
+• Exclusive offers and premium content
+• New features and sneak peeks
 
-Découvrez notre plateforme : ${process.env.NEXT_PUBLIC_APP_URL || 'https://ever-works.com'}
+Discover our platform: ${process.env.NEXT_PUBLIC_APP_URL || "https://ever.works"}
 
-Cet email a été envoyé à ${email}
-Si vous n'avez pas demandé cet abonnement, vous pouvez vous désabonner ici : ${process.env.NEXT_PUBLIC_APP_URL || 'https://ever-works.com'}/newsletter/unsubscribe
+This email was sent to ${email}
+If you didn't request this subscription, you can unsubscribe here: ${process.env.NEXT_PUBLIC_APP_URL || "https://ever.works"}/newsletter/unsubscribe
 
-© 2024 ${appName}. Tous droits réservés.
-    `
+© 2025 ${appName}. All rights reserved.
+    `,
   };
-}; 
+};

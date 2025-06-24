@@ -3,14 +3,14 @@
 import { z } from "zod";
 import { validatedAction } from "@/lib/auth/middleware";
 import {
-    createNewsletterSubscription,
-    getNewsletterSubscriptionByEmail,
-    updateNewsletterSubscription,
-    getNewsletterStats
+  createNewsletterSubscription,
+  getNewsletterSubscriptionByEmail,
+  updateNewsletterSubscription,
+  getNewsletterStats
 } from "@/lib/db/queries";
 import { EmailService } from "@/lib/mail";
 import { getCachedConfig } from "@/lib/content";
-import { getWelcomeEmailTemplate, getUnsubscribeEmailTemplate } from "@/lib/mail/templates";
+import { getUnsubscribeEmailTemplate, getWelcomeEmailTemplate } from "@/lib/mail/templates";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -139,7 +139,7 @@ export const subscribeToNewsletter = validatedAction(
   async (data): Promise<NewsletterActionResult> => {
     try {
       const { email } = data;
-
+      console.log("email", email);
       // Validate subscription status
       const validation = await validateExistingSubscription(email, false);
       if (!validation.isValid) {
@@ -166,9 +166,7 @@ export const subscribeToNewsletter = validatedAction(
 
       const emailService = new EmailService(emailConfig);
       const welcomeTemplate = getWelcomeEmailTemplate(email, companyName);
-
       await sendEmailSafely(emailService, emailConfig, welcomeTemplate, email);
-
       return { success: true };
     } catch (error) {
       console.error("Newsletter subscription error:", error);
