@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useActionState } from "react";
 import { subscribeToNewsletter } from "@/app/[locale]/newsletter/actions";
 import { ActionState } from "@/lib/auth/middleware";
+import { toast } from "sonner";
 
 export function Newsletter({ t }: { t: any }) {
   const [isSuccess, setIsSuccess] = useState(false);
@@ -23,27 +24,8 @@ export function Newsletter({ t }: { t: any }) {
   };
 
   if (isSuccess) {
-    return (
-      <div
-        className="space-y-3 sm:space-y-4 animate-fade-in-up"
-        style={{ animationDelay: "0.4s" }}
-      >
-        <h4 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white tracking-tight">
-          {t("footer.STAY_UPDATED")}
-        </h4>
-        <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
-          <p className="text-sm text-green-700 dark:text-green-300">
-            {t("footer.SUBSCRIPTION_SUCCESS") || "Thank you for subscribing! Check your email for confirmation."}
-          </p>
-        </div>
-        <button
-          onClick={() => setIsSuccess(false)}
-          className="text-sm text-theme-primary-600 dark:text-theme-primary-400 hover:underline"
-        >
-          {t("footer.SUBSCRIBE_AGAIN") || "Subscribe another email"}
-        </button>
-      </div>
-    );
+    toast.success(t("footer.SUBSCRIPTION_SUCCESS"),);
+    setIsSuccess(false);
   }
 
   return (
@@ -72,10 +54,9 @@ export function Newsletter({ t }: { t: any }) {
             disabled={pending}
             className="mt-2 sm:mt-0 w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-gradient-to-r from-theme-primary via-purple-500 to-purple-500 hover:from-theme-primary hover:to-purple-600 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-theme-primary/25 hover:scale-105 text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
-            {pending 
-              ? (t("footer.SUBMITTING") || "Submitting...") 
-              : t("footer.SUBSCRIBE")
-            }
+            {pending
+              ? t("footer.SUBMITTING") || "Submitting..."
+              : t("footer.SUBSCRIBE")}
           </button>
         </div>
         {state?.error && (
