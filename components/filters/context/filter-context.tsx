@@ -1,3 +1,4 @@
+"use client";
 import { createContext, useContext } from 'react';
 import { FilterContextType } from '../types';
 import { useFilterState } from '../hooks/use-filter-state';
