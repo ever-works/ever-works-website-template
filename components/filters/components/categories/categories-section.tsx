@@ -6,6 +6,7 @@ import { SearchInput } from "../../../ui/search-input";
 import { useFilters } from "../../context/filter-context";
 import { containerStyles, textStyles } from "../../utils/style-utils";
 import { SortControl } from "../controls/sort-control";
+import { ActiveFilters } from "../active-filters/active-filters";
 
 /**
  * Main categories section component
@@ -13,7 +14,7 @@ import { SortControl } from "../controls/sort-control";
  */
 export function Categories({ total, categories }: CategoriesProps) {
   const t = useTranslations("listing");
-  const { searchTerm, setSearchTerm, sortBy, setSortBy } = useFilters();
+  const { searchTerm, setSearchTerm, sortBy, setSortBy, selectedTags, setSelectedTags } = useFilters();
 
   return (
     <>
@@ -60,6 +61,22 @@ export function Categories({ total, categories }: CategoriesProps) {
             <CategoriesList categories={categories} />
           </div>
         </div>
+
+        {/* Active Filters Section */}
+        <ActiveFilters
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          selectedTags={selectedTags}
+          setSelectedTags={setSelectedTags}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          availableTags={categories}
+          clearAllFilters={() => {
+            setSearchTerm("");
+            setSelectedTags([]);
+            setSortBy("popularity");
+          }}
+        />
 
         {/* Sort By Section (styled card, now outside categories) */}
         <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden shadow-sm dark:shadow-lg transition-colors duration-300">
