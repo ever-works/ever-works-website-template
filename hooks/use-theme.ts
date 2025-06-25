@@ -20,7 +20,7 @@ export interface ThemeInfo {
   };
 }
 
-// Theme information
+// Theme information with color configurations
 export const THEME_INFO: Record<ThemeKey, ThemeInfo> = {
   everworks: {
     key: "everworks",
@@ -127,6 +127,3 @@ export const useTheme = () => {
     getThemeInfo,
   };
 };
-
-// Export theme info for external use
-export { THEME_INFO };
