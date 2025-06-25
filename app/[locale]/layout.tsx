@@ -40,22 +40,33 @@ export const metadata: Metadata = {
   },
 };
 
+interface RootLayoutProps {
+  children: React.ReactNode;
+  params: {
+    locale: string;
+  };
+}
+
 export default async function RootLayout({
   children,
-  params,
-}: Readonly<{
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
-}>) {
-  const { locale } = await params;
+  params: { locale },
+}: RootLayoutProps) {
+  let messages;
+  try {
+    messages = await getMessages({ locale });
+  } catch (error) {
+    notFound();
+  }
 
-  if (!routing.locales.includes(locale)) {
+  if (!routing.locales.includes(locale as any)) {
     notFound();
   }
 
   const config = await getCachedConfig();
-  const messages = await getMessages();
   const session = await auth();
+
+  // Determine if the current locale is RTL
+  const isRTL = locale === "ar";
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -68,7 +79,7 @@ export default async function RootLayout({
             <Toaster position="bottom-right" richColors />
             <Providers config={config}>
               <Header session={session} />
-              {children}
+              <main className="flex-1">{children}</main>
               <Footer />
               <div className="fixed bottom-6 right-6 z-50">
                 <ScrollToTopButton
