@@ -5,6 +5,7 @@ import { CategoriesList } from "./categories-list";
 import { SearchInput } from "../../../ui/search-input";
 import { useFilters } from "../../context/filter-context";
 import { containerStyles, textStyles } from "../../utils/style-utils";
+import { SortControl } from "../controls/sort-control";
 
 /**
  * Main categories section component
@@ -12,7 +13,7 @@ import { containerStyles, textStyles } from "../../utils/style-utils";
  */
 export function Categories({ total, categories }: CategoriesProps) {
   const t = useTranslations("listing");
-  const { searchTerm, setSearchTerm } = useFilters();
+  const { searchTerm, setSearchTerm, sortBy, setSortBy } = useFilters();
 
   return (
     <>
@@ -57,6 +58,18 @@ export function Categories({ total, categories }: CategoriesProps) {
           </div>
           <div className={containerStyles.content}>
             <CategoriesList categories={categories} />
+          </div>
+        </div>
+
+        {/* Sort By Section (styled card, now outside categories) */}
+        <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden shadow-sm dark:shadow-lg transition-colors duration-300">
+          <div className="p-3 lg:p-4 border-b border-gray-200 dark:border-gray-700/50">
+            <h2 className="text-base lg:text-lg font-semibold text-gray-900 dark:text-gray-200 transition-colors duration-300 capitalize">
+              {t("SORT_BY")}
+            </h2>
+          </div>
+          <div className="p-3 lg:p-4">
+            <SortControl sortBy={sortBy} setSortBy={setSortBy} />
           </div>
         </div>
       </div>

@@ -3,9 +3,10 @@ import { useTranslations } from "next-intl";
 import { Tag } from "@/lib/content";
 import { Accordion, AccordionItem, Button, cn, Tooltip } from "@heroui/react";
 import { SearchInput } from "./ui/search-input";
-import { ChevronDown, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { PropsWithChildren } from "react";
+import { SortControl } from "@/components/filters/components/controls/sort-control";
 
 interface BlockLinkProps
   extends PropsWithChildren<{ href: string; isActive: boolean }> {
@@ -207,22 +208,7 @@ export function TagsItemsColumn(props: { total: number; tag: Tag[] }) {
               </h2>
             </div>
             <div className="p-3 lg:p-4">
-              <div className="relative">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="block w-full px-2 lg:px-3 py-1.5 lg:py-2 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-sm lg:text-base text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary-500 dark:focus:ring-theme-primary-400 focus:border-transparent appearance-none cursor-pointer transition-colors duration-300"
-                >
-                  <option value="popularity">{t("POPULARITY")}</option>
-                  <option value="name-asc">{t("NAME_A_Z")}</option>
-                  <option value="name-desc">{t("NAME_Z_A")}</option>
-                  <option value="date-desc">{t("NEWEST")}</option>
-                  <option value="date-asc">{t("OLDEST")}</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 pr-2 lg:pr-3 flex items-center pointer-events-none">
-                  <ChevronDown className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-gray-400 dark:text-gray-500" />
-                </div>
-              </div>
+              <SortControl sortBy={sortBy} setSortBy={setSortBy} />
             </div>
           </div>
         </div>
