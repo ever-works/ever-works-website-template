@@ -12,7 +12,7 @@ import { layoutComponents, LayoutKey } from "@/components/layouts";
 import { Category, ItemData, Tag } from "@/lib/content";
 import ViewToggle from "@/components/view-toggle";
 import { useLayoutTheme } from "@/components/context";
-import { FilterContext } from "@/components/filters";
+import { FilterContext } from "@/components/filters/context/filter-context";
 
 interface BaseCardProps {
   total: number;

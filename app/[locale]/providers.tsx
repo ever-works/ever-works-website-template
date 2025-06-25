@@ -6,7 +6,7 @@ import { ConfigProvider } from "./config";
 import { ThemeProvider } from "next-themes";
 import ErrorProvider from "@/components/error-provider";
 import { LayoutThemeProvider } from "@/components/context";
-import { FilterProvider } from "@/components/filters";
+import { FilterProvider } from "@/components/filters/context/filter-context";
 
 export function Providers({
   config,

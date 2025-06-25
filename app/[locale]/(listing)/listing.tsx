@@ -1,4 +1,4 @@
-import { FilterProvider } from "@/components/filters";
+import { FilterProvider } from "@/components/filters/context/filter-context";
 import { getTranslations } from "next-intl/server";
 import { Category, ItemData, Tag } from "@/lib/content";
 import GlobalsClient from "./globals-client";
