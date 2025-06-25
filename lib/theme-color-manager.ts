@@ -43,16 +43,7 @@ export const EXTENDED_THEME_CONFIGS: Record<ThemeKey, ThemeConfig> = {
     surface: "#ffffff",
     text: "#3e2723",
     textSecondary: "#8d6e63",
-  },
-  modern: {
-    primary: "#6366f1",
-    secondary: "#10b981",
-    accent: "#4f46e5",
-    background: "#ffffff",
-    surface: "#f9fafb",
-    text: "#111827",
-    textSecondary: "#4b5563",
-  },
+  }
 };
 
 /**

@@ -39,14 +39,7 @@ export const ThemePreviews: Record<ThemeKey, React.ReactNode> = {
       <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-sm"></div>
       <div className="absolute top-1 right-1 w-1 h-1 bg-white/60 rounded-full"></div>
     </div>
-  ),
-  modern: (
-    <div className="w-12 h-8 bg-[#6366f1] rounded overflow-hidden relative">
-      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/10"></div>
-      <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-sm"></div>
-      <div className="absolute top-1 right-1 w-1 h-1 bg-white/60 rounded-full"></div>
-    </div>
-  ),
+  )
 };
 
 // Complete theme definitions
@@ -74,13 +67,7 @@ export const THEME_DEFINITIONS: Record<ThemeKey, Omit<ThemeMetadata, 'config'>> 
     label: "Funny",
     description: "Playful and vibrant theme with pink and yellow colors",
     preview: ThemePreviews.funny,
-  },
-  modern: {
-    key: "modern",
-    label: "Modern",
-    description: "Contemporary theme with indigo and emerald accents",
-    preview: ThemePreviews.modern,
-  },
+  }
 };
 
 // Utility to get complete theme metadata
