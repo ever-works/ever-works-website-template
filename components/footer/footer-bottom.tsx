@@ -1,10 +1,19 @@
 import Link from "next/link";
-import { IconEverworksSimple } from "../icons";
 import { Divider } from "@heroui/react";
 import { ThemeToggler } from "../theme-toggler";
 import { Container } from "../ui/container";
+import Image from "next/image";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export function FooterBottom({ config, t }: { config: any; t: any }) {
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <div className="relative backdrop-blur-xl bg-white/5 dark:bg-black/5 border-t border-white/10 dark:border-gray-700/20">
       {/* Subtle animated background */}
@@ -13,11 +22,15 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
       <Container maxWidth="7xl" padding="default" className="relative px-4 sm:px-6 lg:px-8 py-8">
         {/* Enhanced Disclaimer and utilities */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pt-6">
-          <div className="flex items-center gap-1 w-[165px]">
-            <IconEverworksSimple className="text-gray-900 dark:text-white h-[92px] w-[165.22px]" />
-            <span className="text-gray-900 dark:text-white text-2xl font-bold">
-              Works
-            </span>
+          <div className="flex items-center gap-1">
+            {mounted && (
+              <Image 
+                src={theme !== 'dark' ? "/logo-light.png" : "/logo-dark.png"} 
+                alt="Everworks" 
+                width={165} 
+                height={60} 
+              />
+            )}
           </div>
           <div className="flex flex-col gap-6">
             <nav className="flex items-center justify-between flex-wrap gap-2 text-gray-600 dark:text-gray-400">

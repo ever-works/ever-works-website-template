@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { IconEverworksSimple } from "../icons";
+import Image from "next/image";
 
 /**
  * Enhanced Brand link component
@@ -18,8 +18,8 @@ export function BrandLink({ t }: { t: any }) {
             <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-200 transition-colors">
               {t("footer.BUILT_WITH")}
             </span>
-            <div className="relative w-5 h-5">
-              <IconEverworksSimple className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+            <div className="relative w-6 h-6">
+              <Image className="w-full h-full object-cover" src="/logo-symbol.png" alt="Everworks" width={40} height={40} />
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
             <span className="text-sm  text-gray-600 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-200 transition-colors">
