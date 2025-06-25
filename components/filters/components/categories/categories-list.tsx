@@ -30,7 +30,7 @@ export function CategoriesList({ categories }: CategoriesListProps) {
           if (!category.count) return null;
           
           const href = `/categories/category/${category.id}`;
-          const isActive = pathname.startsWith(encodeURI(href));
+          const isActive = pathname === href || pathname.startsWith(href + "/");
 
           return (
             <CategoryItem

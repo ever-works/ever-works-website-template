@@ -37,9 +37,7 @@ export function CategoryItem({
             "hover:transform-none active:transform-none",
             {
               "bg-theme-primary-500 text-white": isActive,
-              "bg-gray-800 text-white": !isActive && isAllCategories,
-              "bg-transparent text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800":
-                !isActive && !isAllCategories,
+              "bg-transparent text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800": !isActive,
             }
           )}
           radius="md"
