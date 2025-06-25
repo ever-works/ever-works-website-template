@@ -20,6 +20,7 @@ import { NavigationControls } from "../navigation-controls";
 import { ProfileButton } from "./profile-button";
 import { IconEverworksSimple } from "../icons/Icons";
 import { Container } from "../ui/container";
+import { usePostHog } from 'posthog-js/react';
 
 interface NavigationItem {
   key: string;
@@ -124,6 +125,7 @@ export default function Header({ session }: SessionProps) {
   const tListing = useTranslations("listing");
   const config = useConfig();
   const pathname = usePathname();
+  const posthog = usePostHog();
 
   const authProviders = useMemo(() => {
     const auth = config.auth;

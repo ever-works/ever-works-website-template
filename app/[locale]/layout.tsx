@@ -12,6 +12,8 @@ import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { auth } from "@/lib/auth";
 import { Toaster } from "sonner";
+import { PHProvider } from "./integration/posthog/provider";
+import PostHogPageView from "./integration/posthog/page-view";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,9 +60,12 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-dark--theme-950`}>
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-dark--theme-950`}
+      >
+        <PHProvider>
+          <PostHogPageView />
           <NextIntlClientProvider messages={messages}>
-          <Toaster position="bottom-right" richColors />
+            <Toaster position="bottom-right" richColors />
             <Providers config={config}>
               <Header session={session} />
               {children}
@@ -75,6 +80,7 @@ export default async function RootLayout({
               </div>
             </Providers>
           </NextIntlClientProvider>
+        </PHProvider>
       </body>
     </html>
   );
