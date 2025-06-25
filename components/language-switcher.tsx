@@ -13,9 +13,9 @@ const languageMap = {
   en: { flagSrc: "/flags/en.svg", name: "EN", fullName: "English", isRTL: false },
   fr: { flagSrc: "/flags/fr.svg", name: "FR", fullName: "Français", isRTL: false },
   es: { flagSrc: "/flags/es.svg", name: "ES", fullName: "Español", isRTL: false },
-  zh: { flagSrc: "/flags/zh.svg", name: "中文", fullName: "简体中文", isRTL: false },
+  zh: { flagSrc: "/flags/zh.svg", name: "ZH", fullName: "简体中文", isRTL: false },
   de: { flagSrc: "/flags/de.svg", name: "DE", fullName: "Deutsch", isRTL: false },
-  ar: { flagSrc: "/flags/ar.svg", name: "عربي", fullName: "العربية", isRTL: true }
+  ar: { flagSrc: "/flags/ar.svg", name: "AR", fullName: "العربية", isRTL: false }
 } as const;
 
 type LocaleKey = keyof typeof languageMap;
@@ -36,18 +36,6 @@ export function LanguageSwitcher({ compact = false }: LanguageSwitcherProps) {
     [currentLocale]
   );
 
-  // Memoize available locales with their data
-  const availableLocales = useMemo(
-    () =>
-      LOCALES.map((locale) => ({
-        locale,
-        ...languageMap[locale as LocaleKey],
-        isActive: locale === currentLocale,
-      })),
-    [currentLocale]
-  );
-
-  // Optimize change language function
   const changeLanguage = useCallback(
     (locale: string) => {
       if (locale === currentLocale || isPending) return;

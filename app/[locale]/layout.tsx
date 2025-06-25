@@ -40,29 +40,21 @@ export const metadata: Metadata = {
   },
 };
 
-interface RootLayoutProps {
-  children: React.ReactNode;
-  params: {
-    locale: string;
-  };
-}
-
 export default async function RootLayout({
   children,
-  params: { locale },
-}: RootLayoutProps) {
-  let messages;
-  try {
-    messages = await getMessages({ locale });
-  } catch (error) {
-    notFound();
-  }
+  params,
+}: Readonly<{
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}>) {
+  const { locale } = await params;
 
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
 
   const config = await getCachedConfig();
+  const messages = await getMessages();
   const session = await auth();
 
   // Determine if the current locale is RTL
