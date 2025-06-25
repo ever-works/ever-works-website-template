@@ -20,7 +20,7 @@ export interface ThemeInfo {
   };
 }
 
-// Theme information with color configurations
+// Theme information
 export const THEME_INFO: Record<ThemeKey, ThemeInfo> = {
   everworks: {
     key: "everworks",
