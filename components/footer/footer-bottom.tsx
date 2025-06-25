@@ -67,7 +67,7 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
           </div>
 
           <div className="flex items-center gap-4">
-            <ThemeToggler compact />
+            <ThemeToggler />
           </div>
         </div>
       </Container>
