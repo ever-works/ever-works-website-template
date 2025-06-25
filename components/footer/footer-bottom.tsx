@@ -20,12 +20,12 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
             </span>
           </div>
           <div className="flex flex-col gap-6">
-            <nav className="flex items-center flex-wrap gap-2 text-gray-600 dark:text-gray-400 font-bold">
+            <nav className="flex items-center justify-between flex-wrap gap-2 text-gray-600 dark:text-gray-400">
               <div className="text-gray-600 dark:text-gray-400">
-                <span className="font-bold">
+                <span className="font-bold px-3">
                   Copyright &copy;{" "}
                   {config.copyright_year || new Date().getFullYear()}{" "}
-                  <span className="text-sm font-bold text-gray-600 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-200 transition-colors">
+                  <span className="text-sm font-normal text-gray-600 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-200 transition-colors">
                     {config.company_name}
                   </span>
                 </span>
@@ -48,7 +48,7 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
                   <Link
                     key={index}
                     href={item.href}
-                    className="font-bold text-xs sm:text-sm md:text-base flex items-center transition-all duration-300 hover:scale-105 relative group"
+                    className="font-normal text-xs sm:text-sm md:text-base flex items-center transition-all duration-300 hover:scale-105 relative group"
                   >
                     {index > 0 && (
                       <Divider
