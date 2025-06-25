@@ -20,14 +20,14 @@ export interface ThemeInfo {
   };
 }
 
-// Theme definitions
-const THEME_INFO: Record<ThemeKey, ThemeInfo> = {
+// Theme information
+export const THEME_INFO: Record<ThemeKey, ThemeInfo> = {
   everworks: {
     key: "everworks",
     label: "Default",
     description: "Modern and professional theme with blue and green accents",
     colors: {
-      primary: "#0070f3",
+      primary: "#3d70ef",
       secondary: "#00c853",
       accent: "#0056b3",
       background: "#ffffff",
@@ -57,11 +57,11 @@ const THEME_INFO: Record<ThemeKey, ThemeInfo> = {
     colors: {
       primary: "#673ab7",
       secondary: "#ff9800",
-      accent: "#4a148c",
-      background: "#ffffff",
-      surface: "#f5f5f5",
+      accent: "#9c27b0",
+      background: "#fafafa",
+      surface: "#ffffff",
       text: "#212121",
-      textSecondary: "#616161",
+      textSecondary: "#757575",
     },
   },
   funny: {
@@ -71,28 +71,14 @@ const THEME_INFO: Record<ThemeKey, ThemeInfo> = {
     colors: {
       primary: "#ff4081",
       secondary: "#ffeb3b",
-      accent: "#c51162",
-      background: "#ffffff",
-      surface: "#fafafa",
-      text: "#212121",
-      textSecondary: "#616161",
+      accent: "#e91e63",
+      background: "#fff8e1",
+      surface: "#ffffff",
+      text: "#3e2723",
+      textSecondary: "#8d6e63",
     },
-  },
-  modern: {
-    key: "modern",
-    label: "Modern",
-    description: "Contemporary theme with indigo and emerald accents",
-    colors: {
-      primary: "#6366f1",
-      secondary: "#10b981",
-      accent: "#4f46e5",
-      background: "#ffffff",
-      surface: "#f9fafb",
-      text: "#111827",
-      textSecondary: "#4b5563",
-    },
-  },
-} as const;
+  }
+};
 
 // Custom hook for theme management
 export const useTheme = () => {
