@@ -1,8 +1,8 @@
 "use client";
-import { ItemsCategories } from "@/components/items-categories";
 import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
 import Link from "next/link";
+import CategoriesGrid from "@/components/categories-grid";
 
 export default function ListingCategories({
   categories,
@@ -69,12 +69,7 @@ export default function ListingCategories({
 
       {/* Categories Grid */}
       <div className="w-full max-w-5xl mx-auto px-2 sm:px-4">
-        <ItemsCategories
-          categories={categories}
-          basePath="/categories/category"
-          enableSticky={false}
-          maxVisibleTags={100}
-        />
+        <CategoriesGrid categories={categories} />
       </div>
     </Hero>
   );
