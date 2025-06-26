@@ -3,23 +3,28 @@ import LayoutGrid from "@/components/layouts/LayoutGrid";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
+import { FiFolder } from "react-icons/fi";
 
 export default function CategoriesGrid({ categories }: { categories: Category[] }) {
+  // Sort categories by count descending (most items first)
+  const sortedCategories = [...categories].sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
+
   return (
     <LayoutGrid>
-      {categories.map((category) => (
+      {sortedCategories.map((category) => (
         <Link
           href={`/categories/category/${category.id}`}
           key={category.id}
-          className="focus:outline-none focus:ring-2 focus:ring-theme-primary rounded-2xl transition group"
+          className="focus:outline-none focus:ring-2 focus:ring-theme-primary rounded-lg transition group"
         >
           <Card
-            className="group relative border-0 rounded-2xl transition-all duration-700 transform hover:-translate-y-2 backdrop-blur-xl overflow-hidden h-full
+            className="group relative border-0 rounded-lg transition-all duration-700 transform hover:-translate-y-2 backdrop-blur-xl overflow-hidden h-full
               bg-white/80 dark:bg-gray-900/80 shadow-lg hover:shadow-2xl
               ring-1 ring-gray-200/50 dark:ring-gray-700/50 hover:ring-theme-primary/70
               before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/60 before:via-transparent before:to-gray-50/40
               dark:before:from-gray-800/60 dark:before:via-transparent dark:before:to-gray-900/40
               hover:before:from-blue-50/30 hover:before:to-purple-50/20 dark:hover:before:from-blue-900/20 dark:hover:before:to-purple-900/10
+              px-8 py-7 sm:px-10 sm:py-9
             "
           >
             {/* Subtle background pattern */}
@@ -31,9 +36,9 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
               }}
             />
             {/* Icon with animated background */}
-            <div className="relative flex flex-col items-center justify-center pt-6 pb-2">
+            <div className="relative flex flex-col items-center justify-center pt-2 pb-4">
               <div className="relative flex-shrink-0">
-                <div className="w-14 h-14 flex items-center justify-center rounded-2xl transition-all duration-500 bg-gradient-to-br from-theme-primary-10 to-indigo-100 border border-theme-primary-500 group-hover:from-theme-primary-10 group-hover:to-indigo-200 dark:from-theme-primary-10 dark:to-indigo-900/30 dark:border-theme-primary-700/30 dark:group-hover:from-theme-primary-800/40 dark:group-hover:to-indigo-800/40 group-hover:scale-110 group-hover:rotate-3 shadow-sm group-hover:shadow-md">
+                <div className="w-14 h-14 flex items-center justify-center rounded-lg transition-all duration-500 bg-gradient-to-br from-theme-primary-10 to-indigo-100 border border-theme-primary-500 group-hover:from-theme-primary-10 group-hover:to-indigo-200 dark:from-theme-primary-10 dark:to-indigo-900/30 dark:border-theme-primary-700/30 dark:group-hover:from-theme-primary-800/40 dark:group-hover:to-indigo-800/40 group-hover:scale-110 group-hover:rotate-3 shadow-sm group-hover:shadow-md">
                   {category.icon_url ? (
                     <Image
                       src={category.icon_url}
@@ -43,20 +48,20 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
                       className="w-8 h-8 object-contain transition-transform duration-500 group-hover:scale-110"
                     />
                   ) : (
-                    <span className="w-8 h-8 bg-theme-primary-100 rounded-full" />
+                    <FiFolder className="w-8 h-8 text-theme-primary dark:text-theme-primary transition-transform duration-500 group-hover:scale-110" />
                   )}
                 </div>
                 {/* Pulse effect */}
-                <div className="absolute inset-0 rounded-2xl bg-theme-primary-10 opacity-0 group-hover:opacity-100 group-hover:animate-ping transition-opacity duration-300" />
+                <div className="absolute inset-0 rounded-lg bg-theme-primary-10 opacity-0 group-hover:opacity-100 group-hover:animate-ping transition-opacity duration-300" />
               </div>
             </div>
-            <CardHeader className="items-center text-center p-0 mb-2">
-              <CardTitle className="text-lg font-semibold group-hover:text-theme-primary transition-colors">
+            <CardHeader className="items-center text-center p-0 mb-3">
+              <CardTitle className="text-lg font-semibold group-hover:text-theme-primary transition-colors mb-1">
                 {category.name}
               </CardTitle>
             </CardHeader>
             {category.count !== undefined && (
-              <CardContent className="text-xs text-gray-500 dark:text-gray-400 p-0">
+              <CardContent className="text-xs text-gray-500 dark:text-gray-400 p-0 mb-1">
                 {category.count} items
               </CardContent>
             )}
@@ -67,7 +72,7 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
               </div>
             </div>
             {/* Subtle glow effect */}
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+            <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
           </Card>
         </Link>
       ))}
