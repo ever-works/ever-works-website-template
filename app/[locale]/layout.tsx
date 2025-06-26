@@ -14,6 +14,7 @@ import { auth } from "@/lib/auth";
 import { Toaster } from "sonner";
 import { PHProvider } from "./integration/posthog/provider";
 import PostHogPageView from "./integration/posthog/page-view";
+import { Locale } from "@/lib/constants";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,7 +50,7 @@ export default async function RootLayout({
 }>) {
   const { locale } = await params;
 
-  if (!routing.locales.includes(locale as any)) {
+  if (!routing.locales.includes(locale as Locale)) {
     notFound();
   }
 
