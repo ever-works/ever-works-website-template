@@ -49,7 +49,7 @@ export function LanguageSwitcher({ compact = false }: LanguageSwitcherProps) {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
+      <PopoverTrigger>
         <button
           className={cn(
             "flex items-center gap-2 transition-all duration-200",
