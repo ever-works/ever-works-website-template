@@ -58,8 +58,6 @@ export default async function RootLayout({
   const session = await auth();
 
   // Determine if the current locale is RTL
-  const isRTL = locale === "ar";
-
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
