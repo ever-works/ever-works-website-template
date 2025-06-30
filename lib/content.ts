@@ -342,17 +342,37 @@ function eqID(value: string | { id: string }, id: string) {
 
 export async function fetchByCategory(raw: string, options: FetchOptions = {}) {
   const category = decodeURI(raw);
-  const { categories, items, total, tags } = await fetchItems(options);
+  const { categories, items, tags } = await fetchItems(options);
+  
+  const filteredItems = items.filter((item) => {
+    if (Array.isArray(item.category)) {
+      return item.category.some((c) => eqID(c, category));
+    }
+    return eqID(item.category, category);
+  });
+
+  // Recalculate tag counts based only on the filtered items
+  const tagCounts = new Map<string, number>();
+  filteredItems.forEach((item) => {
+    if (Array.isArray(item.tags)) {
+      item.tags.forEach((tag) => {
+        const tagId = typeof tag === "string" ? tag : tag.id;
+        tagCounts.set(tagId, (tagCounts.get(tagId) || 0) + 1);
+      });
+    }
+  });
+
+  // Create new tags array with corrected counts
+  const filteredTags = tags.map(tag => ({
+    ...tag,
+    count: tagCounts.get(tag.id) || 0
+  })).filter(tag => tag.count > 0);
+
   return {
     categories,
-    tags,
-    total,
-    items: items.filter((item) => {
-      if (Array.isArray(item.category)) {
-        return item.category.some((c) => eqID(c, category));
-      }
-      return eqID(item.category, category);
-    }),
+    tags: filteredTags,
+    total: filteredItems.length,
+    items: filteredItems,
   };
 }
 
