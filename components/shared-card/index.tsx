@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useCallback, useContext } from "react";
+import { useMemo, useCallback, useContext, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Search, Filter } from "lucide-react";
+import { Pagination } from "@heroui/react";
 
 import Item from "@/components/item";
 import { Link } from "@/i18n/navigation";
@@ -499,15 +500,19 @@ export function SharedCard(props: ExtendedCardProps) {
   const { layoutKey, setLayoutKey } = useLayoutTheme();
   const { searchTerm, selectedTags, sortBy } = useFilters();
   const t = useTranslations("listing");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const LayoutComponent = layoutComponents[layoutKey];
 
+  // Reset to page 1 when filters change
+  const filterKey = `${searchTerm}-${selectedTags.join(',')}-${sortBy}`;
+  
   const { filtered, paginated, hasActiveFilters } = useProcessedItems(
     props.items,
     searchTerm,
     selectedTags,
     sortBy,
-    props.start,
+    (currentPage - 1) * (config.perPage || PER_PAGE),
     config
   );
 
@@ -515,6 +520,19 @@ export function SharedCard(props: ExtendedCardProps) {
     (newView: LayoutKey) => setLayoutKey(newView),
     [setLayoutKey]
   );
+
+  // Calculate pagination info
+  const perPage = config.perPage || PER_PAGE;
+  const totalPages = Math.ceil(filtered.length / perPage);
+
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+  }, []);
+
+  // Reset page when filters change
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [filterKey]);
 
   return (
     <div className={`w-full space-y-6 ${props.className || ""}`}>
@@ -564,7 +582,7 @@ export function SharedCard(props: ExtendedCardProps) {
               searchTerm={searchTerm}
               selectedTags={selectedTags}
               sortBy={sortBy}
-              start={props.start}
+              start={(currentPage - 1) * perPage}
               filteredCount={filtered.length}
               t={t}
               config={config}
@@ -576,6 +594,25 @@ export function SharedCard(props: ExtendedCardProps) {
               renderCustomItem={props.renderCustomItem}
               animationDelay={config.animationDelay}
             />
+            
+            {/* Pagination */}
+            {config.showPagination && totalPages > 1 && (
+              <div className="flex justify-center mt-8">
+                <Pagination
+                  total={totalPages}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  showControls
+                  radius="lg"
+                  size="lg"
+                  classNames={{
+                    wrapper: "gap-2",
+                    item: "w-10 h-10 text-sm font-medium transition-all duration-300",
+                    cursor: "bg-theme-primary text-white font-semibold",
+                  }}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

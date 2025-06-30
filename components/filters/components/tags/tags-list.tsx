@@ -12,6 +12,9 @@ interface TagsListProps {
   showAllTags: boolean;
   visibleTags: Tag[];
   isAnyTagActive: boolean;
+  mode?: "navigation" | "filter";
+  selectedTags?: string[];
+  setSelectedTags?: (tags: string[]) => void;
 }
 
 /**
@@ -26,25 +29,112 @@ export function TagsList({
   showAllTags,
   visibleTags,
   isAnyTagActive,
+  mode = "navigation",
+  selectedTags = [],
+  setSelectedTags,
 }: TagsListProps) {
   const pathname = usePathname();
 
-  const renderTag = (tag: Tag, index: number) => {
-    const tagBasePath = basePath
-      ? `${basePath}/${tag.id}`
-      : `/tags/${tag.id}`;
+  const handleTagClick = (tagId: string) => {
+    if (mode === "filter" && setSelectedTags) {
+      if (selectedTags.includes(tagId)) {
+        setSelectedTags(selectedTags.filter(id => id !== tagId));
+      } else {
+        setSelectedTags([...selectedTags, tagId]);
+      }
+    }
+  };
 
-    const isActive = pathname.startsWith(encodeURI(tagBasePath));
-    
-    return (
-      <TagItem
-        key={tag.id || index}
-        tag={tag}
-        isActive={isActive}
-        href={tagBasePath}
-        showCount={true}
-      />
-    );
+  const clearAllTags = () => {
+    if (mode === "filter" && setSelectedTags) {
+      setSelectedTags([]);
+    }
+  };
+
+  const renderTag = (tag: Tag, index: number) => {
+    if (mode === "filter") {
+      const isActive = selectedTags.includes(tag.id);
+      
+      return (
+        <Button
+          key={tag.id || index}
+          variant={isActive ? "solid" : "bordered"}
+          radius="full"
+          size="sm"
+          onPress={() => handleTagClick(tag.id)}
+          className={getButtonVariantStyles(
+            isActive,
+            "px-1.5 py-1 h-8 font-medium transition-all duration-200 flex-shrink-0"
+          )}
+        >
+          {isActive && (
+            <svg
+              className="w-3 h-3 mr-1.5 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="3"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          )}
+          
+          {tag.icon_url && (
+            <img
+              src={tag.icon_url}
+              className={cn(
+                "w-4 h-4 mr-1.5 transition-transform",
+                isActive ? "brightness-200" : ""
+              )}
+              alt={tag.name}
+            />
+          )}
+          
+          <span
+            className={cn(
+              "text-sm font-medium transition-all duration-300",
+              isActive
+                ? "text-white tracking-wide"
+                : "text-gray-700 dark:text-gray-300 group-hover:text-theme-primary dark:group-hover:text-theme-primary capitalize"
+            )}
+          >
+            {tag.name}
+          </span>
+          
+          {tag.count && (
+            <span
+              className={cn(
+                "ml-1.5 text-xs font-normal",
+                isActive ? "text-white" : "text-dark-500 dark:text-dark-400"
+              )}
+            >
+              ({tag.count})
+            </span>
+          )}
+        </Button>
+      );
+    } else {
+      // Navigation mode - original behavior
+      const tagBasePath = basePath
+        ? `${basePath}/${tag.id}`
+        : `/tags/${tag.id}`;
+
+      const isActive = pathname.startsWith(encodeURI(tagBasePath));
+      
+      return (
+        <TagItem
+          key={tag.id || index}
+          tag={tag}
+          isActive={isActive}
+          href={tagBasePath}
+          showCount={true}
+        />
+      );
+    }
   };
 
   return (
@@ -56,9 +146,10 @@ export function TagsList({
             variant={!isAnyTagActive ? "solid" : "bordered"}
             radius="full"
             size="sm"
-            as={Link}
-            prefetch={false}
-            href={resetPath || basePath || "/"}
+            as={mode === "filter" ? undefined : Link}
+            prefetch={mode === "filter" ? undefined : false}
+            href={mode === "filter" ? undefined : (resetPath || basePath || "/")}
+            onPress={mode === "filter" ? clearAllTags : undefined}
             className={getButtonVariantStyles(
               !isAnyTagActive,
               "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group capitalize"
@@ -104,9 +195,10 @@ export function TagsList({
             variant={!isAnyTagActive ? "solid" : "bordered"}
             radius="full"
             size="sm"
-            as={Link}
-            prefetch={false}
-            href={resetPath || basePath || "/"}
+            as={mode === "filter" ? undefined : Link}
+            prefetch={mode === "filter" ? undefined : false}
+            href={mode === "filter" ? undefined : (resetPath || basePath || "/")}
+            onPress={mode === "filter" ? clearAllTags : undefined}
             className={getButtonVariantStyles(
               !isAnyTagActive,
               "px-3 py-1 h-8 font-medium transition-all duration-200"

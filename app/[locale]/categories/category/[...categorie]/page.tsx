@@ -39,10 +39,16 @@ export default async function CategoryListing({
   const { categorie: categorieMeta, locale } = resolvedParams;
   const [rawCategorie, rawPage] = categorieMeta;
   const categorie = decodeURIComponent(rawCategorie);
-  const { start, page } = paginateMeta(rawPage || "1");
-  const { items, categories, total, tags } = await fetchByCategory(categorie, {
-    lang: locale,
-  });
+  
+  // Handle pagination
+  const page = rawPage ? parseInt(rawPage) : 1;
+  const { start } = paginateMeta(page);
+  
+  // For now, we'll use the original approach
+  // In the future, we can implement query parameters here
+  const result = await fetchByCategory(categorie, { lang: locale });
+
+  const { items, categories, total, tags } = result;
 
   return (
     <Listing

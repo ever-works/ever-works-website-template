@@ -8,6 +8,7 @@ import { sortByNumericProperty } from "@/lib/utils";
 import { totalPages } from "@/lib/paginate";
 import { HomeTwoLayout, useHomeTwoLogic } from "@/components/home-two";
 import { ListingClient } from "@/components/shared-card/listing-client";
+import { usePathname } from "@/i18n/navigation";
 
 type ListingProps = {
   total: number;
@@ -24,6 +25,11 @@ export default function GlobalsClient(props: ListingProps) {
   const homeTwoLogic = useHomeTwoLogic(props);
   const sortedTags = sortByNumericProperty(props.tags);
   const sortedCategories = sortByNumericProperty(props.categories);
+  const pathname = usePathname();
+
+  // Detect if we're on a category page
+  const isCategoryPage = pathname.includes('/categories/category/');
+  const tagsMode = isCategoryPage ? "filter" : "navigation";
 
   if (layoutHome === LayoutHome.HOME_ONE) {
     return (
@@ -33,15 +39,24 @@ export default function GlobalsClient(props: ListingProps) {
             <Categories total={props.total} categories={sortedCategories} />
           </div>
           <div className="w-full">
-            <Tags tags={sortedTags} enableSticky={true} maxVisibleTags={5} total={props.total} />
+            <Tags 
+              tags={sortedTags} 
+              enableSticky={true} 
+              maxVisibleTags={5} 
+              total={props.total}
+              mode={tagsMode}
+            />
             <ListingClient {...props} />
-            <div className="flex items-center justify-center">
-              <Paginate
-                basePath={props.basePath}
-                initialPage={props.page}
-                total={totalPages(props.items.length)}
-              />
-            </div>
+            {/* Only show separate pagination for navigation mode */}
+            {tagsMode === "navigation" && (
+              <div className="flex items-center justify-center">
+                <Paginate
+                  basePath={props.basePath}
+                  initialPage={props.page}
+                  total={totalPages(props.items.length)}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
