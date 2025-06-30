@@ -40,7 +40,7 @@ export default async function CategoryListing({
   const [rawCategorie, rawPage] = categorieMeta;
   const categorie = decodeURIComponent(rawCategorie);
   const { start, page } = paginateMeta(rawPage || "1");
-  const { items, categories, total } = await fetchByCategory(categorie, {
+  const { items, categories, total, tags } = await fetchByCategory(categorie, {
     lang: locale,
   });
 
@@ -51,7 +51,7 @@ export default async function CategoryListing({
       page={page}
       basePath={`/categories/category/${categorie}`}
       categories={categories}
-      tags={[]}
+      tags={tags}
       items={items}
     />
   );
