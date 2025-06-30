@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { Button } from '@heroui/react';
 import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
+import { useEffect } from 'react';
 
 export default function GlobalError({
   error,
@@ -10,6 +11,9 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
 
   return (
     <html lang="en">

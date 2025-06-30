@@ -43,16 +43,7 @@ export const EXTENDED_THEME_CONFIGS: Record<ThemeKey, ThemeConfig> = {
     surface: "#ffffff",
     text: "#3e2723",
     textSecondary: "#8d6e63",
-  },
-  modern: {
-    primary: "#6366f1",
-    secondary: "#10b981",
-    accent: "#4f46e5",
-    background: "#ffffff",
-    surface: "#f9fafb",
-    text: "#111827",
-    textSecondary: "#4b5563",
-  },
+  }
 };
 
 /**
@@ -94,23 +85,38 @@ export function applyColorPalette(colorName: string, baseColor: string) {
  * @param themeKey - The theme key to apply
  */
 export function applyThemeWithPalettes(themeKey: ThemeKey) {
-  const theme = EXTENDED_THEME_CONFIGS[themeKey];
+  // Get theme configuration or fallback to default
+  const themeToApply = EXTENDED_THEME_CONFIGS[themeKey] || EXTENDED_THEME_CONFIGS.everworks;
+  
+  if (!themeToApply) {
+    console.error('Could not find theme configuration to apply');
+    return;
+  }
 
-  // Apply primary color palette
-  applyColorPalette('theme-primary', theme.primary);
+  try {
+    // Apply primary color palette
+    applyColorPalette('theme-primary', themeToApply.primary);
 
-  // Apply secondary color palette
-  applyColorPalette('theme-secondary', theme.secondary);
+    // Apply secondary color palette
+    applyColorPalette('theme-secondary', themeToApply.secondary);
 
-  // Apply accent color palette
-  applyColorPalette('theme-accent', theme.accent);
+    // Apply accent color palette
+    applyColorPalette('theme-accent', themeToApply.accent);
 
-  // Apply other theme colors (without palettes)
-  const root = document.documentElement;
-  root.style.setProperty('--theme-background', theme.background);
-  root.style.setProperty('--theme-surface', theme.surface);
-  root.style.setProperty('--theme-text', theme.text);
-  root.style.setProperty('--theme-text-secondary', theme.textSecondary);
+    // Apply other theme colors (without palettes)
+    const root = document.documentElement;
+    root.style.setProperty('--theme-background', themeToApply.background);
+    root.style.setProperty('--theme-surface', themeToApply.surface);
+    root.style.setProperty('--theme-text', themeToApply.text);
+    root.style.setProperty('--theme-text-secondary', themeToApply.textSecondary);
+  } catch (error) {
+    console.error('Error applying theme colors:', error);
+    // Try to apply default theme if the requested theme failed
+    if (themeKey !== 'everworks') {
+      console.warn('Falling back to default theme');
+      applyThemeWithPalettes('everworks');
+    }
+  }
 }
 
 /**

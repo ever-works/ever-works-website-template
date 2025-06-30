@@ -1,6 +1,7 @@
 "use client";
 import { Category, ItemData, Tag } from "@/lib/content";
-import { Paginate, Tags } from "@/components/filters";
+import { Paginate } from "@/components/filters/components/pagination/paginate";
+import { Tags } from "@/components/filters/components/tags/tags-section";
 import { totalPages } from "@/lib/paginate";
 import { sortByNumericProperty } from "@/lib/utils";
 import { useMemo } from "react";

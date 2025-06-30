@@ -29,7 +29,7 @@ export interface ThemeConfig {
   readonly textSecondary: string;
 }
 
-export type ThemeKey = "everworks" | "corporate" | "material" | "funny" | "modern";
+export type ThemeKey = "everworks" | "corporate" | "material" | "funny";
 
 
 interface LayoutThemeContextType {
@@ -79,16 +79,7 @@ export const THEME_CONFIGS: Record<ThemeKey, ThemeConfig> = {
     surface: "#ffffff",
     text: "#3e2723",
     textSecondary: "#8d6e63",
-  },
-  modern: {
-    primary: "#6366f1",
-    secondary: "#10b981",
-    accent: "#4f46e5",
-    background: "#ffffff",
-    surface: "#f9fafb",
-    text: "#111827",
-    textSecondary: "#4b5563",
-  },
+  }
 } as const;
 
 // CSS Custom Properties mapping

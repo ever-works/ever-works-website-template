@@ -4,9 +4,7 @@ import { useTranslations } from "next-intl";
 import { Newsletter } from "./news-letter";
 import { BrandLink } from "./brand-link";
 import { SocialLinks } from "./social-link-item";
-import { footerNavigation, socialLinks } from "./social-links";
-
-import { categoryLabels } from "./social-links";
+import { footerNavigation, categoryLabels, socialLinks } from "./social-links";
 import { FooterLinkGroup } from "./footer-link-group";
 import { FooterBottom } from "./footer-bottom";
 import { Container } from "../ui/container";
@@ -38,7 +36,7 @@ export function Footer() {
               </div>
 
               {/* Enhanced Navigation links section */}
-              <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+              <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
                 {Object.entries(footerNavigation(t)).map(
                   ([category, links], categoryIndex) => (
                     <FooterLinkGroup

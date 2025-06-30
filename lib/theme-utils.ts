@@ -385,7 +385,6 @@ export const getThemeColor = (
     corporate: { primary: "#2c3e50", secondary: "#e74c3c" },
     material: { primary: "#673ab7", secondary: "#ff9800" },
     funny: { primary: "#ff4081", secondary: "#ffeb3b" },
-    modern: { primary: "#6366f1", secondary: "#10b981" },
   };
 
   return colorMap[themeKey][colorType];
@@ -424,3 +423,11 @@ export const buildThemeClasses = (
 
   return cn(...classes);
 };
+
+// Theme color presets
+export const THEME_PRESETS = {
+  everworks: { primary: "#3d70ef", secondary: "#00c853" },
+  corporate: { primary: "#2c3e50", secondary: "#e74c3c" },
+  material: { primary: "#673ab7", secondary: "#ff9800" },
+  funny: { primary: "#ff4081", secondary: "#ffeb3b" }
+} as const;

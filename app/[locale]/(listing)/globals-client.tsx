@@ -1,6 +1,8 @@
 "use client";
 import { LayoutHome, useLayoutTheme } from "@/components/context";
-import { Categories, Paginate, Tags } from "@/components/filters";
+import { Categories } from "@/components/filters/components/categories/categories-section";
+import { Paginate } from "@/components/filters/components/pagination/paginate";
+import { Tags } from "@/components/filters/components/tags/tags-section";
 import { Tag, Category, ItemData } from "@/lib/content";
 import { sortByNumericProperty } from "@/lib/utils";
 import { totalPages } from "@/lib/paginate";

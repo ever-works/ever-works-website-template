@@ -12,6 +12,9 @@ import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { auth } from "@/lib/auth";
 import { Toaster } from "sonner";
+import { PHProvider } from "./integration/posthog/provider";
+import PostHogPageView from "./integration/posthog/page-view";
+import { Locale } from "@/lib/constants";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,7 +50,7 @@ export default async function RootLayout({
 }>) {
   const { locale } = await params;
 
-  if (!routing.locales.includes(locale)) {
+  if (!routing.locales.includes(locale as Locale)) {
     notFound();
   }
 
@@ -55,15 +58,19 @@ export default async function RootLayout({
   const messages = await getMessages();
   const session = await auth();
 
+  // Determine if the current locale is RTL
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-dark--theme-950`}>
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-dark--theme-950`}
+      >
+        <PHProvider>
+          <PostHogPageView />
           <NextIntlClientProvider messages={messages}>
-          <Toaster position="bottom-right" richColors />
+            <Toaster position="bottom-right" richColors />
             <Providers config={config}>
               <Header session={session} />
-              {children}
+              <main className="flex-1">{children}</main>
               <Footer />
               <div className="fixed bottom-6 right-6 z-50">
                 <ScrollToTopButton
@@ -75,6 +82,7 @@ export default async function RootLayout({
               </div>
             </Providers>
           </NextIntlClientProvider>
+        </PHProvider>
       </body>
     </html>
   );

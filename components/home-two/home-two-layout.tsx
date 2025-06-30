@@ -2,7 +2,7 @@
 
 import { Category, ItemData, Tag } from "@/lib/content";
 import { totalPages } from "@/lib/paginate";
-import { Paginate } from "@/components/filters";
+import { Paginate } from "@/components/filters/components/pagination/paginate";
 import { HomeTwoFilters } from "./home-two-filters";
 import { useLayoutTheme } from "../context";
 import { useStickyState } from "@/hooks/use-sticky-state";
