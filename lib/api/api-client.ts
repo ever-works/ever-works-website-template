@@ -83,10 +83,11 @@ interface RetryableRequestConfig extends AxiosRequestConfig {
  * - Type safety
  */
 export class ApiClient {
+  private static instance: ApiClient | null = null;
   private readonly client: AxiosInstance;
   private readonly config: Required<ApiClientConfig>;
 
-  constructor(config: ApiClientConfig) {
+  private constructor(config: ApiClientConfig) {
     this.config = {
       timeout: 10000,
       retryAttempts: 3,
@@ -113,6 +114,33 @@ export class ApiClient {
     });
 
     this.setupInterceptors();
+  }
+
+  /**
+   * Get the singleton instance of ApiClient
+   * @param config - Optional configuration to initialize the client
+   * @returns ApiClient instance
+   */
+  public static getInstance(config?: ApiClientConfig): ApiClient {
+    if (!ApiClient.instance) {
+      if (!config) {
+        config = {
+          baseURL: env.NODE_ENV === 'development' 
+            ? 'http://localhost:3000/api' 
+            : env.API_BASE_URL
+        };
+      }
+      ApiClient.instance = new ApiClient(config);
+    }
+    return ApiClient.instance;
+  }
+
+  /**
+   * Reset the singleton instance
+   * Useful for testing or reconfiguring the client
+   */
+  public static resetInstance(): void {
+    ApiClient.instance = null;
   }
 
   /**
@@ -360,9 +388,13 @@ export class ApiClient {
     if (!expiryTime) return true;
     return Date.now() >= parseInt(expiryTime, 10);
   }
-} 
+}
 
+// Export the default instance
+export const api = ApiClient.getInstance();
 
-export const api = new ApiClient({
-  baseURL: env.NODE_ENV === 'development' ? 'http://localhost:3000/api' : env.API_BASE_URL,
-});
+// Export a function to create a new instance with custom config
+export const createCustomApi = (config: ApiClientConfig): ApiClient => {
+  ApiClient.resetInstance();
+  return ApiClient.getInstance(config);
+};
