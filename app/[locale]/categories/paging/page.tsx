@@ -1,5 +1,4 @@
 import { fetchItems } from "@/lib/content";
-import { paginateMeta } from "@/lib/paginate";
 import { LOCALES } from "@/lib/constants";
 import ListingCategories from "../listing-categories";
 
@@ -14,18 +13,11 @@ export default async function CategoryPIndexPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const { start, page } = paginateMeta();
-  const { tags, total, items, categories } = await fetchItems({ lang: locale });
+  const { categories } = await fetchItems({ lang: locale });
 
   return (
     <ListingCategories
-      total={total}
-      start={start}
-      page={page}
-      basePath="/categories/paging"
       categories={categories}
-      tags={tags}
-      items={items}
     />
   );
 }
