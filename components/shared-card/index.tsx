@@ -56,6 +56,8 @@ interface FilterState {
   setSelectedTags: (tags: string[]) => void;
   sortBy: string;
   setSortBy: (sort: string) => void;
+  selectedTag: string | null;
+  setSelectedTag: (tag: string | null) => void;
 }
 
 interface ProcessedItems {
@@ -109,6 +111,7 @@ function useItemFiltering(
   items: ItemData[],
   searchTerm: string,
   selectedTags: string[],
+  selectedTag: string | null,
   config: CardConfigOptions
 ): ItemData[] {
   const enableSearch = config.enableSearch ?? true;
@@ -135,8 +138,16 @@ function useItemFiltering(
       });
     }
 
+    // Filter by selectedTag (single tag from context)
+    if (enableTagFilter && selectedTag) {
+      filtered = filtered.filter((item) => {
+        if (!item.tags?.length) return false;
+        return item.tags.some((itemTag) => getTagId(itemTag) === selectedTag);
+      });
+    }
+
     return filtered;
-  }, [items, searchTerm, selectedTags, enableSearch, enableTagFilter]);
+  }, [items, searchTerm, selectedTags, selectedTag, enableSearch, enableTagFilter]);
 }
 
 function useItemSorting(
@@ -175,6 +186,7 @@ function useProcessedItems(
   items: ItemData[],
   searchTerm: string,
   selectedTags: string[],
+  selectedTag: string | null,
   sortBy: string,
   start: number,
   config: CardConfigOptions
@@ -183,6 +195,7 @@ function useProcessedItems(
     items,
     searchTerm,
     selectedTags,
+    selectedTag,
     config
   );
   const sortedItems = useItemSorting(filteredItems, sortBy, config);
@@ -202,18 +215,12 @@ function useProcessedItems(
   const hasActiveFilters = useMemo(() => {
     const hasSearch = Boolean(enableSearch && searchTerm.trim() !== "");
     const hasTags = Boolean(enableTagFilter && selectedTags.length > 0);
+    const hasSelectedTag = Boolean(enableTagFilter && selectedTag);
     const hasSort = Boolean(
       enableSorting && sortBy !== SORT_OPTIONS.POPULARITY
     );
-    return hasSearch || hasTags || hasSort;
-  }, [
-    searchTerm,
-    selectedTags,
-    sortBy,
-    enableSearch,
-    enableTagFilter,
-    enableSorting,
-  ]);
+    return hasSearch || hasTags || hasSelectedTag || hasSort;
+  }, [searchTerm, selectedTags, selectedTag, sortBy, enableSearch, enableTagFilter, enableSorting]);
 
   return {
     filtered: sortedItems,
@@ -227,6 +234,7 @@ export function FilterStats({
   totalCount,
   searchTerm,
   selectedTags,
+  selectedTag,
   hasActiveFilters,
   t,
   className = "",
@@ -235,6 +243,7 @@ export function FilterStats({
   totalCount: number;
   searchTerm: string;
   selectedTags: string[];
+  selectedTag: string | null;
   hasActiveFilters: boolean;
   t: ReturnType<typeof useTranslations>;
   className?: string;
@@ -256,6 +265,9 @@ export function FilterStats({
           <span className="text-theme-primary-500 dark:text-theme-primary-400">
             {" "}
             {t("FILTERED")}
+            {selectedTag && (
+              <span> ({t("TAG_COLON")} {getTagName(selectedTag, [])})</span>
+            )}
           </span>
         )}
       </div>
@@ -322,6 +334,7 @@ export function ActiveFiltersDisplay({
 export function EmptyState({
   searchTerm,
   selectedTags,
+  selectedTag,
   tags,
   t,
   customMessage,
@@ -330,13 +343,14 @@ export function EmptyState({
 }: {
   searchTerm: string;
   selectedTags: string[];
+  selectedTag: string | null;
   tags: Tag[];
   t: ReturnType<typeof useTranslations>;
   customMessage?: string;
   customDescription?: string;
   className?: string;
 }) {
-  const hasFilters = searchTerm || selectedTags.length > 0;
+  const hasFilters = searchTerm || selectedTags.length > 0 || selectedTag;
 
   return (
     <div className={`text-center py-8 sm:py-10 ${className}`}>
@@ -497,7 +511,7 @@ export function ItemsList({
 export function SharedCard(props: ExtendedCardProps) {
   const config = { ...DEFAULT_CONFIG, ...props.config };
   const { layoutKey, setLayoutKey } = useLayoutTheme();
-  const { searchTerm, selectedTags, sortBy } = useFilters();
+  const { searchTerm, selectedTags, sortBy, selectedTag } = useFilters();
   const t = useTranslations("listing");
 
   const LayoutComponent = layoutComponents[layoutKey];
@@ -506,6 +520,7 @@ export function SharedCard(props: ExtendedCardProps) {
     props.items,
     searchTerm,
     selectedTags,
+    selectedTag,
     sortBy,
     props.start,
     config
@@ -526,6 +541,7 @@ export function SharedCard(props: ExtendedCardProps) {
               totalCount={props.total}
               searchTerm={searchTerm}
               selectedTags={selectedTags}
+              selectedTag={selectedTag}
               hasActiveFilters={hasActiveFilters}
               t={t}
             />
@@ -552,6 +568,7 @@ export function SharedCard(props: ExtendedCardProps) {
             <EmptyState
               searchTerm={searchTerm}
               selectedTags={selectedTags}
+              selectedTag={selectedTag}
               tags={props.tags}
               t={t}
               customMessage={config.customEmptyMessage}
