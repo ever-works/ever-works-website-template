@@ -16,6 +16,8 @@ import { CardPresets } from "@/components/shared-card";
 import { SearchInput } from "@/components/ui/search-input";
 import { useFilters } from "@/hooks/use-filters";
 import { TagsItemsColumn } from "@/components/tags-items-column";
+import { useSearchParams } from "next/navigation";
+import React from "react";
 
 type ListingTagsProps = {
   total: number;
@@ -28,10 +30,11 @@ type ListingTagsProps = {
 };
 
 function ListingTags(props: ListingTagsProps) {
-  const { searchTerm, setSearchTerm, setSortBy, sortBy } = useFilters();
+  const { searchTerm, setSearchTerm, setSortBy, sortBy, setSelectedTag } = useFilters();
   const { layoutKey, setLayoutKey, layoutHome = LayoutHome.HOME_ONE } = useLayoutTheme();
   const t = useTranslations("listing");
   const { isSticky } = useStickyHeader({ enableSticky: true });
+  const searchParams = useSearchParams();
 
   const sortedTags = useMemo(
     () => sortByNumericProperty(props.tags),
@@ -44,6 +47,14 @@ function ListingTags(props: ListingTagsProps) {
     { value: "name-desc", label: t("NAME_Z_A") },
     { value: "date-asc", label: t("OLDEST") },
   ];
+
+  // Read ?tag=... from query params on mount
+  React.useEffect(() => {
+    const tagParam = searchParams.get("tag");
+    if (tagParam) {
+      setSelectedTag(tagParam);
+    }
+  }, [searchParams, setSelectedTag]);
 
   // Render functions
   const renderFilters = () => (
