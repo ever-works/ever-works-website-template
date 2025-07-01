@@ -9,6 +9,7 @@ export function useFilterState() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>(SORT_OPTIONS.POPULARITY);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   /**
    * Clear all active filters
@@ -17,6 +18,7 @@ export function useFilterState() {
     setSearchTerm("");
     setSelectedTags([]);
     setSortBy(SORT_OPTIONS.POPULARITY);
+    setSelectedTag(null);
   }, []);
 
   /**
@@ -49,11 +51,13 @@ export function useFilterState() {
     searchTerm,
     selectedTags,
     sortBy,
+    selectedTag,
     
     // Setters
     setSearchTerm,
     setSelectedTags,
     setSortBy,
+    setSelectedTag,
     
     // Actions
     clearAllFilters,

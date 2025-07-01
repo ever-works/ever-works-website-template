@@ -15,6 +15,10 @@ export interface FilterContextType {
   removeSelectedTag: (tagId: string) => void;
   addSelectedTag: (tagId: string) => void;
   toggleSelectedTag: (tagId: string) => void;
+  selectedCategory: string | null;
+  setSelectedCategory: Dispatch<SetStateAction<string | null>>;
+  selectedTag: string | null;
+  setSelectedTag: Dispatch<SetStateAction<string | null>>;
 }
 
 /**
