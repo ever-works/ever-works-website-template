@@ -33,12 +33,12 @@ export default function GlobalsClient(props: ListingProps) {
 
   if (layoutHome === LayoutHome.HOME_ONE) {
     return (
-      <div className="pb-12">
-        <div className="flex flex-col md:flex-row w-full gap-5">
-          <div className="md:sticky md:top-4 md:self-start">
+      <div className="pb-12 px-4 sm:px-6 lg:px-8 xl:px-12">
+        <div className="flex flex-col lg:flex-row w-full gap-8 lg:gap-12 max-w-7xl mx-auto">
+          <div className="lg:sticky lg:top-4 lg:self-start lg:w-80 lg:flex-shrink-0">
             <Categories total={props.total} categories={sortedCategories} />
           </div>
-          <div className="w-full">
+          <div className="w-full lg:flex-1">
             <Tags 
               tags={sortedTags} 
               enableSticky={true} 
@@ -49,7 +49,7 @@ export default function GlobalsClient(props: ListingProps) {
             <ListingClient {...props} />
             {/* Only show separate pagination for navigation mode */}
             {tagsMode === "navigation" && (
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center mt-8">
                 <Paginate
                   basePath={props.basePath}
                   initialPage={props.page}

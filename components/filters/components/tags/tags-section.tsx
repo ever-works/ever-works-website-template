@@ -41,7 +41,7 @@ export function Tags({
   return (
     <div
       className={cn(
-        "p-4 transition-all duration-300",
+        "p-6 transition-all duration-300",
         enableSticky
           ? cn(
               "sticky top-4 z-10",
@@ -53,7 +53,7 @@ export function Tags({
       )}
     >
       <div className="relative z-10">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-4">
           <h3
             className={cn(
               "text-lg font-bold transition-colors duration-300",

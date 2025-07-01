@@ -5,16 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { FiFolder } from "react-icons/fi";
 import React, { useState } from "react";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationPrevious,
-  PaginationNext,
-  PaginationEllipsis,
-} from "@/components/ui/pagination";
-import { cn } from "@/lib/utils";
+import { Pagination, cn } from "@heroui/react";
 
 const PAGE_SIZE = 10;
 
@@ -25,55 +16,9 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
   const totalPages = Math.ceil(sortedCategories.length / PAGE_SIZE);
   const pagedCategories = sortedCategories.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  // Helper to render page numbers (with ellipsis if needed)
-  const renderPageNumbers = () => {
-    const pages = [];
-    for (let i = 1; i <= totalPages; i++) {
-      // Show first, last, current, and neighbors; ellipsis for gaps
-      if (
-        i === 1 ||
-        i === totalPages ||
-        Math.abs(i - page) <= 1
-      ) {
-        pages.push(
-          <PaginationItem key={i}>
-            <PaginationLink
-              isActive={i === page}
-              onClick={e => {
-                e.preventDefault();
-                setPage(i);
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-              href="#"
-              className={cn(
-                "min-w-10 h-10 text-sm font-medium transition-all duration-300 ease-out",
-                "bg-transparent hover:bg-theme-primary hover:to-theme-primary",
-                "dark:hover:bg-theme-primary dark:hover:to-theme-primary",
-                "text-gray-700 dark:text-gray-300 hover:text-theme-primary dark:hover:text-theme-primary",
-                "border border-transparent hover:border-theme-primary dark:hover:border-theme-primary",
-                "hover:shadow-md hover:scale-105 active:scale-95",
-                "data-[hover=true]:bg-theme-primary dark:data-[hover=true]:bg-theme-primary",
-                "cursor-pointer relative overflow-hidden",
-                i === page &&
-                  "bg-theme-primary text-white font-semibold shadow-lg shadow-theme-primary dark:shadow-theme-primary border-2 border-theme-primary dark:border-theme-primary"
-              )}
-            >
-              {i}
-            </PaginationLink>
-          </PaginationItem>
-        );
-      } else if (
-        (i === page - 2 && page > 3) ||
-        (i === page + 2 && page < totalPages - 2)
-      ) {
-        pages.push(
-          <PaginationItem key={`ellipsis-${i}`}>
-            <PaginationEllipsis />
-          </PaginationItem>
-        );
-      }
-    }
-    return pages;
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -92,7 +37,7 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
                 before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/60 before:via-transparent before:to-gray-50/40
                 dark:before:from-gray-800/60 dark:before:via-transparent dark:before:to-gray-900/40
                 hover:before:from-blue-50/30 hover:before:to-purple-50/20 dark:hover:before:from-blue-900/20 dark:hover:before:to-purple-900/10
-                px-8 py-7 sm:px-10 sm:py-9
+                px-6 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10
               "
             >
               {/* Subtle background pattern */}
@@ -100,7 +45,7 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
                 className="absolute inset-0 opacity-10 dark:opacity-20"
                 style={{
                   backgroundImage:
-                    "url('data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'#000000\' fill-opacity=\'0.05\' fill-rule=\'evenodd\'%3E%3Cpath d=\'M0 0h40v40H0V0zm1 1h38v38H1V1z\' /%3E%3C/g%3E%3C/svg%3E')",
+                    "url('data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'0.05\' fill-rule=\'evenodd\'%3E%3Cpath d=\'M0 0h40v40H0V0zm1 1h38v38H1V1z\' /%3E%3C/g%3E%3C/svg%3E')",
                 }}
               />
               {/* Icon with animated background */}
@@ -158,35 +103,48 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
             {/* Background glow effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 via-primary-600/5 to-primary-500/10 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
             <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-2 shadow-lg hover:shadow-xl transition-all duration-300 dark:shadow-lg dark:shadow-theme-primary-500/20 dark:shadow-theme-primary-500/20">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      href="#"
-                      onClick={e => {
-                        e.preventDefault();
-                        setPage(p => Math.max(1, p - 1));
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }}
-                      aria-disabled={page === 1}
-                      tabIndex={page === 1 ? -1 : 0}
-                    />
-                  </PaginationItem>
-                  {renderPageNumbers()}
-                  <PaginationItem>
-                    <PaginationNext
-                      href="#"
-                      onClick={e => {
-                        e.preventDefault();
-                        setPage(p => Math.min(totalPages, p + 1));
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }}
-                      aria-disabled={page === totalPages}
-                      tabIndex={page === totalPages ? -1 : 0}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
+              <Pagination
+                showControls
+                total={totalPages}
+                page={page}
+                onChange={handlePageChange}
+                radius="lg"
+                size="lg"
+                classNames={{
+                  wrapper: "flex justify-center items-center gap-2",
+                  item: cn(
+                    "min-w-10 h-10 text-sm font-medium transition-all duration-300 ease-out",
+                    "bg-transparent hover:bg-theme-primary hover:bg-theme-primary hover:to-theme-primary",
+                    "dark:hover:bg-theme-primary dark:hover:to-theme-primary",
+                    "text-gray-700 dark:text-gray-300 hover:text-theme-primary dark:hover:text-theme-primary",
+                    "border border-transparent hover:border-theme-primary dark:hover:border-theme-primary",
+                    "hover:shadow-md hover:scale-105 active:scale-95",
+                    "data-[hover=true]:bg-theme-primary data-[hover=true]:bg-theme-primary data-[hover=true]:bg-theme-primary",
+                    "dark:data-[hover=true]:bg-theme-primary dark:data-[hover=true]:bg-theme-primary",
+                    "cursor-pointer relative overflow-hidden"
+                  ),
+                  cursor: cn(
+                    "bg-theme-primary text-white font-semibold",
+                    "shadow-lg shadow-theme-primary dark:shadow-theme-primary",
+                    "border-2 border-theme-primary dark:border-theme-primary",
+                    "relative overflow-hidden"
+                  ),
+                  prev: cn(
+                    "min-w-10 h-10 font-medium transition-all duration-300",
+                    " from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700",
+                    "text-gray-600 dark:text-gray-300 hover:text-theme-primary dark:hover:text-theme-primary",
+                    "border border-gray-200 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
+                    "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  ),
+                  next: cn(
+                    "min-w-10 h-10 font-medium transition-all duration-300",
+                    " from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700",
+                    "text-gray-600 dark:text-gray-300 hover:text-theme-primary dark:hover:text-theme-primary",
+                    "border border-gray-200 dark:border-gray-600 hover:border-theme-primary  dark:hover:border-theme-primary",
+                    "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  ),
+                }}
+              />
             </div>
           </div>
         </div>

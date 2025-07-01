@@ -68,7 +68,7 @@ export default function ListingCategories({
       </nav>
 
       {/* Categories Grid */}
-      <div className="w-full max-w-5xl mx-auto px-2 sm:px-4">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
         <CategoriesGrid categories={categories} />
       </div>
     </Hero>
