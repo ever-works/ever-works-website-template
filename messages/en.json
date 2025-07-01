@@ -382,5 +382,23 @@
       "SCHEDULE_ADVERTISING": "Schedule your advertising period",
       "PREMIUM_CUSTOMER_SUPPORT": "Premium customer support"
     }
+  },
+  "payment": {
+    "form": {
+      "processing": "Processing payment...",
+      "pay_button": "Pay Now",
+      "loading": "Loading payment form...",
+      "error": {
+        "default": "An error occurred during payment",
+        "setup": "An error occurred during setup",
+        "unexpected": "An unexpected error occurred",
+        "payment_method_required": "Please provide a payment method"
+      }
+    },
+    "status": {
+      "success": "Payment successful",
+      "failed": "Payment failed",
+      "pending": "Payment pending"
+    }
   }
 }
