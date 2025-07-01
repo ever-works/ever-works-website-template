@@ -1,9 +1,5 @@
 import { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
-import { checkEnvironmentVariables } from './lib/config/check-env';
-
-// Check environment variables
-checkEnvironmentVariables();
 
 const nextConfig: NextConfig = {
   output: "standalone",
