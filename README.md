@@ -19,6 +19,7 @@ This versatile template is an essential component of the [Ever Works Platform](h
 - **[NodeJs](https://nodejs.org)**
 - [Next.js 15](https://nextjs.org/) with App Router
 - **Authentication**: [Auth.js](https://authjs.dev) / [Supabase Auth](https://supabase.com/auth)
+- **API Client**: Secure Axios-based client with httpOnly cookies
 - **ORM**: [Drizzle](https://github.com/drizzle-team/drizzle-orm)
 - **Supported Databases**: [Supabase](https://supabase.com)/PostgreSQL/MySQL/SQLite
 - **Styling**: [Tailwind CSS](https://tailwindcss.com)
@@ -271,4 +272,85 @@ You can also view a full list of our [contributors tracked by Github](https://gi
 ## ©️ Copyright
 
 #### Copyright © 2024-present, Ever Co. LTD. All rights reserved
+
+## Environment Configuration
+
+Create a `.env.local` file in the root directory with the following configuration:
+
+### Basic Configuration
+```bash
+# Environment
+NODE_ENV=development
+
+# API Configuration
+NEXT_PUBLIC_API_BASE_URL="http://localhost:3000/api"
+API_TIMEOUT=10000
+API_RETRY_ATTEMPTS=3
+API_RETRY_DELAY=1000
+
+# Cookie Security
+COOKIE_SECRET="your-secure-cookie-secret"  # Generate with: openssl rand -base64 32
+COOKIE_DOMAIN="localhost"                  # In production: your-domain.com
+COOKIE_SECURE=false                        # In production: true
+COOKIE_SAME_SITE="lax"                    # In production: strict
+```
+
+### Authentication Configuration
+```bash
+# Auth Endpoints
+AUTH_ENDPOINT_LOGIN="/auth/login"
+AUTH_ENDPOINT_REFRESH="/auth/refresh"
+AUTH_ENDPOINT_LOGOUT="/auth/logout"
+AUTH_ENDPOINT_CHECK="/auth/check"
+
+# JWT Configuration
+JWT_ACCESS_TOKEN_EXPIRES_IN=15m
+JWT_REFRESH_TOKEN_EXPIRES_IN=7d
+```
+
+### CORS Configuration (Production)
+```bash
+# CORS Settings
+CORS_ORIGIN="https://your-frontend-domain.com"
+CORS_CREDENTIALS=true
+CORS_METHODS="GET,POST,PUT,DELETE,OPTIONS"
+```
+
+### Security Notes
+
+1. **Cookie Security**
+   - httpOnly cookies are used for token storage
+   - Prevents XSS attacks by making tokens inaccessible to JavaScript
+   - Secure flag must be enabled in production
+   - SameSite policy helps prevent CSRF attacks
+
+2. **API Security**
+   - Automatic token refresh handling
+   - Request queue during token refresh
+   - Exponential backoff for retries
+   - Proper error handling and formatting
+
+3. **Environment Specific**
+   - Development uses relaxed security for local testing
+   - Production requires strict security settings
+   - Different cookie domains per environment
+   - CORS configuration required for production
+
+### Using the API Client
+
+```typescript
+import { api } from 'lib/api/api-client';
+
+// Authentication
+await api.login({ email: 'user@example.com', password: 'password' });
+
+// Check authentication status
+if (await api.isAuthenticated()) {
+  // Make authenticated requests
+  const response = await api.get('/protected-endpoint');
+}
+
+// Logout
+await api.logout();
+```
 
