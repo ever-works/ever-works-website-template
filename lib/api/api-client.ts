@@ -37,12 +37,7 @@ export interface ErrorResponse {
   path?: string;
 }
 
-// Storage Keys and Constants
-const STORAGE_KEYS = {
-  ACCESS_TOKEN: 'auth_access_token',
-  REFRESH_TOKEN: 'auth_refresh_token',
-  TOKEN_EXPIRY: 'auth_token_expiry'
-} as const;
+
 
 const HTTP_STATUS = {
   UNAUTHORIZED: 401,
