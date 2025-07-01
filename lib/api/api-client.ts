@@ -65,6 +65,7 @@ export interface ApiClientConfig {
     refresh: string;
     login: string;
     logout: string;
+    check: string;
   };
 }
 
@@ -86,6 +87,8 @@ export class ApiClient {
   private static instance: ApiClient | null = null;
   private readonly client: AxiosInstance;
   private readonly config: Required<ApiClientConfig>;
+  private isRefreshing = false;
+  private refreshSubscribers: Array<(token: string) => void> = [];
 
   private constructor(config: ApiClientConfig) {
     this.config = {
@@ -98,7 +101,8 @@ export class ApiClient {
       authEndpoints: {
         refresh: '/auth/refresh',
         login: '/auth/login',
-        logout: '/auth/logout'
+        logout: '/auth/logout',
+        check: '/auth/check'
       },
       ...config
     };
@@ -110,7 +114,8 @@ export class ApiClient {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         ...this.config.headers
-      }
+      },
+      withCredentials: true
     });
 
     this.setupInterceptors();
@@ -229,19 +234,13 @@ export class ApiClient {
    * Sets up request and response interceptors for authentication and error handling
    */
   private setupInterceptors(): void {
-    // Request Interceptor - Adds authentication headers
+    // Request Interceptor - No need to manually add token as it's in httpOnly cookie
     this.client.interceptors.request.use(
-      (config) => {
-        const token = this.getAuthToken();
-        if (token && config.headers) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
+      (config) => config,
       (error) => Promise.reject(this.handleError(error))
     );
 
-    // Response Interceptor - Handles auth errors and retries
+    // Response Interceptor with better token refresh handling
     this.client.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
@@ -256,15 +255,30 @@ export class ApiClient {
         if (error.response?.status === HTTP_STATUS.UNAUTHORIZED) {
           if (retryableRequest._retry === 0) {
             retryableRequest._retry++;
-            try {
-              const newToken = await this.refreshToken();
-              if (newToken && retryableRequest.headers) {
-                retryableRequest.headers.Authorization = `Bearer ${newToken}`;
+            
+            if (!this.isRefreshing) {
+              this.isRefreshing = true;
+              
+              try {
+                await this.refreshToken();
+                // Retry all queued requests
+                this.refreshSubscribers.forEach(callback => callback('token refreshed'));
+                this.refreshSubscribers = [];
                 return this.client(retryableRequest);
+              } catch (refreshError) {
+                this.refreshSubscribers = [];
+                this.handleAuthError();
+                return Promise.reject(this.handleError(refreshError));
+              } finally {
+                this.isRefreshing = false;
               }
-            } catch (refreshError) {
-              this.handleAuthError();
-              return Promise.reject(this.handleError(refreshError));
+            } else {
+              // Queue the retry if a refresh is already in progress
+              return new Promise(resolve => {
+                this.refreshSubscribers.push(() => {
+                  resolve(this.client(retryableRequest));
+                });
+              });
             }
           } else {
             this.handleAuthError();
@@ -333,60 +347,53 @@ export class ApiClient {
    * Authentication token management
    */
   private handleAuthError(): void {
-    this.clearAuthTokens();
     this.config.onAuthError();
   }
 
-  private getAuthToken(): string | null {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-  }
-
-  private async refreshToken(): Promise<string | null> {
+  /**
+   * Check if user is authenticated by calling the check endpoint
+   * This replaces the token expiry check since we're using httpOnly cookies
+   */
+  public async isAuthenticated(): Promise<boolean> {
     try {
-      const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
-      if (!refreshToken) return null;
-
-      const response = await this.post<{ token: string; expiresIn: number }>(
-        this.config.authEndpoints.refresh,
-        { refreshToken }
-      );
-
-      const { token, expiresIn } = response.data;
-      this.setAuthToken(token, expiresIn);
-      return token;
+      await this.get(this.config.authEndpoints.check);
+      return true;
     } catch (error) {
-      this.clearAuthTokens();
-      throw error;
+      if (axios.isAxiosError(error) && error.response?.status === HTTP_STATUS.UNAUTHORIZED) {
+        return false;
+      }
+      throw this.handleError(error);
     }
   }
 
-  private setAuthToken(token: string, expiresIn?: number): void {
-    if (typeof window === 'undefined') return;
-    
-    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, token);
-    
-    if (expiresIn) {
-      const expiryTime = Date.now() + expiresIn * 1000;
-      localStorage.setItem(STORAGE_KEYS.TOKEN_EXPIRY, expiryTime.toString());
+  private async refreshToken(): Promise<void> {
+    try {
+      await this.post(this.config.authEndpoints.refresh);
+    } catch (error) {
+      throw this.handleError(error);
     }
-  }
-
-  private clearAuthTokens(): void {
-    if (typeof window === 'undefined') return;
-    
-    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-    localStorage.removeItem(STORAGE_KEYS.TOKEN_EXPIRY);
   }
 
   /**
-   * Public method to check token expiration
+   * Login method that sets httpOnly cookies
    */
-  public isTokenExpired(): boolean {
-    const expiryTime = localStorage.getItem(STORAGE_KEYS.TOKEN_EXPIRY);
-    if (!expiryTime) return true;
-    return Date.now() >= parseInt(expiryTime, 10);
+  public async login(credentials: { email: string; password: string }): Promise<void> {
+    try {
+      await this.post(this.config.authEndpoints.login, credentials);
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Logout method that clears httpOnly cookies
+   */
+  public async logout(): Promise<void> {
+    try {
+      await this.post(this.config.authEndpoints.logout);
+    } catch (error) {
+      throw this.handleError(error);
+    }
   }
 }
 
