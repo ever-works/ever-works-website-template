@@ -30,11 +30,67 @@ type ListingTagsProps = {
 };
 
 function ListingTags(props: ListingTagsProps) {
-  const { searchTerm, setSearchTerm, setSortBy, sortBy, setSelectedTag } = useFilters();
+  const { searchTerm, setSearchTerm, setSortBy, sortBy, setSelectedTag, selectedTag, selectedTags, selectedCategory } = useFilters();
   const { layoutKey, setLayoutKey, layoutHome = LayoutHome.HOME_ONE } = useLayoutTheme();
   const t = useTranslations("listing");
   const { isSticky } = useStickyHeader({ enableSticky: true });
   const searchParams = useSearchParams();
+
+  // Compute filtered items based on all active filters
+  const filteredItems = React.useMemo(() => {
+    let items = props.items;
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      items = items.filter(
+        (item) =>
+          item.name.toLowerCase().includes(searchLower) ||
+          item.description?.toLowerCase().includes(searchLower)
+      );
+    }
+    if (selectedCategory) {
+      items = items.filter((item) => {
+        if (!item.category) return false;
+        if (Array.isArray(item.category)) {
+          return item.category.some((cat) =>
+            typeof cat === "string"
+              ? cat === selectedCategory
+              : cat.id === selectedCategory
+          );
+        } else {
+          return typeof item.category === "string"
+            ? item.category === selectedCategory
+            : item.category.id === selectedCategory;
+        }
+      });
+    }
+    if (selectedTags && selectedTags.length > 0) {
+      items = items.filter((item) => {
+        if (!item.tags) return false;
+        return selectedTags.some((tagId) =>
+          item.tags.some((tag) => (typeof tag === "string" ? tag === tagId : tag.id === tagId))
+        );
+      });
+    }
+    if (selectedTag) {
+      items = items.filter((item) => {
+        if (!item.tags) return false;
+        return item.tags.some((tag) => (typeof tag === "string" ? tag === selectedTag : tag.id === selectedTag));
+      });
+    }
+    return items;
+  }, [props.items, searchTerm, selectedCategory, selectedTags, selectedTag]);
+
+  // Compute filtered tags with correct counts
+  const filteredTags = React.useMemo(() => {
+    return props.tags
+      .map((tag) => {
+        const count = filteredItems.filter((item) =>
+          item.tags && item.tags.some((itemTag) => (typeof itemTag === "string" ? itemTag === tag.id : itemTag.id === tag.id))
+        ).length;
+        return { ...tag, count };
+      })
+      .filter((tag) => tag.count > 0);
+  }, [props.tags, filteredItems]);
 
   const sortedTags = useMemo(
     () => sortByNumericProperty(props.tags),
@@ -120,12 +176,13 @@ function ListingTags(props: ListingTagsProps) {
       {/* Tags - Always visible */}
       <div className="mt-3 sm:mt-4">
         <Tags
-          tags={sortedTags}
+          tags={filteredTags}
           basePath={`/tags/tag`}
           resetPath={`/tags`}
           enableSticky={false}
           maxVisibleTags={6}
-          total={props.total}
+          total={filteredItems.length}
+          mode="filter"
         />
       </div>
     </div>

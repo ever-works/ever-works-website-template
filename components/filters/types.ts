@@ -65,6 +65,7 @@ export interface TagsProps {
   enableSticky?: boolean;
   maxVisibleTags?: number;
   total?: number;
+  mode?: 'navigation' | 'filter';
 }
 
 /**
