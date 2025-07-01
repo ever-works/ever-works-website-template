@@ -37,8 +37,6 @@ export interface ErrorResponse {
   path?: string;
 }
 
-
-
 const HTTP_STATUS = {
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
@@ -49,19 +47,14 @@ const HTTP_STATUS = {
 
 // Client Configuration
 export interface ApiClientConfig {
-  baseURL: string;
+  baseURL?: string;
   timeout?: number;
   headers?: Record<string, string>;
   retryAttempts?: number;
   retryDelay?: number;
+  withCredentials?: boolean;
   onAuthError?: () => void;
   onError?: (error: Error) => void;
-  authEndpoints?: {
-    refresh: string;
-    login: string;
-    logout: string;
-    check: string;
-  };
 }
 
 // Interface for retryable request configuration
@@ -85,21 +78,20 @@ export class ApiClient {
   private isRefreshing = false;
   private refreshSubscribers: Array<(token: string) => void> = [];
 
-  private constructor(config: ApiClientConfig) {
+  private constructor(config: ApiClientConfig = {}) {
     this.config = {
-      timeout: 10000,
-      retryAttempts: 3,
-      retryDelay: 1000,
-      headers: {},
-      onAuthError: () => undefined,
-      onError: () => undefined,
-      authEndpoints: {
-        refresh: '/auth/refresh',
-        login: '/auth/login',
-        logout: '/auth/logout',
-        check: '/auth/check'
-      },
-      ...config
+      baseURL: config.baseURL || env.API_BASE_URL,
+      timeout: config.timeout || env.API_TIMEOUT,
+      retryAttempts: config.retryAttempts || env.API_RETRY_ATTEMPTS,
+      retryDelay: config.retryDelay || env.API_RETRY_DELAY,
+      headers: config.headers || {},
+      withCredentials: config.withCredentials ?? true,
+      onAuthError: config.onAuthError || (() => {
+        if (typeof window !== 'undefined') {
+          window.location.href = env.AUTH_ENDPOINT_LOGIN;
+        }
+      }),
+      onError: config.onError || console.error,
     };
 
     this.client = axios.create({
@@ -110,7 +102,7 @@ export class ApiClient {
         'Accept': 'application/json',
         ...this.config.headers
       },
-      withCredentials: true
+      withCredentials: this.config.withCredentials
     });
 
     this.setupInterceptors();
@@ -118,18 +110,9 @@ export class ApiClient {
 
   /**
    * Get the singleton instance of ApiClient
-   * @param config - Optional configuration to initialize the client
-   * @returns ApiClient instance
    */
   public static getInstance(config?: ApiClientConfig): ApiClient {
     if (!ApiClient.instance) {
-      if (!config) {
-        config = {
-          baseURL: env.NODE_ENV === 'development' 
-            ? 'http://localhost:3000/api' 
-            : env.API_BASE_URL
-        };
-      }
       ApiClient.instance = new ApiClient(config);
     }
     return ApiClient.instance;
@@ -229,13 +212,13 @@ export class ApiClient {
    * Sets up request and response interceptors for authentication and error handling
    */
   private setupInterceptors(): void {
-    // Request Interceptor - No need to manually add token as it's in httpOnly cookie
+    // Request Interceptor
     this.client.interceptors.request.use(
-      (config) => config,
+      (config) => config, // Les cookies gèrent l'authentification
       (error) => Promise.reject(this.handleError(error))
     );
 
-    // Response Interceptor with better token refresh handling
+    // Response Interceptor
     this.client.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
@@ -256,8 +239,7 @@ export class ApiClient {
               
               try {
                 await this.refreshToken();
-                // Retry all queued requests
-                this.refreshSubscribers.forEach(callback => callback('token refreshed'));
+                this.refreshSubscribers.forEach(callback => callback('refreshed'));
                 this.refreshSubscribers = [];
                 return this.client(retryableRequest);
               } catch (refreshError) {
@@ -351,7 +333,7 @@ export class ApiClient {
    */
   public async isAuthenticated(): Promise<boolean> {
     try {
-      await this.get(this.config.authEndpoints.check);
+      await this.get(env.AUTH_ENDPOINT_CHECK);
       return true;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === HTTP_STATUS.UNAUTHORIZED) {
@@ -362,41 +344,23 @@ export class ApiClient {
   }
 
   private async refreshToken(): Promise<void> {
-    try {
-      await this.post(this.config.authEndpoints.refresh);
-    } catch (error) {
-      throw this.handleError(error);
-    }
+    await this.post(env.AUTH_ENDPOINT_REFRESH);
   }
 
   /**
    * Login method that sets httpOnly cookies
    */
   public async login(credentials: { email: string; password: string }): Promise<void> {
-    try {
-      await this.post(this.config.authEndpoints.login, credentials);
-    } catch (error) {
-      throw this.handleError(error);
-    }
+    await this.post(env.AUTH_ENDPOINT_LOGIN, credentials);
   }
 
   /**
    * Logout method that clears httpOnly cookies
    */
   public async logout(): Promise<void> {
-    try {
-      await this.post(this.config.authEndpoints.logout);
-    } catch (error) {
-      throw this.handleError(error);
-    }
+    await this.post(env.AUTH_ENDPOINT_LOGOUT);
   }
 }
 
-// Export the default instance
-export const api = ApiClient.getInstance();
-
-// Export a function to create a new instance with custom config
-export const createCustomApi = (config: ApiClientConfig): ApiClient => {
-  ApiClient.resetInstance();
-  return ApiClient.getInstance(config);
-};
+// Export the default instance using the singleton manager
+export { getDefaultClient as api, createCustomClient } from './singleton';
