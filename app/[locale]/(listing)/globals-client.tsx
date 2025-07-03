@@ -8,6 +8,9 @@ import { sortByNumericProperty } from "@/lib/utils";
 import { totalPages } from "@/lib/paginate";
 import { HomeTwoLayout, useHomeTwoLogic } from "@/components/home-two";
 import { ListingClient } from "@/components/shared-card/listing-client";
+import { useFilters } from "@/hooks/use-filters";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 type ListingProps = {
   total: number;
@@ -24,6 +27,19 @@ export default function GlobalsClient(props: ListingProps) {
   const homeTwoLogic = useHomeTwoLogic(props);
   const sortedTags = sortByNumericProperty(props.tags);
   const sortedCategories = sortByNumericProperty(props.categories);
+
+  const { setSelectedTags } = useFilters();
+  const searchParams = useSearchParams();
+  const [initialized, setInitialized] = useState(false);
+  useEffect(() => {
+    const tagsParam = searchParams.get("tags");
+    if (tagsParam) {
+      setSelectedTags(tagsParam.split(","));
+    }
+    setInitialized(true);
+  }, [searchParams, setSelectedTags]);
+
+  if (!initialized) return null;
 
   if (layoutHome === LayoutHome.HOME_ONE) {
     return (

@@ -1,5 +1,5 @@
 import { Button, cn } from "@heroui/react";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { Tag } from "@/lib/content";
 import { TagItem } from "./tag-item";
 import { getButtonVariantStyles } from "../../utils/style-utils";
@@ -12,9 +12,8 @@ interface TagsListProps {
   showAllTags: boolean;
   visibleTags: Tag[];
   isAnyTagActive: boolean;
-  mode?: 'navigation' | 'filter';
-  setSelectedTag?: (tag: string | null) => void;
-  selectedTag?: string | null;
+  selectedTags?: string[];
+  setSelectedTags?: (tags: string[]) => void;
 }
 
 /**
@@ -29,22 +28,26 @@ export function TagsList({
   showAllTags,
   visibleTags,
   isAnyTagActive,
-  mode = 'navigation',
-  setSelectedTag,
-  selectedTag,
+  selectedTags = [],
+  setSelectedTags,
 }: TagsListProps) {
-  const pathname = usePathname();
+  const handleTagClick = (tagId: string) => {
+    if (!setSelectedTags) return;
+    if (selectedTags.includes(tagId)) {
+      setSelectedTags(selectedTags.filter((id) => id !== tagId));
+    } else {
+      setSelectedTags([...selectedTags, tagId]);
+    }
+  };
 
   const renderTag = (tag: Tag, index: number) => {
     const tagBasePath = basePath
       ? `${basePath}/${tag.id}`
       : `/tags/${tag.id}`;
 
-    const isActive = mode === 'filter'
-      ? selectedTag === tag.id
-      : pathname.startsWith(encodeURI(tagBasePath));
+    const isActive = selectedTags.includes(tag.id);
 
-    if (mode === 'filter' && setSelectedTag) {
+    if (setSelectedTags) {
       return (
         <Button
           key={tag.id || index}
@@ -55,7 +58,7 @@ export function TagsList({
             isActive,
             "px-1.5 py-1 h-8 font-medium transition-all duration-200 flex-shrink-0"
           )}
-          onClick={() => setSelectedTag(isActive ? null : tag.id)}
+          onClick={() => handleTagClick(tag.id)}
         >
           {isActive && (
             <svg
@@ -125,7 +128,7 @@ export function TagsList({
       {!showAllTags && (
         <div className="w-full flex flex-nowrap gap-2 overflow-x-auto pb-2 hide-scrollbar scrollbar-thin scrollbar-thumb-theme-primary-10 dark:scrollbar-thumb-theme-primary-10 scrollbar-track-transparent">
           {/* All Tags Button */}
-          {mode === 'filter' && setSelectedTag ? (
+          {setSelectedTags ? (
             <Button
               variant={!isAnyTagActive ? "solid" : "bordered"}
               radius="full"
@@ -134,7 +137,7 @@ export function TagsList({
                 !isAnyTagActive,
                 "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group capitalize"
               )}
-              onClick={() => setSelectedTag(null)}
+              onClick={() => setSelectedTags([])}
             >
               {!isAnyTagActive && (
                 <svg
@@ -212,7 +215,7 @@ export function TagsList({
       {showAllTags && (
         <div className="w-full flex flex-wrap gap-2">
           {/* All Tags Button */}
-          {mode === 'filter' && setSelectedTag ? (
+          {setSelectedTags ? (
             <Button
               variant={!isAnyTagActive ? "solid" : "bordered"}
               radius="full"
@@ -221,7 +224,7 @@ export function TagsList({
                 !isAnyTagActive,
                 "px-3 py-1 h-8 font-medium transition-all duration-200"
               )}
-              onClick={() => setSelectedTag(null)}
+              onClick={() => setSelectedTags([])}
             >
               {!isAnyTagActive && (
                 <svg
