@@ -10,6 +10,7 @@ import { ListingClient } from "@/components/shared-card/listing-client";
 import { useFilters } from "@/hooks/use-filters";
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
+import { usePathname } from "@/i18n/navigation";
 
 type ListingProps = {
   total: number;
@@ -25,6 +26,11 @@ export default function GlobalsClient(props: ListingProps) {
   const { layoutHome =LayoutHome.HOME_ONE } = useLayoutTheme();
   const sortedTags = sortByNumericProperty(props.tags);
   const sortedCategories = sortByNumericProperty(props.categories);
+  const pathname = usePathname();
+
+  // Detect if we're on a category page
+  const isCategoryPage = pathname.includes('/categories/category/');
+  const tagsMode = isCategoryPage ? "filter" : "navigation";
 
   const { setSelectedTags, selectedTags, searchTerm, selectedTag } = useFilters();
   const searchParams = useSearchParams();
@@ -92,15 +98,21 @@ export default function GlobalsClient(props: ListingProps) {
 
   if (layoutHome === LayoutHome.HOME_ONE) {
     return (
-      <div className="pb-12">
-        <div className="flex flex-col md:flex-row w-full gap-5">
-          <div className="md:sticky md:top-4 md:self-start">
+      <div className="pb-12 px-4 sm:px-6 lg:px-8 xl:px-12">
+        <div className="flex flex-col lg:flex-row w-full gap-8 lg:gap-12 max-w-7xl mx-auto">
+          <div className="lg:sticky lg:top-4 lg:self-start lg:w-80 lg:flex-shrink-0">
             <Categories total={props.total} categories={sortedCategories} />
           </div>
           <div className="w-full">
-            <Tags tags={sortedTags} enableSticky={true} maxVisibleTags={5} total={props.total} />
+            <Tags 
+              tags={sortedTags} 
+              enableSticky={true} 
+              maxVisibleTags={5} 
+              total={props.total}
+              mode={tagsMode}
+            />
             <ListingClient {...props} items={paginatedItems} total={filteredItems.length} start={start} page={page} />
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center mt-8">
               <Paginate
                 basePath={props.basePath}
                 initialPage={page}

@@ -4,7 +4,7 @@ import { TagsProps } from "../../types";
 import { TagsList } from "./tags-list";
 import { useStickyHeader } from "../../hooks/use-sticky-header";
 import { useTagVisibility } from "../../hooks/use-tag-visibility";
-import { useFilters } from "@/hooks/use-filters";
+import { useFilters } from "../../context/filter-context";
 
 /**
  * Main tags section component
@@ -17,22 +17,31 @@ export function Tags({
   enableSticky = false,
   maxVisibleTags,
   total,
-}: TagsProps) {
+  mode = "navigation", // "navigation" | "filter"
+}: TagsProps & { mode?: "navigation" | "filter" }) {
+  const pathname = usePathname();
   const { isSticky } = useStickyHeader({ enableSticky });
+  const { selectedTags, setSelectedTags } = useFilters();
   const {
     showAllTags,
     visibleTags,
     hasMoreTags,
     toggleTagVisibility,
   } = useTagVisibility(tags, maxVisibleTags);
-  const { selectedTags, setSelectedTags } = useFilters();
 
-  const isAnyTagActive = selectedTags && selectedTags.length > 0;
+  const isAnyTagActive = mode === "filter" 
+    ? selectedTags.length > 0
+    : tags.some((tag) => {
+        const tagBasePath = basePath
+          ? `${basePath}/${tag.id}`
+          : `/tags/${tag.id}`;
+        return pathname.startsWith(encodeURI(tagBasePath));
+      });
 
   return (
     <div
       className={cn(
-        "p-4 transition-all duration-300",
+        "p-6 transition-all duration-300",
         enableSticky
           ? cn(
               "sticky top-4 z-10",
@@ -44,7 +53,7 @@ export function Tags({
       )}
     >
       <div className="relative z-10">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-4">
           <h3
             className={cn(
               "text-lg font-bold transition-colors duration-300",
@@ -121,6 +130,7 @@ export function Tags({
           showAllTags={showAllTags}
           visibleTags={visibleTags}
           isAnyTagActive={isAnyTagActive}
+          mode={mode}
           selectedTags={selectedTags}
           setSelectedTags={setSelectedTags}
         />

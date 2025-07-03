@@ -342,17 +342,37 @@ function eqID(value: string | { id: string }, id: string) {
 
 export async function fetchByCategory(raw: string, options: FetchOptions = {}) {
   const category = decodeURI(raw);
-  const { categories, items, total, tags } = await fetchItems(options);
+  const { categories, items, tags } = await fetchItems(options);
+  
+  const filteredItems = items.filter((item) => {
+    if (Array.isArray(item.category)) {
+      return item.category.some((c) => eqID(c, category));
+    }
+    return eqID(item.category, category);
+  });
+
+  // Recalculate tag counts based only on the filtered items
+  const tagCounts = new Map<string, number>();
+  filteredItems.forEach((item) => {
+    if (Array.isArray(item.tags)) {
+      item.tags.forEach((tag) => {
+        const tagId = typeof tag === "string" ? tag : tag.id;
+        tagCounts.set(tagId, (tagCounts.get(tagId) || 0) + 1);
+      });
+    }
+  });
+
+  // Create new tags array with corrected counts
+  const filteredTags = tags.map(tag => ({
+    ...tag,
+    count: tagCounts.get(tag.id) || 0
+  })).filter(tag => tag.count > 0);
+
   return {
     categories,
-    tags,
-    total,
-    items: items.filter((item) => {
-      if (Array.isArray(item.category)) {
-        return item.category.some((c) => eqID(c, category));
-      }
-      return eqID(item.category, category);
-    }),
+    tags: filteredTags,
+    total: filteredItems.length,
+    items: filteredItems,
   };
 }
 
@@ -368,5 +388,47 @@ export async function fetchByTag(raw: string, options: FetchOptions = {}) {
         return item.tags.some((t) => eqID(t, tag));
       }
     }),
+  };
+}
+
+export async function fetchByCategoryAndTag(category: string, tag: string, options: FetchOptions = {}) {
+  const { categories, items, tags } = await fetchItems(options);
+  
+  const filteredItems = items.filter((item) => {
+    // Check if item belongs to the category
+    const belongsToCategory = Array.isArray(item.category)
+      ? item.category.some((c) => eqID(c, category))
+      : eqID(item.category, category);
+
+    if (!belongsToCategory) return false;
+
+    // Check if item has the tag
+    return Array.isArray(item.tags)
+      ? item.tags.some((t) => eqID(t, tag))
+      : eqID(item.tags, tag);
+  });
+
+  // Recalculate tag counts based only on the filtered items
+  const tagCounts = new Map<string, number>();
+  filteredItems.forEach((item) => {
+    if (Array.isArray(item.tags)) {
+      item.tags.forEach((tag) => {
+        const tagId = typeof tag === "string" ? tag : tag.id;
+        tagCounts.set(tagId, (tagCounts.get(tagId) || 0) + 1);
+      });
+    }
+  });
+
+  // Create new tags array with corrected counts
+  const filteredTags = tags.map(tag => ({
+    ...tag,
+    count: tagCounts.get(tag.id) || 0
+  })).filter(tag => tag.count > 0);
+
+  return {
+    categories,
+    tags: filteredTags,
+    total: filteredItems.length,
+    items: filteredItems,
   };
 }
