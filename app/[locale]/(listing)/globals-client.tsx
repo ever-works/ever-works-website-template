@@ -5,11 +5,10 @@ import { Paginate } from "@/components/filters/components/pagination/paginate";
 import { Tags } from "@/components/filters/components/tags/tags-section";
 import { Tag, Category, ItemData } from "@/lib/content";
 import { sortByNumericProperty } from "@/lib/utils";
-import { totalPages } from "@/lib/paginate";
-import { HomeTwoLayout, useHomeTwoLogic } from "@/components/home-two";
+import { HomeTwoLayout } from "@/components/home-two";
 import { ListingClient } from "@/components/shared-card/listing-client";
 import { useFilters } from "@/hooks/use-filters";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 
 type ListingProps = {
@@ -24,13 +23,63 @@ type ListingProps = {
 
 export default function GlobalsClient(props: ListingProps) {
   const { layoutHome =LayoutHome.HOME_ONE } = useLayoutTheme();
-  const homeTwoLogic = useHomeTwoLogic(props);
   const sortedTags = sortByNumericProperty(props.tags);
   const sortedCategories = sortByNumericProperty(props.categories);
 
-  const { setSelectedTags } = useFilters();
+  const { setSelectedTags, selectedTags, searchTerm, selectedTag } = useFilters();
   const searchParams = useSearchParams();
   const [initialized, setInitialized] = useState(false);
+
+  // Get page from query param, default to 1
+  const pageParam = searchParams.get("page");
+  const page = pageParam ? parseInt(pageParam, 10) : 1;
+  const perPage = 12; // or use from config if needed
+  const start = (page - 1) * perPage;
+
+  // Filtering logic (same as useProcessedItems in Card)
+  const filteredItems = useMemo(() => {
+    let filtered = props.items;
+    if (searchTerm && searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase().trim();
+      filtered = filtered.filter(
+        (item) =>
+          item.name.toLowerCase().includes(searchLower) ||
+          item.description?.toLowerCase().includes(searchLower)
+      );
+    }
+    if (selectedTags && selectedTags.length > 0) {
+      filtered = filtered.filter((item) => {
+        if (!item.tags?.length) return false;
+        return selectedTags.some((selectedTagId) =>
+          item.tags.some((itemTag) => (typeof itemTag === 'string' ? itemTag : itemTag.id) === selectedTagId)
+        );
+      });
+    }
+    if (selectedTag) {
+      filtered = filtered.filter((item) => {
+        if (!item.tags?.length) return false;
+        return item.tags.some((itemTag) => (typeof itemTag === 'string' ? itemTag : itemTag.id) === selectedTag);
+      });
+    }
+    return filtered;
+  }, [props.items, searchTerm, selectedTags, selectedTag]);
+
+  // Paginate filtered items
+  const paginatedItems = useMemo(() => {
+    return filteredItems.slice(start, start + perPage);
+  }, [filteredItems, start, perPage]);
+
+  // Reset page to 1 when filters change
+  useEffect(() => {
+    // Only reset if page is not 1 and filters change
+    if (page !== 1) {
+      const params = new URLSearchParams(Array.from(searchParams.entries()));
+      params.set('page', '1');
+      window.history.replaceState({}, '', `?${params.toString()}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTags, searchTerm, selectedTag]);
+
   useEffect(() => {
     const tagsParam = searchParams.get("tags");
     if (tagsParam) {
@@ -50,12 +99,12 @@ export default function GlobalsClient(props: ListingProps) {
           </div>
           <div className="w-full">
             <Tags tags={sortedTags} enableSticky={true} maxVisibleTags={5} total={props.total} />
-            <ListingClient {...props} />
+            <ListingClient {...props} items={paginatedItems} total={filteredItems.length} start={start} page={page} />
             <div className="flex items-center justify-center">
               <Paginate
                 basePath={props.basePath}
-                initialPage={props.page}
-                total={totalPages(props.items.length)}
+                initialPage={page}
+                total={Math.ceil(filteredItems.length / perPage)}
               />
             </div>
           </div>
@@ -69,8 +118,8 @@ export default function GlobalsClient(props: ListingProps) {
       {...props}
       categories={sortedCategories}
       tags={sortedTags}
-      filteredAndSortedItems={homeTwoLogic.items}
-      paginatedItems={homeTwoLogic.paginatedItems}
+      filteredAndSortedItems={filteredItems}
+      paginatedItems={paginatedItems}
     />
   );
 }
