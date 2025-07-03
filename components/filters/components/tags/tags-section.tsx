@@ -4,6 +4,7 @@ import { TagsProps } from "../../types";
 import { TagsList } from "./tags-list";
 import { useStickyHeader } from "../../hooks/use-sticky-header";
 import { useTagVisibility } from "../../hooks/use-tag-visibility";
+import { useFilterState } from "../../hooks/use-filter-state";
 
 /**
  * Main tags section component
@@ -16,6 +17,7 @@ export function Tags({
   enableSticky = false,
   maxVisibleTags,
   total,
+  mode = 'navigation',
 }: TagsProps) {
   const pathname = usePathname();
   const { isSticky } = useStickyHeader({ enableSticky });
@@ -25,13 +27,16 @@ export function Tags({
     hasMoreTags,
     toggleTagVisibility,
   } = useTagVisibility(tags, maxVisibleTags);
+  const { setSelectedTag, selectedTag } = useFilterState();
 
-  const isAnyTagActive = tags.some((tag) => {
-    const tagBasePath = basePath
-      ? `${basePath}/${tag.id}`
-      : `/tags/${tag.id}`;
-    return pathname.startsWith(encodeURI(tagBasePath));
-  });
+  const isAnyTagActive = mode === 'filter'
+    ? !!selectedTag
+    : tags.some((tag) => {
+        const tagBasePath = basePath
+          ? `${basePath}/${tag.id}`
+          : `/tags/${tag.id}`;
+        return pathname.startsWith(encodeURI(tagBasePath));
+      });
 
   return (
     <div
@@ -125,6 +130,9 @@ export function Tags({
           showAllTags={showAllTags}
           visibleTags={visibleTags}
           isAnyTagActive={isAnyTagActive}
+          mode={mode}
+          setSelectedTag={mode === 'filter' ? setSelectedTag : undefined}
+          selectedTag={mode === 'filter' ? selectedTag : undefined}
         />
       </div>
     </div>

@@ -1,230 +1,44 @@
 "use client";
-import { Category, ItemData, Tag } from "@/lib/content";
-import { Paginate } from "@/components/filters/components/pagination/paginate";
-import { Tags } from "@/components/filters/components/tags/tags-section";
-import { totalPages } from "@/lib/paginate";
-import { sortByNumericProperty } from "@/lib/utils";
-import { useMemo } from "react";
-import SortMenu, { SortOption } from "@/components/sort-menu";
-import { LayoutHome, useLayoutTheme } from "@/components/context/LayoutThemeContext";
-import ViewToggle from "@/components/view-toggle";
 import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
-import { useStickyHeader } from "@/hooks/use-sticky-state";
-import { ListingClient } from "@/components/shared-card/listing-client";
-import { CardPresets } from "@/components/shared-card";
-import { SearchInput } from "@/components/ui/search-input";
-import { useFilters } from "@/hooks/use-filters";
-import { TagsItemsColumn } from "@/components/tags-items-column";
-import { useSearchParams } from "next/navigation";
-import React from "react";
+import { TagsCards } from "@/components/tags-cards";
+import { Paginate } from "@/components/filters/components/pagination/paginate";
+import { totalPages } from "@/lib/paginate";
 
-type ListingTagsProps = {
+export default function ListingTags({
+  tags,
+  total,
+  page,
+  basePath,
+}: {
+  tags: any[];
   total: number;
-  start: number;
   page: number;
   basePath: string;
-  categories: Category[];
-  tags: Tag[];
-  items: ItemData[];
-};
-
-function ListingTags(props: ListingTagsProps) {
-  const { searchTerm, setSearchTerm, setSortBy, sortBy, setSelectedTag, selectedTag, selectedTags, selectedCategory } = useFilters();
-  const { layoutKey, setLayoutKey, layoutHome = LayoutHome.HOME_ONE } = useLayoutTheme();
+}) {
   const t = useTranslations("listing");
-  const { isSticky } = useStickyHeader({ enableSticky: true });
-  const searchParams = useSearchParams();
-
-  // Compute filtered items based on all active filters
-  const filteredItems = React.useMemo(() => {
-    let items = props.items;
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      items = items.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchLower) ||
-          item.description?.toLowerCase().includes(searchLower)
-      );
-    }
-    if (selectedCategory) {
-      items = items.filter((item) => {
-        if (!item.category) return false;
-        if (Array.isArray(item.category)) {
-          return item.category.some((cat) =>
-            typeof cat === "string"
-              ? cat === selectedCategory
-              : cat.id === selectedCategory
-          );
-        } else {
-          return typeof item.category === "string"
-            ? item.category === selectedCategory
-            : item.category.id === selectedCategory;
-        }
-      });
-    }
-    if (selectedTags && selectedTags.length > 0) {
-      items = items.filter((item) => {
-        if (!item.tags) return false;
-        return selectedTags.some((tagId) =>
-          item.tags.some((tag) => (typeof tag === "string" ? tag === tagId : tag.id === tagId))
-        );
-      });
-    }
-    if (selectedTag) {
-      items = items.filter((item) => {
-        if (!item.tags) return false;
-        return item.tags.some((tag) => (typeof tag === "string" ? tag === selectedTag : tag.id === selectedTag));
-      });
-    }
-    return items;
-  }, [props.items, searchTerm, selectedCategory, selectedTags, selectedTag]);
-
-  // Compute filtered tags with correct counts
-  const filteredTags = React.useMemo(() => {
-    return props.tags
-      .map((tag) => {
-        const count = filteredItems.filter((item) =>
-          item.tags && item.tags.some((itemTag) => (typeof itemTag === "string" ? itemTag === tag.id : itemTag.id === tag.id))
-        ).length;
-        return { ...tag, count };
-      })
-      .filter((tag) => tag.count > 0);
-  }, [props.tags, filteredItems]);
-
-  const sortedTags = useMemo(
-    () => sortByNumericProperty(props.tags),
-    [props.tags]
-  );
-
-  const sortOptions: SortOption[] = [
-    { value: "popularity", label: t("POPULARITY") },
-    { value: "name-asc", label: t("NAME_A_Z") },
-    { value: "name-desc", label: t("NAME_Z_A") },
-    { value: "date-asc", label: t("OLDEST") },
-  ];
-
-  // Read ?tag=... from query params on mount
-  React.useEffect(() => {
-    const tagParam = searchParams.get("tag");
-    if (tagParam) {
-      setSelectedTag(tagParam);
-    }
-  }, [searchParams, setSelectedTag]);
-
-  // Render functions
-  const renderFilters = () => (
-    <div
-      className={`md:sticky md:top-4 md:self-start pt-8 sm:pt-10 md:pt-12 z-10 w-full ${
-        isSticky
-          ? "bg-white/95 dark:bg-gray-800/90 shadow-md backdrop-blur-sm"
-          : "bg-transparent"
-      }`}
-    >
-      {/* Mobile Layout */}
-      <div className="block md:hidden space-y-3 px-3">
-        {/* Search Bar - Full Width */}
-        <div className="w-full">
-          <SearchInput
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            className="w-full"
-          />
-        </div>
-
-        {/* Sort and View in one row */}
-        <div className="flex items-center justify-between gap-2">
-          <SortMenu
-            className="h-8 flex-1 text-xs sm:text-sm"
-            options={sortOptions}
-            value={sortBy}
-            onSortChange={setSortBy}
-            ariaLabel="Sort items"
-          />
-          <ViewToggle
-            activeView={layoutKey}
-            onViewChange={(newView) => setLayoutKey(newView)}
-          />
-        </div>
-      </div>
-
-      {/* Desktop Layout */}
-      <div className="hidden md:flex flex-col gap-4 px-3">
-        <div className="flex justify-between items-center">
-          <SortMenu
-            className="h-8 min-w-[180px] text-sm"
-            options={sortOptions}
-            value={sortBy}
-            onSortChange={setSortBy}
-            ariaLabel="Sort items"
-          />
-          <div className="flex items-center gap-3">
-            <div className="w-64 lg:w-80">
-              <SearchInput
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-              />
-            </div>
-            <ViewToggle
-              activeView={layoutKey}
-              onViewChange={(newView) => setLayoutKey(newView)}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Tags - Always visible */}
-      <div className="mt-3 sm:mt-4">
-        <Tags
-          tags={filteredTags}
-          basePath={`/tags/tag`}
-          resetPath={`/tags`}
-          enableSticky={false}
-          maxVisibleTags={6}
-          total={filteredItems.length}
-          mode="filter"
-        />
-      </div>
-    </div>
-  );
 
   return (
     <Hero
       badgeText={t("TAGS")}
       title={
-        <span className="bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 bg-clip-text text-transparent">
-          Discover Tags
+        <span className="bg-gradient-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent">
+          {t("TAGS", { defaultValue: "Tags" })}
         </span>
       }
-      description="Browse all tags in our directory"
+      description={"Browse all tags in our directory."}
       className="min-h-screen text-center"
     >
-      {layoutHome === LayoutHome.HOME_TWO && renderFilters()}
-
-      <div className="flex flex-col md:flex-row items-start gap-8 ">
-        {layoutHome === LayoutHome.HOME_ONE && (
-          <div className="hidden md:block md:sticky md:top-4 md:self-start  z-10 w-full md:max-w-64">
-            <TagsItemsColumn tag={sortedTags} total={props.total} />
-          </div>
-        )}
-        <ListingClient
-          {...props}
-          config={
-            layoutHome === LayoutHome.HOME_ONE
-              ? CardPresets.fullListing
-              : CardPresets.showViewToggle
-          }
-        />
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+        <TagsCards tags={tags} />
       </div>
-
-      <footer className="flex items-center justify-center mt-12">
+      <footer className="flex items-center justify-center">
         <Paginate
-          basePath={props.basePath}
-          initialPage={props.page}
-          total={totalPages(props.items.length)}
+          basePath={basePath}
+          initialPage={page}
+          total={totalPages(total)}
         />
       </footer>
     </Hero>
   );
 }
-export default ListingTags;
