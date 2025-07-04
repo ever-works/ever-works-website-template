@@ -101,7 +101,7 @@ export default function GlobalsClient(props: ListingProps) {
       <div className="pb-12 px-4 sm:px-6 lg:px-8 xl:px-12">
         <div className="flex flex-col lg:flex-row w-full gap-8 lg:gap-12 max-w-7xl mx-auto">
           <div className="lg:sticky lg:top-4 lg:self-start lg:w-80 lg:flex-shrink-0">
-            <Categories total={props.total} categories={sortedCategories} />
+            <Categories total={props.total} categories={sortedCategories} tags={sortedTags} />
           </div>
           <div className="w-full">
             <Tags 
