@@ -351,16 +351,24 @@ export async function fetchByCategory(raw: string, options: FetchOptions = {}) {
     return eqID(item.category, category);
   });
 
-  // Keep original tag counts from all items, don't recalculate based on filtered items
-  // This ensures tag counts show total items with that tag across all categories
-  const originalTags = tags.map(tag => ({
-    ...tag,
-    count: tag.count || 0
-  }));
+  // Recalculate tag counts based only on filtered items
+  const tagCountMap = new Map();
+  for (const item of filteredItems) {
+    if (Array.isArray(item.tags)) {
+      for (const tag of item.tags) {
+        const tagId = typeof tag === 'string' ? tag : tag.id;
+        tagCountMap.set(tagId, (tagCountMap.get(tagId) || 0) + 1);
+      }
+    }
+  }
+  // Only include tags present in filtered items, with correct counts
+  const filteredTags = Array.from(tags.values())
+    .filter(tag => tagCountMap.has(tag.id))
+    .map(tag => ({ ...tag, count: tagCountMap.get(tag.id) }));
 
   return {
     categories,
-    tags: originalTags,
+    tags: filteredTags,
     total: filteredItems.length,
     items: filteredItems,
   };
