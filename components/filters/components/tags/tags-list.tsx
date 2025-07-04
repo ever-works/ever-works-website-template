@@ -52,6 +52,31 @@ export function TagsList({
     }
   };
 
+  // In filter mode, ensure all selected tags are visible (even if not in the default visibleTags)
+  let expandedVisibleTags = visibleTags;
+  if (setSelectedTags) {
+    const selectedTagObjs = tags.filter(tag => selectedTags.includes(tag.id));
+    // Add any selected tags not already in visibleTags
+    expandedVisibleTags = [
+      ...selectedTagObjs.filter(tag => !visibleTags.some(t => t.id === tag.id)),
+      ...visibleTags
+    ];
+    // Remove duplicates
+    expandedVisibleTags = expandedVisibleTags.filter((tag, idx, arr) => arr.findIndex(t => t.id === tag.id) === idx);
+  }
+
+  // In filter mode, show selected tags first
+  let orderedVisibleTags = expandedVisibleTags;
+  if (setSelectedTags) {
+    orderedVisibleTags = [
+      ...expandedVisibleTags.filter(tag => selectedTags.includes(tag.id)),
+      ...expandedVisibleTags.filter(tag => !selectedTags.includes(tag.id)),
+    ];
+  }
+
+  // Set the number of tags to show in collapsed mode
+  const COLLAPSED_TAG_LIMIT = 5;
+
   // Render a single tag (button for filter, link for navigation)
   const renderTag = (tag: Tag, index: number) => {
     const tagBasePath = basePath
@@ -72,7 +97,7 @@ export function TagsList({
           size="sm"
           className={getButtonVariantStyles(
             isActive,
-            "px-1.5 py-1 h-8 font-medium transition-all duration-200 flex-shrink-0"
+            "px-1.5 py-1 h-8 font-medium transition-all duration-200 flex-shrink-0 min-w-0 max-w-[140px] overflow-hidden whitespace-nowrap"
           )}
           onClick={() => handleTagClick(tag.id)}
         >
@@ -105,7 +130,7 @@ export function TagsList({
           )}
           <span
             className={cn(
-              "text-sm font-medium transition-all duration-300",
+              "text-sm font-medium transition-all duration-300 min-w-0 max-w-[90px] truncate overflow-hidden whitespace-nowrap",
               isActive
                 ? "text-white tracking-wide"
                 : "text-gray-700 dark:text-gray-300 group-hover:text-theme-primary dark:group-hover:text-theme-primary capitalize"
@@ -139,10 +164,17 @@ export function TagsList({
     );
   };
 
+  // Helper to wrap tag in min-width div for single-row view
+  const renderTagWithMinWidth = (tag: Tag, idx: number) => (
+    <div key={tag.id || idx} className="min-w-[120px] max-w-[140px] flex-shrink-0">
+      {renderTag(tag, idx)}
+    </div>
+  );
+
   return (
     <div className="relative">
       {!showAllTags && (
-        <div className="w-full flex flex-nowrap gap-2 overflow-x-auto pb-2 hide-scrollbar scrollbar-thin scrollbar-thumb-theme-primary-10 dark:scrollbar-thumb-theme-primary-10 scrollbar-track-transparent">
+        <div className="w-full flex flex-nowrap gap-2 overflow-x-auto pb-2 hide-scrollbar scrollbar-thin scrollbar-thumb-theme-primary-10 dark:scrollbar-thumb-theme-primary-10 scrollbar-track-transparent min-w-0">
           {/* All Tags Button */}
           {setSelectedTags ? (
             <Button
@@ -151,7 +183,7 @@ export function TagsList({
               size="sm"
               className={getButtonVariantStyles(
                 isAllTagsActive,
-                "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group capitalize"
+                "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group capitalize min-w-[90px] max-w-[140px] overflow-hidden"
               )}
               onClick={() => setSelectedTags([])}
             >
@@ -170,7 +202,7 @@ export function TagsList({
                   />
                 </svg>
               )}
-              <span>All Tags</span>
+              <span className="truncate max-w-[90px] overflow-hidden whitespace-nowrap">All Tags</span>
               <span
                 className={cn(
                   "ml-1.5 text-xs font-normal",
@@ -184,18 +216,18 @@ export function TagsList({
             </Button>
           ) : (
             <Button
-              variant={!isAnyTagActive ? "solid" : "bordered"}
+              variant={isAllTagsActive ? "solid" : "bordered"}
               radius="full"
               size="sm"
               as={Link}
               prefetch={false}
               href={resetPath || basePath || "/"}
               className={getButtonVariantStyles(
-                !isAnyTagActive,
-                "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group capitalize"
+                isAllTagsActive,
+                "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group capitalize min-w-[90px] max-w-[140px] overflow-hidden"
               )}
             >
-              {!isAnyTagActive && (
+              {isAllTagsActive && (
                 <svg
                   className="w-3 h-3 mr-1.5 text-white"
                   fill="none"
@@ -210,11 +242,11 @@ export function TagsList({
                   />
                 </svg>
               )}
-              <span>All Tags</span>
+              <span className="truncate max-w-[90px] overflow-hidden whitespace-nowrap">All Tags</span>
               <span
                 className={cn(
                   "ml-1.5 text-xs font-normal",
-                  !isAnyTagActive
+                  isAllTagsActive
                     ? "text-white"
                     : "text-dark-500 dark:text-dark-400"
                 )}
@@ -223,8 +255,38 @@ export function TagsList({
               </span>
             </Button>
           )}
-          {/* Visible Tags */}
-          {visibleTags.map(renderTag)}
+          {/* Hard limit: Only show up to COLLAPSED_TAG_LIMIT tags, prioritizing selected tags */}
+          {(() => {
+            // Always show selected tags first
+            const selectedTagObjs = orderedVisibleTags.filter(tag => selectedTags.includes(tag.id));
+            const unselectedTagObjs = orderedVisibleTags.filter(tag => !selectedTags.includes(tag.id));
+            let tagsToShow: Tag[] = [];
+            let hiddenCount = 0;
+            if (selectedTagObjs.length > COLLAPSED_TAG_LIMIT) {
+              // More selected tags than limit: show first N selected, +N more for the rest
+              tagsToShow = selectedTagObjs.slice(0, COLLAPSED_TAG_LIMIT);
+              hiddenCount = selectedTagObjs.length - COLLAPSED_TAG_LIMIT;
+            } else {
+              // Show all selected, fill up to limit with unselected
+              tagsToShow = [
+                ...selectedTagObjs,
+                ...unselectedTagObjs.slice(0, COLLAPSED_TAG_LIMIT - selectedTagObjs.length)
+              ];
+              hiddenCount = 0; // No '+N more' if selected tags <= limit
+            }
+            return (
+              <>
+                {tagsToShow.map(renderTagWithMinWidth)}
+                {hiddenCount > 0 && (
+                  <div className="min-w-[60px] max-w-[80px] flex-shrink-0">
+                    <span className="inline-flex items-center justify-center px-2 py-1 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-medium select-none cursor-default">
+                      +{hiddenCount} more
+                    </span>
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
       )}
 
@@ -271,18 +333,18 @@ export function TagsList({
             </Button>
           ) : (
             <Button
-              variant={!isAnyTagActive ? "solid" : "bordered"}
+              variant={isAllTagsActive ? "solid" : "bordered"}
               radius="full"
               size="sm"
               as={Link}
               prefetch={false}
               href={resetPath || basePath || "/"}
               className={getButtonVariantStyles(
-                !isAnyTagActive,
+                isAllTagsActive,
                 "px-3 py-1 h-8 font-medium transition-all duration-200"
               )}
             >
-              {!isAnyTagActive && (
+              {isAllTagsActive && (
                 <svg
                   className="w-3 h-3 mr-1.5 text-white"
                   fill="none"
@@ -301,7 +363,7 @@ export function TagsList({
               <span
                 className={cn(
                   "ml-1.5 text-xs font-normal",
-                  !isAnyTagActive
+                  isAllTagsActive
                     ? "text-white"
                     : "text-dark-500 dark:text-dark-400"
                 )}
@@ -311,7 +373,7 @@ export function TagsList({
             </Button>
           )}
           {/* All Tags */}
-          {visibleTags.map(renderTag)}
+          {orderedVisibleTags.map(renderTag)}
         </div>
       )}
     </div>

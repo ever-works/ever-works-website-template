@@ -41,7 +41,7 @@ export function Tags({
   return (
     <div
       className={cn(
-        "p-6 transition-all duration-300",
+        "transition-all duration-300",
         enableSticky
           ? cn(
               "sticky top-4 z-10",
