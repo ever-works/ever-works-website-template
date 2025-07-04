@@ -351,26 +351,16 @@ export async function fetchByCategory(raw: string, options: FetchOptions = {}) {
     return eqID(item.category, category);
   });
 
-  // Recalculate tag counts based only on the filtered items
-  const tagCounts = new Map<string, number>();
-  filteredItems.forEach((item) => {
-    if (Array.isArray(item.tags)) {
-      item.tags.forEach((tag) => {
-        const tagId = typeof tag === "string" ? tag : tag.id;
-        tagCounts.set(tagId, (tagCounts.get(tagId) || 0) + 1);
-      });
-    }
-  });
-
-  // Create new tags array with corrected counts
-  const filteredTags = tags.map(tag => ({
+  // Keep original tag counts from all items, don't recalculate based on filtered items
+  // This ensures tag counts show total items with that tag across all categories
+  const originalTags = tags.map(tag => ({
     ...tag,
-    count: tagCounts.get(tag.id) || 0
-  })).filter(tag => tag.count > 0);
+    count: tag.count || 0
+  }));
 
   return {
     categories,
-    tags: filteredTags,
+    tags: originalTags,
     total: filteredItems.length,
     items: filteredItems,
   };
@@ -408,26 +398,16 @@ export async function fetchByCategoryAndTag(category: string, tag: string, optio
       : eqID(item.tags, tag);
   });
 
-  // Recalculate tag counts based only on the filtered items
-  const tagCounts = new Map<string, number>();
-  filteredItems.forEach((item) => {
-    if (Array.isArray(item.tags)) {
-      item.tags.forEach((tag) => {
-        const tagId = typeof tag === "string" ? tag : tag.id;
-        tagCounts.set(tagId, (tagCounts.get(tagId) || 0) + 1);
-      });
-    }
-  });
-
-  // Create new tags array with corrected counts
-  const filteredTags = tags.map(tag => ({
+  // Keep original tag counts from all items, don't recalculate based on filtered items
+  // This ensures tag counts show total items with that tag across all categories
+  const originalTags = tags.map(tag => ({
     ...tag,
-    count: tagCounts.get(tag.id) || 0
-  })).filter(tag => tag.count > 0);
+    count: tag.count || 0
+  }));
 
   return {
     categories,
-    tags: filteredTags,
+    tags: originalTags,
     total: filteredItems.length,
     items: filteredItems,
   };

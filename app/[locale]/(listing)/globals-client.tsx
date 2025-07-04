@@ -111,7 +111,7 @@ export default function GlobalsClient(props: ListingProps) {
               total={props.total}
               mode={tagsMode}
             />
-            <ListingClient {...props} items={paginatedItems} total={filteredItems.length} start={start} page={page} />
+            <ListingClient {...props} items={paginatedItems} total={filteredItems.length} start={start} page={page} filteredCount={filteredItems.length} totalCount={props.items.length} />
             <div className="flex items-center justify-center mt-8">
               <Paginate
                 basePath={props.basePath}

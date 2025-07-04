@@ -17,6 +17,8 @@ interface ListingClientProps extends BaseCardProps {
   tags: Tag[];
   items: ItemData[];
   config?: CardConfigOptions;
+  filteredCount?: number;
+  totalCount?: number;
 }
 
 export function ListingClient(props: ListingClientProps) {
@@ -40,6 +42,8 @@ export function ListingClient(props: ListingClientProps) {
       {...props}
       config={config}
       className="listing-client"
+      filteredCount={props.filteredCount}
+      totalCount={props.totalCount}
     />
   );
 }

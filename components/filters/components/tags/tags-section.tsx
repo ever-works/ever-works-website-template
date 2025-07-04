@@ -130,7 +130,6 @@ export function Tags({
           showAllTags={showAllTags}
           visibleTags={visibleTags}
           isAnyTagActive={isAnyTagActive}
-          mode={mode}
           selectedTags={selectedTags}
           setSelectedTags={setSelectedTags}
         />
