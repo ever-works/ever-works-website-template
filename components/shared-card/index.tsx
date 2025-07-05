@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback, useContext, useState } from "react";
+import { useMemo, useCallback, useContext, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Search, Filter } from "lucide-react";
 
@@ -532,8 +532,7 @@ export function SharedCard(props: ExtendedCardProps) {
     setCurrentPage(page);
   }, []);
 
-  // Reset page when filters change
-  useMemo(() => {
+  useEffect(() => {
     setCurrentPage(1);
   }, [filterKey]);
 
