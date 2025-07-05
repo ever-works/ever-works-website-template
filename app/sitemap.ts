@@ -98,7 +98,6 @@ const STATIC_ROUTES: RouteConfig[] = [
 ]
 
 const PAGINATION_ROUTES = [
-  '/categories/paging',
   '/tags/paging',
 ]
 
