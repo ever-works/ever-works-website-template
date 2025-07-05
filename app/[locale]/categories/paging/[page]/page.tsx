@@ -21,7 +21,7 @@ export async function generateStaticParams() {
 export default async function CategoryPagingPage({
   params,
 }: {
-  params: Promise<{ page: string; locale: string }>;
+  params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params; 
   const { categories } = await fetchItems({ lang: locale });
