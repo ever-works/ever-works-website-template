@@ -387,6 +387,7 @@ export async function fetchByTag(raw: string, options: FetchOptions = {}) {
       if (Array.isArray(item.tags)) {
         return item.tags.some((t) => eqID(t, tag));
       }
+      return false;
     }),
   };
 }
