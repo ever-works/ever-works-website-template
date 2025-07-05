@@ -23,7 +23,7 @@ export default async function CategoryPagingPage({
 }: {
   params: Promise<{ page: string; locale: string }>;
 }) {
-  const { locale } = await params;
+  const { locale } = await params; 
   const { categories } = await fetchItems({ lang: locale });
   return <ListingCategories categories={categories} />;
 }
