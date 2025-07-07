@@ -8,6 +8,7 @@ import { useLayoutTheme } from "../context";
 import { useStickyState } from "@/hooks/use-sticky-state";
 import { ListingClient } from "../shared-card/listing-client";
 import { CardPresets } from "../shared-card";
+import { useCallback } from "react";
 
 type Home2LayoutProps = {
   total: number;
@@ -22,11 +23,17 @@ type Home2LayoutProps = {
 };
 
 export function HomeTwoLayout(props: Home2LayoutProps) {
-  const { layoutKey, setLayoutKey } = useLayoutTheme();
+  const { layoutKey, setLayoutKey, paginationType } = useLayoutTheme();
   const { isSticky, sentinelRef, targetRef } = useStickyState({
     threshold: 0,
     rootMargin: "-20px 0px 0px 0px",
   });
+
+  const handleLoadMore = useCallback(async (page: number) => {
+    // In a real application, this would make an API call to load more items
+    // For now, we'll just simulate a delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }, []);
 
   return (
     <div className="min-h-screen transition-colors duration-300">
@@ -54,6 +61,8 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
             basePath={props.basePath}
             initialPage={props.page}
             total={totalPages(props.filteredAndSortedItems.length)}
+            paginationType={paginationType}
+            onLoadMore={handleLoadMore}
           />
         </div>
       </div>

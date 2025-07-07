@@ -1,20 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
-
-// Types
-type PaginationType = 'standard' | 'infinite';
+import { useLayoutTheme } from '@/components/context';
 
 interface SelectPaginationTypeProps {
-  value?: PaginationType;
-  onChange?: (type: PaginationType) => void;
   className?: string;
   disabled?: boolean;
 }
 
 // Icons as constants for better maintainability
-const UpArrowIcon = () => (
+const StandardPaginationIcon = () => (
   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
   </svg>
@@ -35,13 +31,13 @@ const ConfigIcon = () => (
 // Pagination options configuration
 const PAGINATION_OPTIONS = [
   {
-    id: 'standard' as PaginationType,
+    id: 'standard',
     label: 'Standard',
-    icon: UpArrowIcon,
+    icon: StandardPaginationIcon,
     description: 'Navigate through pages with traditional pagination controls'
   },
   {
-    id: 'infinite' as PaginationType,
+    id: 'infinite',
     label: 'Infinite Scroll',
     icon: InfiniteScrollIcon,
     description: 'Continuously load content as you scroll down'
@@ -49,24 +45,14 @@ const PAGINATION_OPTIONS = [
 ] as const;
 
 const SelectPaginationType: React.FC<SelectPaginationTypeProps> = ({
-  value,
-  onChange,
   className,
   disabled = false
 }) => {
-  const [localPaginationType, setLocalPaginationType] = useState<PaginationType>('standard');
+  const { paginationType, setPaginationType } = useLayoutTheme();
   
-  const isControlled = value !== undefined;
-  const paginationType = isControlled ? value : localPaginationType;
-  
-  const handlePaginationChange = (type: PaginationType) => {
+  const handlePaginationChange = (type: typeof paginationType) => {
     if (disabled) return;
-    
-    if (isControlled && onChange) {
-      onChange(type);
-    } else {
-      setLocalPaginationType(type);
-    }
+    setPaginationType(type);
   };
 
   return (
@@ -91,7 +77,7 @@ const SelectPaginationType: React.FC<SelectPaginationTypeProps> = ({
           return (
             <button
               key={option.id}
-              onClick={() => handlePaginationChange(option.id)}
+              onClick={() => handlePaginationChange(option.id as typeof paginationType)}
               disabled={disabled}
               className={cn(
                 "px-3 py-2 rounded-xl font-medium text-sm transition-all duration-300",

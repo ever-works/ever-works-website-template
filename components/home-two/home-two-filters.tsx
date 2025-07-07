@@ -2,11 +2,11 @@
 
 import { Category, Tag, ItemData } from "@/lib/content";
 import { HomeTwoSortSelector, HomeTwoTagsSelector } from ".";
-import ViewToggle from "@/components/view-toggle";
 import { useFilters } from "@/hooks/use-filters";
 import { SearchInput } from "../ui/search-input";
 import { Categories } from "./home-two-categories";
 import { LayoutKey } from "../layouts";
+import { LayoutSettings } from "../layout-settings";
 
 type Home2FiltersProps = {
   categories: Category[];
@@ -41,10 +41,7 @@ export function HomeTwoFilters({
             <HomeTwoSortSelector setSortBy={setSortBy} sortBy={sortBy} />
             <HomeTwoTagsSelector tags={tags} />
           </div>
-          <ViewToggle
-            activeView={layoutKey}
-            onViewChange={(newView) => setLayoutKey(newView)}
-          />
+          <LayoutSettings />
         </div>
       </div>
 
@@ -55,10 +52,7 @@ export function HomeTwoFilters({
               <HomeTwoSortSelector setSortBy={setSortBy} sortBy={sortBy} />
               <HomeTwoTagsSelector tags={tags} />
             </div>
-            <ViewToggle
-              activeView={layoutKey}
-              onViewChange={(newView) => setLayoutKey(newView)}
-            />
+            <LayoutSettings />
           </div>
           
           <div className="w-full">
@@ -85,10 +79,8 @@ export function HomeTwoFilters({
               setSearchTerm={setSearchTerm}
             />
           </div>
-          <ViewToggle
-            activeView={layoutKey}
-            onViewChange={(newView) => setLayoutKey(newView)}
-          />
+          
+          <LayoutSettings />
         </div>
       </div>
 

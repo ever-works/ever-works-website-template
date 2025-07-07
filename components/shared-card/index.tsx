@@ -10,9 +10,12 @@ import { getItemPath } from "@/lib/utils";
 import { PER_PAGE } from "@/lib/paginate";
 import { layoutComponents, LayoutKey } from "@/components/layouts";
 import { Category, ItemData, Tag } from "@/lib/content";
-import ViewToggle from "@/components/view-toggle";
 import { useLayoutTheme } from "@/components/context";
 import { FilterContext } from "@/components/filters/context/filter-context";
+import { useInfiniteLoading } from "@/hooks/use-infinite-loading";
+import { Loader2 } from "lucide-react";
+import { useInView } from "react-intersection-observer";
+import ViewToggle from "../view-toggle";
 
 interface BaseCardProps {
   total: number;
@@ -240,7 +243,7 @@ export function FilterStats({
   className?: string;
 }) {
   const tCommon = useTranslations("common");
-  
+
   return (
     <div className={`flex items-center gap-4 ${className}`}>
       <div className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
@@ -495,90 +498,170 @@ export function ItemsList({
  * />
  */
 export function SharedCard(props: ExtendedCardProps) {
-  const config = { ...DEFAULT_CONFIG, ...props.config };
-  const { layoutKey, setLayoutKey } = useLayoutTheme();
-  const { searchTerm, selectedTags, sortBy } = useFilters();
+  const {
+    items,
+    config: rawConfig,
+    className = "",
+    onItemClick,
+    renderCustomItem,
+    renderCustomEmpty,
+    headerActions,
+    start,
+    page,
+  } = props;
+
   const t = useTranslations("listing");
+  const commonT = useTranslations("common");
+  const { layoutKey, setLayoutKey, paginationType } = useLayoutTheme();
+  const { searchTerm, selectedTags, sortBy } = useFilters();
 
-  const LayoutComponent = layoutComponents[layoutKey];
-
+  const config = { ...DEFAULT_CONFIG, ...rawConfig };
   const { filtered, paginated, hasActiveFilters } = useProcessedItems(
-    props.items,
+    items,
     searchTerm,
     selectedTags,
     sortBy,
-    props.start,
+    start,
     config
   );
-
   const handleViewChange = useCallback(
     (newView: LayoutKey) => setLayoutKey(newView),
     [setLayoutKey]
   );
 
+  const { displayedItems, hasMore, isLoading, error, loadMore } =
+    useInfiniteLoading({
+      items: filtered,
+      initialPage: page,
+      perPage: config.perPage,
+    });
+
+  const { ref: loadMoreRef } = useInView({
+    onChange: (inView) => {
+      if (
+        inView &&
+        !isLoading &&
+        hasMore &&
+        paginationType === "infinite" &&
+        displayedItems.length > 0
+      ) {
+        loadMore();
+      }
+    },
+    threshold: 0.5,
+    rootMargin: "100px",
+  });
+
+  const LayoutComponent = layoutComponents[layoutKey];
+
+  const showEmptyState =
+    config.showEmptyState && (filtered.length === 0 || paginated.length === 0);
+
+  if (showEmptyState) {
+    if (renderCustomEmpty) {
+      return renderCustomEmpty();
+    }
+    return (
+      <EmptyState
+        searchTerm={searchTerm}
+        selectedTags={selectedTags}
+        tags={props.tags}
+        t={t}
+        customMessage={config.customEmptyMessage}
+        customDescription={config.customEmptyDescription}
+        className={className}
+      />
+    );
+  }
+
   return (
     <div className={`w-full space-y-6 ${props.className || ""}`}>
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="flex items-center gap-4">
-          {config.showStats && (
-            <FilterStats
-              filteredCount={filtered.length}
-              totalCount={props.total}
-              searchTerm={searchTerm}
-              selectedTags={selectedTags}
-              hasActiveFilters={hasActiveFilters}
-              t={t}
-            />
-          )}
-        </div>
-
-        <div className="flex items-center gap-4">
-          {props.headerActions}
-          {config.showViewToggle && (
-            <ViewToggle
-              activeView={layoutKey}
-              onViewChange={handleViewChange}
-            />
-          )}
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        {paginated.length === 0 ? (
-          config.showEmptyState &&
-          (props.renderCustomEmpty ? (
-            props.renderCustomEmpty()
-          ) : (
-            <EmptyState
-              searchTerm={searchTerm}
-              selectedTags={selectedTags}
-              tags={props.tags}
-              t={t}
-              customMessage={config.customEmptyMessage}
-              customDescription={config.customEmptyDescription}
-            />
-          ))
-        ) : (
-          <div className="space-y-6">
-            <ResultsHeader
-              searchTerm={searchTerm}
-              selectedTags={selectedTags}
-              sortBy={sortBy}
-              start={props.start}
-              filteredCount={filtered.length}
-              t={t}
-              config={config}
-            />
-            <ItemsList
-              items={paginated}
-              LayoutComponent={LayoutComponent}
-              onItemClick={props.onItemClick}
-              renderCustomItem={props.renderCustomItem}
-              animationDelay={config.animationDelay}
-            />
-          </div>
+    <div className="flex items-center justify-between">
+    {config.showStats && (
+        <FilterStats
+          filteredCount={filtered.length}
+          totalCount={items.length}
+          searchTerm={searchTerm}
+          selectedTags={selectedTags}
+          hasActiveFilters={hasActiveFilters}
+          t={t}
+          // className="mb-4"
+        />
+      )}
+      <div className="flex justify-end">
+        {props.headerActions}
+        {config.showViewToggle && (
+          <ViewToggle activeView={layoutKey} onViewChange={handleViewChange} />
         )}
       </div>
+    </div>
+
+      {config.showFilters && (
+        <ResultsHeader
+          searchTerm={searchTerm}
+          selectedTags={selectedTags}
+          sortBy={sortBy}
+          start={start}
+          filteredCount={filtered.length}
+          t={t}
+          config={config}
+          className="mb-6"
+        />
+      )}
+
+      {headerActions}
+
+      <ItemsList
+        items={paginationType === "infinite" ? displayedItems : paginated}
+        LayoutComponent={LayoutComponent}
+        onItemClick={onItemClick}
+        renderCustomItem={renderCustomItem}
+        animationDelay={config.animationDelay}
+      />
+
+      {paginationType === "infinite" && (
+        <div className="flex flex-col items-center gap-6 mt-16 mb-12">
+          {hasMore && (
+            <div
+              ref={loadMoreRef}
+              className="w-full flex items-center justify-center py-8"
+            >
+              {error ? (
+                <div className="text-center py-4">
+                  <p className="text-sm text-red-600 dark:text-red-400 mb-2">
+                    {error.message}
+                  </p>
+                  <button
+                    onClick={() => loadMore()}
+                    className="text-sm text-theme-primary-500 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 transition-colors"
+                  >
+                    {commonT("RETRY")}
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-theme-primary-500 dark:text-theme-primary-400">
+                  {isLoading && (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <span className="text-sm font-medium">
+                        {commonT("LOADING")}
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {!hasMore && !error && (
+            <div className="text-center py-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {commonT("END_OF_CONTENT")}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

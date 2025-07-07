@@ -6,7 +6,10 @@ import { totalPages } from "@/lib/paginate";
 import { sortByNumericProperty } from "@/lib/utils";
 import { useMemo } from "react";
 import SortMenu, { SortOption } from "@/components/sort-menu";
-import { LayoutHome, useLayoutTheme } from "@/components/context/LayoutThemeContext";
+import {
+  LayoutHome,
+  useLayoutTheme,
+} from "@/components/context/LayoutThemeContext";
 import ViewToggle from "@/components/view-toggle";
 import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
@@ -29,7 +32,12 @@ type ListingTagsProps = {
 
 function ListingTags(props: ListingTagsProps) {
   const { searchTerm, setSearchTerm, setSortBy, sortBy } = useFilters();
-  const { layoutKey, setLayoutKey, layoutHome = LayoutHome.HOME_ONE } = useLayoutTheme();
+  const {
+    layoutKey,
+    setLayoutKey,
+    layoutHome = LayoutHome.HOME_ONE,
+    paginationType,
+  } = useLayoutTheme();
   const t = useTranslations("listing");
   const { isSticky } = useStickyHeader({ enableSticky: true });
 
@@ -148,14 +156,15 @@ function ListingTags(props: ListingTagsProps) {
           }
         />
       </div>
-
-      <footer className="flex items-center justify-center mt-12">
-        <Paginate
-          basePath={props.basePath}
-          initialPage={props.page}
-          total={totalPages(props.items.length)}
-        />
-      </footer>
+      {paginationType === "standard" && (
+        <footer className="flex items-center justify-center">
+          <Paginate
+            basePath={props.basePath}
+            initialPage={props.page}
+            total={totalPages(props.items.length)}
+          />
+        </footer>
+      )}
     </Hero>
   );
 }

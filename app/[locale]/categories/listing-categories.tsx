@@ -120,7 +120,7 @@ function HomeTwoLayout({
               className="w-full"
             />
           </div>
-          
+
           {/* Sort and View in one row */}
           <div className="flex items-center justify-between gap-2">
             <SortMenu
@@ -159,7 +159,7 @@ function HomeTwoLayout({
             />
           </div>
         </div>
-        
+
         {/* Categories - Always visible */}
         <div className="mt-3 sm:mt-4">
           <ItemsCategories
@@ -187,7 +187,7 @@ function HomeTwoLayout({
 }
 
 function ListingCategories(props: ListingCategoriesProps) {
-  const { layoutHome = LayoutHome.HOME_ONE } = useLayoutTheme();
+  const { layoutHome = LayoutHome.HOME_ONE, paginationType } = useLayoutTheme();
   const t = useTranslations("listing");
   const { categories, total, page, basePath, items, start, tags } = props;
   const { isSticky } = useStickyHeader({ enableSticky: true });
@@ -238,13 +238,15 @@ function ListingCategories(props: ListingCategoriesProps) {
           tags={tags}
         />
       )}
-      <footer className="flex items-center justify-center">
-        <Paginate
-          basePath={basePath}
-          initialPage={page}
-          total={totalPages(items.length)}
-        />
-      </footer>
+      {paginationType === "standard" && (
+        <footer className="flex items-center justify-center">
+          <Paginate
+            basePath={basePath}
+            initialPage={page}
+            total={totalPages(items.length)}
+          />
+        </footer>
+      )}
     </Hero>
   );
 }
