@@ -20,8 +20,6 @@ type Home2FiltersProps = {
 export function HomeTwoFilters({
   categories,
   tags,
-  layoutKey,
-  setLayoutKey,
 }: Home2FiltersProps) {
   const { searchTerm, setSearchTerm, setSortBy, sortBy } = useFilters();
   
@@ -79,7 +77,7 @@ export function HomeTwoFilters({
               setSearchTerm={setSearchTerm}
             />
           </div>
-          
+
           <LayoutSettings />
         </div>
       </div>

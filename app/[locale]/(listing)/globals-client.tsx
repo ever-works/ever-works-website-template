@@ -8,7 +8,6 @@ import { sortByNumericProperty } from "@/lib/utils";
 import { totalPages } from "@/lib/paginate";
 import { HomeTwoLayout, useHomeTwoLogic } from "@/components/home-two";
 import { ListingClient } from "@/components/shared-card/listing-client";
-import { useCallback } from "react";
 
 type ListingProps = {
   total: number;
@@ -26,11 +25,7 @@ export default function GlobalsClient(props: ListingProps) {
   const sortedTags = sortByNumericProperty(props.tags);
   const sortedCategories = sortByNumericProperty(props.categories);
 
-  const handleLoadMore = useCallback(async (page: number) => {
-    // In a real application, this would make an API call to load more items
-    // For now, we'll just simulate a delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-  }, []);
+
 
   if (layoutHome === LayoutHome.HOME_ONE) {
     return (
@@ -48,7 +43,6 @@ export default function GlobalsClient(props: ListingProps) {
                 initialPage={props.page}
                 total={totalPages(props.items.length)}
                 paginationType={paginationType}
-                onLoadMore={handleLoadMore}
               />
             </div>
           </div>

@@ -275,7 +275,7 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
               </p>
             </div>
           </div>
-          <SelectPaginationType  onChange={() => {}}  />
+          <SelectPaginationType   />
           {layoutContent}
         </div>
       </PopoverContent>

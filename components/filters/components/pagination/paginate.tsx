@@ -12,10 +12,8 @@ export function Paginate({
   initialPage,
   total,
   paginationType = "standard",
-  onLoadMore,
 }: PaginateProps & {
   paginationType?: "standard" | "infinite";
-  onLoadMore?: (page: number) => Promise<void>;
 }) {
   const { navigateWithScroll } = useScrollToTop({
     easing: "easeInOut",
