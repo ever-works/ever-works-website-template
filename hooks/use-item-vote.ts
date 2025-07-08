@@ -1,137 +1,151 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
-import { toast } from 'sonner';
-import type { Vote } from '@/lib/db/schema';
+"use client";
 
-interface UseItemVoteOptions {
-  /** Whether to show toast messages on success/error */
-  showToasts?: boolean;
-  /** Callback when vote status changes */
-  onVoteChange?: (hasVoted: boolean) => void;
+import { useLoginModal } from "./use-login-modal";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useConfig } from "@/app/[locale]/config";
+
+interface ItemVoteResponse {
+  count: number;
+  userVote: "up" | "down" | null;
 }
 
-type VoteCountQueryKey = readonly ['vote-count', string];
-type UserVoteQueryKey = readonly ['user-vote', string, string];
-
-export function useItemVote(itemId: string, options: UseItemVoteOptions = {}) {
-  const { showToasts = true, onVoteChange } = options;
+export function useItemVote(itemId: string) {
+  const config = useConfig();
+  const session = config;
+  const loginModal = useLoginModal();
   const queryClient = useQueryClient();
-  const { data: session } = useSession();
-  const userId = session?.user?.id;
 
-  // Query keys
-  const voteCountKey: VoteCountQueryKey = ['vote-count', itemId];
-  const userVoteKey: UserVoteQueryKey | null = userId ? ['user-vote', userId, itemId] : null;
-
-  // Get vote count
-  const { data: voteCount = 0, isLoading: isLoadingCount } = useQuery({
-    queryKey: voteCountKey,
+  const { data: voteData, isLoading } = useQuery<ItemVoteResponse>({
+    queryKey: ["item-votes", itemId],
     queryFn: async () => {
-      const response = await fetch(`/api/items/${itemId}/votes/count`);
-      if (!response.ok) throw new Error('Failed to fetch vote count');
-      const data = await response.json();
-      return data.count;
+      const response = await fetch(`/api/items/${itemId}/votes`);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to fetch item votes");
+      }
+      return response.json();
     },
     enabled: !!itemId,
   });
 
-  // Get user's vote status
-  const { data: userVote, isLoading: isLoadingVote } = useQuery({
-    queryKey: userVoteKey || ['user-vote', '', ''],
-    queryFn: async () => {
-      const response = await fetch(`/api/items/${itemId}/votes/status`);
-      if (!response.ok) throw new Error('Failed to fetch vote status');
-      return response.json();
-    },
-    enabled: !!userId && !!itemId && !!userVoteKey,
-  });
+  const { mutate: vote, isPending: isVoting } = useMutation({
+    mutationFn: async (type: "up" | "down") => {
+      if (!session) {
+        loginModal.onOpen();
+        return;
+      }
 
-  // Add vote mutation
-  const { mutate: addVote, isPending: isVoting } = useMutation({
-    mutationFn: async () => {
       const response = await fetch(`/api/items/${itemId}/votes`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ itemId }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type }),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to vote');
+        throw new Error(error.message || "Failed to vote on item");
       }
 
       return response.json();
     },
-    onSuccess: (data) => {
-      // Update vote count
-      queryClient.setQueryData(voteCountKey, data.voteCount);
-      
-      // Update user vote status
-      if (userVoteKey) {
-        queryClient.setQueryData(userVoteKey, data.vote);
+    onMutate: async (type) => {
+      if (!session) {
+        return;
       }
 
-      if (showToasts) {
-        toast.success('Vote added successfully');
-      }
+      await queryClient.cancelQueries({ queryKey: ["item-votes", itemId] });
+      const previousVotes = queryClient.getQueryData<ItemVoteResponse>(["item-votes", itemId]);
 
-      onVoteChange?.(true);
+      queryClient.setQueryData<ItemVoteResponse>(["item-votes", itemId], (old) => {
+        if (!old) return { count: 1, userVote: type };
+        
+        const countDiff = old.userVote === type ? -1 : old.userVote === null ? 1 : 2;
+        return {
+          count: old.count + (type === "up" ? countDiff : -countDiff),
+          userVote: old.userVote === type ? null : type,
+        };
+      });
+
+      return { previousVotes };
     },
-    onError: (error: Error) => {
-      if (showToasts) {
-        toast.error(error.message || 'Failed to add vote');
+    onError: (error, _, context) => {
+      if (context?.previousVotes) {
+        queryClient.setQueryData(["item-votes", itemId], context.previousVotes);
       }
+      toast.error(error.message || "Une erreur est survenue lors du vote");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["item-votes", itemId] });
     },
   });
 
-  // Remove vote mutation
   const { mutate: unvote, isPending: isUnvoting } = useMutation({
     mutationFn: async () => {
+      if (!session) {
+        loginModal.onOpen();
+        return;
+      }
+
       const response = await fetch(`/api/items/${itemId}/votes`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to remove vote');
+        throw new Error(error.message || "Failed to remove vote");
       }
 
       return response.json();
     },
-    onSuccess: (data) => {
-      // Update vote count
-      queryClient.setQueryData(voteCountKey, data.voteCount);
-      
-      // Update user vote status
-      if (userVoteKey) {
-        queryClient.setQueryData(userVoteKey, null);
+    onMutate: async () => {
+      if (!session) {
+        return;
       }
 
-      if (showToasts) {
-        toast.success('Vote removed successfully');
-      }
+      await queryClient.cancelQueries({ queryKey: ["item-votes", itemId] });
+      const previousVotes = queryClient.getQueryData<ItemVoteResponse>(["item-votes", itemId]);
 
-      onVoteChange?.(false);
+      queryClient.setQueryData<ItemVoteResponse>(["item-votes", itemId], (old) => {
+        if (!old) return { count: 0, userVote: null };
+        return {
+          count: old.count + (old.userVote === "up" ? -1 : old.userVote === "down" ? 1 : 0),
+          userVote: null,
+        };
+      });
+
+      return { previousVotes };
     },
-    onError: (error: Error) => {
-      if (showToasts) {
-        toast.error(error.message || 'Failed to remove vote');
+    onError: (error, _, context) => {
+      if (context?.previousVotes) {
+        queryClient.setQueryData(["item-votes", itemId], context.previousVotes);
       }
+      toast.error(error.message || "Une erreur est survenue lors du retrait du vote");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["item-votes", itemId] });
     },
   });
 
+  const handleVote = (type: "up" | "down") => {
+    if (isVoting || isUnvoting) return;
+    
+    if (!session) {
+      loginModal.onOpen();
+      return;
+    }
+    
+    if (voteData?.userVote === type) {
+      unvote();
+    } else {
+      vote(type);
+    }
+  };
+
   return {
-    voteCount,
-    hasVoted: !!userVote,
-    vote: userVote as Vote | null,
-    addVote,
-    unvote,
-    isLoadingCount,
-    isLoadingVote,
-    isVoting,
-    isUnvoting,
-    isLoading: isLoadingCount || isLoadingVote || isVoting || isUnvoting,
-    canVote: !!userId,
+    voteCount: voteData?.count || 0,
+    userVote: voteData?.userVote || null,
+    isLoading: isLoading || isVoting || isUnvoting,
+    handleVote,
   };
 }
-

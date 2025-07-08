@@ -1,50 +1,82 @@
-import { auth } from '@/lib/auth';
-import { createVote, deleteVote, getVoteByUserIdAndItemId, getVoteCountForItem } from '@/lib/db/queries';
-import { NextResponse } from 'next/server';
-import { VoteType } from '@/lib/db/schema';
+import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import {
+    createVote,
+    getVoteByUserIdAndItemId,
+    getVoteCountForItem,
+    deleteVote
+} from "@/lib/db/queries";
+import { VoteType } from "@/lib/db/schema";
+
+type RouteParams = {
+  params: {
+    itemId: string;
+  };
+};
+
+export async function GET(
+  request: Request,
+  { params }: RouteParams
+) {
+  try {
+    const session = await auth();
+    const { itemId } = params;
+
+    const count = await getVoteCountForItem(itemId);
+
+    let userVote = null;
+    if (session?.user?.id) {
+      const votes = await getVoteByUserIdAndItemId(session.user.id, itemId);
+      if (votes.length > 0) {
+        userVote = votes[0].voteType === VoteType.UPVOTE ? "up" : "down";
+      }
+    }
+
+    return NextResponse.json({ count, userVote });
+  } catch (error) {
+    console.error("Error in vote route:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(
   request: Request,
-  { params }: { params: { itemId: string } }
+  { params }: RouteParams
 ) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: 'Authentication required' },
+        { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
-    // Check if user has already voted
-    const existingVotes = await getVoteByUserIdAndItemId(session.user.id, params.itemId);
+    const { itemId } = params;
+    const { type } = await request.json();
+
+    const existingVotes = await getVoteByUserIdAndItemId(session.user.id, itemId);
     if (existingVotes.length > 0) {
-      return NextResponse.json(
-        { error: 'You have already voted for this item' },
-        { status: 400 }
-      );
+      await deleteVote(existingVotes[0].id);
     }
 
-    // Add vote
-    const [vote] = await createVote({
+    const voteType = type === "up" ? VoteType.UPVOTE : VoteType.DOWNVOTE;
+    await createVote({
       userId: session.user.id,
-      itemId: params.itemId,
-      voteType: VoteType.UPVOTE,
+      itemId,
+      voteType
     });
 
-    // Get updated vote count
-    const voteCount = await getVoteCountForItem(params.itemId);
+    const count = await getVoteCountForItem(itemId);
 
-    return NextResponse.json({
-      success: true,
-      message: 'Vote added successfully',
-      voteCount,
-      vote,
-    });
+    return NextResponse.json({ count, userVote: type });
   } catch (error) {
-    console.error('Error adding vote:', error);
+    console.error("Error in vote route:", error);
     return NextResponse.json(
-      { error: 'Failed to add vote' },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
@@ -52,41 +84,30 @@ export async function POST(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { itemId: string } }
+  { params }: RouteParams
 ) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: 'Authentication required' },
+        { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
-    // Get user's vote
-    const existingVotes = await getVoteByUserIdAndItemId(session.user.id, params.itemId);
-    if (existingVotes.length === 0) {
-      return NextResponse.json(
-        { error: 'No vote found to remove' },
-        { status: 404 }
-      );
+    const { itemId } = params;
+
+    const existingVotes = await getVoteByUserIdAndItemId(session.user.id, itemId);
+    if (existingVotes.length > 0) {
+      await deleteVote(existingVotes[0].id);
     }
 
-    // Delete vote
-    await deleteVote(existingVotes[0].id);
-
-    // Get updated vote count
-    const voteCount = await getVoteCountForItem(params.itemId);
-
-    return NextResponse.json({
-      success: true,
-      message: 'Vote removed successfully',
-      voteCount,
-    });
+    const count = await getVoteCountForItem(itemId);
+    return NextResponse.json({ count, userVote: null });
   } catch (error) {
-    console.error('Error removing vote:', error);
+    console.error("Error in vote route:", error);
     return NextResponse.json(
-      { error: 'Failed to remove vote' },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

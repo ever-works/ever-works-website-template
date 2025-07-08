@@ -68,7 +68,8 @@
     "tailwind-merge": "^3.2.0",
     "tailwindcss-animate": "^1.0.7",
     "yaml": "^2.7.0",
-    "zod": "3.24.2"
+    "zod": "3.24.2",
+    "zustand": "^5.0.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

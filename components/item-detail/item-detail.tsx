@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { slugify } from "@/lib/utils/slug";
 import { ShareButton } from "./share-button";
 import { VoteButton } from "./vote-button";
-import { toast } from "sonner";
 
 export interface ItemDetailProps {
   meta: {
@@ -92,14 +91,10 @@ export function ItemDetail({
                   {t("common.SAVE")}
                 </button>
                 <ShareButton url={meta.source_url || ""} title={meta.name} />
-                <VoteButton itemId={meta.name} 
-                className="bg-theme-primary-600 hover:bg-theme-primary-700 dark:bg-theme-primary-700 dark:hover:bg-theme-primary-800 dark:hover:from-theme-primary-800 dark:hover:to-theme-primary-900 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-theme-primary-500/25 transform hover:-translate-y-0.5 overflow-hidden" 
-                onVoteSuccess={() => {
-                  toast.success('Voted successfully');
-                }}
-                onVoteError={() => {
-                  toast.error('Failed to vote');
-                }} />
+                <VoteButton
+                  itemId={meta.name}
+                  className="group inline-flex items-center px-6 py-3 bg-white/90 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-semibold transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                />
               </div>
             </div>
 

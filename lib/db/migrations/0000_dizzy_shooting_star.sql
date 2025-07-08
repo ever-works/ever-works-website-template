@@ -32,6 +32,17 @@ CREATE TABLE "authenticators" (
 	CONSTRAINT "authenticators_credentialID_unique" UNIQUE("credentialID")
 );
 --> statement-breakpoint
+CREATE TABLE "newsletter_subscriptions" (
+	"id" text PRIMARY KEY NOT NULL,
+	"email" text NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"subscribed_at" timestamp DEFAULT now() NOT NULL,
+	"unsubscribed_at" timestamp,
+	"last_email_sent" timestamp,
+	"source" text DEFAULT 'footer',
+	CONSTRAINT "newsletter_subscriptions_email_unique" UNIQUE("email")
+);
+--> statement-breakpoint
 CREATE TABLE "passwordResetTokens" (
 	"id" text PRIMARY KEY NOT NULL,
 	"email" text NOT NULL,
@@ -66,17 +77,6 @@ CREATE TABLE "verificationTokens" (
 	"expires" timestamp NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "newsletter_subscriptions" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"email" text NOT NULL,
-	"is_active" boolean DEFAULT true NOT NULL,
-	"subscribed_at" timestamp DEFAULT now() NOT NULL,
-	"unsubscribed_at" timestamp,
-	"last_email_sent" timestamp,
-	"source" text DEFAULT 'footer',
-	CONSTRAINT "newsletter_subscriptions_email_unique" UNIQUE("email")
-);
---> statement-breakpoint
 CREATE TABLE "votes" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
@@ -89,16 +89,8 @@ CREATE TABLE "votes" (
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "activityLogs" ADD CONSTRAINT "activityLogs_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "authenticators" ADD CONSTRAINT "authenticators_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "sessions" ADD CONSTRAINT "sessions_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
---> statement-breakpoint
-ALTER TABLE "newsletter_subscriptions" ADD CONSTRAINT "newsletter_subscriptions_email_unique" UNIQUE("email");--> statement-breakpoint	
---> statement-breakpoint
-ALTER TABLE "votes" ADD CONSTRAINT "votes_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
-ALTER TABLE "votes" ADD CONSTRAINT "votes_item_id_items_id_fk" FOREIGN KEY ("item_id") REFERENCES "public"."items"("id") ON DELETE cascade ON UPDATE no action;
-ALTER TABLE "votes" ADD CONSTRAINT "votes_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;	
+ALTER TABLE "sessions" ADD CONSTRAINT "sessions_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "votes" ADD CONSTRAINT "votes_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "unique_user_item_vote_idx" ON "votes" USING btree ("user_id","item_id");--> statement-breakpoint
-CREATE INDEX "item_votes_idx" ON "votes" USING btree ("item_id");--> statement-breakpoint	
-CREATE INDEX "user_votes_idx" ON "votes" USING btree ("user_id");--> statement-breakpoint
-
-
-
+CREATE INDEX "item_votes_idx" ON "votes" USING btree ("item_id");--> statement-breakpoint
+CREATE INDEX "votes_created_at_idx" ON "votes" USING btree ("created_at");
