@@ -30,29 +30,23 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
     rootMargin: "-20px 0px 0px 0px",
   });
 
-  // Client-side pagination state
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Calculate paginated items based on current page
   const paginatedItems = useMemo(() => {
     const start = (currentPage - 1) * PER_PAGE;
     const end = start + PER_PAGE;
     return props.filteredAndSortedItems.slice(start, end);
   }, [props.filteredAndSortedItems, currentPage]);
 
-  // Calculate total pages based on filtered items
   const totalPagesCount = useMemo(() => {
     return totalPages(props.filteredAndSortedItems.length);
   }, [props.filteredAndSortedItems.length]);
 
-  // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // Scroll to top when page changes
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Reset to page 1 when filters change
   const resetToFirstPage = () => {
     setCurrentPage(1);
   };

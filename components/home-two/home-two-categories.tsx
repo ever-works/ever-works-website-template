@@ -15,8 +15,6 @@ import React, {
 } from "react";
 import Image from "next/image";
 
-
-// Types
 type Home2CategoriesProps = {
   categories: Category[];
   basePath?: string;

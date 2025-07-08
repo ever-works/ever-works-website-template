@@ -33,7 +33,6 @@ export function HomeTwoFilters({
     clearSelectedCategories
   } = useFilters();
 
-  // Call onFilterChange when any filter changes
   const handleCategoryToggle = (categoryId: string) => {
     if (categoryId === "clear-all") {
       clearSelectedCategories();
