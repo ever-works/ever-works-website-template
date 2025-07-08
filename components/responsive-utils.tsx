@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-// Breakpoints définis dans Tailwind
+// Tailwind breakpoints
 export const BREAKPOINTS = {
   xs: 480,
   sm: 640,
@@ -135,28 +135,28 @@ export function Responsive({ children, showOn, hideOn }: ResponsiveProps) {
  * Classes utilitaires pour la responsivité
  */
 export const responsiveClasses = {
-  // Padding responsive
+  // Responsive padding
   padding: {
     sm: "p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6",
     md: "p-3 sm:p-4 md:p-5 lg:p-6 xl:p-8",
     lg: "p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12",
   },
   
-  // Margin responsive
+  // Responsive margin
   margin: {
     sm: "m-2 sm:m-3 md:m-4 lg:m-5 xl:m-6",
     md: "m-3 sm:m-4 md:m-5 lg:m-6 xl:m-8",
     lg: "m-4 sm:m-6 md:m-8 lg:m-10 xl:m-12",
   },
   
-  // Gap responsive
+  // Responsive gap
   gap: {
     sm: "gap-2 sm:gap-3 md:gap-4 lg:gap-5 xl:gap-6",
     md: "gap-3 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8",
     lg: "gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12",
   },
   
-  // Text responsive
+  // Responsive text
   text: {
     xs: "text-xs sm:text-sm md:text-base",
     sm: "text-sm sm:text-base md:text-lg",
@@ -165,7 +165,7 @@ export const responsiveClasses = {
     xl: "text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl",
   },
   
-  // Grid responsive
+  // Responsive grid
   grid: {
     cols1to2: "grid-cols-1 sm:grid-cols-2",
     cols1to3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
@@ -174,7 +174,7 @@ export const responsiveClasses = {
     cols2to6: "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6",
   },
   
-  // Container responsive
+  // Responsive container
   container: {
     sm: "max-w-screen-sm px-4 sm:px-6",
     md: "max-w-screen-md px-4 sm:px-6 lg:px-8",

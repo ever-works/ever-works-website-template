@@ -34,7 +34,7 @@ export const themeClasses = {
   },
 };
 
-// Toutes les couleurs de Tailwind CSS
+// All Tailwind CSS colors
 export const tailwindColors = {
   slate: {
     50: "#f8fafc",
@@ -324,7 +324,7 @@ export const tailwindColors = {
   }
 };
 
-// Utilitaires pour les opacités
+// Opacity utilities
 export const opacities = {
   5: "0.05",
   10: "0.1",
@@ -339,12 +339,12 @@ export const opacities = {
   95: "0.95",
 };
 
-// Fonction utilitaire pour générer une variable CSS dynamique
+// Utility function to generate dynamic CSS variable
 export function getCssVariable(name: string): string {
   return `var(--${name})`;
 }
 
-// Fonction utilitaire pour générer des classes avec opacité
+// Utility function to generate classes with opacity
 export function withOpacity(
   colorClass: string,
   opacity: number | string

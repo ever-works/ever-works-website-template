@@ -1,7 +1,7 @@
 /**
- * Hooks API personnalisés pour la gestion des requêtes et mutations
+ * Custom API hooks for handling requests and mutations
  * 
- * @example Utilisation de useQueryWithConfig
+ * @example Using useQueryWithConfig
  * ```tsx
  * const { data, isLoading } = useQueryWithConfig({
  *   endpoint: '/api/users',
@@ -9,7 +9,7 @@
  * });
  * ```
  * 
- * @example Utilisation de usePaginatedQuery
+ * @example Using usePaginatedQuery
  * ```tsx
  * const { 
  *   data,
@@ -24,7 +24,7 @@
  * });
  * ```
  * 
- * @example Utilisation de useMutationWithToast
+ * @example Using useMutationWithToast
  * ```tsx
  * const { mutate, isLoading } = useMutationWithToast({
  *   endpoint: '/api/users',
@@ -33,7 +33,7 @@
  *   invalidateQueries: ['users']
  * });
  * 
- * // Utilisation
+ * // Usage
  * mutate({ name: 'John Doe', email: 'john@example.com' });
  * ```
  */

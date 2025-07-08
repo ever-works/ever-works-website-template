@@ -8,7 +8,7 @@ class ApiClientSingleton {
   private static instance: ApiClient | null = null;
 
   private constructor() {
-    // Empêche l'instanciation directe
+    // Prevents direct instantiation
   }
 
   /**
