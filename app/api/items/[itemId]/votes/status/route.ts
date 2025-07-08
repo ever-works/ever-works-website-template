@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET(
   request: Request,
-  { params }: { params: { itemId: string } }
+  context: { params: Promise<{ itemId: string }> }
 ) {
   try {
     const session = await auth();
@@ -15,7 +15,8 @@ export async function GET(
       );
     }
 
-    const votes = await getVoteByUserIdAndItemId(session.user.id, params.itemId);
+    const { itemId } = await context.params;
+    const votes = await getVoteByUserIdAndItemId(session.user.id, itemId);
     return NextResponse.json(votes[0] || null);
   } catch (error) {
     console.error('Error fetching vote status:', error);

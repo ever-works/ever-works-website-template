@@ -8,20 +8,16 @@ import {
 } from "@/lib/db/queries";
 import { VoteType } from "@/lib/db/schema";
 
-type RouteParams = {
-  params: {
-    itemId: string;
-  };
-};
+type RouteParams ={ params: Promise<{ itemId: string }> };
 
 export async function GET(
   request: Request,
-  params: RouteParams
+  context: { params: Promise<{ itemId: string }> }
 ) {
   try {
     const [session, { itemId }] = await Promise.all([
       auth(),
-      Promise.resolve(params.params)
+      Promise.resolve(context.params)
     ]);
 
     const count = await getVoteCountForItem(itemId);
