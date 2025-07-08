@@ -1,9 +1,8 @@
 "use client";
 
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { ThumbsUp } from 'lucide-react';
-import { useItemVote } from '@/hooks/use-item-vote';
+import { ThumbsUp, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useItemVote } from "@/hooks/use-item-vote";
 
 interface VoteButtonProps {
   itemId: string;
@@ -17,32 +16,64 @@ export function VoteButton({
   const { voteCount, userVote, isLoading, handleVote } = useItemVote(itemId);
 
   return (
-    <div className="flex items-center gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        className={cn(
-          'flex items-center gap-2 transition-colors',
-          userVote === "up" && 'bg-primary text-primary-foreground hover:bg-primary/90',
-          isLoading && 'cursor-not-allowed opacity-50',
-          className
-        )}
-        onClick={() => handleVote("up")}
-        disabled={isLoading}
-        aria-label={userVote === "up" ? 'Remove upvote' : 'Upvote'}
-        title={userVote === "up" ? 'Remove upvote' : 'Upvote'}
-      >
+    <button
+      onClick={() => handleVote("up")}
+      disabled={isLoading}
+      className={cn(
+        "group relative inline-flex items-center px-6 py-3",
+        "bg-white/90 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700",
+        "text-gray-700 dark:text-gray-200",
+        "rounded-xl font-semibold",
+        "transition-all duration-300",
+        "border border-gray-200 dark:border-gray-700",
+        "shadow-md hover:shadow-lg",
+        "transform hover:-translate-y-0.5",
+        userVote === "up" ? (
+          "bg-gradient-to-r from-purple-500/10 to-purple-600/10 dark:from-purple-500/20 dark:to-purple-600/20 border-purple-300 dark:border-purple-600"
+        ) : (
+          "hover:border-purple-300 dark:hover:border-purple-600"
+        ),
+        isLoading && "cursor-not-allowed opacity-50",
+        className
+      )}
+      aria-label={userVote === "up" ? 'Remove upvote' : 'Upvote'}
+      title={userVote === "up" ? 'Remove upvote' : 'Upvote'}
+    >
+    {userVote === "up" && (
+        <div className="absolute inset-0 rounded-xl bg-purple-400/10 dark:bg-purple-500/10 animate-pulse-slow" />
+      )}
+
+      <div className="relative flex items-center">
         <ThumbsUp
           className={cn(
-            'h-4 w-4 transition-transform',
-            userVote === "up" && 'fill-current',
-            isLoading && 'animate-pulse'
+            "w-5 h-5 mr-2",
+            "transition-all duration-300",
+            "group-hover:rotate-12",
+            userVote === "up" ? (
+              "text-purple-500 dark:text-purple-400 fill-current"
+            ) : (
+              "group-hover:text-purple-500 dark:group-hover:text-purple-400"
+            ),
+            isLoading && "animate-pulse"
           )}
         />
-        <span className="sr-only">Upvotes:</span>
-        <span aria-live="polite">{voteCount}</span>
-      </Button>
+        
+        <span 
+          className={cn(
+            "transition-colors duration-300",
+            userVote === "up" && "text-purple-500 dark:text-purple-400"
+          )}
+          aria-live="polite"
+        >
+          {voteCount}
+        </span>
 
-    </div>
+        {userVote === "up" && (
+          <div className="ml-2 p-1 rounded-full bg-purple-500/10 dark:bg-purple-400/10">
+            <Check className="w-3 h-3 text-purple-500 dark:text-purple-400" />
+          </div>
+        )}
+      </div>
+    </button>
   );
 } 
