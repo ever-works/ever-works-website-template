@@ -16,11 +16,13 @@ type RouteParams = {
 
 export async function GET(
   request: Request,
-  { params }: RouteParams
+  params: RouteParams
 ) {
   try {
-    const session = await auth();
-    const { itemId } = params;
+    const [session, { itemId }] = await Promise.all([
+      auth(),
+      Promise.resolve(params.params)
+    ]);
 
     const count = await getVoteCountForItem(itemId);
 
@@ -44,10 +46,14 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: RouteParams
+  params: RouteParams
 ) {
   try {
-    const session = await auth();
+    const [session, { itemId }] = await Promise.all([
+      auth(),
+      Promise.resolve(params.params)
+    ]);
+
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: "Unauthorized" },
@@ -55,7 +61,6 @@ export async function POST(
       );
     }
 
-    const { itemId } = params;
     const { type } = await request.json();
 
     const existingVotes = await getVoteByUserIdAndItemId(session.user.id, itemId);
@@ -84,18 +89,20 @@ export async function POST(
 
 export async function DELETE(
   request: Request,
-  { params }: RouteParams
+  params: RouteParams
 ) {
   try {
-    const session = await auth();
+    const [session, { itemId }] = await Promise.all([
+      auth(),
+      Promise.resolve(params.params)
+    ]);
+
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
-
-    const { itemId } = params;
 
     const existingVotes = await getVoteByUserIdAndItemId(session.user.id, itemId);
     if (existingVotes.length > 0) {
