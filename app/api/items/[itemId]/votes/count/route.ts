@@ -1,9 +1,15 @@
 import { getVoteCountForItem } from '@/lib/db/queries';
 import { NextResponse } from 'next/server';
 
+type RouteParams = {
+  params: {
+    itemId: string;
+  };
+};
+
 export async function GET(
   request: Request,
-  { params }: { params: { itemId: string } }
+  { params }: RouteParams
 ) {
   try {
     const count = await getVoteCountForItem(params.itemId);
