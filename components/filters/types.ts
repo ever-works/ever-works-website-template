@@ -9,12 +9,18 @@ export interface FilterContextType {
   setSearchTerm: Dispatch<SetStateAction<string>>;
   selectedTags: string[];
   setSelectedTags: Dispatch<SetStateAction<string[]>>;
+  selectedCategories: string[];
+  setSelectedCategories: Dispatch<SetStateAction<string[]>>;
   sortBy: string;
   setSortBy: Dispatch<SetStateAction<string>>;
   clearAllFilters: () => void;
   removeSelectedTag: (tagId: string) => void;
   addSelectedTag: (tagId: string) => void;
   toggleSelectedTag: (tagId: string) => void;
+  removeSelectedCategory: (categoryId: string) => void;
+  addSelectedCategory: (categoryId: string) => void;
+  toggleSelectedCategory: (categoryId: string) => void;
+  clearSelectedCategories: () => void;
 }
 
 /**
@@ -32,6 +38,9 @@ export interface BlockLinkProps {
  */
 export interface CategoriesListProps {
   categories: Category[];
+  mode?: "navigation" | "filter";
+  selectedCategories?: string[];
+  onCategoryToggle?: (categoryId: string | "clear-all") => void;
 }
 
 /**
@@ -82,6 +91,8 @@ export interface CategoryItemProps {
   href: string;
   isAllCategories?: boolean;
   totalItems?: number;
+  mode?: "navigation" | "filter";
+  onToggle?: (categoryId: string) => void;
 }
 
 /**
@@ -94,6 +105,8 @@ export interface FilterControlsProps {
   setSortBy: (sort: string) => void;
   selectedTags: string[];
   setSelectedTags: (tags: string[]) => void;
+  selectedCategories: string[];
+  setSelectedCategories: (categories: string[]) => void;
 }
 
 /**
@@ -104,8 +117,11 @@ export interface ActiveFiltersProps {
   setSearchTerm: (term: string) => void;
   selectedTags: string[];
   setSelectedTags: (tags: string[]) => void;
+  selectedCategories: string[];
+  setSelectedCategories: (categories: string[]) => void;
   sortBy: string;
   setSortBy: (sort: string) => void;
   availableTags: Tag[];
+  availableCategories: Category[];
   clearAllFilters: () => void;
 } 

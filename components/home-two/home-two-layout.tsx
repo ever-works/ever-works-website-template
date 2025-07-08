@@ -48,7 +48,11 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
             setLayoutKey={setLayoutKey}
           />
         </div>
-        <ListingClient {...props} config={CardPresets.showViewToggle} />
+        <ListingClient 
+          {...props}
+          items={props.paginatedItems}
+          config={CardPresets.showViewToggle} 
+        />
         <div className="mt-8 flex items-center justify-center">
           <Paginate
             basePath={props.basePath}

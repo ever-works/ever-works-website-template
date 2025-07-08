@@ -8,13 +8,33 @@ export function getTagId(tag: string | Tag): string {
 type UseHome2LogicProps = {
   items: ItemData[];
   start: number;
+  selectedCategories: string[];
 };
 
-export function useHomeTwoLogic({ items, start }: UseHome2LogicProps) {
-  const paginatedItems = items.slice(start, start + PER_PAGE);
+function itemHasCategory(item: ItemData, selectedCategories: string[]): boolean {
+  if (!selectedCategories.length) return true;
+  if (!item.category) return false;
+  const itemCategories = Array.isArray(item.category)
+    ? item.category
+    : [item.category];
+  // Debug log: print item and selectedCategories
+  console.log('[DEBUG] Filtering item:', item.name, 'itemCategories:', itemCategories, 'selectedCategories:', selectedCategories);
+  return itemCategories.some(cat => {
+    if (typeof cat === "string") return selectedCategories.includes(cat);
+    if (typeof cat === "object" && cat && "id" in cat) return selectedCategories.includes(cat.id);
+    return false;
+  });
+}
+
+export function useHomeTwoLogic({ items, start, selectedCategories }: UseHome2LogicProps) {
+  console.log('[DEBUG] useHomeTwoLogic selectedCategories:', selectedCategories);
+  const filteredItems = selectedCategories.length
+    ? items.filter(item => itemHasCategory(item, selectedCategories))
+    : items;
+  const paginatedItems = filteredItems.slice(start, start + PER_PAGE);
 
   return {
-    items,
+    items: filteredItems,
     paginatedItems,
   };
 }

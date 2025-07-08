@@ -8,6 +8,7 @@ import { SORT_OPTIONS } from '../constants';
 export function useFilterState() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>(SORT_OPTIONS.POPULARITY);
 
   /**
@@ -16,6 +17,7 @@ export function useFilterState() {
   const clearAllFilters = useCallback(() => {
     setSearchTerm("");
     setSelectedTags([]);
+    setSelectedCategories([]);
     setSortBy(SORT_OPTIONS.POPULARITY);
   }, []);
 
@@ -44,15 +46,49 @@ export function useFilterState() {
     );
   }, []);
 
+  /**
+   * Remove a specific category from selected categories
+   */
+  const removeSelectedCategory = useCallback((categoryId: string) => {
+    setSelectedCategories(prev => prev.filter(id => id !== categoryId));
+  }, []);
+
+  /**
+   * Add a category to selected categories
+   */
+  const addSelectedCategory = useCallback((categoryId: string) => {
+    setSelectedCategories(prev => [...prev, categoryId]);
+  }, []);
+
+  /**
+   * Toggle a category selection
+   */
+  const toggleSelectedCategory = useCallback((categoryId: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(categoryId) 
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId]
+    );
+  }, []);
+
+  /**
+   * Clear all selected categories
+   */
+  const clearSelectedCategories = useCallback(() => {
+    setSelectedCategories([]);
+  }, []);
+
   return {
     // State
     searchTerm,
     selectedTags,
+    selectedCategories,
     sortBy,
     
     // Setters
     setSearchTerm,
     setSelectedTags,
+    setSelectedCategories,
     setSortBy,
     
     // Actions
@@ -60,5 +96,9 @@ export function useFilterState() {
     removeSelectedTag,
     addSelectedTag,
     toggleSelectedTag,
+    removeSelectedCategory,
+    addSelectedCategory,
+    toggleSelectedCategory,
+    clearSelectedCategories,
   };
 } 

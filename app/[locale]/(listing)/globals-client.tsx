@@ -8,6 +8,7 @@ import { sortByNumericProperty } from "@/lib/utils";
 import { totalPages } from "@/lib/paginate";
 import { HomeTwoLayout, useHomeTwoLogic } from "@/components/home-two";
 import { ListingClient } from "@/components/shared-card/listing-client";
+import { useFilters } from "@/hooks/use-filters";
 
 type ListingProps = {
   total: number;
@@ -21,7 +22,8 @@ type ListingProps = {
 
 export default function GlobalsClient(props: ListingProps) {
   const { layoutHome =LayoutHome.HOME_ONE } = useLayoutTheme();
-  const homeTwoLogic = useHomeTwoLogic(props);
+  const { selectedCategories } = useFilters();
+  const homeTwoLogic = useHomeTwoLogic({ ...props, selectedCategories });
   const sortedTags = sortByNumericProperty(props.tags);
   const sortedCategories = sortByNumericProperty(props.categories);
 

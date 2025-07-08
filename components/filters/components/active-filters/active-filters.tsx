@@ -12,12 +12,15 @@ export function ActiveFilters({
   setSearchTerm,
   selectedTags,
   setSelectedTags,
+  selectedCategories,
+  setSelectedCategories,
   sortBy,
   setSortBy,
   availableTags,
+  availableCategories,
   clearAllFilters,
 }: ActiveFiltersProps) {
-  const hasActiveFilters = searchTerm || selectedTags.length > 0 || sortBy !== "popularity";
+  const hasActiveFilters = searchTerm || selectedTags.length > 0 || selectedCategories.length > 0 || sortBy !== "popularity";
 
   if (!hasActiveFilters) {
     return null;
@@ -25,6 +28,10 @@ export function ActiveFilters({
 
   const removeSelectedTag = (tagId: string) => {
     setSelectedTags(selectedTags.filter((id) => id !== tagId));
+  };
+
+  const removeSelectedCategory = (categoryId: string) => {
+    setSelectedCategories(selectedCategories.filter((id) => id !== categoryId));
   };
 
   return (
@@ -80,6 +87,33 @@ export function ActiveFilters({
                     <button
                       onClick={() => removeSelectedTag(tagId)}
                       className="ml-2 text-theme-primary-600/70 dark:text-theme-primary-400/70 hover:text-theme-primary-800 dark:hover:text-theme-primary-300"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ) : null;
+              })}
+            </div>
+          </div>
+        )}
+
+        {selectedCategories.length > 0 && (
+          <div className="space-y-2">
+            <span className={textStyles.label}>
+              Selected Categories:
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {selectedCategories.map((categoryId) => {
+                const category = availableCategories.find((c) => c.id === categoryId);
+                return category ? (
+                  <span
+                    key={categoryId}
+                    className="inline-flex items-center px-3 py-1 rounded-lg bg-blue-100 dark:bg-gray-800 text-blue-700 dark:text-blue-400 text-sm font-medium border border-blue-200 dark:border-gray-700"
+                  >
+                    {category.name}
+                    <button
+                      onClick={() => removeSelectedCategory(categoryId)}
+                      className="ml-2 text-blue-600/70 dark:text-blue-400/70 hover:text-blue-800 dark:hover:text-blue-300"
                     >
                       <X className="w-3 h-3" />
                     </button>

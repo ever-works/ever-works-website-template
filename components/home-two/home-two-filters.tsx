@@ -5,7 +5,7 @@ import { HomeTwoSortSelector, HomeTwoTagsSelector } from ".";
 import ViewToggle from "@/components/view-toggle";
 import { useFilters } from "@/hooks/use-filters";
 import { SearchInput } from "../ui/search-input";
-import { Categories } from "./home-two-categories";
+import { HomeTwoCategories } from "./home-two-categories";
 import { LayoutKey } from "../layouts";
 
 type Home2FiltersProps = {
@@ -23,7 +23,15 @@ export function HomeTwoFilters({
   layoutKey,
   setLayoutKey,
 }: Home2FiltersProps) {
-  const { searchTerm, setSearchTerm, setSortBy, sortBy } = useFilters();
+  const { 
+    searchTerm, 
+    setSearchTerm, 
+    setSortBy, 
+    sortBy,
+    selectedCategories,
+    toggleSelectedCategory,
+    clearSelectedCategories
+  } = useFilters();
   
   return (
     <div className="mb-4 sm:mb-6 space-y-3 sm:space-y-4">
@@ -92,8 +100,17 @@ export function HomeTwoFilters({
         </div>
       </div>
 
-      <Categories categories={categories} 
-      maxVisibleTags={4}
+      <HomeTwoCategories 
+        categories={categories}
+        mode="filter"
+        selectedCategories={selectedCategories}
+        onCategoryToggle={(categoryId) => {
+          if (categoryId === "clear-all") {
+            clearSelectedCategories();
+          } else {
+            toggleSelectedCategory(categoryId);
+          }
+        }}
       />
     </div>
   );

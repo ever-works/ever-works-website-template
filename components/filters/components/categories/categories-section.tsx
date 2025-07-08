@@ -14,7 +14,16 @@ import { ActiveFilters } from "../active-filters/active-filters";
  */
 export function Categories({ total, categories }: CategoriesProps) {
   const t = useTranslations("listing");
-  const { searchTerm, setSearchTerm, sortBy, setSortBy, selectedTags, setSelectedTags } = useFilters();
+  const { 
+    searchTerm, 
+    setSearchTerm, 
+    sortBy, 
+    setSortBy, 
+    selectedTags, 
+    setSelectedTags,
+    selectedCategories,
+    setSelectedCategories
+  } = useFilters();
 
   return (
     <>
@@ -68,12 +77,16 @@ export function Categories({ total, categories }: CategoriesProps) {
           setSearchTerm={setSearchTerm}
           selectedTags={selectedTags}
           setSelectedTags={setSelectedTags}
+          selectedCategories={selectedCategories}
+          setSelectedCategories={setSelectedCategories}
           sortBy={sortBy}
           setSortBy={setSortBy}
           availableTags={categories}
+          availableCategories={categories}
           clearAllFilters={() => {
             setSearchTerm("");
             setSelectedTags([]);
+            setSelectedCategories([]);
             setSortBy("popularity");
           }}
         />
