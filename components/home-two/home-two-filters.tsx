@@ -1,6 +1,6 @@
 "use client";
 
-import { Category, Tag, ItemData } from "@/lib/content";
+import { Category, Tag } from "@/lib/content";
 import { HomeTwoSortSelector, HomeTwoTagsSelector } from ".";
 import ViewToggle from "@/components/view-toggle";
 import { useFilters } from "@/hooks/use-filters";
@@ -11,10 +11,9 @@ import { LayoutKey } from "../layouts";
 type Home2FiltersProps = {
   categories: Category[];
   tags: Tag[];
-  items: ItemData[];
   layoutKey: LayoutKey;
   setLayoutKey: (layoutKey: LayoutKey) => void;
-  className?: string;
+  onFilterChange?: () => void;
 };
 
 export function HomeTwoFilters({
@@ -22,6 +21,7 @@ export function HomeTwoFilters({
   tags,
   layoutKey,
   setLayoutKey,
+  onFilterChange,
 }: Home2FiltersProps) {
   const { 
     searchTerm, 
@@ -32,21 +32,41 @@ export function HomeTwoFilters({
     toggleSelectedCategory,
     clearSelectedCategories
   } = useFilters();
-  
+
+  // Call onFilterChange when any filter changes
+  const handleCategoryToggle = (categoryId: string) => {
+    if (categoryId === "clear-all") {
+      clearSelectedCategories();
+    } else {
+      toggleSelectedCategory(categoryId);
+    }
+    onFilterChange?.();
+  };
+
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+    onFilterChange?.();
+  };
+
+  const handleSortChange = (sort: string) => {
+    setSortBy(sort);
+    onFilterChange?.();
+  };
+
   return (
     <div className="mb-4 sm:mb-6 space-y-3 sm:space-y-4">
       <div className="block sm:hidden space-y-3">
         <div className="w-full">
           <SearchInput
             searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
+            setSearchTerm={handleSearchChange}
             className="w-full"
           />
         </div>
         
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 flex-1">
-            <HomeTwoSortSelector setSortBy={setSortBy} sortBy={sortBy} />
+            <HomeTwoSortSelector setSortBy={handleSortChange} sortBy={sortBy} />
             <HomeTwoTagsSelector tags={tags} />
           </div>
           <ViewToggle
@@ -60,7 +80,7 @@ export function HomeTwoFilters({
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <HomeTwoSortSelector setSortBy={setSortBy} sortBy={sortBy} />
+              <HomeTwoSortSelector setSortBy={handleSortChange} sortBy={sortBy} />
               <HomeTwoTagsSelector tags={tags} />
             </div>
             <ViewToggle
@@ -72,7 +92,7 @@ export function HomeTwoFilters({
           <div className="w-full">
             <SearchInput
               searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
+              setSearchTerm={handleSearchChange}
               className="w-full"
             />
           </div>
@@ -82,7 +102,7 @@ export function HomeTwoFilters({
       <div className="hidden md:flex justify-between items-center gap-4">
         {/* Left Side: Sort and Tags */}
         <div className="flex items-center gap-3">
-          <HomeTwoSortSelector setSortBy={setSortBy} sortBy={sortBy} />
+          <HomeTwoSortSelector setSortBy={handleSortChange} sortBy={sortBy} />
           <HomeTwoTagsSelector tags={tags} />
         </div>
         
@@ -90,7 +110,7 @@ export function HomeTwoFilters({
           <div className="w-64 lg:w-80 xl:w-96">
             <SearchInput
               searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
+              setSearchTerm={handleSearchChange}
             />
           </div>
           <ViewToggle
@@ -104,15 +124,11 @@ export function HomeTwoFilters({
         categories={categories}
         mode="filter"
         selectedCategories={selectedCategories}
-        onCategoryToggle={(categoryId) => {
-          if (categoryId === "clear-all") {
-            clearSelectedCategories();
-          } else {
-            toggleSelectedCategory(categoryId);
-          }
-        }}
+        onCategoryToggle={handleCategoryToggle}
         totalItems={categories.reduce((sum, cat) => sum + (cat.count || 0), 0)}
       />
     </div>
   );
 }
+
+
