@@ -72,7 +72,6 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
           <HomeTwoFilters
             categories={props.categories}
             tags={props.tags}
-            items={props.items}
             layoutKey={layoutKey}
             setLayoutKey={setLayoutKey}
             onFilterChange={resetToFirstPage}
