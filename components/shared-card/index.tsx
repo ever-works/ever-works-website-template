@@ -494,7 +494,7 @@ export function ItemsList({
  *   renderCustomItem={(item) => <CustomItem {...item} />}
  * />
  */
-export function SharedCard(props: ExtendedCardProps) {
+export function SharedCard(props: ExtendedCardProps & { filteredCount?: number; totalCount?: number }) {
   const config = { ...DEFAULT_CONFIG, ...props.config };
   const { layoutKey, setLayoutKey } = useLayoutTheme();
   const { searchTerm, selectedTags, sortBy } = useFilters();
@@ -522,8 +522,8 @@ export function SharedCard(props: ExtendedCardProps) {
         <div className="flex items-center gap-4">
           {config.showStats && (
             <FilterStats
-              filteredCount={filtered.length}
-              totalCount={props.total}
+              filteredCount={props.filteredCount ?? filtered.length}
+              totalCount={props.totalCount ?? props.total}
               searchTerm={searchTerm}
               selectedTags={selectedTags}
               hasActiveFilters={hasActiveFilters}

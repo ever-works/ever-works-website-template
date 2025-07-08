@@ -24,6 +24,7 @@ type Home2CategoriesProps = {
   mode?: "navigation" | "filter";
   selectedCategories?: string[];
   onCategoryToggle?: (categoryId: string | "clear-all") => void;
+  totalItems?: number;
 };
 
 type CategoryButtonProps = {
@@ -147,10 +148,13 @@ export function HomeTwoCategories({
   mode = "navigation",
   selectedCategories = [],
   onCategoryToggle,
+  totalItems,
 }: Home2CategoriesProps) {
   const t = useTranslations("listing");
   const tCommon = useTranslations("common");
-  const { totalItems, isHomeActive, pathname } = useCategoryState(categories);
+  // Use totalItems prop for All Categories button, fallback to calculated value
+  const { totalItems: calculatedTotalItems, isHomeActive, pathname } = useCategoryState(categories);
+  const allCategoriesCount = totalItems ?? calculatedTotalItems;
   const [selectedCategory, setSelectedCategory] = useState("");
   const [hiddenCategories, setHiddenCategories] = useState<Category[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -269,7 +273,7 @@ export function HomeTwoCategories({
             aria-label="Select category"
           >
             <option value="all">
-              {t("ALL_CATEGORIES")} ({totalItems})
+              {t("ALL_CATEGORIES")} ({allCategoriesCount})
             </option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
@@ -334,7 +338,7 @@ export function HomeTwoCategories({
                   href={mode === "filter" ? "#" : (resetPath || "/")}
                   isActive={mode === "filter" ? selectedCategories.length === 0 : isHomeActive}
                   displayName={t("ALL_CATEGORIES")}
-                  count={totalItems}
+                  count={allCategoriesCount}
                   onClick={mode === "filter" ? () => onCategoryToggle?.("clear-all") : undefined}
                 />
               </div>

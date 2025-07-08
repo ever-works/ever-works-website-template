@@ -51,6 +51,8 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
         <ListingClient 
           {...props}
           items={props.paginatedItems}
+          filteredCount={props.filteredAndSortedItems.length}
+          totalCount={props.items.length}
           config={CardPresets.showViewToggle} 
         />
         <div className="mt-8 flex items-center justify-center">

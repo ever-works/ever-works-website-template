@@ -111,6 +111,7 @@ export function HomeTwoFilters({
             toggleSelectedCategory(categoryId);
           }
         }}
+        totalItems={categories.reduce((sum, cat) => sum + (cat.count || 0), 0)}
       />
     </div>
   );
