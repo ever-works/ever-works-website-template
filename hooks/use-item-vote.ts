@@ -33,7 +33,7 @@ export function useItemVote(itemId: string) {
   const { mutate: vote, isPending: isVoting } = useMutation({
     mutationFn: async (type: "up" | "down") => {
       if (!session) {
-        loginModal.onOpen("Connectez-vous pour voter sur cet élément");
+        loginModal.onOpen("Please sign in to vote on this item");
         return;
       }
 
@@ -74,7 +74,7 @@ export function useItemVote(itemId: string) {
       if (context?.previousVotes) {
         queryClient.setQueryData(["item-votes", itemId], context.previousVotes);
       }
-      toast.error(error.message || "Une erreur est survenue lors du vote");
+      toast.error(error.message || "An error occurred while voting");
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["item-votes", itemId] });
@@ -84,7 +84,7 @@ export function useItemVote(itemId: string) {
   const { mutate: unvote, isPending: isUnvoting } = useMutation({
     mutationFn: async () => {
       if (!session) {
-        loginModal.onOpen("Connectez-vous pour voter sur cet élément");
+        loginModal.onOpen("Please sign in to vote on this item");
         return;
       }
 
@@ -121,7 +121,7 @@ export function useItemVote(itemId: string) {
       if (context?.previousVotes) {
         queryClient.setQueryData(["item-votes", itemId], context.previousVotes);
       }
-      toast.error(error.message || "Une erreur est survenue lors du retrait du vote");
+      toast.error(error.message || "An error occurred while removing your vote");
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["item-votes", itemId] });
@@ -132,7 +132,7 @@ export function useItemVote(itemId: string) {
     if (isVoting || isUnvoting) return;
     
     if (!session) {
-      loginModal.onOpen("Connectez-vous pour voter sur cet élément");
+      loginModal.onOpen("Please sign in to vote on this item");
       return;
     }
     
