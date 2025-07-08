@@ -1,18 +1,12 @@
 import { getVoteCountForItem } from '@/lib/db/queries';
-import { NextResponse } from 'next/server';
-
-type RouteParams = {
-  params: {
-    itemId: string;
-  };
-};
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
-  request: Request,
-  { params }: RouteParams
+  request: NextRequest,
+  context: { params: { itemId: string } }
 ) {
   try {
-    const count = await getVoteCountForItem(params.itemId);
+    const count = await getVoteCountForItem(context.params.itemId);
     return NextResponse.json({ count });
   } catch (error) {
     console.error('Error fetching vote count:', error);
