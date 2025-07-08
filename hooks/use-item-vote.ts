@@ -9,6 +9,7 @@ interface ItemVoteResponse {
   count: number;
   userVote: "up" | "down" | null;
 }
+let api='/api/items'
 
 export function useItemVote(itemId: string) {
   const config = useConfig();
@@ -19,7 +20,7 @@ export function useItemVote(itemId: string) {
   const { data: voteData, isLoading } = useQuery<ItemVoteResponse>({
     queryKey: ["item-votes", itemId],
     queryFn: async () => {
-      const response = await fetch(`/api/items/${itemId}/votes`);
+      const response = await fetch(`${api}/${itemId}/votes`);
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Failed to fetch item votes");
@@ -32,11 +33,11 @@ export function useItemVote(itemId: string) {
   const { mutate: vote, isPending: isVoting } = useMutation({
     mutationFn: async (type: "up" | "down") => {
       if (!session) {
-        loginModal.onOpen();
+        loginModal.onOpen("Connectez-vous pour voter sur cet élément");
         return;
       }
 
-      const response = await fetch(`/api/items/${itemId}/votes`, {
+      const response = await fetch(`${api}/${itemId}/votes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type }),
@@ -83,11 +84,11 @@ export function useItemVote(itemId: string) {
   const { mutate: unvote, isPending: isUnvoting } = useMutation({
     mutationFn: async () => {
       if (!session) {
-        loginModal.onOpen();
+        loginModal.onOpen("Connectez-vous pour voter sur cet élément");
         return;
       }
 
-      const response = await fetch(`/api/items/${itemId}/votes`, {
+      const response = await fetch(`${api}/${itemId}/votes`, {
         method: "DELETE",
       });
 
@@ -131,7 +132,7 @@ export function useItemVote(itemId: string) {
     if (isVoting || isUnvoting) return;
     
     if (!session) {
-      loginModal.onOpen();
+      loginModal.onOpen("Connectez-vous pour voter sur cet élément");
       return;
     }
     
