@@ -48,7 +48,7 @@ export function Categories({ total, categories }: CategoriesProps) {
             }
           >
             <div className="px-2 pb-2">
-              <CategoriesList categories={categories} />
+              <CategoriesList categories={categories} mode="filter" />
             </div>
           </AccordionItem>
         </Accordion>
@@ -67,7 +67,7 @@ export function Categories({ total, categories }: CategoriesProps) {
             </h2>
           </div>
           <div className={containerStyles.content}>
-            <CategoriesList categories={categories} />
+            <CategoriesList categories={categories} mode="filter" />
           </div>
         </div>
 
