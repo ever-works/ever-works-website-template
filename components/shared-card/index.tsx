@@ -13,6 +13,7 @@ import { Category, ItemData, Tag } from "@/lib/content";
 import ViewToggle from "@/components/view-toggle";
 import { useLayoutTheme } from "@/components/context";
 import { FilterContext } from "@/components/filters/context/filter-context";
+import { SortOption, TagId } from "@/components/filters/types";
 import UniversalPagination from "@/components/universal-pagination";
 
 interface BaseCardProps {
@@ -53,10 +54,12 @@ interface ExtendedCardProps extends BaseCardProps {
 interface FilterState {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
-  selectedTags: string[];
-  setSelectedTags: (tags: string[]) => void;
-  sortBy: string;
-  setSortBy: (sort: string) => void;
+  selectedTags: TagId[];
+  setSelectedTags: (tags: TagId[]) => void;
+  sortBy: SortOption;
+  setSortBy: (sort: SortOption) => void;
+  selectedTag: TagId | null;
+  setSelectedTag: (tag: TagId | null) => void;
 }
 
 interface ProcessedItems {
@@ -109,7 +112,8 @@ function useFilters(): FilterState {
 function useItemFiltering(
   items: ItemData[],
   searchTerm: string,
-  selectedTags: string[],
+  selectedTags: TagId[],
+  selectedTag: TagId | null,
   config: CardConfigOptions
 ): ItemData[] {
   const enableSearch = config.enableSearch ?? true;
@@ -136,13 +140,21 @@ function useItemFiltering(
       });
     }
 
+    // Filter by selectedTag (single tag from context)
+    if (enableTagFilter && selectedTag) {
+      filtered = filtered.filter((item) => {
+        if (!item.tags?.length) return false;
+        return item.tags.some((itemTag) => getTagId(itemTag) === selectedTag);
+      });
+    }
+
     return filtered;
-  }, [items, searchTerm, selectedTags, enableSearch, enableTagFilter]);
+  }, [items, searchTerm, selectedTags, selectedTag, enableSearch, enableTagFilter]);
 }
 
 function useItemSorting(
   items: ItemData[],
-  sortBy: string,
+  sortBy: SortOption,
   config: CardConfigOptions
 ): ItemData[] {
   const enableSorting = config.enableSorting ?? true;
@@ -175,8 +187,9 @@ function useItemSorting(
 function useProcessedItems(
   items: ItemData[],
   searchTerm: string,
-  selectedTags: string[],
-  sortBy: string,
+  selectedTags: TagId[],
+  selectedTag: TagId | null,
+  sortBy: SortOption,
   start: number,
   config: CardConfigOptions
 ): ProcessedItems {
@@ -184,6 +197,7 @@ function useProcessedItems(
     items,
     searchTerm,
     selectedTags,
+    selectedTag,
     config
   );
   const sortedItems = useItemSorting(filteredItems, sortBy, config);
@@ -201,20 +215,12 @@ function useProcessedItems(
   const enableSorting = config.enableSorting ?? true;
 
   const hasActiveFilters = useMemo(() => {
-    const hasSearch = Boolean(enableSearch && searchTerm.trim() !== "");
-    const hasTags = Boolean(enableTagFilter && selectedTags.length > 0);
-    const hasSort = Boolean(
-      enableSorting && sortBy !== SORT_OPTIONS.POPULARITY
-    );
-    return hasSearch || hasTags || hasSort;
-  }, [
-    searchTerm,
-    selectedTags,
-    sortBy,
-    enableSearch,
-    enableTagFilter,
-    enableSorting,
-  ]);
+    const hasSearch = enableSearch && searchTerm.trim() !== "";
+    const hasTags = enableTagFilter && selectedTags.length > 0;
+    const hasSelectedTag = enableTagFilter && Boolean(selectedTag);
+    const hasSort = enableSorting && sortBy !== SORT_OPTIONS.POPULARITY;
+    return hasSearch || hasTags || hasSelectedTag || hasSort;
+  }, [searchTerm, selectedTags, selectedTag, sortBy, enableSearch, enableTagFilter, enableSorting]);
 
   return {
     filtered: sortedItems,
@@ -228,6 +234,7 @@ export function FilterStats({
   totalCount,
   searchTerm,
   selectedTags,
+  selectedTag,
   hasActiveFilters,
   t,
   className = "",
@@ -236,6 +243,7 @@ export function FilterStats({
   totalCount: number;
   searchTerm: string;
   selectedTags: string[];
+  selectedTag: string | null;
   hasActiveFilters: boolean;
   t: ReturnType<typeof useTranslations>;
   className?: string;
@@ -257,6 +265,9 @@ export function FilterStats({
           <span className="text-theme-primary-500 dark:text-theme-primary-400">
             {" "}
             {t("FILTERED")}
+            {selectedTag && (
+              <span> ({t("TAG_COLON")} {getTagName(selectedTag, [])})</span>
+            )}
           </span>
         )}
       </div>
@@ -323,6 +334,7 @@ export function ActiveFiltersDisplay({
 export function EmptyState({
   searchTerm,
   selectedTags,
+  selectedTag,
   tags,
   t,
   customMessage,
@@ -331,13 +343,14 @@ export function EmptyState({
 }: {
   searchTerm: string;
   selectedTags: string[];
+  selectedTag: string | null;
   tags: Tag[];
   t: ReturnType<typeof useTranslations>;
   customMessage?: string;
   customDescription?: string;
   className?: string;
 }) {
-  const hasFilters = searchTerm || selectedTags.length > 0;
+  const hasFilters = searchTerm || selectedTags.length > 0 || selectedTag;
 
   return (
     <div className={`text-center py-8 sm:py-10 ${className}`}>
@@ -495,10 +508,10 @@ export function ItemsList({
  *   renderCustomItem={(item) => <CustomItem {...item} />}
  * />
  */
-export function SharedCard(props: ExtendedCardProps) {
+export function SharedCard(props: ExtendedCardProps & { filteredCount?: number; totalCount?: number }) {
   const config = { ...DEFAULT_CONFIG, ...props.config };
   const { layoutKey, setLayoutKey } = useLayoutTheme();
-  const { searchTerm, selectedTags, sortBy } = useFilters();
+  const { searchTerm, selectedTags, sortBy, selectedTag } = useFilters();
   const t = useTranslations("listing");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -514,6 +527,7 @@ export function SharedCard(props: ExtendedCardProps) {
     props.items,
     searchTerm,
     selectedTags,
+    selectedTag,
     sortBy,
     (currentPage - 1) * (config.perPage || PER_PAGE),
     config
@@ -536,16 +550,21 @@ export function SharedCard(props: ExtendedCardProps) {
     setCurrentPage(1);
   }, [filterKey]);
 
+  // Use filteredCount/totalCount from props if provided, else fallback to filtered.length/props.total
+  const filteredCount = props.filteredCount ?? filtered.length;
+  const totalCount = props.totalCount ?? props.total;
+
   return (
     <div className={`w-full space-y-6 ${props.className || ""}`}>
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="flex items-center gap-4">
           {config.showStats && (
             <FilterStats
-              filteredCount={filtered.length}
-              totalCount={props.total}
+              filteredCount={filteredCount}
+              totalCount={totalCount}
               searchTerm={searchTerm}
               selectedTags={selectedTags}
+              selectedTag={selectedTag}
               hasActiveFilters={hasActiveFilters}
               t={t}
             />
@@ -572,6 +591,7 @@ export function SharedCard(props: ExtendedCardProps) {
             <EmptyState
               searchTerm={searchTerm}
               selectedTags={selectedTags}
+              selectedTag={selectedTag}
               tags={props.tags}
               t={t}
               customMessage={config.customEmptyMessage}

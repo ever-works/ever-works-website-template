@@ -1,10 +1,11 @@
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { SORT_OPTIONS, SORT_LABELS } from "../../constants";
+import { SortOption } from "../../types";
 
 interface SortControlProps {
-  sortBy: string;
-  setSortBy: (sort: string) => void;
+  sortBy: SortOption;
+  setSortBy: (sort: SortOption) => void;
   className?: string;
 }
 
@@ -19,7 +20,7 @@ export function SortControl({ sortBy, setSortBy, className = "" }: SortControlPr
     <div className={`relative ${className}`}>
       <select
         value={sortBy}
-        onChange={(e) => setSortBy(e.target.value)}
+        onChange={(e) => setSortBy(e.target.value as SortOption)}
         className="block w-full px-3 py-2 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary-500 dark:focus:ring-theme-primary-400 focus:border-transparent appearance-none cursor-pointer transition-colors duration-300"
       >
         <option value={SORT_OPTIONS.POPULARITY}>{t(SORT_LABELS[SORT_OPTIONS.POPULARITY])}</option>

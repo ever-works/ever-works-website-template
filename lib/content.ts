@@ -93,6 +93,7 @@ export interface Config {
 
 interface FetchOptions {
   lang?: string;
+  sortTags?: boolean;
 }
 
 async function getConfig() {
@@ -255,6 +256,11 @@ export async function fetchItems(options: FetchOptions = {}) {
     })
   );
 
+  const tagsArray = Array.from(tags.values());
+  const sortedTags = options.sortTags 
+    ? tagsArray.sort((a, b) => a.name.localeCompare(b.name))
+    : tagsArray;
+
   return {
     total: items.length,
     items: items.sort((a, b) => {
@@ -263,7 +269,7 @@ export async function fetchItems(options: FetchOptions = {}) {
       return b.updatedAt.getDate() - a.updatedAt.getDate();
     }),
     categories: Array.from(categories.values()),
-    tags: Array.from(tags.values()),
+    tags: sortedTags,
   };
 }
 
@@ -351,22 +357,19 @@ export async function fetchByCategory(raw: string, options: FetchOptions = {}) {
     return eqID(item.category, category);
   });
 
-  // Recalculate tag counts based only on the filtered items
-  const tagCounts = new Map<string, number>();
-  filteredItems.forEach((item) => {
+  const tagCountMap = new Map();
+  for (const item of filteredItems) {
     if (Array.isArray(item.tags)) {
-      item.tags.forEach((tag) => {
-        const tagId = typeof tag === "string" ? tag : tag.id;
-        tagCounts.set(tagId, (tagCounts.get(tagId) || 0) + 1);
-      });
+      for (const tag of item.tags) {
+        const tagId = typeof tag === 'string' ? tag : tag.id;
+        tagCountMap.set(tagId, (tagCountMap.get(tagId) || 0) + 1);
+      }
     }
-  });
-
-  // Create new tags array with corrected counts
-  const filteredTags = tags.map(tag => ({
-    ...tag,
-    count: tagCounts.get(tag.id) || 0
-  })).filter(tag => tag.count > 0);
+  }
+  // Only include tags present in filtered items, with correct counts
+  const filteredTags = Array.from(tags.values())
+    .filter(tag => tagCountMap.has(tag.id))
+    .map(tag => ({ ...tag, count: tagCountMap.get(tag.id) }));
 
   return {
     categories,
@@ -396,39 +399,26 @@ export async function fetchByCategoryAndTag(category: string, tag: string, optio
   const { categories, items, tags } = await fetchItems(options);
   
   const filteredItems = items.filter((item) => {
-    // Check if item belongs to the category
+
     const belongsToCategory = Array.isArray(item.category)
       ? item.category.some((c) => eqID(c, category))
       : eqID(item.category, category);
 
     if (!belongsToCategory) return false;
 
-    // Check if item has the tag
     return Array.isArray(item.tags)
       ? item.tags.some((t) => eqID(t, tag))
       : eqID(item.tags, tag);
   });
 
-  // Recalculate tag counts based only on the filtered items
-  const tagCounts = new Map<string, number>();
-  filteredItems.forEach((item) => {
-    if (Array.isArray(item.tags)) {
-      item.tags.forEach((tag) => {
-        const tagId = typeof tag === "string" ? tag : tag.id;
-        tagCounts.set(tagId, (tagCounts.get(tagId) || 0) + 1);
-      });
-    }
-  });
-
-  // Create new tags array with corrected counts
-  const filteredTags = tags.map(tag => ({
+  const originalTags = tags.map(tag => ({
     ...tag,
-    count: tagCounts.get(tag.id) || 0
-  })).filter(tag => tag.count > 0);
+    count: tag.count ?? 0
+  }));
 
   return {
     categories,
-    tags: filteredTags,
+    tags: originalTags,
     total: filteredItems.length,
     items: filteredItems,
   };

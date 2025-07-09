@@ -92,9 +92,7 @@ export function HomeTwoFilters({
         </div>
       </div>
 
-      <Categories categories={categories} 
-      maxVisibleTags={4}
-      />
+      <Categories categories={categories} maxVisibleTags={4} />
     </div>
   );
 }

@@ -4,17 +4,28 @@ import { ReactNode, Dispatch, SetStateAction } from "react";
 /**
  * Filter context types
  */
+// Define possible sort options as a union type
+export type SortOption = 'popularity' | 'name-asc' | 'name-desc' | 'date-desc' | 'date-asc';
+
+// Define possible category/tag selection states
+export type CategoryId = string;
+export type TagId = string;
+
 export interface FilterContextType {
   searchTerm: string;
   setSearchTerm: Dispatch<SetStateAction<string>>;
-  selectedTags: string[];
-  setSelectedTags: Dispatch<SetStateAction<string[]>>;
-  sortBy: string;
-  setSortBy: Dispatch<SetStateAction<string>>;
+  selectedTags: TagId[];
+  setSelectedTags: Dispatch<SetStateAction<TagId[]>>;
+  sortBy: SortOption;
+  setSortBy: Dispatch<SetStateAction<SortOption>>;
   clearAllFilters: () => void;
-  removeSelectedTag: (tagId: string) => void;
-  addSelectedTag: (tagId: string) => void;
-  toggleSelectedTag: (tagId: string) => void;
+  removeSelectedTag: (tagId: TagId) => void;
+  addSelectedTag: (tagId: TagId) => void;
+  toggleSelectedTag: (tagId: TagId) => void;
+  selectedCategory: CategoryId | null;
+  setSelectedCategory: Dispatch<SetStateAction<CategoryId | null>>;
+  selectedTag: TagId | null;
+  setSelectedTag: Dispatch<SetStateAction<TagId | null>>;
 }
 
 /**
@@ -61,6 +72,7 @@ export interface TagsProps {
   enableSticky?: boolean;
   maxVisibleTags?: number;
   total?: number;
+  mode?: 'navigation' | 'filter';
 }
 
 /**
@@ -90,10 +102,10 @@ export interface CategoryItemProps {
 export interface FilterControlsProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
-  sortBy: string;
-  setSortBy: (sort: string) => void;
-  selectedTags: string[];
-  setSelectedTags: (tags: string[]) => void;
+  sortBy: SortOption;
+  setSortBy: (sort: SortOption) => void;
+  selectedTags: TagId[];
+  setSelectedTags: (tags: TagId[]) => void;
 }
 
 /**
@@ -102,10 +114,10 @@ export interface FilterControlsProps {
 export interface ActiveFiltersProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
-  selectedTags: string[];
-  setSelectedTags: (tags: string[]) => void;
-  sortBy: string;
-  setSortBy: (sort: string) => void;
+  selectedTags: TagId[];
+  setSelectedTags: (tags: TagId[]) => void;
+  sortBy: SortOption;
+  setSortBy: (sort: SortOption) => void;
   availableTags: Tag[];
   clearAllFilters: () => void;
 } 

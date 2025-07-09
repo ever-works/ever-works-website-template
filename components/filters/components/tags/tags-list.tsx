@@ -1,8 +1,9 @@
 import { Button, cn } from "@heroui/react";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { Tag } from "@/lib/content";
 import { TagItem } from "./tag-item";
 import { getButtonVariantStyles } from "../../utils/style-utils";
+import { expandVisibleTagsWithSelected, orderTagsWithSelectedFirst } from "../../utils/tag-utils";
 import Image from "next/image";
 
 interface TagsListProps {
@@ -13,7 +14,6 @@ interface TagsListProps {
   showAllTags: boolean;
   visibleTags: Tag[];
   isAnyTagActive: boolean;
-  mode?: "navigation" | "filter";
   selectedTags?: string[];
   setSelectedTags?: (tags: string[]) => void;
 }
@@ -30,43 +30,65 @@ export function TagsList({
   showAllTags,
   visibleTags,
   isAnyTagActive,
-  mode = "navigation",
   selectedTags = [],
   setSelectedTags,
 }: TagsListProps) {
-  const pathname = usePathname();
+  // 'All Tags' is active when no tags are selected
+  const isAllTagsActive = setSelectedTags ? selectedTags.length === 0 : !isAnyTagActive;
 
+  // Handle tag click for filter mode
   const handleTagClick = (tagId: string) => {
-    if (mode === "filter" && setSelectedTags) {
-      if (selectedTags.includes(tagId)) {
-        setSelectedTags(selectedTags.filter(id => id !== tagId));
-      } else {
-        setSelectedTags([...selectedTags, tagId]);
-      }
+    if (!setSelectedTags) return;
+    // If All Tags is active, selecting any tag should only select that tag
+    if (selectedTags.length === 0) {
+      setSelectedTags([tagId]);
+      return;
+    }
+    if (selectedTags.includes(tagId)) {
+      // Remove tag from selection
+      const newTags = selectedTags.filter((id) => id !== tagId);
+      setSelectedTags(newTags);
+    } else {
+      // Add tag to selection
+      setSelectedTags([...selectedTags, tagId]);
     }
   };
 
-  const clearAllTags = () => {
-    if (mode === "filter" && setSelectedTags) {
-      setSelectedTags([]);
-    }
-  };
+  // In filter mode, ensure all selected tags are visible and order them properly
+  let expandedVisibleTags = visibleTags;
+  let orderedVisibleTags = expandedVisibleTags;
+  
+  if (setSelectedTags) {
+    expandedVisibleTags = expandVisibleTagsWithSelected(visibleTags, tags, selectedTags);
+    orderedVisibleTags = orderTagsWithSelectedFirst(expandedVisibleTags, selectedTags);
+  }
 
+  // Set the number of tags to show in collapsed mode
+  const COLLAPSED_TAG_LIMIT = 5;
+
+  // Render a single tag (button for filter, link for navigation)
   const renderTag = (tag: Tag, index: number) => {
-    if (mode === "filter") {
-      const isActive = selectedTags.includes(tag.id);
-      
+    const tagBasePath = basePath
+      ? `${basePath}/${tag.id}`
+      : `/tags/${tag.id}`;
+
+    const isActive = setSelectedTags
+      ? selectedTags.includes(tag.id)
+      : selectedTags.length === 1 && selectedTags[0] === tag.id;
+
+    if (setSelectedTags) {
+      // Filter mode (multi-select)
       return (
         <Button
           key={tag.id || index}
           variant={isActive ? "solid" : "bordered"}
           radius="full"
           size="sm"
-          onPress={() => handleTagClick(tag.id)}
           className={getButtonVariantStyles(
             isActive,
-            "px-1.5 py-1 h-8 font-medium transition-all duration-200 flex-shrink-0"
+            "px-1.5 py-1 h-8 font-medium transition-all duration-200 flex-shrink-0 min-w-0 max-w-[140px] overflow-hidden whitespace-nowrap"
           )}
+          onClick={() => handleTagClick(tag.id)}
         >
           {isActive && (
             <svg
@@ -83,7 +105,6 @@ export function TagsList({
               />
             </svg>
           )}
-          
           {tag.icon_url && (
             <Image
               src={tag.icon_url}
@@ -94,10 +115,9 @@ export function TagsList({
               alt={tag.name}
             />
           )}
-          
           <span
             className={cn(
-              "text-sm font-medium transition-all duration-300",
+              "text-sm font-medium transition-all duration-300 min-w-0 max-w-[90px] truncate overflow-hidden whitespace-nowrap",
               isActive
                 ? "text-white tracking-wide"
                 : "text-gray-700 dark:text-gray-300 group-hover:text-theme-primary dark:group-hover:text-theme-primary capitalize"
@@ -105,7 +125,6 @@ export function TagsList({
           >
             {tag.name}
           </span>
-          
           {tag.count && (
             <span
               className={cn(
@@ -118,123 +137,230 @@ export function TagsList({
           )}
         </Button>
       );
-    } else {
-      // Navigation mode - original behavior
-      const tagBasePath = basePath
-        ? `${basePath}/${tag.id}`
-        : `/tags/${tag.id}`;
-
-      const isActive = pathname.startsWith(encodeURI(tagBasePath));
-      
-      return (
-        <TagItem
-          key={tag.id || index}
-          tag={tag}
-          isActive={isActive}
-          href={tagBasePath}
-          showCount={true}
-        />
-      );
     }
+
+    // Navigation mode (single select, highlight if selected)
+    return (
+      <TagItem
+        key={tag.id || index}
+        tag={tag}
+        isActive={isActive}
+        href={tagBasePath}
+        showCount={true}
+      />
+    );
   };
+
+  // Helper to wrap tag in min-width div for single-row view
+  const renderTagWithMinWidth = (tag: Tag, idx: number) => (
+    <div key={tag.id || idx} className="min-w-[120px] max-w-[140px] flex-shrink-0">
+      {renderTag(tag, idx)}
+    </div>
+  );
 
   return (
     <div className="relative">
       {!showAllTags && (
-        <div className="w-full flex flex-nowrap gap-2 overflow-x-auto pb-2 hide-scrollbar scrollbar-thin scrollbar-thumb-theme-primary-10 dark:scrollbar-thumb-theme-primary-10 scrollbar-track-transparent">
+        <div className="w-full flex flex-nowrap gap-2 overflow-x-auto pb-2 hide-scrollbar scrollbar-thin scrollbar-thumb-theme-primary-10 dark:scrollbar-thumb-theme-primary-10 scrollbar-track-transparent min-w-0">
           {/* All Tags Button */}
-          <Button
-            variant={!isAnyTagActive ? "solid" : "bordered"}
-            radius="full"
-            size="sm"
-            as={mode === "filter" ? undefined : Link}
-            prefetch={mode === "filter" ? undefined : false}
-            href={mode === "filter" ? undefined : (resetPath || basePath || "/")}
-            onPress={mode === "filter" ? clearAllTags : undefined}
-            className={getButtonVariantStyles(
-              !isAnyTagActive,
-              "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group capitalize"
-            )}
-          >
-            {!isAnyTagActive && (
-              <svg
-                className="w-3 h-3 mr-1.5 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          {setSelectedTags ? (
+            <Button
+              variant={isAllTagsActive ? "solid" : "bordered"}
+              radius="full"
+              size="sm"
+              className={getButtonVariantStyles(
+                isAllTagsActive,
+                "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group capitalize min-w-[90px] max-w-[140px] overflow-hidden"
+              )}
+              onClick={() => setSelectedTags([])}
+            >
+              {isAllTagsActive && (
+                <svg
+                  className="w-3 h-3 mr-1.5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              )}
+              <span className="truncate max-w-[90px] overflow-hidden whitespace-nowrap">All Tags</span>
+              <span
+                className={cn(
+                  "ml-1.5 text-xs font-normal",
+                  isAllTagsActive
+                    ? "text-white"
+                    : "text-dark-500 dark:text-dark-400"
+                )}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="3"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            )}
-            <span>All Tags</span>
-            <span
-              className={cn(
-                "ml-1.5 text-xs font-normal",
-                !isAnyTagActive
-                  ? "text-white"
-                  : "text-dark-500 dark:text-dark-400"
+                ({total ?? tags.length})
+              </span>
+            </Button>
+          ) : (
+            <Button
+              variant={isAllTagsActive ? "solid" : "bordered"}
+              radius="full"
+              size="sm"
+              as={Link}
+              prefetch={false}
+              href={resetPath || basePath || "/"}
+              className={getButtonVariantStyles(
+                isAllTagsActive,
+                "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group capitalize min-w-[90px] max-w-[140px] overflow-hidden"
               )}
             >
-              ({total})
-            </span>
-          </Button>
-          
-          {/* Visible Tags */}
-          {visibleTags.map(renderTag)}
+              {isAllTagsActive && (
+                <svg
+                  className="w-3 h-3 mr-1.5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              )}
+              <span className="truncate max-w-[90px] overflow-hidden whitespace-nowrap">All Tags</span>
+              <span
+                className={cn(
+                  "ml-1.5 text-xs font-normal",
+                  isAllTagsActive
+                    ? "text-white"
+                    : "text-dark-500 dark:text-dark-400"
+                )}
+              >
+                ({total ?? tags.length})
+              </span>
+            </Button>
+          )}
+          {/* Hard limit: Only show up to COLLAPSED_TAG_LIMIT tags, prioritizing selected tags */}
+          {(() => {
+            // Always show selected tags first
+            const selectedTagObjs = orderedVisibleTags.filter(tag => selectedTags.includes(tag.id));
+            const unselectedTagObjs = orderedVisibleTags.filter(tag => !selectedTags.includes(tag.id));
+            let tagsToShow: Tag[] = [];
+            let hiddenCount = 0;
+            if (selectedTagObjs.length > COLLAPSED_TAG_LIMIT) {
+              // More selected tags than limit: show first N selected, +N more for the rest
+              tagsToShow = selectedTagObjs.slice(0, COLLAPSED_TAG_LIMIT);
+              hiddenCount = Math.max(0, selectedTagObjs.length - COLLAPSED_TAG_LIMIT);
+            } else {
+              // Show all selected, fill up to limit with unselected
+              tagsToShow = [
+                ...selectedTagObjs,
+                ...unselectedTagObjs.slice(0, COLLAPSED_TAG_LIMIT - selectedTagObjs.length)
+              ];
+              hiddenCount = 0; // No '+N more' if selected tags <= limit
+            }
+            return (
+              <>
+                {tagsToShow.map(renderTagWithMinWidth)}
+                {hiddenCount > 0 && (
+                  <div className="min-w-[60px] max-w-[80px] flex-shrink-0">
+                    <span className="inline-flex items-center justify-center px-2 py-1 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-medium select-none cursor-default">
+                      +{hiddenCount} more
+                    </span>
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
       )}
 
       {showAllTags && (
         <div className="w-full flex flex-wrap gap-2">
           {/* All Tags Button */}
-          <Button
-            variant={!isAnyTagActive ? "solid" : "bordered"}
-            radius="full"
-            size="sm"
-            as={mode === "filter" ? undefined : Link}
-            prefetch={mode === "filter" ? undefined : false}
-            href={mode === "filter" ? undefined : (resetPath || basePath || "/")}
-            onPress={mode === "filter" ? clearAllTags : undefined}
-            className={getButtonVariantStyles(
-              !isAnyTagActive,
-              "px-3 py-1 h-8 font-medium transition-all duration-200"
-            )}
-          >
-            {!isAnyTagActive && (
-              <svg
-                className="w-3 h-3 mr-1.5 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          {setSelectedTags ? (
+            <Button
+              variant={isAllTagsActive ? "solid" : "bordered"}
+              radius="full"
+              size="sm"
+              className={getButtonVariantStyles(
+                isAllTagsActive,
+                "px-3 py-1 h-8 font-medium transition-all duration-200"
+              )}
+              onClick={() => setSelectedTags([])}
+            >
+              {isAllTagsActive && (
+                <svg
+                  className="w-3 h-3 mr-1.5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              )}
+              <span>All Tags</span>
+              <span
+                className={cn(
+                  "ml-1.5 text-xs font-normal",
+                  isAllTagsActive
+                    ? "text-white"
+                    : "text-dark-500 dark:text-dark-400"
+                )}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="3"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            )}
-            <span>All Tags</span>
-            <span
-              className={cn(
-                "ml-1.5 text-xs font-normal",
-                !isAnyTagActive
-                  ? "text-white"
-                  : "text-dark-500 dark:text-dark-400"
+                ({total ?? tags.length})
+              </span>
+            </Button>
+          ) : (
+            <Button
+              variant={isAllTagsActive ? "solid" : "bordered"}
+              radius="full"
+              size="sm"
+              as={Link}
+              prefetch={false}
+              href={resetPath || basePath || "/"}
+              className={getButtonVariantStyles(
+                isAllTagsActive,
+                "px-3 py-1 h-8 font-medium transition-all duration-200"
               )}
             >
-              ({tags.length})
-            </span>
-          </Button>
-          
+              {isAllTagsActive && (
+                <svg
+                  className="w-3 h-3 mr-1.5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              )}
+              <span>All Tags</span>
+              <span
+                className={cn(
+                  "ml-1.5 text-xs font-normal",
+                  isAllTagsActive
+                    ? "text-white"
+                    : "text-dark-500 dark:text-dark-400"
+                )}
+              >
+                ({total ?? tags.length})
+              </span>
+            </Button>
+          )}
           {/* All Tags */}
-          {visibleTags.map(renderTag)}
+          {orderedVisibleTags.map(renderTag)}
         </div>
       )}
     </div>

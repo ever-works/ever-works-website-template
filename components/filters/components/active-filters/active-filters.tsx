@@ -1,6 +1,6 @@
 import { Button } from "@heroui/react";
 import { X } from "lucide-react";
-import { ActiveFiltersProps } from "../../types";
+import { ActiveFiltersProps, TagId } from "../../types";
 import { containerStyles, textStyles } from "../../utils/style-utils";
 
 /**
@@ -23,7 +23,7 @@ export function ActiveFilters({
     return null;
   }
 
-  const removeSelectedTag = (tagId: string) => {
+  const removeSelectedTag = (tagId: TagId) => {
     setSelectedTags(selectedTags.filter((id) => id !== tagId));
   };
 
