@@ -13,16 +13,16 @@ interface TagsCardsProps {
   className?: string;
 }
 
-export function TagsCards({ tags, basePath = "/tags/tag", className }: TagsCardsProps) {
+export function TagsCards({ tags, className }: TagsCardsProps) {
   const pathname = usePathname();
   const router = useRouter();
 
   const renderTagCard = (tag: Tag) => {
-    const tagPath = `${basePath}/${tag.id}`;
+    const tagPath = `/?tags=${tag.id}`;
     const isActive = pathname.startsWith(encodeURI(tagPath));
 
     const handleClick = () => {
-      router.push(`${basePath}/${tag.id}`);
+      router.push(`/?tags=${tag.id}`);
     };
 
     return (

@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Category, ItemData, Tag } from "@/lib/content";
 import GlobalsClient from "./globals-client";
 import Hero from "@/components/hero";
-import TagsQuerySync from "@/components/filters/TagsQuerySync";
+import TagsQuerySync from "@/components/filters/tags-query-sync";
 
 type ListingProps = {
   total: number;
