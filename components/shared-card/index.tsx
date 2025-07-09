@@ -215,12 +215,10 @@ function useProcessedItems(
   const enableSorting = config.enableSorting ?? true;
 
   const hasActiveFilters = useMemo(() => {
-    const hasSearch = Boolean(enableSearch && searchTerm.trim() !== "");
-    const hasTags = Boolean(enableTagFilter && selectedTags.length > 0);
-    const hasSelectedTag = Boolean(enableTagFilter && selectedTag);
-    const hasSort = Boolean(
-      enableSorting && sortBy !== SORT_OPTIONS.POPULARITY
-    );
+    const hasSearch = enableSearch && searchTerm.trim() !== "";
+    const hasTags = enableTagFilter && selectedTags.length > 0;
+    const hasSelectedTag = enableTagFilter && Boolean(selectedTag);
+    const hasSort = enableSorting && sortBy !== SORT_OPTIONS.POPULARITY;
     return hasSearch || hasTags || hasSelectedTag || hasSort;
   }, [searchTerm, selectedTags, selectedTag, sortBy, enableSearch, enableTagFilter, enableSorting]);
 
