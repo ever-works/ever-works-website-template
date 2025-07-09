@@ -22,7 +22,7 @@ export function TagsCards({ tags, basePath = "/tags/tag", className }: TagsCards
     const isActive = pathname.startsWith(encodeURI(tagPath));
 
     const handleClick = () => {
-      router.push(`/?tags=${tag.id}`);
+      router.push(`${basePath}/${tag.id}`);
     };
 
     return (
@@ -33,6 +33,12 @@ export function TagsCards({ tags, basePath = "/tags/tag", className }: TagsCards
           className
         )}
         onClick={handleClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClick();
+          }
+        }}
         role="button"
         tabIndex={0}
       >
