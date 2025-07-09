@@ -351,7 +351,6 @@ export async function fetchByCategory(raw: string, options: FetchOptions = {}) {
     return eqID(item.category, category);
   });
 
-  // Recalculate tag counts based only on filtered items
   const tagCountMap = new Map();
   for (const item of filteredItems) {
     if (Array.isArray(item.tags)) {
@@ -394,24 +393,21 @@ export async function fetchByCategoryAndTag(category: string, tag: string, optio
   const { categories, items, tags } = await fetchItems(options);
   
   const filteredItems = items.filter((item) => {
-    // Check if item belongs to the category
+
     const belongsToCategory = Array.isArray(item.category)
       ? item.category.some((c) => eqID(c, category))
       : eqID(item.category, category);
 
     if (!belongsToCategory) return false;
 
-    // Check if item has the tag
     return Array.isArray(item.tags)
       ? item.tags.some((t) => eqID(t, tag))
       : eqID(item.tags, tag);
   });
 
-  // Keep original tag counts from all items, don't recalculate based on filtered items
-  // This ensures tag counts show total items with that tag across all categories
   const originalTags = tags.map(tag => ({
     ...tag,
-    count: tag.count || 0
+    count: tag.count ?? 0
   }));
 
   return {

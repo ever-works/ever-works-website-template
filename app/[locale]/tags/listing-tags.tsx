@@ -4,6 +4,7 @@ import Hero from "@/components/hero";
 import { TagsCards } from "@/components/tags-cards";
 import { Paginate } from "@/components/filters/components/pagination/paginate";
 import { totalPages } from "@/lib/paginate";
+import { Tag } from "@/lib/content";
 
 export default function ListingTags({
   tags,
@@ -11,7 +12,7 @@ export default function ListingTags({
   page,
   basePath,
 }: {
-  tags: any[];
+  tags: Tag[];
   total: number;
   page: number;
   basePath: string;

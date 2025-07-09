@@ -8,9 +8,16 @@ import { SortOption, TagId, CategoryId } from '../types';
  */
 export function useFilterState() {
   const [searchTerm, setSearchTerm] = useState("");
+  
+  /** Multiple tag selection for advanced filtering - allows selecting multiple tags simultaneously */
   const [selectedTags, setSelectedTags] = useState<TagId[]>([]);
+  
   const [sortBy, setSortBy] = useState<SortOption>(SORT_OPTIONS.POPULARITY);
+  
+  /** Single tag selection for navigation - used when navigating to a specific tag page */
   const [selectedTag, setSelectedTag] = useState<TagId | null>(null);
+  
+  /** Currently selected category for navigation and filtering */
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(null);
 
   /**
