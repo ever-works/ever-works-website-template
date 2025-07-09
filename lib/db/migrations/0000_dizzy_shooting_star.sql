@@ -91,7 +91,6 @@ ALTER TABLE "activityLogs" ADD CONSTRAINT "activityLogs_userId_users_id_fk" FORE
 ALTER TABLE "authenticators" ADD CONSTRAINT "authenticators_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "votes" ADD CONSTRAINT "votes_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "votes" ADD CONSTRAINT "votes_item_id_items_id_fk" FOREIGN KEY ("item_id") REFERENCES "public"."items"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "unique_user_item_vote_idx" ON "votes" USING btree ("user_id","item_id");--> statement-breakpoint
 CREATE INDEX "item_votes_idx" ON "votes" USING btree ("item_id");--> statement-breakpoint
 CREATE INDEX "votes_created_at_idx" ON "votes" USING btree ("created_at");

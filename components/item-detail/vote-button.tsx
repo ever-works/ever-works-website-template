@@ -3,18 +3,16 @@
 import { ThumbsUp, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useItemVote } from "@/hooks/use-item-vote";
-
 interface VoteButtonProps {
   itemId: string;
   className?: string;
 }
 
-export function VoteButton({ 
+export  function VoteButton({ 
   itemId, 
   className,
 }: VoteButtonProps) {
   const { voteCount, userVote, isLoading, handleVote } = useItemVote(itemId);
-
   return (
     <button
       onClick={() => handleVote("up")}
@@ -29,9 +27,9 @@ export function VoteButton({
         "shadow-md hover:shadow-lg",
         "transform hover:-translate-y-0.5",
         userVote === "up" ? (
-          "bg-gradient-to-r from-purple-500/10 to-purple-600/10 dark:from-purple-500/20 dark:to-purple-600/20 border-purple-300 dark:border-purple-600"
+          "bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-500 dark:to-theme-primary-600 border-theme-primary-300 dark:border-theme-primary-600"
         ) : (
-          "hover:border-purple-300 dark:hover:border-purple-600"
+          "hover:border-theme-primary-300 dark:hover:border-theme-primary-600"
         ),
         isLoading && "cursor-not-allowed opacity-50",
         className
@@ -50,9 +48,9 @@ export function VoteButton({
             "transition-all duration-300",
             "group-hover:rotate-12",
             userVote === "up" ? (
-              "text-purple-500 dark:text-purple-400 fill-current"
+              "text-theme-primary-500 dark:text-theme-primary-500 fill-current"
             ) : (
-              "group-hover:text-purple-500 dark:group-hover:text-purple-400"
+              "group-hover:text-theme-primary-500 dark:group-hover:text-theme-primary-400"
             ),
             isLoading && "animate-pulse"
           )}
@@ -61,7 +59,7 @@ export function VoteButton({
         <span 
           className={cn(
             "transition-colors duration-300",
-            userVote === "up" && "text-purple-500 dark:text-purple-400"
+            userVote === "up" && "text-theme-primary-500 dark:text-theme-primary-400"
           )}
           aria-live="polite"
         >
@@ -70,7 +68,7 @@ export function VoteButton({
 
         {userVote === "up" && (
           <div className="ml-2 p-1 rounded-full bg-purple-500/10 dark:bg-purple-400/10">
-            <Check className="w-3 h-3 text-purple-500 dark:text-purple-400" />
+            <Check className="w-3 h-3 text-theme-primary-500 dark:text-theme-primary-400" />
           </div>
         )}
       </div>

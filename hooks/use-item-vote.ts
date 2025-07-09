@@ -3,7 +3,7 @@
 import { useLoginModal } from "./use-login-modal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useConfig } from "@/app/[locale]/config";
+import { useCurrentUser } from "./use-current-user";
 
 interface ItemVoteResponse {
   count: number;
@@ -12,8 +12,7 @@ interface ItemVoteResponse {
 let api='/api/items'
 
 export function useItemVote(itemId: string) {
-  const config = useConfig();
-  const session = config;
+  const { user } = useCurrentUser();
   const loginModal = useLoginModal();
   const queryClient = useQueryClient();
 
@@ -32,7 +31,7 @@ export function useItemVote(itemId: string) {
 
   const { mutate: vote, isPending: isVoting } = useMutation({
     mutationFn: async (type: "up" | "down") => {
-      if (!session) {
+      if (!user) {
         loginModal.onOpen("Please sign in to vote on this item");
         return;
       }
@@ -42,7 +41,6 @@ export function useItemVote(itemId: string) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type }),
       });
-
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Failed to vote on item");
@@ -51,7 +49,7 @@ export function useItemVote(itemId: string) {
       return response.json();
     },
     onMutate: async (type) => {
-      if (!session) {
+      if (!user) {
         return;
       }
 
@@ -83,7 +81,7 @@ export function useItemVote(itemId: string) {
 
   const { mutate: unvote, isPending: isUnvoting } = useMutation({
     mutationFn: async () => {
-      if (!session) {
+      if (!user) {
         loginModal.onOpen("Please sign in to vote on this item");
         return;
       }
@@ -100,7 +98,7 @@ export function useItemVote(itemId: string) {
       return response.json();
     },
     onMutate: async () => {
-      if (!session) {
+      if (!user) {
         return;
       }
 
@@ -131,7 +129,7 @@ export function useItemVote(itemId: string) {
   const handleVote = (type: "up" | "down") => {
     if (isVoting || isUnvoting) return;
     
-    if (!session) {
+    if (!user) {
       loginModal.onOpen("Please sign in to vote on this item");
       return;
     }
