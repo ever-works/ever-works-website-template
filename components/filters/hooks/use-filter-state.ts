@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { SORT_OPTIONS } from '../constants';
-import { SortOption, TagId } from '../types';
+import { SortOption, TagId, CategoryId } from '../types';
 
 /**
  * Custom hook for managing filter state
@@ -11,6 +11,7 @@ export function useFilterState() {
   const [selectedTags, setSelectedTags] = useState<TagId[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>(SORT_OPTIONS.POPULARITY);
   const [selectedTag, setSelectedTag] = useState<TagId | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(null);
 
   /**
    * Clear all active filters
@@ -20,6 +21,7 @@ export function useFilterState() {
     setSelectedTags([]);
     setSortBy(SORT_OPTIONS.POPULARITY);
     setSelectedTag(null);
+    setSelectedCategory(null);
   }, []);
 
   /**
@@ -53,12 +55,14 @@ export function useFilterState() {
     selectedTags,
     sortBy,
     selectedTag,
+    selectedCategory,
     
     // Setters
     setSearchTerm,
     setSelectedTags,
     setSortBy,
     setSelectedTag,
+    setSelectedCategory,
     
     // Actions
     clearAllFilters,
