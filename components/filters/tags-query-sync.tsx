@@ -10,7 +10,7 @@ export default function TagsQuerySync() {
   useEffect(() => {
     const tagsParam = searchParams.get("tags");
     if (tagsParam) {
-      setSelectedTags(tagsParam.split(","));
+      setSelectedTags(tagsParam.split(",").map(tag => decodeURIComponent(tag)));
     } else {
       setSelectedTags([]);
     }
