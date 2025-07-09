@@ -12,6 +12,7 @@ import { useConfig } from "@/app/[locale]/config";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/hooks/use-theme";
+import Image from "next/image";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -105,9 +106,11 @@ export function LoginModal({
                   <div className="mb-6">
                     {/* Logo */}
                     <div className="flex items-center mb-6 space-x-2">
-                      <img 
+                      <Image 
                         src={isDark ? "/logo-dark.png" : "/logo-light.png"}
-                        alt={config.company_name}
+                        alt={config.company_name || "Logo"}
+                        width={100}
+                        height={100}
                         className="h-7 w-auto"
                       />
                     </div>
