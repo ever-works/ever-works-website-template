@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { Tag } from "@/lib/content";
 import { TagItem } from "./tag-item";
 import { getButtonVariantStyles } from "../../utils/style-utils";
+import Image from "next/image";
 
 interface TagsListProps {
   tags: Tag[];
@@ -117,9 +118,7 @@ export function TagsList({
             </svg>
           )}
           {tag.icon_url && (
-            <img
-              width={20}
-              height={20}
+            <Image
               src={tag.icon_url}
               className={cn(
                 "w-4 h-4 mr-1.5 transition-transform",

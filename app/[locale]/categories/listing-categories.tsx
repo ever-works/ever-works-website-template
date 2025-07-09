@@ -3,11 +3,12 @@ import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
 import Link from "next/link";
 import CategoriesGrid from "@/components/categories-grid";
+import { Category } from "@/lib/content";
 
 export default function ListingCategories({
   categories,
 }: {
-  categories: any[];
+  categories: Category[];
 }) {
   const t = useTranslations("listing");
 

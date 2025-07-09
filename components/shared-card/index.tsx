@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback, useContext, useState } from "react";
+import { useMemo, useCallback, useContext, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Search, Filter } from "lucide-react";
 
@@ -519,7 +519,10 @@ export function SharedCard(props: ExtendedCardProps & { filteredCount?: number; 
   const LayoutComponent = layoutComponents[layoutKey];
 
   // Reset to page 1 when filters change
-  const filterKey = `${searchTerm}-${selectedTags.join(',')}-${sortBy}`;
+  const filterKey = useMemo(() => 
+    `${searchTerm}-${selectedTags.join(',')}-${sortBy}`,
+    [searchTerm, selectedTags, sortBy]
+  );
   
   const { filtered, paginated, hasActiveFilters } = useProcessedItems(
     props.items,
@@ -544,8 +547,7 @@ export function SharedCard(props: ExtendedCardProps & { filteredCount?: number; 
     setCurrentPage(page);
   }, []);
 
-  // Reset page when filters change
-  useMemo(() => {
+  useEffect(() => {
     setCurrentPage(1);
   }, [filterKey]);
 
