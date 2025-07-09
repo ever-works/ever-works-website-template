@@ -17,8 +17,9 @@ export default async function TagPagingPage({
   const { start, page } = paginateMeta();
   const { tags, total } = await fetchItems({ lang: locale });
 
-  // Sort and paginate tags
-  const sortedTags = tags.slice().sort((a, b) => a.name.localeCompare(b.name));
+  // Sort and paginate tags with locale-aware sorting
+  const collator = new Intl.Collator(locale);
+  const sortedTags = tags.slice().sort((a, b) => collator.compare(a.name, b.name));
   const paginatedTags = sortedTags.slice(start, start + PER_PAGE);
 
   return (
