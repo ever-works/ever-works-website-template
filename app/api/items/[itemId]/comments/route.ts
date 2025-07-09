@@ -9,16 +9,18 @@ const commentSchema = z.object({
 
 export async function GET(
   request: Request,
-  { params }: { params: { itemId: string } }
+  { params }: { params: Promise<{ itemId: string }> }
 ) {
-  const comments = await getCommentsByItemId(params.itemId);
+  const { itemId } = await params;
+  const comments = await getCommentsByItemId(itemId);
   return NextResponse.json(comments);
 }
 
 export async function POST(
   request: Request,
-  { params }: { params: { itemId: string } }
+  { params }: { params: Promise<{ itemId: string }> }
 ) {
+  const { itemId } = await params;
   const session = await auth();
   if (!session?.user?.id) {
     return new NextResponse("Unauthorized", { status: 401 });
@@ -31,7 +33,7 @@ export async function POST(
     const comment = await createComment({
       content,
       userId: session.user.id,
-      itemId: params.itemId,
+      itemId: itemId,
     });
 
     return NextResponse.json(comment);

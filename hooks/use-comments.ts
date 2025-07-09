@@ -9,7 +9,7 @@ interface CreateCommentData {
 
 export function useComments(itemId: string) {
   const queryClient = useQueryClient();
-//   const { openLoginModal } = useLoginModal();
+  //   const { openLoginModal } = useLoginModal();
 
   const { data: comments = [], isLoading } = useQuery<CommentWithUser[]>({
     queryKey: ["comments", itemId],
@@ -44,10 +44,31 @@ export function useComments(itemId: string) {
     },
   });
 
+  const { mutate: deleteComment, isPending: isDeleting } = useMutation({
+    mutationFn: async (commentId: string) => {
+      const response = await fetch(`/api/items/${itemId}/comments/${commentId}`, {
+        method: "DELETE",
+      });
+
+      if (response.status === 401) {
+        throw new Error("Please login to delete comment");
+      }
+
+      if (!response.ok) {
+        throw new Error("Failed to delete comment");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
+    },
+  });
+
   return {
     comments,
     isLoading,
     createComment,
     isCreating,
+    deleteComment,
+    isDeleting,
   };
 } 

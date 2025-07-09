@@ -8,6 +8,13 @@
       "when": 1752010932880,
       "tag": "0000_dizzy_shooting_star",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1752096701180,
+      "tag": "0002_solid_kat_farrell",
+      "breakpoints": true
     }
   ]
 }
