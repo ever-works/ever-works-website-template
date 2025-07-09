@@ -8,6 +8,7 @@ import { Avatar } from "@/components/header/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Rating } from "@/components/ui/rating";
 
 interface CommentsSectionProps {
   itemId: string;
@@ -15,17 +16,20 @@ interface CommentsSectionProps {
 
 export function CommentsSection({ itemId }: CommentsSectionProps) {
   const [content, setContent] = useState("");
-  const { comments, isLoading, createComment, isCreating, deleteComment, isDeleting } = useComments(itemId);
+//   const { comments, isLoading, createComment, isCreating, deleteComment, isDeleting } = 
+//   useComments(itemId);
+  const [rating, setRating] = useState(5);
+  const { comments, isLoading, createComment, isCreating } = useComments(itemId);
   const { toast } = useToast();
-//   const { data: session } = useSession();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;
 
     try {
-      await createComment({ content, itemId });
+      await createComment({ content, itemId, rating });
       setContent("");
+      setRating(5);
       toast({
         title: "Success",
         description: "Comment posted successfully",
@@ -82,6 +86,10 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Rating:</span>
+            <Rating value={rating} onChange={setRating} size="md" />
+          </div>
           <Textarea
             placeholder="Share your thoughts..."
             value={content}
@@ -136,11 +144,13 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
                       })}
                     </span>
                   </div>
-                  {/* {session?.user?.id === comment.userId && (
+                                    {/* {session?.user?.id === comment.userId && (
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity 
+                        text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/
+                        20"
                       onClick={() => handleDelete(comment.id)}
                       disabled={isDeleting}
                     >
@@ -148,6 +158,7 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
                       <span className="sr-only">Delete comment</span>
                     </Button>
                   )} */}
+                  <Rating value={comment.rating} readOnly size="sm" />
                 </div>
                 <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
                   {comment.content}

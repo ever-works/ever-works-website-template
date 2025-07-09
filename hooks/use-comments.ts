@@ -5,6 +5,7 @@ import type { CommentWithUser } from "@/lib/types/comment";
 interface CreateCommentData {
   content: string;
   itemId: string;
+  rating: number;
 }
 
 export function useComments(itemId: string) {
@@ -21,11 +22,11 @@ export function useComments(itemId: string) {
   });
 
   const { mutate: createComment, isPending: isCreating } = useMutation({
-    mutationFn: async ({ content, itemId }: CreateCommentData) => {
+    mutationFn: async ({ content, itemId, rating }: CreateCommentData) => {
       const response = await fetch(`/api/items/${itemId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ content, rating }),
       });
 
       if (response.status === 401) {

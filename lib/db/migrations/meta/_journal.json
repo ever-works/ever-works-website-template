@@ -15,6 +15,13 @@
       "when": 1752096701180,
       "tag": "0002_solid_kat_farrell",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1752096701181,
+      "tag": "0003_add_rating_to_comments",
+      "breakpoints": true
     }
   ]
 }
