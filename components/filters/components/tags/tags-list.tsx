@@ -315,7 +315,7 @@ export function TagsList({
                     : "text-dark-500 dark:text-dark-400"
                 )}
               >
-                ({tags.length})
+                ({total ?? tags.length})
               </span>
             </Button>
           ) : (
@@ -355,7 +355,7 @@ export function TagsList({
                     : "text-dark-500 dark:text-dark-400"
                 )}
               >
-                ({tags.length})
+                ({total ?? tags.length})
               </span>
             </Button>
           )}

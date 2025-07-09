@@ -23,7 +23,7 @@ type ListingProps = {
 };
 
 export default function GlobalsClient(props: ListingProps) {
-  const { layoutHome =LayoutHome.HOME_ONE } = useLayoutTheme();
+  const { layoutHome = LayoutHome.HOME_ONE } = useLayoutTheme();
   const sortedTags = sortByNumericProperty(props.tags);
   const sortedCategories = sortByNumericProperty(props.categories);
   const pathname = usePathname();
@@ -83,8 +83,7 @@ export default function GlobalsClient(props: ListingProps) {
       params.set('page', '1');
       window.history.replaceState({}, '', `?${params.toString()}`);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTags, searchTerm, selectedTag]);
+  }, [selectedTags, searchTerm, selectedTag, searchParams, page]);
 
   useEffect(() => {
     const tagsParam = searchParams.get("tags");
