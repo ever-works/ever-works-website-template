@@ -13,6 +13,7 @@ import { Category, ItemData, Tag } from "@/lib/content";
 import ViewToggle from "@/components/view-toggle";
 import { useLayoutTheme } from "@/components/context";
 import { FilterContext } from "@/components/filters/context/filter-context";
+import { SortOption, TagId } from "@/components/filters/types";
 import UniversalPagination from "@/components/universal-pagination";
 
 interface BaseCardProps {
@@ -53,12 +54,12 @@ interface ExtendedCardProps extends BaseCardProps {
 interface FilterState {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
-  selectedTags: string[];
-  setSelectedTags: (tags: string[]) => void;
-  sortBy: string;
-  setSortBy: (sort: string) => void;
-  selectedTag: string | null;
-  setSelectedTag: (tag: string | null) => void;
+  selectedTags: TagId[];
+  setSelectedTags: (tags: TagId[]) => void;
+  sortBy: SortOption;
+  setSortBy: (sort: SortOption) => void;
+  selectedTag: TagId | null;
+  setSelectedTag: (tag: TagId | null) => void;
 }
 
 interface ProcessedItems {
@@ -111,8 +112,8 @@ function useFilters(): FilterState {
 function useItemFiltering(
   items: ItemData[],
   searchTerm: string,
-  selectedTags: string[],
-  selectedTag: string | null,
+  selectedTags: TagId[],
+  selectedTag: TagId | null,
   config: CardConfigOptions
 ): ItemData[] {
   const enableSearch = config.enableSearch ?? true;
@@ -153,7 +154,7 @@ function useItemFiltering(
 
 function useItemSorting(
   items: ItemData[],
-  sortBy: string,
+  sortBy: SortOption,
   config: CardConfigOptions
 ): ItemData[] {
   const enableSorting = config.enableSorting ?? true;
@@ -186,9 +187,9 @@ function useItemSorting(
 function useProcessedItems(
   items: ItemData[],
   searchTerm: string,
-  selectedTags: string[],
-  selectedTag: string | null,
-  sortBy: string,
+  selectedTags: TagId[],
+  selectedTag: TagId | null,
+  sortBy: SortOption,
   start: number,
   config: CardConfigOptions
 ): ProcessedItems {
