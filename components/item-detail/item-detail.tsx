@@ -4,7 +4,11 @@ import { ItemContent } from "./item-content";
 import { useTranslations } from "next-intl";
 import { slugify } from "@/lib/utils/slug";
 import { ShareButton } from "./share-button";
+<<<<<<< HEAD
 import { VoteButton } from "./vote-button";
+=======
+import { CommentsSection } from "./comments-section";
+>>>>>>> 004c985 (feat(comments): implement comment system for listing pages)
 
 export interface ItemDetailProps {
   meta: {
@@ -352,6 +356,11 @@ export function ItemDetail({
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-2xl font-semibold mb-6">Comments</h2>
+        <CommentsSection itemId={meta.name} />
       </div>
     </div>
   );

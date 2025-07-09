@@ -11,9 +11,15 @@ import {
   newsletterSubscriptions,
   type NewNewsletterSubscription,
   type NewsletterSubscription,
+<<<<<<< HEAD
   votes,
   InsertVote,
+=======
+  comments,
+>>>>>>> 004c985 (feat(comments): implement comment system for listing pages)
 } from "./schema";
+import { desc, and, isNull } from "drizzle-orm";
+import type { NewComment, CommentWithUser } from "@/lib/types/comment";
 
 export async function logActivity(
   userId: string,
@@ -342,3 +348,47 @@ export async function getVoteCountForItem(itemId: string): Promise<number> {
 }
 
 // export async function getActivityLogs() {}
+
+export async function createComment(data: NewComment) {
+  const [comment] = await db.insert(comments).values(data).returning();
+  return comment;
+}
+
+export async function getCommentsByItemId(itemId: string): Promise<CommentWithUser[]> {
+  return db
+    .select({
+      id: comments.id,
+      content: comments.content,
+      userId: comments.userId,
+      itemId: comments.itemId,
+      createdAt: comments.createdAt,
+      updatedAt: comments.updatedAt,
+      user: {
+        id: users.id,
+        name: users.name,
+        image: users.image,
+      },
+    })
+    .from(comments)
+    .innerJoin(users, eq(comments.userId, users.id))
+    .where(and(eq(comments.itemId, itemId), isNull(comments.deletedAt)))
+    .orderBy(desc(comments.createdAt));
+}
+
+export async function updateComment(id: string, content: string) {
+  const [comment] = await db
+    .update(comments)
+    .set({ content, updatedAt: new Date() })
+    .where(eq(comments.id, id))
+    .returning();
+  return comment;
+}
+
+export async function deleteComment(id: string) {
+  const [comment] = await db
+    .update(comments)
+    .set({ deletedAt: new Date() })
+    .where(eq(comments.id, id))
+    .returning();
+  return comment;
+}
