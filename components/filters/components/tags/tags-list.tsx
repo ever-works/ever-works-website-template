@@ -252,7 +252,7 @@ export function TagsList({
             if (selectedTagObjs.length > COLLAPSED_TAG_LIMIT) {
               // More selected tags than limit: show first N selected, +N more for the rest
               tagsToShow = selectedTagObjs.slice(0, COLLAPSED_TAG_LIMIT);
-              hiddenCount = selectedTagObjs.length - COLLAPSED_TAG_LIMIT;
+              hiddenCount = Math.max(0, selectedTagObjs.length - COLLAPSED_TAG_LIMIT);
             } else {
               // Show all selected, fill up to limit with unselected
               tagsToShow = [
