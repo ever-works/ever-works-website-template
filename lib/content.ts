@@ -93,6 +93,7 @@ export interface Config {
 
 interface FetchOptions {
   lang?: string;
+  sortTags?: boolean;
 }
 
 async function getConfig() {
@@ -255,6 +256,11 @@ export async function fetchItems(options: FetchOptions = {}) {
     })
   );
 
+  const tagsArray = Array.from(tags.values());
+  const sortedTags = options.sortTags 
+    ? tagsArray.sort((a, b) => a.name.localeCompare(b.name))
+    : tagsArray;
+
   return {
     total: items.length,
     items: items.sort((a, b) => {
@@ -263,7 +269,7 @@ export async function fetchItems(options: FetchOptions = {}) {
       return b.updatedAt.getDate() - a.updatedAt.getDate();
     }),
     categories: Array.from(categories.values()),
-    tags: Array.from(tags.values()),
+    tags: sortedTags,
   };
 }
 

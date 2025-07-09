@@ -15,11 +15,10 @@ export default async function TagsPage({
 }) {
   const { locale } = await params;
   const { start, page } = paginateMeta(undefined, 12);
-  const { tags, total } = await fetchItems({ lang: locale });
+  const { tags, total } = await fetchItems({ lang: locale, sortTags: true });
 
-  // Sort and paginate tags
-  const sortedTags = tags.slice().sort((a, b) => a.name.localeCompare(b.name));
-  const paginatedTags = sortedTags.slice(start, start + PER_PAGE);
+  // Paginate tags
+  const paginatedTags = tags.slice(start, start + PER_PAGE);
 
   return (
     <ListingTags
