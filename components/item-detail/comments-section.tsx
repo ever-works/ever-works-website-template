@@ -6,8 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar } from "@/components/header/avatar";
 import { formatDistanceToNow } from "date-fns";
-import { Trash2, MessageCircle } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface CommentsSectionProps {
@@ -18,7 +17,7 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
   const [content, setContent] = useState("");
   const { comments, isLoading, createComment, isCreating, deleteComment, isDeleting } = useComments(itemId);
   const { toast } = useToast();
-  const { data: session } = useSession();
+//   const { data: session } = useSession();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,21 +39,21 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
     }
   };
 
-  const handleDelete = async (commentId: string) => {
-    try {
-      await deleteComment(commentId);
-      toast({
-        title: "Success",
-        description: "Comment deleted successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete comment",
-        variant: "destructive",
-      });
-    }
-  };
+//   const handleDelete = async (commentId: string) => {
+//     try {
+//       await deleteComment(commentId);
+//       toast({
+//           title: "Success",
+//           description: "Comment deleted successfully",
+//         });
+//     } catch (error) {
+//       toast({
+//         title: "Error",
+//         description: error instanceof Error ? error.message : "Failed to delete comment",
+//         variant: "destructive",
+//       });
+//     }
+//   };
 
   if (isLoading) {
     return (
@@ -137,7 +136,7 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
                       })}
                     </span>
                   </div>
-                  {session?.user?.id === comment.userId && (
+                  {/* {session?.user?.id === comment.userId && (
                     <Button
                       variant="ghost"
                       size="sm"
@@ -148,7 +147,7 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
                       <Trash2 className="h-4 w-4" />
                       <span className="sr-only">Delete comment</span>
                     </Button>
-                  )}
+                  )} */}
                 </div>
                 <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
                   {comment.content}
