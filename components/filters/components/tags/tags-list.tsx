@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { Tag } from "@/lib/content";
 import { TagItem } from "./tag-item";
 import { getButtonVariantStyles } from "../../utils/style-utils";
+import { expandVisibleTagsWithSelected, orderTagsWithSelectedFirst } from "../../utils/tag-utils";
 import Image from "next/image";
 
 interface TagsListProps {
@@ -53,26 +54,13 @@ export function TagsList({
     }
   };
 
-  // In filter mode, ensure all selected tags are visible (even if not in the default visibleTags)
+  // In filter mode, ensure all selected tags are visible and order them properly
   let expandedVisibleTags = visibleTags;
-  if (setSelectedTags) {
-    const selectedTagObjs = tags.filter(tag => selectedTags.includes(tag.id));
-    // Add any selected tags not already in visibleTags
-    expandedVisibleTags = [
-      ...selectedTagObjs.filter(tag => !visibleTags.some(t => t.id === tag.id)),
-      ...visibleTags
-    ];
-    // Remove duplicates
-    expandedVisibleTags = expandedVisibleTags.filter((tag, idx, arr) => arr.findIndex(t => t.id === tag.id) === idx);
-  }
-
-  // In filter mode, show selected tags first
   let orderedVisibleTags = expandedVisibleTags;
+  
   if (setSelectedTags) {
-    orderedVisibleTags = [
-      ...expandedVisibleTags.filter(tag => selectedTags.includes(tag.id)),
-      ...expandedVisibleTags.filter(tag => !selectedTags.includes(tag.id)),
-    ];
+    expandedVisibleTags = expandVisibleTagsWithSelected(visibleTags, tags, selectedTags);
+    orderedVisibleTags = orderTagsWithSelectedFirst(expandedVisibleTags, selectedTags);
   }
 
   // Set the number of tags to show in collapsed mode
