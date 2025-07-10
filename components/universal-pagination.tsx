@@ -52,16 +52,16 @@ export function UniversalPagination({ page, totalPages, onPageChange, className 
               ),
               prev: cn(
                 "min-w-10 h-10 font-medium transition-all duration-300",
-                " from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700",
+                "bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700",
                 "text-gray-600 dark:text-gray-300 hover:text-theme-primary dark:hover:text-theme-primary",
                 "border border-gray-200 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
                 "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               ),
               next: cn(
                 "min-w-10 h-10 font-medium transition-all duration-300",
-                " from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700",
+                "bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700",
                 "text-gray-600 dark:text-gray-300 hover:text-theme-primary dark:hover:text-theme-primary",
-                "border border-gray-200 dark:border-gray-600 hover:border-theme-primary  dark:hover:border-theme-primary",
+                "border border-gray-200 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
                 "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               ),
             }}
