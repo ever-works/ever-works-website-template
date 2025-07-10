@@ -2,6 +2,7 @@
 
 import { Category } from "@/lib/content";
 import { Link, usePathname } from "@/i18n/navigation";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { cn } from "@/lib/utils/index";
@@ -150,6 +151,7 @@ export function HomeTwoCategories({
 }: Home2CategoriesProps) {
   const t = useTranslations("listing");
   const tCommon = useTranslations("common");
+  const router = useRouter();
   // Use totalItems prop for All Categories button, fallback to calculated value
   const { totalItems: calculatedTotalItems, isHomeActive, pathname } = useCategoryState(categories);
   const allCategoriesCount = totalItems ?? calculatedTotalItems;
@@ -244,14 +246,14 @@ export function HomeTwoCategories({
       }
     } else {
       if (value === "all") {
-        window.location.href = resetPath || "/";
+        router.push(resetPath || "/");
       } else {
         const category = categories.find((c) => c.id === value);
         if (category) {
           const href = basePath
             ? `${basePath}/${category.id}`
             : `/categories/${category.id}`;
-          window.location.href = href;
+          router.push(href);
         }
       }
     }

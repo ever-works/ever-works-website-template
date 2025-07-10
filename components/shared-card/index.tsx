@@ -246,35 +246,13 @@ export function FilterStats({
   t: ReturnType<typeof useTranslations>;
   className?: string;
 }) {
-  const tCommon = useTranslations("common");
   
   return (
     <div className={`flex items-center gap-4 ${className}`}>
       <div className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-        {hasActiveFilters ? (
-          <>
-            <span className="font-medium text-gray-900 dark:text-white">
-              {filteredCount}
-            </span>{" "}
-            {tCommon("OF")} {" "}
-            <span className="font-medium text-gray-900 dark:text-white">
-              {totalCount}
-            </span>{" "}
-            {tCommon("ITEMS")}
-            <span className="ml-1">that match all selected tags</span>
-          </>
-        ) : (
-          <>
-            <span className="font-medium text-gray-900 dark:text-white">
-              {filteredCount}
-            </span>{" "}
-            {tCommon("OF")} {" "}
-            <span className="font-medium text-gray-900 dark:text-white">
-              {totalCount}
-            </span>{" "}
-            {tCommon("ITEMS")}
-          </>
-        )}
+        {hasActiveFilters
+          ? t("FILTER_STATUS_MATCH_ALL", { filtered: filteredCount, total: totalCount })
+          : t("FILTER_STATUS", { filtered: filteredCount, total: totalCount })}
       </div>
 
       {(searchTerm || selectedTags.length > 0) && (

@@ -108,7 +108,7 @@ export function ActiveFilters({
                 return category ? (
                   <span
                     key={categoryId}
-                    className="inline-flex items-center px-3 py-1 rounded-lg bg-blue-100 dark:bg-gray-800 text-blue-700 dark:text-blue-400 text-sm font-medium border border-blue-200 dark:border-gray-700"
+                    className="inline-flex items-center px-3 py-1 rounded-lg bg-theme-primary-100 dark:bg-gray-800 text-theme-primary-700 dark:text-theme-primary-400 text-sm font-medium border border-theme-primary-200 dark:border-gray-700"
                   >
                     {category.name}
                     <button

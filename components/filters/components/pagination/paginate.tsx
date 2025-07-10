@@ -18,10 +18,12 @@ export function Paginate({ basePath, initialPage, total, onPageChange }: Paginat
     if (onPageChange) {
       // Client-side pagination
       onPageChange(page);
-    } else {
+    } else if (basePath) {
       // Server-side pagination (URL-based)
       const path = basePath + (page === 1 ? "" : `/${page}`);
       navigateWithScroll(path, FILTER_CONSTANTS.NAVIGATE_DELAY);
+    } else {
+      console.error('Neither onPageChange nor basePath provided to Paginate component');
     }
   }
 
