@@ -362,6 +362,7 @@ export function EmptyState({
 export function ResultsHeader({
   searchTerm,
   selectedTags,
+  isInfinite = false,
   sortBy,
   start,
   filteredCount,
@@ -371,6 +372,7 @@ export function ResultsHeader({
 }: {
   searchTerm: string;
   selectedTags: string[];
+  isInfinite?: boolean;
   sortBy: string;
   start: number;
   filteredCount: number;
@@ -413,7 +415,10 @@ export function ResultsHeader({
         <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
           <span>
             {t("SHOWING")} {start + 1}-
-            {Math.min(start + pageSize, filteredCount)}
+            {isInfinite
+              ? filteredCount
+              : Math.min(start + pageSize, filteredCount)
+            }
             {config.enableSorting && sortBy !== SORT_OPTIONS.POPULARITY && (
               <span className="ml-2 text-theme-primary-500 dark:text-theme-primary-400">
                 {t("SORTED_BY")} {getSortLabel(sortBy)}
@@ -627,6 +632,7 @@ export function SharedCard(props: ExtendedCardProps & { filteredCount?: number; 
           <ResultsHeader
             searchTerm={searchTerm}
             selectedTags={selectedTags}
+            isInfinite={paginationType === "infinite"}
             sortBy={sortBy}
             start={paginationType === "infinite" ? 0 : (currentPage - 1) * perPage}
             filteredCount={filtered.length}
