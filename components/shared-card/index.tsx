@@ -261,7 +261,6 @@ export function FilterStats({
               {totalCount}
             </span>{" "}
             {tCommon("ITEMS")}
-            <span className="text-theme-primary-500 dark:text-theme-primary-400"> {t("FILTERED")}</span>
             <span className="ml-1">that match all selected tags</span>
           </>
         ) : (
