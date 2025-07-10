@@ -64,7 +64,7 @@ export default function GlobalsClient(props: ListingProps) {
 
   // Filter and sort items for Home 1 using shared utility
   const filteredAndSortedItems = useMemo(() => {
-    const filtered = filterItems(props.items, {
+    let filtered = filterItems(props.items, {
       selectedCategories,
       searchTerm,
       selectedTags,
@@ -72,13 +72,13 @@ export default function GlobalsClient(props: ListingProps) {
 
     // Sort items
     if (sortBy === "name-asc") {
-      filtered.sort((a, b) => a.name.localeCompare(b.name));
+      filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
     } else if (sortBy === "name-desc") {
-      filtered.sort((a, b) => b.name.localeCompare(a.name));
+      filtered = [...filtered].sort((a, b) => b.name.localeCompare(a.name));
     } else if (sortBy === "date-desc") {
-      filtered.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+      filtered = [...filtered].sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
     } else if (sortBy === "date-asc") {
-      filtered.sort((a, b) => a.updatedAt.getTime() - b.updatedAt.getTime());
+      filtered = [...filtered].sort((a, b) => a.updatedAt.getTime() - b.updatedAt.getTime());
     }
     // Default is popularity (no sorting needed)
 
