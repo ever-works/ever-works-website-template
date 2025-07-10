@@ -16,8 +16,8 @@ export interface FilterContextType {
   setSearchTerm: Dispatch<SetStateAction<string>>;
   selectedTags: TagId[];
   setSelectedTags: Dispatch<SetStateAction<TagId[]>>;
-  selectedCategories: string[];
-  setSelectedCategories: Dispatch<SetStateAction<string[]>>;
+  selectedCategories: CategoryId[];
+  setSelectedCategories: Dispatch<SetStateAction<CategoryId[]>>;
   sortBy: SortOption;
   setSortBy: Dispatch<SetStateAction<SortOption>>;
   clearAllFilters: () => void;
@@ -104,7 +104,7 @@ export interface CategoryItemProps {
   isAllCategories?: boolean;
   totalItems?: number;
   mode?: "navigation" | "filter";
-  onToggle?: (categoryId: string) => void;
+  onToggle?: (categoryId: CategoryId) => void;
 }
 
 /**

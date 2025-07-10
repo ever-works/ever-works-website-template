@@ -13,7 +13,7 @@ export function useFilterState() {
   const [selectedTags, setSelectedTags] = useState<TagId[]>([]);
   
   /** Multiple category selection for advanced filtering */
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<CategoryId[]>([]);
   
   const [sortBy, setSortBy] = useState<SortOption>(SORT_OPTIONS.POPULARITY);
   
