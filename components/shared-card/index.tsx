@@ -234,7 +234,6 @@ export function FilterStats({
   totalCount,
   searchTerm,
   selectedTags,
-  selectedTag,
   hasActiveFilters,
   t,
   className = "",
@@ -243,7 +242,6 @@ export function FilterStats({
   totalCount: number;
   searchTerm: string;
   selectedTags: string[];
-  selectedTag: string | null;
   hasActiveFilters: boolean;
   t: ReturnType<typeof useTranslations>;
   className?: string;
@@ -253,22 +251,30 @@ export function FilterStats({
   return (
     <div className={`flex items-center gap-4 ${className}`}>
       <div className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-        <span className="font-medium text-gray-900 dark:text-white">
-          {filteredCount}
-        </span>{" "}
-        {tCommon("OF")}{" "}
-        <span className="font-medium text-gray-900 dark:text-white">
-          {totalCount}
-        </span>{" "}
-        {tCommon("ITEMS")}
-        {hasActiveFilters && (
-          <span className="text-theme-primary-500 dark:text-theme-primary-400">
-            {" "}
-            {t("FILTERED")}
-            {selectedTag && (
-              <span> ({t("TAG_COLON")} {getTagName(selectedTag, [])})</span>
-            )}
-          </span>
+        {hasActiveFilters ? (
+          <>
+            <span className="font-medium text-gray-900 dark:text-white">
+              {filteredCount}
+            </span>{" "}
+            {tCommon("OF")} {" "}
+            <span className="font-medium text-gray-900 dark:text-white">
+              {totalCount}
+            </span>{" "}
+            {tCommon("ITEMS")}
+            <span className="text-theme-primary-500 dark:text-theme-primary-400"> {t("FILTERED")}</span>
+            <span className="ml-1">that match all selected tags</span>
+          </>
+        ) : (
+          <>
+            <span className="font-medium text-gray-900 dark:text-white">
+              {filteredCount}
+            </span>{" "}
+            {tCommon("OF")} {" "}
+            <span className="font-medium text-gray-900 dark:text-white">
+              {totalCount}
+            </span>{" "}
+            {tCommon("ITEMS")}
+          </>
         )}
       </div>
 
@@ -564,7 +570,6 @@ export function SharedCard(props: ExtendedCardProps & { filteredCount?: number; 
               totalCount={totalCount}
               searchTerm={searchTerm}
               selectedTags={selectedTags}
-              selectedTag={selectedTag}
               hasActiveFilters={hasActiveFilters}
               t={t}
             />

@@ -10,7 +10,6 @@ interface TagsListProps {
   tags: Tag[];
   basePath?: string;
   resetPath?: string;
-  total?: number;
   showAllTags: boolean;
   visibleTags: Tag[];
   isAnyTagActive: boolean;
@@ -26,7 +25,6 @@ export function TagsList({
   tags,
   basePath,
   resetPath,
-  total,
   showAllTags,
   visibleTags,
   isAnyTagActive,
@@ -65,6 +63,11 @@ export function TagsList({
 
   // Set the number of tags to show in collapsed mode
   const COLLAPSED_TAG_LIMIT = 5;
+
+  // Helper to get dynamic tag count
+  const getTagCount = (tagId: string) => {
+    return tags.find(t => t.id === tagId)?.count || 0;
+  };
 
   // Render a single tag (button for filter, link for navigation)
   const renderTag = (tag: Tag, index: number) => {
@@ -125,7 +128,7 @@ export function TagsList({
           >
             {tag.name}
           </span>
-          {tag.count && (
+          {typeof tag.count === 'number' && (
             <span
               className={cn(
                 "ml-1.5 text-xs font-normal",
@@ -198,7 +201,7 @@ export function TagsList({
                     : "text-dark-500 dark:text-dark-400"
                 )}
               >
-                ({total ?? tags.length})
+                ({selectedTags.length === 0 ? tags.length : getTagCount(selectedTags[0])})
               </span>
             </Button>
           ) : (
@@ -238,7 +241,7 @@ export function TagsList({
                     : "text-dark-500 dark:text-dark-400"
                 )}
               >
-                ({total ?? tags.length})
+                ({selectedTags.length === 0 ? tags.length : getTagCount(selectedTags[0])})
               </span>
             </Button>
           )}
@@ -315,7 +318,7 @@ export function TagsList({
                     : "text-dark-500 dark:text-dark-400"
                 )}
               >
-                ({total ?? tags.length})
+                ({selectedTags.length === 0 ? tags.length : getTagCount(selectedTags[0])})
               </span>
             </Button>
           ) : (
@@ -355,7 +358,7 @@ export function TagsList({
                     : "text-dark-500 dark:text-dark-400"
                 )}
               >
-                ({total ?? tags.length})
+                ({selectedTags.length === 0 ? tags.length : getTagCount(selectedTags[0])})
               </span>
             </Button>
           )}

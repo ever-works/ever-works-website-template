@@ -165,7 +165,7 @@ export default function GlobalsClient(props: ListingProps) {
             <Categories total={props.total} categories={sortedCategories} tags={sortedTags} />
           </div>
           <div className="w-full">
-            <Tags tags={sortedTags} enableSticky={true} maxVisibleTags={5} total={props.total} />
+            <Tags tags={sortedTags} enableSticky={true} maxVisibleTags={5} allItems={props.items} />
             <ListingClient 
               {...props}
               items={homeOnePaginatedItems}
