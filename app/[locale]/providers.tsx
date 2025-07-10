@@ -3,32 +3,35 @@
 import type { Config } from "@/lib/content";
 import { HeroUIProvider } from "@heroui/react";
 import { ConfigProvider } from "./config";
-import { ThemeProvider } from "next-themes";
-import ErrorProvider from "@/components/error-provider";
-import { LayoutThemeProvider } from "@/components/context";
-import { FilterProvider } from "@/components/filters/context/filter-context";
+import {
+  ErrorProvider,
+  FilterProvider,
+  LayoutProvider,
+  QueryClientProvider,
+  ThemeProvider,
 
-export function Providers({
-  config,
-  children,
-}: {
+} from "@/components/providers";
+
+interface ProvidersProps {
   config: Config;
   children: React.ReactNode;
-}) {
+  dehydratedState?: unknown;
+}
+
+export function Providers({ config, children, dehydratedState }: ProvidersProps) {
   return (
-    <LayoutThemeProvider>
-      <ErrorProvider>
-        <FilterProvider>
-          <ConfigProvider config={config}>
-            <ThemeProvider
-              enableSystem={true}
-              attribute="class"
-              defaultTheme="system">
+    <QueryClientProvider dehydratedState={dehydratedState}>
+      <LayoutProvider>
+        <ErrorProvider>
+          <FilterProvider>
+            <ConfigProvider config={config}>
+              <ThemeProvider>
                 <HeroUIProvider>{children}</HeroUIProvider>
-            </ThemeProvider>
-          </ConfigProvider>
-        </FilterProvider>
-      </ErrorProvider>
-    </LayoutThemeProvider>
+              </ThemeProvider>
+            </ConfigProvider>
+          </FilterProvider>
+        </ErrorProvider>
+      </LayoutProvider>
+    </QueryClientProvider>
   );
 }

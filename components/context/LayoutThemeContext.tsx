@@ -11,11 +11,14 @@ export enum LayoutHome {
   HOME_TWO = 'Home_Two',
   HOME_THREE = 'Home_Three',
 }
+export type PaginationType = "standard" | "infinite";
 const DEFAULT_LAYOUT_HOME: LayoutHome = LayoutHome.HOME_ONE;
+const DEFAULT_PAGINATION_TYPE: PaginationType = "standard";
 const STORAGE_KEYS = {
   LAYOUT: "layoutKey",
   THEME: "themeKey",
   LAYOUT_HOME: "layoutHome",
+  PAGINATION_TYPE: "paginationType",
 } as const;
 
 // Types
@@ -40,6 +43,8 @@ interface LayoutThemeContextType {
   currentTheme: ThemeConfig;
   layoutHome: LayoutHome;
   setLayoutHome: (key: LayoutHome) => void;
+  paginationType: PaginationType;
+  setPaginationType: (type: PaginationType) => void;
 }
 
 // Theme configurations with readonly properties
@@ -155,7 +160,21 @@ const useLayoutHomeManager = () => {
   };
 };
 
+// Custom hook for pagination type management
+const usePaginationTypeManager = () => {
+  const [paginationType, setPaginationTypeState] = useState<PaginationType>(DEFAULT_PAGINATION_TYPE);
+  const setPaginationType = React.useCallback((type: PaginationType) => {
+    setPaginationTypeState(type);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STORAGE_KEYS.PAGINATION_TYPE, type);
+    }
+  }, []);
 
+  return {
+    paginationType,
+    setPaginationType,
+  };
+};
 
 // Custom hook for layout management
 const useLayoutManager = () => {
@@ -179,6 +198,7 @@ export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const layoutManager = useLayoutManager();
   const themeManager = useThemeManager();
   const layoutHomeManager = useLayoutHomeManager();
+  const paginationTypeManager = usePaginationTypeManager();
 
   // Initialize from localStorage
   useEffect(() => {
@@ -187,6 +207,7 @@ export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const savedLayout = localStorage.getItem(STORAGE_KEYS.LAYOUT) as LayoutKey;
     const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) as ThemeKey;
     const savedLayoutHome = localStorage.getItem(STORAGE_KEYS.LAYOUT_HOME) as LayoutHome;
+    const savedPaginationType = localStorage.getItem(STORAGE_KEYS.PAGINATION_TYPE) as PaginationType;
 
     if (
       savedLayout &&
@@ -203,17 +224,18 @@ export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (savedLayoutHome && savedLayoutHome !== layoutHomeManager.layoutHome) {
       layoutHomeManager.setLayoutHome(savedLayoutHome);
     }
-  }, [layoutManager, themeManager, layoutHomeManager]);
 
+    if (savedPaginationType && savedPaginationType !== paginationTypeManager.paginationType) {
+      paginationTypeManager.setPaginationType(savedPaginationType);
+    }
+  }, [layoutManager, themeManager, layoutHomeManager, paginationTypeManager]);
 
-  const contextValue = React.useMemo(
-    () => ({
-      ...layoutManager,
-      ...themeManager,
-      ...layoutHomeManager,
-    }),
-    [layoutManager, themeManager, layoutHomeManager]
-  );
+  const contextValue = {
+    ...layoutManager,
+    ...themeManager,
+    ...layoutHomeManager,
+    ...paginationTypeManager,
+  };
 
   return (
     <LayoutThemeContext.Provider value={contextValue}>

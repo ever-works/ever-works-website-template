@@ -70,6 +70,8 @@ export interface PaginateProps {
   basePath: string;
   initialPage: number;
   total: number;
+  paginationType?: "standard" | "infinite";
+  onLoadMore?: (page: number) => Promise<void>;
 }
 
 /**

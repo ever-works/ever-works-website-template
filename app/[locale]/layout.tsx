@@ -15,6 +15,7 @@ import { Toaster } from "sonner";
 import { PHProvider } from "./integration/posthog/provider";
 import PostHogPageView from "./integration/posthog/page-view";
 import { Locale } from "@/lib/constants";
+import { LoginModalProvider } from "@/components/auth/login-modal-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,6 +70,7 @@ export default async function RootLayout({
           <NextIntlClientProvider messages={messages}>
             <Toaster position="bottom-right" richColors />
             <Providers config={config}>
+              <LoginModalProvider />
               <Header session={session} />
               <main className="flex-1">{children}</main>
               <Footer />

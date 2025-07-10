@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { db } from "./drizzle";
 import {
   activityLogs,
@@ -11,6 +11,8 @@ import {
   newsletterSubscriptions,
   type NewNewsletterSubscription,
   type NewsletterSubscription,
+  votes,
+  InsertVote,
 } from "./schema";
 
 export async function logActivity(
@@ -297,6 +299,46 @@ export async function getNewsletterStats() {
       recentSubscriptions: 0,
     };
   }
+}
+
+// ######################### Vote Queries #########################
+
+export async function createVote(vote: InsertVote) {
+  return db.insert(votes).values(vote).returning();
+}
+
+export async function getVoteByUserIdAndItemId(userId: string, itemId: string) {
+  return db.select().from(votes).where(and(eq(votes.userId, userId), eq(votes.itemId, itemId))).limit(1);
+}
+
+export async function deleteVote(voteId: string) {
+  return db.delete(votes).where(eq(votes.id, voteId));
+}
+
+export async function getItemsSortedByVotes(limit: number = 10, offset: number = 0) {
+  const itemsWithVotes = await db
+    .select({
+      itemId: votes.itemId,
+      voteCount: sql<number>`count(${votes.id})`.as('vote_count'),
+    })
+    .from(votes)
+    .groupBy(votes.itemId)
+    .orderBy(sql`vote_count DESC`)
+    .limit(limit)
+    .offset(offset);
+
+  return itemsWithVotes;
+}
+
+export async function getVoteCountForItem(itemId: string): Promise<number> {
+  const [result] = await db
+    .select({
+      count: sql<number>`count(*)`.as('count'),
+    })
+    .from(votes)
+    .where(eq(votes.itemId, itemId));
+
+  return Number(result?.count || 0);
 }
 
 // export async function getActivityLogs() {}

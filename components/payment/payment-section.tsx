@@ -93,14 +93,14 @@ export function PaymentSection({
     setIsProcessing(true);
 
     try {
-      // Ici, vous intégreriez l'appel à l'API Stripe
+      // Here, you would integrate the Stripe API call
       console.log("Processing payment for", getPlanName());
       console.log("Card details:", paymentInfo);
 
-      // Simuler un délai de traitement
+      // Simulate processing delay
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      // Paiement réussi
+      // Payment successful
       onComplete();
     } catch (error) {
       console.error("Payment error:", error);

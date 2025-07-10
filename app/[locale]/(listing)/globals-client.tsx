@@ -113,6 +113,8 @@ export default function GlobalsClient(props: ListingProps) {
 
   if (!initialized) return null;
 
+
+
   if (layoutHome === LayoutHome.HOME_ONE) {
     return (
       <div className="pb-12 px-4 sm:px-6 lg:px-8 xl:px-12">

@@ -1,12 +1,14 @@
 import {
-    boolean,
-    timestamp,
-    pgTable,
-    text,
-    primaryKey,
-    integer,
-    serial,
-    varchar,
+  boolean,
+  timestamp,
+  pgTable,
+  text,
+  primaryKey,
+  integer,
+  serial,
+  varchar,
+  uniqueIndex,
+  index,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
 
@@ -117,6 +119,38 @@ export const newsletterSubscriptions = pgTable("newsletter_subscriptions", {
   source: text("source").default("footer"), // footer, popup, etc.
 });
 
+export const VoteType = {
+  UPVOTE: 'upvote',
+  DOWNVOTE: 'downvote',
+} as const;
+
+export type VoteTypeValues = typeof VoteType[keyof typeof VoteType];
+
+// ######################### Vote Schema #########################
+export const votes = pgTable('votes', {
+  id: text('id')
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  itemId: text('item_id').notNull(),
+  voteType: text('vote_type', { enum: [VoteType.UPVOTE, VoteType.DOWNVOTE] })
+    .notNull()
+    .default(VoteType.UPVOTE),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at')
+    .notNull()
+    .defaultNow(),
+}, (table) => ({
+  uniqueUserItemVote: uniqueIndex('unique_user_item_vote_idx').on(table.userId, table.itemId),
+  itemVotesIndex: index('item_votes_idx').on(table.itemId),
+  createdAtIndex: index('votes_created_at_idx').on(table.createdAt),
+}));
+
+export type Vote = typeof votes.$inferSelect;
+export type InsertVote = typeof votes.$inferInsert;
 export type NewUser = typeof users.$inferInsert;
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type NewActivityLog = typeof activityLogs.$inferInsert;
