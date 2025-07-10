@@ -4,17 +4,28 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
 import { FiFolder } from "react-icons/fi";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import UniversalPagination from "@/components/universal-pagination";
 
 const PAGE_SIZE = 10;
 
 export default function CategoriesGrid({ categories }: { categories: Category[] }) {
-  // Sort categories by count descending (most items first)
-  const sortedCategories = [...categories].sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
   const [page, setPage] = useState(1);
-  const totalPages = Math.ceil(sortedCategories.length / PAGE_SIZE);
-  const pagedCategories = sortedCategories.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const sortedCategories = useMemo(() =>
+    [...categories].sort((a, b) => (b.count ?? 0) - (a.count ?? 0)),
+    [categories]
+  );
+
+  const totalPages = useMemo(() =>
+    Math.ceil(sortedCategories.length / PAGE_SIZE),
+    [sortedCategories.length]
+  );
+
+  const pagedCategories = useMemo(() =>
+    sortedCategories.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [sortedCategories, page]
+  );
 
   return (
     <>
