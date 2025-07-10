@@ -1,4 +1,5 @@
 import { Category, Tag } from "@/lib/content";
+import { ItemData } from "@/lib/content";
 import { ReactNode, Dispatch, SetStateAction } from "react";
 
 /**
@@ -82,6 +83,7 @@ export interface TagsProps {
   maxVisibleTags?: number;
   total?: number;
   mode?: 'navigation' | 'filter';
+  allItems?: ItemData[];
 }
 
 /**

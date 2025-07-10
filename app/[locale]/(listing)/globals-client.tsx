@@ -4,7 +4,7 @@ import { Categories } from "@/components/filters/components/categories/categorie
 import { Paginate } from "@/components/filters/components/pagination/paginate";
 import { Tags } from "@/components/filters/components/tags/tags-section";
 import { Tag, Category, ItemData } from "@/lib/content";
-import { sortByNumericProperty } from "@/lib/utils";
+import { sortByNumericProperty, filterItems } from "@/lib/utils";
 import { HomeTwoLayout } from "@/components/home-two";
 import { ListingClient } from "@/components/shared-card/listing-client";
 import { useFilters } from "@/hooks/use-filters";
@@ -36,26 +36,12 @@ export default function GlobalsClient(props: ListingProps) {
   const perPage = 12; // or use from config if needed
   const start = (page - 1) * perPage;
 
-  // Filtering logic (same as useProcessedItems in Card)
+  // Filtering logic using shared utility
   const filteredItems = useMemo(() => {
-    let filtered = props.items;
-    if (searchTerm && searchTerm.trim()) {
-      const searchLower = searchTerm.toLowerCase().trim();
-      filtered = filtered.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchLower) ||
-          item.description?.toLowerCase().includes(searchLower)
-      );
-    }
-    if (selectedTags && selectedTags.length > 0) {
-      filtered = filtered.filter((item) => {
-        if (!item.tags?.length) return false;
-        return selectedTags.some((selectedTagId) =>
-          item.tags.some((itemTag) => (typeof itemTag === 'string' ? itemTag : itemTag.id) === selectedTagId)
-        );
-      });
-    }
-    return filtered;
+    return filterItems(props.items, {
+      searchTerm,
+      selectedTags,
+    });
   }, [props.items, searchTerm, selectedTags]);
 
   // Paginate filtered items
@@ -76,43 +62,13 @@ export default function GlobalsClient(props: ListingProps) {
   // Client-side pagination state for Home 1
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Filter and sort items for Home 1
+  // Filter and sort items for Home 1 using shared utility
   const filteredAndSortedItems = useMemo(() => {
-    let filtered = props.items;
-
-    // Filter by selected categories
-    if (selectedCategories.length > 0) {
-      filtered = filtered.filter(item => {
-        if (!item.category) return false;
-        const itemCategories = Array.isArray(item.category) ? item.category : [item.category];
-        return itemCategories.some(cat => {
-          if (typeof cat === "string") return selectedCategories.includes(cat);
-          if (typeof cat === "object" && cat && "id" in cat) return selectedCategories.includes(cat.id);
-          return false;
-        });
-      });
-    }
-
-    // Filter by search term
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      filtered = filtered.filter(item =>
-        item.name.toLowerCase().includes(searchLower) ||
-        item.description?.toLowerCase().includes(searchLower)
-      );
-    }
-
-    // Filter by selected tags
-    if (selectedTags.length > 0) {
-      filtered = filtered.filter(item => {
-        if (!item.tags) return false;
-        const itemTags = Array.isArray(item.tags) ? item.tags : [item.tags];
-        return itemTags.some(tag => {
-          const tagId = typeof tag === "string" ? tag : tag.id;
-          return selectedTags.includes(tagId);
-        });
-      });
-    }
+    const filtered = filterItems(props.items, {
+      selectedCategories,
+      searchTerm,
+      selectedTags,
+    });
 
     // Sort items
     if (sortBy === "name-asc") {

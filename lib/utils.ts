@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Category } from "./content";
+import { Category, ItemData } from "./content";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -139,4 +139,56 @@ export function sortByNumericProperty<
   K extends keyof T
 >(items: T[], property: K = "count" as K, order: "desc" | "asc" = "desc"): T[] {
   return sortByProperty<T, K>(items, property, order, "number");
+}
+
+/**
+ * Filter items by categories, search term, and tags
+ * Shared utility function to eliminate code duplication
+ */
+export function filterItems(
+  items: ItemData[],
+  options: {
+    selectedCategories?: string[];
+    searchTerm?: string;
+    selectedTags?: string[];
+  }
+): ItemData[] {
+  let filtered = items;
+  const { selectedCategories = [], searchTerm = "", selectedTags = [] } = options;
+
+  // Filter by selected categories
+  if (selectedCategories.length > 0) {
+    filtered = filtered.filter(item => {
+      if (!item.category) return false;
+      const itemCategories = Array.isArray(item.category) ? item.category : [item.category];
+      return itemCategories.some((cat: string | Category) => {
+        if (typeof cat === "string") return selectedCategories.includes(cat);
+        if (typeof cat === "object" && cat && "id" in cat) return selectedCategories.includes(cat.id);
+        return false;
+      });
+    });
+  }
+
+  // Filter by search term
+  if (searchTerm && searchTerm.trim()) {
+    const searchLower = searchTerm.toLowerCase().trim();
+    filtered = filtered.filter(item =>
+      item.name.toLowerCase().includes(searchLower) ||
+      item.description?.toLowerCase().includes(searchLower)
+    );
+  }
+
+  // Filter by selected tags
+  if (selectedTags.length > 0) {
+    filtered = filtered.filter(item => {
+      if (!item.tags) return false;
+      const itemTags = Array.isArray(item.tags) ? item.tags : [item.tags];
+      return itemTags.some((tag: string | { id: string }) => {
+        const tagId = typeof tag === "string" ? tag : tag.id;
+        return selectedTags.includes(tagId);
+      });
+    });
+  }
+
+  return filtered;
 }
