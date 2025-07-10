@@ -3,6 +3,7 @@ import { usePathname } from "@/i18n/navigation";
 import { CategoriesListProps } from "../../types";
 import { CategoryItem } from "./category-item";
 import { useFilters } from "../../context/filter-context";
+import { isCategoryPagePath } from "@/lib/utils";
 
 /**
  * Categories list component
@@ -81,7 +82,7 @@ export function CategoriesList({
       {/* All Categories Item */}
       <CategoryItem
         category={{ id: "all", name: t("ALL_CATEGORIES"), count: totalItems }}
-        isActive={pathname === "/categories"}
+        isActive={isCategoryPagePath(pathname)}
         href="/categories"
         isAllCategories={true}
         totalItems={totalItems}
@@ -93,7 +94,7 @@ export function CategoriesList({
           if (!category.count) return null;
           
           const href = `/categories/category/${category.id}`;
-          const isActive = pathname === href || pathname.startsWith(href + "/");
+          const isActive = isCategoryPagePath(pathname, href);
 
           return (
             <CategoryItem

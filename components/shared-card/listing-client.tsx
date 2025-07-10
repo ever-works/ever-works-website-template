@@ -7,6 +7,7 @@ import {
 } from "@/components/shared-card";
 import { Category, ItemData, Tag } from "@/lib/content";
 import { usePathname } from "@/i18n/navigation";
+import { isCategoryPagePath } from "@/lib/utils";
 
 interface ListingClientProps extends BaseCardProps {
   total: number;
@@ -24,7 +25,7 @@ interface ListingClientProps extends BaseCardProps {
 
 export function ListingClient(props: ListingClientProps) {
   const pathname = usePathname();
-  const isCategoryPage = pathname.includes('/categories/category/');
+  const isCategoryPage = isCategoryPagePath(pathname);
   
   // Use different configuration based on mode
   let config = props.config || CardPresets.fullListing;

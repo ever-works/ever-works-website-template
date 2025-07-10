@@ -192,3 +192,14 @@ export function filterItems(
 
   return filtered;
 }
+
+/**
+ * Returns true if the pathname is a category page (strict match)
+ * If href is provided, checks for exact match or subpath
+ */
+export function isCategoryPagePath(pathname: string, href?: string): boolean {
+  if (href) {
+    return pathname === href || pathname.startsWith(href + "/");
+  }
+  return pathname.startsWith('/categories/category/');
+}
