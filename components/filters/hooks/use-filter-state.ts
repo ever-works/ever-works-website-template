@@ -63,21 +63,21 @@ export function useFilterState() {
   /**
    * Remove a specific category from selected categories
    */
-  const removeSelectedCategory = useCallback((categoryId: string) => {
+  const removeSelectedCategory = useCallback((categoryId: CategoryId) => {
     setSelectedCategories(prev => prev.filter(id => id !== categoryId));
   }, []);
 
   /**
    * Add a category to selected categories
    */
-  const addSelectedCategory = useCallback((categoryId: string) => {
+  const addSelectedCategory = useCallback((categoryId: CategoryId) => {
     setSelectedCategories(prev => [...prev, categoryId]);
   }, []);
 
   /**
    * Toggle a category selection
    */
-  const toggleSelectedCategory = useCallback((categoryId: string) => {
+  const toggleSelectedCategory = useCallback((categoryId: CategoryId) => {
     setSelectedCategories(prev => 
       prev.includes(categoryId) 
         ? prev.filter(id => id !== categoryId)
