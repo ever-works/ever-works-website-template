@@ -54,7 +54,7 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
                 mode="filter" 
                 selectedCategories={selectedCategories}
                 onCategoryToggle={(categoryId) => {
-                  if (categoryId === "clear-all") {
+                  if (categoryId === "all" || categoryId === "clear-all") {
                     setSelectedCategories([]);
                   } else {
                     setSelectedCategories(prev => 
@@ -88,7 +88,7 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
               mode="filter" 
               selectedCategories={selectedCategories}
               onCategoryToggle={(categoryId) => {
-                if (categoryId === "clear-all") {
+                if (categoryId === "all" || categoryId === "clear-all") {
                   setSelectedCategories([]);
                 } else {
                   setSelectedCategories(prev => 
