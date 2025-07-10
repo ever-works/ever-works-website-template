@@ -15,6 +15,7 @@ interface TagsListProps {
   isAnyTagActive: boolean;
   selectedTags?: string[];
   setSelectedTags?: (tags: string[]) => void;
+  allItemsCount?: number;
 }
 
 /**
@@ -30,6 +31,7 @@ export function TagsList({
   isAnyTagActive,
   selectedTags = [],
   setSelectedTags,
+  allItemsCount,
 }: TagsListProps) {
   // 'All Tags' is active when no tags are selected
   const isAllTagsActive = setSelectedTags ? selectedTags.length === 0 : !isAnyTagActive;
@@ -64,11 +66,6 @@ export function TagsList({
   // Set the number of tags to show in collapsed mode
   const COLLAPSED_TAG_LIMIT = 5;
 
-  // Helper to get dynamic tag count
-  const getTagCount = (tagId: string) => {
-    return tags.find(t => t.id === tagId)?.count || 0;
-  };
-
   // Render a single tag (button for filter, link for navigation)
   const renderTag = (tag: Tag, index: number) => {
     const tagBasePath = basePath
@@ -77,7 +74,7 @@ export function TagsList({
 
     const isActive = setSelectedTags
       ? selectedTags.includes(tag.id)
-      : selectedTags.length === 1 && selectedTags[0] === tag.id;
+      : false;
 
     if (setSelectedTags) {
       // Filter mode (multi-select)
@@ -203,7 +200,7 @@ export function TagsList({
                     : "text-dark-500 dark:text-dark-400"
                 )}
               >
-                ({selectedTags.length === 0 ? tags.length : getTagCount(selectedTags[0])})
+                ({allItemsCount ?? tags.length})
               </span>
             </Button>
           ) : (
@@ -243,7 +240,7 @@ export function TagsList({
                     : "text-dark-500 dark:text-dark-400"
                 )}
               >
-                ({selectedTags.length === 0 ? tags.length : getTagCount(selectedTags[0])})
+                ({allItemsCount ?? tags.length})
               </span>
             </Button>
           )}
@@ -320,7 +317,7 @@ export function TagsList({
                     : "text-dark-500 dark:text-dark-400"
                 )}
               >
-                ({selectedTags.length === 0 ? tags.length : getTagCount(selectedTags[0])})
+                ({allItemsCount ?? tags.length})
               </span>
             </Button>
           ) : (
@@ -360,7 +357,7 @@ export function TagsList({
                     : "text-dark-500 dark:text-dark-400"
                 )}
               >
-                ({selectedTags.length === 0 ? tags.length : getTagCount(selectedTags[0])})
+                ({allItemsCount ?? tags.length})
               </span>
             </Button>
           )}
