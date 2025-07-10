@@ -8,7 +8,6 @@ import { ChevronDown, Search, Tag as TagIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils/index";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 
-// Types
 type HomeTwoTagsSelectorProps = {
   tags: Tag[];
 };
@@ -20,17 +19,14 @@ type TagButtonProps = {
   onPress?: () => void;
 };
 
-// Constants
 const MAX_TAG_NAME_LENGTH = 20;
 const TRUNCATE_SUFFIX = "...";
 
-// Utility functions
 const truncateText = (text: string): string => {
   if (!text || text.length <= MAX_TAG_NAME_LENGTH) return text;
   return `${text.substring(0, MAX_TAG_NAME_LENGTH)}${TRUNCATE_SUFFIX}`;
 };
 
-// Memoized components
 const TagButton = ({ tag, isActive, href, onPress }: TagButtonProps) => {
   const displayName = truncateText(tag.name);
   const isTextTruncated = tag.name.length > MAX_TAG_NAME_LENGTH;

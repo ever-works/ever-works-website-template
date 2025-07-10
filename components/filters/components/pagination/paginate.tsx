@@ -7,7 +7,7 @@ import { FILTER_CONSTANTS } from "../../constants";
  * Pagination component
  * Handles page navigation with scroll-to-top functionality
  */
-export function Paginate({ basePath, initialPage, total }: PaginateProps) {
+export function Paginate({ basePath, initialPage, total, onPageChange }: PaginateProps & { onPageChange?: (page: number) => void }) {
   const { navigateWithScroll } = useScrollToTop({
     easing: "easeInOut",
     duration: FILTER_CONSTANTS.SCROLL_DURATION,
@@ -15,8 +15,16 @@ export function Paginate({ basePath, initialPage, total }: PaginateProps) {
   });
 
   function redirect(page: number) {
-    const path = basePath + (page === 1 ? "" : `/${page}`);
-    navigateWithScroll(path, FILTER_CONSTANTS.NAVIGATE_DELAY);
+    if (onPageChange) {
+      // Client-side pagination
+      onPageChange(page);
+    } else if (basePath) {
+      // Server-side pagination (URL-based)
+      const path = basePath + (page === 1 ? "" : `/${page}`);
+      navigateWithScroll(path, FILTER_CONSTANTS.NAVIGATE_DELAY);
+    } else {
+      console.error('Neither onPageChange nor basePath provided to Paginate component');
+    }
   }
 
   return (

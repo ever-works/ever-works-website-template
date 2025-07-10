@@ -16,7 +16,6 @@ export function Tags({
   resetPath,
   enableSticky = false,
   maxVisibleTags,
-  total,
   mode = "navigation", // "navigation" | "filter"
 }: TagsProps & { mode?: "navigation" | "filter" }) {
   const pathname = usePathname();
@@ -126,7 +125,6 @@ export function Tags({
           tags={tags}
           basePath={basePath}
           resetPath={resetPath}
-          total={total}
           showAllTags={showAllTags}
           visibleTags={visibleTags}
           isAnyTagActive={isAnyTagActive}

@@ -12,6 +12,9 @@ export function useFilterState() {
   /** Multiple tag selection for advanced filtering - allows selecting multiple tags simultaneously */
   const [selectedTags, setSelectedTags] = useState<TagId[]>([]);
   
+  /** Multiple category selection for advanced filtering */
+  const [selectedCategories, setSelectedCategories] = useState<CategoryId[]>([]);
+  
   const [sortBy, setSortBy] = useState<SortOption>(SORT_OPTIONS.POPULARITY);
   
   /** Single tag selection for navigation - used when navigating to a specific tag page */
@@ -26,6 +29,7 @@ export function useFilterState() {
   const clearAllFilters = useCallback(() => {
     setSearchTerm("");
     setSelectedTags([]);
+    setSelectedCategories([]);
     setSortBy(SORT_OPTIONS.POPULARITY);
     setSelectedTag(null);
     setSelectedCategory(null);
@@ -56,10 +60,43 @@ export function useFilterState() {
     );
   }, []);
 
+  /**
+   * Remove a specific category from selected categories
+   */
+  const removeSelectedCategory = useCallback((categoryId: string) => {
+    setSelectedCategories(prev => prev.filter(id => id !== categoryId));
+  }, []);
+
+  /**
+   * Add a category to selected categories
+   */
+  const addSelectedCategory = useCallback((categoryId: string) => {
+    setSelectedCategories(prev => [...prev, categoryId]);
+  }, []);
+
+  /**
+   * Toggle a category selection
+   */
+  const toggleSelectedCategory = useCallback((categoryId: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(categoryId) 
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId]
+    );
+  }, []);
+
+  /**
+   * Clear all selected categories
+   */
+  const clearSelectedCategories = useCallback(() => {
+    setSelectedCategories([]);
+  }, []);
+
   return {
     // State
     searchTerm,
     selectedTags,
+    selectedCategories,
     sortBy,
     selectedTag,
     selectedCategory,
@@ -67,6 +104,7 @@ export function useFilterState() {
     // Setters
     setSearchTerm,
     setSelectedTags,
+    setSelectedCategories,
     setSortBy,
     setSelectedTag,
     setSelectedCategory,
@@ -76,5 +114,9 @@ export function useFilterState() {
     removeSelectedTag,
     addSelectedTag,
     toggleSelectedTag,
+    removeSelectedCategory,
+    addSelectedCategory,
+    toggleSelectedCategory,
+    clearSelectedCategories,
   };
 } 

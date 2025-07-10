@@ -15,7 +15,16 @@ import { ActiveFilters } from "../active-filters/active-filters";
  */
 export function Categories({ total, categories, tags }: CategoriesProps & { tags: Tag[] }) {
   const t = useTranslations("listing");
-  const { searchTerm, setSearchTerm, sortBy, setSortBy, selectedTags, setSelectedTags } = useFilters();
+  const { 
+    searchTerm, 
+    setSearchTerm, 
+    sortBy, 
+    setSortBy, 
+    selectedTags, 
+    setSelectedTags,
+    selectedCategories,
+    setSelectedCategories
+  } = useFilters();
 
   return (
     <>
@@ -40,7 +49,22 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
             }
           >
             <div className="px-2 pb-2">
-              <CategoriesList categories={categories} />
+              <CategoriesList 
+                categories={categories} 
+                mode="filter" 
+                selectedCategories={selectedCategories}
+                onCategoryToggle={(categoryId) => {
+                  if (categoryId === "clear-all") {
+                    setSelectedCategories([]);
+                  } else {
+                    setSelectedCategories(prev => 
+                      prev.includes(categoryId) 
+                        ? prev.filter(id => id !== categoryId)
+                        : [...prev, categoryId]
+                    );
+                  }
+                }}
+              />
             </div>
           </AccordionItem>
         </Accordion>
@@ -59,7 +83,22 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
             </h2>
           </div>
           <div className={containerStyles.content}>
-            <CategoriesList categories={categories} />
+            <CategoriesList 
+              categories={categories} 
+              mode="filter" 
+              selectedCategories={selectedCategories}
+              onCategoryToggle={(categoryId) => {
+                if (categoryId === "clear-all") {
+                  setSelectedCategories([]);
+                } else {
+                  setSelectedCategories(prev => 
+                    prev.includes(categoryId) 
+                      ? prev.filter(id => id !== categoryId)
+                      : [...prev, categoryId]
+                  );
+                }
+              }}
+            />
           </div>
         </div>
 
@@ -69,12 +108,16 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
           setSearchTerm={setSearchTerm}
           selectedTags={selectedTags}
           setSelectedTags={setSelectedTags}
+          selectedCategories={selectedCategories}
+          setSelectedCategories={setSelectedCategories}
           sortBy={sortBy}
           setSortBy={setSortBy}
           availableTags={tags}
+          availableCategories={categories}
           clearAllFilters={() => {
             setSearchTerm("");
             setSelectedTags([]);
+            setSelectedCategories([]);
             setSortBy("popularity");
           }}
         />

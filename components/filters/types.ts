@@ -1,4 +1,5 @@
 import { Category, Tag } from "@/lib/content";
+import { ItemData } from "@/lib/content";
 import { ReactNode, Dispatch, SetStateAction } from "react";
 
 /**
@@ -16,12 +17,18 @@ export interface FilterContextType {
   setSearchTerm: Dispatch<SetStateAction<string>>;
   selectedTags: TagId[];
   setSelectedTags: Dispatch<SetStateAction<TagId[]>>;
+  selectedCategories: CategoryId[];
+  setSelectedCategories: Dispatch<SetStateAction<CategoryId[]>>;
   sortBy: SortOption;
   setSortBy: Dispatch<SetStateAction<SortOption>>;
   clearAllFilters: () => void;
   removeSelectedTag: (tagId: TagId) => void;
   addSelectedTag: (tagId: TagId) => void;
   toggleSelectedTag: (tagId: TagId) => void;
+  removeSelectedCategory: (categoryId: string) => void;
+  addSelectedCategory: (categoryId: string) => void;
+  toggleSelectedCategory: (categoryId: string) => void;
+  clearSelectedCategories: () => void;
   selectedCategory: CategoryId | null;
   setSelectedCategory: Dispatch<SetStateAction<CategoryId | null>>;
   selectedTag: TagId | null;
@@ -43,6 +50,9 @@ export interface BlockLinkProps {
  */
 export interface CategoriesListProps {
   categories: Category[];
+  mode?: "navigation" | "filter";
+  selectedCategories?: string[];
+  onCategoryToggle?: (categoryId: string | "clear-all") => void;
 }
 
 /**
@@ -73,6 +83,7 @@ export interface TagsProps {
   maxVisibleTags?: number;
   total?: number;
   mode?: 'navigation' | 'filter';
+  allItems?: ItemData[];
 }
 
 /**
@@ -94,6 +105,24 @@ export interface CategoryItemProps {
   href: string;
   isAllCategories?: boolean;
   totalItems?: number;
+  mode?: "navigation" | "filter";
+  onToggle?: (categoryId: CategoryId) => void;
+}
+
+/**
+ * Category item component props with strict typing for filter mode
+ */
+export interface CategoryItemFilterProps extends Omit<CategoryItemProps, 'mode' | 'onToggle'> {
+  mode: "filter";
+  onToggle: (categoryId: CategoryId) => void;
+}
+
+/**
+ * Category item component props for navigation mode
+ */
+export interface CategoryItemNavigationProps extends Omit<CategoryItemProps, 'mode' | 'onToggle'> {
+  mode?: "navigation";
+  onToggle?: never;
 }
 
 /**
@@ -106,6 +135,8 @@ export interface FilterControlsProps {
   setSortBy: (sort: SortOption) => void;
   selectedTags: TagId[];
   setSelectedTags: (tags: TagId[]) => void;
+  selectedCategories: string[];
+  setSelectedCategories: (categories: string[]) => void;
 }
 
 /**
@@ -116,8 +147,11 @@ export interface ActiveFiltersProps {
   setSearchTerm: (term: string) => void;
   selectedTags: TagId[];
   setSelectedTags: (tags: TagId[]) => void;
+  selectedCategories: string[];
+  setSelectedCategories: (categories: string[]) => void;
   sortBy: SortOption;
   setSortBy: (sort: SortOption) => void;
   availableTags: Tag[];
+  availableCategories: Category[];
   clearAllFilters: () => void;
 } 
