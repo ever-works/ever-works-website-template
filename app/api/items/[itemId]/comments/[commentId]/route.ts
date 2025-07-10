@@ -7,7 +7,7 @@ import { eq, and, isNull } from "drizzle-orm";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { itemId: string; commentId: string } }
+  { params }: { params: Promise<{ itemId: string; commentId: string }> }
 ) {
   const session = await auth();
   if (!session?.user?.id) {
@@ -15,13 +15,12 @@ export async function DELETE(
   }
 
   try {
-    // Vérifier que l'utilisateur est le propriétaire du commentaire
     const [comment] = await db
       .select()
       .from(comments)
       .where(
         and(
-          eq(comments.id, params.commentId),
+          eq(comments.id, (await params).commentId),
           eq(comments.userId, session.user.id),
           isNull(comments.deletedAt)
         )
@@ -31,7 +30,7 @@ export async function DELETE(
       return new NextResponse("Comment not found or not authorized", { status: 404 });
     }
 
-    await deleteComment(params.commentId);
+    await deleteComment((await params).commentId);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error("Error deleting comment:", error);

@@ -1,3 +1,4 @@
+"use client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CommentWithUser } from "@/lib/types/comment";
 // import { useLoginModal } from "./use-login-modal";
@@ -64,6 +65,64 @@ export function useComments(itemId: string) {
     },
   });
 
+  const { mutate: rateCommentMutation, isPending: isRatingComment } = useMutation({
+    mutationFn: async ({ commentId, rating }: { commentId: string; rating: number }) => {
+      const encodedItemId = encodeURIComponent(itemId);
+      const response = await fetch(`/api/items/${encodedItemId}/comments/rating`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ commentId, rating }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to rate comment");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
+      queryClient.invalidateQueries({ queryKey: ["itemRating", itemId] });
+    },
+  });
+
+  const { mutate: updateCommentRatingMutation, isPending: isUpdatingRating } = useMutation({
+    mutationFn: async ({ commentId, rating }: { commentId: string; rating: number }) => {
+      const encodedItemId = encodeURIComponent(itemId);
+      const response = await fetch(`/api/items/${encodedItemId}/comments/rating`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ commentId, rating }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update comment rating");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
+      queryClient.invalidateQueries({ queryKey: ["itemRating", itemId] });
+    },
+  });
+
+
+  const { data: commentRating = 0, isLoading: isLoadingRating } = useQuery({
+    queryKey: ["commentRating", itemId],
+    queryFn: async () => {
+      const response = await fetch(`/api/items/comments/rating/${itemId}`, {
+        method: "GET",
+      });
+      return response.json();
+    },
+  });
+
+
   return {
     comments,
     isLoading,
@@ -71,5 +130,11 @@ export function useComments(itemId: string) {
     isCreating,
     deleteComment,
     isDeleting,
+    updateCommentRating: updateCommentRatingMutation,
+    isUpdatingRating,
+    commentRating,
+    isLoadingRating,
+    rateComment: rateCommentMutation,
+    isRatingComment,
   };
 } 

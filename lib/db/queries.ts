@@ -11,14 +11,11 @@ import {
   newsletterSubscriptions,
   type NewNewsletterSubscription,
   type NewsletterSubscription,
-<<<<<<< HEAD
+  comments,
   votes,
   InsertVote,
-=======
-  comments,
->>>>>>> 004c985 (feat(comments): implement comment system for listing pages)
 } from "./schema";
-import { desc, and, isNull } from "drizzle-orm";
+import { desc, isNull } from "drizzle-orm";
 import type { NewComment, CommentWithUser } from "@/lib/types/comment";
 
 export async function logActivity(
@@ -348,10 +345,10 @@ export async function getVoteCountForItem(itemId: string): Promise<number> {
 }
 
 // export async function getActivityLogs() {}
+// ######################### Comment Queries #########################
 
 export async function createComment(data: NewComment) {
-  const [comment] = await db.insert(comments).values(data).returning();
-  return comment;
+  return (await db.insert(comments).values(data).returning())[0];
 }
 
 export async function getCommentsByItemId(itemId: string): Promise<CommentWithUser[]> {
@@ -359,6 +356,7 @@ export async function getCommentsByItemId(itemId: string): Promise<CommentWithUs
     .select({
       id: comments.id,
       content: comments.content,
+      rating: comments.rating,
       userId: comments.userId,
       itemId: comments.itemId,
       createdAt: comments.createdAt,
@@ -391,4 +389,14 @@ export async function deleteComment(id: string) {
     .where(eq(comments.id, id))
     .returning();
   return comment;
+}
+
+// ######################### Comment Queries #########################
+
+export async function getCommentById(id: string) {
+  return (await db.select().from(comments).where(eq(comments.id, id)).limit(1))[0];
+}
+
+export async function updateCommentRating(id: string, rating: number) {
+  return (await db.update(comments).set({ rating }).where(eq(comments.id, id)).returning())[0];
 }

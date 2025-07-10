@@ -1,26 +1,13 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db/drizzle";
-import { comments } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { getCommentsByItemId, createComment } from "@/lib/db/queries";
 
 export async function GET(
   request: Request,
-  { params }: { params: { itemId: string } }
+  { params }: { params: Promise<{ itemId: string }> }
 ) {
   try {
-    const itemComments = await db.query.comments.findMany({
-      where: eq(comments.itemId, params.itemId),
-      with: {
-        user: {
-          columns: {
-            id: true,
-            name: true,
-            image: true,
-          },
-        },
-      },
-    });
+   const itemComments = await getCommentsByItemId((await params).itemId);
 
     return NextResponse.json(itemComments);
   } catch (error) {
@@ -34,7 +21,7 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { itemId: string } }
+  { params }: { params: Promise<{ itemId: string }> }
 ) {
   try {
     const session = await auth();
@@ -60,25 +47,15 @@ export async function POST(
       );
     }
 
-    const comment = await db.insert(comments).values({
+    const comment = await createComment({
       content,
       rating,
-      userId: session.user.id,
-      itemId: params.itemId,
-    }).returning();
-
-    const commentWithUser = await db.query.comments.findFirst({
-      where: eq(comments.id, comment[0].id),
-      with: {
-        user: {
-          columns: {
-            id: true,
-            name: true,
-            image: true,
-          },
-        },
-      },
+      userId: session.user.id!,
+      itemId: (await params).itemId,
     });
+
+    const itemComments = await getCommentsByItemId((await params).itemId);
+    const commentWithUser = itemComments.find((c) => c.id === comment.id);
 
     return NextResponse.json(commentWithUser);
   } catch (error) {
