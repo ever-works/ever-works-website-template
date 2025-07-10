@@ -1,7 +1,8 @@
 import { Button } from "@heroui/react";
 import { X } from "lucide-react";
+import { useMemo } from "react";
 import { ActiveFiltersProps, TagId } from "../../types";
-import { containerStyles, textStyles } from "../../utils/style-utils";
+import { containerStyles, textStyles, filterItemStyles } from "../../utils/style-utils";
 
 /**
  * Active filters component
@@ -21,6 +22,25 @@ export function ActiveFilters({
   clearAllFilters,
 }: ActiveFiltersProps) {
   const hasActiveFilters = searchTerm || selectedTags.length > 0 || selectedCategories.length > 0 || sortBy !== "popularity";
+
+  // Memoize category and tag lookups to prevent unnecessary iterations
+  const selectedCategoryData = useMemo(() => {
+    return selectedCategories
+      .map((categoryId) => {
+        const category = availableCategories.find((c) => c.id === categoryId);
+        return category ? { id: categoryId, name: category.name } : null;
+      })
+      .filter((item): item is { id: string; name: string } => item !== null);
+  }, [selectedCategories, availableCategories]);
+
+  const selectedTagData = useMemo(() => {
+    return selectedTags
+      .map((tagId) => {
+        const tag = availableTags.find((t) => t.id === tagId);
+        return tag ? { id: tagId, name: tag.name } : null;
+      })
+      .filter((item): item is { id: TagId; name: string } => item !== null);
+  }, [selectedTags, availableTags]);
 
   if (!hasActiveFilters) {
     return null;
@@ -58,11 +78,11 @@ export function ActiveFilters({
             <span className={textStyles.label}>
               Search:
             </span>
-            <span className="inline-flex items-center px-3 py-1 rounded-lg bg-theme-primary-100 dark:bg-gray-800 text-theme-primary-700 dark:text-theme-primary-400 text-sm font-medium border border-theme-primary-200 dark:border-gray-700">
+            <span className={`${filterItemStyles.base} ${filterItemStyles.primary}`}>
               {searchTerm}
               <button
                 onClick={() => setSearchTerm("")}
-                className="ml-2 text-theme-primary-600/70 dark:text-theme-primary-400/70 hover:text-theme-primary-800 dark:hover:text-theme-primary-300"
+                className={filterItemStyles.removeButton.primary}
               >
                 <X className="w-3 h-3" />
               </button>
@@ -70,56 +90,50 @@ export function ActiveFilters({
           </div>
         )}
 
-        {selectedTags.length > 0 && (
+        {selectedTagData.length > 0 && (
           <div className="space-y-2">
             <span className={textStyles.label}>
               Selected Tags:
             </span>
             <div className="flex flex-wrap gap-2">
-              {selectedTags.map((tagId) => {
-                const tag = availableTags.find((t) => t.id === tagId);
-                return tag ? (
-                  <span
-                    key={tagId}
-                    className="inline-flex items-center px-3 py-1 rounded-lg bg-theme-primary-100 dark:bg-gray-800 text-theme-primary-700 dark:text-theme-primary-400 text-sm font-medium border border-theme-primary-200 dark:border-gray-700"
+              {selectedTagData.map((tag) => (
+                <span
+                  key={tag.id}
+                  className={`${filterItemStyles.base} ${filterItemStyles.primary}`}
+                >
+                  {tag.name}
+                  <button
+                    onClick={() => removeSelectedTag(tag.id)}
+                    className={filterItemStyles.removeButton.primary}
                   >
-                    {tag.name}
-                    <button
-                      onClick={() => removeSelectedTag(tagId)}
-                      className="ml-2 text-theme-primary-600/70 dark:text-theme-primary-400/70 hover:text-theme-primary-800 dark:hover:text-theme-primary-300"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
-                ) : null;
-              })}
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
             </div>
           </div>
         )}
 
-        {selectedCategories.length > 0 && (
+        {selectedCategoryData.length > 0 && (
           <div className="space-y-2">
             <span className={textStyles.label}>
               Selected Categories:
             </span>
             <div className="flex flex-wrap gap-2">
-              {selectedCategories.map((categoryId) => {
-                const category = availableCategories.find((c) => c.id === categoryId);
-                return category ? (
-                  <span
-                    key={categoryId}
-                    className="inline-flex items-center px-3 py-1 rounded-lg bg-theme-primary-100 dark:bg-gray-800 text-theme-primary-700 dark:text-theme-primary-400 text-sm font-medium border border-theme-primary-200 dark:border-gray-700"
+              {selectedCategoryData.map((category) => (
+                <span
+                  key={category.id}
+                  className={`${filterItemStyles.base} ${filterItemStyles.primary}`}
+                >
+                  {category.name}
+                  <button
+                    onClick={() => removeSelectedCategory(category.id)}
+                    className={filterItemStyles.removeButton.blue}
                   >
-                    {category.name}
-                    <button
-                      onClick={() => removeSelectedCategory(categoryId)}
-                      className="ml-2 text-blue-600/70 dark:text-blue-400/70 hover:text-blue-800 dark:hover:text-blue-300"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
-                ) : null;
-              })}
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
             </div>
           </div>
         )}
@@ -129,7 +143,7 @@ export function ActiveFilters({
             <span className={textStyles.label}>
               Sort:
             </span>
-            <span className="inline-flex items-center px-3 py-1 rounded-lg bg-green-100 dark:bg-gray-800 text-green-700 dark:text-green-400 text-sm font-medium border border-green-200 dark:border-gray-700">
+            <span className={`${filterItemStyles.base} ${filterItemStyles.green}`}>
               {sortBy === "name-asc"
                 ? "Name (A-Z)"
                 : sortBy === "name-desc"
@@ -141,7 +155,7 @@ export function ActiveFilters({
                       : "Popularity"}
               <button
                 onClick={() => setSortBy("popularity")}
-                className="ml-2 text-green-600/70 dark:text-green-400/70 hover:text-green-800 dark:hover:text-green-300"
+                className={filterItemStyles.removeButton.green}
               >
                 <X className="w-3 h-3" />
               </button>
