@@ -111,6 +111,8 @@ export function TagsList({
           {tag.icon_url && (
             <Image
               src={tag.icon_url}
+              width={16}
+              height={16}
               className={cn(
                 "w-4 h-4 mr-1.5 transition-transform",
                 isActive ? "brightness-200" : ""
