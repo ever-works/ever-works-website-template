@@ -502,8 +502,8 @@ export function SharedCard(props: ExtendedCardProps & { filteredCount?: number; 
 
   // Reset to page 1 when filters change
   const filterKey = useMemo(() => 
-    `${searchTerm}-${selectedTags.join(',')}-${sortBy}`,
-    [searchTerm, selectedTags, sortBy]
+    `${searchTerm}-${selectedTags.join(',')}-${selectedTag || ''}-${sortBy}`,
+    [searchTerm, selectedTags, selectedTag, sortBy]
   );
   
   const { filtered, paginated, hasActiveFilters } = useProcessedItems(
