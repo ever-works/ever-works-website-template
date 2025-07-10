@@ -72,11 +72,16 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
           />
         </div>
         <ListingClient 
-          {...props}
+          total={props.total}
+          start={props.start}
+          page={props.page}
+          basePath={props.basePath}
+          categories={props.categories}
+          tags={props.tags}
           items={paginatedItems}
           filteredCount={props.filteredAndSortedItems.length}
           totalCount={props.items.length}
-          config={CardPresets.showViewToggle} 
+          config={CardPresets.showViewToggle}
         />
         {totalPagesCount > 1 && (
           <div className="mt-8 flex items-center justify-center">

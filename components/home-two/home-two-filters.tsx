@@ -9,6 +9,14 @@ import { HomeTwoCategories } from "./home-two-categories";
 import { LayoutKey } from "../layouts";
 import { SortOption } from "../filters/types";
 
+const SORT_OPTIONS: SortOption[] = [
+  'popularity',
+  'name-asc',
+  'name-desc',
+  'date-desc',
+  'date-asc',
+];
+
 type Home2FiltersProps = {
   categories: Category[];
   tags: Tag[];
@@ -49,8 +57,10 @@ export function HomeTwoFilters({
   };
 
   const handleSortChange = (sort: string) => {
-    setSortBy(sort as SortOption);
-    onFilterChange?.();
+    if (SORT_OPTIONS.includes(sort as SortOption)) {
+      setSortBy(sort as SortOption);
+      onFilterChange?.();
+    }
   };
 
   return (

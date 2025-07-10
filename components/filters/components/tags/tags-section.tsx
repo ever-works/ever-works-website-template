@@ -17,7 +17,6 @@ export function Tags({
   enableSticky = false,
   maxVisibleTags,
   mode = "navigation", // "navigation" | "filter"
-  allItems = [], // add allItems prop
 }: TagsProps & { mode?: "navigation" | "filter"; allItems?: any[] }) {
   const pathname = usePathname();
   const { isSticky } = useStickyHeader({ enableSticky });
@@ -131,7 +130,6 @@ export function Tags({
           isAnyTagActive={isAnyTagActive}
           selectedTags={selectedTags}
           setSelectedTags={setSelectedTags}
-          allItems={allItems}
         />
       </div>
     </div>

@@ -17,8 +17,6 @@ function itemHasCategory(item: ItemData, selectedCategories: string[]): boolean 
   const itemCategories = Array.isArray(item.category)
     ? item.category
     : [item.category];
-  // Debug log: print item and selectedCategories
-  console.log('[DEBUG] Filtering item:', item.name, 'itemCategories:', itemCategories, 'selectedCategories:', selectedCategories);
   return itemCategories.some(cat => {
     if (typeof cat === "string") return selectedCategories.includes(cat);
     if (typeof cat === "object" && cat && "id" in cat) return selectedCategories.includes(cat.id);
@@ -27,7 +25,7 @@ function itemHasCategory(item: ItemData, selectedCategories: string[]): boolean 
 }
 
 export function useHomeTwoLogic({ items, start, selectedCategories }: UseHome2LogicProps) {
-  console.log('[DEBUG] useHomeTwoLogic selectedCategories:', selectedCategories);
+  
   const filteredItems = selectedCategories.length
     ? items.filter(item => itemHasCategory(item, selectedCategories))
     : items;
