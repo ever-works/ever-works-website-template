@@ -93,6 +93,7 @@ export interface Config {
 
 interface FetchOptions {
   lang?: string;
+  sortTags?: boolean;
 }
 
 async function getConfig() {
@@ -255,6 +256,11 @@ export async function fetchItems(options: FetchOptions = {}) {
     })
   );
 
+  const tagsArray = Array.from(tags.values());
+  const sortedTags = options.sortTags 
+    ? tagsArray.sort((a, b) => a.name.localeCompare(b.name))
+    : tagsArray;
+
   return {
     total: items.length,
     items: items.sort((a, b) => {
@@ -263,7 +269,7 @@ export async function fetchItems(options: FetchOptions = {}) {
       return b.updatedAt.getDate() - a.updatedAt.getDate();
     }),
     categories: Array.from(categories.values()),
-    tags: Array.from(tags.values()),
+    tags: sortedTags,
   };
 }
 
@@ -342,17 +348,34 @@ function eqID(value: string | { id: string }, id: string) {
 
 export async function fetchByCategory(raw: string, options: FetchOptions = {}) {
   const category = decodeURI(raw);
-  const { categories, items, total, tags } = await fetchItems(options);
+  const { categories, items, tags } = await fetchItems(options);
+  
+  const filteredItems = items.filter((item) => {
+    if (Array.isArray(item.category)) {
+      return item.category.some((c) => eqID(c, category));
+    }
+    return eqID(item.category, category);
+  });
+
+  const tagCountMap = new Map();
+  for (const item of filteredItems) {
+    if (Array.isArray(item.tags)) {
+      for (const tag of item.tags) {
+        const tagId = typeof tag === 'string' ? tag : tag.id;
+        tagCountMap.set(tagId, (tagCountMap.get(tagId) || 0) + 1);
+      }
+    }
+  }
+  // Only include tags present in filtered items, with correct counts
+  const filteredTags = Array.from(tags.values())
+    .filter(tag => tagCountMap.has(tag.id))
+    .map(tag => ({ ...tag, count: tagCountMap.get(tag.id) }));
+
   return {
     categories,
-    tags,
-    total,
-    items: items.filter((item) => {
-      if (Array.isArray(item.category)) {
-        return item.category.some((c) => eqID(c, category));
-      }
-      return eqID(item.category, category);
-    }),
+    tags: filteredTags,
+    total: filteredItems.length,
+    items: filteredItems,
   };
 }
 
@@ -367,6 +390,36 @@ export async function fetchByTag(raw: string, options: FetchOptions = {}) {
       if (Array.isArray(item.tags)) {
         return item.tags.some((t) => eqID(t, tag));
       }
+      return false;
     }),
+  };
+}
+
+export async function fetchByCategoryAndTag(category: string, tag: string, options: FetchOptions = {}) {
+  const { categories, items, tags } = await fetchItems(options);
+  
+  const filteredItems = items.filter((item) => {
+
+    const belongsToCategory = Array.isArray(item.category)
+      ? item.category.some((c) => eqID(c, category))
+      : eqID(item.category, category);
+
+    if (!belongsToCategory) return false;
+
+    return Array.isArray(item.tags)
+      ? item.tags.some((t) => eqID(t, tag))
+      : eqID(item.tags, tag);
+  });
+
+  const originalTags = tags.map(tag => ({
+    ...tag,
+    count: tag.count ?? 0
+  }));
+
+  return {
+    categories,
+    tags: originalTags,
+    total: filteredItems.length,
+    items: filteredItems,
   };
 }

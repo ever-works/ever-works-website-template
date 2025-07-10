@@ -1,10 +1,11 @@
 import { useTranslations } from "next-intl";
 import { SortControl } from "./sort-control";
 import { containerStyles, textStyles } from "../../utils/style-utils";
+import { SortOption } from "../../types";
 
 interface FilterControlsProps {
-  sortBy: string;
-  setSortBy: (sort: string) => void;
+  sortBy: SortOption;
+  setSortBy: (sort: SortOption) => void;
 }
 
 /**

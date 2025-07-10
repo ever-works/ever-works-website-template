@@ -39,20 +39,17 @@ export default async function TagListing({
   const { tags: tagMeta, locale } = resolvedParams;
   const [rawTag, rawPage] = tagMeta;
   const tag = decodeURI(rawTag);
-  const { start, page } = paginateMeta(rawPage || "1");
-  const { items, categories, total, tags } = await fetchByTag(tag, {
+  const { page } = paginateMeta(rawPage || "1");
+  const { total, tags } = await fetchByTag(tag, {
     lang: locale,
   });
   
   return (
     <ListingTags
       total={total}
-      start={start}
       page={page}
       basePath={`/tags/tag/${tag}`}
-      categories={categories}
       tags={tags}
-      items={items}
     />
   );
 } 

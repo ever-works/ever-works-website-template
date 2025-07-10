@@ -7,6 +7,7 @@ import { useFilters } from "@/hooks/use-filters";
 import { SearchInput } from "../ui/search-input";
 import { HomeTwoCategories } from "./home-two-categories";
 import { LayoutKey } from "../layouts";
+import { SortOption } from "../filters/types";
 
 type Home2FiltersProps = {
   categories: Category[];
@@ -48,7 +49,7 @@ export function HomeTwoFilters({
   };
 
   const handleSortChange = (sort: string) => {
-    setSortBy(sort);
+    setSortBy(sort as SortOption);
     onFilterChange?.();
   };
 

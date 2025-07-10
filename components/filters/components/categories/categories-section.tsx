@@ -1,6 +1,7 @@
 import { Accordion, AccordionItem } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { CategoriesProps } from "../../types";
+import { Tag } from "@/lib/content";
 import { CategoriesList } from "./categories-list";
 import { SearchInput } from "../../../ui/search-input";
 import { useFilters } from "../../context/filter-context";
@@ -12,7 +13,7 @@ import { ActiveFilters } from "../active-filters/active-filters";
  * Main categories section component
  * Handles both mobile and desktop layouts for categories
  */
-export function Categories({ total, categories }: CategoriesProps) {
+export function Categories({ total, categories, tags }: CategoriesProps & { tags: Tag[] }) {
   const t = useTranslations("listing");
   const { 
     searchTerm, 
@@ -28,7 +29,7 @@ export function Categories({ total, categories }: CategoriesProps) {
   return (
     <>
       {/* Mobile Layout */}
-      <div className="md:hidden">
+      <div className="lg:hidden">
         <Accordion
           variant="bordered"
           className="shadow-sm bg-white dark:bg-gray-900/90 border border-gray-100 dark:border-gray-700 rounded-xl transition-colors duration-300"
@@ -55,7 +56,7 @@ export function Categories({ total, categories }: CategoriesProps) {
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden md:flex flex-col w-full max-w-64 gap-6">
+      <div className="hidden lg:flex flex-col w-full max-w-80 gap-8">
         {/* Search Bar */}
         <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         
@@ -81,7 +82,7 @@ export function Categories({ total, categories }: CategoriesProps) {
           setSelectedCategories={setSelectedCategories}
           sortBy={sortBy}
           setSortBy={setSortBy}
-          availableTags={categories}
+          availableTags={tags}
           availableCategories={categories}
           clearAllFilters={() => {
             setSearchTerm("");
@@ -93,12 +94,12 @@ export function Categories({ total, categories }: CategoriesProps) {
 
         {/* Sort By Section (styled card, now outside categories) */}
         <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden shadow-sm dark:shadow-lg transition-colors duration-300">
-          <div className="p-3 lg:p-4 border-b border-gray-200 dark:border-gray-700/50">
+          <div className="p-4 lg:p-5 border-b border-gray-200 dark:border-gray-700/50">
             <h2 className="text-base lg:text-lg font-semibold text-gray-900 dark:text-gray-200 transition-colors duration-300 capitalize">
               {t("SORT_BY")}
             </h2>
           </div>
-          <div className="p-3 lg:p-4">
+          <div className="p-4 lg:p-5">
             <SortControl sortBy={sortBy} setSortBy={setSortBy} />
           </div>
         </div>

@@ -4,6 +4,7 @@ import { TagsProps } from "../../types";
 import { TagsList } from "./tags-list";
 import { useStickyHeader } from "../../hooks/use-sticky-header";
 import { useTagVisibility } from "../../hooks/use-tag-visibility";
+import { useFilters } from "../../context/filter-context";
 
 /**
  * Main tags section component
@@ -16,9 +17,11 @@ export function Tags({
   enableSticky = false,
   maxVisibleTags,
   total,
-}: TagsProps) {
+  mode = "navigation", // "navigation" | "filter"
+}: TagsProps & { mode?: "navigation" | "filter" }) {
   const pathname = usePathname();
   const { isSticky } = useStickyHeader({ enableSticky });
+  const { selectedTags, setSelectedTags } = useFilters();
   const {
     showAllTags,
     visibleTags,
@@ -26,17 +29,19 @@ export function Tags({
     toggleTagVisibility,
   } = useTagVisibility(tags, maxVisibleTags);
 
-  const isAnyTagActive = tags.some((tag) => {
-    const tagBasePath = basePath
-      ? `${basePath}/${tag.id}`
-      : `/tags/${tag.id}`;
-    return pathname.startsWith(encodeURI(tagBasePath));
-  });
+  const isAnyTagActive = mode === "filter" 
+    ? selectedTags.length > 0
+    : tags.some((tag) => {
+        const tagBasePath = basePath
+          ? `${basePath}/${encodeURIComponent(tag.id)}`
+          : `/tags/${encodeURIComponent(tag.id)}`;
+        return pathname.startsWith(tagBasePath);
+      });
 
   return (
     <div
       className={cn(
-        "p-4 transition-all duration-300",
+        "transition-all duration-300",
         enableSticky
           ? cn(
               "sticky top-4 z-10",
@@ -48,7 +53,7 @@ export function Tags({
       )}
     >
       <div className="relative z-10">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-4">
           <h3
             className={cn(
               "text-lg font-bold transition-colors duration-300",
@@ -125,6 +130,8 @@ export function Tags({
           showAllTags={showAllTags}
           visibleTags={visibleTags}
           isAnyTagActive={isAnyTagActive}
+          selectedTags={selectedTags}
+          setSelectedTags={setSelectedTags}
         />
       </div>
     </div>
