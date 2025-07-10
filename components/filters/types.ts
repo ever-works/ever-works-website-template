@@ -108,6 +108,22 @@ export interface CategoryItemProps {
 }
 
 /**
+ * Category item component props with strict typing for filter mode
+ */
+export interface CategoryItemFilterProps extends Omit<CategoryItemProps, 'mode' | 'onToggle'> {
+  mode: "filter";
+  onToggle: (categoryId: CategoryId) => void;
+}
+
+/**
+ * Category item component props for navigation mode
+ */
+export interface CategoryItemNavigationProps extends Omit<CategoryItemProps, 'mode' | 'onToggle'> {
+  mode?: "navigation";
+  onToggle?: never;
+}
+
+/**
  * Filter controls component props
  */
 export interface FilterControlsProps {

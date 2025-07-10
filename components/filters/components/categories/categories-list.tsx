@@ -8,19 +8,33 @@ import { useFilters } from "../../context/filter-context";
  * Categories list component
  * Renders a list of category items with "All Categories" option
  */
-export function CategoriesList({ categories, mode = "navigation" }: CategoriesListProps) {
+export function CategoriesList({ 
+  categories, 
+  mode = "navigation",
+  selectedCategories: propSelectedCategories,
+  onCategoryToggle: propOnCategoryToggle
+}: CategoriesListProps) {
   const t = useTranslations("listing");
   const pathname = usePathname();
-  const { selectedCategories, toggleSelectedCategory, clearSelectedCategories } = useFilters();
+  const { selectedCategories: contextSelectedCategories, toggleSelectedCategory, clearSelectedCategories } = useFilters();
 
+  // Use props if provided, otherwise fall back to context
+  const selectedCategories = propSelectedCategories ?? contextSelectedCategories;
+  
   const totalItems = categories.reduce((sum, cat) => sum + (cat.count || 0), 0);
 
   // Handle category toggle for filter mode
   const handleCategoryToggle = (categoryId: string) => {
-    if (categoryId === "all") {
-      clearSelectedCategories();
+    if (propOnCategoryToggle) {
+      // Use prop callback if provided
+      propOnCategoryToggle(categoryId);
     } else {
-      toggleSelectedCategory(categoryId);
+      // Fall back to context methods
+      if (categoryId === "all") {
+        clearSelectedCategories();
+      } else {
+        toggleSelectedCategory(categoryId);
+      }
     }
   };
 
