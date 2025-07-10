@@ -24,7 +24,11 @@ export function CategoryItem({
   const handleClick = (e: React.MouseEvent) => {
     if (mode === "filter") {
       e.preventDefault();
-      onToggle?.(category.id);
+      if (onToggle) {
+        onToggle(category.id);
+      } else {
+        console.warn("CategoryItem: onToggle is required when mode is 'filter'");
+      }
     }
   };
 
