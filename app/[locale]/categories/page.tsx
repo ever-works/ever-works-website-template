@@ -13,7 +13,23 @@ export default async function CategoriesPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const { categories } = await fetchItems({ lang: locale });
+  const { categories, tags, items } = await fetchItems({ lang: locale });
 
-  return <ListingCategories categories={categories} />;
+  // Calculate pagination info
+  const total = items.length;
+  const page = 1;
+  const start = 0;
+  const basePath = "/categories";
+
+  return (
+    <ListingCategories 
+      categories={categories}
+      tags={tags}
+      items={items}
+      total={total}
+      start={start}
+      page={page}
+      basePath={basePath}
+    />
+  );
 }

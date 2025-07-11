@@ -23,7 +23,7 @@ type ListingProps = {
 };
 
 export default function GlobalsClient(props: ListingProps) {
-  const { layoutHome = LayoutHome.HOME_ONE } = useLayoutTheme();
+  const { layoutHome = LayoutHome.HOME_ONE, paginationType } = useLayoutTheme();
   const { selectedCategories, searchTerm, selectedTags, sortBy, setSelectedTags } = useFilters();
   const sortedTags = sortByNumericProperty(props.tags);
   const sortedCategories = sortByNumericProperty(props.categories);
@@ -41,8 +41,9 @@ export default function GlobalsClient(props: ListingProps) {
     return filterItems(props.items, {
       searchTerm,
       selectedTags,
+      selectedCategories,
     });
-  }, [props.items, searchTerm, selectedTags]);
+  }, [props.items, searchTerm, selectedTags, selectedCategories]);
 
   // Paginate filtered items
   const paginatedItems = useMemo(() => {
@@ -57,7 +58,7 @@ export default function GlobalsClient(props: ListingProps) {
       params.set('page', '1');
       window.history.replaceState({}, '', `?${params.toString()}`);
     }
-  }, [selectedTags, searchTerm, searchParams, page]);
+  }, [selectedTags, selectedCategories, searchTerm, searchParams, page]);
 
   // Client-side pagination state for Home 1
   const [currentPage, setCurrentPage] = useState(1);
@@ -113,8 +114,6 @@ export default function GlobalsClient(props: ListingProps) {
 
   if (!initialized) return null;
 
-
-
   if (layoutHome === LayoutHome.HOME_ONE) {
     return (
       <div className="pb-12 px-4 sm:px-6 lg:px-8 xl:px-12">
@@ -126,17 +125,18 @@ export default function GlobalsClient(props: ListingProps) {
             <Tags tags={sortedTags} enableSticky={true} maxVisibleTags={5} allItems={props.items} />
             <ListingClient 
               {...props}
-              items={homeOnePaginatedItems}
+              items={paginationType === "infinite" ? filteredAndSortedItems : homeOnePaginatedItems}
               filteredCount={filteredAndSortedItems.length}
               totalCount={props.items.length}
             />
-            {totalPagesCount > 1 && (
+            {paginationType === "standard" && totalPagesCount > 1 && (
               <div className="flex items-center justify-center">
                 <Paginate
                   basePath={props.basePath}
                   initialPage={currentPage}
                   total={totalPagesCount}
                   onPageChange={handlePageChange}
+                  paginationType={paginationType}
                 />
               </div>
             )}
