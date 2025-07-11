@@ -53,7 +53,7 @@ export default function ListingCategories(props: ListingCategoriesProps) {
           tags={props.tags}
         />
       )}
-      {paginationType === "standard" && (
+      {paginationType === "standard" && false && (
         <footer className="flex items-center justify-center">
           <Paginate
             basePath={props.basePath}
