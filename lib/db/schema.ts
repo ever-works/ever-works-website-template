@@ -119,6 +119,22 @@ export const newsletterSubscriptions = pgTable("newsletter_subscriptions", {
   source: text("source").default("footer"), // footer, popup, etc.
 });
 
+// ######################### Comment Schema #########################
+export const comments = pgTable("comments", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  content: text("content").notNull(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  itemId: text("itemId").notNull(),
+  rating: integer("rating").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  deletedAt: timestamp("deleted_at"),
+});
+
 export const VoteType = {
   UPVOTE: 'upvote',
   DOWNVOTE: 'downvote',
@@ -149,6 +165,9 @@ export const votes = pgTable('votes', {
   createdAtIndex: index('votes_created_at_idx').on(table.createdAt),
 }));
 
+export type Comment = typeof comments.$inferSelect;
+export type NewComment = typeof comments.$inferInsert;
+export type CommentWithUser = Comment & { user: typeof users.$inferSelect };
 export type Vote = typeof votes.$inferSelect;
 export type InsertVote = typeof votes.$inferInsert;
 export type NewUser = typeof users.$inferInsert;

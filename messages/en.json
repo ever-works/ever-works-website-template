@@ -134,7 +134,8 @@
     "PUBLISHER": "Publisher",
     "WEBSITE": "Website",
     "PUBLISHED": "Published",
-    "NO_TAGS_AVAILABLE": "No tags available"
+    "NO_TAGS_AVAILABLE": "No tags available",
+    "RATING": "Rating"
   },
   "footer": {
     "ALL_RIGHTS_RESERVED": "All rights reserved",

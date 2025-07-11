@@ -4,7 +4,9 @@ import { ItemContent } from "./item-content";
 import { useTranslations } from "next-intl";
 import { slugify } from "@/lib/utils/slug";
 import { ShareButton } from "./share-button";
+import { CommentsSection } from "./comments-section";
 import { VoteButton } from "./vote-button";
+import { RatingDisplay } from "./rating-display";
 
 export interface ItemDetailProps {
   meta: {
@@ -154,6 +156,9 @@ export function ItemDetail({
                 </h2>
               </div>
               <div className="space-y-4">
+                <RatingDisplay itemId={meta.name} />
+
+                {/* Existing information items */}
                 <div className="flex justify-between items-center p-4 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-300 group">
                   <span className="text-gray-600 dark:text-gray-300 font-medium flex items-center gap-2">
                     <svg
@@ -352,6 +357,11 @@ export function ItemDetail({
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-2xl font-semibold mb-6">Comments</h2>
+        <CommentsSection itemId={meta.name} />
       </div>
     </div>
   );

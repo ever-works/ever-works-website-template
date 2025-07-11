@@ -1,6 +1,6 @@
 {
-  "id": "333341f9-1c08-479e-9b50-b0eef3c65916",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "1619909d-0a44-4d5b-a3a0-c3e55840a9dd",
+  "prevId": "333341f9-1c08-479e-9b50-b0eef3c65916",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -254,17 +254,17 @@
           "primaryKey": false,
           "notNull": true
         },
-        "userId": {
-          "name": "userId",
+        "user_id": {
+          "name": "user_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "itemId": {
-          "name": "itemId",
+        "item_id": {
+          "name": "item_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "rating": {
           "name": "rating",
@@ -296,12 +296,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "comments_userId_users_id_fk": {
-          "name": "comments_userId_users_id_fk",
+        "comments_user_id_users_id_fk": {
+          "name": "comments_user_id_users_id_fk",
           "tableFrom": "comments",
           "tableTo": "users",
           "columnsFrom": [
-            "userId"
+            "user_id"
           ],
           "columnsTo": [
             "id"

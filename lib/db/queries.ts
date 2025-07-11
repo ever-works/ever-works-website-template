@@ -11,9 +11,12 @@ import {
   newsletterSubscriptions,
   type NewNewsletterSubscription,
   type NewsletterSubscription,
+  comments,
   votes,
   InsertVote,
 } from "./schema";
+import { desc, isNull } from "drizzle-orm";
+import type { NewComment, CommentWithUser } from "@/lib/types/comment";
 
 export async function logActivity(
   userId: string,
@@ -342,3 +345,58 @@ export async function getVoteCountForItem(itemId: string): Promise<number> {
 }
 
 // export async function getActivityLogs() {}
+// ######################### Comment Queries #########################
+
+export async function createComment(data: NewComment) {
+  return (await db.insert(comments).values(data).returning())[0];
+}
+
+export async function getCommentsByItemId(itemId: string): Promise<CommentWithUser[]> {
+  return db
+    .select({
+      id: comments.id,
+      content: comments.content,
+      rating: comments.rating,
+      userId: comments.userId,
+      itemId: comments.itemId,
+      createdAt: comments.createdAt,
+      updatedAt: comments.updatedAt,
+      user: {
+        id: users.id,
+        name: users.name,
+        image: users.image,
+      },
+    })
+    .from(comments)
+    .innerJoin(users, eq(comments.userId, users.id))
+    .where(and(eq(comments.itemId, itemId), isNull(comments.deletedAt)))
+    .orderBy(desc(comments.createdAt));
+}
+
+export async function updateComment(id: string, content: string) {
+  const [comment] = await db
+    .update(comments)
+    .set({ content, updatedAt: new Date() })
+    .where(eq(comments.id, id))
+    .returning();
+  return comment;
+}
+
+export async function deleteComment(id: string) {
+  const [comment] = await db
+    .update(comments)
+    .set({ deletedAt: new Date() })
+    .where(eq(comments.id, id))
+    .returning();
+  return comment;
+}
+
+// ######################### Comment Queries #########################
+
+export async function getCommentById(id: string) {
+  return (await db.select().from(comments).where(eq(comments.id, id)).limit(1))[0];
+}
+
+export async function updateCommentRating(id: string, rating: number) {
+  return (await db.update(comments).set({ rating }).where(eq(comments.id, id)).returning())[0];
+}
