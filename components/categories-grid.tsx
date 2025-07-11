@@ -4,18 +4,79 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
 import { FiFolder } from "react-icons/fi";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import UniversalPagination from "@/components/universal-pagination";
+import { useLayoutTheme } from "@/components/context";
+import { Loader2 } from "lucide-react";
+import { useInView } from "react-intersection-observer";
 
 const PAGE_SIZE = 10;
 
+// Custom infinite loading for categories
+function useInfiniteCategories({ items, initialPage, perPage }: { items: Category[]; initialPage: number; perPage: number }) {
+  const { paginationType } = useLayoutTheme();
+  const [currentPage, setCurrentPage] = useState(initialPage);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const totalPages = Math.ceil(items.length / perPage);
+  const displayedItems = items.slice(0, currentPage * perPage);
+  const hasMore = currentPage < totalPages && displayedItems.length < items.length;
+
+  const loadMore = useCallback(async () => {
+    if (isLoading || !hasMore || paginationType !== "infinite") return;
+    setIsLoading(true);
+    setError(null);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setCurrentPage(prev => prev + 1);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error("Failed to load more categories"));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isLoading, hasMore, paginationType]);
+
+  return {
+    displayedItems,
+    hasMore,
+    isLoading,
+    error,
+    loadMore,
+  };
+}
+
 export default function CategoriesGrid({ categories }: { categories: Category[] }) {
+  const { paginationType } = useLayoutTheme();
   const [page, setPage] = useState(1);
 
   const sortedCategories = useMemo(() =>
     [...categories].sort((a, b) => (b.count ?? 0) - (a.count ?? 0)),
     [categories]
   );
+
+  // Infinite loading logic
+  const {
+    displayedItems: loadedCategories,
+    hasMore,
+    isLoading,
+    error,
+    loadMore,
+  } = useInfiniteCategories({
+    items: sortedCategories,
+    initialPage: 1,
+    perPage: PAGE_SIZE,
+  });
+
+  const { ref: loadMoreRef } = useInView({
+    onChange: (inView) => {
+      if (inView && !isLoading && hasMore && paginationType === "infinite" && loadedCategories.length > 0) {
+        loadMore();
+      }
+    },
+    threshold: 0.5,
+    rootMargin: "100px",
+  });
 
   const totalPages = useMemo(() =>
     Math.ceil(sortedCategories.length / PAGE_SIZE),
@@ -27,10 +88,13 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
     [sortedCategories, page]
   );
 
+  // Choose which categories to show
+  const categoriesToShow = paginationType === "infinite" ? loadedCategories : pagedCategories;
+
   return (
     <>
       <LayoutGrid>
-        {pagedCategories.map((category) => (
+        {categoriesToShow.map((category) => (
           <Link
             href={`/categories/category/${category.id}`}
             key={category.id}
@@ -51,7 +115,7 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
                 className="absolute inset-0 opacity-10 dark:opacity-20"
                 style={{
                   backgroundImage:
-                    "url('data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'0.05\' fill-rule=\'evenodd\'%3E%3Cpath d=\'M0 0h40v40H0V0zm1 1h38v38H1V1z\' /%3E%3C/g%3E%3C/svg%3E')",
+                    "url('data:image/svg+xml,%3Csvg width=&apos;40&apos; height=&apos;40&apos; viewBox=&apos;0 0 40 40&apos; xmlns=&apos;http://www.w3.org/2000/svg&apos;%3E%3Cg fill=&apos;#000000&apos; fill-opacity=&apos;0.05&apos; fill-rule=&apos;evenodd&apos;%3E%3Cpath d=&apos;M0 0h40v40H0V0zm1 1h38v38H1V1z&apos; /%3E%3C/g%3E%3C/svg%3E')",
                 }}
               />
               {/* Icon with animated background */}
@@ -96,7 +160,39 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
           </Link>
         ))}
       </LayoutGrid>
-      <UniversalPagination page={page} totalPages={totalPages} onPageChange={setPage} />
+      {/* Standard Pagination */}
+      {paginationType === "standard" && (
+        <UniversalPagination page={page} totalPages={totalPages} onPageChange={setPage} />
+      )}
+      {/* Infinite Scroll Loader */}
+      {paginationType === "infinite" && (
+        <div className="flex flex-col items-center gap-6 mt-16 mb-12">
+          {hasMore && (
+            <div ref={loadMoreRef} className="w-full flex items-center justify-center py-8">
+              {error ? (
+                <div className="text-center py-4">
+                  <p className="text-sm text-red-600 dark:text-red-400 mb-2">{error.message}</p>
+                  <button onClick={() => loadMore()} className="text-sm text-theme-primary-500 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 transition-colors">Retry</button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-theme-primary-500 dark:text-theme-primary-400">
+                  {isLoading && (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <span className="text-sm font-medium">Loading...</span>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+          {!hasMore && !error && (
+            <div className="text-center py-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400">You've reached the end</p>
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 } 
