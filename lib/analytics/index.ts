@@ -1,9 +1,17 @@
 import posthog from 'posthog-js';
 import * as Sentry from '@sentry/nextjs';
+import type { Event as SentryEvent } from '@sentry/nextjs';
 import { POST_HOG_HOST, POST_HOG_KEY } from '@/lib/constants';
 
 type EventProperties = Record<string, any>;
 type UserProperties = Record<string, any>;
+
+// Extend PostHog type to include Sentry integration
+declare module 'posthog-js' {
+  interface PostHog {
+    sentry?: typeof Sentry;
+  }
+}
 
 export class Analytics {
   private static instance: Analytics;
@@ -42,7 +50,28 @@ export class Analytics {
 
       // Link PostHog with Sentry
       if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+        // Set up Sentry integration
         posthog.sentry = Sentry;
+        
+        // Configure Sentry to send events to PostHog
+        Sentry.addIntegration({
+          name: 'PostHog',
+          setupOnce() {
+            Sentry.addEventProcessor((event: SentryEvent) => {
+              // Only send events to PostHog if we have a user
+              if (event.user) {
+                posthog.capture('sentry_error', {
+                  error: event.message,
+                  error_id: event.event_id,
+                  error_type: event.type,
+                  error_context: event.contexts,
+                  error_tags: event.tags,
+                });
+              }
+              return event;
+            });
+          },
+        });
       }
     }
 
