@@ -1,7 +1,7 @@
 "use client";
 import { useState, useMemo, useCallback } from "react";
 import { Tag } from "@/lib/content";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { TagsCards } from "@/components/tags-cards";
 import UniversalPagination from "@/components/universal-pagination";
 import Hero from "@/components/hero";
 import { useTranslations } from "next-intl";
@@ -92,20 +92,7 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
       className="min-h-screen text-center"
     >
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-          {tagsToShow.map((tag) => (
-            <Card key={tag.id} className="flex flex-col items-center justify-center p-6">
-              <CardHeader className="items-center text-center p-0 mb-3">
-                <CardTitle className="text-lg font-semibold text-theme-primary">
-                  #{tag.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-xs text-gray-500 dark:text-gray-400 p-0 mb-1">
-                {tag.count} items
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <TagsCards tags={tagsToShow} />
       </div>
       {/* Standard Pagination */}
       {paginationType === "standard" && (
