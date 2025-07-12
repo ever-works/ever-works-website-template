@@ -29,7 +29,7 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
   return (
     <>
       {/* Mobile Layout */}
-      <div className="lg:hidden">
+      <div className="md:hidden">
         <Accordion
           variant="bordered"
           className="shadow-sm bg-white dark:bg-gray-900/90 border border-gray-100 dark:border-gray-700 rounded-xl transition-colors duration-300"
@@ -71,7 +71,7 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden lg:flex flex-col w-full max-w-80 gap-8">
+      <div className="hidden md:flex flex-col w-full max-w-64 gap-6">
         {/* Search Bar */}
         <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         
@@ -124,12 +124,12 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
 
         {/* Sort By Section (styled card, now outside categories) */}
         <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden shadow-sm dark:shadow-lg transition-colors duration-300">
-          <div className="p-4 lg:p-5 border-b border-gray-200 dark:border-gray-700/50">
+          <div className="p-3 lg:p-4 border-b border-gray-200 dark:border-gray-700/50">
             <h2 className="text-base lg:text-lg font-semibold text-gray-900 dark:text-gray-200 transition-colors duration-300 capitalize">
               {t("SORT_BY")}
             </h2>
           </div>
-          <div className="p-4 lg:p-5">
+          <div className="p-3 lg:p-4">
             <SortControl sortBy={sortBy} setSortBy={setSortBy} />
           </div>
         </div>

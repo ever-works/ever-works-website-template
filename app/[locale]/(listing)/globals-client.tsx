@@ -116,12 +116,12 @@ export default function GlobalsClient(props: ListingProps) {
 
   if (layoutHome === LayoutHome.HOME_ONE) {
     return (
-      <div className="pb-12 px-4 sm:px-6 lg:px-8 xl:px-12">
-        <div className="flex flex-col lg:flex-row w-full gap-8 lg:gap-12 max-w-7xl mx-auto">
-          <div className="lg:sticky lg:top-4 lg:self-start lg:w-80 lg:flex-shrink-0">
+      <div className="pb-12">
+        <div className="flex flex-col md:flex-row w-full gap-5">
+          <div className="lg:sticky lg:top-4 lg:self-start">
             <Categories total={props.total} categories={sortedCategories} tags={sortedTags} />
           </div>
-          <div className="w-full">
+          <div className="w-full flex-1">
             <Tags tags={sortedTags} enableSticky={true} maxVisibleTags={5} allItems={props.items} />
             <ListingClient 
               {...props}
