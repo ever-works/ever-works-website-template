@@ -9,8 +9,9 @@ import UniversalPagination from "@/components/universal-pagination";
 import { useLayoutTheme } from "@/components/context";
 import { Loader2 } from "lucide-react";
 import { useInView } from "react-intersection-observer";
+import { PER_PAGE } from "@/lib/paginate";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = PER_PAGE;
 // Set to 0 for production, or e.g. 300 for development
 const ARTIFICIAL_DELAY = 300;
 
