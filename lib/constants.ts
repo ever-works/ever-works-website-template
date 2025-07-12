@@ -30,5 +30,10 @@ export const POSTHOG_AUTO_CAPTURE = getNextPublicEnv("POSTHOG_AUTO_CAPTURE", "fa
 export const POSTHOG_SAMPLE_RATE = process.env.NODE_ENV === 'production' ? 0.1 : 1.0;
 export const POSTHOG_SESSION_RECORDING_SAMPLE_RATE = process.env.NODE_ENV === 'production' ? 0.1 : 1.0;
 
+// Exception Tracking Configuration
+export const EXCEPTION_TRACKING_PROVIDER = getNextPublicEnv("EXCEPTION_TRACKING_PROVIDER", "both"); // "sentry" | "posthog" | "both"
+export const POSTHOG_EXCEPTION_TRACKING = getNextPublicEnv("POSTHOG_EXCEPTION_TRACKING", "true");
+export const SENTRY_EXCEPTION_TRACKING = getNextPublicEnv("SENTRY_EXCEPTION_TRACKING", "true");
 
 export type Locale = (typeof LOCALES)[number];
+export type ExceptionTrackingProvider = "sentry" | "posthog" | "both" | "none";

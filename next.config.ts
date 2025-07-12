@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
   generateEtags: false,
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
+  webpack: (config, { isServer }) => {
+    config.ignoreWarnings = [
+      { module: /@supabase\/realtime-js/ }
+    ];
+    return config;
+  },
   images: {
     remotePatterns: [
       {
@@ -36,7 +42,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  /* config options here */
   async rewrites() {
     return [
       {
@@ -49,7 +54,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-};
+} satisfies NextConfig;
 
 const withNextIntl = createNextIntlPlugin();
 

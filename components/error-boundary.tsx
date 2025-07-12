@@ -23,9 +23,10 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    analytics.captureError(error, {
+    analytics.captureException(error, {
       ...errorInfo,
       componentStack: errorInfo.componentStack,
+      type: 'react-error-boundary',
     });
   }
 
