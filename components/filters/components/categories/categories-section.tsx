@@ -26,6 +26,18 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
     setSelectedCategories
   } = useFilters();
 
+  const handleCategoryToggle = (categoryId: string) => {
+    if (categoryId === "all" || categoryId === "clear-all") {
+      setSelectedCategories([]);
+    } else {
+      setSelectedCategories(prev =>
+        prev.includes(categoryId)
+          ? prev.filter(id => id !== categoryId)
+          : [...prev, categoryId]
+      );
+    }
+  };
+
   return (
     <>
       {/* Mobile Layout */}
@@ -53,17 +65,7 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
                 categories={categories} 
                 mode="filter" 
                 selectedCategories={selectedCategories}
-                onCategoryToggle={(categoryId) => {
-                  if (categoryId === "all" || categoryId === "clear-all") {
-                    setSelectedCategories([]);
-                  } else {
-                    setSelectedCategories(prev => 
-                      prev.includes(categoryId) 
-                        ? prev.filter(id => id !== categoryId)
-                        : [...prev, categoryId]
-                    );
-                  }
-                }}
+                onCategoryToggle={handleCategoryToggle}
               />
             </div>
           </AccordionItem>
@@ -87,17 +89,7 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
               categories={categories} 
               mode="filter" 
               selectedCategories={selectedCategories}
-              onCategoryToggle={(categoryId) => {
-                if (categoryId === "all" || categoryId === "clear-all") {
-                  setSelectedCategories([]);
-                } else {
-                  setSelectedCategories(prev => 
-                    prev.includes(categoryId) 
-                      ? prev.filter(id => id !== categoryId)
-                      : [...prev, categoryId]
-                  );
-                }
-              }}
+              onCategoryToggle={handleCategoryToggle}
             />
           </div>
         </div>
