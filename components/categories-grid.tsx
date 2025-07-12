@@ -11,6 +11,8 @@ import { Loader2 } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 
 const PAGE_SIZE = 10;
+// Set to 0 for production, or e.g. 300 for development
+const ARTIFICIAL_DELAY = 300;
 
 // Custom infinite loading for categories
 function useInfiniteCategories({ items, initialPage, perPage }: { items: Category[]; initialPage: number; perPage: number }) {
@@ -28,7 +30,9 @@ function useInfiniteCategories({ items, initialPage, perPage }: { items: Categor
     setIsLoading(true);
     setError(null);
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
+      if (ARTIFICIAL_DELAY) {
+        await new Promise(resolve => setTimeout(resolve, ARTIFICIAL_DELAY));
+      }
       setCurrentPage(prev => prev + 1);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to load more categories"));
@@ -188,7 +192,7 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
           )}
           {!hasMore && !error && (
             <div className="text-center py-4">
-              <p className="text-sm text-gray-500 dark:text-gray-400">You've reached the end</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">You&apos;ve reached the end</p>
             </div>
           )}
         </div>
