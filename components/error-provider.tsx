@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import ErrorBoundary from './error-boundary';
+import { ErrorBoundary } from './error-boundary';
 
 interface ErrorProviderProps {
   children: React.ReactNode;
