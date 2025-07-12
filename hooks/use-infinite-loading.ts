@@ -33,6 +33,9 @@ export function useInfiniteLoading({
   const displayedItems = items.slice(0, currentPage * perPage);
   const hasMore = currentPage < totalPages && displayedItems.length < items.length;
 
+  // Set to 0 for production, or e.g. 300 for development
+  const ARTIFICIAL_DELAY = 300;
+
   const loadMore = useCallback(async () => {
     if (isLoading || !hasMore || paginationType !== "infinite") return;
 
@@ -40,8 +43,9 @@ export function useInfiniteLoading({
     setError(null);
 
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (ARTIFICIAL_DELAY) {
+        await new Promise(resolve => setTimeout(resolve, ARTIFICIAL_DELAY));
+      }
       setCurrentPage(prev => prev + 1);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to load more items"));
