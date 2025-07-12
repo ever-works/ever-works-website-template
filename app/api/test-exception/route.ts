@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       
       case 'reference':
         // This will throw a ReferenceError
-        // @ts-ignore
+        // @ts-expect-error - Intentionally calling undefined function to test error handling
         nonExistentFunction();
         break;
       

@@ -18,7 +18,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(_: Error): State {
+  static getDerivedStateFromError(): State {
     return { hasError: true };
   }
 
@@ -36,7 +36,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
         <div className="flex min-h-[400px] w-full flex-col items-center justify-center space-y-4 text-center">
           <h2 className="text-2xl font-semibold">Something went wrong</h2>
           <p className="text-muted-foreground">
-            We've been notified and are working to fix the issue.
+            We&apos;ve been notified and are working to fix the issue.
           </p>
           <button
             onClick={() => this.setState({ hasError: false })}
