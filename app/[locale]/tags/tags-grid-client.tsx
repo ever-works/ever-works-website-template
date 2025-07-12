@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Tag } from "@/lib/content";
 import { TagsCards } from "@/components/tags-cards";
 import UniversalPagination from "@/components/universal-pagination";
@@ -30,10 +30,15 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
   const pagedTags = useMemo(() => tags.slice((page - 1) * itemsPerPage, page * itemsPerPage), [tags, page, itemsPerPage]);
   const tagsToShow = paginationType === "infinite" ? loadedTags : pagedTags;
 
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
   const { ref: loadMoreRef } = useInView({
     onChange: (inView) => {
       if (inView && !isLoading && hasMore && paginationType === "infinite" && loadedTags.length > 0) {
-        loadMore();
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
+          loadMore();
+        }, 150); // 150ms debounce
       }
     },
     threshold: 0.5,
