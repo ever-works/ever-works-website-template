@@ -50,6 +50,7 @@ function useInfiniteTags({ items, initialPage, perPage }: { items: Tag[]; initia
 
 export default function TagsGridClient({ tags }: { tags: Tag[] }) {
   const t = useTranslations("listing");
+  const tCommon = useTranslations("common");
   const { paginationType, itemsPerPage } = useLayoutTheme();
   const [page, setPage] = useState(1);
 
@@ -90,7 +91,9 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
           {t("TAGS", { defaultValue: "Tags" })}
         </span>
       }
-      description={"Browse all tags in our directory."}
+      description={tCommon("TAGS_DESCRIPTION", { 
+        defaultValue: "Browse all tags in our directory." 
+      })}
       className="min-h-screen text-center"
     >
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">

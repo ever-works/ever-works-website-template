@@ -18,6 +18,7 @@ export default function ListingTags({
   basePath: string;
 }) {
   const t = useTranslations("listing");
+  const tCommon = useTranslations("common");
 
   return (
     <Hero
@@ -27,7 +28,9 @@ export default function ListingTags({
           {t("TAGS", { defaultValue: "Tags" })}
         </span>
       }
-      description={"Browse all tags in our directory."}
+      description={tCommon("TAGS_DESCRIPTION", { 
+        defaultValue: "Browse all tags in our directory." 
+      })}
       className="min-h-screen text-center"
     >
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">

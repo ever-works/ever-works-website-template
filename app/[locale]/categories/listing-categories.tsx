@@ -27,6 +27,7 @@ interface ListingCategoriesProps {
 export default function ListingCategories(props: ListingCategoriesProps) {
   const { layoutHome = LayoutHome.HOME_ONE, paginationType } = useLayoutTheme();
   const t = useTranslations("listing");
+  const tCommon = useTranslations("common");
 
   return (
     <Hero
@@ -36,7 +37,9 @@ export default function ListingCategories(props: ListingCategoriesProps) {
           {t("CATEGORIES", { defaultValue: "Open Source Software Categories" })}
         </span>
       }
-      description={"Browse top categories to find your best Open Source software options."}
+      description={tCommon("CATEGORIES_DESCRIPTION", { 
+        defaultValue: "Browse top categories to find your best Open Source software options." 
+      })}
       className="min-h-screen text-center"
     >
       {layoutHome === LayoutHome.HOME_ONE && (
