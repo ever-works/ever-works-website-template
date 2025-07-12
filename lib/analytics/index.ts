@@ -2,8 +2,15 @@ import posthog from 'posthog-js';
 import * as Sentry from '@sentry/nextjs';
 import type { Event as SentryEvent } from '@sentry/nextjs';
 import {
-    POST_HOG_HOST,
-    POST_HOG_KEY, SENTRY_ENABLED
+    POSTHOG_KEY,
+    POSTHOG_HOST,
+    POSTHOG_ENABLED,
+    POSTHOG_DEBUG,
+    POSTHOG_SESSION_RECORDING_ENABLED,
+    POSTHOG_AUTO_CAPTURE,
+    POSTHOG_SAMPLE_RATE,
+    POSTHOG_SESSION_RECORDING_SAMPLE_RATE,
+    SENTRY_ENABLED,
 } from '@/lib/constants';
 
 type EventProperties = Record<string, any>;
@@ -32,26 +39,37 @@ export class Analytics {
   init() {
     if (this.initialized) return;
     
-    const posthogKey = POST_HOG_KEY.value;
-    const posthogHost = POST_HOG_HOST.value;
-
-    if (typeof window !== 'undefined' && posthogKey && posthogHost) {
-      // Initialize PostHog
-      posthog.init(posthogKey, {
+    const posthogKey = POSTHOG_KEY.value;
+    const posthogHost = POSTHOG_HOST.value;
+    
+    if (typeof window !== 'undefined' && POSTHOG_ENABLED && posthogKey && posthogHost) {
+      // Initialize PostHog with centralized configuration
+      const config: posthog.Config = {
         api_host: posthogHost,
+        debug: POSTHOG_DEBUG.value === 'true',
+        persistence: 'localStorage',
         person_profiles: 'identified_only',
-        capture_pageview: false, // We handle this manually
+        capture_pageview: POSTHOG_AUTO_CAPTURE.value === 'true',
         capture_pageleave: true,
-        enable_recording_console_log: true,
-        session_recording: {
-          maskAllInputs: true,
-          maskTextSelector: "[data-mask]",
-        },
+        enable_recording_console_log: POSTHOG_DEBUG.value === 'true',
         mask_all_element_attributes: false,
         mask_all_text: false,
-      });
+        sample_rate: POSTHOG_SAMPLE_RATE,
+      };
 
-      // Link PostHog with Sentry if enabled
+      // Add session recording if enabled
+      if (POSTHOG_SESSION_RECORDING_ENABLED.value === 'true') {
+        config.session_recording = {
+          maskAllInputs: true,
+          maskTextSelector: "[data-mask]",
+          sampleRate: POSTHOG_SESSION_RECORDING_SAMPLE_RATE,
+        };
+      }
+
+      // Initialize PostHog
+      posthog.init(posthogKey, config);
+
+      // Link PostHog with Sentry if both are enabled
       if (SENTRY_ENABLED) {
         // Set up Sentry integration
         posthog.sentry = Sentry;
@@ -82,7 +100,7 @@ export class Analytics {
 
   // User Identification and Properties
   identify(userId: string, properties?: UserProperties) {
-    if (!this.initialized) return;
+    if (!this.initialized || !POSTHOG_ENABLED) return;
     posthog?.identify(userId, properties);
     if (SENTRY_ENABLED) {
       Sentry.setUser({ id: userId, ...properties });
@@ -90,7 +108,7 @@ export class Analytics {
   }
 
   reset() {
-    if (!this.initialized) return;
+    if (!this.initialized || !POSTHOG_ENABLED) return;
     posthog?.reset();
     if (SENTRY_ENABLED) {
       Sentry.setUser(null);
@@ -99,13 +117,13 @@ export class Analytics {
 
   // Event Tracking
   track(eventName: string, properties?: EventProperties) {
-    if (!this.initialized) return;
+    if (!this.initialized || !POSTHOG_ENABLED) return;
     posthog?.capture(eventName, properties);
   }
 
   // Page Views
   trackPageView(url: string, properties?: EventProperties) {
-    if (!this.initialized) return;
+    if (!this.initialized || !POSTHOG_ENABLED) return;
     posthog?.capture('$pageview', {
       $current_url: url,
       ...properties,
@@ -114,12 +132,12 @@ export class Analytics {
 
   // Feature Flags
   isFeatureEnabled(flagKey: string, defaultValue = false): boolean {
-    if (!this.initialized) return defaultValue;
+    if (!this.initialized || !POSTHOG_ENABLED) return defaultValue;
     return posthog?.isFeatureEnabled(flagKey) ?? defaultValue;
   }
 
   async reloadFeatureFlags(): Promise<void> {
-    if (!this.initialized) return;
+    if (!this.initialized || !POSTHOG_ENABLED) return;
     await posthog?.reloadFeatureFlags();
   }
 
@@ -127,12 +145,14 @@ export class Analytics {
   captureError(error: Error, context?: Record<string, any>) {
     if (!this.initialized) return;
     
-    // Send to PostHog
-    this.track('error', {
-      message: error.message,
-      stack: error.stack,
-      ...context,
-    });
+    // Send to PostHog if enabled
+    if (POSTHOG_ENABLED) {
+      this.track('error', {
+        message: error.message,
+        stack: error.stack,
+        ...context,
+      });
+    }
 
     // Send to Sentry if enabled
     if (SENTRY_ENABLED) {
@@ -144,13 +164,13 @@ export class Analytics {
 
   // User Properties
   setUserProperties(properties: UserProperties) {
-    if (!this.initialized) return;
+    if (!this.initialized || !POSTHOG_ENABLED) return;
     posthog?.people.set(properties);
   }
 
   // Super Properties (properties sent with every event)
   setSuperProperties(properties: Record<string, any>) {
-    if (!this.initialized) return;
+    if (!this.initialized || !POSTHOG_ENABLED) return;
     posthog?.register(properties);
   }
 }

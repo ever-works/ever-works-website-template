@@ -16,9 +16,19 @@ export const SENTRY_ENABLE_DEV = getNextPublicEnv("SENTRY_ENABLE_DEV");
 export const SENTRY_DEBUG = getNextPublicEnv("SENTRY_DEBUG");
 export const SENTRY_ENABLED = SENTRY_DSN && (SENTRY_ENABLE_DEV.value === 'true' || process.env.NODE_ENV === 'production');
 
+// PostHog Configuration
+export const POSTHOG_KEY = getNextPublicEnv("NEXT_PUBLIC_POSTHOG_KEY");
+export const POSTHOG_HOST = getNextPublicEnv("NEXT_PUBLIC_POSTHOG_HOST");
+export const POSTHOG_ENABLED = POSTHOG_KEY && POSTHOG_HOST;
+export const POSTHOG_DEBUG = getNextPublicEnv("POSTHOG_DEBUG");
 
+// PostHog Feature Configuration
+export const POSTHOG_SESSION_RECORDING_ENABLED = getNextPublicEnv("POSTHOG_SESSION_RECORDING_ENABLED", "true");
+export const POSTHOG_AUTO_CAPTURE = getNextPublicEnv("POSTHOG_AUTO_CAPTURE", "false");
 
-
+// Sampling Rates
+export const POSTHOG_SAMPLE_RATE = process.env.NODE_ENV === 'production' ? 0.1 : 1.0;
+export const POSTHOG_SESSION_RECORDING_SAMPLE_RATE = process.env.NODE_ENV === 'production' ? 0.1 : 1.0;
 
 
 export type Locale = (typeof LOCALES)[number];
