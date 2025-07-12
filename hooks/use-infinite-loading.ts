@@ -2,28 +2,27 @@
 
 import { useState, useCallback } from "react";
 import { useLayoutTheme } from "@/components/context";
-import { ItemData } from "@/lib/content";
 import { PER_PAGE } from "@/lib/paginate";
 
-interface UseInfiniteLoadingProps {
-  items: ItemData[];
+interface UseInfiniteLoadingProps<T> {
+  items: T[];
   initialPage: number;
   perPage?: number;
 }
 
-interface UseInfiniteLoadingResult {
-  displayedItems: ItemData[];
+interface UseInfiniteLoadingResult<T> {
+  displayedItems: T[];
   hasMore: boolean;
   isLoading: boolean;
   error: Error | null;
   loadMore: () => Promise<void>;
 }
 
-export function useInfiniteLoading({
+export function useInfiniteLoading<T>({
   items,
   initialPage,
   perPage = PER_PAGE,
-}: UseInfiniteLoadingProps): UseInfiniteLoadingResult {
+}: UseInfiniteLoadingProps<T>): UseInfiniteLoadingResult<T> {
   const { paginationType } = useLayoutTheme();
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [isLoading, setIsLoading] = useState(false);

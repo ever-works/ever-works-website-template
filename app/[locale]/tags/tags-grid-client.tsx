@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { Tag } from "@/lib/content";
 import { TagsCards } from "@/components/tags-cards";
 import UniversalPagination from "@/components/universal-pagination";
@@ -8,45 +8,7 @@ import { useTranslations } from "next-intl";
 import { useLayoutTheme } from "@/components/context";
 import { Loader2 } from "lucide-react";
 import { useInView } from "react-intersection-observer";
-// Set to 0 for production, or e.g. 500 for development
-const ARTIFICIAL_DELAY = 300;
-
-function useInfiniteTags({ items, initialPage, perPage }: { items: Tag[]; initialPage: number; perPage: number }) {
-  const { paginationType } = useLayoutTheme();
-  const [currentPage, setCurrentPage] = useState(initialPage);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  const totalPages = Math.ceil(items.length / perPage);
-  const displayedItems = items.slice(0, currentPage * perPage);
-  const hasMore = currentPage < totalPages && displayedItems.length < items.length;
-
-  const loadMore = useCallback(async () => {
-    if (isLoading || !hasMore || paginationType !== "infinite") return;
-    setIsLoading(true);
-    setError(null);
-    try {
-      if (ARTIFICIAL_DELAY) {
-        await new Promise(resolve => setTimeout(resolve, ARTIFICIAL_DELAY));
-      }
-      setCurrentPage(prev => prev + 1);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error("Failed to load more tags"));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isLoading, hasMore, paginationType]);
-
-  return {
-    displayedItems,
-    hasMore,
-    isLoading,
-    error,
-    loadMore,
-    setCurrentPage,
-    totalPages
-  };
-}
+import { useInfiniteLoading } from "@/hooks/use-infinite-loading";
 
 export default function TagsGridClient({ tags }: { tags: Tag[] }) {
   const t = useTranslations("listing");
@@ -60,9 +22,10 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
     isLoading,
     error,
     loadMore,
-    setCurrentPage,
-    totalPages
-  } = useInfiniteTags({ items: tags, initialPage: 1, perPage: itemsPerPage });
+  } = useInfiniteLoading({ items: tags, initialPage: 1, perPage: itemsPerPage });
+
+  // Calculate total pages for pagination
+  const totalPages = Math.ceil(tags.length / itemsPerPage);
 
   const pagedTags = useMemo(() => tags.slice((page - 1) * itemsPerPage, page * itemsPerPage), [tags, page, itemsPerPage]);
   const tagsToShow = paginationType === "infinite" ? loadedTags : pagedTags;
@@ -80,7 +43,6 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
   // Sync page state for standard pagination
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
-    setCurrentPage(newPage); // for consistency if switching modes
   };
 
   return (

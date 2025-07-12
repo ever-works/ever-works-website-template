@@ -4,52 +4,15 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
 import { FiFolder } from "react-icons/fi";
-import React, { useState, useMemo, useCallback, useRef } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import UniversalPagination from "@/components/universal-pagination";
 import { useLayoutTheme } from "@/components/context";
 import { Loader2 } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { PER_PAGE } from "@/lib/paginate";
+import { useInfiniteLoading } from "@/hooks/use-infinite-loading";
 
 const PAGE_SIZE = PER_PAGE;
-// Set to 0 for production, or e.g. 300 for development
-const ARTIFICIAL_DELAY = 300;
-
-// Custom infinite loading for categories
-function useInfiniteCategories({ items, initialPage, perPage }: { items: Category[]; initialPage: number; perPage: number }) {
-  const { paginationType } = useLayoutTheme();
-  const [currentPage, setCurrentPage] = useState(initialPage);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  const totalPages = Math.ceil(items.length / perPage);
-  const displayedItems = items.slice(0, currentPage * perPage);
-  const hasMore = currentPage < totalPages && displayedItems.length < items.length;
-
-  const loadMore = useCallback(async () => {
-    if (isLoading || !hasMore || paginationType !== "infinite") return;
-    setIsLoading(true);
-    setError(null);
-    try {
-      if (ARTIFICIAL_DELAY) {
-        await new Promise(resolve => setTimeout(resolve, ARTIFICIAL_DELAY));
-      }
-      setCurrentPage(prev => prev + 1);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error("Failed to load more categories"));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isLoading, hasMore, paginationType]);
-
-  return {
-    displayedItems,
-    hasMore,
-    isLoading,
-    error,
-    loadMore,
-  };
-}
 
 export default function CategoriesGrid({ categories }: { categories: Category[] }) {
   const { paginationType } = useLayoutTheme();
@@ -67,7 +30,7 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
     isLoading,
     error,
     loadMore,
-  } = useInfiniteCategories({
+  } = useInfiniteLoading({
     items: sortedCategories,
     initialPage: 1,
     perPage: PAGE_SIZE,
