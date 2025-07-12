@@ -61,7 +61,7 @@ export default function ListingCategories(props: ListingCategoriesProps) {
           <Paginate
             basePath={props.basePath}
             initialPage={props.page}
-            total={totalPages(props.items.length)}
+            total={totalPages(props.categories.length)}
           />
         </footer>
       )}
