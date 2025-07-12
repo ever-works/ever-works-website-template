@@ -6,8 +6,6 @@ import NextAuth from "next-auth";
 import authConfig from "./auth.config";
 import { updateSession } from "@/lib/auth/supabase/middleware";
 import { getAuthConfig } from "@/lib/auth/config";
-import { analytics } from '@/lib/analytics';
-import { getToken } from 'next-auth/jwt';
 
 const PRIVATE_PATHS = ["/dashboard"];
 const PUBLIC_PATHS = ["/auth/signin", "/auth/register"];
@@ -46,21 +44,10 @@ const authMiddleware = auth(async (req) => {
   return response;
 });
 
-export async function middleware(request: NextRequest) {
-  // Handle analytics user identification first
-  const token = await getToken({ req: request as any });
-  if (token?.sub && token.email) {
-    // Set user properties in analytics
-    analytics.identify(token.sub, {
-      email: token.email,
-      name: token.name || undefined,
-    });
-  }
-
-  // Handle authentication and internationalization
+export default async function middleware(req: NextRequest) {
   const config = getAuthConfig();
   if (config.provider === "supabase") {
-    const supabaseResponse = await updateSession(request);
+    const supabaseResponse = await updateSession(req);
     return intlMiddleware(supabaseResponse as any);
   } else if (config.provider === "next-auth") {
     const authPaths = PRIVATE_PATHS.flatMap((p) =>
@@ -71,14 +58,14 @@ export async function middleware(request: NextRequest) {
       `^(/(${routing.locales.join("|")}))?(${authPaths})/?$`,
       "i"
     );
-    const isAuthPage = authPathnameRegex.test(request.nextUrl.pathname);
+    const isAuthPage = authPathnameRegex.test(req.nextUrl.pathname);
 
     if (isAuthPage) {
-      return (authMiddleware as any)(request);
+      return (authMiddleware as any)(req);
     }
   }
   
-  return intlMiddleware(request);
+  return intlMiddleware(req);
 }
 
 export const config = {
