@@ -8,14 +8,17 @@ export function register() {
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
     // Adjust this value in production, or use tracesSampler for greater control
-    tracesSampleRate: 1,
+    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
 
-    // Setting this option to true will print useful information to the console while you're setting up Sentry.
-    debug: process.env.NODE_ENV === 'development',
+    // Only enable debug mode in development and when explicitly enabled
+    debug: process.env.NODE_ENV === 'development' && process.env.SENTRY_DEBUG === 'true',
 
-    // Session replay configuration
+    // Session replay configuration - reduce sampling in production
     replaysOnErrorSampleRate: 1.0,
-    replaysSessionSampleRate: 0.1,
+    replaysSessionSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+
+    // Disable Sentry in development unless explicitly enabled
+    enabled: process.env.NODE_ENV === 'production' || process.env.SENTRY_ENABLE_DEV === 'true',
 
     integrations: [
       new Replay({
