@@ -30,8 +30,8 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
   const pagedTags = useMemo(() => tags.slice((page - 1) * itemsPerPage, page * itemsPerPage), [tags, page, itemsPerPage]);
   const tagsToShow = paginationType === "infinite" ? loadedTags : pagedTags;
 
+  // Move hooks above early return to avoid conditional hook call
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
-
   const { ref: loadMoreRef } = useInView({
     onChange: (inView) => {
       if (inView && !isLoading && hasMore && paginationType === "infinite" && loadedTags.length > 0) {
@@ -44,6 +44,19 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
     threshold: 0.5,
     rootMargin: "100px",
   });
+
+  // Handle empty state
+  if (tags.length === 0) {
+    return (
+      <Hero badgeText={t("TAGS")} title={t("TAGS")} description={tCommon("TAGS_DESCRIPTION")}>
+        <div className="text-center py-12">
+          <p className="text-gray-500 dark:text-gray-400">
+            No tags found.
+          </p>
+        </div>
+      </Hero>
+    );
+  }
 
   // Sync page state for standard pagination
   const handlePageChange = (newPage: number) => {
@@ -58,8 +71,8 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
           {t("TAGS", { defaultValue: "Tags" })}
         </span>
       }
-      description={tCommon("TAGS_DESCRIPTION", { 
-        defaultValue: "Browse all tags in our directory." 
+      description={tCommon("TAGS_DESCRIPTION", {
+        defaultValue: "Browse all tags in our directory."
       })}
       className="min-h-screen text-center"
     >
