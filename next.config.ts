@@ -1,5 +1,7 @@
 import { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { withSentryConfig } from '@sentry/nextjs';
+import { sentryWebpackPluginOptions } from './sentry.config';
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -51,4 +53,10 @@ const nextConfig: NextConfig = {
 
 const withNextIntl = createNextIntlPlugin();
 
-export default withNextIntl(nextConfig);
+// Apply plugins in the correct order
+const configWithIntl = withNextIntl(nextConfig);
+
+// Sentry configuration with type casting to avoid TypeScript errors
+const finalConfig = withSentryConfig(configWithIntl, sentryWebpackPluginOptions) as NextConfig;
+
+export default finalConfig;
