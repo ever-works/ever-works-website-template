@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
 import { FiFolder } from "react-icons/fi";
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import UniversalPagination from "@/components/universal-pagination";
 import { useLayoutTheme } from "@/components/context";
 import { Loader2 } from "lucide-react";
@@ -72,10 +72,21 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
     perPage: PAGE_SIZE,
   });
 
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
   const { ref: loadMoreRef } = useInView({
     onChange: (inView) => {
-      if (inView && !isLoading && hasMore && paginationType === "infinite" && loadedCategories.length > 0) {
-        loadMore();
+      if (
+        inView &&
+        !isLoading &&
+        hasMore &&
+        paginationType === "infinite" &&
+        loadedCategories.length > 0
+      ) {
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
+          loadMore();
+        }, 150); // 150ms debounce
       }
     },
     threshold: 0.5,
