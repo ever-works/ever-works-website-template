@@ -92,8 +92,15 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
             <div ref={loadMoreRef} className="w-full flex items-center justify-center py-8">
               {error ? (
                 <div className="text-center py-4">
-                  <p className="text-sm text-red-600 dark:text-red-400 mb-2">{error.message}</p>
-                  <button onClick={() => loadMore()} className="text-sm text-theme-primary-500 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 transition-colors">Retry</button>
+                  <p className="text-sm text-red-600 dark:text-red-400 mb-2">
+                    Failed to load more tags
+                  </p>
+                  <button 
+                    onClick={() => loadMore()} 
+                    className="text-sm text-theme-primary-500 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 transition-colors focus:outline-none focus:ring-2 focus:ring-theme-primary-500 rounded px-2 py-1"
+                  >
+                    {t("RETRY", { defaultValue: "Retry" })}
+                  </button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2 text-theme-primary-500 dark:text-theme-primary-400">
