@@ -14,4 +14,7 @@ export async function register() {
     // Setting this option to true will print useful information to the console while you're setting up Sentry.
     debug: process.env.NODE_ENV === 'development',
   });
-} 
+}
+
+// Add hook to capture errors from React Server Components
+export const onRequestError = Sentry.captureRequestError; 
