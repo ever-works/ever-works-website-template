@@ -24,4 +24,7 @@ export function register() {
       }),
     ],
   });
-} 
+}
+
+// Add router transition instrumentation
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart; 
