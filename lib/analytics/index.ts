@@ -1,7 +1,10 @@
 import posthog from 'posthog-js';
 import * as Sentry from '@sentry/nextjs';
 import type { Event as SentryEvent } from '@sentry/nextjs';
-import { POST_HOG_HOST, POST_HOG_KEY } from '@/lib/constants';
+import {
+    POST_HOG_HOST,
+    POST_HOG_KEY, SENTRY_ENABLED
+} from '@/lib/constants';
 
 type EventProperties = Record<string, any>;
 type UserProperties = Record<string, any>;
@@ -48,8 +51,8 @@ export class Analytics {
         mask_all_text: false,
       });
 
-      // Link PostHog with Sentry
-      if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+      // Link PostHog with Sentry if enabled
+      if (SENTRY_ENABLED) {
         // Set up Sentry integration
         posthog.sentry = Sentry;
         
@@ -58,7 +61,6 @@ export class Analytics {
           name: 'PostHog',
           setupOnce() {
             Sentry.addEventProcessor((event: SentryEvent) => {
-              // Only send events to PostHog if we have a user
               if (event.user) {
                 posthog.capture('sentry_error', {
                   error: event.message,
@@ -82,13 +84,17 @@ export class Analytics {
   identify(userId: string, properties?: UserProperties) {
     if (!this.initialized) return;
     posthog?.identify(userId, properties);
-    Sentry.setUser({ id: userId, ...properties });
+    if (SENTRY_ENABLED) {
+      Sentry.setUser({ id: userId, ...properties });
+    }
   }
 
   reset() {
     if (!this.initialized) return;
     posthog?.reset();
-    Sentry.setUser(null);
+    if (SENTRY_ENABLED) {
+      Sentry.setUser(null);
+    }
   }
 
   // Event Tracking
@@ -128,10 +134,12 @@ export class Analytics {
       ...context,
     });
 
-    // Send to Sentry
-    Sentry.captureException(error, {
-      extra: context,
-    });
+    // Send to Sentry if enabled
+    if (SENTRY_ENABLED) {
+      Sentry.captureException(error, {
+        extra: context,
+      });
+    }
   }
 
   // User Properties

@@ -11,6 +11,11 @@ export const API_BASE_URL = getNextPublicEnv("NEXT_PUBLIC_API_BASE_URL");
 export const COOKIE_SECRET = getNextPublicEnv("COOKIE_SECRET");
 export const JWT_ACCESS_TOKEN_EXPIRES_IN = getNextPublicEnv("JWT_ACCESS_TOKEN_EXPIRES_IN");
 export const JWT_REFRESH_TOKEN_EXPIRES_IN = getNextPublicEnv("JWT_REFRESH_TOKEN_EXPIRES_IN");
+export const SENTRY_DSN = getNextPublicEnv("NEXT_PUBLIC_SENTRY_DSN");
+export const SENTRY_ENABLE_DEV = getNextPublicEnv("SENTRY_ENABLE_DEV");
+export const SENTRY_DEBUG = getNextPublicEnv("SENTRY_DEBUG");
+export const SENTRY_ENABLED = SENTRY_DSN && (SENTRY_ENABLE_DEV.value === 'true' || process.env.NODE_ENV === 'production');
+
 
 
 
