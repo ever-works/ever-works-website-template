@@ -22,8 +22,8 @@ export async function generateStaticParams() {
   return (await Promise.all(params)).flat();
 }
 
-// Set per page to 12 for tags
-const PER_PAGE = 12;
+// Set per page to 12 for tags (default from config)
+const PER_PAGE = 12; // This matches the default in LayoutThemeContext
 
 export default async function TagPagingPage({
   params,

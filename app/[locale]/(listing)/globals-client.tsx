@@ -33,7 +33,7 @@ export default function GlobalsClient(props: ListingProps) {
   // Get page from query param, default to 1
   const pageParam = searchParams.get("page");
   const page = pageParam ? parseInt(pageParam, 10) : 1;
-  const perPage = 12; // or use from config if needed
+  const perPage = useLayoutTheme().itemsPerPage ?? 12;
   const start = (page - 1) * perPage;
 
   // Filtering logic using shared utility

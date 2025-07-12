@@ -157,7 +157,7 @@ function HomeTwoLayout({
   ];
 
   // Calculate paginated items
-  const perPage = 12; // or from config
+  const perPage = useLayoutTheme().itemsPerPage ?? 12;
   const paginatedItems = items.slice((page - 1) * perPage, page * perPage);
 
   return (

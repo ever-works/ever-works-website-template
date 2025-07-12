@@ -8,8 +8,6 @@ import { useTranslations } from "next-intl";
 import { useLayoutTheme } from "@/components/context";
 import { Loader2 } from "lucide-react";
 import { useInView } from "react-intersection-observer";
-
-const PER_PAGE = 12;
 // Set to 0 for production, or e.g. 500 for development
 const ARTIFICIAL_DELAY = 300;
 
@@ -52,7 +50,7 @@ function useInfiniteTags({ items, initialPage, perPage }: { items: Tag[]; initia
 
 export default function TagsGridClient({ tags }: { tags: Tag[] }) {
   const t = useTranslations("listing");
-  const { paginationType } = useLayoutTheme();
+  const { paginationType, itemsPerPage } = useLayoutTheme();
   const [page, setPage] = useState(1);
 
   const {
@@ -63,9 +61,9 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
     loadMore,
     setCurrentPage,
     totalPages
-  } = useInfiniteTags({ items: tags, initialPage: 1, perPage: PER_PAGE });
+  } = useInfiniteTags({ items: tags, initialPage: 1, perPage: itemsPerPage });
 
-  const pagedTags = useMemo(() => tags.slice((page - 1) * PER_PAGE, page * PER_PAGE), [tags, page]);
+  const pagedTags = useMemo(() => tags.slice((page - 1) * itemsPerPage, page * itemsPerPage), [tags, page, itemsPerPage]);
   const tagsToShow = paginationType === "infinite" ? loadedTags : pagedTags;
 
   const { ref: loadMoreRef } = useInView({
