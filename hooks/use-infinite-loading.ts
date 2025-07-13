@@ -2,28 +2,27 @@
 
 import { useState, useCallback } from "react";
 import { useLayoutTheme } from "@/components/context";
-import { ItemData } from "@/lib/content";
 import { PER_PAGE } from "@/lib/paginate";
 
-interface UseInfiniteLoadingProps {
-  items: ItemData[];
+interface UseInfiniteLoadingProps<T> {
+  items: T[];
   initialPage: number;
   perPage?: number;
 }
 
-interface UseInfiniteLoadingResult {
-  displayedItems: ItemData[];
+interface UseInfiniteLoadingResult<T> {
+  displayedItems: T[];
   hasMore: boolean;
   isLoading: boolean;
   error: Error | null;
   loadMore: () => Promise<void>;
 }
 
-export function useInfiniteLoading({
+export function useInfiniteLoading<T>({
   items,
   initialPage,
   perPage = PER_PAGE,
-}: UseInfiniteLoadingProps): UseInfiniteLoadingResult {
+}: UseInfiniteLoadingProps<T>): UseInfiniteLoadingResult<T> {
   const { paginationType } = useLayoutTheme();
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +32,9 @@ export function useInfiniteLoading({
   const displayedItems = items.slice(0, currentPage * perPage);
   const hasMore = currentPage < totalPages && displayedItems.length < items.length;
 
+  // Set to 0 for production, or e.g. 300 for development
+  const ARTIFICIAL_DELAY = 300;
+
   const loadMore = useCallback(async () => {
     if (isLoading || !hasMore || paginationType !== "infinite") return;
 
@@ -40,8 +42,9 @@ export function useInfiniteLoading({
     setError(null);
 
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (ARTIFICIAL_DELAY) {
+        await new Promise(resolve => setTimeout(resolve, ARTIFICIAL_DELAY));
+      }
       setCurrentPage(prev => prev + 1);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to load more items"));

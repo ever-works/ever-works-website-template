@@ -2,6 +2,7 @@
 
 import { Category } from "@/lib/content";
 import { Link, usePathname } from "@/i18n/navigation";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { cn } from "@/lib/utils/index";
@@ -15,12 +16,14 @@ import React, {
 } from "react";
 import Image from "next/image";
 
-
-// Types
 type Home2CategoriesProps = {
   categories: Category[];
   basePath?: string;
   resetPath?: string;
+  mode?: "navigation" | "filter";
+  selectedCategories?: string[];
+  onCategoryToggle?: (categoryId: string | "clear-all") => void;
+  totalItems?: number;
 };
 
 type CategoryButtonProps = {
@@ -141,10 +144,17 @@ export function HomeTwoCategories({
   categories,
   basePath,
   resetPath,
+  mode = "navigation",
+  selectedCategories = [],
+  onCategoryToggle,
+  totalItems,
 }: Home2CategoriesProps) {
   const t = useTranslations("listing");
   const tCommon = useTranslations("common");
-  const { totalItems, isHomeActive, pathname } = useCategoryState(categories);
+  const router = useRouter();
+  // Use totalItems prop for All Categories button, fallback to calculated value
+  const { totalItems: calculatedTotalItems, isHomeActive, pathname } = useCategoryState(categories);
+  const allCategoriesCount = totalItems ?? calculatedTotalItems;
   const [selectedCategory, setSelectedCategory] = useState("");
   const [hiddenCategories, setHiddenCategories] = useState<Category[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -152,30 +162,53 @@ export function HomeTwoCategories({
 
   const renderCategory = useCallback(
     (category: Category, index?: number) => {
-      const href = basePath
-        ? `${basePath}/${category.id}`
-        : `/categories/${category.id}`;
-      const isActive = pathname.startsWith(encodeURI(href));
-      const displayName = category.name;
+      if (mode === "filter") {
+        const isActive = selectedCategories.includes(category.id);
+        const displayName = category.name;
 
-      return (
-        <CategoryButton
-          key={category.id}
-          href={href}
-          isActive={isActive}
-          displayName={displayName}
-          count={category.count || 0}
-          isTextTruncated
-          fullName={category.name}
-          ref={
-            index !== undefined
-              ? (el) => (categoriesRef.current[index] = el as any)
-              : undefined
-          }
-        />
-      );
+        return (
+          <CategoryButton
+            key={category.id}
+            href="#"
+            isActive={isActive}
+            displayName={displayName}
+            count={category.count || 0}
+            isTextTruncated
+            fullName={category.name}
+            onClick={() => onCategoryToggle?.(category.id)}
+            ref={
+              index !== undefined
+                ? (el) => (categoriesRef.current[index] = el as any)
+                : undefined
+            }
+          />
+        );
+      } else {
+        const href = basePath
+          ? `${basePath}/${category.id}`
+          : `/categories/${category.id}`;
+        const isActive = pathname.startsWith(encodeURI(href));
+        const displayName = category.name;
+
+        return (
+          <CategoryButton
+            key={category.id}
+            href={href}
+            isActive={isActive}
+            displayName={displayName}
+            count={category.count || 0}
+            isTextTruncated
+            fullName={category.name}
+            ref={
+              index !== undefined
+                ? (el) => (categoriesRef.current[index] = el as any)
+                : undefined
+            }
+          />
+        );
+      }
     },
-    [basePath, pathname]
+    [basePath, pathname, mode, selectedCategories, onCategoryToggle]
   );
 
   const categoriesList = useMemo(
@@ -205,15 +238,23 @@ export function HomeTwoCategories({
     const value = e.target.value;
     setSelectedCategory(value);
 
-    if (value === "all") {
-      window.location.href = resetPath || "/";
+    if (mode === "filter") {
+      if (value === "all") {
+        onCategoryToggle?.("clear-all");
+      } else {
+        onCategoryToggle?.(value);
+      }
     } else {
-      const category = categories.find((c) => c.id === value);
-      if (category) {
-        const href = basePath
-          ? `${basePath}/${category.id}`
-          : `/categories/${category.id}`;
-        window.location.href = href;
+      if (value === "all") {
+        router.push(resetPath || "/");
+      } else {
+        const category = categories.find((c) => c.id === value);
+        if (category) {
+          const href = basePath
+            ? `${basePath}/${category.id}`
+            : `/categories/${category.id}`;
+          router.push(href);
+        }
       }
     }
   };
@@ -232,7 +273,7 @@ export function HomeTwoCategories({
             aria-label="Select category"
           >
             <option value="all">
-              {t("ALL_CATEGORIES")} ({totalItems})
+              {t("ALL_CATEGORIES")} ({allCategoriesCount})
             </option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
@@ -294,10 +335,11 @@ export function HomeTwoCategories({
                   }
                 `}</style>
                 <CategoryButton
-                  href={resetPath || "/"}
-                  isActive={isHomeActive}
+                  href={mode === "filter" ? "#" : (resetPath || "/")}
+                  isActive={mode === "filter" ? selectedCategories.length === 0 : isHomeActive}
                   displayName={t("ALL_CATEGORIES")}
-                  count={totalItems}
+                  count={allCategoriesCount}
+                  onClick={mode === "filter" ? () => onCategoryToggle?.("clear-all") : undefined}
                 />
               </div>
               {categoriesList}

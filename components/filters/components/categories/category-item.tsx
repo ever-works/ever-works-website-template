@@ -13,11 +13,24 @@ export function CategoryItem({
   isActive, 
   href, 
   isAllCategories = false,
-  totalItems 
+  totalItems,
+  mode = "navigation",
+  onToggle
 }: CategoryItemProps) {
   const t = useTranslations("listing");
   const displayName = truncateText(category.name);
   const textIsTruncated = checkTextTruncated(category.name);
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (mode === "filter") {
+      e.preventDefault();
+      if (onToggle) {
+        onToggle(category.id);
+      } else {
+        console.warn("CategoryItem: onToggle is required when mode is 'filter'");
+      }
+    }
+  };
 
   return (
     <Tooltip
@@ -42,8 +55,9 @@ export function CategoryItem({
           )}
           radius="md"
           variant="light"
-          as={Link}
-          href={href}
+          as={mode === "filter" ? "button" : Link}
+          href={mode === "filter" ? undefined : href}
+          onClick={mode === "filter" ? handleClick : undefined}
           fullWidth
         >
           <div className="flex items-center justify-between w-full group">

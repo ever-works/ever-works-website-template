@@ -14,7 +14,7 @@ const intlMiddleware = createMiddleware(routing);
 
 const { auth } = NextAuth(authConfig);
 const authMiddleware = auth(async (req) => {
-  const response = await intlMiddleware(req);
+  const response = await intlMiddleware(req as any);
   const url = new URL(response.headers.get("x-middleware-rewrite") || req.url);
 
   const locale = url.pathname.split("/")[1];

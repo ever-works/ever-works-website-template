@@ -11,9 +11,11 @@ export function Paginate({
   basePath,
   initialPage,
   total,
+  onPageChange,
   paginationType = "standard",
 }: PaginateProps & {
   paginationType?: "standard" | "infinite";
+  onPageChange?: (page: number) => void;
 }) {
   const { navigateWithScroll } = useScrollToTop({
     easing: "easeInOut",
@@ -22,8 +24,16 @@ export function Paginate({
   });
 
   function redirect(page: number) {
-    const path = basePath + (page === 1 ? "" : `/${page}`);
-    navigateWithScroll(path, FILTER_CONSTANTS.NAVIGATE_DELAY);
+    if (onPageChange) {
+      // Client-side pagination
+      onPageChange(page);
+    } else if (basePath) {
+      // Server-side pagination (URL-based)
+      const path = basePath + (page === 1 ? "" : `/${page}`);
+      navigateWithScroll(path, FILTER_CONSTANTS.NAVIGATE_DELAY);
+    } else {
+      console.error('Neither onPageChange nor basePath provided to Paginate component');
+    }
   }
 
   return (

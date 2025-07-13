@@ -1,6 +1,7 @@
 import { Accordion, AccordionItem } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { CategoriesProps } from "../../types";
+import { Tag } from "@/lib/content";
 import { CategoriesList } from "./categories-list";
 import { SearchInput } from "../../../ui/search-input";
 import { useFilters } from "../../context/filter-context";
@@ -12,9 +13,30 @@ import { ActiveFilters } from "../active-filters/active-filters";
  * Main categories section component
  * Handles both mobile and desktop layouts for categories
  */
-export function Categories({ total, categories }: CategoriesProps) {
+export function Categories({ total, categories, tags }: CategoriesProps & { tags: Tag[] }) {
   const t = useTranslations("listing");
-  const { searchTerm, setSearchTerm, sortBy, setSortBy, selectedTags, setSelectedTags } = useFilters();
+  const { 
+    searchTerm, 
+    setSearchTerm, 
+    sortBy, 
+    setSortBy, 
+    selectedTags, 
+    setSelectedTags,
+    selectedCategories,
+    setSelectedCategories
+  } = useFilters();
+
+  const handleCategoryToggle = (categoryId: string) => {
+    if (categoryId === "all" || categoryId === "clear-all") {
+      setSelectedCategories([]);
+    } else {
+      setSelectedCategories(prev =>
+        prev.includes(categoryId)
+          ? prev.filter(id => id !== categoryId)
+          : [...prev, categoryId]
+      );
+    }
+  };
 
   return (
     <>
@@ -39,7 +61,12 @@ export function Categories({ total, categories }: CategoriesProps) {
             }
           >
             <div className="px-2 pb-2">
-              <CategoriesList categories={categories} />
+              <CategoriesList 
+                categories={categories} 
+                mode="filter" 
+                selectedCategories={selectedCategories}
+                onCategoryToggle={handleCategoryToggle}
+              />
             </div>
           </AccordionItem>
         </Accordion>
@@ -58,7 +85,12 @@ export function Categories({ total, categories }: CategoriesProps) {
             </h2>
           </div>
           <div className={containerStyles.content}>
-            <CategoriesList categories={categories} />
+            <CategoriesList 
+              categories={categories} 
+              mode="filter" 
+              selectedCategories={selectedCategories}
+              onCategoryToggle={handleCategoryToggle}
+            />
           </div>
         </div>
 
@@ -68,12 +100,16 @@ export function Categories({ total, categories }: CategoriesProps) {
           setSearchTerm={setSearchTerm}
           selectedTags={selectedTags}
           setSelectedTags={setSelectedTags}
+          selectedCategories={selectedCategories}
+          setSelectedCategories={setSelectedCategories}
           sortBy={sortBy}
           setSortBy={setSortBy}
-          availableTags={categories}
+          availableTags={tags}
+          availableCategories={categories}
           clearAllFilters={() => {
             setSearchTerm("");
             setSelectedTags([]);
+            setSelectedCategories([]);
             setSortBy("popularity");
           }}
         />

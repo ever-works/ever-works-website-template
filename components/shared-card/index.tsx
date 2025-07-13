@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback, useContext } from "react";
+import { useMemo, useCallback, useContext, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Search, Filter } from "lucide-react";
 
@@ -12,6 +12,8 @@ import { layoutComponents, LayoutKey } from "@/components/layouts";
 import { Category, ItemData, Tag } from "@/lib/content";
 import { useLayoutTheme } from "@/components/context";
 import { FilterContext } from "@/components/filters/context/filter-context";
+import { SortOption, TagId } from "@/components/filters/types";
+import UniversalPagination from "@/components/universal-pagination";
 import { useInfiniteLoading } from "@/hooks/use-infinite-loading";
 import { Loader2 } from "lucide-react";
 import { useInView } from "react-intersection-observer";
@@ -55,10 +57,12 @@ interface ExtendedCardProps extends BaseCardProps {
 interface FilterState {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
-  selectedTags: string[];
-  setSelectedTags: (tags: string[]) => void;
-  sortBy: string;
-  setSortBy: (sort: string) => void;
+  selectedTags: TagId[];
+  setSelectedTags: (tags: TagId[]) => void;
+  sortBy: SortOption;
+  setSortBy: (sort: SortOption) => void;
+  selectedTag: TagId | null;
+  setSelectedTag: (tag: TagId | null) => void;
 }
 
 interface ProcessedItems {
@@ -111,7 +115,8 @@ function useFilters(): FilterState {
 function useItemFiltering(
   items: ItemData[],
   searchTerm: string,
-  selectedTags: string[],
+  selectedTags: TagId[],
+  selectedTag: TagId | null,
   config: CardConfigOptions
 ): ItemData[] {
   const enableSearch = config.enableSearch ?? true;
@@ -138,13 +143,21 @@ function useItemFiltering(
       });
     }
 
+    // Filter by selectedTag (single tag from context)
+    if (enableTagFilter && selectedTag) {
+      filtered = filtered.filter((item) => {
+        if (!item.tags?.length) return false;
+        return item.tags.some((itemTag) => getTagId(itemTag) === selectedTag);
+      });
+    }
+
     return filtered;
-  }, [items, searchTerm, selectedTags, enableSearch, enableTagFilter]);
+  }, [items, searchTerm, selectedTags, selectedTag, enableSearch, enableTagFilter]);
 }
 
 function useItemSorting(
   items: ItemData[],
-  sortBy: string,
+  sortBy: SortOption,
   config: CardConfigOptions
 ): ItemData[] {
   const enableSorting = config.enableSorting ?? true;
@@ -177,8 +190,9 @@ function useItemSorting(
 function useProcessedItems(
   items: ItemData[],
   searchTerm: string,
-  selectedTags: string[],
-  sortBy: string,
+  selectedTags: TagId[],
+  selectedTag: TagId | null,
+  sortBy: SortOption,
   start: number,
   config: CardConfigOptions
 ): ProcessedItems {
@@ -186,6 +200,7 @@ function useProcessedItems(
     items,
     searchTerm,
     selectedTags,
+    selectedTag,
     config
   );
   const sortedItems = useItemSorting(filteredItems, sortBy, config);
@@ -203,20 +218,12 @@ function useProcessedItems(
   const enableSorting = config.enableSorting ?? true;
 
   const hasActiveFilters = useMemo(() => {
-    const hasSearch = Boolean(enableSearch && searchTerm.trim() !== "");
-    const hasTags = Boolean(enableTagFilter && selectedTags.length > 0);
-    const hasSort = Boolean(
-      enableSorting && sortBy !== SORT_OPTIONS.POPULARITY
-    );
-    return hasSearch || hasTags || hasSort;
-  }, [
-    searchTerm,
-    selectedTags,
-    sortBy,
-    enableSearch,
-    enableTagFilter,
-    enableSorting,
-  ]);
+    const hasSearch = enableSearch && searchTerm.trim() !== "";
+    const hasTags = enableTagFilter && selectedTags.length > 0;
+    const hasSelectedTag = enableTagFilter && Boolean(selectedTag);
+    const hasSort = enableSorting && sortBy !== SORT_OPTIONS.POPULARITY;
+    return hasSearch || hasTags || hasSelectedTag || hasSort;
+  }, [searchTerm, selectedTags, selectedTag, sortBy, enableSearch, enableTagFilter, enableSorting]);
 
   return {
     filtered: sortedItems,
@@ -242,25 +249,12 @@ export function FilterStats({
   t: ReturnType<typeof useTranslations>;
   className?: string;
 }) {
-  const tCommon = useTranslations("common");
-
   return (
     <div className={`flex items-center gap-4 ${className}`}>
       <div className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-        <span className="font-medium text-gray-900 dark:text-white">
-          {filteredCount}
-        </span>{" "}
-        {tCommon("OF")}{" "}
-        <span className="font-medium text-gray-900 dark:text-white">
-          {totalCount}
-        </span>{" "}
-        {tCommon("ITEMS")}
-        {hasActiveFilters && (
-          <span className="text-theme-primary-500 dark:text-theme-primary-400">
-            {" "}
-            {t("FILTERED")}
-          </span>
-        )}
+        {hasActiveFilters
+          ? t("FILTER_STATUS_MATCH_ALL", { filtered: filteredCount, total: totalCount })
+          : t("FILTER_STATUS", { filtered: filteredCount, total: totalCount })}
       </div>
 
       {(searchTerm || selectedTags.length > 0) && (
@@ -325,6 +319,7 @@ export function ActiveFiltersDisplay({
 export function EmptyState({
   searchTerm,
   selectedTags,
+  selectedTag,
   tags,
   t,
   customMessage,
@@ -333,13 +328,14 @@ export function EmptyState({
 }: {
   searchTerm: string;
   selectedTags: string[];
+  selectedTag: string | null;
   tags: Tag[];
   t: ReturnType<typeof useTranslations>;
   customMessage?: string;
   customDescription?: string;
   className?: string;
 }) {
-  const hasFilters = searchTerm || selectedTags.length > 0;
+  const hasFilters = searchTerm || selectedTags.length > 0 || selectedTag;
 
   return (
     <div className={`text-center py-8 sm:py-10 ${className}`}>
@@ -366,6 +362,7 @@ export function EmptyState({
 export function ResultsHeader({
   searchTerm,
   selectedTags,
+  isInfinite = false,
   sortBy,
   start,
   filteredCount,
@@ -375,6 +372,7 @@ export function ResultsHeader({
 }: {
   searchTerm: string;
   selectedTags: string[];
+  isInfinite?: boolean;
   sortBy: string;
   start: number;
   filteredCount: number;
@@ -417,7 +415,10 @@ export function ResultsHeader({
         <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
           <span>
             {t("SHOWING")} {start + 1}-
-            {Math.min(start + pageSize, filteredCount)}
+            {isInfinite
+              ? filteredCount
+              : Math.min(start + pageSize, filteredCount)
+            }
             {config.enableSorting && sortBy !== SORT_OPTIONS.POPULARITY && (
               <span className="ml-2 text-theme-primary-500 dark:text-theme-primary-400">
                 {t("SORTED_BY")} {getSortLabel(sortBy)}
@@ -497,7 +498,7 @@ export function ItemsList({
  *   renderCustomItem={(item) => <CustomItem {...item} />}
  * />
  */
-export function SharedCard(props: ExtendedCardProps) {
+export function SharedCard(props: ExtendedCardProps & { filteredCount?: number; totalCount?: number }) {
   const {
     items,
     config: rawConfig,
@@ -506,27 +507,32 @@ export function SharedCard(props: ExtendedCardProps) {
     renderCustomItem,
     renderCustomEmpty,
     headerActions,
-    start,
     page,
   } = props;
 
+  const config = { ...DEFAULT_CONFIG, ...rawConfig };
+  const { layoutKey, setLayoutKey, paginationType } = useLayoutTheme();
+  const { searchTerm, selectedTags, sortBy, selectedTag } = useFilters();
   const t = useTranslations("listing");
   const commonT = useTranslations("common");
-  const { layoutKey, setLayoutKey, paginationType } = useLayoutTheme();
-  const { searchTerm, selectedTags, sortBy } = useFilters();
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const config = { ...DEFAULT_CONFIG, ...rawConfig };
+  const LayoutComponent = layoutComponents[layoutKey];
+
+  // Reset to page 1 when filters change
+  const filterKey = useMemo(() => 
+    `${searchTerm}-${selectedTags.join(',')}-${selectedTag || ''}-${sortBy}`,
+    [searchTerm, selectedTags, selectedTag, sortBy]
+  );
+
   const { filtered, paginated, hasActiveFilters } = useProcessedItems(
     items,
     searchTerm,
     selectedTags,
+    selectedTag,
     sortBy,
-    start,
+    paginationType === "infinite" ? 0 : (currentPage - 1) * (config.perPage || PER_PAGE),
     config
-  );
-  const handleViewChange = useCallback(
-    (newView: LayoutKey) => setLayoutKey(newView),
-    [setLayoutKey]
   );
 
   const { displayedItems, hasMore, isLoading, error, loadMore } =
@@ -552,7 +558,26 @@ export function SharedCard(props: ExtendedCardProps) {
     rootMargin: "100px",
   });
 
-  const LayoutComponent = layoutComponents[layoutKey];
+  const handleViewChange = useCallback(
+    (newView: LayoutKey) => setLayoutKey(newView),
+    [setLayoutKey]
+  );
+
+  // Calculate pagination info for standard pagination
+  const perPage = config.perPage || PER_PAGE;
+  const totalPages = Math.ceil(filtered.length / perPage);
+
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+  }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterKey]);
+
+  // Use filteredCount/totalCount from props if provided, else fallback to filtered.length/props.total
+  const filteredCount = props.filteredCount ?? filtered.length;
+  const totalCount = props.totalCount ?? props.total;
 
   const showEmptyState =
     config.showEmptyState && (filtered.length === 0 || paginated.length === 0);
@@ -565,6 +590,7 @@ export function SharedCard(props: ExtendedCardProps) {
       <EmptyState
         searchTerm={searchTerm}
         selectedTags={selectedTags}
+        selectedTag={selectedTag}
         tags={props.tags}
         t={t}
         customMessage={config.customEmptyMessage}
@@ -575,93 +601,110 @@ export function SharedCard(props: ExtendedCardProps) {
   }
 
   return (
-    <div className={`w-full space-y-6 ${props.className || ""}`}>
-    <div className="flex items-center justify-between">
-    {config.showStats && (
-        <FilterStats
-          filteredCount={filtered.length}
-          totalCount={items.length}
-          searchTerm={searchTerm}
-          selectedTags={selectedTags}
-          hasActiveFilters={hasActiveFilters}
-          t={t}
-          // className="mb-4"
-        />
-      )}
-      <div className="flex justify-end">
-        {props.headerActions}
-        {config.showViewToggle && (
-          <ViewToggle activeView={layoutKey} onViewChange={handleViewChange} />
-        )}
-      </div>
-    </div>
-
-      {config.showFilters && (
-        <ResultsHeader
-          searchTerm={searchTerm}
-          selectedTags={selectedTags}
-          sortBy={sortBy}
-          start={start}
-          filteredCount={filtered.length}
-          t={t}
-          config={config}
-          className="mb-6"
-        />
-      )}
-
-      {headerActions}
-
-      <ItemsList
-        items={paginationType === "infinite" ? displayedItems : paginated}
-        LayoutComponent={LayoutComponent}
-        onItemClick={onItemClick}
-        renderCustomItem={renderCustomItem}
-        animationDelay={config.animationDelay}
-      />
-
-      {paginationType === "infinite" && (
-        <div className="flex flex-col items-center gap-6 mt-16 mb-12">
-          {hasMore && (
-            <div
-              ref={loadMoreRef}
-              className="w-full flex items-center justify-center py-8"
-            >
-              {error ? (
-                <div className="text-center py-4">
-                  <p className="text-sm text-red-600 dark:text-red-400 mb-2">
-                    {error.message}
-                  </p>
-                  <button
-                    onClick={() => loadMore()}
-                    className="text-sm text-theme-primary-500 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 transition-colors"
-                  >
-                    {commonT("RETRY")}
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-theme-primary-500 dark:text-theme-primary-400">
-                  {isLoading && (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      <span className="text-sm font-medium">
-                        {commonT("LOADING")}
-                      </span>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
-          {!hasMore && !error && (
-            <div className="text-center py-4">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {commonT("END_OF_CONTENT")}
-              </p>
-            </div>
+    <div className={`w-full space-y-6 ${className}`}>
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="flex items-center gap-4">
+          {config.showStats && (
+            <FilterStats
+              filteredCount={filteredCount}
+              totalCount={totalCount}
+              searchTerm={searchTerm}
+              selectedTags={selectedTags}
+              hasActiveFilters={hasActiveFilters}
+              t={t}
+            />
           )}
         </div>
-      )}
+
+        <div className="flex items-center gap-4">
+          {headerActions}
+          {config.showViewToggle && (
+            <ViewToggle
+              activeView={layoutKey}
+              onViewChange={handleViewChange}
+            />
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {config.showFilters && (
+          <ResultsHeader
+            searchTerm={searchTerm}
+            selectedTags={selectedTags}
+            isInfinite={paginationType === "infinite"}
+            sortBy={sortBy}
+            start={paginationType === "infinite" ? 0 : (currentPage - 1) * perPage}
+            filteredCount={filtered.length}
+            t={t}
+            config={config}
+            className="mb-6"
+          />
+        )}
+
+        <ItemsList
+          items={paginationType === "infinite" ? displayedItems : paginated}
+          LayoutComponent={LayoutComponent}
+          onItemClick={onItemClick}
+          renderCustomItem={renderCustomItem}
+          animationDelay={config.animationDelay}
+        />
+        
+        {/* Standard Pagination */}
+        {config.showPagination && paginationType === "standard" && totalPages > 1 && (
+          <UniversalPagination
+            page={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            className="" // add more spacing if needed
+          />
+        )}
+
+        {/* Infinite Scroll */}
+        {paginationType === "infinite" && (
+          <div className="flex flex-col items-center gap-6 mt-16 mb-12">
+            {hasMore && (
+              <div
+                ref={loadMoreRef}
+                className="w-full flex items-center justify-center py-8"
+              >
+                {error ? (
+                  <div className="text-center py-4">
+                    <p className="text-sm text-red-600 dark:text-red-400 mb-2">
+                      {error.message}
+                    </p>
+                    <button
+                      onClick={() => loadMore()}
+                      className="text-sm text-theme-primary-500 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 transition-colors"
+                    >
+                      {commonT("RETRY")}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-theme-primary-500 dark:text-theme-primary-400">
+                    {isLoading && (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <span className="text-sm font-medium">
+                          {commonT("LOADING")}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {!hasMore && !error && (
+              <div className="text-center py-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {commonT("END_OF_CONTENT")}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

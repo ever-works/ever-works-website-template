@@ -30,6 +30,21 @@ export const textStyles = {
 } as const;
 
 /**
+ * Common filter item styles for active filters
+ */
+export const filterItemStyles = {
+  base: "inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium border",
+  primary: "bg-theme-primary-100 dark:bg-gray-800 text-theme-primary-700 dark:text-theme-primary-400 border-theme-primary-200 dark:border-gray-700",
+  blue: "bg-blue-100 dark:bg-gray-800 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-gray-700",
+  green: "bg-green-100 dark:bg-gray-800 text-green-700 dark:text-green-400 border-green-200 dark:border-gray-700",
+  removeButton: {
+    primary: "ml-2 text-theme-primary-600/70 dark:text-theme-primary-400/70 hover:text-theme-primary-800 dark:hover:text-theme-primary-300",
+    blue: "ml-2 text-blue-600/70 dark:text-blue-400/70 hover:text-blue-800 dark:hover:text-blue-300",
+    green: "ml-2 text-green-600/70 dark:text-green-400/70 hover:text-green-800 dark:hover:text-green-300",
+  },
+} as const;
+
+/**
  * Get button variant styles based on active state
  */
 export function getButtonVariantStyles(isActive: boolean, additionalClasses?: string) {
