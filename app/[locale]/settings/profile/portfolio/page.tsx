@@ -1,0 +1,260 @@
+import { Container } from "@/components/ui/container";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { FiBriefcase, FiArrowLeft, FiPlus, FiEdit, FiTrash2, FiStar, FiExternalLink } from "react-icons/fi";
+import Link from "next/link";
+
+const dummyPortfolio = [
+  {
+    id: "1",
+    title: "E-commerce Platform",
+    description: "A modern e-commerce platform built with Next.js and Stripe",
+    imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop",
+    externalUrl: "https://example.com/project1",
+    tags: ["Next.js", "Stripe", "E-commerce"],
+    isFeatured: true,
+  },
+  {
+    id: "2",
+    title: "Task Management App",
+    description: "A collaborative task management application with real-time updates",
+    imageUrl: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=300&fit=crop",
+    externalUrl: "https://example.com/project2",
+    tags: ["React", "Firebase", "Real-time"],
+    isFeatured: true,
+  },
+  {
+    id: "3",
+    title: "Weather Dashboard",
+    description: "A beautiful weather dashboard with location-based forecasts",
+    imageUrl: "https://images.unsplash.com/photo-1592210454359-9043f067919b?w=400&h=300&fit=crop",
+    externalUrl: "https://example.com/project3",
+    tags: ["Vue.js", "Weather API", "Dashboard"],
+    isFeatured: false,
+  },
+];
+
+export default async function PortfolioPage() {
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <Container maxWidth="7xl" padding="default">
+        <div className="space-y-8 pb-16">
+          {/* Header */}
+          <div className="flex items-center gap-4">
+            <Link
+              href="/settings/profile"
+              className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+            >
+              <FiArrowLeft className="w-4 h-4" />
+              Back to Settings
+            </Link>
+          </div>
+
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              Portfolio Management
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
+              Add, edit, and organize your portfolio projects. Showcase your best work to potential clients and collaborators.
+            </p>
+          </div>
+
+          {/* Add New Project */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                <FiPlus className="w-5 h-5 text-theme-primary-500" />
+                Add New Project
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Project Title
+                    </label>
+                    <Input
+                      id="title"
+                      name="title"
+                      placeholder="Enter project title"
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="imageUrl" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Image URL
+                    </label>
+                    <Input
+                      id="imageUrl"
+                      name="imageUrl"
+                      type="url"
+                      placeholder="https://example.com/image.jpg"
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="description" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Description
+                  </label>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    rows={3}
+                    placeholder="Describe your project..."
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="externalUrl" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Project URL
+                    </label>
+                    <Input
+                      id="externalUrl"
+                      name="externalUrl"
+                      type="url"
+                      placeholder="https://yourproject.com"
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="tags" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Tags (comma separated)
+                    </label>
+                    <Input
+                      id="tags"
+                      name="tags"
+                      placeholder="React, TypeScript, Next.js"
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      name="isFeatured"
+                      className="rounded border-gray-300 text-theme-primary-600 focus:ring-theme-primary-500"
+                    />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Featured Project</span>
+                  </label>
+                </div>
+
+                <div className="flex justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                  <Button type="submit" className="inline-flex items-center gap-2">
+                    <FiPlus className="w-4 h-4" />
+                    Add Project
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Existing Projects */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                <FiBriefcase className="w-5 h-5 text-theme-primary-500" />
+                Your Projects
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {dummyPortfolio.map((project) => (
+                  <PortfolioItem key={project.id} project={project} />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </Container>
+    </div>
+  );
+}
+
+interface PortfolioItemProps {
+  project: {
+    id: string;
+    title: string;
+    description: string;
+    imageUrl: string;
+    externalUrl: string;
+    tags: string[];
+    isFeatured: boolean;
+  };
+}
+
+function PortfolioItem({ project }: PortfolioItemProps) {
+  return (
+    <div className="flex items-start gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+      <div className="flex-shrink-0">
+        <img
+          src={project.imageUrl}
+          alt={project.title}
+          className="w-16 h-16 object-cover rounded-lg"
+        />
+      </div>
+      
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100">{project.title}</h3>
+              {project.isFeatured && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200 rounded text-xs">
+                  <FiStar className="w-3 h-3" />
+                  Featured
+                </span>
+              )}
+            </div>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">{project.description}</p>
+            <div className="flex flex-wrap gap-1">
+              {project.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded text-xs"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2 ml-4">
+            <a
+              href={project.externalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors"
+              title="View project"
+            >
+              <FiExternalLink className="w-4 h-4" />
+            </a>
+            <button
+              className="p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors"
+              title="Edit project"
+            >
+              <FiEdit className="w-4 h-4" />
+            </button>
+            <button
+              className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+              title="Delete project"
+            >
+              <FiTrash2 className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+} 

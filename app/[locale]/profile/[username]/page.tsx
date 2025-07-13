@@ -51,38 +51,38 @@ const dummyProfile = {
   themeColor: "#3B82F6", // Blue theme
   isPublic: true,
   memberSince: "2022-03-15",
-  submissions: [
-    {
-      id: "1",
-      title: "E-commerce Platform",
-      description: "A modern e-commerce platform built with Next.js and Stripe",
-      category: "Web Development",
-      status: "approved",
-      submittedAt: "2024-01-15",
-      updatedAt: "2024-01-20",
-      url: "/items/ecommerce-platform",
-    },
-    {
-      id: "2",
-      title: "Task Management App",
-      description: "A collaborative task management application with real-time updates",
-      category: "Mobile Development",
-      status: "pending",
-      submittedAt: "2024-02-01",
-      updatedAt: "2024-02-01",
-      url: "/items/task-management-app",
-    },
-    {
-      id: "3",
-      title: "Weather Dashboard",
-      description: "A beautiful weather dashboard with location-based forecasts",
-      category: "Web Development",
-      status: "rejected",
-      submittedAt: "2024-01-10",
-      updatedAt: "2024-01-12",
-      url: "/items/weather-dashboard",
-    },
-  ],
+        submissions: [
+        {
+          id: "1",
+          title: "E-commerce Platform",
+          description: "A modern e-commerce platform built with Next.js and Stripe",
+          category: "Web Development",
+          status: "approved" as const,
+          submittedAt: "2024-01-15",
+          updatedAt: "2024-01-20",
+          url: "/items/ecommerce-platform",
+        },
+        {
+          id: "2",
+          title: "Task Management App",
+          description: "A collaborative task management application with real-time updates",
+          category: "Mobile Development",
+          status: "pending" as const,
+          submittedAt: "2024-02-01",
+          updatedAt: "2024-02-01",
+          url: "/items/task-management-app",
+        },
+        {
+          id: "3",
+          title: "Weather Dashboard",
+          description: "A beautiful weather dashboard with location-based forecasts",
+          category: "Web Development",
+          status: "rejected" as const,
+          submittedAt: "2024-01-10",
+          updatedAt: "2024-01-12",
+          url: "/items/weather-dashboard",
+        },
+      ],
 };
 
 interface ProfilePageProps {
@@ -103,7 +103,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Container maxWidth="7xl" padding="default">
-        <div className="space-y-8">
+        <div className="space-y-8 pb-16">
           <ProfileHeader profile={profile} />
           <ProfileContent profile={profile} />
         </div>
