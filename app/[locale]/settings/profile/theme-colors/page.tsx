@@ -42,7 +42,7 @@ export default function ThemeColorsPage() {
             <CardHeader className="pb-6">
               <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <FiDroplet className="w-5 h-5 text-theme-primary-500" />
-                Choose Visual Theme
+              Choose Visual Theme
               </CardTitle>
               <p className="text-gray-500 dark:text-gray-400 text-sm">
                 Select a theme that best represents your style and brand
@@ -50,49 +50,49 @@ export default function ThemeColorsPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {availableThemes.map((theme) => (
-                  <button
-                    key={theme.key}
-                    type="button"
-                    onClick={() => changeTheme(theme.key)}
+              {availableThemes.map((theme) => (
+                <button
+                  key={theme.key}
+                  type="button"
+                  onClick={() => changeTheme(theme.key)}
                     className={`flex items-center w-full rounded-xl border transition-all duration-300 p-6 text-left focus:outline-none focus:ring-2 focus:ring-theme-primary-500 hover:shadow-md
                       ${themeKey === theme.key 
                         ? "border-theme-primary-400 bg-theme-primary-50 dark:bg-theme-primary-950/20 ring-2 ring-theme-primary-400 shadow-lg" 
                         : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 hover:border-theme-primary-300 dark:hover:border-theme-primary-600"
                       }
-                    `}
-                  >
+                  `}
+                >
                     <span className="flex items-center justify-center mr-6">
-                      <span className="flex gap-1">
-                        <span
+                    <span className="flex gap-1">
+                      <span
                           className="inline-block w-8 h-6 rounded-md shadow-sm"
-                          style={{ background: theme.colors.primary, border: "2px solid #222" }}
-                        />
-                        <span
+                        style={{ background: theme.colors.primary, border: "2px solid #222" }}
+                      />
+                      <span
                           className="inline-block w-8 h-6 rounded-md shadow-sm -ml-2"
-                          style={{ background: theme.colors.secondary, border: "2px solid #222" }}
-                        />
-                      </span>
+                        style={{ background: theme.colors.secondary, border: "2px solid #222" }}
+                      />
                     </span>
-                    <span className="flex-1 min-w-0">
+                  </span>
+                  <span className="flex-1 min-w-0">
                       <span className={`block font-semibold text-lg ${themeKey === theme.key ? "text-theme-primary-700 dark:text-theme-primary-400" : "text-gray-900 dark:text-gray-100"}`}>
                         {theme.label}
                       </span>
                       <span className="block text-gray-600 dark:text-gray-300 text-sm mt-1 leading-relaxed">
                         {theme.description}
                       </span>
-                    </span>
-                    <span className="ml-4">
-                      {themeKey === theme.key ? (
+                  </span>
+                  <span className="ml-4">
+                    {themeKey === theme.key ? (
                         <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-theme-primary-500 text-white shadow-sm">
-                          <FiCheck className="w-4 h-4" />
-                        </span>
-                      ) : (
+                        <FiCheck className="w-4 h-4" />
+                      </span>
+                    ) : (
                         <span className="inline-block w-6 h-6 rounded-full border-2 border-gray-300 dark:border-gray-600" />
-                      )}
-                    </span>
-                  </button>
-                ))}
+                    )}
+                  </span>
+                </button>
+              ))}
               </div>
             </CardContent>
           </Card>
@@ -119,8 +119,8 @@ export default function ThemeColorsPage() {
                   <p className="text-gray-600 dark:text-gray-300 text-sm max-w-md mx-auto">
                     This is how your profile will appear with the selected theme. The colors and styling will be applied consistently across your profile.
                   </p>
-                </div>
-              </div>
+            </div>
+          </div>
             </CardContent>
           </Card>
         </div>

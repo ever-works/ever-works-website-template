@@ -125,12 +125,7 @@ export default function Header({ session }: SessionProps) {
   const config = useConfig();
   const pathname = usePathname();
 
-  const authProviders = useMemo(() => {
-    const auth = config.auth;
-    return Object.keys(auth || {}).filter((key) =>
-      auth ? !!auth[key as keyof typeof auth] : false
-    );
-  }, [config.auth]);
+
 
   const navigationItems = useMemo((): NavigationItem[] => {
     return NAVIGATION_CONFIG.map((item) => ({
@@ -209,18 +204,16 @@ export default function Header({ session }: SessionProps) {
         <NavbarItem className="hidden sm:flex">
           <NavigationControls />
         </NavbarItem>
-        {authProviders.length > 0 && (
-          <NavbarItem>
-            <ProfileButton session={session} />
-          </NavbarItem>
-        )}
+        <NavbarItem>
+          <ProfileButton session={session} />
+        </NavbarItem>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className={STYLES.navbarMenuToggle}
         />
       </NavbarContent>
     ),
-    [authProviders.length, session, isMenuOpen]
+    [session, isMenuOpen]
   );
 
   return (
