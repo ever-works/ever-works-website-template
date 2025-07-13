@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/container";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FiUser, FiDroplet, FiBriefcase, FiFileText, FiArrowRight } from "react-icons/fi";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { FiUser, FiDroplet, FiBriefcase, FiFileText, FiArrowRight, FiEye, FiDownload } from "react-icons/fi";
 import Link from "next/link";
 
 interface SettingsCardProps {
@@ -12,24 +13,24 @@ interface SettingsCardProps {
 
 function SettingsCard({ title, description, icon, href }: SettingsCardProps) {
   return (
-    <Link href={href} className="block">
-      <Card className="hover:shadow-xl hover:border-theme-primary-400 border border-gray-200 dark:border-gray-800 transition-all duration-200 hover:scale-[1.025] cursor-pointer group rounded-2xl bg-white/90 dark:bg-gray-900/80">
-        <CardContent className="p-7">
+    <Link href={href} className="block group">
+      <Card className="h-full hover:shadow-lg hover:shadow-theme-primary-500/10 border border-gray-200 dark:border-gray-800 transition-all duration-300 hover:scale-[1.02] cursor-pointer group-hover:border-theme-primary-300 dark:group-hover:border-theme-primary-600 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
+        <CardContent className="p-6">
           <div className="flex items-start justify-between">
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-14 h-14 bg-theme-primary-100 dark:bg-theme-primary-900/30 rounded-xl flex items-center justify-center group-hover:bg-theme-primary-200 dark:group-hover:bg-theme-primary-800/50 transition-colors">
+            <div className="flex items-start gap-4 flex-1">
+              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-xl flex items-center justify-center group-hover:from-theme-primary-200 group-hover:to-theme-primary-300 dark:group-hover:from-theme-primary-800/60 dark:group-hover:to-theme-primary-700/60 transition-all duration-300 shadow-sm">
                 {icon}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg group-hover:text-theme-primary-600 dark:group-hover:text-theme-primary-400 transition-colors">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg group-hover:text-theme-primary-700 dark:group-hover:text-theme-primary-400 transition-colors mb-1">
                   {title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
+                <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
                   {description}
                 </p>
               </div>
             </div>
-            <FiArrowRight className="w-5 h-5 text-gray-400 group-hover:text-theme-primary-500 transition-colors" />
+            <FiArrowRight className="w-5 h-5 text-gray-400 group-hover:text-theme-primary-500 group-hover:translate-x-1 transition-all duration-300" />
           </div>
         </CardContent>
       </Card>
@@ -44,47 +45,65 @@ export default async function ProfileSettingsPage() {
   const settingsCards = [
     {
       title: "Basic Information",
-      description: "Update your name, bio, location, and contact details",
-      icon: <FiUser className="w-6 h-6 text-theme-primary-600 dark:text-theme-primary-400" />,
-      href: "/settings/profile/basic-info",
+      description: "Update your name, bio, location, and contact details to personalize your profile",
+      icon: <FiUser className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
+      href: "/settings/profile/basic-info"
     },
     {
       title: "Theme & Appearance",
-      description: "Customize your profile colors and visual style",
-      icon: <FiDroplet className="w-6 h-6 text-theme-primary-600 dark:text-theme-primary-400" />,
-      href: "/settings/profile/theme-colors",
+      description: "Customize your profile colors and visual style to match your brand",
+      icon: <FiDroplet className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
+      href: "/settings/profile/theme-colors"
     },
     {
       title: "Portfolio Management",
-      description: "Add, edit, and organize your portfolio projects",
-      icon: <FiBriefcase className="w-6 h-6 text-theme-primary-600 dark:text-theme-primary-400" />,
-      href: "/settings/profile/portfolio",
+      description: "Add, edit, and organize your portfolio projects to showcase your work",
+      icon: <FiBriefcase className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
+      href: "/settings/profile/portfolio"
     },
     {
       title: "Submissions",
-      description: "Manage your directory submissions and track their status",
-      icon: <FiFileText className="w-6 h-6 text-theme-primary-600 dark:text-theme-primary-400" />,
-      href: "/settings/profile/submissions",
+      description: "Manage your directory submissions and track their approval status",
+      icon: <FiFileText className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
+      href: "/settings/profile/submissions"
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       <Container maxWidth="7xl" padding="default">
-        <div className="space-y-10 pb-20">
+        <div className="space-y-12 py-8">
           {/* Section Header */}
-          <div className="text-center pt-8">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-2xl mb-4">
+              <FiUser className="w-8 h-8 text-theme-primary-600 dark:text-theme-primary-400" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">
               Profile Settings
             </h1>
-            <p className="text-gray-600 dark:text-gray-300 text-base max-w-2xl mx-auto">
-              Customize your profile appearance, manage your information, and control how others see your profile.
-            </p>
+          </div>
+
+          {/* Quick Actions (simplified, moved up) */}
+          <div className="flex justify-end gap-2 mb-6">
+            <Link
+              href={`/profile/${session.user?.name?.toLowerCase().replace(/\s+/g, '')}`}
+              className="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-theme-primary-600 hover:bg-theme-primary-700 text-white rounded-md transition-colors font-medium"
+            >
+              <FiEye className="w-4 h-4" />
+              View Profile
+            </Link>
+            <Button
+              variant="outline"
+              className="inline-flex items-center gap-2 px-3 py-1.5 text-sm"
+            >
+              <FiDownload className="w-4 h-4" />
+              Export Data
+            </Button>
           </div>
 
           {/* Settings Grid Panel */}
-          <div className="rounded-xl bg-white dark:bg-gray-800/90 shadow-md p-6 md:p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {settingsCards.map((card) => (
                 <SettingsCard
                   key={card.title}
@@ -96,30 +115,6 @@ export default async function ProfileSettingsPage() {
               ))}
             </div>
           </div>
-
-          {/* Quick Actions */}
-          <Card className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800/90 shadow-md">
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                Quick Actions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-4">
-                <Link
-                  href={`/profile/${session.user?.name?.toLowerCase().replace(/\s+/g, '')}`}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-theme-primary-600 hover:bg-theme-primary-700 text-white rounded-lg transition-colors"
-                >
-                  <FiUser className="w-4 h-4" />
-                  View My Profile
-                </Link>
-                <button className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors">
-                  <FiFileText className="w-4 h-4" />
-                  Export Profile Data
-                </button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </Container>
     </div>
