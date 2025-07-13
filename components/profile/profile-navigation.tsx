@@ -24,21 +24,28 @@ export function ProfileNavigation({ activeTab = "about", onTabChange }: ProfileN
   };
 
   return (
-    <div className="border-b border-gray-200 dark:border-gray-700">
-      <nav className="flex space-x-8 overflow-x-auto">
+    <div className="sticky top-0 z-20 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md rounded-t-2xl shadow-sm border-b border-gray-200 dark:border-gray-800 mb-4">
+      <nav
+        className="flex space-x-2 sm:space-x-4 px-2 sm:px-6 py-2 overflow-x-auto"
+        role="tablist"
+        aria-label="Profile Sections"
+      >
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTabState === tab.id;
-          
+
           return (
             <button
               key={tab.id}
               onClick={() => handleTabClick(tab.id)}
+              role="tab"
+              aria-selected={isActive}
+              tabIndex={isActive ? 0 : -1}
               className={`
-                flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap
-                ${isActive 
-                  ? 'border-theme-primary-500 text-theme-primary-600 dark:text-theme-primary-400' 
-                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-sm transition-all whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary-500
+                ${isActive
+                  ? 'bg-theme-primary-600/10 text-theme-primary-700 dark:text-theme-primary-300 shadow border border-theme-primary-300 dark:border-theme-primary-700'
+                  : 'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 border border-transparent'
                 }
               `}
             >

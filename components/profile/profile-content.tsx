@@ -57,22 +57,57 @@ export function ProfileContent({ profile }: ProfileContentProps) {
   const renderSection = () => {
     switch (activeTab) {
       case "about":
-        return <AboutSection profile={profile} />;
+        return (
+          <section className="space-y-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 border-b border-gray-200 dark:border-gray-800 pb-2">
+              About
+            </h2>
+            <AboutSection profile={profile} />
+          </section>
+        );
       case "portfolio":
-        return <PortfolioSection profile={profile} />;
+        return (
+          <section className="space-y-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 border-b border-gray-200 dark:border-gray-800 pb-2">
+              Portfolio
+            </h2>
+            <PortfolioSection profile={profile} />
+          </section>
+        );
       case "skills":
-        return <SkillsSection profile={profile} />;
+        return (
+          <section className="space-y-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 border-b border-gray-200 dark:border-gray-800 pb-2">
+              Skills & Expertise
+            </h2>
+            <SkillsSection profile={profile} />
+          </section>
+        );
       case "submissions":
-        return <SubmissionsSection profile={profile} />;
+        return (
+          <section className="space-y-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 border-b border-gray-200 dark:border-gray-800 pb-2">
+              Submissions
+            </h2>
+            <SubmissionsSection profile={profile} />
+          </section>
+        );
       default:
-        return <AboutSection profile={profile} />;
+        return (
+          <section className="space-y-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 border-b border-gray-200 dark:border-gray-800 pb-2">
+              About
+            </h2>
+            <AboutSection profile={profile} />
+          </section>
+        );
     }
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12 max-w-5xl mx-auto px-2 sm:px-0">
       <ProfileNavigation activeTab={activeTab} onTabChange={setActiveTab} />
-      {renderSection()}
+      <div className="pt-2">{renderSection()}</div>
     </div>
   );
 } 

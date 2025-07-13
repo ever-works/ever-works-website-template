@@ -39,38 +39,48 @@ export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderPr
   };
 
   return (
-    <Card className="relative overflow-hidden border-0 shadow-lg">
-      {/* Background with theme color */}
-      <div 
-        className="absolute inset-0 bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 opacity-10"
-        style={{ 
-          background: `linear-gradient(135deg, ${profile.themeColor}20, ${profile.themeColor}40)` 
-        }}
-      />
-      
-      <div className="relative p-8">
-        <div className="flex flex-col md:flex-row items-start md:items-center space-y-6 md:space-y-0 md:space-x-8">
-          {/* Avatar */}
-          <div className="relative flex-shrink-0">
-            <div className="w-32 h-32 rounded-full overflow-hidden ring-4 ring-white dark:ring-gray-800 shadow-lg">
-              <Image
-                src={profile.avatar}
-                alt={`${profile.displayName}'s avatar`}
-                width={128}
-                height={128}
-                className="w-full h-full object-cover"
-                priority
-              />
-            </div>
-            {isOwnProfile && (
-              <button className="absolute bottom-0 right-0 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                <FiEdit2 className="w-4 h-4 text-theme-primary-600 dark:text-theme-primary-400" />
-              </button>
-            )}
-          </div>
+    <div className="relative w-full">
+      {/* Cover Banner */}
+      <div className="relative h-20 md:h-24 w-full overflow-hidden">
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            background:
+              `linear-gradient(120deg, var(--theme-primary), var(--theme-secondary) 80%)`,
+          }}
+        />
+        {/* Overlay for readability */}
+        <div className="absolute inset-0 bg-black/20 dark:bg-black/30 z-10" />
+      </div>
 
+      {/* Avatar - Overlapping the cover */}
+      <div className="absolute left-1/2 md:left-12 top-6 md:top-10 transform -translate-x-1/2 md:translate-x-0 z-20">
+        <div className="relative">
+          <div className="w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden ring-4 ring-white dark:ring-gray-900 shadow-xl bg-white dark:bg-gray-900">
+            <Image
+              src={profile.avatar}
+              alt={`${profile.displayName}'s avatar`}
+              width={112}
+              height={112}
+              className="w-full h-full object-cover"
+              priority
+            />
+          </div>
+          {isOwnProfile && (
+            <button className="absolute bottom-2 right-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700">
+              <FiEdit2 className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Profile Info Card */}
+      <Card className="relative z-30 mt-8 md:mt-4 mx-auto max-w-4xl px-6 py-8 md:px-12 md:py-10 shadow-lg border-0">
+        <div className="flex flex-col md:flex-row items-center md:items-start md:space-x-8">
+          {/* Spacer for avatar on desktop */}
+          <div className="hidden md:block md:w-0 md:h-0 flex-shrink-0" />
           {/* Profile Info */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 w-full">
             <div className="space-y-4">
               {/* Name and Title */}
               <div>
@@ -102,7 +112,7 @@ export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderPr
                   </div>
                 )}
                 {profile.website && (
-                  <a 
+                  <a
                     href={profile.website}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -116,7 +126,7 @@ export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderPr
 
               {/* Social Links */}
               {profile.socialLinks.length > 0 && (
-                <div className="flex items-center gap-4 pt-2">
+                <div className="flex items-center gap-4 pt-2 flex-wrap">
                   {profile.socialLinks.map((link) => (
                     <a
                       key={link.platform}
@@ -136,7 +146,7 @@ export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderPr
             </div>
           </div>
         </div>
-      </div>
-    </Card>
+      </Card>
+    </div>
   );
 } 
