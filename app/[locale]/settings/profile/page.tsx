@@ -1,7 +1,6 @@
 import { Container } from "@/components/ui/container";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { FiUser, FiDroplet, FiBriefcase, FiFileText, FiArrowRight, FiEye, FiDownload } from "react-icons/fi";
+import { FiUser, FiDroplet, FiBriefcase, FiFileText, FiArrowRight } from "react-icons/fi";
 import Link from "next/link";
 
 interface SettingsCardProps {
@@ -39,8 +38,6 @@ function SettingsCard({ title, description, icon, href }: SettingsCardProps) {
 }
 
 export default async function ProfileSettingsPage() {
-  // Bypass auth for testing
-  const session = { user: { name: "John Doe", email: "john@example.com" } };
 
   const settingsCards = [
     {
@@ -83,23 +80,7 @@ export default async function ProfileSettingsPage() {
             </h1>
           </div>
 
-          {/* Quick Actions (simplified, moved up) */}
-          <div className="flex justify-end gap-2 mb-6">
-            <Link
-              href={`/profile/${session.user?.name?.toLowerCase().replace(/\s+/g, '')}`}
-              className="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-theme-primary-600 hover:bg-theme-primary-700 text-white rounded-md transition-colors font-medium"
-            >
-              <FiEye className="w-4 h-4" />
-              View Profile
-            </Link>
-            <Button
-              variant="outline"
-              className="inline-flex items-center gap-2 px-3 py-1.5 text-sm"
-            >
-              <FiDownload className="w-4 h-4" />
-              Export Data
-            </Button>
-          </div>
+
 
           {/* Settings Grid Panel */}
           <div className="space-y-8">
