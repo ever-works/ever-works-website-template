@@ -1,4 +1,4 @@
-import { FiMapPin, FiBriefcase, FiGlobe, FiCalendar, FiTag, FiGithub, FiLinkedin, FiTwitter } from "react-icons/fi";
+import { FiMapPin, FiBriefcase, FiGlobe, FiCalendar, FiTag } from "react-icons/fi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface Profile {
@@ -10,11 +10,6 @@ interface Profile {
   company: string;
   jobTitle: string;
   website: string;
-  socialLinks: Array<{
-    platform: string;
-    url: string;
-    displayName: string;
-  }>;
   skills: string[];
   interests: string[];
   memberSince: string;
@@ -33,18 +28,7 @@ export function AboutSection({ profile }: AboutSectionProps) {
     });
   };
 
-  const getSocialIcon = (platform: string) => {
-    switch (platform.toLowerCase()) {
-      case "github":
-        return <FiGithub className="w-5 h-5" />;
-      case "linkedin":
-        return <FiLinkedin className="w-5 h-5" />;
-      case "twitter":
-        return <FiTwitter className="w-5 h-5" />;
-      default:
-        return <FiGlobe className="w-5 h-5" />;
-    }
-  };
+
 
   return (
     <div className="space-y-6">
@@ -167,35 +151,7 @@ export function AboutSection({ profile }: AboutSectionProps) {
         </Card>
       )}
 
-      {/* Social Links */}
-      {profile.socialLinks.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              Social Links
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {profile.socialLinks.map((link) => (
-                <a
-                  key={link.platform}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200"
-                >
-                  {getSocialIcon(link.platform)}
-                  <div>
-                    <div className="font-medium text-gray-900 dark:text-gray-100">{link.displayName}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">{link.url}</div>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+
     </div>
   );
 } 

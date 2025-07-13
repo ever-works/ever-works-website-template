@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FiUser, FiBriefcase, FiAward } from "react-icons/fi";
+import { FiUser, FiBriefcase, FiAward, FiFileText } from "react-icons/fi";
 
 interface ProfileNavigationProps {
   activeTab?: string;
@@ -15,6 +15,7 @@ export function ProfileNavigation({ activeTab = "about", onTabChange }: ProfileN
     { id: "about", label: "About", icon: FiUser },
     { id: "portfolio", label: "Portfolio", icon: FiBriefcase },
     { id: "skills", label: "Skills", icon: FiAward },
+    { id: "submissions", label: "Submissions", icon: FiFileText },
   ];
 
   const handleTabClick = (tabId: string) => {

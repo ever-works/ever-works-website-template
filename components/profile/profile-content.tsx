@@ -5,6 +5,7 @@ import { ProfileNavigation } from "./profile-navigation";
 import { AboutSection } from "./sections/about-section";
 import { PortfolioSection } from "./sections/portfolio-section";
 import { SkillsSection } from "./sections/skills-section";
+import { SubmissionsSection } from "./sections/submissions-section";
 
 interface Profile {
   username: string;
@@ -33,6 +34,17 @@ interface Profile {
   }>;
   themeColor: string;
   memberSince: string;
+  submissions: Array<{
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    status: "approved" | "pending" | "rejected";
+    submittedAt: string;
+    updatedAt: string;
+    url: string;
+    imageUrl?: string;
+  }>;
 }
 
 interface ProfileContentProps {
@@ -50,6 +62,8 @@ export function ProfileContent({ profile }: ProfileContentProps) {
         return <PortfolioSection profile={profile} />;
       case "skills":
         return <SkillsSection profile={profile} />;
+      case "submissions":
+        return <SubmissionsSection profile={profile} />;
       default:
         return <AboutSection profile={profile} />;
     }
