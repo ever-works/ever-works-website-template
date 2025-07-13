@@ -9,17 +9,11 @@ on:
     - cron: '0 6 * * 1'  # Weekly on Monday at 6 AM
   workflow_dispatch:  # Allow manual triggering
 
-env:
-  # Set to true to run advanced CodeQL analysis
-  ENABLE_ADVANCED_CODEQL: true
-
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
     timeout-minutes: 360
-    # Only run if advanced CodeQL is enabled
-    if: env.ENABLE_ADVANCED_CODEQL == 'true'
     permissions:
       actions: read
       contents: read
@@ -34,7 +28,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Check if CodeQL should run
+      id: should-run
+      run: |
+        # You can set this to false to disable the workflow
+        echo "enabled=true" >> $GITHUB_OUTPUT
+
     - name: Initialize CodeQL
+      if: steps.should-run.outputs.enabled == 'true'
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
@@ -43,9 +44,11 @@ jobs:
         category: "/language:${{ matrix.language }}/advanced"
 
     - name: Autobuild
+      if: steps.should-run.outputs.enabled == 'true'
       uses: github/codeql-action/autobuild@v3
 
     - name: Perform CodeQL Analysis
+      if: steps.should-run.outputs.enabled == 'true'
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{ matrix.language }}/advanced"
