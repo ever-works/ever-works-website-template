@@ -26,8 +26,17 @@ This versatile template is an essential component of the [Ever Works Platform](h
 - **UI Components**: [HeroUI React](https://www.heroui.com)
 - **Internationalization**: [next-intl](https://github.com/amannn/next-intl)
 - **Form Validation**: [Zod](https://zod.dev)
+- **Analytics & Monitoring**: [PostHog](https://posthog.com) / [Sentry](https://sentry.io)
 - **Notifications/Emails Services**: [Novu](https://novu.co) / [Resend](https://resend.com)
 - **Hosting**: [Vercel](https://vercel.com)
+
+### 🔒 Security Features
+
+- **Code Security**: Advanced CodeQL analysis for vulnerability detection
+- **Authentication**: Multi-provider support with secure session management
+- **Exception Tracking**: Comprehensive error monitoring and reporting
+- **Environment Validation**: Startup checks for critical configuration
+- **API Security**: httpOnly cookies, CORS protection, and request validation
 
 ### 📄 Project Structure
 
@@ -36,12 +45,19 @@ This versatile template is an essential component of the [Ever Works Platform](h
 │   ├── posts/            # Blog posts
 │   ├── categories/       # Category definitions
 │   └── assets/           # Media files related to content
+├── .github/              # GitHub workflows and configuration
+│   ├── workflows/        # CI/CD workflows
+│   └── codeql/           # CodeQL security configuration
 ├── app/
 │   ├── [locale]/         # Internationalized routes
 │   ├── api/              # API routes
 │   └── auth/             # Authentication pages
 ├── components/           # Reusable UI components
+├── docs/                 # Documentation
 ├── lib/                  # Utility functions and config
+│   ├── analytics/        # Analytics integration
+│   ├── auth/             # Authentication services
+│   └── api/              # API client configuration
 ├── public/               # Static files
 └── styles/               # Global styles
 ```
@@ -125,18 +141,63 @@ auth:
 cp .env.example .env.local
 ```
 
-1. Fill in your environment variables in `.env.local`:
+2. Fill in your environment variables in `.env.local`:
 
-### Auth Setup
+### Authentication Setup
 
-```
+```env
+# ============================================
+# AUTHENTICATION & SECURITY
+# ============================================
+
+## NextAuth Configuration
 AUTH_SECRET="your-secret-key"
 # Generate one with: openssl rand -base64 32
+NEXTAUTH_SECRET="same-as-auth-secret"
+NEXTAUTH_URL="http://localhost:3000"
+
+## OAuth Providers (optional)
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+
+GITHUB_CLIENT_ID="your-github-client-id"
+GITHUB_CLIENT_SECRET="your-github-client-secret"
+
+# Add other providers as needed...
+```
+
+### Analytics & Monitoring Setup
+
+```env
+# ============================================
+# ANALYTICS & MONITORING
+# ============================================
+
+## PostHog Analytics
+NEXT_PUBLIC_POSTHOG_KEY="your-posthog-key"
+NEXT_PUBLIC_POSTHOG_HOST="https://app.posthog.com"
+POSTHOG_DEBUG=false
+POSTHOG_SESSION_RECORDING_ENABLED=true
+POSTHOG_AUTO_CAPTURE=false
+
+## Sentry Error Monitoring
+NEXT_PUBLIC_SENTRY_DSN="your-sentry-dsn"
+SENTRY_ORG="your-org-name"
+SENTRY_PROJECT="your-project-name"
+SENTRY_AUTH_TOKEN="your-auth-token"
+SENTRY_ENABLE_DEV=false
+SENTRY_DEBUG=false
+
+## Exception Tracking Configuration
+# Options: "sentry", "posthog", "both", or "none"
+EXCEPTION_TRACKING_PROVIDER=both
+POSTHOG_EXCEPTION_TRACKING=true
+SENTRY_EXCEPTION_TRACKING=true
 ```
 
 ### GitHub Integration
 
-### Define the data repository
+#### Define the data repository
 
 1. Fork the repository:
     - Visit https://github.com/ever-works/awesome-data
@@ -144,7 +205,11 @@ AUTH_SECRET="your-secret-key"
     - This repo will hold `.content` data
 2. Configure GitHub integration:
 
-```
+```env
+# ============================================
+# CONTENT MANAGEMENT
+# ============================================
+
 GH_TOKEN='your-github-token'
 DATA_REPOSITORY='https://github.com/ever-works/awesome-data'
 ```
@@ -153,7 +218,11 @@ DATA_REPOSITORY='https://github.com/ever-works/awesome-data'
 
 ### Database Configuration
 
-```
+```env
+# ============================================
+# DATABASE
+# ============================================
+
 DATABASE_URL=postgresql://user:password@localhost:5432/db_name
 ```
 
@@ -174,6 +243,8 @@ DATABASE_URL=postgresql://user:password@localhost:5432/db_name
 npm install
 # or
 yarn install
+# or
+pnpm install
 
 # Set up the database
 npm run db:generate
@@ -190,6 +261,40 @@ The app will be available at [http://localhost:3000](http://localhost:3000/).
 - **Database Studio**: `npm run db:studio`
 - **Linting**: `npm run lint`
 - **Type Checking**: `tsc` or during build
+- **Environment Check**: `npm run check-env`
+
+## 🔒 Security & Code Quality
+
+### CodeQL Security Analysis
+
+This project includes advanced CodeQL configuration for comprehensive security analysis:
+
+- **Automated Security Scanning**: Detects vulnerabilities and security issues
+- **Custom Configuration**: Excludes generated files and focuses on source code
+- **Multiple Triggers**: Runs on push, pull requests, and scheduled weekly
+- **Advanced Setup**: Uses custom queries and path filtering
+
+The CodeQL workflow is configured to avoid conflicts with GitHub's default setup and provides detailed security insights.
+
+### Exception Tracking
+
+Comprehensive error monitoring system supporting multiple providers:
+
+- **Flexible Configuration**: Choose between Sentry, PostHog, or both
+- **Automatic Error Capture**: Handles unhandled exceptions and promise rejections
+- **Custom Error Reporting**: Unified API for manual error reporting
+- **Development Support**: Different configurations for dev/production environments
+
+See [docs/EXCEPTION_TRACKING.md](docs/EXCEPTION_TRACKING.md) for detailed configuration.
+
+### Authentication Security
+
+- **Multi-Provider Support**: NextAuth.js and Supabase Auth integration
+- **Secure Session Management**: httpOnly cookies and JWT tokens
+- **OAuth Integration**: Google, GitHub, Facebook, Twitter, Microsoft
+- **Environment Validation**: Startup checks for missing credentials
+
+See [docs/AUTH_SETUP.md](docs/AUTH_SETUP.md) for troubleshooting authentication issues.
 
 ## Developer Guide
 
@@ -212,18 +317,98 @@ The app will be available at [http://localhost:3000](http://localhost:3000/).
 - Protect routes via middleware
 - Customize auth pages in `app/[locale]/auth`
 
+### Analytics Integration
+
+```typescript
+import { analytics } from '@/lib/analytics';
+
+// Track events
+analytics.track('button_clicked', {
+  button_name: 'subscribe',
+  page: 'homepage'
+});
+
+// Track page views (automatic)
+analytics.page();
+
+// Identify users
+analytics.identify('user_123', {
+  email: 'user@example.com',
+  name: 'John Doe'
+});
+
+// Report exceptions
+analytics.captureException(new Error('Something went wrong'));
+```
+
+### API Client Usage
+
+```typescript
+import { apiClient } from '@/lib/api/api-client';
+
+// GET request
+const data = await apiClient.get('/endpoint');
+
+// POST request
+const result = await apiClient.post('/endpoint', { data });
+
+// Paginated requests
+const paginatedData = await apiClient.getPaginated('/items', {
+  page: 1,
+  limit: 10
+});
+```
+
+## 🚀 CI/CD & Deployment
+
+### GitHub Actions Workflows
+
+- **CI Workflow**: Automated linting, type checking, and building
+- **CodeQL Analysis**: Security vulnerability scanning
+- **Vercel Deployment**: Automated deployment to Vercel
+
+### Environment Variables for Production
+
+Make sure to configure these in your deployment platform:
+
+```env
+# Production-specific variables
+NODE_ENV=production
+NEXT_PUBLIC_APP_URL=https://your-domain.com
+NEXTAUTH_URL=https://your-domain.com
+
+# Security settings
+COOKIE_SECURE=true
+COOKIE_SAME_SITE=strict
+CORS_ORIGIN=https://your-domain.com
+```
+
+### Vercel Deployment
+
+The easiest way to deploy the app is via the [Vercel platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
+
+1. Connect your GitHub repository
+2. Configure environment variables
+3. Deploy automatically on push to main branch
+
+Check the [Next.js deployment docs](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## 📚 Documentation
+
+- [Exception Tracking Setup](docs/EXCEPTION_TRACKING.md)
+- [Authentication Setup & Troubleshooting](docs/AUTH_SETUP.md)
+- [Theme System](docs/THEME_SYSTEM.md)
+- [Dynamic Color System](docs/DYNAMIC_COLOR_SYSTEM.md)
+- [Email Templates](docs/EMAIL_TEMPLATES.md)
+
 ## 🔗 Resources
 
 - [Next.js Docs](https://nextjs.org/docs)
 - [NextAuth.js Guide](https://authjs.dev/)
 - [Drizzle ORM Docs](https://orm.drizzle.team/)
 - [Tailwind CSS Docs](https://tailwindcss.com/docs)
-
-## Deployment on Vercel
-
-The easiest way to deploy the app is via the [Vercel platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
-
-Check the [Next.js deployment docs](https://nextjs.org/docs/app/building-your-application/deploying).
+- [PostHog Docs](https://posthog.com/docs)
+- [Sentry Docs](https://docs.sentry.io/)
 
 ## License
 
@@ -272,85 +457,4 @@ You can also view a full list of our [contributors tracked by Github](https://gi
 ## ©️ Copyright
 
 #### Copyright © 2024-present, Ever Co. LTD. All rights reserved
-
-## Environment Configuration
-
-Create a `.env.local` file in the root directory with the following configuration:
-
-### Basic Configuration
-```bash
-# Environment
-NODE_ENV=development
-
-# API Configuration
-NEXT_PUBLIC_API_BASE_URL="http://localhost:3000/api"
-API_TIMEOUT=10000
-API_RETRY_ATTEMPTS=3
-API_RETRY_DELAY=1000
-
-# Cookie Security
-COOKIE_SECRET="your-secure-cookie-secret"  # Generate with: openssl rand -base64 32
-COOKIE_DOMAIN="localhost"                  # In production: your-domain.com
-COOKIE_SECURE=false                        # In production: true
-COOKIE_SAME_SITE="lax"                    # In production: strict
-```
-
-### Authentication Configuration
-```bash
-# Auth Endpoints
-AUTH_ENDPOINT_LOGIN="/auth/login"
-AUTH_ENDPOINT_REFRESH="/auth/refresh"
-AUTH_ENDPOINT_LOGOUT="/auth/logout"
-AUTH_ENDPOINT_CHECK="/auth/check"
-
-# JWT Configuration
-JWT_ACCESS_TOKEN_EXPIRES_IN=15m
-JWT_REFRESH_TOKEN_EXPIRES_IN=7d
-```
-
-### CORS Configuration (Production)
-```bash
-# CORS Settings
-CORS_ORIGIN="https://your-frontend-domain.com"
-CORS_CREDENTIALS=true
-CORS_METHODS="GET,POST,PUT,DELETE,OPTIONS"
-```
-
-### Security Notes
-
-1. **Cookie Security**
-   - httpOnly cookies are used for token storage
-   - Prevents XSS attacks by making tokens inaccessible to JavaScript
-   - Secure flag must be enabled in production
-   - SameSite policy helps prevent CSRF attacks
-
-2. **API Security**
-   - Automatic token refresh handling
-   - Request queue during token refresh
-   - Exponential backoff for retries
-   - Proper error handling and formatting
-
-3. **Environment Specific**
-   - Development uses relaxed security for local testing
-   - Production requires strict security settings
-   - Different cookie domains per environment
-   - CORS configuration required for production
-
-### Using the API Client
-
-```typescript
-import { api } from 'lib/api/api-client';
-
-// Authentication
-await api.login({ email: 'user@example.com', password: 'password' });
-
-// Check authentication status
-if (await api.isAuthenticated()) {
-  // Make authenticated requests
-  const response = await api.get('/protected-endpoint');
-}
-
-// Logout
-await api.logout();
-```
 
