@@ -74,17 +74,16 @@ export default async function ProfileSettingsPage() {
         <div className="space-y-10 pb-20">
           {/* Section Header */}
           <div className="text-center pt-8">
-            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100 mb-2 tracking-tight">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
               Profile Settings
             </h1>
-            <div className="w-16 h-1 mx-auto bg-theme-primary-400 rounded-full mb-4" />
-            <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-gray-300 text-base max-w-2xl mx-auto">
               Customize your profile appearance, manage your information, and control how others see your profile.
             </p>
           </div>
 
           {/* Settings Grid Panel */}
-          <div className="rounded-2xl bg-white/70 dark:bg-gray-900/60 shadow-lg p-6 md:p-10">
+          <div className="rounded-xl bg-white dark:bg-gray-800/90 shadow-md p-6 md:p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {settingsCards.map((card) => (
                 <SettingsCard
@@ -99,7 +98,7 @@ export default async function ProfileSettingsPage() {
           </div>
 
           {/* Quick Actions */}
-          <Card className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-theme-primary-50/60 dark:bg-theme-primary-900/20 shadow-md">
+          <Card className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800/90 shadow-md">
             <CardHeader>
               <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                 Quick Actions

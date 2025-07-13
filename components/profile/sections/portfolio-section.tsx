@@ -76,7 +76,7 @@ interface PortfolioCardProps {
 
 function PortfolioCard({ project, featured = false }: PortfolioCardProps) {
   return (
-    <Card className={`group hover:shadow-lg transition-all duration-300 ${featured ? 'ring-2 ring-yellow-500/20' : ''}`}>
+    <Card className={`group border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow transition-all duration-300 ${featured ? 'ring-2 ring-yellow-500/20' : ''} p-0`}>
       <div className="relative overflow-hidden rounded-t-lg">
         <Image
           src={project.imageUrl}

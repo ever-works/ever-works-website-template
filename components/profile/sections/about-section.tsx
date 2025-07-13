@@ -1,5 +1,6 @@
-import { FiMapPin, FiBriefcase, FiGlobe, FiCalendar, FiTag } from "react-icons/fi";
+import { FiMapPin, FiBriefcase, FiGlobe, FiCalendar } from "react-icons/fi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ProfileTag } from "../ProfileTag";
 
 interface Profile {
   username: string;
@@ -33,27 +34,23 @@ export function AboutSection({ profile }: AboutSectionProps) {
   return (
     <div className="space-y-6">
       {/* About Me */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            About Me
-          </CardTitle>
+      <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
+        <CardHeader className="p-0 mb-2">
+          <CardTitle className="text-lg font-bold text-gray-100">About Me</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
+        <CardContent className="p-0">
+          <p className="text-gray-300 leading-relaxed text-base">
             {profile.bio}
           </p>
         </CardContent>
       </Card>
 
       {/* Personal Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            Personal Information
-          </CardTitle>
+      <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
+        <CardHeader className="p-0 mb-2">
+          <CardTitle className="text-lg font-bold text-gray-100">Personal Information</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <div className="space-y-4">
             {profile.location && (
               <div className="flex items-center gap-3">
@@ -105,7 +102,7 @@ export function AboutSection({ profile }: AboutSectionProps) {
 
       {/* Skills */}
       {profile.skills.length > 0 && (
-        <Card>
+        <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
           <CardHeader>
             <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
               Skills & Expertise
@@ -114,13 +111,7 @@ export function AboutSection({ profile }: AboutSectionProps) {
           <CardContent>
             <div className="flex flex-wrap gap-2">
               {profile.skills.map((skill) => (
-                <span
-                  key={skill}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-theme-primary-100 dark:bg-theme-primary-900/30 text-theme-primary-800 dark:text-theme-primary-200 rounded-full text-sm font-medium"
-                >
-                  <FiTag className="w-3 h-3" />
-                  {skill}
-                </span>
+                <ProfileTag key={skill} label={skill} />
               ))}
             </div>
           </CardContent>
@@ -129,7 +120,7 @@ export function AboutSection({ profile }: AboutSectionProps) {
 
       {/* Interests */}
       {profile.interests.length > 0 && (
-        <Card>
+        <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
           <CardHeader>
             <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
               Interests
@@ -138,13 +129,7 @@ export function AboutSection({ profile }: AboutSectionProps) {
           <CardContent>
             <div className="flex flex-wrap gap-2">
               {profile.interests.map((interest) => (
-                <span
-                  key={interest}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium"
-                >
-                  <FiTag className="w-3 h-3" />
-                  {interest}
-                </span>
+                <ProfileTag key={interest} label={interest} />
               ))}
             </div>
           </CardContent>

@@ -60,13 +60,11 @@ export function SubmissionsSection({ profile }: SubmissionsSectionProps) {
   return (
     <div className="space-y-6">
       {/* Submissions Overview */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            My Submissions
-          </CardTitle>
+      <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
+        <CardHeader className="p-0 mb-2">
+          <CardTitle className="text-lg font-bold text-gray-100">My Submissions</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
                       <p className="text-gray-600 dark:text-gray-300 mb-6">
               Here are all the items you&apos;ve submitted to our directory. You can view, edit, or track the status of your submissions.
             </p>
@@ -97,13 +95,11 @@ export function SubmissionsSection({ profile }: SubmissionsSectionProps) {
 
       {/* Submission Stats */}
       {profile.submissions.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              Submission Statistics
-            </CardTitle>
+        <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
+          <CardHeader className="p-0 mb-2">
+            <CardTitle className="text-lg font-bold text-gray-100">Submission Statistics</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center p-4 bg-theme-primary-50 dark:bg-theme-primary-900/20 rounded-lg">
                 <div className="text-2xl font-bold text-theme-primary-600 dark:text-theme-primary-400">
@@ -149,7 +145,7 @@ interface SubmissionCardProps {
 
 function SubmissionCard({ submission, getStatusIcon, getStatusColor, formatDate }: SubmissionCardProps) {
   return (
-    <Card className="hover:shadow-md transition-shadow duration-200">
+    <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow hover:shadow-md transition-shadow duration-200 p-0">
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">

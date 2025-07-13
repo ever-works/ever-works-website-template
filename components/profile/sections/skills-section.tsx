@@ -1,5 +1,6 @@
 import { FiAward, FiTrendingUp } from "react-icons/fi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ProfileTag } from "../ProfileTag";
 
 interface Profile {
   skills: string[];
@@ -43,15 +44,20 @@ export function SkillsSection({ profile }: SkillsSectionProps) {
 
   return (
     <div className="space-y-8">
-      {/* Skills Overview */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+      {/* Skills Tag Summary */}
+      <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
+        <CardHeader className="p-0 mb-2">
+          <CardTitle className="text-lg font-bold text-gray-100 flex items-center gap-2">
             <FiAward className="w-5 h-5 text-theme-primary-500" />
             Skills & Expertise
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
+          <div className="flex flex-wrap gap-2 mb-6">
+            {profile.skills.map((skill) => (
+              <ProfileTag key={skill} label={skill} />
+            ))}
+          </div>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             Here are the technologies and tools I work with. Each skill represents my proficiency level based on experience and projects.
           </p>
@@ -94,13 +100,11 @@ export function SkillsSection({ profile }: SkillsSectionProps) {
       </Card>
 
       {/* Skills Summary */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            Skills Summary
-          </CardTitle>
+      <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
+        <CardHeader className="p-0 mb-2">
+          <CardTitle className="text-lg font-bold text-gray-100">Skills Summary</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="text-center p-4 bg-theme-primary-50 dark:bg-theme-primary-900/20 rounded-lg">
               <div className="text-2xl font-bold text-theme-primary-600 dark:text-theme-primary-400">
