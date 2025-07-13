@@ -1,41 +1,12 @@
 "use client";
 
 import { Container } from "@/components/ui/container";
-import { Button } from "@/components/ui/button";
 import { FiArrowLeft, FiCheck } from "react-icons/fi";
 import Link from "next/link";
-import { useState } from "react";
-
-const visualThemes = [
-  {
-    key: "default",
-    name: "Default",
-    description: "Modern and professional theme with blue and green accents",
-    colors: ["#3B82F6", "#10B981"],
-  },
-  {
-    key: "corporate",
-    name: "Corporate",
-    description: "Professional business theme with dark gray and red accents",
-    colors: ["#22C55E", "#EF4444", "#1E293B"],
-  },
-  {
-    key: "material",
-    name: "Material",
-    description: "Google Material Design inspired theme with purple and orange",
-    colors: ["#8B5CF6", "#F59E0B"],
-  },
-  {
-    key: "funny",
-    name: "Funny",
-    description: "Playful and vibrant theme with pink and yellow colors",
-    colors: ["#EC4899", "#FDE047"],
-  },
-];
+import { useTheme } from "@/hooks/use-theme";
 
 export default function ThemeColorsPage() {
-  // For demo, default to 'default' theme
-  const [selected, setSelected] = useState("default");
+  const { themeKey, availableThemes, changeTheme } = useTheme();
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -67,32 +38,33 @@ export default function ThemeColorsPage() {
               Choose Visual Theme
             </div>
             <div className="flex flex-col gap-4">
-              {visualThemes.map((theme) => (
+              {availableThemes.map((theme) => (
                 <button
                   key={theme.key}
                   type="button"
-                  onClick={() => setSelected(theme.key)}
+                  onClick={() => changeTheme(theme.key)}
                   className={`flex items-center w-full rounded-xl border transition-all p-4 text-left focus:outline-none focus:ring-2 focus:ring-theme-primary-500
-                    ${selected === theme.key ? "border-theme-primary-400 bg-theme-primary-950/10 ring-2 ring-theme-primary-400" : "border-gray-700/40 bg-gray-900/40"}
+                    ${themeKey === theme.key ? "border-theme-primary-400 bg-theme-primary-950/10 ring-2 ring-theme-primary-400" : "border-gray-700/40 bg-gray-900/40"}
                   `}
                 >
                   <span className="flex items-center justify-center mr-4">
                     <span className="flex gap-1">
-                      {theme.colors.map((color, i) => (
-                        <span
-                          key={color}
-                          className="inline-block w-6 h-4 rounded"
-                          style={{ background: color, marginLeft: i > 0 ? "-8px" : 0, border: "2px solid #222" }}
-                        />
-                      ))}
+                      <span
+                        className="inline-block w-6 h-4 rounded"
+                        style={{ background: theme.colors.primary, border: "2px solid #222" }}
+                      />
+                      <span
+                        className="inline-block w-6 h-4 rounded -ml-2"
+                        style={{ background: theme.colors.secondary, border: "2px solid #222" }}
+                      />
                     </span>
                   </span>
                   <span className="flex-1 min-w-0">
-                    <span className={`block font-bold text-base ${selected === theme.key ? "text-theme-primary-400" : "text-gray-100"}`}>{theme.name}</span>
+                    <span className={`block font-bold text-base ${themeKey === theme.key ? "text-theme-primary-400" : "text-gray-100"}`}>{theme.label}</span>
                     <span className="block text-gray-400 text-sm mt-1">{theme.description}</span>
                   </span>
                   <span className="ml-4">
-                    {selected === theme.key ? (
+                    {themeKey === theme.key ? (
                       <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-theme-primary-500 text-white">
                         <FiCheck className="w-4 h-4" />
                       </span>
@@ -105,21 +77,7 @@ export default function ThemeColorsPage() {
             </div>
           </div>
 
-          {/* Save/Cancel */}
-          <div className="flex justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <Link
-              href="/settings/profile"
-              className="px-6 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-            >
-              Cancel
-            </Link>
-            <Button className="inline-flex items-center gap-2">
-              <FiCheck className="w-4 h-4" />
-              Save Theme
-            </Button>
-          </div>
-
-          {/* Preview (optional, can be improved later) */}
+          {/* Save/Cancel (optional, since theme changes instantly) */}
         </div>
       </Container>
     </div>
