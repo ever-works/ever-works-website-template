@@ -18,6 +18,7 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
   const { paginationType } = useLayoutTheme();
   const [page, setPage] = useState(1);
   const router = useRouter();
+  const [loadingCategory, setLoadingCategory] = useState<string | null>(null);
 
   const sortedCategories = useMemo(() =>
     [...categories].sort((a, b) => (b.count ?? 0) - (a.count ?? 0)),
@@ -79,23 +80,52 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
   // Choose which categories to show
   const categoriesToShow = paginationType === "infinite" ? loadedCategories : pagedCategories;
 
+  const handleCategoryClick = (categoryId: string) => {
+    setLoadingCategory(categoryId);
+    router.push(`/?category=${categoryId}`);
+    
+    // Clear loading state after a short delay
+    setTimeout(() => {
+      setLoadingCategory(null);
+    }, 1000);
+  };
+
   return (
     <>
       <LayoutGrid>
         {categoriesToShow.map((category) => (
           <div
             key={category.id}
-            className="focus:outline-none focus:ring-2 focus:ring-theme-primary rounded-lg transition group cursor-pointer"
-            onClick={() => router.push(`/?category=${category.id}`)}
+            className="focus:outline-none focus:ring-2 focus:ring-theme-primary rounded-lg transition group cursor-pointer relative"
+            onClick={() => handleCategoryClick(category.id)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                router.push(`/?category=${category.id}`);
+                handleCategoryClick(category.id);
               }
             }}
             role="button"
             tabIndex={0}
           >
+            {/* Full card loading overlay */}
+            {loadingCategory === category.id && (
+              <div className="absolute inset-0 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-lg flex items-center justify-center transition-all duration-300">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="relative">
+                    <Loader2 className="h-8 w-8 animate-spin text-theme-primary-500 dark:text-theme-primary-400" />
+                    <div className="absolute inset-0 rounded-full bg-theme-primary-500/20 animate-ping" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Loading...
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Navigating to {category.name}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
             <Card
               className="group relative border-0 rounded-lg transition-all duration-700 transform hover:-translate-y-2 backdrop-blur-xl overflow-hidden h-full
                 bg-white/80 dark:bg-gray-900/80 shadow-lg hover:shadow-2xl
