@@ -1,4 +1,4 @@
-name: "CodeQL"
+name: "CodeQL Advanced"
 
 on:
   push:
@@ -6,12 +6,20 @@ on:
   pull_request:
     branches: [ "main", "develop" ]
   schedule:
-    - cron: '0 0 * * 1'  # Weekly on Monday
+    - cron: '0 6 * * 1'  # Weekly on Monday at 6 AM
+  workflow_dispatch:  # Allow manual triggering
+
+env:
+  # Set to true to run advanced CodeQL analysis
+  ENABLE_ADVANCED_CODEQL: true
 
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
+    timeout-minutes: 360
+    # Only run if advanced CodeQL is enabled
+    if: env.ENABLE_ADVANCED_CODEQL == 'true'
     permissions:
       actions: read
       contents: read
@@ -20,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'javascript' ]
+        language: [ 'javascript-typescript' ]
 
     steps:
     - name: Checkout repository
@@ -31,6 +39,8 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         config-file: ./.github/codeql/codeql-config.yml
+        # Use a different category to avoid conflicts
+        category: "/language:${{ matrix.language }}/advanced"
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
@@ -38,4 +48,5 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
-        category: "/language:${{matrix.language}}" 
+        category: "/language:${{ matrix.language }}/advanced"
+        upload: true 
