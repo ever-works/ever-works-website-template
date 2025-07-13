@@ -9,6 +9,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+.pnp.js
 
 # testing
 /coverage
@@ -34,6 +35,8 @@ yarn-error.log*
 .env*
 !.env.example
 
+
+
 # vercel
 .vercel
 
@@ -42,3 +45,4 @@ yarn-error.log*
 next-env.d.ts
 
 .content
+analyze/

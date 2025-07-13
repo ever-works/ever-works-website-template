@@ -1,0 +1,15 @@
+name: "CodeQL Configuration"
+
+paths-ignore:
+  - "analyze/**"
+  - ".next/**"
+  - "node_modules/**"
+  - "build/**"
+  - "dist/**"
+  - "coverage/**"
+  - ".content/**"
+  - "**/*.min.js"
+  - "**/*.bundle.js"
+
+queries:
+  - uses: security-and-quality 
