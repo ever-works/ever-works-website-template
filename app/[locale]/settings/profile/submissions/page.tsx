@@ -1,13 +1,13 @@
 import { Container } from "@/components/ui/container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FiFileText, FiArrowLeft, FiEye, FiEdit, FiTrash2, FiClock, FiCheck, FiX, FiAlertCircle } from "react-icons/fi";
+import { FiFileText, FiArrowLeft, FiEye, FiEdit, FiTrash2, FiClock, FiCheck, FiX, FiAlertCircle, FiPlus, FiTrendingUp, FiActivity } from "react-icons/fi";
 import Link from "next/link";
 
 const dummySubmissions = [
   {
     id: "1",
     title: "React Component Library",
-    description: "A comprehensive component library for React applications",
+    description: "A comprehensive component library for React applications with TypeScript support and modern design patterns",
     status: "approved" as const,
     submittedAt: "2024-01-15T10:30:00Z",
     approvedAt: "2024-01-18T14:20:00Z",
@@ -30,7 +30,7 @@ const dummySubmissions = [
   {
     id: "3",
     title: "E-commerce Dashboard",
-    description: "Admin dashboard for e-commerce management",
+    description: "Admin dashboard for e-commerce management with analytics and inventory tracking",
     status: "rejected" as const,
     submittedAt: "2024-01-10T16:45:00Z",
     rejectedAt: "2024-01-12T11:30:00Z",
@@ -43,7 +43,7 @@ const dummySubmissions = [
   {
     id: "4",
     title: "Weather App API",
-    description: "RESTful API for weather data with caching",
+    description: "RESTful API for weather data with caching and real-time updates",
     status: "draft" as const,
     submittedAt: null,
     category: "APIs",
@@ -59,29 +59,32 @@ const statusConfig = {
     icon: FiCheck,
     color: "text-green-600 dark:text-green-400",
     bgColor: "bg-green-100 dark:bg-green-900/30",
+    borderColor: "border-green-200 dark:border-green-800",
   },
   pending: {
     label: "Pending Review",
     icon: FiClock,
     color: "text-yellow-600 dark:text-yellow-400",
     bgColor: "bg-yellow-100 dark:bg-yellow-900/30",
+    borderColor: "border-yellow-200 dark:border-yellow-800",
   },
   rejected: {
     label: "Rejected",
     icon: FiX,
     color: "text-red-600 dark:text-red-400",
     bgColor: "bg-red-100 dark:bg-red-900/30",
+    borderColor: "border-red-200 dark:border-red-800",
   },
   draft: {
     label: "Draft",
     icon: FiAlertCircle,
     color: "text-gray-600 dark:text-gray-400",
     bgColor: "bg-gray-100 dark:bg-gray-800",
+    borderColor: "border-gray-200 dark:border-gray-700",
   },
 };
 
 export default async function SubmissionsPage() {
-
   const stats = {
     total: dummySubmissions.length,
     approved: dummySubmissions.filter(s => s.status === "approved").length,
@@ -91,9 +94,9 @@ export default async function SubmissionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       <Container maxWidth="7xl" padding="default">
-        <div className="space-y-8 pb-16">
+        <div className="space-y-12 py-8">
           {/* Header */}
           <div className="flex items-center gap-4">
             <Link
@@ -105,8 +108,12 @@ export default async function SubmissionsPage() {
             </Link>
           </div>
 
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+          {/* Page Header */}
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-2xl mb-4">
+              <FiFileText className="w-8 h-8 text-theme-primary-600 dark:text-theme-primary-400" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">
               Submissions Management
             </h1>
             <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
@@ -114,35 +121,50 @@ export default async function SubmissionsPage() {
             </p>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card>
-              <CardContent className="p-4">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <Card className="hover:shadow-lg hover:shadow-theme-primary-500/10 border border-gray-200 dark:border-gray-800 transition-all duration-300 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
+              <CardContent className="p-6">
                 <div className="text-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/40 dark:to-blue-800/40 rounded-xl mb-3 mx-auto">
+                    <FiFileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                  </div>
                   <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.total}</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Total Submissions</div>
                 </div>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="p-4">
+            
+            <Card className="hover:shadow-lg hover:shadow-green-500/10 border border-gray-200 dark:border-gray-800 transition-all duration-300 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
+              <CardContent className="p-6">
                 <div className="text-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/40 dark:to-green-800/40 rounded-xl mb-3 mx-auto">
+                    <FiCheck className="w-6 h-6 text-green-600 dark:text-green-400" />
+                  </div>
                   <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.approved}</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Approved</div>
                 </div>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="p-4">
+            
+            <Card className="hover:shadow-lg hover:shadow-yellow-500/10 border border-gray-200 dark:border-gray-800 transition-all duration-300 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
+              <CardContent className="p-6">
                 <div className="text-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-yellow-100 to-yellow-200 dark:from-yellow-900/40 dark:to-yellow-800/40 rounded-xl mb-3 mx-auto">
+                    <FiClock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+                  </div>
                   <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Pending</div>
                 </div>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="p-4">
+            
+            <Card className="hover:shadow-lg hover:shadow-red-500/10 border border-gray-200 dark:border-gray-800 transition-all duration-300 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
+              <CardContent className="p-6">
                 <div className="text-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-red-100 to-red-200 dark:from-red-900/40 dark:to-red-800/40 rounded-xl mb-3 mx-auto">
+                    <FiX className="w-6 h-6 text-red-600 dark:text-red-400" />
+                  </div>
                   <div className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.rejected}</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Rejected</div>
                 </div>
@@ -151,18 +173,18 @@ export default async function SubmissionsPage() {
           </div>
 
           {/* Submissions List */}
-          <Card>
+          <Card className="hover:shadow-lg hover:shadow-theme-primary-500/10 border border-gray-200 dark:border-gray-800 transition-all duration-300 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                  <FiFileText className="w-5 h-5 text-theme-primary-500" />
+                  <FiFileText className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />
                   Your Submissions
                 </CardTitle>
                 <Link
                   href="/submit"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-theme-primary-600 hover:bg-theme-primary-700 text-white rounded-lg transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 text-white rounded-lg transition-all duration-300 font-medium shadow-sm hover:shadow-md"
                 >
-                  <FiFileText className="w-4 h-4" />
+                  <FiPlus className="w-4 h-4" />
                   New Submission
                 </Link>
               </div>
@@ -211,66 +233,82 @@ function SubmissionItem({ submission }: SubmissionItemProps) {
   };
 
   return (
-    <div className="flex items-start gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-      <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">{submission.title}</h3>
-              <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs ${status.bgColor} ${status.color}`}>
-                <StatusIcon className="w-3 h-3" />
-                {status.label}
-              </span>
-            </div>
-            <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">{submission.description}</p>
-            <div className="flex flex-wrap gap-1 mb-2">
-              {submission.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded text-xs"
-                >
-                  {tag}
+    <div className="group p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-theme-primary-300 dark:hover:border-theme-primary-600 hover:shadow-lg hover:shadow-theme-primary-500/10 transition-all duration-300 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+      <div className="flex items-start gap-4">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between mb-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg group-hover:text-theme-primary-700 dark:group-hover:text-theme-primary-400 transition-colors">
+                  {submission.title}
+                </h3>
+                <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${status.bgColor} ${status.color} ${status.borderColor} border`}>
+                  <StatusIcon className="w-3 h-3" />
+                  {status.label}
                 </span>
-              ))}
-            </div>
-            <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-              <span>Category: {submission.category}</span>
-              {submission.submittedAt && (
-                <span>Submitted: {formatDate(submission.submittedAt)}</span>
-              )}
-              {submission.status === "approved" && submission.views > 0 && (
-                <>
-                  <span>{submission.views} views</span>
-                  <span>{submission.likes} likes</span>
-                </>
-              )}
-            </div>
-            {submission.status === "rejected" && submission.rejectionReason && (
-              <div className="mt-2 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded text-xs text-red-700 dark:text-red-300">
-                <strong>Rejection Reason:</strong> {submission.rejectionReason}
               </div>
-            )}
-          </div>
-          
-          <div className="flex items-center gap-2 ml-4">
-            <button
-              className="p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors"
-              title="View submission"
-            >
-              <FiEye className="w-4 h-4" />
-            </button>
-            <button
-              className="p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors"
-              title="Edit submission"
-            >
-              <FiEdit className="w-4 h-4" />
-            </button>
-            <button
-              className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-              title="Delete submission"
-            >
-              <FiTrash2 className="w-4 h-4" />
-            </button>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mb-3 leading-relaxed">{submission.description}</p>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {submission.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-xs font-medium border border-gray-200 dark:border-gray-700"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <div className="flex items-center gap-6 text-xs text-gray-500 dark:text-gray-400">
+                <span className="flex items-center gap-1">
+                  <FiActivity className="w-3 h-3" />
+                  {submission.category}
+                </span>
+                {submission.submittedAt && (
+                  <span className="flex items-center gap-1">
+                    <FiClock className="w-3 h-3" />
+                    Submitted: {formatDate(submission.submittedAt)}
+                  </span>
+                )}
+                {submission.status === "approved" && submission.views > 0 && (
+                  <>
+                    <span className="flex items-center gap-1">
+                      <FiEye className="w-3 h-3" />
+                      {submission.views} views
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <FiTrendingUp className="w-3 h-3" />
+                      {submission.likes} likes
+                    </span>
+                  </>
+                )}
+              </div>
+              {submission.status === "rejected" && submission.rejectionReason && (
+                <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-xs text-red-700 dark:text-red-300">
+                  <strong>Rejection Reason:</strong> {submission.rejectionReason}
+                </div>
+              )}
+            </div>
+            
+            <div className="flex items-center gap-2 ml-4">
+              <button
+                className="p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors rounded-lg hover:bg-theme-primary-50 dark:hover:bg-theme-primary-900/20"
+                title="View submission"
+              >
+                <FiEye className="w-4 h-4" />
+              </button>
+              <button
+                className="p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors rounded-lg hover:bg-theme-primary-50 dark:hover:bg-theme-primary-900/20"
+                title="Edit submission"
+              >
+                <FiEdit className="w-4 h-4" />
+              </button>
+              <button
+                className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
+                title="Delete submission"
+              >
+                <FiTrash2 className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
