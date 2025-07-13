@@ -5,6 +5,7 @@ import { TagsCards } from "@/components/tags-cards";
 import { Paginate } from "@/components/filters/components/pagination/paginate";
 import { totalPages } from "@/lib/paginate";
 import { Tag } from "@/lib/content";
+import TagsQuerySync from "@/components/filters/tags-query-sync";
 
 export default function ListingTags({
   tags,
@@ -21,7 +22,9 @@ export default function ListingTags({
   const tCommon = useTranslations("common");
 
   return (
-    <Hero
+    <>
+      <TagsQuerySync />
+      <Hero
       badgeText={t("TAGS")}
       title={
         <span className="bg-gradient-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent">
@@ -44,5 +47,6 @@ export default function ListingTags({
         />
       </footer>
     </Hero>
+    </>
   );
 }

@@ -1,7 +1,7 @@
 import { Category } from "@/lib/content";
 import LayoutGrid from "@/components/layouts/LayoutGrid";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FiFolder } from "react-icons/fi";
 import React, { useState, useMemo, useRef, useEffect } from "react";
@@ -17,6 +17,7 @@ const PAGE_SIZE = PER_PAGE;
 export default function CategoriesGrid({ categories }: { categories: Category[] }) {
   const { paginationType } = useLayoutTheme();
   const [page, setPage] = useState(1);
+  const router = useRouter();
 
   const sortedCategories = useMemo(() =>
     [...categories].sort((a, b) => (b.count ?? 0) - (a.count ?? 0)),
@@ -82,10 +83,18 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
     <>
       <LayoutGrid>
         {categoriesToShow.map((category) => (
-          <Link
-            href={`/categories/category/${category.id}`}
+          <div
             key={category.id}
-            className="focus:outline-none focus:ring-2 focus:ring-theme-primary rounded-lg transition group"
+            className="focus:outline-none focus:ring-2 focus:ring-theme-primary rounded-lg transition group cursor-pointer"
+            onClick={() => router.push(`/?category=${category.id}`)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                router.push(`/?category=${category.id}`);
+              }
+            }}
+            role="button"
+            tabIndex={0}
           >
             <Card
               className="group relative border-0 rounded-lg transition-all duration-700 transform hover:-translate-y-2 backdrop-blur-xl overflow-hidden h-full
@@ -144,7 +153,7 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
               {/* Subtle glow effect */}
               <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
             </Card>
-          </Link>
+          </div>
         ))}
       </LayoutGrid>
       {/* Standard Pagination */}

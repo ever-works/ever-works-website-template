@@ -24,7 +24,7 @@ type ListingProps = {
 
 export default function GlobalsClient(props: ListingProps) {
   const { layoutHome = LayoutHome.HOME_ONE, paginationType } = useLayoutTheme();
-  const { selectedCategories, searchTerm, selectedTags, sortBy, setSelectedTags } = useFilters();
+  const { selectedCategories, searchTerm, selectedTags, sortBy, setSelectedTags, setSelectedCategories } = useFilters();
   const sortedTags = sortByNumericProperty(props.tags);
   const sortedCategories = sortByNumericProperty(props.categories);
   const searchParams = useSearchParams();
@@ -109,8 +109,14 @@ export default function GlobalsClient(props: ListingProps) {
     if (tagsParam) {
       setSelectedTags(tagsParam.split(","));
     }
+    
+    const categoriesParam = searchParams.get("category");
+    if (categoriesParam) {
+      setSelectedCategories(categoriesParam.split(","));
+    }
+    
     setInitialized(true);
-  }, [searchParams, setSelectedTags]);
+  }, [searchParams, setSelectedTags, setSelectedCategories]);
 
   if (!initialized) return null;
 
