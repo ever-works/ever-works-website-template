@@ -1,6 +1,5 @@
 "use client";
 
-import { ThemeSwitcher } from "./header/ThemeSwitch";
 import { LanguageSwitcher } from "./language-switcher";
 import { ThemeToggler } from "./theme-toggler";
 import { LayoutSwitcher } from "./layout-switcher";
@@ -15,9 +14,9 @@ export function NavigationControls() {
       {/* <div className="block sm:hidden"> */}
       <ThemeToggler />
       {/* </div> */}
-      <div className="sm:block hidden">
+      {/* <div className="sm:block hidden">
         <ThemeSwitcher />
-      </div>
+      </div> */}
     </div>
   );
 }
