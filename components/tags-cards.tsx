@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 import { Card, CardBody, CardFooter } from "@heroui/react";
 import { usePathname } from "@/i18n/navigation";
 import { Hash, ArrowRight, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 interface TagsCardsProps {
   tags: Tag[];
@@ -19,6 +19,20 @@ export function TagsCards({ tags, className }: TagsCardsProps) {
   const router = useRouter();
   const [loadingTag, setLoadingTag] = useState<string | null>(null);
 
+  useEffect(() => {
+    const handleRouteChangeComplete = () => {
+      setLoadingTag(null);
+    };
+
+    router.events.on("routeChangeComplete", handleRouteChangeComplete);
+    router.events.on("routeChangeError", handleRouteChangeComplete);
+
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChangeComplete);
+      router.events.off("routeChangeError", handleRouteChangeComplete);
+    };
+  }, [router]);
+
   const renderTagCard = (tag: Tag) => {
     const tagPath = `/?tags=${tag.id}`;
     const isActive = pathname.startsWith(encodeURI(tagPath));
@@ -26,11 +40,7 @@ export function TagsCards({ tags, className }: TagsCardsProps) {
     const handleClick = () => {
       setLoadingTag(tag.id);
       router.push(`/?tags=${tag.id}`);
-      
-      // Clear loading state after a short delay
-      setTimeout(() => {
-        setLoadingTag(null);
-      }, 1000);
+      // No timeout needed!
     };
 
     return (
