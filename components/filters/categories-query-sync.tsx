@@ -10,7 +10,12 @@ export default function CategoriesQuerySync() {
   useEffect(() => {
     const categoriesParam = searchParams.get("categories");
     if (categoriesParam) {
-      setSelectedCategories(categoriesParam.split(",").map(category => decodeURIComponent(category)));
+      try {
+        setSelectedCategories(categoriesParam.split(",").map(category => decodeURIComponent(category)));
+      } catch (error) {
+        console.error('Error decoding category parameters:', error);
+        setSelectedCategories([]);
+      }
     } else {
       setSelectedCategories([]);
     }
