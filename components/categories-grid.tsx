@@ -1,7 +1,7 @@
 import { Category } from "@/lib/content";
 import LayoutGrid from "@/components/layouts/LayoutGrid";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { FiFolder } from "react-icons/fi";
 import React, { useState, useMemo, useRef, useEffect } from "react";
@@ -18,7 +18,13 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
   const { paginationType } = useLayoutTheme();
   const [page, setPage] = useState(1);
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [loadingCategory, setLoadingCategory] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoadingCategory(null);
+  }, [pathname, searchParams]);
 
   const sortedCategories = useMemo(() =>
     [...categories].sort((a, b) => (b.count ?? 0) - (a.count ?? 0)),
@@ -83,11 +89,6 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
   const handleCategoryClick = (categoryId: string) => {
     setLoadingCategory(categoryId);
     router.push(`/?categories=${categoryId}`);
-    
-    // Clear loading state after a short delay
-    setTimeout(() => {
-      setLoadingCategory(null);
-    }, 1000);
   };
 
   return (
