@@ -82,7 +82,7 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
 
   const handleCategoryClick = (categoryId: string) => {
     setLoadingCategory(categoryId);
-    router.push(`/?category=${categoryId}`);
+    router.push(`/?categories=${categoryId}`);
     
     // Clear loading state after a short delay
     setTimeout(() => {

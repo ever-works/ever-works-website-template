@@ -8,7 +8,7 @@ export default function CategoriesQuerySync() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const categoriesParam = searchParams.get("category");
+    const categoriesParam = searchParams.get("categories");
     if (categoriesParam) {
       setSelectedCategories(categoriesParam.split(",").map(category => decodeURIComponent(category)));
     } else {

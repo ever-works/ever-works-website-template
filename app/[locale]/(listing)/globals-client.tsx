@@ -110,7 +110,7 @@ export default function GlobalsClient(props: ListingProps) {
       setSelectedTags(tagsParam.split(","));
     }
     
-    const categoriesParam = searchParams.get("category");
+    const categoriesParam = searchParams.get("categories");
     if (categoriesParam) {
       setSelectedCategories(categoriesParam.split(","));
     }
