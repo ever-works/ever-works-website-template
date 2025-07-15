@@ -12,6 +12,12 @@ import {
 } from "lucide-react";
 import { StatsCard } from "./stats-card";
 import { ActivityItem } from "./activity-item";
+import { ActivityChart } from "./activity-chart";
+import { EngagementChart } from "./engagement-chart";
+import { SubmissionTimeline } from "./submission-timeline";
+import { EngagementOverview } from "./engagement-overview";
+import { StatusBreakdown } from "./status-breakdown";
+import { TopItems } from "./top-items";
 import { useDashboardStats } from "@/hooks/use-dashboard-stats";
 import { useUserActivity } from "@/hooks/use-user-activity";
 import { Button } from "@/components/ui/button";
@@ -22,7 +28,7 @@ interface DashboardContentProps {
 
 export function DashboardContent({ session }: DashboardContentProps) {
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useDashboardStats();
+  const { data: stats, refetch: refetchStats } = useDashboardStats();
   const { 
     data: activityData, 
     isLoading: activityLoading, 
@@ -70,31 +76,74 @@ export function DashboardContent({ session }: DashboardContentProps) {
           <StatsCard
             title="Total Submissions"
             value={stats?.totalSubmissions || 0}
-            description="Comments and reviews"
+            description="Content you've created"
             icon={MessageSquare}
-            isLoading={statsLoading}
+            isLoading={false}
           />
           <StatsCard
-            title="Total Votes"
-            value={stats?.totalVotes || 0}
-            description="Upvotes and downvotes"
-            icon={ThumbsUp}
-            isLoading={statsLoading}
-          />
-          <StatsCard
-            title="Items Interacted"
-            value={stats?.uniqueItemsInteracted || 0}
-            description="Unique items you've engaged with"
-            icon={Activity}
-            isLoading={statsLoading}
-          />
-          <StatsCard
-            title="Recent Activity"
-            value={stats?.recentActivity ? 
-              stats.recentActivity.comments + stats.recentActivity.votes : 0}
-            description="Last 30 days"
+            title="Total Views"
+            value={stats?.totalViews || 0}
+            description="Views on your content"
             icon={TrendingUp}
-            isLoading={statsLoading}
+            isLoading={false}
+          />
+          <StatsCard
+            title="Votes Received"
+            value={stats?.totalVotesReceived || 0}
+            description="Votes on your content"
+            icon={ThumbsUp}
+            isLoading={false}
+          />
+          <StatsCard
+            title="Comments Received"
+            value={stats?.totalCommentsReceived || 0}
+            description="Comments on your content"
+            icon={Activity}
+            isLoading={false}
+          />
+        </div>
+
+        {/* New Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <SubmissionTimeline 
+            data={stats?.submissionTimeline || []} 
+            isLoading={false}
+          />
+          <StatusBreakdown 
+            data={stats?.statusBreakdown || []} 
+            isLoading={false}
+          />
+        </div>
+
+        {/* Engagement Overview */}
+        <div className="mb-8">
+          <EngagementOverview 
+            data={stats?.engagementOverview || []} 
+            isLoading={false}
+          />
+        </div>
+
+        {/* Top Items Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="lg:col-span-2">
+            <TopItems 
+              items={stats?.topItems || []} 
+              isLoading={false}
+            />
+          </div>
+          <div>
+            <EngagementChart 
+              data={stats?.engagementChartData || []} 
+              isLoading={false}
+            />
+          </div>
+        </div>
+
+        {/* Weekly Activity Chart */}
+        <div className="mb-8">
+          <ActivityChart 
+            data={stats?.activityChartData || []} 
+            isLoading={false}
           />
         </div>
 
