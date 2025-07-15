@@ -1,6 +1,6 @@
 import { FiMapPin, FiBriefcase, FiGlobe, FiCalendar } from "react-icons/fi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ProfileTag } from "../ProfileTag";
+import { ProfileTag } from "../profile-tag";
 
 interface Profile {
   username: string;

@@ -28,7 +28,7 @@ export function ProfileNavigation({ activeTab = "about", onTabChange }: ProfileN
   };
 
   return (
-    <div className="sticky top-0 z-20 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md rounded-t-2xl shadow-sm border-b border-gray-200 dark:border-gray-800 mb-4">
+    <div className="sticky top-0 z-nav bg-white/80 dark:bg-gray-950/80 backdrop-blur-md rounded-t-2xl shadow-sm border-b border-gray-200 dark:border-gray-800 mb-4">
       <nav
         className="flex space-x-2 sm:space-x-4 px-2 sm:px-6 py-2 overflow-x-auto"
         role="tablist"

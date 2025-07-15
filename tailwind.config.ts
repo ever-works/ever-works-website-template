@@ -27,6 +27,9 @@ export default {
           '50%': { opacity: '0.85' },
         },
       },
+      zIndex: {
+        nav: '20', // semantic token for navigation
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

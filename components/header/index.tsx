@@ -125,8 +125,6 @@ export default function Header({ session }: SessionProps) {
   const config = useConfig();
   const pathname = usePathname();
 
-
-
   const navigationItems = useMemo((): NavigationItem[] => {
     return NAVIGATION_CONFIG.map((item) => ({
       key: item.key,
