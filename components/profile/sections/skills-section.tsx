@@ -1,6 +1,6 @@
 import { FiAward, FiTrendingUp } from "react-icons/fi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ProfileTag } from "../ProfileTag";
+import { ProfileTag } from "../profile-tag";
 
 interface Profile {
   skills: string[];
@@ -122,7 +122,9 @@ export function SkillsSection({ profile }: SkillsSectionProps) {
             
             <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
               <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                {Math.round(profile.skills.reduce((sum, skill) => sum + getSkillLevel(skill), 0) / profile.skills.length)}
+                {profile.skills && profile.skills.length > 0
+                  ? Math.round(profile.skills.reduce((sum, skill) => sum + getSkillLevel(skill), 0) / profile.skills.length)
+                  : 0}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Avg. Proficiency</div>
             </div>
