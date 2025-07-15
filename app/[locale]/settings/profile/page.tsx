@@ -43,24 +43,28 @@ export default function ProfileSettingsPage() {
 
   const settingsCards = [
     {
+      id: "basic-info",
       title: "Basic Information",
       description: "Update your name, bio, location, and contact details to personalize your profile",
       icon: <FiUser className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
       href: `/${locale}/settings/profile/basic-info`
     },
     {
+      id: "theme-colors",
       title: "Theme & Appearance",
       description: "Customize your profile colors and visual style to match your brand",
       icon: <FiDroplet className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
       href: `/${locale}/settings/profile/theme-colors`
     },
     {
+      id: "portfolio",
       title: "Portfolio Management",
       description: "Add, edit, and organize your portfolio projects to showcase your work",
       icon: <FiBriefcase className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
       href: `/${locale}/settings/profile/portfolio`
     },
     {
+      id: "submissions",
       title: "Submissions",
       description: "Manage your directory submissions and track their approval status",
       icon: <FiFileText className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
@@ -82,14 +86,12 @@ export default function ProfileSettingsPage() {
             </h1>
           </div>
 
-
-
           {/* Settings Grid Panel */}
           <div className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {settingsCards.map((card) => (
                 <SettingsCard
-                  key={card.title}
+                  key={card.id}
                   title={card.title}
                   description={card.description}
                   icon={card.icon}
