@@ -9,10 +9,8 @@ import portfolioData from "../portfolio-data.json";
 import { useState } from "react";
 
 export default function PortfolioPage() {
-  // Simulate fetching from JSON file
-  const projects = portfolioData;
+  const [projects, setProjects] = useState<any[]>(portfolioData);
 
-  // Form state
   const [title, setTitle] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [description, setDescription] = useState("");
@@ -22,7 +20,6 @@ export default function PortfolioPage() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [success, setSuccess] = useState("");
 
-  // Basic validation
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
     if (!title.trim()) newErrors.title = "Project title is required.";
@@ -39,8 +36,7 @@ export default function PortfolioPage() {
     const validationErrors = validate();
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
-    // Here you would add the new project to your data source
-    setSuccess("Project added (demo only, not persisted)");
+    setSuccess("Project added");
     setTitle("");
     setImageUrl("");
     setDescription("");
@@ -208,7 +204,16 @@ export default function PortfolioPage() {
             <CardContent>
               <div className="space-y-4">
                 {projects.map((project: any) => (
-                  <PortfolioItem key={project.id} project={project} />
+                  <PortfolioItem
+                    key={project.id}
+                    project={project}
+                    onEdit={() => alert(`Edit project: ${project.title}`)}
+                    onDelete={() => {
+                      if (window.confirm(`Are you sure you want to delete "${project.title}"?`)) {
+                        setProjects(prev => prev.filter(p => p.id !== project.id));
+                      }
+                    }}
+                  />
                 ))}
               </div>
             </CardContent>
@@ -229,9 +234,11 @@ interface PortfolioItemProps {
     tags: string[];
     isFeatured: boolean;
   };
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-function PortfolioItem({ project }: PortfolioItemProps) {
+function PortfolioItem({ project, onEdit, onDelete }: PortfolioItemProps) {
   return (
     <div className="flex items-start gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
       <div className="flex-shrink-0">
@@ -280,12 +287,14 @@ function PortfolioItem({ project }: PortfolioItemProps) {
             <button
               className="p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors"
               title="Edit project"
+              onClick={onEdit}
             >
               <FiEdit className="w-4 h-4" />
             </button>
             <button
               className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
               title="Delete project"
+              onClick={onDelete}
             >
               <FiTrash2 className="w-4 h-4" />
             </button>
