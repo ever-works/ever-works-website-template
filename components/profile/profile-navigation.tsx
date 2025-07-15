@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiUser, FiBriefcase, FiAward, FiFileText } from "react-icons/fi";
 
 interface ProfileNavigationProps {
@@ -10,6 +10,10 @@ interface ProfileNavigationProps {
 
 export function ProfileNavigation({ activeTab = "about", onTabChange }: ProfileNavigationProps) {
   const [activeTabState, setActiveTabState] = useState(activeTab);
+
+  useEffect(() => {
+    setActiveTabState(activeTab);
+  }, [activeTab]);
 
   const tabs = [
     { id: "about", label: "About", icon: FiUser },
