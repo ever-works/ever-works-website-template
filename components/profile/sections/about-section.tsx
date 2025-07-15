@@ -72,6 +72,16 @@ export function AboutSection({ profile }: AboutSectionProps) {
               </div>
             )}
 
+            {profile.jobTitle && (
+              <div className="flex items-center gap-3">
+                <FiBriefcase className="w-5 h-5 text-theme-primary-500" />
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Job Title</p>
+                  <p className="text-gray-900 dark:text-gray-100">{profile.jobTitle}</p>
+                </div>
+              </div>
+            )}
+
             {profile.website && (
               <div className="flex items-center gap-3">
                 <FiGlobe className="w-5 h-5 text-theme-primary-500" />
