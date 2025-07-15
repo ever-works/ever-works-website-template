@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { FiUser, FiDroplet, FiBriefcase, FiFileText, FiArrowRight } from "react-icons/fi";
+import { useLocale } from "next-intl";
 import Link from "next/link";
 
 interface SettingsCardProps {
@@ -37,32 +38,33 @@ function SettingsCard({ title, description, icon, href }: SettingsCardProps) {
   );
 }
 
-export default async function ProfileSettingsPage() {
+export default function ProfileSettingsPage() {
+  const locale = useLocale();
 
   const settingsCards = [
     {
       title: "Basic Information",
       description: "Update your name, bio, location, and contact details to personalize your profile",
       icon: <FiUser className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
-      href: "/settings/profile/basic-info"
+      href: `/${locale}/settings/profile/basic-info`
     },
     {
       title: "Theme & Appearance",
       description: "Customize your profile colors and visual style to match your brand",
       icon: <FiDroplet className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
-      href: "/settings/profile/theme-colors"
+      href: `/${locale}/settings/profile/theme-colors`
     },
     {
       title: "Portfolio Management",
       description: "Add, edit, and organize your portfolio projects to showcase your work",
       icon: <FiBriefcase className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
-      href: "/settings/profile/portfolio"
+      href: `/${locale}/settings/profile/portfolio`
     },
     {
       title: "Submissions",
       description: "Manage your directory submissions and track their approval status",
       icon: <FiFileText className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
-      href: "/settings/profile/submissions"
+      href: `/${locale}/settings/profile/submissions`
     },
   ];
 
