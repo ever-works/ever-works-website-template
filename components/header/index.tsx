@@ -11,7 +11,6 @@ import {
   NavbarMenuToggle,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
-import { SessionProps } from "@/lib/types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useCallback, useState } from "react";
@@ -118,7 +117,7 @@ const STYLES = {
   mobileMenuItem: "py-2 w-full",
 } as const;
 
-export default function Header({ session }: SessionProps) {
+export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const t = useTranslations("common");
   const tListing = useTranslations("listing");
@@ -203,7 +202,7 @@ export default function Header({ session }: SessionProps) {
           <NavigationControls />
         </NavbarItem>
         <NavbarItem>
-          <ProfileButton session={session} />
+          <ProfileButton/>
         </NavbarItem>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -211,7 +210,7 @@ export default function Header({ session }: SessionProps) {
         />
       </NavbarContent>
     ),
-    [session, isMenuOpen]
+    [isMenuOpen]
   );
 
   return (

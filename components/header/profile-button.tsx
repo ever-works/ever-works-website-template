@@ -4,17 +4,18 @@ import { User, LogOut, Settings } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { signOutAction } from "@/app/[locale]/auth/actions";
-import { SessionProps } from "@/lib/types";
 import { Link } from "@/i18n/navigation";
 import { Avatar } from "./avatar";
 import { useConfig } from "@/app/[locale]/config";
 
-export function ProfileButton({ session }: SessionProps) {
+export function ProfileButton() {
   const t = useTranslations();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const config = useConfig();
 
-  const user = session?.user;
+  // For demo mode, type as 'any' to avoid linter errors. Replace with real user type when integrating backend.
+  const user: any = undefined; // Replace with real user object when available
+  const profilePath = `/profile/${user?.username || user?.id || 'johndoe'}`;
 
   const handleLogout = () => {
     signOutAction(config.authConfig?.provider);
@@ -52,7 +53,7 @@ export function ProfileButton({ session }: SessionProps) {
         >
           {/* TODO: Update this to use the general username dynamically instead of hardcoded 'johndoe' */}
           <Link
-            href="/profile/johndoe"
+            href={profilePath}
             className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
             role="menuitem"
           >
