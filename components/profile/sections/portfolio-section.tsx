@@ -84,6 +84,8 @@ function PortfolioCard({ project, featured = false }: PortfolioCardProps) {
           width={400}
           height={300}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+          priority={!!featured}
+          loading={featured ? undefined : "lazy"}
         />
         {featured && (
           <div className="absolute top-2 right-2">
