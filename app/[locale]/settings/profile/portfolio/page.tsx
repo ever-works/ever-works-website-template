@@ -6,10 +6,48 @@ import { Textarea } from "@/components/ui/textarea";
 import { FiBriefcase, FiArrowLeft, FiPlus, FiEdit, FiTrash2, FiStar, FiExternalLink } from "react-icons/fi";
 import Link from "next/link";
 import portfolioData from "../portfolio-data.json";
+import { useState } from "react";
 
-export default async function PortfolioPage() {
+export default function PortfolioPage() {
   // Simulate fetching from JSON file
   const projects = portfolioData;
+
+  // Form state
+  const [title, setTitle] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [description, setDescription] = useState("");
+  const [externalUrl, setExternalUrl] = useState("");
+  const [tags, setTags] = useState("");
+  const [isFeatured, setIsFeatured] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [success, setSuccess] = useState("");
+
+  // Basic validation
+  const validate = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (!title.trim()) newErrors.title = "Project title is required.";
+    if (!imageUrl.trim()) newErrors.imageUrl = "Image URL is required.";
+    if (!description.trim()) newErrors.description = "Description is required.";
+    if (!externalUrl.trim()) newErrors.externalUrl = "Project URL is required.";
+    // Optionally: validate URL format
+    return newErrors;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSuccess("");
+    const validationErrors = validate();
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) return;
+    // Here you would add the new project to your data source
+    setSuccess("Project added (demo only, not persisted)");
+    setTitle("");
+    setImageUrl("");
+    setDescription("");
+    setExternalUrl("");
+    setTags("");
+    setIsFeatured(false);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -44,7 +82,7 @@ export default async function PortfolioPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit} noValidate>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -55,7 +93,12 @@ export default async function PortfolioPage() {
                       name="title"
                       placeholder="Enter project title"
                       className="w-full"
+                      value={title}
+                      onChange={e => setTitle(e.target.value)}
+                      aria-invalid={!!errors.title}
+                      aria-describedby="title-error"
                     />
+                    {errors.title && <p className="text-red-600 text-xs mt-1" id="title-error">{errors.title}</p>}
                   </div>
 
                   <div className="space-y-2">
@@ -68,7 +111,12 @@ export default async function PortfolioPage() {
                       type="url"
                       placeholder="https://example.com/image.jpg"
                       className="w-full"
+                      value={imageUrl}
+                      onChange={e => setImageUrl(e.target.value)}
+                      aria-invalid={!!errors.imageUrl}
+                      aria-describedby="imageUrl-error"
                     />
+                    {errors.imageUrl && <p className="text-red-600 text-xs mt-1" id="imageUrl-error">{errors.imageUrl}</p>}
                   </div>
                 </div>
 
@@ -82,7 +130,12 @@ export default async function PortfolioPage() {
                     rows={3}
                     placeholder="Describe your project..."
                     className="w-full"
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                    aria-invalid={!!errors.description}
+                    aria-describedby="description-error"
                   />
+                  {errors.description && <p className="text-red-600 text-xs mt-1" id="description-error">{errors.description}</p>}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -96,7 +149,12 @@ export default async function PortfolioPage() {
                       type="url"
                       placeholder="https://yourproject.com"
                       className="w-full"
+                      value={externalUrl}
+                      onChange={e => setExternalUrl(e.target.value)}
+                      aria-invalid={!!errors.externalUrl}
+                      aria-describedby="externalUrl-error"
                     />
+                    {errors.externalUrl && <p className="text-red-600 text-xs mt-1" id="externalUrl-error">{errors.externalUrl}</p>}
                   </div>
 
                   <div className="space-y-2">
@@ -108,6 +166,8 @@ export default async function PortfolioPage() {
                       name="tags"
                       placeholder="React, TypeScript, Next.js"
                       className="w-full"
+                      value={tags}
+                      onChange={e => setTags(e.target.value)}
                     />
                   </div>
                 </div>
@@ -118,10 +178,14 @@ export default async function PortfolioPage() {
                       type="checkbox"
                       name="isFeatured"
                       className="rounded border-gray-300 text-theme-primary-600 focus:ring-theme-primary-500"
+                      checked={isFeatured}
+                      onChange={e => setIsFeatured(e.target.checked)}
                     />
                     <span className="text-sm text-gray-700 dark:text-gray-300">Featured Project</span>
                   </label>
                 </div>
+
+                {success && <p className="text-green-600 text-sm font-medium">{success}</p>}
 
                 <div className="flex justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
                   <Button type="submit" className="inline-flex items-center gap-2">
