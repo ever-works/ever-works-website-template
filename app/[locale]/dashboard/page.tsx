@@ -1,8 +1,6 @@
-import { auth } from "@/lib/auth";
 import { DashboardContent } from "./content";
 
-export default async function DashboardPage() {
-  const session = await auth();
-
-  return <DashboardContent session={session} />;
+export default function DashboardPage() {
+  // No auth required - pass null session
+  return <DashboardContent session={null} />;
 }
