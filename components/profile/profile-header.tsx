@@ -16,7 +16,6 @@ interface Profile {
     url: string;
     displayName: string;
   }>;
-  themeColor: string;
 }
 
 interface ProfileHeaderProps {
@@ -46,7 +45,7 @@ export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderPr
           className="absolute inset-0 z-0"
           style={{
             background:
-              `linear-gradient(120deg, var(--theme-primary), var(--theme-secondary) 80%)`,
+              `linear-gradient(120deg, var(--theme-primary, #6366f1), var(--theme-secondary, #a5b4fc) 80%)`,
           }}
         />
         {/* Overlay for readability */}
