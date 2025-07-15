@@ -144,6 +144,12 @@ interface SubmissionCardProps {
 }
 
 function SubmissionCard({ submission, getStatusIcon, getStatusColor, formatDate }: SubmissionCardProps) {
+  // Placeholder edit handler
+  const handleEdit = () => {
+    // TODO: Implement edit logic/modal
+    alert(`Edit submission: ${submission.title}`);
+  };
+  const isEditable = submission.status === "approved";
   return (
     <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow hover:shadow-md transition-shadow duration-200 p-0">
       <CardContent className="p-6">
@@ -158,11 +164,9 @@ function SubmissionCard({ submission, getStatusIcon, getStatusColor, formatDate 
                 {submission.status}
               </span>
             </div>
-            
             <p className="text-gray-600 dark:text-gray-300 text-sm mb-3 line-clamp-2">
               {submission.description}
             </p>
-            
             <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
               <span>Category: {submission.category}</span>
               <span>Submitted: {formatDate(submission.submittedAt)}</span>
@@ -171,7 +175,6 @@ function SubmissionCard({ submission, getStatusIcon, getStatusColor, formatDate 
               )}
             </div>
           </div>
-          
           <div className="flex items-center gap-2 ml-4">
             <a
               href={submission.url}
@@ -183,8 +186,11 @@ function SubmissionCard({ submission, getStatusIcon, getStatusColor, formatDate 
               <FiEye className="w-4 h-4" />
             </a>
             <button
-              className="p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors"
-              title="Edit submission"
+              className={`p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors ${!isEditable ? 'opacity-60 cursor-not-allowed' : ''}`}
+              title={isEditable ? "Edit submission" : "Editing disabled for pending/rejected submissions"}
+              onClick={isEditable ? handleEdit : undefined}
+              disabled={!isEditable}
+              aria-disabled={!isEditable}
             >
               <FiEdit className="w-4 h-4" />
             </button>
