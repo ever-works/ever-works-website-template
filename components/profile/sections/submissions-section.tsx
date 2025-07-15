@@ -23,7 +23,7 @@ interface SubmissionsSectionProps {
 }
 
 export function SubmissionsSection({ profile }: SubmissionsSectionProps) {
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: SubmissionItem['status']) => {
     switch (status) {
       case "approved":
         return <FiCheckCircle className="w-4 h-4 text-green-500" />;
@@ -36,7 +36,7 @@ export function SubmissionsSection({ profile }: SubmissionsSectionProps) {
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: SubmissionItem['status']) => {
     switch (status) {
       case "approved":
         return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
@@ -138,8 +138,8 @@ export function SubmissionsSection({ profile }: SubmissionsSectionProps) {
 
 interface SubmissionCardProps {
   submission: SubmissionItem;
-  getStatusIcon: (status: string) => React.ReactElement;
-  getStatusColor: (status: string) => string;
+  getStatusIcon: (status: SubmissionItem['status']) => React.ReactElement;
+  getStatusColor: (status: SubmissionItem['status']) => string;
   formatDate: (dateString: string) => string;
 }
 
