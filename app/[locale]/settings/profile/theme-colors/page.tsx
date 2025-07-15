@@ -58,6 +58,7 @@ export default function ThemeColorsPage() {
                       key={theme.key}
                       type="button"
                       onClick={() => changeTheme(theme.key)}
+                      aria-pressed={isSelected}
                       className={`group relative p-6 rounded-xl border-2 transition-all duration-300 text-left focus:outline-none focus:ring-2 focus:ring-theme-primary-500 hover:shadow-lg
                         ${isSelected 
                           ? "border-theme-primary-500 bg-gradient-to-br from-theme-primary-50 to-theme-primary-100 dark:from-theme-primary-900/30 dark:to-theme-primary-800/20 shadow-lg shadow-theme-primary-500/20" 
