@@ -11,7 +11,13 @@ const dummyProfile = {
   location: "San Francisco, CA",
   company: "Tech Corp",
   jobTitle: "Senior Software Engineer",
-  skills: ["React", "TypeScript", "Node.js", "Next.js", "Tailwind CSS"],
+  skills: [
+    { name: "React", level: 90 },
+    { name: "TypeScript", level: 85 },
+    { name: "Node.js", level: 80 },
+    { name: "Next.js", level: 85 },
+    { name: "Tailwind CSS", level: 90 },
+  ],
   interests: ["Web Development", "Open Source", "AI/ML", "Design"],
   website: "https://johndoe.dev",
   socialLinks: [

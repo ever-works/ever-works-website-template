@@ -1,20 +1,7 @@
 import { FiMapPin, FiBriefcase, FiGlobe, FiCalendar } from "react-icons/fi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProfileTag } from "../profile-tag";
-
-interface Profile {
-  username: string;
-  displayName: string;
-  bio: string;
-  avatar: string;
-  location: string;
-  company: string;
-  jobTitle: string;
-  website: string;
-  skills: string[];
-  interests: string[];
-  memberSince: string;
-}
+import type { Profile } from "../profile-content";
 
 interface AboutSectionProps {
   profile: Profile;
@@ -118,8 +105,8 @@ export function AboutSection({ profile }: AboutSectionProps) {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
-              {profile.skills.map((skill) => (
-                <ProfileTag key={skill} label={skill} />
+              {profile.skills.map((skill: { name: string; level: number }) => (
+                <ProfileTag key={skill.name} label={skill.name} />
               ))}
             </div>
           </CardContent>
@@ -136,7 +123,7 @@ export function AboutSection({ profile }: AboutSectionProps) {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
-              {profile.interests.map((interest) => (
+              {profile.interests.map((interest: string) => (
                 <ProfileTag key={interest} label={interest} />
               ))}
             </div>

@@ -7,7 +7,7 @@ import { PortfolioSection } from "./sections/portfolio-section";
 import { SkillsSection } from "./sections/skills-section";
 import { SubmissionsSection } from "./sections/submissions-section";
 
-interface Profile {
+export interface Profile {
   username: string;
   displayName: string;
   bio: string;
@@ -21,7 +21,7 @@ interface Profile {
     url: string;
     displayName: string;
   }>;
-  skills: string[];
+  skills: { name: string; level: number; }[];
   interests: string[];
   portfolio: Array<{
     id: string;

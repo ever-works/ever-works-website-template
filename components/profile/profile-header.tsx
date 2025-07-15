@@ -1,22 +1,7 @@
 import Image from "next/image";
 import { FiEdit2, FiMapPin, FiBriefcase, FiGlobe, FiGithub, FiLinkedin, FiTwitter } from "react-icons/fi";
 import { Card } from "@/components/ui/card";
-
-interface Profile {
-  username: string;
-  displayName: string;
-  bio: string;
-  avatar: string;
-  location: string;
-  company: string;
-  jobTitle: string;
-  website: string;
-  socialLinks: Array<{
-    platform: string;
-    url: string;
-    displayName: string;
-  }>;
-}
+import type { Profile } from "./profile-content";
 
 interface ProfileHeaderProps {
   profile: Profile;
@@ -126,7 +111,7 @@ export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderPr
               {/* Social Links */}
               {profile.socialLinks.length > 0 && (
                 <div className="flex items-center gap-4 pt-2 flex-wrap">
-                  {profile.socialLinks.map((link) => (
+                  {profile.socialLinks.map((link: { platform: string; url: string; displayName: string }) => (
                     <a
                       key={link.platform}
                       href={link.url}
