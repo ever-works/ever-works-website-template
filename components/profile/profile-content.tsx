@@ -51,6 +51,15 @@ interface ProfileContentProps {
   profile: Profile;
 }
 
+// Reusable section header component
+function ProfileSectionHeader({ title }: { title: string }) {
+  return (
+    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 border-b border-gray-200 dark:border-gray-800 pb-2">
+      {title}
+    </h2>
+  );
+}
+
 export function ProfileContent({ profile }: ProfileContentProps) {
   const [activeTab, setActiveTab] = useState("about");
 
@@ -59,45 +68,35 @@ export function ProfileContent({ profile }: ProfileContentProps) {
       case "about":
         return (
           <section className="space-y-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 border-b border-gray-200 dark:border-gray-800 pb-2">
-              About
-            </h2>
+            <ProfileSectionHeader title="About" />
             <AboutSection profile={profile} />
           </section>
         );
       case "portfolio":
         return (
           <section className="space-y-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 border-b border-gray-200 dark:border-gray-800 pb-2">
-              Portfolio
-            </h2>
+            <ProfileSectionHeader title="Portfolio" />
             <PortfolioSection profile={profile} />
           </section>
         );
       case "skills":
         return (
           <section className="space-y-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 border-b border-gray-200 dark:border-gray-800 pb-2">
-              Skills & Expertise
-            </h2>
+            <ProfileSectionHeader title="Skills & Expertise" />
             <SkillsSection profile={profile} />
           </section>
         );
       case "submissions":
         return (
           <section className="space-y-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 border-b border-gray-200 dark:border-gray-800 pb-2">
-              Submissions
-            </h2>
+            <ProfileSectionHeader title="Submissions" />
             <SubmissionsSection profile={profile} />
           </section>
         );
       default:
         return (
           <section className="space-y-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 border-b border-gray-200 dark:border-gray-800 pb-2">
-              About
-            </h2>
+            <ProfileSectionHeader title="About" />
             <AboutSection profile={profile} />
           </section>
         );
