@@ -29,8 +29,6 @@ export function AboutSection({ profile }: AboutSectionProps) {
     });
   };
 
-
-
   return (
     <div className="space-y-6">
       {/* About Me */}

@@ -5,38 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FiBriefcase, FiArrowLeft, FiPlus, FiEdit, FiTrash2, FiStar, FiExternalLink } from "react-icons/fi";
 import Link from "next/link";
-
-const dummyPortfolio = [
-  {
-    id: "1",
-    title: "E-commerce Platform",
-    description: "A modern e-commerce platform built with Next.js and Stripe",
-    imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop",
-    externalUrl: "https://example.com/project1",
-    tags: ["Next.js", "Stripe", "E-commerce"],
-    isFeatured: true,
-  },
-  {
-    id: "2",
-    title: "Task Management App",
-    description: "A collaborative task management application with real-time updates",
-    imageUrl: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=300&fit=crop",
-    externalUrl: "https://example.com/project2",
-    tags: ["React", "Firebase", "Real-time"],
-    isFeatured: true,
-  },
-  {
-    id: "3",
-    title: "Weather Dashboard",
-    description: "A beautiful weather dashboard with location-based forecasts",
-    imageUrl: "https://images.unsplash.com/photo-1592210454359-9043f067919b?w=400&h=300&fit=crop",
-    externalUrl: "https://example.com/project3",
-    tags: ["Vue.js", "Weather API", "Dashboard"],
-    isFeatured: false,
-  },
-];
+import portfolioData from "../portfolio-data.json";
 
 export default async function PortfolioPage() {
+  // Simulate fetching from JSON file
+  const projects = portfolioData;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -170,7 +143,7 @@ export default async function PortfolioPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {dummyPortfolio.map((project) => (
+                {projects.map((project: any) => (
                   <PortfolioItem key={project.id} project={project} />
                 ))}
               </div>
