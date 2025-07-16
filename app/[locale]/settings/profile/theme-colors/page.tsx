@@ -9,6 +9,16 @@ import { useTheme } from "@/hooks/use-theme";
 export default function ThemeColorsPage() {
   const { themeKey, availableThemes, changeTheme } = useTheme();
 
+  if (!availableThemes || availableThemes.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-500 dark:text-gray-400">Unable to load themes</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       <Container maxWidth="7xl" padding="default">
