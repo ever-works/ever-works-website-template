@@ -6,8 +6,8 @@ import { useTranslations } from 'next-intl';
 interface TechItem {
   name: string;
   icon: string;
-  description: string;
-  category: string;
+  descriptionKey: string;
+  categoryKey: string;
   color: string;
 }
 
@@ -15,114 +15,114 @@ const techStack: TechItem[] = [
   {
     name: "Next.js",
     icon: "⚡",
-    description: "Full stack React framework for production.",
-    category: "Frontend Framework",
-    color: "from-gray-800 to-gray-900"
+    descriptionKey: "TECH_NEXTJS_DESC",
+    categoryKey: "TECH_NEXTJS_CATEGORY",
+    color: "from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800"
   },
   {
     name: "TypeScript",
     icon: "🔷",
-    description: "Typed superset of JavaScript for better development.",
-    category: "Language",
-    color: "from-blue-800 to-blue-900"
+    descriptionKey: "TECH_TYPESCRIPT_DESC",
+    categoryKey: "TECH_TYPESCRIPT_CATEGORY",
+    color: "from-blue-200 to-blue-300 dark:from-blue-700 dark:to-blue-800"
   },
   {
     name: "Tailwind CSS",
     icon: "🎨",
-    description: "CSS framework for rapid UI development.",
-    category: "Styling",
-    color: "from-cyan-800 to-cyan-900"
+    descriptionKey: "TECH_TAILWIND_DESC",
+    categoryKey: "TECH_TAILWIND_CATEGORY",
+    color: "from-cyan-200 to-cyan-300 dark:from-cyan-700 dark:to-cyan-800"
   },
   {
     name: "HeroUI",
     icon: "🎯",
-    description: "Modern React component library for building UIs.",
-    category: "UI Components",
-    color: "from-purple-800 to-purple-900"
+    descriptionKey: "TECH_HEROUI_DESC",
+    categoryKey: "TECH_HEROUI_CATEGORY",
+    color: "from-purple-200 to-purple-300 dark:from-purple-700 dark:to-purple-800"
   },
   {
     name: "NextAuth.js",
     icon: "🔐",
-    description: "Complete authentication solution for Next.js.",
-    category: "Authentication",
-    color: "from-green-800 to-green-900"
+    descriptionKey: "TECH_NEXTAUTH_DESC",
+    categoryKey: "TECH_NEXTAUTH_CATEGORY",
+    color: "from-green-200 to-green-300 dark:from-green-700 dark:to-green-800"
   },
   {
     name: "Supabase",
     icon: "🗃️",
-    description: "Open source Firebase alternative with PostgreSQL.",
-    category: "Backend",
-    color: "from-emerald-800 to-emerald-900"
+    descriptionKey: "TECH_SUPABASE_DESC",
+    categoryKey: "TECH_SUPABASE_CATEGORY",
+    color: "from-emerald-200 to-emerald-300 dark:from-emerald-700 dark:to-emerald-800"
   },
   {
     name: "Drizzle ORM",
     icon: "🔧",
-    description: "TypeScript ORM for SQL databases.",
-    category: "Database",
-    color: "from-orange-800 to-orange-900"
+    descriptionKey: "TECH_DRIZZLE_DESC",
+    categoryKey: "TECH_DRIZZLE_CATEGORY",
+    color: "from-orange-200 to-orange-300 dark:from-orange-700 dark:to-orange-800"
   },
   {
     name: "TanStack Query",
     icon: "🔄",
-    description: "Powerful data synchronization for React.",
-    category: "Data Fetching",
-    color: "from-red-800 to-red-900"
+    descriptionKey: "TECH_TANSTACK_DESC",
+    categoryKey: "TECH_TANSTACK_CATEGORY",
+    color: "from-red-200 to-red-300 dark:from-red-700 dark:to-red-800"
   },
   {
     name: "Stripe",
     icon: "💳",
-    description: "Best and most secure online payment service.",
-    category: "Payments",
-    color: "from-indigo-800 to-indigo-900"
+    descriptionKey: "TECH_STRIPE_DESC",
+    categoryKey: "TECH_STRIPE_CATEGORY",
+    color: "from-indigo-200 to-indigo-300 dark:from-indigo-700 dark:to-indigo-800"
   },
   {
     name: "Resend",
     icon: "✉️",
-    description: "Modern email service for developers.",
-    category: "Email",
-    color: "from-teal-800 to-teal-900"
+    descriptionKey: "TECH_RESEND_DESC",
+    categoryKey: "TECH_RESEND_CATEGORY",
+    color: "from-teal-200 to-teal-300 dark:from-teal-700 dark:to-teal-800"
   },
   {
     name: "Sentry",
     icon: "🛡️",
-    description: "Application monitoring and error tracking.",
-    category: "Monitoring",
-    color: "from-rose-800 to-rose-900"
+    descriptionKey: "TECH_SENTRY_DESC",
+    categoryKey: "TECH_SENTRY_CATEGORY",
+    color: "from-rose-200 to-rose-300 dark:from-rose-700 dark:to-rose-800"
   },
   {
     name: "Framer Motion",
     icon: "🎪",
-    description: "Production-ready motion library for React.",
-    category: "Animation",
-    color: "from-pink-800 to-pink-900"
+    descriptionKey: "TECH_FRAMER_DESC",
+    categoryKey: "TECH_FRAMER_CATEGORY",
+    color: "from-pink-200 to-pink-300 dark:from-pink-700 dark:to-pink-800"
   },
   {
     name: "Zustand",
     icon: "🐻",
-    description: "Small, fast and scalable state management.",
-    category: "State Management",
-    color: "from-amber-800 to-amber-900"
+    descriptionKey: "TECH_ZUSTAND_DESC",
+    categoryKey: "TECH_ZUSTAND_CATEGORY",
+    color: "from-amber-200 to-amber-300 dark:from-amber-700 dark:to-amber-800"
   },
   {
     name: "Zod",
     icon: "✅",
-    description: "TypeScript-first schema validation library.",
-    category: "Validation",
-    color: "from-lime-800 to-lime-900"
+    descriptionKey: "TECH_ZOD_DESC",
+    categoryKey: "TECH_ZOD_CATEGORY",
+    color: "from-lime-200 to-lime-300 dark:from-lime-700 dark:to-lime-800"
   },
   {
     name: "PostHog",
     icon: "📊",
-    description: "Open source product analytics platform.",
-    category: "Analytics",
-    color: "from-violet-800 to-violet-900"
+    descriptionKey: "TECH_POSTHOG_DESC",
+    categoryKey: "TECH_POSTHOG_CATEGORY",
+    color: "from-violet-200 to-violet-300 dark:from-violet-700 dark:to-violet-800"
   },
   {
     name: "Vercel",
     icon: "🚀",
-    description: "The platform for frontend developers.",
-    category: "Deployment",
-    color: "from-gray-800 to-black"
+    descriptionKey: "TECH_VERCEL_DESC",
+    categoryKey: "TECH_VERCEL_CATEGORY",
+    color: "from-gray-200 to-gray-400 dark:from-gray-600 dark:to-black"
   }
 ];
 
@@ -130,81 +130,81 @@ export function TechStack() {
   const t = useTranslations('help');
 
   return (
+    <section className="py-20 bg-white/80 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300">
+      <div className="py-20">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <p className="text-theme-primary-600 dark:text-theme-primary-400 text-sm font-medium tracking-wider uppercase mb-4">
+            POWERED BY
+          </p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+            {t('TECH_STACK_TITLE')}
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
+            {t('TECH_STACK_SUBTITLE')}
+          </p>
+        </div>
 
-        <div className="py-20">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <p className="text-blue-400 text-sm font-medium tracking-wider uppercase mb-4">
-              POWERED BY
-            </p>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              {t('TECH_STACK_TITLE')}
-            </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              {t('TECH_STACK_SUBTITLE')}
-            </p>
-          </div>
-
-          {/* Tech Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {techStack.map((tech, index) => (
-              <div
-                key={tech.name}
-                className={`relative group hover:scale-105 transition-all duration-300 ${
-                  index % 2 === 0 ? 'animate-fade-in' : 'animate-fade-in-left'
-                }`}
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className={`bg-gradient-to-br ${tech.color} p-6 rounded-xl border border-gray-800 hover:border-gray-700 transition-all duration-300 h-full`}>
-                  {/* Icon & Name */}
-                  <div className="flex items-center mb-4">
-                    <div className="text-3xl mr-3">{tech.icon}</div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-white">{tech.name}</h3>
-                      <p className="text-xs text-gray-400 font-medium">{tech.category}</p>
-                    </div>
+        {/* Tech Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {techStack.map((tech, index) => (
+            <div
+              key={tech.name}
+              className={`relative group hover:scale-105 transition-all duration-300 ${
+                index % 2 === 0 ? 'animate-fade-in' : 'animate-fade-in-left'
+              }`}
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <div className={`bg-gradient-to-br ${tech.color} p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300 h-full shadow-lg hover:shadow-xl`}>
+                {/* Icon & Name */}
+                <div className="flex items-center mb-4">
+                  <div className="text-3xl mr-3">{tech.icon}</div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{tech.name}</h3>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">{t(tech.categoryKey as any)}</p>
                   </div>
-
-                  {/* Description */}
-                  <p className="text-gray-300 text-sm leading-relaxed">
-                    {tech.description}
-                  </p>
-
-                  {/* Hover Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
+
+                {/* Description */}
+                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                  {t(tech.descriptionKey as any)}
+                </p>
+
+                {/* Hover Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-theme-primary-500/10 to-theme-secondary-500/10 dark:from-theme-primary-400/10 dark:to-theme-secondary-400/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
+        </div>
 
-          {/* Bottom Section */}
-          <div className="mt-20 text-center">
-            <div className="bg-gray-900 rounded-2xl p-8 border border-gray-800">
-              <h3 className="text-2xl font-bold mb-4">{t('TECH_STACK_READY')}</h3>
-              <p className="text-gray-400 mb-6">
-                {t('TECH_STACK_READY_DESC')}
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <div className="flex items-center space-x-2 px-4 py-2 bg-gray-800 rounded-lg">
-                  <span className="text-green-400">✓</span>
-                  <span className="text-sm">TypeScript Ready</span>
-                </div>
-                <div className="flex items-center space-x-2 px-4 py-2 bg-gray-800 rounded-lg">
-                  <span className="text-green-400">✓</span>
-                  <span className="text-sm">Production Tested</span>
-                </div>
-                <div className="flex items-center space-x-2 px-4 py-2 bg-gray-800 rounded-lg">
-                  <span className="text-green-400">✓</span>
-                  <span className="text-sm">Fully Documented</span>
-                </div>
-                <div className="flex items-center space-x-2 px-4 py-2 bg-gray-800 rounded-lg">
-                  <span className="text-green-400">✓</span>
-                  <span className="text-sm">Enterprise Ready</span>
-                </div>
+        {/* Bottom Section */}
+        <div className="mt-20 text-center">
+          <div className="bg-gray-50 dark:bg-gray-800/70 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
+            <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{t('TECH_STACK_READY')}</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              {t('TECH_STACK_READY_DESC')}
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <div className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                <span className="text-theme-secondary-600 dark:text-theme-secondary-400">✓</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300">TypeScript Ready</span>
+              </div>
+              <div className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                <span className="text-theme-secondary-600 dark:text-theme-secondary-400">✓</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300">Production Tested</span>
+              </div>
+              <div className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                <span className="text-theme-secondary-600 dark:text-theme-secondary-400">✓</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300">Fully Documented</span>
+              </div>
+              <div className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                <span className="text-theme-secondary-600 dark:text-theme-secondary-400">✓</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300">Enterprise Ready</span>
               </div>
             </div>
           </div>
         </div>
-
+      </div>
+    </section>
   );
 } 

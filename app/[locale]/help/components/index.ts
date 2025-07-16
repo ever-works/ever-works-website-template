@@ -6,3 +6,4 @@ export { MonetizationSection } from "./monetization-section";
 export { HowItWorks } from "./how-it-works";
 export { InstallationGuide } from "./installation-guide";
 export { UsageGuide } from "./usage-guide";
+export { Support } from "./support";

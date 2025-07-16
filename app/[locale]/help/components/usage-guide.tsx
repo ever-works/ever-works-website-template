@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface UsageSection {
   id: string;
@@ -13,19 +14,23 @@ interface UsageSection {
   }[];
 }
 
-const usageSections: UsageSection[] = [
-  {
-    id: "creating-items",
-    title: "Creating Directory Items",
-    description: "Learn how to add and manage items in your directory.",
-    content: [
-      {
-        type: 'text',
-        value: 'Navigate to the admin dashboard and click "Add New Item" to create a new directory entry. Fill in the required fields and configure the item settings.'
-      },
-      {
-        type: 'code',
-        value: `// Example: Creating an item programmatically
+export function UsageGuide() {
+  const [activeSection, setActiveSection] = useState("creating-items");
+  const t = useTranslations("help");
+
+  const usageSections: UsageSection[] = [
+    {
+      id: "creating-items",
+      title: t("USAGE_CREATING_ITEMS_TITLE"),
+      description: t("USAGE_CREATING_ITEMS_DESC"),
+      content: [
+        {
+          type: 'text',
+          value: t("USAGE_CREATING_ITEMS_TEXT")
+        },
+        {
+          type: 'code',
+          value: `// Example: Creating an item programmatically
 import { createItem } from '@/lib/api';
 
 const newItem = await createItem({
@@ -41,62 +46,56 @@ const newItem = await createItem({
     "API integration"
   ]
 });`,
-        language: 'typescript'
-      }
-    ]
-  },
-  {
-    id: "customizing-design",
-    title: "Customizing Your Design",
-    description: "Personalize your directory with custom themes and branding.",
-    content: [
-      {
-        type: 'text',
-        value: 'Ever Works comes with a powerful theming system built on Tailwind CSS. You can customize colors, fonts, and layouts to match your brand.'
-      },
-      {
-        type: 'code',
-        value: `// tailwind.config.ts - Custom theme configuration
-export default {
-  theme: {
-    extend: {
-      colors: {
-        primary: {
-          50: '#eff6ff',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          900: '#1e3a8a',
-        },
-        brand: {
-          primary: '#6366f1',
-          secondary: '#8b5cf6',
-          accent: '#06b6d4',
+          language: 'typescript'
         }
-      },
-      fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        mono: ['Fira Code', 'monospace'],
-      }
-    }
-  }
+      ]
+    },
+    {
+      id: "customizing-design",
+      title: t("USAGE_CUSTOMIZING_DESIGN_TITLE"),
+      description: t("USAGE_CUSTOMIZING_DESIGN_DESC"),
+      content: [
+        {
+          type: 'text',
+          value: t("USAGE_CUSTOMIZING_DESIGN_TEXT")
+        },
+        {
+          type: 'code',
+          value: `// Example: Customizing theme colors
+export const customTheme = {
+  primary: "#3b82f6",
+  secondary: "#10b981",
+  accent: "#8b5cf6",
+  background: "#ffffff",
+  surface: "#f8f9fa",
+  text: "#1a1a1a",
+  textSecondary: "#6c757d",
+};
+
+// Apply theme in your component
+function MyComponent() {
+  return (
+    <div className="bg-theme-primary text-white">
+      Custom themed content
+    </div>
+  );
 }`,
-        language: 'typescript'
-      }
-    ]
-  },
-  {
-    id: "managing-users",
-    title: "User Management",
-    description: "Handle user authentication, roles, and permissions.",
-    content: [
-      {
-        type: 'text',
-        value: 'Ever Works includes a complete authentication system with support for multiple providers. You can manage user roles and permissions through the admin dashboard.'
-      },
-      {
-        type: 'code',
-        value: `// Example: User role middleware
+          language: 'typescript'
+        }
+      ]
+    },
+    {
+      id: "managing-users",
+      title: t("USAGE_MANAGING_USERS_TITLE"),
+      description: t("USAGE_MANAGING_USERS_DESC"),
+      content: [
+        {
+          type: 'text',
+          value: t("USAGE_MANAGING_USERS_TEXT")
+        },
+        {
+          type: 'code',
+          value: `// Example: User role middleware
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
@@ -117,22 +116,22 @@ export async function middleware(request: NextRequest) {
   
   return NextResponse.next();
 }`,
-        language: 'typescript'
-      }
-    ]
-  },
-  {
-    id: "payments-setup",
-    title: "Setting up Payments",
-    description: "Configure Stripe for paid submissions and premium features.",
-    content: [
-      {
-        type: 'text',
-        value: 'Ever Works integrates with Stripe for handling payments. Configure your Stripe keys in the environment variables and set up your pricing plans.'
-      },
-      {
-        type: 'code',
-        value: `// Example: Creating a payment intent
+          language: 'typescript'
+        }
+      ]
+    },
+    {
+      id: "payments-setup",
+      title: t("USAGE_PAYMENTS_SETUP_TITLE"),
+      description: t("USAGE_PAYMENTS_SETUP_DESC"),
+      content: [
+        {
+          type: 'text',
+          value: t("USAGE_PAYMENTS_SETUP_TEXT")
+        },
+        {
+          type: 'code',
+          value: `// Example: Creating a payment intent
 import { stripe } from '@/lib/stripe';
 
 export async function createPaymentIntent(amount: number, currency = 'usd') {
@@ -162,68 +161,50 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Payment failed' }, { status: 500 });
   }
 }`,
-        language: 'typescript'
-      }
-    ]
-  },
-  {
-    id: "deployment",
-    title: "Deployment",
-    description: "Deploy your directory to production with Vercel or other platforms.",
-    content: [
-      {
-        type: 'text',
-        value: 'Ever Works is optimized for deployment on Vercel, but can be deployed to any platform that supports Next.js. Here\'s how to deploy to different platforms:'
-      },
-      {
-        type: 'code',
-        value: `# Vercel Deployment
-# Install Vercel CLI
-npm i -g vercel
+          language: 'typescript'
+        }
+      ]
+    },
+    {
+      id: "deployment",
+      title: t("USAGE_DEPLOYMENT_TITLE"),
+      description: t("USAGE_DEPLOYMENT_DESC"),
+      content: [
+        {
+          type: 'text',
+          value: t("USAGE_DEPLOYMENT_TEXT")
+        },
+        {
+          type: 'code',
+          value: `# Vercel Deployment
+npx vercel
 
-# Deploy to Vercel
-vercel
+# Or with custom domain
+npx vercel --prod --alias yourdomain.com
 
-# Set environment variables
-vercel env add NEXT_PUBLIC_APP_URL
-vercel env add NEXT_PUBLIC_SUPABASE_URL
-vercel env add NEXTAUTH_SECRET
+# Docker Deployment
+docker build -t my-directory .
+docker run -p 3000:3000 my-directory
 
-# Deploy to production
-vercel --prod`,
-        language: 'bash'
-      },
-      {
-        type: 'code',
-        value: `# Docker Deployment
-# Build Docker image
-docker build -t ever-works .
-
-# Run container
-docker run -p 3000:3000 \\
-  -e NEXT_PUBLIC_APP_URL=https://yourdomain.com \\
-  -e NEXT_PUBLIC_SUPABASE_URL=your_supabase_url \\
-  -e NEXTAUTH_SECRET=your_secret \\
-  ever-works`,
-        language: 'bash'
-      }
-    ]
-  }
-];
-
-export function UsageGuide() {
-  const [activeSection, setActiveSection] = useState("creating-items");
+# Manual deployment
+npm run build
+npm start`,
+          language: 'bash'
+        }
+      ]
+    }
+  ];
 
   return (
-    <section className="py-12 bg-gray-900 rounded-2xl p-8 border border-gray-800">
-      <div className="max-w-6xl mx-auto">
+    <section className="py-20 bg-white dark:bg-dark--theme-950 transition-colors duration-300">
+      <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            🚀 Usage Guide
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
+            {t("USAGE_GUIDE_TITLE")}
           </h2>
-          <p className="text-gray-400 text-lg">
-            Learn how to use and customize Ever Works for your directory
+          <p className="text-xl text-gray-600 dark:text-gray-300 transition-colors duration-300">
+            {t("USAGE_GUIDE_SUBTITLE")}
           </p>
         </div>
 
@@ -233,10 +214,10 @@ export function UsageGuide() {
             <button
               key={section.id}
               onClick={() => setActiveSection(section.id)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                 activeSection === section.id
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  ? "bg-theme-primary-600 dark:bg-theme-primary-500 text-white shadow-lg shadow-theme-primary-500/25"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700"
               }`}
             >
               {section.title}
@@ -245,7 +226,7 @@ export function UsageGuide() {
         </div>
 
         {/* Section Content */}
-        <div className="grid grid-cols-1 gap-8">
+        <div className="space-y-6">
           {usageSections.map((section) => (
             <div
               key={section.id}
@@ -253,11 +234,11 @@ export function UsageGuide() {
                 activeSection === section.id ? 'block' : 'hidden'
               }`}
             >
-              <div className="bg-gray-800 rounded-lg p-6 mb-6">
-                <h3 className="text-2xl font-semibold text-white mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-6 shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300">
+                <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
                   {section.title}
                 </h3>
-                <p className="text-gray-300 leading-relaxed">
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed transition-colors duration-300">
                   {section.description}
                 </p>
               </div>
@@ -267,23 +248,23 @@ export function UsageGuide() {
                 {section.content.map((content, index) => (
                   <div key={index}>
                     {content.type === 'text' && (
-                      <div className="bg-gray-800 rounded-lg p-6">
-                        <p className="text-gray-300 leading-relaxed">
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300">
+                        <p className="text-gray-600 dark:text-gray-300 leading-relaxed transition-colors duration-300">
                           {content.value}
                         </p>
                       </div>
                     )}
 
                     {content.type === 'code' && (
-                      <div className="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
+                      <div className="bg-gray-900 dark:bg-gray-950 rounded-lg border border-gray-700 dark:border-gray-800 overflow-hidden shadow-xl transition-all duration-300">
                         {/* Code Header */}
-                        <div className="bg-gray-800 px-4 py-3 flex items-center justify-between">
+                        <div className="bg-gray-800 dark:bg-gray-900 px-4 py-3 flex items-center justify-between border-b border-gray-700 dark:border-gray-800 transition-all duration-300">
                           <div className="flex items-center space-x-2">
                             <div className="w-3 h-3 bg-red-500 rounded-full"></div>
                             <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
                             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                           </div>
-                          <div className="text-gray-400 text-sm font-mono">
+                          <div className="text-gray-400 dark:text-gray-500 text-sm font-mono transition-colors duration-300">
                             {content.language || 'code'}
                           </div>
                           <div className="w-12"></div>
@@ -291,23 +272,23 @@ export function UsageGuide() {
 
                         {/* Code Content */}
                         <div className="p-4 font-mono text-sm overflow-x-auto">
-                          <pre className="text-gray-300 leading-relaxed">
+                          <pre className="text-gray-300 dark:text-gray-400 leading-relaxed transition-colors duration-300">
                             <code>
                               {content.value.split('\n').map((line, lineIndex) => (
                                 <div key={lineIndex} className="flex">
-                                  <span className="text-gray-600 mr-4 select-none w-8 text-right">
+                                  <span className="text-gray-600 dark:text-gray-500 mr-4 select-none w-8 text-right transition-colors duration-300">
                                     {lineIndex + 1}
                                   </span>
-                                  <span className={
-                                    line.trim().startsWith('//') || line.trim().startsWith('#') ? 'text-gray-500' :
-                                    line.includes('import') || line.includes('export') ? 'text-blue-400' :
-                                    line.includes('const') || line.includes('let') || line.includes('var') ? 'text-purple-400' :
-                                    line.includes('function') || line.includes('async') || line.includes('await') ? 'text-green-400' :
-                                    line.includes('return') ? 'text-yellow-400' :
-                                    line.includes('npm') || line.includes('pnpm') || line.includes('yarn') ? 'text-green-400' :
-                                    line.includes('docker') || line.includes('vercel') ? 'text-cyan-400' :
-                                    'text-gray-300'
-                                  }>
+                                  <span className={`transition-colors duration-300 ${
+                                    line.trim().startsWith('//') || line.trim().startsWith('#') ? 'text-gray-500 dark:text-gray-600' :
+                                    line.includes('import') || line.includes('export') ? 'text-blue-400 dark:text-blue-500' :
+                                    line.includes('const') || line.includes('let') || line.includes('var') ? 'text-purple-400 dark:text-purple-500' :
+                                    line.includes('function') || line.includes('async') || line.includes('await') ? 'text-green-400 dark:text-green-500' :
+                                    line.includes('return') ? 'text-yellow-400 dark:text-yellow-500' :
+                                    line.includes('npm') || line.includes('pnpm') || line.includes('yarn') ? 'text-green-400 dark:text-green-500' :
+                                    line.includes('docker') || line.includes('vercel') ? 'text-cyan-400 dark:text-cyan-500' :
+                                    'text-gray-300 dark:text-gray-400'
+                                  }`}>
                                     {line}
                                   </span>
                                 </div>
@@ -319,9 +300,9 @@ export function UsageGuide() {
                     )}
 
                     {content.type === 'screenshot' && (
-                      <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                        <div className="aspect-video bg-gray-700 rounded-lg flex items-center justify-center">
-                          <div className="text-center text-gray-400">
+                      <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 transition-all duration-300">
+                        <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center transition-all duration-300">
+                          <div className="text-center text-gray-500 dark:text-gray-400 transition-colors duration-300">
                             <svg className="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd"/>
                             </svg>
@@ -338,43 +319,45 @@ export function UsageGuide() {
         </div>
 
         {/* Best Practices */}
-        <div className="mt-12 bg-gradient-to-r from-purple-900/20 to-pink-900/20 rounded-2xl p-6 border border-gray-800">
-          <h3 className="text-lg font-semibold text-white mb-4">💡 Best Practices</h3>
+        <div className="mt-12 bg-gradient-to-r from-theme-primary-50 to-theme-secondary-50 dark:from-theme-primary-900/20 dark:to-theme-secondary-900/20 rounded-2xl p-6 border border-theme-primary-200 dark:border-theme-primary-800 transition-all duration-300">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 transition-colors duration-300">
+            {t("USAGE_BEST_PRACTICES_TITLE")}
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 bg-green-500 dark:bg-green-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg transition-all duration-300">
                 <span className="text-white text-sm">✓</span>
               </div>
               <div>
-                <h4 className="font-medium text-white">Regular Backups</h4>
-                <p className="text-gray-400 text-sm">Always backup your database before major updates</p>
+                <h4 className="font-medium text-gray-900 dark:text-white transition-colors duration-300">{t("USAGE_BEST_PRACTICE_1_TITLE")}</h4>
+                <p className="text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">{t("USAGE_BEST_PRACTICE_1_DESC")}</p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg transition-all duration-300">
                 <span className="text-white text-sm">🔒</span>
               </div>
               <div>
-                <h4 className="font-medium text-white">Security</h4>
-                <p className="text-gray-400 text-sm">Keep your environment variables secure and rotate keys regularly</p>
+                <h4 className="font-medium text-gray-900 dark:text-white transition-colors duration-300">{t("USAGE_BEST_PRACTICE_2_TITLE")}</h4>
+                <p className="text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">{t("USAGE_BEST_PRACTICE_2_DESC")}</p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 bg-purple-500 dark:bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg transition-all duration-300">
                 <span className="text-white text-sm">⚡</span>
               </div>
               <div>
-                <h4 className="font-medium text-white">Performance</h4>
-                <p className="text-gray-400 text-sm">Optimize images and use caching for better performance</p>
+                <h4 className="font-medium text-gray-900 dark:text-white transition-colors duration-300">{t("USAGE_BEST_PRACTICE_3_TITLE")}</h4>
+                <p className="text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">{t("USAGE_BEST_PRACTICE_3_DESC")}</p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 bg-orange-500 dark:bg-orange-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg transition-all duration-300">
                 <span className="text-white text-sm">📊</span>
               </div>
               <div>
-                <h4 className="font-medium text-white">Analytics</h4>
-                <p className="text-gray-400 text-sm">Monitor your directory's performance with built-in analytics</p>
+                <h4 className="font-medium text-gray-900 dark:text-white transition-colors duration-300">{t("USAGE_BEST_PRACTICE_4_TITLE")}</h4>
+                <p className="text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">{t("USAGE_BEST_PRACTICE_4_DESC")}</p>
               </div>
             </div>
           </div>

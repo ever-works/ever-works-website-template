@@ -96,37 +96,37 @@ export function HowItWorks() {
       title: t('HOW_IT_WORKS_STEP1_TITLE'),
       description: t('HOW_IT_WORKS_STEP1_DESC'),
       icon: "⚙️",
-      color: "text-blue-400"
+      color: "text-theme-primary-600 dark:text-theme-primary-400"
     },
     {
       number: "2.",
       title: t('HOW_IT_WORKS_STEP2_TITLE'),
       description: t('HOW_IT_WORKS_STEP2_DESC'),
       icon: "🚀",
-      color: "text-purple-400"
+      color: "text-theme-secondary-600 dark:text-theme-secondary-400"
     },
     {
       number: "3.",
       title: t('HOW_IT_WORKS_STEP3_TITLE'),
       description: t('HOW_IT_WORKS_STEP3_DESC'),
       icon: "✨",
-      color: "text-green-400"
+      color: "text-theme-accent-600 dark:text-theme-accent-400"
     }
   ];
 
   return (
-    <section className="py-20 bg-gray-900 rounded-2xl p-8 border border-gray-800">
+    <section className="py-20 bg-white/80 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300">
         <div>
           {/* Header */}
           <div className="text-center mb-16">
-            <p className="text-blue-400 text-sm font-medium tracking-wider uppercase mb-4">
+            <p className="text-theme-primary-600 dark:text-theme-primary-400 text-sm font-medium tracking-wider uppercase mb-4">
               {t('HOW_IT_WORKS_TITLE')}
             </p>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
               {t('HOW_IT_WORKS_SUBTITLE')}
             </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Simple setup process to launch your directory website in minutes
+            <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
+              {t('HOW_IT_WORKS_DESCRIPTION')}
             </p>
           </div>
 
@@ -142,20 +142,20 @@ export function HowItWorks() {
                 >
                   {/* Step Line */}
                   <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center group-hover:bg-gray-700 transition-colors">
+                    <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors border border-gray-200 dark:border-gray-600">
                       <span className="text-2xl">{step.icon}</span>
                     </div>
                     {index < steps.length - 1 && (
-                      <div className="w-px h-16 bg-gray-800 mt-4"></div>
+                      <div className="w-px h-16 bg-gray-300 dark:bg-gray-600 mt-4"></div>
                     )}
                   </div>
 
                   {/* Content */}
                   <div className="flex-1 pt-2">
-                    <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-theme-primary-600 dark:group-hover:text-theme-primary-400 transition-colors">
                       {step.number} {step.title}
                     </h3>
-                    <p className="text-gray-400 leading-relaxed">
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                       {step.description}
                     </p>
                   </div>
@@ -167,38 +167,38 @@ export function HowItWorks() {
             <div className="space-y-6">
               {/* Environment Variables Window */}
               <div className="animate-fade-in [animation-delay:600ms]">
-                <div className="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-2xl">
+                <div className="bg-gray-100 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden shadow-2xl">
                   {/* Window Header */}
-                  <div className="bg-gray-800 px-4 py-3 flex items-center justify-between">
+                  <div className="bg-gray-200 dark:bg-gray-800 px-4 py-3 flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <div className="w-3 h-3 bg-red-500 rounded-full"></div>
                       <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
                       <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                     </div>
-                    <div className="text-gray-400 text-sm font-mono">.env</div>
+                    <div className="text-gray-600 dark:text-gray-400 text-sm font-mono">.env</div>
                     <div className="w-12"></div>
                   </div>
                   
                   {/* Description */}
-                  <div className="bg-gray-800/50 px-4 py-2 border-b border-gray-700">
-                    <p className="text-gray-400 text-xs">
-                      🔐 <strong>Variables d'environnement</strong> - Configuration technique pour les services externes (API keys, URLs, secrets)
+                  <div className="bg-gray-200/50 dark:bg-gray-800/50 px-4 py-2 border-b border-gray-300 dark:border-gray-700">
+                    <p className="text-gray-700 dark:text-gray-300 text-xs">
+                      🔐 <strong>{t('HOW_IT_WORKS_ENV_TITLE')}</strong> - {t('HOW_IT_WORKS_ENV_DESC')}
                     </p>
                   </div>
 
                   {/* Code Content */}
-                  <div className="p-4 bg-gray-950 font-mono text-xs h-96 overflow-y-auto">
-                    <pre className="text-gray-300 leading-relaxed">
+                  <div className="p-4 bg-gray-50 dark:bg-gray-950 font-mono text-xs h-96 overflow-y-auto">
+                    <pre className="text-gray-800 dark:text-gray-300 leading-relaxed">
                       <code>
                         {codeContent.split('\n').map((line, index) => (
                           <div key={index} className="flex">
-                            <span className="text-gray-600 mr-3 select-none">
+                            <span className="text-gray-500 dark:text-gray-600 mr-3 select-none">
                               {String(index + 1).padStart(2, ' ')}
                             </span>
                             <span className={
-                              line.startsWith('#') ? 'text-gray-500' :
-                              line.includes('=') ? 'text-green-400' :
-                              'text-gray-300'
+                              line.startsWith('#') ? 'text-gray-500 dark:text-gray-500' :
+                              line.includes('=') ? 'text-theme-secondary-600 dark:text-theme-secondary-400' :
+                              'text-gray-800 dark:text-gray-300'
                             }>
                               {line}
                             </span>
@@ -212,41 +212,41 @@ export function HowItWorks() {
 
               {/* Configuration Window */}
               <div className="animate-fade-in [animation-delay:800ms]">
-                <div className="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-2xl">
+                <div className="bg-gray-100 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden shadow-2xl">
                   {/* Window Header */}
-                  <div className="bg-gray-800 px-4 py-3 flex items-center justify-between">
+                  <div className="bg-gray-200 dark:bg-gray-800 px-4 py-3 flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <div className="w-3 h-3 bg-red-500 rounded-full"></div>
                       <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
                       <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                     </div>
-                    <div className="text-gray-400 text-sm font-mono">config.yml</div>
+                    <div className="text-gray-600 dark:text-gray-400 text-sm font-mono">config.yml</div>
                     <div className="w-12"></div>
                   </div>
                   
                   {/* Description */}
-                  <div className="bg-gray-800/50 px-4 py-2 border-b border-gray-700">
-                    <p className="text-gray-400 text-xs">
-                      🎯 <strong>Configuration Ever Works</strong> - Paramètres métier et comportement de l'application
+                  <div className="bg-gray-200/50 dark:bg-gray-800/50 px-4 py-2 border-b border-gray-300 dark:border-gray-700">
+                    <p className="text-gray-700 dark:text-gray-300 text-xs">
+                      🎯 <strong>{t('HOW_IT_WORKS_CONFIG_TITLE')}</strong> - {t('HOW_IT_WORKS_CONFIG_DESC')}
                     </p>
                   </div>
 
                   {/* Code Content */}
-                  <div className="p-4 bg-gray-950 font-mono text-xs h-96 overflow-y-auto">
-                    <pre className="text-gray-300 leading-relaxed">
+                  <div className="p-4 bg-gray-50 dark:bg-gray-950 font-mono text-xs h-96 overflow-y-auto">
+                    <pre className="text-gray-800 dark:text-gray-300 leading-relaxed">
                       <code>
                         {configContent.split('\n').map((line, index) => (
                           <div key={index} className="flex">
-                            <span className="text-gray-600 mr-3 select-none">
+                            <span className="text-gray-500 dark:text-gray-600 mr-3 select-none">
                               {String(index + 1).padStart(2, ' ')}
                             </span>
                             <span className={
-                              line.trim().startsWith('#') ? 'text-gray-500' :
-                              line.includes(':') && !line.trim().startsWith('-') ? 'text-blue-400' :
-                              line.trim().startsWith('-') ? 'text-yellow-400' :
-                              line.includes('true') || line.includes('false') ? 'text-purple-400' :
-                              /^\s*\d+/.test(line) ? 'text-orange-400' :
-                              'text-gray-300'
+                              line.trim().startsWith('#') ? 'text-gray-500 dark:text-gray-500' :
+                              line.includes(':') && !line.trim().startsWith('-') ? 'text-theme-primary-600 dark:text-theme-primary-400' :
+                              line.trim().startsWith('-') ? 'text-theme-accent-600 dark:text-theme-accent-400' :
+                              line.includes('true') || line.includes('false') ? 'text-theme-secondary-600 dark:text-theme-secondary-400' :
+                              /^\s*\d+/.test(line) ? 'text-orange-600 dark:text-orange-400' :
+                              'text-gray-800 dark:text-gray-300'
                             }>
                               {line}
                             </span>
@@ -263,143 +263,143 @@ export function HowItWorks() {
           {/* Configuration Explanation */}
           <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* .env Explanation */}
-            <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                <span className="text-green-400 mr-2">🔐</span>
-                Fenêtre .env (Variables d'environnement)
+            <div className="bg-gray-50 dark:bg-gray-800/70 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                <span className="text-theme-secondary-600 dark:text-theme-secondary-400 mr-2">🔐</span>
+                {t('HOW_IT_WORKS_ENV_WINDOW_TITLE')}
               </h3>
-              <div className="space-y-3 text-sm text-gray-300">
+              <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
                 <div>
-                  <strong className="text-blue-400">🔧 App Configuration :</strong>
-                  <p>URL de base et environnement de l'application</p>
+                  <strong className="text-theme-primary-600 dark:text-theme-primary-400">🔧 {t('HOW_IT_WORKS_ENV_APP_CONFIG')}</strong>
+                  <p>{t('HOW_IT_WORKS_ENV_APP_CONFIG_DESC')}</p>
                 </div>
                 <div>
-                  <strong className="text-blue-400">🗃️ Database (Supabase) :</strong>
-                  <p>URL du projet et clés d'accès à la base de données</p>
+                  <strong className="text-theme-primary-600 dark:text-theme-primary-400">🗃️ {t('HOW_IT_WORKS_ENV_DATABASE')}</strong>
+                  <p>{t('HOW_IT_WORKS_ENV_DATABASE_DESC')}</p>
                 </div>
                 <div>
-                  <strong className="text-blue-400">🔐 Authentication :</strong>
-                  <p>Secret NextAuth et URL de callback</p>
+                  <strong className="text-theme-primary-600 dark:text-theme-primary-400">🔐 {t('HOW_IT_WORKS_ENV_AUTH')}</strong>
+                  <p>{t('HOW_IT_WORKS_ENV_AUTH_DESC')}</p>
                 </div>
                 <div>
-                  <strong className="text-blue-400">👥 OAuth Providers :</strong>
-                  <p>Clés pour Google, GitHub, Facebook, etc.</p>
+                  <strong className="text-theme-primary-600 dark:text-theme-primary-400">👥 {t('HOW_IT_WORKS_ENV_OAUTH')}</strong>
+                  <p>{t('HOW_IT_WORKS_ENV_OAUTH_DESC')}</p>
                 </div>
                 <div>
-                  <strong className="text-blue-400">📧 Services externes :</strong>
-                  <p>Resend (emails), Stripe (paiements), PostHog (analytics), Sentry (monitoring)</p>
+                  <strong className="text-theme-primary-600 dark:text-theme-primary-400">📧 {t('HOW_IT_WORKS_ENV_SERVICES')}</strong>
+                  <p>{t('HOW_IT_WORKS_ENV_SERVICES_DESC')}</p>
                 </div>
               </div>
             </div>
 
             {/* config.yml Explanation */}
-            <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                <span className="text-purple-400 mr-2">🎯</span>
-                Fenêtre config.yml (Configuration métier)
+            <div className="bg-gray-50 dark:bg-gray-800/70 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                <span className="text-theme-accent-600 dark:text-theme-accent-400 mr-2">🎯</span>
+                {t('HOW_IT_WORKS_CONFIG_WINDOW_TITLE')}
               </h3>
-              <div className="space-y-3 text-sm text-gray-300">
+              <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
                 <div>
-                  <strong className="text-purple-400">🏢 Configuration générale :</strong>
-                  <p>Nom de l'entreprise, noms des éléments, copyright</p>
+                  <strong className="text-theme-accent-600 dark:text-theme-accent-400">🏢 {t('HOW_IT_WORKS_CONFIG_GENERAL')}</strong>
+                  <p>{t('HOW_IT_WORKS_CONFIG_GENERAL_DESC')}</p>
                 </div>
                 <div>
-                  <strong className="text-purple-400">🤖 Paramètres IA :</strong>
-                  <p>Génération automatique, limites de recherche, seuils de pertinence</p>
+                  <strong className="text-theme-accent-600 dark:text-theme-accent-400">🤖 {t('HOW_IT_WORKS_CONFIG_AI')}</strong>
+                  <p>{t('HOW_IT_WORKS_CONFIG_AI_DESC')}</p>
                 </div>
                 <div>
-                  <strong className="text-purple-400">🔄 Mises à jour :</strong>
-                  <p>Configuration des Pull Requests automatiques</p>
+                  <strong className="text-theme-accent-600 dark:text-theme-accent-400">🔄 {t('HOW_IT_WORKS_CONFIG_UPDATES')}</strong>
+                  <p>{t('HOW_IT_WORKS_CONFIG_UPDATES_DESC')}</p>
                 </div>
                 <div>
-                  <strong className="text-purple-400">🔐 Authentification :</strong>
-                  <p>Activation des méthodes de connexion (email, réseaux sociaux)</p>
+                  <strong className="text-theme-accent-600 dark:text-theme-accent-400">🔐 {t('HOW_IT_WORKS_CONFIG_AUTHENTICATION')}</strong>
+                  <p>{t('HOW_IT_WORKS_CONFIG_AUTHENTICATION_DESC')}</p>
                 </div>
                 <div>
-                  <strong className="text-purple-400">⚙️ Paramètres avancés :</strong>
-                  <p>Longueur minimale du contenu, nombre max de pages à traiter</p>
+                  <strong className="text-theme-accent-600 dark:text-theme-accent-400">⚙️ {t('HOW_IT_WORKS_CONFIG_ADVANCED')}</strong>
+                  <p>{t('HOW_IT_WORKS_CONFIG_ADVANCED_DESC')}</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Process Explanation */}
-          <div className="mt-12 bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-2xl p-8 border border-gray-800">
-            <h3 className="text-xl font-bold text-white mb-6 text-center">
-              🔄 Processus de configuration
+          <div className="mt-12 bg-gradient-to-r from-theme-primary-50 to-theme-secondary-50 dark:from-theme-primary-900/20 dark:to-theme-secondary-900/20 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+              🔄 {t('HOW_IT_WORKS_PROCESS_TITLE')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="text-center">
-                <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 bg-theme-primary-500 dark:bg-theme-primary-400 rounded-full flex items-center justify-center mx-auto mb-3">
                   <span className="text-white font-bold">1</span>
                 </div>
-                <h4 className="font-semibold text-white mb-2">Cloner le repo</h4>
-                <p className="text-gray-400 text-sm">Copier .env.example vers .env</p>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">{t('HOW_IT_WORKS_PROCESS_STEP1')}</h4>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">{t('HOW_IT_WORKS_PROCESS_STEP1_DESC')}</p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 bg-theme-secondary-500 dark:bg-theme-secondary-400 rounded-full flex items-center justify-center mx-auto mb-3">
                   <span className="text-white font-bold">2</span>
                 </div>
-                <h4 className="font-semibold text-white mb-2">Remplir .env</h4>
-                <p className="text-gray-400 text-sm">Ajouter vos clés API et secrets</p>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">{t('HOW_IT_WORKS_PROCESS_STEP2')}</h4>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">{t('HOW_IT_WORKS_PROCESS_STEP2_DESC')}</p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 bg-theme-accent-500 dark:bg-theme-accent-400 rounded-full flex items-center justify-center mx-auto mb-3">
                   <span className="text-white font-bold">3</span>
                 </div>
-                <h4 className="font-semibold text-white mb-2">Ajuster config.yml</h4>
-                <p className="text-gray-400 text-sm">Personnaliser selon vos besoins</p>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">{t('HOW_IT_WORKS_PROCESS_STEP3')}</h4>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">{t('HOW_IT_WORKS_PROCESS_STEP3_DESC')}</p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 bg-orange-500 dark:bg-orange-400 rounded-full flex items-center justify-center mx-auto mb-3">
                   <span className="text-white font-bold">4</span>
                 </div>
-                <h4 className="font-semibold text-white mb-2">Déployer</h4>
-                <p className="text-gray-400 text-sm">Lancer votre application</p>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">{t('HOW_IT_WORKS_PROCESS_STEP4')}</h4>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">{t('HOW_IT_WORKS_PROCESS_STEP4_DESC')}</p>
               </div>
             </div>
           </div>
 
           {/* Advantages */}
-          <div className="mt-12 bg-gray-900 rounded-2xl p-8 border border-gray-800">
-            <h3 className="text-xl font-bold text-white mb-6 text-center">
-              💡 Avantages de cette séparation
+          <div className="mt-12 bg-gray-50 dark:bg-gray-800/70 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+              💡 {t('HOW_IT_WORKS_ADVANTAGES_TITLE')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 bg-theme-secondary-500 dark:bg-theme-secondary-400 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-sm">🔒</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-white mb-1">Sécurité</h4>
-                  <p className="text-gray-400 text-sm">Variables sensibles dans .env (non versionnées)</p>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">{t('HOW_IT_WORKS_ADVANTAGES_SECURITY')}</h4>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">{t('HOW_IT_WORKS_ADVANTAGES_SECURITY_DESC')}</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 bg-theme-primary-500 dark:bg-theme-primary-400 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-sm">⚡</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-white mb-1">Flexibilité</h4>
-                  <p className="text-gray-400 text-sm">Configuration métier dans config.yml (versionnée)</p>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">{t('HOW_IT_WORKS_ADVANTAGES_FLEXIBILITY')}</h4>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">{t('HOW_IT_WORKS_ADVANTAGES_FLEXIBILITY_DESC')}</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 bg-theme-accent-500 dark:bg-theme-accent-400 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-sm">🔧</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-white mb-1">Maintenance</h4>
-                  <p className="text-gray-400 text-sm">Modification facile sans toucher au code</p>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">{t('HOW_IT_WORKS_ADVANTAGES_MAINTENANCE')}</h4>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">{t('HOW_IT_WORKS_ADVANTAGES_MAINTENANCE_DESC')}</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 bg-orange-500 dark:bg-orange-400 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-sm">👥</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-white mb-1">Équipe</h4>
-                  <p className="text-gray-400 text-sm">Développeurs gèrent .env, métier gère config.yml</p>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">{t('HOW_IT_WORKS_ADVANTAGES_TEAM')}</h4>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">{t('HOW_IT_WORKS_ADVANTAGES_TEAM_DESC')}</p>
                 </div>
               </div>
             </div>
@@ -407,23 +407,23 @@ export function HowItWorks() {
 
           {/* Bottom CTA */}
           <div className="mt-20 text-center">
-            <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 rounded-2xl p-8 border border-gray-800">
-              <h3 className="text-2xl font-bold mb-4">Ready to Start?</h3>
-              <p className="text-gray-400 mb-6">
-                Get your directory up and running in less than 10 minutes
+            <div className="bg-gradient-to-r from-theme-primary-100 to-theme-secondary-100 dark:from-theme-primary-900/30 dark:to-theme-secondary-900/30 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{t('HOW_IT_WORKS_CTA_TITLE')}</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                {t('HOW_IT_WORKS_CTA_DESC')}
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <div className="flex items-center space-x-2 px-4 py-2 bg-gray-800/50 rounded-lg">
-                  <span className="text-green-400">✓</span>
-                  <span className="text-sm">One-click deployment</span>
+                <div className="flex items-center space-x-2 px-4 py-2 bg-white/80 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-600">
+                  <span className="text-theme-secondary-600 dark:text-theme-secondary-400">✓</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{t('HOW_IT_WORKS_CTA_DEPLOY')}</span>
                 </div>
-                <div className="flex items-center space-x-2 px-4 py-2 bg-gray-800/50 rounded-lg">
-                  <span className="text-green-400">✓</span>
-                  <span className="text-sm">Supabase Backend</span>
+                <div className="flex items-center space-x-2 px-4 py-2 bg-white/80 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-600">
+                  <span className="text-theme-secondary-600 dark:text-theme-secondary-400">✓</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{t('HOW_IT_WORKS_CTA_BACKEND')}</span>
                 </div>
-                <div className="flex items-center space-x-2 px-4 py-2 bg-gray-800/50 rounded-lg">
-                  <span className="text-green-400">✓</span>
-                  <span className="text-sm">Environment wizard</span>
+                <div className="flex items-center space-x-2 px-4 py-2 bg-white/80 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-600">
+                  <span className="text-theme-secondary-600 dark:text-theme-secondary-400">✓</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{t('HOW_IT_WORKS_CTA_WIZARD')}</span>
                 </div>
               </div>
             </div>
