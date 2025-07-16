@@ -2,6 +2,7 @@ import Image from "next/image";
 import { FiExternalLink, FiStar, FiTag } from "react-icons/fi";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Profile } from "@/lib/types/profile";
+import { cn } from "@/lib/utils";
 
 interface PortfolioItem {
   id: string;
@@ -71,7 +72,10 @@ interface PortfolioCardProps {
 
 function PortfolioCard({ project, featured = false }: PortfolioCardProps) {
   return (
-    <Card className={`group border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow transition-all duration-300 ${featured ? 'ring-2 ring-yellow-500/20' : ''} p-0`}>
+    <Card className={cn(
+      "group border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow transition-all duration-300 p-0",
+      featured && "ring-2 ring-yellow-500/20"
+    )}>
       <div className="relative overflow-hidden rounded-t-lg">
         <Image
           src={project.imageUrl}
