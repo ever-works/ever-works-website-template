@@ -166,7 +166,7 @@ function SubmissionCard({ submission, getStatusIcon, getStatusColor, formatDate 
             <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
               <span>Category: {submission.category}</span>
               <span>Submitted: {formatDate(submission.submittedAt)}</span>
-              {submission.updatedAt !== submission.submittedAt && (
+              {submission.updatedAt && submission.submittedAt && submission.updatedAt !== submission.submittedAt && (
                 <span>Updated: {formatDate(submission.updatedAt)}</span>
               )}
             </div>
