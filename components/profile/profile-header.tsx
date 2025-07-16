@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import { FiEdit2, FiMapPin, FiBriefcase, FiGlobe, FiGithub, FiLinkedin, FiTwitter, FiUser } from "react-icons/fi";
 import { Card } from "@/components/ui/card";

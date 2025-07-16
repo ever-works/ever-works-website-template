@@ -20,7 +20,7 @@ export function validatedAction<S extends z.ZodType<any, any>, T>(
   return async (prevState: ActionState, formData: FormData): Promise<T> => {
     const result = schema.safeParse(Object.fromEntries(formData));
     if (!result.success) {
-      return { error: result.error.errors[0].message } as T;
+      return { error: result.error.issues[0].message } as T;
     }
 
     return action(result.data, formData);
@@ -45,7 +45,7 @@ export function validatedActionWithUser<S extends z.ZodType<any, any>, T>(
 
     const result = schema.safeParse(Object.fromEntries(formData));
     if (!result.success) {
-      return { error: result.error.errors[0].message } as T;
+      return { error: result.error.issues[0].message } as T;
     }
 
     return action(result.data, formData, session?.user);

@@ -10,7 +10,6 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
-import { auth } from "@/lib/auth";
 import { Toaster } from "sonner";
 import { PHProvider } from "./integration/posthog/provider";
 import PostHogPageView from "./integration/posthog/page-view";
@@ -57,7 +56,6 @@ export default async function RootLayout({
 
   const config = await getCachedConfig();
   const messages = await getMessages();
-  const session = await auth();
 
   // Determine if the current locale is RTL
   return (
@@ -71,7 +69,7 @@ export default async function RootLayout({
             <Toaster position="bottom-right" richColors />
             <Providers config={config}>
               <LoginModalProvider />
-              <Header session={session} />
+              <Header />
               <main className="flex-1">{children}</main>
               <Footer />
               <div className="fixed bottom-6 right-6 z-50">
