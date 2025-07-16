@@ -32,13 +32,30 @@ function SkillsEditor({ initialSkills = [] }: { initialSkills?: Skill[] }) {
           { name: "", category: "Frontend", proficiency: 80 }
         ]
   );
+  const [errors, setErrors] = useState<Record<number, string>>({});
 
   const handleSkillChange = (idx: number, field: keyof Skill, value: string | number) => {
+    // Clear error when user starts typing
+    if (field === "name" && errors[idx]) {
+      setErrors(prev => ({ ...prev, [idx]: "" }));
+    }
     setSkills((prev) =>
       prev.map((skill, i) =>
         i === idx ? { ...skill, [field]: value } : skill
       )
     );
+  };
+
+  const validateSkill = (idx: number, skillName: string) => {
+    if (!skillName.trim()) {
+      setErrors(prev => ({ ...prev, [idx]: "Skill name is required" }));
+      return false;
+    }
+    if (skillName.length < 2) {
+      setErrors(prev => ({ ...prev, [idx]: "Skill name must be at least 2 characters" }));
+      return false;
+    }
+    return true;
   };
 
   const addSkill = () => {
@@ -49,7 +66,14 @@ function SkillsEditor({ initialSkills = [] }: { initialSkills?: Skill[] }) {
   };
 
   const removeSkill = (idx: number) => {
-    setSkills((prev) => prev.filter((_, i) => i !== idx));
+    if (skills.length > 1) {
+      setSkills((prev) => prev.filter((_, i) => i !== idx));
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[idx];
+        return newErrors;
+      });
+    }
   };
 
   return (
@@ -65,8 +89,12 @@ function SkillsEditor({ initialSkills = [] }: { initialSkills?: Skill[] }) {
               placeholder="Skill name"
               value={skill.name}
               onChange={e => handleSkillChange(idx, "name", e.target.value)}
+              onBlur={() => validateSkill(idx, skill.name)}
               className="w-full md:w-1/3 h-12 px-4 text-base bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 outline-none text-gray-900 dark:text-white placeholder:text-gray-400"
             />
+            {errors[idx] && (
+              <p className="text-red-500 text-sm mt-1">{errors[idx]}</p>
+            )}
             <select
               value={skill.category}
               onChange={e => handleSkillChange(idx, "category", e.target.value)}
