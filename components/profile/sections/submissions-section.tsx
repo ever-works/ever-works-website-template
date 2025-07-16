@@ -96,30 +96,30 @@ export function SubmissionsSection({ profile }: SubmissionsSectionProps) {
             <CardTitle className="text-lg font-bold text-gray-100">Submission Statistics</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="text-center p-4 bg-theme-primary-50 dark:bg-theme-primary-900/20 rounded-lg">
-                <div className="text-2xl font-bold text-theme-primary-600 dark:text-theme-primary-400">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4" role="region" aria-label="Submission statistics">
+              <div className="text-center p-4 bg-theme-primary-50 dark:bg-theme-primary-900/20 rounded-lg" role="stat">
+                <div className="text-2xl font-bold text-theme-primary-600 dark:text-theme-primary-400" aria-label="Total submissions count">
                   {profile.submissions.length}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Total Submissions</div>
               </div>
               
-              <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+              <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg" role="stat">
+                <div className="text-2xl font-bold text-green-600 dark:text-green-400" aria-label="Approved submissions count">
                   {profile.submissions.filter(s => s.status === "approved").length}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Approved</div>
               </div>
               
-              <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+              <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg" role="stat">
+                <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400" aria-label="Pending submissions count">
                   {profile.submissions.filter(s => s.status === "pending").length}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Pending</div>
               </div>
               
-              <div className="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+              <div className="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg" role="stat">
+                <div className="text-2xl font-bold text-red-600 dark:text-red-400" aria-label="Rejected submissions count">
                   {profile.submissions.filter(s => s.status === "rejected").length}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Rejected</div>
