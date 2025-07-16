@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useTranslations } from 'next-intl';
 
 interface MonetizationMethod {
@@ -13,11 +12,6 @@ interface MonetizationMethod {
 
 export function MonetizationSection() {
   const t = useTranslations('help');
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
 
 const monetizationMethods: MonetizationMethod[] = [
   {

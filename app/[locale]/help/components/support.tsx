@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 export function Support() {
   const t = useTranslations("help");
@@ -33,12 +34,12 @@ export function Support() {
                 {t("DOCUMENTATION")}
               </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-4">{t("DOCUMENTATION_DESC")}</p>
-              <a
+              <Link
                 href="/docs"
                 className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors duration-300"
               >
                 {t("VIEW_DOCUMENTATION")}
-              </a>
+              </Link>
             </div>
 
             {/* Community */}
