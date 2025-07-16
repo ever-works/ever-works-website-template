@@ -21,7 +21,7 @@ export function AboutSection({ profile }: AboutSectionProps) {
       {/* About Me */}
       <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
         <CardHeader className="p-0 mb-2">
-          <CardTitle className="text-lg font-bold text-gray-100">About Me</CardTitle>
+          <CardTitle className="text-lg font-bold text-gray-900 dark:text-gray-100">About Me</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <p className="text-gray-300 leading-relaxed text-base">
@@ -33,7 +33,7 @@ export function AboutSection({ profile }: AboutSectionProps) {
       {/* Personal Information */}
       <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
         <CardHeader className="p-0 mb-2">
-          <CardTitle className="text-lg font-bold text-gray-100">Personal Information</CardTitle>
+          <CardTitle className="text-lg font-bold text-gray-900 dark:text-gray-100">Personal Information</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="space-y-4">
