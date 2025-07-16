@@ -5,6 +5,7 @@ import { Container } from "../ui/container";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { VersionDisplay, VersionTooltip } from "../version";
 
 export function FooterBottom({ config, t }: { config: any; t: any }) {
   const { theme } = useTheme();
@@ -74,8 +75,13 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
                 ))}
               </div>
             </nav>
-            <div className="text-xs sm:text-sm md:text-[16px] font-medium text-gray-500 dark:text-gray-500 max-w-3xl mt-1 sm:mt-2">
-              *{t("footer.DISCLAIMER")}
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <div className="text-xs sm:text-sm md:text-[16px] font-medium text-gray-500 dark:text-gray-500 max-w-3xl">
+                *{t("footer.DISCLAIMER")}
+              </div>
+              <VersionTooltip>
+                <VersionDisplay variant="inline" className="ml-auto hover:text-gray-400 dark:hover:text-gray-300 transition-colors duration-200" />
+              </VersionTooltip>
             </div>
           </div>
 

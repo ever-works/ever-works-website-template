@@ -20,6 +20,7 @@ import { NavigationControls } from "../navigation-controls";
 import { ProfileButton } from "./profile-button";
 import { IconEverworksSimple } from "../icons/Icons";
 import { Container } from "../ui/container";
+import { VersionDisplay, VersionTooltip } from "../version";
 
 interface NavigationItem {
   key: string;
@@ -95,28 +96,19 @@ const NAVIGATION_CONFIG: Array<{
 ];
 
 const STYLES = {
-  navbar: "border-b border-gray-100 dark:border-gray-800",
-  container:"flex items-center justify-between w-full  py-2 h-16",
+  navbar: "bg-white/75 dark:bg-gray-900/75 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50",
+  container: "flex items-center justify-between px-4 sm:px-6 lg:px-8",
+  navContent: "hidden sm:flex gap-6 lg:gap-8",
+  navbarMenuToggle: "sm:hidden",
+  mobileMenuItem: "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200",
   brand: "flex items-center group",
   brandIcon: "relative font-bold mr-2 sm:mr-4",
-  brandIconSvg:
-    "w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 transition-transform duration-300 group-hover:scale-110",
+  brandIconSvg: "w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 transition-transform duration-300 group-hover:scale-110",
   brandText: "font-bold text-base sm:text-lg md:text-xl",
-  navContent: "hidden md:flex gap-4 mx-8",
-  layoutButton:
-    "p-0 bg-transparent data-[hover=true]:bg-transparent text-gray-700 dark:text-gray-300 hover:text-theme-primary",
-  popoverContent:
-    "p-0 w-full md:w-[420px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl overflow-hidden ",
-  popoverInner: "p-4 sm:p-6 space-y-6",
-  popoverHeader: "text-center",
-  popoverTitle: "text-lg font-semibold text-blue-500 mb-1",
-  popoverSection: "space-y-4",
   linkBase: "transition-colors font-medium",
   linkActive: "text-theme-primary border-b-2 border-theme-primary pb-1",
   linkInactive: "text-gray-700 dark:text-gray-300 hover:text-theme-primary",
-  navbarMenuToggle: "text-gray-700 dark:text-gray-300 md:hidden",
-  mobileMenuItem: "py-2 w-full",
-} as const;
+};
 
 export default function Header({ session }: SessionProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -208,6 +200,11 @@ export default function Header({ session }: SessionProps) {
       <NavbarContent justify="end">
         <NavbarItem className="hidden sm:flex">
           <NavigationControls />
+        </NavbarItem>
+        <NavbarItem className="hidden lg:flex">
+          <VersionTooltip>
+            <VersionDisplay variant="badge" className="opacity-60 hover:opacity-100 transition-opacity duration-200" />
+          </VersionTooltip>
         </NavbarItem>
         {authProviders.length > 0 && (
           <NavbarItem>
