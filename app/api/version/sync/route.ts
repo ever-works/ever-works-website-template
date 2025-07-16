@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { trySyncRepository } from "@/lib/repository";
+import { startBackgroundSync, getSyncStatus } from "@/lib/services/sync-service";
 
 // Types
 interface SyncResponse {
@@ -17,13 +17,6 @@ interface SyncError {
   duration: number;
   details?: string;
 }
-
-type SyncResult = { success: boolean; message: string; details?: string };
-
-// Background sync status tracking
-let lastSyncTime: Date | null = null;
-let syncInProgress = false;
-let syncPromise: Promise<SyncResult> | null = null;
 
 // Helper function to create sync response
 function createSyncResponse(
@@ -57,64 +50,11 @@ function createSyncResponse(
   });
 }
 
-// Background sync function
-async function performBackgroundSync(): Promise<SyncResult> {
-  const startTime = Date.now();
-  
-  try {
-    console.log("[SYNC_API] Starting background repository sync");
-    
-    // Perform the actual sync
-    await trySyncRepository();
-    
-    // Update sync status
-    lastSyncTime = new Date();
-    const duration = Date.now() - startTime;
-    
-    console.log(`[SYNC_API] Background sync completed successfully in ${duration}ms`);
-    
-    return {
-      success: true,
-      message: "Repository synchronized successfully",
-      details: `Sync completed in ${duration}ms`,
-    };
-  } catch (error) {
-    const duration = Date.now() - startTime;
-    const errorMessage = error instanceof Error ? error.message : "Unknown sync error";
-    
-    console.error(`[SYNC_API] Background sync failed after ${duration}ms:`, error);
-    
-    return {
-      success: false,
-      message: "Repository synchronization failed",
-      details: `Sync failed after ${duration}ms: ${errorMessage}`,
-    };
-  }
-}
-
 // POST endpoint for manual sync trigger
 export async function POST(request: Request) {
   const startTime = Date.now();
   
   try {
-    // Check if sync is already in progress
-    if (syncInProgress) {
-      console.log("[SYNC_API] Sync already in progress, waiting for completion");
-      
-      // Wait for existing sync to complete
-      if (syncPromise) {
-        await syncPromise;
-      }
-      
-      const duration = Date.now() - startTime;
-      return createSyncResponse(
-        true,
-        "Sync was already in progress and has completed",
-        duration,
-        `Last sync: ${lastSyncTime?.toISOString() || "never"}`
-      );
-    }
-
     // Parse request body for options
     let options = {};
     try {
@@ -126,17 +66,17 @@ export async function POST(request: Request) {
 
     console.log("[SYNC_API] Manual sync triggered", options);
 
-    // Mark sync as in progress
-    syncInProgress = true;
-    
-    // Start sync and store promise
-    syncPromise = performBackgroundSync().finally(() => {
-      syncInProgress = false;
-      syncPromise = null;
-    });
-
-    const result = await syncPromise;
+    const result = await startBackgroundSync();
     const duration = Date.now() - startTime;
+
+    if (result === null) {
+      return createSyncResponse(
+        true,
+        "Sync was already in progress",
+        duration,
+        "Another sync operation is currently running"
+      );
+    }
 
     return createSyncResponse(
       result.success,
@@ -146,9 +86,6 @@ export async function POST(request: Request) {
     );
 
   } catch (error) {
-    syncInProgress = false;
-    syncPromise = null;
-    
     const duration = Date.now() - startTime;
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     
@@ -165,12 +102,13 @@ export async function POST(request: Request) {
 
 // GET endpoint for sync status
 export async function GET() {
+  const syncStatus = getSyncStatus();
   const now = new Date();
-  const timeSinceLastSync = lastSyncTime ? now.getTime() - lastSyncTime.getTime() : null;
+  const timeSinceLastSync = syncStatus.lastSyncTime ? now.getTime() - syncStatus.lastSyncTime.getTime() : null;
   
   const status = {
-    syncInProgress,
-    lastSyncTime: lastSyncTime?.toISOString() || null,
+    syncInProgress: syncStatus.syncInProgress,
+    lastSyncTime: syncStatus.lastSyncTime?.toISOString() || null,
     timeSinceLastSync,
     timeSinceLastSyncHuman: timeSinceLastSync 
       ? `${Math.floor(timeSinceLastSync / 1000)}s ago`
@@ -185,31 +123,4 @@ export async function GET() {
       "Content-Type": "application/json",
     },
   });
-}
-
-// Helper function to start automatic background sync
-export async function startBackgroundSync(): Promise<SyncResult | null> {
-  if (syncInProgress) {
-    console.log("[SYNC_API] Background sync already in progress");
-    return null;
-  }
-
-  console.log("[SYNC_API] Starting automatic background sync");
-  
-  syncInProgress = true;
-  syncPromise = performBackgroundSync().finally(() => {
-    syncInProgress = false;
-    syncPromise = null;
-  });
-
-  return await syncPromise;
-}
-
-// Export sync status for other modules
-export function getSyncStatus() {
-  return {
-    syncInProgress,
-    lastSyncTime,
-    timeSinceLastSync: lastSyncTime ? Date.now() - lastSyncTime.getTime() : null,
-  };
 } 
