@@ -4,12 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FiBriefcase, FiArrowLeft, FiPlus, FiEdit, FiTrash2, FiStar, FiExternalLink } from "react-icons/fi";
 import Link from "next/link";
-import portfolioData from "../portfolio-data.json";
+import { dummyPortfolio } from "@/lib/dummy-data";
 import React, { useState } from "react";
 import Image from "next/image";
 
 export default function PortfolioPage() {
-  const [projects, setProjects] = useState<any[]>(portfolioData);
+  const [projects, setProjects] = useState<any[]>(dummyPortfolio);
 
   const [title, setTitle] = useState("");
   const [imageUrl, setImageUrl] = useState("");
