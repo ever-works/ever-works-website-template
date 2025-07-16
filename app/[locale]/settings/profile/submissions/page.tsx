@@ -112,9 +112,30 @@ export default async function SubmissionsPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {dummySubmissions.map((submission) => (
-                  <SubmissionItem key={submission.id} submission={submission} />
-                ))}
+                {dummySubmissions.length > 0 ? (
+                  dummySubmissions.map((submission) => (
+                    <SubmissionItem key={submission.id} submission={submission} />
+                  ))
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full mb-4">
+                      <FiFileText className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                      No submissions yet
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                      Start building your portfolio by submitting your first project. Share your work with the community and get feedback from other developers.
+                    </p>
+                    <Link
+                      href="/submit"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-theme-primary-600 hover:bg-theme-primary-700 text-white rounded-lg font-medium transition-colors"
+                    >
+                      <FiPlus className="w-4 h-4" />
+                      Submit Your First Project
+                    </Link>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
