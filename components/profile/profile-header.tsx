@@ -63,7 +63,11 @@ export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderPr
             )}
           </div>
           {isOwnProfile && (
-            <button className="absolute bottom-2 right-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700">
+            <button 
+              className="absolute bottom-2 right-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700"
+              aria-label="Edit profile"
+              title="Edit profile"
+            >
               <FiEdit2 className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />
             </button>
           )}
