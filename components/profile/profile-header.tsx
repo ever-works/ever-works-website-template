@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { FiEdit2, FiMapPin, FiBriefcase, FiGlobe, FiGithub, FiLinkedin, FiTwitter } from "react-icons/fi";
+import { FiEdit2, FiMapPin, FiBriefcase, FiGlobe, FiGithub, FiLinkedin, FiTwitter, FiUser } from "react-icons/fi";
 import { Card } from "@/components/ui/card";
 import type { Profile } from "@/lib/types/profile";
+import { useState } from "react";
 
 interface ProfileHeaderProps {
   profile: Profile;
@@ -9,6 +10,7 @@ interface ProfileHeaderProps {
 }
 
 export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderProps) {
+  const [imageError, setImageError] = useState(false);
   const getSocialIcon = (platform: string) => {
     switch (platform.toLowerCase()) {
       case "github":
@@ -41,14 +43,23 @@ export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderPr
       <div className="absolute left-1/2 md:left-12 top-6 md:top-10 transform -translate-x-1/2 md:translate-x-0 z-20">
         <div className="relative">
           <div className="w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden ring-4 ring-white dark:ring-gray-900 shadow-xl bg-white dark:bg-gray-900">
-            <Image
-              src={profile.avatar}
-              alt={`${profile.displayName}'s avatar`}
-              width={112}
-              height={112}
-              className="w-full h-full object-cover"
-              priority
-            />
+            {!imageError ? (
+              <Image
+                src={profile.avatar}
+                alt={`${profile.displayName}'s avatar`}
+                width={112}
+                height={112}
+                className="w-full h-full object-cover"
+                priority
+                onError={() => {
+                  setImageError(true);
+                }}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                <FiUser className="w-8 h-8 text-gray-400" />
+              </div>
+            )}
           </div>
           {isOwnProfile && (
             <button className="absolute bottom-2 right-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700">
