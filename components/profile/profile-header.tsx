@@ -68,7 +68,7 @@ export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderPr
               aria-label="Edit profile"
               title="Edit profile"
             >
-              <FiEdit2 className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />
+              <FiEdit2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </button>
           )}
         </div>
