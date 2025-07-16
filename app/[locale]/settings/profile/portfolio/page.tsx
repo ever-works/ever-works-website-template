@@ -6,7 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { FiBriefcase, FiArrowLeft, FiPlus, FiEdit, FiTrash2, FiStar, FiExternalLink } from "react-icons/fi";
 import Link from "next/link";
 import portfolioData from "../portfolio-data.json";
-import { useState } from "react";
+import React, { useState } from "react";
+import Image from "next/image";
 
 export default function PortfolioPage() {
   const [projects, setProjects] = useState<any[]>(portfolioData);
@@ -242,11 +243,7 @@ function PortfolioItem({ project, onEdit, onDelete }: PortfolioItemProps) {
   return (
     <div className="flex items-start gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
       <div className="flex-shrink-0">
-        <img
-          src={project.imageUrl}
-          alt={project.title}
-          className="w-16 h-16 object-cover rounded-lg"
-        />
+        <ProjectImage imageUrl={project.imageUrl} title={project.title} />
       </div>
       
       <div className="flex-1 min-w-0">
@@ -302,5 +299,21 @@ function PortfolioItem({ project, onEdit, onDelete }: PortfolioItemProps) {
         </div>
       </div>
     </div>
+  );
+} 
+
+// Helper component for image with error handling
+function ProjectImage({ imageUrl, title }: { imageUrl: string; title: string }) {
+  const [imgSrc, setImgSrc] = useState(imageUrl);
+  return (
+    <Image
+      src={imgSrc}
+      alt={title}
+      width={64}
+      height={64}
+      className="w-16 h-16 object-cover rounded-lg"
+      onError={() => setImgSrc("/images/placeholder-project.jpg")}
+      unoptimized
+    />
   );
 } 
