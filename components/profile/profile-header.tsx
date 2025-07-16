@@ -116,7 +116,7 @@ export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderPr
                     href={profile.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors"
+                    className="flex items-center gap-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
                     <FiGlobe className="w-4 h-4" />
                     <span>Website</span>
