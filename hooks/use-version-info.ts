@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { VersionInfo } from "@/app/api/version/route";
 
 interface UseVersionInfoOptions {
   refreshInterval?: number;
   retryOnError?: boolean;
   retryDelay?: number;
+  maxRetries?: number;
 }
 
 interface UseVersionInfoReturn {
@@ -13,88 +14,160 @@ interface UseVersionInfoReturn {
   error: string | null;
   refetch: () => Promise<void>;
   lastFetch: number | null;
+  retryCount: number;
 }
 
 export function useVersionInfo({
   refreshInterval = 5 * 60 * 1000, // 5 minutes
   retryOnError = true,
   retryDelay = 10000, // 10 seconds
+  maxRetries = 3,
 }: UseVersionInfoOptions = {}): UseVersionInfoReturn {
   const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastFetch, setLastFetch] = useState<number | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
-  const fetchVersionInfo = useCallback(async () => {
+  // Use refs to track cleanup and prevent stale closures
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Memoized fetch function with proper error handling
+  const fetchVersionInfo = useCallback(async (isRetry = false) => {
     try {
-      setLoading(true);
-      setError(null);
-      
+      // Cancel any existing request
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      // Create new abort controller
+      abortControllerRef.current = new AbortController();
+
+      if (!isRetry) {
+        setLoading(true);
+        setError(null);
+      }
+
       const response = await fetch("/api/version", {
-        cache: "no-store", // Ensure fresh data
+        cache: "no-store",
         headers: {
           "Cache-Control": "no-cache",
         },
+        signal: abortControllerRef.current.signal,
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.error || `HTTP ${response.status}: ${response.statusText}`
+        );
       }
 
       const data = await response.json();
+      
+      // Validate response data
+      if (!data.commit || !data.date || !data.author) {
+        throw new Error("Invalid version data received");
+      }
+
       setVersionInfo(data);
       setLastFetch(Date.now());
+      setRetryCount(0);
+      setError(null);
+
     } catch (err) {
+      // Handle AbortError (not a real error)
+      if (err instanceof Error && err.name === "AbortError") {
+        return;
+      }
+
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
-      setError(errorMessage);
       console.error("Error fetching version info:", errorMessage);
+      
+      setError(errorMessage);
+      
+      // Retry logic
+      if (retryOnError && retryCount < maxRetries) {
+        setRetryCount(prev => prev + 1);
+        
+        retryTimeoutRef.current = setTimeout(() => {
+          fetchVersionInfo(true);
+        }, retryDelay * Math.pow(2, retryCount)); // Exponential backoff
+      }
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [retryOnError, retryDelay, maxRetries, retryCount]);
 
+  // Public refetch function
   const refetch = useCallback(async () => {
-    await fetchVersionInfo();
+    setRetryCount(0);
+    await fetchVersionInfo(false);
   }, [fetchVersionInfo]);
 
+  // Setup visibility change listener for auto-refresh
   useEffect(() => {
-    fetchVersionInfo();
-  }, [fetchVersionInfo]);
-
-  // Auto-refresh interval
-  useEffect(() => {
-    if (refreshInterval > 0) {
-      const interval = setInterval(fetchVersionInfo, refreshInterval);
-      return () => clearInterval(interval);
-    }
-  }, [fetchVersionInfo, refreshInterval]);
-
-  // Retry on error
-  useEffect(() => {
-    if (error && retryOnError) {
-      const timeout = setTimeout(() => {
-        fetchVersionInfo();
-      }, retryDelay);
-      return () => clearTimeout(timeout);
-    }
-  }, [error, retryOnError, retryDelay, fetchVersionInfo]);
-
-  // Listen for window focus to refetch (helps with ISR updates)
-  useEffect(() => {
-    const handleFocus = () => {
-      if (document.visibilityState === "visible") {
-        fetchVersionInfo();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && !loading) {
+        fetchVersionInfo(false);
       }
     };
 
-    document.addEventListener("visibilitychange", handleFocus);
+    const handleFocus = () => {
+      if (!loading) {
+        fetchVersionInfo(false);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("focus", handleFocus);
 
     return () => {
-      document.removeEventListener("visibilitychange", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("focus", handleFocus);
     };
+  }, [fetchVersionInfo, loading]);
+
+  // Setup refresh interval
+  useEffect(() => {
+    if (refreshInterval > 0) {
+      refreshIntervalRef.current = setInterval(() => {
+        fetchVersionInfo(false);
+      }, refreshInterval);
+
+      return () => {
+        if (refreshIntervalRef.current) {
+          clearInterval(refreshIntervalRef.current);
+        }
+      };
+    }
+  }, [fetchVersionInfo, refreshInterval]);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchVersionInfo(false);
   }, [fetchVersionInfo]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      // Cancel any pending requests
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      
+      // Clear timeouts
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+      }
+      
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+    };
+  }, []);
 
   return {
     versionInfo,
@@ -102,5 +175,6 @@ export function useVersionInfo({
     error,
     refetch,
     lastFetch,
+    retryCount,
   };
 } 

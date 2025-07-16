@@ -20,7 +20,6 @@ import { NavigationControls } from "../navigation-controls";
 import { ProfileButton } from "./profile-button";
 import { IconEverworksSimple } from "../icons/Icons";
 import { Container } from "../ui/container";
-import { VersionDisplay, VersionTooltip } from "../version";
 
 interface NavigationItem {
   key: string;
@@ -200,11 +199,6 @@ export default function Header({ session }: SessionProps) {
       <NavbarContent justify="end">
         <NavbarItem className="hidden sm:flex">
           <NavigationControls />
-        </NavbarItem>
-        <NavbarItem className="hidden lg:flex">
-          <VersionTooltip>
-            <VersionDisplay variant="badge" className="opacity-60 hover:opacity-100 transition-opacity duration-200" />
-          </VersionTooltip>
         </NavbarItem>
         {authProviders.length > 0 && (
           <NavbarItem>

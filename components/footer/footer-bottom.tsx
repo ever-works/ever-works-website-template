@@ -22,7 +22,7 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
 
       <Container maxWidth="7xl" padding="default" className="relative px-4 sm:px-6 lg:px-8 py-8">
         {/* Enhanced Disclaimer and utilities */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pt-6">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pt-6">
           <div className="flex items-center gap-1">
             {mounted && (
               <Image 
@@ -33,8 +33,9 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
               />
             )}
           </div>
-          <div className="flex flex-col gap-6">
-            <nav className="flex items-center justify-between flex-wrap gap-2 text-gray-600 dark:text-gray-400">
+          
+          <div className="flex-1 flex flex-col gap-6">
+            <nav className="flex items-center justify-between flex-wrap gap-4 text-gray-600 dark:text-gray-400">
               <div className="text-gray-600 dark:text-gray-400">
                 <span className="font-bold px-3">
                   Copyright &copy;{" "}
@@ -75,13 +76,22 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
                 ))}
               </div>
             </nav>
+            
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-              <div className="text-xs sm:text-sm md:text-[16px] font-medium text-gray-500 dark:text-gray-500 max-w-3xl">
+              <div className="text-xs sm:text-sm md:text-[16px] font-medium text-gray-500 dark:text-gray-500 max-w-3xl flex-1">
                 *{t("footer.DISCLAIMER")}
               </div>
-              <VersionTooltip>
-                <VersionDisplay variant="inline" className="ml-auto hover:text-gray-400 dark:hover:text-gray-300 transition-colors duration-200" />
-              </VersionTooltip>
+              
+              <div className="flex items-center gap-4">
+                <VersionTooltip>
+                  <div className="group cursor-help">
+                    <VersionDisplay 
+                      variant="inline" 
+                      className="group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors duration-200 border border-transparent group-hover:border-blue-200 dark:group-hover:border-blue-800 rounded-full px-2 py-1 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20" 
+                    />
+                  </div>
+                </VersionTooltip>
+              </div>
             </div>
           </div>
 

@@ -1,7 +1,8 @@
 "use client";
 
-import { Clock, GitBranch, User, Calendar } from "lucide-react";
+import { Clock, GitBranch, User, Calendar, Info } from "lucide-react";
 import { useVersionInfo } from "@/hooks/use-version-info";
+import { memo, useMemo } from "react";
 
 interface VersionDisplayProps {
   className?: string;
@@ -10,7 +11,7 @@ interface VersionDisplayProps {
   refreshInterval?: number;
 }
 
-export function VersionDisplay({ 
+const VersionDisplay = memo(function VersionDisplay({ 
   className = "", 
   variant = "inline", 
   showDetails = false,
@@ -22,101 +23,158 @@ export function VersionDisplay({
     retryDelay: 10000,
   });
 
+  // Memoize date formatters for performance
+  const dateFormatters = useMemo(() => ({
+    formatDate: (dateString: string) => {
+      return new Date(dateString).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    },
+    
+    getRelativeTime: (dateString: string) => {
+      const now = new Date();
+      const date = new Date(dateString);
+      const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+      
+      if (diffInHours < 1) return "Just now";
+      if (diffInHours < 24) return `${diffInHours}h ago`;
+      if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
+      return new Date(dateString).toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+      });
+    },
+    
+    getRepositoryName: (url: string) => {
+      if (url === "unknown") return "Unknown";
+      const match = url.match(/github\.com\/([^\/]+\/[^\/]+)/);
+      return match ? match[1] : url;
+    }
+  }), []);
+
+  // Loading state with better skeleton
   if (loading) {
     return (
-      <div className={`animate-pulse ${className}`}>
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+      <div className={`inline-flex items-center gap-2 ${className}`}>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse"></div>
+          <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-16 animate-pulse"></div>
+          <div className="w-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+          <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-20 animate-pulse"></div>
+        </div>
       </div>
     );
   }
 
+  // Error state
   if (error || !versionInfo) {
     return (
-      <div className={`text-xs text-gray-500 ${className}`}>
-        Data version unavailable
+      <div className={`inline-flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 ${className}`}>
+        <Info className="h-3 w-3" />
+        <span>Version unavailable</span>
       </div>
     );
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const getRepositoryName = (url: string) => {
-    if (url === "unknown") return "Unknown";
-    const match = url.match(/github\.com\/([^\/]+\/[^\/]+)/);
-    return match ? match[1] : url;
-  };
-
+  // Badge variant
   if (variant === "badge") {
     return (
-      <div className={`inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-xs text-gray-600 dark:text-gray-400 ${className}`}>
+      <div className={`inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-full text-xs font-medium text-blue-700 dark:text-blue-300 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 ${className}`}>
         <GitBranch className="h-3 w-3" />
-        <span>Data: {versionInfo.commit}</span>
+        <span>v{versionInfo.commit}</span>
+        <div className="w-1 h-1 bg-blue-400 dark:bg-blue-500 rounded-full animate-pulse"></div>
+        <span className="text-blue-600 dark:text-blue-400">
+          {dateFormatters.getRelativeTime(versionInfo.date)}
+        </span>
       </div>
     );
   }
 
+  // Detailed variant
   if (variant === "detailed") {
     return (
-      <div className={`space-y-2 text-sm ${className}`}>
-        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-          <GitBranch className="h-4 w-4" />
-          <span className="font-medium">Data Version:</span>
-          <code className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs">
-            {versionInfo.commit}
-          </code>
-        </div>
-        
-        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-          <Calendar className="h-4 w-4" />
-          <span>Updated: {formatDate(versionInfo.date)}</span>
-        </div>
-        
-        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-          <User className="h-4 w-4" />
-          <span>By: {versionInfo.author}</span>
-        </div>
-        
-        {showDetails && (
-          <>
-            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-              <Clock className="h-4 w-4" />
-              <span>Last sync: {formatDate(versionInfo.lastSync)}</span>
+      <div className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-md transition-all duration-200 ${className}`}>
+        <div className="space-y-3">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <GitBranch className="h-4 w-4 text-blue-500" />
+              Data Version
+            </h3>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-xs text-green-600 dark:text-green-400 font-medium">Live</span>
             </div>
-            
-            <div className="text-gray-600 dark:text-gray-400">
-              <span>Repository: </span>
-              <code className="text-xs bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded">
-                {getRepositoryName(versionInfo.repository)}
-              </code>
+          </div>
+
+          {/* Version Info */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <code className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono text-gray-800 dark:text-gray-200 border">
+                  {versionInfo.commit}
+                </code>
+                <span className="text-xs text-gray-500 dark:text-gray-400">•</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  {dateFormatters.getRelativeTime(versionInfo.date)}
+                </span>
+              </div>
             </div>
-            
+
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <User className="h-3 w-3" />
+              <span>{versionInfo.author}</span>
+            </div>
+
             {versionInfo.message && (
-              <div className="text-gray-600 dark:text-gray-400">
-                <span>Message: </span>
-                <em className="text-sm">{versionInfo.message}</em>
+              <div className="text-xs text-gray-500 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-700/50 p-2 rounded border-l-2 border-blue-200 dark:border-blue-800">
+                "{versionInfo.message.split('\n')[0]}"
               </div>
             )}
-          </>
-        )}
+          </div>
+
+          {/* Details section */}
+          {showDetails && (
+            <div className="pt-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
+              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                <Calendar className="h-3 w-3" />
+                <span>Updated: {dateFormatters.formatDate(versionInfo.date)}</span>
+              </div>
+              
+              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                <Clock className="h-3 w-3" />
+                <span>Last sync: {dateFormatters.formatDate(versionInfo.lastSync)}</span>
+              </div>
+              
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                <span>Repository: </span>
+                <code className="text-xs bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded font-mono">
+                  {dateFormatters.getRepositoryName(versionInfo.repository)}
+                </code>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
 
   // Default inline variant
   return (
-    <div className={`flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 ${className}`}>
-      <GitBranch className="h-3 w-3" />
-      <span>Data: {versionInfo.commit}</span>
-      <span className="text-gray-400">•</span>
-      <span>{formatDate(versionInfo.date)}</span>
+    <div className={`inline-flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200 ${className}`}>
+      <div className="flex items-center gap-1.5">
+        <GitBranch className="h-3 w-3" />
+        <span className="font-medium">v{versionInfo.commit}</span>
+      </div>
+      <div className="w-1 h-1 bg-gray-400 dark:bg-gray-500 rounded-full"></div>
+      <span>{dateFormatters.getRelativeTime(versionInfo.date)}</span>
+      <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse"></div>
     </div>
   );
-} 
+});
+
+export { VersionDisplay }; 
