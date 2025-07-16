@@ -1,5 +1,6 @@
 import { FiExternalLink, FiEdit, FiEye, FiCheckCircle, FiClock, FiXCircle } from "react-icons/fi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Profile } from "@/lib/types/profile";
 
 interface SubmissionItem {
   id: string;
@@ -11,11 +12,6 @@ interface SubmissionItem {
   updatedAt: string;
   url: string;
   imageUrl?: string;
-}
-
-interface Profile {
-  username: string;
-  submissions: SubmissionItem[];
 }
 
 interface SubmissionsSectionProps {

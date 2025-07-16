@@ -1,7 +1,7 @@
 import { FiAward, FiTrendingUp, FiGrid, FiBarChart2 } from "react-icons/fi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProfileTag } from "../profile-tag";
-import type { Profile } from "../profile-content";
+import type { Profile } from "@/lib/types/profile";
 
 // Configurable skill categories for better reusability
 const SKILL_CATEGORIES: Record<string, string[]> = {

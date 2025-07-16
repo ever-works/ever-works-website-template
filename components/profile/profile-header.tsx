@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { FiEdit2, FiMapPin, FiBriefcase, FiGlobe, FiGithub, FiLinkedin, FiTwitter } from "react-icons/fi";
 import { Card } from "@/components/ui/card";
-import type { Profile } from "./profile-content";
+import type { Profile } from "@/lib/types/profile";
 
 interface ProfileHeaderProps {
   profile: Profile;

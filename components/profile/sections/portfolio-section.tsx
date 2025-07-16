@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { FiExternalLink, FiStar, FiTag } from "react-icons/fi";
 import { Card, CardContent } from "@/components/ui/card";
+import type { Profile } from "@/lib/types/profile";
 
 interface PortfolioItem {
   id: string;
@@ -10,10 +11,6 @@ interface PortfolioItem {
   externalUrl: string;
   tags: string[];
   isFeatured: boolean;
-}
-
-interface Profile {
-  portfolio: PortfolioItem[];
 }
 
 interface PortfolioSectionProps {
