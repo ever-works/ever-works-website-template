@@ -132,7 +132,7 @@ const VersionDisplay = memo(function VersionDisplay({
 
             {versionInfo.message && (
               <div className="text-xs text-gray-500 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-700/50 p-2 rounded border-l-2 border-blue-200 dark:border-blue-800">
-                "{versionInfo.message.split('\n')[0]}"
+                &ldquo;{versionInfo.message.split('\n')[0]}&rdquo;
               </div>
             )}
           </div>
