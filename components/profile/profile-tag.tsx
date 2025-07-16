@@ -1,5 +1,5 @@
 import { FiTag } from "react-icons/fi";
-import { cn } from "@heroui/react";
+import { cn } from "@/lib/utils";
 import React from "react";
 
 interface ProfileTagProps {
