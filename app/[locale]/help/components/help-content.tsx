@@ -50,7 +50,6 @@ export const HelpContent = () => {
         <HowItWorks />
         <InstallationGuide />
         <UsageGuide />
- 
       </PageContainer>
     </div>
   );
