@@ -2,14 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from 'next-intl';
 
 export function HeroLanding() {
+  const t = useTranslations('help');
   const [isVisible, setIsVisible] = useState(false);
   const [typingText, setTypingText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTypingComplete, setIsTypingComplete] = useState(false);
 
-  const fullText = "in minutes";
+  const fullText = t('HERO_IN_MINUTES');
 
   useEffect(() => {
     setIsVisible(true);
@@ -55,7 +57,7 @@ export function HeroLanding() {
         <div className={`text-center pt-8 mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
           <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-800/80 to-gray-700/80 backdrop-blur-sm border border-gray-600 rounded-full text-sm text-gray-300 hover:border-gray-500 transition-all duration-300 cursor-pointer group">
             <span className="animate-bounce group-hover:animate-pulse">🔥</span>
-            <span className="font-medium">Special Gift: 50% off</span>
+            <span className="font-medium">{t('HERO_SPECIAL_OFFER')}</span>
             <span className="animate-bounce group-hover:animate-pulse">🔥</span>
             <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -67,9 +69,9 @@ export function HeroLanding() {
         <div className="text-center max-w-6xl mx-auto">
           {/* Main Title */}
           <h1 className={`text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-8 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            Create your
+            {t('HERO_CREATE_YOUR')}
             <br />
-            directory{" "}
+            {t('HERO_DIRECTORY')}{" "}
             <span className="relative inline-block">
               <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
                 {typingText}
@@ -83,12 +85,12 @@ export function HeroLanding() {
 
           {/* Subtitle */}
           <p className={`text-lg md:text-xl lg:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            The best directory boilerplate, packed with{" "}
-            <span className="text-blue-400 font-semibold">AI</span>,{" "}
-            <span className="text-purple-400 font-semibold">Listings</span>,{" "}
-            <span className="text-pink-400 font-semibold">Payment</span>,
+            {t('HERO_SUBTITLE')}{" "}
+            <span className="text-blue-400 font-semibold">{t('HERO_AI')}</span>,{" "}
+            <span className="text-purple-400 font-semibold">{t('HERO_LISTINGS')}</span>,{" "}
+            <span className="text-pink-400 font-semibold">{t('HERO_PAYMENT')}</span>,
             <br />
-            Submission, CMS, Blog, Authentication, Newsletter, SEO, Themes and more.
+            {t('HERO_SUBTITLE_FEATURES')}
           </p>
 
           {/* CTA Buttons */}
@@ -98,7 +100,7 @@ export function HeroLanding() {
               className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold px-10 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:shadow-purple-500/25 group"
             >
               <span className="flex items-center gap-2">
-                Get ever.works
+                {t('HERO_CTA_START')}
                 <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
@@ -106,12 +108,12 @@ export function HeroLanding() {
             </Button>
             <Button 
               size="lg" 
-              variant="outline" 
+              variant="outline"
               onClick={handleScroll}
               className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:border-gray-500 font-semibold px-10 py-6 rounded-xl transition-all duration-300 transform hover:scale-105 group"
             >
               <span className="flex items-center gap-2">
-                See Demo
+                {t('HERO_CTA_PREVIEW')}
                 <svg className="w-5 h-5 transform group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
@@ -137,7 +139,7 @@ export function HeroLanding() {
               </div>
             </div>
             <p className="text-gray-400 text-lg">
-              <span className="font-semibold text-white">260+</span> makers ship faster with ever.works
+              <span className="font-semibold text-white">260+</span> {t('HERO_SOCIAL_PROOF')}
             </p>
           </div>
         </div>

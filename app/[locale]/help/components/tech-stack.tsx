@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from 'next-intl';
+
 
 interface TechItem {
   name: string;
@@ -125,6 +127,8 @@ const techStack: TechItem[] = [
 ];
 
 export function TechStack() {
+  const t = useTranslations('help');
+
   return (
 
         <div className="py-20">
@@ -134,10 +138,10 @@ export function TechStack() {
               POWERED BY
             </p>
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Industry-standard Tech Stack
+              {t('TECH_STACK_TITLE')}
             </h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Built with the most trusted and performant technologies in the industry
+              {t('TECH_STACK_SUBTITLE')}
             </p>
           </div>
 
@@ -176,9 +180,9 @@ export function TechStack() {
           {/* Bottom Section */}
           <div className="mt-20 text-center">
             <div className="bg-gray-900 rounded-2xl p-8 border border-gray-800">
-              <h3 className="text-2xl font-bold mb-4">Ready to Build?</h3>
+              <h3 className="text-2xl font-bold mb-4">{t('TECH_STACK_READY')}</h3>
               <p className="text-gray-400 mb-6">
-                Start with our production-ready stack and launch your directory in minutes
+                {t('TECH_STACK_READY_DESC')}
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <div className="flex items-center space-x-2 px-4 py-2 bg-gray-800 rounded-lg">

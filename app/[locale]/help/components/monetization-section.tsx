@@ -1,5 +1,8 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useTranslations } from 'next-intl';
+
 interface MonetizationMethod {
   title: string;
   icon: string;
@@ -8,34 +11,40 @@ interface MonetizationMethod {
   hoverColor: string;
 }
 
-const monetizationMethods: MonetizationMethod[] = [
-  {
-    title: "Affiliation",
-    icon: "🤑",
-    description:
-      "Use affiliate links on your items to earn a commission for each person buying any of the services.",
-    color: "from-blue-900 to-blue-800",
-    hoverColor: "hover:from-blue-800 hover:to-blue-700",
-  },
-  {
-    title: "Paid Submissions",
-    icon: "💰",
-    description:
-      "Offer paid submissions to receive payments from businesses seeking backlinks and exposure to your audience.",
-    color: "from-blue-900 to-blue-800",
-    hoverColor: "hover:from-blue-800 hover:to-blue-700",
-  },
-  {
-    title: "Sponsored Ads",
-    icon: "🎯",
-    description:
-      "Offer premium advertising spaces for businesses to showcase their products to your targeted audience.",
-    color: "from-blue-900 to-blue-800",
-    hoverColor: "hover:from-blue-800 hover:to-blue-700",
-  },
-];
+
 
 export function MonetizationSection() {
+  const t = useTranslations('help');
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  const monetizationMethods: MonetizationMethod[] = [
+    {
+      title: t('MONETIZATION_AFFILIATION_TITLE'),
+      icon: "🤑",
+      description: t('MONETIZATION_AFFILIATION_DESC'),
+      color: "from-blue-900 to-blue-800",
+      hoverColor: "hover:from-blue-800 hover:to-blue-700",
+    },
+    {
+      title: t('MONETIZATION_PAID_SUBMISSION_TITLE'),
+      icon: "💰",
+      description: t('MONETIZATION_PAID_SUBMISSION_DESC'),
+      color: "from-blue-900 to-blue-800",
+      hoverColor: "hover:from-blue-800 hover:to-blue-700",
+    },
+    {
+      title: t('MONETIZATION_SPONSORED_ADS_TITLE'),
+      icon: "🎯",
+      description: t('MONETIZATION_SPONSORED_ADS_DESC'),
+      color: "from-blue-900 to-blue-800",
+      hoverColor: "hover:from-blue-800 hover:to-blue-700",
+    },
+  ];
+
   return (
     <section className="py-20  text-white bg-gray-900 rounded-2xl p-8 border border-gray-800">
       <div>
@@ -45,11 +54,10 @@ export function MonetizationSection() {
             MONETIZATION
           </p>
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            How to make money from directory?
+            {t('MONETIZATION_SECTION_TITLE')}
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Multiple proven revenue streams to turn your directory into a
-            profitable business
+            {t('MONETIZATION_SECTION_SUBTITLE')}
           </p>
         </div>
 

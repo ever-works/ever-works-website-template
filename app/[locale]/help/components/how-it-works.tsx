@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from 'next-intl';
 
 interface Step {
   number: string;
@@ -8,30 +9,6 @@ interface Step {
   icon: string;
   color: string;
 }
-
-const steps: Step[] = [
-  {
-    number: "1.",
-    title: "Configure your directory",
-    description: "Clone the repository, customize the website.",
-    icon: "⚙️",
-    color: "text-blue-400"
-  },
-  {
-    number: "2.",
-    title: "Deploy your directory",
-    description: "Deploy the project to your preferred platform.",
-    icon: "🚀",
-    color: "text-purple-400"
-  },
-  {
-    number: "3.",
-    title: "Manage the content",
-    description: "Manage the content through Supabase dashboard and built-in CMS.",
-    icon: "✨",
-    color: "text-green-400"
-  }
-];
 
 const codeContent = `# App Configuration
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -111,16 +88,42 @@ auth:
   x: true                   # X/Twitter login`;
 
 export function HowItWorks() {
+  const t = useTranslations('help');
+  
+  const steps: Step[] = [
+    {
+      number: "1.",
+      title: t('HOW_IT_WORKS_STEP1_TITLE'),
+      description: t('HOW_IT_WORKS_STEP1_DESC'),
+      icon: "⚙️",
+      color: "text-blue-400"
+    },
+    {
+      number: "2.",
+      title: t('HOW_IT_WORKS_STEP2_TITLE'),
+      description: t('HOW_IT_WORKS_STEP2_DESC'),
+      icon: "🚀",
+      color: "text-purple-400"
+    },
+    {
+      number: "3.",
+      title: t('HOW_IT_WORKS_STEP3_TITLE'),
+      description: t('HOW_IT_WORKS_STEP3_DESC'),
+      icon: "✨",
+      color: "text-green-400"
+    }
+  ];
+
   return (
     <section className="py-20 bg-gray-900 rounded-2xl p-8 border border-gray-800">
         <div>
           {/* Header */}
           <div className="text-center mb-16">
             <p className="text-blue-400 text-sm font-medium tracking-wider uppercase mb-4">
-              HOW IT WORKS?
+              {t('HOW_IT_WORKS_TITLE')}
             </p>
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Just 3 steps to get started
+              {t('HOW_IT_WORKS_SUBTITLE')}
             </h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
               Simple setup process to launch your directory website in minutes
