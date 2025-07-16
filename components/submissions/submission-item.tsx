@@ -1,7 +1,5 @@
 import { FiActivity, FiClock, FiEye, FiEdit, FiTrash2, FiTrendingUp, FiCheck, FiX, FiAlertCircle } from "react-icons/fi";
 
-// You may want to import the Submission type from your dummy-data or types file
-// For now, define it here for clarity
 export interface Submission {
   id: string;
   title: string;
@@ -27,7 +25,6 @@ interface StatusConfig {
   };
 }
 
-// You may want to import this from a shared config
 const statusConfig: StatusConfig = {
   approved: {
     label: "Approved",

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { FiUser, FiMapPin, FiBriefcase, FiGlobe, FiSave, FiArrowLeft, FiUpload, FiPlus, FiTrash2 } from "react-icons/fi";
 import Link from "next/link";
 import { useState } from "react";
+import Image from "next/image";
 
 const SKILL_CATEGORIES = [
   "Frontend",
@@ -111,6 +112,30 @@ function SkillsEditor({ initialSkills = [] }: { initialSkills?: Skill[] }) {
 export default function BasicInfoPage() {
   // Bypass auth for testing
   const session = { user: { name: "John Doe", email: "john@example.com" } };
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('Please select a valid image file (JPG, PNG, or GIF)');
+        return;
+      }
+      // Validate file size (2MB limit)
+      if (file.size > 2 * 1024 * 1024) {
+        alert('File size must be less than 2MB');
+        return;
+      }
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setAvatarPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -156,13 +181,31 @@ export default function BasicInfoPage() {
                 {/* Avatar Upload */}
                 <div className="flex flex-col items-center gap-4">
                   <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-                    {/* Placeholder avatar, replace with actual image if available */}
-                    <FiUser className="w-12 h-12 text-gray-400" />
+                    {avatarPreview ? (
+                      <Image
+                        src={avatarPreview}
+                        alt="Avatar preview"
+                        className="w-full h-full object-cover"
+                        fill
+                        unoptimized
+                        sizes="96px"
+                        priority
+                      />
+                    ) : (
+                      <FiUser className="w-12 h-12 text-gray-400" />
+                    )}
                   </div>
                   <label htmlFor="avatar" className="inline-flex items-center gap-2 px-4 py-2 bg-theme-primary-600 hover:bg-theme-primary-700 text-white rounded-lg cursor-pointer transition-colors">
                     <FiUpload className="w-4 h-4" />
                     Upload Avatar
-                    <input id="avatar" name="avatar" type="file" accept="image/*" className="hidden" />
+                    <input 
+                      id="avatar" 
+                      name="avatar" 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden"
+                      onChange={handleAvatarChange}
+                    />
                   </label>
                   <p className="text-xs text-gray-500 dark:text-gray-400">JPG, PNG, or GIF. Max 2MB.</p>
                 </div>
@@ -247,7 +290,7 @@ export default function BasicInfoPage() {
                 {/* Location, Company, Job Title, Website */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-4">
-                    <label htmlFor="location" className="block font-semibold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-1">
+                    <label htmlFor="location" className="font-semibold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-1">
                       <FiMapPin className="w-4 h-4" />
                       Location
                     </label>
@@ -264,7 +307,7 @@ export default function BasicInfoPage() {
                     </p>
                   </div>
                   <div className="space-y-4">
-                    <label htmlFor="company" className="block font-semibold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-1">
+                    <label htmlFor="company" className="font-semibold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-1">
                       <FiBriefcase className="w-4 h-4" />
                       Company
                     </label>
@@ -297,7 +340,7 @@ export default function BasicInfoPage() {
                     </p>
                   </div>
                   <div className="space-y-4">
-                    <label htmlFor="website" className="block font-semibold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-1">
+                    <label htmlFor="website" className="font-semibold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-1">
                       <FiGlobe className="w-4 h-4" />
                       Website
                     </label>
