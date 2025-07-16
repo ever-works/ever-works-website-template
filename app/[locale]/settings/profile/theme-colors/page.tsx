@@ -5,6 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FiArrowLeft, FiCheck, FiDroplet } from "react-icons/fi";
 import Link from "next/link";
 import { useTheme } from "@/hooks/use-theme";
+import { cn } from "@/lib/utils";
+
+const getThemeButtonClasses = (isSelected: boolean) => cn(
+  "group relative p-6 rounded-xl border-2 transition-all duration-300 text-left",
+  "focus:outline-none focus:ring-2 focus:ring-theme-primary-500 hover:shadow-lg",
+  isSelected
+    ? "border-theme-primary-500 bg-gradient-to-br from-theme-primary-50 to-theme-primary-100 dark:from-theme-primary-900/30 dark:to-theme-primary-800/20 shadow-lg shadow-theme-primary-500/20"
+    : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 hover:border-theme-primary-300 dark:hover:border-theme-primary-600 hover:bg-gray-50 dark:hover:bg-gray-800"
+);
 
 export default function ThemeColorsPage() {
   const { themeKey, availableThemes, changeTheme } = useTheme();
@@ -69,12 +78,7 @@ export default function ThemeColorsPage() {
                       type="button"
                       onClick={() => changeTheme(theme.key)}
                       aria-pressed={isSelected}
-                      className={`group relative p-6 rounded-xl border-2 transition-all duration-300 text-left focus:outline-none focus:ring-2 focus:ring-theme-primary-500 hover:shadow-lg
-                        ${isSelected 
-                          ? "border-theme-primary-500 bg-gradient-to-br from-theme-primary-50 to-theme-primary-100 dark:from-theme-primary-900/30 dark:to-theme-primary-800/20 shadow-lg shadow-theme-primary-500/20" 
-                          : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 hover:border-theme-primary-300 dark:hover:border-theme-primary-600 hover:bg-gray-50 dark:hover:bg-gray-800"
-                        }
-                      `}
+                      className={getThemeButtonClasses(isSelected)}
                     >
                       {/* Selection Indicator */}
                       {isSelected && (
