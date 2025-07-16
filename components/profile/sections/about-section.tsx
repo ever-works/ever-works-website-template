@@ -24,7 +24,7 @@ export function AboutSection({ profile }: AboutSectionProps) {
           <CardTitle className="text-lg font-bold text-gray-900 dark:text-gray-100">About Me</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <p className="text-gray-300 leading-relaxed text-base">
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-base">
             {profile.bio}
           </p>
         </CardContent>

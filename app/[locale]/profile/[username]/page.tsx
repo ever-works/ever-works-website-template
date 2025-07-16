@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { ProfileHeader, ProfileContent } from "@/components/profile";
+import { Suspense } from 'react';
 
 // Dummy data for development
 const dummyProfile = {
@@ -95,6 +96,21 @@ interface ProfilePageProps {
   params: Promise<{ username: string; locale: string }>;
 }
 
+function ProfileSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <Container maxWidth="7xl" padding="default">
+        <div className="space-y-8 pb-16">
+          <div className="animate-pulse">
+            <div className="h-32 bg-gray-200 dark:bg-gray-800 rounded-lg mb-4"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-3/4"></div>
+          </div>
+        </div>
+      </Container>
+    </div>
+  );
+}
+
 export default async function ProfilePage({ params }: ProfilePageProps) {
   const { username } = await params;
 
@@ -107,13 +123,15 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      <Container maxWidth="7xl" padding="default">
-        <div className="space-y-8 pb-16">
-          <ProfileHeader profile={profile} />
-          <ProfileContent profile={profile} />
-        </div>
-      </Container>
-    </div>
+    <Suspense fallback={<ProfileSkeleton />}>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+        <Container maxWidth="7xl" padding="default">
+          <div className="space-y-8 pb-16">
+            <ProfileHeader profile={profile} />
+            <ProfileContent profile={profile} />
+          </div>
+        </Container>
+      </div>
+    </Suspense>
   );
 } 
