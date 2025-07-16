@@ -2,8 +2,6 @@
 import { Container } from "@/components/ui/container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { FiBriefcase, FiArrowLeft, FiPlus, FiEdit, FiTrash2, FiStar, FiExternalLink } from "react-icons/fi";
 import Link from "next/link";
 import portfolioData from "../portfolio-data.json";
@@ -86,11 +84,11 @@ export default function PortfolioPage() {
                     <label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Project Title
                     </label>
-                    <Input
+                    <input
                       id="title"
                       name="title"
                       placeholder="Enter project title"
-                      className="w-full"
+                      className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                       value={title}
                       onChange={e => setTitle(e.target.value)}
                       aria-invalid={!!errors.title}
@@ -103,12 +101,12 @@ export default function PortfolioPage() {
                     <label htmlFor="imageUrl" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Image URL
                     </label>
-                    <Input
+                    <input
                       id="imageUrl"
                       name="imageUrl"
                       type="url"
                       placeholder="https://example.com/image.jpg"
-                      className="w-full"
+                      className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                       value={imageUrl}
                       onChange={e => setImageUrl(e.target.value)}
                       aria-invalid={!!errors.imageUrl}
@@ -122,12 +120,12 @@ export default function PortfolioPage() {
                   <label htmlFor="description" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Description
                   </label>
-                  <Textarea
+                  <textarea
                     id="description"
                     name="description"
                     rows={3}
                     placeholder="Describe your project..."
-                    className="w-full"
+                    className="w-full px-6 py-4 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 hover:border-gray-300 dark:hover:border-gray-500 resize-none outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                     value={description}
                     onChange={e => setDescription(e.target.value)}
                     aria-invalid={!!errors.description}
@@ -141,12 +139,12 @@ export default function PortfolioPage() {
                     <label htmlFor="externalUrl" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Project URL
                     </label>
-                    <Input
+                    <input
                       id="externalUrl"
                       name="externalUrl"
                       type="url"
                       placeholder="https://yourproject.com"
-                      className="w-full"
+                      className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                       value={externalUrl}
                       onChange={e => setExternalUrl(e.target.value)}
                       aria-invalid={!!errors.externalUrl}
@@ -159,11 +157,11 @@ export default function PortfolioPage() {
                     <label htmlFor="tags" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Tags (comma separated)
                     </label>
-                    <Input
+                    <input
                       id="tags"
                       name="tags"
                       placeholder="React, TypeScript, Next.js"
-                      className="w-full"
+                      className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                       value={tags}
                       onChange={e => setTags(e.target.value)}
                     />
