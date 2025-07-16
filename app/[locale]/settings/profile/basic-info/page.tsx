@@ -3,10 +3,13 @@
 import { Container } from "@/components/ui/container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FiUser, FiMapPin, FiBriefcase, FiGlobe, FiSave, FiArrowLeft, FiUpload, FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiUser, FiMapPin, FiBriefcase, FiGlobe, FiArrowLeft, FiUpload, FiPlus, FiTrash2 } from "react-icons/fi";
 import Link from "next/link";
 import { useState } from "react";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 const SKILL_CATEGORIES = [
   "Frontend",
@@ -109,6 +112,19 @@ function SkillsEditor({ initialSkills = [] }: { initialSkills?: Skill[] }) {
   );
 }
 
+const profileSchema = z.object({
+  displayName: z.string().min(1, "Display name is required").max(100),
+  username: z.string().min(3, "Username must be at least 3 characters").max(50),
+  bio: z.string().max(500, "Bio must be less than 500 characters"),
+  location: z.string().max(100),
+  company: z.string().max(100),
+  jobTitle: z.string().max(100),
+  website: z.string().url("Must be a valid URL").or(z.literal("")),
+  interests: z.string().max(200),
+});
+
+type ProfileFormData = z.infer<typeof profileSchema>;
+
 export default function BasicInfoPage() {
   // Bypass auth for testing
   const session = { user: { name: "John Doe", email: "john@example.com" } };
@@ -134,6 +150,27 @@ export default function BasicInfoPage() {
         setAvatarPreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ProfileFormData>({
+    resolver: zodResolver(profileSchema),
+  });
+
+  const onSubmit = async (data: ProfileFormData) => {
+    try {
+      // Implement API call to save profile data
+      // await updateProfile(data);
+      // Show success message
+      alert(`Profile updated! (demo mode): ${JSON.stringify(data)}`);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      // Show error message
+      alert("Error updating profile");
     }
   };
 
@@ -177,7 +214,7 @@ export default function BasicInfoPage() {
               </p>
             </CardHeader>
             <CardContent>
-              <form className="space-y-8">
+              <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
                 {/* Avatar Upload */}
                 <div className="flex flex-col items-center gap-4">
                   <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
@@ -218,12 +255,15 @@ export default function BasicInfoPage() {
                     </label>
                     <input
                       id="displayName"
-                      name="displayName"
                       type="text"
-                      defaultValue={session.user?.name || ""}
                       placeholder="Enter your display name"
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                      {...register("displayName")}
+                      defaultValue={session.user?.name || ""}
                     />
+                    {errors.displayName && (
+                      <p className="text-red-500 text-sm mt-1">{errors.displayName.message}</p>
+                    )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       This is how your name will appear to others
                     </p>
@@ -234,12 +274,15 @@ export default function BasicInfoPage() {
                     </label>
                     <input
                       id="username"
-                      name="username"
                       type="text"
                       defaultValue={session.user?.name?.toLowerCase().replace(/\s+/g, '') || ""}
                       placeholder="Enter your username"
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                      {...register("username")}
                     />
+                    {errors.username && (
+                      <p className="text-red-500 text-sm mt-1">{errors.username.message}</p>
+                    )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       Your unique profile identifier
                     </p>
@@ -253,12 +296,15 @@ export default function BasicInfoPage() {
                   </label>
                   <textarea
                     id="bio"
-                    name="bio"
                     rows={4}
                     placeholder="Tell us about yourself..."
                     className="w-full px-6 py-4 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 hover:border-gray-300 dark:hover:border-gray-500 resize-none outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                    {...register("bio")}
                     defaultValue="Full-stack developer passionate about creating amazing web experiences. I love working with React, TypeScript, and modern web technologies."
                   />
+                  {errors.bio && (
+                    <p className="text-red-500 text-sm mt-1">{errors.bio.message}</p>
+                  )}
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     A brief description about yourself and your work
                   </p>
@@ -274,11 +320,14 @@ export default function BasicInfoPage() {
                   </label>
                   <input
                     id="interests"
-                    name="interests"
                     type="text"
                     placeholder="e.g. Open Source, UI/UX, Startups"
                     className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                    {...register("interests")}
                   />
+                  {errors.interests && (
+                    <p className="text-red-500 text-sm mt-1">{errors.interests.message}</p>
+                  )}
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     Separate interests with commas. These will be shown as tags on your profile.
                   </p>
@@ -296,12 +345,15 @@ export default function BasicInfoPage() {
                     </label>
                     <input
                       id="location"
-                      name="location"
                       type="text"
                       placeholder="City, Country"
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                      {...register("location")}
                       defaultValue="San Francisco, CA"
                     />
+                    {errors.location && (
+                      <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>
+                    )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       Where you&apos;re based
                     </p>
@@ -313,12 +365,15 @@ export default function BasicInfoPage() {
                     </label>
                     <input
                       id="company"
-                      name="company"
                       type="text"
                       placeholder="Your company name"
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                      {...register("company")}
                       defaultValue="Tech Corp"
                     />
+                    {errors.company && (
+                      <p className="text-red-500 text-sm mt-1">{errors.company.message}</p>
+                    )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       Your current employer or organization
                     </p>
@@ -329,12 +384,15 @@ export default function BasicInfoPage() {
                     </label>
                     <input
                       id="jobTitle"
-                      name="jobTitle"
                       type="text"
                       placeholder="Your job title"
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                      {...register("jobTitle")}
                       defaultValue="Senior Software Engineer"
                     />
+                    {errors.jobTitle && (
+                      <p className="text-red-500 text-sm mt-1">{errors.jobTitle.message}</p>
+                    )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       Your current role or position
                     </p>
@@ -346,12 +404,15 @@ export default function BasicInfoPage() {
                     </label>
                     <input
                       id="website"
-                      name="website"
                       type="url"
                       placeholder="https://yourwebsite.com"
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                      {...register("website")}
                       defaultValue="https://johndoe.dev"
                     />
+                    {errors.website && (
+                      <p className="text-red-500 text-sm mt-1">{errors.website.message}</p>
+                    )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       Your personal website or portfolio
                     </p>
@@ -370,9 +431,9 @@ export default function BasicInfoPage() {
                     <Button
                       type="submit"
                       className="inline-flex items-center gap-2 px-6 py-2 text-base font-semibold bg-theme-primary-600 hover:bg-theme-primary-700 text-white rounded-md transition-colors shadow-md w-full md:w-auto justify-center"
+                      disabled={isSubmitting}
                     >
-                      <FiSave className="w-5 h-5" />
-                      Save Changes
+                      {isSubmitting ? "Saving..." : "Save Changes"}
                     </Button>
                   </div>
                 </div>
