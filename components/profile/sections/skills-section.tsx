@@ -3,19 +3,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProfileTag } from "../profile-tag";
 import type { Profile } from "../profile-content";
 
+// Configurable skill categories for better reusability
+const SKILL_CATEGORIES: Record<string, string[]> = {
+  Frontend: ["React", "Vue.js", "Angular", "HTML", "CSS", "JavaScript", "TypeScript"],
+  Backend: ["Node.js", "Python", "Java", "C#", "PHP", "Go", "Rust"],
+  "Tools & Frameworks": ["Next.js", "Tailwind CSS", "Docker", "Git", "AWS", "Firebase"]
+};
+
 interface SkillsSectionProps {
   profile: Profile;
 }
 
 export function SkillsSection({ profile }: SkillsSectionProps) {
   const getSkillCategory = (skill: string) => {
-    const frontend = ["React", "Vue.js", "Angular", "HTML", "CSS", "JavaScript", "TypeScript"];
-    const backend = ["Node.js", "Python", "Java", "C#", "PHP", "Go", "Rust"];
-    const tools = ["Next.js", "Tailwind CSS", "Docker", "Git", "AWS", "Firebase"];
-    
-    if (frontend.includes(skill)) return "Frontend";
-    if (backend.includes(skill)) return "Backend";
-    if (tools.includes(skill)) return "Tools & Frameworks";
+    for (const [category, skills] of Object.entries(SKILL_CATEGORIES)) {
+      if (skills.includes(skill)) return category;
+    }
     return "Other";
   };
 
