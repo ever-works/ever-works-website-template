@@ -1,4 +1,5 @@
 import { FiActivity, FiClock, FiEye, FiEdit, FiTrash2, FiTrendingUp, FiCheck, FiX, FiAlertCircle } from "react-icons/fi";
+import { IconType } from "react-icons";
 
 export interface Submission {
   id: string;
@@ -18,7 +19,7 @@ export interface Submission {
 interface StatusConfig {
   [key: string]: {
     label: string;
-    icon: any;
+    icon: IconType;
     color: string;
     bgColor: string;
     borderColor: string;
