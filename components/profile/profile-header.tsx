@@ -83,7 +83,7 @@ export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderPr
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {profile.displayName}
                 </h1>
-                <p className="text-lg text-theme-primary-600 dark:text-theme-primary-400 font-medium">
+                <p className="text-lg text-blue-600 dark:text-blue-400 font-medium">
                   {profile.jobTitle}
                 </p>
               </div>
