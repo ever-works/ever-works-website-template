@@ -19,7 +19,6 @@ export function StripePaymentForm({
   onError,
   clientSecret,
   successUrl,
-  cancelUrl,
   isSubscription,
 }: PaymentFormProps) {
   const stripe = useStripe();

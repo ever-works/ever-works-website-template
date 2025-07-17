@@ -1,4 +1,5 @@
-import { User } from '@supabase/supabase-js';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { User } from '@supabase/auth-js';
 import {
   PaymentProviderInterface,
   PaymentIntent,
@@ -60,13 +61,13 @@ const solidgateTranslations = {
     paymentFailed: 'Your payment could not be processed',
   },
   fr: {
-    cardNumber: 'Numéro de carte',
-    cardExpiry: 'Date d\'expiration',
+    cardNumber: 'Card number',
+    cardExpiry: 'Expiration date',
     cardCvc: 'CVV',
-    submit: 'Payer en toute sécurité',
-    processingPayment: 'Traitement de votre paiement...',
-    paymentSuccessful: 'Paiement effectué avec succès',
-    paymentFailed: 'Votre paiement n\'a pas pu être traité',
+    submit: 'Pay securely',
+    processingPayment: 'Processing your payment...',
+    paymentSuccessful: 'Payment successful',
+    paymentFailed: 'Your payment could not be processed',
   }
 };
 
@@ -161,8 +162,8 @@ export class SolidgateProvider implements PaymentProviderInterface {
       cardBrands: solidgateCardBrands,
 
       // Supported payment methods
-      // Note: Les méthodes de paiement express (Apple Pay, Google Pay) seront gérées nativement par Solidgate
-      // si elles sont configurées dans le dashboard Solidgate
+      // Note: Express payment methods (Apple Pay, Google Pay) will be handled natively by Solidgate
+              // if they are configured in the Solidgate dashboard
       supportedPaymentMethods: [ 'card' ],
 
       // Translations

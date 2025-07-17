@@ -1,4 +1,4 @@
-import { User } from '@supabase/supabase-js';
+import { User } from '@supabase/auth-js';
 import {
   PaymentProviderInterface,
   PaymentIntent,
@@ -25,7 +25,8 @@ interface PaymentServiceConfig {
 export enum PaymentPlanId {
   FREE = "1",
   ONE_TIME = "2",
-  SUBSCRIPTION = "3"
+  SUBSCRIPTION = "3",
+  SPONSOR = "4",
 }
 
 export interface PaymentPlan {
