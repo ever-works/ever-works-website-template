@@ -17,6 +17,7 @@ export interface ItemDetailProps {
     updated_at?: string;
     source_url?: string;
     tags?: Array<string | { name: string; id: string }>;
+    video_url?: string;
   };
   content?: string;
   categoryName: string;
@@ -42,6 +43,27 @@ export function ItemDetail({
       <div className="relative z-10 container max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex-1">
+            {/* Video Showcase */}
+            {meta.video_url && (
+              <div className="mb-8">
+                <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-2xl shadow-lg">
+                  <iframe
+                    src={
+                      meta.video_url.includes("youtube.com") || meta.video_url.includes("youtu.be")
+                        ? meta.video_url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")
+                        : meta.video_url.includes("vimeo.com")
+                        ? meta.video_url.replace("vimeo.com/", "player.vimeo.com/video/")
+                        : meta.video_url
+                    }
+                    title="Video Showcase"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute top-0 left-0 w-full h-full"
+                  ></iframe>
+                </div>
+              </div>
+            )}
             <div className="mb-8">
               <div className="mb-8 transform transition-all duration-500 hover:scale-[1.01]">
                 <ItemBreadcrumb
