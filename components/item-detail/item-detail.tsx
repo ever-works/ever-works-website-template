@@ -44,26 +44,6 @@ export function ItemDetail({
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex-1">
             {/* Video Showcase */}
-            {meta.video_url && (
-              <div className="mb-8">
-                <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-2xl shadow-lg">
-                  <iframe
-                    src={
-                      meta.video_url.includes("youtube.com") || meta.video_url.includes("youtu.be")
-                        ? meta.video_url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")
-                        : meta.video_url.includes("vimeo.com")
-                        ? meta.video_url.replace("vimeo.com/", "player.vimeo.com/video/")
-                        : meta.video_url
-                    }
-                    title="Video Showcase"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="absolute top-0 left-0 w-full h-full"
-                  ></iframe>
-                </div>
-              </div>
-            )}
             <div className="mb-8">
               <div className="mb-8 transform transition-all duration-500 hover:scale-[1.01]">
                 <ItemBreadcrumb
@@ -88,6 +68,28 @@ export function ItemDetail({
                   <div className="h-1 w-24 bg-gradient-to-r from-theme-primary-500 to-theme-purple-500 rounded-full transform transition-all duration-500 group-hover:w-32"></div>
                 </div>
               </div>
+
+              {/* Video Showcase - below title/meta, above description */}
+              {meta.video_url && (
+                <div className="mb-8">
+                  <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+                    <iframe
+                      src={
+                        meta.video_url.includes("youtube.com") || meta.video_url.includes("youtu.be")
+                          ? meta.video_url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")
+                          : meta.video_url.includes("vimeo.com")
+                          ? meta.video_url.replace("vimeo.com/", "player.vimeo.com/video/")
+                          : meta.video_url
+                      }
+                      title={`Video Demo for ${meta.name}`}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="absolute top-0 left-0 w-full h-full"
+                    ></iframe>
+                  </div>
+                </div>
+              )}
 
               <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed max-w-4xl font-medium">
                 {meta.description}
