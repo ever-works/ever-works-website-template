@@ -36,6 +36,7 @@ interface FormData {
   tags: string[];
   description: string;
   introduction: string;
+  video_url?: string; // Added video_url to FormData
   [key: string]: any;
 }
 
@@ -108,6 +109,7 @@ export function DetailsForm({
       tags: [],
       description: "",
       introduction: "",
+      video_url: "", // Initialize video_url
     };
 
     // Merge with initialData and sync link field with main link
@@ -558,6 +560,52 @@ export function DetailsForm({
                       {t("DETAILS_FORM.ADD_MORE_LINKS")}
                     </button>
                   </div>
+                </div>
+
+                {/* Video URL */}
+                <div className="space-y-3">
+                  <label
+                    htmlFor="video_url"
+                    className="block text-sm font-bold text-gray-700 dark:text-gray-300"
+                  >
+                    Video URL (YouTube or Vimeo)
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="video_url"
+                      name="video_url"
+                      type="url"
+                      value={formData.video_url || ""}
+                      onChange={e => setFormData(prev => ({ ...prev, video_url: e.target.value }))}
+                      placeholder="https://www.youtube.com/watch?v=..."
+                      className={cn(
+                        "w-full h-12 px-4 pr-12 text-base bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl transition-all duration-300 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400",
+                        "focus:border-theme-primary-500 dark:focus:border-theme-primary-400 focus:ring-4 focus:ring-theme-primary-20"
+                      )}
+                    />
+                  </div>
+                  {/* Video Preview */}
+                  {formData.video_url &&
+                    (formData.video_url.includes("youtube.com") || formData.video_url.includes("youtu.be") || formData.video_url.includes("vimeo.com")) && (
+                      <div className="mt-4">
+                        <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-2xl shadow-lg">
+                          <iframe
+                            src={
+                              formData.video_url.includes("youtube.com") || formData.video_url.includes("youtu.be")
+                                ? formData.video_url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")
+                                : formData.video_url.includes("vimeo.com")
+                                ? formData.video_url.replace("vimeo.com/", "player.vimeo.com/video/")
+                                : formData.video_url
+                            }
+                            title="Video Preview"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="absolute top-0 left-0 w-full h-full"
+                          ></iframe>
+                        </div>
+                      </div>
+                    )}
                 </div>
 
                 {/* Category */}
