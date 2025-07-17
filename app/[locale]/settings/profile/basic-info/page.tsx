@@ -187,6 +187,10 @@ export default function BasicInfoPage() {
       reader.onload = (e) => {
         setAvatarPreview(e.target?.result as string);
       };
+      reader.onerror = () => {
+        alert('Error reading file. Please try again.');
+        setAvatarPreview(null);
+      };
       reader.readAsDataURL(file);
     }
   };
