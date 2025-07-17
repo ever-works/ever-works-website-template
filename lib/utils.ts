@@ -209,16 +209,30 @@ export function getVideoEmbedUrl(url: string): string {
   if (!url) return "";
   try {
     const parsedUrl = new URL(url);
-    const host = parsedUrl.host.replace(/^www\./, ""); // Normalize by removing 'www.'
+    const host = parsedUrl.host.replace(/^www\./, "");
 
-    if (host === "youtube.com" || host === "youtu.be") {
-      return url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/");
+    if (host === "youtube.com") {
+      // e.g. https://www.youtube.com/watch?v=VIDEO_ID
+      const videoId = parsedUrl.searchParams.get("v");
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+    }
+    if (host === "youtu.be") {
+      // e.g. https://youtu.be/VIDEO_ID
+      const videoId = parsedUrl.pathname.slice(1);
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
     }
     if (host === "vimeo.com") {
-      return url.replace("vimeo.com/", "player.vimeo.com/video/");
+      // e.g. https://vimeo.com/VIDEO_ID
+      const videoId = parsedUrl.pathname.slice(1);
+      if (videoId) {
+        return `https://player.vimeo.com/video/${videoId}`;
+      }
     }
   } catch {
-    // If URL parsing fails, return the original string
     return url;
   }
   return url;
