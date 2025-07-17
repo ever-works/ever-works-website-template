@@ -4,6 +4,7 @@ import { getItemPath } from "@/lib/utils";
 
 interface ActivityItemProps {
   itemId: string;
+  itemTitle?: string;
   type: "comment" | "vote";
   content?: string;
   rating?: number;
@@ -13,6 +14,7 @@ interface ActivityItemProps {
 
 export function ActivityItem({
   itemId,
+  itemTitle,
   type,
   content,
   rating,
@@ -35,14 +37,15 @@ export function ActivityItem({
   };
 
   const getActivityText = () => {
+    const displayName = itemTitle || itemId;
     if (type === "comment") {
-      return `Commented on ${itemId}`;
+      return `Commented on ${displayName}`;
     }
     if (type === "vote") {
       const action = voteType === "upvote" ? "upvoted" : "downvoted";
-      return `${action} ${itemId}`;
+      return `${action} ${displayName}`;
     }
-    return `Interacted with ${itemId}`;
+    return `Interacted with ${displayName}`;
   };
 
   const formatDate = (date: Date) => {
