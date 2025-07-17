@@ -24,10 +24,20 @@ export default function PortfolioPage() {
     const newErrors: { [key: string]: string } = {};
     if (!title.trim()) newErrors.title = "Project title is required.";
     if (!imageUrl.trim()) newErrors.imageUrl = "Image URL is required.";
+    else if (!isValidUrl(imageUrl.trim())) newErrors.imageUrl = "Please enter a valid image URL.";
     if (!description.trim()) newErrors.description = "Description is required.";
     if (!externalUrl.trim()) newErrors.externalUrl = "Project URL is required.";
-    // Optionally: validate URL format
+    else if (!isValidUrl(externalUrl.trim())) newErrors.externalUrl = "Please enter a valid project URL.";
     return newErrors;
+  };
+
+  const isValidUrl = (url: string) => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -203,7 +213,7 @@ export default function PortfolioPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {projects.map((project: any) => (
+                {projects.map((project) => (
                   <PortfolioItem
                     key={project.id}
                     project={project}
