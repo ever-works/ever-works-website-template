@@ -38,7 +38,7 @@ export function PaymentProvider({ children, providerConfigs }: PaymentProviderPr
     setService(serviceManager.getPaymentService());
     setCurrentProvider(serviceManager.getCurrentProvider());
     setAvailableProviders(serviceManager.getAvailableProviders());
-  }, []);
+  }, [serviceManager]);
 
   const switchProvider = async (newProvider: SupportedProvider) => {
     await serviceManager.switchProvider(newProvider);

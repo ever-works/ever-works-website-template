@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 import React from 'react';
-import { User } from '@supabase/supabase-js';
+import { User } from '@supabase/auth-js';
 import axios from 'axios';
 import {
   PaymentProviderInterface,
@@ -69,13 +69,13 @@ const stripeTranslations = {
     paymentFailed: 'Payment failed',
   },
   fr: {
-    cardNumber: 'Numéro de carte',
-    cardExpiry: 'Date d\'expiration',
+    cardNumber: 'Card number',
+    cardExpiry: 'Expiration date',
     cardCvc: 'CVC',
-    submit: 'Payer maintenant',
-    processingPayment: 'Traitement du paiement...',
-    paymentSuccessful: 'Paiement réussi',
-    paymentFailed: 'Échec du paiement',
+    submit: 'Pay now',
+    processingPayment: 'Processing payment...',
+    paymentSuccessful: 'Payment successful',
+    paymentFailed: 'Payment failed',
   }
 };
 
@@ -118,10 +118,10 @@ export class StripeProvider implements PaymentProviderInterface {
 
   async getCustomerId(user: User | null): Promise<string | null> {
     if (this.hasCustomerId(user)) {
-      return user!.user_metadata.stripe_customer_id;
+      return user?.user_metadata?.stripe_customer_id || null;
     } else {
       const customer = await this.createCustomer({
-        email: user?.email!,
+        email: user?.email || '',
         name: user?.user_metadata.name,
         metadata: { userId: user?.id },
       });
@@ -291,10 +291,10 @@ export class StripeProvider implements PaymentProviderInterface {
       // For subscriptions without trial period
       if (trialPeriodDays === 0) {
         // Options to charge immediately
-        subscriptionParams.off_session = true,
-          subscriptionParams.payment_settings = {
-            save_default_payment_method: 'on_subscription'
-          }
+        subscriptionParams.off_session = true;
+        subscriptionParams.payment_settings = {
+          save_default_payment_method: 'on_subscription'
+        };
       } else {
         subscriptionParams.trial_period_days = trialPeriodDays;
       }
@@ -499,7 +499,6 @@ export class StripeProvider implements PaymentProviderInterface {
   }
 
   getUIComponents(): UIComponents {
-    const self = this;
 
     // Create a function that will inject the public key into the StripeElements component
     const StripePaymentFormWithConfig = (props: PaymentFormProps) => {

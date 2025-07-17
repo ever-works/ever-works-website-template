@@ -337,7 +337,7 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
   getClientConfig(): ClientConfig {
     return {
       publicKey: this.apiKey,
-      paymentGateway: 'stripe', // This should be 'lemonsqueezy' but the type only allows 'stripe' | 'solidgate'
+      paymentGateway: 'lemonsqueezy',
       options: {
         storeId: this.storeId,
         testMode: this.testMode,

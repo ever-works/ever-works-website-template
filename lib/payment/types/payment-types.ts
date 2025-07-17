@@ -1,4 +1,4 @@
-import { User } from '@supabase/supabase-js';
+import { User } from '@supabase/auth-js';
 import Stripe from 'stripe';
 
 export interface PriceDetails {
@@ -211,7 +211,7 @@ export interface UpdateSubscriptionParams {
 // Client configuration for frontend integration
 export interface ClientConfig {
   publicKey: string;
-  paymentGateway: 'stripe' | 'solidgate';
+  paymentGateway: 'stripe' | 'solidgate' | 'lemonsqueezy';
   options?: Record<string, any>;
 }
 
@@ -229,7 +229,7 @@ export enum WebhookEventType {
 }
 
 // Supported providers type
-export type SupportedProvider = 'stripe' | 'solidgate';
+export type SupportedProvider = 'stripe' | 'solidgate'|'lemonsqueezy';
 
 // Interface for the configuration of a provider
 export interface PaymentProviderConfig {

@@ -34,21 +34,21 @@ export const createProviderConfigs = (
   }
 ): Record<SupportedProvider, PaymentProviderConfig> => ({
   stripe: {
-    apiKey: stripeConfig?.apiKey!,
-    webhookSecret: stripeConfig?.webhookSecret!,
+    apiKey: stripeConfig?.apiKey || '',
+    webhookSecret: stripeConfig?.webhookSecret || '',
     options: {
       apiVersion: stripeConfig?.options?.apiVersion || '2023-10-16',
       ...stripeConfig?.options
     }
   },
   solidgate: {
-    apiKey: solidgateConfig?.apiKey!,
-    webhookSecret: solidgateConfig?.webhookSecret!,
+    apiKey: solidgateConfig?.apiKey || '',
+    webhookSecret: solidgateConfig?.webhookSecret || '',
     options: solidgateConfig?.options || {}
   },
   lemonsqueezy: {
-    apiKey: lemonsqueezyConfig?.apiKey!,
-    webhookSecret: lemonsqueezyConfig?.webhookSecret!,
+    apiKey: lemonsqueezyConfig?.apiKey || '',
+    webhookSecret: lemonsqueezyConfig?.webhookSecret || '',
     options: lemonsqueezyConfig?.options || {}
   }
 }); 
