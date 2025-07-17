@@ -21,6 +21,7 @@ export type { SupportedProvider } from './lib/payment-provider-factory';
 // Export providers
 export * from './lib/providers/stripe-provider';
 export * from './lib/providers/solidgate-provider';
+export * from './lib/providers/lemonsqueezy-provider';
 
 // Export configurations
 export { createProviderConfigs } from './config/provider-configs';
