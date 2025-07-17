@@ -7,7 +7,7 @@ interface UserActivity {
   type: "comment" | "vote";
   content?: string;
   rating?: number;
-  voteType?: string;
+  voteType?: "upvote" | "downvote";
 }
 
 interface UserActivityResponse {
