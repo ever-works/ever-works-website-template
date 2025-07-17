@@ -3,6 +3,7 @@ import { ItemIcon } from "./item-icon";
 import { ItemContent } from "./item-content";
 import { useTranslations } from "next-intl";
 import { slugify } from "@/lib/utils/slug";
+import { getVideoEmbedUrl } from "@/lib/utils";
 import { ShareButton } from "./share-button";
 import { CommentsSection } from "./comments-section";
 import { VoteButton } from "./vote-button";
@@ -74,13 +75,7 @@ export function ItemDetail({
                 <div className="mb-8">
                   <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
                     <iframe
-                      src={
-                        meta.video_url.includes("youtube.com") || meta.video_url.includes("youtu.be")
-                          ? meta.video_url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")
-                          : meta.video_url.includes("vimeo.com")
-                          ? meta.video_url.replace("vimeo.com/", "player.vimeo.com/video/")
-                          : meta.video_url
-                      }
+                      src={getVideoEmbedUrl(meta.video_url)}
                       title={`Video Demo for ${meta.name}`}
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

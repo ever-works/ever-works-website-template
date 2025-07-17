@@ -203,3 +203,15 @@ export function isCategoryPagePath(pathname: string, href?: string): boolean {
   }
   return pathname.startsWith('/categories/category/');
 }
+
+// Returns the embeddable URL for YouTube or Vimeo, or the original if not recognized
+export function getVideoEmbedUrl(url: string): string {
+  if (!url) return "";
+  if (url.includes("youtube.com") || url.includes("youtu.be")) {
+    return url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/");
+  }
+  if (url.includes("vimeo.com")) {
+    return url.replace("vimeo.com/", "player.vimeo.com/video/");
+  }
+  return url;
+}
