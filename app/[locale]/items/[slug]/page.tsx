@@ -33,10 +33,15 @@ export default async function ItemDetails({
   const { meta, content } = item;
   const categoryName = getCategoriesName(meta.category);
 
+  const metaWithVideo = {
+    ...meta,
+    video_url: "https://www.youtube.com/watch?v=eDqfg_LexCQ",
+  };
+
   return (
     <Container maxWidth="7xl" padding="default">
       <ItemDetail
-        meta={meta}
+        meta={metaWithVideo}
         content={content}
         categoryName={categoryName}
         noContentMessage={t("NO_CONTENT_PROVIDED")}
