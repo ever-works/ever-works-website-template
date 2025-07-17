@@ -24,6 +24,7 @@ export function ActivityItem({
       return <MessageSquare className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
     }
     if (type === "vote") {
+      if (!voteType) return null;
       return voteType === "upvote" ? (
         <ThumbsUp className="h-4 w-4 text-green-600 dark:text-green-400" />
       ) : (
