@@ -40,11 +40,11 @@ function SkillsEditor({ initialSkills = [], onChange }: { initialSkills?: Skill[
       setErrors(prev => ({ ...prev, [idx]: "" }));
     }
     setSkills((prev) => {
-      const updated = prev.map((skill, i) =>
+      const updatedSkills = prev.map((skill, i) =>
         i === idx ? { ...skill, [field]: value } : skill
       );
-      onChange(updated);
-      return updated;
+      onChange(updatedSkills);
+      return updatedSkills;
     });
   };
 
@@ -62,21 +62,21 @@ function SkillsEditor({ initialSkills = [], onChange }: { initialSkills?: Skill[
 
   const addSkill = () => {
     setSkills((prev) => {
-      const updated = [
+      const updatedSkills = [
         ...prev,
         { name: "", category: "Frontend", proficiency: 70 }
       ];
-      onChange(updated);
-      return updated;
+      onChange(updatedSkills);
+      return updatedSkills;
     });
   };
 
   const removeSkill = (idx: number) => {
     if (skills.length > 1) {
       setSkills((prev) => {
-        const updated = prev.filter((_, i) => i !== idx);
-        onChange(updated);
-        return updated;
+        const updatedSkills = prev.filter((_, i) => i !== idx);
+        onChange(updatedSkills);
+        return updatedSkills;
       });
       setErrors(prev => {
         const newErrors = { ...prev };
