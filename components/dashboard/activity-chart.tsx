@@ -26,22 +26,36 @@ export function ActivityChart({ data, isLoading = false }: ActivityChartProps) {
     );
   }
 
+  // Validate data structure
+  const validData = data.filter(item => 
+    item && 
+    typeof item.date === 'string' && 
+    typeof item.submissions === 'number' && 
+    typeof item.views === 'number' && 
+    typeof item.engagement === 'number'
+  );
+
   return (
     <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
         Weekly Activity
       </h3>
       <ResponsiveContainer width="100%" height={250}>
-        <LineChart data={data}>
+        <LineChart 
+          data={validData} 
+          aria-label="Weekly activity chart showing submissions, views, and engagement over time"
+        >
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
           <XAxis 
             dataKey="date" 
             stroke="#6B7280"
             fontSize={12}
+            tick={{ fill: '#6B7280' }}
           />
           <YAxis 
             stroke="#6B7280"
             fontSize={12}
+            tick={{ fill: '#6B7280' }}
           />
           <Tooltip 
             contentStyle={{
