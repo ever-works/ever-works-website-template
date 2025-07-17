@@ -13,6 +13,14 @@ interface StatusBreakdownProps {
   isLoading?: boolean;
 }
 
+// Tooltip style constant for reuse and theme configuration
+const tooltipContentStyle = {
+  backgroundColor: '#1F2937',
+  border: '1px solid #374151',
+  borderRadius: '8px',
+  color: '#F9FAFB',
+};
+
 export function StatusBreakdown({ data, isLoading = false }: StatusBreakdownProps) {
   if (isLoading) {
     return (
@@ -47,12 +55,7 @@ export function StatusBreakdown({ data, isLoading = false }: StatusBreakdownProp
             ))}
           </Pie>
           <Tooltip 
-            contentStyle={{
-              backgroundColor: '#1F2937',
-              border: '1px solid #374151',
-              borderRadius: '8px',
-              color: '#F9FAFB'
-            }}
+            contentStyle={tooltipContentStyle}
           />
           <Legend />
         </PieChart>
