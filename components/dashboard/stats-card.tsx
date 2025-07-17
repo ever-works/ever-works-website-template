@@ -42,7 +42,7 @@ export function StatsCard({
 
   return (
     <div className={`bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700 ${className}`}>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center">
         <div className="flex-1">
           <div className="flex items-center space-x-2">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
