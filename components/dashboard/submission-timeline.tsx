@@ -18,7 +18,7 @@ export function SubmissionTimeline({ data, isLoading = false }: SubmissionTimeli
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div className="animate-pulse">
           <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4 w-1/3"></div>
-          <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div className="h-[250px] bg-gray-200 dark:bg-gray-700 rounded"></div>
         </div>
       </div>
     );
