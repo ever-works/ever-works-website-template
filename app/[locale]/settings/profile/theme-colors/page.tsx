@@ -6,6 +6,7 @@ import { FiArrowLeft, FiCheck, FiDroplet } from "react-icons/fi";
 import Link from "next/link";
 import { useTheme } from "@/hooks/use-theme";
 import { cn } from "@/lib/utils";
+import { useLocale } from "next-intl";
 
 const getThemeButtonClasses = (isSelected: boolean) => cn(
   "group relative p-6 rounded-xl border-2 transition-all duration-300 text-left",
@@ -16,6 +17,7 @@ const getThemeButtonClasses = (isSelected: boolean) => cn(
 );
 
 export default function ThemeColorsPage() {
+  const locale = useLocale();
   const { themeKey, availableThemes, changeTheme } = useTheme();
 
   if (!availableThemes || availableThemes.length === 0) {
@@ -35,7 +37,7 @@ export default function ThemeColorsPage() {
           {/* Header */}
           <div className="flex items-center gap-4">
             <Link
-              href="/settings/profile"
+              href={`/${locale}/settings/profile`}
               className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
             >
               <FiArrowLeft className="w-4 h-4" />
