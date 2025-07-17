@@ -24,7 +24,7 @@ interface Skill {
   proficiency: number;
 }
 
-function SkillsEditor({ initialSkills = [] }: { initialSkills?: Skill[], onChange: (skills: Skill[]) => void }) {
+function SkillsEditor({ initialSkills = [], onChange }: { initialSkills?: Skill[], onChange: (skills: Skill[]) => void }) {
   const [skills, setSkills] = useState<Skill[]>(
     initialSkills.length > 0
       ? initialSkills
@@ -39,11 +39,13 @@ function SkillsEditor({ initialSkills = [] }: { initialSkills?: Skill[], onChang
     if (field === "name" && errors[idx]) {
       setErrors(prev => ({ ...prev, [idx]: "" }));
     }
-    setSkills((prev) =>
-      prev.map((skill, i) =>
+    setSkills((prev) => {
+      const updated = prev.map((skill, i) =>
         i === idx ? { ...skill, [field]: value } : skill
-      )
-    );
+      );
+      onChange(updated);
+      return updated;
+    });
   };
 
   const validateSkill = (idx: number, skillName: string) => {
@@ -59,15 +61,23 @@ function SkillsEditor({ initialSkills = [] }: { initialSkills?: Skill[], onChang
   };
 
   const addSkill = () => {
-    setSkills((prev) => [
-      ...prev,
-      { name: "", category: "Frontend", proficiency: 70 }
-    ]);
+    setSkills((prev) => {
+      const updated = [
+        ...prev,
+        { name: "", category: "Frontend", proficiency: 70 }
+      ];
+      onChange(updated);
+      return updated;
+    });
   };
 
   const removeSkill = (idx: number) => {
     if (skills.length > 1) {
-      setSkills((prev) => prev.filter((_, i) => i !== idx));
+      setSkills((prev) => {
+        const updated = prev.filter((_, i) => i !== idx);
+        onChange(updated);
+        return updated;
+      });
       setErrors(prev => {
         const newErrors = { ...prev };
         delete newErrors[idx];
