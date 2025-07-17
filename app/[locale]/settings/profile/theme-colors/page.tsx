@@ -102,7 +102,7 @@ export default function ThemeColorsPage() {
                           />
                           <span
                             className="inline-block w-8 h-6 rounded-md shadow-sm border border-gray-200 dark:border-gray-600"
-                            style={{ background: theme.colors.accent || theme.colors.primary }}
+                            style={{ background: theme.colors.accent || theme.colors.primary || '#6366f1' }}
                           />
                         </div>
                         <div className="flex-1">
