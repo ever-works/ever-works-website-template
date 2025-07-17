@@ -32,7 +32,7 @@ export function EngagementOverview({ data, isLoading = false }: EngagementOvervi
       </h3>
       <ResponsiveContainer width="100%" height={250}>
         <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--tw-prose-hr, #e5e7eb)" />
           <XAxis 
             dataKey="week" 
             stroke="#6B7280"
