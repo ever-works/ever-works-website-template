@@ -78,28 +78,28 @@ export function DashboardContent({ session }: DashboardContentProps) {
             value={stats?.totalSubmissions || 0}
             description="Content you've created"
             icon={MessageSquare}
-            isLoading={false}
+            isLoading={!stats}
           />
           <StatsCard
             title="Total Views"
             value={stats?.totalViews || 0}
             description="Views on your content"
             icon={TrendingUp}
-            isLoading={false}
+            isLoading={!stats}
           />
           <StatsCard
             title="Votes Received"
             value={stats?.totalVotesReceived || 0}
             description="Votes on your content"
             icon={ThumbsUp}
-            isLoading={false}
+            isLoading={!stats}
           />
           <StatsCard
             title="Comments Received"
             value={stats?.totalCommentsReceived || 0}
             description="Comments on your content"
             icon={Activity}
-            isLoading={false}
+            isLoading={!stats}
           />
         </div>
 
@@ -107,11 +107,11 @@ export function DashboardContent({ session }: DashboardContentProps) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <SubmissionTimeline 
             data={stats?.submissionTimeline || []} 
-            isLoading={false}
+            isLoading={!stats}
           />
           <StatusBreakdown 
             data={stats?.statusBreakdown || []} 
-            isLoading={false}
+            isLoading={!stats}
           />
         </div>
 
@@ -119,7 +119,7 @@ export function DashboardContent({ session }: DashboardContentProps) {
         <div className="mb-8">
           <EngagementOverview 
             data={stats?.engagementOverview || []} 
-            isLoading={false}
+            isLoading={!stats}
           />
         </div>
 
@@ -128,13 +128,13 @@ export function DashboardContent({ session }: DashboardContentProps) {
           <div className="lg:col-span-2">
             <TopItems 
               items={stats?.topItems || []} 
-              isLoading={false}
+              isLoading={!stats}
             />
           </div>
           <div>
             <EngagementChart 
               data={stats?.engagementChartData || []} 
-              isLoading={false}
+              isLoading={!stats}
             />
           </div>
         </div>
@@ -143,7 +143,7 @@ export function DashboardContent({ session }: DashboardContentProps) {
         <div className="mb-8">
           <ActivityChart 
             data={stats?.activityChartData || []} 
-            isLoading={false}
+            isLoading={!stats}
           />
         </div>
 
