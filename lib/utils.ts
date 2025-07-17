@@ -207,11 +207,19 @@ export function isCategoryPagePath(pathname: string, href?: string): boolean {
 // Returns the embeddable URL for YouTube or Vimeo, or the original if not recognized
 export function getVideoEmbedUrl(url: string): string {
   if (!url) return "";
-  if (url.includes("youtube.com") || url.includes("youtu.be")) {
-    return url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/");
-  }
-  if (url.includes("vimeo.com")) {
-    return url.replace("vimeo.com/", "player.vimeo.com/video/");
+  try {
+    const parsedUrl = new URL(url);
+    const host = parsedUrl.host.replace(/^www\./, ""); // Normalize by removing 'www.'
+
+    if (host === "youtube.com" || host === "youtu.be") {
+      return url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/");
+    }
+    if (host === "vimeo.com") {
+      return url.replace("vimeo.com/", "player.vimeo.com/video/");
+    }
+  } catch {
+    // If URL parsing fails, return the original string
+    return url;
   }
   return url;
 }
