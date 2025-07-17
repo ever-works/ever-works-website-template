@@ -31,7 +31,7 @@ export function SubmissionTimeline({ data, isLoading = false }: SubmissionTimeli
       </h3>
       <ResponsiveContainer width="100%" height={250}>
         <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--tw-prose-hr, #e5e7eb)" />
           <XAxis 
             dataKey="month" 
             stroke="#6B7280"
