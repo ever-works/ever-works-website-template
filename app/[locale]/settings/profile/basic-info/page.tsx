@@ -24,13 +24,13 @@ interface Skill {
   proficiency: number;
 }
 
-function SkillsEditor({ initialSkills = [] }: { initialSkills?: Skill[] }) {
+function SkillsEditor({ initialSkills = [] }: { initialSkills?: Skill[], onChange: (skills: Skill[]) => void }) {
   const [skills, setSkills] = useState<Skill[]>(
     initialSkills.length > 0
       ? initialSkills
       : [
-          { name: "", category: "Frontend", proficiency: 80 }
-        ]
+        { name: "", category: "Frontend", proficiency: 80 }
+      ]
   );
   const [errors, setErrors] = useState<Record<number, string>>({});
 
@@ -149,6 +149,11 @@ const profileSchema = z.object({
   jobTitle: z.string().max(100),
   website: z.string().url("Must be a valid URL").or(z.literal("")),
   interests: z.string().max(200),
+  skills: z.array(z.object({
+    name: z.string().min(1, "Skill name is required"),
+    category: z.enum(["Frontend", "Backend", "Tools & Frameworks", "Other"]),
+    proficiency: z.number().min(0).max(100),
+  })).optional(),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -157,6 +162,11 @@ export default function BasicInfoPage() {
   // Bypass auth for testing
   const session = { user: { name: "John Doe", email: "john@example.com" } };
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  // Skills state for integration
+  const [skills, setSkills] = useState<Skill[]>([
+    { name: "", category: "Frontend", proficiency: 80 }
+  ]);
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -191,10 +201,12 @@ export default function BasicInfoPage() {
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
+      // Merge skills into form data
+      const formDataWithSkills = { ...data, skills };
       // Implement API call to save profile data
-      // await updateProfile(data);
+      // await updateProfile(formDataWithSkills);
       // Show success message
-      alert(`Profile updated! (demo mode): ${JSON.stringify(data)}`);
+      alert(`Profile updated! (demo mode): ${JSON.stringify(formDataWithSkills)}`);
     } catch (error) {
       console.error("Error updating profile:", error);
       // Show error message
@@ -225,7 +237,7 @@ export default function BasicInfoPage() {
               Basic Information
             </h1>
             <p className="text-gray-600 dark:text-gray-300 text-lg max-w-3xl mx-auto leading-relaxed">
-              Update your personal information and contact details. This information will be displayed on your public profile 
+              Update your personal information and contact details. This information will be displayed on your public profile
               and helps others discover and connect with you.
             </p>
           </div>
@@ -263,11 +275,11 @@ export default function BasicInfoPage() {
                   <label htmlFor="avatar" className="inline-flex items-center gap-2 px-4 py-2 bg-theme-primary-600 hover:bg-theme-primary-700 text-white rounded-lg cursor-pointer transition-colors">
                     <FiUpload className="w-4 h-4" />
                     Upload Avatar
-                    <input 
-                      id="avatar" 
-                      name="avatar" 
-                      type="file" 
-                      accept="image/*" 
+                    <input
+                      id="avatar"
+                      name="avatar"
+                      type="file"
+                      accept="image/*"
                       className="hidden"
                       onChange={handleAvatarChange}
                     />
@@ -339,7 +351,7 @@ export default function BasicInfoPage() {
                 </div>
 
                 {/* Advanced Skills Editor */}
-                <SkillsEditor />
+                <SkillsEditor initialSkills={skills} onChange={setSkills} />
 
                 {/* Interests */}
                 <div className="space-y-4">
