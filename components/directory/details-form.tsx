@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { getVideoEmbedUrl } from "@/lib/utils";
 
 interface ProductLink {
   id: string;
@@ -584,28 +585,38 @@ export function DetailsForm({
                       )}
                     />
                   </div>
-                  {/* Video Preview */}
-                  {formData.video_url &&
-                    (formData.video_url.includes("youtube.com") || formData.video_url.includes("youtu.be") || formData.video_url.includes("vimeo.com")) && (
-                      <div className="mt-4">
-                        <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-2xl shadow-lg">
-                          <iframe
-                            src={
-                              formData.video_url.includes("youtube.com") || formData.video_url.includes("youtu.be")
-                                ? formData.video_url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")
-                                : formData.video_url.includes("vimeo.com")
-                                ? formData.video_url.replace("vimeo.com/", "player.vimeo.com/video/")
-                                : formData.video_url
-                            }
-                            title="Video Preview"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            className="absolute top-0 left-0 w-full h-full"
-                          ></iframe>
+                  {/* Video Preview - only for whitelisted hosts */}
+                  {formData.video_url && (() => {
+                    try {
+                      const parsedUrl = new URL(formData.video_url);
+                      const allowedHosts = [
+                        "youtube.com",
+                        "www.youtube.com",
+                        "youtu.be",
+                        "vimeo.com",
+                        "www.vimeo.com"
+                      ];
+                      if (!allowedHosts.includes(parsedUrl.hostname)) {
+                        return null;
+                      }
+                      return (
+                        <div className="mt-4">
+                          <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-2xl shadow-lg">
+                            <iframe
+                              src={getVideoEmbedUrl(formData.video_url)}
+                              title="Video Preview"
+                              frameBorder="0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              className="absolute top-0 left-0 w-full h-full"
+                            ></iframe>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      );
+                    } catch {
+                      return null;
+                    }
+                  })()}
                 </div>
 
                 {/* Category */}
