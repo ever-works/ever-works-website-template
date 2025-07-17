@@ -126,22 +126,26 @@ export function useUserActivity(options: UseUserActivityOptions = {}) {
   return useQuery<UserActivityResponse>({
     queryKey: ["user-activity", page, limit],
     queryFn: async () => {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      const startIndex = (page - 1) * limit;
-      const endIndex = startIndex + limit;
-      const paginatedActivities = mockActivities.slice(startIndex, endIndex);
-      
-      return {
-        activities: paginatedActivities,
-        pagination: {
-          page,
-          limit,
-          total: mockActivities.length,
-          totalPages: Math.ceil(mockActivities.length / limit),
-        },
-      };
+      try {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        const paginatedActivities = mockActivities.slice(startIndex, endIndex);
+        
+        return {
+          activities: paginatedActivities,
+          pagination: {
+            page,
+            limit,
+            total: mockActivities.length,
+            totalPages: Math.ceil(mockActivities.length / limit),
+          },
+        };
+      } catch (error) {
+        throw new Error(`Failed to fetch user activity: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
     },
     enabled,
     staleTime: 2 * 60 * 1000, // 2 minutes
