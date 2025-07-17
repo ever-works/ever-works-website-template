@@ -393,7 +393,7 @@ export default function BasicInfoPage() {
                       placeholder="City, Country"
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                       {...register("location")}
-                      defaultValue="San Francisco, CA"
+                      defaultValue="" // TODO: Use real user data from session or database
                     />
                     {errors.location && (
                       <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>
@@ -413,7 +413,7 @@ export default function BasicInfoPage() {
                       placeholder="Your company name"
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                       {...register("company")}
-                      defaultValue="Tech Corp"
+                      defaultValue="" // TODO: Use real user data from session or database
                     />
                     {errors.company && (
                       <p className="text-red-500 text-sm mt-1">{errors.company.message}</p>
@@ -432,7 +432,7 @@ export default function BasicInfoPage() {
                       placeholder="Your job title"
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                       {...register("jobTitle")}
-                      defaultValue="Senior Software Engineer"
+                      defaultValue="" // TODO: Use real user data from session or database
                     />
                     {errors.jobTitle && (
                       <p className="text-red-500 text-sm mt-1">{errors.jobTitle.message}</p>
@@ -452,7 +452,7 @@ export default function BasicInfoPage() {
                       placeholder="https://yourwebsite.com"
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                       {...register("website")}
-                      defaultValue="https://johndoe.dev"
+                      defaultValue="" // TODO: Use real user data from session or database
                     />
                     {errors.website && (
                       <p className="text-red-500 text-sm mt-1">{errors.website.message}</p>
