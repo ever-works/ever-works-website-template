@@ -24,15 +24,7 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
     }
   };
 
-  const handleContinue = () => {
-    if (!selectedPlan) return;
 
-    if (selectedPlan === "free") {
-      router.push("/submit?plan=free&step=details");
-    } else {
-      router.push(`/submit?plan=${selectedPlan}&step=payment`);
-    }
-  };
 
   const freePlanFeatures: PlanFeature[] = [
     { included: true, text: t("FREE_PLAN_FEATURES.GET_3_DOFOLLOW_LINKS") },
@@ -136,7 +128,8 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
                 isSelected={selectedPlan === "free"}
                 onSelect={handleSelectPlan}
                 actionText="Submit to review"
-                actionHref="/submit?plan=free&step=details"
+                actionHref="/submit"
+                
               />
             </div>
           </div>
@@ -172,7 +165,7 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
                 onSelect={handleSelectPlan}
                 actionText="Pay & Publish Right Now"
                 actionVariant="default"
-                actionHref="/submit?plan=pro&step=payment"
+                actionHref="/submit"
               />
             </div>
           </div>
@@ -201,7 +194,7 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
                 onSelect={handleSelectPlan}
                 actionText="Pay & Publish Right Now"
                 actionVariant="default"
-                actionHref="/submit?plan=sponsor&step=payment"
+                actionHref="/submit"
               />
             </div>
           </div>
@@ -230,7 +223,7 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 
               <Button
                 size="lg"
-                onPress={handleContinue}
+                onClick={() => router.push("/submit")}
                 className="h-14 px-12 rounded-xl font-semibold bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 hover:from-theme-primary-600 hover:via-purple-600 hover:to-theme-primary-700 text-white transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
               >
                 <div className="flex items-center gap-3">
