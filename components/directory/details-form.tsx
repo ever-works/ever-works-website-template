@@ -84,7 +84,6 @@ const TAGS = [
   "Business Tools",
 ];
 
-// Configuration des étapes
 const STEPS = [
   {
     id: 1,
