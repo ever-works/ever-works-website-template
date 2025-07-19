@@ -1,24 +1,9 @@
 import { cn } from "@/lib/utils";
 import { Check, X, Plus } from "lucide-react";
+import { FormData } from "./type";
 
-interface ProductLink {
-  id: string;
-  url: string;
-  label: string;
-  type: "main" | "secondary";
-  icon?: string;
-}
 
-interface FormData {
-  name: string;
-  link: string;
-  links: ProductLink[];
-  category: string;
-  tags: string[];
-  description: string;
-  introduction: string;
-  [key: string]: any;
-}
+
 
 interface InputLinkProps {
   formData: FormData;
