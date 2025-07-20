@@ -24,8 +24,8 @@ export function MonetizationSection() {
   const [activeMethod, setActiveMethod] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
 
-  const monetizationMethods: MonetizationMethod[] = [
-    {
+const monetizationMethods: MonetizationMethod[] = [
+  {
       id: "affiliation",
       title: t('MONETIZATION_AFFILIATION_TITLE'),
       icon: "🤝",
@@ -52,8 +52,8 @@ export function MonetizationSection() {
         "Commission rates vary",
         "Requires quality content"
       ]
-    },
-    {
+  },
+  {
       id: "paid-submissions",
       title: t('MONETIZATION_PAID_SUBMISSION_TITLE'),
       icon: "💎",
@@ -80,11 +80,11 @@ export function MonetizationSection() {
         "Content moderation needed",
         "Payment processing fees"
       ]
-    },
-    {
+  },
+  {
       id: "sponsored-ads",
       title: t('MONETIZATION_SPONSORED_ADS_TITLE'),
-      icon: "🎯",
+    icon: "🎯",
       description: t('MONETIZATION_SPONSORED_ADS_DESC'),
       revenue: "$3K - $12K/month",
       setupTime: "1 hour",
@@ -116,7 +116,7 @@ export function MonetizationSection() {
     { label: "Active Users", value: "12.5K", change: "+15%", period: "monthly" },
     { label: "Conversion Rate", value: "4.2%", change: "+8%", period: "monthly" },
     { label: "Platform Growth", value: "156%", change: "+34%", period: "yearly" }
-  ];
+];
 
   return (
     <section className="py-20 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black">
@@ -336,8 +336,8 @@ export function MonetizationSection() {
                 </div>
               )}
             </div>
-          </div>
-        </div>
+              </div>
+              </div>
 
         {/* Call to Action */}
         <div className="text-center">

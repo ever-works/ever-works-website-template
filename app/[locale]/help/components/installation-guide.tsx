@@ -183,19 +183,19 @@ pnpm start`,
   return (
     <section className="py-20 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+          {/* Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 rounded-full text-green-700 dark:text-green-300 text-sm font-medium mb-6">
             <span>⚡</span>
-            {t("INSTALLATION_GUIDE_TITLE")}
+              {t("INSTALLATION_GUIDE_TITLE")}
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white">
             {t("INSTALLATION_GUIDE_SUBTITLE")}
-          </h2>
+            </h2>
           <p className="text-slate-600 dark:text-slate-400 text-lg max-w-3xl mx-auto leading-relaxed">
             Follow these steps to get your web platform up and running in minutes
-          </p>
-        </div>
+            </p>
+          </div>
 
         {/* Progress Bar */}
         <div className="mb-12">
@@ -213,7 +213,7 @@ pnpm start`,
               style={{ width: `${progressPercentage}%` }}
             ></div>
           </div>
-        </div>
+          </div>
 
         {/* Main Content */}
         <div className="grid lg:grid-cols-3 gap-8">
@@ -243,8 +243,8 @@ pnpm start`,
                       </div>
                       <div className="flex-1">
                         <h3 className={`font-semibold ${step.color}`}>
-                          {step.title}
-                        </h3>
+                      {step.title}
+                    </h3>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-xs text-slate-500 dark:text-slate-400">
                             {step.estimatedTime}
@@ -277,7 +277,7 @@ pnpm start`,
                     {completedSteps.includes(index) && (
                       <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
                         <span className="text-white text-xs">✓</span>
-                      </div>
+                    </div>
                     )}
                   </div>
 
@@ -288,7 +288,7 @@ pnpm start`,
                 </div>
               ))}
             </div>
-          </div>
+            </div>
 
           {/* Code Preview */}
           <div className="lg:col-span-2">
@@ -298,10 +298,10 @@ pnpm start`,
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="flex gap-2">
-                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                      <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    </div>
+                          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                          <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                        </div>
                     <span className="text-slate-600 dark:text-slate-400 text-sm font-medium">
                       {installationSteps[activeStep].codeLanguage}
                     </span>
@@ -323,18 +323,18 @@ pnpm start`,
                       </span>
                     </div>
                   </div>
-                </div>
-              </div>
+                        </div>
+                      </div>
 
-              {/* Code Content */}
+                      {/* Code Content */}
               <div className="p-6">
                 <pre className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed overflow-x-auto">
-                  <code>
+                          <code>
                     {installationSteps[activeStep].code.split('\n').map((line, index) => (
-                      <div key={index} className="flex">
+                              <div key={index} className="flex">
                         <span className="text-slate-500 dark:text-slate-600 mr-4 select-none w-8 text-right">
-                          {index + 1}
-                        </span>
+                                  {index + 1}
+                                </span>
                         <span className={
                           line.startsWith('#') ? 'text-slate-500 dark:text-slate-500' :
                           line.includes('pnpm') || line.includes('npm') || line.includes('yarn') ? 'text-green-600 dark:text-green-400' :
@@ -344,13 +344,13 @@ pnpm start`,
                           line.includes('=') ? 'text-purple-600 dark:text-purple-400' :
                           'text-slate-800 dark:text-slate-200'
                         }>
-                          {line}
-                        </span>
+                                  {line}
+                                </span>
+                              </div>
+                            ))}
+                          </code>
+                        </pre>
                       </div>
-                    ))}
-                  </code>
-                </pre>
-              </div>
 
               {/* Navigation */}
               <div className="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-t border-slate-200 dark:border-slate-700">
@@ -372,7 +372,7 @@ pnpm start`,
                     >
                       {completedSteps.includes(activeStep) ? "✓ Completed" : "Mark Complete"}
                     </Button>
-                  </div>
+                        </div>
 
                   <Button
                     onClick={handleNextStep}
@@ -384,14 +384,14 @@ pnpm start`,
                 </div>
               </div>
             </div>
+            </div>
           </div>
-        </div>
 
         {/* Tips Section */}
         <div className="mt-16">
           <h3 className="text-2xl font-bold text-center mb-12 text-slate-900 dark:text-white">
             💡 Quick Tips for Success
-          </h3>
+            </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {tips.map((tip, index) => (
               <div
@@ -406,11 +406,11 @@ pnpm start`,
                 </h4>
                 <p className="text-slate-600 dark:text-slate-400 text-sm">
                   {tip.description}
-                </p>
+                  </p>
               </div>
             ))}
-          </div>
-        </div>
+                </div>
+              </div>
 
         {/* Call to Action */}
         <div className="mt-16 text-center">

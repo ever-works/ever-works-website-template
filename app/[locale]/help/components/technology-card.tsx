@@ -138,38 +138,38 @@ export function TechnologyCard({
       <div className="p-6">
         {/* Header */}
         <div className="flex items-start gap-4 mb-4">
-          <div className="flex-shrink-0 relative">
+        <div className="flex-shrink-0 relative">
             <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${colors.bg} flex items-center justify-center text-white text-2xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
-              {icon}
-            </div>
-            <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            {icon}
           </div>
+            <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </div>
 
-          <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between">
-              <div>
+            <div>
                 <h3 className="font-bold text-xl text-slate-900 dark:text-white mb-1 group-hover:text-opacity-80 transition-colors duration-300">
-                  {name}
-                </h3>
+                {name}
+              </h3>
                 <div className="flex items-center gap-3">
                   <span className="text-xs uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">
-                    {category}
-                  </span>
-                  {version && (
+                  {category}
+                </span>
+                {version && (
                     <span className="text-xs px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-full font-mono border border-slate-200 dark:border-slate-600">
-                      v{version}
-                    </span>
-                  )}
+                    v{version}
+                  </span>
+                )}
                 </div>
+              </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Description */}
+          {/* Description */}
         <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4">
-          {description}
-        </p>
+            {description}
+          </p>
 
         {/* Usage Progress */}
         <div className="mb-4">
@@ -192,13 +192,13 @@ export function TechnologyCard({
         {/* Features Tags */}
         <div className="flex flex-wrap gap-2 mb-4">
           {getFeatureTags(name).slice(0, 3).map((tag, index) => (
-            <span 
-              key={index} 
+              <span 
+                key={index} 
               className="px-2 py-1 text-xs bg-slate-100 dark:bg-slate-700 rounded-md border border-slate-200 dark:border-slate-600 font-medium text-slate-700 dark:text-slate-300 transition-all duration-300 hover:bg-slate-200 dark:hover:bg-slate-600"
-            >
-              {tag}
-            </span>
-          ))}
+              >
+                {tag}
+              </span>
+            ))}
           {getFeatureTags(name).length > 3 && (
             <span className="px-2 py-1 text-xs bg-slate-100 dark:bg-slate-700 rounded-md border border-slate-200 dark:border-slate-600 font-medium text-slate-700 dark:text-slate-300">
               +{getFeatureTags(name).length - 3} more
@@ -241,7 +241,7 @@ export function TechnologyCard({
                   {tab.label}
                 </button>
               ))}
-            </div>
+      </div>
 
             {/* Tab Content */}
             <div className="space-y-4">
@@ -320,8 +320,8 @@ export function TechnologyCard({
                         <div 
                           className={`h-full bg-gradient-to-r ${colors.bg} transition-all duration-1000 ease-out`}
                           style={{ width: `${value}%` }}
-                        ></div>
-                      </div>
+          ></div>
+        </div>
                     </div>
                   ))}
                 </div>
@@ -352,7 +352,7 @@ export function TechnologyCard({
                 </div>
               )}
             </div>
-          </div>
+        </div>
         )}
       </div>
 

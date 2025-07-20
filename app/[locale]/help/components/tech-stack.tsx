@@ -358,8 +358,8 @@ export function TechStack() {
                 Avg Performance
               </div>
             </div>
-          </div>
-        </div>
+                  </div>
+                </div>
 
         {/* Controls */}
         <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl p-6 mb-8">
@@ -467,8 +467,8 @@ export function TechStack() {
                 </p>
               </div>
             )}
-          </div>
-        </div>
+              </div>
+              </div>
 
         {/* Bottom CTA */}
         <div className="mt-16 text-center">

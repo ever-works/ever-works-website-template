@@ -85,7 +85,7 @@ STRIPE_SECRET_KEY=your_stripe_secret`,
     {
       id: "deploy",
       number: "03",
-      title: t('HOW_IT_WORKS_STEP3_TITLE'), 
+      title: t('HOW_IT_WORKS_STEP3_TITLE'),
       description: t('HOW_IT_WORKS_STEP3_DESC'),
       icon: "🚀",
       color: "text-green-600 dark:text-green-400",
@@ -135,24 +135,24 @@ vercel --prod`,
   return (
     <section className="py-20 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-16">
+          {/* Header */}
+          <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-blue-700 dark:text-blue-300 text-sm font-medium mb-6">
             <span>🎯</span>
-            {t('HOW_IT_WORKS_TITLE')}
+              {t('HOW_IT_WORKS_TITLE')}
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white">
-            {t('HOW_IT_WORKS_SUBTITLE')}
-          </h2>
+              {t('HOW_IT_WORKS_SUBTITLE')}
+            </h2>
           <p className="text-slate-600 dark:text-slate-400 text-lg max-w-3xl mx-auto leading-relaxed">
-            {t('HOW_IT_WORKS_DESCRIPTION')}
-          </p>
-        </div>
+              {t('HOW_IT_WORKS_DESCRIPTION')}
+            </p>
+          </div>
 
         {/* Interactive Steps */}
         <div className="grid lg:grid-cols-3 gap-8 mb-16">
-          {steps.map((step, index) => (
-            <div
+              {steps.map((step, index) => (
+                <div
               key={step.id}
               className={`relative group cursor-pointer transition-all duration-300 ${
                 activeStep === index 
@@ -160,7 +160,7 @@ vercel --prod`,
                   : 'hover:transform hover:scale-102'
               }`}
               onClick={() => setActiveStep(index)}
-            >
+                >
               {/* Step Card */}
               <div className={`relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 border-2 transition-all duration-300 ${
                 activeStep === index
@@ -191,7 +191,7 @@ vercel --prod`,
                       {feature}
                     </div>
                   ))}
-                </div>
+                  </div>
 
                 {/* Active Indicator */}
                 {activeStep === index && (
@@ -199,10 +199,10 @@ vercel --prod`,
                     <div className="w-2 h-2 bg-white rounded-full"></div>
                   </div>
                 )}
-              </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
         {/* Code Preview */}
         <div className="mb-16">
@@ -212,10 +212,10 @@ vercel --prod`,
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="flex gap-2">
-                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  </div>
+                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    </div>
                   <span className="text-slate-600 dark:text-slate-400 text-sm font-medium">
                     {steps[activeStep].codeLanguage}
                   </span>
@@ -225,33 +225,33 @@ vercel --prod`,
                     Step {activeStep + 1} of {steps.length}
                   </span>
                 </div>
-              </div>
-            </div>
+                  </div>
+                  </div>
 
-            {/* Code Content */}
+                  {/* Code Content */}
             <div className="p-6">
               <pre className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed overflow-x-auto">
-                <code>
+                      <code>
                   {steps[activeStep].code.split('\n').map((line, index) => (
-                    <div key={index} className="flex">
+                          <div key={index} className="flex">
                       <span className="text-slate-500 dark:text-slate-600 mr-4 select-none w-8 text-right">
                         {index + 1}
-                      </span>
-                      <span className={
+                            </span>
+                            <span className={
                         line.startsWith('#') ? 'text-slate-500 dark:text-slate-500' :
                         line.includes('=') ? 'text-blue-600 dark:text-blue-400' :
                         line.includes('pnpm') || line.includes('git') ? 'text-green-600 dark:text-green-400' :
                         'text-slate-800 dark:text-slate-200'
-                      }>
-                        {line}
-                      </span>
-                    </div>
-                  ))}
-                </code>
-              </pre>
-            </div>
-          </div>
-        </div>
+                            }>
+                              {line}
+                            </span>
+                          </div>
+                        ))}
+                      </code>
+                    </pre>
+                  </div>
+                </div>
+              </div>
 
         {/* Benefits Grid */}
         <div className="mb-16">
@@ -273,8 +273,8 @@ vercel --prod`,
                 </p>
               </div>
             ))}
-          </div>
-        </div>
+              </div>
+            </div>
 
         {/* Call to Action */}
         <div className="text-center">
@@ -292,10 +292,10 @@ vercel --prod`,
               <Button variant="outline" className="border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold px-8 py-3 rounded-xl transition-all duration-300">
                 View Documentation
               </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
     </section>
   );
 } 

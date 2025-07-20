@@ -87,21 +87,21 @@ export function HeroLanding() {
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-full text-sm font-medium text-slate-700 dark:text-slate-300 transition-all duration-700 opacity-100 translate-y-0">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
               {t('HERO_BADGE_TEXT')}
-            </div>
+        </div>
 
             {/* Main Heading */}
             <div className="space-y-6 transition-all duration-700 delay-200 opacity-100 translate-y-0">
-              <h1 className="text-5xl lg:text-6xl xl:text-7xl font-bold text-slate-900 dark:text-white leading-tight">
+              <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-slate-900 dark:text-white leading-tight">
                 {t('HERO_MAIN_TITLE')}
                 <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-orange-600 bg-clip-text text-transparent">
                   {t('HERO_MAIN_TITLE_HIGHLIGHT')}
-                </span>
-              </h1>
-              
+            </span>
+          </h1>
+
               <p className="text-xl text-slate-600 dark:text-slate-400 leading-relaxed max-w-lg">
                 {t('HERO_SUBTITLE')}
               </p>
-            </div>
+          </div>
 
             {/* Feature Showcase */}
             <div className="space-y-4 transition-all duration-700 delay-400 opacity-100 translate-y-0">
@@ -161,7 +161,7 @@ export function HeroLanding() {
                   <div className="text-sm text-slate-600 dark:text-slate-400">
                     {stat.label}
                   </div>
-                </div>
+              </div>
               ))}
             </div>
           </div>
@@ -170,17 +170,17 @@ export function HeroLanding() {
           <div className="relative transition-all duration-700 delay-1000 opacity-100 translate-y-0">
             {/* Main Demo Container */}
             <div className="relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-slate-200 dark:border-slate-700">
-              {/* Browser Header */}
+                {/* Browser Header */}
               <div className="flex items-center gap-3 mb-6">
-                <div className="flex gap-2">
+                  <div className="flex gap-2">
                   <div className="w-3 h-3 bg-red-500 rounded-full"></div>
                   <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                 </div>
                 <div className="flex-1 bg-slate-100 dark:bg-slate-700 rounded-lg px-4 py-2 text-sm text-slate-600 dark:text-slate-400">
                   ever.works
-                </div>
-              </div>
+                  </div>
+                    </div>
 
               {/* Demo Content */}
               <div className="space-y-6">
@@ -208,7 +208,7 @@ export function HeroLanding() {
                     <div key={index} className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                       <div className={`w-8 h-8 ${item.color} rounded-lg flex items-center justify-center text-white text-sm`}>
                         {item.icon}
-                      </div>
+                    </div>
                       <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
                         {item.title}
                       </span>

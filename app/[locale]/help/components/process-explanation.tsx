@@ -147,7 +147,7 @@ export const ProcessExplanation = () => {
         </div>
         <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
           {t('HOW_IT_WORKS_PROCESS_TITLE')}
-        </h3>
+      </h3>
         <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl mx-auto">
           Follow our proven 4-step process to get your platform up and running quickly
         </p>
@@ -162,7 +162,7 @@ export const ProcessExplanation = () => {
           <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
             {Math.round(progress)}%
           </span>
-        </div>
+          </div>
         <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
           <div 
             className="bg-gradient-to-r from-blue-500 to-cyan-500 h-full rounded-full transition-all duration-1000 ease-out"
@@ -209,11 +209,11 @@ export const ProcessExplanation = () => {
                     <div className="flex items-center gap-4">
                       <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${step.gradient} flex items-center justify-center text-white text-xl shadow-lg`}>
                         {step.icon}
-                      </div>
+          </div>
                       <div>
                         <h4 className={`text-lg font-bold mb-1 ${step.color}`}>
                           {step.title}
-                        </h4>
+          </h4>
                         <div className="flex items-center gap-3">
                           <span className="text-xs px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400">
                             {step.duration}
@@ -295,7 +295,7 @@ export const ProcessExplanation = () => {
             );
           })}
         </div>
-      </div>
+          </div>
 
       {/* Bottom CTA */}
       <div className="mt-12 text-center">
