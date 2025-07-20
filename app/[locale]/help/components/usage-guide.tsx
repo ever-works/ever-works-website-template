@@ -8,7 +8,7 @@ interface UsageSection {
   title: string;
   description: string;
   content: {
-    type: 'code' | 'screenshot' | 'text';
+    type: "code" | "screenshot" | "text";
     value: string;
     language?: string;
   }[];
@@ -25,11 +25,11 @@ export function UsageGuide() {
       description: t("USAGE_CREATING_ITEMS_DESC"),
       content: [
         {
-          type: 'text',
-          value: t("USAGE_CREATING_ITEMS_TEXT")
+          type: "text",
+          value: t("USAGE_CREATING_ITEMS_TEXT"),
         },
         {
-          type: 'code',
+          type: "code",
           value: `// Example: Creating an item programmatically
 import { createItem } from '@/lib/api';
 
@@ -46,9 +46,9 @@ const newItem = await createItem({
     "API integration"
   ]
 });`,
-          language: 'typescript'
-        }
-      ]
+          language: "typescript",
+        },
+      ],
     },
     {
       id: "customizing-design",
@@ -56,11 +56,11 @@ const newItem = await createItem({
       description: t("USAGE_CUSTOMIZING_DESIGN_DESC"),
       content: [
         {
-          type: 'text',
-          value: t("USAGE_CUSTOMIZING_DESIGN_TEXT")
+          type: "text",
+          value: t("USAGE_CUSTOMIZING_DESIGN_TEXT"),
         },
         {
-          type: 'code',
+          type: "code",
           value: `// Example: Customizing theme colors
 export const customTheme = {
   primary: "#3b82f6",
@@ -80,9 +80,9 @@ function MyComponent() {
     </div>
   );
 }`,
-          language: 'typescript'
-        }
-      ]
+          language: "typescript",
+        },
+      ],
     },
     {
       id: "managing-users",
@@ -90,11 +90,11 @@ function MyComponent() {
       description: t("USAGE_MANAGING_USERS_DESC"),
       content: [
         {
-          type: 'text',
-          value: t("USAGE_MANAGING_USERS_TEXT")
+          type: "text",
+          value: t("USAGE_MANAGING_USERS_TEXT"),
         },
         {
-          type: 'code',
+          type: "code",
           value: `// Example: User role middleware
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
@@ -116,9 +116,9 @@ export async function middleware(request: NextRequest) {
   
   return NextResponse.next();
 }`,
-          language: 'typescript'
-        }
-      ]
+          language: "typescript",
+        },
+      ],
     },
     {
       id: "payments-setup",
@@ -126,11 +126,11 @@ export async function middleware(request: NextRequest) {
       description: t("USAGE_PAYMENTS_SETUP_DESC"),
       content: [
         {
-          type: 'text',
-          value: t("USAGE_PAYMENTS_SETUP_TEXT")
+          type: "text",
+          value: t("USAGE_PAYMENTS_SETUP_TEXT"),
         },
         {
-          type: 'code',
+          type: "code",
           value: `// Example: Creating a payment intent
 import { stripe } from '@/lib/stripe';
 
@@ -161,9 +161,9 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Payment failed' }, { status: 500 });
   }
 }`,
-          language: 'typescript'
-        }
-      ]
+          language: "typescript",
+        },
+      ],
     },
     {
       id: "deployment",
@@ -171,11 +171,11 @@ export async function POST(request: Request) {
       description: t("USAGE_DEPLOYMENT_DESC"),
       content: [
         {
-          type: 'text',
-          value: t("USAGE_DEPLOYMENT_TEXT")
+          type: "text",
+          value: t("USAGE_DEPLOYMENT_TEXT"),
         },
         {
-          type: 'code',
+          type: "code",
           value: `# Vercel Deployment
 npx vercel
 
@@ -189,10 +189,10 @@ docker run -p 3000:3000 my-platform
 # Manual deployment
 npm run build
 npm start`,
-          language: 'bash'
-        }
-      ]
-    }
+          language: "bash",
+        },
+      ],
+    },
   ];
 
   return (
@@ -231,7 +231,7 @@ npm start`,
             <div
               key={section.id}
               className={`transition-all duration-300 ${
-                activeSection === section.id ? 'block' : 'hidden'
+                activeSection === section.id ? "block" : "hidden"
               }`}
             >
               <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-6 shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300">
@@ -247,7 +247,7 @@ npm start`,
               <div className="space-y-6">
                 {section.content.map((content, index) => (
                   <div key={index}>
-                    {content.type === 'text' && (
+                    {content.type === "text" && (
                       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300">
                         <p className="text-gray-600 dark:text-gray-300 leading-relaxed transition-colors duration-300">
                           {content.value}
@@ -255,7 +255,7 @@ npm start`,
                       </div>
                     )}
 
-                    {content.type === 'code' && (
+                    {content.type === "code" && (
                       <div className="bg-gray-900 dark:bg-gray-950 rounded-lg border border-gray-700 dark:border-gray-800 overflow-hidden shadow-xl transition-all duration-300">
                         {/* Code Header */}
                         <div className="bg-gray-800 dark:bg-gray-900 px-4 py-3 flex items-center justify-between border-b border-gray-700 dark:border-gray-800 transition-all duration-300">
@@ -265,7 +265,7 @@ npm start`,
                             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                           </div>
                           <div className="text-gray-400 dark:text-gray-500 text-sm font-mono transition-colors duration-300">
-                            {content.language || 'code'}
+                            {content.language || "code"}
                           </div>
                           <div className="w-12"></div>
                         </div>
@@ -274,39 +274,69 @@ npm start`,
                         <div className="p-4 font-mono text-sm overflow-x-auto">
                           <pre className="text-gray-300 dark:text-gray-400 leading-relaxed transition-colors duration-300">
                             <code>
-                              {content.value.split('\n').map((line, lineIndex) => (
-                                <div key={lineIndex} className="flex">
-                                  <span className="text-gray-600 dark:text-gray-500 mr-4 select-none w-8 text-right transition-colors duration-300">
-                                    {lineIndex + 1}
-                                  </span>
-                                  <span className={`transition-colors duration-300 ${
-                                    line.trim().startsWith('//') || line.trim().startsWith('#') ? 'text-gray-500 dark:text-gray-600' :
-                                    line.includes('import') || line.includes('export') ? 'text-blue-400 dark:text-blue-500' :
-                                    line.includes('const') || line.includes('let') || line.includes('var') ? 'text-purple-400 dark:text-purple-500' :
-                                    line.includes('function') || line.includes('async') || line.includes('await') ? 'text-green-400 dark:text-green-500' :
-                                    line.includes('return') ? 'text-yellow-400 dark:text-yellow-500' :
-                                    line.includes('npm') || line.includes('pnpm') || line.includes('yarn') ? 'text-green-400 dark:text-green-500' :
-                                    line.includes('docker') || line.includes('vercel') ? 'text-cyan-400 dark:text-cyan-500' :
-                                    'text-gray-300 dark:text-gray-400'
-                                  }`}>
-                                    {line}
-                                  </span>
-                                </div>
-                              ))}
+                              {content.value
+                                .split("\n")
+                                .map((line, lineIndex) => (
+                                  <div key={lineIndex} className="flex">
+                                    <span className="text-gray-600 dark:text-gray-500 mr-4 select-none w-8 text-right transition-colors duration-300">
+                                      {lineIndex + 1}
+                                    </span>
+                                    <span
+                                      className={`transition-colors duration-300 ${
+                                        line.trim().startsWith("//") ||
+                                        line.trim().startsWith("#")
+                                          ? "text-gray-500 dark:text-gray-600"
+                                          : line.includes("import") ||
+                                              line.includes("export")
+                                            ? "text-blue-400 dark:text-blue-500"
+                                            : line.includes("const") ||
+                                                line.includes("let") ||
+                                                line.includes("var")
+                                              ? "text-purple-400 dark:text-purple-500"
+                                              : line.includes("function") ||
+                                                  line.includes("async") ||
+                                                  line.includes("await")
+                                                ? "text-green-400 dark:text-green-500"
+                                                : line.includes("return")
+                                                  ? "text-yellow-400 dark:text-yellow-500"
+                                                  : line.includes("npm") ||
+                                                      line.includes("pnpm") ||
+                                                      line.includes("yarn")
+                                                    ? "text-green-400 dark:text-green-500"
+                                                    : line.includes("docker") ||
+                                                        line.includes("vercel")
+                                                      ? "text-cyan-400 dark:text-cyan-500"
+                                                      : "text-gray-300 dark:text-gray-400"
+                                      }`}
+                                    >
+                                      {line}
+                                    </span>
+                                  </div>
+                                ))}
                             </code>
                           </pre>
                         </div>
                       </div>
                     )}
 
-                    {content.type === 'screenshot' && (
+                    {content.type === "screenshot" && (
                       <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 transition-all duration-300">
                         <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center transition-all duration-300">
                           <div className="text-center text-gray-500 dark:text-gray-400 transition-colors duration-300">
-                            <svg className="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd"/>
+                            <svg
+                              className="w-16 h-16 mx-auto mb-4"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                                clipRule="evenodd"
+                              />
                             </svg>
-                            <p className="text-sm">Screenshot: {content.value}</p>
+                            <p className="text-sm">
+                              Screenshot: {content.value}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -329,8 +359,12 @@ npm start`,
                 <span className="text-white text-sm">✓</span>
               </div>
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-white transition-colors duration-300">{t("USAGE_BEST_PRACTICE_1_TITLE")}</h4>
-                <p className="text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">{t("USAGE_BEST_PRACTICE_1_DESC")}</p>
+                <h4 className="font-medium text-gray-900 dark:text-white transition-colors duration-300">
+                  {t("USAGE_BEST_PRACTICE_1_TITLE")}
+                </h4>
+                <p className="text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">
+                  {t("USAGE_BEST_PRACTICE_1_DESC")}
+                </p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
@@ -338,8 +372,12 @@ npm start`,
                 <span className="text-white text-sm">🔒</span>
               </div>
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-white transition-colors duration-300">{t("USAGE_BEST_PRACTICE_2_TITLE")}</h4>
-                <p className="text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">{t("USAGE_BEST_PRACTICE_2_DESC")}</p>
+                <h4 className="font-medium text-gray-900 dark:text-white transition-colors duration-300">
+                  {t("USAGE_BEST_PRACTICE_2_TITLE")}
+                </h4>
+                <p className="text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">
+                  {t("USAGE_BEST_PRACTICE_2_DESC")}
+                </p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
@@ -347,8 +385,12 @@ npm start`,
                 <span className="text-white text-sm">⚡</span>
               </div>
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-white transition-colors duration-300">{t("USAGE_BEST_PRACTICE_3_TITLE")}</h4>
-                <p className="text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">{t("USAGE_BEST_PRACTICE_3_DESC")}</p>
+                <h4 className="font-medium text-gray-900 dark:text-white transition-colors duration-300">
+                  {t("USAGE_BEST_PRACTICE_3_TITLE")}
+                </h4>
+                <p className="text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">
+                  {t("USAGE_BEST_PRACTICE_3_DESC")}
+                </p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
@@ -356,8 +398,12 @@ npm start`,
                 <span className="text-white text-sm">📊</span>
               </div>
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-white transition-colors duration-300">{t("USAGE_BEST_PRACTICE_4_TITLE")}</h4>
-                <p className="text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">{t("USAGE_BEST_PRACTICE_4_DESC")}</p>
+                <h4 className="font-medium text-gray-900 dark:text-white transition-colors duration-300">
+                  {t("USAGE_BEST_PRACTICE_4_TITLE")}
+                </h4>
+                <p className="text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">
+                  {t("USAGE_BEST_PRACTICE_4_DESC")}
+                </p>
               </div>
             </div>
           </div>
@@ -365,4 +411,4 @@ npm start`,
       </div>
     </section>
   );
-} 
+}
