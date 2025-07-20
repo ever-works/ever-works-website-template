@@ -194,14 +194,14 @@ export function HeroLanding() {
                     </div>
                     
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
-                      The Ultimate{" "}
+                      Modern{" "}
                       <span className="bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 bg-clip-text text-transparent">
-                        Directory Website Template
+                        Web Platform Foundation
                       </span>
                     </h2>
                     
                     <p className="text-gray-600 dark:text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-                      This is a demo directory website built with ever.works, with which you can launch any trending and profitable directory website in minutes without hassle.
+                      Transform your ideas into digital reality with our revolutionary web development foundation built for performance, scalability, and developer experience.
                     </p>
 
                     {/* Mock Features Grid */}
