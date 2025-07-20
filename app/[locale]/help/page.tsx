@@ -9,7 +9,8 @@ import {
   TechStack,
   MonetizationSection,
   HeroLanding,
-  Support
+  Support,
+  EnvConfiguration
 } from "./components";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,18 @@ export default function HelpPage() {
       component: <HowItWorks />,
       completed: false,
       estimatedTime: "5 min",
+      difficulty: "beginner"
+    },
+    {
+      id: "env-config",
+      title: "Environment Setup",
+      description: "Configure your environment variables and API keys",
+      icon: "⚙️",
+      color: "text-indigo-600 dark:text-indigo-400",
+      gradient: "from-indigo-500 to-purple-500",
+      component: <EnvConfiguration />,
+      completed: false,
+      estimatedTime: "8 min",
       difficulty: "beginner"
     },
     {
