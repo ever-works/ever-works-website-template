@@ -50,6 +50,9 @@ importers:
       '@stripe/stripe-js':
         specifier: ^7.3.0
         version: 7.4.0
+      '@supabase/auth-js':
+        specifier: ^2.71.0
+        version: 2.71.0
       '@supabase/ssr':
         specifier: ^0.6.1
         version: 0.6.1(@supabase/supabase-js@2.49.10)
@@ -2801,6 +2804,9 @@ packages:
 
   '@supabase/auth-js@2.69.1':
     resolution: {integrity: sha512-FILtt5WjCNzmReeRLq5wRs3iShwmnWgBvxHfqapC/VoljJl+W8hDAyFmf1NVw3zH+ZjZ05AKxiKxVeb0HNWRMQ==}
+
+  '@supabase/auth-js@2.71.0':
+    resolution: {integrity: sha512-OMYNbhGa1Cj4stalJq0VoHm5l7Sj/xY0j9CiYEQCikbQmtiDG3c27EIFA4OD+NxuoHTZmjaW8VJlS3SP+yasEA==}
 
   '@supabase/functions-js@2.4.4':
     resolution: {integrity: sha512-WL2p6r4AXNGwop7iwvul2BvOtuJ1YQy8EbOd0dhG1oN1q8el/BIRSFCFnWAMM/vJJlHWLi4ad22sKbKr9mvjoA==}
@@ -9486,6 +9492,10 @@ snapshots:
   '@stripe/stripe-js@7.4.0': {}
 
   '@supabase/auth-js@2.69.1':
+    dependencies:
+      '@supabase/node-fetch': 2.6.15
+
+  '@supabase/auth-js@2.71.0':
     dependencies:
       '@supabase/node-fetch': 2.6.15
 
