@@ -94,9 +94,9 @@ const monetizationMethods: MonetizationMethod[] = [
         {/* Bottom CTA Section */}
         <div className="mt-20 text-center">
           <div className="bg-gradient-to-r from-theme-primary-50 to-theme-secondary-50 dark:from-theme-primary-900/20 dark:to-theme-secondary-900/20 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Start Earning Today</h3>
+            <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Ready to Monetize</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-2xl mx-auto">
-              Our template comes with built-in monetization features and payment
+              Our platform comes with built-in revenue generation features and payment
               integrations ready to use
             </p>
             <div className="flex flex-wrap justify-center gap-4">

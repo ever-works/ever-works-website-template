@@ -34,12 +34,12 @@ export function UsageGuide() {
 import { createItem } from '@/lib/api';
 
 const newItem = await createItem({
-  title: "Amazing SaaS Tool",
-  description: "A powerful tool for productivity",
-  category: "productivity",
-  tags: ["saas", "productivity", "business"],
+  title: "Modern Web Application",
+  description: "A powerful application for modern businesses",
+  category: "business",
+  tags: ["web", "business", "productivity"],
   url: "https://example.com",
-  pricing: "freemium",
+  pricing: "premium",
   features: [
     "Real-time collaboration",
     "Advanced analytics",
@@ -139,7 +139,7 @@ export async function createPaymentIntent(amount: number, currency = 'usd') {
     amount: amount * 100, // Convert to cents
     currency,
     metadata: {
-      type: 'directory_submission',
+      type: 'platform_submission',
       plan: 'premium'
     }
   });
@@ -183,8 +183,8 @@ npx vercel
 npx vercel --prod --alias yourdomain.com
 
 # Docker Deployment
-docker build -t my-directory .
-docker run -p 3000:3000 my-directory
+docker build -t my-platform .
+docker run -p 3000:3000 my-platform
 
 # Manual deployment
 npm run build
