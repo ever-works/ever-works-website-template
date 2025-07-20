@@ -42,26 +42,23 @@ export function usePaymentFlow(options: UsePaymentFlowOptions = {}): UsePaymentF
   } = options;
 
   // Use the secure localStorage hook
-  const [storedFlow, setStoredFlow, removeStoredFlow] = usePaymentFlowStorage();
+  const [storedFlow, setStoredFlow] = usePaymentFlowStorage();
   
-  // Initialize selectedFlow with stored value or default
-  const [selectedFlow, setSelectedFlowState] = useState<PaymentFlow>(() => {
+  // Initialize selectedFlow with a consistent default for SSR
+  const [selectedFlow, setSelectedFlowState] = useState<PaymentFlow>(initialFlow);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Handle hydration - only use stored value after client-side hydration
+  useEffect(() => {
+    setIsHydrated(true);
     if (autoSave && storedFlow) {
-      return storedFlow;
+      setSelectedFlowState(storedFlow);
     }
-    return initialFlow;
-  });
+  }, [autoSave, storedFlow]);
 
   const [isAnimating, setIsAnimating] = useState(false);
   const [isSelecting, setIsSelecting] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState<SubmissionStatus>(SubmissionStatus.DRAFT);
-
-  // Sync with stored value when it changes
-  useEffect(() => {
-    if (autoSave && storedFlow && storedFlow !== selectedFlow) {
-      setSelectedFlowState(storedFlow);
-    }
-  }, [storedFlow, autoSave, selectedFlow]);
 
   // Get flow configuration
   const flowConfig = useMemo(() => 
@@ -125,11 +122,11 @@ export function usePaymentFlow(options: UsePaymentFlowOptions = {}): UsePaymentF
   const setSelectedFlow = useCallback((flow: PaymentFlow) => {
     setSelectedFlowState(flow);
     
-    // Auto-save to localStorage if enabled
-    if (autoSave) {
+    // Auto-save to localStorage if enabled and hydrated
+    if (autoSave && isHydrated) {
       setStoredFlow(flow);
     }
-  }, [autoSave, setStoredFlow]);
+  }, [autoSave, setStoredFlow, isHydrated]);
 
   const selectFlow = useCallback(async (flow: PaymentFlow) => {
     if (isSelecting) return;
@@ -155,11 +152,11 @@ export function usePaymentFlow(options: UsePaymentFlowOptions = {}): UsePaymentF
     setIsAnimating(false);
     setIsSelecting(false);
     
-    // Reset localStorage if autoSave is enabled
-    if (autoSave) {
+    // Reset localStorage if autoSave is enabled and hydrated
+    if (autoSave && isHydrated) {
       setStoredFlow(initialFlow);
     }
-  }, [initialFlow, autoSave, setStoredFlow]);
+  }, [initialFlow, autoSave, setStoredFlow, isHydrated]);
 
   // Animation helpers
   const triggerAnimation = useCallback(() => {

@@ -88,6 +88,12 @@ export function PaymentFlowIndicator({
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Handle hydration to prevent SSR/client mismatch
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
 
   const flowConfig = useMemo(() => 
@@ -196,6 +202,20 @@ export function PaymentFlowIndicator({
       setIsFocused(false);
     }
   }, [loading]);
+
+  // Show loading state during SSR to prevent hydration mismatch
+  if (!isHydrated) {
+    return (
+      <div className={cn(
+        "flex items-center justify-center p-4 rounded-lg border border-gray-200 dark:border-gray-700",
+        "bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400",
+        className
+      )}>
+        <div className="w-5 h-5 rounded-full bg-gradient-to-r from-gray-300 to-gray-400 animate-pulse" />
+        <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">Loading...</span>
+      </div>
+    );
+  }
 
   if (!flowConfig || !IconComponent) {
     return (
