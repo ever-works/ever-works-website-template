@@ -35,7 +35,7 @@ export default async function ItemDetails({
 
   const metaWithVideo = {
     ...meta,
-    video_url: "https://www.youtube.com/watch?v=eDqfg_LexCQ",
+    video_url: "", // e.g. https://www.youtube.com/watch?v=eDqfg_LexCQ
   };
 
   return (
