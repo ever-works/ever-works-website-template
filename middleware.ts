@@ -7,7 +7,7 @@ import authConfig from "./auth.config";
 import { updateSession } from "@/lib/auth/supabase/middleware";
 import { getAuthConfig } from "@/lib/auth/config";
 
-const PRIVATE_PATHS = ["/dashboard"];
+const PRIVATE_PATHS: string[] = []; // Remove dashboard from private paths
 const PUBLIC_PATHS = ["/auth/signin", "/auth/register"];
 
 const intlMiddleware = createMiddleware(routing);

@@ -3,9 +3,9 @@
 import { Tag } from "@/lib/content";
 import { cn } from "@/lib/utils";
 import { Card, CardBody, CardFooter } from "@heroui/react";
-import { usePathname } from "@/i18n/navigation";
-import { Hash, ArrowRight } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { Hash, ArrowRight, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface TagsCardsProps {
   tags: Tag[];
@@ -14,14 +14,21 @@ interface TagsCardsProps {
 }
 
 export function TagsCards({ tags, className }: TagsCardsProps) {
-  const pathname = usePathname();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [loadingTag, setLoadingTag] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoadingTag(null);
+  }, [pathname, searchParams]);
 
   const renderTagCard = (tag: Tag) => {
     const tagPath = `/?tags=${tag.id}`;
     const isActive = pathname.startsWith(encodeURI(tagPath));
 
     const handleClick = () => {
+      setLoadingTag(tag.id);
       router.push(`/?tags=${tag.id}`);
     };
 
@@ -29,7 +36,7 @@ export function TagsCards({ tags, className }: TagsCardsProps) {
       <div
         key={tag.id}
         className={cn(
-          "group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg",
+          "group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg relative",
           className
         )}
         onClick={handleClick}
@@ -42,6 +49,25 @@ export function TagsCards({ tags, className }: TagsCardsProps) {
         role="button"
         tabIndex={0}
       >
+        {/* Full card loading overlay */}
+        {loadingTag === tag.id && (
+          <div className="absolute inset-0 z-20 bg-gray-900/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg flex items-center justify-center transition-all duration-300">
+            <div className="flex flex-col items-center gap-3">
+              <div className="relative">
+                <Loader2 className="h-8 w-8 animate-spin text-theme-primary-400 dark:text-theme-primary-300" />
+                <div className="absolute inset-0 rounded-full bg-theme-primary-400/20 animate-ping" />
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-medium text-gray-300 dark:text-gray-300">
+                  Loading...
+                </p>
+                <p className="text-xs text-gray-400 dark:text-gray-400 mt-1">
+                  Navigating to {tag.name}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
         <Card
           className={cn(
             "bg-gray-900/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-700/50 dark:border-gray-700/70",

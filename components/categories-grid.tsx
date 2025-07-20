@@ -1,7 +1,7 @@
 import { Category } from "@/lib/content";
 import LayoutGrid from "@/components/layouts/LayoutGrid";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import Link from "next/link";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { FiFolder } from "react-icons/fi";
 import React, { useState, useMemo, useRef, useEffect } from "react";
@@ -17,6 +17,14 @@ const PAGE_SIZE = PER_PAGE;
 export default function CategoriesGrid({ categories }: { categories: Category[] }) {
   const { paginationType } = useLayoutTheme();
   const [page, setPage] = useState(1);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [loadingCategory, setLoadingCategory] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoadingCategory(null);
+  }, [pathname, searchParams]);
 
   const sortedCategories = useMemo(() =>
     [...categories].sort((a, b) => (b.count ?? 0) - (a.count ?? 0)),
@@ -78,15 +86,47 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
   // Choose which categories to show
   const categoriesToShow = paginationType === "infinite" ? loadedCategories : pagedCategories;
 
+  const handleCategoryClick = (categoryId: string) => {
+    setLoadingCategory(categoryId);
+    router.push(`/?categories=${categoryId}`);
+  };
+
   return (
     <>
       <LayoutGrid>
         {categoriesToShow.map((category) => (
-          <Link
-            href={`/categories/category/${category.id}`}
+          <div
             key={category.id}
-            className="focus:outline-none focus:ring-2 focus:ring-theme-primary rounded-lg transition group"
+            className="focus:outline-none focus:ring-2 focus:ring-theme-primary rounded-lg transition group cursor-pointer relative"
+            onClick={() => handleCategoryClick(category.id)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleCategoryClick(category.id);
+              }
+            }}
+            role="button"
+            tabIndex={0}
           >
+            {/* Full card loading overlay */}
+            {loadingCategory === category.id && (
+              <div className="absolute inset-0 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-lg flex items-center justify-center transition-all duration-300">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="relative">
+                    <Loader2 className="h-8 w-8 animate-spin text-theme-primary-500 dark:text-theme-primary-400" />
+                    <div className="absolute inset-0 rounded-full bg-theme-primary-500/20 animate-ping" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Loading...
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Navigating to {category.name}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
             <Card
               className="group relative border-0 rounded-lg transition-all duration-700 transform hover:-translate-y-2 backdrop-blur-xl overflow-hidden h-full
                 bg-white/80 dark:bg-gray-900/80 shadow-lg hover:shadow-2xl
@@ -144,7 +184,7 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
               {/* Subtle glow effect */}
               <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
             </Card>
-          </Link>
+          </div>
         ))}
       </LayoutGrid>
       {/* Standard Pagination */}

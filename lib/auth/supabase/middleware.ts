@@ -55,7 +55,7 @@ export async function updateSession(request: NextRequest) {
     '/auth/reset-password',
     '/auth/verify-email',
   ];
-  const PRIVATE_PATHS = ['/dashboard'];
+  const PRIVATE_PATHS: string[] = []; // Remove dashboard from private paths
 
   const isPrivatePath = PRIVATE_PATHS.some(path => 
     pathWithoutLocale.startsWith(path) || 
