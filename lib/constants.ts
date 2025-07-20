@@ -96,8 +96,8 @@ export enum PaymentStatus {
 
 export enum PaymentPlan {
   FREE = "free",
-  BASIC = "basic",
   PRO = "pro",
+  SPONSOR = "sponsor",
 }
 
 export enum PaymentMethod {
