@@ -26,6 +26,8 @@ interface PlanCardProps {
   actionVariant?: "default" | "outline";
   actionHref?: string;
   children?: ReactNode;
+  isButton?: boolean;
+  onClick?: () => void;
 }
 
 export function PlanCard({
@@ -40,6 +42,8 @@ export function PlanCard({
   actionText,
   actionHref,
   children,
+  isButton = true,
+  onClick,
 }: PlanCardProps) {
   const router = useRouter();
 
@@ -67,8 +71,14 @@ export function PlanCard({
       <div className={cn("p-6 bg-card", isPopular && "pt-8")}>
         <h2 className="text-xl font-bold mb-2">{title}</h2>
         <div className="flex items-end gap-1 mb-6">
-          <span className="text-4xl font-bold text-theme-primary-500">{price}</span>
-          {priceUnit && <span className="text-muted-foreground text-theme-primary-500">{priceUnit}</span>}
+          <span className="text-4xl font-bold text-theme-primary-500">
+            {price}
+          </span>
+          {priceUnit && (
+            <span className="text-muted-foreground text-theme-primary-500">
+              {priceUnit}
+            </span>
+          )}
         </div>
 
         <Button
@@ -99,7 +109,7 @@ export function PlanCard({
       <div className="p-6 bg-muted/20">
         <Button
           className="w-full bg-theme-primary-500 text-white hover:bg-theme-primary-600"
-          onClick={handleAction}
+          onClick={isButton ? handleAction : onClick}
         >
           {actionText}
         </Button>
