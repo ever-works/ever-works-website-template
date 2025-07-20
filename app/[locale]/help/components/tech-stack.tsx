@@ -431,7 +431,7 @@ export function TechStack() {
             ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 
             : "space-y-4"
         }`}>
-          {filteredTech.map((tech, index) => (
+          {filteredTech.map((tech) => (
             <TechnologyCard
               key={tech.name}
               name={tech.name}

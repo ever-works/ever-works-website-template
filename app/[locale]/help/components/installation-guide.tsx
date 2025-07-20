@@ -419,7 +419,7 @@ pnpm start`,
               Ready to Launch Your Platform?
             </h3>
             <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-2xl mx-auto">
-              You're just a few steps away from having your web platform live and ready for users.
+              You&apos;re just a few steps away from having your web platform live and ready for users.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">

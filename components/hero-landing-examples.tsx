@@ -57,7 +57,7 @@ export function HeroLandingExamples() {
                 </span>
               </h1>
               <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
-                Créez quelque chose d'extraordinaire avec notre plateforme moderne
+                Créez quelque chose d&apos;extraordinaire avec notre plateforme moderne
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                 <button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
