@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { KeyRound, Shield, Eye, EyeOff, XCircle } from "lucide-react";
+import { KeyRound, Shield, Eye, EyeOff, XCircle, CheckCircle, Lock, ArrowLeft } from "lucide-react";
 import { useConfig } from "../../config";
-import { Button, cn, Input, Progress } from "@heroui/react";
+import { Button, cn } from "@heroui/react";
 import { Link } from "@/i18n/navigation";
 import { newPasswordAction, verifyPasswordTokenAction } from "../actions";
 
@@ -140,244 +140,408 @@ export default function NewPasswordPage() {
     }
   };
 
-  // Get password strength color
-  const getStrengthColor = () => {
-    if (passwordStrength < 40) return "bg-red-500";
-    if (passwordStrength < 60) return "bg-yellow-500";
-    if (passwordStrength < 80) return "bg-blue-500";
-    return "bg-green-500";
-  };
+
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      {/* Main container */}
-      <div className="w-full max-w-4xl rounded-lg border dark:border-gray-800 shadow-lg overflow-hidden">
-        <div className="flex flex-col md:flex-row">
-          {/* Brand/Directory Info Side */}
-          <div className="w-full md:w-1/2 bg-gray-800 text-white p-8 flex flex-col justify-center">
-            <div className="mb-6">
-              {/* Directory Logo */}
-              <div className="flex items-center mb-6 space-x-2">
-                <span className="text-2xl font-bold">
-                  {config.company_name}
-                </span>
+    <div className="min-h-screen bg-[#1a1f2e] relative overflow-hidden">
+      {/* Background decorative elements - matching the forgot password style */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Large circles */}
+        <div className="absolute top-20 left-20 w-40 h-40 bg-gray-500/15 rounded-full blur-2xl" />
+        <div className="absolute top-32 left-32 w-32 h-32 bg-gray-600/20 rounded-full blur-xl" />
+        <div className="absolute bottom-40 right-40 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl" />
+
+        {/* Small decorative elements */}
+        <div className="absolute top-24 left-72 w-1 h-1 bg-blue-400/80 rounded-full animate-pulse" />
+        <div className="absolute top-40 right-64 w-1.5 h-1.5 bg-blue-500/60 rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute bottom-32 left-56 w-1 h-1 bg-blue-300/70 rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+      </div>
+
+      <div className="flex min-h-screen">
+        {/* Left side - Branding and illustration - matching the forgot password style */}
+        <div className="hidden lg:flex lg:w-1/2 flex-col justify-center p-12 relative">
+          {/* Illustration area - security themed */}
+          <div className="mb-12 flex justify-center relative">
+            <div className="relative">
+              {/* Main security illustration - lock with key */}
+              <div className="w-72 h-44 bg-white rounded-2xl shadow-2xl relative overflow-hidden transform rotate-3">
+                {/* Lock body */}
+                <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-20 h-16 bg-gray-100 rounded-lg"></div>
+                <div className="absolute top-12 left-1/2 transform -translate-x-1/2 w-12 h-12 border-4 border-blue-500 rounded-full bg-transparent"></div>
+
+                {/* Key */}
+                <div className="absolute bottom-8 right-8 w-16 h-6 bg-blue-500 rounded-full">
+                  <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-blue-500 rounded-sm"></div>
+                  <div className="absolute right-1 top-1 w-2 h-1 bg-white rounded-sm"></div>
+                  <div className="absolute right-1 bottom-1 w-2 h-1 bg-white rounded-sm"></div>
+                </div>
+
+                {/* Security indicators */}
+                <div className="absolute top-6 left-6 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <div className="absolute top-6 right-6 w-2 h-2 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
               </div>
 
-              <h2 className="text-2xl font-bold mb-3">Create New Password</h2>
+              {/* Security badge with shield icon */}
+              <div className="absolute -top-3 -right-3 w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
+                <Shield className="w-5 h-5 text-white" />
+              </div>
 
-              <p className="text-gray-300 mb-6">
-                Create a strong, unique password to protect your account and
-                personal information.
-              </p>
+              {/* Background circles */}
+              <div className="absolute -top-8 -left-8 w-24 h-24 bg-gray-400/20 rounded-full blur-sm"></div>
+              <div className="absolute -bottom-6 -right-6 w-20 h-20 bg-gray-500/15 rounded-full blur-sm"></div>
+            </div>
+          </div>
 
-              {/* Directory Feature */}
-              <div className="space-y-3">
-                <div className="flex items-center">
-                  <div className="bg-blue-500/20 p-1 rounded-full mr-3">
-                    <Shield className="h-4 w-4 text-blue-400" />
-                  </div>
-                  <span className="text-sm text-gray-300">
-                    Secure your account with a strong password
-                  </span>
-                </div>
-                <div className="flex items-center">
-                  <div className="bg-blue-500/20 p-1 rounded-full mr-3">
-                    <KeyRound className="h-4 w-4 text-blue-400" />
-                  </div>
-                  <span className="text-sm text-gray-300">
-                    Never reuse passwords across different sites
-                  </span>
-                </div>
+          {/* Company branding */}
+          <div className="mb-10">
+            {/* Company logo and name */}
+            <div className="flex items-center mb-8">
+              <div className="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+                <span className="text-white font-bold text-xl">
+                  {config.company_name?.charAt(0) || 'E'}
+                </span>
+              </div>
+              <span className="text-white text-xl font-semibold">{config.company_name}</span>
+            </div>
+
+            {/* Main heading */}
+            <h1 className="text-4xl font-bold text-white mb-2 leading-tight">
+              Secure your
+            </h1>
+            <h2 className="text-4xl font-bold mb-6 leading-tight">
+              <span className="text-blue-400">account access</span>
+            </h2>
+
+            <p className="text-gray-300 text-lg leading-relaxed mb-8 max-w-md">
+              Create a strong password to protect your account and ensure secure access to our professional platform.
+            </p>
+          </div>
+
+          {/* Security features list */}
+          <div className="space-y-6">
+            {/* Strong Password */}
+            <div className="flex items-start">
+              <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center mr-4 mt-1">
+                <Lock className="w-6 h-6 text-blue-400" />
+              </div>
+              <div>
+                <div className="text-white font-semibold text-lg mb-1">Strong Password Protection</div>
+                <div className="text-gray-400 text-sm">Advanced encryption for your security</div>
+              </div>
+            </div>
+
+            {/* Account Security */}
+            <div className="flex items-start">
+              <div className="w-12 h-12 bg-green-500/10 rounded-2xl flex items-center justify-center mr-4 mt-1">
+                <Shield className="w-6 h-6 text-green-400" />
+              </div>
+              <div>
+                <div className="text-white font-semibold text-lg mb-1">Account Security</div>
+                <div className="text-gray-400 text-sm">Multi-layer protection system</div>
+              </div>
+            </div>
+
+            {/* Secure Access */}
+            <div className="flex items-start">
+              <div className="w-12 h-12 bg-purple-500/10 rounded-2xl flex items-center justify-center mr-4 mt-1">
+                <KeyRound className="w-6 h-6 text-purple-400" />
+              </div>
+              <div>
+                <div className="text-white font-semibold text-lg mb-1">Secure Access</div>
+                <div className="text-gray-400 text-sm">Protected login experience</div>
               </div>
             </div>
           </div>
 
-          {/* New Password Form Side */}
-          <div className="w-full md:w-1/2 p-8">
+          {/* SSL Badge */}
+          <div className="mt-8 flex items-center text-gray-400 text-sm">
+            <Shield className="w-4 h-4 mr-2" />
+            Secured by SSL
+          </div>
+        </div>
+
+        {/* Right side - Form - matching the forgot password style */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12">
+          <div className="w-full max-w-sm">
             {isLoading && !success ? (
               <div className="flex flex-col items-center justify-center h-full">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-                <p className="text-gray-500">Processing...</p>
+                <div className="w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-6"></div>
+                <p className="text-gray-400 text-lg">Processing...</p>
               </div>
             ) : !isTokenValid && !success ? (
-              <div className="space-y-3 text-center flex flex-col">
-                <div className="flex justify-center">
-                  <XCircle className="h-16 w-16 text-red-500" />
+              <div className="space-y-6 text-center">
+                {/* Error icon */}
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-red-500 rounded-2xl mb-6 shadow-lg">
+                  <XCircle className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">
-                  Verification Failed
-                </h3>
 
-                <div className="p-3 bg-red-50 text-red-700 rounded-md">
-                  <p>
-                    {error ||
-                      "This password reset link has expired or is invalid."}
+                <div className="space-y-4">
+                  <h3 className="text-2xl font-bold text-white">
+                    Verification Failed
+                  </h3>
+                  <p className="text-gray-400 text-base">
+                    This password reset link has expired or is invalid
                   </p>
                 </div>
 
-                <Link href="/auth/forgot-password">
-                  <Button className="w-full">Request New Reset Link</Button>
-                </Link>
+                <div className="p-4 bg-red-900/20 border border-red-700/50 rounded-xl backdrop-blur-sm">
+                  <p className="text-red-300 text-sm">
+                    {error || "The reset token is no longer valid. Please request a new password reset link."}
+                  </p>
+                </div>
 
-                <div className="text-center mt-4">
-                  <Link
-                    href="/auth/signin"
-                    className="text-sm text-blue-600 hover:text-blue-800"
+                <div className="space-y-4">
+                  <Button
+                    as={Link}
+                    href="/auth/forgot-password"
+                    size="lg"
+                    radius="lg"
+                    className="w-full h-14 font-semibold bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
                   >
-                    Return to Login
-                  </Link>
+                    Request New Reset Link
+                  </Button>
+
+                  <div className="text-center">
+                    <Link
+                      href="/auth/signin"
+                      className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-blue-400 transition-colors duration-200"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                      Return to Login
+                    </Link>
+                  </div>
                 </div>
               </div>
             ) : success ? (
               <div className="space-y-6 text-center">
-                <div className="p-6 flex flex-col items-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                    <Shield className="h-8 w-8 text-green-500" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">
+                {/* Success icon */}
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-green-500 rounded-2xl mb-6 shadow-lg">
+                  <CheckCircle className="w-8 h-8 text-white" />
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-2xl font-bold text-white">
                     Password Updated!
                   </h3>
-                  <p className="text-gray-500 mb-6">
-                    Your password has been successfully updated. You can now log
-                    in with your new password.
+                  <p className="text-gray-400 text-base">
+                    Your password has been successfully updated. You can now log in with your new password.
                   </p>
                 </div>
 
-                <Link href="/auth/signin">
-                  <Button className="w-full">Go to Login</Button>
-                </Link>
+                <div className="p-4 bg-green-900/20 border border-green-700/50 rounded-xl backdrop-blur-sm">
+                  <p className="text-green-300 text-sm">
+                    Your account is now secure with your new password. Please keep it safe and don&apos;t share it with anyone.
+                  </p>
+                </div>
+
+                <Button
+                  as={Link}
+                  href="/auth/signin"
+                  size="lg"
+                  radius="lg"
+                  className="w-full h-14 font-semibold bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+                >
+                  Go to Login →
+                </Button>
               </div>
             ) : (
               <>
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold mb-2">
+                {/* Header with icon */}
+                <div className="text-center mb-8">
+                  {/* Lock icon with key indicator */}
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-500 rounded-2xl mb-6 relative shadow-lg">
+                    <Lock className="w-8 h-8 text-white" />
+                    {/* Key indicator */}
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-md">
+                      <KeyRound className="w-3 h-3 text-white" />
+                    </div>
+                  </div>
+
+                  <h1 className="text-3xl font-bold text-white mb-3">
                     Set New Password
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    Create a strong password that you {"don't"} use for other
-                    websites
+                  </h1>
+                  <p className="text-gray-400 text-base">
+                    Create a strong password that you don&apos;t use for other websites
                   </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">
-                        New Password
-                      </label>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          placeholder="Enter new password"
-                          className="pr-10"
-                          name="newPassword"
-                          required
-                        />
-                        <button
-                          type="button"
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4 text-gray-400" />
-                          ) : (
-                            <Eye className="h-4 w-4 text-gray-400" />
-                          )}
-                        </button>
-                      </div>
-
-                      {/* Password strength meter */}
-                      {password && (
-                        <div className="mt-2">
-                          <div className="flex justify-between text-xs mb-1">
-                            <span>Password strength</span>
-                            <span
-                              className={
-                                passwordStrength >= 80
-                                  ? "text-green-500"
-                                  : passwordStrength >= 60
-                                  ? "text-blue-500"
-                                  : passwordStrength >= 40
-                                  ? "text-yellow-500"
-                                  : "text-red-500"
-                              }
-                            >
-                              {passwordStrength >= 80
-                                ? "Strong"
-                                : passwordStrength >= 60
-                                ? "Good"
-                                : passwordStrength >= 40
-                                ? "Fair"
-                                : "Weak"}
-                            </span>
-                          </div>
-                          <Progress
-                            value={passwordStrength}
-                            className={cn("h-1", getStrengthColor())}
-                          />
-
-                          {/* Password criteria checklist */}
-                          <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-1 text-xs">
-                            {passwordCriteria.map((criterion) => (
-                              <div
-                                key={criterion.id}
-                                className="flex items-center"
-                              >
-                                <div
-                                  className={cn(
-                                    `w-3 h-3 rounded-full mr-2`,
-                                    criterion.test(password)
-                                      ? "bg-green-500"
-                                      : "bg-gray-300"
-                                  )}
-                                />
-                                <span
-                                  className={cn(
-                                    criterion.test(password) && "text-gray-500"
-                                  )}
-                                >
-                                  {criterion.label}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                  {/* New Password field */}
+                  <div className="space-y-2">
+                    <label className="text-white text-sm font-medium flex items-center gap-1">
+                      New Password
+                      <span className="text-red-400">*</span>
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-10" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Enter new password"
+                        name="newPassword"
+                        required
+                        className="w-full h-14 bg-gray-800/50 border border-gray-600/50 rounded-xl pl-12 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:bg-gray-800/70 transition-all duration-200"
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors duration-200"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium mb-1">
-                        Confirm Password
-                      </label>
-                      <Input
+                    {/* Password strength meter */}
+                    {password && (
+                      <div className="mt-3 space-y-3">
+                        <div className="flex justify-between text-xs">
+                          <span className="text-gray-300">Password strength</span>
+                          <span
+                            className={
+                              passwordStrength >= 80
+                                ? "text-green-400"
+                                : passwordStrength >= 60
+                                ? "text-blue-400"
+                                : passwordStrength >= 40
+                                ? "text-yellow-400"
+                                : "text-red-400"
+                            }
+                          >
+                            {passwordStrength >= 80
+                              ? "Strong"
+                              : passwordStrength >= 60
+                              ? "Good"
+                              : passwordStrength >= 40
+                              ? "Fair"
+                              : "Weak"}
+                          </span>
+                        </div>
+
+                        {/* Progress bar */}
+                        <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div
+                            className={cn(
+                              "h-2 rounded-full transition-all duration-300",
+                              passwordStrength >= 80
+                                ? "bg-green-500"
+                                : passwordStrength >= 60
+                                ? "bg-blue-500"
+                                : passwordStrength >= 40
+                                ? "bg-yellow-500"
+                                : "bg-red-500"
+                            )}
+                            style={{ width: `${passwordStrength}%` }}
+                          />
+                        </div>
+
+                        {/* Password criteria checklist */}
+                        <div className="grid grid-cols-1 gap-2 text-xs">
+                          {passwordCriteria.map((criterion) => (
+                            <div
+                              key={criterion.id}
+                              className="flex items-center space-x-2"
+                            >
+                              <div
+                                className={cn(
+                                  "w-3 h-3 rounded-full transition-colors duration-200",
+                                  criterion.test(password)
+                                    ? "bg-green-500"
+                                    : "bg-gray-600"
+                                )}
+                              />
+                              <span
+                                className={cn(
+                                  "transition-colors duration-200",
+                                  criterion.test(password)
+                                    ? "text-green-400"
+                                    : "text-gray-400"
+                                )}
+                              >
+                                {criterion.label}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Confirm Password field */}
+                  <div className="space-y-2">
+                    <label className="text-white text-sm font-medium flex items-center gap-1">
+                      Confirm Password
+                      <span className="text-red-400">*</span>
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-10" />
+                      <input
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Confirm new password"
                         name="confirmPassword"
                         required
+                        className="w-full h-14 bg-gray-800/50 border border-gray-600/50 rounded-xl pl-12 pr-4 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:bg-gray-800/70 transition-all duration-200"
                       />
                     </div>
-
-                    {error && (
-                      <div className="p-2 text-sm text-red-600 bg-red-50 rounded">
-                        {error}
-                      </div>
+                    {confirmPassword && password !== confirmPassword && (
+                      <p className="text-red-400 text-sm mt-1">Passwords do not match</p>
                     )}
                   </div>
 
+                  {/* Error message */}
+                  {error && (
+                    <div className="p-4 bg-red-900/20 border border-red-700/50 rounded-xl backdrop-blur-sm">
+                      <p className="text-red-300 text-sm">{error}</p>
+                    </div>
+                  )}
+
+                  {/* Submit button */}
                   <Button
                     type="submit"
-                    className="w-full"
                     isLoading={isLoading}
+                    size="lg"
+                    radius="lg"
+                    className="w-full h-14 font-semibold bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+                    disabled={passwordStrength < 60 || password !== confirmPassword}
                   >
-                    {"Set New Password"}
+                    {isLoading ? "Setting Password..." : "Set New Password →"}
                   </Button>
+
+                  {/* Back to login */}
+                  <div className="text-center pt-4 border-t border-gray-700/50">
+                    <Link
+                      href="/auth/signin"
+                      className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-blue-400 transition-colors duration-200"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                      Back to Login
+                    </Link>
+                  </div>
                 </form>
               </>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom left avatar - matching the forgot password style */}
+      <div className="absolute bottom-6 left-6">
+        <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center shadow-lg">
+          <span className="text-white font-bold text-lg">N</span>
+        </div>
+      </div>
+
+      {/* Bottom right avatar - matching the forgot password style */}
+      <div className="absolute bottom-6 right-6">
+        <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
+          <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
           </div>
         </div>
       </div>
