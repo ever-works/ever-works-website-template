@@ -60,7 +60,7 @@ export function LoginIllustration({ className }: { className?: string }) {
   );
 }
 
-// Illustration d'inscription moderne
+// Modern signup illustration
 export function SignupIllustration({ className }: { className?: string }) {
   return (
     <div className={cn('relative w-full h-full flex items-center justify-center', className)}>

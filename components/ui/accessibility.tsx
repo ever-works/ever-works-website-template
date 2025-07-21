@@ -191,7 +191,7 @@ export function AccessibleField({
       )}
       
       <div className="relative">
-        {React.cloneElement(children as React.ReactElement, {
+        {React.isValidElement(children) && React.cloneElement(children, {
           id,
           'aria-describedby': [
             description ? descriptionId : '',
@@ -201,7 +201,7 @@ export function AccessibleField({
             .join(' ') || undefined,
           'aria-invalid': error ? 'true' : undefined,
           'aria-required': required,
-        })}
+        } as any)}
       </div>
       
       <AccessibleError id={errorId} error={error} />
