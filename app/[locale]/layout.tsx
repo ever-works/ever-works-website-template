@@ -2,9 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
-import Header from "@/components/header";
-import { Footer } from "@/components/footer";
-import { ScrollToTopButton } from "@/components/scroll-to-top-button";
 import { getCachedConfig } from "@/lib/content";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
@@ -15,6 +12,7 @@ import { PHProvider } from "./integration/posthog/provider";
 import PostHogPageView from "./integration/posthog/page-view";
 import { Locale } from "@/lib/constants";
 import { LoginModalProvider } from "@/components/auth/login-modal-provider";
+import { ConditionalLayout } from "@/components/layout/conditional-layout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,17 +67,9 @@ export default async function RootLayout({
             <Toaster position="bottom-right" richColors />
             <Providers config={config}>
               <LoginModalProvider />
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <div className="fixed bottom-6 right-6 z-50">
-                <ScrollToTopButton
-                  variant="elegant"
-                  easing="easeInOut"
-                  showAfter={400}
-                  size="md"
-                />
-              </div>
+              <ConditionalLayout>
+                {children}
+              </ConditionalLayout>
             </Providers>
           </NextIntlClientProvider>
         </PHProvider>

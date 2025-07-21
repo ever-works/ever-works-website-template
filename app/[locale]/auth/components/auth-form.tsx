@@ -7,11 +7,11 @@ import { SocialLogin } from "./social-login";
 import { AnimatedContainer, StaggerContainer } from "@/components/ui/animations";
 import { useTranslations } from "next-intl";
 import {
-    LoginIllustration,
-    SignupIllustration,
-    AnimatedBackground,
-    GeometricDecoration,
-    TrustBadge
+  LoginIllustration,
+  SignupIllustration,
+  AnimatedBackground,
+  GeometricDecoration,
+  TrustBadge
 } from "@/components/ui/auth-illustrations";
 
 export function AuthForm({ form }: { form: "login" | "signup" }) {
@@ -20,11 +20,10 @@ export function AuthForm({ form }: { form: "login" | "signup" }) {
   const isLogin = form === "login";
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 relative bg-gray-50 dark:bg-gray-900">
       {/* Animated background */}
       <AnimatedBackground />
       <GeometricDecoration />
-
       {/* Main container with modern design */}
       <AnimatedContainer type="scaleIn" duration="slow" easing="bounce">
         <div className="w-full max-w-5xl mx-auto rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 shadow-2xl overflow-hidden">
