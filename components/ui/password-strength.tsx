@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { cn } from '@heroui/react';
 import { CheckCircle, XCircle } from 'lucide-react';
 
@@ -18,27 +18,27 @@ interface PasswordCriteria {
 export function PasswordStrength({ password, className }: PasswordStrengthProps) {
   const criteria: PasswordCriteria[] = useMemo(() => [
     {
-      label: "Au moins 8 caractères",
+      label: "At least 8 characters",
       test: (pwd) => pwd.length >= 8,
       met: password.length >= 8,
     },
     {
-      label: "Une majuscule",
+      label: "At least one uppercase letter",
       test: (pwd) => /[A-Z]/.test(pwd),
       met: /[A-Z]/.test(password),
     },
     {
-      label: "Une minuscule",
+      label: "At least one lowercase letter",
       test: (pwd) => /[a-z]/.test(pwd),
       met: /[a-z]/.test(password),
     },
     {
-      label: "Un chiffre",
+      label: "At least one number",
       test: (pwd) => /\d/.test(pwd),
       met: /\d/.test(password),
     },
     {
-      label: "Un caractère spécial",
+      label: "At least one special character",
       test: (pwd) => /[!@#$%^&*(),.?":{}|<>]/.test(pwd),
       met: /[!@#$%^&*(),.?":{}|<>]/.test(password),
     },
@@ -54,9 +54,9 @@ export function PasswordStrength({ password, className }: PasswordStrengthProps)
   };
 
   const getStrengthLabel = () => {
-    if (strength < 0.4) return 'Faible';
-    if (strength < 0.7) return 'Moyen';
-    return 'Fort';
+    if (strength < 0.4) return 'Weak';
+    if (strength < 0.7) return 'Medium';
+    return 'Strong';
   };
 
   if (!password) return null;
@@ -67,7 +67,7 @@ export function PasswordStrength({ password, className }: PasswordStrengthProps)
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-            Force du mot de passe
+            Password strength
           </span>
           <span className={cn(
             'text-xs font-semibold px-2 py-1 rounded-full',

@@ -179,8 +179,8 @@ export default function ForgotPasswordPage() {
                 </h2>
 
                 <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
-                  Don't worry, it happens to the best of us. Enter your email
-                  address and we'll send you a secure link to reset your
+                  Don&apos;t worry, it happens to the best of us. Enter your email
+                  address and we&apos;ll send you a secure link to reset your
                   password.
                 </p>
               </div>
