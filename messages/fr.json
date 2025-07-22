@@ -627,6 +627,14 @@
     "HOW_IT_WORKS_CTA_DESC": "Faites fonctionner votre annuaire en moins de 10 minutes",
     "HOW_IT_WORKS_CTA_DEPLOY": "Déploiement en un clic",
     "HOW_IT_WORKS_CTA_BACKEND": "Backend Supabase",
-    "HOW_IT_WORKS_CTA_WIZARD": "Assistant d'environnement"
+    "HOW_IT_WORKS_CTA_WIZARD": "Assistant d'environnement",
+    "BENEFITS_FAST_TITLE": "Ultra Rapide",
+    "BENEFITS_FAST_DESC": "Lancez votre plateforme d'annuaire en moins de 10 minutes",
+    "BENEFITS_SECURE_TITLE": "Sécurisé par Défaut",
+    "BENEFITS_SECURE_DESC": "Meilleures pratiques de sécurité intégrées et authentification pour les annuaires",
+    "BENEFITS_MOBILE_TITLE": "Prêt pour Mobile",
+    "BENEFITS_MOBILE_DESC": "Design entièrement responsive qui fonctionne parfaitement sur tous les appareils",
+    "BENEFITS_CUSTOMIZABLE_TITLE": "Hautement Personnalisable",
+    "BENEFITS_CUSTOMIZABLE_DESC": "Facile à personnaliser avec des thèmes, des mises en page et des fonctionnalités spécifiques aux annuaires"
   }
 }

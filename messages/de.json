@@ -419,6 +419,14 @@
     "INSTALLATION_TIP2_TITLE": "Umgebungsprüfung",
     "INSTALLATION_TIP2_DESC": "um die Konfiguration zu überprüfen",
     "INSTALLATION_TIP3_TITLE": "Entwicklungsmodus",
-    "INSTALLATION_TIP3_DESC": "Hot Reload und detaillierte Fehlermeldungen"
+    "INSTALLATION_TIP3_DESC": "Hot Reload und detaillierte Fehlermeldungen",
+    "BENEFITS_FAST_TITLE": "Blitzschnell",
+    "BENEFITS_FAST_DESC": "Bringen Sie Ihre Verzeichnisplattform in unter 10 Minuten zum Laufen",
+    "BENEFITS_SECURE_TITLE": "Standardmäßig Sicher",
+    "BENEFITS_SECURE_DESC": "Integrierte Sicherheits-Best-Practices und Authentifizierung für Verzeichnisse",
+    "BENEFITS_MOBILE_TITLE": "Mobilbereit",
+    "BENEFITS_MOBILE_DESC": "Vollständig responsives Design, das perfekt auf allen Geräten funktioniert",
+    "BENEFITS_CUSTOMIZABLE_TITLE": "Hochgradig Anpassbar",
+    "BENEFITS_CUSTOMIZABLE_DESC": "Einfach anzupassen mit Themes, Layouts und verzeichnisspezifischen Funktionen"
   }
-} 
+}

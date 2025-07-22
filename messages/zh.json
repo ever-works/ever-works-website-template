@@ -419,6 +419,14 @@
     "INSTALLATION_TIP2_TITLE": "环境检查",
     "INSTALLATION_TIP2_DESC": "验证设置",
     "INSTALLATION_TIP3_TITLE": "开发模式",
-    "INSTALLATION_TIP3_DESC": "热重载和详细错误信息"
+    "INSTALLATION_TIP3_DESC": "热重载和详细错误信息",
+    "BENEFITS_FAST_TITLE": "闪电般快速",
+    "BENEFITS_FAST_DESC": "在10分钟内让您的目录平台运行起来",
+    "BENEFITS_SECURE_TITLE": "默认安全",
+    "BENEFITS_SECURE_DESC": "内置安全最佳实践和目录身份验证",
+    "BENEFITS_MOBILE_TITLE": "移动就绪",
+    "BENEFITS_MOBILE_DESC": "完全响应式设计，在所有设备上完美运行",
+    "BENEFITS_CUSTOMIZABLE_TITLE": "高度可定制",
+    "BENEFITS_CUSTOMIZABLE_DESC": "易于使用主题、布局和目录特定功能进行自定义"
   }
-} 
+}

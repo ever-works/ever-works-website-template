@@ -419,6 +419,14 @@
     "INSTALLATION_TIP2_TITLE": "فحص البيئة",
     "INSTALLATION_TIP2_DESC": "للتحقق من الإعداد",
     "INSTALLATION_TIP3_TITLE": "وضع التطوير",
-    "INSTALLATION_TIP3_DESC": "إعادة تحميل تلقائي ورسائل خطأ مفصلة"
+    "INSTALLATION_TIP3_DESC": "إعادة تحميل تلقائي ورسائل خطأ مفصلة",
+    "BENEFITS_FAST_TITLE": "سريع كالبرق",
+    "BENEFITS_FAST_DESC": "شغّل منصة الدليل الخاصة بك في أقل من 10 دقائق",
+    "BENEFITS_SECURE_TITLE": "آمن افتراضياً",
+    "BENEFITS_SECURE_DESC": "أفضل ممارسات الأمان المدمجة والمصادقة للأدلة",
+    "BENEFITS_MOBILE_TITLE": "جاهز للجوال",
+    "BENEFITS_MOBILE_DESC": "تصميم متجاوب بالكامل يعمل بشكل مثالي على جميع الأجهزة",
+    "BENEFITS_CUSTOMIZABLE_TITLE": "قابل للتخصيص بدرجة عالية",
+    "BENEFITS_CUSTOMIZABLE_DESC": "سهل التخصيص مع السمات والتخطيطات والميزات الخاصة بالأدلة"
   }
-} 
+}

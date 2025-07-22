@@ -407,6 +407,14 @@
     "INSTALLATION_TIP2_TITLE": "Verificación del entorno",
     "INSTALLATION_TIP2_DESC": "para verificar la configuración",
     "INSTALLATION_TIP3_TITLE": "Modo desarrollo",
-    "INSTALLATION_TIP3_DESC": "Recarga automática y mensajes de error detallados"
+    "INSTALLATION_TIP3_DESC": "Recarga automática y mensajes de error detallados",
+    "BENEFITS_FAST_TITLE": "Ultra Rápido",
+    "BENEFITS_FAST_DESC": "Pon en marcha tu plataforma de directorio en menos de 10 minutos",
+    "BENEFITS_SECURE_TITLE": "Seguro por Defecto",
+    "BENEFITS_SECURE_DESC": "Mejores prácticas de seguridad integradas y autenticación para directorios",
+    "BENEFITS_MOBILE_TITLE": "Listo para Móvil",
+    "BENEFITS_MOBILE_DESC": "Diseño completamente responsive que funciona perfectamente en todos los dispositivos",
+    "BENEFITS_CUSTOMIZABLE_TITLE": "Altamente Personalizable",
+    "BENEFITS_CUSTOMIZABLE_DESC": "Fácil de personalizar con temas, diseños y características específicas para directorios"
   }
 }
