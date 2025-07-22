@@ -87,7 +87,7 @@ const NAVIGATION_CONFIG: Array<{
   },
   {
     key: "submit",
-    href: "/submit?step=details&plan=free",
+    href: "/submit",
     translationKey: "SUBMIT",
     translationNamespace: "common",
   },
