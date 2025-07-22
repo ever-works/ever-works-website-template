@@ -31,17 +31,10 @@
     "JOIN_OUR": "Rejoignez notre",
     "COMMUNITY": "communauté",
     "ACCESS_THOUSANDS": "Accédez à des milliers d'annonces et trouvez exactement ce que vous cherchez dans notre écosystème professionnel.",
-<<<<<<< HEAD
-    "CREATE_ACCOUNT_DESC": "Créez votre compte pour lister vos produits dans notre annuaire et explorer notre vaste annuaire de produits.",
-    "ADVANCED_SEARCH": "Recherche avancée",
-    "EXPLORE_THOUSANDS": "Explorez des milliers d'annonces",
-    "LIST_YOUR_BUSINESS": "Listez vos produits dans notre annuaire",
-=======
     "CREATE_ACCOUNT_DESC": "Créez votre compte pour lister votre entreprise et explorer notre vaste annuaire de professionnels.",
     "ADVANCED_SEARCH": "Recherche avancée",
     "EXPLORE_THOUSANDS": "Explorez des milliers d'annonces",
     "LIST_YOUR_BUSINESS": "Listez votre entreprise",
->>>>>>> 9816b87 (feat: transform help section to reflect directory builder nature)
     "INCREASE_VISIBILITY": "Augmentez votre visibilité",
     "PROFESSIONAL_NETWORK": "Réseau professionnel",
     "CONNECT_WITH_EXPERTS": "Connectez-vous avec des experts",
@@ -386,7 +379,6 @@
       "SCHEDULE_ADVERTISING": "Planifiez votre période publicitaire",
       "PREMIUM_CUSTOMER_SUPPORT": "Support client premium"
     }
-<<<<<<< HEAD
   },
   "payment": {
     "title": "Finalisez votre commande",
@@ -636,7 +628,5 @@
     "HOW_IT_WORKS_CTA_DEPLOY": "Déploiement en un clic",
     "HOW_IT_WORKS_CTA_BACKEND": "Backend Supabase",
     "HOW_IT_WORKS_CTA_WIZARD": "Assistant d'environnement"
-=======
->>>>>>> 9816b87 (feat: transform help section to reflect directory builder nature)
   }
 }
