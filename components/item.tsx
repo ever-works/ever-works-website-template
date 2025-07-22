@@ -115,21 +115,6 @@ export default function Item(props: ItemProps) {
               {Array.isArray(props.category)
                 ? props.category.length > 0 && <CategoryFilterButton category={props.category[0]} />
                 : <CategoryFilterButton category={props.category} />}
-              {props.tags &&
-                Array.isArray(props.tags) &&
-                props.tags.slice(0, 2).map((tag, index) => {
-                  const tagName = getTagName(tag);
-                  if (!tagName) return null;
-                  return (
-                    <span
-                      key={index}
-                      className="px-3 py-2 text-xs font-medium rounded-full bg-gradient-to-r from-gray-100 to-gray-50 text-gray-700 border border-gray-200/50 dark:from-gray-800/50 dark:to-gray-700/50 dark:text-gray-300 dark:border-gray-600/30 transition-all duration-300 hover:scale-105 hover:shadow-md capitalize shadow-sm"
-                      style={{ animationDelay: `${index * 0.1}s` }}
-                    >
-                      {tagName}
-                    </span>
-                  );
-                })}
             </div>
           </div>
         </CardHeader>
@@ -187,7 +172,7 @@ export default function Item(props: ItemProps) {
 type CategoryProp = string | Category;
 
 function CategoryFilterButton({ category }: { category: CategoryProp }) {
-  const { selectedCategories, toggleSelectedCategory } = useFilters();
+  const { selectedCategories, addSelectedCategory } = useFilters();
   const categoryId = typeof category === "string" ? category : category?.id;
   const categoryName = typeof category === "string" ? category : category?.name || categoryId;
   const isActive = selectedCategories.includes(categoryId);
@@ -201,7 +186,9 @@ function CategoryFilterButton({ category }: { category: CategoryProp }) {
       }
       onClick={e => {
         e.stopPropagation();
-        toggleSelectedCategory(categoryId);
+        if (!isActive) {
+          addSelectedCategory(categoryId);
+        }
       }}
     >
       {categoryName}
