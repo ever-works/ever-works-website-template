@@ -113,7 +113,9 @@ export default function Item(props: ItemProps) {
 
             <div className="flex items-center gap-2 flex-wrap">
               {Array.isArray(props.category)
-                ? props.category.length > 0 && <CategoryFilterButton category={props.category[0]} />
+                ? props.category.map((cat, idx) =>
+                    cat && <CategoryFilterButton key={typeof cat === 'string' ? cat : cat.id || idx} category={cat} />
+                  )
                 : <CategoryFilterButton category={props.category} />}
             </div>
           </div>
