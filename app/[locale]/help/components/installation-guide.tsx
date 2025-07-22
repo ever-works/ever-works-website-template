@@ -193,7 +193,7 @@ pnpm start`,
             {t("INSTALLATION_GUIDE_SUBTITLE")}
             </h2>
           <p className="text-slate-600 dark:text-slate-400 text-lg max-w-3xl mx-auto leading-relaxed">
-            Follow these steps to get your web platform up and running in minutes
+            {t("INSTALLATION_GUIDE_DESC")}
             </p>
           </div>
 
@@ -201,7 +201,7 @@ pnpm start`,
         <div className="mb-12">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-              Installation Progress
+              {t("INSTALLATION_PROGRESS")}
             </span>
             <span className="text-sm text-slate-600 dark:text-slate-400">
               {completedSteps.length} of {installationSteps.length} completed

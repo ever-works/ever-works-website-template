@@ -136,14 +136,14 @@ export function Support() {
       tags: ["hosting", "deployment", "production"]
     },
     {
-      question: "How do I integrate payment processing?",
-      answer: "Our platform comes with pre-configured Stripe integration. Simply add your API keys in the environment variables and the payment system will be ready to use.",
+      question: t("FAQ_PAYMENT_INTEGRATION"),
+      answer: t("FAQ_PAYMENT_INTEGRATION_ANSWER"),
       category: "payments",
       tags: ["stripe", "payments", "integration"]
     },
     {
-      question: "Can I use my own domain?",
-      answer: "Yes! You can easily connect your custom domain. We provide step-by-step instructions for domain configuration with popular providers.",
+      question: t("FAQ_CUSTOM_DOMAIN"),
+      answer: t("FAQ_CUSTOM_DOMAIN_ANSWER"),
       category: "deployment",
       tags: ["domain", "custom", "configuration"]
     }

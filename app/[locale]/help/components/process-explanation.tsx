@@ -143,7 +143,7 @@ export const ProcessExplanation = () => {
       <div className="text-center mb-12">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-blue-700 dark:text-blue-300 text-sm font-medium mb-6">
           <span>🔄</span>
-          Process Overview
+          {t('PROCESS_OVERVIEW_BADGE')}
         </div>
         <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
           {t('HOW_IT_WORKS_PROCESS_TITLE')}

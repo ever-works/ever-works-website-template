@@ -112,10 +112,10 @@ const monetizationMethods: MonetizationMethod[] = [
   ];
 
   const stats = [
-    { label: "Average Revenue", value: "$8.5K", change: "+23%", period: "monthly" },
-    { label: "Active Users", value: "12.5K", change: "+15%", period: "monthly" },
-    { label: "Conversion Rate", value: "4.2%", change: "+8%", period: "monthly" },
-    { label: "Platform Growth", value: "156%", change: "+34%", period: "yearly" }
+    { label: t("STAT_AVERAGE_REVENUE"), value: "$8.5K", change: "+23%", period: t("STAT_MONTHLY") },
+    { label: t("STAT_ACTIVE_USERS"), value: "12.5K", change: "+15%", period: t("STAT_MONTHLY") },
+    { label: t("STAT_CONVERSION_RATE"), value: "4.2%", change: "+8%", period: t("STAT_MONTHLY") },
+    { label: t("STAT_PLATFORM_GROWTH"), value: "156%", change: "+34%", period: t("STAT_YEARLY") }
 ];
 
   return (
@@ -125,7 +125,7 @@ const monetizationMethods: MonetizationMethod[] = [
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 rounded-full text-green-700 dark:text-green-300 text-sm font-medium mb-6">
             <span>💰</span>
-            Revenue Generation
+            {t('MONETIZATION_BADGE')}
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white">
             {t('MONETIZATION_SECTION_TITLE')}
@@ -194,15 +194,15 @@ const monetizationMethods: MonetizationMethod[] = [
                 {/* Quick Stats */}
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-500 dark:text-slate-400">Revenue Potential:</span>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">{t("REVENUE_POTENTIAL")}:</span>
                     <span className="font-semibold text-green-600 dark:text-green-400">{method.revenue}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-500 dark:text-slate-400">Setup Time:</span>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">{t("SETUP_TIME")}:</span>
                     <span className="font-semibold text-blue-600 dark:text-blue-400">{method.setupTime}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-500 dark:text-slate-400">Difficulty:</span>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">{t("DIFFICULTY")}:</span>
                     <span className={`text-xs px-2 py-1 rounded-full ${
                       method.difficulty === "Easy" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" :
                       method.difficulty === "Medium" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300" :
@@ -244,7 +244,7 @@ const monetizationMethods: MonetizationMethod[] = [
                   size="sm"
                   className="border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300"
                 >
-                  {showDetails ? "Hide Details" : "Show Details"}
+                  {showDetails ? t("HIDE_DETAILS") : t("SHOW_DETAILS")}
                 </Button>
               </div>
             </div>
@@ -256,7 +256,7 @@ const monetizationMethods: MonetizationMethod[] = [
                 <div>
                   <h4 className="font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                     <span className="text-blue-600">✨</span>
-                    Key Features
+                    {t("KEY_FEATURES")}
                   </h4>
                   <div className="space-y-2">
                     {monetizationMethods[activeMethod].features.map((feature, index) => (
@@ -273,7 +273,7 @@ const monetizationMethods: MonetizationMethod[] = [
                   <div>
                     <h4 className="font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                       <span className="text-green-600">✅</span>
-                      Pros
+                      {t("PROS")}
                     </h4>
                     <div className="space-y-2">
                       {monetizationMethods[activeMethod].pros.map((pro, index) => (
@@ -287,7 +287,7 @@ const monetizationMethods: MonetizationMethod[] = [
                   <div>
                     <h4 className="font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                       <span className="text-red-600">⚠️</span>
-                      Cons
+                      {t("CONS")}
                     </h4>
                     <div className="space-y-2">
                       {monetizationMethods[activeMethod].cons.map((con, index) => (
@@ -343,17 +343,17 @@ const monetizationMethods: MonetizationMethod[] = [
         <div className="text-center">
           <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/30 dark:to-blue-900/30 rounded-2xl p-8 border border-green-200 dark:border-green-800">
             <h3 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
-              Start Monetizing Your Platform Today
+              {t("START_MONETIZING_TODAY")}
             </h3>
             <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-2xl mx-auto">
-              Choose the monetization strategy that best fits your platform and start generating revenue immediately.
+              {t("START_MONETIZING_DESC")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                Get Started Now
+                {t("GET_STARTED_NOW")}
               </Button>
               <Button variant="outline" className="border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold px-8 py-3 rounded-xl transition-all duration-300">
-                View Case Studies
+                {t("VIEW_CASE_STUDIES")}
               </Button>
             </div>
           </div>

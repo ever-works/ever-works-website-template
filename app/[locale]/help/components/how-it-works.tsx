@@ -43,10 +43,10 @@ pnpm install
 # Copy environment file
 cp .env.example .env`,
       features: [
-        "Repository cloning",
-        "Dependency installation", 
-        "Environment setup",
-        "Project initialization"
+        t('STEP1_FEATURE_1'),
+        t('STEP1_FEATURE_2'),
+        t('STEP1_FEATURE_3'),
+        t('STEP1_FEATURE_4')
       ]
     },
     {
@@ -76,10 +76,10 @@ RESEND_API_KEY=your_resend_key
 STRIPE_PUBLIC_KEY=your_stripe_key
 STRIPE_SECRET_KEY=your_stripe_secret`,
       features: [
-        "Environment variables",
-        "Database configuration",
-        "Authentication setup",
-        "External services"
+        t('STEP2_FEATURE_1'),
+        t('STEP2_FEATURE_2'),
+        t('STEP2_FEATURE_3'),
+        t('STEP2_FEATURE_4')
       ]
     },
     {
@@ -101,10 +101,10 @@ pnpm start
 # Deploy to Vercel (recommended)
 vercel --prod`,
       features: [
-        "Development server",
-        "Production build",
-        "Vercel deployment",
-        "Live platform"
+        t('STEP3_FEATURE_1'),
+        t('STEP3_FEATURE_2'),
+        t('STEP3_FEATURE_3'),
+        t('STEP3_FEATURE_4')
       ]
     }
   ];
@@ -112,23 +112,23 @@ vercel --prod`,
   const benefits = [
     {
       icon: "⚡",
-      title: "Lightning Fast",
-      description: "Get your platform running in under 10 minutes"
+      title: t('BENEFITS_FAST_TITLE'),
+      description: t('BENEFITS_FAST_DESC')
     },
     {
-      icon: "🔒", 
-      title: "Secure by Default",
-      description: "Built-in security best practices and authentication"
+      icon: "🔒",
+      title: t('BENEFITS_SECURE_TITLE'),
+      description: t('BENEFITS_SECURE_DESC')
     },
     {
       icon: "📱",
-      title: "Mobile Ready",
-      description: "Fully responsive design that works on all devices"
+      title: t('BENEFITS_MOBILE_TITLE'),
+      description: t('BENEFITS_MOBILE_DESC')
     },
     {
       icon: "🎨",
-      title: "Customizable",
-      description: "Easy to customize with Tailwind CSS and themes"
+      title: t('BENEFITS_CUSTOMIZABLE_TITLE'),
+      description: t('BENEFITS_CUSTOMIZABLE_DESC')
     }
   ];
 
@@ -256,7 +256,7 @@ vercel --prod`,
         {/* Benefits Grid */}
         <div className="mb-16">
           <h3 className="text-2xl font-bold text-center mb-12 text-slate-900 dark:text-white">
-            Why Choose Our Platform?
+            {t('WHY_CHOOSE_PLATFORM')}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {benefits.map((benefit, index) => (
@@ -280,17 +280,17 @@ vercel --prod`,
         <div className="text-center">
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 rounded-2xl p-8 border border-blue-200 dark:border-blue-800">
             <h3 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
-              Ready to Get Started?
+              {t('READY_TO_GET_STARTED')}
             </h3>
             <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-2xl mx-auto">
-              Join thousands of developers who are already building amazing web platforms with our foundation.
+              {t('JOIN_DEVELOPERS_DESC')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                Start Building Now
+                {t('START_BUILDING_NOW')}
               </Button>
               <Button variant="outline" className="border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold px-8 py-3 rounded-xl transition-all duration-300">
-                View Documentation
+                {t('VIEW_DOCUMENTATION')}
               </Button>
               </div>
             </div>

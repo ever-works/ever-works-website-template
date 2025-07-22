@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import { PageContainer } from "@/components/ui/container";
 import {
-  HowItWorks,
-  InstallationGuide,
-  UsageGuide,
-  TechStack,
-  MonetizationSection,
-  HeroLanding,
-  Support,
-  EnvConfiguration
+    HowItWorks,
+    InstallationGuide,
+    UsageGuide,
+    TechStack,
+    MonetizationSection,
+    HeroLanding,
+    Support,
+    EnvConfiguration
 } from "./components";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -50,8 +50,8 @@ export default function HelpPage() {
     },
     {
       id: "env-config",
-      title: "Environment Setup",
-      description: "Configure your environment variables and API keys",
+      title: t("ENV_SETUP"),
+      description: t("ENV_SETUP_DESC"),
       icon: "⚙️",
       color: "text-indigo-600 dark:text-indigo-400",
       gradient: "from-indigo-500 to-purple-500",
@@ -178,7 +178,7 @@ export default function HelpPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Progress: {completedCount}/{totalSteps}
+                  {t("PROGRESS")}: {completedCount}/{totalSteps}
                 </span>
                 <div className="w-32 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                   <div 
@@ -188,7 +188,7 @@ export default function HelpPage() {
                 </div>
               </div>
               <div className="text-sm text-slate-600 dark:text-slate-400">
-                {Math.round(progressPercentage)}% Complete
+                {Math.round(progressPercentage)}% {t("COMPLETE")}
               </div>
             </div>
           </div>
@@ -211,10 +211,10 @@ export default function HelpPage() {
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                      Interactive Guide
+                      {t("INTERACTIVE_GUIDE")}
                     </h2>
                     <p className="text-sm text-slate-600 dark:text-slate-400">
-                      Follow the steps to get started
+                      {t("INTERACTIVE_GUIDE_DESC")}
                     </p>
                   </div>
                 </div>
@@ -223,7 +223,7 @@ export default function HelpPage() {
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="Search guides..."
+                    placeholder={t("SEARCH_GUIDES_PLACEHOLDER")}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-64 px-4 py-2 pl-10 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-theme-primary-500"
@@ -292,7 +292,7 @@ export default function HelpPage() {
                         </div>
                         {currentStep === index && (
                           <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                            Current
+                            {t("CURRENT")}
                           </span>
                         )}
                       </div>
@@ -319,7 +319,7 @@ export default function HelpPage() {
                       {navigationSteps[currentStep].title}
                     </h2>
                     <p className="text-slate-600 dark:text-slate-400">
-                      Step {currentStep + 1} of {totalSteps}
+                      {t("STEP_OF", { current: currentStep + 1, total: totalSteps })}
                     </p>
                   </div>
                 </div>
@@ -332,14 +332,14 @@ export default function HelpPage() {
                     variant="outline"
                     className="border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50"
                   >
-                    ← Previous
+                    ← {t("PREVIOUS")}
                   </Button>
                   <Button
                     onClick={nextStep}
                     disabled={currentStep === totalSteps - 1}
                     className="bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 hover:from-theme-primary-600 hover:to-theme-primary-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
                   >
-                    {currentStep === totalSteps - 1 ? 'Complete' : 'Next →'}
+                    {currentStep === totalSteps - 1 ? t("COMPLETE") : `${t("NEXT")} →`}
                   </Button>
                 </div>
               </div>
@@ -355,7 +355,7 @@ export default function HelpPage() {
         {/* Quick Navigation */}
         <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xl">
           <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-            Quick Navigation
+            {t("QUICK_NAVIGATION")}
           </h3>
           <div className="flex flex-wrap gap-2">
             {navigationSteps.map((step, index) => (

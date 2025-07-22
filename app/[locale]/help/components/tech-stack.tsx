@@ -252,15 +252,15 @@ const techStack: TechItem[] = [
   }
 ];
 
-const categories = [
-  { id: "all", label: "All Technologies", icon: "🔧", count: techStack.length },
-  { id: "frontend", label: "Frontend", icon: "🎨", count: techStack.filter(t => t.categoryKey.includes("FRONTEND")).length },
-  { id: "backend", label: "Backend", icon: "⚙️", count: techStack.filter(t => t.categoryKey.includes("BACKEND")).length },
-  { id: "database", label: "Database", icon: "🗃️", count: techStack.filter(t => t.categoryKey.includes("DATABASE")).length },
-  { id: "auth", label: "Authentication", icon: "🔐", count: techStack.filter(t => t.categoryKey.includes("AUTH")).length },
-  { id: "payment", label: "Payment", icon: "💳", count: techStack.filter(t => t.categoryKey.includes("PAYMENT")).length },
-  { id: "monitoring", label: "Monitoring", icon: "📊", count: techStack.filter(t => t.categoryKey.includes("MONITORING")).length },
-  { id: "deployment", label: "Deployment", icon: "🚀", count: techStack.filter(t => t.categoryKey.includes("DEPLOYMENT")).length }
+const getCategoriesWithTranslations = (t: any) => [
+  { id: "all", label: t("CATEGORY_ALL_TECH"), icon: "🔧", count: techStack.length },
+  { id: "frontend", label: t("CATEGORY_FRONTEND"), icon: "🎨", count: techStack.filter(t => t.categoryKey.includes("FRONTEND")).length },
+  { id: "backend", label: t("CATEGORY_BACKEND"), icon: "⚙️", count: techStack.filter(t => t.categoryKey.includes("BACKEND")).length },
+  { id: "database", label: t("CATEGORY_DATABASE"), icon: "🗃️", count: techStack.filter(t => t.categoryKey.includes("DATABASE")).length },
+  { id: "auth", label: t("CATEGORY_AUTH"), icon: "🔐", count: techStack.filter(t => t.categoryKey.includes("AUTH")).length },
+  { id: "payment", label: t("CATEGORY_PAYMENT"), icon: "💳", count: techStack.filter(t => t.categoryKey.includes("PAYMENT")).length },
+  { id: "monitoring", label: t("CATEGORY_MONITORING"), icon: "📊", count: techStack.filter(t => t.categoryKey.includes("MONITORING")).length },
+  { id: "deployment", label: t("CATEGORY_DEPLOYMENT"), icon: "🚀", count: techStack.filter(t => t.categoryKey.includes("DEPLOYMENT")).length }
 ];
 
 export function TechStack() {
@@ -268,6 +268,8 @@ export function TechStack() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState<"name" | "popularity" | "performance">("popularity");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  const categories = getCategoriesWithTranslations(t);
 
   const filteredTech = useMemo(() => {
     let filtered = techStack;
@@ -317,7 +319,7 @@ export function TechStack() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-full text-indigo-700 dark:text-indigo-300 text-sm font-medium mb-6">
             <span>⚡</span>
-            Technology Stack
+            {t('TECH_STACK_BADGE')}
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white">
             {t('TECH_STACK_TITLE')}
@@ -335,7 +337,7 @@ export function TechStack() {
                 {stats.total}
               </div>
               <div className="text-sm text-slate-600 dark:text-slate-400">
-                Total Technologies
+                {t('TECH_STACK_TOTAL_TECH')}
               </div>
             </div>
           </div>
@@ -345,7 +347,7 @@ export function TechStack() {
                 {stats.highPopularity}
               </div>
               <div className="text-sm text-slate-600 dark:text-slate-400">
-                High Popularity
+                {t('TECH_STACK_HIGH_POPULARITY')}
               </div>
             </div>
           </div>
@@ -355,7 +357,7 @@ export function TechStack() {
                 {stats.avgPerformance}%
               </div>
               <div className="text-sm text-slate-600 dark:text-slate-400">
-                Avg Performance
+                {t('TECH_STACK_AVG_PERFORMANCE')}
               </div>
             </div>
                   </div>
@@ -390,9 +392,9 @@ export function TechStack() {
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="popularity">Sort by Popularity</option>
-                <option value="performance">Sort by Performance</option>
-                <option value="name">Sort by Name</option>
+                <option value="popularity">{t("SORT_BY_POPULARITY")}</option>
+                <option value="performance">{t("SORT_BY_PERFORMANCE")}</option>
+                <option value="name">{t("SORT_BY_NAME")}</option>
               </select>
 
               <div className="flex bg-slate-100 dark:bg-slate-700 rounded-lg p-1">
@@ -454,16 +456,16 @@ export function TechStack() {
         <div className="mt-12 text-center">
           <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
             <p className="text-slate-600 dark:text-slate-400 mb-4">
-              Showing {filteredTech.length} of {techStack.length} technologies
+              {t("SHOWING_TECHNOLOGIES", { filtered: filteredTech.length, total: techStack.length })}
             </p>
             {filteredTech.length === 0 && (
               <div className="text-center py-8">
                 <div className="text-6xl mb-4">🔍</div>
                 <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
-                  No technologies found
+                  {t("NO_TECH_FOUND")}
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400">
-                  Try adjusting your filters to see more results
+                  {t("TRY_ADJUSTING_FILTERS")}
                 </p>
               </div>
             )}
@@ -474,17 +476,17 @@ export function TechStack() {
         <div className="mt-16 text-center">
           <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-2xl p-8 border border-indigo-200 dark:border-indigo-800">
             <h3 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
-              Ready to Build with These Technologies?
+              {t("READY_TO_BUILD_WITH_TECH")}
             </h3>
             <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-2xl mx-auto">
-              All these technologies are pre-configured and ready to use in your project
+              {t("ALL_TECH_PRECONFIGURED")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                Get Started Now
+                {t("GET_STARTED_NOW")}
               </Button>
               <Button variant="outline" className="border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold px-8 py-3 rounded-xl transition-all duration-300">
-                View Documentation
+                {t("VIEW_DOCUMENTATION")}
               </Button>
             </div>
           </div>

@@ -225,7 +225,7 @@ export function EnvConfiguration() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-blue-700 dark:text-blue-300 text-sm font-medium mb-6">
             <span>⚙️</span>
-            Environment Configuration
+            {t("ENV_CONFIG_BADGE")}
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white">
             {t("ENV_CONFIG_TITLE")}
@@ -246,7 +246,7 @@ export function EnvConfiguration() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                    Environment Configuration
+                    {t("ENV_CONFIG_BADGE")}
                   </h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400">
                     {filteredVariables.length} variables • {filteredVariables.filter(v => v.required).length} required
