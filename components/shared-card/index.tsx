@@ -5,8 +5,6 @@ import { useTranslations } from "next-intl";
 import { Search, Filter } from "lucide-react";
 
 import Item from "@/components/item";
-import { Link } from "@/i18n/navigation";
-import { getItemPath } from "@/lib/utils";
 import { PER_PAGE } from "@/lib/paginate";
 import { layoutComponents, LayoutKey } from "@/components/layouts";
 import { Category, ItemData, Tag } from "@/lib/content";
@@ -461,14 +459,7 @@ export function ItemsList({
             {renderCustomItem ? (
               renderCustomItem(item, index)
             ) : (
-              <Link
-                className="block duration-300 h-full"
-                prefetch={false}
-                href={getItemPath(item.slug)}
-                onClick={() => onItemClick?.(item)}
-              >
-                <Item {...item} isWrappedInLink={true} />
-              </Link>
+              <Item {...item} onNavigate={() => onItemClick?.(item)} />
             )}
           </div>
         ))}

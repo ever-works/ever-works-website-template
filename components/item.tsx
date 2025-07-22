@@ -1,30 +1,35 @@
 "use client";
 
 import { ItemData, Tag } from "@/lib/content";
-import { getCategoriesName } from "@/lib/utils";
 import Link from "next/link";
 import { Card, CardHeader, CardBody, cn, Badge } from "@heroui/react";
 import {
   FiStar,
-  FiExternalLink,
   FiFolder,
   FiArrowUpRight
 } from "react-icons/fi";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import { useFilters } from "@/components/filters/context/filter-context";
+import { usePathname } from "next/navigation";
 
 type ItemProps = ItemData & {
-  isWrappedInLink?: boolean;
+  onNavigate?: () => void;
 };
 
 export default function Item(props: ItemProps) {
   const t = useTranslations();
+  const pathname = usePathname();
+  const locale = pathname.split("/")[1] || "";
 
   const getTagName = (tag: string | Tag): string => {
     if (typeof tag === "string") return tag;
     if (tag && typeof tag === "object" && "name" in tag) return tag.name;
     return "";
   };
+
+  // Helper to get item detail path (locale-aware)
+  const getDetailPath = () => (locale ? `/${locale}/items/${props.slug}` : `/items/${props.slug}`);
 
   return (
     <Card
@@ -76,9 +81,16 @@ export default function Item(props: ItemProps) {
                 </div>
 
               <div className="flex-1 min-w-0">
-                <h3 className="text-lg sm:text-base font-semibold leading-tight text-gray-900 dark:text-white mb-1 transition-colors duration-300 group-hover:text-gray-700 dark:group-hover:text-gray-200">
+                <Link
+                  href={getDetailPath()}
+                  onClick={e => {
+                    e.stopPropagation();
+                    props.onNavigate?.();
+                  }}
+                  className="text-lg sm:text-base font-semibold leading-tight text-gray-900 dark:text-white mb-1 transition-colors duration-300 group-hover:text-gray-700 dark:group-hover:text-gray-200"
+                >
                   {props.name}
-                </h3>
+                </Link>
                 <div className="w-0 h-0.5 bg-gray-300 dark:bg-gray-600 group-hover:w-12 transition-all duration-500 ease-out" />
               </div>
             </div>
@@ -100,9 +112,7 @@ export default function Item(props: ItemProps) {
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="bg-theme-primary-10 px-3 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-theme-primary-100 to-theme-primary-100 text-theme-primary  dark:from-theme-primary-900/30 dark:to-theme-primary-900/30 dark:text-theme-primary border-theme-primary-10 transition-all duration-300 hover:scale-105 hover:shadow-md capitalize shadow-sm border dark:border-gray-600/30">
-                {getCategoriesName(props.category)}
-              </span>
+              <CategoryFilterButton category={props.category} />
               {props.tags &&
                 Array.isArray(props.tags) &&
                 props.tags.slice(0, 2).map((tag, index) => {
@@ -136,30 +146,16 @@ export default function Item(props: ItemProps) {
                 props.tags.slice(0, 4).map((tag, index) => {
                   const tagName = getTagName(tag);
                   const tagId = typeof tag === "string" ? tag : tag.id;
-                  if (!tagName) return null;
-
-                  if (props.isWrappedInLink) {
-                    return (
-                      <div
-                        key={tagId || `tag-${index}`}
-                        className="text-xs transition-all duration-300 cursor-pointer text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 hover:scale-105 font-medium px-2 py-1 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                        style={{ animationDelay: `${index * 0.05}s` }}
-                      >
-                        #{tagName}
-                      </div>
-                    );
-                  }
+                  if (!tagName) return null; 
 
                   return (
-                    <Link
-                      key={tagId || `tag-${index}`}
-                      href={`/tags/${encodeURIComponent(tagId)}`}
-                      className="group/hashtag text-xs transition-all duration-300 no-underline flex items-center gap-1.5 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 px-3 py-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:scale-105 font-medium border border-transparent hover:border-blue-200/50 dark:hover:border-blue-700/30"
-                      style={{ animationDelay: `${index * 0.05}s` }}
-                    >
-                      #{tagName}
-                      <FiExternalLink className="w-3 h-3 opacity-0 group-hover/hashtag:opacity-100 transition-all duration-300 group-hover/hashtag:scale-110" />
-                    </Link>
+                    <div
+                    key={tagId || `tag-${index}`}
+                    className="text-xs transition-all duration-300 cursor-pointer text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 hover:scale-105 font-medium px-2 py-1 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
+                    #{tagName}
+                  </div>
                   );
                 })}
             </div>
@@ -168,14 +164,43 @@ export default function Item(props: ItemProps) {
       </div>
 
       {/* Enhanced hover indicator */}
-      <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-2 group-hover:translate-x-0">
-        <div className="w-8 h-8 rounded-full bg-theme-primary-500/10 dark:bg-theme-primary-400/10 flex items-center justify-center backdrop-blur-sm border border-theme-primary-10 dark:border-theme-primary">
-          <FiArrowUpRight className="w-4 h-4 text-theme-primary-600 dark:text-theme-primary-400" />
-        </div>
-      </div>
+      <Link
+        href={getDetailPath()}
+        onClick={e => {
+          e.stopPropagation();
+          props.onNavigate?.();
+        }}
+        className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-2 group-hover:translate-x-0 w-8 h-8 rounded-full bg-theme-primary-500/10 dark:bg-theme-primary-400/10 flex items-center justify-center backdrop-blur-sm border border-theme-primary-10 dark:border-theme-primary"
+        aria-label="View details"
+      >
+        <FiArrowUpRight className="w-4 h-4 text-theme-primary-600 dark:text-theme-primary-400" />
+      </Link>
 
       {/* Subtle glow effect */}
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
     </Card>
+  );
+}
+
+function CategoryFilterButton({ category }: { category: any }) {
+  const { selectedCategories, toggleSelectedCategory } = useFilters();
+  const categoryId = typeof category === "string" ? category : category?.id;
+  const categoryName = typeof category === "string" ? category : category?.name || categoryId;
+  const isActive = selectedCategories.includes(categoryId);
+  return (
+    <button
+      type="button"
+      data-category-filter
+      className={
+        "bg-theme-primary-10 px-3 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-theme-primary-100 to-theme-primary-100 text-theme-primary  dark:from-theme-primary-900/30 dark:to-theme-primary-900/30 dark:text-theme-primary border-theme-primary-10 transition-all duration-300 hover:scale-105 hover:shadow-md capitalize shadow-sm border dark:border-gray-600/30 focus:outline-none " +
+        (isActive ? "ring-2 ring-theme-primary-500" : "")
+      }
+      onClick={e => {
+        e.stopPropagation();
+        toggleSelectedCategory(categoryId);
+      }}
+    >
+      {categoryName}
+    </button>
   );
 }
