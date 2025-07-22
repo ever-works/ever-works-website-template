@@ -1,6 +1,6 @@
 "use client";
 
-import { ItemData, Tag } from "@/lib/content";
+import { ItemData, Tag, Category } from "@/lib/content";
 import Link from "next/link";
 import { Card, CardHeader, CardBody, cn, Badge } from "@heroui/react";
 import {
@@ -112,7 +112,9 @@ export default function Item(props: ItemProps) {
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
-              <CategoryFilterButton category={props.category} />
+              {Array.isArray(props.category)
+                ? props.category.length > 0 && <CategoryFilterButton category={props.category[0]} />
+                : <CategoryFilterButton category={props.category} />}
               {props.tags &&
                 Array.isArray(props.tags) &&
                 props.tags.slice(0, 2).map((tag, index) => {
@@ -182,7 +184,9 @@ export default function Item(props: ItemProps) {
   );
 }
 
-function CategoryFilterButton({ category }: { category: any }) {
+type CategoryProp = string | Category;
+
+function CategoryFilterButton({ category }: { category: CategoryProp }) {
   const { selectedCategories, toggleSelectedCategory } = useFilters();
   const categoryId = typeof category === "string" ? category : category?.id;
   const categoryName = typeof category === "string" ? category : category?.name || categoryId;
