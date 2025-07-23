@@ -27,6 +27,8 @@ const ReportButton: React.FC<ReportButtonProps> = ({ contentType, contentId, cla
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setOpen(false);
+    setReason("");
+    setDetails("");
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 2500);
   };
