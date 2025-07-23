@@ -2,6 +2,19 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { FiFlag, FiCheckCircle } from "react-icons/fi"; // Use Feather icon for consistent style
+// import clsx from "clsx"; // Uncomment if clsx is available
+
+// Class constants for readability
+const BUTTON_CLASS =
+  "inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-red-200 bg-red-50 dark:bg-red-900/20 text-xs font-semibold text-red-600 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-800/40 shadow-sm transition-all duration-200";
+const MODAL_OVERLAY_CLASS =
+  "fixed inset-0 w-screen h-screen flex items-center justify-center bg-black/50 backdrop-blur-lg z-50";
+const MODAL_CONTAINER_CLASS =
+  "bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-6 w-full max-w-sm relative border border-gray-200 dark:border-gray-700 mx-4 z-50";
+const CONFIRM_OVERLAY_CLASS =
+  "fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fade-in";
+const CONFIRM_CONTAINER_CLASS =
+  "flex flex-col items-center gap-3 bg-green-500 text-white px-8 py-6 rounded-2xl shadow-2xl";
 
 interface ReportButtonProps {
   contentType: string;
@@ -34,8 +47,8 @@ const ReportButton: React.FC<ReportButtonProps> = ({ contentType, contentId, cla
   };
 
   const modal = (
-    <div className="fixed inset-0 w-screen h-screen flex items-center justify-center bg-black/50 backdrop-blur-lg z-[9999]">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-6 w-full max-w-sm relative border border-gray-200 dark:border-gray-700 mx-4 z-[9999]">
+    <div className={MODAL_OVERLAY_CLASS}>
+      <div className={MODAL_CONTAINER_CLASS}>
         <button
           className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-xl font-bold"
           onClick={() => setOpen(false)}
@@ -91,10 +104,7 @@ const ReportButton: React.FC<ReportButtonProps> = ({ contentType, contentId, cla
     <>
       <button
         type="button"
-        className={
-          "inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-red-200 bg-red-50 dark:bg-red-900/20 text-xs font-semibold text-red-600 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-800/40 shadow-sm transition-all duration-200 " +
-          (className || "")
-        }
+        className={BUTTON_CLASS + (className ? ` ${className}` : "")}
         onClick={e => {
           e.stopPropagation();
           setOpen(true);
@@ -106,8 +116,8 @@ const ReportButton: React.FC<ReportButtonProps> = ({ contentType, contentId, cla
       </button>
       {open && typeof window !== "undefined" && ReactDOM.createPortal(modal, document.body)}
       {submitted && typeof window !== "undefined" && ReactDOM.createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fade-in">
-          <div className="flex flex-col items-center gap-3 bg-green-500 text-white px-8 py-6 rounded-2xl shadow-2xl">
+        <div className={CONFIRM_OVERLAY_CLASS}>
+          <div className={CONFIRM_CONTAINER_CLASS}>
             <FiCheckCircle className="w-8 h-8 mb-1 text-white" />
             <span className="text-lg font-semibold">Thank you for your report!</span>
           </div>
