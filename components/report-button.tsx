@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { FiFlag, FiCheckCircle } from "react-icons/fi"; // Use Feather icon for consistent style
 // import clsx from "clsx"; // Uncomment if clsx is available
@@ -36,6 +36,19 @@ const ReportButton: React.FC<ReportButtonProps> = ({ contentType, contentId, cla
   const [reason, setReason] = useState("");
   const [details, setDetails] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const modalWrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (open && modalWrapperRef.current) {
+      modalWrapperRef.current.focus();
+    }
+  }, [open]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Escape") {
+      setOpen(false);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,7 +127,16 @@ const ReportButton: React.FC<ReportButtonProps> = ({ contentType, contentId, cla
         <FiFlag className="w-4 h-4 mr-1" />
         Report
       </button>
-      {open && typeof window !== "undefined" && ReactDOM.createPortal(modal, document.body)}
+      {open && typeof window !== "undefined" && ReactDOM.createPortal(
+        <div
+          ref={modalWrapperRef}
+          tabIndex={-1}
+          onKeyDown={handleKeyDown}
+        >
+          {modal}
+        </div>,
+        document.body
+      )}
       {submitted && typeof window !== "undefined" && ReactDOM.createPortal(
         <div className={CONFIRM_OVERLAY_CLASS}>
           <div className={CONFIRM_CONTAINER_CLASS}>
