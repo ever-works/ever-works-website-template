@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { FiFlag } from "react-icons/fi"; // Use Feather icon for consistent style
+import { FiFlag, FiCheckCircle } from "react-icons/fi"; // Use Feather icon for consistent style
 
 interface ReportButtonProps {
   contentType: string;
@@ -103,10 +103,14 @@ const ReportButton: React.FC<ReportButtonProps> = ({ contentType, contentId, cla
         Report
       </button>
       {open && typeof window !== "undefined" && ReactDOM.createPortal(modal, document.body)}
-      {submitted && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-[9999]">
-          Thank you for your report!
-        </div>
+      {submitted && typeof window !== "undefined" && ReactDOM.createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fade-in">
+          <div className="flex flex-col items-center gap-3 bg-green-500 text-white px-8 py-6 rounded-2xl shadow-2xl">
+            <FiCheckCircle className="w-8 h-8 mb-1 text-white" />
+            <span className="text-lg font-semibold">Thank you for your report!</span>
+          </div>
+        </div>,
+        document.body
       )}
     </>
   );
