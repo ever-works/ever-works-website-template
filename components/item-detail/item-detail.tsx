@@ -69,7 +69,6 @@ export function ItemDetail({
                     <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-900 via-theme-primary-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent tracking-tight leading-tight mb-2">
                       {meta.name}
                     </h1>
-                    <ReportButton contentType="item" contentId={meta.slug || meta.name} />
                   </div>
                   <div className="h-1 w-24 bg-gradient-to-r from-theme-primary-500 to-theme-purple-500 rounded-full transform transition-all duration-500 group-hover:w-32"></div>
                 </div>
@@ -151,6 +150,9 @@ export function ItemDetail({
                   content={content}
                   noContentMessage={noContentMessage}
                 />
+                <div className="flex justify-end mt-6">
+                  <ReportButton contentType="item" contentId={meta.slug || meta.name} />
+                </div>
               </div>
             </div>
           </div>
