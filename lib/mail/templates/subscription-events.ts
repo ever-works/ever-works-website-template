@@ -333,7 +333,6 @@ export const getNewSubscriptionTemplate = (data: SubscriptionEventData) => {
 export const getUpdatedSubscriptionTemplate = (data: SubscriptionEventData) => {
   const {
     customerName,
-    customerEmail,
     planName,
     amount,
     currency,
@@ -346,7 +345,6 @@ export const getUpdatedSubscriptionTemplate = (data: SubscriptionEventData) => {
     companyUrl = "https://ever.works",
     supportEmail = "support@ever.works",
     manageSubscriptionUrl,
-    features = []
   } = data;
 
   const currencySymbol = currency === 'eur' ? '€' : currency === 'usd' ? '$' : currency.toUpperCase();
@@ -668,7 +666,6 @@ export const getUpdatedSubscriptionTemplate = (data: SubscriptionEventData) => {
 export const getCancelledSubscriptionTemplate = (data: SubscriptionEventData) => {
   const {
     customerName,
-    customerEmail,
     planName,
     amount,
     currency,

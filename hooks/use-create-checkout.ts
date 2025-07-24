@@ -153,8 +153,8 @@ export const useCreateCheckoutSession = () => {
         mode: 'subscription',
         trialPeriodDays: plan.trialDays || 0,
         billingInterval,
-        successUrl: `${window.location.origin}/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancelUrl: `${window.location.origin}/subscription?cancelled=true`,
+        successUrl: `${window.location.origin}/pricing/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancelUrl: `${window.location.origin}/pricing?cancelled=true`,
         customerId: user.id,
         metadata: {
           planId: plan.id,

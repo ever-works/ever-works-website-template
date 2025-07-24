@@ -21,25 +21,35 @@ export async function POST(request: NextRequest) {
       billingInterval = 'month',
       successUrl,
       cancelUrl,
-      customerId,
       metadata = {}
     } = await request.json();
 
     // Initialize Stripe provider
-    const configs = createProviderConfigs({
-      apiKey: process.env.STRIPE_SECRET_KEY!,
-      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-      options: {
-        publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-        apiVersion: '2023-10-16'
-      }
-    });
+
+       const requiredEnvVars = {
+      apiKey: process.env.STRIPE_SECRET_KEY,
+      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+      publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    };
+
+    if (!requiredEnvVars.apiKey || !requiredEnvVars.webhookSecret || !requiredEnvVars.publishableKey) {
+      return NextResponse.json({
+        error: 'Configuration error',
+        message: 'Stripe configuration is incomplete'
+      }, { status: 500 });
+    }
+
+     const configs = createProviderConfigs({
+      apiKey: requiredEnvVars.apiKey,
+      webhookSecret: requiredEnvVars.webhookSecret,
+       options: {
+        publishableKey: requiredEnvVars.publishableKey,
+         apiVersion: '2023-10-16'
+       }
+     });
 
     const stripeProvider = new StripeProvider(configs.stripe);
-
-    // Get or create customer
     const stripeCustomerId = await stripeProvider.getCustomerId(session.user as any);
-    
     if (!stripeCustomerId) {
       return NextResponse.json({
         error: 'Failed to create customer',

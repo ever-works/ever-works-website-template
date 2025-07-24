@@ -128,7 +128,12 @@ export class StripeProvider implements PaymentProviderInterface {
       const customer = await this.createCustomer({
         email: user?.email || '',
         name: user?.user_metadata?.name,
-        metadata: { userId: user?.id },
+        metadata: { 
+          userId: user?.id, 
+          planId: user?.user_metadata?.planId, 
+          planName: user?.user_metadata?.planName,
+          billingInterval: user?.user_metadata?.billingInterval
+        },
       });
  
       if (user) {

@@ -28,7 +28,6 @@ export function PricingSection({
   const [showSelector, setShowSelector] = useState(false);
   const [currentPlan, setCurrentPlan] = useState<SubscriptionPlan | null>(null);
   const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('month');
-  const [showCheckout, setShowCheckout] = useState(false);
   const [processingPlan, setProcessingPlan] = useState<string | null>(null);
   
 
@@ -103,12 +102,10 @@ export function PricingSection({
   useEffect(() => {
     if (isSuccess) {
       toast.success('Checkout session created! Redirecting to Stripe...');
-      // Réinitialiser l'état de traitement en cas de succès
       setProcessingPlan(null);
     }
   }, [isSuccess]);
 
-  // Réinitialiser l'état de traitement en cas d'erreur
   useEffect(() => {
     if (error) {
       setProcessingPlan(null);
@@ -126,7 +123,6 @@ export function PricingSection({
       return;
     }
 
-    // Marquer ce plan comme en cours de traitement
     setProcessingPlan(plan.id);
 
     try {
@@ -134,7 +130,6 @@ export function PricingSection({
     } catch (error) {
       console.error('Checkout error:', error);
     } finally {
-      // Réinitialiser l'état de traitement
       setProcessingPlan(null);
     }
   };
@@ -283,7 +278,7 @@ export function PricingSection({
                 error ? "Error - Try again" :
                 !user ? "Sign in to continue" :
                 (processingPlan === plans[0].id && isLoading) ? "Processing..." :
-                "Submit to review"
+                "Submit to review"            
               }
               actionHref="/submit"
               isLoading={processingPlan === plans[0].id && isLoading}
@@ -300,7 +295,7 @@ export function PricingSection({
           {/* Popular Badge */}
           <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
             <div className="px-4 py-1.5 bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 text-white text-sm font-semibold rounded-full shadow-lg">
-              {t("MOST_POPULAR")}
+              {t("MOST_POPULAR")} {currentPlan?.id}
             </div>
           </div>
 

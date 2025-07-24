@@ -355,8 +355,8 @@ export const extractCustomerInfo = (stripeObject: any) => {
 /**
  * Format amount from cents to currency
  */
-export const formatAmount = (amountInCents: number, currency: string = 'usd') => {
-  return (amountInCents / 100).toFixed(2);
+export const formatAmount = (amountInCents: number, currency: string = 'USD') => {
+  return (amountInCents / 100).toFixed(2) + " " + currency.toUpperCase();
 };
 
 /**
