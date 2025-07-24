@@ -9,6 +9,7 @@ import { Button, cn } from "@heroui/react";
 import { useConfig } from "../../config";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export function CredentialsForm({
   type,
@@ -23,6 +24,8 @@ export function CredentialsForm({
   const auth = config.auth || {};
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordTips, setShowPasswordTips] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaError, setCaptchaError] = useState<string | null>(null);
 
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
     isLogin ? signInAction : signUp,
@@ -37,6 +40,11 @@ export function CredentialsForm({
   }, [state, redirect, router]);
 
   const handleFormAction = async (formData: FormData) => {
+    if (process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && !captchaToken) {
+      setCaptchaError('Please complete the captcha.');
+      return;
+    }
+    setCaptchaError(null);
     formData.append('provider', config.authConfig?.provider || 'next-auth');
     return formAction(formData);
   };
@@ -281,6 +289,16 @@ export function CredentialsForm({
       )}
 
       {/* Modern submit button */}
+      {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
+        <div className="mb-4">
+          <ReCAPTCHA
+            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+            onChange={(token: string | null) => setCaptchaToken(token)}
+            theme="light"
+          />
+          {captchaError && <p className="text-red-500 text-xs mt-2">{captchaError}</p>}
+        </div>
+      )}
       <Button
         type="submit"
         className={cn(
