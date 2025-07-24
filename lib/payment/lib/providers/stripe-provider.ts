@@ -477,6 +477,8 @@ export class StripeProvider implements PaymentProviderInterface {
     }
   }
 
+
+
   async refundPayment(paymentId: string, amount?: number): Promise<any> {
     try {
       const refundParams: Stripe.RefundCreateParams = {
@@ -506,6 +508,8 @@ export class StripeProvider implements PaymentProviderInterface {
       paymentGateway: 'stripe',
     };
   }
+
+  
 
   getUIComponents(): UIComponents {
 

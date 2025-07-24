@@ -19,6 +19,14 @@ interface PaymentFailedData {
   companyUrl?: string;
   supportEmail?: string;
 }
+function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 export const getPaymentFailedTemplate = (data: PaymentFailedData) => {
   const {
@@ -276,7 +284,7 @@ export const getPaymentFailedTemplate = (data: PaymentFailedData) => {
         </div>
         
         <div class="content">
-          <p>Hello <strong>${customerName}</strong>,</p>
+          <p>Hello <strong>${escapeHtml(customerName)}</strong>,</p>
           
           <p>We encountered an issue while processing your payment. Here are the details:</p>
           
@@ -375,7 +383,7 @@ export const getPaymentFailedTemplate = (data: PaymentFailedData) => {
   const text = `
     Payment Failed - ${companyName}
     
-    Hello ${customerName},
+    Hello ${escapeHtml(customerName)},
     
     We encountered an issue while processing your payment of ${currencySymbol}${amount}.
     

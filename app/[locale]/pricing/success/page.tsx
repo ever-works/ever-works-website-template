@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { CheckCircle, Loader2, Star, CreditCard, Calendar, Gift, Folder, Zap, Shield, Smartphone, Download, BookOpen } from 'lucide-react';
@@ -29,7 +28,6 @@ export default function SubscriptionSuccessPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user } = useCurrentUser();
-  const t = useTranslations('pricing');
 
   const sessionId = searchParams.get('session_id');
   const subscriptionId = searchParams.get('subscription');
@@ -230,7 +228,7 @@ export default function SubscriptionSuccessPage() {
 
           {/* Next Steps */}
           <Card className="bg-slate-800 border-slate-700 p-8 mb-8">
-            <h3 className="text-xl font-bold text-white mb-6">What's Next?</h3>
+            <h3 className="text-xl font-bold text-white mb-6">What&apos;s Next?</h3>
             <div className="grid md:grid-cols-2 gap-6">
               {subscriptionDetails?.trialEnd && (
                 <div className="flex items-start gap-3 p-4 bg-blue-500/20 rounded-lg">

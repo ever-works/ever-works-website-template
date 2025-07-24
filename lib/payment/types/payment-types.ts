@@ -281,8 +281,9 @@ export interface CheckoutSessionParams {
   };
   billing_address_collection?: 'auto' | 'required';
   customer_update?: {
-    address: string;
-    name: string;
+    address?: 'auto' | 'never';
+    name?: 'auto' | 'never';
+    shipping?: 'auto' | 'never';
   };
   allow_promotion_codes?: boolean;
   payment_method_types?: string[];
