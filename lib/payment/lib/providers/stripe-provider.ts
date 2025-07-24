@@ -92,8 +92,13 @@ export class StripeProvider implements PaymentProviderInterface {
     this.publishableKey = config.options?.publishableKey || '';
   }
 
+  // Public method to get Stripe instance
+  public getStripeInstance(): Stripe {
+    return this.stripe;
+  }
+
   hasCustomerId(user: User | null): boolean {
-    return !!user?.user_metadata.stripe_customer_id;
+    return !!user?.user_metadata?.stripe_customer_id;
   }
 
   // Private method to update user metadata via the API
@@ -122,11 +127,10 @@ export class StripeProvider implements PaymentProviderInterface {
     } else {
       const customer = await this.createCustomer({
         email: user?.email || '',
-        name: user?.user_metadata.name,
+        name: user?.user_metadata?.name,
         metadata: { userId: user?.id },
       });
  
-      console.log('user==+++====>', user);
       if (user) {
         try {
           // Update the metadata via the API
@@ -145,7 +149,7 @@ export class StripeProvider implements PaymentProviderInterface {
 
   async createSetupIntent(user: User | null): Promise<SetupIntent> {
     const setupIntent = await this.stripe.setupIntents.create({
-      customer: user?.user_metadata.stripe_customer_id,
+      customer: user?.user_metadata?.stripe_customer_id,
       payment_method_types: [ 'card' ],
     });
 

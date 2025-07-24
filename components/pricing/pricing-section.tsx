@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { PlanCard, PlanFeature, PricingPlan } from "./plan-card";
 import { Check, ArrowRight, Zap, Shield } from "lucide-react";
@@ -11,6 +11,9 @@ import { PaymentFlow } from "@/lib/constants";
 import { PaymentFlowIndicator } from "../payment/flow-indicator";
 import { usePaymentFlow } from "@/hooks/use-payment-flow";
 import { PaymentFlowSelectorModal } from "../payment";
+import { plans, SubscriptionPlan, useCreateCheckoutSession } from "@/hooks/use-create-checkout";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { toast } from "sonner";
 
 interface PricingSectionProps {
   onSelectPlan?: (plan: PricingPlan) => void;
@@ -19,8 +22,15 @@ interface PricingSectionProps {
 export function PricingSection({
   onSelectPlan,
 }: PricingSectionProps) {
+  const searchParams = useSearchParams();
+  const { user } = useCurrentUser();
   const router = useRouter();
   const [showSelector, setShowSelector] = useState(false);
+  const [currentPlan, setCurrentPlan] = useState<SubscriptionPlan | null>(null);
+  const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('month');
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [processingPlan, setProcessingPlan] = useState<string | null>(null);
+  
 
   const {
     selectedFlow,
@@ -45,6 +55,87 @@ export function PricingSection({
     setSelectedPlan(plan);
     if (onSelectPlan) {
       onSelectPlan(plan);
+    }
+  };
+
+  useEffect(() => {
+    const planFromUrl = searchParams.get('plan');
+    if (planFromUrl && !selectedPlan) {
+      const plan = plans.find(p => p.id === planFromUrl);
+      if (plan) {
+        setCurrentPlan(plan);
+      }
+    }
+  }, [searchParams, selectedPlan]);
+
+  const calculatePrice = (plan: SubscriptionPlan) => {
+    if (billingInterval === 'year' && plan.annualDiscount) {
+      const annualPrice = plan.price * 12;
+      return Math.round(annualPrice * (1 - plan.annualDiscount / 100));
+    }
+    return plan.price;
+  };
+
+  const getSavingsText = (plan: SubscriptionPlan) => {
+    if (billingInterval === 'year' && plan.annualDiscount) {
+      const monthlyTotal = plan.price * 12;
+      const yearlyPrice = calculatePrice(plan);
+      const savings = monthlyTotal - yearlyPrice;
+      return `Save $${savings}/year`;
+    }
+    return null;
+  };
+
+
+  const {
+    createCheckoutSession,
+    isLoading,
+    error,
+    isSuccess,
+  } = useCreateCheckoutSession();
+
+  useEffect(() => {
+    if (error) {
+      toast.error('Failed to create checkout session. Please try again.');
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success('Checkout session created! Redirecting to Stripe...');
+      // Réinitialiser l'état de traitement en cas de succès
+      setProcessingPlan(null);
+    }
+  }, [isSuccess]);
+
+  // Réinitialiser l'état de traitement en cas d'erreur
+  useEffect(() => {
+    if (error) {
+      setProcessingPlan(null);
+    }
+  }, [error]);
+
+  const handleCheckout = async (plan: SubscriptionPlan) => {
+    if (error) {
+      toast.error('Failed to create checkout session. Please try again.');
+    }
+
+    if (!user || !user.id) {
+      toast.info('Please sign in to continue with your purchase.');
+      router.push('/auth/signin');
+      return;
+    }
+
+    // Marquer ce plan comme en cours de traitement
+    setProcessingPlan(plan.id);
+
+    try {
+      await createCheckoutSession(plan, user as any, billingInterval);
+    } catch (error) {
+      console.error('Checkout error:', error);
+    } finally {
+      // Réinitialiser l'état de traitement
+      setProcessingPlan(null);
     }
   };
 
@@ -135,6 +226,37 @@ export function PricingSection({
             />
           </div>
 
+      {/* Billing Interval Selector */}
+      <div className="flex justify-center mb-8">
+        <div className="inline-flex items-center p-1 rounded-xl bg-gray-200/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-300/30 dark:border-gray-700/30">
+          <button
+            onClick={() => setBillingInterval('month')}
+            className={cn(
+              "px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+              billingInterval === 'month'
+                ? "bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm"
+                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+            )}
+          >
+            Monthly
+          </button>
+          <button
+            onClick={() => setBillingInterval('year')}
+            className={cn(
+              "px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative",
+              billingInterval === 'year'
+                ? "bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm"
+                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+            )}
+          >
+            Yearly
+            <span className="absolute -top-2 -right-2 px-2 py-0.5 text-xs font-semibold bg-green-500 text-white rounded-full">
+              Save up to 25%
+            </span>
+          </button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
         <div
           className="relative group animate-fade-in-up"
@@ -153,12 +275,20 @@ export function PricingSection({
             <PlanCard
               plan="free"
               title="FREE"
-              price="$0"
+              price={`$${calculatePrice(plans[0])}`}
               features={freePlanFeatures}
               isSelected={selectedPlan === "free"}
               onSelect={handleSelectPlan}
-              actionText="Submit to review"
+              actionText={
+                error ? "Error - Try again" :
+                !user ? "Sign in to continue" :
+                (processingPlan === plans[0].id && isLoading) ? "Processing..." :
+                "Submit to review"
+              }
               actionHref="/submit"
+              isLoading={processingPlan === plans[0].id && isLoading}
+              isButton={false}
+              onClick={() => handleCheckout(plans[0])}
             />
           </div>
         </div>
@@ -187,15 +317,32 @@ export function PricingSection({
             <PlanCard
               plan="pro"
               title="PRO"
-              price="$10"
+              price={`$${calculatePrice(plans[1])}`}
+              priceUnit={billingInterval === 'year' ? '/ year' : '/ month'}
               features={proPlanFeatures}
               isPopular={true}
               isSelected={selectedPlan === "pro"}
               onSelect={handleSelectPlan}
-              actionText="Pay & Publish Right Now"
+              actionText={
+                error ? "Error - Try again" :
+                !user ? "Sign in to continue" :
+                (processingPlan === plans[1].id && isLoading) ? "Processing..." :
+                "Pay & Publish Right Now"
+              }
               actionVariant="default"
               actionHref="/submit"
-            />
+              isLoading={processingPlan === plans[1].id && isLoading}
+              isButton={false}
+              onClick={() => handleCheckout(plans[1])}
+            >
+              {getSavingsText(plans[1]) && (
+                <div className="text-center mb-4">
+                  <span className="inline-block px-3 py-1 text-sm font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full">
+                    {getSavingsText(plans[1])}
+                  </span>
+                </div>
+              )}
+            </PlanCard>
           </div>
         </div>
 
@@ -216,15 +363,31 @@ export function PricingSection({
             <PlanCard
               plan="sponsor"
               title="SPONSOR"
-              price="$20"
-              priceUnit="/ week"
+              price={`$${calculatePrice(plans[2])}`}
+              priceUnit={billingInterval === 'year' ? '/ year' : '/ month'}
               features={sponsorPlanFeatures}
               isSelected={selectedPlan === "sponsor"}
               onSelect={handleSelectPlan}
-              actionText="Pay & Publish Right Now"
+              actionText={
+                error ? "Error - Try again" :
+                !user ? "Sign in to continue" :
+                (processingPlan === plans[2].id && isLoading) ? "Processing..." :
+                "Pay & Publish Right Now"
+              }
               actionVariant="default"
               actionHref="/submit"
-            />
+              isButton={false}
+              isLoading={processingPlan === plans[2].id && isLoading}
+              onClick={() => handleCheckout(plans[2])}
+            >
+              {getSavingsText(plans[2]) && (
+                <div className="text-center mb-4">
+                  <span className="inline-block px-3 py-1 text-sm font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full">
+                    {getSavingsText(plans[2])}
+                  </span>
+                </div>
+              )}
+            </PlanCard>
           </div>
         </div>
       </div>

@@ -14,8 +14,16 @@ import {
   comments,
   votes,
   InsertVote,
+  subscriptions,
+  subscriptionHistory,
+  SubscriptionStatus, PlanType,
+  type Subscription,
+  type NewSubscription,
+  type SubscriptionHistory as SubscriptionHistoryType,
+  type NewSubscriptionHistory,
+  type SubscriptionWithUser
 } from "./schema";
-import { desc, isNull } from "drizzle-orm";
+import { desc, isNull, count, asc, lte } from "drizzle-orm";
 import type { NewComment, CommentWithUser } from "@/lib/types/comment";
 
 export async function logActivity(
@@ -399,4 +407,294 @@ export async function getCommentById(id: string) {
 
 export async function updateCommentRating(id: string, rating: number) {
   return (await db.update(comments).set({ rating }).where(eq(comments.id, id)).returning())[0];
+}
+
+// ######################### Subscription Queries #########################
+
+/**
+ * Get active subscription for a user
+ */
+export async function getUserActiveSubscription(userId: string): Promise<Subscription | null> {
+  const result = await db
+    .select()
+    .from(subscriptions)
+    .where(
+      and(
+        eq(subscriptions.userId, userId),
+        eq(subscriptions.status, SubscriptionStatus.ACTIVE)
+      )
+    )
+    .limit(1);
+
+  return result[0] || null;
+}
+
+/**
+ * Get all subscriptions for a user
+ */
+export async function getUserSubscriptions(userId: string): Promise<Subscription[]> {
+  return await db
+    .select()
+    .from(subscriptions)
+    .where(eq(subscriptions.userId, userId))
+    .orderBy(desc(subscriptions.createdAt));
+}
+
+/**
+ * Get subscription by provider subscription ID
+ */
+export async function getSubscriptionByProviderSubscriptionId(
+  paymentProvider: string,
+  subscriptionId: string
+): Promise<Subscription | null> {
+  const result = await db
+    .select()
+    .from(subscriptions)
+    .where(
+      and(
+        eq(subscriptions.paymentProvider, paymentProvider as any),
+        eq(subscriptions.subscriptionId, subscriptionId)
+      )
+    )
+    .limit(1);
+
+  return result[0] || null;
+}
+
+/**
+ * Create a new subscription
+ */
+export async function createSubscription(data: NewSubscription): Promise<Subscription> {
+  const result = await db
+    .insert(subscriptions)
+    .values({
+      ...data,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    })
+    .returning();
+
+  return result[0];
+}
+
+/**
+ * Update subscription
+ */
+export async function updateSubscription(
+  subscriptionId: string,
+  data: Partial<NewSubscription>
+): Promise<Subscription | null> {
+  const result = await db
+    .update(subscriptions)
+    .set({
+      ...data,
+      updatedAt: new Date()
+    })
+    .where(eq(subscriptions.id, subscriptionId))
+    .returning();
+
+  return result[0] || null;
+}
+
+/**
+ * Update subscription status
+ */
+export async function updateSubscriptionStatus(
+  subscriptionId: string,
+  status: string,
+  reason?: string
+): Promise<Subscription | null> {
+  const updateData: any = {
+    status,
+    updatedAt: new Date()
+  };
+
+  if (status === SubscriptionStatus.CANCELLED) {
+    updateData.cancelledAt = new Date();
+    if (reason) {
+      updateData.cancelReason = reason;
+    }
+  }
+
+  const result = await db
+    .update(subscriptions)
+    .set(updateData)
+    .where(eq(subscriptions.id, subscriptionId))
+    .returning();
+
+  return result[0] || null;
+}
+
+/**
+ * Cancel subscription
+ */
+export async function cancelSubscription(
+  subscriptionId: string,
+  reason?: string,
+  cancelAtPeriodEnd: boolean = false
+): Promise<Subscription | null> {
+  const result = await db
+    .update(subscriptions)
+    .set({
+      status: cancelAtPeriodEnd ? SubscriptionStatus.ACTIVE : SubscriptionStatus.CANCELLED,
+      cancelledAt: new Date(),
+      cancelReason: reason,
+      cancelAtPeriodEnd,
+      updatedAt: new Date()
+    })
+    .where(eq(subscriptions.id, subscriptionId))
+    .returning();
+
+  return result[0] || null;
+}
+
+/**
+ * Get subscription with user details
+ */
+export async function getSubscriptionWithUser(subscriptionId: string): Promise<SubscriptionWithUser | null> {
+  const result = await db
+    .select()
+    .from(subscriptions)
+    .leftJoin(users, eq(subscriptions.userId, users.id))
+    .where(eq(subscriptions.id, subscriptionId))
+    .limit(1);
+
+  if (!result[0]) return null;
+
+  return {
+    ...result[0].subscriptions,
+    user: result[0].users!
+  };
+}
+
+/**
+ * Get subscriptions expiring soon
+ */
+export async function getSubscriptionsExpiringSoon(days: number = 7): Promise<Subscription[]> {
+  const expirationDate = new Date();
+  expirationDate.setDate(expirationDate.getDate() + days);
+
+  return await db
+    .select()
+    .from(subscriptions)
+    .where(
+      and(
+        eq(subscriptions.status, SubscriptionStatus.ACTIVE),
+        lte(subscriptions.endDate, expirationDate)
+      )
+    )
+    .orderBy(asc(subscriptions.endDate));
+}
+
+/**
+ * Check if user has active subscription
+ */
+export async function hasActiveSubscription(userId: string): Promise<boolean> {
+  const result = await db
+    .select({ count: count() })
+    .from(subscriptions)
+    .where(
+      and(
+        eq(subscriptions.userId, userId),
+        eq(subscriptions.status, SubscriptionStatus.ACTIVE)
+      )
+    );
+
+  return result[0].count > 0;
+}
+
+/**
+ * Get user's current plan
+ */
+export async function getUserPlan(userId: string): Promise<string> {
+  const subscription = await getUserActiveSubscription(userId);
+  return subscription?.planId || PlanType.FREE;
+}
+
+// ######################### Subscription History Queries #########################
+
+/**
+ * Create subscription history entry
+ */
+export async function createSubscriptionHistory(data: NewSubscriptionHistory): Promise<SubscriptionHistoryType> {
+  const result = await db
+    .insert(subscriptionHistory)
+    .values({
+      ...data,
+      createdAt: new Date()
+    })
+    .returning();
+
+  return result[0];
+}
+
+/**
+ * Get subscription history
+ */
+export async function getSubscriptionHistory(subscriptionId: string): Promise<SubscriptionHistoryType[]> {
+  return await db
+    .select()
+    .from(subscriptionHistory)
+    .where(eq(subscriptionHistory.subscriptionId, subscriptionId))
+    .orderBy(desc(subscriptionHistory.createdAt));
+}
+
+/**
+ * Log subscription change
+ */
+export async function logSubscriptionChange(
+  subscriptionId: string,
+  action: string,
+  previousStatus?: string,
+  newStatus?: string,
+  previousPlan?: string,
+  newPlan?: string,
+  reason?: string,
+  metadata?: any
+): Promise<SubscriptionHistoryType> {
+  return await createSubscriptionHistory({
+    subscriptionId,
+    action,
+    previousStatus,
+    newStatus,
+    previousPlan,
+    newPlan,
+    reason,
+    metadata: metadata ? JSON.stringify(metadata) : null
+  });
+}
+
+/**
+ * Get subscription statistics
+ */
+export async function getSubscriptionStats() {
+  const totalSubscriptions = await db
+    .select({ count: count() })
+    .from(subscriptions);
+
+  const activeSubscriptions = await db
+    .select({ count: count() })
+    .from(subscriptions)
+    .where(eq(subscriptions.status, SubscriptionStatus.ACTIVE));
+
+  const cancelledSubscriptions = await db
+    .select({ count: count() })
+    .from(subscriptions)
+    .where(eq(subscriptions.status, SubscriptionStatus.CANCELLED));
+
+  const planDistribution = await db
+    .select({
+      planId: subscriptions.planId,
+      count: count()
+    })
+    .from(subscriptions)
+    .where(eq(subscriptions.status, SubscriptionStatus.ACTIVE))
+    .groupBy(subscriptions.planId);
+
+  return {
+    total: totalSubscriptions[0].count,
+    active: activeSubscriptions[0].count,
+    cancelled: cancelledSubscriptions[0].count,
+    planDistribution
+  };
 }
