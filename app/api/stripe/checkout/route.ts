@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { StripeProvider } from '@/lib/payment/lib/providers/stripe-provider';
 import { createProviderConfigs } from '@/lib/payment/config/provider-configs';
+import { CheckoutSessionParams } from '@/lib/payment/types/payment-types';
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     const { 
       priceId, 
-      mode = 'subscription', 
+      mode = 'one_time', 
       trialPeriodDays = 0, 
       billingInterval = 'month',
       successUrl,
@@ -26,29 +27,30 @@ export async function POST(request: NextRequest) {
 
     // Initialize Stripe provider
 
-       const requiredEnvVars = {
-      apiKey: process.env.STRIPE_SECRET_KEY,
-      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
-      publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-    };
-
-    if (!requiredEnvVars.apiKey || !requiredEnvVars.webhookSecret || !requiredEnvVars.publishableKey) {
-      return NextResponse.json({
-        error: 'Configuration error',
-        message: 'Stripe configuration is incomplete'
-      }, { status: 500 });
+    function initializeStripeProvider() {
+      const requiredEnvVars = {
+        apiKey: process.env.STRIPE_SECRET_KEY,
+        webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+        publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+      };
+    
+      if (!requiredEnvVars.apiKey || !requiredEnvVars.webhookSecret || !requiredEnvVars.publishableKey) {
+        throw new Error('Stripe configuration is incomplete');
+      }
+    
+      const configs = createProviderConfigs({
+        apiKey: requiredEnvVars.apiKey,
+        webhookSecret: requiredEnvVars.webhookSecret,
+        options: {
+          publishableKey: requiredEnvVars.publishableKey,
+          apiVersion: process.env.STRIPE_API_VERSION || '2023-10-16'
+        }
+      });
+    
+      return new StripeProvider(configs.stripe);
     }
 
-     const configs = createProviderConfigs({
-      apiKey: requiredEnvVars.apiKey,
-      webhookSecret: requiredEnvVars.webhookSecret,
-       options: {
-        publishableKey: requiredEnvVars.publishableKey,
-         apiVersion: '2023-10-16'
-       }
-     });
-
-    const stripeProvider = new StripeProvider(configs.stripe);
+    const stripeProvider = initializeStripeProvider();
     const stripeCustomerId = await stripeProvider.getCustomerId(session.user as any);
     if (!stripeCustomerId) {
       return NextResponse.json({
@@ -57,7 +59,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    const checkoutParams: any = {
+    const checkoutParams: CheckoutSessionParams = {
       customer: stripeCustomerId,
       mode,
       line_items: [
@@ -68,6 +70,7 @@ export async function POST(request: NextRequest) {
       ],
       success_url: successUrl,
       cancel_url: cancelUrl,
+      billing_address_collection: 'auto',
       metadata: {
         ...metadata,
         userId: session.user.id,
@@ -112,7 +115,7 @@ export async function POST(request: NextRequest) {
 
     // Create checkout session via Stripe SDK
     const stripe = stripeProvider.getStripeInstance();
-    const checkoutSession = await stripe.checkout.sessions.create(checkoutParams);
+    const checkoutSession = await stripe.checkout.sessions.create(checkoutParams as any);
 
     return NextResponse.json({
       data: {

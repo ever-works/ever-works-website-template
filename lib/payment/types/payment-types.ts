@@ -1,5 +1,5 @@
-import { User } from '@supabase/auth-js';
-import Stripe from 'stripe';
+import { User } from "@supabase/auth-js";
+import Stripe from "stripe";
 
 export interface PriceDetails {
   amount: number;
@@ -50,18 +50,18 @@ export interface SubscriptionInfo {
 }
 
 export enum SubscriptionStatus {
-  INCOMPLETE = 'incomplete',
-  INCOMPLETE_EXPIRED = 'incomplete_expired',
-  TRIALING = 'trialing',
-  ACTIVE = 'active',
-  PAST_DUE = 'past_due',
-  CANCELED = 'canceled',
-  UNPAID = 'unpaid',
+  INCOMPLETE = "incomplete",
+  INCOMPLETE_EXPIRED = "incomplete_expired",
+  TRIALING = "trialing",
+  ACTIVE = "active",
+  PAST_DUE = "past_due",
+  CANCELED = "canceled",
+  UNPAID = "unpaid",
 }
 
 export enum SubscriptionPlanType {
-  TRIAL = 'trial',        // 7-day trial that converts to recurring
-  RECURRING = 'recurring' // Direct recurring subscription (1-month)
+  TRIAL = "trial", // 7-day trial that converts to recurring
+  RECURRING = "recurring", // Direct recurring subscription (1-month)
 }
 
 export interface PaymentVerificationResult {
@@ -133,16 +133,26 @@ export interface UIComponents {
 export interface PaymentProviderInterface {
   // Methods to create and manage payments
   createPaymentIntent(params: CreatePaymentParams): Promise<PaymentIntent>;
-  confirmPayment(paymentId: string, paymentMethodId: string): Promise<PaymentIntent>;
+  confirmPayment(
+    paymentId: string,
+    paymentMethodId: string
+  ): Promise<PaymentIntent>;
   verifyPayment(paymentId: string): Promise<PaymentVerificationResult>;
   createSetupIntent(user: User | null): Promise<SetupIntent>;
   // createPaymentMethod(params: CreatePaymentMethodParams): Promise<{ clientSecret: string, isSubscription: boolean }>;
 
   // Methods to manage subscriptions
   createCustomer(params: CreateCustomerParams): Promise<CustomerResult>;
-  createSubscription(params: CreateSubscriptionParams): Promise<SubscriptionInfo>;
-  cancelSubscription(subscriptionId: string, cancelAtPeriodEnd?: boolean): Promise<SubscriptionInfo>;
-  updateSubscription(params: UpdateSubscriptionParams): Promise<SubscriptionInfo>;
+  createSubscription(
+    params: CreateSubscriptionParams
+  ): Promise<SubscriptionInfo>;
+  cancelSubscription(
+    subscriptionId: string,
+    cancelAtPeriodEnd?: boolean
+  ): Promise<SubscriptionInfo>;
+  updateSubscription(
+    params: UpdateSubscriptionParams
+  ): Promise<SubscriptionInfo>;
   hasCustomerId(user: User | null): boolean;
   getCustomerId(user: User | null): Promise<string | null>;
 
@@ -170,13 +180,13 @@ export interface CreatePaymentParams {
 }
 
 export interface CreatePaymentMethodParams {
-  user: User | null,
+  user: User | null;
   plan: {
-    id: number | string,
-    period: string,
-    price?: number,
-    name?: string
-  }
+    id: number | string;
+    period: string;
+    price?: number;
+    name?: string;
+  };
 }
 
 export interface CreateCustomerParams {
@@ -211,25 +221,25 @@ export interface UpdateSubscriptionParams {
 // Client configuration for frontend integration
 export interface ClientConfig {
   publicKey: string;
-  paymentGateway: 'stripe' | 'solidgate' | 'lemonsqueezy';
+  paymentGateway: "stripe" | "solidgate" | "lemonsqueezy";
   options?: Record<string, any>;
 }
 
 // Webhook event type
 export enum WebhookEventType {
-  PAYMENT_SUCCEEDED = 'payment_succeeded',
-  PAYMENT_FAILED = 'payment_failed',
-  REFUND_SUCCEEDED = 'refund_succeeded',
-  SUBSCRIPTION_CREATED = 'subscription_created',
-  SUBSCRIPTION_UPDATED = 'subscription_updated',
-  SUBSCRIPTION_CANCELLED = 'subscription_cancelled',
-  SUBSCRIPTION_TRIAL_ENDING = 'subscription_trial_ending',
-  SUBSCRIPTION_PAYMENT_SUCCEEDED = 'subscription_payment_succeeded',
-  SUBSCRIPTION_PAYMENT_FAILED = 'subscription_payment_failed'
+  PAYMENT_SUCCEEDED = "payment_succeeded",
+  PAYMENT_FAILED = "payment_failed",
+  REFUND_SUCCEEDED = "refund_succeeded",
+  SUBSCRIPTION_CREATED = "subscription_created",
+  SUBSCRIPTION_UPDATED = "subscription_updated",
+  SUBSCRIPTION_CANCELLED = "subscription_cancelled",
+  SUBSCRIPTION_TRIAL_ENDING = "subscription_trial_ending",
+  SUBSCRIPTION_PAYMENT_SUCCEEDED = "subscription_payment_succeeded",
+  SUBSCRIPTION_PAYMENT_FAILED = "subscription_payment_failed",
 }
 
 // Supported providers type
-export type SupportedProvider = 'stripe' | 'solidgate'|'lemonsqueezy';
+export type SupportedProvider = "stripe" | "solidgate" | "lemonsqueezy";
 
 // Interface for the configuration of a provider
 export interface PaymentProviderConfig {
@@ -247,7 +257,35 @@ export interface PaymentServiceConfig {
 
 // Payment type
 export enum PaymentType {
-  ONE_TIME = 'one_time',
-  SUBSCRIPTION = 'subscription',
-  FREE = 'free'
+  ONE_TIME = "one_time",
+  SUBSCRIPTION = "subscription",
+  FREE = "free",
 }
+
+export interface CheckoutSessionParams {
+  customer: string;
+  mode: string;
+  line_items: Array<{ price: string; quantity: number }>;
+  success_url: string;
+  cancel_url: string;
+  metadata: Record<string, any>;
+  ui_mode: string;
+  custom_text: {
+    submit: {
+      message: string;
+    };
+  };
+  subscription_data?: {
+    metadata: Record<string, any>;
+    trial_period_days?: number;
+  };
+  billing_address_collection?: 'auto' | 'required';
+  customer_update?: {
+    address: string;
+    name: string;
+  };
+  allow_promotion_codes?: boolean;
+  payment_method_types?: string[];
+  
+}
+
