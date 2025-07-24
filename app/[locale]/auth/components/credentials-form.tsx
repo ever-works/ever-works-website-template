@@ -45,6 +45,9 @@ export function CredentialsForm({
       return;
     }
     setCaptchaError(null);
+    if (captchaToken) {
+      formData.append('captchaToken', captchaToken);
+    }
     formData.append('provider', config.authConfig?.provider || 'next-auth');
     return formAction(formData);
   };
