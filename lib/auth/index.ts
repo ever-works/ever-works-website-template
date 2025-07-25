@@ -66,6 +66,13 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       }
     },
     jwt: async ({ token, user, account }) => {
+      // Always fetch the user from the database to get isAdmin
+      let dbUser = null;
+      if (user?.email) {
+        dbUser = await getUserByEmail(user.email);
+      } else if (token?.email) {
+        dbUser = await getUserByEmail(token.email);
+      }
       if (user?.id && typeof user.id === "string") {
         token.userId = user.id;
       }
@@ -73,9 +80,9 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         token.userId = token.sub;
       }
       token.provider = account?.provider || "credentials";
-      // Add isAdmin to token if available
-      if (user && typeof user.isAdmin === "boolean") {
-        token.isAdmin = user.isAdmin;
+      // Add isAdmin to token if available from dbUser
+      if (dbUser && typeof dbUser.isAdmin === "boolean") {
+        token.isAdmin = dbUser.isAdmin;
       }
       return token;
     },

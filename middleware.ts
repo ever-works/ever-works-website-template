@@ -64,6 +64,7 @@ export default async function middleware(req: NextRequest) {
       // Use NextAuth session
       const session = await auth();
       user = session?.user;
+      
       if (!user || !user.isAdmin) {
         return NextResponse.redirect(new URL("/admin/auth/signin", req.url));
       }
