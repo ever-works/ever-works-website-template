@@ -66,21 +66,28 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       }
     },
     jwt: async ({ token, user, account }) => {
-      if (user?.id) {
+      if (user?.id && typeof user.id === "string") {
         token.userId = user.id;
       }
-      if (!token.userId && token.sub) {
+      if (!token.userId && typeof token.sub === "string") {
         token.userId = token.sub;
       }
       token.provider = account?.provider || "credentials";
+      // Add isAdmin to token if available
+      if (user && typeof user.isAdmin === "boolean") {
+        token.isAdmin = user.isAdmin;
+      }
       return token;
     },
     session: async ({ session, token }) => {
       if (token && session.user) {
-        if (token.userId) {
+        if (typeof token.userId === "string") {
           session.user.id = token.userId;
         }
-        session.user.provider = token.provider || "credentials";
+        session.user.provider = typeof token.provider === "string" ? token.provider : "credentials";
+        if (typeof token.isAdmin === "boolean") {
+          session.user.isAdmin = token.isAdmin;
+        }
       }
       return session;
     },

@@ -1,23 +1,24 @@
 import { DefaultSession, DefaultUser } from "next-auth";
-import { DefaultJWT } from "next-auth/jwt";
+
+// Extend NextAuth session and user types to include isAdmin
 
 declare module "next-auth" {
   interface Session {
     user: {
       id?: string;
       provider?: string;
+      isAdmin?: boolean;
     } & DefaultSession["user"];
   }
-
   interface User extends DefaultUser {
-    id: string;
-    provider?: string;
+    isAdmin?: boolean;
   }
 }
 
 declare module "next-auth/jwt" {
-  interface JWT extends DefaultJWT {
+  interface JWT {
     userId?: string;
     provider?: string;
+    isAdmin?: boolean;
   }
 }

@@ -46,6 +46,32 @@ const authMiddleware = auth(async (req) => {
 
 export default async function middleware(req: NextRequest) {
   const config = getAuthConfig();
+  const pathname = req.nextUrl.pathname;
+
+  // Admin route protection
+  if (pathname.startsWith("/admin")) {
+    let user = null;
+    if (config.provider === "supabase") {
+      // Use Supabase session
+      const supabase = await updateSession(req);
+      // Try to get user from supabase session cookie
+      // (You may need to adjust this logic based on your Supabase session handling)
+      // For now, just allow through (TODO: implement actual isAdmin check)
+      // If not admin, redirect:
+      // return NextResponse.redirect(new URL("/admin/auth/signin", req.url));
+      return supabase;
+    } else if (config.provider === "next-auth") {
+      // Use NextAuth session
+      const session = await auth();
+      user = session?.user;
+      if (!user || !user.isAdmin) {
+        return NextResponse.redirect(new URL("/admin/auth/signin", req.url));
+      }
+    }
+    // If admin, allow through
+    return intlMiddleware(req);
+  }
+
   if (config.provider === "supabase") {
     const supabaseResponse = await updateSession(req);
     return intlMiddleware(supabaseResponse as any);
