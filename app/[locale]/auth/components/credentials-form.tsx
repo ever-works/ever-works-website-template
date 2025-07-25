@@ -13,7 +13,8 @@ import { Link } from "@/i18n/navigation";
 export function CredentialsForm({
   type,
   children,
-}: PropsWithChildren<{ type: "login" | "signup" }>) {
+  hideSwitchButton = false,
+}: PropsWithChildren<{ type: "login" | "signup", hideSwitchButton?: boolean }>) {
   const isLogin = type === "login";
   const t = useTranslations("auth");
   const searchParams = useSearchParams();
@@ -320,7 +321,7 @@ export function CredentialsForm({
 
       {children}
 
-      {auth.credentials && (
+      {auth.credentials && !hideSwitchButton && (
         <div className="text-center mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
           <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
             {isLogin ? "New to our platform?" : "Already have an account?"}

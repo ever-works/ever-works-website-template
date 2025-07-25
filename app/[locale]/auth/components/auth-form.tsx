@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Building, Globe } from "lucide-react";
+import { Search, Building, Globe, User } from "lucide-react";
 import { useConfig } from "../../config";
 import { CredentialsForm } from "./credentials-form";
 import { SocialLogin } from "./social-login";
@@ -14,7 +14,7 @@ import {
   TrustBadge
 } from "@/components/ui/auth-illustrations";
 
-export function AuthForm({ form }: { form: "login" | "signup" }) {
+export function AuthForm({ form, showSocialLogin = true }: { form: "login" | "signup", showSocialLogin?: boolean }) {
   const config = useConfig();
   const t = useTranslations("common");
   const isLogin = form === "login";
@@ -56,71 +56,128 @@ export function AuthForm({ form }: { form: "login" | "signup" }) {
                       </span>
                     </div>
 
-                    <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
-                      {isLogin ? (
-                        <>
-                          {t("WELCOME_BACK")} <br />
-                          <span className="text-theme-primary">{t("AMONG_US")}</span>
-                        </>
-                      ) : (
-                        <>
-                          {t("JOIN_OUR")} <br />
-                          <span className="text-theme-primary">{t("COMMUNITY")}</span>
-                        </>
-                      )}
-                    </h2>
-
-                    <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
-                      {isLogin
-                        ? t("ACCESS_THOUSANDS")
-                        : t("CREATE_ACCOUNT_DESC")}
-                    </p>
+                    {/* Admin-specific message */}
+                    {showSocialLogin === false ? (
+                      <>
+                        <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
+                          Welcome to the Admin Dashboard
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                          Please sign in with your admin credentials to access the management section. Only authorized administrators are allowed beyond this point.
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
+                          {isLogin ? (
+                            <>
+                              {t("WELCOME_BACK")} <br />
+                              <span className="text-theme-primary">{t("AMONG_US")}</span>
+                            </>
+                          ) : (
+                            <>
+                              {t("JOIN_OUR")} <br />
+                              <span className="text-theme-primary">{t("COMMUNITY")}</span>
+                            </>
+                          )}
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                          {isLogin
+                            ? t("ACCESS_THOUSANDS")
+                            : t("CREATE_ACCOUNT_DESC")}
+                        </p>
+                      </>
+                    )}
                   </div>
                 </AnimatedContainer>
 
                 {/* Feature list with staggered animations */}
                 <StaggerContainer staggerDelay={150} className="space-y-4">
-                  <div className="flex items-center">
-                    <div className="bg-theme-primary/10 p-3 rounded-xl mr-4 group hover:bg-theme-primary/20 transition-colors">
-                      <Search className="h-5 w-5 text-theme-primary group-hover:scale-110 transition-transform" />
-                    </div>
-                    <div>
-                      <span className="font-semibold text-gray-900 dark:text-white block">
-                        {t("ADVANCED_SEARCH")}
-                      </span>
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {t("EXPLORE_THOUSANDS")}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center">
-                    <div className="bg-theme-accent/10 p-3 rounded-xl mr-4 group hover:bg-theme-accent/20 transition-colors">
-                      <Building className="h-5 w-5 text-theme-accent group-hover:scale-110 transition-transform" />
-                    </div>
-                    <div>
-                      <span className="font-semibold text-gray-900 dark:text-white block">
-                        {t("LIST_YOUR_BUSINESS")}
-                      </span>
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {t("INCREASE_VISIBILITY")}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center">
-                    <div className="bg-theme-secondary/10 p-3 rounded-xl mr-4 group hover:bg-theme-secondary/20 transition-colors">
-                      <Globe className="h-5 w-5 text-theme-secondary group-hover:scale-110 transition-transform" />
-                    </div>
-                    <div>
-                      <span className="font-semibold text-gray-900 dark:text-white block">
-                        {t("PROFESSIONAL_NETWORK")}
-                      </span>
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {t("CONNECT_WITH_EXPERTS")}
-                      </span>
-                    </div>
-                  </div>
+                  {showSocialLogin === false ? (
+                    <>
+                      <div className="flex items-center">
+                        <div className="bg-theme-primary/10 p-3 rounded-xl mr-4 group">
+                          <User className="h-5 w-5 text-theme-primary" />
+                        </div>
+                        <div>
+                          <span className="font-semibold text-gray-900 dark:text-white block">
+                            User Management
+                          </span>
+                          <span className="text-sm text-gray-600 dark:text-gray-400">
+                            Manage platform users and permissions
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="bg-theme-accent/10 p-3 rounded-xl mr-4 group">
+                          <Building className="h-5 w-5 text-theme-accent" />
+                        </div>
+                        <div>
+                          <span className="font-semibold text-gray-900 dark:text-white block">
+                            Content Moderation
+                          </span>
+                          <span className="text-sm text-gray-600 dark:text-gray-400">
+                            Review and approve new submissions
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="bg-theme-secondary/10 p-3 rounded-xl mr-4 group">
+                          <Globe className="h-5 w-5 text-theme-secondary" />
+                        </div>
+                        <div>
+                          <span className="font-semibold text-gray-900 dark:text-white block">
+                            Analytics Dashboard
+                          </span>
+                          <span className="text-sm text-gray-600 dark:text-gray-400">
+                            Access platform statistics and reports
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center">
+                        <div className="bg-theme-primary/10 p-3 rounded-xl mr-4 group hover:bg-theme-primary/20 transition-colors">
+                          <Search className="h-5 w-5 text-theme-primary group-hover:scale-110 transition-transform" />
+                        </div>
+                        <div>
+                          <span className="font-semibold text-gray-900 dark:text-white block">
+                            {t("ADVANCED_SEARCH")}
+                          </span>
+                          <span className="text-sm text-gray-600 dark:text-gray-400">
+                            {t("EXPLORE_THOUSANDS")}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="bg-theme-accent/10 p-3 rounded-xl mr-4 group hover:bg-theme-accent/20 transition-colors">
+                          <Building className="h-5 w-5 text-theme-accent group-hover:scale-110 transition-transform" />
+                        </div>
+                        <div>
+                          <span className="font-semibold text-gray-900 dark:text-white block">
+                            {t("LIST_YOUR_BUSINESS")}
+                          </span>
+                          <span className="text-sm text-gray-600 dark:text-gray-400">
+                            {t("INCREASE_VISIBILITY")}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="bg-theme-secondary/10 p-3 rounded-xl mr-4 group hover:bg-theme-secondary/20 transition-colors">
+                          <Globe className="h-5 w-5 text-theme-secondary group-hover:scale-110 transition-transform" />
+                        </div>
+                        <div>
+                          <span className="font-semibold text-gray-900 dark:text-white block">
+                            {t("PROFESSIONAL_NETWORK")}
+                          </span>
+                          <span className="text-sm text-gray-600 dark:text-gray-400">
+                            {t("CONNECT_WITH_EXPERTS")}
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </StaggerContainer>
 
                 {/* Trust badge */}
@@ -136,8 +193,8 @@ export function AuthForm({ form }: { form: "login" | "signup" }) {
             <div className="w-full lg:w-1/2 p-6 lg:p-8 flex flex-col justify-center bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
               <div className="max-w-sm mx-auto w-full">
                 <AnimatedContainer type="slideLeft" delay={400}>
-                  <CredentialsForm type={form}>
-                    <SocialLogin />
+                  <CredentialsForm type={form} hideSwitchButton={!showSocialLogin}>
+                    {showSocialLogin && <SocialLogin />}
                   </CredentialsForm>
                 </AnimatedContainer>
               </div>
