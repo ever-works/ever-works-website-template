@@ -14,7 +14,8 @@ export function CredentialsForm({
   type,
   children,
   hideSwitchButton = false,
-}: PropsWithChildren<{ type: "login" | "signup", hideSwitchButton?: boolean }>) {
+  onSuccess,
+}: PropsWithChildren<{ type: "login" | "signup", hideSwitchButton?: boolean, onSuccess?: () => void }>) {
   const isLogin = type === "login";
   const t = useTranslations("auth");
   const searchParams = useSearchParams();
@@ -32,10 +33,14 @@ export function CredentialsForm({
 
   useEffect(() => {
     if (state.success) {
-      router.push(redirect || "/dashboard");
-      router.refresh();
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.push(redirect || "/dashboard");
+        router.refresh();
+      }
     }
-  }, [state, redirect, router]);
+  }, [state, redirect, router, onSuccess]);
 
   const handleFormAction = async (formData: FormData) => {
     formData.append('provider', config.authConfig?.provider || 'next-auth');
