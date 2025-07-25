@@ -43,7 +43,7 @@ export function CredentialsForm({
   }, [state, redirect, router, onSuccess]);
 
   const handleFormAction = async (formData: FormData) => {
-    formData.append('provider', config.authConfig?.provider || 'next-auth');
+    formData.append('authProvider', config.authConfig?.provider || 'next-auth');
     return formAction(formData);
   };
 
