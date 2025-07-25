@@ -24,6 +24,7 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   deletedAt: timestamp("deleted_at"),
+  isAdmin: boolean("is_admin").notNull().default(false),
 });
 
 export const accounts = pgTable(

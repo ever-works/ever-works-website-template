@@ -22,6 +22,13 @@
       "when": 1752165151977,
       "tag": "0002_burly_abomination",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1753415723627,
+      "tag": "0003_absurd_kabuki",
+      "breakpoints": true
     }
   ]
 }
