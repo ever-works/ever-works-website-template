@@ -296,15 +296,12 @@ export function CredentialsForm({
           "shadow-lg hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed",
           "transform hover:scale-[1.02] active:scale-[0.98]"
         )}
-        isLoading={pending || !!state.success}
-        aria-busy={pending}
-        aria-disabled={pending}
+        isLoading={pending && !state.success}
+        aria-busy={pending && !state.success}
+        aria-disabled={pending && !state.success}
       >
-        {pending ? (
-          <span className="flex items-center justify-center gap-3">
-            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-            <span>{isLogin ? "Signing in..." : "Creating account..."}</span>
-          </span>
+        {pending && !state.success ? (
+          <span>{isLogin ? "Signing in..." : "Creating account..."}</span>
         ) : state.success ? (
           <span className="flex items-center justify-center gap-2">
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
