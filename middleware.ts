@@ -49,7 +49,7 @@ export default async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
   // Admin route protection
-  if (pathname.startsWith("/admin")) {
+  if (pathname.startsWith("/admin") && pathname !== "/admin/auth/signin") {
     let user = null;
     if (config.provider === "supabase") {
       // Use Supabase session
