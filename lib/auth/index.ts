@@ -23,6 +23,14 @@ const drizzle = isDatabaseAvailable ? DrizzleAdapter(db, {
 
 export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   adapter: drizzle,
+  session: { 
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+    updateAge: 24 * 60 * 60, // 24 hours
+  },
+  jwt: {
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   callbacks: {
     authorized: ({ auth }) => auth?.user != null,
     signIn: async ({ user, account }) => {
@@ -73,6 +81,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       } else if (token?.email) {
         dbUser = await getUserByEmail(token.email);
       }
+      
       if (user?.id && typeof user.id === "string") {
         token.userId = user.id;
       }
@@ -80,10 +89,15 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         token.userId = token.sub;
       }
       token.provider = account?.provider || "credentials";
+      
       // Add isAdmin to token if available from dbUser
-      if (dbUser && typeof dbUser.isAdmin === "boolean") {
-        token.isAdmin = dbUser.isAdmin;
+      if (dbUser) {
+        const isAdmin = dbUser.isAdmin ?? dbUser.is_admin;
+        if (typeof isAdmin === "boolean") {
+          token.isAdmin = isAdmin;
+        }
       }
+      
       return token;
     },
     session: async ({ session, token }) => {
@@ -99,7 +113,6 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       return session;
     },
   },
-  session: { strategy: "jwt" },
   pages: {
     signIn: "/auth/signin",
     signOut: "/auth/signout",

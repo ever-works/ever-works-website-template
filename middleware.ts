@@ -4,8 +4,8 @@ import { routing } from "./i18n/routing";
 import { NextRequest, NextResponse } from "next/server";
 import NextAuth from "next-auth";
 import authConfig from "./auth.config";
-import { updateSession } from "@/lib/auth/supabase/middleware";
 import { getAuthConfig } from "@/lib/auth/config";
+import { updateSession } from "@/lib/auth/supabase/middleware";
 
 const PRIVATE_PATHS: string[] = []; // Remove dashboard from private paths
 const PUBLIC_PATHS = ["/auth/signin", "/auth/register"];
@@ -48,28 +48,20 @@ export default async function middleware(req: NextRequest) {
   const config = getAuthConfig();
   const pathname = req.nextUrl.pathname;
 
-  // Admin route protection
   if (pathname.startsWith("/admin") && pathname !== "/admin/auth/signin") {
-    let user = null;
     if (config.provider === "supabase") {
-      // Use Supabase session
       const supabase = await updateSession(req);
-      // Try to get user from supabase session cookie
-      // (You may need to adjust this logic based on your Supabase session handling)
-      // For now, just allow through (TODO: implement actual isAdmin check)
-      // If not admin, redirect:
-      // return NextResponse.redirect(new URL("/admin/auth/signin", req.url));
       return supabase;
     } else if (config.provider === "next-auth") {
-      // Use NextAuth session
       const session = await auth();
-      user = session?.user;
-      
-      if (!user || !user.isAdmin) {
-        return NextResponse.redirect(new URL("/admin/auth/signin", req.url));
+
+      if (session?.user?.isAdmin) {
+        return intlMiddleware(req);
       }
+      
+      return NextResponse.redirect(new URL("/admin/auth/signin", req.url));
     }
-    // If admin, allow through
+
     return intlMiddleware(req);
   }
 
