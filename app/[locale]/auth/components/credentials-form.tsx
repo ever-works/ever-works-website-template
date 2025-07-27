@@ -29,7 +29,7 @@ export function CredentialsForm({
   const [showPasswordTips, setShowPasswordTips] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState<string | null>(null);
-  const { verifyToken, isLoading: isVerifying, error: verificationError, data } = useAutoRecaptchaVerification();
+  const { verifyToken, isLoading: isVerifying, error: verificationError } = useAutoRecaptchaVerification();
   const [isPending, startTransition] = useTransition();
   
   const [state, formAction, pending] = useActionState<ActionState, FormData>(

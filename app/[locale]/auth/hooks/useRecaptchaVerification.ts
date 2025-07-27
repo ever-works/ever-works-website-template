@@ -1,8 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
 
-interface RecaptchaVerificationRequest {
-  token: string;
-}
 
 interface RecaptchaVerificationResponse {
   success: boolean;
