@@ -56,6 +56,7 @@ export const footerNavigation = (t: any) => {
       { label: t("common.CATEGORY"), href: "/categories" },
       { label: t("common.TAG"), href: "/tags" },
       { label: t("footer.PRICING"), href: "/pricing" },
+      { label: t("footer.HELP"), href: "/help" },
     ],
     company: [
       { label: t("footer.ABOUT_US"), href: "/about" },

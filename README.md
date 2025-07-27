@@ -1,24 +1,37 @@
-# Ever Works Website Template
+# Ever Works Directory Website Template
 
-This is a modern, full-stack website template built with [Next.js 15](https://nextjs.org/), featuring authentication, internationalization, and a robust development setup.
+## ⭐️ What is it?
+
+Welcome to the **Ever Works Directory Website Template**, a cutting-edge, full-stack directory website solution built with [Next.js 15](https://nextjs.org/).  
+
+This versatile template is an essential component of the [Ever Works Platform](https://ever.works), offering seamless integration while maintaining the flexibility to function as a standalone solution.
+
+## 🔗 Links
+
+- Demo: [https://demo.ever.works](https://demo.ever.works)
+- Ever Works website: [https://ever.works](https://ever.works) (WIP)
 
 ## Project Overview
 
-### Tech Stack
+### 🧱 Technology Stack and Requirements
 
-- **Framework**: Next.js 15 with App Router
-- **Authentication**: NextAuth.js v5
-- **Database**: PostgreSQL with Drizzle ORM
-- **Styling**: Tailwind CSS
-- **UI Components**: HeroUI React
-- **Internationalization**: next-intl
-- **Form Validation**: Zod
-- **Email Service**: Resend
+- **[TypeScript](https://www.typescriptlang.org)**
+- **[NodeJs](https://nodejs.org)**
+- **Framework**: [Next.js 15](https://nextjs.org/) with App Router
+- **Authentication**: [Auth.js](https://authjs.dev) / [Supabase Auth](https://supabase.com/auth)
+- **API Client**: Secure Axios-based client with httpOnly cookies
+- **ORM**: [Drizzle](https://github.com/drizzle-team/drizzle-orm)
+- **Supported Databases**: [Supabase](https://supabase.com)/PostgreSQL/MySQL/SQLite
+- **Styling**: [Tailwind CSS](https://tailwindcss.com)
+- **UI Components**: [HeroUI React](https://www.heroui.com)
+- **Internationalization**: [next-intl](https://github.com/amannn/next-intl)
+- **Form Validation**: [Zod](https://zod.dev)
+- **Notifications/Emails Services**: [Novu](https://novu.co) / [Resend](https://resend.com)
+- **Hosting**: [Vercel](https://vercel.com)
 - **Payment Processing**: Stripe & LemonSqueezy
 - **Security**: ReCAPTCHA v2
-- **API Client**: Custom server client with retry logic
 
-### Project Structure
+### 📄 Project Structure
 
 ```
 ├── .content/             # Content management directory
@@ -62,6 +75,28 @@ Automatic sync via GitHub integration:
 3. Updates occur periodically or on demand
 4. Requires a valid `GH_TOKEN` for private repos
 
+### Environment Configuration
+
+Create a `.env.local` file in the root directory with the following configuration:
+
+#### Basic Configuration
+```bash
+# Environment
+NODE_ENV=development
+
+# API Configuration
+NEXT_PUBLIC_API_BASE_URL="http://localhost:3000/api"
+API_TIMEOUT=10000
+API_RETRY_ATTEMPTS=3
+API_RETRY_DELAY=1000
+
+# Cookie Security
+COOKIE_SECRET="your-secure-cookie-secret"  # Generate with: openssl rand -base64 32
+COOKIE_DOMAIN="localhost"                  # In production: your-domain.com
+COOKIE_SECURE=false                        # In production: true
+COOKIE_SAME_SITE="lax"                    # In production: strict
+```
+
 ### Site Configuration (config.yml)
 
 The `.content/config.yml` file controls main site settings:
@@ -103,8 +138,8 @@ auth:
 ### Prerequisites
 
 - Node.js 18.x or higher
-- PostgreSQL database
-- npm or yarn or pnpm package manager
+- PostgreSQL database (optional)
+- `npm` or `yarn` or `pnpm` package manager
 
 ### Environment Setup
 
@@ -114,7 +149,7 @@ auth:
 cp .env.example .env.local
 ```
 
-1. Fill in your environment variables in `.env.local`:
+2. Fill in your environment variables in `.env.local`:
 
 ### Auth Setup
 
@@ -146,7 +181,7 @@ DATA_REPOSITORY='https://github.com/ever-works/awesome-data'
 DATABASE_URL=postgresql://user:password@localhost:5432/db_name
 ```
 
-### Details:
+### Details
 
 - `user`: PostgreSQL username
 - `password`: PostgreSQL password
@@ -278,6 +313,26 @@ payment:
 
 ## 🔒 Security & ReCAPTCHA
 
+### Security Notes
+
+1. **Cookie Security**
+   - httpOnly cookies are used for token storage
+   - Prevents XSS attacks by making tokens inaccessible to JavaScript
+   - Secure flag must be enabled in production
+   - SameSite policy helps prevent CSRF attacks
+
+2. **API Security**
+   - Automatic token refresh handling
+   - Request queue during token refresh
+   - Exponential backoff for retries
+   - Proper error handling and formatting
+
+3. **Environment Specific**
+   - Development uses relaxed security for local testing
+   - Production requires strict security settings
+   - Different cookie domains per environment
+   - CORS configuration required for production
+
 ### ReCAPTCHA v2 Integration
 
 This template includes Google ReCAPTCHA v2 for form protection against spam and bots.
@@ -395,14 +450,23 @@ const client = new ServerClient('https://api.example.com', {
 });
 ```
 
-### Key Features
+### Using the API Client
 
-- **Authentication**: Email/password + social login
-- **Internationalization**: Multi-language with `next-intl`
-- **Database**: PostgreSQL + Drizzle ORM
-- **Modern UI**: Tailwind CSS + HeroUI
-- **TypeScript**: Type-safe development
-- **Emails**: Resend email service integration
+```typescript
+import { api } from 'lib/api/api-client';
+
+// Authentication
+await api.login({ email: 'user@example.com', password: 'password' });
+
+// Check authentication status
+if (await api.isAuthenticated()) {
+  // Make authenticated requests
+  const response = await api.get('/protected-endpoint');
+}
+
+// Logout
+await api.logout();
+```
 
 ### Developer Tools
 
@@ -431,7 +495,28 @@ const client = new ServerClient('https://api.example.com', {
 - Protect routes via middleware
 - Customize auth pages in `app/[locale]/auth`
 
-## Resources
+#### Authentication Configuration
+```bash
+# Auth Endpoints
+AUTH_ENDPOINT_LOGIN="/auth/login"
+AUTH_ENDPOINT_REFRESH="/auth/refresh"
+AUTH_ENDPOINT_LOGOUT="/auth/logout"
+AUTH_ENDPOINT_CHECK="/auth/check"
+
+# JWT Configuration
+JWT_ACCESS_TOKEN_EXPIRES_IN=15m
+JWT_REFRESH_TOKEN_EXPIRES_IN=7d
+```
+
+#### CORS Configuration (Production)
+```bash
+# CORS Settings
+CORS_ORIGIN="https://your-frontend-domain.com"
+CORS_CREDENTIALS=true
+CORS_METHODS="GET,POST,PUT,DELETE,OPTIONS"
+```
+
+## 🔗 Resources
 
 - [Next.js Docs](https://nextjs.org/docs)
 - [NextAuth.js Guide](https://authjs.dev/)
@@ -447,3 +532,47 @@ Check the [Next.js deployment docs](https://nextjs.org/docs/app/building-your-ap
 ## License
 
 AGPL v3
+
+## ™️ Trademarks
+
+**Ever**® is a registered trademark of [Ever Co. LTD](https://ever.co).
+**Ever® Works™**, **Ever® Demand™**, **Ever® Gauzy™**, **Ever® Teams™** and **Ever® OpenSaaS™** are all trademarks of [Ever Co. LTD](https://ever.co).
+
+The trademarks may only be used with the written permission of Ever Co. LTD. and may not be used to promote or otherwise market competitive products or services.
+
+All other brand and product names are trademarks, registered trademarks, or service marks of their respective holders.
+
+## 🍺 Contribute
+
+-   Please give us a :star: on Github, it **helps**!
+-   You are more than welcome to submit feature requests in the [separate repo](https://github.com/ever-co/feature-requests/issues)
+-   Pull requests are always welcome! Please base pull requests against the _develop_ branch and follow the [contributing guide](.github/CONTRIBUTING.md).
+
+## 💪 Thanks to our Contributors
+
+See our contributors list in [CONTRIBUTORS.md](https://github.com/ever-co/ever-works-website-template/blob/develop/.github/CONTRIBUTORS.md).
+You can also view a full list of our [contributors tracked by Github](https://github.com/ever-co/ever-works-website-template/graphs/contributors).
+
+<img src="https://contributors-img.web.app/image?repo=ever-co/ever-works-website-template" />
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=ever-co/ever-works-website-template&type=Date)](https://star-history.com/#ever-co/ever-works-website-template&Date)
+
+## ❤️ Powered By
+
+<p>
+  <a href="https://www.digitalocean.com/?utm_medium=opensource&utm_source=ever-co">
+    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg" width="201px">
+  </a>
+</p>
+
+<p>
+ <a href="https://vercel.com/?utm_source=ever-co&utm_campaign=oss">
+     <img src=".github/vercel-logo.svg" alt="Powered by Vercel" />
+ </a>
+</p>
+
+## ©️ Copyright
+
+#### Copyright © 2024-present, Ever Co. LTD. All rights reserved

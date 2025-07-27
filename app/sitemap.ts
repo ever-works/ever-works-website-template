@@ -1,19 +1,18 @@
-import { MetadataRoute } from 'next'
-import { fetchItems } from '@/lib/content'
-import { LOCALES } from '@/lib/constants'
+import { MetadataRoute } from "next";
+import { fetchItems } from "@/lib/content";
 
 // Types
-type RouteConfig = {
-  path: string
-  priority: number
-  changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never'
+interface RouteConfig {
+  path: string;
+  priority: number;
+  changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
 }
 
-type SitemapEntry = {
-  url: string
-  lastModified: Date
-  changeFrequency: RouteConfig['changeFrequency']
-  priority: number
+interface SitemapEntry {
+  url: string;
+  lastModified: Date;
+  changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
+  priority: number;
 }
 
 // Constants
@@ -48,6 +47,11 @@ const STATIC_ROUTES: RouteConfig[] = [
   { 
     path: '/contact', 
     priority: DEFAULT_PRIORITIES.SECONDARY, 
+    changeFrequency: DEFAULT_CHANGE_FREQUENCIES.WEEKLY 
+  },
+  { 
+    path: '/help', 
+    priority: DEFAULT_PRIORITIES.MAIN, 
     changeFrequency: DEFAULT_CHANGE_FREQUENCIES.WEEKLY 
   },
   { 
@@ -99,45 +103,51 @@ const STATIC_ROUTES: RouteConfig[] = [
 
 const PAGINATION_ROUTES = [
   '/tags/paging',
+  '/categories/paging',
 ]
 
 // Helper functions
 const getBaseUrl = (): string => {
-  return process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_BASE_URL
-}
+  return process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_BASE_URL;
+};
 
-const createSitemapEntry = (
-  baseUrl: string,
-  path: string,
-  config: Partial<RouteConfig> = {}
-): SitemapEntry => ({
-  url: `${baseUrl}${path}`,
-  lastModified: new Date(),
-  changeFrequency: config.changeFrequency || DEFAULT_CHANGE_FREQUENCIES.WEEKLY,
-  priority: config.priority || DEFAULT_PRIORITIES.LOW,
-})
+const generateStaticRoutes = (baseUrl: string): SitemapEntry[] => {
+  return STATIC_ROUTES.map((route) => ({
+    url: `${baseUrl}${route.path}`,
+    lastModified: new Date(),
+    changeFrequency: route.changeFrequency,
+    priority: route.priority,
+  }));
+};
 
-const generateStaticRoutes = (baseUrl: string): SitemapEntry[] =>
-  STATIC_ROUTES.map(({ path, priority, changeFrequency }) =>
-    createSitemapEntry(baseUrl, path, { priority, changeFrequency })
-  )
+const generatePaginationRoutes = (baseUrl: string): SitemapEntry[] => {
+  return PAGINATION_ROUTES.map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: DEFAULT_CHANGE_FREQUENCIES.WEEKLY,
+    priority: DEFAULT_PRIORITIES.LOW,
+  }));
+};
 
-const generatePaginationRoutes = (baseUrl: string): SitemapEntry[] =>
-  PAGINATION_ROUTES.map((path) =>
-    createSitemapEntry(baseUrl, path, { 
-      priority: DEFAULT_PRIORITIES.TERTIARY, 
-      changeFrequency: DEFAULT_CHANGE_FREQUENCIES.DAILY 
-    })
-  )
+const generateLocaleRoutes = (baseUrl: string): SitemapEntry[] => {
+  const locales = ['en', 'fr', 'es', 'de', 'ar', 'zh'];
+  const routes: SitemapEntry[] = [];
 
-const generateLocaleRoutes = (baseUrl: string): SitemapEntry[] =>
-  LOCALES.flatMap((locale) =>
-    STATIC_ROUTES
-      .filter(({ path }) => !path.startsWith('/settings'))
-      .map(({ path, priority, changeFrequency }) =>
-        createSitemapEntry(baseUrl, `/${locale}${path}`, { priority, changeFrequency })
-      )
-  )
+  locales.forEach((locale) => {
+    STATIC_ROUTES.forEach((route) => {
+      if (locale !== 'en') { // Skip default locale prefix
+        routes.push({
+          url: `${baseUrl}/${locale}${route.path}`,
+          lastModified: new Date(),
+          changeFrequency: route.changeFrequency,
+          priority: route.priority,
+        });
+      }
+    });
+  });
+
+  return routes;
+};
 
 const generateDynamicRoutes = async (baseUrl: string): Promise<SitemapEntry[]> => {
   try {
