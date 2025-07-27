@@ -11,4 +11,4 @@ export {
 
 
 // Re-export types for convenience
-export type { PaymentFlow } from '@/lib/types/payment'; 
+export type { PaymentFlow } from '@/lib/payment/types/payment'; 

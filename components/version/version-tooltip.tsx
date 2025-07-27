@@ -19,7 +19,7 @@ export function VersionTooltip({
 }: VersionTooltipProps) {
   // Always call all hooks first - this is critical for hook order consistency
   const [isVisible, setIsVisible] = useState(false);
-  const { versionInfo, loading, error } = useVersionInfo();
+  const { versionInfo, error } = useVersionInfo();
   
   // Use refs to manage timeouts and prevent memory leaks
   const showTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -81,8 +81,7 @@ export function VersionTooltip({
     };
   }, []);
 
-  // Handle conditional rendering AFTER all hooks have been called
-  if (disabled || loading || error || !versionInfo) {
+  if (disabled || error || !versionInfo) {
     return <>{children}</>;
   }
 

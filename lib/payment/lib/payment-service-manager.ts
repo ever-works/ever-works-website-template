@@ -7,7 +7,8 @@ import { SupportedProvider, PaymentProviderConfig } from '../types/payment-types
 export class PaymentServiceManager {
   private static instance: PaymentServiceManager;
   private currentService: PaymentService | null = null;
-  private readonly STORAGE_KEY = 'selected_payment_provider';
+  private readonly STORAGE_KEY = 'everworks_template.payment_provider.selected';
+  private readonly DEFAULT_PROVIDER = 'stripe';
   private providerConfigs: Record<SupportedProvider, PaymentProviderConfig>;
 
   private constructor(providerConfigs: Record<SupportedProvider, PaymentProviderConfig>) {
@@ -28,9 +29,9 @@ export class PaymentServiceManager {
    * Get the stored provider from localStorage
    */
   private getStoredProvider(): SupportedProvider {
-    if (typeof window === 'undefined') return 'stripe'; // Default for SSR
+    if (typeof window === 'undefined') return this.DEFAULT_PROVIDER; // Default for SSR
     const stored = localStorage.getItem(this.STORAGE_KEY);
-    return (stored as SupportedProvider) || 'stripe';
+    return (stored as SupportedProvider) || this.DEFAULT_PROVIDER;
   }
 
   /**

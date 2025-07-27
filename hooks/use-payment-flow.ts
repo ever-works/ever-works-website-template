@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { PaymentFlow, SubmissionStatus } from "@/lib/types/payment";
+import { PaymentFlow, SubmissionStatus } from "@/lib/payment/types/payment";
 import { getPaymentFlowConfig } from "@/lib/config/payment-flows";
 import { usePaymentFlowStorage } from "./use-local-storage";
 

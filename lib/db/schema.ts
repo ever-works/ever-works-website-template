@@ -11,6 +11,7 @@ import {
   index,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
+import { PaymentPlan, PaymentProvider } from "../constants";
 
 export const users = pgTable("users", {
   id: text("id")
@@ -137,34 +138,150 @@ export const comments = pgTable("comments", {
 });
 
 export const VoteType = {
-  UPVOTE: 'upvote',
-  DOWNVOTE: 'downvote',
+  UPVOTE: "upvote",
+  DOWNVOTE: "downvote",
 } as const;
 
-export type VoteTypeValues = typeof VoteType[keyof typeof VoteType];
+export type VoteTypeValues = (typeof VoteType)[keyof typeof VoteType];
 
 // ######################### Vote Schema #########################
-export const votes = pgTable('votes', {
-  id: text('id')
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  userId: text('user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  itemId: text('item_id').notNull(),
-  voteType: text('vote_type', { enum: [VoteType.UPVOTE, VoteType.DOWNVOTE] })
-    .notNull()
-    .default(VoteType.UPVOTE),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at')
-    .notNull()
-    .defaultNow(),
-}, (table) => ({
-  uniqueUserItemVote: uniqueIndex('unique_user_item_vote_idx').on(table.userId, table.itemId),
-  itemVotesIndex: index('item_votes_idx').on(table.itemId),
-  createdAtIndex: index('votes_created_at_idx').on(table.createdAt),
-}));
+export const votes = pgTable(
+  "votes",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("userid")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    itemId: text("item_id").notNull(),
+    voteType: text("vote_type", { enum: [VoteType.UPVOTE, VoteType.DOWNVOTE] })
+      .notNull()
+      .default(VoteType.UPVOTE),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => ({
+    uniqueUserItemVote: uniqueIndex("unique_user_item_vote_idx").on(
+      table.userId,
+      table.itemId
+    ),
+    itemVotesIndex: index("item_votes_idx").on(table.itemId),
+    createdAtIndex: index("votes_created_at_idx").on(table.createdAt),
+  })
+);
+
+// ######################### Subscription Schema #########################
+export const SubscriptionStatus = {
+  ACTIVE: "active",
+  CANCELLED: "cancelled",
+  EXPIRED: "expired",
+  PENDING: "pending",
+  PAUSED: "paused",
+} as const;
+
+export type SubscriptionStatusValues =
+  (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus];
+
+
+export type PaymentProviderValues =
+  (typeof PaymentProvider)[keyof typeof PaymentProvider];
+
+
+export type PlanTypeValues = (typeof PaymentPlan)[keyof typeof PaymentPlan];
+
+export const subscriptions = pgTable(
+  "subscriptions",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    planId: text("plan_id", {
+      enum: [PaymentPlan.FREE, PaymentPlan.STANDARD, PaymentPlan.PREMIUM],
+    })
+      .notNull()
+      .default(PaymentPlan.FREE),
+    status: text("status", {
+      enum: [
+        SubscriptionStatus.ACTIVE,
+        SubscriptionStatus.CANCELLED,
+        SubscriptionStatus.EXPIRED,
+        SubscriptionStatus.PENDING,
+        SubscriptionStatus.PAUSED,
+      ],
+    })
+      .notNull()
+      .default(SubscriptionStatus.PENDING),
+    startDate: timestamp("start_date", { mode: "date" }).notNull(),
+    endDate: timestamp("end_date", { mode: "date" }),
+    paymentProvider: text("payment_provider", {
+      enum: [
+        PaymentProvider.STRIPE,
+        PaymentProvider.LEMONSQUEEZY,
+        PaymentProvider.SOLIDGATE,
+      ],
+    }).notNull(),
+    subscriptionId: text("subscription_id").notNull(), 
+    priceId: text("price_id"),
+    customerId: text("customer_id"),
+    currency: text("currency").default("usd"),
+    amount: integer("amount"),
+    interval: text("interval").default("month"),
+    intervalCount: integer("interval_count").default(1),
+    trialStart: timestamp("trial_start", { mode: "date" }),
+    trialEnd: timestamp("trial_end", { mode: "date" }),
+    cancelledAt: timestamp("cancelled_at", { mode: "date" }),
+    cancelAtPeriodEnd: boolean("cancel_at_period_end").default(false),
+    cancelReason: text("cancel_reason"),
+    metadata: text("metadata"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => ({
+    userSubscriptionIndex: index("user_subscription_idx").on(table.userId),
+    statusIndex: index("subscription_status_idx").on(table.status),
+    providerSubscriptionIndex: uniqueIndex("provider_subscription_idx").on(
+      table.paymentProvider,
+      table.subscriptionId
+    ),
+    planIndex: index("subscription_plan_idx").on(table.planId),
+    createdAtIndex: index("subscription_created_at_idx").on(table.createdAt),
+  })
+);
+
+// ######################### Subscription History Schema #########################
+export const subscriptionHistory = pgTable(
+  "subscription_history",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    subscriptionId: text("subscription_id")
+      .notNull()
+      .references(() => subscriptions.id, { onDelete: "cascade" }),
+    action: text("action").notNull(),
+    previousStatus: text("previous_status"),
+    newStatus: text("new_status"),
+    previousPlan: text("previous_plan"),
+    newPlan: text("new_plan"),
+    reason: text("reason"),
+    metadata: text("metadata"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => ({
+    subscriptionHistoryIndex: index("subscription_history_idx").on(
+      table.subscriptionId
+    ),
+    actionIndex: index("subscription_action_idx").on(table.action),
+    createdAtIndex: index("subscription_history_created_at_idx").on(
+      table.createdAt
+    ),
+  })
+);
 
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
@@ -174,8 +291,20 @@ export type InsertVote = typeof votes.$inferInsert;
 export type NewUser = typeof users.$inferInsert;
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type NewActivityLog = typeof activityLogs.$inferInsert;
-export type NewsletterSubscription = typeof newsletterSubscriptions.$inferSelect;
-export type NewNewsletterSubscription = typeof newsletterSubscriptions.$inferInsert;
+export type NewsletterSubscription =
+  typeof newsletterSubscriptions.$inferSelect;
+export type NewNewsletterSubscription =
+  typeof newsletterSubscriptions.$inferInsert;
+export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
+
+// ######################### Subscription Types #########################
+export type Subscription = typeof subscriptions.$inferSelect;
+export type NewSubscription = typeof subscriptions.$inferInsert;
+export type SubscriptionHistory = typeof subscriptionHistory.$inferSelect;
+export type NewSubscriptionHistory = typeof subscriptionHistory.$inferInsert;
+export type SubscriptionWithUser = Subscription & {
+  user: typeof users.$inferSelect;
+};
 
 export enum ActivityType {
   SIGN_UP = "SIGN_UP",

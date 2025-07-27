@@ -1,4 +1,4 @@
-import { PaymentFlowConfig, PaymentFlow } from "@/lib/types/payment";
+import { PaymentFlowConfig, PaymentFlow } from "@/lib/payment/types/payment";
 
 export const PAYMENT_FLOWS: PaymentFlowConfig[] = [
   {

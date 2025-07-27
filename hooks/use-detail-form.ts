@@ -1,4 +1,4 @@
-import { PricingPlan } from '@/components/pricing/plan-card';
+import { PaymentPlan } from '@/lib/constants';
 import { Eye, FileText, Globe, Tag, Type } from 'lucide-react';
 import React, { useCallback, useMemo, useState } from 'react';
 interface ProductLink {
@@ -22,7 +22,7 @@ interface ProductLink {
   
   export interface DetailsFormProps {
     initialData?: Partial<FormData>;
-    selectedPlan: PricingPlan | null;
+    selectedPlan: PaymentPlan | null;
     onSubmit: (data: FormData) => void;
     onBack: () => void;
   }

@@ -4,12 +4,12 @@ import { useLoginModal } from "./use-login-modal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useCurrentUser } from "./use-current-user";
+import { serverClient, apiUtils } from "@/lib/api/server-api-client";
 
 interface ItemVoteResponse {
   count: number;
   userVote: "up" | "down" | null;
 }
-let api='/api/items'
 
 export function useItemVote(itemId: string) {
   const { user } = useCurrentUser();
@@ -19,14 +19,26 @@ export function useItemVote(itemId: string) {
   const { data: voteData, isLoading } = useQuery<ItemVoteResponse>({
     queryKey: ["item-votes", itemId],
     queryFn: async () => {
-      const response = await fetch(`${api}/${itemId}/votes`);
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to fetch item votes");
+      const response = await serverClient.get<ItemVoteResponse>(`/api/items/${itemId}/votes`);
+
+      if (!apiUtils.isSuccess(response)) {
+        throw new Error(apiUtils.getErrorMessage(response) || "Failed to fetch item votes");
       }
-      return response.json();
+
+      return response.data;
     },
     enabled: !!itemId,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
+    retry: (failureCount, error) => {
+      // Don't retry if it's an authentication error
+      if (error.message.includes('sign in') || error.message.includes('unauthorized')) {
+        return false;
+      }
+      // Retry up to 2 times for other errors
+      return failureCount < 2;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000)
   });
 
   const { mutate: vote, isPending: isVoting } = useMutation({
@@ -36,17 +48,15 @@ export function useItemVote(itemId: string) {
         return;
       }
 
-      const response = await fetch(`${api}/${itemId}/votes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type }),
+      const response = await serverClient.post<ItemVoteResponse>(`/api/items/${itemId}/votes`, {
+        type,
       });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to vote on item");
+
+      if (!apiUtils.isSuccess(response)) {
+        throw new Error(apiUtils.getErrorMessage(response) || "Failed to vote on item");
       }
 
-      return response.json();
+      return response.data;
     },
     onMutate: async (type) => {
       if (!user) {
@@ -72,7 +82,11 @@ export function useItemVote(itemId: string) {
       if (context?.previousVotes) {
         queryClient.setQueryData(["item-votes", itemId], context.previousVotes);
       }
-      toast.error(error.message || "An error occurred while voting");
+
+      // Don't show error toast if user is not logged in (handled by login modal)
+      if (!error.message.includes('sign in')) {
+        toast.error(error.message || "An error occurred while voting");
+      }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["item-votes", itemId] });
@@ -86,16 +100,13 @@ export function useItemVote(itemId: string) {
         return;
       }
 
-      const response = await fetch(`${api}/${itemId}/votes`, {
-        method: "DELETE",
-      });
+      const response = await serverClient.delete<ItemVoteResponse>(`/api/items/${itemId}/votes`);
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to remove vote");
+      if (!apiUtils.isSuccess(response)) {
+        throw new Error(apiUtils.getErrorMessage(response) || "Failed to remove vote");
       }
 
-      return response.json();
+      return response.data;
     },
     onMutate: async () => {
       if (!user) {
@@ -141,10 +152,58 @@ export function useItemVote(itemId: string) {
     }
   };
 
+  // Utility function to manually refresh vote data
+  const refreshVotes = () => {
+    queryClient.invalidateQueries({ queryKey: ["item-votes", itemId] });
+  };
+
   return {
     voteCount: voteData?.count || 0,
     userVote: voteData?.userVote || null,
     isLoading: isLoading || isVoting || isUnvoting,
     handleVote,
+    refreshVotes,
+  };
+}
+
+/**
+ * Utility hook for managing vote cache across the application
+ */
+export function useVoteCache() {
+  const queryClient = useQueryClient();
+
+  const invalidateAllVotes = () => {
+    queryClient.invalidateQueries({ queryKey: ["item-votes"] });
+  };
+
+  const invalidateItemVotes = (itemId: string) => {
+    queryClient.invalidateQueries({ queryKey: ["item-votes", itemId] });
+  };
+
+  const clearVoteCache = () => {
+    queryClient.removeQueries({ queryKey: ["item-votes"] });
+  };
+
+  const prefetchItemVotes = async (itemId: string) => {
+    await queryClient.prefetchQuery({
+      queryKey: ["item-votes", itemId],
+      queryFn: async () => {
+        const response = await serverClient.get<ItemVoteResponse>(`/api/items/${itemId}/votes`);
+
+        if (!apiUtils.isSuccess(response)) {
+          throw new Error(apiUtils.getErrorMessage(response) || "Failed to fetch item votes");
+        }
+
+        return response.data;
+      },
+      staleTime: 1000 * 60 * 5,
+    });
+  };
+
+  return {
+    invalidateAllVotes,
+    invalidateItemVotes,
+    clearVoteCache,
+    prefetchItemVotes,
   };
 }

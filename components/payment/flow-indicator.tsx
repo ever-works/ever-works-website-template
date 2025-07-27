@@ -5,25 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge, Chip } from "@heroui/react";
 import { cn } from "@/lib/utils";
-import { PaymentFlow } from "@/lib/types/payment";
+import { PaymentFlow } from "@/lib/payment/types/payment";
 import { PAYMENT_FLOWS } from "@/lib/config/payment-flows";
 import {
-    CreditCard,
-    Clock,
-    ChevronDown,
-    Sparkles,
-    CheckCircle,
-    ArrowRight,
-    Zap,
-    Shield,
-    Crown,
-    TrendingUp,
-    Users,
-    Globe,
-    Star,
-    Info,
-    AlertCircle,
-    Loader2
+  CreditCard,
+  Clock,
+  ChevronDown,
+  Sparkles,
+  CheckCircle,
+  ArrowRight,
+  Zap,
+  Shield,
+  Crown,
+  TrendingUp,
+  Users,
+  Globe,
+  Star,
+  Info,
+  AlertCircle,
+  Loader2
 } from "lucide-react";
 
 interface PaymentFlowIndicatorProps {

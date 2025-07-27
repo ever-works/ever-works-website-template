@@ -1,7 +1,23 @@
 {
   "name": "ever-works-website-template",
   "version": "0.1.0",
+  "description": "Ever Works Directory Website Template",
+  "license": "AGPL-3.0",
+	"homepage": "https://ever.works",
+  "repository": {
+		"type": "git",
+		"url": "https://github.com/ever-works/ever-works-website-template.git"
+	},
+	"bugs": {
+		"url": "https://github.com/ever-works/ever-works-website-template/issues"
+	},
   "private": true,
+  "author": {
+		"name": "Ever Co. LTD",
+		"email": "ever@ever.co",
+		"url": "https://ever.co"
+	},
+	"keywords": [],
   "scripts": {
     "dev": "node scripts/check-env.js --quick && next dev",
     "predev": "node scripts/clone.cjs",
@@ -97,5 +113,37 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.20.3",
     "typescript": "^5"
-  }
+  },
+  "engines": {
+		"node": ">=20.19.0",
+		"yarn": ">=1.13.0"
+	},
+	"prettier": {
+		"printWidth": 120,
+		"singleQuote": true,
+		"semi": true,
+		"useTabs": true,
+		"tabWidth": 4,
+		"arrowParens": "always",
+		"trailingComma": "none",
+		"quoteProps": "as-needed",
+		"trimTrailingWhitespace": true,
+		"overrides": [
+			{
+				"files": "*.scss",
+				"options": {
+					"useTabs": false,
+					"tabWidth": 2
+				}
+			},
+			{
+				"files": "*.yml",
+				"options": {
+					"useTabs": false,
+					"tabWidth": 2
+				}
+			}
+		]
+	},
+  "snyk": true
 }

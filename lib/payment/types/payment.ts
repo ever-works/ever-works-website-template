@@ -55,4 +55,4 @@ export interface SubmissionData {
   publishedAt?: Date;
   paymentId?: string;
   adminNotes?: string;
-} 
+}
