@@ -15,7 +15,8 @@ export function CredentialsForm({
   children,
   hideSwitchButton = false,
   onSuccess,
-}: PropsWithChildren<{ type: "login" | "signup", hideSwitchButton?: boolean, onSuccess?: () => void }>) {
+  clientMode = false,
+}: PropsWithChildren<{ type: "login" | "signup", hideSwitchButton?: boolean, onSuccess?: () => void, clientMode?: boolean }>) {
   const isLogin = type === "login";
   const t = useTranslations("auth");
   const searchParams = useSearchParams();
@@ -27,9 +28,13 @@ export function CredentialsForm({
   const [showPasswordTips, setShowPasswordTips] = useState(false);
 
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
-    isLogin ? signInAction : signUp,
+    isLogin && !clientMode ? signInAction : signUp,
     {}
   );
+
+  // Local state used only in clientMode for login
+  const [clientPending, setClientPending] = useState(false);
+  const [clientError, setClientError] = useState<string | null>(null);
 
   useEffect(() => {
     if (state.success) {
@@ -45,6 +50,38 @@ export function CredentialsForm({
   const handleFormAction = async (formData: FormData) => {
     formData.append('authProvider', config.authConfig?.provider || 'next-auth');
     return formAction(formData);
+  };
+
+  // Client-side submit when clientMode is true (admin login path)
+  const handleClientSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!isLogin) return;
+
+    const form = e.currentTarget;
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+    const password = (form.elements.namedItem('password') as HTMLInputElement).value;
+
+    setClientPending(true);
+    setClientError(null);
+
+    try {
+      const { signIn } = await import('next-auth/react');
+      const res = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (res && !res.error) {
+        if (onSuccess) onSuccess();
+      } else {
+        setClientError(res?.error || 'Authentication failed');
+      }
+    } catch (error: any) {
+      setClientError(error?.message || 'Authentication failed');
+    } finally {
+      setClientPending(false);
+    }
   };
 
   return (
@@ -93,8 +130,10 @@ export function CredentialsForm({
 
       {auth.credentials && (
         <form
+          {...(clientMode
+            ? { onSubmit: handleClientSubmit }
+            : { action: handleFormAction as any })}
           className="space-y-5 animate-fade-in"
-          action={handleFormAction}
           aria-label={isLogin ? t("SIGN_IN") : t("CREATE_ACCOUNT")}
         >
           {/* Name field (signup only) */}
@@ -234,7 +273,7 @@ export function CredentialsForm({
       </div>
 
       {/* Modern error and success messages */}
-      {state?.error && (
+      {(state?.error || clientError) && (
         <div className="flex items-start space-x-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
           <div className="flex-shrink-0">
             <div className="w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center">
@@ -248,13 +287,13 @@ export function CredentialsForm({
               Connection Error
             </h4>
             <p className="text-sm text-red-700 dark:text-red-300">
-              {state?.error}
+              {state?.error || clientError}
             </p>
           </div>
         </div>
       )}
 
-      {state?.success && (
+      {state?.success && !clientMode && (
         <div className="flex items-start space-x-3 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
           <div className="flex-shrink-0">
             <div className="w-6 h-6 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center">
@@ -288,6 +327,7 @@ export function CredentialsForm({
 
       {/* Modern submit button */}
       <Button
+        disabled={clientPending}
         type="submit"
         className={cn(
           "w-full h-12 bg-gradient-to-r from-theme-primary to-theme-accent text-white font-semibold rounded-xl",
@@ -296,13 +336,13 @@ export function CredentialsForm({
           "shadow-lg hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed",
           "transform hover:scale-[1.02] active:scale-[0.98]"
         )}
-        isLoading={pending && !state.success}
-        aria-busy={pending && !state.success}
-        aria-disabled={pending && !state.success}
+        isLoading={(pending && !state.success) || clientPending}
+        aria-busy={(pending && !state.success) || clientPending}
+        aria-disabled={(pending && !state.success) || clientPending}
       >
-        {pending && !state.success ? (
+        {(pending && !state.success) || clientPending ? (
           <span>{isLogin ? "Signing in..." : "Creating account..."}</span>
-        ) : state.success ? (
+        ) : state.success && !clientMode ? (
           <span className="flex items-center justify-center gap-2">
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />

@@ -16,7 +16,12 @@ export default function AdminLoginPage() {
 
   return (
     <div>
-      <AuthForm form="login" showSocialLogin={false} onSuccess={() => setLoginSuccess(true)} />
+      <AuthForm
+        form="login"
+        showSocialLogin={false}
+        clientMode={true}
+        onSuccess={() => setLoginSuccess(true)}
+      />
     </div>
   );
 } 

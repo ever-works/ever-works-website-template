@@ -1,95 +1,83 @@
-import createMiddleware from "next-intl/middleware";
+// -------------------------------------------------------
+// Unified middleware that supports *either* Supabase Auth
+// *or* Next-Auth (or both) while keeping locale handling
+// -------------------------------------------------------
+
+import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
 import { NextRequest, NextResponse } from "next/server";
-import NextAuth from "next-auth";
-import authConfig from "./auth.config";
+
 import { getAuthConfig } from "@/lib/auth/config";
-import { updateSession } from "@/lib/auth/supabase/middleware";
+import { updateSession as supabaseUpdate } from "@/lib/auth/supabase/middleware";
 
-const PRIVATE_PATHS: string[] = []; // Remove dashboard from private paths
-const PUBLIC_PATHS = ["/auth/signin", "/auth/register"];
+import { auth } from "@/lib/auth";
 
-const intlMiddleware = createMiddleware(routing);
+const intl = createIntlMiddleware(routing);
 
-const { auth } = NextAuth(authConfig);
-const authMiddleware = auth(async (req) => {
-  const response = await intlMiddleware(req as any);
-  const url = new URL(response.headers.get("x-middleware-rewrite") || req.url);
+const ADMIN_PREFIX = "/admin";
+const ADMIN_SIGNIN = "/admin/auth/signin";
 
-  const locale = url.pathname.split("/")[1];
-  const pathname = "/" + url.pathname.split("/").slice(2).join("/");
+/* ────────────────────────────────── NextAuth guard ────────────────────────────────── */
 
-  const isAuthenticated = !!req.auth;
-  const isPublicPage = PUBLIC_PATHS.includes(pathname);
-
-  if (isPublicPage && isAuthenticated) {
-    return NextResponse.redirect(new URL(`/${locale}`, req.url));
-  }
-
-  if (!isAuthenticated && PRIVATE_PATHS.includes(pathname)) {
-    let from = pathname;
-    if (req.nextUrl.search) {
-      from += req.nextUrl.search;
+// Use the same auth instance as the main app
+const nextAuthGuard: any = (auth as any)(
+  async (req: any) => {
+    if (req.auth?.user?.isAdmin) {
+      // Return locale-aware response
+      return intl(req as any);
     }
+    return NextResponse.redirect(new URL(ADMIN_SIGNIN, req.url));
+  },
+  { callbacks: { authorized: () => true } },
+);
 
-    return NextResponse.redirect(
-      new URL(
-        `/${locale}/auth/signin?callbackUrl=${encodeURIComponent(from)}`,
-        req.url
-      )
-    );
-  }
+/* ────────────────────────────── Supabase guard helper ────────────────────────────── */
+async function supabaseGuard(req: NextRequest, baseRes: NextResponse): Promise<NextResponse> {
+  // Refresh Supabase session & get proper cookies
+  const supRes = await supabaseUpdate(req);
 
-  return response;
-});
+  // Merge any Set-Cookie headers from Supabase response into the base response
+  supRes.cookies.getAll().forEach((cookie) => {
+    baseRes.cookies.set(cookie);
+  });
 
-export default async function middleware(req: NextRequest) {
-  const config = getAuthConfig();
-  const pathname = req.nextUrl.pathname;
-
-  if (pathname.startsWith("/admin") && pathname !== "/admin/auth/signin") {
-    if (config.provider === "supabase") {
-      const supabase = await updateSession(req);
-      return supabase;
-    } else if (config.provider === "next-auth") {
-      const session = await auth();
-
-      if (session?.user?.isAdmin) {
-        return intlMiddleware(req);
-      }
-      
-      return NextResponse.redirect(new URL("/admin/auth/signin", req.url));
-    }
-
-    return intlMiddleware(req);
-  }
-
-  if (config.provider === "supabase") {
-    const supabaseResponse = await updateSession(req);
-    return intlMiddleware(supabaseResponse as any);
-  } else if (config.provider === "next-auth") {
-    const authPaths = PRIVATE_PATHS.flatMap((p) =>
-      p === "/" ? ["", "/"] : p
-    ).join("|");
-
-    const authPathnameRegex = RegExp(
-      `^(/(${routing.locales.join("|")}))?(${authPaths})/?$`,
-      "i"
-    );
-    const isAuthPage = authPathnameRegex.test(req.nextUrl.pathname);
-
-    if (isAuthPage) {
-      return (authMiddleware as any)(req);
-    }
-  }
-  
-  return intlMiddleware(req);
+  // TODO: if you store an admin flag in Supabase user metadata, add the check here.
+  return baseRes;
 }
 
+/* ──────────────────────────────────── Main middleware ─────────────────────────────────── */
+
+export default async function middleware(req: NextRequest) {
+  const cfg = getAuthConfig();
+  const originalPathname = req.nextUrl.pathname;
+
+  // 1️⃣ Locale rewrite – runs for every request
+  const intlResponse = await intl(req as any);
+
+  // Extract path without locale for admin checks
+  const segments = originalPathname.split("/").filter(Boolean); // remove leading ''
+  const maybeLocale = segments[0];
+  const hasLocale = routing.locales.includes(maybeLocale as any);
+  const pathWithoutLocale = hasLocale ? `/${segments.slice(1).join("/")}` : originalPathname;
+
+  // 2️⃣ Admin protection
+  if (pathWithoutLocale.startsWith(ADMIN_PREFIX) && pathWithoutLocale !== ADMIN_SIGNIN) {
+    
+    if (cfg.provider === "supabase" || cfg.provider === "both") {
+      return supabaseGuard(req, intlResponse);
+    }
+    if (cfg.provider === "next-auth" || cfg.provider === "both") {
+      // Delegate to NextAuth guard (returns Response)
+      return nextAuthGuard(req, {} as any);
+    }
+  }
+
+  // 3️⃣ No special auth needed – return locale-handled response
+  return intlResponse;
+}
+
+// Run on every non-static, non-api path
 export const config = {
-  // Match all pathnames except for
-  // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
-  // - … the ones containing a dot (e.g. `favicon.ico`)
   matcher: ["/((?!api|trpc|_next|_vercel|.*\\..*).*)"],
 };

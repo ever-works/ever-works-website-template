@@ -14,7 +14,7 @@ import {
   TrustBadge
 } from "@/components/ui/auth-illustrations";
 
-export function AuthForm({ form, showSocialLogin = true, onSuccess }: { form: "login" | "signup", showSocialLogin?: boolean, onSuccess?: () => void }) {
+export function AuthForm({ form, showSocialLogin = true, onSuccess, clientMode = false }: { form: "login" | "signup", showSocialLogin?: boolean, onSuccess?: () => void, clientMode?: boolean }) {
   const config = useConfig();
   const t = useTranslations("common");
   const isLogin = form === "login";
@@ -193,7 +193,12 @@ export function AuthForm({ form, showSocialLogin = true, onSuccess }: { form: "l
             <div className="w-full lg:w-1/2 p-6 lg:p-8 flex flex-col justify-center bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
               <div className="max-w-sm mx-auto w-full">
                 <AnimatedContainer type="slideLeft" delay={400}>
-                  <CredentialsForm type={form} hideSwitchButton={!showSocialLogin} onSuccess={onSuccess}>
+                  <CredentialsForm
+                    type={form}
+                    hideSwitchButton={!showSocialLogin}
+                    onSuccess={onSuccess}
+                    clientMode={clientMode}
+                  >
                     {showSocialLogin && <SocialLogin />}
                   </CredentialsForm>
                 </AnimatedContainer>

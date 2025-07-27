@@ -110,6 +110,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
           session.user.isAdmin = token.isAdmin;
         }
       }
+      
       return session;
     },
   },
