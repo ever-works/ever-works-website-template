@@ -2,6 +2,7 @@ export const API_CONSTANTS = {
   HEADERS: {
     CONTENT_TYPE: 'application/json',
     ACCEPT: 'application/json',
+    AUTHORIZATION: 'Authorization',
   },
   STATUS: {
     UNAUTHORIZED: 401,

@@ -11,6 +11,7 @@ export async function POST() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    
     // Initialize Stripe provider
     const configs = createProviderConfigs({
       apiKey: process.env.STRIPE_SECRET_KEY!,

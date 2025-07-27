@@ -2,16 +2,14 @@ import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from 'axios';
 import { env } from '../config/env';
 import { API_CONSTANTS } from './constants';
 import type {
-    ApiEndpoint,
-    QueryParams,
-    RequestBody,
-    PaginationParams,
-    PaginatedResponse,
-    ApiResponse,
-    ErrorResponse,
-    ApiClientConfig,
-    ApiError,
-    ApiResponseInterceptor
+  ApiEndpoint,
+  QueryParams,
+  RequestBody,
+  PaginationParams,
+  PaginatedResponse,
+  ApiResponse, ApiClientConfig,
+  ApiError,
+  ApiResponseInterceptor
 } from './types';
 
 export class ApiClient {
@@ -19,8 +17,9 @@ export class ApiClient {
 
   constructor(config: ApiClientConfig = {}) {
     this.client = axios.create({
-      baseURL: config.baseURL || env.API_BASE_URL,
-      timeout: config.timeout || env.API_TIMEOUT,
+      baseURL: config.baseURL,
+      // timeout: config.timeout || env.API_TIMEOUT,
+    
       headers: {
         'Content-Type': API_CONSTANTS.HEADERS.CONTENT_TYPE,
         'Accept': API_CONSTANTS.HEADERS.ACCEPT,
@@ -42,7 +41,7 @@ export class ApiClient {
 
   private handleResponseError: ApiResponseInterceptor = async (error) => {
     if (error.response?.status === API_CONSTANTS.STATUS.UNAUTHORIZED) {
-      if (typeof window !== 'undefined') {
+      if (typeof window !== 'undefined' && env.AUTH_ENDPOINT_LOGIN) {
         window.location.href = env.AUTH_ENDPOINT_LOGIN;
       }
     }
@@ -51,7 +50,11 @@ export class ApiClient {
 
   private formatError(error: unknown): ApiError {
     if (error instanceof AxiosError && error.response?.data) {
-      const { message, code, details } = error.response.data as ErrorResponse;
+      const errorData = error.response.data as any;
+      const message = errorData.message || errorData.error || 'An error occurred';
+      const code = errorData.code;
+      const details = errorData.details;
+
       const formattedError = new Error(message) as ApiError;
       Object.assign(formattedError, {
         code,

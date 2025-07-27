@@ -28,6 +28,7 @@ interface PlanCardProps {
   children?: ReactNode;
   isButton?: boolean;
   onClick?: () => void;
+  isLoading?: boolean;
 }
 
 export function PlanCard({
@@ -43,6 +44,7 @@ export function PlanCard({
   actionHref,
   children,
   isButton = true,
+  isLoading,
   onClick,
 }: PlanCardProps) {
   const router = useRouter();
@@ -108,6 +110,8 @@ export function PlanCard({
 
       <div className="p-6 bg-muted/20">
         <Button
+          isLoading={isLoading}
+          disabled={isLoading}
           className="w-full bg-theme-primary-500 text-white hover:bg-theme-primary-600"
           onClick={isButton ? handleAction : onClick}
         >
