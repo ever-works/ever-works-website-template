@@ -35,6 +35,7 @@ export function CredentialsForm({
   // Local state used only in clientMode for login
   const [clientPending, setClientPending] = useState(false);
   const [clientError, setClientError] = useState<string | null>(null);
+  const [clientSuccess, setClientSuccess] = useState(false);
 
   useEffect(() => {
     if (state.success) {
@@ -73,7 +74,11 @@ export function CredentialsForm({
       });
 
       if (res && !res.error) {
-        if (onSuccess) onSuccess();
+        setClientSuccess(true);
+        // Small delay to show success message before redirect
+        setTimeout(() => {
+          if (onSuccess) onSuccess();
+        }, 1000);
       } else {
         setClientError(res?.error || 'Authentication failed');
       }
@@ -293,6 +298,7 @@ export function CredentialsForm({
         </div>
       )}
 
+      {/* Server-side success message */}
       {state?.success && !clientMode && (
         <div className="flex items-start space-x-3 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
           <div className="flex-shrink-0">
@@ -313,6 +319,27 @@ export function CredentialsForm({
         </div>
       )}
 
+      {/* Client-side success message for admin login */}
+      {clientMode && clientSuccess && (
+        <div className="flex items-start space-x-3 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
+          <div className="flex-shrink-0">
+            <div className="w-6 h-6 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center">
+              <svg className="w-3 h-3 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+            </div>
+          </div>
+          <div className="flex-1">
+            <h4 className="text-sm font-semibold text-green-800 dark:text-green-200 mb-1">
+              Admin Login Successful!
+            </h4>
+            <p className="text-sm text-green-700 dark:text-green-300">
+              Redirecting to admin dashboard...
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Forgot password link (login only) */}
       {isLogin && (
         <div className="flex items-center justify-center">
@@ -327,7 +354,7 @@ export function CredentialsForm({
 
       {/* Modern submit button */}
       <Button
-        disabled={clientPending}
+        disabled={clientPending || clientSuccess}
         type="submit"
         className={cn(
           "w-full h-12 bg-gradient-to-r from-theme-primary to-theme-accent text-white font-semibold rounded-xl",
@@ -336,20 +363,27 @@ export function CredentialsForm({
           "shadow-lg hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed",
           "transform hover:scale-[1.02] active:scale-[0.98]"
         )}
-        isLoading={(pending && !state.success) || clientPending}
-        aria-busy={(pending && !state.success) || clientPending}
-        aria-disabled={(pending && !state.success) || clientPending}
+        isLoading={(pending && !state.success) || clientPending || clientSuccess}
+        aria-busy={(pending && !state.success) || clientPending || clientSuccess}
+        aria-disabled={(pending && !state.success) || clientPending || clientSuccess}
       >
         {(pending && !state.success) || clientPending ? (
           <span>{isLogin ? "Signing in..." : "Creating account..."}</span>
-        ) : state.success && !clientMode ? (
-          <span className="flex items-center justify-center gap-2">
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-            <span>{isLogin ? "Signed in!" : "Account created!"}</span>
-          </span>
-        ) : (
+        ) : clientSuccess ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              <span>Redirecting...</span>
+            </span>
+          ) : state.success && !clientMode ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              <span>{isLogin ? "Signed in!" : "Account created!"}</span>
+            </span>
+          ) : (
           <span className="flex items-center justify-center gap-2">
             <span>{isLogin ? t("SIGN_IN") : t("CREATE_ACCOUNT")}</span>
             <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
