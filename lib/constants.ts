@@ -79,6 +79,14 @@ export const SENTRY_EXCEPTION_TRACKING = getNextPublicEnv(
 );
 
 // ============================================
+// RECAPTCHA
+// ============================================ 
+export const RECAPTCHA_SITE_KEY = getNextPublicEnv("NEXT_PUBLIC_RECAPTCHA_SITE_KEY");
+export const RECAPTCHA_SECRET_KEY = getNextPublicEnv("RECAPTCHA_SECRET_KEY");
+
+
+
+// ============================================
 // PAYMENT FLOW
 // ============================================
 export type ExceptionTrackingProvider = "sentry" | "posthog" | "both" | "none";
