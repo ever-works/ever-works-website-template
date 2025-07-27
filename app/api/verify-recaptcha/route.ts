@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { externalClient, apiUtils } from "@/lib/api/server-client";
+import { externalClient, apiUtils } from "@/lib/api/server-api-client";
 
 // Types for ReCAPTCHA API response
 interface RecaptchaApiResponse {
