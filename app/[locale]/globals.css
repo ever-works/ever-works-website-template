@@ -830,3 +830,20 @@ select option:active {
   position: absolute !important;
   pointer-events: none !important;
 }
+
+/* Custom animations for logout loading state */
+@keyframes progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-progress {
+  animation: progress 2s ease-in-out infinite;
+}

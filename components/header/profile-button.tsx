@@ -1,6 +1,6 @@
 "use client";
 
-import { User, LogOut, Settings, FolderTree, Tag, List, Loader2 } from "lucide-react";
+import { User, LogOut, Settings, FolderTree, Tag, List } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { signOutAction } from "@/app/[locale]/auth/actions";
@@ -90,7 +90,7 @@ export function ProfileButton() {
 
       {isProfileMenuOpen && !isLoggingOut && (
         <div
-          className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+          className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50 animate-in slide-in-from-top-2 duration-200"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="user-menu"
@@ -163,25 +163,60 @@ export function ProfileButton() {
           <button
             onClick={handleLogout}
             disabled={isLoggingOut}
-            className="flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             role="menuitem"
           >
             {isLoggingOut ? (
-              <Loader2 className="mr-3 h-4 w-4 text-gray-400 animate-spin" />
+              <>
+                <div className="mr-3 h-4 w-4 relative">
+                  <div className="absolute inset-0 h-4 w-4 rounded-full border-2 border-transparent border-t-gray-400 animate-spin"></div>
+                </div>
+                <span className="animate-pulse">Signing out...</span>
+              </>
             ) : (
-              <LogOut className="mr-3 h-4 w-4 text-gray-400" />
+              <>
+                <LogOut className="mr-3 h-4 w-4 text-gray-400" />
+                <span>{t("settings.LOGOUT")}</span>
+              </>
             )}
-            {isLoggingOut ? "Signing out..." : t("settings.LOGOUT")}
           </button>
         </div>
       )}
 
-      {/* Global loading overlay when logging out */}
+      {/* Enhanced loading overlay when logging out */}
       {isLoggingOut && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 flex items-center space-x-3">
-            <Loader2 className="h-5 w-5 animate-spin text-theme-primary" />
-            <span className="text-gray-900 dark:text-gray-100">Signing out...</span>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200">
+          <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/20 dark:border-gray-700/30 animate-in zoom-in-95 duration-300">
+            <div className="flex flex-col items-center space-y-4">
+              {/* Animated icon */}
+              <div className="relative">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-theme-primary/20 to-theme-accent/20 flex items-center justify-center">
+                  <LogOut className="h-8 w-8 text-theme-primary animate-pulse" />
+                </div>
+                {/* Rotating ring */}
+                <div className="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-t-theme-primary animate-spin"></div>
+              </div>
+              
+              {/* Text with typing animation */}
+              <div className="text-center space-y-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Signing out
+                  <span className="inline-flex ml-1">
+                    <span className="animate-bounce">.</span>
+                    <span className="animate-bounce" style={{ animationDelay: '0.1s' }}>.</span>
+                    <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>.</span>
+                  </span>
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Please wait while we securely log you out
+                </p>
+              </div>
+              
+              {/* Progress bar */}
+              <div className="w-48 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-theme-primary to-theme-accent rounded-full animate-progress"></div>
+              </div>
+            </div>
           </div>
         </div>
       )}
