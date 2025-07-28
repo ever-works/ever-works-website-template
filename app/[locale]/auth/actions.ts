@@ -36,10 +36,14 @@ import { authServiceFactory } from "@/lib/auth/services";
 const PASSWORD_MIN_LENGTH = 8;
 const authProviderTypes = ['supabase', 'next-auth', 'both'] as const;
 
+// ReCAPTCHA verification is now handled client-side with React Query
+// See /api/verify-recaptcha route and useRecaptchaVerification hook
+
 const signInSchema = z.object({
   email: z.string().email().min(3).max(255),
   password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
   authProvider: z.enum(authProviderTypes).default('next-auth'),
+  captchaToken: z.string().optional(),
 });
 
 export const signInAction = validatedAction(signInSchema, async (data) => {
@@ -109,17 +113,22 @@ const signUpSchema = z.object({
   email: z.string().email(),
   password: z.string().min(PASSWORD_MIN_LENGTH),
   authProvider: z.enum(authProviderTypes).default('next-auth'),
+  captchaToken: z.string().optional(),
 });
 
 export const signUp = validatedAction(signUpSchema, async (data) => {
-  const { name, email, password } = data;
-  const authService = authServiceFactory(data.authProvider);
-  if (data.authProvider === 'supabase') {
-    const { error } = await authService.signUp(email, password);
-    if (error) {
-      throw error;
+  try {
+    // ReCAPTCHA is already verified on client-side with React Query
+    // No need to re-verify here
+
+    const { name, email, password } = data;
+    const authService = authServiceFactory(data.authProvider);
+    if (data.authProvider === 'supabase') {
+      const { error } = await authService.signUp(email, password);
+      if (error) {
+        throw error;
+      }
     }
-  }
 
   const existingUser = await getUserByEmail(email).catch(() => null);
 
@@ -161,6 +170,13 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
   });
 
   return { success: true };
+  } catch (error) {
+    console.error('SignUp error:', error);
+    return {
+      error: "Failed to create user. Please try again.",
+      ...data,
+    };
+  }
 });
 
 const updatePasswordSchema = z

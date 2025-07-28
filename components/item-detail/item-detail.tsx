@@ -8,6 +8,7 @@ import { ShareButton } from "./share-button";
 import { CommentsSection } from "./comments-section";
 import { VoteButton } from "./vote-button";
 import { RatingDisplay } from "./rating-display";
+import ReportButton from "../report-button";
 
 export interface ItemDetailProps {
   meta: {
@@ -19,6 +20,7 @@ export interface ItemDetailProps {
     source_url?: string;
     tags?: Array<string | { name: string; id: string }>;
     video_url?: string;
+    slug?: string;
   };
   content?: string;
   categoryName: string;
@@ -63,9 +65,11 @@ export function ItemDetail({
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-900 via-theme-primary-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent tracking-tight leading-tight mb-2">
-                    {meta.name}
-                  </h1>
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-900 via-theme-primary-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent tracking-tight leading-tight mb-2">
+                      {meta.name}
+                    </h1>
+                  </div>
                   <div className="h-1 w-24 bg-gradient-to-r from-theme-primary-500 to-theme-purple-500 rounded-full transform transition-all duration-500 group-hover:w-32"></div>
                 </div>
               </div>
@@ -146,6 +150,9 @@ export function ItemDetail({
                   content={content}
                   noContentMessage={noContentMessage}
                 />
+                <div className="flex justify-end mt-6">
+                  <ReportButton contentType="item" contentId={meta.slug || meta.name} />
+                </div>
               </div>
             </div>
           </div>

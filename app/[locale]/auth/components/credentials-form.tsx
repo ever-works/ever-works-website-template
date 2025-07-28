@@ -3,12 +3,16 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInAction, signUp } from "../actions";
 import { ActionState } from "@/lib/auth/middleware";
-import { PropsWithChildren, useActionState, useEffect, useState } from "react";
+import { PropsWithChildren, useActionState, useEffect, useState, useTransition } from "react";
 import { User, Lock, Mail, Eye, EyeOff } from "lucide-react";
 import { Button, cn } from "@heroui/react";
 import { useConfig } from "../../config";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import ReCAPTCHA from 'react-google-recaptcha';
+import { RECAPTCHA_SITE_KEY } from "@/lib/constants";
+import { useAutoRecaptchaVerification } from '../hooks/useRecaptchaVerification';
+
 
 export function CredentialsForm({
   type,
@@ -26,7 +30,11 @@ export function CredentialsForm({
   const auth = config.auth || {};
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordTips, setShowPasswordTips] = useState(false);
-
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaError, setCaptchaError] = useState<string | null>(null);
+  const { verifyToken, isLoading: isVerifying, error: verificationError } = useAutoRecaptchaVerification();
+  const [isPending, startTransition] = useTransition();
+  
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
     isLogin && !clientMode ? signInAction : signUp,
     {}
@@ -36,7 +44,6 @@ export function CredentialsForm({
   const [clientPending, setClientPending] = useState(false);
   const [clientError, setClientError] = useState<string | null>(null);
   const [clientSuccess, setClientSuccess] = useState(false);
-
   useEffect(() => {
     if (state.success) {
       if (onSuccess) {
@@ -48,9 +55,52 @@ export function CredentialsForm({
     }
   }, [state, redirect, router, onSuccess]);
 
+  useEffect(() => {
+    if (RECAPTCHA_SITE_KEY.value || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
+      const timeout = setTimeout(() => {
+        console.log('ReCAPTCHA loading timeout - hiding loader');
+      }, 3000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, []);
+  const isRecaptchaRequired = !!(RECAPTCHA_SITE_KEY.value || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY);
+  const isRecaptchaBlocking = isRecaptchaRequired && !captchaToken;
+  
   const handleFormAction = async (formData: FormData) => {
+    if (isRecaptchaRequired) {
+      if (!captchaToken) {
+        setCaptchaError('Please complete the captcha.');
+        return;
+      }
+      try {
+        setCaptchaError(null);
+        console.log('Verifying ReCAPTCHA token before submission...');
+
+        const isValid = await verifyToken(captchaToken);
+        if (!isValid) {
+          setCaptchaError('ReCAPTCHA verification failed. Please try again.');
+          return;
+        }
+
+        console.log('ReCAPTCHA verified successfully');
+
+      } catch (error: unknown) {
+        console.error('ReCAPTCHA verification error:', error);
+        setCaptchaError('ReCAPTCHA verification failed. Please try again.');
+        return;
+      }
+    }
+
+    if (captchaToken) {
+      formData.append('captchaToken', captchaToken);
+    }
+
     formData.append('authProvider', config.authConfig?.provider || 'next-auth');
-    return formAction(formData);
+
+    startTransition(() => {
+      formAction(formData);
+    });
   };
 
   // Client-side submit when clientMode is true (admin login path)
@@ -82,55 +132,24 @@ export function CredentialsForm({
       } else {
         setClientError(res?.error || 'Authentication failed');
       }
-    } catch (error: any) {
-      setClientError(error?.message || 'Authentication failed');
+    } catch (error: unknown) {
+      setClientError((error as Error)?.message || 'Authentication failed');
     } finally {
       setClientPending(false);
     }
   };
-
   return (
-    <>
-      {/* Modern header with animation */}
-      <div className="text-center mb-8">
-        <div className="flex justify-center mb-6">
-          <div className="relative">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-theme-primary to-theme-accent flex items-center justify-center shadow-xl shadow-theme-primary/25 animate-pulse-subtle">
-              <User className="text-white w-8 h-8" />
-            </div>
-            <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            {isLogin ? t("SIGN_IN") : t("CREATE_ACCOUNT")}
-          </h1>
-          {auth.credentials && (
-            <p className="text-gray-600 dark:text-gray-300 text-lg max-w-md mx-auto leading-relaxed">
-              {isLogin
-                ? t("ENTER_YOUR_CREDENTIALS_HEADER")
-                : t("FILL_IN_OUR_DIRECTORY")}
-            </p>
-          )}
-        </div>
-
-        {/* Progress indicator for signup */}
-        {!isLogin && (
-          <div className="mt-6 flex items-center justify-center space-x-2">
-            <div className="flex items-center space-x-1">
-              <div className="w-2 h-2 bg-theme-primary rounded-full"></div>
-              <span className="text-xs text-theme-primary font-medium">Step 1</span>
-            </div>
-            <div className="w-8 h-px bg-gray-200 dark:bg-gray-700"></div>
-            <div className="flex items-center space-x-1">
-              <div className="w-2 h-2 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-              <span className="text-xs text-gray-400">Verification</span>
-            </div>
-          </div>
-        )}
+    <div className="max-w-md mx-auto">
+      {/* Simple header */}
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          {isLogin ? t("SIGN_IN") : t("CREATE_ACCOUNT")}
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">
+          {isLogin
+            ? "Welcome back! Please sign in to your account"
+            : "Create your account to get started"}
+        </p>
       </div>
 
       {auth.credentials && (
@@ -155,15 +174,7 @@ export function CredentialsForm({
             <input
               id="name"
               type="text"
-              className={cn(
-                "pl-10 pr-4 w-full py-3 border-2 rounded-lg transition-all duration-200",
-                "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100",
-                "border-gray-200 dark:border-gray-700",
-                "focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20",
-                "placeholder:text-gray-400 dark:placeholder:text-gray-500 placeholder:text-sm",
-                "shadow-sm hover:shadow-md focus:shadow-lg",
-                "disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-              )}
+              className="pl-10 pr-4 w-full py-2.5 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-theme-primary focus:ring-1 focus:ring-theme-primary placeholder:text-gray-400"
               placeholder={t("ENTER_YOUR_FULL_NAME")}
               name="name"
               defaultValue={state?.name}
@@ -188,15 +199,7 @@ export function CredentialsForm({
           <input
             id="email"
             type="email"
-            className={cn(
-              "pl-10 pr-4 w-full py-3 border-2 rounded-lg transition-all duration-200",
-              "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100",
-              "border-gray-200 dark:border-gray-700",
-              "focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20",
-              "placeholder:text-gray-400 dark:placeholder:text-gray-500 placeholder:text-sm",
-              "shadow-sm hover:shadow-md focus:shadow-lg",
-              "disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-            )}
+            className="pl-10 pr-4 w-full py-2.5 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-theme-primary focus:ring-1 focus:ring-theme-primary placeholder:text-gray-400"
             placeholder={t("ENTER_YOUR_EMAIL")}
             name="email"
             defaultValue={state?.email}
@@ -220,15 +223,7 @@ export function CredentialsForm({
           <input
             id="password"
             type={showPassword ? "text" : "password"}
-            className={cn(
-              "pl-10 pr-10 w-full py-3 border-2 rounded-lg transition-all duration-200",
-              "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100",
-              "border-gray-200 dark:border-gray-700",
-              "focus:border-theme-primary focus:ring-2 focus:ring-theme-primary/20",
-              "placeholder:text-gray-400 dark:placeholder:text-gray-500 placeholder:text-sm",
-              "shadow-sm hover:shadow-md focus:shadow-lg",
-              "disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-            )}
+            className="pl-10 pr-10 w-full py-2.5 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-theme-primary focus:ring-1 focus:ring-theme-primary placeholder:text-gray-400"
             placeholder={t("ENTER_YOUR_PASSWORD")}
             name="password"
             required
@@ -352,9 +347,63 @@ export function CredentialsForm({
         </div>
       )}
 
-      {/* Modern submit button */}
+      {/* ReCAPTCHA */}
+      {(RECAPTCHA_SITE_KEY.value || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) && (
+        <div className="mb-4">
+
+          <div className="flex justify-center">
+            <div className="recaptcha-container">
+                  <ReCAPTCHA
+                    sitekey={RECAPTCHA_SITE_KEY.value || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+                    onChange={(token: string | null) => {
+                      setCaptchaToken(token);
+                      setCaptchaError(null);
+                      if (token) {
+                        console.log('ReCAPTCHA token received, ready for verification on submit');
+                      }
+                    }}
+                    onLoad={() => {
+                      console.log('ReCAPTCHA loaded successfully');
+                    }}
+                    onError={(error) => {
+                      console.error('ReCAPTCHA error:', error);
+                      setCaptchaError('Failed to load security verification. Please refresh the page.');
+                    }}
+                    onExpired={() => {
+                      console.log('ReCAPTCHA expired');
+                      setCaptchaToken(null);
+                      setCaptchaError('Security verification expired. Please complete it again.');
+                    }}
+                    theme="light"
+                    size="normal"
+                  />
+            </div>
+          </div>
+
+          {/* Simple error message */}
+          {(captchaError || verificationError) && (
+            <div className="mt-2 text-sm text-red-600 dark:text-red-400">
+              {captchaError || verificationError?.message || 'ReCAPTCHA verification failed'}
+            </div>
+          )}
+
+          {/* Simple loading indicator */}
+          {isVerifying && (
+            <div className="mt-2 text-sm text-blue-600 dark:text-blue-400">
+              Verifying...
+            </div>
+          )}
+
+          {/* Simple blocking message */}
+          {isRecaptchaBlocking && (
+            <div className="mt-2 text-sm text-amber-600 dark:text-amber-400">
+              Please complete the security verification
+            </div>
+          )}
+        </div>
+      )}
       <Button
-        disabled={clientPending || clientSuccess}
+        disabled={clientPending || clientSuccess || pending || isPending || isVerifying || isRecaptchaBlocking}
         type="submit"
         className={cn(
           "w-full h-12 bg-gradient-to-r from-theme-primary to-theme-accent text-white font-semibold rounded-xl",
@@ -363,9 +412,9 @@ export function CredentialsForm({
           "shadow-lg hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed",
           "transform hover:scale-[1.02] active:scale-[0.98]"
         )}
-        isLoading={(pending && !state.success) || clientPending || clientSuccess}
-        aria-busy={(pending && !state.success) || clientPending || clientSuccess}
-        aria-disabled={(pending && !state.success) || clientPending || clientSuccess}
+        isLoading={(pending && !state.success) || clientPending || clientSuccess || isPending || isVerifying}
+        aria-busy={(pending && !state.success) || clientPending || clientSuccess || isPending || isVerifying}
+        aria-disabled={(pending && !state.success) || clientPending || clientSuccess || isPending || isVerifying || isRecaptchaBlocking}
       >
         {(pending && !state.success) || clientPending ? (
           <span>{isLogin ? "Signing in..." : "Creating account..."}</span>
@@ -430,6 +479,6 @@ export function CredentialsForm({
           </Button>
         </div>
       )}
-    </>
+    </div>
   );
 }
