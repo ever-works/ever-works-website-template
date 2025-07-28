@@ -3,22 +3,30 @@
 import { User, LogOut, Settings, FolderTree, Tag, List } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { signOutAction } from "@/app/[locale]/auth/actions";
+import { signOut } from "next-auth/react";
 import { Link } from "@/i18n/navigation";
 import { Avatar } from "./avatar";
-import { useConfig } from "@/app/[locale]/config";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 export function ProfileButton() {
   const t = useTranslations();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const config = useConfig();
   const { user, isLoading } = useCurrentUser();
 
   const profilePath = `/profile/${user?.id || user?.email?.split('@')[0] || 'profile'}`;
+  
+  // Check if user is admin - define this early so it can be used everywhere
+  const isAdmin = user?.isAdmin === true;
 
   const handleLogout = async () => {
-    const userIsAdmin = user?.isAdmin === true;
+    // Debug admin detection
+    console.log('🔍 Logout Debug:', {
+      user: user,
+      isAdmin: isAdmin,
+      userIsAdminRaw: user?.isAdmin,
+      userIsAdminType: typeof user?.isAdmin
+    });
+    
     setIsProfileMenuOpen(false);
     
     // Create simple overlay
@@ -80,14 +88,16 @@ export function ProfileButton() {
     `;
     document.head.appendChild(style);
     document.body.appendChild(overlay);
-    
     try {
-      await signOutAction(config.authConfig?.provider);
+      
+      // Use NextAuth signOut with redirect: false so we can handle redirect ourselves
+      await signOut({ redirect: false });
       
       // Clean up overlay before redirect
       overlay.remove();
       
-      const redirectUrl = userIsAdmin ? '/admin/auth/signin' : '/auth/signin';
+      const redirectUrl = isAdmin ? '/admin/auth/signin' : '/auth/signin';
+      console.log("Redirecting to:", redirectUrl);
       window.location.replace(redirectUrl);
     } catch (error) {
       // Clean up overlay on error too
@@ -109,9 +119,6 @@ export function ProfileButton() {
   if (!user) {
     return null;
   }
-
-  // Check if user is admin
-  const isAdmin = user.isAdmin === true;
 
   return (
     <div className="relative ml-3">
