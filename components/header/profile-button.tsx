@@ -21,10 +21,79 @@ export function ProfileButton() {
     const userIsAdmin = user?.isAdmin === true;
     setIsProfileMenuOpen(false);
     
-    await signOutAction(config.authConfig?.provider);
+    // Create simple overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'logout-overlay';
+    overlay.innerHTML = `
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        font-family: system-ui, -apple-system, sans-serif;
+      ">
+        <div style="
+          background: white;
+          padding: 2rem;
+          border-radius: 12px;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+          text-align: center;
+          max-width: 300px;
+        ">
+          <div style="
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem auto;
+          "></div>
+          <h3 style="
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1f2937;
+          ">Signing Out</h3>
+          <p style="
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.9rem;
+          ">Please wait while we log you out...</p>
+        </div>
+      </div>
+    `;
     
-    const redirectUrl = userIsAdmin ? '/admin/auth/signin' : '/auth/signin';
-    window.location.href = redirectUrl;
+    // Add spinner animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
+    document.body.appendChild(overlay);
+    
+    try {
+      await signOutAction(config.authConfig?.provider);
+      
+      // Clean up overlay before redirect
+      overlay.remove();
+      
+      const redirectUrl = userIsAdmin ? '/admin/auth/signin' : '/auth/signin';
+      window.location.replace(redirectUrl);
+    } catch (error) {
+      // Clean up overlay on error too
+      overlay.remove();
+      console.error('Logout failed:', error);
+    }
   };
 
   // Show loading state or return null if no user
