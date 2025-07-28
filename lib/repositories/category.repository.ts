@@ -35,6 +35,36 @@ export class CategoryRepository {
   }
 
   /**
+   * Find all categories with pagination
+   */
+  async findAllPaginated(options: CategoryListOptions = {}): Promise<{
+    categories: CategoryWithCount[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const { page = 1, limit = 10, ...filterOptions } = options;
+    
+    // Get all filtered and sorted categories
+    const allCategories = await this.findAll(filterOptions);
+    const total = allCategories.length;
+    
+    // Calculate pagination
+    const offset = (page - 1) * limit;
+    const paginatedCategories = allCategories.slice(offset, offset + limit);
+    const totalPages = Math.ceil(total / limit);
+    
+    return {
+      categories: paginatedCategories,
+      total,
+      page,
+      limit,
+      totalPages,
+    };
+  }
+
+  /**
    * Find category by ID
    */
   async findById(id: string): Promise<CategoryData | null> {
@@ -63,7 +93,6 @@ export class CategoryRepository {
     const newCategory: CategoryData = {
       id: this.generateId(data.name),
       name: data.name.trim(),
-      description: data.description?.trim(),
       color: data.color || CATEGORY_VALIDATION.DEFAULT_COLOR,
       icon: data.icon?.trim(),
       isActive: data.isActive ?? true,
@@ -118,7 +147,6 @@ export class CategoryRepository {
 
     // Clean up undefined values
     if (data.name) updatedCategory.name = data.name.trim();
-    if (data.description !== undefined) updatedCategory.description = data.description?.trim();
     if (data.icon !== undefined) updatedCategory.icon = data.icon?.trim();
 
     // Replace in array
@@ -211,10 +239,6 @@ export class CategoryRepository {
       throw new Error(`Category name must be no more than ${CATEGORY_VALIDATION.NAME_MAX_LENGTH} characters long`);
     }
 
-    if (data.description && data.description.length > CATEGORY_VALIDATION.DESCRIPTION_MAX_LENGTH) {
-      throw new Error(`Category description must be no more than ${CATEGORY_VALIDATION.DESCRIPTION_MAX_LENGTH} characters long`);
-    }
-
     if (data.color && !CATEGORY_VALIDATION.ALLOWED_COLORS.includes(data.color as any)) {
       throw new Error(`Invalid color. Allowed colors: ${CATEGORY_VALIDATION.ALLOWED_COLORS.join(', ')}`);
     }
@@ -228,9 +252,6 @@ export class CategoryRepository {
     // Validate other fields if provided
     if (data.name !== undefined) {
       this.validateCategoryData({ name: data.name } as CreateCategoryRequest);
-    }
-    if (data.description !== undefined && data.description.length > CATEGORY_VALIDATION.DESCRIPTION_MAX_LENGTH) {
-      throw new Error(`Category description must be no more than ${CATEGORY_VALIDATION.DESCRIPTION_MAX_LENGTH} characters long`);
     }
     if (data.color && !CATEGORY_VALIDATION.ALLOWED_COLORS.includes(data.color as any)) {
       throw new Error(`Invalid color. Allowed colors: ${CATEGORY_VALIDATION.ALLOWED_COLORS.join(', ')}`);

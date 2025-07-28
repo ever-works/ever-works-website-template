@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Input, Textarea } from "@heroui/react";
+import { Button, Input } from "@heroui/react";
 import { Save, X } from "lucide-react";
 import { CategoryData, CreateCategoryRequest, UpdateCategoryRequest, CATEGORY_VALIDATION, CategoryColor } from "@/lib/types/category";
 
@@ -29,7 +29,6 @@ const colorOptions: { value: CategoryColor; label: string; preview: string }[] =
 export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, mode }: CategoryFormProps) {
   const [formData, setFormData] = useState({
     name: category?.name || '',
-    description: category?.description || '',
     color: category?.color || CATEGORY_VALIDATION.DEFAULT_COLOR,
     icon: category?.icon || '',
     isActive: category?.isActive ?? true,
@@ -50,10 +49,7 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
       newErrors.name = `Name must be no more than ${CATEGORY_VALIDATION.NAME_MAX_LENGTH} characters`;
     }
 
-    // Description validation
-    if (formData.description && formData.description.length > CATEGORY_VALIDATION.DESCRIPTION_MAX_LENGTH) {
-      newErrors.description = `Description must be no more than ${CATEGORY_VALIDATION.DESCRIPTION_MAX_LENGTH} characters`;
-    }
+
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -115,23 +111,7 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
           </div>
         </div>
 
-        {/* Description Field */}
-        <div>
-          <Textarea
-            label="Description"
-            placeholder="Enter category description (optional)"
-            value={formData.description}
-            onChange={(e) => handleInputChange('description', e.target.value)}
-            errorMessage={errors.description}
-            isInvalid={!!errors.description}
-            maxLength={CATEGORY_VALIDATION.DESCRIPTION_MAX_LENGTH}
-            className="w-full"
-            rows={3}
-          />
-          <div className="text-xs text-gray-500 mt-1">
-            {formData.description.length}/{CATEGORY_VALIDATION.DESCRIPTION_MAX_LENGTH} characters
-          </div>
-        </div>
+
 
         {/* Color Selection */}
         <div>

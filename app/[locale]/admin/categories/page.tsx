@@ -5,6 +5,7 @@ import { Button, Card, CardBody, Chip, Modal, ModalContent, ModalBody, useDisclo
 import { Plus, Edit, Trash2, Eye, EyeOff, GripVertical } from "lucide-react";
 import { CategoryForm } from "@/components/admin/categories/category-form";
 import { CategoryData, CreateCategoryRequest, UpdateCategoryRequest, CategoryWithCount } from "@/lib/types/category";
+import { UniversalPagination } from "@/components/universal-pagination";
 import { toast } from "sonner";
 
 interface ApiResponse<T = any> {
@@ -14,6 +15,10 @@ interface ApiResponse<T = any> {
   category?: CategoryData;
   error?: string;
   message?: string;
+  total?: number;
+  page?: number;
+  limit?: number;
+  totalPages?: number;
 }
 
 export default function AdminCategoriesPage() {
@@ -23,17 +28,32 @@ export default function AdminCategoriesPage() {
   const [selectedCategory, setSelectedCategory] = useState<CategoryData | null>(null);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCategories, setTotalCategories] = useState(0);
+  const [limit] = useState(10);
+  
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // Fetch categories
-  const fetchCategories = async () => {
+  const fetchCategories = async (page: number = currentPage) => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/admin/categories?includeInactive=true');
+      const params = new URLSearchParams({
+        includeInactive: 'true',
+        page: page.toString(),
+        limit: limit.toString(),
+      });
+      
+      const response = await fetch(`/api/admin/categories?${params}`);
       const data: ApiResponse<CategoryWithCount[]> = await response.json();
       
       if (data.success && data.categories) {
         setCategories(data.categories);
+        setTotalCategories(data.total || 0);
+        setTotalPages(data.totalPages || 1);
+        setCurrentPage(data.page || 1);
       } else {
         toast.error(data.error || 'Failed to fetch categories');
       }
@@ -145,6 +165,11 @@ export default function AdminCategoriesPage() {
     }
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    fetchCategories(page);
+  };
+
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -183,17 +208,27 @@ export default function AdminCategoriesPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card>
-          <CardBody className="text-center">
-            <div className="text-2xl font-bold text-blue-600">
-              {categories.length}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Total Categories
-            </div>
-          </CardBody>
-        </Card>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <Card>
+                <CardBody className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">
+                    {totalCategories}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    Total Categories
+                  </div>
+                </CardBody>
+              </Card>
+              <Card>
+                <CardBody className="text-center">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {categories.length}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    Showing This Page
+                  </div>
+                </CardBody>
+              </Card>
         <Card>
           <CardBody className="text-center">
             <div className="text-2xl font-bold text-green-600">
@@ -228,9 +263,6 @@ export default function AdminCategoriesPage() {
                   </th>
                   <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">
                     Category
-                  </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">
-                    Description
                   </th>
                   <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">
                     Status
@@ -273,11 +305,6 @@ export default function AdminCategoriesPage() {
                             ID: {category.id}
                           </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="text-gray-600 dark:text-gray-400 max-w-xs truncate">
-                        {category.description || '—'}
                       </div>
                     </td>
                     <td className="py-3 px-4">
@@ -333,6 +360,24 @@ export default function AdminCategoriesPage() {
           </div>
         </CardBody>
       </Card>
+
+      {/* Pagination and Stats */}
+      {totalCategories > 0 && (
+        <div className="mt-6 space-y-4">
+          {/* Results Info */}
+          <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+            Showing {((currentPage - 1) * limit) + 1} to {Math.min(currentPage * limit, totalCategories)} of {totalCategories} categories
+          </div>
+          
+          {/* Pagination Controls */}
+          <UniversalPagination
+            page={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            className="justify-center"
+          />
+        </div>
+      )}
 
       {/* Form Modal */}
       <Modal isOpen={isOpen} onClose={onClose} size="2xl">

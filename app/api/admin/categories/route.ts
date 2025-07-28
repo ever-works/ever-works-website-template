@@ -23,20 +23,27 @@ export async function GET(request: NextRequest) {
     const includeInactive = searchParams.get('includeInactive') === 'true';
     const sortBy = searchParams.get('sortBy') as 'name' | 'sortOrder' | 'createdAt' || 'sortOrder';
     const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' || 'asc';
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
 
     const options: CategoryListOptions = {
       includeInactive,
       sortBy,
       sortOrder,
+      page,
+      limit,
     };
 
-    // Get categories
-    const categories = await categoryRepository.findAll(options);
+    // Get categories with pagination
+    const result = await categoryRepository.findAllPaginated(options);
 
     return NextResponse.json({
       success: true,
-      categories,
-      total: categories.length,
+      categories: result.categories,
+      total: result.total,
+      page: result.page,
+      limit: result.limit,
+      totalPages: result.totalPages,
     });
 
   } catch (error) {
@@ -70,7 +77,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const createData: CreateCategoryRequest = {
       name: body.name,
-      description: body.description,
       color: body.color,
       icon: body.icon,
       isActive: body.isActive,

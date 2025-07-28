@@ -3,7 +3,6 @@
 export interface CategoryData {
   id: string;
   name: string;
-  description?: string;
   color?: string;
   icon?: string;
   icon_url?: string;
@@ -19,7 +18,6 @@ export interface CategoryWithCount extends CategoryData {
 
 export interface CreateCategoryRequest {
   name: string;
-  description?: string;
   color?: string;
   icon?: string;
   isActive?: boolean;
@@ -33,6 +31,9 @@ export interface UpdateCategoryRequest extends Partial<CreateCategoryRequest> {
 export interface CategoryListResponse {
   categories: CategoryWithCount[];
   total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 export interface CategoryResponse {
@@ -45,13 +46,14 @@ export interface CategoryListOptions {
   includeInactive?: boolean;
   sortBy?: 'name' | 'sortOrder' | 'createdAt';
   sortOrder?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
 }
 
 // Validation schemas
 export const CATEGORY_VALIDATION = {
   NAME_MIN_LENGTH: 2,
   NAME_MAX_LENGTH: 50,
-  DESCRIPTION_MAX_LENGTH: 200,
   DEFAULT_COLOR: '#3B82F6',
   ALLOWED_COLORS: [
     '#3B82F6', // Blue
