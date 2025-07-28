@@ -116,11 +116,10 @@ export function useAdminStats() {
   return useQuery<AdminStats>({
     queryKey: ["admin-stats"],
     queryFn: async () => {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Return mock data immediately - no delay
       return mockAdminStats;
     },
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    refetchInterval: 5 * 60 * 1000, // Auto-refresh every 5 minutes
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    // Removed auto-refetch to prevent interference with auth flow
   });
 } 
