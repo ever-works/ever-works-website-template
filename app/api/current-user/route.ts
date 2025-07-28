@@ -14,6 +14,7 @@ export async function GET() {
     email: session.user.email,
     image: session.user.image,
     provider: session.user.provider,
+    isAdmin: session.user.isAdmin || false,
   };
 
   return NextResponse.json(safeUser);
