@@ -10,14 +10,14 @@ export async function generateStaticParams() {
     const { categories } = await fetchItems({ lang: locale });
     const paths = [];
 
-    for (const categorie of categories) {
-      const pages = totalPages(categorie.count || 0);
+    for (const category of categories) {
+      const pages = totalPages(category.count || 0);
 
       for (let i = 1; i <= pages; ++i) {
         if (i === 1) {
-          paths.push({ categorie: [categorie.id], locale });
+          paths.push({ categorie: [category.id], locale });
         } else {
-          paths.push({ categorie: [categorie.id, i.toString()], locale });
+          paths.push({ categorie: [category.id, i.toString()], locale });
         }
       }
     }
@@ -36,9 +36,9 @@ export default async function CategoryListing({
   params: Promise<{ categorie: string[]; locale: string }>;
 }) {
   const resolvedParams = await params;
-  const { categorie: categorieMeta, locale } = resolvedParams;
-  const [rawCategorie, rawPage] = categorieMeta;
-  const categorie = decodeURIComponent(rawCategorie);
+  const { categorie: categoryMeta, locale } = resolvedParams;
+  const [rawCategory, rawPage] = categoryMeta;
+  const category = decodeURIComponent(rawCategory);
   
   // Handle pagination
   const page = rawPage ? parseInt(rawPage) : 1;
@@ -46,7 +46,7 @@ export default async function CategoryListing({
   
   // For now, we'll use the original approach
   // In the future, we can implement query parameters here
-  const result = await fetchByCategory(categorie, { lang: locale });
+  const result = await fetchByCategory(category, { lang: locale });
 
   const { items, categories, total, tags } = result;
 
@@ -55,7 +55,7 @@ export default async function CategoryListing({
       total={total}
       start={start}
       page={page}
-      basePath={`/categories/category/${categorie}`}
+      basePath={`/categories/category/${category}`}
       categories={categories}
       tags={tags}
       items={items}
