@@ -3,7 +3,7 @@ import yaml from "yaml";
 import * as fs from "fs";
 import * as path from "path";
 import { CategoryData } from "@/lib/types/category";
-import { getContentPath, dirExists, fsExists } from "@/lib/lib";
+import { getContentPath, fsExists } from "@/lib/lib";
 
 /**
  * Service for handling file-based category operations
@@ -17,7 +17,7 @@ export class CategoryFileService {
   constructor() {
     this.contentPath = getContentPath();
     this.categoriesDir = path.join(this.contentPath, "categories");
-    this.categoriesFilePath = path.join(this.categoriesDir, "categories.yml");
+    this.categoriesFilePath = path.join(this.contentPath, "categories.yml"); // Use existing categories.yml directly
   }
 
   /**
@@ -27,10 +27,7 @@ export class CategoryFileService {
    */
   async readCategories(lang?: string): Promise<CategoryData[]> {
     try {
-      // Ensure categories directory exists
-      await this.ensureCategoriesDirectory();
-
-      // Try reading from categories.yml
+      // Read from existing categories.yml
       const categories = await this.readCategoriesFromFile();
       
       // Apply translations if requested
@@ -54,8 +51,6 @@ export class CategoryFileService {
    */
   async writeCategories(categories: CategoryData[]): Promise<void> {
     try {
-      await this.ensureCategoriesDirectory();
-      
       const yamlContent = yaml.stringify(categories, {
         indent: 2,
         lineWidth: 0, // Disable line wrapping
@@ -80,7 +75,7 @@ export class CategoryFileService {
    */
   async createBackup(): Promise<string> {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const backupPath = path.join(this.categoriesDir, `categories.backup.${timestamp}.yml`);
+    const backupPath = path.join(this.contentPath, `categories.backup.${timestamp}.yml`);
     
     if (await this.categoriesFileExists()) {
       await fs.promises.copyFile(this.categoriesFilePath, backupPath);
@@ -89,32 +84,10 @@ export class CategoryFileService {
     return backupPath;
   }
 
-  /**
-   * Private helper methods
-   */
-  private async ensureCategoriesDirectory(): Promise<void> {
-    const dirExists = await this.directoriesExist();
-    if (!dirExists) {
-      await fs.promises.mkdir(this.categoriesDir, { recursive: true });
-    }
-  }
-
-  private async directoriesExist(): Promise<boolean> {
-    return await dirExists(this.categoriesDir);
-  }
-
   private async readCategoriesFromFile(): Promise<CategoryData[]> {
-    // Try new directory structure first
+    // Read from existing categories.yml in content root
     if (await this.categoriesFileExists()) {
       const content = await fs.promises.readFile(this.categoriesFilePath, 'utf8');
-      const categories = yaml.parse(content) as CategoryData[];
-      return Array.isArray(categories) ? categories : [];
-    }
-
-    // Fallback to old structure (categories.yml in root)
-    const fallbackPath = path.join(this.contentPath, "categories.yml");
-    if (await fsExists(fallbackPath)) {
-      const content = await fs.promises.readFile(fallbackPath, 'utf8');
       const categories = yaml.parse(content) as CategoryData[];
       return Array.isArray(categories) ? categories : [];
     }
@@ -124,7 +97,7 @@ export class CategoryFileService {
 
   private async applyTranslations(categories: CategoryData[], lang: string): Promise<CategoryData[]> {
     try {
-      const translationPath = path.join(this.categoriesDir, `categories.${lang}.yml`);
+      const translationPath = path.join(this.contentPath, `categories.${lang}.yml`);
       
       if (await fsExists(translationPath)) {
         const content = await fs.promises.readFile(translationPath, 'utf8');
