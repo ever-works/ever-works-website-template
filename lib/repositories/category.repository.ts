@@ -7,19 +7,39 @@ import {
   CategoryListOptions,
   CATEGORY_VALIDATION 
 } from "@/lib/types/category";
-import { categoryFileService } from "@/lib/services/category-file.service";
+import { createCategoryGitService } from "@/lib/services/category-git.service";
 
 /**
  * Repository for category business logic operations
  * Follows Repository Pattern and Single Responsibility Principle
  */
 export class CategoryRepository {
+  private gitService: any = null;
+
+  private async getGitService() {
+    if (!this.gitService) {
+      const gitConfig = {
+        owner: process.env.GITHUB_OWNER || 'your-username',
+        repo: process.env.GITHUB_REPO || 'your-repo',
+        token: process.env.GITHUB_TOKEN || '',
+        branch: process.env.GITHUB_BRANCH || 'main',
+      };
+
+      if (!gitConfig.token) {
+        throw new Error('GitHub token not configured. Please set GITHUB_TOKEN environment variable.');
+      }
+
+      this.gitService = await createCategoryGitService(gitConfig);
+    }
+    return this.gitService;
+  }
   
   /**
    * Get all categories with optional filtering and sorting
    */
   async findAll(options: CategoryListOptions = {}): Promise<CategoryWithCount[]> {
-    const categories = await categoryFileService.readCategories();
+    const gitService = await this.getGitService();
+    const categories = await gitService.readCategories();
     
     let filteredCategories = categories;
 
@@ -69,8 +89,9 @@ export class CategoryRepository {
    * Find category by ID
    */
   async findById(id: string): Promise<CategoryData | null> {
-    const categories = await categoryFileService.readCategories();
-    return categories.find(cat => cat.id === id) || null;
+    const gitService = await this.getGitService();
+    const categories = await gitService.readCategories();
+    return categories.find((cat: CategoryData) => cat.id === id) || null;
   }
 
   /**
@@ -90,25 +111,9 @@ export class CategoryRepository {
     // Check for duplicate names
     await this.checkDuplicateName(data.name);
 
-    // Create new category with defaults
-    const newCategory: CategoryData = {
-      id: data.id,
-      name: data.name.trim(),
-    };
-
-    // Read existing categories
-    const categories = await categoryFileService.readCategories();
-    
-    // Add new category
-    categories.push(newCategory);
-    
-    // Create backup before writing
-    await categoryFileService.createBackup();
-    
-    // Write updated categories
-    await categoryFileService.writeCategories(categories);
-
-    return newCategory;
+    // Use Git service to create category
+    const gitService = await this.getGitService();
+    return await gitService.createCategory(data);
   }
 
   /**
@@ -118,35 +123,14 @@ export class CategoryRepository {
     // Validate input
     this.validateUpdateData(data);
 
-    // Find existing category
-    const categories = await categoryFileService.readCategories();
-    const categoryIndex = categories.findIndex(cat => cat.id === data.id);
-    
-    if (categoryIndex === -1) {
-      throw new Error(`Category with ID ${data.id} not found`);
-    }
-
     // Check for duplicate name if name is being changed
-    if (data.name && data.name !== categories[categoryIndex].name) {
+    if (data.name) {
       await this.checkDuplicateName(data.name, data.id);
     }
 
-    // Update category
-    const updatedCategory: CategoryData = {
-      ...categories[categoryIndex],
-      name: data.name?.trim() || categories[categoryIndex].name,
-    };
-
-    // Replace in array
-    categories[categoryIndex] = updatedCategory;
-
-    // Create backup before writing
-    await categoryFileService.createBackup();
-
-    // Write updated categories
-    await categoryFileService.writeCategories(categories);
-
-    return updatedCategory;
+    // Use Git service to update category
+    const gitService = await this.getGitService();
+    return await gitService.updateCategory(data);
   }
 
   /**
@@ -158,43 +142,31 @@ export class CategoryRepository {
   }
 
   /**
-   * Hard delete a category (remove from file)
+   * Hard delete a category (remove from Git repository)
    */
   async hardDelete(id: string): Promise<void> {
-    const categories = await categoryFileService.readCategories();
-    const filteredCategories = categories.filter(cat => cat.id !== id);
-    
-    if (filteredCategories.length === categories.length) {
-      throw new Error(`Category with ID ${id} not found`);
-    }
-
-    // Create backup before writing
-    await categoryFileService.createBackup();
-
-    // Write updated categories
-    await categoryFileService.writeCategories(filteredCategories);
+    const gitService = await this.getGitService();
+    await gitService.deleteCategory(id);
   }
 
   /**
    * Reorder categories (simplified - just reorder by name for now)
    */
   async reorder(categoryIds: string[]): Promise<void> {
-    const categories = await categoryFileService.readCategories();
+    const gitService = await this.getGitService();
+    const categories = await gitService.readCategories();
     
     // Reorder categories based on the provided IDs
     const reorderedCategories = categoryIds
-      .map(id => categories.find(cat => cat.id === id))
+      .map(id => categories.find((cat: CategoryData) => cat.id === id))
       .filter(Boolean) as CategoryData[];
 
     // Add any remaining categories that weren't in the reorder list
-    const remainingCategories = categories.filter(cat => !categoryIds.includes(cat.id));
+    const remainingCategories = categories.filter((cat: CategoryData) => !categoryIds.includes(cat.id));
     reorderedCategories.push(...remainingCategories);
 
-    // Create backup before writing
-    await categoryFileService.createBackup();
-
-    // Write updated categories
-    await categoryFileService.writeCategories(reorderedCategories);
+    // Write reordered categories back to Git
+    await gitService.writeCategories(reorderedCategories);
   }
 
   /**
@@ -240,8 +212,9 @@ export class CategoryRepository {
   }
 
   private async checkDuplicateName(name: string, excludeId?: string): Promise<void> {
-    const categories = await categoryFileService.readCategories();
-    const duplicate = categories.find(cat => 
+    const gitService = await this.getGitService();
+    const categories = await gitService.readCategories();
+    const duplicate = categories.find((cat: CategoryData) => 
       cat.name.toLowerCase() === name.toLowerCase() && 
       cat.id !== excludeId
     );
