@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button, Input } from "@heroui/react";
 import { Save, X } from "lucide-react";
-import { CategoryData, CreateCategoryRequest, UpdateCategoryRequest, CATEGORY_VALIDATION, CategoryColor } from "@/lib/types/category";
+import { CategoryData, CreateCategoryRequest, UpdateCategoryRequest, CATEGORY_VALIDATION } from "@/lib/types/category";
 
 interface CategoryFormProps {
   category?: CategoryData;
@@ -13,32 +13,27 @@ interface CategoryFormProps {
   mode: 'create' | 'edit';
 }
 
-const colorOptions: { value: CategoryColor; label: string; preview: string }[] = [
-  { value: '#3B82F6', label: 'Blue', preview: 'bg-blue-500' },
-  { value: '#10B981', label: 'Green', preview: 'bg-green-500' },
-  { value: '#F59E0B', label: 'Yellow', preview: 'bg-yellow-500' },
-  { value: '#EF4444', label: 'Red', preview: 'bg-red-500' },
-  { value: '#8B5CF6', label: 'Purple', preview: 'bg-purple-500' },
-  { value: '#F97316', label: 'Orange', preview: 'bg-orange-500' },
-  { value: '#06B6D4', label: 'Cyan', preview: 'bg-cyan-500' },
-  { value: '#84CC16', label: 'Lime', preview: 'bg-lime-500' },
-  { value: '#EC4899', label: 'Pink', preview: 'bg-pink-500' },
-  { value: '#6B7280', label: 'Gray', preview: 'bg-gray-500' },
-];
-
 export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, mode }: CategoryFormProps) {
   const [formData, setFormData] = useState({
+    id: category?.id || '',
     name: category?.name || '',
-    color: category?.color || CATEGORY_VALIDATION.DEFAULT_COLOR,
-    icon: category?.icon || '',
-    isActive: category?.isActive ?? true,
-    sortOrder: category?.sortOrder || 0,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
+
+    // ID validation
+    if (!formData.id.trim()) {
+      newErrors.id = 'Category ID is required';
+    } else if (!/^[a-z0-9-]+$/.test(formData.id.trim())) {
+      newErrors.id = 'ID must contain only lowercase letters, numbers, and hyphens';
+    } else if (formData.id.trim().length < 3) {
+      newErrors.id = 'ID must be at least 3 characters';
+    } else if (formData.id.trim().length > 50) {
+      newErrors.id = 'ID must be no more than 50 characters';
+    }
 
     // Name validation
     if (!formData.name.trim()) {
@@ -48,8 +43,6 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
     } else if (formData.name.trim().length > CATEGORY_VALIDATION.NAME_MAX_LENGTH) {
       newErrors.name = `Name must be no more than ${CATEGORY_VALIDATION.NAME_MAX_LENGTH} characters`;
     }
-
-
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -64,7 +57,7 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
 
     try {
       const submitData = mode === 'edit' 
-        ? { id: category!.id, ...formData } as UpdateCategoryRequest
+        ? { ...formData } as UpdateCategoryRequest
         : formData as CreateCategoryRequest;
 
       await onSubmit(submitData);
@@ -82,17 +75,34 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
     }
   };
 
-  const selectedColor = colorOptions.find(opt => opt.value === formData.color);
-
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700">
+      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
           {mode === 'create' ? 'Create New Category' : 'Edit Category'}
         </h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          {mode === 'create' ? 'Add a new category to organize your content' : 'Update category information'}
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        {/* ID Field */}
+        <div>
+          <Input
+            label="Category ID"
+            placeholder="Enter category ID (e.g., time-tracking-cli-tools)"
+            value={formData.id}
+            onChange={(e) => handleInputChange('id', e.target.value)}
+            errorMessage={errors.id}
+            isInvalid={!!errors.id}
+            isRequired
+            isDisabled={mode === 'edit'} // ID cannot be changed when editing
+            className="w-full"
+            description={mode === 'edit' ? "ID cannot be changed after creation" : "Use lowercase with hyphens (e.g., my-category)"}
+          />
+        </div>
+
         {/* Name Field */}
         <div>
           <Input
@@ -105,92 +115,22 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
             isRequired
             maxLength={CATEGORY_VALIDATION.NAME_MAX_LENGTH}
             className="w-full"
+            description="Display name for the category"
           />
           <div className="text-xs text-gray-500 mt-1">
             {formData.name.length}/{CATEGORY_VALIDATION.NAME_MAX_LENGTH} characters
           </div>
         </div>
 
-
-
-        {/* Color Selection */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Color
-          </label>
-          <div className="grid grid-cols-5 gap-2">
-            {colorOptions.map((color) => (
-              <button
-                key={color.value}
-                type="button"
-                onClick={() => handleInputChange('color', color.value)}
-                className={`
-                  w-full h-12 rounded-lg border-2 transition-all duration-200
-                  ${formData.color === color.value 
-                    ? 'border-gray-900 dark:border-white scale-105' 
-                    : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
-                  }
-                `}
-                title={color.label}
-              >
-                <div className={`w-full h-full rounded-md ${color.preview}`} />
-              </button>
-            ))}
-          </div>
-          {selectedColor && (
-            <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-              Selected: {selectedColor.label}
-            </div>
-          )}
-        </div>
-
-        {/* Icon Field */}
-        <div>
-          <Input
-            label="Icon"
-            placeholder="Enter icon (emoji or icon name)"
-            value={formData.icon}
-            onChange={(e) => handleInputChange('icon', e.target.value)}
-            className="w-full"
-            description="You can use emojis (🎨) or icon names"
-          />
-        </div>
-
-        {/* Sort Order */}
-        <div>
-          <Input
-            label="Sort Order"
-            type="number"
-            placeholder="0"
-            value={formData.sortOrder.toString()}
-            onChange={(e) => handleInputChange('sortOrder', parseInt(e.target.value) || 0)}
-            className="w-full"
-            description="Lower numbers appear first"
-          />
-        </div>
-
-        {/* Active Status */}
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            id="isActive"
-            checked={formData.isActive}
-            onChange={(e) => handleInputChange('isActive', e.target.checked)}
-            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-          />
-          <label htmlFor="isActive" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Active (visible to users)
-          </label>
-        </div>
-
         {/* Form Actions */}
-        <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 -mx-6 -mb-6 px-6 pb-6">
           <Button
             type="button"
             variant="flat"
             onPress={onCancel}
             isDisabled={isLoading}
             startContent={<X size={16} />}
+            className="px-6 py-2 font-medium"
           >
             Cancel
           </Button>
@@ -199,6 +139,7 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
             color="primary"
             isLoading={isLoading}
             startContent={!isLoading && <Save size={16} />}
+            className="px-6 py-2 font-medium bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg"
           >
             {mode === 'create' ? 'Create Category' : 'Update Category'}
           </Button>

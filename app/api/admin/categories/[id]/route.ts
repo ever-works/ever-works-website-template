@@ -75,10 +75,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const updateData: UpdateCategoryRequest = {
       id,
       name: body.name,
-      color: body.color,
-      icon: body.icon,
-      isActive: body.isActive,
-      sortOrder: body.sortOrder,
     };
 
     // Update category

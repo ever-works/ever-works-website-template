@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
-import { Plus, Edit, Trash2, Eye, EyeOff, GripVertical, FolderTree } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, FolderTree } from "lucide-react";
 import { CategoryForm } from "@/components/admin/categories/category-form";
 import { CategoryData, CreateCategoryRequest, UpdateCategoryRequest, CategoryWithCount } from "@/lib/types/category";
 import { UniversalPagination } from "@/components/universal-pagination";
@@ -302,7 +302,7 @@ export default function AdminCategoriesPage() {
       </div>
 
       {/* Enhanced Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <Card className="border-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
@@ -321,55 +321,19 @@ export default function AdminCategoriesPage() {
           </CardBody>
         </Card>
 
-        <Card className="border-0 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-purple-600 dark:text-purple-400 mb-1">
-                  Current Page
-                </p>
-                <p className="text-3xl font-bold text-purple-700 dark:text-purple-300 group-hover:scale-105 transition-transform">
-                  {categories.length}
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <Eye className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-
         <Card className="border-0 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-1">
-                  Active
+                  Active Categories
                 </p>
                 <p className="text-3xl font-bold text-green-700 dark:text-green-300 group-hover:scale-105 transition-transform">
-                  {categories.filter(cat => cat.isActive !== false).length}
+                  {totalCategories}
                 </p>
               </div>
               <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                 <Eye className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card className="border-0 bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-red-600 dark:text-red-400 mb-1">
-                  Inactive
-                </p>
-                <p className="text-3xl font-bold text-red-700 dark:text-red-300 group-hover:scale-105 transition-transform">
-                  {categories.filter(cat => cat.isActive === false).length}
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <EyeOff className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardBody>
@@ -400,31 +364,13 @@ export default function AdminCategoriesPage() {
               >
                 <div className="px-6 py-4">
                   <div className="flex items-center justify-between">
-                    {/* Left Section: Order & Category Info */}
+                    {/* Left Section: Category Info */}
                     <div className="flex items-center space-x-4 flex-1 min-w-0">
-                      {/* Drag Handle & Sort Order */}
-                      <div className="flex items-center space-x-2 text-gray-400 dark:text-gray-500">
-                        <GripVertical size={16} className="cursor-move group-hover:text-theme-primary transition-colors" />
-                        <span className="text-xs font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md min-w-[2rem] text-center">
-                          {category.sortOrder || 0}
-                        </span>
-                      </div>
-
-                      {/* Category Visual & Info */}
+                      {/* Category Details */}
                       <div className="flex items-center space-x-3 flex-1 min-w-0">
-                        {/* Color & Icon */}
-                        <div className="flex items-center space-x-2">
-                          {category.color && (
-                            <div 
-                              className="w-4 h-4 rounded-full border-2 border-white dark:border-gray-700 shadow-sm group-hover:scale-110 transition-transform"
-                              style={{ backgroundColor: category.color }}
-                            />
-                          )}
-                          {category.icon && (
-                            <span className="text-lg group-hover:scale-110 transition-transform">
-                              {category.icon}
-                            </span>
-                          )}
+                        {/* Category Icon */}
+                        <div className="w-8 h-8 bg-gradient-to-br from-theme-primary to-theme-accent rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                          <FolderTree size={16} className="text-white" />
                         </div>
 
                         {/* Category Details */}
@@ -433,45 +379,32 @@ export default function AdminCategoriesPage() {
                             <h4 className="font-medium text-gray-900 dark:text-white group-hover:text-theme-primary transition-colors truncate">
                               {category.name}
                             </h4>
-                            {category.isActive === false && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
-                                Inactive
-                              </span>
-                            )}
                           </div>
                           <div className="flex items-center space-x-4 mt-1">
                             <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
                               ID: {category.id}
                             </p>
-                            {category.createdAt && (
-                              <p className="text-xs text-gray-500 dark:text-gray-400">
-                                Created {new Date(category.createdAt).toLocaleDateString()}
-                              </p>
-                            )}
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Right Section: Status & Actions */}
+                    {/* Right Section: Actions */}
                     <div className="flex items-center space-x-4">
-                      {/* Status Badge */}
+                      {/* Category Status */}
                       <div className="hidden sm:block">
                         <Chip
                           size="sm"
                           variant="flat"
-                          color={category.isActive !== false ? 'success' : 'default'}
+                          color="success"
                           startContent={
                             <div className="flex items-center">
-                              {category.isActive !== false ? 
-                                <Eye size={12} className="mr-1" /> : 
-                                <EyeOff size={12} className="mr-1" />
-                              }
+                              <Eye size={12} className="mr-1" />
                             </div>
                           }
                           className="transition-all duration-200 group-hover:shadow-md"
                         >
-                          {category.isActive !== false ? 'Active' : 'Inactive'}
+                          Active
                         </Chip>
                       </div>
 

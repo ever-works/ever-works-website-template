@@ -76,11 +76,8 @@ export async function POST(request: NextRequest) {
     // Parse request body
     const body = await request.json();
     const createData: CreateCategoryRequest = {
+      id: body.id,
       name: body.name,
-      color: body.color,
-      icon: body.icon,
-      isActive: body.isActive,
-      sortOrder: body.sortOrder,
     };
 
     // Validate required fields

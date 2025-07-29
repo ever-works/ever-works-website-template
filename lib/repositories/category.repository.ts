@@ -23,9 +23,10 @@ export class CategoryRepository {
     
     let filteredCategories = categories;
 
-    // Filter inactive categories if requested
+    // All categories are considered active since we removed isActive field
+    // This filter is kept for backward compatibility but always returns all categories
     if (!options.includeInactive) {
-      filteredCategories = categories.filter(cat => cat.isActive !== false);
+      filteredCategories = categories; // All categories are active
     }
 
     // Sort categories
@@ -91,14 +92,8 @@ export class CategoryRepository {
 
     // Create new category with defaults
     const newCategory: CategoryData = {
-      id: this.generateId(data.name),
+      id: data.id,
       name: data.name.trim(),
-      color: data.color || CATEGORY_VALIDATION.DEFAULT_COLOR,
-      icon: data.icon?.trim(),
-      isActive: data.isActive ?? true,
-      sortOrder: data.sortOrder ?? await this.getNextSortOrder(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
     };
 
     // Read existing categories
@@ -139,15 +134,8 @@ export class CategoryRepository {
     // Update category
     const updatedCategory: CategoryData = {
       ...categories[categoryIndex],
-      ...Object.fromEntries(
-        Object.entries(data).filter(([, value]) => value !== undefined)
-      ),
-      updatedAt: new Date().toISOString(),
+      name: data.name?.trim() || categories[categoryIndex].name,
     };
-
-    // Clean up undefined values
-    if (data.name) updatedCategory.name = data.name.trim();
-    if (data.icon !== undefined) updatedCategory.icon = data.icon?.trim();
 
     // Replace in array
     categories[categoryIndex] = updatedCategory;
@@ -162,25 +150,11 @@ export class CategoryRepository {
   }
 
   /**
-   * Delete a category (soft delete by setting isActive to false)
+   * Delete a category (hard delete since we removed isActive)
    */
   async delete(id: string): Promise<void> {
-    const categories = await categoryFileService.readCategories();
-    const categoryIndex = categories.findIndex(cat => cat.id === id);
-    
-    if (categoryIndex === -1) {
-      throw new Error(`Category with ID ${id} not found`);
-    }
-
-    // Soft delete
-    categories[categoryIndex].isActive = false;
-    categories[categoryIndex].updatedAt = new Date().toISOString();
-
-    // Create backup before writing
-    await categoryFileService.createBackup();
-
-    // Write updated categories
-    await categoryFileService.writeCategories(categories);
+    // Since we removed isActive, we'll do a hard delete
+    await this.hardDelete(id);
   }
 
   /**
@@ -202,29 +176,25 @@ export class CategoryRepository {
   }
 
   /**
-   * Reorder categories
+   * Reorder categories (simplified - just reorder by name for now)
    */
   async reorder(categoryIds: string[]): Promise<void> {
     const categories = await categoryFileService.readCategories();
     
-    // Update sort orders
-    const updatedCategories = categories.map(category => {
-      const newIndex = categoryIds.indexOf(category.id);
-      if (newIndex !== -1) {
-        return {
-          ...category,
-          sortOrder: newIndex,
-          updatedAt: new Date().toISOString(),
-        };
-      }
-      return category;
-    });
+    // Reorder categories based on the provided IDs
+    const reorderedCategories = categoryIds
+      .map(id => categories.find(cat => cat.id === id))
+      .filter(Boolean) as CategoryData[];
+
+    // Add any remaining categories that weren't in the reorder list
+    const remainingCategories = categories.filter(cat => !categoryIds.includes(cat.id));
+    reorderedCategories.push(...remainingCategories);
 
     // Create backup before writing
     await categoryFileService.createBackup();
 
     // Write updated categories
-    await categoryFileService.writeCategories(updatedCategories);
+    await categoryFileService.writeCategories(reorderedCategories);
   }
 
   /**
@@ -239,8 +209,16 @@ export class CategoryRepository {
       throw new Error(`Category name must be no more than ${CATEGORY_VALIDATION.NAME_MAX_LENGTH} characters long`);
     }
 
-    if (data.color && !CATEGORY_VALIDATION.ALLOWED_COLORS.includes(data.color as any)) {
-      throw new Error(`Invalid color. Allowed colors: ${CATEGORY_VALIDATION.ALLOWED_COLORS.join(', ')}`);
+    if (!data.id || data.id.trim().length < 3) {
+      throw new Error('Category ID must be at least 3 characters long');
+    }
+
+    if (data.id.trim().length > 50) {
+      throw new Error('Category ID must be no more than 50 characters long');
+    }
+
+    if (!/^[a-z0-9-]+$/.test(data.id.trim())) {
+      throw new Error('Category ID must contain only lowercase letters, numbers, and hyphens');
     }
   }
 
@@ -249,12 +227,15 @@ export class CategoryRepository {
       throw new Error('Category ID is required for updates');
     }
 
-    // Validate other fields if provided
+    // Validate name if provided
     if (data.name !== undefined) {
-      this.validateCategoryData({ name: data.name } as CreateCategoryRequest);
-    }
-    if (data.color && !CATEGORY_VALIDATION.ALLOWED_COLORS.includes(data.color as any)) {
-      throw new Error(`Invalid color. Allowed colors: ${CATEGORY_VALIDATION.ALLOWED_COLORS.join(', ')}`);
+      if (data.name.trim().length < CATEGORY_VALIDATION.NAME_MIN_LENGTH) {
+        throw new Error(`Category name must be at least ${CATEGORY_VALIDATION.NAME_MIN_LENGTH} characters long`);
+      }
+
+      if (data.name.trim().length > CATEGORY_VALIDATION.NAME_MAX_LENGTH) {
+        throw new Error(`Category name must be no more than ${CATEGORY_VALIDATION.NAME_MAX_LENGTH} characters long`);
+      }
     }
   }
 
@@ -279,28 +260,16 @@ export class CategoryRepository {
       .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
   }
 
-  private async getNextSortOrder(): Promise<number> {
-    const categories = await categoryFileService.readCategories();
-    const maxSortOrder = Math.max(...categories.map(cat => cat.sortOrder || 0), -1);
-    return maxSortOrder + 1;
-  }
-
   private sortCategories(categories: CategoryData[], options: CategoryListOptions): CategoryData[] {
-    const { sortBy = 'sortOrder', sortOrder = 'asc' } = options;
+    const { sortBy = 'name', sortOrder = 'asc' } = options;
 
     return categories.sort((a, b) => {
       let comparison = 0;
 
       switch (sortBy) {
         case 'name':
-          comparison = a.name.localeCompare(b.name);
-          break;
-        case 'createdAt':
-          comparison = new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
-          break;
-        case 'sortOrder':
         default:
-          comparison = (a.sortOrder || 0) - (b.sortOrder || 0);
+          comparison = a.name.localeCompare(b.name);
           break;
       }
 
