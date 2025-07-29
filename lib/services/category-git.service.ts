@@ -1,6 +1,8 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs/promises';
 import * as yaml from 'yaml';
+import * as http from 'isomorphic-git/http/node';
+import git from 'isomorphic-git';
 import { CategoryData, CreateCategoryRequest, UpdateCategoryRequest } from '@/lib/types/category';
 
 interface GitConfig {
@@ -14,6 +16,11 @@ interface CategoryGitServiceConfig {
   dataDir: string;
   categoriesFile: string;
   gitConfig: GitConfig;
+}
+
+interface ICommitter {
+  name?: string;
+  email?: string;
 }
 
 export class CategoryGitService {
@@ -33,6 +40,9 @@ export class CategoryGitService {
       // Ensure data directory exists
       await fs.mkdir(this.config.dataDir, { recursive: true });
       
+      // Clone or pull repository to sync with remote
+      await this.cloneOrPull();
+      
       // Ensure categories file exists
       await this.ensureCategoriesFile();
       
@@ -41,6 +51,60 @@ export class CategoryGitService {
       console.error('❌ Failed to initialize Category Git service:', error);
       throw error;
     }
+  }
+
+  /**
+   * Clone or pull repository
+   */
+  private async cloneOrPull(): Promise<void> {
+    try {
+      if (await this.directoryExists(this.repoDir)) {
+        console.log('📥 Pulling latest changes...');
+        await this.pull();
+      } else {
+        console.log('📥 Cloning repository...');
+        await this.clone();
+      }
+    } catch (error) {
+      console.error('❌ Git operation failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Clone repository
+   */
+  private async clone(): Promise<void> {
+    const url = this.getRepositoryUrl();
+    const auth = this.getAuth();
+
+    await fs.mkdir(path.dirname(this.repoDir), { recursive: true });
+
+    await git.clone({
+      onAuth: () => auth,
+      fs,
+      http,
+      dir: this.repoDir,
+      url,
+      singleBranch: true,
+    });
+  }
+
+  /**
+   * Pull latest changes
+   */
+  private async pull(): Promise<void> {
+    const auth = this.getAuth();
+    const committer = this.getCommitter();
+
+    await git.pull({
+      onAuth: () => auth,
+      fs,
+      http,
+      dir: this.repoDir,
+      author: committer,
+      singleBranch: true,
+    });
   }
 
   /**
@@ -74,8 +138,35 @@ export class CategoryGitService {
    * Get categories file path
    */
   private getCategoriesFilePath(): string {
-    // Use the existing .content directory structure
-    return path.join(this.config.dataDir, this.config.categoriesFile);
+    // Use the cloned repository directory
+    return path.join(this.repoDir, this.config.categoriesFile);
+  }
+
+  /**
+   * Get repository URL
+   */
+  private getRepositoryUrl(): string {
+    return `https://github.com/${this.config.gitConfig.owner}/${this.config.gitConfig.repo}`;
+  }
+
+  /**
+   * Get Git authentication
+   */
+  private getAuth() {
+    return {
+      username: 'x-access-token',
+      password: this.config.gitConfig.token,
+    };
+  }
+
+  /**
+   * Get committer info
+   */
+  private getCommitter(committer: ICommitter = {}): ICommitter {
+    return {
+      email: committer.email || process.env.GIT_EMAIL || 'website@ever.works',
+      name: committer.name || process.env.GIT_NAME || 'Website Bot',
+    };
   }
 
   /**
@@ -93,15 +184,43 @@ export class CategoryGitService {
   }
 
   /**
-   * Write categories to file
+   * Write categories to file and push to GitHub
    */
   async writeCategories(categories: CategoryData[]): Promise<void> {
     try {
       const categoriesPath = this.getCategoriesFilePath();
       const content = yaml.stringify(categories);
+      
+      // Write to local file
       await fs.writeFile(categoriesPath, content, 'utf-8');
       
-      console.log('✅ Categories written successfully');
+      // Add to git
+      await git.add({
+        fs,
+        dir: this.repoDir,
+        filepath: this.config.categoriesFile,
+      });
+      
+      // Commit changes
+      const committer = this.getCommitter();
+      await git.commit({
+        fs,
+        dir: this.repoDir,
+        message: `Update categories - ${new Date().toISOString()}`,
+        author: committer,
+        committer: committer,
+      });
+      
+      // Push to GitHub
+      const auth = this.getAuth();
+      await git.push({
+        onAuth: () => auth,
+        fs,
+        http,
+        dir: this.repoDir,
+      });
+      
+      console.log('✅ Categories written and pushed to GitHub successfully');
     } catch (error) {
       console.error('❌ Failed to write categories:', error);
       throw error;
@@ -210,11 +329,26 @@ export class CategoryGitService {
     const categories = await this.readCategories();
     
     return {
-      repoUrl: `https://github.com/${this.config.gitConfig.owner}/${this.config.gitConfig.repo}`,
+      repoUrl: this.getRepositoryUrl(),
       branch: this.config.gitConfig.branch || 'main',
       lastSync: new Date().toISOString(),
       categoriesCount: categories.length,
     };
+  }
+
+  /**
+   * Get Git status
+   */
+  async getGitStatus(): Promise<any> {
+    try {
+      return await git.statusMatrix({
+        fs,
+        dir: this.repoDir,
+      });
+    } catch (error) {
+      console.error('❌ Failed to get Git status:', error);
+      return [];
+    }
   }
 }
 
