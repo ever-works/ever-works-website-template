@@ -18,15 +18,28 @@ export class CategoryRepository {
 
   private async getGitService() {
     if (!this.gitService) {
+      // Parse DATA_REPOSITORY URL to extract owner and repo
+      const dataRepo = process.env.DATA_REPOSITORY;
+      if (!dataRepo) {
+        throw new Error('DATA_REPOSITORY not configured. Please set DATA_REPOSITORY environment variable.');
+      }
+
+      // Extract owner and repo from URL like: https://github.com/ever-co/awesome-time-tracking-data
+      const match = dataRepo.match(/https:\/\/github\.com\/([^\/]+)\/([^\/]+)/);
+      if (!match) {
+        throw new Error('Invalid DATA_REPOSITORY format. Expected: https://github.com/owner/repo');
+      }
+
+      const [, owner, repo] = match;
       const gitConfig = {
-        owner: process.env.GITHUB_OWNER || 'your-username',
-        repo: process.env.GITHUB_REPO || 'your-repo',
-        token: process.env.GITHUB_TOKEN || '',
+        owner,
+        repo,
+        token: process.env.GH_TOKEN || '',
         branch: process.env.GITHUB_BRANCH || 'main',
       };
 
       if (!gitConfig.token) {
-        throw new Error('GitHub token not configured. Please set GITHUB_TOKEN environment variable.');
+        throw new Error('GitHub token not configured. Please set GH_TOKEN environment variable.');
       }
 
       this.gitService = await createCategoryGitService(gitConfig);

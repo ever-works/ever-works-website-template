@@ -17,10 +17,34 @@ export async function GET() {
       );
     }
 
-    // Get Git configuration from environment
+    // Parse DATA_REPOSITORY URL to extract owner and repo
+    const dataRepo = process.env.DATA_REPOSITORY;
+    if (!dataRepo) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: "DATA_REPOSITORY not configured. Please set DATA_REPOSITORY environment variable." 
+        },
+        { status: 500 }
+      );
+    }
+
+    // Extract owner and repo from URL like: https://github.com/ever-co/awesome-time-tracking-data
+    const match = dataRepo.match(/https:\/\/github\.com\/([^\/]+)\/([^\/]+)/);
+    if (!match) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: "Invalid DATA_REPOSITORY format. Expected: https://github.com/owner/repo" 
+        },
+        { status: 500 }
+      );
+    }
+
+    const [, owner, repo] = match;
     const gitConfig = {
-      owner: process.env.GITHUB_OWNER || 'your-username',
-      repo: process.env.GITHUB_REPO || 'your-repo',
+      owner,
+      repo,
       token: process.env.GITHUB_TOKEN || '',
       branch: process.env.GITHUB_BRANCH || 'main',
     };
@@ -88,11 +112,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get Git configuration
+    // Parse DATA_REPOSITORY URL to extract owner and repo
+    const dataRepo = process.env.DATA_REPOSITORY;
+    if (!dataRepo) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: "DATA_REPOSITORY not configured. Please set DATA_REPOSITORY environment variable." 
+        },
+        { status: 500 }
+      );
+    }
+
+    // Extract owner and repo from URL like: https://github.com/ever-co/awesome-time-tracking-data
+    const match = dataRepo.match(/https:\/\/github\.com\/([^\/]+)\/([^\/]+)/);
+    if (!match) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: "Invalid DATA_REPOSITORY format. Expected: https://github.com/owner/repo" 
+        },
+        { status: 500 }
+      );
+    }
+
+    const [, owner, repo] = match;
     const gitConfig = {
-      owner: process.env.GITHUB_OWNER || 'your-username',
-      repo: process.env.GITHUB_REPO || 'your-repo',
-      token: process.env.GITHUB_TOKEN || '',
+      owner,
+      repo,
+      token: process.env.GH_TOKEN || '',
       branch: process.env.GITHUB_BRANCH || 'main',
     };
 
@@ -100,7 +148,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { 
           success: false, 
-          error: "GitHub token not configured. Please set GITHUB_TOKEN environment variable." 
+          error: "GitHub token not configured. Please set GH_TOKEN environment variable." 
         },
         { status: 500 }
       );

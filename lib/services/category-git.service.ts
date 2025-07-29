@@ -33,9 +33,6 @@ export class CategoryGitService {
       // Ensure data directory exists
       await fs.mkdir(this.config.dataDir, { recursive: true });
       
-      // Clone or pull repository
-      await this.cloneOrPull();
-      
       // Ensure categories file exists
       await this.ensureCategoriesFile();
       
@@ -44,45 +41,6 @@ export class CategoryGitService {
       console.error('❌ Failed to initialize Category Git service:', error);
       throw error;
     }
-  }
-
-  /**
-   * Clone or pull the repository
-   */
-  private async cloneOrPull(): Promise<void> {
-    try {
-      if (await this.directoryExists(this.repoDir)) {
-        console.log('📥 Pulling latest changes...');
-        await this.pull();
-      } else {
-        console.log('📥 Cloning repository...');
-        await this.clone();
-      }
-    } catch (error) {
-      console.error('❌ Git operation failed:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Clone repository
-   */
-  private async clone(): Promise<void> {
-    // This would use isomorphic-git in a real implementation
-    // For now, we'll simulate the clone operation
-    console.log(`🔗 Cloning ${this.config.gitConfig.owner}/${this.config.gitConfig.repo}`);
-    
-    // Create directory structure
-    await fs.mkdir(this.repoDir, { recursive: true });
-    await fs.mkdir(path.dirname(this.getCategoriesFilePath()), { recursive: true });
-  }
-
-  /**
-   * Pull latest changes
-   */
-  private async pull(): Promise<void> {
-    console.log('⬇️ Pulling latest changes...');
-    // This would use isomorphic-git in a real implementation
   }
 
   /**
@@ -116,7 +74,8 @@ export class CategoryGitService {
    * Get categories file path
    */
   private getCategoriesFilePath(): string {
-    return path.join(this.repoDir, this.config.categoriesFile);
+    // Use the existing .content directory structure
+    return path.join(this.config.dataDir, this.config.categoriesFile);
   }
 
   /**
@@ -142,10 +101,7 @@ export class CategoryGitService {
       const content = yaml.stringify(categories);
       await fs.writeFile(categoriesPath, content, 'utf-8');
       
-      // Commit and push changes
-      await this.commitAndPush('Update categories');
-      
-      console.log('✅ Categories written and committed successfully');
+      console.log('✅ Categories written successfully');
     } catch (error) {
       console.error('❌ Failed to write categories:', error);
       throw error;
@@ -224,37 +180,21 @@ export class CategoryGitService {
   }
 
   /**
-   * Commit and push changes
-   */
-  private async commitAndPush(message: string): Promise<void> {
-    try {
-      // This would use isomorphic-git in a real implementation
-      console.log(`💾 Committing changes: ${message}`);
-      
-      // Simulate commit and push
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      console.log('🚀 Changes pushed to remote repository');
-    } catch (error) {
-      console.error('❌ Failed to commit and push:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Create backup of current state
+   * Create backup of categories
    */
   async createBackup(): Promise<void> {
     try {
       const categories = await this.readCategories();
-      const backupPath = path.join(this.repoDir, 'backup', `categories-${Date.now()}.yml`);
+      const backupPath = path.join(
+        this.config.dataDir,
+        `categories-backup-${new Date().toISOString().replace(/[:.]/g, '-')}.yml`
+      );
       
-      await fs.mkdir(path.dirname(backupPath), { recursive: true });
       await fs.writeFile(backupPath, yaml.stringify(categories), 'utf-8');
-      
-      console.log('💾 Backup created successfully');
+      console.log(`✅ Backup created: ${backupPath}`);
     } catch (error) {
       console.error('❌ Failed to create backup:', error);
+      throw error;
     }
   }
 
@@ -278,21 +218,16 @@ export class CategoryGitService {
   }
 }
 
-/**
- * Factory function to create CategoryGitService
- */
 export async function createCategoryGitService(
   gitConfig: GitConfig,
   dataDir: string = './.content'
 ): Promise<CategoryGitService> {
-  const config: CategoryGitServiceConfig = {
+  const service = new CategoryGitService({
     dataDir,
     categoriesFile: 'categories.yml',
     gitConfig,
-  };
+  });
   
-  const service = new CategoryGitService(config);
   await service.initialize();
-  
   return service;
 } 
