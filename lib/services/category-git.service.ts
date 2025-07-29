@@ -25,11 +25,11 @@ interface ICommitter {
 
 export class CategoryGitService {
   private config: CategoryGitServiceConfig;
-  private repoDir: string;
+  private pendingChanges: CategoryData[] | null = null;
+  private syncInProgress = false;
 
   constructor(config: CategoryGitServiceConfig) {
     this.config = config;
-    this.repoDir = path.join(config.dataDir, `${config.gitConfig.owner}-${config.gitConfig.repo}`);
   }
 
   /**
@@ -39,6 +39,9 @@ export class CategoryGitService {
     try {
       // Ensure data directory exists
       await fs.mkdir(this.config.dataDir, { recursive: true });
+      
+      // Sync with remote repository
+      await this.syncWithRemote();
       
       // Ensure categories file exists
       await this.ensureCategoriesFile();
@@ -51,11 +54,14 @@ export class CategoryGitService {
   }
 
   /**
-   * Clone or pull repository
+   * Sync with remote repository
    */
-  private async cloneOrPull(): Promise<void> {
+  private async syncWithRemote(): Promise<void> {
     try {
-      if (await this.directoryExists(this.repoDir)) {
+      // Check if .content is already a git repository
+      const gitExists = await this.directoryExists(path.join(this.config.dataDir, '.git'));
+      
+      if (gitExists) {
         console.log('📥 Pulling latest changes...');
         await this.pull();
       } else {
@@ -63,8 +69,8 @@ export class CategoryGitService {
         await this.clone();
       }
     } catch (error) {
-      console.error('❌ Git operation failed:', error);
-      throw error;
+      console.error('❌ Git sync failed:', error);
+      // Continue without sync if it fails - use existing local data
     }
   }
 
@@ -75,13 +81,11 @@ export class CategoryGitService {
     const url = this.getRepositoryUrl();
     const auth = this.getAuth();
 
-    await fs.mkdir(path.dirname(this.repoDir), { recursive: true });
-
     await git.clone({
       onAuth: () => auth,
       fs,
       http,
-      dir: this.repoDir,
+      dir: this.config.dataDir,
       url,
       singleBranch: true,
     });
@@ -91,17 +95,23 @@ export class CategoryGitService {
    * Pull latest changes
    */
   private async pull(): Promise<void> {
-    const auth = this.getAuth();
-    const committer = this.getCommitter();
+    try {
+      const auth = this.getAuth();
+      const committer = this.getCommitter();
 
-    await git.pull({
-      onAuth: () => auth,
-      fs,
-      http,
-      dir: this.repoDir,
-      author: committer,
-      singleBranch: true,
-    });
+      await git.pull({
+        onAuth: () => auth,
+        fs,
+        http,
+        dir: this.config.dataDir,
+        author: committer,
+        singleBranch: true,
+      });
+    } catch (error) {
+      console.error('❌ Git pull failed:', error);
+      // If pull fails, we'll continue with local data
+      throw error;
+    }
   }
 
   /**
@@ -115,6 +125,10 @@ export class CategoryGitService {
       return false;
     }
   }
+
+
+
+
 
   /**
    * Ensure categories file exists
@@ -188,36 +202,47 @@ export class CategoryGitService {
       const categoriesPath = this.getCategoriesFilePath();
       const content = yaml.stringify(categories);
       
-      // Write to local file
+      // Write to local file first (always succeed)
       await fs.writeFile(categoriesPath, content, 'utf-8');
+      console.log('✅ Categories written to local file');
       
-      // Add to git (using the .content directory as the git repo)
-      await git.add({
-        fs,
-        dir: this.config.dataDir,
-        filepath: this.config.categoriesFile,
-      });
-      
-      // Commit changes
-      const committer = this.getCommitter();
-      await git.commit({
-        fs,
-        dir: this.config.dataDir,
-        message: `Update categories - ${new Date().toISOString()}`,
-        author: committer,
-        committer: committer,
-      });
-      
-      // Push to GitHub
-      const auth = this.getAuth();
-      await git.push({
-        onAuth: () => auth,
-        fs,
-        http,
-        dir: this.config.dataDir,
-      });
-      
-      console.log('✅ Categories written and pushed to GitHub successfully');
+      try {
+        // Try Git operations (may fail)
+        // Add to git (using the .content directory as the git repo)
+        await git.add({
+          fs,
+          dir: this.config.dataDir,
+          filepath: this.config.categoriesFile,
+        });
+        
+        // Commit changes
+        const committer = this.getCommitter();
+        await git.commit({
+          fs,
+          dir: this.config.dataDir,
+          message: `Update categories - ${new Date().toISOString()}`,
+          author: committer,
+          committer: committer,
+        });
+        
+        // Push to GitHub
+        const auth = this.getAuth();
+        await git.push({
+          onAuth: () => auth,
+          fs,
+          http,
+          dir: this.config.dataDir,
+        });
+        
+        console.log('✅ Categories committed and pushed to GitHub successfully');
+      } catch (gitError) {
+        console.error('⚠️ Git operations failed, but local file was saved:', gitError);
+        // Store pending changes for later sync
+        this.pendingChanges = categories;
+        // Try to sync in background
+        this.scheduleBackgroundSync();
+        // Don't throw error - local file was saved successfully
+      }
     } catch (error) {
       console.error('❌ Failed to write categories:', error);
       throw error;
@@ -340,12 +365,115 @@ export class CategoryGitService {
     try {
       return await git.statusMatrix({
         fs,
-        dir: this.repoDir,
+        dir: this.config.dataDir,
       });
     } catch (error) {
       console.error('❌ Failed to get Git status:', error);
       return [];
     }
+  }
+
+  /**
+   * Schedule background sync for pending changes
+   */
+  private scheduleBackgroundSync(): void {
+    if (this.syncInProgress) {
+      return; // Already syncing
+    }
+
+    // Schedule sync after 30 seconds
+    setTimeout(() => {
+      this.performBackgroundSync();
+    }, 30000);
+  }
+
+  /**
+   * Perform background sync of pending changes
+   */
+  private async performBackgroundSync(): Promise<void> {
+    if (!this.pendingChanges || this.syncInProgress) {
+      return;
+    }
+
+    this.syncInProgress = true;
+    console.log('🔄 Attempting background sync of pending changes...');
+
+    try {
+      // Try to sync with remote first
+      await this.syncWithRemote();
+      
+      // Then try to push pending changes
+      await this.pushPendingChanges();
+      
+      console.log('✅ Background sync completed successfully');
+    } catch (error) {
+      console.error('❌ Background sync failed:', error);
+      // Schedule another attempt in 5 minutes
+      setTimeout(() => {
+        this.syncInProgress = false;
+        this.performBackgroundSync();
+      }, 300000);
+    } finally {
+      this.syncInProgress = false;
+    }
+  }
+
+  /**
+   * Push pending changes to Git
+   */
+  private async pushPendingChanges(): Promise<void> {
+    if (!this.pendingChanges) {
+      return;
+    }
+
+    try {
+      // Add to git
+      await git.add({
+        fs,
+        dir: this.config.dataDir,
+        filepath: this.config.categoriesFile,
+      });
+      
+      // Commit changes
+      const committer = this.getCommitter();
+      await git.commit({
+        fs,
+        dir: this.config.dataDir,
+        message: `Background sync: Update categories - ${new Date().toISOString()}`,
+        author: committer,
+        committer: committer,
+      });
+      
+      // Push to GitHub
+      const auth = this.getAuth();
+      await git.push({
+        onAuth: () => auth,
+        fs,
+        http,
+        dir: this.config.dataDir,
+      });
+      
+      console.log('✅ Pending changes pushed to GitHub');
+      this.pendingChanges = null; // Clear pending changes
+    } catch (error) {
+      console.error('❌ Failed to push pending changes:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get sync status including pending changes
+   */
+  async getSyncStatus(): Promise<{
+    hasPendingChanges: boolean;
+    syncInProgress: boolean;
+    lastSyncAttempt?: string;
+  }> {
+    return {
+      hasPendingChanges: this.pendingChanges !== null,
+      syncInProgress: this.syncInProgress,
+      lastSyncAttempt: this.syncInProgress ? new Date().toISOString() : undefined,
+    };
   }
 }
 
