@@ -40,9 +40,6 @@ export class CategoryGitService {
       // Ensure data directory exists
       await fs.mkdir(this.config.dataDir, { recursive: true });
       
-      // Clone or pull repository to sync with remote
-      await this.cloneOrPull();
-      
       // Ensure categories file exists
       await this.ensureCategoriesFile();
       
@@ -138,8 +135,8 @@ export class CategoryGitService {
    * Get categories file path
    */
   private getCategoriesFilePath(): string {
-    // Use the cloned repository directory
-    return path.join(this.repoDir, this.config.categoriesFile);
+    // Use the existing .content directory structure
+    return path.join(this.config.dataDir, this.config.categoriesFile);
   }
 
   /**
@@ -194,10 +191,10 @@ export class CategoryGitService {
       // Write to local file
       await fs.writeFile(categoriesPath, content, 'utf-8');
       
-      // Add to git
+      // Add to git (using the .content directory as the git repo)
       await git.add({
         fs,
-        dir: this.repoDir,
+        dir: this.config.dataDir,
         filepath: this.config.categoriesFile,
       });
       
@@ -205,7 +202,7 @@ export class CategoryGitService {
       const committer = this.getCommitter();
       await git.commit({
         fs,
-        dir: this.repoDir,
+        dir: this.config.dataDir,
         message: `Update categories - ${new Date().toISOString()}`,
         author: committer,
         committer: committer,
@@ -217,7 +214,7 @@ export class CategoryGitService {
         onAuth: () => auth,
         fs,
         http,
-        dir: this.repoDir,
+        dir: this.config.dataDir,
       });
       
       console.log('✅ Categories written and pushed to GitHub successfully');
