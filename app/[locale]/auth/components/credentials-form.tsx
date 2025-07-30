@@ -34,7 +34,7 @@ export function CredentialsForm({
   const [captchaError, setCaptchaError] = useState<string | null>(null);
   const { verifyToken, isLoading: isVerifying, error: verificationError } = useAutoRecaptchaVerification();
   const [isPending, startTransition] = useTransition();
-  
+
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
     isLogin && !clientMode ? signInAction : signUp,
     {}
@@ -66,7 +66,7 @@ export function CredentialsForm({
   }, []);
   const isRecaptchaRequired = !!(RECAPTCHA_SITE_KEY.value || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY);
   const isRecaptchaBlocking = isRecaptchaRequired && !captchaToken;
-  
+
   const handleFormAction = async (formData: FormData) => {
     if (isRecaptchaRequired) {
       if (!captchaToken) {
@@ -143,10 +143,10 @@ export function CredentialsForm({
       {/* Simple header */}
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          {isLogin ? t("SIGN_IN") : t("CREATE_ACCOUNT")}
-        </h1>
+            {isLogin ? t("SIGN_IN") : t("CREATE_ACCOUNT")}
+          </h1>
         <p className="text-gray-600 dark:text-gray-400 text-sm">
-          {isLogin
+              {isLogin
             ? "Welcome back! Please sign in to your account"
             : "Create your account to get started"}
         </p>

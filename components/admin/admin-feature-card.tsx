@@ -34,7 +34,7 @@ export function AdminFeatureCard({ feature }: AdminFeatureCardProps) {
           className="text-theme-primary font-medium hover:text-theme-primary/80 transition-colors hover:underline"
           onClick={(e) => e.preventDefault()} // Remove when actual links are ready
         >
-          Go to {title.split(' ')[1] || title}
+          Go to {title.includes(' ') ? title.split(' ').slice(1).join(' ') : title}
         </a>
       </CardContent>
     </Card>
