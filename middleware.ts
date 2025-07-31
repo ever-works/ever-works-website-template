@@ -88,14 +88,15 @@ export default async function middleware(req: NextRequest) {
     } else if (cfg.provider === "next-auth") {
       return nextAuthGuard(req, {} as any);
     } else if (cfg.provider === "both") {
-
-      const nextAuthResult = await nextAuthGuard(req, {} as any);
-
-      if (nextAuthResult.status === 200) {
-        return nextAuthResult;
-      } else {
-        return supabaseGuard(req, intlResponse);
+      // Check NextAuth session first
+      const { auth } = await import("@/lib/auth");
+      const session = await auth();
+      if (session?.user?.isAdmin) {
+        return intlResponse;
       }
+      
+      // Fallback to Supabase guard
+      return supabaseGuard(req, intlResponse);
     }
   }
 
