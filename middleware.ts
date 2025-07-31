@@ -42,7 +42,30 @@ async function supabaseGuard(req: NextRequest, baseRes: NextResponse): Promise<N
     baseRes.cookies.set(cookie);
   });
 
-  // TODO: if you store an admin flag in Supabase user metadata, add the check here.
+  // Get user from Supabase
+  const { createServerClient } = await import('@supabase/ssr');
+  const { data: { user } } = await createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return req.cookies.getAll(); },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
+        },
+      },
+    }
+  ).auth.getUser();
+
+  // Check admin flag in user metadata
+  const isAdmin = user?.user_metadata?.isAdmin === true || user?.user_metadata?.role === 'admin';
+  if (!isAdmin) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/admin/auth/signin";
+    url.searchParams.set('callbackUrl', req.nextUrl.pathname);
+    return NextResponse.redirect(url);
+  }
+
   return baseRes;
 }
 
