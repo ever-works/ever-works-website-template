@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TagForm } from "@/components/admin/tags/tag-form";
 import { TagData } from "@/lib/types/tag";
 import { UniversalPagination } from "@/components/universal-pagination";
-import { Plus, Edit, Trash2, Tag } from "lucide-react";
+import { Plus, Edit, Trash2, Tag, Eye } from "lucide-react";
 import { toast } from "sonner";
 
 interface TagsResponse {
@@ -214,116 +214,194 @@ export default function AdminTagsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Manage Tags</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Create, edit, and manage tags for your content
-          </p>
+    <div className="p-6 max-w-7xl mx-auto">
+      {/* Enhanced Header */}
+      <div className="mb-8">
+        <div className="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-theme-primary to-theme-accent rounded-xl flex items-center justify-center shadow-lg">
+                <Tag className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                  Tag Management
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center space-x-2">
+                  <span>Organize and manage your content tags</span>
+                  <span className="hidden sm:inline">•</span>
+                  <span className="text-sm px-2 py-1 bg-theme-primary/10 text-theme-primary rounded-full font-medium">
+                    {totalTags} total
+                  </span>
+                </p>
+              </div>
+            </div>
+            <Button
+              color="primary"
+              size="lg"
+              onPress={openCreateModal}
+              startContent={<Plus size={18} />}
+              className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
+            >
+              Add Tag
+            </Button>
+          </div>
         </div>
-        <Button
-          color="primary"
-          onPress={openCreateModal}
-          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Tag
-        </Button>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Tags</CardTitle>
-            <Tag className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalTags}</div>
-            <p className="text-xs text-muted-foreground">
-              All tags in the system
-            </p>
+      {/* Enhanced Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <Card className="border-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-1">
+                  Total Tags
+                </p>
+                <p className="text-3xl font-bold text-blue-700 dark:text-blue-300 group-hover:scale-105 transition-transform">
+                  {totalTags}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <Tag className="w-6 h-6 text-white" />
+              </div>
+            </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Tags</CardTitle>
-            <Tag className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalTags}</div>
-            <p className="text-xs text-muted-foreground">
-              All tags are active
-            </p>
+
+        <Card className="border-0 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-1">
+                  Active Tags
+                </p>
+                <p className="text-3xl font-bold text-green-700 dark:text-green-300 group-hover:scale-105 transition-transform">
+                  {totalTags}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <Eye className="w-6 h-6 text-white" />
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Tags List */}
-      <div className="space-y-4">
-        {tags.length === 0 ? (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <Tag className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                No tags found
+      {/* Tags Table */}
+      <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+        <CardContent className="p-0">
+          {/* Table Header */}
+          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Tags
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Get started by creating your first tag
-              </p>
-              <Button
-                color="primary"
-                onPress={openCreateModal}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {tags.length} of {totalTags} tags
+              </div>
+            </div>
+          </div>
+
+          {/* Enhanced Table Content */}
+          <div className="divide-y divide-gray-100 dark:divide-gray-800">
+            {tags.map((tag) => (
+              <div 
+                key={tag.id} 
+                className="group hover:bg-gradient-to-r hover:from-theme-primary/5 hover:to-theme-accent/5 dark:hover:from-theme-primary/10 dark:hover:to-theme-accent/10 transition-all duration-200"
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Create Tag
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          tags.map((tag) => (
-            <Card key={tag.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {tag.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      ID: {tag.id}
-                    </p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onPress={() => openEditModal(tag)}
-                      className="text-blue-600 hover:text-blue-700"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onPress={() => handleDeleteTag(tag.id)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                <div className="px-6 py-4">
+                  <div className="flex items-center justify-between">
+                    {/* Left Section: Tag Info */}
+                    <div className="flex items-center space-x-4 flex-1 min-w-0">
+                      {/* Tag Details */}
+                      <div className="flex items-center space-x-3 flex-1 min-w-0">
+                        {/* Tag Icon */}
+                        <div className="w-8 h-8 bg-gradient-to-br from-theme-primary to-theme-accent rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                          <Tag size={16} className="text-white" />
+                        </div>
+
+                        {/* Tag Details */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-2">
+                            <h4 className="font-medium text-gray-900 dark:text-white group-hover:text-theme-primary transition-colors truncate">
+                              {tag.name}
+                            </h4>
+                          </div>
+                          <div className="flex items-center space-x-4 mt-1">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+                              ID: {tag.id}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right Section: Actions */}
+                    <div className="flex items-center space-x-4">
+                      {/* Tag Status */}
+                      <div className="hidden sm:block">
+                        <span className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+                          Active
+                        </span>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onPress={() => openEditModal(tag)}
+                          className="h-8 w-8 p-0 hover:bg-theme-primary/10 hover:text-theme-primary"
+                        >
+                          <Edit size={14} />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onPress={() => handleDeleteTag(tag.id)}
+                          className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
+                        >
+                          <Trash2 size={14} />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Empty State */}
+          {tags.length === 0 && (
+            <div className="px-6 py-16 text-center">
+              <div className="max-w-sm mx-auto">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-theme-primary/10 to-theme-accent/10 rounded-full flex items-center justify-center">
+                  <Tag className="w-8 h-8 text-theme-primary opacity-60" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  No tags found
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+                  Create your first tag to start organizing your content.
+                </p>
+                <Button
+                  color="primary"
+                  onPress={openCreateModal}
+                  startContent={<Plus size={16} />}
+                  className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90"
+                >
+                  Create Tag
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center">
+        <div className="mt-8 flex justify-center">
           <UniversalPagination
             page={currentPage}
             totalPages={totalPages}
