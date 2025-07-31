@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { TagData, TAG_VALIDATION } from "@/lib/types/tag";
 
 interface TagFormProps {
@@ -88,34 +87,56 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
       {/* Form */}
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
         {/* ID Field */}
-        <div>
-          <Input
-            label="Tag ID"
+        <div className="space-y-2">
+          <label htmlFor="tag-id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Tag ID <span className="text-red-500">*</span>
+          </label>
+          <input
+            id="tag-id"
+            type="text"
             placeholder="Enter tag ID (e.g., time-tracking-cli-tools)"
             value={formData.id}
             onChange={(e) => handleInputChange('id', e.target.value)}
-            errorMessage={errors.id}
-            isInvalid={!!errors.id}
-            isRequired
-            isDisabled={mode === 'edit'} // ID cannot be changed when editing
-            className="w-full"
-            description={mode === 'edit' ? "ID cannot be changed after creation" : "Use lowercase with hyphens (e.g., my-tag)"}
+            disabled={mode === 'edit'}
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.id 
+                ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+            } ${
+              mode === 'edit' ? 'bg-gray-100 dark:bg-gray-600 cursor-not-allowed' : ''
+            }`}
           />
+          {errors.id && (
+            <p className="text-sm text-red-600 dark:text-red-400">{errors.id}</p>
+          )}
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {mode === 'edit' ? "ID cannot be changed after creation" : "Use lowercase with hyphens (e.g., my-tag)"}
+          </p>
         </div>
 
         {/* Name Field */}
-        <div>
-          <Input
-            label="Tag Name"
+        <div className="space-y-2">
+          <label htmlFor="tag-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Tag Name <span className="text-red-500">*</span>
+          </label>
+          <input
+            id="tag-name"
+            type="text"
             placeholder="Enter tag name (e.g., Time Tracking CLI Tools)"
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
-            errorMessage={errors.name}
-            isInvalid={!!errors.name}
-            isRequired
-            className="w-full"
-            description="Display name for the tag"
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.name 
+                ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+            }`}
           />
+          {errors.name && (
+            <p className="text-sm text-red-600 dark:text-red-400">{errors.name}</p>
+          )}
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Display name for the tag
+          </p>
         </div>
 
         {/* Actions */}
