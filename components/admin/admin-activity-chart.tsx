@@ -32,7 +32,9 @@ export function AdminActivityChart({ data, isLoading }: AdminActivityChartProps)
     );
   }
 
-  const maxValue = Math.max(...data.map(d => Math.max(d.views, d.votes, d.comments)));
+  const maxValue = data.length > 0 
+    ? Math.max(...data.map(d => Math.max(d.views, d.votes, d.comments)))
+    : 1; // Default to 1 to avoid division by zero
 
   return (
     <Card>
