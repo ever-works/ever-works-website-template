@@ -122,6 +122,7 @@ export class TagGitService {
     const newTag: TagData = {
       id: data.id,
       name: data.name,
+      isActive: data.isActive,
     };
 
     tags.push(newTag);
@@ -151,6 +152,11 @@ export class TagGitService {
     // Only update name if provided
     if (data.name) {
       updatedTag.name = data.name;
+    }
+
+    // Update isActive if provided
+    if (data.isActive !== undefined) {
+      updatedTag.isActive = data.isActive;
     }
 
     tags[tagIndex] = updatedTag;

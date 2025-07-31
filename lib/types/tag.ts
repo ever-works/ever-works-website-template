@@ -3,6 +3,7 @@
 export interface TagData {
   id: string;
   name: string;
+  isActive: boolean;
 }
 
 export interface TagWithCount extends TagData {
@@ -12,6 +13,7 @@ export interface TagWithCount extends TagData {
 export interface CreateTagRequest {
   id: string;
   name: string;
+  isActive: boolean;
 }
 
 export interface UpdateTagRequest extends Partial<CreateTagRequest> {

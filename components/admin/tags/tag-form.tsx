@@ -7,7 +7,7 @@ import { TagData, TAG_VALIDATION } from "@/lib/types/tag";
 interface TagFormProps {
   tag?: TagData;
   mode: 'create' | 'edit';
-  onSubmit: (data: { id: string; name: string }) => void;
+  onSubmit: (data: { id: string; name: string; isActive: boolean }) => void;
   onCancel: () => void;
   isLoading?: boolean;
 }
@@ -16,6 +16,7 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
   const [formData, setFormData] = useState({
     id: tag?.id || '',
     name: tag?.name || '',
+    isActive: tag?.isActive ?? true,
   });
 
   const [errors, setErrors] = useState<{ id?: string; name?: string }>({});
@@ -25,6 +26,7 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
       setFormData({
         id: tag.id,
         name: tag.name,
+        isActive: tag.isActive,
       });
     }
   }, [tag]);
@@ -59,6 +61,7 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
       onSubmit({
         id: formData.id.trim(),
         name: formData.name.trim(),
+        isActive: formData.isActive,
       });
     }
   };
@@ -70,6 +73,10 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
+  };
+
+  const handleToggleActive = () => {
+    setFormData(prev => ({ ...prev, isActive: !prev.isActive }));
   };
 
   return (
@@ -136,6 +143,39 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
           )}
           <p className="text-xs text-gray-500 dark:text-gray-400">
             Display name for the tag
+          </p>
+        </div>
+
+        {/* Active/Inactive Toggle */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Status
+          </label>
+          <div className="flex items-center space-x-3">
+            <button
+              type="button"
+              onClick={handleToggleActive}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                formData.isActive 
+                  ? 'bg-blue-600 dark:bg-blue-500' 
+                  : 'bg-gray-200 dark:bg-gray-700'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  formData.isActive ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              {formData.isActive ? 'Active' : 'Inactive'}
+            </span>
+          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {formData.isActive 
+              ? 'This tag will be visible and usable' 
+              : 'This tag will be hidden and unusable'
+            }
           </p>
         </div>
 

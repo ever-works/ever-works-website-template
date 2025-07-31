@@ -45,16 +45,16 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { name }: UpdateTagRequest = body;
+    const { name, isActive }: UpdateTagRequest = body;
 
     if (!name) {
       return NextResponse.json(
-        { error: 'Tag name is required' },
+        { success: false, error: "Tag name is required" },
         { status: 400 }
       );
     }
 
-    const tag = await tagRepository.update(params.id, { id: params.id, name });
+    const tag = await tagRepository.update(params.id, { id: params.id, name, isActive });
     
     return NextResponse.json({ success: true, tag });
   } catch (error) {

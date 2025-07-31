@@ -36,16 +36,16 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, name }: CreateTagRequest = body;
+    const { id, name, isActive }: CreateTagRequest = body;
 
     if (!id || !name) {
       return NextResponse.json(
-        { error: 'Tag ID and name are required' },
+        { success: false, error: "Tag ID and name are required" },
         { status: 400 }
       );
     }
 
-    const tag = await tagRepository.create({ id, name });
+    const tag = await tagRepository.create({ id, name, isActive: isActive ?? true });
     
     return NextResponse.json({ success: true, tag }, { status: 201 });
   } catch (error) {
