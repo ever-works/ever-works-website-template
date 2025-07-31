@@ -35,7 +35,7 @@ export function AdminTopItems({ data, isLoading }: AdminTopItemsProps) {
     );
   }
 
-  const maxViews = Math.max(...data.map(item => item.views));
+  const maxViews = data.length > 0 ? Math.max(...data.map(item => item.views)) : 0;
 
   return (
     <Card>
