@@ -18,7 +18,7 @@ export function AdminStatsOverview({ stats, isLoading }: AdminStatsOverviewProps
         value={stats?.totalUsers || 0}
         description={`${stats?.activeUsers || 0} active users`}
         icon={Users}
-        trend={{ value: growthPercentage, isPositive: true }}
+        trend={{ value: growthPercentage, isPositive: growthPercentage >= 0 }}
         isLoading={isLoading}
       />
       
