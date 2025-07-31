@@ -133,7 +133,12 @@ export function CredentialsForm({
         setClientError(res?.error || 'Authentication failed');
       }
     } catch (error: unknown) {
-      setClientError((error as Error)?.message || 'Authentication failed');
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : typeof error === 'string' 
+          ? error 
+          : 'Authentication failed';
+      setClientError(errorMessage);
     } finally {
       setClientPending(false);
     }
