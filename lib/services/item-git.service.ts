@@ -102,41 +102,51 @@ export class ItemGitService {
 
   async readItems(): Promise<ItemData[]> {
     try {
-      const itemsDir = path.join(this.config.dataDir, this.config.itemsDir);
-      const files = await fs.readdir(itemsDir);
+      const dataDir = path.join(this.config.dataDir, 'data');
+      const itemDirs = await fs.readdir(dataDir);
       
       const items: ItemData[] = [];
       
-      for (const file of files) {
-        if (file.endsWith('.yml') || file.endsWith('.yaml')) {
-          const filePath = path.join(itemsDir, file);
-          const content = await fs.readFile(filePath, 'utf-8');
-          const item = yaml.parse(content) as ItemData;
+      for (const itemDir of itemDirs) {
+        const itemDirPath = path.join(dataDir, itemDir);
+        const itemDirStat = await fs.stat(itemDirPath);
+        
+        if (itemDirStat.isDirectory()) {
+          const itemFile = path.join(itemDirPath, `${itemDir}.yml`);
           
-          // Ensure required fields have defaults
-          const normalizedItem: ItemData = {
-            id: item.id || path.basename(file, path.extname(file)),
-            name: item.name || '',
-            slug: item.slug || item.id || path.basename(file, path.extname(file)),
-            description: item.description || '',
-            source_url: item.source_url || '',
-            category: item.category || [],
-            tags: item.tags || [],
-            featured: item.featured || false,
-            icon_url: item.icon_url,
-            updated_at: item.updated_at || new Date().toISOString(),
-            status: item.status || 'draft',
-            submitted_by: item.submitted_by,
-            submitted_at: item.submitted_at,
-            reviewed_by: item.reviewed_by,
-            reviewed_at: item.reviewed_at,
-            review_notes: item.review_notes,
-          };
-          
-          items.push(normalizedItem);
+          try {
+            const content = await fs.readFile(itemFile, 'utf-8');
+            const item = yaml.parse(content) as any;
+            
+            // Ensure required fields have defaults
+            const normalizedItem: ItemData = {
+              id: itemDir, // Use directory name as ID
+              name: item.name || '',
+              slug: itemDir, // Use directory name as slug
+              description: item.description || '',
+              source_url: item.source_url || '',
+              category: Array.isArray(item.category) ? item.category : [item.category].filter(Boolean),
+              tags: Array.isArray(item.tags) ? item.tags : [],
+              featured: item.featured || false,
+              icon_url: item.icon_url,
+              updated_at: item.updated_at || new Date().toISOString(),
+              status: item.status || 'approved', // Default to approved since these are existing items
+              submitted_by: item.submitted_by || 'admin',
+              submitted_at: item.submitted_at || item.updated_at || new Date().toISOString(),
+              reviewed_by: item.reviewed_by || 'admin',
+              reviewed_at: item.reviewed_at || item.updated_at || new Date().toISOString(),
+              review_notes: item.review_notes,
+            };
+            
+            items.push(normalizedItem);
+          } catch (fileError) {
+            console.warn(`⚠️ Could not read item file ${itemFile}:`, fileError);
+            // Continue with other items
+          }
         }
       }
       
+      console.log(`📦 Loaded ${items.length} items from .content/data`);
       return items;
     } catch (error) {
       console.error('❌ Error reading items:', error);
@@ -146,15 +156,28 @@ export class ItemGitService {
 
   async writeItem(item: ItemData): Promise<void> {
     try {
-      const itemsDir = path.join(this.config.dataDir, this.config.itemsDir);
-      const itemDir = path.join(itemsDir, item.slug);
+      const dataDir = path.join(this.config.dataDir, 'data');
+      const itemDir = path.join(dataDir, item.slug);
       const itemFile = path.join(itemDir, `${item.slug}.yml`);
       
       // Ensure item directory exists
       await fs.mkdir(itemDir, { recursive: true });
       
+      // Prepare item data for writing (exclude review fields from YAML)
+      const itemData = {
+        name: item.name,
+        description: item.description,
+        source_url: item.source_url,
+        category: item.category,
+        tags: item.tags,
+        featured: item.featured,
+        icon_url: item.icon_url,
+        updated_at: item.updated_at,
+        // Don't write review fields to YAML as they're for admin use only
+      };
+      
       // Write item data
-      const content = yaml.stringify(item);
+      const content = yaml.stringify(itemData);
       await fs.writeFile(itemFile, content, 'utf-8');
       
       // Commit and push changes
@@ -289,8 +312,8 @@ export class ItemGitService {
     }
 
     // Delete item file
-    const itemsDir = path.join(this.config.dataDir, this.config.itemsDir);
-    const itemDir = path.join(itemsDir, item.slug);
+    const dataDir = path.join(this.config.dataDir, 'data');
+    const itemDir = path.join(dataDir, item.slug);
     const itemFile = path.join(itemDir, `${item.slug}.yml`);
     
     try {
