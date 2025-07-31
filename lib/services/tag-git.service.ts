@@ -42,67 +42,86 @@ export class TagGitService {
 
   async readTags(): Promise<TagData[]> {
     try {
-      const tagsPath = this.getTagsFilePath();
-      const content = await fs.readFile(tagsPath, 'utf-8');
-      return yaml.parse(content) || [];
+      const filePath = path.join(this.config.dataDir, 'tags.yml');
+      console.log('🔍 Reading tags from:', filePath);
+      
+      const fileContent = await fs.readFile(filePath, 'utf-8');
+      const tags = yaml.parse(fileContent) as any[];
+      
+      // Ensure all tags have isActive field for backward compatibility
+      return tags.map(tag => ({
+        id: tag.id,
+        name: tag.name,
+        isActive: tag.isActive !== undefined ? tag.isActive : true, // Default to true for existing tags
+      }));
     } catch (error) {
-      console.error('❌ Failed to read tags:', error);
+      console.error('❌ Error reading tags:', error);
       return [];
     }
   }
 
   async writeTags(tags: TagData[]): Promise<void> {
     try {
-      const tagsPath = this.getTagsFilePath();
-      const content = yaml.stringify(tags);
-
-      // Write to local file first (always succeed)
-      await fs.writeFile(tagsPath, content, 'utf-8');
-      console.log('✅ Tags written to local file');
-
-      try {
-        // Try Git operations (may fail)
-        const git = (await import('isomorphic-git')).default;
-        const http = (await import('isomorphic-git/http/node')).default;
-
-        // Add to git (using the .content directory as the git repo)
-        await git.add({
-          fs,
-          dir: this.config.dataDir,
-          filepath: this.config.tagsFile,
-        });
-
-        // Commit changes
-        const committer = this.getCommitter();
-        await git.commit({
-          fs,
-          dir: this.config.dataDir,
-          message: `Update tags - ${new Date().toISOString()}`,
-          author: committer,
-          committer: committer,
-        });
-
-        // Push to GitHub
-        const auth = this.getAuth();
-        await git.push({
-          onAuth: () => auth,
-          fs,
-          http,
-          dir: this.config.dataDir,
-        });
-
-        console.log('✅ Tags committed and pushed to GitHub successfully');
-      } catch (gitError) {
-        console.error('⚠️ Git operations failed, but local file was saved:', gitError);
-        // Store pending changes for later sync
-        this.pendingChanges = tags;
-        // Try to sync in background
-        this.scheduleBackgroundSync();
-        // Don't throw error - local file was saved successfully
-      }
+      const filePath = path.join(this.config.dataDir, 'tags.yml');
+      console.log('💾 Writing tags to:', filePath);
+      
+      // Ensure all tags have the required fields
+      const normalizedTags = tags.map(tag => ({
+        id: tag.id,
+        name: tag.name,
+        isActive: tag.isActive,
+      }));
+      
+      const content = yaml.stringify(normalizedTags);
+      await fs.writeFile(filePath, content, 'utf-8');
+      
+      // Commit and push changes
+      await this.commitAndPush('Update tags');
     } catch (error) {
-      console.error('❌ Failed to write tags:', error);
+      console.error('❌ Error writing tags:', error);
       throw error;
+    }
+  }
+
+  private async commitAndPush(message: string): Promise<void> {
+    try {
+      const git = (await import('isomorphic-git')).default;
+      const http = (await import('isomorphic-git/http/node')).default;
+
+      // Add to git
+      await git.add({
+        fs,
+        dir: this.config.dataDir,
+        filepath: this.config.tagsFile,
+      });
+
+      // Commit changes
+      const committer = this.getCommitter();
+      await git.commit({
+        fs,
+        dir: this.config.dataDir,
+        message: `${message} - ${new Date().toISOString()}`,
+        author: committer,
+        committer: committer,
+      });
+
+      // Push to GitHub
+      const auth = this.getAuth();
+      await git.push({
+        onAuth: () => auth,
+        fs,
+        http,
+        dir: this.config.dataDir,
+      });
+
+      console.log('✅ Tags committed and pushed to GitHub successfully');
+    } catch (gitError) {
+      console.error('⚠️ Git operations failed, but local file was saved:', gitError);
+      // Store pending changes for later sync
+      this.pendingChanges = await this.readTags();
+      // Try to sync in background
+      this.scheduleBackgroundSync();
+      // Don't throw error - local file was saved successfully
     }
   }
 
