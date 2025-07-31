@@ -107,6 +107,7 @@ export default function AdminItemsPage() {
         toast.success(result.message || 'Item created successfully');
         setIsModalOpen(false);
         fetchItems(currentPage);
+        fetchStats(); // Refresh stats after create
       } else {
         toast.error(result.error || 'Failed to create item');
       }
@@ -137,6 +138,7 @@ export default function AdminItemsPage() {
         toast.success(result.message || 'Item updated successfully');
         setIsModalOpen(false);
         fetchItems(currentPage);
+        fetchStats(); // Refresh stats after update
       } else {
         toast.error(result.error || 'Failed to update item');
       }
@@ -163,6 +165,7 @@ export default function AdminItemsPage() {
       if (result.success) {
         toast.success('Item deleted successfully');
         fetchItems(currentPage);
+        fetchStats(); // Refresh stats after delete
       } else {
         toast.error(result.error || 'Failed to delete item');
       }
@@ -187,6 +190,7 @@ export default function AdminItemsPage() {
       if (result.success) {
         toast.success(`Item ${status} successfully`);
         fetchItems(currentPage);
+        fetchStats(); // Refresh stats after review
       } else {
         toast.error(result.error || `Failed to ${status} item`);
       }
