@@ -75,32 +75,33 @@ export default async function middleware(req: NextRequest) {
   const cfg = getAuthConfig();
   const originalPathname = req.nextUrl.pathname;
 
-  // 1️⃣ Locale rewrite – runs for every request
   const intlResponse = await intl(req as any);
 
-  // Extract path without locale for admin checks
-  const segments = originalPathname.split("/").filter(Boolean); // remove leading ''
+  const segments = originalPathname.split("/").filter(Boolean);
   const maybeLocale = segments[0];
   const hasLocale = routing.locales.includes(maybeLocale as any);
   const pathWithoutLocale = hasLocale ? `/${segments.slice(1).join("/")}` : originalPathname;
 
-  // 2️⃣ Admin protection
   if (pathWithoutLocale.startsWith(ADMIN_PREFIX) && pathWithoutLocale !== ADMIN_SIGNIN) {
-    
-    if (cfg.provider === "supabase" || cfg.provider === "both") {
+    if (cfg.provider === "supabase") {
       return supabaseGuard(req, intlResponse);
-    }
-    if (cfg.provider === "next-auth" || cfg.provider === "both") {
-      // Delegate to NextAuth guard (returns Response)
+    } else if (cfg.provider === "next-auth") {
       return nextAuthGuard(req, {} as any);
+    } else if (cfg.provider === "both") {
+
+      const nextAuthResult = await nextAuthGuard(req, {} as any);
+
+      if (nextAuthResult.status === 200) {
+        return nextAuthResult;
+      } else {
+        return supabaseGuard(req, intlResponse);
+      }
     }
   }
 
-  // 3️⃣ No special auth needed – return locale-handled response
   return intlResponse;
 }
 
-// Run on every non-static, non-api path
 export const config = {
   matcher: ["/((?!api|trpc|_next|_vercel|.*\\..*).*)"],
 };
