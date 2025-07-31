@@ -1,4 +1,4 @@
-import { Users, FileText, BarChart3, FolderTree } from "lucide-react";
+import { Users, FileText, BarChart3, FolderTree, Tag } from "lucide-react";
 import { AdminFeatureCard } from "./admin-feature-card";
 import { AdminFeature } from "./types";
 
@@ -9,6 +9,13 @@ const ADMIN_FEATURES: AdminFeature[] = [
     description: "Create, edit, and organize content categories.",
     href: "/admin/categories",
     emoji: "📁"
+  },
+  {
+    icon: Tag,
+    title: "Manage Tags",
+    description: "Create, edit, and organize content tags.",
+    href: "/admin/tags",
+    emoji: "🏷️"
   },
   {
     icon: Users,
@@ -35,9 +42,9 @@ const ADMIN_FEATURES: AdminFeature[] = [
 
 export function AdminFeaturesGrid() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {ADMIN_FEATURES.map((feature) => (
-        <AdminFeatureCard key={feature.title} feature={feature} />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {ADMIN_FEATURES.map((feature, index) => (
+        <AdminFeatureCard key={`${feature.title}-${index}`} feature={feature} />
       ))}
     </div>
   );
