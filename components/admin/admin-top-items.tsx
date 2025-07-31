@@ -9,6 +9,20 @@ interface AdminTopItemsProps {
 }
 
 export function AdminTopItems({ data, isLoading }: AdminTopItemsProps) {
+  const getRankingBadgeClass = (index: number): string => {
+    const baseClass = "flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold";
+    
+    if (index === 0) {
+      return `${baseClass} bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400`;
+    } else if (index === 1) {
+      return `${baseClass} bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400`;
+    } else if (index === 2) {
+      return `${baseClass} bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400`;
+    } else {
+      return `${baseClass} bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400`;
+    }
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -57,12 +71,7 @@ export function AdminTopItems({ data, isLoading }: AdminTopItemsProps) {
               <div key={index} className="group">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-3">
-                    <div className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
-                      index === 0 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
-                      index === 1 ? 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400' :
-                      index === 2 ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400' :
-                      'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
-                    }`}>
+                    <div className={getRankingBadgeClass(index)}>
                       {index + 1}
                     </div>
                     <span className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-theme-primary transition-colors">
