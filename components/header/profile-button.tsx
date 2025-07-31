@@ -83,7 +83,7 @@ export function ProfileButton() {
       overlay.remove();
 
       const redirectUrl = isAdmin ? '/admin/auth/signin' : '/auth/signin';
-      console.log("Redirecting to:", redirectUrl);
+
       window.location.replace(redirectUrl);
     } catch (error) {
       overlay.remove();
