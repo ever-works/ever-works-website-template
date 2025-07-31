@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ItemForm } from "@/components/admin/items/item-form";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
 import { UniversalPagination } from "@/components/universal-pagination";
-import { Plus, Edit, Trash2, Package, Eye, Clock, CheckCircle, XCircle, Star, ExternalLink } from "lucide-react";
+import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
 interface ItemsResponse {
@@ -28,6 +28,13 @@ export default function AdminItemsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
+  const [stats, setStats] = useState({
+    total: 0,
+    draft: 0,
+    pending: 0,
+    approved: 0,
+    rejected: 0,
+  });
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -56,8 +63,26 @@ export default function AdminItemsPage() {
     }
   };
 
+  const fetchStats = async () => {
+    try {
+      const response = await fetch('/api/admin/items/stats');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch stats');
+      }
+      
+      const data = await response.json();
+      if (data.success) {
+        setStats(data.stats);
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  };
+
   useEffect(() => {
     fetchItems();
+    fetchStats();
   }, []);
 
   const handlePageChange = (page: number) => {
@@ -328,7 +353,7 @@ export default function AdminItemsPage() {
                   Total Items
                 </p>
                 <p className="text-3xl font-bold text-blue-700 dark:text-blue-300 group-hover:scale-105 transition-transform">
-                  {totalItems}
+                  {stats.total}
                 </p>
               </div>
               <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -346,7 +371,7 @@ export default function AdminItemsPage() {
                   Pending Review
                 </p>
                 <p className="text-3xl font-bold text-yellow-700 dark:text-yellow-300 group-hover:scale-105 transition-transform">
-                  {items.filter(item => item.status === 'pending').length}
+                  {stats.pending}
                 </p>
               </div>
               <div className="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -364,7 +389,7 @@ export default function AdminItemsPage() {
                   Approved
                 </p>
                 <p className="text-3xl font-bold text-green-700 dark:text-green-300 group-hover:scale-105 transition-transform">
-                  {items.filter(item => item.status === 'approved').length}
+                  {stats.approved}
                 </p>
               </div>
               <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -382,7 +407,7 @@ export default function AdminItemsPage() {
                   Rejected
                 </p>
                 <p className="text-3xl font-bold text-red-700 dark:text-red-300 group-hover:scale-105 transition-transform">
-                  {items.filter(item => item.status === 'rejected').length}
+                  {stats.rejected}
                 </p>
               </div>
               <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
