@@ -159,8 +159,11 @@ export class TagGitService {
     }
 
     // Check for duplicate name (excluding current tag)
-    if (data.name && tags.some(tag => tag.id !== id && tag.name.toLowerCase() === data.name.toLowerCase())) {
-      throw new Error(`Tag with name '${data.name}' already exists`);
+    if (data.name) {
+      const name = data.name;
+      if (tags.some(tag => tag.id !== id && tag.name.toLowerCase() === name.toLowerCase())) {
+        throw new Error(`Tag with name '${name}' already exists`);
+      }
     }
 
     const updatedTag: TagData = {
