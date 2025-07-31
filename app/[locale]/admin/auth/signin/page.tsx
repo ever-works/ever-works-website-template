@@ -2,18 +2,14 @@
 
 import { AuthForm } from "@/app/[locale]/auth/components/auth-form";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function AdminLoginPage() {
   const params = useParams();
   const router = useRouter();
-  const [loginSuccess, setLoginSuccess] = useState(false);
 
-  useEffect(() => {
-    if (loginSuccess) {
-      router.push(`/${params.locale}/admin`);
-    }
-  }, [loginSuccess, params.locale, router]);
+  const handleLoginSuccess = () => {
+    router.push(`/${params.locale}/admin`);
+  };
 
   return (
     <div>
@@ -21,7 +17,7 @@ export default function AdminLoginPage() {
         form="login"
         showSocialLogin={false}
         clientMode={true}
-        onSuccess={() => setLoginSuccess(true)}
+        onSuccess={handleLoginSuccess}
       />
     </div>
   );
