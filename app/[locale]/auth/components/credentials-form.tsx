@@ -36,7 +36,7 @@ export function CredentialsForm({
   const [isPending, startTransition] = useTransition();
 
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
-    isLogin && !clientMode ? signInAction : signUp,
+    isLogin ? signInAction : signUp,
     {}
   );
 
