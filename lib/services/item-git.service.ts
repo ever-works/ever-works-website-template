@@ -130,7 +130,7 @@ export class ItemGitService {
               featured: item.featured || false,
               icon_url: item.icon_url,
               updated_at: item.updated_at || new Date().toISOString(),
-              status: item.status || 'approved', // Default to approved since these are existing items
+              status: item.status || 'approved', // Read status from YAML or default to approved
               submitted_by: item.submitted_by || 'admin',
               submitted_at: item.submitted_at || item.updated_at || new Date().toISOString(),
               reviewed_by: item.reviewed_by || 'admin',
@@ -163,7 +163,7 @@ export class ItemGitService {
       // Ensure item directory exists
       await fs.mkdir(itemDir, { recursive: true });
       
-      // Prepare item data for writing (exclude review fields from YAML)
+      // Prepare item data for writing (include status for admin management)
       const itemData = {
         name: item.name,
         description: item.description,
@@ -173,7 +173,8 @@ export class ItemGitService {
         featured: item.featured,
         icon_url: item.icon_url,
         updated_at: item.updated_at,
-        // Don't write review fields to YAML as they're for admin use only
+        status: item.status, // Include status for admin management
+        // Don't write other review fields to YAML as they're for admin use only
       };
       
       // Write item data
