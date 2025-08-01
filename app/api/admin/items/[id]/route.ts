@@ -11,7 +11,7 @@ const itemRepository = new ItemRepository();
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
@@ -23,7 +23,8 @@ export async function GET(
       );
     }
 
-    const item = await itemRepository.findById(params.id);
+    const resolvedParams = await params;
+    const item = await itemRepository.findById(resolvedParams.id);
     
     if (!item) {
       return NextResponse.json(
@@ -55,7 +56,7 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
@@ -68,12 +69,13 @@ export async function PUT(
     }
 
     const body = await request.json();
+    const resolvedParams = await params;
     const updateData: UpdateItemRequest = {
-      id: params.id,
+      id: resolvedParams.id,
       ...body,
     };
 
-    const item = await itemRepository.update(params.id, updateData);
+    const item = await itemRepository.update(resolvedParams.id, updateData);
 
     return NextResponse.json({
       success: true,
@@ -99,7 +101,7 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
@@ -111,7 +113,8 @@ export async function DELETE(
       );
     }
 
-    await itemRepository.delete(params.id);
+    const resolvedParams = await params;
+    await itemRepository.delete(resolvedParams.id);
 
     return NextResponse.json({
       success: true,
