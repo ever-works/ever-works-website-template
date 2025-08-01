@@ -145,7 +145,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
-      .trim();
+      .replace(/^-+|-+$/g, '');
     
     if (slug) {
       handleInputChange('slug', slug);
