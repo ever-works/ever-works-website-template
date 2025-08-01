@@ -3,6 +3,17 @@ import * as path from 'node:path';
 import * as yaml from 'yaml';
 import { ItemData, CreateItemRequest, UpdateItemRequest, ReviewRequest } from '@/lib/types/item';
 
+// Helper function to format date in the expected format for YAML files
+function formatDateForYaml(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+
 export interface ItemGitServiceConfig {
   owner: string;
   repo: string;
@@ -129,12 +140,12 @@ export class ItemGitService {
               tags: Array.isArray(item.tags) ? item.tags : [],
               featured: item.featured || false,
               icon_url: item.icon_url,
-              updated_at: item.updated_at || new Date().toISOString(),
+              updated_at: item.updated_at || formatDateForYaml(),
               status: item.status || 'approved', // Read status from YAML or default to approved
               submitted_by: item.submitted_by || 'admin',
-              submitted_at: item.submitted_at || item.updated_at || new Date().toISOString(),
+              submitted_at: item.submitted_at || item.updated_at || formatDateForYaml(),
               reviewed_by: item.reviewed_by || 'admin',
-              reviewed_at: item.reviewed_at || item.updated_at || new Date().toISOString(),
+              reviewed_at: item.reviewed_at || item.updated_at || formatDateForYaml(),
               review_notes: item.review_notes,
             };
             
@@ -254,10 +265,10 @@ export class ItemGitService {
       tags: data.tags,
       featured: data.featured || false,
       icon_url: data.icon_url,
-      updated_at: new Date().toISOString(),
+      updated_at: formatDateForYaml(),
       status: data.status || 'draft',
       submitted_by: 'admin', // TODO: Get from session
-      submitted_at: new Date().toISOString(),
+      submitted_at: formatDateForYaml(),
     };
 
     await this.writeItem(newItem);
@@ -276,7 +287,7 @@ export class ItemGitService {
       ...items[itemIndex],
       ...data,
       id, // Ensure ID doesn't change
-      updated_at: new Date().toISOString(),
+      updated_at: formatDateForYaml(),
     };
 
     await this.writeItem(updatedItem);
@@ -296,8 +307,8 @@ export class ItemGitService {
       status: reviewData.status,
       review_notes: reviewData.review_notes,
       reviewed_by: 'admin', // TODO: Get from session
-      reviewed_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      reviewed_at: formatDateForYaml(),
+      updated_at: formatDateForYaml(),
     };
 
     await this.writeItem(updatedItem);
