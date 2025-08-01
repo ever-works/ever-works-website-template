@@ -282,7 +282,7 @@ export default function AdminTagsPage() {
                   Active Tags
                 </p>
                 <p className="text-3xl font-bold text-green-700 dark:text-green-300 group-hover:scale-105 transition-transform">
-                  {totalTags}
+                  {tags.filter(tag => tag.isActive).length}
                 </p>
               </div>
               <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
