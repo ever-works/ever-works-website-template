@@ -4,14 +4,15 @@ import { ItemData, Tag, Category } from "@/lib/content";
 import Link from "next/link";
 import { Card, CardHeader, CardBody, cn, Badge } from "@heroui/react";
 import {
-    FiStar,
-    FiFolder,
-    FiArrowUpRight
+  FiStar,
+  FiFolder,
+  FiArrowUpRight
 } from "react-icons/fi";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useFilters } from "@/components/filters/context/filter-context";
 import { usePathname } from "next/navigation";
+import { PromoCodeComponent } from "./promo-code";
 
 type ItemProps = ItemData & {
   onNavigate?: () => void;
@@ -160,7 +161,6 @@ export default function Item(props: ItemProps) {
                 showTerms={false}
                 className="w-full"
                 onCodeCopied={(code) => {
-                  // Track promo code copy event
                   if (typeof window !== "undefined" && (window as any).gtag) {
                     (window as any).gtag("event", "promo_code_copied", {
                       event_category: "engagement",
