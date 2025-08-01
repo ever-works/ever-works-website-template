@@ -311,7 +311,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             id="item-category"
             type="text"
             placeholder="Enter categories separated by commas (e.g., productivity, time-tracking, cli)"
-            value={Array.isArray(formData.category) ? formData.category.join(', ') : formData.category}
+            value={(formData.category as string[]).join(', ')}
             onChange={(e) => handleCategoryChange(e.target.value)}
             className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
               errors.category 
@@ -336,7 +336,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             id="item-tags"
             type="text"
             placeholder="Enter tags separated by commas (e.g., open-source, free, cross-platform)"
-            value={Array.isArray(formData.tags) ? formData.tags.join(', ') : formData.tags}
+            value={formData.tags.join(', ')}
             onChange={(e) => handleTagsChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           />
