@@ -24,13 +24,19 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
-    const status = searchParams.get('status') || undefined;
+    const statusParam = searchParams.get('status');
     const category = searchParams.get('category') || undefined;
     const tag = searchParams.get('tag') || undefined;
 
+    // Validate status parameter
+    const validStatuses = ['draft', 'pending', 'approved', 'rejected'] as const;
+    const status = statusParam && validStatuses.includes(statusParam as any) 
+      ? (statusParam as 'draft' | 'pending' | 'approved' | 'rejected') 
+      : undefined;
+
     // Get paginated items
     const result = await itemRepository.findAllPaginated(page, limit, {
-      status: status as any,
+      status,
       category,
       tag,
     });
