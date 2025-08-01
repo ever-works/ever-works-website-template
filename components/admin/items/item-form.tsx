@@ -120,7 +120,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
     }
   };
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | boolean | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     
     // Clear error when user starts typing
