@@ -42,7 +42,30 @@ async function supabaseGuard(req: NextRequest, baseRes: NextResponse): Promise<N
     baseRes.cookies.set(cookie);
   });
 
-  // TODO: if you store an admin flag in Supabase user metadata, add the check here.
+  // Get user from Supabase
+  const { createServerClient } = await import('@supabase/ssr');
+  const { data: { user } } = await createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return req.cookies.getAll(); },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
+        },
+      },
+    }
+  ).auth.getUser();
+
+  // Check admin flag in user metadata
+  const isAdmin = user?.user_metadata?.isAdmin === true || user?.user_metadata?.role === 'admin';
+  if (!isAdmin) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/admin/auth/signin";
+    url.searchParams.set('callbackUrl', req.nextUrl.pathname);
+    return NextResponse.redirect(url);
+  }
+
   return baseRes;
 }
 
@@ -52,32 +75,34 @@ export default async function middleware(req: NextRequest) {
   const cfg = getAuthConfig();
   const originalPathname = req.nextUrl.pathname;
 
-  // 1️⃣ Locale rewrite – runs for every request
   const intlResponse = await intl(req as any);
 
-  // Extract path without locale for admin checks
-  const segments = originalPathname.split("/").filter(Boolean); // remove leading ''
+  const segments = originalPathname.split("/").filter(Boolean);
   const maybeLocale = segments[0];
   const hasLocale = routing.locales.includes(maybeLocale as any);
   const pathWithoutLocale = hasLocale ? `/${segments.slice(1).join("/")}` : originalPathname;
 
-  // 2️⃣ Admin protection
   if (pathWithoutLocale.startsWith(ADMIN_PREFIX) && pathWithoutLocale !== ADMIN_SIGNIN) {
-    
-    if (cfg.provider === "supabase" || cfg.provider === "both") {
+    if (cfg.provider === "supabase") {
       return supabaseGuard(req, intlResponse);
-    }
-    if (cfg.provider === "next-auth" || cfg.provider === "both") {
-      // Delegate to NextAuth guard (returns Response)
+    } else if (cfg.provider === "next-auth") {
       return nextAuthGuard(req, {} as any);
+    } else if (cfg.provider === "both") {
+      // Check NextAuth session first
+      const { auth } = await import("@/lib/auth");
+      const session = await auth();
+      if (session?.user?.isAdmin) {
+        return intlResponse;
+      }
+      
+      // Fallback to Supabase guard
+      return supabaseGuard(req, intlResponse);
     }
   }
 
-  // 3️⃣ No special auth needed – return locale-handled response
   return intlResponse;
 }
 
-// Run on every non-static, non-api path
 export const config = {
   matcher: ["/((?!api|trpc|_next|_vercel|.*\\..*).*)"],
 };

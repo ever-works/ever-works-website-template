@@ -101,10 +101,10 @@ export function AuthForm({ form, showSocialLogin = true, onSuccess, clientMode =
                         </div>
                         <div>
                           <span className="font-semibold text-gray-900 dark:text-white block">
-                            User Management
+                            {t("USER_MANAGEMENT")}
                           </span>
                           <span className="text-sm text-gray-600 dark:text-gray-400">
-                            Manage platform users and permissions
+                            {t("USER_MANAGEMENT_DESC")}
                           </span>
                         </div>
                       </div>
@@ -114,10 +114,10 @@ export function AuthForm({ form, showSocialLogin = true, onSuccess, clientMode =
                         </div>
                         <div>
                           <span className="font-semibold text-gray-900 dark:text-white block">
-                            Content Moderation
+                            {t("CONTENT_MODERATION")}
                           </span>
                           <span className="text-sm text-gray-600 dark:text-gray-400">
-                            Review and approve new submissions
+                            {t("CONTENT_MODERATION_DESC")}
                           </span>
                         </div>
                       </div>
@@ -127,10 +127,10 @@ export function AuthForm({ form, showSocialLogin = true, onSuccess, clientMode =
                         </div>
                         <div>
                           <span className="font-semibold text-gray-900 dark:text-white block">
-                            Analytics Dashboard
+                            {t("ANALYTICS_DASHBOARD")}
                           </span>
                           <span className="text-sm text-gray-600 dark:text-gray-400">
-                            Access platform statistics and reports
+                            {t("ANALYTICS_DASHBOARD_DESC")}
                           </span>
                         </div>
                       </div>

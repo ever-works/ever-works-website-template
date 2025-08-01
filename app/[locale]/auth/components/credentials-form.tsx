@@ -36,7 +36,7 @@ export function CredentialsForm({
   const [isPending, startTransition] = useTransition();
 
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
-    isLogin && !clientMode ? signInAction : signUp,
+    isLogin ? signInAction : signUp,
     {}
   );
 
@@ -133,7 +133,12 @@ export function CredentialsForm({
         setClientError(res?.error || 'Authentication failed');
       }
     } catch (error: unknown) {
-      setClientError((error as Error)?.message || 'Authentication failed');
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : typeof error === 'string' 
+          ? error 
+          : 'Authentication failed';
+      setClientError(errorMessage);
     } finally {
       setClientPending(false);
     }
@@ -143,8 +148,8 @@ export function CredentialsForm({
       {/* Simple header */}
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          {isLogin ? t("SIGN_IN") : t("CREATE_ACCOUNT")}
-        </h1>
+            {isLogin ? t("SIGN_IN") : t("CREATE_ACCOUNT")}
+          </h1>
         <p className="text-gray-600 dark:text-gray-400 text-sm">
             {isLogin
             ? "Welcome back! Please sign in to your account"
