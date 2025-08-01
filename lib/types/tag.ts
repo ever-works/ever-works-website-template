@@ -16,9 +16,7 @@ export interface CreateTagRequest {
   isActive: boolean;
 }
 
-export interface UpdateTagRequest extends Partial<CreateTagRequest> {
-  id: string;
-}
+export type UpdateTagRequest = Partial<Omit<CreateTagRequest, 'id'>>;
 
 export interface TagListResponse {
   tags: TagWithCount[];

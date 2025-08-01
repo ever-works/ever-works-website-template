@@ -54,7 +54,12 @@ export async function PUT(
       );
     }
 
-    const tag = await tagRepository.update(params.id, { id: params.id, name, isActive });
+    const updateData: UpdateTagRequest = {
+      name,
+      isActive,
+    };
+
+    const tag = await tagRepository.update(params.id, updateData);
     
     return NextResponse.json({ success: true, tag });
   } catch (error) {
