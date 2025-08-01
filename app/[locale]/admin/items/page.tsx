@@ -265,11 +265,31 @@ export default function AdminItemsPage() {
 
   const getStatusColor = (status: string) => {
     const color = ITEM_STATUS_COLORS[status as keyof typeof ITEM_STATUS_COLORS] || 'gray';
-    return {
-      bg: `bg-${color}-100 dark:bg-${color}-900/20`,
-      text: `text-${color}-800 dark:text-${color}-400`,
-      border: `border-${color}-200 dark:border-${color}-700`,
+    
+    const statusClasses = {
+      gray: {
+        bg: 'bg-gray-100 dark:bg-gray-900/20',
+        text: 'text-gray-800 dark:text-gray-400',
+        border: 'border-gray-200 dark:border-gray-700',
+      },
+      yellow: {
+        bg: 'bg-yellow-100 dark:bg-yellow-900/20',
+        text: 'text-yellow-800 dark:text-yellow-400',
+        border: 'border-yellow-200 dark:border-yellow-700',
+      },
+      green: {
+        bg: 'bg-green-100 dark:bg-green-900/20',
+        text: 'text-green-800 dark:text-green-400',
+        border: 'border-green-200 dark:border-green-700',
+      },
+      red: {
+        bg: 'bg-red-100 dark:bg-red-900/20',
+        text: 'text-red-800 dark:text-red-400',
+        border: 'border-red-200 dark:border-red-700',
+      },
     };
+    
+    return statusClasses[color as keyof typeof statusClasses] || statusClasses.gray;
   };
 
   if (isLoading) {
