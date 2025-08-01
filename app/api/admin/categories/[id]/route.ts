@@ -4,9 +4,9 @@ import { UpdateCategoryRequest } from "@/lib/types/category";
 import { auth } from "@/lib/auth";
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 /**
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Find category
     const category = await categoryRepository.findById(id);
@@ -68,7 +68,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Parse request body
     const body = await request.json();
@@ -137,7 +137,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Check for hard delete parameter
     const { searchParams } = new URL(request.url);
