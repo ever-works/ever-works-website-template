@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ItemForm } from "@/components/admin/items/item-form";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
 import { UniversalPagination } from "@/components/universal-pagination";
-import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, ExternalLink } from "lucide-react";
+import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, ExternalLink, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface ItemsResponse {
@@ -25,6 +25,7 @@ export default function AdminItemsPage() {
   const [items, setItems] = useState<ItemData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reviewingItems, setReviewingItems] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
@@ -151,11 +152,16 @@ export default function AdminItemsPage() {
   };
 
   const handleDeleteItem = async (itemId: string) => {
+    // Prevent multiple clicks
+    if (reviewingItems.has(itemId)) return;
+    
     if (!confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
       return;
     }
 
     try {
+      setReviewingItems(prev => new Set(prev).add(itemId));
+      
       const response = await fetch(`/api/admin/items/${itemId}`, {
         method: 'DELETE',
       });
@@ -172,11 +178,22 @@ export default function AdminItemsPage() {
     } catch (error) {
       console.error('Error deleting item:', error);
       toast.error('Failed to delete item');
+    } finally {
+      setReviewingItems(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(itemId);
+        return newSet;
+      });
     }
   };
 
   const handleReviewItem = async (itemId: string, status: 'approved' | 'rejected', notes?: string) => {
+    // Prevent multiple clicks
+    if (reviewingItems.has(itemId)) return;
+    
     try {
+      setReviewingItems(prev => new Set(prev).add(itemId));
+      
       const response = await fetch(`/api/admin/items/${itemId}/review`, {
         method: 'POST',
         headers: {
@@ -197,6 +214,12 @@ export default function AdminItemsPage() {
     } catch (error) {
       console.error('Error reviewing item:', error);
       toast.error(`Failed to ${status} item`);
+    } finally {
+      setReviewingItems(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(itemId);
+        return newSet;
+      });
     }
   };
 
@@ -526,19 +549,37 @@ export default function AdminItemsPage() {
                               size="sm"
                               variant="ghost"
                               onClick={() => handleReviewItem(item.id, 'approved')}
-                              className="h-8 w-8 p-0 hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900/20"
-                              title="Approve"
+                              disabled={reviewingItems.has(item.id)}
+                              className={`h-8 w-8 p-0 transition-all duration-200 ${
+                                reviewingItems.has(item.id)
+                                  ? 'opacity-50 cursor-not-allowed'
+                                  : 'hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900/20'
+                              }`}
+                              title={reviewingItems.has(item.id) ? 'Approving...' : 'Approve'}
                             >
-                              <CheckCircle size={14} />
+                              {reviewingItems.has(item.id) ? (
+                                <Loader2 size={14} className="animate-spin" />
+                              ) : (
+                                <CheckCircle size={14} />
+                              )}
                             </Button>
                             <Button
                               size="sm"
                               variant="ghost"
                               onClick={() => handleReviewItem(item.id, 'rejected')}
-                              className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
-                              title="Reject"
+                              disabled={reviewingItems.has(item.id)}
+                              className={`h-8 w-8 p-0 transition-all duration-200 ${
+                                reviewingItems.has(item.id)
+                                  ? 'opacity-50 cursor-not-allowed'
+                                  : 'hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20'
+                              }`}
+                              title={reviewingItems.has(item.id) ? 'Rejecting...' : 'Reject'}
                             >
-                              <XCircle size={14} />
+                              {reviewingItems.has(item.id) ? (
+                                <Loader2 size={14} className="animate-spin" />
+                              ) : (
+                                <XCircle size={14} />
+                              )}
                             </Button>
                           </>
                         )}
@@ -548,7 +589,12 @@ export default function AdminItemsPage() {
                           size="sm"
                           variant="ghost"
                           onClick={() => openEditModal(item)}
-                          className="h-8 w-8 p-0 hover:bg-theme-primary/10 hover:text-theme-primary"
+                          disabled={reviewingItems.has(item.id)}
+                          className={`h-8 w-8 p-0 transition-all duration-200 ${
+                            reviewingItems.has(item.id)
+                              ? 'opacity-50 cursor-not-allowed'
+                              : 'hover:bg-theme-primary/10 hover:text-theme-primary'
+                          }`}
                           title="Edit"
                         >
                           <Edit size={14} />
@@ -557,10 +603,19 @@ export default function AdminItemsPage() {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleDeleteItem(item.id)}
-                          className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
-                          title="Delete"
+                          disabled={reviewingItems.has(item.id)}
+                          className={`h-8 w-8 p-0 transition-all duration-200 ${
+                            reviewingItems.has(item.id)
+                              ? 'opacity-50 cursor-not-allowed'
+                              : 'hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20'
+                          }`}
+                          title={reviewingItems.has(item.id) ? 'Deleting...' : 'Delete'}
                         >
-                          <Trash2 size={14} />
+                          {reviewingItems.has(item.id) ? (
+                            <Loader2 size={14} className="animate-spin" />
+                          ) : (
+                            <Trash2 size={14} />
+                          )}
                         </Button>
                       </div>
                     </div>
