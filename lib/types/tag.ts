@@ -34,7 +34,7 @@ export interface TagResponse {
 
 export interface TagListOptions {
   includeInactive?: boolean;
-  sortBy?: 'name' | 'sortOrder' | 'createdAt';
+  sortBy?: 'name' | 'id';
   sortOrder?: 'asc' | 'desc';
   page?: number;
   limit?: number;

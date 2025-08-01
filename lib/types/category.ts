@@ -34,7 +34,7 @@ export interface CategoryResponse {
 
 export interface CategoryListOptions {
   includeInactive?: boolean;
-  sortBy?: 'name' | 'sortOrder' | 'createdAt';
+  sortBy?: 'name' | 'id';
   sortOrder?: 'asc' | 'desc';
   page?: number;
   limit?: number;
