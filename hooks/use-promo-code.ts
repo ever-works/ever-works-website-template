@@ -61,7 +61,11 @@ export function usePromoCode(options: UsePromoCodeOptions = {}): UsePromoCodeRet
   // Save stats to localStorage whenever they change
   useEffect(() => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("promo-code-stats", JSON.stringify(stats));
+      try {
+        localStorage.setItem("promo-code-stats", JSON.stringify(stats));
+      } catch (error) {
+        console.warn("Failed to save promo code stats to localStorage:", error);
+      }
     }
   }, [stats]);
 
