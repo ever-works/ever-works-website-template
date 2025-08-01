@@ -21,6 +21,9 @@ export class TagGitService {
   private config: TagGitServiceConfig;
   private pendingChanges: TagData[] | null = null;
   private syncInProgress = false;
+  private retryCount = 0;
+  private maxRetries = 3;
+  private retryTimeout: NodeJS.Timeout | null = null;
 
   constructor(config: TagGitServiceConfig) {
     this.config = config;
@@ -284,7 +287,7 @@ export class TagGitService {
     }
 
     this.syncInProgress = true;
-    console.log('🔄 Attempting background sync of pending changes...');
+    console.log(`🔄 Attempting background sync of pending changes... (attempt ${this.retryCount + 1}/${this.maxRetries + 1})`);
 
     try {
       // Try to sync with remote first
@@ -294,15 +297,34 @@ export class TagGitService {
       await this.pushPendingChanges();
 
       console.log('✅ Background sync completed successfully');
+      this.retryCount = 0; // Reset retry count on success
     } catch (error) {
       console.error('❌ Background sync failed:', error);
-      // Schedule another attempt in 5 minutes
-      setTimeout(() => {
-        this.syncInProgress = false;
-        this.performBackgroundSync();
-      }, 300000);
+      
+      // Implement exponential backoff with maximum retries
+      if (this.retryCount < this.maxRetries) {
+        this.retryCount++;
+        const delay = Math.min(30000 * Math.pow(2, this.retryCount - 1), 300000); // Exponential backoff: 30s, 60s, 120s, max 5min
+        
+        console.log(`⏰ Scheduling retry in ${delay / 1000} seconds... (attempt ${this.retryCount}/${this.maxRetries})`);
+        
+        // Clear any existing timeout to prevent memory leaks
+        if (this.retryTimeout) {
+          clearTimeout(this.retryTimeout);
+        }
+        
+        this.retryTimeout = setTimeout(() => {
+          this.syncInProgress = false;
+          this.performBackgroundSync();
+        }, delay);
+      } else {
+        console.error('❌ Max retries reached. Stopping background sync attempts.');
+        this.retryCount = 0; // Reset for next manual trigger
+      }
     } finally {
-      this.syncInProgress = false;
+      if (this.retryCount >= this.maxRetries) {
+        this.syncInProgress = false;
+      }
     }
   }
 
@@ -374,12 +396,26 @@ export class TagGitService {
     hasPendingChanges: boolean;
     syncInProgress: boolean;
     lastSyncAttempt?: string;
+    retryCount?: number;
   }> {
     return {
       hasPendingChanges: this.pendingChanges !== null,
       syncInProgress: this.syncInProgress,
       lastSyncAttempt: this.syncInProgress ? new Date().toISOString() : undefined,
+      retryCount: this.retryCount,
     };
+  }
+
+  /**
+   * Clean up resources and stop retries
+   */
+  cleanup(): void {
+    if (this.retryTimeout) {
+      clearTimeout(this.retryTimeout);
+      this.retryTimeout = null;
+    }
+    this.syncInProgress = false;
+    this.retryCount = 0;
   }
 }
 
