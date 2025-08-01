@@ -7,6 +7,7 @@ export interface CategoryData {
 
 export interface CategoryWithCount extends CategoryData {
   count?: number;
+  isInactive?: boolean;
 }
 
 export interface CreateCategoryRequest {

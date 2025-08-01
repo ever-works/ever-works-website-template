@@ -9,7 +9,10 @@ interface AdminStatsOverviewProps {
 
 export function AdminStatsOverview({ stats, isLoading }: AdminStatsOverviewProps) {
   const growthPercentage = stats ? 
-    Math.round(((stats.newUsersToday / stats.totalUsers) * 100) * 30) : 0; // Approximated monthly growth
+    stats.totalUsers > 0 
+      ? Math.round((stats.newUsersToday / stats.totalUsers) * 100 * 100) / 100
+      : 0
+    : 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -18,7 +21,7 @@ export function AdminStatsOverview({ stats, isLoading }: AdminStatsOverviewProps
         value={stats?.totalUsers || 0}
         description={`${stats?.activeUsers || 0} active users`}
         icon={Users}
-        trend={{ value: growthPercentage, isPositive: true }}
+        trend={{ value: growthPercentage, isPositive: growthPercentage >= 0 }}
         isLoading={isLoading}
       />
       

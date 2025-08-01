@@ -23,7 +23,7 @@ export function AdminActivityChart({ data, isLoading }: AdminActivityChartProps)
             {Array.from({ length: 7 }, (_, i) => (
               <div key={i} className="flex items-end space-x-2">
                 <Skeleton className="h-8 w-12" />
-                <Skeleton className={`h-${Math.floor(Math.random() * 32) + 8} w-full`} />
+                <Skeleton className="w-full" style={{ height: `${Math.floor(Math.random() * 32) + 8 * 4}px` }} />
               </div>
             ))}
           </div>
@@ -32,7 +32,9 @@ export function AdminActivityChart({ data, isLoading }: AdminActivityChartProps)
     );
   }
 
-  const maxValue = Math.max(...data.map(d => Math.max(d.views, d.votes, d.comments)));
+  const maxValue = data.length > 0 
+    ? Math.max(...data.map(d => Math.max(d.views, d.votes, d.comments)))
+    : 1; // Default to 1 to avoid division by zero
 
   return (
     <Card>

@@ -14,6 +14,12 @@ interface CategoryFormProps {
 }
 
 export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, mode }: CategoryFormProps) {
+  // Extract long className strings into constants for better maintainability
+  const containerClasses = "bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700";
+  const headerClasses = "px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900";
+  const formClasses = "p-6 space-y-6";
+  const actionsClasses = "flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 -mx-6 -mb-6 px-6 pb-6";
+
   const [formData, setFormData] = useState({
     id: category?.id || '',
     name: category?.name || '',
@@ -66,7 +72,7 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
     }
   };
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     
     // Clear error when user starts typing
@@ -76,8 +82,8 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700">
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+    <div className={containerClasses}>
+      <div className={headerClasses}>
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
           {mode === 'create' ? 'Create New Category' : 'Edit Category'}
         </h2>
@@ -86,7 +92,7 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6 space-y-6">
+      <form onSubmit={handleSubmit} className={formClasses}>
         {/* ID Field */}
         <div>
           <Input
@@ -123,7 +129,7 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
         </div>
 
         {/* Form Actions */}
-        <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 -mx-6 -mb-6 px-6 pb-6">
+        <div className={actionsClasses}>
           <Button
             type="button"
             variant="flat"

@@ -23,6 +23,8 @@ export function AdminDashboard() {
 
   const adminName = session?.user?.name || session?.user?.email || "Admin";
 
+  const refreshIconClass = `h-4 w-4${isFetching ? ' animate-spin' : ''}`;
+
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
@@ -35,7 +37,7 @@ export function AdminDashboard() {
           disabled={isFetching}
           className="flex items-center space-x-2"
         >
-          <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
+          <RefreshCw className={refreshIconClass} />
           <span>Refresh</span>
         </Button>
       </div>

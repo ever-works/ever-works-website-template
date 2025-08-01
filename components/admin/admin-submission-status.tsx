@@ -39,6 +39,22 @@ export function AdminSubmissionStatus({ data, isLoading }: AdminSubmissionStatus
 
   const total = data.reduce((sum, item) => sum + item.count, 0);
   
+  // Guard against empty data
+  if (total === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Submission Status</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+            No submissions data available
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+  
   // Calculate angles for pie chart
   let currentAngle = 0;
   const segments = data.map(item => {

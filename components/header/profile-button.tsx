@@ -12,23 +12,12 @@ export function ProfileButton() {
   const t = useTranslations();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const { user, isLoading } = useCurrentUser();
-
   const profilePath = `/profile/${user?.id || user?.email?.split('@')[0] || 'profile'}`;
-  
-  // Check if user is admin - define this early so it can be used everywhere
   const isAdmin = user?.isAdmin === true;
 
   const handleLogout = async () => {
-    // Debug admin detection
-    console.log('🔍 Logout Debug:', {
-      user: user,
-      isAdmin: isAdmin,
-      userIsAdminRaw: user?.isAdmin,
-      userIsAdminType: typeof user?.isAdmin
-    });
-    
     setIsProfileMenuOpen(false);
-    
+
     // Create simple overlay
     const overlay = document.createElement('div');
     overlay.id = 'logout-overlay';
@@ -77,7 +66,7 @@ export function ProfileButton() {
         </div>
       </div>
     `;
-    
+
     // Add spinner animation
     const style = document.createElement('style');
     style.textContent = `
@@ -89,24 +78,19 @@ export function ProfileButton() {
     document.head.appendChild(style);
     document.body.appendChild(overlay);
     try {
-      
-      // Use NextAuth signOut with redirect: false so we can handle redirect ourselves
+
       await signOut({ redirect: false });
-      
-      // Clean up overlay before redirect
       overlay.remove();
-      
+
       const redirectUrl = isAdmin ? '/admin/auth/signin' : '/auth/signin';
-      console.log("Redirecting to:", redirectUrl);
+
       window.location.replace(redirectUrl);
     } catch (error) {
-      // Clean up overlay on error too
       overlay.remove();
       console.error('Logout failed:', error);
     }
   };
 
-  // Show loading state or return null if no user
   if (isLoading) {
     return (
       <div className="relative ml-3">
@@ -115,7 +99,6 @@ export function ProfileButton() {
     );
   }
 
-  // Don't show profile button if user is not logged in
   if (!user) {
     return null;
   }
@@ -150,7 +133,6 @@ export function ProfileButton() {
           aria-labelledby="user-menu"
         >
           {isAdmin ? (
-            // Admin menu items
             <>
               <Link
                 href="/admin"

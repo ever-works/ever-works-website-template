@@ -81,19 +81,21 @@ export function Modal({
     }
   };
 
+  const modalContainerClasses = `
+    relative w-full ${sizeClasses[size]} max-h-[90vh] 
+    bg-white dark:bg-gray-900 
+    rounded-lg shadow-xl 
+    overflow-hidden
+    ${className}
+  `;
+
   const modalContent = (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${backdropClasses[backdrop]}`}
       onClick={handleBackdropClick}
     >
       <div
-        className={`
-          relative w-full ${sizeClasses[size]} max-h-[90vh] 
-          bg-white dark:bg-gray-900 
-          rounded-lg shadow-xl 
-          overflow-hidden
-          ${className}
-        `}
+        className={modalContainerClasses}
         onClick={(e) => e.stopPropagation()}
       >
         {(title || !hideCloseButton) && (
