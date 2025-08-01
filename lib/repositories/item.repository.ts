@@ -38,16 +38,31 @@ export class ItemRepository {
 
   async findAll(options: ItemListOptions = {}): Promise<ItemData[]> {
     const gitService = await this.getGitService();
-    const result = await gitService.getItemsPaginated(
-      options.page || 1,
-      options.limit || 10,
-      {
-        status: options.status,
-        category: options.category,
-        tag: options.tag,
-      }
-    );
-    return result.items;
+    const items = await gitService.readItems();
+    
+    // Apply filters if provided
+    let filteredItems = items;
+    
+    if (options.status) {
+      filteredItems = filteredItems.filter(item => item.status === options.status);
+    }
+    
+    if (options.category) {
+      filteredItems = filteredItems.filter(item => {
+        if (Array.isArray(item.category)) {
+          return item.category.includes(options.category!);
+        }
+        return item.category === options.category;
+      });
+    }
+    
+    if (options.tag) {
+      filteredItems = filteredItems.filter(item => {
+        return item.tags.includes(options.tag!);
+      });
+    }
+    
+    return filteredItems;
   }
 
   async findAllPaginated(page: number = 1, limit: number = 10, options: ItemListOptions = {}): Promise<{
