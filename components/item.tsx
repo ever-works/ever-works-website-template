@@ -4,9 +4,9 @@ import { ItemData, Tag, Category } from "@/lib/content";
 import Link from "next/link";
 import { Card, CardHeader, CardBody, cn, Badge } from "@heroui/react";
 import {
-  FiStar,
-  FiFolder,
-  FiArrowUpRight
+    FiStar,
+    FiFolder,
+    FiArrowUpRight
 } from "react-icons/fi";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -149,6 +149,29 @@ export default function Item(props: ItemProps) {
                 })}
             </div>
           </div>
+
+          {/* Promo Code Section */}
+          {props.promo_code && (
+            <div className="mt-4 pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
+              <PromoCodeComponent
+                promoCode={props.promo_code}
+                variant="compact"
+                showDescription={false}
+                showTerms={false}
+                className="w-full"
+                onCodeCopied={(code) => {
+                  // Track promo code copy event
+                  if (typeof window !== "undefined" && (window as any).gtag) {
+                    (window as any).gtag("event", "promo_code_copied", {
+                      event_category: "engagement",
+                      event_label: code,
+                      item_name: props.name,
+                    });
+                  }
+                }}
+              />
+            </div>
+          )}
         </CardBody>
       </div>
 

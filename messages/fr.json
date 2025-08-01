@@ -174,7 +174,8 @@
     "WEBSITE": "Site web",
     "PUBLISHED": "Publié",
     "NO_TAGS_AVAILABLE": "Aucune étiquette disponible",
-    "RATING": "Note"
+    "RATING": "Note",
+    "PROMO_CODE": "Code Promo"
   },
   "settings": {
     "PROFILE": "Votre profil",

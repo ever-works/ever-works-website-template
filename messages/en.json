@@ -165,7 +165,8 @@
     "WEBSITE": "Website",
     "PUBLISHED": "Published",
     "NO_TAGS_AVAILABLE": "No tags available",
-    "RATING": "Rating"
+    "RATING": "Rating",
+    "PROMO_CODE": "Promo Code"
   },
   "footer": {
     "ALL_RIGHTS_RESERVED": "All rights reserved",

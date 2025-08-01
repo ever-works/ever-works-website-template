@@ -9,6 +9,8 @@ import { CommentsSection } from "./comments-section";
 import { VoteButton } from "./vote-button";
 import { RatingDisplay } from "./rating-display";
 import ReportButton from "../report-button";
+import { PromoCode } from "@/lib/content";
+import { PromoCodeComponent } from "../promo-code/promo-code";
 
 export interface ItemDetailProps {
   meta: {
@@ -21,6 +23,7 @@ export interface ItemDetailProps {
     tags?: Array<string | { name: string; id: string }>;
     video_url?: string;
     slug?: string;
+    promo_code?: PromoCode;
   };
   content?: string;
   categoryName: string;
@@ -270,6 +273,48 @@ export function ItemDetail({
                 </div>
               </div>
             </div>
+
+            {/* Promo Code Section */}
+            {meta.promo_code && (
+              <div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="p-3 bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-xl">
+                    <svg
+                      className="w-6 h-6 text-green-600 dark:text-green-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                      />
+                    </svg>
+                  </div>
+                  <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+                    {t("itemDetail.PROMO_CODE")}
+                  </h2>
+                </div>
+                <PromoCodeComponent
+                  promoCode={meta.promo_code}
+                  variant="featured"
+                  showDescription={true}
+                  showTerms={true}
+                  onCodeCopied={(code) => {
+                    if (typeof window !== "undefined" && (window as any).gtag) {
+                      (window as any).gtag("event", "promo_code_copied", {
+                        event_category: "engagement",
+                        event_label: code,
+                        item_name: meta.name,
+                        page_location: window.location.href,
+                      });
+                    }
+                  }}
+                />
+              </div>
+            )}
 
             <div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
               <div className="flex items-center justify-between mb-6">

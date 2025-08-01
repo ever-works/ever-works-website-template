@@ -23,6 +23,16 @@ export interface Tag extends Identifiable {
   count?: number;
 }
 
+export interface PromoCode {
+  code: string;
+  description?: string;
+  discount_type: 'percentage' | 'fixed' | 'free_shipping';
+  discount_value?: number;
+  expires_at?: string;
+  terms?: string;
+  url?: string; // Optional URL to redirect when using the code
+}
+
 export interface ItemData {
   name: string;
   slug: string;
@@ -34,6 +44,7 @@ export interface ItemData {
   icon_url?: string;
   updated_at: string; // raw string timestamp
   updatedAt: Date; // timestamp
+  promo_code?: PromoCode; // New field for promotional codes
 }
 
 export interface AuthOptions {
