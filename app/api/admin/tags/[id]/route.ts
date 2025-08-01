@@ -5,7 +5,7 @@ import { UpdateTagRequest } from '@/lib/types/tag';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
@@ -14,7 +14,8 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const tag = await tagRepository.findById(params.id);
+    const { id } = await params;
+    const tag = await tagRepository.findById(id);
     
     if (!tag) {
       return NextResponse.json(
@@ -35,7 +36,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
@@ -44,6 +45,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const body = await request.json();
     const { name, isActive }: UpdateTagRequest = body;
 
@@ -54,7 +56,12 @@ export async function PUT(
       );
     }
 
-    const tag = await tagRepository.update(params.id, { id: params.id, name, isActive });
+    const updateData: UpdateTagRequest = {
+      name,
+      isActive,
+    };
+
+    const tag = await tagRepository.update(id, updateData);
     
     return NextResponse.json({ success: true, tag });
   } catch (error) {
@@ -90,7 +97,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
@@ -99,7 +106,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await tagRepository.delete(params.id);
+    const { id } = await params;
+    await tagRepository.delete(id);
     
     return NextResponse.json({ success: true });
   } catch (error) {

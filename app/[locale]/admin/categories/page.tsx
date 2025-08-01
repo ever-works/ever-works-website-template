@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
-import { Plus, Edit, Trash2, Eye, FolderTree } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, EyeOff, FolderTree } from "lucide-react";
 import { CategoryForm } from "@/components/admin/categories/category-form";
 import { CategoryData, CreateCategoryRequest, UpdateCategoryRequest, CategoryWithCount } from "@/lib/types/category";
 import { UniversalPagination } from "@/components/universal-pagination";
@@ -329,7 +329,7 @@ export default function AdminCategoriesPage() {
                   Active Categories
                 </p>
                 <p className="text-3xl font-bold text-green-700 dark:text-green-300 group-hover:scale-105 transition-transform">
-                  {totalCategories}
+                  {categories.filter(category => !category.isInactive).length}
                 </p>
               </div>
               <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -396,15 +396,15 @@ export default function AdminCategoriesPage() {
                         <Chip
                           size="sm"
                           variant="flat"
-                          color="success"
+                          color={category.isInactive ? "danger" : "success"}
                           startContent={
                             <div className="flex items-center">
-                              <Eye size={12} className="mr-1" />
+                              {category.isInactive ? <EyeOff size={12} className="mr-1" /> : <Eye size={12} className="mr-1" />}
                             </div>
                           }
                           className="transition-all duration-200 group-hover:shadow-md"
                         >
-                          Active
+                          {category.isInactive ? "Inactive" : "Active"}
                         </Chip>
                       </div>
 

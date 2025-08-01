@@ -16,9 +16,7 @@ export interface CreateTagRequest {
   isActive: boolean;
 }
 
-export interface UpdateTagRequest extends Partial<CreateTagRequest> {
-  id: string;
-}
+export type UpdateTagRequest = Partial<Omit<CreateTagRequest, 'id'>>;
 
 export interface TagListResponse {
   tags: TagWithCount[];
@@ -36,7 +34,7 @@ export interface TagResponse {
 
 export interface TagListOptions {
   includeInactive?: boolean;
-  sortBy?: 'name' | 'sortOrder' | 'createdAt';
+  sortBy?: 'name' | 'id';
   sortOrder?: 'asc' | 'desc';
   page?: number;
   limit?: number;

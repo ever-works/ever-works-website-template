@@ -7,6 +7,7 @@ export interface CategoryData {
 
 export interface CategoryWithCount extends CategoryData {
   count?: number;
+  isInactive?: boolean;
 }
 
 export interface CreateCategoryRequest {
@@ -34,7 +35,7 @@ export interface CategoryResponse {
 
 export interface CategoryListOptions {
   includeInactive?: boolean;
-  sortBy?: 'name' | 'sortOrder' | 'createdAt';
+  sortBy?: 'name' | 'id';
   sortOrder?: 'asc' | 'desc';
   page?: number;
   limit?: number;

@@ -21,8 +21,10 @@ export async function GET(request: NextRequest) {
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const includeInactive = searchParams.get('includeInactive') === 'true';
-    const sortBy = searchParams.get('sortBy') as 'name' | 'sortOrder' | 'createdAt' || 'sortOrder';
-    const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' || 'asc';
+    const sortByParam = searchParams.get('sortBy');
+    const sortBy = (sortByParam === 'name' || sortByParam === 'id') ? sortByParam : 'name';
+    const sortOrderParam = searchParams.get('sortOrder');
+    const sortOrder = (sortOrderParam === 'asc' || sortOrderParam === 'desc') ? sortOrderParam : 'asc';
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
 
