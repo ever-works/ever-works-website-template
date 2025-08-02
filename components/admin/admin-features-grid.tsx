@@ -1,4 +1,4 @@
-import { Users, FileText, BarChart3, FolderTree } from "lucide-react";
+import { Users, FileText, BarChart3, FolderTree, Tag, Package } from "lucide-react";
 import { AdminFeatureCard } from "./admin-feature-card";
 import { AdminFeature } from "./types";
 
@@ -9,6 +9,20 @@ const ADMIN_FEATURES: AdminFeature[] = [
     description: "Create, edit, and organize content categories.",
     href: "/admin/categories",
     emoji: "📁"
+  },
+  {
+    icon: Tag,
+    title: "Manage Tags",
+    description: "Create, edit, and organize content tags.",
+    href: "/admin/tags",
+    emoji: "🏷️"
+  },
+  {
+    icon: Package,
+    title: "Manage Items",
+    description: "Create, edit, review, and approve content items.",
+    href: "/admin/items",
+    emoji: "📦"
   },
   {
     icon: Users,
