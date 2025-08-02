@@ -1,6 +1,6 @@
 "use client";
 
-import { User, LogOut, Settings, FolderTree, Tag, List } from "lucide-react";
+import { User, LogOut, Settings, FolderTree, Tag, Package } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
@@ -167,7 +167,7 @@ export function ProfileButton() {
                 role="menuitem"
                 onClick={() => setIsProfileMenuOpen(false)}
               >
-                <List className="mr-3 h-4 w-4 text-gray-400" />
+                <Package className="mr-3 h-4 w-4 text-gray-400" />
                 Manage Items
               </Link>
             </>

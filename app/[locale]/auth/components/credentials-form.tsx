@@ -151,7 +151,7 @@ export function CredentialsForm({
             {isLogin ? t("SIGN_IN") : t("CREATE_ACCOUNT")}
           </h1>
         <p className="text-gray-600 dark:text-gray-400 text-sm">
-              {isLogin
+            {isLogin
             ? "Welcome back! Please sign in to your account"
             : "Create your account to get started"}
         </p>
