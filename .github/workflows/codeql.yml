@@ -9,21 +9,16 @@ on:
     - cron: '0 6 * * 1'  # Weekly on Monday at 6 AM
   workflow_dispatch:  # Allow manual triggering
 
-env:
-  # Set to true to run advanced CodeQL analysis
-  ENABLE_ADVANCED_CODEQL: true
-
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
     timeout-minutes: 360
-    # Only run if advanced CodeQL is enabled
-    if: env.ENABLE_ADVANCED_CODEQL == 'true'
     permissions:
       actions: read
       contents: read
       security-events: write
+      pull-requests: read
 
     strategy:
       fail-fast: false
@@ -34,19 +29,44 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@v4
       with:
         languages: ${{ matrix.language }}
         config-file: ./.github/codeql/codeql-config.yml
-        # Use a different category to avoid conflicts
         category: "/language:${{ matrix.language }}/advanced"
+
+    - name: Setup CodeQL environment
+      run: node scripts/codeql-setup.js
+
+    - name: Install dependencies
+      run: |
+        if [ -f "package-lock.json" ]; then
+          npm ci
+        else
+          npm install
+        fi
 
     - name: Autobuild
-      uses: github/codeql-action/autobuild@v3
+      uses: github/codeql-action/autobuild@v4
+      env:
+        # Environment variables needed for build
+        NEXT_PUBLIC_APP_URL: http://localhost:3000
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+        NEXTAUTH_SECRET: "codeql-test-secret-not-for-production"
+        NEXTAUTH_URL: "http://localhost:3000"
+        DATA_REPOSITORY: "codeql-test-repo-not-used"
+        CONTENT_WARNINGS_SILENT: "true"
+        CI: "true"
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@v4
       with:
         category: "/language:${{ matrix.language }}/advanced"
-        upload: true 
+        upload: true
