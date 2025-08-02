@@ -4,7 +4,7 @@ import "server-only";
 import yaml from "yaml";
 import * as fs from "fs";
 import * as path from "path";
-import { parse } from "date-fns";
+import { parse, isValid } from "date-fns";
 import { trySyncRepository } from "./repository";
 import { dirExists, fsExists, getContentPath } from "./lib";
 import { unstable_cache } from "next/cache";
@@ -125,7 +125,20 @@ async function parseItem(base: string, filename: string) {
   const content = await fs.promises.readFile(filepath, { encoding: "utf8" });
   const meta = yaml.parse(content) as ItemData;
   meta.slug = path.basename(filename, path.extname(filename));
-  meta.updatedAt = parse(meta.updated_at, "yyyy-MM-dd HH:mm", new Date());
+  // Try to parse the date in the expected format first
+  let parsedDate = parse(meta.updated_at, "yyyy-MM-dd HH:mm", new Date());
+  
+  // If that fails, try to parse as ISO string (for backward compatibility)
+  if (!isValid(parsedDate)) {
+    try {
+      parsedDate = new Date(meta.updated_at);
+    } catch {
+      // If both fail, use current date
+      parsedDate = new Date();
+    }
+  }
+  
+  meta.updatedAt = parsedDate;
 
   return meta;
 }
