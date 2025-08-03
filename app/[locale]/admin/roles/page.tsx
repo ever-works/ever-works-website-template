@@ -24,11 +24,11 @@ interface ApiResponse<T = any> {
 export default function RolesPage() {
   const [roles, setRoles] = useState<RoleData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [selectedRole, setSelectedRole] = useState<RoleData | null>(null);
-  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -57,7 +57,7 @@ export default function RolesPage() {
 
   const handleCreateRole = async (data: CreateRoleRequest | UpdateRoleRequest) => {
     try {
-      setIsSubmitting(true);
+      setLoading(true);
       const response = await fetch('/api/admin/roles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -77,7 +77,7 @@ export default function RolesPage() {
       toast.error('Failed to create role');
       console.error('Error creating role:', error);
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
@@ -85,7 +85,7 @@ export default function RolesPage() {
     if (!selectedRole) return;
 
     try {
-      setIsSubmitting(true);
+      setLoading(true);
       const response = await fetch(`/api/admin/roles/${selectedRole.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -106,7 +106,7 @@ export default function RolesPage() {
       toast.error('Failed to update role');
       console.error('Error updating role:', error);
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 

@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { AlertTriangle, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
+import { AlertTriangle, Trash2, Shield } from 'lucide-react';
 import { RoleData } from '@/lib/types/role';
 
 interface DeleteRoleDialogProps {
@@ -13,100 +12,101 @@ interface DeleteRoleDialogProps {
 }
 
 export function DeleteRoleDialog({ role, onConfirm, onCancel }: DeleteRoleDialogProps) {
-  const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [hardDelete, setHardDelete] = useState(false);
 
   const handleConfirm = async () => {
-    setLoading(true);
+    setIsLoading(true);
     try {
       await onConfirm(hardDelete);
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Error deleting role:', error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-md w-full mx-4">
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-red-100 dark:bg-red-900/20 rounded-full">
-              <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
-            </div>
-            <div>
-              <CardTitle className="text-lg">Delete Role</CardTitle>
-              <CardDescription>
-                Are you sure you want to delete this role?
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <h4 className="font-medium mb-2">{role.name}</h4>
-            <p className="text-sm text-muted-foreground mb-2">{role.description}</p>
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium">ID:</span> {role.id}
-            </div>
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium">Permissions:</span> {role.permissions.length}
-            </div>
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium">Status:</span>{' '}
-              <span className={role.isActive ? 'text-green-600' : 'text-red-600'}>
-                {role.isActive ? 'Active' : 'Inactive'}
-              </span>
-            </div>
-          </div>
+  const handleCancel = () => {
+    setIsOpen(false);
+    onCancel();
+  };
 
-          <div className="space-y-3">
+  return (
+    <Modal isOpen={isOpen} onClose={handleCancel} size="md">
+      <ModalContent>
+        <ModalHeader className="flex items-center space-x-2">
+          <div className="w-8 h-8 bg-red-100 dark:bg-red-900/20 rounded-lg flex items-center justify-center">
+            <AlertTriangle size={16} className="text-red-600 dark:text-red-400" />
+          </div>
+          <span>Delete Role</span>
+        </ModalHeader>
+        <ModalBody>
+          <div className="space-y-4">
+            <div className="flex items-start space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-lg flex items-center justify-center">
+                <Shield size={20} className="text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium text-gray-900 dark:text-white">
+                  {role.name}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  {role.description}
+                </p>
+                <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  <span>ID: {role.id}</span>
+                  <span>{role.permissions.length} permissions</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+              <div className="flex items-start space-x-2">
+                <AlertTriangle size={16} className="text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
+                <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                  <p className="font-medium">Warning</p>
+                  <p className="mt-1">
+                    This action cannot be undone. Deleting this role will remove all associated permissions and may affect users assigned to this role.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="flex items-center space-x-2">
               <input
                 type="checkbox"
                 id="hardDelete"
                 checked={hardDelete}
                 onChange={(e) => setHardDelete(e.target.checked)}
-                className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                className="rounded border-gray-300 text-theme-primary focus:ring-theme-primary"
               />
-              <label htmlFor="hardDelete" className="text-sm">
-                Permanently delete (cannot be undone)
+              <label htmlFor="hardDelete" className="text-sm text-gray-700 dark:text-gray-300">
+                Permanently delete (cannot be recovered)
               </label>
             </div>
-            
-            <div className="text-sm text-muted-foreground">
-              {hardDelete ? (
-                <p className="text-red-600 dark:text-red-400">
-                  ⚠️ This will permanently delete the role and all associated data. This action cannot be undone.
-                </p>
-              ) : (
-                <p>
-                  The role will be marked as inactive and can be restored later.
-                </p>
-              )}
-            </div>
           </div>
-
-          <div className="flex justify-end gap-3 pt-4">
-            <Button variant="outline" onClick={onCancel} disabled={loading}>
-              Cancel
-            </Button>
-            <Button 
-              variant="destructive" 
-              onClick={handleConfirm}
-              disabled={loading}
-            >
-              {loading ? (
-                'Deleting...'
-              ) : (
-                <>
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  {hardDelete ? 'Permanently Delete' : 'Delete Role'}
-                </>
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </div>
-    </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            variant="light"
+            onPress={handleCancel}
+            isDisabled={isLoading}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="danger"
+            variant="flat"
+            onPress={handleConfirm}
+            isLoading={isLoading}
+            startContent={<Trash2 size={16} />}
+          >
+            {hardDelete ? 'Delete Permanently' : 'Delete Role'}
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 } 
