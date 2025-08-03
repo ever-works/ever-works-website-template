@@ -231,9 +231,6 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
                 className="w-full"
                 description="Detailed description of the role's purpose and responsibilities"
               />
-              <div className="text-xs text-gray-500 mt-1">
-                {formData.description.length}/500 characters
-              </div>
             </div>
 
             {/* Active Status */}
