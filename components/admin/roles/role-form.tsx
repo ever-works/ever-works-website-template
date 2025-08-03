@@ -1,13 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button, Input, Switch } from '@heroui/react';
+import { Save, X } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/lib/types/role';
 import { PERMISSIONS, Permission } from '@/lib/permissions/definitions';
 
@@ -20,6 +16,12 @@ interface RoleFormProps {
 }
 
 export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: RoleFormProps) {
+  // Extract long className strings into constants for better maintainability
+  const containerClasses = "bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700";
+  const headerClasses = "px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900";
+  const formClasses = "p-6 space-y-6";
+  const actionsClasses = "flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 -mx-6 -mb-6 px-6 pb-6";
+
   const [formData, setFormData] = useState<CreateRoleRequest>({
     id: '',
     name: '',
@@ -111,7 +113,7 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
     }
 
     if (formData.permissions.length === 0) {
-      newErrors.permissions = 'At least one permission is required';
+      newErrors.permissions = 'At least one permission must be selected';
     }
 
     setErrors(newErrors);
@@ -120,25 +122,16 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
-    if (role) {
-      // Update existing role
-      const updateData: UpdateRoleRequest = {
-        id: formData.id,
-        name: formData.name,
-        description: formData.description,
-        isActive: formData.isActive,
-        permissions: formData.permissions,
-      };
-      onSubmit(updateData);
-    } else {
-      // Create new role
-      onSubmit(formData);
-    }
+    const submitData = mode === 'edit' 
+      ? { ...formData } as UpdateRoleRequest
+      : formData as CreateRoleRequest;
+
+    onSubmit(submitData);
   };
 
   const getResourceDisplayName = (resource: string): string => {
@@ -166,164 +159,183 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
       assignRoles: 'Assign Roles',
       export: 'Export',
       settings: 'Settings',
-      backup: 'Backup',
-      logs: 'Logs',
     };
     return displayNames[action] || action;
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold">
-                {role ? 'Edit Role' : 'Create Role'}
-              </h2>
-              <p className="text-muted-foreground">
-                {role ? 'Update role details and permissions' : 'Create a new role with specific permissions'}
+    <div className={containerClasses}>
+      <div className={headerClasses}>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+          {mode === 'create' ? 'Create New Role' : 'Edit Role'}
+        </h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          {mode === 'create' ? 'Create a new role with specific permissions' : 'Update role details and permissions'}
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className={formClasses}>
+        {/* Basic Information */}
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-md font-medium text-gray-900 dark:text-white mb-4">Basic Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* ID Field */}
+              <div>
+                <Input
+                  label="Role ID"
+                  placeholder="Enter role ID (e.g., content-manager)"
+                  value={formData.id}
+                  onChange={(e) => handleInputChange('id', e.target.value)}
+                  errorMessage={errors.id}
+                  isInvalid={!!errors.id}
+                  isRequired
+                  isDisabled={mode === 'edit'} // ID cannot be changed when editing
+                  className="w-full"
+                  description={mode === 'edit' ? "ID cannot be changed after creation" : "Use lowercase with hyphens (e.g., my-role)"}
+                />
+              </div>
+
+              {/* Name Field */}
+              <div>
+                <Input
+                  label="Role Name"
+                  placeholder="Enter role name"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  errorMessage={errors.name}
+                  isInvalid={!!errors.name}
+                  isRequired
+                  maxLength={100}
+                  className="w-full"
+                  description="Display name for the role"
+                />
+                <div className="text-xs text-gray-500 mt-1">
+                  {formData.name.length}/100 characters
+                </div>
+              </div>
+            </div>
+
+            {/* Description Field */}
+            <div className="mt-4">
+              <Textarea
+                label="Description"
+                placeholder="Describe what this role can do..."
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                errorMessage={errors.description}
+                isInvalid={!!errors.description}
+                isRequired
+                maxLength={500}
+                minRows={3}
+                className="w-full"
+                description="Detailed description of the role's purpose and responsibilities"
+              />
+              <div className="text-xs text-gray-500 mt-1">
+                {formData.description.length}/500 characters
+              </div>
+            </div>
+
+            {/* Active Status */}
+            <div className="mt-4">
+              <div className="flex items-center space-x-3">
+                <Switch
+                  isSelected={formData.isActive}
+                  onValueChange={(checked: boolean) => handleInputChange('isActive', checked)}
+                  size="sm"
+                />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Active Role
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Inactive roles cannot be assigned to users
               </p>
             </div>
-            <Button variant="ghost" size="sm" onClick={onCancel}>
-              <X className="h-4 w-4" />
-            </Button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
-                <CardDescription>
-                  Define the role&apos;s basic details
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="id">Role ID</Label>
-                    <Input
-                      id="id"
-                      value={formData.id}
-                      onChange={(e) => handleInputChange('id', e.target.value)}
-                      placeholder="e.g., content-manager"
-                      disabled={!!role} // Can't change ID when editing
-                    />
-                    {errors.id && (
-                      <p className="text-sm text-red-600 dark:text-red-400">{errors.id}</p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Role Name</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
-                      placeholder="e.g., Content Manager"
-                    />
-                    {errors.name && (
-                      <p className="text-sm text-red-600 dark:text-red-400">{errors.name}</p>
-                    )}
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => handleInputChange('description', e.target.value)}
-                    placeholder="Describe what this role can do..."
-                    rows={3}
-                  />
-                  {errors.description && (
-                    <p className="text-sm text-red-600 dark:text-red-400">{errors.description}</p>
-                  )}
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="isActive"
-                    checked={formData.isActive}
-                    onCheckedChange={(checked: boolean) => handleInputChange('isActive', checked)}
-                  />
-                  <Label htmlFor="isActive">Active</Label>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Permissions Section */}
+          <div>
+            <h3 className="text-md font-medium text-gray-900 dark:text-white mb-4">Permissions</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Select the permissions this role should have
+            </p>
 
-            {/* Permissions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Permissions</CardTitle>
-                <CardDescription>
-                  Select the permissions this role should have
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {errors.permissions && (
-                  <p className="text-sm text-red-600 dark:text-red-400 mb-4">{errors.permissions}</p>
-                )}
-                
-                <div className="space-y-6">
-                  {Object.entries(PERMISSIONS).map(([resource, permissions]) => (
-                    <div key={resource} className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-medium text-lg">
-                          {getResourceDisplayName(resource)}
-                        </h4>
-                        <div className="flex gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleSelectAll(resource as keyof typeof PERMISSIONS)}
-                          >
-                            Select All
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleClearAll(resource as keyof typeof PERMISSIONS)}
-                          >
-                            Clear All
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                        {Object.entries(permissions).map(([action, permission]) => (
-                          <div key={permission} className="flex items-center space-x-2">
-                            <input
-                              type="checkbox"
-                              id={permission}
-                              checked={formData.permissions.includes(permission)}
-                              onChange={() => handlePermissionToggle(permission)}
-                              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                            />
-                            <Label htmlFor={permission} className="text-sm font-normal">
-                              {getActionDisplayName(action)}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
+            {errors.permissions && (
+              <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-sm text-red-600 dark:text-red-400">{errors.permissions}</p>
+              </div>
+            )}
+
+            <div className="space-y-6">
+              {Object.entries(PERMISSIONS).map(([resource, permissions]) => (
+                <div key={resource} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="font-medium text-gray-900 dark:text-white">
+                      {getResourceDisplayName(resource)}
+                    </h4>
+                    <div className="flex space-x-2">
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        onPress={() => handleSelectAll(resource as keyof typeof PERMISSIONS)}
+                        className="text-xs"
+                      >
+                        Select All
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        onPress={() => handleClearAll(resource as keyof typeof PERMISSIONS)}
+                        className="text-xs"
+                      >
+                        Clear All
+                      </Button>
                     </div>
-                  ))}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {Object.entries(permissions).map(([action, permission]) => (
+                      <div key={permission} className="flex items-center space-x-2">
+                        <Switch
+                          size="sm"
+                          isSelected={formData.permissions.includes(permission)}
+                          onValueChange={() => handlePermissionToggle(permission)}
+                        />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          {getActionDisplayName(action)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Actions */}
-            <div className="flex justify-end gap-3">
-              <Button type="button" variant="outline" onClick={onCancel}>
-                Cancel
-              </Button>
-              <Button type="submit">
-                {role ? 'Update Role' : 'Create Role'}
-              </Button>
+              ))}
             </div>
-          </form>
+          </div>
         </div>
-      </div>
+
+        {/* Form Actions */}
+        <div className={actionsClasses}>
+          <Button
+            type="button"
+            variant="flat"
+            onPress={onCancel}
+            isDisabled={isLoading}
+            startContent={<X size={16} />}
+            className="px-6 py-2 font-medium"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            color="primary"
+            isLoading={isLoading}
+            startContent={!isLoading && <Save size={16} />}
+            className="px-6 py-2 font-medium bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg"
+          >
+            {mode === 'create' ? 'Create Role' : 'Update Role'}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 } 

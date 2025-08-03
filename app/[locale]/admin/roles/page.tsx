@@ -1,43 +1,39 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
-import { Plus, Search, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Plus, Search, Edit, Trash2, Eye, EyeOff, Shield } from 'lucide-react';
+import { Button, Card, CardBody, Chip, useDisclosure, Input } from '@heroui/react';
 import { RoleForm } from '@/components/admin/roles/role-form';
 import { DeleteRoleDialog } from '@/components/admin/roles/delete-role-dialog';
 import { RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/lib/types/role';
+import { toast } from 'sonner';
 
-interface RoleStats {
-  total: number;
-  active: number;
-  inactive: number;
-  averagePermissions: number;
+interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  roles?: T;
+  role?: RoleData;
+  error?: string;
+  message?: string;
+  total?: number;
+  page?: number;
+  limit?: number;
+  totalPages?: number;
 }
 
 export default function RolesPage() {
   const [roles, setRoles] = useState<RoleData[]>([]);
-  const [stats, setStats] = useState<RoleStats>({
-    total: 0,
-    active: 0,
-    inactive: 0,
-    averagePermissions: 0,
-  });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedRole, setSelectedRole] = useState<RoleData | null>(null);
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     fetchRoles();
-    fetchStats();
   }, []);
 
   const fetchRoles = async () => {
@@ -47,46 +43,41 @@ export default function RolesPage() {
       if (!response.ok) {
         throw new Error('Failed to fetch roles');
       }
-      const data = await response.json();
-      setRoles(data.roles || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch roles');
+      const data: ApiResponse<RoleData[]> = await response.json();
+      if (data.roles) {
+        setRoles(data.roles);
+      }
+    } catch (error) {
+      toast.error('Failed to fetch roles');
+      console.error('Error fetching roles:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchStats = async () => {
-    try {
-      const response = await fetch('/api/admin/roles/stats');
-      if (!response.ok) {
-        throw new Error('Failed to fetch stats');
-      }
-      const data = await response.json();
-      setStats(data);
-    } catch (err) {
-      console.error('Failed to fetch stats:', err);
-    }
-  };
-
   const handleCreateRole = async (data: CreateRoleRequest | UpdateRoleRequest) => {
     try {
+      setIsSubmitting(true);
       const response = await fetch('/api/admin/roles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create role');
+      const result: ApiResponse<RoleData> = await response.json();
+      
+      if (response.ok) {
+        toast.success('Role created successfully');
+        onClose();
+        fetchRoles();
+      } else {
+        toast.error(result.error || 'Failed to create role');
       }
-
-      await fetchRoles();
-      await fetchStats();
-      setShowCreateModal(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create role');
+    } catch (error) {
+      toast.error('Failed to create role');
+      console.error('Error creating role:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -94,23 +85,28 @@ export default function RolesPage() {
     if (!selectedRole) return;
 
     try {
+      setIsSubmitting(true);
       const response = await fetch(`/api/admin/roles/${selectedRole.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update role');
+      const result: ApiResponse<RoleData> = await response.json();
+      
+      if (response.ok) {
+        toast.success('Role updated successfully');
+        onClose();
+        fetchRoles();
+        setSelectedRole(null);
+      } else {
+        toast.error(result.error || 'Failed to update role');
       }
-
-      await fetchRoles();
-      await fetchStats();
-      setShowEditModal(false);
-      setSelectedRole(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update role');
+    } catch (error) {
+      toast.error('Failed to update role');
+      console.error('Error updating role:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -124,17 +120,41 @@ export default function RolesPage() {
       
       const response = await fetch(url, { method: 'DELETE' });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to delete role');
+      if (response.ok) {
+        toast.success(hardDelete ? 'Role permanently deleted' : 'Role deleted');
+        fetchRoles();
+        setSelectedRole(null);
+      } else {
+        const result = await response.json();
+        toast.error(result.error || 'Failed to delete role');
       }
+    } catch (error) {
+      toast.error('Failed to delete role');
+      console.error('Error deleting role:', error);
+    }
+  };
 
-      await fetchRoles();
-      await fetchStats();
-      setShowDeleteDialog(false);
-      setSelectedRole(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete role');
+  const openCreateForm = () => {
+    setFormMode('create');
+    setSelectedRole(null);
+    onOpen();
+  };
+
+  const openEditForm = (role: RoleData) => {
+    setFormMode('edit');
+    setSelectedRole(role);
+    onOpen();
+  };
+
+  const openDeleteDialog = (role: RoleData) => {
+    setSelectedRole(role);
+  };
+
+  const handleFormSubmit = async (data: CreateRoleRequest | UpdateRoleRequest) => {
+    if (formMode === 'create') {
+      await handleCreateRole(data);
+    } else {
+      await handleUpdateRole(data);
     }
   };
 
@@ -149,11 +169,6 @@ export default function RolesPage() {
     
     return matchesSearch && matchesStatus;
   });
-
-  const getStatusColor = (isActive: boolean) => {
-    return isActive ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 
-                     'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-  };
 
   if (loading) {
     return (
@@ -181,65 +196,87 @@ export default function RolesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Role Management</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-theme-primary to-theme-accent bg-clip-text text-transparent">
+            Role Management
+          </h1>
+          <p className="text-muted-foreground mt-1">
             Manage user roles and permissions
           </p>
         </div>
-        <Button onClick={() => setShowCreateModal(true)}>
-          <Plus className="mr-2 h-4 w-4" />
+        <Button 
+          color="primary" 
+          onPress={openCreateForm}
+          startContent={<Plus size={16} />}
+          className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg"
+        >
           Create Role
         </Button>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Roles</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-          </CardContent>
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800">
+          <CardBody className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-blue-600 dark:text-blue-400">Total Roles</p>
+                <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{roles.length}</p>
+              </div>
+              <Shield className="h-8 w-8 text-blue-500 dark:text-blue-400" />
+            </div>
+          </CardBody>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Roles</CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.active}</div>
-          </CardContent>
+        <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-800">
+          <CardBody className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-green-600 dark:text-green-400">Active Roles</p>
+                <p className="text-2xl font-bold text-green-900 dark:text-green-100">
+                  {roles.filter(role => role.isActive).length}
+                </p>
+              </div>
+              <Eye className="h-8 w-8 text-green-500 dark:text-green-400" />
+            </div>
+          </CardBody>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Inactive Roles</CardTitle>
-            <EyeOff className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.inactive}</div>
-          </CardContent>
+        <Card className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-orange-200 dark:border-orange-800">
+          <CardBody className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-orange-600 dark:text-orange-400">Inactive Roles</p>
+                <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">
+                  {roles.filter(role => !role.isActive).length}
+                </p>
+              </div>
+              <EyeOff className="h-8 w-8 text-orange-500 dark:text-orange-400" />
+            </div>
+          </CardBody>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Permissions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.averagePermissions.toFixed(1)}</div>
-          </CardContent>
+        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-purple-200 dark:border-purple-800">
+          <CardBody className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-purple-600 dark:text-purple-400">Avg Permissions</p>
+                <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+                  {roles.length > 0 
+                    ? Math.round(roles.reduce((sum, role) => sum + role.permissions.length, 0) / roles.length)
+                    : 0
+                  }
+                </p>
+              </div>
+              <Shield className="h-8 w-8 text-purple-500 dark:text-purple-400" />
+            </div>
+          </CardBody>
         </Card>
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filters</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+        <CardBody className="p-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
                   placeholder="Search roles..."
                   value={searchTerm}
@@ -250,124 +287,152 @@ export default function RolesPage() {
             </div>
             <div className="flex gap-2">
               <Button
-                variant={statusFilter === 'all' ? 'default' : 'outline'}
-                onClick={() => setStatusFilter('all')}
+                variant={statusFilter === 'all' ? 'solid' : 'flat'}
+                color={statusFilter === 'all' ? 'primary' : 'default'}
+                onPress={() => setStatusFilter('all')}
+                size="sm"
               >
                 All
               </Button>
               <Button
-                variant={statusFilter === 'active' ? 'default' : 'outline'}
-                onClick={() => setStatusFilter('active')}
+                variant={statusFilter === 'active' ? 'solid' : 'flat'}
+                color={statusFilter === 'active' ? 'primary' : 'default'}
+                onPress={() => setStatusFilter('active')}
+                size="sm"
               >
                 Active
               </Button>
               <Button
-                variant={statusFilter === 'inactive' ? 'default' : 'outline'}
-                onClick={() => setStatusFilter('inactive')}
+                variant={statusFilter === 'inactive' ? 'solid' : 'flat'}
+                color={statusFilter === 'inactive' ? 'primary' : 'default'}
+                onPress={() => setStatusFilter('inactive')}
+                size="sm"
               >
                 Inactive
               </Button>
             </div>
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
-
-      {/* Error Display */}
-      {error && (
-        <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950">
-          <CardContent className="pt-6">
-            <p className="text-red-800 dark:text-red-200">{error}</p>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Roles List */}
       <div className="space-y-4">
         {filteredRoles.length === 0 ? (
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-center text-muted-foreground">
+          <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+            <CardBody className="p-8 text-center">
+              <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                 {searchTerm || statusFilter !== 'all' 
-                  ? 'No roles match your filters.' 
-                  : 'No roles found. Create your first role to get started.'}
+                  ? 'No roles match your filters' 
+                  : 'No roles found'}
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400 mb-4">
+                {searchTerm || statusFilter !== 'all' 
+                  ? 'Try adjusting your search or filter criteria' 
+                  : 'Create your first role to get started'}
               </p>
-            </CardContent>
+              {!searchTerm && statusFilter === 'all' && (
+                <Button 
+                  color="primary" 
+                  onPress={openCreateForm}
+                  startContent={<Plus size={16} />}
+                  className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90"
+                >
+                  Create First Role
+                </Button>
+              )}
+            </CardBody>
           </Card>
         ) : (
           filteredRoles.map((role) => (
-            <Card key={role.id}>
-              <CardHeader>
+            <Card 
+              key={role.id} 
+              className="group hover:bg-gradient-to-r hover:from-theme-primary/5 hover:to-theme-accent/5 dark:hover:from-theme-primary/10 dark:hover:to-theme-accent/10 transition-all duration-200 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
+            >
+              <CardBody className="p-6">
                 <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <CardTitle className="flex items-center gap-2">
-                      {role.name}
-                      <Badge className={getStatusColor(role.isActive)}>
-                        {role.isActive ? 'Active' : 'Inactive'}
-                      </Badge>
-                    </CardTitle>
-                    <CardDescription>{role.description}</CardDescription>
-                    <div className="text-sm text-muted-foreground">
-                      ID: {role.id} • {role.permissions.length} permissions
+                  {/* Left Section: Role Info */}
+                  <div className="flex items-center space-x-4 flex-1 min-w-0">
+                    {/* Role Details */}
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      {/* Role Icon */}
+                      <div className="w-8 h-8 bg-gradient-to-br from-theme-primary to-theme-accent rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                        <Shield size={16} className="text-white" />
+                      </div>
+
+                      {/* Role Details */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2">
+                          <h4 className="font-medium text-gray-900 dark:text-white group-hover:text-theme-primary transition-colors truncate">
+                            {role.name}
+                          </h4>
+                          <Chip
+                            size="sm"
+                            variant="flat"
+                            color={role.isActive ? "success" : "danger"}
+                            startContent={role.isActive ? <Eye size={14} /> : <EyeOff size={14} />}
+                          >
+                            {role.isActive ? 'Active' : 'Inactive'}
+                          </Chip>
+                        </div>
+                        <div className="flex items-center space-x-4 mt-1">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+                            ID: {role.id}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {role.permissions.length} permissions
+                          </p>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 truncate">
+                          {role.description}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+
+                  {/* Right Section: Actions */}
+                  <div className="flex items-center space-x-2">
                     <Button
-                      variant="outline"
+                      isIconOnly
                       size="sm"
-                      onClick={() => {
-                        setSelectedRole(role);
-                        setShowEditModal(true);
-                      }}
+                      variant="light"
+                      onPress={() => openEditForm(role)}
+                      className="text-gray-500 hover:text-theme-primary"
                     >
-                      <Edit className="h-4 w-4" />
+                      <Edit size={16} />
                     </Button>
                     <Button
-                      variant="outline"
+                      isIconOnly
                       size="sm"
-                      onClick={() => {
-                        setSelectedRole(role);
-                        setShowDeleteDialog(true);
-                      }}
+                      variant="light"
+                      onPress={() => openDeleteDialog(role)}
+                      className="text-gray-500 hover:text-red-500"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 size={16} />
                     </Button>
                   </div>
                 </div>
-              </CardHeader>
+              </CardBody>
             </Card>
           ))
         )}
       </div>
 
       {/* Modals */}
-      {showCreateModal && (
+      {isOpen && (
         <RoleForm
-          onSubmit={(data) => handleCreateRole(data as any)}
-          onCancel={() => setShowCreateModal(false)}
-          mode="create"
+          role={selectedRole || undefined}
+          onSubmit={handleFormSubmit}
+          onCancel={onClose}
+          mode={formMode}
         />
       )}
 
-      {showEditModal && selectedRole && (
-        <RoleForm
-          role={selectedRole}
-          onSubmit={(data) => handleUpdateRole(data as any)}
-          onCancel={() => {
-            setShowEditModal(false);
-            setSelectedRole(null);
-          }}
-          mode="edit"
-        />
-      )}
-
-      {showDeleteDialog && selectedRole && (
+      {selectedRole && (
         <DeleteRoleDialog
           role={selectedRole}
           onConfirm={handleDeleteRole}
-          onCancel={() => {
-            setShowDeleteDialog(false);
-            setSelectedRole(null);
-          }}
+          onCancel={() => setSelectedRole(null)}
         />
       )}
     </div>
