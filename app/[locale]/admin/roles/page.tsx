@@ -344,6 +344,7 @@ export default function RolesPage() {
         <RoleForm
           onSubmit={(data) => handleCreateRole(data as any)}
           onCancel={() => setShowCreateModal(false)}
+          mode="create"
         />
       )}
 
@@ -355,6 +356,7 @@ export default function RolesPage() {
             setShowEditModal(false);
             setSelectedRole(null);
           }}
+          mode="edit"
         />
       )}
 

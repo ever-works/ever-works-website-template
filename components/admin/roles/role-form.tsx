@@ -15,9 +15,11 @@ interface RoleFormProps {
   role?: RoleData;
   onSubmit: (data: CreateRoleRequest | UpdateRoleRequest) => void;
   onCancel: () => void;
+  isLoading?: boolean;
+  mode: 'create' | 'edit';
 }
 
-export function RoleForm({ role, onSubmit, onCancel }: RoleFormProps) {
+export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: RoleFormProps) {
   const [formData, setFormData] = useState<CreateRoleRequest>({
     id: '',
     name: '',
