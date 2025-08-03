@@ -46,8 +46,6 @@ export const PERMISSIONS = {
   // System
   system: {
     settings: 'system:settings',
-    backup: 'system:backup',
-    logs: 'system:logs',
   },
 } as const;
 
@@ -58,7 +56,7 @@ export type Permission =
   | 'roles:read' | 'roles:create' | 'roles:update' | 'roles:delete'
   | 'users:read' | 'users:create' | 'users:update' | 'users:delete' | 'users:assignRoles'
   | 'analytics:read' | 'analytics:export'
-  | 'system:settings' | 'system:backup' | 'system:logs';
+  | 'system:settings';
 
 export function getAllPermissions(): Permission[] {
   return Object.values(PERMISSIONS).flatMap(resource => 
