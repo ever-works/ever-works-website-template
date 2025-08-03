@@ -420,12 +420,16 @@ export default function RolesPage() {
 
       {/* Modals */}
       {isOpen && (
-        <RoleForm
-          role={selectedRole || undefined}
-          onSubmit={handleFormSubmit}
-          onCancel={onClose}
-          mode={formMode}
-        />
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <RoleForm
+              role={selectedRole || undefined}
+              onSubmit={handleFormSubmit}
+              onCancel={onClose}
+              mode={formMode}
+            />
+          </div>
+        </div>
       )}
 
       {selectedRole && (
