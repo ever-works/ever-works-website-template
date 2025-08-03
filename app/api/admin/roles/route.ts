@@ -29,7 +29,13 @@ export async function GET(request: NextRequest) {
 
     const result = await roleRepository.findAllPaginated(options);
     
-    return NextResponse.json(result);
+    return NextResponse.json({
+      roles: result.roles,
+      total: result.total,
+      page: result.page,
+      limit: result.limit,
+      totalPages: result.totalPages,
+    });
   } catch (error) {
     console.error('Error fetching roles:', error);
     return NextResponse.json(
