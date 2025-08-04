@@ -227,7 +227,60 @@
     "SECURITY": "Security",
     "LEGAL": "Legal",
     "HELP": "Help Center",
-    "LOGOUT": "Sign out"
+    "LOGOUT": "Sign out",
+    "SECURITY_PAGE": {
+      "TITLE": "Security Settings",
+      "BACK_TO_SETTINGS": "Back to Settings",
+      "CHANGE_PASSWORD": {
+        "TITLE": "Change Your Password",
+        "DESCRIPTION": "Choose a strong password that you haven't used elsewhere. We'll send you a confirmation email once your password is changed."
+      },
+      "SECURITY_TIPS": {
+        "TITLE": "Security Tips",
+        "TIP_1": "Use a unique password that you don't use for other accounts",
+        "TIP_2": "Include a mix of uppercase, lowercase, numbers, and special characters",
+        "TIP_3": "Consider enabling two-factor authentication for extra security",
+        "TIP_4": "Regularly review your login activity and active sessions"
+      },
+      "CHANGE_PASSWORD_FORM": {
+        "CURRENT_PASSWORD": "Current Password",
+        "CURRENT_PASSWORD_PLACEHOLDER": "Enter your current password",
+        "NEW_PASSWORD": "New Password",
+        "NEW_PASSWORD_PLACEHOLDER": "Enter your new password",
+        "CONFIRM_PASSWORD": "Confirm New Password",
+        "CONFIRM_PASSWORD_PLACEHOLDER": "Confirm your new password",
+        "UPDATE_PASSWORD": "Update Password",
+        "UPDATING_PASSWORD": "Updating Password...",
+        "CANCEL": "Cancel",
+        "SHOW_PASSWORD": "Show password",
+        "HIDE_PASSWORD": "Hide password",
+        "SUCCESS_MESSAGE": "Password changed successfully!",
+        "SUCCESS_DESCRIPTION": "A confirmation email has been sent to your email address.",
+        "VALIDATION": {
+          "CURRENT_REQUIRED": "Current password is required",
+          "NEW_REQUIRED": "New password is required",
+          "MIN_LENGTH": "Password must be at least 8 characters",
+          "UPPERCASE": "Password must contain at least one uppercase letter",
+          "LOWERCASE": "Password must contain at least one lowercase letter",
+          "NUMBER": "Password must contain at least one number",
+          "SPECIAL": "Password must contain at least one special character",
+          "CONFIRM_REQUIRED": "Please confirm your password",
+          "PASSWORDS_MATCH": "Passwords don't match"
+        },
+        "STRENGTH": {
+          "WEAK": "Weak",
+          "FAIR": "Fair",
+          "GOOD": "Good",
+          "STRONG": "Strong",
+          "REQUIREMENTS": "Password Requirements:",
+          "AT_LEAST_8": "At least 8 characters",
+          "ONE_UPPERCASE": "One uppercase letter",
+          "ONE_LOWERCASE": "One lowercase letter",
+          "ONE_NUMBER": "One number",
+          "ONE_SPECIAL": "One special character"
+        }
+      }
+    }
   },
   "newsletter": {
     "NEWSLETTER": "NEWSLETTER",
