@@ -77,7 +77,7 @@ export function ToggleGroup({
 
   return (
     <div className={cn("relative inline-flex items-center", currentVariant.container, currentSize.container, className)}>
-      {options.map((option, index) => (
+      {options.map((option) => (
         <button
           key={option.value}
           onClick={() => !option.disabled && onValueChange(option.value)}

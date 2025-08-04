@@ -13,14 +13,14 @@ export type PlanFeature = {
 };
 
 interface PlanCardProps {
-  readonly plan: PaymentPlan;
+  readonly plan?: PaymentPlan;
   readonly title: string;
   readonly price: string;
   readonly priceUnit?: string;
   readonly features: readonly PlanFeature[];
   readonly isPopular?: boolean;
   readonly isSelected: boolean;
-  readonly onSelect: (plan: PaymentPlan) => void;
+  readonly onSelect?: (plan: PaymentPlan) => void;
   readonly actionText: string;
   readonly actionVariant?: "default" | "outline";
   readonly actionHref?: string;
@@ -86,14 +86,12 @@ const getCardStyles = (title: string, isPopular: boolean) => {
 };
 
 export function PlanCard({
-  plan,
   title,
   price,
   priceUnit,
   features,
   isPopular = false,
   isSelected,
-  onSelect,
   actionText,
   actionHref,
   children,
@@ -139,7 +137,7 @@ export function PlanCard({
     <article className={cardStyles}>
       {(title.toUpperCase() === 'STANDARD' || isPopular) && (
         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-30">
-          <div className="bg-gradient-to-r from-theme-primary-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-xl whitespace-nowrap">
+          <div className="bg-gradient-to-r from-theme-primary-500 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-bold shadow-xl whitespace-nowrap">
             Most Popular
           </div>
         </div>
