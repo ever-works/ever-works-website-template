@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useUsers } from '@/hooks/use-users';
+import { useRoles } from '@/hooks/use-roles';
 import { UserData, CreateUserRequest, UpdateUserRequest } from '@/lib/types/user';
 import { Button, Input } from '@heroui/react';
 import { toast } from 'sonner';
@@ -16,6 +17,7 @@ interface UserFormProps {
 
 export default function UserForm({ user, onSuccess, isSubmitting = false, onCancel }: UserFormProps) {
   const { createUser, updateUser, checkUsername, checkEmail } = useUsers();
+  const { roles, loading: rolesLoading, getRoles } = useRoles();
   const [showPassword, setShowPassword] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
   const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
@@ -23,6 +25,11 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
   const [checkingEmail, setCheckingEmail] = useState(false);
 
   const isEditing = !!user;
+
+  // Load roles on component mount
+  useEffect(() => {
+    getRoles();
+  }, [getRoles]);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -279,11 +286,22 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             value={formData.role} 
             onChange={(e) => handleInputChange('role', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+            disabled={rolesLoading}
           >
-            <option value="user">User</option>
-            <option value="moderator">Moderator</option>
-            <option value="admin">Admin</option>
-            <option value="super-admin">Super Admin</option>
+            {rolesLoading ? (
+              <option value="">Loading roles...</option>
+            ) : (
+              <>
+                <option value="">Select a role</option>
+                {roles
+                  .filter(role => role.isActive)
+                  .map(role => (
+                    <option key={role.id} value={role.id}>
+                      {role.name}
+                    </option>
+                  ))}
+              </>
+            )}
           </select>
         </div>
 
