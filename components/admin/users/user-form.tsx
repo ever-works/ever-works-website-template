@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useUsers } from '@/hooks/use-users';
 import { UserData, CreateUserRequest, UpdateUserRequest } from '@/lib/types/user';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button, Input } from '@heroui/react';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
@@ -163,6 +162,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
               value={formData.avatar}
               onChange={(e) => handleInputChange('avatar', e.target.value)}
               className="w-full"
+              variant="bordered"
             />
           </div>
         </div>
@@ -176,6 +176,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
             required
+            variant="bordered"
           />
         </div>
 
@@ -185,6 +186,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             placeholder="Software Engineer" 
             value={formData.title}
             onChange={(e) => handleInputChange('title', e.target.value)}
+            variant="bordered"
           />
         </div>
       </div>
@@ -200,6 +202,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
               onChange={(e) => handleInputChange('username', e.target.value)}
               className={getUsernameStatus() === 'unavailable' ? 'border-red-500' : ''}
               required
+              variant="bordered"
             />
             {checkingUsername && (
               <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-muted-foreground" />
@@ -223,6 +226,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
               onChange={(e) => handleInputChange('email', e.target.value)}
               className={getEmailStatus() === 'unavailable' ? 'border-red-500' : ''}
               required
+              variant="bordered"
             />
             {checkingEmail && (
               <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-muted-foreground" />
@@ -248,6 +252,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
               value={formData.password}
               onChange={(e) => handleInputChange('password', e.target.value)}
               required
+              variant="bordered"
             />
             <Button
               type="button"
@@ -273,7 +278,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
           <select 
             value={formData.role} 
             onChange={(e) => handleInputChange('role', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
           >
             <option value="user">User</option>
             <option value="moderator">Moderator</option>
@@ -288,7 +293,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             <select 
               value={formData.status} 
               onChange={(e) => handleInputChange('status', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
@@ -301,7 +306,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
       <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 -mx-6 -mb-6 px-6 pb-6">
         {onCancel && (
           <Button
-            variant="outline"
+            variant="bordered"
             onPress={onCancel}
             disabled={isSubmitting}
             className="px-4 py-2"
