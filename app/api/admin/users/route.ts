@@ -1,19 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/auth.config';
+import { auth } from '@/lib/auth';
 import { UserRepository } from '@/lib/repositories/user.repository';
 import { CreateUserRequest, UserListOptions } from '@/lib/types/user';
 
 export async function GET(request: NextRequest) {
   try {
     // Check authentication
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check admin permissions
-    if (session.user.role !== 'admin' && session.user.role !== 'super-admin') {
+    if (!session.user.isAdmin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -57,13 +56,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check admin permissions
-    if (session.user.role !== 'admin' && session.user.role !== 'super-admin') {
+    if (!session.user.isAdmin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
