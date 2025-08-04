@@ -35,7 +35,7 @@ const ADMIN_FEATURES: AdminFeature[] = [
     icon: Users,
     title: "Manage Users",
     description: "View and manage platform users and permissions.",
-    href: "#",
+    href: "/admin/users",
     emoji: "👤"
   },
   {
