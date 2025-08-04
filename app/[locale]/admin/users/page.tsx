@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button, Card, CardBody, Chip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/react";
-import { Plus, Edit, Trash2, Users, UserCheck, UserX, Search } from "lucide-react";
+import { Plus, Edit, Trash2, Users, UserCheck, UserX, Search, ChevronDown } from "lucide-react";
 import UserForm from "@/components/admin/users/user-form";
 import { UserData, CreateUserRequest, UpdateUserRequest, UserWithCount } from "@/lib/types/user";
 import { toast } from "sonner";
@@ -24,6 +24,7 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserWithCount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFiltering, setIsFiltering] = useState(false);
 
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
@@ -47,7 +48,11 @@ export default function AdminUsersPage() {
   // Fetch users
   const fetchUsers = async (page: number = currentPage) => {
     try {
-      setIsLoading(true);
+      if (page === 1) {
+        setIsFiltering(true);
+      } else {
+        setIsLoading(true);
+      }
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
@@ -72,6 +77,7 @@ export default function AdminUsersPage() {
       toast.error('Failed to fetch users');
     } finally {
       setIsLoading(false);
+      setIsFiltering(false);
     }
   };
 
@@ -196,7 +202,11 @@ export default function AdminUsersPage() {
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     setCurrentPage(1);
-    fetchUsers(1);
+    // Add debouncing for search
+    const timeoutId = setTimeout(() => {
+      fetchUsers(1);
+    }, 300);
+    return () => clearTimeout(timeoutId);
   };
 
   const handleRoleFilter = (value: string) => {
@@ -385,24 +395,33 @@ export default function AdminUsersPage() {
         </Card>
       </div>
 
-      {/* Filters */}
-      <Card className="border-0 shadow-lg mb-6">
-        <CardBody className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent"
-              />
+            {/* Modern SaaS-Style Filters */}
+      <div className="mb-6">
+        {/* Search Bar */}
+        <div className="relative mb-4">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search users..."
+            value={searchTerm}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+          />
+          {isFiltering && (
+            <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+              <div className="w-4 h-4 border-2 border-theme-primary border-t-transparent rounded-full animate-spin"></div>
             </div>
+          )}
+        </div>
+
+        {/* Filter Pills */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Role Filter */}
+          <div className="relative">
             <select 
               value={roleFilter} 
               onChange={(e) => handleRoleFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent"
+              className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 pr-8 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
             >
               <option value="">All Roles</option>
               <option value="super-admin">Super Admin</option>
@@ -410,30 +429,74 @@ export default function AdminUsersPage() {
               <option value="moderator">Moderator</option>
               <option value="user">User</option>
             </select>
+            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+          </div>
+
+          {/* Status Filter */}
+          <div className="relative">
             <select 
               value={statusFilter} 
               onChange={(e) => handleStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent"
+              className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 pr-8 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
-            <Button
-              variant="bordered"
-              onPress={() => {
-                setSearchTerm('');
-                setRoleFilter('');
-                setStatusFilter('active');
-                setCurrentPage(1);
-                fetchUsers(1);
-              }}
-              className="w-full"
-            >
-              Clear Filters
-            </Button>
+            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
           </div>
-        </CardBody>
-      </Card>
+
+          {/* Active Filters Count */}
+          {(searchTerm || roleFilter || statusFilter !== 'active') && (
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {[
+                  searchTerm && 'search',
+                  roleFilter && 'role',
+                  statusFilter !== 'active' && 'status'
+                ].filter(Boolean).length} filter{[
+                  searchTerm && 'search',
+                  roleFilter && 'role',
+                  statusFilter !== 'active' && 'status'
+                ].filter(Boolean).length !== 1 ? 's' : ''} applied
+              </span>
+              <Button
+                variant="light"
+                size="sm"
+                color="danger"
+                onPress={() => {
+                  setSearchTerm('');
+                  setRoleFilter('');
+                  setStatusFilter('active');
+                  setCurrentPage(1);
+                  fetchUsers(1);
+                }}
+                className="h-6 px-2 text-xs"
+              >
+                Clear all
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* Results Summary */}
+        {!isLoading && (
+          <div className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+            <span>
+              Showing {users.length} of {totalUsers} users
+              {(searchTerm || roleFilter || statusFilter !== 'active') && (
+                <span className="ml-1">
+                  • filtered
+                </span>
+              )}
+            </span>
+            {totalPages > 1 && (
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Users Table */}
       <Card className="border-0 shadow-lg">
