@@ -12,7 +12,8 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 interface UserFormProps {
   user?: UserData;
-  onSuccess: () => void;
+  onSuccess: (data: CreateUserRequest | UpdateUserRequest) => void;
+  isSubmitting?: boolean;
 }
 
 export default function UserForm({ user, onSuccess }: UserFormProps) {
@@ -104,7 +105,7 @@ export default function UserForm({ user, onSuccess }: UserFormProps) {
 
         const updatedUser = await updateUser(user.id, updateData);
         if (updatedUser) {
-          onSuccess();
+          onSuccess(updateData);
         }
       } else {
         const createData: CreateUserRequest = {
@@ -119,7 +120,7 @@ export default function UserForm({ user, onSuccess }: UserFormProps) {
 
         const newUser = await createUser(createData);
         if (newUser) {
-          onSuccess();
+          onSuccess(createData);
         }
       }
     } catch {

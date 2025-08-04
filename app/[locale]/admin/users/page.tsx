@@ -1,357 +1,408 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { useUsers } from '@/hooks/use-users';
-import { UserData, UserListOptions } from '@/lib/types/user';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { useState, useEffect } from "react";
+import { Button, Card, CardBody, Chip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/react";
+import { Plus, Edit, Trash2, Users, UserCheck, UserX, Search } from "lucide-react";
+import UserForm from "@/components/admin/users/user-form";
+import { UserData, CreateUserRequest, UpdateUserRequest, UserWithCount } from "@/lib/types/user";
+import { toast } from "sonner";
 
-import { 
-  Modal, 
-  ModalContent, 
-  ModalHeader 
-} from '@/components/ui/modal';
-import { 
-  Search, 
-  Edit, 
-  Trash2, 
-  UserPlus,
-  Users,
-  UserCheck,
-  UserX
-} from 'lucide-react';
-import { toast } from 'sonner';
-import UserForm from '@/components/admin/users/user-form';
-import DeleteUserDialog from '@/components/admin/users/delete-user-dialog';
+interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  users?: T;
+  user?: UserData;
+  error?: string;
+  message?: string;
+  total?: number;
+  page?: number;
+  limit?: number;
+  totalPages?: number;
+}
 
-export default function UsersPage() {
-  const { 
-    loading, 
-    error, 
-    getUsers, 
-    deleteUser, 
-    getUserStats,
-    clearError 
-  } = useUsers();
+export default function AdminUsersPage() {
+  const [users, setUsers] = useState<UserWithCount[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [users, setUsers] = useState<UserData[]>([]);
-  const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0 });
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-    totalPages: 0,
-  });
-  const [filters, setFilters] = useState<UserListOptions>({
-    search: '',
-    role: '',
-    status: 'active',
-    sortBy: 'name',
-    sortOrder: 'asc',
-  });
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const isLoadingRef = useRef(false);
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [limit] = useState(10);
+  
+  // Stats state
+  const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0 });
+  
+  // Filters state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [roleFilter, setRoleFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('active');
+  
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // Load initial data
-  useEffect(() => {
-    const initializeData = async () => {
-      // Load users
-      const requestOptions: UserListOptions = {
-        ...filters,
-        page: pagination.page,
-        limit: pagination.limit,
-      };
-      const result = await getUsers(requestOptions);
-      setUsers(result.users);
-      setPagination(prev => ({
-        ...prev,
-        page: result.page,
-        limit: result.limit,
-        total: result.total,
-        totalPages: result.totalPages,
-      }));
-
-      // Load stats
-      const statsData = await getUserStats();
-      if (statsData) {
-        setStats(statsData);
-      }
-    };
-    initializeData();
-  }, []);
-
-  // Load users when filters change - using a simpler approach
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      if (isLoadingRef.current) return;
+  // Fetch users
+  const fetchUsers = async (page: number = currentPage) => {
+    try {
+      setIsLoading(true);
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        ...(searchTerm && { search: searchTerm }),
+        ...(roleFilter && { role: roleFilter }),
+        ...(statusFilter && { status: statusFilter }),
+      });
       
-      isLoadingRef.current = true;
-      try {
-        const requestOptions: UserListOptions = {
-          ...filters,
-          page: pagination.page,
-          limit: pagination.limit,
-        };
-
-        const result = await getUsers(requestOptions);
-        setUsers(result.users);
-        setPagination(prev => ({
-          ...prev,
-          page: result.page,
-          limit: result.limit,
-          total: result.total,
-          totalPages: result.totalPages,
-        }));
-      } finally {
-        isLoadingRef.current = false;
+      const response = await fetch(`/api/admin/users?${params}`);
+      const data: ApiResponse<UserWithCount[]> = await response.json();
+      
+      if (data.users) {
+        setUsers(data.users);
+        setTotalUsers(data.total || 0);
+        setTotalPages(data.totalPages || 1);
+        setCurrentPage(data.page || 1);
+      } else {
+        toast.error(data.error || 'Failed to fetch users');
       }
-    }, 300); // Debounce the search
-    
-    return () => clearTimeout(timer);
-  }, [filters.search, filters.role, filters.status, filters.sortBy, filters.sortOrder, pagination.page, pagination.limit, getUsers]);
-
-  // Handle errors
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-      clearError();
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+      toast.error('Failed to fetch users');
+    } finally {
+      setIsLoading(false);
     }
-  }, [error, clearError]);
+  };
 
+  // Fetch stats
+  const fetchStats = async () => {
+    try {
+      const response = await fetch('/api/admin/users/stats');
+      const data = await response.json();
+      if (data.total !== undefined) {
+        setStats(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch stats:', error);
+    }
+  };
 
+  // Create user
+  const handleCreate = async (data: CreateUserRequest) => {
+    try {
+      setIsSubmitting(true);
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      
+      const result: ApiResponse<UserData> = await response.json();
+      
+      if (result.success) {
+        toast.success(result.message || 'User created successfully');
+        onClose();
+        fetchUsers();
+        fetchStats();
+      } else {
+        toast.error(result.error || 'Failed to create user');
+      }
+    } catch (error) {
+      console.error('Failed to create user:', error);
+      toast.error('Failed to create user');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Update user
+  const handleUpdate = async (data: UpdateUserRequest & { id: string }) => {
+    try {
+      setIsSubmitting(true);
+      const response = await fetch(`/api/admin/users/${data.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      
+      const result: ApiResponse<UserData> = await response.json();
+      
+      if (result.success) {
+        toast.success(result.message || 'User updated successfully');
+        onClose();
+        fetchUsers();
+        fetchStats();
+      } else {
+        toast.error(result.error || 'Failed to update user');
+      }
+    } catch (error) {
+      console.error('Failed to update user:', error);
+      toast.error('Failed to update user');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Delete user
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await fetch(`/api/admin/users/${id}`, {
+        method: 'DELETE',
+      });
+      
+      const result: ApiResponse = await response.json();
+      
+      if (result.success) {
+        toast.success(result.message || 'User deleted successfully');
+        fetchUsers();
+        fetchStats();
+      } else {
+        toast.error(result.error || 'Failed to delete user');
+      }
+    } catch (error) {
+      console.error('Failed to delete user:', error);
+      toast.error('Failed to delete user');
+    }
+  };
+
+  const openCreateForm = () => {
+    setFormMode('create');
+    setSelectedUser(null);
+    onOpen();
+  };
+
+  const openEditForm = (user: UserData) => {
+    setFormMode('edit');
+    setSelectedUser(user);
+    onOpen();
+  };
+
+  const handleFormSubmit = async (data: CreateUserRequest | UpdateUserRequest) => {
+    if (formMode === 'create') {
+      await handleCreate(data as CreateUserRequest);
+    } else {
+      if (selectedUser) {
+        await handleUpdate({ ...data, id: selectedUser.id } as UpdateUserRequest & { id: string });
+      }
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    fetchUsers(page);
+  };
 
   const handleSearch = (value: string) => {
-    setFilters(prev => ({ ...prev, search: value }));
-    setPagination(prev => ({ ...prev, page: 1 }));
+    setSearchTerm(value);
+    setCurrentPage(1);
+    fetchUsers(1);
   };
 
   const handleRoleFilter = (value: string) => {
-    setFilters(prev => ({ ...prev, role: value }));
-    setPagination(prev => ({ ...prev, page: 1 }));
+    setRoleFilter(value);
+    setCurrentPage(1);
+    fetchUsers(1);
   };
 
   const handleStatusFilter = (value: string) => {
-    setFilters(prev => ({ ...prev, status: value as 'active' | 'inactive' }));
-    setPagination(prev => ({ ...prev, page: 1 }));
+    setStatusFilter(value);
+    setCurrentPage(1);
+    fetchUsers(1);
   };
 
-  const handleSort = (field: string) => {
-    setFilters(prev => ({
-      ...prev,
-      sortBy: field as any,
-      sortOrder: prev.sortBy === field && prev.sortOrder === 'asc' ? 'desc' : 'asc',
-    }));
-  };
+  useEffect(() => {
+    fetchUsers();
+    fetchStats();
+  }, []);
 
-  const handleEdit = (user: UserData) => {
-    setSelectedUser(user);
-    setIsEditDialogOpen(true);
-  };
-
-  const handleDelete = (user: UserData) => {
-    setSelectedUser(user);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleUserCreated = () => {
-    setIsCreateDialogOpen(false);
-    // Reload data
-    const requestOptions: UserListOptions = {
-      ...filters,
-      page: pagination.page,
-      limit: pagination.limit,
-    };
-    getUsers(requestOptions).then(result => {
-      setUsers(result.users);
-      setPagination(prev => ({
-        ...prev,
-        page: result.page,
-        limit: result.limit,
-        total: result.total,
-        totalPages: result.totalPages,
-      }));
-    });
-    getUserStats().then(statsData => {
-      if (statsData) {
-        setStats(statsData);
-      }
-    });
-    toast.success('User created successfully');
-  };
-
-  const handleUserUpdated = () => {
-    setIsEditDialogOpen(false);
-    setSelectedUser(null);
-    // Reload data
-    const requestOptions: UserListOptions = {
-      ...filters,
-      page: pagination.page,
-      limit: pagination.limit,
-    };
-    getUsers(requestOptions).then(result => {
-      setUsers(result.users);
-      setPagination(prev => ({
-        ...prev,
-        page: result.page,
-        limit: result.limit,
-        total: result.total,
-        totalPages: result.totalPages,
-      }));
-    });
-    getUserStats().then(statsData => {
-      if (statsData) {
-        setStats(statsData);
-      }
-    });
-    toast.success('User updated successfully');
-  };
-
-  const handleUserDeleted = async () => {
-    if (!selectedUser) return;
-
-    const success = await deleteUser(selectedUser.id);
-    if (success) {
-      setIsDeleteDialogOpen(false);
-      setSelectedUser(null);
-      // Reload data
-      const requestOptions: UserListOptions = {
-        ...filters,
-        page: pagination.page,
-        limit: pagination.limit,
-      };
-      getUsers(requestOptions).then(result => {
-        setUsers(result.users);
-        setPagination(prev => ({
-          ...prev,
-          page: result.page,
-          limit: result.limit,
-          total: result.total,
-          totalPages: result.totalPages,
-        }));
-      });
-      getUserStats().then(statsData => {
-        if (statsData) {
-          setStats(statsData);
-        }
-      });
-      toast.success('User deleted successfully');
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    return status === 'active' ? (
-      <Badge variant="default" className="bg-green-100 text-green-800">
-        <UserCheck className="w-3 h-3 mr-1" />
-        Active
-      </Badge>
-    ) : (
-      <Badge variant="secondary" className="bg-gray-100 text-gray-800">
-        <UserX className="w-3 h-3 mr-1" />
-        Inactive
-      </Badge>
-    );
-  };
-
-  const getRoleBadge = (role: string) => {
-    const roleColors: Record<string, string> = {
-      'super-admin': 'bg-red-100 text-red-800',
-      'admin': 'bg-blue-100 text-blue-800',
-      'moderator': 'bg-purple-100 text-purple-800',
-      'user': 'bg-gray-100 text-gray-800',
-    };
-
+  if (isLoading) {
     return (
-      <Badge variant="outline" className={roleColors[role] || 'bg-gray-100 text-gray-800'}>
-        {role.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-      </Badge>
+      <div className="p-6 max-w-7xl mx-auto">
+        {/* Loading Header */}
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse"></div>
+                <div>
+                  <div className="h-8 w-48 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse mb-2"></div>
+                  <div className="h-4 w-64 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                </div>
+              </div>
+              <div className="h-12 w-32 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Loading Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {Array.from({ length: 3 }, (_, i) => (
+            <Card key={i} className="border-0 shadow-lg">
+              <CardBody className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-2"></div>
+                    <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                  </div>
+                  <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse"></div>
+                </div>
+              </CardBody>
+            </Card>
+          ))}
+        </div>
+
+        {/* Loading Table */}
+        <Card className="border-0 shadow-lg">
+          <CardBody className="p-0">
+            <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+              <div className="flex items-center justify-between">
+                <div className="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+              </div>
+            </div>
+            <div className="divide-y divide-gray-100 dark:divide-gray-800">
+              {Array.from({ length: 5 }, (_, i) => (
+                <div key={i} className="px-6 py-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4 flex-1">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                        <div className="w-8 h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+                        <div className="w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                        <div className="flex-1">
+                          <div className="h-5 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-1"></div>
+                          <div className="h-3 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <div className="w-16 h-6 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+                      <div className="flex space-x-1">
+                        <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                        <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardBody>
+        </Card>
+
+        {/* Loading indicator with text */}
+        <div className="mt-8 text-center">
+          <div className="inline-flex items-center space-x-2 text-gray-500 dark:text-gray-400">
+            <div className="w-4 h-4 border-2 border-theme-primary border-t-transparent rounded-full animate-spin"></div>
+            <span className="text-sm font-medium">Loading users...</span>
+          </div>
+        </div>
+      </div>
     );
-  };
+  }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">User Management</h1>
-          <p className="text-muted-foreground">Manage users and their permissions</p>
+    <div className="p-6 max-w-7xl mx-auto">
+      {/* Enhanced Header */}
+      <div className="mb-8">
+        <div className="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-theme-primary to-theme-accent rounded-xl flex items-center justify-center shadow-lg">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                  User Management
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center space-x-2">
+                  <span>Manage platform users and their permissions</span>
+                  <span className="hidden sm:inline">•</span>
+                  <span className="text-sm px-2 py-1 bg-theme-primary/10 text-theme-primary rounded-full font-medium">
+                    {totalUsers} total
+                  </span>
+                </p>
+              </div>
+            </div>
+            <Button
+              color="primary"
+              size="lg"
+              onPress={openCreateForm}
+              startContent={<Plus size={18} />}
+              className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
+            >
+              Add User
+            </Button>
+          </div>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <UserPlus className="w-4 h-4 mr-2" />
-          Add User
-        </Button>
-        
-        <Modal isOpen={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)} size="2xl">
-          <ModalContent>
-            <ModalHeader>
-              <h2 className="text-lg font-semibold">Create New User</h2>
-            </ModalHeader>
-            <UserForm onSuccess={handleUserCreated} />
-          </ModalContent>
-        </Modal>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <Users className="w-5 h-5 text-blue-600" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Users</p>
-                <p className="text-2xl font-bold">{stats.total}</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card className="border-0 shadow-lg">
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Users</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Users className="w-6 h-6 text-white" />
               </div>
             </div>
-          </CardContent>
+          </CardBody>
         </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <UserCheck className="w-5 h-5 text-green-600" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Active Users</p>
-                <p className="text-2xl font-bold">{stats.active}</p>
+
+        <Card className="border-0 shadow-lg">
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Users</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.active}</p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                <UserCheck className="w-6 h-6 text-white" />
               </div>
             </div>
-          </CardContent>
+          </CardBody>
         </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <UserX className="w-5 h-5 text-gray-600" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Inactive Users</p>
-                <p className="text-2xl font-bold">{stats.inactive}</p>
+
+        <Card className="border-0 shadow-lg">
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Inactive Users</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.inactive}</p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center shadow-lg">
+                <UserX className="w-6 h-6 text-white" />
               </div>
             </div>
-          </CardContent>
+          </CardBody>
         </Card>
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filters</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <Card className="border-0 shadow-lg mb-6">
+        <CardBody className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
                 placeholder="Search users..."
-                value={filters.search}
+                value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
-                className="pl-10"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent"
               />
             </div>
             <select 
-              value={filters.role} 
+              value={roleFilter} 
               onChange={(e) => handleRoleFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent"
             >
               <option value="">All Roles</option>
               <option value="super-admin">Super Admin</option>
@@ -360,153 +411,160 @@ export default function UsersPage() {
               <option value="user">User</option>
             </select>
             <select 
-              value={filters.status} 
+              value={statusFilter} 
               onChange={(e) => handleStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent"
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
             <Button
-              variant="outline"
-              onClick={() => setFilters({ search: '', role: '', status: 'active', sortBy: 'name', sortOrder: 'asc' })}
+              variant="bordered"
+              onPress={() => {
+                setSearchTerm('');
+                setRoleFilter('');
+                setStatusFilter('active');
+                setCurrentPage(1);
+                fetchUsers(1);
+              }}
+              className="w-full"
             >
               Clear Filters
             </Button>
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Users Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Users ({pagination.total})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <Card className="border-0 shadow-lg">
+        <CardBody className="p-0">
+          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Users</h3>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {totalUsers} users total
+              </span>
             </div>
-          ) : users.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No users found
+          </div>
+          
+          {users.length === 0 ? (
+            <div className="px-6 py-12 text-center">
+              <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No users found</h3>
+              <p className="text-gray-500 dark:text-gray-400">Try adjusting your filters or create a new user.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <div className="min-w-full">
-                {/* Table Header */}
-                <div className="grid grid-cols-5 gap-4 p-4 bg-gray-50 border-b font-medium text-sm">
-                  <div>User</div>
-                  <div>Role</div>
-                  <div>Status</div>
-                  <div 
-                    className="cursor-pointer hover:text-blue-600"
-                    onClick={() => handleSort('created_at')}
-                  >
-                    Created
-                  </div>
-                  <div className="w-[50px]"></div>
-                </div>
-                
-                {/* Table Body */}
-                <div className="divide-y">
-                  {users.map((user) => (
-                    <div key={user.id} className="grid grid-cols-5 gap-4 p-4 hover:bg-gray-50">
-                      <div>
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold">
-                            {user.name?.split(' ').map(n => n[0]).join('') || 'U'}
-                          </div>
-                          <div>
-                            <p className="font-medium">{user.name}</p>
-                            <p className="text-sm text-gray-600">
-                              @{user.username} • {user.email}
-                            </p>
-                            {user.title && (
-                              <p className="text-xs text-gray-500">{user.title}</p>
-                            )}
-                          </div>
+            <div className="divide-y divide-gray-100 dark:divide-gray-800">
+              {users.map((user) => (
+                <div key={user.id} className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4 flex-1">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">#{user.id}</span>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                          {user.name?.charAt(0) || 'U'}
                         </div>
-                      </div>
-                      <div>{getRoleBadge(user.role)}</div>
-                      <div>{getStatusBadge(user.status)}</div>
-                      <div>
-                        <span className="text-sm text-gray-600">
-                          {new Date(user.created_at).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <div>
-                        <div className="flex space-x-1">
-                          <Button variant="ghost" size="sm" onClick={() => handleEdit(user)}>
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => handleDelete(user)} className="text-red-600">
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-900 dark:text-white">{user.name}</h4>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            @{user.username} • {user.email}
+                          </p>
+                          {user.title && (
+                            <p className="text-xs text-gray-400 dark:text-gray-500">{user.title}</p>
+                          )}
                         </div>
                       </div>
                     </div>
-                  ))}
+                    <div className="flex items-center space-x-4">
+                      <Chip
+                        color={user.status === 'active' ? 'success' : 'default'}
+                        variant="flat"
+                        size="sm"
+                      >
+                        {user.status === 'active' ? 'Active' : 'Inactive'}
+                      </Chip>
+                      <Chip
+                        color="primary"
+                        variant="flat"
+                        size="sm"
+                      >
+                        {user.role.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      </Chip>
+                      <div className="flex space-x-1">
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          onPress={() => openEditForm(user)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          color="danger"
+                          onPress={() => handleDelete(user.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           )}
-
-          {/* Pagination */}
-          {pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <p className="text-sm text-muted-foreground">
-                Showing {((pagination.page - 1) * pagination.limit) + 1} to{' '}
-                {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
-                {pagination.total} users
-              </p>
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={pagination.page === 1}
-                  onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
-                >
-                  Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={pagination.page === pagination.totalPages}
-                  onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
-                >
-                  Next
-                </Button>
-              </div>
-            </div>
-          )}
-        </CardContent>
+        </CardBody>
       </Card>
 
-      {/* Edit Dialog */}
-      {selectedUser && (
-        <Modal isOpen={isEditDialogOpen} onClose={() => setIsEditDialogOpen(false)} size="2xl">
-          <ModalContent>
-            <ModalHeader>
-              <h2 className="text-lg font-semibold">Edit User</h2>
-            </ModalHeader>
-            <UserForm 
-              user={selectedUser} 
-              onSuccess={handleUserUpdated}
-            />
-          </ModalContent>
-        </Modal>
-      )}
+             {/* Pagination */}
+       {totalPages > 1 && (
+         <div className="mt-6 flex justify-center">
+           <div className="flex space-x-2">
+             <Button
+               variant="bordered"
+               size="sm"
+               disabled={currentPage === 1}
+               onPress={() => handlePageChange(currentPage - 1)}
+             >
+               Previous
+             </Button>
+             <span className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400">
+               Page {currentPage} of {totalPages}
+             </span>
+             <Button
+               variant="bordered"
+               size="sm"
+               disabled={currentPage === totalPages}
+               onPress={() => handlePageChange(currentPage + 1)}
+             >
+               Next
+             </Button>
+           </div>
+         </div>
+       )}
 
-      {/* Delete Dialog */}
-      {selectedUser && (
-        <DeleteUserDialog
-          user={selectedUser}
-          open={isDeleteDialogOpen}
-          onOpenChange={setIsDeleteDialogOpen}
-          onConfirm={handleUserDeleted}
-        />
-      )}
+       {/* Modal */}
+       <Modal isOpen={isOpen} onClose={onClose} size="2xl">
+         <ModalContent>
+           <ModalHeader>
+             <h2 className="text-lg font-semibold">
+               {formMode === 'create' ? 'Create New User' : 'Edit User'}
+             </h2>
+           </ModalHeader>
+           <ModalBody>
+             <UserForm
+               user={selectedUser || undefined}
+               onSuccess={handleFormSubmit}
+               isSubmitting={isSubmitting}
+             />
+           </ModalBody>
+         </ModalContent>
+       </Modal>
     </div>
   );
 } 
