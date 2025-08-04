@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PageContainer } from "@/components/ui/container";
 import {
   HowItWorks,
@@ -34,6 +34,9 @@ export default function HelpPage() {
   const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
   const [showProgress, setShowProgress] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isScrolling, setIsScrolling] = useState(false);
+
+  const contentSectionRef = useRef<HTMLDivElement>(null);
 
   const navigationSteps: NavigationStep[] = [
     {
@@ -138,18 +141,38 @@ export default function HelpPage() {
   const nextStep = () => {
     if (currentStep < navigationSteps.length - 1) {
       markStepCompleted(navigationSteps[currentStep].id);
-      setCurrentStep(currentStep + 1);
+      goToStep(currentStep + 1);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+      goToStep(currentStep - 1);
     }
   };
 
   const goToStep = (index: number) => {
     setCurrentStep(index);
+    setIsScrolling(true);
+
+    // Scroll automatique vers la section de contenu
+    setTimeout(() => {
+      if (contentSectionRef.current) {
+        const yOffset = -80; // Offset pour tenir compte de la barre de progression
+        const element = contentSectionRef.current;
+        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+        window.scrollTo({
+          top: y,
+          behavior: 'smooth'
+        });
+
+        // Réinitialiser l'état de scroll après l'animation
+        setTimeout(() => {
+          setIsScrolling(false);
+        }, 1000); // Durée approximative de l'animation de scroll
+      }
+    }, 100); // Petit délai pour permettre au state de se mettre à jour
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -239,7 +262,7 @@ export default function HelpPage() {
                   <div
                     key={step.id}
                     onClick={() => goToStep(index)}
-                    className={`relative p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:transform hover:scale-105 ${
+                    className={`relative p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:transform hover:scale-105 hover:shadow-lg group ${
                       currentStep === index
                         ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg shadow-blue-500/25"
                         : completedSteps.has(step.id)
@@ -289,9 +312,13 @@ export default function HelpPage() {
                             ⏱️ {step.estimatedTime}
                           </span>
                         </div>
-                        {currentStep === index && (
+                        {currentStep === index ? (
                           <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
                             {t("CURRENT")}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            📍 Cliquer pour voir
                           </span>
                         )}
                       </div>
@@ -304,7 +331,7 @@ export default function HelpPage() {
         </div>
 
         {/* Current Step Content */}
-        <div className="mb-16">
+        <div ref={contentSectionRef} className="mb-16">
           <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
             {/* Step Header */}
             <div className="bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
@@ -345,7 +372,15 @@ export default function HelpPage() {
             </div>
 
             {/* Step Content */}
-            <div className="p-6">
+            <div className="p-6 relative">
+              {isScrolling && (
+                <div className="absolute inset-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm flex items-center justify-center z-10 rounded-lg">
+                  <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
+                    <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-sm font-medium">Chargement du contenu...</span>
+                  </div>
+                </div>
+              )}
               {navigationSteps[currentStep].component}
             </div>
           </div>
@@ -361,7 +396,7 @@ export default function HelpPage() {
               <button
                 key={step.id}
                 onClick={() => goToStep(index)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:transform hover:scale-105 ${
                   currentStep === index
                     ? "bg-theme-primary-600 text-white shadow-lg shadow-blue-500/25"
                     : completedSteps.has(step.id)
