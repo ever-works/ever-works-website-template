@@ -5,8 +5,6 @@ import { useUsers } from '@/hooks/use-users';
 import { UserData, CreateUserRequest, UpdateUserRequest } from '@/lib/types/user';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
-import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
@@ -14,10 +12,11 @@ interface UserFormProps {
   user?: UserData;
   onSuccess: (data: CreateUserRequest | UpdateUserRequest) => void;
   isSubmitting?: boolean;
+  onCancel?: () => void;
 }
 
-export default function UserForm({ user, onSuccess }: UserFormProps) {
-  const { createUser, updateUser, checkUsername, checkEmail, loading } = useUsers();
+export default function UserForm({ user, onSuccess, isSubmitting = false, onCancel }: UserFormProps) {
+  const { createUser, updateUser, checkUsername, checkEmail } = useUsers();
   const [showPassword, setShowPassword] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
   const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
@@ -141,25 +140,32 @@ export default function UserForm({ user, onSuccess }: UserFormProps) {
   };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
-      {/* Avatar Section */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-lg font-semibold">
-              {formData.name?.split(' ').map(n => n[0]).join('') || 'U'}
-            </div>
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-2">Avatar URL</label>
-              <Input
-                placeholder="https://example.com/avatar.jpg"
-                value={formData.avatar}
-                onChange={(e) => handleInputChange('avatar', e.target.value)}
-              />
-            </div>
+    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700">
+      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+          {isEditing ? 'Edit User' : 'Create New User'}
+        </h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          {isEditing ? 'Update user information' : 'Add a new user to the platform'}
+        </p>
+      </div>
+
+      <form onSubmit={onSubmit} className="p-6 space-y-6">
+        {/* Avatar Section */}
+        <div className="flex items-center space-x-4">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-theme-primary to-theme-accent flex items-center justify-center text-white text-lg font-semibold">
+            {formData.name?.split(' ').map(n => n[0]).join('') || 'U'}
           </div>
-        </CardContent>
-      </Card>
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Avatar URL</label>
+            <Input
+              placeholder="https://example.com/avatar.jpg"
+              value={formData.avatar}
+              onChange={(e) => handleInputChange('avatar', e.target.value)}
+              className="w-full"
+            />
+          </div>
+        </div>
 
       {/* Basic Information */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -291,13 +297,29 @@ export default function UserForm({ user, onSuccess }: UserFormProps) {
         )}
       </div>
 
-      {/* Submit Button */}
-      <div className="flex justify-end space-x-2">
-        <Button type="submit" disabled={loading}>
-          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+      {/* Action Buttons */}
+      <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 -mx-6 -mb-6 px-6 pb-6">
+        {onCancel && (
+          <Button
+            variant="outline"
+            onPress={onCancel}
+            disabled={isSubmitting}
+            className="px-4 py-2"
+          >
+            Cancel
+          </Button>
+        )}
+        <Button
+          type="submit"
+          color="primary"
+          disabled={isSubmitting}
+          className="px-4 py-2"
+        >
+          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isEditing ? 'Update User' : 'Create User'}
         </Button>
       </div>
     </form>
-  );
-} 
+  </div>
+);
+}

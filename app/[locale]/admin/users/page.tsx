@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button, Card, CardBody, Chip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/react";
+import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
 import { Plus, Edit, Trash2, Users, UserCheck, UserX, Search, ChevronDown } from "lucide-react";
 import UserForm from "@/components/admin/users/user-form";
 import { UserData, CreateUserRequest, UpdateUserRequest, UserWithCount } from "@/lib/types/user";
@@ -611,23 +611,45 @@ export default function AdminUsersPage() {
          </div>
        )}
 
-       {/* Modal */}
-       <Modal isOpen={isOpen} onClose={onClose} size="2xl">
-         <ModalContent>
-           <ModalHeader>
-             <h2 className="text-lg font-semibold">
-               {formMode === 'create' ? 'Create New User' : 'Edit User'}
-             </h2>
-           </ModalHeader>
-           <ModalBody>
-             <UserForm
-               user={selectedUser || undefined}
-               onSuccess={handleFormSubmit}
-               isSubmitting={isSubmitting}
-             />
-           </ModalBody>
-         </ModalContent>
-       </Modal>
+             {/* Form Modal - Using Reliable CSS Modal */}
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-60" 
+            onClick={() => {
+              if (!isSubmitting) {
+                console.log('🔷 Closing modal via backdrop click');
+                onClose();
+              }
+            }}
+          />
+          <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {formMode === 'create' ? 'Create New User' : 'Edit User'}
+              </h2>
+              {!isSubmitting && (
+                <button
+                  onClick={onClose}
+                  className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                >
+                  <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
+            <div className="overflow-y-auto max-h-[calc(90vh-4rem)]">
+              <UserForm
+                user={selectedUser || undefined}
+                onSuccess={handleFormSubmit}
+                isSubmitting={isSubmitting}
+                onCancel={onClose}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
