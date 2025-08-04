@@ -4,13 +4,13 @@ import { StripeProvider } from '@/lib/payment/lib/providers/stripe-provider';
 import { createProviderConfigs } from '@/lib/payment/config/provider-configs';
 import { WebhookEventType } from '@/lib/payment/types/payment-types';
 import {
-  paymentEmailService,
-  extractCustomerInfo,
-  formatAmount,
-  formatPaymentMethod,
-  formatBillingDate,
-  getPlanName,
-  getBillingPeriod
+    paymentEmailService,
+    extractCustomerInfo,
+    formatAmount,
+    formatPaymentMethod,
+    formatBillingDate,
+    getPlanName,
+    getBillingPeriod
 } from '@/lib/payment/services/payment-email.service';
 
 // Import server configuration utility
@@ -286,7 +286,7 @@ async function handleSubscriptionCancelled(data: any) {
       reactivateUrl: `${process.env.NEXT_PUBLIC_APP_URL}/subscription/reactivate?subscription=${data.id}`,
       companyName: "Ever Works",
       companyUrl: process.env.NEXT_PUBLIC_APP_URL || "https://ever.works",
-      supportEmail: process.env.SUPPORT_EMAIL || "support@ever.works"
+      supportEmail: process.env.SUPPORT_EMAIL || "ever@ever.works"
     };
     
     // Send cancellation email

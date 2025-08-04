@@ -9,9 +9,9 @@ import { sendEmailSafely } from '@/lib/newsletter/utils';
 import { getPaymentSuccessTemplate } from '@/lib/mail/templates/payment-success';
 import { getPaymentFailedTemplate } from '@/lib/mail/templates/payment-failed';
 import {
-  getNewSubscriptionTemplate,
-  getUpdatedSubscriptionTemplate,
-  getCancelledSubscriptionTemplate
+    getNewSubscriptionTemplate,
+    getUpdatedSubscriptionTemplate,
+    getCancelledSubscriptionTemplate
 } from '@/lib/mail/templates/subscription-events';
 
 // ============================================================================
@@ -272,7 +272,7 @@ export class PaymentEmailService {
         ...data,
         companyName: data.companyName || "Ever Works",
         companyUrl: data.companyUrl || "https://ever.works",
-        supportEmail: data.supportEmail || "support@ever.works"
+        supportEmail: data.supportEmail || "ever@ever.works"
       });
       
       const result = await sendEmailSafely(
@@ -309,7 +309,7 @@ export class PaymentEmailService {
         ...data,
         companyName: data.companyName || "Ever Works",
         companyUrl: data.companyUrl || "https://ever.works",
-        supportEmail: data.supportEmail || "support@ever.works"
+        supportEmail: data.supportEmail || "ever@ever.works"
       });
       
       const result = await sendEmailSafely(

@@ -8,3 +8,4 @@ export {
   getCancelledSubscriptionTemplate,
   getNewSubscriptionTemplate,
 } from "./subscription-events";
+export { getPasswordChangeConfirmationTemplate } from "./password-change-confirmation";

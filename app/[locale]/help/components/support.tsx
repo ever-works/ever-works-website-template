@@ -87,7 +87,7 @@ export function Support() {
         "Bug reports",
         "Feature requests"
       ],
-      link: "mailto:support@ever.works",
+      link: "mailto:ever@ever.works",
       status: "online"
     },
     {

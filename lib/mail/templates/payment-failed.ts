@@ -53,7 +53,7 @@ export const getPaymentFailedTemplate = (data: PaymentFailedData) => {
     updatePaymentUrl,
     companyName = "Ever Works",
     companyUrl = "https://ever.works",
-    supportEmail = "support@ever.works"
+    supportEmail = "ever@ever.works"
   } = data;
 
   // Security: Escape all user-provided data

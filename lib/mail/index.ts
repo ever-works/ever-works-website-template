@@ -1,5 +1,6 @@
 import { getCachedConfig } from "../content";
 import { EmailProviderFactory } from "./factory";
+import { getPasswordChangeConfirmationTemplate } from "./templates";
 
 export interface EmailMessage {
   from: string;
@@ -85,6 +86,57 @@ export class EmailService {
     });
   }
 
+  async sendPasswordChangeConfirmationEmail(email: string, userName?: string, ipAddress?: string, userAgent?: string): Promise<any> {
+    console.log("🎨 Generating email template...");
+
+    const templateData = {
+      customerName: userName,
+      customerEmail: email,
+      changeDate: new Date().toLocaleString(),
+      ipAddress,
+      userAgent,
+      companyUrl: this.domain,
+    };
+
+    console.log("📝 Template data:", templateData);
+
+    const template = getPasswordChangeConfirmationTemplate(templateData);
+
+    console.log("📧 Template generated:", {
+      subject: template.subject,
+      hasHtml: !!template.html,
+      hasText: !!template.text,
+      htmlLength: template.html?.length,
+      textLength: template.text?.length
+    });
+
+    const emailMessage = {
+      from: this.defaultFrom,
+      to: email,
+      subject: template.subject,
+      html: template.html,
+      text: template.text,
+    };
+
+    console.log("📮 Sending email with provider:", this.provider.getName());
+    console.log("📬 Email message:", {
+      from: emailMessage.from,
+      to: emailMessage.to,
+      subject: emailMessage.subject,
+      hasHtml: !!emailMessage.html,
+      hasText: !!emailMessage.text
+    });
+
+    try {
+      const result = await this.provider.sendEmail(emailMessage);
+      console.log("✅ Provider send result:", result);
+      return result;
+    } catch (providerError) {
+      console.error("❌ Provider send error:", providerError);
+      throw providerError;
+    }
+  }
+
   async sendCustomEmail(message: EmailMessage): Promise<any> {
     return this.provider.sendEmail(message);
   }
@@ -145,4 +197,26 @@ export const sendNewsletterUnsubscriptionEmail = async (email: string) => {
 export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
   const service = await mailService();
   return service.sendTwoFactorTokenEmail(email, token);
+};
+
+export const sendPasswordChangeConfirmationEmail = async (
+  email: string,
+  userName?: string,
+  ipAddress?: string,
+  userAgent?: string
+) => {
+  console.log("🔧 Creating mail service...");
+
+  try {
+    const service = await mailService();
+    console.log("📬 Mail service created, provider:", service.getProviderName());
+
+    const result = await service.sendPasswordChangeConfirmationEmail(email, userName, ipAddress, userAgent);
+    console.log("📤 Email service result:", result);
+
+    return result;
+  } catch (error) {
+    console.error("💥 Error in sendPasswordChangeConfirmationEmail:", error);
+    throw error;
+  }
 };
