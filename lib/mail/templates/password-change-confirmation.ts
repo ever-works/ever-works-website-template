@@ -19,7 +19,7 @@ export const getPasswordChangeConfirmationTemplate = (data: PasswordChangeData) 
     userAgent,
     companyName = "Ever Works",
     companyUrl = "https://ever.works",
-    supportEmail = "ever@ever.works",
+    supportEmail = "support@ever.works",
     securityUrl = `${companyUrl}/settings/security`
   } = data;
 

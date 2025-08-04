@@ -272,7 +272,7 @@ export class PaymentEmailService {
         ...data,
         companyName: data.companyName || "Ever Works",
         companyUrl: data.companyUrl || "https://ever.works",
-        supportEmail: data.supportEmail || "ever@ever.works"
+        supportEmail: data.supportEmail || "support@ever.works"
       });
       
       const result = await sendEmailSafely(
@@ -309,7 +309,7 @@ export class PaymentEmailService {
         ...data,
         companyName: data.companyName || "Ever Works",
         companyUrl: data.companyUrl || "https://ever.works",
-        supportEmail: data.supportEmail || "ever@ever.works"
+        supportEmail: data.supportEmail || "support@ever.works"
       });
       
       const result = await sendEmailSafely(

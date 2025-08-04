@@ -53,7 +53,7 @@ export const getPaymentSuccessTemplate = (data: PaymentSuccessData) => {
     receiptUrl,
     companyName = "Ever Works",
     companyUrl = "https://ever.works",
-    supportEmail = "ever@ever.works"
+    supportEmail = "support@ever.works"
   } = data;
 
   // Security: Escape all user-provided data

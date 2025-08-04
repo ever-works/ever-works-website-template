@@ -286,7 +286,7 @@ async function handleSubscriptionCancelled(data: any) {
       reactivateUrl: `${process.env.NEXT_PUBLIC_APP_URL}/subscription/reactivate?subscription=${data.id}`,
       companyName: "Ever Works",
       companyUrl: process.env.NEXT_PUBLIC_APP_URL || "https://ever.works",
-      supportEmail: process.env.SUPPORT_EMAIL || "ever@ever.works"
+      supportEmail: process.env.SUPPORT_EMAIL || "support@ever.works"
     };
     
     // Send cancellation email

@@ -39,7 +39,7 @@ export const getNewSubscriptionTemplate = (data: SubscriptionEventData) => {
     subscriptionId,
     companyName = "Ever Works",
     companyUrl = "https://ever.works",
-    supportEmail = "ever@ever.works",
+    supportEmail = "support@ever.works",
     manageSubscriptionUrl,
     features = []
   } = data;

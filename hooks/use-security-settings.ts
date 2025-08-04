@@ -31,7 +31,6 @@ export const SECURITY_QUERY_KEYS = {
 
 // Fetch security settings using server-api-client
 const fetchSecuritySettings = async (): Promise<SecuritySettings> => {
-  const { serverClient } = await import("@/lib/api/server-api-client");
 
   const response = await serverClient.get<SecuritySettings>("/api/auth/security/settings");
 
