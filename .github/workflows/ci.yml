@@ -36,7 +36,7 @@ jobs:
           if [ -f "pnpm-lock.yaml" ]; then
             echo "manager=pnpm" >> $GITHUB_OUTPUT
             echo "lockfile=pnpm-lock.yaml" >> $GITHUB_OUTPUT
-            echo "install-cmd=pnpm install --frozen-lockfile" >> $GITHUB_OUTPUT
+            echo "install-cmd=pnpm install" >> $GITHUB_OUTPUT
             echo "run-cmd=pnpm run" >> $GITHUB_OUTPUT
           elif [ -f "yarn.lock" ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
