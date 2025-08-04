@@ -30,54 +30,36 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check for lock file existence
-        id: check-lock-file
-        run: |
-          if [ -f "package-lock.json" ] || [ -f "npm-shrinkwrap.json" ] || [ -f "yarn.lock" ]; then
-            echo "lock_file_exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "lock_file_exists=false" >> $GITHUB_OUTPUT
-          fi
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
 
-      - name: Setup Node.js with cache
-        if: steps.check-lock-file.outputs.lock_file_exists == 'true'
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          
-      - name: Setup Node.js without cache
-        if: steps.check-lock-file.outputs.lock_file_exists != 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: |
-          if [ "${{ steps.check-lock-file.outputs.lock_file_exists }}" == "true" ]; then
-            echo "Installing dependencies with npm ci (using lock file)"
-            npm ci
-          else
-            echo "No lock file found, using npm install instead"
-            npm install
-          fi
+        run: pnpm install --frozen-lockfile
 
       - name: Run lint
-        run: npm run lint
+        run: pnpm run lint
         continue-on-error: ${{ github.event_name == 'pull_request' }}
         # You can use the following if you want to ignore specific warnings
         # run: npm run lint -- --max-warnings=0
 
       - name: Type check
-        run: npm run typecheck || npm run check:types || echo "No type check script found, skipping"
+        run: pnpm run typecheck || pnpm run check:types || echo "No type check script found, skipping"
 
       - name: Create content directories
         run: |
           mkdir -p .content/data
           echo "Created content directories for build"
-          
+
       - name: Build project
-        run: npm run build 2> >(grep -v "DATA_REPOSITORY\|AUTH CONFIG WARNING" >&2)
+        run: pnpm run build 2> >(grep -v "DATA_REPOSITORY\|AUTH CONFIG WARNING" >&2)
         env:
           # Use GitHub secrets for sensitive environment variables
           # Auth related variables

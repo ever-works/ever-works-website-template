@@ -33,7 +33,12 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-        cache: 'npm'
+        cache: 'pnpm'
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 8
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
@@ -46,12 +51,7 @@ jobs:
       run: node scripts/codeql-setup.js
 
     - name: Install dependencies
-      run: |
-        if [ -f "package-lock.json" ]; then
-          npm ci
-        else
-          npm install
-        fi
+      run: pnpm install --frozen-lockfile
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3

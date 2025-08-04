@@ -26,7 +26,7 @@ jobs:
         with:
           version: 9
       - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+        run: pnpm add --global vercel@latest
       - name: Link Vercel project
         run: vercel link --yes --project ${{ github.event.repository.name }} --token=${{ secrets.VERCEL_TOKEN }}
       - name: Set data repository env variable
