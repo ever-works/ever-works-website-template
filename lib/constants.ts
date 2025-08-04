@@ -91,9 +91,9 @@ export enum PaymentInterval {
 // PAYMENT PLANS
 // ============================================
 export enum PaymentPlan {
-	FREE = 'free',
-	STANDARD = 'standard',
-	PREMIUM = 'premium'
+  FREE = 'free',
+  STANDARD = 'standard',
+  PREMIUM = 'premium'
 }
 
 export enum PaymentMethod {

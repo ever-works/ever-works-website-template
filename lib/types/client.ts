@@ -3,22 +3,33 @@
 export interface ClientData {
   id: string;
   userId: string;
-  companyName?: string;
-  clientType: 'individual' | 'business' | 'enterprise';
+  displayName?: string;
+  username?: string;
+  bio?: string;
+  jobTitle?: string;
+  company?: string;
+  industry?: string;
   phone?: string;
   website?: string;
-  country?: string;
-  city?: string;
-  jobTitle?: string;
-  status: 'active' | 'inactive' | 'suspended' | 'trial';
+  location?: string;
+  accountType: 'individual' | 'team' | 'enterprise';
+  status: 'active' | 'inactive' | 'suspended' | 'trial' | 'cancelled';
   plan: 'free' | 'standard' | 'premium';
   trialStartDate?: Date;
   trialEndDate?: Date;
+  subscriptionStartDate?: Date;
+  subscriptionEndDate?: Date;
   totalSubmissions: number;
+  lastLoginAt?: Date;
   lastActivityAt?: Date;
-  preferredContactMethod: 'email' | 'phone' | 'chat';
-  marketingConsent: boolean;
+  timezone: string;
+  language: string;
+  emailNotifications: boolean;
+  marketingEmails: boolean;
+  twoFactorEnabled: boolean;
+  emailVerified: boolean;
   notes?: string;
+  tags?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,32 +46,46 @@ export interface ClientWithUser extends ClientData {
 
 export interface CreateClientRequest {
   userId: string;
-  companyName?: string;
-  clientType: 'individual' | 'business' | 'enterprise';
+  displayName?: string;
+  username?: string;
+  bio?: string;
+  jobTitle?: string;
+  company?: string;
+  industry?: string;
   phone?: string;
   website?: string;
-  country?: string;
-  city?: string;
-  jobTitle?: string;
-  preferredContactMethod?: 'email' | 'phone' | 'chat';
-  marketingConsent?: boolean;
+  location?: string;
+  accountType?: 'individual' | 'team' | 'enterprise';
+  timezone?: string;
+  language?: string;
+  emailNotifications?: boolean;
+  marketingEmails?: boolean;
   notes?: string;
+  tags?: string;
 }
 
 export interface UpdateClientRequest {
   id: string;
-  companyName?: string;
-  clientType?: 'individual' | 'business' | 'enterprise';
+  displayName?: string;
+  username?: string;
+  bio?: string;
+  jobTitle?: string;
+  company?: string;
+  industry?: string;
   phone?: string;
   website?: string;
-  country?: string;
-  city?: string;
-  jobTitle?: string;
-  status?: 'active' | 'inactive' | 'suspended' | 'trial';
+  location?: string;
+  accountType?: 'individual' | 'team' | 'enterprise';
+  status?: 'active' | 'inactive' | 'suspended' | 'trial' | 'cancelled';
   plan?: 'free' | 'standard' | 'premium';
-  preferredContactMethod?: 'email' | 'phone' | 'chat';
-  marketingConsent?: boolean;
+  timezone?: string;
+  language?: string;
+  emailNotifications?: boolean;
+  marketingEmails?: boolean;
+  twoFactorEnabled?: boolean;
+  emailVerified?: boolean;
   notes?: string;
+  tags?: string;
 }
 
 export interface ClientListResponse {
@@ -81,26 +106,31 @@ export interface ClientResponse {
 }
 
 export interface ClientListOptions {
-  status?: 'active' | 'inactive' | 'suspended' | 'trial';
+  status?: 'active' | 'inactive' | 'suspended' | 'trial' | 'cancelled';
   plan?: 'free' | 'standard' | 'premium';
-  clientType?: 'individual' | 'business' | 'enterprise';
+  accountType?: 'individual' | 'team' | 'enterprise';
   page?: number;
   limit?: number;
   offset?: number;
   search?: string;
-  sortBy?: 'companyName' | 'clientType' | 'status' | 'plan' | 'createdAt';
+  sortBy?: 'displayName' | 'username' | 'accountType' | 'status' | 'plan' | 'createdAt';
   sortOrder?: 'asc' | 'desc';
   userId?: string;
 }
 
 // Client validation constants
 export const CLIENT_VALIDATION = {
-  COMPANY_NAME_MIN_LENGTH: 2,
-  COMPANY_NAME_MAX_LENGTH: 100,
+  DISPLAY_NAME_MIN_LENGTH: 2,
+  DISPLAY_NAME_MAX_LENGTH: 100,
+  USERNAME_MIN_LENGTH: 3,
+  USERNAME_MAX_LENGTH: 30,
+  BIO_MAX_LENGTH: 500,
+  JOB_TITLE_MAX_LENGTH: 100,
+  COMPANY_MAX_LENGTH: 100,
+  INDUSTRY_MAX_LENGTH: 100,
   PHONE_MAX_LENGTH: 20,
   WEBSITE_MAX_LENGTH: 255,
-  COUNTRY_MAX_LENGTH: 50,
-  CITY_MAX_LENGTH: 50,
-  JOB_TITLE_MAX_LENGTH: 100,
+  LOCATION_MAX_LENGTH: 100,
   NOTES_MAX_LENGTH: 1000,
+  TAGS_MAX_LENGTH: 500,
 } as const; 

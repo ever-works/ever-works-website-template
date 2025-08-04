@@ -20,23 +20,29 @@ interface ClientFormProps {
 
 export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode }: ClientFormProps) {
   // Extract long className strings into constants for better maintainability
-  const containerClasses = "bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700";
+  const containerClasses = "w-full";
   const headerClasses = "px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900";
   const formClasses = "p-6 space-y-6";
   const actionsClasses = "flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 -mx-6 -mb-6 px-6 pb-6";
 
   const [formData, setFormData] = useState({
     userId: client?.userId || '',
-    companyName: client?.companyName || '',
-    clientType: client?.clientType || 'individual',
+    displayName: client?.displayName || '',
+    username: client?.username || '',
+    bio: client?.bio || '',
+    jobTitle: client?.jobTitle || '',
+    company: client?.company || '',
+    industry: client?.industry || '',
     phone: client?.phone || '',
     website: client?.website || '',
-    country: client?.country || '',
-    city: client?.city || '',
-    jobTitle: client?.jobTitle || '',
-    preferredContactMethod: client?.preferredContactMethod || 'email',
-    marketingConsent: client?.marketingConsent || false,
+    location: client?.location || '',
+    accountType: client?.accountType || 'individual',
+    timezone: client?.timezone || 'UTC',
+    language: client?.language || 'en',
+    emailNotifications: client?.emailNotifications ?? true,
+    marketingEmails: client?.marketingEmails ?? false,
     notes: client?.notes || '',
+    tags: client?.tags || '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -49,11 +55,38 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
       newErrors.userId = 'User ID is required';
     }
 
-    // Company name validation
-    if (formData.companyName && formData.companyName.trim().length < CLIENT_VALIDATION.COMPANY_NAME_MIN_LENGTH) {
-      newErrors.companyName = `Company name must be at least ${CLIENT_VALIDATION.COMPANY_NAME_MIN_LENGTH} characters`;
-    } else if (formData.companyName && formData.companyName.trim().length > CLIENT_VALIDATION.COMPANY_NAME_MAX_LENGTH) {
-      newErrors.companyName = `Company name must be no more than ${CLIENT_VALIDATION.COMPANY_NAME_MAX_LENGTH} characters`;
+    // Display name validation
+    if (formData.displayName && formData.displayName.trim().length < CLIENT_VALIDATION.DISPLAY_NAME_MIN_LENGTH) {
+      newErrors.displayName = `Display name must be at least ${CLIENT_VALIDATION.DISPLAY_NAME_MIN_LENGTH} characters`;
+    } else if (formData.displayName && formData.displayName.trim().length > CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH) {
+      newErrors.displayName = `Display name must be no more than ${CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH} characters`;
+    }
+
+    // Username validation
+    if (formData.username && formData.username.trim().length < CLIENT_VALIDATION.USERNAME_MIN_LENGTH) {
+      newErrors.username = `Username must be at least ${CLIENT_VALIDATION.USERNAME_MIN_LENGTH} characters`;
+    } else if (formData.username && formData.username.trim().length > CLIENT_VALIDATION.USERNAME_MAX_LENGTH) {
+      newErrors.username = `Username must be no more than ${CLIENT_VALIDATION.USERNAME_MAX_LENGTH} characters`;
+    }
+
+    // Bio validation
+    if (formData.bio && formData.bio.trim().length > CLIENT_VALIDATION.BIO_MAX_LENGTH) {
+      newErrors.bio = `Bio must be no more than ${CLIENT_VALIDATION.BIO_MAX_LENGTH} characters`;
+    }
+
+    // Job title validation
+    if (formData.jobTitle && formData.jobTitle.trim().length > CLIENT_VALIDATION.JOB_TITLE_MAX_LENGTH) {
+      newErrors.jobTitle = `Job title must be no more than ${CLIENT_VALIDATION.JOB_TITLE_MAX_LENGTH} characters`;
+    }
+
+    // Company validation
+    if (formData.company && formData.company.trim().length > CLIENT_VALIDATION.COMPANY_MAX_LENGTH) {
+      newErrors.company = `Company must be no more than ${CLIENT_VALIDATION.COMPANY_MAX_LENGTH} characters`;
+    }
+
+    // Industry validation
+    if (formData.industry && formData.industry.trim().length > CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH) {
+      newErrors.industry = `Industry must be no more than ${CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH} characters`;
     }
 
     // Phone validation
@@ -66,24 +99,19 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
       newErrors.website = `Website must be no more than ${CLIENT_VALIDATION.WEBSITE_MAX_LENGTH} characters`;
     }
 
-    // Country validation
-    if (formData.country && formData.country.trim().length > CLIENT_VALIDATION.COUNTRY_MAX_LENGTH) {
-      newErrors.country = `Country must be no more than ${CLIENT_VALIDATION.COUNTRY_MAX_LENGTH} characters`;
-    }
-
-    // City validation
-    if (formData.city && formData.city.trim().length > CLIENT_VALIDATION.CITY_MAX_LENGTH) {
-      newErrors.city = `City must be no more than ${CLIENT_VALIDATION.CITY_MAX_LENGTH} characters`;
-    }
-
-    // Job title validation
-    if (formData.jobTitle && formData.jobTitle.trim().length > CLIENT_VALIDATION.JOB_TITLE_MAX_LENGTH) {
-      newErrors.jobTitle = `Job title must be no more than ${CLIENT_VALIDATION.JOB_TITLE_MAX_LENGTH} characters`;
+    // Location validation
+    if (formData.location && formData.location.trim().length > CLIENT_VALIDATION.LOCATION_MAX_LENGTH) {
+      newErrors.location = `Location must be no more than ${CLIENT_VALIDATION.LOCATION_MAX_LENGTH} characters`;
     }
 
     // Notes validation
     if (formData.notes && formData.notes.trim().length > CLIENT_VALIDATION.NOTES_MAX_LENGTH) {
       newErrors.notes = `Notes must be no more than ${CLIENT_VALIDATION.NOTES_MAX_LENGTH} characters`;
+    }
+
+    // Tags validation
+    if (formData.tags && formData.tags.trim().length > CLIENT_VALIDATION.TAGS_MAX_LENGTH) {
+      newErrors.tags = `Tags must be no more than ${CLIENT_VALIDATION.TAGS_MAX_LENGTH} characters`;
     }
 
     setErrors(newErrors);
@@ -156,47 +184,157 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
           </div>
         )}
 
-        {/* Company Name Field */}
+        {/* Display Name Field */}
         <div className="space-y-2">
-          <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Company Name
+          <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Display Name
           </label>
           <input
-            id="companyName"
+            id="displayName"
             type="text"
-            placeholder="Enter company name"
-            value={formData.companyName}
-            onChange={(e) => handleInputChange('companyName', e.target.value)}
-            maxLength={CLIENT_VALIDATION.COMPANY_NAME_MAX_LENGTH}
+            placeholder="Enter display name"
+            value={formData.displayName}
+            onChange={(e) => handleInputChange('displayName', e.target.value)}
+            maxLength={CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH}
             className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-              errors.companyName 
+              errors.displayName 
                 ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
                 : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
             }`}
           />
-          {errors.companyName && (
-            <p className="text-sm text-red-600 dark:text-red-400">{errors.companyName}</p>
+          {errors.displayName && (
+            <p className="text-sm text-red-600 dark:text-red-400">{errors.displayName}</p>
           )}
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {formData.companyName.length}/{CLIENT_VALIDATION.COMPANY_NAME_MAX_LENGTH} characters
+            {formData.displayName.length}/{CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH} characters
           </div>
         </div>
 
-        {/* Client Type Field */}
+        {/* Username Field */}
         <div className="space-y-2">
-          <label htmlFor="clientType" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Client Type
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Username
           </label>
-          <select
-            id="clientType"
-            value={formData.clientType}
-            onChange={(e) => handleInputChange('clientType', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="individual">Individual</option>
-            <option value="business">Business</option>
-            <option value="enterprise">Enterprise</option>
-          </select>
+          <input
+            id="username"
+            type="text"
+            placeholder="Enter username"
+            value={formData.username}
+            onChange={(e) => handleInputChange('username', e.target.value)}
+            maxLength={CLIENT_VALIDATION.USERNAME_MAX_LENGTH}
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.username 
+                ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+            }`}
+          />
+          {errors.username && (
+            <p className="text-sm text-red-600 dark:text-red-400">{errors.username}</p>
+          )}
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            {formData.username.length}/{CLIENT_VALIDATION.USERNAME_MAX_LENGTH} characters
+          </div>
+        </div>
+
+        {/* Bio Field */}
+        <div className="space-y-2">
+          <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Bio
+          </label>
+          <textarea
+            id="bio"
+            placeholder="Enter bio"
+            value={formData.bio}
+            onChange={(e) => handleInputChange('bio', e.target.value)}
+            maxLength={CLIENT_VALIDATION.BIO_MAX_LENGTH}
+            rows={4}
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.bio 
+                ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+            }`}
+          />
+          {errors.bio && (
+            <p className="text-sm text-red-600 dark:text-red-400">{errors.bio}</p>
+          )}
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            {formData.bio.length}/{CLIENT_VALIDATION.BIO_MAX_LENGTH} characters
+          </div>
+        </div>
+
+        {/* Job Title Field */}
+        <div className="space-y-2">
+          <label htmlFor="jobTitle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Job Title
+          </label>
+          <input
+            id="jobTitle"
+            type="text"
+            placeholder="Enter job title"
+            value={formData.jobTitle}
+            onChange={(e) => handleInputChange('jobTitle', e.target.value)}
+            maxLength={CLIENT_VALIDATION.JOB_TITLE_MAX_LENGTH}
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.jobTitle 
+                ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+            }`}
+          />
+          {errors.jobTitle && (
+            <p className="text-sm text-red-600 dark:text-red-400">{errors.jobTitle}</p>
+          )}
+        </div>
+
+        {/* Company Field */}
+        <div className="space-y-2">
+          <label htmlFor="company" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Company
+          </label>
+          <input
+            id="company"
+            type="text"
+            placeholder="Enter company"
+            value={formData.company}
+            onChange={(e) => handleInputChange('company', e.target.value)}
+            maxLength={CLIENT_VALIDATION.COMPANY_MAX_LENGTH}
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.company 
+                ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+            }`}
+          />
+          {errors.company && (
+            <p className="text-sm text-red-600 dark:text-red-400">{errors.company}</p>
+          )}
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            {formData.company.length}/{CLIENT_VALIDATION.COMPANY_MAX_LENGTH} characters
+          </div>
+        </div>
+
+        {/* Industry Field */}
+        <div className="space-y-2">
+          <label htmlFor="industry" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Industry
+          </label>
+          <input
+            id="industry"
+            type="text"
+            placeholder="Enter industry"
+            value={formData.industry}
+            onChange={(e) => handleInputChange('industry', e.target.value)}
+            maxLength={CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH}
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.industry 
+                ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+            }`}
+          />
+          {errors.industry && (
+            <p className="text-sm text-red-600 dark:text-red-400">{errors.industry}</p>
+          )}
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            {formData.industry.length}/{CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH} characters
+          </div>
         </div>
 
         {/* Contact Information */}
@@ -246,105 +384,115 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
           </div>
         </div>
 
-        {/* Location */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label htmlFor="country" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Country
-            </label>
-            <input
-              id="country"
-              type="text"
-              placeholder="Enter country"
-              value={formData.country}
-              onChange={(e) => handleInputChange('country', e.target.value)}
-              maxLength={CLIENT_VALIDATION.COUNTRY_MAX_LENGTH}
-              className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                errors.country 
-                  ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
-                  : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-              }`}
-            />
-            {errors.country && (
-              <p className="text-sm text-red-600 dark:text-red-400">{errors.country}</p>
-            )}
-          </div>
-          
-          <div className="space-y-2">
-            <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              City
-            </label>
-            <input
-              id="city"
-              type="text"
-              placeholder="Enter city"
-              value={formData.city}
-              onChange={(e) => handleInputChange('city', e.target.value)}
-              maxLength={CLIENT_VALIDATION.CITY_MAX_LENGTH}
-              className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                errors.city 
-                  ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
-                  : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-              }`}
-            />
-            {errors.city && (
-              <p className="text-sm text-red-600 dark:text-red-400">{errors.city}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Job Title */}
+        {/* Location Field */}
         <div className="space-y-2">
-          <label htmlFor="jobTitle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Job Title
+          <label htmlFor="location" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Location
           </label>
           <input
-            id="jobTitle"
+            id="location"
             type="text"
-            placeholder="Enter job title"
-            value={formData.jobTitle}
-            onChange={(e) => handleInputChange('jobTitle', e.target.value)}
-            maxLength={CLIENT_VALIDATION.JOB_TITLE_MAX_LENGTH}
+            placeholder="Enter location"
+            value={formData.location}
+            onChange={(e) => handleInputChange('location', e.target.value)}
+            maxLength={CLIENT_VALIDATION.LOCATION_MAX_LENGTH}
             className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-              errors.jobTitle 
+              errors.location 
                 ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
                 : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
             }`}
           />
-          {errors.jobTitle && (
-            <p className="text-sm text-red-600 dark:text-red-400">{errors.jobTitle}</p>
+          {errors.location && (
+            <p className="text-sm text-red-600 dark:text-red-400">{errors.location}</p>
           )}
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            {formData.location.length}/{CLIENT_VALIDATION.LOCATION_MAX_LENGTH} characters
+          </div>
+        </div>
+
+        {/* Account Type Field */}
+        <div className="space-y-2">
+          <label htmlFor="accountType" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Account Type
+          </label>
+          <select
+            id="accountType"
+            value={formData.accountType}
+            onChange={(e) => handleInputChange('accountType', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="individual">Individual</option>
+            <option value="business">Business</option>
+            <option value="enterprise">Enterprise</option>
+          </select>
+        </div>
+
+        {/* Timezone Field */}
+        <div className="space-y-2">
+          <label htmlFor="timezone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Timezone
+          </label>
+          <select
+            id="timezone"
+            value={formData.timezone}
+            onChange={(e) => handleInputChange('timezone', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="UTC">UTC</option>
+            <option value="America/New_York">America/New_York</option>
+            <option value="Europe/London">Europe/London</option>
+            <option value="Asia/Tokyo">Asia/Tokyo</option>
+          </select>
+        </div>
+
+        {/* Language Field */}
+        <div className="space-y-2">
+          <label htmlFor="language" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Language
+          </label>
+          <select
+            id="language"
+            value={formData.language}
+            onChange={(e) => handleInputChange('language', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+          </select>
         </div>
 
         {/* Preferences */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label htmlFor="preferredContactMethod" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Preferred Contact Method
+            <label htmlFor="emailNotifications" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Email Notifications
             </label>
             <select
-              id="preferredContactMethod"
-              value={formData.preferredContactMethod}
-              onChange={(e) => handleInputChange('preferredContactMethod', e.target.value)}
+              id="emailNotifications"
+              value={formData.emailNotifications ? 'true' : 'false'}
+              onChange={(e) => handleInputChange('emailNotifications', e.target.value === 'true')}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="email">Email</option>
-              <option value="phone">Phone</option>
-              <option value="chat">Chat</option>
+              <option value="true">Enabled</option>
+              <option value="false">Disabled</option>
             </select>
           </div>
           
-          <div className="flex items-center space-x-2 pt-6">
-            <input
-              type="checkbox"
-              id="marketingConsent"
-              checked={formData.marketingConsent}
-              onChange={(e) => handleInputChange('marketingConsent', e.target.checked)}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-            />
-            <label htmlFor="marketingConsent" className="text-sm text-gray-700 dark:text-gray-300">
-              Marketing consent
+          <div className="space-y-2">
+            <label htmlFor="marketingEmails" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Marketing Emails
             </label>
+            <select
+              id="marketingEmails"
+              value={formData.marketingEmails ? 'true' : 'false'}
+              onChange={(e) => handleInputChange('marketingEmails', e.target.value === 'true')}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="true">Enabled</option>
+              <option value="false">Disabled</option>
+            </select>
           </div>
         </div>
 
@@ -375,6 +523,32 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
           <p className="text-xs text-gray-500 dark:text-gray-400">
             Internal notes for admin reference
           </p>
+        </div>
+
+        {/* Tags */}
+        <div className="space-y-2">
+          <label htmlFor="tags" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Tags (comma-separated)
+          </label>
+          <input
+            id="tags"
+            type="text"
+            placeholder="e.g., customer, premium, new"
+            value={formData.tags}
+            onChange={(e) => handleInputChange('tags', e.target.value)}
+            maxLength={CLIENT_VALIDATION.TAGS_MAX_LENGTH}
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.tags 
+                ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+            }`}
+          />
+          {errors.tags && (
+            <p className="text-sm text-red-600 dark:text-red-400">{errors.tags}</p>
+          )}
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            {formData.tags.length}/{CLIENT_VALIDATION.TAGS_MAX_LENGTH} characters
+          </div>
         </div>
 
         {/* Form Actions */}

@@ -288,26 +288,29 @@ export const clients = pgTable("clients", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
   
-  // Client Information
-  companyName: text("company_name"),
-  clientType: text("client_type", { 
-    enum: ["individual", "business", "enterprise"] 
-  }).default("individual"),
+  // SaaS User Information
+  displayName: text("display_name"),
+  username: text("username").unique(),
+  bio: text("bio"),
+  
+  // Professional Information
+  jobTitle: text("job_title"),
+  company: text("company"),
+  industry: text("industry"),
   
   // Contact Information
   phone: text("phone"),
   website: text("website"),
+  location: text("location"),
   
-  // Location
-  country: text("country"),
-  city: text("city"),
+  // SaaS Account Information
+  accountType: text("account_type", { 
+    enum: ["individual", "team", "enterprise"] 
+  }).default("individual"),
   
-  // Professional Information
-  jobTitle: text("job_title"),
-  
-  // Client Status & Lifecycle
+  // Subscription & Billing
   status: text("status", { 
-    enum: ["active", "inactive", "suspended", "trial"] 
+    enum: ["active", "inactive", "suspended", "trial", "cancelled"] 
   }).default("active"),
   plan: text("plan", { 
     enum: ["free", "standard", "premium"] 
@@ -316,21 +319,27 @@ export const clients = pgTable("clients", {
   // Trial & Subscription
   trialStartDate: timestamp("trial_start_date", { mode: "date" }),
   trialEndDate: timestamp("trial_end_date", { mode: "date" }),
+  subscriptionStartDate: timestamp("subscription_start_date", { mode: "date" }),
+  subscriptionEndDate: timestamp("subscription_end_date", { mode: "date" }),
   
-  // Usage Tracking
+  // Usage & Activity
   totalSubmissions: integer("total_submissions").default(0),
+  lastLoginAt: timestamp("last_login_at", { mode: "date" }),
   lastActivityAt: timestamp("last_activity_at", { mode: "date" }),
   
-  // Communication Preferences
-  preferredContactMethod: text("preferred_contact_method", {
-    enum: ["email", "phone", "chat"]
-  }).default("email"),
+  // Preferences
+  timezone: text("timezone").default("UTC"),
+  language: text("language").default("en"),
+  emailNotifications: boolean("email_notifications").default(true),
+  marketingEmails: boolean("marketing_emails").default(false),
   
-  // Marketing & Communication
-  marketingConsent: boolean("marketing_consent").default(false),
+  // Account Settings
+  twoFactorEnabled: boolean("two_factor_enabled").default(false),
+  emailVerified: boolean("email_verified").default(false),
   
   // Admin Management
   notes: text("notes"), // Admin notes about client
+  tags: text("tags"), // Comma-separated tags for categorization
   
   // Timestamps
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -339,7 +348,8 @@ export const clients = pgTable("clients", {
   userClientIndex: index("user_client_idx").on(table.userId),
   statusIndex: index("client_status_idx").on(table.status),
   planIndex: index("client_plan_idx").on(table.plan),
-  clientTypeIndex: index("client_type_idx").on(table.clientType),
+  accountTypeIndex: index("client_account_type_idx").on(table.accountType),
+  usernameIndex: index("client_username_idx").on(table.username),
 }));
 
 export type Comment = typeof comments.$inferSelect;

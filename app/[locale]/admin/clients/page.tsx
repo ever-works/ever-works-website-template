@@ -36,14 +36,13 @@ export default function AdminClientsPage() {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalClients, setTotalClients] = useState(0);
   const [limit] = useState(10);
   
   // Filter state
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [planFilter, setPlanFilter] = useState<string>('');
-  const [clientTypeFilter, setClientTypeFilter] = useState<string>('');
+  const [accountTypeFilter, setAccountTypeFilter] = useState<string>('');
   
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -57,7 +56,7 @@ export default function AdminClientsPage() {
         search: searchTerm,
         status: statusFilter,
         plan: planFilter,
-        clientType: clientTypeFilter,
+        accountType: accountTypeFilter,
       });
       
       const response = await fetch(`/api/admin/clients?${params}`);
@@ -65,7 +64,6 @@ export default function AdminClientsPage() {
       
       if (data.success && data.clients) {
         setClients(data.clients);
-        setTotalClients(data.total || 0);
         setTotalPages(data.totalPages || 1);
         setCurrentPage(data.page || 1);
       } else {
@@ -193,7 +191,7 @@ export default function AdminClientsPage() {
     setSearchTerm('');
     setStatusFilter('');
     setPlanFilter('');
-    setClientTypeFilter('');
+    setAccountTypeFilter('');
     setCurrentPage(1);
     fetchClients(1);
   };
@@ -221,11 +219,11 @@ export default function AdminClientsPage() {
     }
   };
 
-  const getClientTypeColor = (type: string) => {
+  const getAccountTypeColor = (type: string) => {
     switch (type) {
-      case 'enterprise': return 'success';
-      case 'business': return 'primary';
       case 'individual': return 'default';
+      case 'business': return 'primary';
+      case 'enterprise': return 'success';
       default: return 'default';
     }
   };
@@ -277,6 +275,7 @@ export default function AdminClientsPage() {
               <option value="inactive">Inactive</option>
               <option value="suspended">Suspended</option>
               <option value="trial">Trial</option>
+              <option value="cancelled">Cancelled</option>
             </select>
 
             <select
@@ -291,13 +290,13 @@ export default function AdminClientsPage() {
             </select>
 
             <select
-              value={clientTypeFilter}
-              onChange={(e) => setClientTypeFilter(e.target.value)}
+              value={accountTypeFilter}
+              onChange={(e) => setAccountTypeFilter(e.target.value)}
               className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">All Types</option>
               <option value="individual">Individual</option>
-              <option value="business">Business</option>
+              <option value="team">Team</option>
               <option value="enterprise">Enterprise</option>
             </select>
           </div>
@@ -334,12 +333,12 @@ export default function AdminClientsPage() {
               <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No clients found</h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                {searchTerm || statusFilter || planFilter || clientTypeFilter 
+                {searchTerm || statusFilter || planFilter || accountTypeFilter 
                   ? 'Try adjusting your filters or search terms.'
                   : 'Get started by adding your first client.'
                 }
               </p>
-              {!searchTerm && !statusFilter && !planFilter && !clientTypeFilter && (
+              {!searchTerm && !statusFilter && !planFilter && !accountTypeFilter && (
                 <Button color="primary" onPress={openCreateForm}>
                   Add First Client
                 </Button>
@@ -356,11 +355,16 @@ export default function AdminClientsPage() {
                     <div className="flex items-center space-x-3">
                       <div>
                         <h3 className="font-medium text-gray-900 dark:text-white">
-                          {client.companyName || client.user.name || 'Unnamed Client'}
+                          {client.displayName || client.user.name || 'Unnamed Client'}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
                           {client.user.email}
                         </p>
+                        {client.username && (
+                          <p className="text-xs text-gray-500 dark:text-gray-500">
+                            @{client.username}
+                          </p>
+                        )}
                         {client.jobTitle && (
                           <p className="text-xs text-gray-500 dark:text-gray-500">
                             {client.jobTitle}
@@ -376,8 +380,8 @@ export default function AdminClientsPage() {
                       <Chip size="sm" color={getPlanColor(client.plan)}>
                         {client.plan}
                       </Chip>
-                      <Chip size="sm" color={getClientTypeColor(client.clientType)}>
-                        {client.clientType}
+                      <Chip size="sm" color={getAccountTypeColor(client.accountType)}>
+                        {client.accountType}
                       </Chip>
                     </div>
                   </div>
@@ -412,7 +416,7 @@ export default function AdminClientsPage() {
       {totalPages > 1 && (
         <div className="flex justify-center">
           <UniversalPagination
-            currentPage={currentPage}
+            page={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
           />
@@ -421,8 +425,8 @@ export default function AdminClientsPage() {
 
       {/* Client Form Modal */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="max-w-2xl w-full max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-900 rounded-xl shadow-xl">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 p-4 overflow-y-auto">
+          <div className="w-full max-w-4xl my-8 bg-white dark:bg-gray-900 rounded-xl shadow-xl max-h-[calc(100vh-4rem)] overflow-y-auto">
             <ClientForm
               client={selectedClient || undefined}
               onSubmit={handleFormSubmit}

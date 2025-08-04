@@ -748,7 +748,7 @@ export async function getClients(options: ClientListOptions): Promise<ClientWith
     sortOrder = 'desc',
     status,
     plan,
-    clientType,
+    accountType,
     userId 
   } = options;
 
@@ -758,11 +758,12 @@ export async function getClients(options: ClientListOptions): Promise<ClientWith
   if (search) {
     whereConditions.push(
       or(
-        like(clients.companyName, `%${search}%`),
+        like(clients.displayName, `%${search}%`),
+        like(clients.username, `%${search}%`),
+        like(clients.company, `%${search}%`),
+        like(clients.location, `%${search}%`),
         like(clients.phone, `%${search}%`),
-        like(clients.website, `%${search}%`),
-        like(clients.country, `%${search}%`),
-        like(clients.city, `%${search}%`)
+        like(clients.website, `%${search}%`)
       )
     );
   }
@@ -776,8 +777,8 @@ export async function getClients(options: ClientListOptions): Promise<ClientWith
     whereConditions.push(eq(clients.plan, plan));
   }
 
-  if (clientType) {
-    whereConditions.push(eq(clients.clientType, clientType));
+  if (accountType) {
+    whereConditions.push(eq(clients.accountType, accountType));
   }
 
   if (userId) {
@@ -797,8 +798,9 @@ export async function getClients(options: ClientListOptions): Promise<ClientWith
   }
 
   // Add sorting
-  const orderByClause = sortBy === 'companyName' ? (sortOrder === 'asc' ? asc(clients.companyName) : desc(clients.companyName)) :
-    sortBy === 'clientType' ? (sortOrder === 'asc' ? asc(clients.clientType) : desc(clients.clientType)) :
+  const orderByClause = sortBy === 'displayName' ? (sortOrder === 'asc' ? asc(clients.displayName) : desc(clients.displayName)) :
+    sortBy === 'username' ? (sortOrder === 'asc' ? asc(clients.username) : desc(clients.username)) :
+    sortBy === 'accountType' ? (sortOrder === 'asc' ? asc(clients.accountType) : desc(clients.accountType)) :
     sortBy === 'status' ? (sortOrder === 'asc' ? asc(clients.status) : desc(clients.status)) :
     sortBy === 'plan' ? (sortOrder === 'asc' ? asc(clients.plan) : desc(clients.plan)) :
     sortOrder === 'asc' ? asc(clients.createdAt) : desc(clients.createdAt);

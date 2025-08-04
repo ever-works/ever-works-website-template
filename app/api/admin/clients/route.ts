@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search') || '';
     const status = searchParams.get('status') as any;
     const plan = searchParams.get('plan') as any;
-    const clientType = searchParams.get('clientType') as any;
+    const accountType = searchParams.get('accountType') as any;
     const sortBy = searchParams.get('sortBy') as any;
     const sortOrder = searchParams.get('sortOrder') as any;
 
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       search,
       status,
       plan,
-      clientType,
+      accountType,
       sortBy,
       sortOrder
     };
@@ -85,25 +85,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!data.clientType) {
-      return NextResponse.json(
-        { error: 'Client type is required' },
-        { status: 400 }
-      );
-    }
-
     const client = await createClient({
       userId: data.userId,
-      companyName: data.companyName,
-      clientType: data.clientType,
+      displayName: data.displayName,
+      username: data.username,
+      bio: data.bio,
+      jobTitle: data.jobTitle,
+      company: data.company,
+      industry: data.industry,
       phone: data.phone,
       website: data.website,
-      country: data.country,
-      city: data.city,
-      jobTitle: data.jobTitle,
-      preferredContactMethod: data.preferredContactMethod || 'email',
-      marketingConsent: data.marketingConsent || false,
+      location: data.location,
+      accountType: data.accountType || 'individual',
+      timezone: data.timezone || 'UTC',
+      language: data.language || 'en',
+      emailNotifications: data.emailNotifications ?? true,
+      marketingEmails: data.marketingEmails ?? false,
       notes: data.notes,
+      tags: data.tags,
       status: 'active',
       plan: 'free',
       totalSubmissions: 0
