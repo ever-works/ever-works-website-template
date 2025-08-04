@@ -283,6 +283,65 @@ export const subscriptionHistory = pgTable(
   })
 );
 
+export const clients = pgTable("clients", {
+  // Basic Identification
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
+  
+  // Client Information
+  companyName: text("company_name"),
+  clientType: text("client_type", { 
+    enum: ["individual", "business", "enterprise"] 
+  }).default("individual"),
+  
+  // Contact Information
+  phone: text("phone"),
+  website: text("website"),
+  
+  // Location
+  country: text("country"),
+  city: text("city"),
+  
+  // Professional Information
+  jobTitle: text("job_title"),
+  
+  // Client Status & Lifecycle
+  status: text("status", { 
+    enum: ["active", "inactive", "suspended", "trial"] 
+  }).default("active"),
+  plan: text("plan", { 
+    enum: ["free", "standard", "premium"] 
+  }).default("free"),
+  
+  // Trial & Subscription
+  trialStartDate: timestamp("trial_start_date", { mode: "date" }),
+  trialEndDate: timestamp("trial_end_date", { mode: "date" }),
+  
+  // Usage Tracking
+  totalSubmissions: integer("total_submissions").default(0),
+  lastActivityAt: timestamp("last_activity_at", { mode: "date" }),
+  
+  // Communication Preferences
+  preferredContactMethod: text("preferred_contact_method", {
+    enum: ["email", "phone", "chat"]
+  }).default("email"),
+  
+  // Marketing & Communication
+  marketingConsent: boolean("marketing_consent").default(false),
+  
+  // Admin Management
+  notes: text("notes"), // Admin notes about client
+  
+  // Timestamps
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  userClientIndex: index("user_client_idx").on(table.userId),
+  statusIndex: index("client_status_idx").on(table.status),
+  planIndex: index("client_plan_idx").on(table.plan),
+  clientTypeIndex: index("client_type_idx").on(table.clientType),
+}));
+
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
 export type CommentWithUser = Comment & { user: typeof users.$inferSelect };
@@ -303,6 +362,13 @@ export type NewSubscription = typeof subscriptions.$inferInsert;
 export type SubscriptionHistory = typeof subscriptionHistory.$inferSelect;
 export type NewSubscriptionHistory = typeof subscriptionHistory.$inferInsert;
 export type SubscriptionWithUser = Subscription & {
+  user: typeof users.$inferSelect;
+};
+
+// Client Types
+export type Client = typeof clients.$inferSelect;
+export type NewClient = typeof clients.$inferInsert;
+export type ClientWithUser = Client & {
   user: typeof users.$inferSelect;
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { User, LogOut, Settings, FolderTree, Tag, Package } from "lucide-react";
+import { User, LogOut, Settings, FolderTree, Tag, Package, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
@@ -26,68 +26,46 @@ export function ProfileButton() {
         position: fixed;
         top: 0;
         left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.7);
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
         z-index: 9999;
-        font-family: system-ui, -apple-system, sans-serif;
       ">
         <div style="
           background: white;
-          padding: 2rem;
-          border-radius: 12px;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+          padding: 20px;
+          border-radius: 8px;
           text-align: center;
-          max-width: 300px;
         ">
+          <div style="margin-bottom: 10px;">Logging out...</div>
           <div style="
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3b82f6;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 1rem auto;
+            margin: 0 auto;
           "></div>
-          <h3 style="
-            margin: 0 0 0.5rem 0;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1f2937;
-          ">Signing Out</h3>
-          <p style="
-            margin: 0;
-            color: #6b7280;
-            font-size: 0.9rem;
-          ">Please wait while we log you out...</p>
         </div>
       </div>
+      <style>
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      </style>
     `;
-
-    // Add spinner animation
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    `;
-    document.head.appendChild(style);
     document.body.appendChild(overlay);
+
     try {
-
-      await signOut({ redirect: false });
-      overlay.remove();
-
-      const redirectUrl = isAdmin ? '/admin/auth/signin' : '/auth/signin';
-
-      window.location.replace(redirectUrl);
+      await signOut({ callbackUrl: '/' });
     } catch (error) {
-      overlay.remove();
-      console.error('Logout failed:', error);
+      console.error('Logout error:', error);
+      document.body.removeChild(overlay);
     }
   };
 
@@ -120,7 +98,6 @@ export function ProfileButton() {
             alt={user?.name || "User"}
             fallback={user?.name?.charAt(0) || "U"}
             size="sm"
-            className="ring-2 ring-white ring-offset-2 ring-offset-theme-primary transition-transform hover:scale-105"
           />
         </button>
       </div>
@@ -142,6 +119,15 @@ export function ProfileButton() {
               >
                 <Settings className="mr-3 h-4 w-4 text-gray-400" />
                 Admin Dashboard
+              </Link>
+              <Link
+                href="/admin/clients"
+                className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                role="menuitem"
+                onClick={() => setIsProfileMenuOpen(false)}
+              >
+                <Users className="mr-3 h-4 w-4 text-gray-400" />
+                Manage Clients
               </Link>
               <Link
                 href="/admin/categories"

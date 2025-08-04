@@ -26,10 +26,10 @@ const ADMIN_FEATURES: AdminFeature[] = [
   },
   {
     icon: Users,
-    title: "Manage Users",
-    description: "View and manage platform users and permissions.",
-    href: "#",
-    emoji: "👤"
+    title: "Manage Clients",
+    description: "View and manage client accounts and information.",
+    href: "/admin/clients",
+    emoji: "👥"
   },
   {
     icon: FileText,
