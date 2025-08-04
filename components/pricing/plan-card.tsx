@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -8,28 +8,82 @@ import { Check, X } from "lucide-react";
 import { PaymentPlan } from "@/lib/constants";
 
 export type PlanFeature = {
-  included: boolean;
-  text: string;
+  readonly included: boolean;
+  readonly text: string;
 };
 
-
 interface PlanCardProps {
-  plan: PaymentPlan;
-  title: string;
-  price: string;
-  priceUnit?: string;
-  features: PlanFeature[];
-  isPopular?: boolean;
-  isSelected: boolean;
-  onSelect: (plan: PaymentPlan) => void;
-  actionText: string;
-  actionVariant?: "default" | "outline";
-  actionHref?: string;
-  children?: ReactNode;
-  isButton?: boolean;
-  onClick?: () => void;
-  isLoading?: boolean;
+  readonly plan: PaymentPlan;
+  readonly title: string;
+  readonly price: string;
+  readonly priceUnit?: string;
+  readonly features: readonly PlanFeature[];
+  readonly isPopular?: boolean;
+  readonly isSelected: boolean;
+  readonly onSelect: (plan: PaymentPlan) => void;
+  readonly actionText: string;
+  readonly actionVariant?: "default" | "outline";
+  readonly actionHref?: string;
+  readonly children?: ReactNode;
+  readonly isButton?: boolean;
+  readonly onClick?: () => void;
+  readonly isLoading?: boolean;
+  readonly className?: string;
 }
+
+// Constants for modern design based on reference image
+const PLAN_TYPES = {
+  FREE: 'FREE',
+  STANDARD: 'STANDARD',
+  PREMIUM: 'PREMIUM'
+} as const;
+
+const getButtonStyles = (title: string, isPopular: boolean) => {
+  const upperTitle = title.toUpperCase();
+
+  if (upperTitle === PLAN_TYPES.STANDARD || isPopular) {
+    return "bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 hover:from-theme-primary-600 hover:to-theme-primary-500 text-white border-0 shadow-lg h-12 text-sm font-medium rounded-lg";
+  }
+
+  if (upperTitle === PLAN_TYPES.PREMIUM) {
+    return "bg-transparent border border-slate-500/70 dark:border-slate-400/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/30 hover:border-slate-600 dark:hover:border-slate-400 h-12 text-sm font-medium rounded-lg";
+  }
+
+  return "bg-transparent border border-slate-500/70 dark:border-slate-400/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/30 hover:border-slate-600 dark:hover:border-slate-400 h-12 text-sm font-medium rounded-lg";
+};
+
+const getPriceColor = (title: string, isPopular: boolean) => {
+  const upperTitle = title.toUpperCase();
+
+  if (upperTitle === PLAN_TYPES.STANDARD || isPopular) {
+    return "text-theme-primary-500";
+  }
+
+  if (upperTitle === PLAN_TYPES.PREMIUM) {
+    return "text-black dark:text-white"; // Orange for "Custom"
+  }
+
+  return "text-black dark:text-white";
+};
+
+const getCardStyles = (title: string, isPopular: boolean) => {
+  const upperTitle = title.toUpperCase();
+
+  if (upperTitle === PLAN_TYPES.STANDARD || isPopular) {
+    return [
+      "border-slate-300/50 dark:border-slate-600/50 shadow-xl",
+      "bg-white/95 dark:bg-slate-800/90",
+      "scale-105 z-10", // Larger for middle card
+      "max-w-[380px] min-h-[672px]" // Larger height
+    ];
+  }
+
+  return [
+    "border-slate-200/70 dark:border-slate-600/30 shadow-lg dark:shadow-xl",
+    "bg-white/90 dark:bg-slate-800/80",
+    "max-w-[380px] min-h-[674px]" // Standard height for FREE and PREMIUM
+  ];
+};
 
 export function PlanCard({
   plan,
@@ -44,10 +98,36 @@ export function PlanCard({
   actionHref,
   children,
   isButton = true,
-  isLoading,
+  isLoading = false,
   onClick,
+  className,
 }: PlanCardProps) {
   const router = useRouter();
+
+  const cardStyles = useMemo(() => cn(
+    // Style exactly like reference image with dark/light mode support
+    "relative flex flex-col",
+    "w-full rounded-xl border",
+    "backdrop-blur-sm transition-all duration-300 ease-out",
+    "hover:shadow-xl dark:hover:shadow-2xl hover:-translate-y-1",
+    // Add top margin for popular badge
+    (title.toUpperCase() === 'STANDARD' || isPopular) ? "mt-6" : "mt-2",
+
+    ...getCardStyles(title, isPopular),
+    isSelected && "ring-2 ring-blue-500/50 ring-offset-2 ring-offset-white dark:ring-offset-slate-900",
+
+    className
+  ), [title, isPopular, isSelected, className]);
+
+  const buttonStyles = useMemo(() => cn(
+    "w-full rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl",
+    "disabled:opacity-50 disabled:cursor-not-allowed",
+    "font-semibold tracking-wide",
+    getButtonStyles(title, isPopular),
+    isLoading && "animate-pulse"
+  ), [title, isPopular, isLoading]);
+
+
 
   const handleAction = () => {
     if (actionHref) {
@@ -56,100 +136,61 @@ export function PlanCard({
   };
 
   return (
-    <article
-      className={cn(
-        // Base structure
-        "relative flex flex-col overflow-hidden",
-        "border border-border/50 rounded-xl bg-card/50 backdrop-blur-sm",
-
-        // Fixed dimensions for consistency
-        "h-[623px] min-h-[623px] max-h-[623px]",
-
-        // Professional shadows and transitions
-        "shadow-sm hover:shadow-lg transition-all duration-300 ease-out",
-        "hover:border-theme-primary-200 dark:hover:border-theme-primary-800",
-
-        // Selection state
-        isSelected && "ring-2 ring-theme-primary-500 ring-offset-2 border-theme-primary-300",
-
-        // Popular plan enhancement
-        isPopular && "scale-[1.02] shadow-md border-theme-primary-200 dark:border-theme-primary-800"
-      )}
-    >
-      {/* Popular Badge */}
-      {isPopular && (
-        <div className="absolute -top-1 left-1/2 -translate-x-1/2 z-20">
-          <div className="bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg border border-theme-primary-400">
-            POPULAR
+    <article className={cardStyles}>
+      {(title.toUpperCase() === 'STANDARD' || isPopular) && (
+        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-30">
+          <div className="bg-gradient-to-r from-theme-primary-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-xl whitespace-nowrap">
+            Most Popular
           </div>
         </div>
       )}
 
-      {/* Header Section */}
-      <header className={cn(
-        "flex flex-col items-center justify-center text-center",
-        "px-4 py-3 bg-gradient-to-b from-card to-card/80",
-        "border-b border-border/30",
-        "h-[130px] flex-shrink-0",
-        isPopular && "pt-5"
-      )}>
-        <h3 className="text-base font-bold tracking-tight mb-1 text-foreground">
+      <header className="flex flex-col items-start text-left px-6 pt-6 pb-4 flex-shrink-0">
+        <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
           {title}
         </h3>
-        <div className="flex items-baseline justify-center gap-1 mb-2">
-          <span className="text-2xl font-extrabold text-theme-primary-600 dark:text-theme-primary-400">
+        <div className="flex justify-center items-baseline gap-1 mb-2">
+          <span className={cn(
+            "text-4xl font-bold leading-none",
+            getPriceColor(title, isPopular)
+          )}>
             {price}
           </span>
           {priceUnit && (
-            <span className="text-muted-foreground text-xs font-medium ml-1">
+            <span className="text-slate-500 dark:text-slate-400 text-sm font-normal ml-1">
               {priceUnit}
             </span>
           )}
-             {children}
         </div>
-
-        <Button
-          variant={isSelected ? "default" : "outline"}
-          size="sm"
-          className={cn(
-            "w-full font-medium transition-all duration-200 h-8 text-xs",
-            isSelected
-              ? "bg-theme-primary-600 hover:bg-theme-primary-700 text-white shadow-md"
-              : "border hover:border-theme-primary-300 hover:bg-theme-primary-50 dark:hover:bg-theme-primary-950"
-          )}
-          onClick={() => onSelect(plan)}
-        >
-          {isSelected ? "✓ Selected" : "Select Plan"}
-        </Button>
+        {children && (
+          <div className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+            {children}
+          </div>
+        )}
       </header>
 
-      {/* Features Section */}
-      <section className="flex-1 px-4 py-2 bg-card/30">
-        <div className="space-y-1 h-full flex flex-col justify-start gap-y-3">
+      {/* Features Section - Style exactly like reference image */}
+      <section className="flex-1 px-6 pb-4">
+        <div className="space-y-3 h-full flex flex-col justify-start">
           {features.map((feature, index) => (
             <div
               key={`feature-${index}`}
-              className="flex items-center gap-2 group min-h-[20px]"
+              className="flex items-start gap-3 group"
             >
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 mt-0.5">
                 {feature.included ? (
-                  <div className="w-4 h-4 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                    <Check className="w-4 h-4 text-green-600 dark:text-green-400 stroke-[3]" />
-                  </div>
+                  <Check className="w-4 h-4 text-green-500 dark:text-green-400 stroke-[2.5]" />
                 ) : (
-                  <div className="w-3 h-3 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                    <X className="w-2 h-2 text-red-500 dark:text-red-400 stroke-[3]" />
-                  </div>
+                  <X className="w-4 h-4 text-red-500 dark:text-red-400 stroke-[2.5]" />
                 )}
               </div>
 
               <span
                 className={cn(
-                  "text-sm leading-tight font-medium flex-1",
-                  "transition-colors duration-200",
+                  "text-sm leading-relaxed flex-1 transition-colors duration-200",
                   feature.included
-                    ? "text-foreground group-hover:text-theme-primary-700 dark:group-hover:text-theme-primary-300"
-                    : "text-muted-foreground line-through opacity-60"
+                    ? "text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white"
+                    : "text-slate-500 dark:text-slate-500 line-through opacity-50"
                 )}
                 title={feature.text}
               >
@@ -160,30 +201,22 @@ export function PlanCard({
         </div>
       </section>
 
-      {/* Action Button Section */}
-      <footer className="px-4 py-3 bg-muted/10 border-t border-border/30 flex-shrink-0 mt-auto">
+      {/* Action Button Section - Style exactly like reference image */}
+      <footer className="flex-shrink-0 mt-auto px-6 pb-6">
         <Button
-          size="sm"
+          size="default"
           disabled={isLoading}
-          className={cn(
-            "w-full font-medium text-xs h-8",
-            "bg-theme-primary-600 hover:bg-theme-primary-700 text-white",
-            "shadow-md hover:shadow-lg transition-all duration-200",
-            "disabled:opacity-50 disabled:cursor-not-allowed",
-            "rounded-md border-0",
-            isLoading && "animate-pulse"
-          )}
+          className={buttonStyles}
           onClick={isButton ? handleAction : onClick}
         >
           {isLoading ? (
-            <div className="flex items-center justify-center gap-1">
-              <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              <span className="text-xs">Processing...</span>
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span className="text-sm">Processing...</span>
             </div>
           ) : (
-            <span className="flex items-center justify-center gap-1 px-1">
-              <span className="truncate text-sm">{actionText}</span>
-              <span className="text-sm flex-shrink-0">→</span>
+            <span className="text-sm font-medium">
+              {actionText}
             </span>
           )}
         </Button>
