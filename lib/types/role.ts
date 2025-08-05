@@ -69,22 +69,16 @@ export interface RoleWithCount extends RoleData {
   userCount?: number;
 }
 
-export interface PermissionAssignment {
+export interface RoleAssignment {
   roleId: string;
+}
+
+export interface PermissionAssignment extends RoleAssignment {
   permissions: Permission[];
 }
-
-export interface RolePermissionUpdate {
-  roleId: string;
-  permissions: Permission[];
+export interface UserRoleAssignment extends RoleAssignment {
+  userId: string;
 }
 
-export interface UserRoleAssignment {
-  userId: string;
-  roleId: string;
-}
-
-export interface UserRoleUpdate {
-  userId: string;
-  roleId: string;
-} 
+export type RolePermissionUpdate = PermissionAssignment;
+export type UserRoleUpdate = UserRoleAssignment; 
