@@ -114,7 +114,7 @@ export function isValidUserStatus(status: string): status is UserStatus {
 }
 
 export function generateUserId(): string {
-  return `user_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+  return crypto.randomUUID();
 }
 
 export function formatDateForYaml(date: Date = new Date()): string {
