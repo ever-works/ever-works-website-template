@@ -245,8 +245,8 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_your-stripe-publishable-key"
 STRIPE_WEBHOOK_SECRET="whsec_your-webhook-secret"
 
 # Stripe Price IDs (create these in Stripe Dashboard)
-NEXT_PUBLIC_STRIPE_PRO_PRICE_ID="price_your-pro-price-id"
-NEXT_PUBLIC_STRIPE_SPONSOR_PRICE_ID="price_your-sponsor-price-id"
+NEXT_PUBLIC_STRIPE_STANDARD_PRICE_ID="price_your-pro-price-id"
+NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID="price_your-sponsor-price-id"
 ```
 
 3. **Create Products & Prices in Stripe**

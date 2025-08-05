@@ -26,7 +26,7 @@ export enum PaymentPlanId {
   FREE = "1",
   ONE_TIME = "2",
   SUBSCRIPTION = "3",
-  SPONSOR = "4",
+  PREMIUM = "4",
 }
 
 export interface PaymentPlan {

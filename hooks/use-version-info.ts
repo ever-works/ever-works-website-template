@@ -1,180 +1,170 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { VersionInfo } from "@/app/api/version/route";
+import { apiUtils, serverClient } from "@/lib/api/server-api-client";
+
+// Query key for version info
+export const VERSION_INFO_QUERY_KEY = ["version-info"] as const;
+
+// Cache configuration
+const STALE_TIME = 5 * 60 * 1000; // 5 minutes
+const GC_TIME = 30 * 60 * 1000; // 30 minutes
 
 interface UseVersionInfoOptions {
   refreshInterval?: number;
   retryOnError?: boolean;
-  retryDelay?: number;
-  maxRetries?: number;
+  enabled?: boolean;
+}
+
+interface UseVersionInfoError {
+  message: string;
+  status?: number;
 }
 
 interface UseVersionInfoReturn {
   versionInfo: VersionInfo | null;
-  loading: boolean;
-  error: string | null;
-  refetch: () => Promise<void>;
-  lastFetch: number | null;
-  retryCount: number;
+  isLoading: boolean;
+  isError: boolean;
+  error: UseVersionInfoError | null;
+  refetch: () => Promise<any>;
+  isStale: boolean;
+  dataUpdatedAt: number;
+  invalidateVersionInfo: () => Promise<void>;
 }
 
 export function useVersionInfo({
   refreshInterval = 5 * 60 * 1000, // 5 minutes
   retryOnError = true,
-  retryDelay = 10000, // 10 seconds
-  maxRetries = 3,
+  enabled = true,
 }: UseVersionInfoOptions = {}): UseVersionInfoReturn {
-  const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastFetch, setLastFetch] = useState<number | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const queryClient = useQueryClient();
 
-  // Use refs to track cleanup and prevent stale closures
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Memoized fetch function with proper error handling
-  const fetchVersionInfo = useCallback(async (isRetry = false) => {
-    try {
-      // Cancel any existing request
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-
-      // Create new abort controller
-      abortControllerRef.current = new AbortController();
-
-      if (!isRetry) {
-        setLoading(true);
-        setError(null);
-      }
-
-      const response = await fetch("/api/version", {
-        cache: "no-store",
-        headers: {
-          "Cache-Control": "no-cache",
-        },
-        signal: abortControllerRef.current.signal,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.error || `HTTP ${response.status}: ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      
-      // Validate response data
-      if (!data.commit || !data.date || !data.author) {
-        throw new Error("Invalid version data received");
-      }
-
-      setVersionInfo(data);
-      setLastFetch(Date.now());
-      setRetryCount(0);
-      setError(null);
-
-    } catch (err) {
-      // Handle AbortError (not a real error)
-      if (err instanceof Error && err.name === "AbortError") {
-        return;
-      }
-
-      const errorMessage = err instanceof Error ? err.message : "Unknown error";
-      console.error("Error fetching version info:", errorMessage);
-      
-      setError(errorMessage);
-      
-      // Retry logic
-      if (retryOnError && retryCount < maxRetries) {
-        setRetryCount(prev => prev + 1);
-        
-        retryTimeoutRef.current = setTimeout(() => {
-          fetchVersionInfo(true);
-        }, retryDelay * Math.pow(2, retryCount)); // Exponential backoff
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [retryOnError, retryDelay, maxRetries, retryCount]);
-
-  // Public refetch function
-  const refetch = useCallback(async () => {
-    setRetryCount(0);
-    await fetchVersionInfo(false);
-  }, [fetchVersionInfo]);
-
-  // Setup visibility change listener for auto-refresh
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible" && !loading) {
-        fetchVersionInfo(false);
-      }
-    };
-
-    const handleFocus = () => {
-      if (!loading) {
-        fetchVersionInfo(false);
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    window.addEventListener("focus", handleFocus);
-
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("focus", handleFocus);
-    };
-  }, [fetchVersionInfo, loading]);
-
-  // Setup refresh interval
-  useEffect(() => {
-    if (refreshInterval > 0) {
-      refreshIntervalRef.current = setInterval(() => {
-        fetchVersionInfo(false);
-      }, refreshInterval);
-
-      return () => {
-        if (refreshIntervalRef.current) {
-          clearInterval(refreshIntervalRef.current);
-        }
-      };
-    }
-  }, [fetchVersionInfo, refreshInterval]);
-
-  // Initial fetch
-  useEffect(() => {
-    fetchVersionInfo(false);
-  }, [fetchVersionInfo]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      // Cancel any pending requests
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-      
-      // Clear timeouts
-      if (retryTimeoutRef.current) {
-        clearTimeout(retryTimeoutRef.current);
-      }
-      
-      if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current);
-      }
-    };
-  }, []);
-
-  return {
-    versionInfo,
-    loading,
+  // React Query implementation
+  const {
+    data: versionInfo,
+    isLoading,
+    isError,
     error,
     refetch,
-    lastFetch,
-    retryCount,
+    isStale,
+    dataUpdatedAt,
+  } = useQuery<VersionInfo, UseVersionInfoError>({
+    queryKey: VERSION_INFO_QUERY_KEY,
+    queryFn: async () => {
+      try {
+        const response = await serverClient.get<VersionInfo>("/api/version", {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        });
+
+        if (!apiUtils.isSuccess(response)) {
+          const errorMessage = apiUtils.getErrorMessage(response) || "Failed to fetch version info";
+          throw {
+            message: errorMessage,
+            status: 'status' in response ? response.status : undefined,
+          };
+        }
+
+        const data = response.data;
+
+        // Validate response data
+        if (!data || !data.commit || !data.date || !data.author) {
+          throw {
+            message: "Invalid version data received",
+            status: 422,
+          };
+        }
+
+        return data;
+      } catch (err) {
+        // Handle both our custom errors and unexpected errors
+        if (err && typeof err === 'object' && 'message' in err) {
+          throw err as UseVersionInfoError;
+        }
+
+        const error = err as Error;
+        throw {
+          message: error?.message || "Failed to fetch version info",
+          status: undefined,
+        } as UseVersionInfoError;
+      }
+    },
+    staleTime: STALE_TIME,
+    gcTime: GC_TIME,
+    refetchInterval: refreshInterval > 0 ? refreshInterval : false,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    enabled,
+    retry: (failureCount, error) => {
+      if (!retryOnError) return false;
+
+      // Don't retry on client errors (4xx) except for specific cases
+      if (error.status && error.status >= 400 && error.status < 500) {
+        return false;
+      }
+
+      // Retry network errors and server errors up to 3 times
+      return failureCount < 3;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
+  });
+
+  // Utility function to invalidate version info cache
+  const invalidateVersionInfo = async () => {
+    await queryClient.invalidateQueries({ queryKey: VERSION_INFO_QUERY_KEY });
   };
-} 
+
+  return {
+    versionInfo: versionInfo || null,
+    isLoading,
+    isError,
+    error: error || null,
+    refetch,
+    isStale,
+    dataUpdatedAt,
+    invalidateVersionInfo,
+  };
+}
+
+/**
+ * Utility hook for managing version info queries across the application
+ */
+export function useVersionInfoUtils() {
+  const queryClient = useQueryClient();
+
+  const prefetchVersionInfo = async () => {
+    await queryClient.prefetchQuery({
+      queryKey: VERSION_INFO_QUERY_KEY,
+      queryFn: async () => {
+        const response = await serverClient.get<VersionInfo>("/api/version");
+
+        if (!apiUtils.isSuccess(response)) {
+          throw new Error(apiUtils.getErrorMessage(response) || "Failed to fetch version info");
+        }
+
+        return response.data;
+      },
+      staleTime: STALE_TIME,
+    });
+  };
+
+  const invalidateVersionInfo = async () => {
+    await queryClient.invalidateQueries({ queryKey: VERSION_INFO_QUERY_KEY });
+  };
+
+  const getVersionInfoFromCache = (): VersionInfo | undefined => {
+    return queryClient.getQueryData(VERSION_INFO_QUERY_KEY);
+  };
+
+  const setVersionInfoInCache = (versionInfo: VersionInfo) => {
+    queryClient.setQueryData(VERSION_INFO_QUERY_KEY, versionInfo);
+  };
+
+  return {
+    prefetchVersionInfo,
+    invalidateVersionInfo,
+    getVersionInfoFromCache,
+    setVersionInfoInCache,
+  };
+}

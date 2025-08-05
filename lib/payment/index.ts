@@ -16,7 +16,6 @@ export * from './lib/payment-service';
 export { PaymentService } from './lib/payment-service';
 export { PaymentServiceManager } from './lib/payment-service-manager';
 export { PaymentProviderFactory } from './lib/payment-provider-factory';
-export type { SupportedProvider } from './lib/payment-provider-factory';
 
 // Export providers
 export * from './lib/providers/stripe-provider';

@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { PricingPlan } from "@/components/pricing/plan-card";
 
 import {
   ArrowLeft,
@@ -16,6 +15,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PaymentPlan } from "@/lib/constants";
 
 interface FormData {
   name: string;
@@ -29,7 +29,7 @@ interface FormData {
 
 interface ReviewSectionProps {
   formData: FormData;
-  selectedPlan: PricingPlan | null;
+  selectedPlan: PaymentPlan | null;
   onSubmit: () => void;
   onBack: () => void;
 }
@@ -42,9 +42,9 @@ export function ReviewSection({
 }: ReviewSectionProps) {
   const getPlanPrice = () => {
     switch (selectedPlan) {
-      case "pro":
+      case PaymentPlan.STANDARD:
         return "$10";
-      case "sponsor":
+      case PaymentPlan.PREMIUM:
         return "$20";
       default:
         return "$0";
@@ -53,10 +53,10 @@ export function ReviewSection({
 
   const getPlanName = () => {
     switch (selectedPlan) {
-      case "pro":
-        return "Pro Plan";
-      case "sponsor":
-        return "Sponsor Plan";
+      case PaymentPlan.STANDARD:
+        return "Standard Plan";
+      case PaymentPlan.PREMIUM:
+        return "Premium Plan";
       default:
         return "Free Plan";
     }
@@ -64,9 +64,9 @@ export function ReviewSection({
 
   const getPlanDescription = () => {
     switch (selectedPlan) {
-      case "pro":
-        return "One-time payment • Pro features";
-      case "sponsor":
+      case PaymentPlan.STANDARD:
+        return "One-time payment • Standard features";
+      case PaymentPlan.PREMIUM:
         return "Billed weekly • Premium features";
       default:
         return "Free forever • Basic features";
@@ -74,7 +74,7 @@ export function ReviewSection({
   };
 
   const getStatusInfo = () => {
-    if (selectedPlan === "free") {
+    if (selectedPlan === PaymentPlan.FREE) {
       return {
         status: "Pending Review",
         icon: Clock,
@@ -174,7 +174,7 @@ export function ReviewSection({
                   <div className="text-3xl font-bold bg-gradient-to-r from-theme-primary-600 to-purple-600 dark:from-theme-primary-400 dark:to-purple-400 bg-clip-text text-transparent">
                     {getPlanPrice()}
                   </div>
-                  {selectedPlan === "sponsor" && (
+                  {selectedPlan === PaymentPlan.PREMIUM && (
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       per week
                     </p>
@@ -350,7 +350,7 @@ export function ReviewSection({
               <div
                 className={cn(
                   "mt-6 p-6 rounded-2xl border",
-                  selectedPlan === "free"
+                  selectedPlan === PaymentPlan.FREE
                     ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200/50 dark:border-yellow-700/30"
                     : "bg-green-50 dark:bg-green-900/20 border-green-200/50 dark:border-green-700/30"
                 )}
@@ -359,12 +359,12 @@ export function ReviewSection({
                   <div
                     className={cn(
                       "w-10 h-10 rounded-xl flex items-center justify-center",
-                      selectedPlan === "free"
+                      selectedPlan ===PaymentPlan.FREE
                         ? "bg-yellow-500/20 dark:bg-yellow-400/30"
                         : "bg-green-500/20 dark:bg-green-400/30"
                     )}
                   >
-                    {selectedPlan === "free" ? (
+                    {selectedPlan ===PaymentPlan.FREE ? (
                       <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
                     ) : (
                       <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -374,12 +374,12 @@ export function ReviewSection({
                     <h5
                       className={cn(
                         "font-bold mb-1",
-                        selectedPlan === "free"
+                        selectedPlan === PaymentPlan.FREE
                           ? "text-yellow-800 dark:text-yellow-300"
                           : "text-green-800 dark:text-green-300"
                       )}
                     >
-                      {selectedPlan === "free"
+                      {selectedPlan === PaymentPlan.FREE
                         ? "Review Process"
                         : "Instant Publishing"}
                     </h5>

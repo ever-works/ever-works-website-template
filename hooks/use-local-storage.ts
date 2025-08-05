@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { PaymentFlow } from '@/lib/types/payment';
+import { PaymentFlow } from '@/lib/payment/types/payment';
 
 // Helper function to check if we're on the client side
 const isClient = typeof window !== 'undefined';

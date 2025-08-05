@@ -4,24 +4,24 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { PaymentFlow } from "@/lib/types/payment";
+import { PaymentFlow } from "@/lib/payment/types/payment";
 import { PAYMENT_FLOWS } from "@/lib/config/payment-flows";
 import {
-    CreditCard,
-    Clock,
-    CheckCircle,
-    ArrowRight,
-    Sparkles,
-    Save,
-    Shield,
-    Zap,
-    Star,
-    TrendingUp,
-    Info,
-    AlertCircle,
-    ChevronRight,
-    Play,
-    Pause
+  CreditCard,
+  Clock,
+  CheckCircle,
+  ArrowRight,
+  Sparkles,
+  Save,
+  Shield,
+  Zap,
+  Star,
+  TrendingUp,
+  Info,
+  AlertCircle,
+  ChevronRight,
+  Play,
+  Pause
 } from "lucide-react";
 
 interface PaymentFlowSelectorProps {

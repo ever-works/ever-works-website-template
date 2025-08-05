@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PaymentFlow } from "@/lib/types/payment";
+import { PaymentFlow } from "@/lib/payment/types/payment";
 import {
   Modal,
   ModalContent,

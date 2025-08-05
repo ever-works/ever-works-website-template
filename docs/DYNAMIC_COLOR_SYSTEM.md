@@ -1,16 +1,16 @@
-# Système de Couleurs Dynamiques
+# Dynamic Color System
 
-Ce guide explique comment utiliser le système de couleurs dynamiques avec toutes les nuances (50-950).
+This guide explains how to use the dynamic color system with all shades (50-950).
 
-## 🎨 Configuration Actuelle
+## 🎨 Current Configuration
 
-Le système est déjà configuré avec :
+The system is already configured with:
 
-### 1. Variables CSS (dans `globals.css`)
+### 1. CSS Variables (in `globals.css`)
 
 ```css
 :root {
-  /* Couleur principale avec toutes les nuances */
+  /* Primary color with all shades */
   --theme-primary: #4d88ca;
   --theme-primary-50: #eff6ff;
   --theme-primary-100: #dbeafe;
@@ -23,19 +23,19 @@ Le système est déjà configuré avec :
   --theme-primary-800: #1e40af;
   --theme-primary-900: #1e3a8a;
   --theme-primary-950: #172554;
-  
-  /* Même structure pour secondary et accent */
+
+  /* Same structure for secondary and accent */
   --theme-secondary: #00c853;
   --theme-secondary-50: #e8f5e9;
   /* ... etc ... */
-  
+
   --theme-accent: #0056b3;
   --theme-accent-50: #e3f2fd;
   /* ... etc ... */
 }
 ```
 
-### 2. Configuration Tailwind (dans `tailwind.config.ts`)
+### 2. Tailwind Configuration (in `tailwind.config.ts`)
 
 ```typescript
 colors: {
@@ -53,55 +53,55 @@ colors: {
     900: "var(--theme-primary-900)",
     950: "var(--theme-primary-950)",
   },
-  // Même structure pour theme-secondary et theme-accent
+  // Same structure for theme-secondary and theme-accent
 }
 ```
 
-## 🚀 Utilisation
+## 🚀 Usage
 
-### Classes Disponibles
+### Available Classes
 
-Avec cette configuration, Tailwind génère automatiquement toutes ces classes :
+With this configuration, Tailwind automatically generates all these classes:
 
 #### Backgrounds
-- `bg-theme-primary` (couleur par défaut)
-- `bg-theme-primary-50` à `bg-theme-primary-950`
-- `bg-theme-secondary-50` à `bg-theme-secondary-950`
-- `bg-theme-accent-50` à `bg-theme-accent-950`
+- `bg-theme-primary` (default color)
+- `bg-theme-primary-50` to `bg-theme-primary-950`
+- `bg-theme-secondary-50` to `bg-theme-secondary-950`
+- `bg-theme-accent-50` to `bg-theme-accent-950`
 
-#### Texte
+#### Text
 - `text-theme-primary`
-- `text-theme-primary-50` à `text-theme-primary-950`
-- `text-theme-secondary-50` à `text-theme-secondary-950`
-- `text-theme-accent-50` à `text-theme-accent-950`
+- `text-theme-primary-50` to `text-theme-primary-950`
+- `text-theme-secondary-50` to `text-theme-secondary-950`
+- `text-theme-accent-50` to `text-theme-accent-950`
 
-#### Bordures
+#### Borders
 - `border-theme-primary`
-- `border-theme-primary-50` à `border-theme-primary-950`
-- `border-theme-secondary-50` à `border-theme-secondary-950`
-- `border-theme-accent-50` à `border-theme-accent-950`
+- `border-theme-primary-50` to `border-theme-primary-950`
+- `border-theme-secondary-50` to `border-theme-secondary-950`
+- `border-theme-accent-50` to `border-theme-accent-950`
 
-#### Avec Variantes
+#### With Variants
 - `hover:bg-theme-primary-600`
 - `focus:border-theme-primary-400`
 - `dark:bg-theme-primary-800`
 - `active:bg-theme-primary-700`
-- Et toutes les autres variantes Tailwind !
+- And all other Tailwind variants!
 
-### Exemples d'Utilisation
+### Usage Examples
 
 ```jsx
-// Bouton principal
+// Primary button
 <button className="bg-theme-primary-500 hover:bg-theme-primary-600 text-white">
   Primary Button
 </button>
 
-// Bouton clair
+// Light button
 <button className="bg-theme-primary-50 text-theme-primary-900 hover:bg-theme-primary-100">
   Light Button
 </button>
 
-// Avec opacité
+// With opacity
 <button className="bg-theme-primary-500/20 hover:bg-theme-primary-500/30">
   Transparent Button
 </button>
@@ -116,12 +116,12 @@ Avec cette configuration, Tailwind génère automatiquement toutes ces classes :
   Dark Mode Aware
 </div>
 
-// États interactifs complets
+// Complete interactive states
 <button className="
-  bg-theme-primary-500 
-  hover:bg-theme-primary-600 
-  active:bg-theme-primary-700 
-  focus:ring-4 
+  bg-theme-primary-500
+  hover:bg-theme-primary-600
+  active:bg-theme-primary-700
+  focus:ring-4
   focus:ring-theme-primary-300
   disabled:bg-theme-primary-200
   transition-colors
@@ -132,31 +132,31 @@ Avec cette configuration, Tailwind génère automatiquement toutes ces classes :
 
 // Responsive
 <div className="
-  bg-theme-primary-100 
-  sm:bg-theme-primary-200 
-  md:bg-theme-primary-300 
+  bg-theme-primary-100
+  sm:bg-theme-primary-200
+  md:bg-theme-primary-300
   lg:bg-theme-primary-400
 ">
   Responsive Colors
 </div>
 ```
 
-## 🔧 Changer les Couleurs Dynamiquement
+## 🔧 Changing Colors Dynamically
 
-### Méthode 1 : Via JavaScript
+### Method 1: Via JavaScript
 
 ```javascript
 function applyCustomColors(colors) {
   const root = document.documentElement;
-  
-  // Appliquer la couleur principale
+
+  // Apply primary color
   root.style.setProperty('--theme-primary', colors.primary);
   root.style.setProperty('--theme-primary-50', colors.primary50);
   root.style.setProperty('--theme-primary-100', colors.primary100);
-  // ... etc pour toutes les nuances
+  // ... etc for all shades
 }
 
-// Exemple d'utilisation
+// Usage example
 applyCustomColors({
   primary: '#6366f1',
   primary50: '#eef2ff',
@@ -165,9 +165,9 @@ applyCustomColors({
 });
 ```
 
-### Méthode 2 : Via le Context des Thèmes
+### Method 2: Via Theme Context
 
-Dans votre `LayoutThemeContext`, vous pouvez ajouter une fonction pour changer les couleurs :
+In your `LayoutThemeContext`, you can add a function to change colors:
 
 ```typescript
 const changeThemeColors = (colors: ThemeColors) => {
@@ -177,61 +177,61 @@ const changeThemeColors = (colors: ThemeColors) => {
 };
 ```
 
-## 📊 Utilisation des Nuances
+## 📊 Using Shades
 
-### Guide des Nuances
+### Shade Guide
 
-- **50-100** : Backgrounds très clairs, états hover légers
-- **200-300** : Bordures légères, backgrounds secondaires
-- **400-500** : Couleurs principales, boutons, liens
-- **600-700** : États hover, focus, couleurs actives
-- **800-900** : Textes foncés, dark mode
-- **950** : Couleurs très foncées, contrastes maximaux
+- **50-100**: Very light backgrounds, light hover states
+- **200-300**: Light borders, secondary backgrounds
+- **400-500**: Primary colors, buttons, links
+- **600-700**: Hover states, focus, active colors
+- **800-900**: Dark text, dark mode
+- **950**: Very dark colors, maximum contrasts
 
-### Exemples Pratiques
+### Practical Examples
 
 ```jsx
-// Card avec hiérarchie de couleurs
+// Card with color hierarchy
 <div className="bg-theme-primary-50 border border-theme-primary-200">
-  <h3 className="text-theme-primary-900">Titre</h3>
+  <h3 className="text-theme-primary-900">Title</h3>
   <p className="text-theme-primary-700">Description</p>
   <button className="bg-theme-primary-500 hover:bg-theme-primary-600 text-white">
     Action
   </button>
 </div>
 
-// Navigation avec états
+// Navigation with states
 <nav className="bg-white dark:bg-gray-900">
   <a className="
-    text-theme-primary-600 
-    hover:text-theme-primary-700 
+    text-theme-primary-600
+    hover:text-theme-primary-700
     hover:bg-theme-primary-50
     active:bg-theme-primary-100
   ">
-    Lien Navigation
+    Navigation Link
   </a>
 </nav>
 
-// Badge avec variantes
+// Badge with variants
 <span className="bg-theme-primary-100 text-theme-primary-800 px-2 py-1 rounded">
   Badge
 </span>
 ```
 
-## 🎯 Bonnes Pratiques
+## 🎯 Best Practices
 
-1. **Cohérence** : Utilisez les mêmes nuances pour les mêmes types d'éléments
-2. **Accessibilité** : Assurez-vous d'avoir suffisamment de contraste (WCAG AA)
-3. **Dark Mode** : Inversez généralement les nuances (clair → foncé)
-4. **Performance** : Les variables CSS sont très performantes
-5. **Maintenance** : Centralisez vos couleurs dans les variables CSS
+1. **Consistency**: Use the same shades for the same types of elements
+2. **Accessibility**: Ensure sufficient contrast (WCAG AA)
+3. **Dark Mode**: Generally invert shades (light → dark)
+4. **Performance**: CSS variables are very performant
+5. **Maintenance**: Centralize your colors in CSS variables
 
 ## 🔍 Debug
 
-Pour voir toutes les variables CSS actuelles :
+To see all current CSS variables:
 
 ```javascript
-// Dans la console du navigateur
+// In the browser console
 const styles = getComputedStyle(document.documentElement);
 const themeVars = Array.from(document.documentElement.style)
   .filter(prop => prop.startsWith('--theme-'))
@@ -242,9 +242,9 @@ const themeVars = Array.from(document.documentElement.style)
 console.table(themeVars);
 ```
 
-## 🚨 Notes Importantes
+## 🚨 Important Notes
 
-1. Les classes sont générées au build time par Tailwind
-2. Si vous ajoutez de nouvelles variables CSS, redémarrez le serveur de développement
-3. Les variables CSS sont héritées, vous pouvez les surcharger localement
-4. Utilisez `theme()` dans Tailwind pour accéder aux valeurs : `theme('colors.theme-primary.500')` 
+1. Classes are generated at build time by Tailwind
+2. If you add new CSS variables, restart the development server
+3. CSS variables are inherited, you can override them locally
+4. Use `theme()` in Tailwind to access values: `theme('colors.theme-primary.500')`

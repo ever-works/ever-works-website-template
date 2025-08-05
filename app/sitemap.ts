@@ -1,19 +1,18 @@
-import { MetadataRoute } from 'next'
-import { fetchItems } from '@/lib/content'
-import { LOCALES } from '@/lib/constants'
+import { MetadataRoute } from "next";
+import { fetchItems } from "@/lib/content";
 
 // Types
-type RouteConfig = {
-  path: string
-  priority: number
-  changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never'
+interface RouteConfig {
+  path: string;
+  priority: number;
+  changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
 }
 
-type SitemapEntry = {
-  url: string
-  lastModified: Date
-  changeFrequency: RouteConfig['changeFrequency']
-  priority: number
+interface SitemapEntry {
+  url: string;
+  lastModified: Date;
+  changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
+  priority: number;
 }
 
 // Constants
@@ -48,6 +47,11 @@ const STATIC_ROUTES: RouteConfig[] = [
   { 
     path: '/contact', 
     priority: DEFAULT_PRIORITIES.SECONDARY, 
+    changeFrequency: DEFAULT_CHANGE_FREQUENCIES.WEEKLY 
+  },
+  { 
+    path: '/help', 
+    priority: DEFAULT_PRIORITIES.MAIN, 
     changeFrequency: DEFAULT_CHANGE_FREQUENCIES.WEEKLY 
   },
   { 
@@ -99,72 +103,98 @@ const STATIC_ROUTES: RouteConfig[] = [
 
 const PAGINATION_ROUTES = [
   '/tags/paging',
+  '/categories/paging',
 ]
 
 // Helper functions
 const getBaseUrl = (): string => {
-  return process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_BASE_URL
-}
+  return process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_BASE_URL;
+};
 
-const createSitemapEntry = (
-  baseUrl: string,
-  path: string,
-  config: Partial<RouteConfig> = {}
-): SitemapEntry => ({
-  url: `${baseUrl}${path}`,
-  lastModified: new Date(),
-  changeFrequency: config.changeFrequency || DEFAULT_CHANGE_FREQUENCIES.WEEKLY,
-  priority: config.priority || DEFAULT_PRIORITIES.LOW,
-})
+const sanitizeSlug = (slug: string): string => {
+  // Remove any potentially dangerous characters and ensure valid URL format
+  return slug
+    .replace(/[^a-zA-Z0-9\-_]/g, '-')
+    .replace(/--+/g, '-')
+    .replace(/^-|-$/g, '')
+    .toLowerCase();
+};
 
-const generateStaticRoutes = (baseUrl: string): SitemapEntry[] =>
-  STATIC_ROUTES.map(({ path, priority, changeFrequency }) =>
-    createSitemapEntry(baseUrl, path, { priority, changeFrequency })
-  )
+const validateSlug = (slug: string): boolean => {
+  // Ensure slug is safe and not empty
+  return Boolean(slug && slug.length > 0 && slug.length < 200 && /^[a-zA-Z0-9\-_]+$/.test(slug));
+};
 
-const generatePaginationRoutes = (baseUrl: string): SitemapEntry[] =>
-  PAGINATION_ROUTES.map((path) =>
-    createSitemapEntry(baseUrl, path, { 
-      priority: DEFAULT_PRIORITIES.TERTIARY, 
-      changeFrequency: DEFAULT_CHANGE_FREQUENCIES.DAILY 
-    })
-  )
+const generateStaticRoutes = (baseUrl: string): SitemapEntry[] => {
+  return STATIC_ROUTES.map((route) => ({
+    url: `${baseUrl}${route.path}`,
+    lastModified: new Date(),
+    changeFrequency: route.changeFrequency,
+    priority: route.priority,
+  }));
+};
 
-const generateLocaleRoutes = (baseUrl: string): SitemapEntry[] =>
-  LOCALES.flatMap((locale) =>
-    STATIC_ROUTES
-      .filter(({ path }) => !path.startsWith('/settings'))
-      .map(({ path, priority, changeFrequency }) =>
-        createSitemapEntry(baseUrl, `/${locale}${path}`, { priority, changeFrequency })
-      )
-  )
+const generatePaginationRoutes = (baseUrl: string): SitemapEntry[] => {
+  return PAGINATION_ROUTES.map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: DEFAULT_CHANGE_FREQUENCIES.WEEKLY,
+    priority: DEFAULT_PRIORITIES.LOW,
+  }));
+};
+
+const generateLocaleRoutes = (baseUrl: string): SitemapEntry[] => {
+  const locales = ['en', 'fr', 'es', 'de', 'ar', 'zh'];
+  const routes: SitemapEntry[] = [];
+
+  locales.forEach((locale) => {
+    STATIC_ROUTES.forEach((route) => {
+      if (locale !== 'en') { // Skip default locale prefix
+        routes.push({
+          url: `${baseUrl}/${locale}${route.path}`,
+          lastModified: new Date(),
+          changeFrequency: route.changeFrequency,
+          priority: route.priority,
+        });
+      }
+    });
+  });
+
+  return routes;
+};
 
 const generateDynamicRoutes = async (baseUrl: string): Promise<SitemapEntry[]> => {
   try {
     const { items, categories, tags } = await fetchItems()
 
     return [
-      // Items
-      ...items.map((item) => ({
-        url: `${baseUrl}/items/${item.slug}`,
-        lastModified: item.updatedAt,
-        changeFrequency: DEFAULT_CHANGE_FREQUENCIES.WEEKLY,
-        priority: item.featured ? DEFAULT_PRIORITIES.MAIN : DEFAULT_PRIORITIES.SECONDARY,
-      })),
-      // Categories
-      ...categories.map((category) => ({
-        url: `${baseUrl}/categories/category/${category.id}`,
-        lastModified: new Date(),
-        changeFrequency: DEFAULT_CHANGE_FREQUENCIES.WEEKLY,
-        priority: DEFAULT_PRIORITIES.SECONDARY,
-      })),
-      // Tags
-      ...tags.map((tag) => ({
-        url: `${baseUrl}/tags/${tag.id}`,
-        lastModified: new Date(),
-        changeFrequency: DEFAULT_CHANGE_FREQUENCIES.WEEKLY,
-        priority: DEFAULT_PRIORITIES.TERTIARY,
-      })),
+      // Items - validate and sanitize slugs
+      ...items
+        .filter((item) => item.slug && validateSlug(item.slug))
+        .map((item) => ({
+          url: `${baseUrl}/items/${sanitizeSlug(item.slug)}`,
+          lastModified: item.updatedAt,
+          changeFrequency: DEFAULT_CHANGE_FREQUENCIES.WEEKLY,
+          priority: item.featured ? DEFAULT_PRIORITIES.MAIN : DEFAULT_PRIORITIES.SECONDARY,
+        })),
+      // Categories - validate and sanitize IDs
+      ...categories
+        .filter((category) => category.id && validateSlug(category.id))
+        .map((category) => ({
+          url: `${baseUrl}/categories/category/${sanitizeSlug(category.id)}`,
+          lastModified: new Date(),
+          changeFrequency: DEFAULT_CHANGE_FREQUENCIES.WEEKLY,
+          priority: DEFAULT_PRIORITIES.SECONDARY,
+        })),
+      // Tags - validate and sanitize IDs
+      ...tags
+        .filter((tag) => tag.id && validateSlug(tag.id))
+        .map((tag) => ({
+          url: `${baseUrl}/tags/${sanitizeSlug(tag.id)}`,
+          lastModified: new Date(),
+          changeFrequency: DEFAULT_CHANGE_FREQUENCIES.WEEKLY,
+          priority: DEFAULT_PRIORITIES.TERTIARY,
+        })),
     ]
   } catch (error) {
     console.error('Failed to generate dynamic routes:', error)

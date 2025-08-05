@@ -17,10 +17,9 @@ const VersionDisplay = memo(function VersionDisplay({
   showDetails = false,
   refreshInterval = 5 * 60 * 1000 // 5 minutes
 }: VersionDisplayProps) {
-  const { versionInfo, loading, error } = useVersionInfo({
+  const { versionInfo, error } = useVersionInfo({
     refreshInterval,
     retryOnError: true,
-    retryDelay: 10000,
   });
 
   // Memoize date formatters for performance
@@ -55,20 +54,6 @@ const VersionDisplay = memo(function VersionDisplay({
       return match ? match[1] : url;
     }
   }), []);
-
-  // Loading state with better skeleton
-  if (loading) {
-    return (
-      <div className={`inline-flex items-center gap-2 ${className}`}>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse"></div>
-          <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-16 animate-pulse"></div>
-          <div className="w-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-          <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-20 animate-pulse"></div>
-        </div>
-      </div>
-    );
-  }
 
   // Error state
   if (error || !versionInfo) {

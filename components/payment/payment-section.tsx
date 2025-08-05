@@ -14,10 +14,10 @@ import {
   Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PricingPlan } from "@/components/pricing/plan-card";
+import { PaymentPlan } from "@/lib/constants";
 
 interface PaymentSectionProps {
-  selectedPlan: PricingPlan | null;
+  selectedPlan: PaymentPlan | null;
   onComplete: () => void;
   onBack: () => void;
 }
@@ -111,9 +111,9 @@ export function PaymentSection({
 
   const getPlanPrice = () => {
     switch (selectedPlan) {
-      case "pro":
+      case PaymentPlan.STANDARD:
         return "$10";
-      case "sponsor":
+      case PaymentPlan.PREMIUM:
         return "$20";
       default:
         return "$0";
@@ -122,10 +122,10 @@ export function PaymentSection({
 
   const getPlanName = () => {
     switch (selectedPlan) {
-      case "pro":
-        return "Pro Plan";
-      case "sponsor":
-        return "Sponsor Plan";
+      case PaymentPlan.STANDARD:
+        return "Standard Plan";
+      case  PaymentPlan.PREMIUM:
+        return "Premium Plan";
       default:
         return "Free Plan";
     }
@@ -244,11 +244,11 @@ export function PaymentSection({
                         <h4 className="text-lg font-bold text-gray-900 dark:text-white">
                           {getPlanName()}
                         </h4>
-                        {selectedPlan === "sponsor" ? (
+                        {selectedPlan === PaymentPlan.PREMIUM ? (
                           <p className="text-sm text-gray-600 dark:text-gray-400">
                             Billed weekly • Premium features
                           </p>
-                        ) : selectedPlan === "pro" ? (
+                        ) : selectedPlan === PaymentPlan.STANDARD ? (
                           <p className="text-sm text-gray-600 dark:text-gray-400">
                             One-time payment • Pro features
                           </p>
@@ -263,7 +263,7 @@ export function PaymentSection({
                       <div className="text-3xl font-bold bg-gradient-to-r from-theme-primary-600 to-purple-600 dark:from-theme-primary-400 dark:to-purple-400 bg-clip-text text-transparent">
                         {getPlanPrice()}
                       </div>
-                      {selectedPlan === "sponsor" && (
+                      {selectedPlan === PaymentPlan.PREMIUM && (
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           per week
                         </p>
