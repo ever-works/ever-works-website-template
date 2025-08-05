@@ -60,6 +60,7 @@ export class UserGitService {
       const content = await readFile(filePath, 'utf-8');
       return yaml.parse(content) as UserData;
     } catch (error) {
+      console.error(`❌ Error reading user file ${id}:`, error);
       return null;
     }
   }
@@ -128,6 +129,7 @@ export class UserGitService {
       await unlink(filePath);
       console.log(`✅ Deleted user: ${id}`);
     } catch (error) {
+      console.error(`❌ Error deleting user file ${id}:`, error);
       throw new Error(`User with ID ${id} not found`);
     }
   }

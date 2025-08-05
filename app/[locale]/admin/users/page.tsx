@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
 import { Plus, Edit, Trash2, Users, UserCheck, UserX, Search, ChevronDown } from "lucide-react";
 import UserForm from "@/components/admin/users/user-form";
@@ -46,7 +46,7 @@ export default function AdminUsersPage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // Fetch users
-  const fetchUsers = async (page: number = currentPage) => {
+  const fetchUsers = useCallback(async (page: number = currentPage) => {
     try {
       if (page === 1) {
         setIsFiltering(true);
@@ -79,10 +79,10 @@ export default function AdminUsersPage() {
       setIsLoading(false);
       setIsFiltering(false);
     }
-  };
+  }, [currentPage, limit, searchTerm, roleFilter, statusFilter]);
 
   // Fetch stats
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/users/stats');
       const data = await response.json();
@@ -92,7 +92,7 @@ export default function AdminUsersPage() {
     } catch (error) {
       console.error('Failed to fetch stats:', error);
     }
-  };
+  }, []);
 
   // Create user
   const handleCreate = async (data: CreateUserRequest) => {
@@ -224,7 +224,7 @@ export default function AdminUsersPage() {
   useEffect(() => {
     fetchUsers();
     fetchStats();
-  }, []);
+  }, [fetchUsers, fetchStats]);
 
   if (isLoading) {
     return (

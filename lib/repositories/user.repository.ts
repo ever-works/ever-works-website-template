@@ -5,7 +5,6 @@ import {
   UpdateUserRequest, 
   UserListOptions,
   UserListResponse,
-  UserResponse,
   userValidationSchema,
   updateUserValidationSchema
 } from '@/lib/types/user';
