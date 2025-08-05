@@ -30,12 +30,20 @@ export function hasAllPermissions(userPermissions: UserPermissions, permissions:
 /**
  * Check if user has permission for a specific resource and action
  */
+import { isValidPermission } from '@/lib/permissions/definitions';
+
 export function hasResourcePermission(
   userPermissions: UserPermissions, 
   resource: string, 
   action: string
 ): boolean {
-  const permission = `${resource}:${action}` as Permission;
+  const permission = `${resource}:${action}`;
+  
+  if (!isValidPermission(permission)) {
+    console.warn(`Invalid permission: ${permission}`);
+    return false;
+  }
+  
   return hasPermission(userPermissions, permission);
 }
 
