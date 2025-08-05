@@ -48,10 +48,7 @@ export interface ClientWithUser extends ClientData {
 }
 
 export interface CreateClientRequest {
-  userId: string;
-  type: string;
-  provider: string;
-  providerAccountId: string;
+  email: string;
   displayName?: string;
   username?: string;
   bio?: string;

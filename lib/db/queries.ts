@@ -705,6 +705,43 @@ export async function getSubscriptionStats() {
 // ######################### Client Queries #########################
 
 /**
+ * Create a client account for manual email users
+ */
+export async function createClientForManualUser(userId: string, data: any): Promise<any> {
+  // For manual email users, we create a "credentials" account
+  const [client] = await db
+    .insert(accounts)
+    .values({
+      userId: userId,
+      type: 'oauth',
+      provider: 'credentials',
+      providerAccountId: userId, // Use userId as providerAccountId for manual users
+      displayName: data.displayName,
+      username: data.username,
+      bio: data.bio,
+      jobTitle: data.jobTitle,
+      company: data.company,
+      industry: data.industry,
+      phone: data.phone,
+      website: data.website,
+      location: data.location,
+      accountType: data.accountType || 'individual',
+      status: data.status || 'active',
+      plan: data.plan || 'free',
+      timezone: data.timezone || 'UTC',
+      language: data.language || 'en',
+      emailNotifications: data.emailNotifications ?? true,
+      marketingEmails: data.marketingEmails ?? false,
+      notes: data.notes,
+      tags: data.tags,
+      totalSubmissions: data.totalSubmissions || 0,
+    })
+    .returning();
+
+  return client;
+}
+
+/**
  * Create a new client account
  */
 export async function createClient(data: any): Promise<any> {

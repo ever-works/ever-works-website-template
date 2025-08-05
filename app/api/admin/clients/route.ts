@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { createClient, getClients, getClientStats } from "@/lib/db/queries";
+import { getClients, getClientStats, createClientForManualUser, getUserByEmail } from "@/lib/db/queries";
 import type { CreateClientRequest, ClientListResponse } from "@/lib/types/client";
 
 export async function GET(request: NextRequest) {
@@ -69,19 +69,17 @@ export async function POST(request: NextRequest) {
 
     const data: CreateClientRequest = await request.json();
 
-    // Validate required fields
-    if (!data.userId || !data.type || !data.provider || !data.providerAccountId) {
+    // Check if user exists
+    const user = await getUserByEmail(data.email);
+    if (!user) {
       return NextResponse.json(
-        { error: 'User ID, type, provider, and provider account ID are required' },
-        { status: 400 }
+        { error: 'User not found. Please ensure the user has registered first.' },
+        { status: 404 }
       );
     }
 
-    const client = await createClient({
-      userId: data.userId,
-      type: data.type,
-      provider: data.provider,
-      providerAccountId: data.providerAccountId,
+    // Create client account for manual email user
+    const client = await createClientForManualUser(user.id, {
       displayName: data.displayName,
       username: data.username,
       bio: data.bio,
@@ -98,9 +96,6 @@ export async function POST(request: NextRequest) {
       marketingEmails: data.marketingEmails ?? false,
       notes: data.notes,
       tags: data.tags,
-      status: 'active',
-      plan: 'free',
-      totalSubmissions: 0
     });
 
     return NextResponse.json({
