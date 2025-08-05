@@ -39,10 +39,6 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
     accountType: client?.accountType || 'individual',
     timezone: client?.timezone || 'UTC',
     language: client?.language || 'en',
-    emailNotifications: client?.emailNotifications ?? true,
-    marketingEmails: client?.marketingEmails ?? false,
-    notes: client?.notes || '',
-    tags: client?.tags || '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -108,15 +104,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
       newErrors.location = `Location must be no more than ${CLIENT_VALIDATION.LOCATION_MAX_LENGTH} characters`;
     }
 
-    // Notes validation
-    if (formData.notes && formData.notes.trim().length > CLIENT_VALIDATION.NOTES_MAX_LENGTH) {
-      newErrors.notes = `Notes must be no more than ${CLIENT_VALIDATION.NOTES_MAX_LENGTH} characters`;
-    }
 
-    // Tags validation
-    if (formData.tags && formData.tags.trim().length > CLIENT_VALIDATION.TAGS_MAX_LENGTH) {
-      newErrors.tags = `Tags must be no more than ${CLIENT_VALIDATION.TAGS_MAX_LENGTH} characters`;
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -463,93 +451,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
           </select>
         </div>
 
-        {/* Preferences */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label htmlFor="emailNotifications" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Email Notifications
-            </label>
-            <select
-              id="emailNotifications"
-              value={formData.emailNotifications ? 'true' : 'false'}
-              onChange={(e) => handleInputChange('emailNotifications', e.target.value === 'true')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="true">Enabled</option>
-              <option value="false">Disabled</option>
-            </select>
-          </div>
-          
-          <div className="space-y-2">
-            <label htmlFor="marketingEmails" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Marketing Emails
-            </label>
-            <select
-              id="marketingEmails"
-              value={formData.marketingEmails ? 'true' : 'false'}
-              onChange={(e) => handleInputChange('marketingEmails', e.target.value === 'true')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="true">Enabled</option>
-              <option value="false">Disabled</option>
-            </select>
-          </div>
-        </div>
 
-        {/* Notes */}
-        <div className="space-y-2">
-          <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Admin Notes
-          </label>
-          <textarea
-            id="notes"
-            placeholder="Enter admin notes about this client"
-            value={formData.notes}
-            onChange={(e) => handleInputChange('notes', e.target.value)}
-            maxLength={CLIENT_VALIDATION.NOTES_MAX_LENGTH}
-            rows={4}
-            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-              errors.notes 
-                ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
-                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-            }`}
-          />
-          {errors.notes && (
-            <p className="text-sm text-red-600 dark:text-red-400">{errors.notes}</p>
-          )}
-          <div className="text-xs text-gray-500 dark:text-gray-400">
-            {formData.notes.length}/{CLIENT_VALIDATION.NOTES_MAX_LENGTH} characters
-          </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Internal notes for admin reference
-          </p>
-        </div>
-
-        {/* Tags */}
-        <div className="space-y-2">
-          <label htmlFor="tags" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Tags (comma-separated)
-          </label>
-          <input
-            id="tags"
-            type="text"
-            placeholder="e.g., customer, premium, new"
-            value={formData.tags}
-            onChange={(e) => handleInputChange('tags', e.target.value)}
-            maxLength={CLIENT_VALIDATION.TAGS_MAX_LENGTH}
-            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-              errors.tags 
-                ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
-                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-            }`}
-          />
-          {errors.tags && (
-            <p className="text-sm text-red-600 dark:text-red-400">{errors.tags}</p>
-          )}
-          <div className="text-xs text-gray-500 dark:text-gray-400">
-            {formData.tags.length}/{CLIENT_VALIDATION.TAGS_MAX_LENGTH} characters
-          </div>
-        </div>
 
         {/* Form Actions */}
         <div className={actionsClasses}>

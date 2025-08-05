@@ -730,10 +730,6 @@ export async function createClientForManualUser(userId: string, data: any): Prom
       plan: data.plan || 'free',
       timezone: data.timezone || 'UTC',
       language: data.language || 'en',
-      emailNotifications: data.emailNotifications ?? true,
-      marketingEmails: data.marketingEmails ?? false,
-      notes: data.notes,
-      tags: data.tags,
       totalSubmissions: data.totalSubmissions || 0,
     })
     .returning();
@@ -766,10 +762,6 @@ export async function createClient(data: any): Promise<any> {
       plan: data.plan || 'free',
       timezone: data.timezone || 'UTC',
       language: data.language || 'en',
-      emailNotifications: data.emailNotifications ?? true,
-      marketingEmails: data.marketingEmails ?? false,
-      notes: data.notes,
-      tags: data.tags,
       totalSubmissions: data.totalSubmissions || 0,
     })
     .returning();
@@ -891,12 +883,8 @@ export async function updateClient(userId: string, provider: string, providerAcc
       plan: data.plan,
       timezone: data.timezone,
       language: data.language,
-      emailNotifications: data.emailNotifications,
-      marketingEmails: data.marketingEmails,
       twoFactorEnabled: data.twoFactorEnabled,
       emailVerified: data.emailVerified,
-      notes: data.notes,
-      tags: data.tags,
       updatedAt: new Date(),
     })
     .where(

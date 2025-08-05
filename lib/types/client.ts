@@ -26,12 +26,8 @@ export interface ClientData {
   plan: 'free' | 'standard' | 'premium';
   timezone: string;
   language: string;
-  emailNotifications: boolean;
-  marketingEmails: boolean;
   twoFactorEnabled: boolean;
   emailVerified: boolean;
-  notes?: string;
-  tags?: string;
   totalSubmissions: number;
   createdAt: Date;
   updatedAt: Date;
@@ -63,10 +59,6 @@ export interface CreateClientRequest {
   plan?: 'free' | 'standard' | 'premium';
   timezone?: string;
   language?: string;
-  emailNotifications?: boolean;
-  marketingEmails?: boolean;
-  notes?: string;
-  tags?: string;
 }
 
 export interface UpdateClientRequest {
@@ -87,12 +79,8 @@ export interface UpdateClientRequest {
   plan?: 'free' | 'standard' | 'premium';
   timezone?: string;
   language?: string;
-  emailNotifications?: boolean;
-  marketingEmails?: boolean;
   twoFactorEnabled?: boolean;
   emailVerified?: boolean;
-  notes?: string;
-  tags?: string;
 }
 
 export interface ClientListResponse {

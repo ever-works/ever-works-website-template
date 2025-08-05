@@ -92,10 +92,6 @@ export async function POST(request: NextRequest) {
       accountType: data.accountType || 'individual',
       timezone: data.timezone || 'UTC',
       language: data.language || 'en',
-      emailNotifications: data.emailNotifications ?? true,
-      marketingEmails: data.marketingEmails ?? false,
-      notes: data.notes,
-      tags: data.tags,
     });
 
     return NextResponse.json({
