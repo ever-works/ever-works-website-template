@@ -47,8 +47,8 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			popular: true,
 			envKey: 'PRO_PLAN',
 			lemonProductId: '',
-			trialPeriodDays: 5,
-			trialDays: 5
+			trialPeriodDays: 0,
+			trialDays: 0
 		},
 		PREMIUM: {
 			id: PaymentPlan.PREMIUM,
@@ -64,10 +64,10 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			annualPriceId: 'price_1RlzDqKlJU1BkehBszBVt6Ui',
 			annualDiscount: 10,
 			disabled: true,
-			trialPeriodDays: 7,
+			trialPeriodDays: 0,
 			popular: false,
 			lemonProductId: '',
-			trialDays: 7,
+			trialDays: 0,
 			envKey: 'PREMIUM_PLAN'
 		}
 	}

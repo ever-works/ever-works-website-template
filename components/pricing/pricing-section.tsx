@@ -58,10 +58,6 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 			onSelectPlan(plan);
 		}
 	};
-
-	// Memoized available plans to prevent unnecessary re-renders
-
-	// Handle plan selection from URL parameters with proper error handling
 	useEffect(() => {
 		const planFromUrl = searchParams.get('plan');
 		const availablePlans = [FREE, STANDARD, PREMIUM];

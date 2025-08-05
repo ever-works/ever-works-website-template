@@ -192,21 +192,21 @@
       "TITLE": "Paramètres de sécurité",
       "BACK_TO_SETTINGS": "Retour aux paramètres",
       "CHANGE_PASSWORD": {
-        "TITLE": "Changer votre mot de passe",
-        "DESCRIPTION": "Choisissez un mot de passe fort que vous n'avez pas utilisé ailleurs. Nous vous enverrons un email de confirmation une fois votre mot de passe modifié."
+        "TITLE": "Changer le mot de passe",
+        "DESCRIPTION": "Choisissez un mot de passe fort que vous n'utilisez pas ailleurs. Nous vous enverrons un email de confirmation après le changement de votre mot de passe."
       },
       "SECURITY_TIPS": {
         "TITLE": "Conseils de sécurité",
-        "TIP_1": "Utilisez un mot de passe unique que vous n'utilisez pas pour d'autres comptes",
-        "TIP_2": "Incluez un mélange de majuscules, minuscules, chiffres et caractères spéciaux",
-        "TIP_3": "Envisagez d'activer l'authentification à deux facteurs pour plus de sécurité",
+        "TIP_1": "Utilisez un mot de passe unique que vous n'avez pas utilisé pour d'autres comptes",
+        "TIP_2": "Incluez une combinaison de majuscules, minuscules, chiffres et caractères spéciaux",
+        "TIP_3": "Envisagez d'activer l'authentification à deux facteurs pour une sécurité renforcée",
         "TIP_4": "Vérifiez régulièrement votre activité de connexion et vos sessions actives"
       },
       "CHANGE_PASSWORD_FORM": {
         "CURRENT_PASSWORD": "Mot de passe actuel",
-        "CURRENT_PASSWORD_PLACEHOLDER": "Saisissez votre mot de passe actuel",
+        "CURRENT_PASSWORD_PLACEHOLDER": "Entrez votre mot de passe actuel",
         "NEW_PASSWORD": "Nouveau mot de passe",
-        "NEW_PASSWORD_PLACEHOLDER": "Saisissez votre nouveau mot de passe",
+        "NEW_PASSWORD_PLACEHOLDER": "Entrez votre nouveau mot de passe",
         "CONFIRM_PASSWORD": "Confirmer le nouveau mot de passe",
         "CONFIRM_PASSWORD_PLACEHOLDER": "Confirmez votre nouveau mot de passe",
         "UPDATE_PASSWORD": "Mettre à jour le mot de passe",
@@ -214,7 +214,7 @@
         "CANCEL": "Annuler",
         "SHOW_PASSWORD": "Afficher le mot de passe",
         "HIDE_PASSWORD": "Masquer le mot de passe",
-        "SUCCESS_MESSAGE": "Mot de passe modifié avec succès !",
+        "SUCCESS_MESSAGE": "Mot de passe changé avec succès !",
         "SUCCESS_DESCRIPTION": "Un email de confirmation a été envoyé à votre adresse email.",
         "VALIDATION": {
           "CURRENT_REQUIRED": "Le mot de passe actuel est requis",
@@ -227,17 +227,10 @@
           "CONFIRM_REQUIRED": "Veuillez confirmer votre mot de passe",
           "PASSWORDS_MATCH": "Les mots de passe ne correspondent pas"
         },
-        "STRENGTH": {
-          "WEAK": "Faible",
-          "FAIR": "Correct",
-          "GOOD": "Bon",
-          "STRONG": "Fort",
-          "REQUIREMENTS": "Exigences du mot de passe :",
-          "AT_LEAST_8": "Au moins 8 caractères",
-          "ONE_UPPERCASE": "Une lettre majuscule",
-          "ONE_LOWERCASE": "Une lettre minuscule",
-          "ONE_NUMBER": "Un chiffre",
-          "ONE_SPECIAL": "Un caractère spécial"
+        "ERRORS": {
+          "CURRENT_INCORRECT": "Le mot de passe actuel est incorrect",
+          "SAME_PASSWORD": "Le nouveau mot de passe doit être différent du mot de passe actuel",
+          "GENERIC_ERROR": "Une erreur s'est produite lors de la mise à jour de votre mot de passe. Veuillez réessayer."
         }
       }
     }
