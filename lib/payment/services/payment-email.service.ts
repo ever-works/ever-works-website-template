@@ -9,9 +9,9 @@ import { sendEmailSafely } from '@/lib/newsletter/utils';
 import { getPaymentSuccessTemplate } from '@/lib/mail/templates/payment-success';
 import { getPaymentFailedTemplate } from '@/lib/mail/templates/payment-failed';
 import {
-    getNewSubscriptionTemplate,
-    getUpdatedSubscriptionTemplate,
-    getCancelledSubscriptionTemplate
+  getNewSubscriptionTemplate,
+  getUpdatedSubscriptionTemplate,
+  getCancelledSubscriptionTemplate
 } from '@/lib/mail/templates/subscription-events';
 
 // ============================================================================

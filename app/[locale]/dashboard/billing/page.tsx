@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { PageContainer } from "@/components/ui/container";
-import { BillingSection } from "@/components/dashboard/billing-section";
+import { BillingSection } from "@/components/dashboard";
 
 export default function DashboardBillingPage() {
   const t = useTranslations("billing");

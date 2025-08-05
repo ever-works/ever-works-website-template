@@ -230,13 +230,23 @@ export enum WebhookEventType {
   PAYMENT_SUCCEEDED = "payment_succeeded",
   PAYMENT_FAILED = "payment_failed",
   REFUND_SUCCEEDED = "refund_succeeded",
+
   SUBSCRIPTION_CREATED = "subscription_created",
   SUBSCRIPTION_UPDATED = "subscription_updated",
   SUBSCRIPTION_CANCELLED = "subscription_cancelled",
   SUBSCRIPTION_TRIAL_ENDING = "subscription_trial_ending",
   SUBSCRIPTION_PAYMENT_SUCCEEDED = "subscription_payment_succeeded",
   SUBSCRIPTION_PAYMENT_FAILED = "subscription_payment_failed",
+
+  PAYMENT_INTENT_SUCCEEDED = "payment_intent_succeeded",
+  PAYMENT_INTENT_FAILED = "payment_intent_failed",
+  CHARGE_SUCCEEDED = "charge_succeeded",
+  CHARGE_FAILED = "charge_failed",
+  INVOICE_PAID = "invoice_paid",
+  INVOICE_PAYMENT_FAILED = "invoice_payment_failed",
+  REFUND_CREATED = "refund_created"
 }
+
 
 // Supported providers type
 export type SupportedProvider = "stripe" | "solidgate" | "lemonsqueezy";
@@ -287,6 +297,7 @@ export interface CheckoutSessionParams {
   };
   allow_promotion_codes?: boolean;
   payment_method_types?: string[];
+  collection_method?: string
   
 }
 

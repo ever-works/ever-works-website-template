@@ -2,16 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Lock } from "lucide-react";
+import { Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
-import { PaymentMethod } from "./billing-section";
+import { type PaymentMethodData, usePaymentMethods } from "@/hooks/use-payment-methods";
 
 interface EditPaymentMethodModalProps {
   isOpen: boolean;
   onClose: () => void;
-  paymentMethod: PaymentMethod | null;
-  onEdit: (paymentMethod: PaymentMethod) => void;
+  paymentMethod: PaymentMethodData | null;
+  onEdit: (paymentMethod: PaymentMethodData) => void;
 }
 
 export function EditPaymentMethodModal({
@@ -21,6 +21,8 @@ export function EditPaymentMethodModal({
   onEdit
 }: EditPaymentMethodModalProps) {
   const t = useTranslations("billing");
+  const { updatePaymentMethodAsync } = usePaymentMethods();
+
   const [formData, setFormData] = useState({
     holderName: "",
     expiryMonth: "",
@@ -29,14 +31,15 @@ export function EditPaymentMethodModal({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [apiError, setApiError] = useState<string | null>(null);
 
   useEffect(() => {
     if (paymentMethod) {
       setFormData({
-        holderName: paymentMethod.holderName,
-        expiryMonth: paymentMethod.expiryMonth.toString(),
-        expiryYear: paymentMethod.expiryYear.toString(),
-        isDefault: paymentMethod.isDefault
+        holderName: paymentMethod.billing_details?.name || "",
+        expiryMonth: paymentMethod.card?.exp_month?.toString() || "",
+        expiryYear: paymentMethod.card?.exp_year?.toString() || "",
+        isDefault: paymentMethod.is_default || false
       });
     }
   }, [paymentMethod]);
@@ -70,27 +73,35 @@ export function EditPaymentMethodModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm() || !paymentMethod) return;
 
     setIsSubmitting(true);
+    setApiError(null);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      const updatedPaymentMethod: PaymentMethod = {
-        ...paymentMethod,
-        holderName: formData.holderName,
-        expiryMonth: parseInt(formData.expiryMonth),
-        expiryYear: parseInt(formData.expiryYear),
-        isDefault: formData.isDefault
+      const updateData = {
+        billing_details: {
+          name: formData.holderName
+        },
+        card: {
+          exp_month: parseInt(formData.expiryMonth),
+          exp_year: parseInt(formData.expiryYear)
+        },
+        set_as_default: formData.isDefault
       };
 
+      const updatedPaymentMethod = await updatePaymentMethodAsync({
+        paymentMethodId: paymentMethod.id,
+        updateData
+      });
+
       onEdit(updatedPaymentMethod);
+      onClose();
       setErrors({});
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating payment method:", error);
+      setApiError(error.message || "Une erreur est survenue lors de la mise à jour");
     } finally {
       setIsSubmitting(false);
     }
@@ -118,7 +129,7 @@ export function EditPaymentMethodModal({
             </div>
             <div>
               <p className="font-medium text-gray-900 dark:text-gray-100">
-                {paymentMethod.brand} •••• {paymentMethod.last4}
+                {paymentMethod.card?.brand} •••• {paymentMethod.card?.last4}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 {t("CARD_NUMBER_NOT_EDITABLE")}
@@ -128,6 +139,12 @@ export function EditPaymentMethodModal({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {apiError && (
+            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-red-800 dark:text-red-200 text-sm">{apiError}</p>
+            </div>
+          )}
+
           <div>
             <label htmlFor="holderName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t("CARD_HOLDER_NAME")}
@@ -232,7 +249,14 @@ export function EditPaymentMethodModal({
               disabled={isSubmitting}
               className="flex-1 bg-theme-primary-500 hover:bg-theme-primary-500"
             >
-              {isSubmitting ? t("UPDATING_CARD") : t("SAVE")}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Mise à jour...
+                </>
+              ) : (
+                "Sauvegarder"
+              )}
             </Button>
           </div>
         </form>

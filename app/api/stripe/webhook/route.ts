@@ -4,13 +4,13 @@ import { StripeProvider } from '@/lib/payment/lib/providers/stripe-provider';
 import { createProviderConfigs } from '@/lib/payment/config/provider-configs';
 import { WebhookEventType } from '@/lib/payment/types/payment-types';
 import {
-    paymentEmailService,
-    extractCustomerInfo,
-    formatAmount,
-    formatPaymentMethod,
-    formatBillingDate,
-    getPlanName,
-    getBillingPeriod
+  paymentEmailService,
+  extractCustomerInfo,
+  formatAmount,
+  formatPaymentMethod,
+  formatBillingDate,
+  getPlanName,
+  getBillingPeriod
 } from '@/lib/payment/services/payment-email.service';
 
 // Import server configuration utility

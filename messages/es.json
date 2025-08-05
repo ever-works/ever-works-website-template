@@ -158,15 +158,15 @@
     "LOGOUT": "Cerrar sesión",
     "SECURITY_PAGE": {
       "TITLE": "Configuración de seguridad",
-      "BACK_TO_SETTINGS": "Volver a la configuración",
+      "BACK_TO_SETTINGS": "Volver a configuración",
       "CHANGE_PASSWORD": {
-        "TITLE": "Cambiar tu contraseña",
-        "DESCRIPTION": "Elige una contraseña fuerte que no hayas usado en otro lugar. Te enviaremos un correo de confirmación una vez que se cambie tu contraseña."
+        "TITLE": "Cambiar contraseña",
+        "DESCRIPTION": "Elige una contraseña fuerte que no uses en otros sitios. Te enviaremos un email de confirmación después de cambiar tu contraseña."
       },
       "SECURITY_TIPS": {
         "TITLE": "Consejos de seguridad",
-        "TIP_1": "Usa una contraseña única que no uses para otras cuentas",
-        "TIP_2": "Incluye una mezcla de mayúsculas, minúsculas, números y caracteres especiales",
+        "TIP_1": "Usa una contraseña única que no hayas usado para otras cuentas",
+        "TIP_2": "Incluye una combinación de mayúsculas, minúsculas, números y caracteres especiales",
         "TIP_3": "Considera habilitar la autenticación de dos factores para mayor seguridad",
         "TIP_4": "Revisa regularmente tu actividad de inicio de sesión y sesiones activas"
       },
@@ -183,7 +183,7 @@
         "SHOW_PASSWORD": "Mostrar contraseña",
         "HIDE_PASSWORD": "Ocultar contraseña",
         "SUCCESS_MESSAGE": "¡Contraseña cambiada exitosamente!",
-        "SUCCESS_DESCRIPTION": "Se ha enviado un correo de confirmación a tu dirección de correo electrónico.",
+        "SUCCESS_DESCRIPTION": "Se ha enviado un email de confirmación a tu dirección de correo.",
         "VALIDATION": {
           "CURRENT_REQUIRED": "La contraseña actual es requerida",
           "NEW_REQUIRED": "La nueva contraseña es requerida",
@@ -195,17 +195,10 @@
           "CONFIRM_REQUIRED": "Por favor confirma tu contraseña",
           "PASSWORDS_MATCH": "Las contraseñas no coinciden"
         },
-        "STRENGTH": {
-          "WEAK": "Débil",
-          "FAIR": "Regular",
-          "GOOD": "Buena",
-          "STRONG": "Fuerte",
-          "REQUIREMENTS": "Requisitos de contraseña:",
-          "AT_LEAST_8": "Al menos 8 caracteres",
-          "ONE_UPPERCASE": "Una letra mayúscula",
-          "ONE_LOWERCASE": "Una letra minúscula",
-          "ONE_NUMBER": "Un número",
-          "ONE_SPECIAL": "Un carácter especial"
+        "ERRORS": {
+          "CURRENT_INCORRECT": "La contraseña actual es incorrecta",
+          "SAME_PASSWORD": "La nueva contraseña debe ser diferente a la actual",
+          "GENERIC_ERROR": "Ocurrió un error al actualizar tu contraseña. Por favor intenta de nuevo."
         }
       }
     }
