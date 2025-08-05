@@ -1,15 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { 
-  getClientById, 
-  updateClient, 
-  deleteClient, 
-  getClientWithUser 
-} from '@/lib/db/queries';
-import type { 
-  UpdateClientRequest, 
-  ClientResponse 
-} from '@/lib/types/client';
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { getClientWithUser, updateClient, deleteClient } from "@/lib/db/queries";
+import type { UpdateClientRequest, ClientResponse } from "@/lib/types/client";
 
 export async function GET(
   request: NextRequest,
@@ -22,8 +14,17 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { clientId } = params;
-    const client = await getClientWithUser(clientId);
+    // Parse the clientId which should be in format: userId:provider:providerAccountId
+    const [userId, provider, providerAccountId] = params.clientId.split(':');
+    
+    if (!userId || !provider || !providerAccountId) {
+      return NextResponse.json(
+        { error: 'Invalid client ID format' },
+        { status: 400 }
+      );
+    }
+
+    const client = await getClientWithUser(userId, provider, providerAccountId);
 
     if (!client) {
       return NextResponse.json(
@@ -58,45 +59,34 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { clientId } = params;
+    // Parse the clientId which should be in format: userId:provider:providerAccountId
+    const [userId, provider, providerAccountId] = params.clientId.split(':');
+    
+    if (!userId || !provider || !providerAccountId) {
+      return NextResponse.json(
+        { error: 'Invalid client ID format' },
+        { status: 400 }
+      );
+    }
+
     const data: UpdateClientRequest = await request.json();
 
-    // Check if client exists
-    const existingClient = await getClientById(clientId);
-    if (!existingClient) {
+    const client = await updateClient(userId, provider, providerAccountId, data);
+
+    if (!client) {
       return NextResponse.json(
         { error: 'Client not found' },
         { status: 404 }
       );
     }
 
-    const updatedClient = await updateClient(clientId, {
-      companyName: data.companyName,
-      clientType: data.clientType,
-      phone: data.phone,
-      website: data.website,
-      country: data.country,
-      city: data.city,
-      jobTitle: data.jobTitle,
-      status: data.status,
-      plan: data.plan,
-      preferredContactMethod: data.preferredContactMethod,
-      marketingConsent: data.marketingConsent,
-      notes: data.notes
-    });
-
-    if (!updatedClient) {
-      return NextResponse.json(
-        { error: 'Failed to update client' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
+    const response: ClientResponse = {
       success: true,
-      client: updatedClient,
+      client,
       message: 'Client updated successfully'
-    });
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error updating client:', error);
     return NextResponse.json(
@@ -117,23 +107,22 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { clientId } = params;
-
-    // Check if client exists
-    const existingClient = await getClientById(clientId);
-    if (!existingClient) {
+    // Parse the clientId which should be in format: userId:provider:providerAccountId
+    const [userId, provider, providerAccountId] = params.clientId.split(':');
+    
+    if (!userId || !provider || !providerAccountId) {
       return NextResponse.json(
-        { error: 'Client not found' },
-        { status: 404 }
+        { error: 'Invalid client ID format' },
+        { status: 400 }
       );
     }
 
-    const deletedClient = await deleteClient(clientId);
+    const success = await deleteClient(userId, provider, providerAccountId);
 
-    if (!deletedClient) {
+    if (!success) {
       return NextResponse.json(
-        { error: 'Failed to delete client' },
-        { status: 500 }
+        { error: 'Client not found' },
+        { status: 404 }
       );
     }
 

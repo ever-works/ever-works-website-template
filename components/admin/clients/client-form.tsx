@@ -27,6 +27,9 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
 
   const [formData, setFormData] = useState({
     userId: client?.userId || '',
+    type: client?.type || 'oauth',
+    provider: client?.provider || '',
+    providerAccountId: client?.providerAccountId || '',
     displayName: client?.displayName || '',
     username: client?.username || '',
     bio: client?.bio || '',
@@ -50,9 +53,20 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    // User ID validation (required for create mode)
-    if (mode === 'create' && !formData.userId.trim()) {
-      newErrors.userId = 'User ID is required';
+    // Required fields for create mode
+    if (mode === 'create') {
+      if (!formData.userId.trim()) {
+        newErrors.userId = 'User ID is required';
+      }
+      if (!formData.type.trim()) {
+        newErrors.type = 'Account type is required';
+      }
+      if (!formData.provider.trim()) {
+        newErrors.provider = 'Provider is required';
+      }
+      if (!formData.providerAccountId.trim()) {
+        newErrors.providerAccountId = 'Provider account ID is required';
+      }
     }
 
     // Display name validation
@@ -120,17 +134,13 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     if (!validateForm()) {
       return;
     }
 
     try {
-      const submitData = mode === 'edit' 
-        ? { id: client!.id, ...formData } as UpdateClientRequest
-        : formData as CreateClientRequest;
-
-      await onSubmit(submitData);
+      await onSubmit(formData);
     } catch (error) {
       console.error('Form submission error:', error);
     }
@@ -159,29 +169,94 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
       <form onSubmit={handleSubmit} className={formClasses}>
         {/* User ID Field (only for create mode) */}
         {mode === 'create' && (
-          <div className="space-y-2">
-            <label htmlFor="userId" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              User ID <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="userId"
-              type="text"
-              placeholder="Enter user ID"
-              value={formData.userId}
-              onChange={(e) => handleInputChange('userId', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                errors.userId 
-                  ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
-                  : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-              }`}
-            />
-            {errors.userId && (
-              <p className="text-sm text-red-600 dark:text-red-400">{errors.userId}</p>
-            )}
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              The user ID this client profile belongs to
-            </p>
-          </div>
+          <>
+            <div className="space-y-2">
+              <label htmlFor="userId" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                User ID <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="userId"
+                type="text"
+                placeholder="Enter user ID"
+                value={formData.userId}
+                onChange={(e) => handleInputChange('userId', e.target.value)}
+                className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                  errors.userId
+                    ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
+                    : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+                }`}
+              />
+              {errors.userId && (
+                <p className="text-sm text-red-600 dark:text-red-400">{errors.userId}</p>
+              )}
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                The user ID this client profile belongs to
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="type" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Account Type <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="type"
+                type="text"
+                placeholder="e.g., oauth"
+                value={formData.type}
+                onChange={(e) => handleInputChange('type', e.target.value)}
+                className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                  errors.type
+                    ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
+                    : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+                }`}
+              />
+              {errors.type && (
+                <p className="text-sm text-red-600 dark:text-red-400">{errors.type}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="provider" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Provider <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="provider"
+                type="text"
+                placeholder="e.g., google, github"
+                value={formData.provider}
+                onChange={(e) => handleInputChange('provider', e.target.value)}
+                className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                  errors.provider
+                    ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
+                    : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+                }`}
+              />
+              {errors.provider && (
+                <p className="text-sm text-red-600 dark:text-red-400">{errors.provider}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="providerAccountId" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Provider Account ID <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="providerAccountId"
+                type="text"
+                placeholder="Enter provider account ID"
+                value={formData.providerAccountId}
+                onChange={(e) => handleInputChange('providerAccountId', e.target.value)}
+                className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                  errors.providerAccountId
+                    ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
+                    : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+                }`}
+              />
+              {errors.providerAccountId && (
+                <p className="text-sm text-red-600 dark:text-red-400">{errors.providerAccountId}</p>
+              )}
+            </div>
+          </>
         )}
 
         {/* Display Name Field */}

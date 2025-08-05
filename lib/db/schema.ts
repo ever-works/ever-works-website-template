@@ -44,6 +44,43 @@ export const accounts = pgTable(
     scope: text("scope"),
     id_token: text("id_token"),
     session_state: text("session_state"),
+    
+    // Client Management Fields
+    displayName: text("display_name"),
+    username: text("username").unique(),
+    bio: text("bio"),
+    jobTitle: text("job_title"),
+    company: text("company"),
+    industry: text("industry"),
+    phone: text("phone"),
+    website: text("website"),
+    location: text("location"),
+    accountType: text("account_type", { 
+      enum: ["individual", "team", "enterprise"] 
+    }).default("individual"),
+    status: text("status", { 
+      enum: ["active", "inactive", "suspended", "trial", "cancelled"] 
+    }).default("active"),
+    plan: text("plan", { 
+      enum: ["free", "standard", "premium"] 
+    }).default("free"),
+    trialStartDate: timestamp("trial_start_date", { mode: "date" }),
+    trialEndDate: timestamp("trial_end_date", { mode: "date" }),
+    subscriptionStartDate: timestamp("subscription_start_date", { mode: "date" }),
+    subscriptionEndDate: timestamp("subscription_end_date", { mode: "date" }),
+    totalSubmissions: integer("total_submissions").default(0),
+    lastLoginAt: timestamp("last_login_at", { mode: "date" }),
+    lastActivityAt: timestamp("last_activity_at", { mode: "date" }),
+    timezone: text("timezone").default("UTC"),
+    language: text("language").default("en"),
+    emailNotifications: boolean("email_notifications").default(true),
+    marketingEmails: boolean("marketing_emails").default(false),
+    twoFactorEnabled: boolean("two_factor_enabled").default(false),
+    emailVerified: boolean("email_verified").default(false),
+    notes: text("notes"),
+    tags: text("tags"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
   (account) => [
     {
@@ -51,6 +88,10 @@ export const accounts = pgTable(
         columns: [account.provider, account.providerAccountId],
       }),
     },
+    index("account_status_idx").on(account.status),
+    index("account_plan_idx").on(account.plan),
+    index("account_type_idx").on(account.accountType),
+    index("account_username_idx").on(account.username),
   ]
 );
 
@@ -114,11 +155,11 @@ export const newsletterSubscriptions = pgTable("newsletter_subscriptions", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   email: text("email").notNull().unique(),
-  isActive: boolean("is_active").notNull().default(true),
-  subscribedAt: timestamp("subscribed_at").notNull().defaultNow(),
-  unsubscribedAt: timestamp("unsubscribed_at"),
-  lastEmailSent: timestamp("last_email_sent"),
-  source: text("source").default("footer"), // footer, popup, etc.
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  isSubscribed: boolean("is_subscribed").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 // ######################### Comment Schema #########################
@@ -200,56 +241,38 @@ export const subscriptions = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    planId: text("plan_id", {
-      enum: [PaymentPlan.FREE, PaymentPlan.STANDARD, PaymentPlan.PREMIUM],
-    })
-      .notNull()
-      .default(PaymentPlan.FREE),
+    stripeCustomerId: text("stripe_customer_id"),
+    stripeSubscriptionId: text("stripe_subscription_id"),
+    stripePriceId: text("stripe_price_id"),
+    stripeProductId: text("stripe_product_id"),
     status: text("status", {
-      enum: [
-        SubscriptionStatus.ACTIVE,
-        SubscriptionStatus.CANCELLED,
-        SubscriptionStatus.EXPIRED,
-        SubscriptionStatus.PENDING,
-        SubscriptionStatus.PAUSED,
-      ],
-    })
-      .notNull()
-      .default(SubscriptionStatus.PENDING),
-    startDate: timestamp("start_date", { mode: "date" }).notNull(),
-    endDate: timestamp("end_date", { mode: "date" }),
-    paymentProvider: text("payment_provider", {
-      enum: [
-        PaymentProvider.STRIPE,
-        PaymentProvider.LEMONSQUEEZY,
-        PaymentProvider.SOLIDGATE,
-      ],
+      enum: ["active", "canceled", "incomplete", "incomplete_expired", "past_due", "trialing", "unpaid"],
     }).notNull(),
-    subscriptionId: text("subscription_id").notNull(), 
-    priceId: text("price_id"),
-    customerId: text("customer_id"),
-    currency: text("currency").default("usd"),
-    amount: integer("amount"),
-    interval: text("interval").default("month"),
-    intervalCount: integer("interval_count").default(1),
+    plan: text("plan", {
+      enum: ["free", "standard", "premium"],
+    }).notNull(),
+    currentPeriodStart: timestamp("current_period_start", { mode: "date" }),
+    currentPeriodEnd: timestamp("current_period_end", { mode: "date" }),
+    cancelAtPeriodEnd: boolean("cancel_at_period_end").notNull().default(false),
+    canceledAt: timestamp("canceled_at", { mode: "date" }),
     trialStart: timestamp("trial_start", { mode: "date" }),
     trialEnd: timestamp("trial_end", { mode: "date" }),
-    cancelledAt: timestamp("cancelled_at", { mode: "date" }),
-    cancelAtPeriodEnd: boolean("cancel_at_period_end").default(false),
-    cancelReason: text("cancel_reason"),
-    metadata: text("metadata"),
+    paymentMethodId: text("payment_method_id"),
+    billingEmail: text("billing_email"),
+    billingName: text("billing_name"),
+    billingAddress: text("billing_address"),
+    billingCity: text("billing_city"),
+    billingState: text("billing_state"),
+    billingPostalCode: text("billing_postal_code"),
+    billingCountry: text("billing_country"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
-  },
-  (table) => ({
+  }, (table) => ({
     userSubscriptionIndex: index("user_subscription_idx").on(table.userId),
     statusIndex: index("subscription_status_idx").on(table.status),
-    providerSubscriptionIndex: uniqueIndex("provider_subscription_idx").on(
-      table.paymentProvider,
-      table.subscriptionId
-    ),
-    planIndex: index("subscription_plan_idx").on(table.planId),
-    createdAtIndex: index("subscription_created_at_idx").on(table.createdAt),
+    planIndex: index("subscription_plan_idx").on(table.plan),
+    stripeCustomerIndex: index("stripe_customer_idx").on(table.stripeCustomerId),
+    stripeSubscriptionIndex: index("stripe_subscription_idx").on(table.stripeSubscriptionId),
   })
 );
 
@@ -283,75 +306,6 @@ export const subscriptionHistory = pgTable(
   })
 );
 
-export const clients = pgTable("clients", {
-  // Basic Identification
-  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
-  
-  // SaaS User Information
-  displayName: text("display_name"),
-  username: text("username").unique(),
-  bio: text("bio"),
-  
-  // Professional Information
-  jobTitle: text("job_title"),
-  company: text("company"),
-  industry: text("industry"),
-  
-  // Contact Information
-  phone: text("phone"),
-  website: text("website"),
-  location: text("location"),
-  
-  // SaaS Account Information
-  accountType: text("account_type", { 
-    enum: ["individual", "team", "enterprise"] 
-  }).default("individual"),
-  
-  // Subscription & Billing
-  status: text("status", { 
-    enum: ["active", "inactive", "suspended", "trial", "cancelled"] 
-  }).default("active"),
-  plan: text("plan", { 
-    enum: ["free", "standard", "premium"] 
-  }).default("free"),
-  
-  // Trial & Subscription
-  trialStartDate: timestamp("trial_start_date", { mode: "date" }),
-  trialEndDate: timestamp("trial_end_date", { mode: "date" }),
-  subscriptionStartDate: timestamp("subscription_start_date", { mode: "date" }),
-  subscriptionEndDate: timestamp("subscription_end_date", { mode: "date" }),
-  
-  // Usage & Activity
-  totalSubmissions: integer("total_submissions").default(0),
-  lastLoginAt: timestamp("last_login_at", { mode: "date" }),
-  lastActivityAt: timestamp("last_activity_at", { mode: "date" }),
-  
-  // Preferences
-  timezone: text("timezone").default("UTC"),
-  language: text("language").default("en"),
-  emailNotifications: boolean("email_notifications").default(true),
-  marketingEmails: boolean("marketing_emails").default(false),
-  
-  // Account Settings
-  twoFactorEnabled: boolean("two_factor_enabled").default(false),
-  emailVerified: boolean("email_verified").default(false),
-  
-  // Admin Management
-  notes: text("notes"), // Admin notes about client
-  tags: text("tags"), // Comma-separated tags for categorization
-  
-  // Timestamps
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-}, (table) => ({
-  userClientIndex: index("user_client_idx").on(table.userId),
-  statusIndex: index("client_status_idx").on(table.status),
-  planIndex: index("client_plan_idx").on(table.plan),
-  accountTypeIndex: index("client_account_type_idx").on(table.accountType),
-  usernameIndex: index("client_username_idx").on(table.username),
-}));
-
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
 export type CommentWithUser = Comment & { user: typeof users.$inferSelect };
@@ -376,8 +330,8 @@ export type SubscriptionWithUser = Subscription & {
 };
 
 // Client Types
-export type Client = typeof clients.$inferSelect;
-export type NewClient = typeof clients.$inferInsert;
+export type Client = typeof accounts.$inferSelect;
+export type NewClient = typeof accounts.$inferInsert;
 export type ClientWithUser = Client & {
   user: typeof users.$inferSelect;
 };

@@ -1,15 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { 
-  getClients, 
-  createClient, 
-  getClientStats 
-} from '@/lib/db/queries';
-import type { 
-  CreateClientRequest, 
-  ClientListResponse, 
-  ClientListOptions 
-} from '@/lib/types/client';
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { createClient, getClients, getClientStats } from "@/lib/db/queries";
+import type { CreateClientRequest, ClientListResponse } from "@/lib/types/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -31,7 +23,7 @@ export async function GET(request: NextRequest) {
 
     const offset = (page - 1) * limit;
 
-    const options: ClientListOptions = {
+    const options = {
       page,
       limit,
       offset,
@@ -78,15 +70,18 @@ export async function POST(request: NextRequest) {
     const data: CreateClientRequest = await request.json();
 
     // Validate required fields
-    if (!data.userId) {
+    if (!data.userId || !data.type || !data.provider || !data.providerAccountId) {
       return NextResponse.json(
-        { error: 'User ID is required' },
+        { error: 'User ID, type, provider, and provider account ID are required' },
         { status: 400 }
       );
     }
 
     const client = await createClient({
       userId: data.userId,
+      type: data.type,
+      provider: data.provider,
+      providerAccountId: data.providerAccountId,
       displayName: data.displayName,
       username: data.username,
       bio: data.bio,

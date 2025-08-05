@@ -1,8 +1,19 @@
 // ######################### Client Types #########################
 
 export interface ClientData {
-  id: string;
   userId: string;
+  type: string;
+  provider: string;
+  providerAccountId: string;
+  refresh_token?: string;
+  access_token?: string;
+  expires_at?: number;
+  token_type?: string;
+  scope?: string;
+  id_token?: string;
+  session_state?: string;
+  
+  // Client Management Fields
   displayName?: string;
   username?: string;
   bio?: string;
@@ -46,6 +57,9 @@ export interface ClientWithUser extends ClientData {
 
 export interface CreateClientRequest {
   userId: string;
+  type: string;
+  provider: string;
+  providerAccountId: string;
   displayName?: string;
   username?: string;
   bio?: string;
@@ -65,7 +79,9 @@ export interface CreateClientRequest {
 }
 
 export interface UpdateClientRequest {
-  id: string;
+  userId: string;
+  provider: string;
+  providerAccountId: string;
   displayName?: string;
   username?: string;
   bio?: string;
