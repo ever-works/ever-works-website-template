@@ -127,13 +127,13 @@ export default function ClientsPage() {
   };
 
   // Delete client
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (compositeKey: string) => {
     if (!confirm('Are you sure you want to delete this client? This action cannot be undone.')) {
       return;
     }
 
     try {
-      const response = await fetch(`/api/admin/clients/${id}`, {
+      const response = await fetch(`/api/admin/clients/${compositeKey}`, {
         method: 'DELETE',
       });
       
@@ -337,7 +337,7 @@ export default function ClientsPage() {
             <div className="space-y-4">
               {clients.map((client) => (
                 <div
-                  key={client.id}
+                  key={`${client.userId}:${client.provider}:${client.providerAccountId}`}
                   className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
                   <div className="flex-1">
@@ -378,6 +378,7 @@ export default function ClientsPage() {
                   <div className="flex items-center space-x-2">
                     <Button
                       size="sm"
+                      color="primary"
                       variant="bordered"
                       onPress={() => openEditForm(client)}
                       startContent={<Edit className="w-4 h-4" />}
@@ -388,7 +389,7 @@ export default function ClientsPage() {
                       size="sm"
                       color="danger"
                       variant="bordered"
-                      onPress={() => handleDelete(client.id)}
+                      onPress={() => handleDelete(`${client.userId}:${client.provider}:${client.providerAccountId}`)}
                       startContent={<Trash2 className="w-4 h-4" />}
                     >
                       Delete

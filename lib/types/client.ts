@@ -12,8 +12,6 @@ export interface ClientData {
   scope?: string;
   id_token?: string;
   session_state?: string;
-  
-  // Client Management Fields
   displayName?: string;
   username?: string;
   bio?: string;
@@ -23,16 +21,9 @@ export interface ClientData {
   phone?: string;
   website?: string;
   location?: string;
-  accountType: 'individual' | 'team' | 'enterprise';
-  status: 'active' | 'inactive' | 'suspended' | 'trial' | 'cancelled';
+  accountType: 'individual' | 'business' | 'enterprise';
+  status: 'active' | 'inactive' | 'suspended' | 'trial';
   plan: 'free' | 'standard' | 'premium';
-  trialStartDate?: Date;
-  trialEndDate?: Date;
-  subscriptionStartDate?: Date;
-  subscriptionEndDate?: Date;
-  totalSubmissions: number;
-  lastLoginAt?: Date;
-  lastActivityAt?: Date;
   timezone: string;
   language: string;
   emailNotifications: boolean;
@@ -41,6 +32,7 @@ export interface ClientData {
   emailVerified: boolean;
   notes?: string;
   tags?: string;
+  totalSubmissions: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -69,7 +61,9 @@ export interface CreateClientRequest {
   phone?: string;
   website?: string;
   location?: string;
-  accountType?: 'individual' | 'team' | 'enterprise';
+  accountType?: 'individual' | 'business' | 'enterprise';
+  status?: 'active' | 'inactive' | 'suspended' | 'trial';
+  plan?: 'free' | 'standard' | 'premium';
   timezone?: string;
   language?: string;
   emailNotifications?: boolean;
@@ -91,8 +85,8 @@ export interface UpdateClientRequest {
   phone?: string;
   website?: string;
   location?: string;
-  accountType?: 'individual' | 'team' | 'enterprise';
-  status?: 'active' | 'inactive' | 'suspended' | 'trial' | 'cancelled';
+  accountType?: 'individual' | 'business' | 'enterprise';
+  status?: 'active' | 'inactive' | 'suspended' | 'trial';
   plan?: 'free' | 'standard' | 'premium';
   timezone?: string;
   language?: string;
@@ -122,9 +116,9 @@ export interface ClientResponse {
 }
 
 export interface ClientListOptions {
-  status?: 'active' | 'inactive' | 'suspended' | 'trial' | 'cancelled';
+  status?: 'active' | 'inactive' | 'suspended' | 'trial';
   plan?: 'free' | 'standard' | 'premium';
-  accountType?: 'individual' | 'team' | 'enterprise';
+  accountType?: 'individual' | 'business' | 'enterprise';
   page?: number;
   limit?: number;
   offset?: number;

@@ -22,15 +22,12 @@ import {
   type SubscriptionHistory as SubscriptionHistoryType,
   type NewSubscriptionHistory,
   type SubscriptionWithUser,
-  clients,
-  type Client,
-  type NewClient,
-  type ClientWithUser
+  accounts
 } from "./schema";
 import { desc, isNull, count, asc, lte, like, or } from "drizzle-orm";
 import type { NewComment, CommentWithUser } from "@/lib/types/comment";
 import { PaymentPlan } from "../constants";
-import type { ClientListOptions } from "@/lib/types/client";
+import type { ClientListOptions, ClientWithUser } from "@/lib/types/client";
 
 export async function logActivity(
   userId: string,
@@ -708,32 +705,57 @@ export async function getSubscriptionStats() {
 // ######################### Client Queries #########################
 
 /**
- * Create a new client
+ * Create a new client account
  */
-export async function createClient(data: NewClient): Promise<Client> {
-  const result = await db
-    .insert(clients)
+export async function createClient(data: any): Promise<any> {
+  const [client] = await db
+    .insert(accounts)
     .values({
-      ...data,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      userId: data.userId,
+      type: data.type,
+      provider: data.provider,
+      providerAccountId: data.providerAccountId,
+      displayName: data.displayName,
+      username: data.username,
+      bio: data.bio,
+      jobTitle: data.jobTitle,
+      company: data.company,
+      industry: data.industry,
+      phone: data.phone,
+      website: data.website,
+      location: data.location,
+      accountType: data.accountType || 'individual',
+      status: data.status || 'active',
+      plan: data.plan || 'free',
+      timezone: data.timezone || 'UTC',
+      language: data.language || 'en',
+      emailNotifications: data.emailNotifications ?? true,
+      marketingEmails: data.marketingEmails ?? false,
+      notes: data.notes,
+      tags: data.tags,
+      totalSubmissions: data.totalSubmissions || 0,
     })
     .returning();
 
-  return result[0];
+  return client;
 }
 
 /**
- * Get client by ID
+ * Get client by user ID and provider
  */
-export async function getClientById(id: string): Promise<Client | null> {
-  const result = await db
+export async function getClientById(userId: string, provider: string, providerAccountId: string): Promise<any> {
+  const [client] = await db
     .select()
-    .from(clients)
-    .where(eq(clients.id, id))
-    .limit(1);
+    .from(accounts)
+    .where(
+      and(
+        eq(accounts.userId, userId),
+        eq(accounts.provider, provider),
+        eq(accounts.providerAccountId, providerAccountId)
+      )
+    );
 
-  return result[0] || null;
+  return client;
 }
 
 /**
@@ -758,52 +780,52 @@ export async function getClients(options: ClientListOptions): Promise<ClientWith
   if (search) {
     whereConditions.push(
       or(
-        like(clients.displayName, `%${search}%`),
-        like(clients.username, `%${search}%`),
-        like(clients.company, `%${search}%`),
-        like(clients.location, `%${search}%`),
-        like(clients.phone, `%${search}%`),
-        like(clients.website, `%${search}%`)
+        like(accounts.displayName, `%${search}%`),
+        like(accounts.username, `%${search}%`),
+        like(accounts.company, `%${search}%`),
+        like(accounts.location, `%${search}%`),
+        like(accounts.phone, `%${search}%`),
+        like(accounts.website, `%${search}%`)
       )
     );
   }
 
   // Add filter conditions
   if (status) {
-    whereConditions.push(eq(clients.status, status));
+    whereConditions.push(eq(accounts.status, status));
   }
 
   if (plan) {
-    whereConditions.push(eq(clients.plan, plan));
+    whereConditions.push(eq(accounts.plan, plan));
   }
 
   if (accountType) {
-    whereConditions.push(eq(clients.accountType, accountType));
+    whereConditions.push(eq(accounts.accountType, accountType));
   }
 
   if (userId) {
-    whereConditions.push(eq(clients.userId, userId));
+    whereConditions.push(eq(accounts.userId, userId));
   }
 
   const query = db
     .select({
-      clients: clients,
+      accounts: accounts,
       user: users
     })
-    .from(clients)
-    .leftJoin(users, eq(clients.userId, users.id));
+    .from(accounts)
+    .leftJoin(users, eq(accounts.userId, users.id));
 
   if (whereConditions.length > 0) {
     query.where(and(...whereConditions));
   }
 
   // Add sorting
-  const orderByClause = sortBy === 'displayName' ? (sortOrder === 'asc' ? asc(clients.displayName) : desc(clients.displayName)) :
-    sortBy === 'username' ? (sortOrder === 'asc' ? asc(clients.username) : desc(clients.username)) :
-    sortBy === 'accountType' ? (sortOrder === 'asc' ? asc(clients.accountType) : desc(clients.accountType)) :
-    sortBy === 'status' ? (sortOrder === 'asc' ? asc(clients.status) : desc(clients.status)) :
-    sortBy === 'plan' ? (sortOrder === 'asc' ? asc(clients.plan) : desc(clients.plan)) :
-    sortOrder === 'asc' ? asc(clients.createdAt) : desc(clients.createdAt);
+  const orderByClause = sortBy === 'displayName' ? (sortOrder === 'asc' ? asc(accounts.displayName) : desc(accounts.displayName)) :
+    sortBy === 'username' ? (sortOrder === 'asc' ? asc(accounts.username) : desc(accounts.username)) :
+    sortBy === 'accountType' ? (sortOrder === 'asc' ? asc(accounts.accountType) : desc(accounts.accountType)) :
+    sortBy === 'status' ? (sortOrder === 'asc' ? asc(accounts.status) : desc(accounts.status)) :
+    sortBy === 'plan' ? (sortOrder === 'asc' ? asc(accounts.plan) : desc(accounts.plan)) :
+    sortOrder === 'asc' ? asc(accounts.createdAt) : desc(accounts.createdAt);
 
   return query
     .orderBy(orderByClause)
@@ -812,79 +834,106 @@ export async function getClients(options: ClientListOptions): Promise<ClientWith
 }
 
 /**
- * Update client
+ * Update client account
  */
-export async function updateClient(
-  clientId: string,
-  data: Partial<NewClient>
-): Promise<Client | null> {
-  const result = await db
-    .update(clients)
+export async function updateClient(userId: string, provider: string, providerAccountId: string, data: any): Promise<any> {
+  const [client] = await db
+    .update(accounts)
     .set({
-      ...data,
-      updatedAt: new Date()
+      displayName: data.displayName,
+      username: data.username,
+      bio: data.bio,
+      jobTitle: data.jobTitle,
+      company: data.company,
+      industry: data.industry,
+      phone: data.phone,
+      website: data.website,
+      location: data.location,
+      accountType: data.accountType,
+      status: data.status,
+      plan: data.plan,
+      timezone: data.timezone,
+      language: data.language,
+      emailNotifications: data.emailNotifications,
+      marketingEmails: data.marketingEmails,
+      twoFactorEnabled: data.twoFactorEnabled,
+      emailVerified: data.emailVerified,
+      notes: data.notes,
+      tags: data.tags,
+      updatedAt: new Date(),
     })
-    .where(eq(clients.id, clientId))
+    .where(
+      and(
+        eq(accounts.userId, userId),
+        eq(accounts.provider, provider),
+        eq(accounts.providerAccountId, providerAccountId)
+      )
+    )
     .returning();
 
-  return result[0] || null;
+  return client;
 }
 
 /**
- * Delete client (hard delete for now since no deletedAt field)
+ * Delete client account
  */
-export async function deleteClient(clientId: string): Promise<Client | null> {
+export async function deleteClient(userId: string, provider: string, providerAccountId: string): Promise<boolean> {
   const result = await db
-    .delete(clients)
-    .where(eq(clients.id, clientId))
-    .returning();
+    .delete(accounts)
+    .where(
+      and(
+        eq(accounts.userId, userId),
+        eq(accounts.provider, provider),
+        eq(accounts.providerAccountId, providerAccountId)
+      )
+    );
 
-  return result[0] || null;
+  return result.rowCount > 0;
 }
 
 /**
- * Get client with user details
+ * Get client with user information
  */
-export async function getClientWithUser(clientId: string): Promise<ClientWithUser | null> {
-  const result = await db
+export async function getClientWithUser(userId: string, provider: string, providerAccountId: string): Promise<ClientWithUser | null> {
+  const [result] = await db
     .select({
-      clients: clients,
+      accounts: accounts,
       user: users
     })
-    .from(clients)
-    .leftJoin(users, eq(clients.userId, users.id))
-    .where(eq(clients.id, clientId))
-    .limit(1);
+    .from(accounts)
+    .leftJoin(users, eq(accounts.userId, users.id))
+    .where(
+      and(
+        eq(accounts.userId, userId),
+        eq(accounts.provider, provider),
+        eq(accounts.providerAccountId, providerAccountId)
+      )
+    );
 
-  if (!result[0]) return null;
-
-  return {
-    ...result[0].clients,
-    user: result[0].user!
-  };
+  return result || null;
 }
 
 /**
  * Get client statistics
  */
-export async function getClientStats() {
-  const totalClients = await db
-    .select({ count: count() })
-    .from(clients);
+export async function getClientStats(): Promise<{ total: number; active: number; trial: number }> {
+  const [totalResult] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(accounts);
 
-  const activeClients = await db
-    .select({ count: count() })
-    .from(clients)
-    .where(eq(clients.status, 'active'));
+  const [activeResult] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(accounts)
+    .where(eq(accounts.status, 'active'));
 
-  const trialClients = await db
-    .select({ count: count() })
-    .from(clients)
-    .where(eq(clients.status, 'trial'));
+  const [trialResult] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(accounts)
+    .where(eq(accounts.status, 'trial'));
 
   return {
-    total: totalClients[0].count,
-    active: activeClients[0].count,
-    trial: trialClients[0].count
+    total: totalResult?.count || 0,
+    active: activeResult?.count || 0,
+    trial: trialResult?.count || 0,
   };
 }

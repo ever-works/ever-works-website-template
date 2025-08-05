@@ -5,7 +5,7 @@ import type { UpdateClientRequest, ClientResponse } from "@/lib/types/client";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { clientId: string } }
+  { params }: { params: Promise<{ clientId: string }> }
 ) {
   try {
     const session = await auth();
@@ -14,8 +14,10 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { clientId } = await params;
+
     // Parse the clientId which should be in format: userId:provider:providerAccountId
-    const [userId, provider, providerAccountId] = params.clientId.split(':');
+    const [userId, provider, providerAccountId] = clientId.split(':');
     
     if (!userId || !provider || !providerAccountId) {
       return NextResponse.json(
@@ -50,7 +52,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { clientId: string } }
+  { params }: { params: Promise<{ clientId: string }> }
 ) {
   try {
     const session = await auth();
@@ -59,8 +61,10 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { clientId } = await params;
+
     // Parse the clientId which should be in format: userId:provider:providerAccountId
-    const [userId, provider, providerAccountId] = params.clientId.split(':');
+    const [userId, provider, providerAccountId] = clientId.split(':');
     
     if (!userId || !provider || !providerAccountId) {
       return NextResponse.json(
@@ -98,7 +102,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { clientId: string } }
+  { params }: { params: Promise<{ clientId: string }> }
 ) {
   try {
     const session = await auth();
@@ -107,8 +111,10 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { clientId } = await params;
+
     // Parse the clientId which should be in format: userId:provider:providerAccountId
-    const [userId, provider, providerAccountId] = params.clientId.split(':');
+    const [userId, provider, providerAccountId] = clientId.split(':');
     
     if (!userId || !provider || !providerAccountId) {
       return NextResponse.json(
