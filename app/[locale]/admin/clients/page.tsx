@@ -2,22 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
-import { Plus, Edit, Trash2, Users, Search, Filter } from "lucide-react";
-import { ClientForm } from "@/components/admin/clients/client-form";
-import type { 
-  ClientData, 
-  CreateClientRequest, 
-  UpdateClientRequest, 
-  ClientWithUser 
-} from "@/lib/types/client";
-import { UniversalPagination } from "@/components/universal-pagination";
+import { Plus, Edit, Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
+import { ClientForm } from "@/components/admin/clients/client-form";
+import { UniversalPagination } from "@/components/universal-pagination";
+import type { ClientWithUser } from "@/lib/types/client";
 
 interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
   clients?: T;
-  client?: ClientData;
+  client?: any;
   error?: string;
   message?: string;
   total?: number;
@@ -26,11 +21,11 @@ interface ApiResponse<T = any> {
   totalPages?: number;
 }
 
-export default function AdminClientsPage() {
+export default function ClientsPage() {
   const [clients, setClients] = useState<ClientWithUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<ClientData | null>(null);
+  const [selectedClient, setSelectedClient] = useState<any | null>(null);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   
   // Pagination state
@@ -78,7 +73,7 @@ export default function AdminClientsPage() {
   };
 
   // Create client
-  const handleCreate = async (data: CreateClientRequest) => {
+  const handleCreate = async (data: any) => {
     try {
       setIsSubmitting(true);
       const response = await fetch('/api/admin/clients', {
@@ -87,7 +82,7 @@ export default function AdminClientsPage() {
         body: JSON.stringify(data),
       });
       
-      const result: ApiResponse<ClientData> = await response.json();
+      const result: ApiResponse<any> = await response.json();
       
       if (result.success) {
         toast.success(result.message || 'Client created successfully');
@@ -105,7 +100,7 @@ export default function AdminClientsPage() {
   };
 
   // Update client
-  const handleUpdate = async (data: UpdateClientRequest) => {
+  const handleUpdate = async (data: any) => {
     try {
       setIsSubmitting(true);
       const response = await fetch(`/api/admin/clients/${data.id}`, {
@@ -114,7 +109,7 @@ export default function AdminClientsPage() {
         body: JSON.stringify(data),
       });
       
-      const result: ApiResponse<ClientData> = await response.json();
+      const result: ApiResponse<any> = await response.json();
       
       if (result.success) {
         toast.success(result.message || 'Client updated successfully');
@@ -163,17 +158,17 @@ export default function AdminClientsPage() {
     onOpen();
   };
 
-  const openEditForm = (client: ClientData) => {
+  const openEditForm = (client: any) => {
     setSelectedClient(client);
     setFormMode('edit');
     onOpen();
   };
 
-  const handleFormSubmit = async (data: CreateClientRequest | UpdateClientRequest) => {
+  const handleFormSubmit = async (data: any) => {
     if (formMode === 'create') {
-      await handleCreate(data as CreateClientRequest);
+      await handleCreate(data as any);
     } else {
-      await handleUpdate(data as UpdateClientRequest);
+      await handleUpdate(data as any);
     }
   };
 
@@ -182,12 +177,7 @@ export default function AdminClientsPage() {
     fetchClients(page);
   };
 
-  const handleSearch = () => {
-    setCurrentPage(1);
-    fetchClients(1);
-  };
-
-  const handleClearFilters = () => {
+  const clearFilters = () => {
     setSearchTerm('');
     setStatusFilter('');
     setPlanFilter('');
@@ -248,77 +238,76 @@ export default function AdminClientsPage() {
       </div>
 
       {/* Filters */}
-      <Card className="bg-white dark:bg-gray-800">
-        <CardBody>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <div className="md:col-span-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Search clients..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        {/* Search */}
+        <div className="flex-1">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search clients..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </div>
-            
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="suspended">Suspended</option>
-              <option value="trial">Trial</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-
-            <select
-              value={planFilter}
-              onChange={(e) => setPlanFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">All Plans</option>
-              <option value="free">Free</option>
-              <option value="standard">Standard</option>
-              <option value="premium">Premium</option>
-            </select>
-
-            <select
-              value={accountTypeFilter}
-              onChange={(e) => setAccountTypeFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">All Types</option>
-              <option value="individual">Individual</option>
-              <option value="team">Team</option>
-              <option value="enterprise">Enterprise</option>
-            </select>
           </div>
-          
-          <div className="flex justify-between items-center mt-4">
-            <Button
-              variant="bordered"
-              onPress={handleSearch}
-              startContent={<Search className="w-4 h-4" />}
+        </div>
+
+        {/* Filter Buttons */}
+        <div className="flex gap-2">
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="suspended">Suspended</option>
+            <option value="trial">Trial</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+
+          {/* Plan Filter */}
+          <select
+            value={planFilter}
+            onChange={(e) => setPlanFilter(e.target.value)}
+            className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">All Plans</option>
+            <option value="free">Free</option>
+            <option value="standard">Standard</option>
+            <option value="premium">Premium</option>
+          </select>
+
+          {/* Account Type Filter */}
+          <select
+            value={accountTypeFilter}
+            onChange={(e) => setAccountTypeFilter(e.target.value)}
+            className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">All Types</option>
+            <option value="individual">Individual</option>
+            <option value="team">Team</option>
+            <option value="enterprise">Enterprise</option>
+          </select>
+
+          {/* Clear Filters Button */}
+          {(searchTerm || statusFilter || planFilter || accountTypeFilter) && (
+            <button
+              onClick={clearFilters}
+              className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
-              Search
-            </Button>
-            <Button
-              variant="bordered"
-              onPress={handleClearFilters}
-              startContent={<Filter className="w-4 h-4" />}
-            >
-              Clear Filters
-            </Button>
-          </div>
-        </CardBody>
-      </Card>
+              Clear
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* Clients List */}
       <Card className="bg-white dark:bg-gray-800">
@@ -330,7 +319,7 @@ export default function AdminClientsPage() {
             </div>
           ) : clients.length === 0 ? (
             <div className="text-center py-8">
-              <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <Eye className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No clients found</h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
                 {searchTerm || statusFilter || planFilter || accountTypeFilter 
