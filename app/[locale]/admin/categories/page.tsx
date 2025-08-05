@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
 import { Plus, Edit, Trash2, Eye, EyeOff, FolderTree } from "lucide-react";
 import { CategoryForm } from "@/components/admin/categories/category-form";
@@ -38,7 +38,7 @@ export default function AdminCategoriesPage() {
 
 
   // Fetch categories
-  const fetchCategories = async (page: number = currentPage) => {
+  const fetchCategories = useCallback(async (page: number = currentPage) => {
     try {
       setIsLoading(true);
       const params = new URLSearchParams({
@@ -64,7 +64,7 @@ export default function AdminCategoriesPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentPage, limit]);
 
   // Create category
   const handleCreate = async (data: CreateCategoryRequest) => {
@@ -173,7 +173,7 @@ export default function AdminCategoriesPage() {
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   if (isLoading) {
     return (
