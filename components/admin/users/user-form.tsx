@@ -96,6 +96,12 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validate required fields
+    if (!formData.role) {
+      toast.error('Please select a role');
+      return;
+    }
+    
     try {
       if (isEditing) {
         const updateData: UpdateUserRequest = {
@@ -287,12 +293,12 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             onChange={(e) => handleInputChange('role', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             disabled={rolesLoading}
+            required
           >
             {rolesLoading ? (
               <option value="">Loading roles...</option>
             ) : (
               <>
-                <option value="">Select a role</option>
                 {roles
                   .filter(role => role.isActive)
                   .map(role => (

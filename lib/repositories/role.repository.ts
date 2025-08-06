@@ -118,8 +118,4 @@ export class RoleRepository {
     const roles = await this.findAll();
     return roles.filter(role => role.isActive);
   }
-
-  getGitService(): RoleGitService {
-    return this.gitService;
-  }
 } 
