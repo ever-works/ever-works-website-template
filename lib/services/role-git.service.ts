@@ -46,6 +46,18 @@ export class RoleGitService {
     return true;
   }
 
+  private validatePath(filePath: string): boolean {
+    const resolvedPath = path.resolve(filePath);
+    const resolvedRoot = path.resolve(this.rolesDir);
+    
+    if (!resolvedPath.startsWith(resolvedRoot)) {
+      console.warn(`Path traversal attempt detected: ${filePath} resolves to ${resolvedPath}`);
+      return false;
+    }
+    
+    return true;
+  }
+
   private formatDateForYaml(): string {
     const now = new Date();
     const year = now.getFullYear();
@@ -133,6 +145,10 @@ export class RoleGitService {
     
     try {
       const filePath = path.join(this.rolesDir, `${id}.yml`);
+      if (!this.validatePath(filePath)) {
+        return false;
+      }
+      
       await fs.access(filePath);
       return true;
     } catch (error) {
@@ -149,6 +165,10 @@ export class RoleGitService {
     }
     try {
       const filePath = path.join(this.rolesDir, `${id}.yml`);
+      if (!this.validatePath(filePath)) {
+        return null;
+      }
+      
       const content = await fs.readFile(filePath, 'utf-8');
       return this.parseRole(content);
     } catch (error) {
@@ -173,6 +193,10 @@ export class RoleGitService {
     };
 
     const filePath = path.join(this.rolesDir, `${role.id}.yml`);
+    if (!this.validatePath(filePath)) {
+      throw new Error('Invalid file path');
+    }
+    
     const content = this.serializeRole(role);
     
     await fs.writeFile(filePath, content, 'utf-8');
@@ -197,6 +221,10 @@ export class RoleGitService {
     };
 
     const filePath = path.join(this.rolesDir, `${id}.yml`);
+    if (!this.validatePath(filePath)) {
+      throw new Error('Invalid file path');
+    }
+    
     const yamlContent = this.serializeRole(updatedRole);
     
     await fs.writeFile(filePath, yamlContent, 'utf-8');
@@ -223,11 +251,17 @@ export class RoleGitService {
 
   async hardDeleteRole(id: string): Promise<void> {
     if (!this.validateId(id)) {
-      throw new Error(`Invalid role ID format: ${id}`);
+      throw new Error('Invalid role ID');
     }
+
     const filePath = path.join(this.rolesDir, `${id}.yml`);
+    if (!this.validatePath(filePath)) {
+      throw new Error('Invalid file path');
+    }
+    
     try {
       await fs.unlink(filePath);
+      console.log(`✅ Hard deleted role: ${id}`);
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         throw new Error(`Role with ID '${id}' not found`);
