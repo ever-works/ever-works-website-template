@@ -26,6 +26,26 @@ export class RoleGitService {
     this.rolesDir = path.join(process.cwd(), '.content', 'roles');
   }
 
+  private validateId(id: string): boolean {
+    if (!id || typeof id !== 'string') {
+      return false;
+    }
+    
+    // Check for path traversal attempts
+    if (id.includes('..') || id.includes('/') || id.includes('\\')) {
+      console.warn(`Potential path traversal attempt detected: ${id}`);
+      return false;
+    }
+    
+    // Validate id format (alphanumeric, hyphens, underscores only)
+    if (!/^[a-zA-Z0-9_-]+$/.test(id)) {
+      console.warn(`Invalid role ID format: ${id}`);
+      return false;
+    }
+    
+    return true;
+  }
+
   private formatDateForYaml(): string {
     const now = new Date();
     const year = now.getFullYear();
@@ -106,6 +126,10 @@ export class RoleGitService {
   }
 
   async exists(id: string): Promise<boolean> {
+    if (!this.validateId(id)) {
+      return false;
+    }
+    
     try {
       const filePath = path.join(this.rolesDir, `${id}.yml`);
       await fs.access(filePath);
@@ -119,6 +143,9 @@ export class RoleGitService {
   }
 
   async findById(id: string): Promise<RoleData | null> {
+    if (!this.validateId(id)) {
+      return null;
+    }
     try {
       const filePath = path.join(this.rolesDir, `${id}.yml`);
       const content = await fs.readFile(filePath, 'utf-8');
@@ -153,6 +180,9 @@ export class RoleGitService {
   }
 
   async updateRole(id: string, updates: UpdateRoleRequest): Promise<RoleData> {
+    if (!this.validateId(id)) {
+      throw new Error(`Invalid role ID format: ${id}`);
+    }
     const existingRole = await this.findById(id);
     if (!existingRole) {
       throw new Error(`Role with ID '${id}' not found`);
@@ -183,6 +213,9 @@ export class RoleGitService {
   }
 
   async hardDeleteRole(id: string): Promise<void> {
+    if (!this.validateId(id)) {
+      throw new Error(`Invalid role ID format: ${id}`);
+    }
     const filePath = path.join(this.rolesDir, `${id}.yml`);
     try {
       await fs.unlink(filePath);

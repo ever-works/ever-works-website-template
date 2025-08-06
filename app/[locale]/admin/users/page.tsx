@@ -10,14 +10,15 @@ import { toast } from "sonner";
 interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
-  users?: T;
-  user?: UserData;
   error?: string;
   message?: string;
-  total?: number;
-  page?: number;
-  limit?: number;
-  totalPages?: number;
+}
+
+interface PaginatedResponse<T> extends ApiResponse<T> {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 export default function AdminUsersPage() {
@@ -62,10 +63,10 @@ export default function AdminUsersPage() {
       });
       
       const response = await fetch(`/api/admin/users?${params}`);
-      const data: ApiResponse<UserWithCount[]> = await response.json();
+      const data: PaginatedResponse<UserWithCount[]> = await response.json();
       
-      if (data.users) {
-        setUsers(data.users);
+      if (data.success && data.data) {
+        setUsers(data.data);
         setTotalUsers(data.total || 0);
         setTotalPages(data.totalPages || 1);
         setCurrentPage(data.page || 1);
@@ -85,9 +86,9 @@ export default function AdminUsersPage() {
   const fetchStats = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/users/stats');
-      const data = await response.json();
-      if (data.total !== undefined) {
-        setStats(data);
+      const data: ApiResponse<{ total: number; active: number; inactive: number }> = await response.json();
+      if (data.success && data.data) {
+        setStats(data.data);
       }
     } catch (error) {
       console.error('Failed to fetch stats:', error);
@@ -104,7 +105,7 @@ export default function AdminUsersPage() {
         body: JSON.stringify(data),
       });
       
-      const result: ApiResponse<UserData> = await response.json();
+      const result: ApiResponse<{ user: UserData }> = await response.json();
       
       if (result.success) {
         toast.success(result.message || 'User created successfully');
@@ -132,7 +133,7 @@ export default function AdminUsersPage() {
         body: JSON.stringify(data),
       });
       
-      const result: ApiResponse<UserData> = await response.json();
+      const result: ApiResponse<{ user: UserData }> = await response.json();
       
       if (result.success) {
         toast.success(result.message || 'User updated successfully');
