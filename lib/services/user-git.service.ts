@@ -6,15 +6,70 @@ import {
   CreateUserRequest, 
   UpdateUserRequest, 
   UserListOptions,
+  UserStatus,
   generateUserId,
   formatDateForYaml
 } from '@/lib/types/user';
+
+interface ParsedUserData {
+  id: string;
+  username: string;
+  email: string;
+  name: string;
+  title?: string;
+  avatar?: string;
+  role: string;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
+  created_by?: string;
+}
 
 export class UserGitService {
   private readonly usersDir: string;
 
   constructor() {
     this.usersDir = join(process.cwd(), '.content', 'users');
+  }
+
+  private parseUser(content: string): UserData {
+    const data = yaml.parse(content) as ParsedUserData;
+    
+    if (!data.id || !data.username || !data.email || !data.name || !data.role) {
+      throw new Error('Invalid user data: missing required fields');
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+      throw new Error('Invalid user data: invalid email format');
+    }
+
+    // Validate role
+    const validRoles = ['super-admin', 'admin', 'moderator', 'user'];
+    if (!validRoles.includes(data.role)) {
+      throw new Error(`Invalid user data: invalid role '${data.role}'`);
+    }
+
+    // Validate status
+    const validStatuses = ['active', 'inactive'];
+    if (data.status && !validStatuses.includes(data.status)) {
+      throw new Error(`Invalid user data: invalid status '${data.status}'`);
+    }
+
+    return {
+      id: data.id,
+      username: data.username,
+      email: data.email,
+      name: data.name,
+      title: data.title || '',
+      avatar: data.avatar || '',
+      role: data.role,
+      status: (data.status || 'active') as UserStatus,
+      created_at: data.created_at || formatDateForYaml(),
+      updated_at: data.updated_at || formatDateForYaml(),
+      created_by: data.created_by || 'system',
+    };
   }
 
   /**
@@ -31,14 +86,8 @@ export class UserGitService {
         try {
           const filePath = join(this.usersDir, file);
           const content = await readFile(filePath, 'utf-8');
-          const userData = yaml.parse(content) as UserData;
-          
-          // Validate required fields
-          if (userData.id && userData.username && userData.email && userData.name && userData.role) {
-            users.push(userData);
-          } else {
-            console.warn(`⚠️ Invalid user data in ${file}: missing required fields`);
-          }
+          const userData = this.parseUser(content);
+          users.push(userData);
         } catch (error) {
           console.error(`❌ Error reading user file ${file}:`, error);
         }
@@ -58,7 +107,7 @@ export class UserGitService {
     try {
       const filePath = join(this.usersDir, `${id}.yml`);
       const content = await readFile(filePath, 'utf-8');
-      return yaml.parse(content) as UserData;
+      return this.parseUser(content);
     } catch (error) {
       console.error(`❌ Error reading user file ${id}:`, error);
       return null;
