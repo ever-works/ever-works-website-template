@@ -5,7 +5,7 @@ import { Button, Input, Switch } from '@heroui/react';
 import { Save, X } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/lib/types/role';
-import { PERMISSIONS, Permission } from '@/lib/permissions/definitions';
+import { PERMISSIONS, Permission, getPermissionsForResource } from '@/lib/permissions/definitions';
 
 interface RoleFormProps {
   role?: RoleData;
@@ -70,7 +70,7 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
   };
 
   const handleSelectAll = (resource: keyof typeof PERMISSIONS) => {
-    const resourcePermissions = Object.values(PERMISSIONS[resource]) as Permission[];
+    const resourcePermissions = getPermissionsForResource(resource);
     setFormData(prev => ({
       ...prev,
       permissions: [...new Set([...prev.permissions, ...resourcePermissions])],
@@ -78,7 +78,7 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
   };
 
   const handleClearAll = (resource: keyof typeof PERMISSIONS) => {
-    const resourcePermissions = Object.values(PERMISSIONS[resource]) as Permission[];
+    const resourcePermissions = getPermissionsForResource(resource);
     setFormData(prev => ({
       ...prev,
       permissions: prev.permissions.filter(p => !resourcePermissions.includes(p)),

@@ -59,17 +59,22 @@ export type Permission =
   | 'system:settings';
 
 export function getAllPermissions(): Permission[] {
-  return Object.values(PERMISSIONS).flatMap(resource => 
+  const allPermissions = Object.values(PERMISSIONS).flatMap(resource => 
     Object.values(resource)
-  ) as Permission[];
+  );
+  // Type assertion is safe here because PERMISSIONS is const and all values are valid permissions
+  return allPermissions as Permission[];
 }
 
 export function getPermissionsForResource(resource: keyof typeof PERMISSIONS): Permission[] {
-  return Object.values(PERMISSIONS[resource]) as Permission[];
+  const resourcePermissions = Object.values(PERMISSIONS[resource]);
+  // Type assertion is safe here because PERMISSIONS[resource] contains only valid permissions
+  return resourcePermissions as Permission[];
 }
 
 export function isValidPermission(permission: string): permission is Permission {
-  return getAllPermissions().includes(permission as Permission);
+  const allPermissions = getAllPermissions();
+  return allPermissions.includes(permission as Permission);
 }
 
 export const DEFAULT_ROLES = {
