@@ -1,6 +1,8 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
+const thumbClasses = "pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-1";
+
 interface SwitchProps extends React.InputHTMLAttributes<HTMLInputElement> {
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
@@ -24,7 +26,10 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
           )}
           {...props}
         />
-        <span className="pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-1" />
+        <span 
+          className={thumbClasses}
+          data-state={checked ? 'checked' : 'unchecked'}
+        />
       </div>
     )
   }
