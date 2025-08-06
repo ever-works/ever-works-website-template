@@ -1,4 +1,4 @@
-import { RoleGitService } from '@/lib/services/role-git.service';
+import { RoleDbService } from '@/lib/services/role-db.service';
 import { 
   RoleData, 
   CreateRoleRequest, 
@@ -8,14 +8,14 @@ import {
 } from '@/lib/types/role';
 
 export class RoleRepository {
-  private gitService: RoleGitService;
+  private dbService: RoleDbService;
 
   constructor() {
-    this.gitService = new RoleGitService();
+    this.dbService = new RoleDbService();
   }
 
   async findAll(): Promise<RoleData[]> {
-    return this.gitService.readRoles();
+    return this.dbService.readRoles();
   }
 
   async findAllPaginated(options: RoleListOptions = {}): Promise<{
@@ -25,82 +25,31 @@ export class RoleRepository {
     limit: number;
     totalPages: number;
   }> {
-    const { page = 1, limit = 10, status, sortBy = 'name', sortOrder = 'asc' } = options;
-    
-    let roles = await this.gitService.readRoles();
-    
-    // Filter by status if specified
-    if (status !== undefined) {
-      roles = roles.filter(role => role.status === status);
-    }
-    
-    // Sort roles
-    roles.sort((a, b) => {
-      let aValue: string | number;
-      let bValue: string | number;
-      
-      switch (sortBy) {
-        case 'name':
-          aValue = a.name.toLowerCase();
-          bValue = b.name.toLowerCase();
-          break;
-        case 'id':
-          aValue = a.id.toLowerCase();
-          bValue = b.id.toLowerCase();
-          break;
-        case 'created_at':
-          aValue = new Date(a.created_at).getTime();
-          bValue = new Date(b.created_at).getTime();
-          break;
-        default:
-          aValue = a.name.toLowerCase();
-          bValue = b.name.toLowerCase();
-      }
-      
-      if (sortOrder === 'desc') {
-        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
-      }
-      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-    });
-    
-    // Calculate pagination
-    const total = roles.length;
-    const totalPages = Math.ceil(total / limit);
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedRoles = roles.slice(startIndex, endIndex);
-    
-    return {
-      roles: paginatedRoles,
-      total,
-      page,
-      limit,
-      totalPages,
-    };
+    return this.dbService.findRoles(options);
   }
 
   async findById(id: string): Promise<RoleData | null> {
-    return this.gitService.findById(id);
+    return this.dbService.findById(id);
   }
 
   async create(data: CreateRoleRequest): Promise<RoleData> {
-    return this.gitService.createRole(data);
+    return this.dbService.createRole(data);
   }
 
   async update(id: string, data: UpdateRoleRequest): Promise<RoleData> {
-    return this.gitService.updateRole(id, data);
+    return this.dbService.updateRole(id, data);
   }
 
   async delete(id: string): Promise<void> {
-    return this.gitService.deleteRole(id);
+    return this.dbService.deleteRole(id);
   }
 
   async hardDelete(id: string): Promise<void> {
-    return this.gitService.hardDeleteRole(id);
+    return this.dbService.hardDeleteRole(id);
   }
 
   async checkDuplicateId(id: string): Promise<boolean> {
-    return this.gitService.exists(id);
+    return this.dbService.checkDuplicateId(id);
   }
 
   async findWithCounts(): Promise<RoleWithCount[]> {

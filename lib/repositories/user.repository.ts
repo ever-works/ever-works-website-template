@@ -1,4 +1,4 @@
-import { UserGitService } from '@/lib/services/user-git.service';
+import { UserDbService } from '@/lib/services/user-db.service';
 import { 
   UserData, 
   CreateUserRequest, 
@@ -10,10 +10,10 @@ import {
 } from '@/lib/types/user';
 
 export class UserRepository {
-  private userGitService: UserGitService;
+  private userDbService: UserDbService;
 
   constructor() {
-    this.userGitService = new UserGitService();
+    this.userDbService = new UserDbService();
   }
 
   /**
@@ -21,7 +21,7 @@ export class UserRepository {
    */
   async findAll(options: UserListOptions = {}): Promise<UserListResponse> {
     try {
-      const result = await this.userGitService.findUsers(options);
+      const result = await this.userDbService.findUsers(options);
       return {
         users: result.users,
         total: result.total,
@@ -40,7 +40,7 @@ export class UserRepository {
    */
   async findById(id: string): Promise<UserData | null> {
     try {
-      return await this.userGitService.readUser(id);
+      return await this.userDbService.findById(id);
     } catch (error) {
       console.error('Error finding user by ID:', error);
       throw new Error('Failed to retrieve user');
@@ -55,20 +55,8 @@ export class UserRepository {
       // Validate input data
       const validatedData = userValidationSchema.parse(data);
 
-      // Check if username already exists
-      const usernameExists = await this.userGitService.usernameExists(validatedData.username);
-      if (usernameExists) {
-        throw new Error('Username already exists');
-      }
-
-      // Check if email already exists
-      const emailExists = await this.userGitService.emailExists(validatedData.email);
-      if (emailExists) {
-        throw new Error('Email already exists');
-      }
-
-      // Create user
-      const user = await this.userGitService.createUser(validatedData, createdBy);
+      // Create user (duplicate checking is handled in the service)
+      const user = await this.userDbService.createUser(validatedData, createdBy);
       return user;
     } catch (error) {
       if (error instanceof Error) {
@@ -88,29 +76,13 @@ export class UserRepository {
       const validatedData = updateUserValidationSchema.parse(data);
 
       // Check if user exists
-      const existingUser = await this.userGitService.readUser(id);
+      const existingUser = await this.userDbService.findById(id);
       if (!existingUser) {
         throw new Error('User not found');
       }
 
-      // Check username uniqueness if username is being updated
-      if (validatedData.username && validatedData.username !== existingUser.username) {
-        const usernameExists = await this.userGitService.usernameExists(validatedData.username, id);
-        if (usernameExists) {
-          throw new Error('Username already exists');
-        }
-      }
-
-      // Check email uniqueness if email is being updated
-      if (validatedData.email && validatedData.email !== existingUser.email) {
-        const emailExists = await this.userGitService.emailExists(validatedData.email, id);
-        if (emailExists) {
-          throw new Error('Email already exists');
-        }
-      }
-
-      // Update user
-      const updatedUser = await this.userGitService.updateUser(id, validatedData);
+      // Update user (duplicate checking is handled in the service)
+      const updatedUser = await this.userDbService.updateUser(id, validatedData);
       return updatedUser;
     } catch (error) {
       if (error instanceof Error) {
@@ -127,21 +99,21 @@ export class UserRepository {
   async delete(id: string): Promise<void> {
     try {
       // Check if user exists
-      const existingUser = await this.userGitService.readUser(id);
+      const existingUser = await this.userDbService.findById(id);
       if (!existingUser) {
         throw new Error('User not found');
       }
 
       // Prevent deletion of the last super admin
       if (existingUser.role === 'super-admin') {
-        const allUsers = await this.userGitService.readUsers();
+        const allUsers = await this.userDbService.readUsers();
         const superAdmins = allUsers.filter(user => user.role === 'super-admin' && user.status === 'active');
         if (superAdmins.length <= 1) {
           throw new Error('Cannot delete the last super admin');
         }
       }
 
-      await this.userGitService.deleteUser(id);
+      await this.userDbService.deleteUser(id);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -160,7 +132,7 @@ export class UserRepository {
     inactive: number;
   }> {
     try {
-      return await this.userGitService.getUserStats();
+      return await this.userDbService.getUserStats();
     } catch (error) {
       console.error('Error getting user stats:', error);
       throw new Error('Failed to retrieve user statistics');
@@ -172,7 +144,7 @@ export class UserRepository {
    */
   async usernameExists(username: string, excludeId?: string): Promise<boolean> {
     try {
-      return await this.userGitService.usernameExists(username, excludeId);
+      return await this.userDbService.usernameExists(username, excludeId);
     } catch (error) {
       console.error('Error checking username existence:', error);
       throw new Error('Failed to check username availability');
@@ -184,7 +156,7 @@ export class UserRepository {
    */
   async emailExists(email: string, excludeId?: string): Promise<boolean> {
     try {
-      return await this.userGitService.emailExists(email, excludeId);
+      return await this.userDbService.emailExists(email, excludeId);
     } catch (error) {
       console.error('Error checking email existence:', error);
       throw new Error('Failed to check email availability');
@@ -196,7 +168,7 @@ export class UserRepository {
    */
   async getAllUsers(): Promise<UserData[]> {
     try {
-      return await this.userGitService.readUsers();
+      return await this.userDbService.readUsers();
     } catch (error) {
       console.error('Error getting all users:', error);
       throw new Error('Failed to retrieve all users');
