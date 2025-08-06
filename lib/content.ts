@@ -38,23 +38,27 @@ function validatePath(filepath: string, basePath: string): void {
 	}
 }
 function ensureTrailingSeparator(p: string): string {
-  return p.endsWith(path.sep) ? p : p + path.sep;
+	return p.endsWith(path.sep) ? p : p + path.sep;
 }
 
 async function safeReadFile(filepath: string, basePath: string): Promise<string> {
 	validatePath(filepath, basePath);
-  const resolvedPath = path.resolve(basePath, filepath);
-  const [realResolvedPath, realBasePath] = await Promise.all([
+	const resolvedPath = path.resolve(basePath, filepath);
+	const [realResolvedPath, realBasePath] = await Promise.all([
 		fs.promises.realpath(resolvedPath),
 		fs.promises.realpath(path.resolve(basePath))
 	]);
-  const baseWithSep = ensureTrailingSeparator(realBasePath);
-  if (!realResolvedPath.startsWith(baseWithSep) && realResolvedPath !== realBasePath) {
-    	throw new Error('Invalid file path: outside of allowed directory');
+	const baseWithSep = ensureTrailingSeparator(realBasePath);
+	if (!realResolvedPath.startsWith(baseWithSep) && realResolvedPath !== realBasePath) {
+		throw new Error('Invalid file path: outside of allowed directory');
 	}
 	return fs.promises.readFile(realResolvedPath, { encoding: 'utf8' });
-  }
-  
+}
+interface PrUpdate {
+	branch: string;
+	title: string;
+	body: string;
+}
 interface Identifiable {
 	id: string;
 	name: string;
@@ -104,27 +108,27 @@ export interface Tag extends Identifiable {
 }
 
 export interface PromoCode {
-  code: string;
-  description?: string;
-  discount_type: 'percentage' | 'fixed' | 'free_shipping';
-  discount_value?: number;
-  expires_at?: string;
-  terms?: string;
-  url?: string; // Optional URL to redirect when using the code
+	code: string;
+	description?: string;
+	discount_type: 'percentage' | 'fixed' | 'free_shipping';
+	discount_value?: number;
+	expires_at?: string;
+	terms?: string;
+	url?: string; // Optional URL to redirect when using the code
 }
 
 export interface ItemData {
-  name: string;
-  slug: string;
-  description: string;
-  source_url: string;
-  category: string | Category | Category[] | string[];
-  tags: string[] | Tag[];
-  featured?: boolean;
-  icon_url?: string;
-  updated_at: string; // raw string timestamp
-  updatedAt: Date; // timestamp
-  promo_code?: PromoCode; // New field for promotional codes
+	name: string;
+	slug: string;
+	description: string;
+	source_url: string;
+	category: string | Category | Category[] | string[];
+	tags: string[] | Tag[];
+	featured?: boolean;
+	icon_url?: string;
+	updated_at: string; // raw string timestamp
+	updatedAt: Date; // timestamp
+	promo_code?: PromoCode; // New field for promotional codes
 }
 
 export interface AuthOptions {
@@ -179,6 +183,15 @@ export interface Config {
 	app_url?: string;
 	auth?: false | AuthOptions;
 	mail?: NovuMail | ResendMail;
+	generation_method?: 'create-update' | string;
+	max_search_queries?: number;
+	max_results_per_query?: number;
+	max_pages_to_process?: number;
+	relevance_threshold_content?: number;
+	min_content_length_for_extraction?: number;
+	ai_first_generation_enabled?: boolean;
+	prompt_comparison_confidence_threshold?: number;
+	pr_update?: PrUpdate;
 	authConfig?: AuthConfig;
 	pricing?: PricingPlanConfig;
 }
