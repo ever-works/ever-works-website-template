@@ -48,7 +48,7 @@ interface CreateSetupIntentParams {
   payment_method_types?: string[];
   usage?: 'off_session' | 'on_session';
   metadata?: Record<string, string>;
-  // Paramètres personnalisés pour l'API
+  // Custom parameters for the API
   customer_name?: string;
   set_as_default?: boolean;
 }
@@ -105,7 +105,7 @@ const createSetupIntentWithCustomParams = async (params: { customer_name: string
     const response = await serverClient.post<{ client_secret: string }>('/api/stripe/setup-intent', params);
 
     if (!apiUtils.isSuccess(response)) {
-      const errorMessage = apiUtils.getErrorMessage(response) || 'Erreur lors de la création du SetupIntent';
+      const errorMessage = apiUtils.getErrorMessage(response) || 'Error creating SetupIntent';
       const error = new Error(errorMessage) as SetupIntentError;
       error.status = 'status' in response ? (response.status as number) : undefined;
       error.code = 'API_ERROR';
