@@ -1,10 +1,22 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
 import { RoleRepository } from '@/lib/repositories/role.repository';
 
 const roleRepository = new RoleRepository();
 
 export async function GET() {
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check admin permissions
+    if (!session.user.isAdmin) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const roles = await roleRepository.findAll();
     
     const total = roles.length;
