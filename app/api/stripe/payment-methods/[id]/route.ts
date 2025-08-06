@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth, initializeStripeProvider } from '@/lib/auth';
 import Stripe from 'stripe';
 
-const stripeProvider = initializeStripeProvider();
-const stripe = stripeProvider.getStripeInstance();
+
 // GET - Retrieve a specific payment method by ID
 export async function GET(
   _request: NextRequest,
@@ -18,7 +17,8 @@ export async function GET(
         { status: 401 }
       );
     }
-
+    const stripeProvider = initializeStripeProvider();
+    const stripe = stripeProvider.getStripeInstance();
     const { id } = await params;
 
     if (!id) {
@@ -122,7 +122,8 @@ export async function DELETE(
         { status: 401 }
       );
     }
-
+    const stripeProvider = initializeStripeProvider();
+    const stripe = stripeProvider.getStripeInstance();
     const { id } = await params;
 
     if (!id) {

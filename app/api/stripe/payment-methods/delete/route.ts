@@ -3,12 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { z } from 'zod';
 
-// ============================================================================
-// CONSTANTS & CONFIGURATION
-// ============================================================================
 
-const stripeProvider = initializeStripeProvider();
-const stripe = stripeProvider.getStripeInstance();
 
 // ============================================================================
 // VALIDATION SCHEMAS
@@ -64,6 +59,8 @@ async function validatePaymentMethodOwnership(
   userId: string
 ): Promise<{ paymentMethod: Stripe.PaymentMethod; customer: Stripe.Customer } | NextResponse> {
   try {
+    const stripeProvider = initializeStripeProvider();
+const stripe = stripeProvider.getStripeInstance();
     // Retrieve payment method
     const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
 
@@ -119,6 +116,8 @@ async function handleDefaultPaymentMethodReassignment(
 
   try {
     // Get all payment methods for this customer
+    const stripeProvider = initializeStripeProvider();
+const stripe = stripeProvider.getStripeInstance();
     const otherPaymentMethods = await stripe.paymentMethods.list({
       customer: customer.id,
       type: 'card',
@@ -159,6 +158,8 @@ async function checkAffectedSubscriptions(
   paymentMethodId: string
 ): Promise<number> {
   try {
+    const stripeProvider = initializeStripeProvider();
+const stripe = stripeProvider.getStripeInstance();
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
       status: 'active',
@@ -225,7 +226,8 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
       return sessionResult;
     }
     const { userId } = sessionResult;
-
+    const stripeProvider = initializeStripeProvider();
+    const stripe = stripeProvider.getStripeInstance();
     // Parse and validate request body
     const body = await request.json();
     const { paymentMethodId } = deletePaymentMethodSchema.parse(body);
