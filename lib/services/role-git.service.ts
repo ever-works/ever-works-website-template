@@ -2,7 +2,18 @@ import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import * as yaml from 'yaml';
 import { RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/lib/types/role';
-import { isValidPermission } from '@/lib/permissions/definitions';
+import { isValidPermission, Permission } from '@/lib/permissions/definitions';
+
+interface ParsedRoleData {
+  id: string;
+  name: string;
+  description: string;
+  isActive?: boolean;
+  permissions: string[];
+  created_at?: string;
+  updated_at?: string;
+  created_by?: string;
+}
 
 export class RoleGitService {
   private rolesDir: string;
@@ -26,7 +37,7 @@ export class RoleGitService {
   }
 
   private parseRole(content: string): RoleData {
-    const data = yaml.parse(content) as any;
+    const data = yaml.parse(content) as ParsedRoleData;
     
     if (!data.id || !data.name || !data.description) {
       throw new Error('Invalid role data: missing required fields');
@@ -47,7 +58,7 @@ export class RoleGitService {
       name: data.name,
       description: data.description,
       isActive: data.isActive ?? true,
-      permissions: data.permissions,
+      permissions: data.permissions as Permission[],
       created_at: data.created_at || this.formatDateForYaml(),
       updated_at: data.updated_at || this.formatDateForYaml(),
       created_by: data.created_by || 'system',
