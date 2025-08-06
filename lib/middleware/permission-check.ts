@@ -130,7 +130,18 @@ export function getPermissionSummary(userPermissions: UserPermissions): Record<s
   const summary: Record<string, string[]> = {};
   
   userPermissions.permissions.forEach(permission => {
-    const [resource, action] = permission.split(':');
+    const parts = permission.split(':');
+    if (parts.length !== 2) {
+      console.warn(`Invalid permission format: ${permission}`);
+      return;
+    }
+    
+    const [resource, action] = parts;
+    if (!resource || !action) {
+      console.warn(`Invalid permission format: ${permission}`);
+      return;
+    }
+    
     if (!summary[resource]) {
       summary[resource] = [];
     }
