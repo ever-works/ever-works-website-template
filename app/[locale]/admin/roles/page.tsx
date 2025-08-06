@@ -8,7 +8,7 @@ import { DeleteRoleDialog } from '@/components/admin/roles/delete-role-dialog';
 import { RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/lib/types/role';
 import { toast } from 'sonner';
 
-interface ApiResponse<T = any> {
+interface ApiResponse<T> {
   success: boolean;
   data?: T;
   roles?: T;
