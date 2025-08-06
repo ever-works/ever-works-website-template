@@ -26,7 +26,7 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
     id: '',
     name: '',
     description: '',
-    isActive: true,
+    status: 'active',
     permissions: [],
   });
 
@@ -38,7 +38,7 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
         id: role.id,
         name: role.name,
         description: role.description,
-        isActive: role.isActive,
+        status: role.status,
         permissions: role.permissions,
       });
     }
@@ -237,8 +237,8 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
             <div className="mt-4">
               <div className="flex items-center space-x-3">
                 <Switch
-                  isSelected={formData.isActive}
-                  onValueChange={(checked: boolean) => handleInputChange('isActive', checked)}
+                  isSelected={formData.status === 'active'}
+                  onValueChange={(checked: boolean) => handleInputChange('status', checked ? 'active' : 'inactive')}
                   size="sm"
                 />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">

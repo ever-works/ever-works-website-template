@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { RoleRepository } from '@/lib/repositories/role.repository';
-import { CreateRoleRequest } from '@/lib/types/role';
+import { CreateRoleRequest, RoleStatus } from '@/lib/types/role';
 import { isValidPermission } from '@/lib/permissions/definitions';
 
 const roleRepository = new RoleRepository();
@@ -12,17 +12,16 @@ export async function GET(request: NextRequest) {
     // Parse query parameters
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
-    const isActiveParam = searchParams.get('isActive');
+    const statusParam = searchParams.get('status');
+    const status: RoleStatus | undefined = statusParam === 'active' || statusParam === 'inactive' ? statusParam as RoleStatus : undefined;
     const sortBy = searchParams.get('sortBy') as 'name' | 'id' | 'created_at' | null;
     const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' | null;
 
     // Validate parameters
-    const isActive = isActiveParam === null ? undefined : isActiveParam === 'true';
-    
     const options = {
       page: Math.max(1, page),
       limit: Math.min(100, Math.max(1, limit)),
-      isActive,
+      status,
       sortBy: sortBy || 'name',
       sortOrder: sortOrder || 'asc',
     };
