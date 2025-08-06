@@ -202,11 +202,6 @@ export default function AdminUsersPage() {
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     setCurrentPage(1);
-    // Add debouncing for search
-    const timeoutId = setTimeout(() => {
-      fetchUsers(1);
-    }, 300);
-    return () => clearTimeout(timeoutId);
   };
 
   const handleRoleFilter = (value: string) => {
@@ -225,6 +220,17 @@ export default function AdminUsersPage() {
     fetchUsers();
     fetchStats();
   }, [fetchUsers, fetchStats]);
+
+  // Debounced search effect
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchTerm !== '') {
+        fetchUsers(1);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, fetchUsers]);
 
   if (isLoading) {
     return (
