@@ -26,6 +26,7 @@ export default function RolesPage() {
   const [loading, setLoading] = useState(true);
 
   const [selectedRole, setSelectedRole] = useState<RoleData | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
@@ -134,6 +135,11 @@ export default function RolesPage() {
     }
   };
 
+  const handleDeleteCancel = () => {
+    setIsDeleteDialogOpen(false);
+    setSelectedRole(null);
+  };
+
   const openCreateForm = () => {
     setFormMode('create');
     setSelectedRole(null);
@@ -148,6 +154,7 @@ export default function RolesPage() {
 
   const openDeleteDialog = (role: RoleData) => {
     setSelectedRole(role);
+    setIsDeleteDialogOpen(true);
   };
 
   const handleFormSubmit = async (data: CreateRoleRequest | UpdateRoleRequest) => {
@@ -164,8 +171,8 @@ export default function RolesPage() {
                          role.id.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || 
-                         (statusFilter === 'active' && role.isActive) ||
-                         (statusFilter === 'inactive' && !role.isActive);
+                         (statusFilter === 'active' && role.status === 'active') ||
+                         (statusFilter === 'inactive' && role.status === 'inactive');
     
     return matchesSearch && matchesStatus;
   });
@@ -232,7 +239,7 @@ export default function RolesPage() {
               <div>
                 <p className="text-sm font-medium text-green-600 dark:text-green-400">Active Roles</p>
                 <p className="text-2xl font-bold text-green-900 dark:text-green-100">
-                  {roles.filter(role => role.isActive).length}
+                  {roles.filter(role => role.status === 'active').length}
                 </p>
               </div>
               <Eye className="h-8 w-8 text-green-500 dark:text-green-400" />
@@ -245,7 +252,7 @@ export default function RolesPage() {
               <div>
                 <p className="text-sm font-medium text-orange-600 dark:text-orange-400">Inactive Roles</p>
                 <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">
-                  {roles.filter(role => !role.isActive).length}
+                  {roles.filter(role => role.status === 'inactive').length}
                 </p>
               </div>
               <EyeOff className="h-8 w-8 text-orange-500 dark:text-orange-400" />
@@ -353,10 +360,10 @@ export default function RolesPage() {
                           <Chip
                             size="sm"
                             variant="flat"
-                            color={role.isActive ? "success" : "danger"}
-                            startContent={role.isActive ? <Eye size={14} /> : <EyeOff size={14} />}
+                            color={role.status === 'active' ? "success" : "danger"}
+                            startContent={role.status === 'active' ? <Eye size={14} /> : <EyeOff size={14} />}
                           >
-                            {role.isActive ? 'Active' : 'Inactive'}
+                            {role.status === 'active' ? 'Active' : 'Inactive'}
                           </Chip>
                         </div>
                         <div className="flex items-center space-x-4 mt-1">
@@ -420,7 +427,8 @@ export default function RolesPage() {
         <DeleteRoleDialog
           role={selectedRole}
           onConfirm={handleDeleteRole}
-          onCancel={() => setSelectedRole(null)}
+          onCancel={handleDeleteCancel}
+          isOpen={isDeleteDialogOpen}
         />
       )}
     </div>

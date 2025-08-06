@@ -1,4 +1,9 @@
-import { Permission } from '@/lib/permissions/definitions';
+import { Permission, PERMISSIONS } from '@/lib/permissions/definitions';
+
+// Get all valid permissions as a Set for O(1) lookup
+const VALID_PERMISSIONS = new Set(
+  Object.values(PERMISSIONS).flatMap(resource => Object.values(resource))
+);
 
 export interface UserPermissions {
   userId: string;
@@ -113,14 +118,24 @@ export function canViewAnalytics(userPermissions: UserPermissions): boolean {
  * Check if user is a super admin (has all permissions)
  */
 export function isSuperAdmin(userPermissions: UserPermissions): boolean {
-  // Super admin should have all permissions
-  // For now, we'll check for a few key permissions
-  return hasAllPermissions(userPermissions, [
-    'items:create',
-    'roles:create',
-    'users:create',
+  // Check if user has the super-admin role (most secure approach)
+  if (userPermissions.roles.includes('super-admin')) {
+    return true;
+  }
+  
+  // Fallback: Check if user has ALL system permissions
+  // This ensures no partial permissions can grant super admin access
+  const allPermissions: Permission[] = [
+    'items:read', 'items:create', 'items:update', 'items:delete', 'items:review', 'items:approve', 'items:reject',
+    'categories:read', 'categories:create', 'categories:update', 'categories:delete',
+    'tags:read', 'tags:create', 'tags:update', 'tags:delete',
+    'roles:read', 'roles:create', 'roles:update', 'roles:delete',
+    'users:read', 'users:create', 'users:update', 'users:delete', 'users:assignRoles',
+    'analytics:read', 'analytics:export',
     'system:settings'
-  ]);
+  ];
+  
+  return hasAllPermissions(userPermissions, allPermissions);
 }
 
 /**
@@ -155,8 +170,7 @@ export function getPermissionSummary(userPermissions: UserPermissions): Record<s
  * Validate if a permission string is valid
  */
 export function validatePermission(permission: string): boolean {
-  const [resource, action] = permission.split(':');
-  return Boolean(resource && action && resource.length > 0 && action.length > 0);
+  return VALID_PERMISSIONS.has(permission as Permission);
 }
 
 /**

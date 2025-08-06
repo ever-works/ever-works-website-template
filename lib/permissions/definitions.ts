@@ -49,14 +49,15 @@ export const PERMISSIONS = {
   },
 } as const;
 
-export type Permission = 
-  | 'items:read' | 'items:create' | 'items:update' | 'items:delete' | 'items:review' | 'items:approve' | 'items:reject'
-  | 'categories:read' | 'categories:create' | 'categories:update' | 'categories:delete'
-  | 'tags:read' | 'tags:create' | 'tags:update' | 'tags:delete'
-  | 'roles:read' | 'roles:create' | 'roles:update' | 'roles:delete'
-  | 'users:read' | 'users:create' | 'users:update' | 'users:delete' | 'users:assignRoles'
-  | 'analytics:read' | 'analytics:export'
-  | 'system:settings';
+type PermissionValues<T> = T extends Record<string, infer U>
+  ? U extends Record<string, infer V>
+    ? V extends string
+      ? V
+      : never
+    : never
+  : never;
+
+export type Permission = PermissionValues<typeof PERMISSIONS>;
 
 export function getAllPermissions(): Permission[] {
   const allPermissions = Object.values(PERMISSIONS).flatMap(resource => 

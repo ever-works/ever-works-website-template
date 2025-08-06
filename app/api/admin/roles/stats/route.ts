@@ -20,7 +20,7 @@ export async function GET() {
     const roles = await roleRepository.findAll();
     
     const total = roles.length;
-    const active = roles.filter(role => role.isActive).length;
+    const active = roles.filter(role => role.status === 'active').length;
     const inactive = total - active;
     
     // Calculate average permissions per role

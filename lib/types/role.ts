@@ -4,7 +4,7 @@ export interface RoleData {
   id: string;
   name: string;
   description: string;
-  isActive: boolean;
+  status: RoleStatus;
   permissions: Permission[];
   created_at: string;
   updated_at: string;
@@ -15,7 +15,7 @@ export interface CreateRoleRequest {
   id: string;
   name: string;
   description: string;
-  isActive: boolean;
+  status: RoleStatus;
   permissions: Permission[];
 }
 
@@ -38,7 +38,7 @@ export interface RoleResponse {
 export interface RoleListOptions {
   page?: number;
   limit?: number;
-  isActive?: boolean;
+  status?: RoleStatus;
   sortBy?: 'name' | 'id' | 'created_at';
   sortOrder?: 'asc' | 'desc';
 }

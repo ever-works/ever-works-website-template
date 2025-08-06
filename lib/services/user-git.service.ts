@@ -10,6 +10,7 @@ import {
   generateUserId,
   formatDateForYaml
 } from '@/lib/types/user';
+import { isValidEmail } from '@/lib/utils/email-validation';
 
 interface ParsedUserData {
   id: string;
@@ -35,26 +36,25 @@ export class UserGitService {
   private parseUser(content: string): UserData {
     const data = yaml.parse(content) as ParsedUserData;
     
+    // Validate required fields
     if (!data.id || !data.username || !data.email || !data.name || !data.role) {
       throw new Error('Invalid user data: missing required fields');
     }
-
+    
     // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
+    if (!isValidEmail(data.email)) {
       throw new Error('Invalid user data: invalid email format');
     }
-
-    // Validate role
-    const validRoles = ['super-admin', 'admin', 'moderator', 'user'];
-    if (!validRoles.includes(data.role)) {
-      throw new Error(`Invalid user data: invalid role '${data.role}'`);
+    
+    // Validate username format
+    const usernameRegex = /^[a-zA-Z0-9_-]{3,30}$/;
+    if (!usernameRegex.test(data.username)) {
+      throw new Error('Invalid user data: invalid username format');
     }
-
-    // Validate status
-    const validStatuses = ['active', 'inactive'];
-    if (data.status && !validStatuses.includes(data.status)) {
-      throw new Error(`Invalid user data: invalid status '${data.status}'`);
+    
+    // Validate role
+    if (!data.role || data.role.trim().length === 0) {
+      throw new Error('Invalid user data: missing role');
     }
 
     return {
@@ -62,8 +62,8 @@ export class UserGitService {
       username: data.username,
       email: data.email,
       name: data.name,
-      title: data.title || '',
-      avatar: data.avatar || '',
+      title: data.title,
+      avatar: data.avatar,
       role: data.role,
       status: (data.status || 'active') as UserStatus,
       created_at: data.created_at || formatDateForYaml(),
@@ -118,6 +118,16 @@ export class UserGitService {
    * Create a new user
    */
   async createUser(data: CreateUserRequest, createdBy: string): Promise<UserData> {
+    // Check for duplicate username
+    if (await this.usernameExists(data.username)) {
+      throw new Error(`Username '${data.username}' already exists`);
+    }
+    
+    // Check for duplicate email
+    if (await this.emailExists(data.email)) {
+      throw new Error(`Email '${data.email}' already exists`);
+    }
+    
     const id = generateUserId();
     const now = formatDateForYaml();
     

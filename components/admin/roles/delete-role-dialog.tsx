@@ -7,12 +7,12 @@ import { RoleData } from '@/lib/types/role';
 
 interface DeleteRoleDialogProps {
   role: RoleData;
+  isOpen: boolean;
   onConfirm: (hardDelete: boolean) => void;
   onCancel: () => void;
 }
 
-export function DeleteRoleDialog({ role, onConfirm, onCancel }: DeleteRoleDialogProps) {
-  const [isOpen, setIsOpen] = useState(true);
+export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRoleDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [hardDelete, setHardDelete] = useState(false);
 
@@ -20,7 +20,6 @@ export function DeleteRoleDialog({ role, onConfirm, onCancel }: DeleteRoleDialog
     setIsLoading(true);
     try {
       await onConfirm(hardDelete);
-      setIsOpen(false);
     } catch (error) {
       console.error('Error deleting role:', error);
     } finally {
@@ -29,7 +28,6 @@ export function DeleteRoleDialog({ role, onConfirm, onCancel }: DeleteRoleDialog
   };
 
   const handleCancel = () => {
-    setIsOpen(false);
     onCancel();
   };
 

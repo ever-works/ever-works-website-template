@@ -303,7 +303,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             ) : (
               <>
                 {roles
-                  .filter(role => role.isActive)
+                  .filter(role => role.status === 'active')
                   .map(role => (
                     <option key={role.id} value={role.id}>
                       {role.name}
