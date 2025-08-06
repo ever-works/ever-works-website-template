@@ -18,14 +18,46 @@ export async function GET(request: NextRequest) {
 
     // Parse query parameters
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
+    
+    // Validate and constrain numeric parameters
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1') || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '10') || 10));
+    
     const search = searchParams.get('search') || undefined;
     const role = searchParams.get('role') || undefined;
     const status = searchParams.get('status') as 'active' | 'inactive' | undefined;
+    
+    // Validate status value
+    if (status && !['active', 'inactive'].includes(status)) {
+      return NextResponse.json({ error: 'Invalid status parameter' }, { status: 400 });
+    }
+    
     const sortBy = searchParams.get('sortBy') as 'name' | 'username' | 'email' | 'role' | 'created_at' | undefined;
+    
+    // Validate sortBy value
+    const validSortFields = ['name', 'username', 'email', 'role', 'created_at'];
+    if (sortBy && !validSortFields.includes(sortBy)) {
+      return NextResponse.json({ error: 'Invalid sortBy parameter' }, { status: 400 });
+    }
+    
     const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' | undefined;
+    
+    // Validate sortOrder value
+    if (sortOrder && !['asc', 'desc'].includes(sortOrder)) {
+      return NextResponse.json({ error: 'Invalid sortOrder parameter' }, { status: 400 });
+    }
+    
     const includeInactive = searchParams.get('includeInactive') === 'true';
+    
+    // Validate search parameter length
+    if (search && search.length > 100) {
+      return NextResponse.json({ error: 'Search parameter too long' }, { status: 400 });
+    }
+    
+    // Validate role parameter length
+    if (role && role.length > 50) {
+      return NextResponse.json({ error: 'Role parameter too long' }, { status: 400 });
+    }
 
     // Build options object
     const options: UserListOptions = {
