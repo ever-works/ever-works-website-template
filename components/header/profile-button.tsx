@@ -35,35 +35,35 @@ export function ProfileButton() {
         z-index: 9999;
         font-family: system-ui, -apple-system, sans-serif;
       ">
-        <div style="
-          background: white;
-          padding: 2rem;
-          border-radius: 12px;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-          text-align: center;
-          max-width: 300px;
-        ">
-          <div style="
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3b82f6;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem auto;
-          "></div>
-          <h3 style="
-            margin: 0 0 0.5rem 0;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1f2937;
-          ">Signing Out</h3>
-          <p style="
-            margin: 0;
-            color: #6b7280;
-            font-size: 0.9rem;
-          ">Please wait while we log you out...</p>
-        </div>
+                  <div style="
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            max-width: 300px;
+          ">
+            <div style="
+              width: 40px;
+              height: 40px;
+              border: 4px solid #f3f3f3;
+              border-top: 4px solid #3b82f6;
+              border-radius: 50%;
+              animation: spin 1s linear infinite;
+              margin: 0 auto 1rem auto;
+            "></div>
+            <h3 style="
+              margin: 0 0 0.5rem 0;
+              font-size: 1.2rem;
+              font-weight: 600;
+              color: #1f2937;
+            ">Signing Out</h3>
+            <p style="
+              margin: 0;
+              color: #6b7280;
+              font-size: 0.9rem;
+            ">Please wait while we log you out...</p>
+          </div>
       </div>
     `;
 
@@ -141,7 +141,7 @@ export function ProfileButton() {
                 onClick={() => setIsProfileMenuOpen(false)}
               >
                 <Settings className="mr-3 h-4 w-4 text-gray-400" />
-                Admin Dashboard
+                {t("common.ANALYTICS_DASHBOARD")}
               </Link>
               <Link
                 href="/admin/categories"
@@ -150,7 +150,7 @@ export function ProfileButton() {
                 onClick={() => setIsProfileMenuOpen(false)}
               >
                 <FolderTree className="mr-3 h-4 w-4 text-gray-400" />
-                Manage Categories
+                {t("common.CATEGORY")}
               </Link>
               <Link
                 href="/admin/tags"
@@ -159,7 +159,7 @@ export function ProfileButton() {
                 onClick={() => setIsProfileMenuOpen(false)}
               >
                 <Tag className="mr-3 h-4 w-4 text-gray-400" />
-                Manage Tags
+                {t("common.TAG")}
               </Link>
               <Link
                 href="/admin/items"
@@ -168,7 +168,7 @@ export function ProfileButton() {
                 onClick={() => setIsProfileMenuOpen(false)}
               >
                 <Package className="mr-3 h-4 w-4 text-gray-400" />
-                Manage Items
+                {t("common.ITEMS")}
               </Link>
               <Link
                 href="/admin/roles"
@@ -177,7 +177,7 @@ export function ProfileButton() {
                 onClick={() => setIsProfileMenuOpen(false)}
               >
                 <Shield className="mr-3 h-4 w-4 text-gray-400" />
-                Manage Roles
+                Roles
               </Link>
               <Link
                 href="/admin/users"
@@ -186,7 +186,7 @@ export function ProfileButton() {
                 onClick={() => setIsProfileMenuOpen(false)}
               >
                 <Users className="mr-3 h-4 w-4 text-gray-400" />
-                Manage Users
+                {t("common.USER_MANAGEMENT")}
               </Link>
             </>
           ) : (
