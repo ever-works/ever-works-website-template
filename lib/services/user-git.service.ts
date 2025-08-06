@@ -118,6 +118,16 @@ export class UserGitService {
    * Create a new user
    */
   async createUser(data: CreateUserRequest, createdBy: string): Promise<UserData> {
+    // Check for duplicate username
+    if (await this.usernameExists(data.username)) {
+      throw new Error(`Username '${data.username}' already exists`);
+    }
+    
+    // Check for duplicate email
+    if (await this.emailExists(data.email)) {
+      throw new Error(`Email '${data.email}' already exists`);
+    }
+    
     const id = generateUserId();
     const now = formatDateForYaml();
     
