@@ -1,14 +1,14 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import * as yaml from 'yaml';
-import { RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/lib/types/role';
+import { RoleData, CreateRoleRequest, UpdateRoleRequest, RoleStatus } from '@/lib/types/role';
 import { isValidPermission, Permission } from '@/lib/permissions/definitions';
 
 interface ParsedRoleData {
   id: string;
   name: string;
   description: string;
-  isActive?: boolean;
+  status?: string;
   permissions: string[];
   created_at?: string;
   updated_at?: string;
@@ -59,25 +59,26 @@ export class RoleGitService {
   private parseRole(content: string): RoleData {
     const data = yaml.parse(content) as ParsedRoleData;
     
+    // Validate required fields
     if (!data.id || !data.name || !data.description) {
       throw new Error('Invalid role data: missing required fields');
     }
-
+    
     // Validate permissions
     if (!Array.isArray(data.permissions)) {
       throw new Error('Invalid role data: permissions must be an array');
     }
-
-    const invalidPermissions = data.permissions.filter((p: string) => !isValidPermission(p));
+    
+    const invalidPermissions = data.permissions.filter(p => !isValidPermission(p));
     if (invalidPermissions.length > 0) {
-      throw new Error(`Invalid permissions: ${invalidPermissions.join(', ')}`);
+      throw new Error(`Invalid role data: invalid permissions: ${invalidPermissions.join(', ')}`);
     }
 
     return {
       id: data.id,
       name: data.name,
       description: data.description,
-      isActive: data.isActive ?? true,
+      status: (data.status || 'active') as RoleStatus,
       permissions: data.permissions as Permission[],
       created_at: data.created_at || this.formatDateForYaml(),
       updated_at: data.updated_at || this.formatDateForYaml(),
@@ -90,7 +91,7 @@ export class RoleGitService {
       id: role.id,
       name: role.name,
       description: role.description,
-      isActive: role.isActive,
+      status: role.status,
       permissions: role.permissions,
       created_at: role.created_at,
       updated_at: role.updated_at,
@@ -181,8 +182,9 @@ export class RoleGitService {
 
   async updateRole(id: string, updates: UpdateRoleRequest): Promise<RoleData> {
     if (!this.validateId(id)) {
-      throw new Error(`Invalid role ID format: ${id}`);
+      throw new Error('Invalid role ID');
     }
+
     const existingRole = await this.findById(id);
     if (!existingRole) {
       throw new Error(`Role with ID '${id}' not found`);
@@ -195,21 +197,28 @@ export class RoleGitService {
     };
 
     const filePath = path.join(this.rolesDir, `${id}.yml`);
-    const content = this.serializeRole(updatedRole);
+    const yamlContent = this.serializeRole(updatedRole);
     
-    await fs.writeFile(filePath, content, 'utf-8');
+    await fs.writeFile(filePath, yamlContent, 'utf-8');
     
+    console.log(`✅ Updated role: ${updatedRole.name} (${id})`);
     return updatedRole;
   }
 
   async deleteRole(id: string): Promise<void> {
-    const role = await this.findById(id);
-    if (!role) {
+    if (!this.validateId(id)) {
+      throw new Error('Invalid role ID');
+    }
+
+    const existingRole = await this.findById(id);
+    if (!existingRole) {
       throw new Error(`Role with ID '${id}' not found`);
     }
 
-    // Soft delete by setting isActive to false
-    await this.updateRole(id, { id, isActive: false });
+    // Soft delete by setting status to inactive
+    await this.updateRole(id, { id, status: 'inactive' });
+    
+    console.log(`✅ Soft deleted role: ${existingRole.name} (${id})`);
   }
 
   async hardDeleteRole(id: string): Promise<void> {

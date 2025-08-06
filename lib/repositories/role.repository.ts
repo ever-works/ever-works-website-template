@@ -25,13 +25,13 @@ export class RoleRepository {
     limit: number;
     totalPages: number;
   }> {
-    const { page = 1, limit = 10, isActive, sortBy = 'name', sortOrder = 'asc' } = options;
+    const { page = 1, limit = 10, status, sortBy = 'name', sortOrder = 'asc' } = options;
     
     let roles = await this.gitService.readRoles();
     
-    // Filter by active status if specified
-    if (isActive !== undefined) {
-      roles = roles.filter(role => role.isActive === isActive);
+    // Filter by status if specified
+    if (status !== undefined) {
+      roles = roles.filter(role => role.status === status);
     }
     
     // Sort roles
@@ -116,6 +116,6 @@ export class RoleRepository {
 
   async findActive(): Promise<RoleData[]> {
     const roles = await this.findAll();
-    return roles.filter(role => role.isActive);
+    return roles.filter(role => role.status === 'active');
   }
 } 
