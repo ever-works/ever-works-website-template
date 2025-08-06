@@ -222,13 +222,26 @@ export class UserGitService {
     const sortOrder = options.sortOrder || 'asc';
     
     users.sort((a, b) => {
-      let aValue: string | number = a[sortBy] || '';
-      let bValue: string | number = b[sortBy] || '';
+      // Type-safe property access with fallback
+      const getSortValue = (user: UserData, field: string): string | number => {
+        switch (field) {
+          case 'name':
+            return user.name;
+          case 'username':
+            return user.username;
+          case 'email':
+            return user.email;
+          case 'role':
+            return user.role;
+          case 'created_at':
+            return new Date(user.created_at).getTime();
+          default:
+            return '';
+        }
+      };
       
-      if (sortBy === 'created_at') {
-        aValue = new Date(aValue).getTime();
-        bValue = new Date(bValue).getTime();
-      }
+      const aValue = getSortValue(a, sortBy);
+      const bValue = getSortValue(b, sortBy);
       
       if (sortOrder === 'asc') {
         return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
