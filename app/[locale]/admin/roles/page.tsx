@@ -26,6 +26,7 @@ export default function RolesPage() {
   const [loading, setLoading] = useState(true);
 
   const [selectedRole, setSelectedRole] = useState<RoleData | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
@@ -134,6 +135,11 @@ export default function RolesPage() {
     }
   };
 
+  const handleDeleteCancel = () => {
+    setIsDeleteDialogOpen(false);
+    setSelectedRole(null);
+  };
+
   const openCreateForm = () => {
     setFormMode('create');
     setSelectedRole(null);
@@ -148,6 +154,7 @@ export default function RolesPage() {
 
   const openDeleteDialog = (role: RoleData) => {
     setSelectedRole(role);
+    setIsDeleteDialogOpen(true);
   };
 
   const handleFormSubmit = async (data: CreateRoleRequest | UpdateRoleRequest) => {
@@ -420,7 +427,8 @@ export default function RolesPage() {
         <DeleteRoleDialog
           role={selectedRole}
           onConfirm={handleDeleteRole}
-          onCancel={() => setSelectedRole(null)}
+          onCancel={handleDeleteCancel}
+          isOpen={isDeleteDialogOpen}
         />
       )}
     </div>
