@@ -152,6 +152,11 @@ export default function AdminUsersPage() {
 
   // Delete user
   const handleDelete = async (id: string) => {
+    // Show confirmation dialog
+    if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+      return;
+    }
+
     try {
       const response = await fetch(`/api/admin/users/${id}`, {
         method: 'DELETE',

@@ -16,6 +16,9 @@ interface UserFormProps {
 }
 
 export default function UserForm({ user, onSuccess, isSubmitting = false, onCancel }: UserFormProps) {
+  // Extract long className strings into constants for better maintainability
+  const selectClasses = "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white";
+  
   const { createUser, updateUser, checkUsername, checkEmail } = useUsers();
   const { roles, loading: rolesLoading, getRoles } = useRoles();
   const [showPassword, setShowPassword] = useState(false);
@@ -291,7 +294,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
           <select 
             value={formData.role} 
             onChange={(e) => handleInputChange('role', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+            className={selectClasses}
             disabled={rolesLoading}
             required
           >
@@ -317,7 +320,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             <select 
               value={formData.status} 
               onChange={(e) => handleInputChange('status', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              className={selectClasses}
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
