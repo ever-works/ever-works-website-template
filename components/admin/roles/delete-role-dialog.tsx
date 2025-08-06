@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
+import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Switch } from '@heroui/react';
 import { AlertTriangle, Trash2, Shield } from 'lucide-react';
 import { RoleData } from '@/lib/types/role';
 
@@ -74,17 +74,18 @@ export function DeleteRoleDialog({ role, onConfirm, onCancel }: DeleteRoleDialog
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="hardDelete"
-                checked={hardDelete}
-                onChange={(e) => setHardDelete(e.target.checked)}
-                className="rounded border-gray-300 text-theme-primary focus:ring-theme-primary"
-              />
-              <label htmlFor="hardDelete" className="text-sm text-gray-700 dark:text-gray-300">
-                Permanently delete (cannot be recovered)
-              </label>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  isSelected={hardDelete}
+                  onValueChange={setHardDelete}
+                  color="danger"
+                  size="sm"
+                />
+                <label className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+                  Permanently delete (cannot be recovered)
+                </label>
+              </div>
             </div>
           </div>
         </ModalBody>
