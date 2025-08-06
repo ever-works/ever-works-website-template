@@ -1,6 +1,6 @@
 import { db } from '@/lib/db/drizzle';
 import { roles } from '@/lib/db/schema';
-import { eq, like, desc, asc, and, sql } from 'drizzle-orm';
+import { eq, desc, asc, sql } from 'drizzle-orm';
 import { RoleData, CreateRoleRequest, UpdateRoleRequest, RoleStatus, RoleListOptions } from '@/lib/types/role';
 import { Permission } from '@/lib/permissions/definitions';
 
@@ -38,7 +38,7 @@ export class RoleDbService {
         description: data.description,
         status: data.status || 'active',
         permissions: JSON.stringify(data.permissions),
-        created_by: data.created_by || 'system',
+        created_by: 'system',
       };
 
       const result = await db.insert(roles).values(roleData).returning();
@@ -116,13 +116,29 @@ export class RoleDbService {
       const total = Number(countResult[0].count);
       
       // Apply sorting and pagination
-      const sortColumn = roles[sortBy as keyof typeof roles];
-      const sortFunction = sortOrder === 'desc' ? desc : asc;
-      
-      const result = await query
-        .orderBy(sortFunction(sortColumn))
-        .limit(limit)
-        .offset((page - 1) * limit);
+      let result;
+      if (sortBy === 'name') {
+        result = await query
+          .orderBy(sortOrder === 'desc' ? desc(roles.name) : asc(roles.name))
+          .limit(limit)
+          .offset((page - 1) * limit);
+      } else if (sortBy === 'id') {
+        result = await query
+          .orderBy(sortOrder === 'desc' ? desc(roles.id) : asc(roles.id))
+          .limit(limit)
+          .offset((page - 1) * limit);
+      } else if (sortBy === 'created_at') {
+        result = await query
+          .orderBy(sortOrder === 'desc' ? desc(roles.createdAt) : asc(roles.createdAt))
+          .limit(limit)
+          .offset((page - 1) * limit);
+      } else {
+        // Default to name sorting
+        result = await query
+          .orderBy(asc(roles.name))
+          .limit(limit)
+          .offset((page - 1) * limit);
+      }
       
       return {
         roles: result.map(this.mapDbToRoleData),

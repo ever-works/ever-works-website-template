@@ -3,7 +3,6 @@ import { users } from '@/lib/db/schema';
 import { eq, like, desc, asc, and, or, sql } from 'drizzle-orm';
 import { UserData, CreateUserRequest, UpdateUserRequest, UserListOptions, UserStatus } from '@/lib/types/user';
 import { generateUserId } from '@/lib/types/user';
-import { isValidEmail } from '@/lib/utils/email-validation';
 
 export class UserDbService {
   async readUsers(): Promise<UserData[]> {
@@ -39,14 +38,14 @@ export class UserDbService {
       }
 
       const userData = {
-        id: data.id || generateUserId(),
+        id: generateUserId(),
         username: data.username,
         email: data.email,
         name: data.name,
         title: data.title,
         avatar: data.avatar,
         role_id: data.role,
-        status: data.status || 'active',
+        status: 'active',
         created_by: createdBy,
       };
 
@@ -130,13 +129,39 @@ export class UserDbService {
       const total = Number(countResult[0].count);
       
       // Apply sorting and pagination
-      const sortColumn = users[sortBy as keyof typeof users];
-      const sortFunction = sortOrder === 'desc' ? desc : asc;
-      
-      const result = await query
-        .orderBy(sortFunction(sortColumn))
-        .limit(limit)
-        .offset((page - 1) * limit);
+      let result;
+      if (sortBy === 'name') {
+        result = await query
+          .orderBy(sortOrder === 'desc' ? desc(users.name) : asc(users.name))
+          .limit(limit)
+          .offset((page - 1) * limit);
+      } else if (sortBy === 'username') {
+        result = await query
+          .orderBy(sortOrder === 'desc' ? desc(users.username) : asc(users.username))
+          .limit(limit)
+          .offset((page - 1) * limit);
+      } else if (sortBy === 'email') {
+        result = await query
+          .orderBy(sortOrder === 'desc' ? desc(users.email) : asc(users.email))
+          .limit(limit)
+          .offset((page - 1) * limit);
+      } else if (sortBy === 'role') {
+        result = await query
+          .orderBy(sortOrder === 'desc' ? desc(users.role_id) : asc(users.role_id))
+          .limit(limit)
+          .offset((page - 1) * limit);
+      } else if (sortBy === 'created_at') {
+        result = await query
+          .orderBy(sortOrder === 'desc' ? desc(users.createdAt) : asc(users.createdAt))
+          .limit(limit)
+          .offset((page - 1) * limit);
+      } else {
+        // Default to name sorting
+        result = await query
+          .orderBy(asc(users.name))
+          .limit(limit)
+          .offset((page - 1) * limit);
+      }
       
       return {
         users: result.map(this.mapDbToUserData),
@@ -208,8 +233,8 @@ export class UserDbService {
       username: dbUser.username || '',
       email: dbUser.email || '',
       name: dbUser.name || '',
-      title: dbUser.title,
-      avatar: dbUser.avatar,
+      title: dbUser.title || undefined,
+      avatar: dbUser.avatar || undefined,
       role: dbUser.role_id || '',
       status: (dbUser.status as UserStatus) || 'active',
       created_at: dbUser.createdAt.toISOString(),
