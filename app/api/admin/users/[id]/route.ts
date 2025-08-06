@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { UserRepository } from '@/lib/repositories/user.repository';
 import { RoleRepository } from '@/lib/repositories/role.repository';
 import { UpdateUserRequest, isValidUserStatus } from '@/lib/types/user';
+import { isValidEmail } from '@/lib/utils/email-validation';
 
 export async function GET(
   request: NextRequest,
@@ -71,8 +72,7 @@ export async function PUT(
       if (typeof body.email !== 'string') {
         return NextResponse.json({ error: 'Email must be a string' }, { status: 400 });
       }
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(body.email)) {
+      if (!isValidEmail(body.email)) {
         return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
       }
     }

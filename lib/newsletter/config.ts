@@ -69,6 +69,7 @@ export interface NewsletterStats {
 // ============================================================================
 
 import { z } from "zod";
+import { isValidEmail } from '@/lib/utils/email-validation';
 
 export const emailSchema = z.object({
   email: z
@@ -131,10 +132,6 @@ export const validateAndNormalizeEmail = (email: string): string => {
   return email.toLowerCase().trim();
 };
 
-/**
- * Checks if email is valid format
- */
-export const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}; 
+export function validateEmail(email: string): boolean {
+  return isValidEmail(email);
+} 
