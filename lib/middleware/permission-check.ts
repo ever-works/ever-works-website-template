@@ -1,4 +1,9 @@
-import { Permission } from '@/lib/permissions/definitions';
+import { Permission, PERMISSIONS } from '@/lib/permissions/definitions';
+
+// Get all valid permissions as a Set for O(1) lookup
+const VALID_PERMISSIONS = new Set(
+  Object.values(PERMISSIONS).flatMap(resource => Object.values(resource))
+);
 
 export interface UserPermissions {
   userId: string;
@@ -165,8 +170,7 @@ export function getPermissionSummary(userPermissions: UserPermissions): Record<s
  * Validate if a permission string is valid
  */
 export function validatePermission(permission: string): boolean {
-  const [resource, action] = permission.split(':');
-  return Boolean(resource && action && resource.length > 0 && action.length > 0);
+  return VALID_PERMISSIONS.has(permission as Permission);
 }
 
 /**
