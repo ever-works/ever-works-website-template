@@ -191,7 +191,7 @@ export interface Config {
 	min_content_length_for_extraction?: number;
 	ai_first_generation_enabled?: boolean;
 	prompt_comparison_confidence_threshold?: number;
-	pr_update: PrUpdate;
+	pr_update?: PrUpdate;
 	authConfig?: AuthConfig;
 	pricing?: PricingPlanConfig;
 }
