@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth, initializeStripeProvider } from '@/lib/auth';
 import { CheckoutSessionParams } from '@/lib/payment/types/payment-types';
 
-const stripeProvider = initializeStripeProvider();
-const stripe = stripeProvider.getStripeInstance();
 export async function POST(request: NextRequest) {
 	try {
 		const session = await auth();
@@ -17,6 +15,10 @@ export async function POST(request: NextRequest) {
 				{ status: 401 }
 			);
 		}
+
+		// Initialize Stripe provider inside the function
+		const stripeProvider = initializeStripeProvider();
+		const stripe = stripeProvider.getStripeInstance();
 
 		const {
 			priceId,
@@ -129,6 +131,10 @@ export async function GET(request: NextRequest) {
 		if (!session?.user) {
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
+
+		// Initialize Stripe provider inside the function
+		const stripeProvider = initializeStripeProvider();
+		const stripe = stripeProvider.getStripeInstance();
 
 		const { searchParams } = new URL(request.url);
 		const sessionId = searchParams.get('session_id');
