@@ -20,42 +20,6 @@ export default function DashboardBillingPage() {
     </div>
 
     <BillingSection />
-
-    <div className="bg-theme-primary-50 dark:bg-theme-primary-10 border border-theme-primary-200 dark:border-theme-primary-800 rounded-lg p-6">
-      <h3 className="text-lg font-semibold text-theme-primary-900 dark:text-theme-primary-100 mb-3">
-        {t("FEATURES_INCLUDED")}
-      </h3>
-      <ul className="space-y-2 text-theme-primary-800 dark:text-theme-primary-200">
-        <li className="flex items-center space-x-2">
-          <span className="w-2 h-2 bg-theme-primatext-theme-primary-500 rounded-full"></span>
-          <span>{t("FEATURE_PAYMENT_DISPLAY")}</span>
-        </li>
-        <li className="flex items-center space-x-2">
-          <span className="w-2 h-2 bg-theme-primatext-theme-primary-500 rounded-full"></span>
-          <span>{t("FEATURE_LAST_DIGITS")}</span>
-        </li>
-        <li className="flex items-center space-x-2">
-          <span className="w-2 h-2 bg-theme-primatext-theme-primary-500 rounded-full"></span>
-          <span>{t("FEATURE_EDIT_DELETE")}</span>
-        </li>
-        <li className="flex items-center space-x-2">
-          <span className="w-2 h-2 bg-theme-primatext-theme-primary-500 rounded-full"></span>
-          <span>{t("FEATURE_ADD_MODAL")}</span>
-        </li>
-        <li className="flex items-center space-x-2">
-          <span className="w-2 h-2 bg-theme-primatext-theme-primary-500 rounded-full"></span>
-          <span>{t("FEATURE_DEFAULT_MANAGEMENT")}</span>
-        </li>
-        <li className="flex items-center space-x-2">
-          <span className="w-2 h-2 bg-theme-primatext-theme-primary-500 rounded-full"></span>
-          <span>{t("FEATURE_EXPIRY_ALERTS")}</span>
-        </li>
-        <li className="flex items-center space-x-2">
-          <span className="w-2 h-2 bg-blue-500 text-blue-500 rounded-full"></span>
-          <span>{t("FEATURE_RESPONSIVE")}</span>
-        </li>
-      </ul>
-    </div>
   </div>
   </PageContainer>
   </div>

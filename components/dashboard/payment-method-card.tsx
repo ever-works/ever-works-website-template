@@ -61,7 +61,7 @@ export function PaymentMethodCard({
 							</div>
 
 							<div className="space-y-1">
-								{/* Nom du titulaire */}
+								{/* Cardholder name */}
 								{paymentMethod.billing_details?.name && (
 									<div className="text-sm font-medium text-gray-700 dark:text-gray-300">
 										{paymentMethod.billing_details.name}
@@ -107,7 +107,7 @@ export function PaymentMethodCard({
 								{isSettingDefault ? (
 									<>
 										<Loader2 className="h-3 w-3 mr-1 animate-spin" />
-										En cours...
+										Loading...
 									</>
 								) : (
 									t('SET_AS_DEFAULT')
