@@ -101,7 +101,7 @@ export function EditPaymentMethodModal({
       setErrors({});
     } catch (error: any) {
       console.error("Error updating payment method:", error);
-      setApiError(error.message || "Une erreur est survenue lors de la mise à jour");
+      setApiError(error.message || "An error occurred during the update");
     } finally {
       setIsSubmitting(false);
     }
@@ -252,10 +252,10 @@ export function EditPaymentMethodModal({
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Mise à jour...
+                  {t("UPDATING_CARD")}
                 </>
               ) : (
-                "Sauvegarder"
+                t("SAVE")
               )}
             </Button>
           </div>
