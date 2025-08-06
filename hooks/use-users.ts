@@ -196,49 +196,50 @@ export function useUsers() {
     }
   }, []);
 
-  // Check username availability
-  const checkUsername = useCallback(async (username: string, excludeId?: string): Promise<boolean> => {
+  // Generic availability check
+  const checkAvailability = useCallback(async (
+    endpoint: string,
+    field: string,
+    value: string,
+    excludeId?: string
+  ): Promise<boolean> => {
+    setLoading(true);
+    setError(null);
+    
     try {
-      const response = await fetch(`${API_BASE}/check-username`, {
+      const response = await fetch(`${API_BASE}/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, excludeId }),
+        body: JSON.stringify({ [field]: value, excludeId }),
       });
 
       if (!response.ok) {
-        return false;
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to check ${field} availability`);
       }
 
       const data = await response.json();
       return data.available;
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : `Failed to check ${field} availability`;
+      setError(errorMessage);
       return false;
+    } finally {
+      setLoading(false);
     }
   }, []);
+
+  // Check username availability
+  const checkUsername = useCallback(async (username: string, excludeId?: string): Promise<boolean> => {
+    return checkAvailability('check-username', 'username', username, excludeId);
+  }, [checkAvailability]);
 
   // Check email availability
   const checkEmail = useCallback(async (email: string, excludeId?: string): Promise<boolean> => {
-    try {
-      const response = await fetch(`${API_BASE}/check-email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, excludeId }),
-      });
-
-      if (!response.ok) {
-        return false;
-      }
-
-      const data = await response.json();
-      return data.available;
-    } catch (err) {
-      return false;
-    }
-  }, []);
+    return checkAvailability('check-email', 'email', email, excludeId);
+  }, [checkAvailability]);
 
   // Clear error
   const clearError = useCallback(() => {
