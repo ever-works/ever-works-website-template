@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { UserRepository } from '@/lib/repositories/user.repository';
+import { RoleRepository } from '@/lib/repositories/role.repository';
 import { CreateUserRequest, UserListOptions } from '@/lib/types/user';
 
 export async function GET(request: NextRequest) {
@@ -100,13 +101,77 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json();
+
+    // Validate request body structure
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    }
+
+    // Validate required fields
+    if (!body.username || !body.email || !body.name || !body.password || !body.role) {
+      return NextResponse.json({ error: 'Missing required fields: username, email, name, password, and role are required' }, { status: 400 });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(body.email)) {
+      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
+    }
+
+    // Validate username format (alphanumeric, dash, underscore)
+    const usernameRegex = /^[a-zA-Z0-9_-]{3,30}$/;
+    if (!usernameRegex.test(body.username)) {
+      return NextResponse.json({ error: 'Username must be 3-30 characters and contain only letters, numbers, dashes, and underscores' }, { status: 400 });
+    }
+
+    // Validate name length
+    if (typeof body.name !== 'string' || body.name.trim().length < 2 || body.name.trim().length > 100) {
+      return NextResponse.json({ error: 'Name must be between 2 and 100 characters' }, { status: 400 });
+    }
+
+    // Validate password strength
+    if (typeof body.password !== 'string' || body.password.length < 8) {
+      return NextResponse.json({ error: 'Password must be at least 8 characters long' }, { status: 400 });
+    }
+
+    // Validate title if provided
+    if (body.title !== undefined && body.title !== null) {
+      if (typeof body.title !== 'string') {
+        return NextResponse.json({ error: 'Title must be a string' }, { status: 400 });
+      }
+      if (body.title.length > 100) {
+        return NextResponse.json({ error: 'Title must be at most 100 characters' }, { status: 400 });
+      }
+    }
+
+    // Validate avatar if provided
+    if (body.avatar !== undefined && body.avatar !== null) {
+      if (typeof body.avatar !== 'string') {
+        return NextResponse.json({ error: 'Avatar must be a string' }, { status: 400 });
+      }
+      if (body.avatar.length > 500) {
+        return NextResponse.json({ error: 'Avatar URL must be at most 500 characters' }, { status: 400 });
+      }
+    }
+
+    // Validate role exists in the system
+    if (typeof body.role !== 'string' || body.role.trim().length === 0) {
+      return NextResponse.json({ error: 'Role cannot be empty' }, { status: 400 });
+    }
+    
+    const roleRepository = new RoleRepository();
+    const roleExists = await roleRepository.findById(body.role);
+    if (!roleExists) {
+      return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
+    }
+
     const userData: CreateUserRequest = {
-      username: body.username,
-      email: body.email,
-      name: body.name,
-      title: body.title,
-      avatar: body.avatar,
-      role: body.role,
+      username: body.username.trim(),
+      email: body.email.trim().toLowerCase(),
+      name: body.name.trim(),
+      title: body.title?.trim() || undefined,
+      avatar: body.avatar?.trim() || undefined,
+      role: body.role.trim(),
       password: body.password,
     };
 
