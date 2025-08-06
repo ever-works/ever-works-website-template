@@ -47,7 +47,7 @@ export default function DeleteUserDialog({
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold">
-                {user.name?.split(' ').map(n => n[0]).join('') || 'U'}
+                {user.name?.split(' ').map(n => n[0]).filter(Boolean).join('').toUpperCase() || user.username?.[0]?.toUpperCase() || 'U'}
               </div>
               <div>
                 <p className="font-medium">{user.name}</p>
