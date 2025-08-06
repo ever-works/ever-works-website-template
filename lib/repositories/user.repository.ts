@@ -31,13 +31,7 @@ export class UserRepository {
       };
     } catch (error) {
       console.error('Error finding users:', error);
-      return {
-        users: [],
-        total: 0,
-        page: 1,
-        limit: 10,
-        totalPages: 0,
-      };
+      throw new Error('Failed to retrieve users');
     }
   }
 
@@ -49,7 +43,7 @@ export class UserRepository {
       return await this.userGitService.readUser(id);
     } catch (error) {
       console.error('Error finding user by ID:', error);
-      return null;
+      throw new Error('Failed to retrieve user');
     }
   }
 
@@ -169,11 +163,7 @@ export class UserRepository {
       return await this.userGitService.getUserStats();
     } catch (error) {
       console.error('Error getting user stats:', error);
-      return {
-        total: 0,
-        active: 0,
-        inactive: 0,
-      };
+      throw new Error('Failed to retrieve user statistics');
     }
   }
 
@@ -185,7 +175,7 @@ export class UserRepository {
       return await this.userGitService.usernameExists(username, excludeId);
     } catch (error) {
       console.error('Error checking username existence:', error);
-      return false;
+      throw new Error('Failed to check username availability');
     }
   }
 
@@ -197,7 +187,7 @@ export class UserRepository {
       return await this.userGitService.emailExists(email, excludeId);
     } catch (error) {
       console.error('Error checking email existence:', error);
-      return false;
+      throw new Error('Failed to check email availability');
     }
   }
 
@@ -209,7 +199,7 @@ export class UserRepository {
       return await this.userGitService.readUsers();
     } catch (error) {
       console.error('Error getting all users:', error);
-      return [];
+      throw new Error('Failed to retrieve all users');
     }
   }
 } 
