@@ -94,6 +94,19 @@ export class RoleGitService {
     }
   }
 
+  async exists(id: string): Promise<boolean> {
+    try {
+      const filePath = path.join(this.rolesDir, `${id}.yml`);
+      await fs.access(filePath);
+      return true;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        return false;
+      }
+      throw error;
+    }
+  }
+
   async findById(id: string): Promise<RoleData | null> {
     try {
       const filePath = path.join(this.rolesDir, `${id}.yml`);

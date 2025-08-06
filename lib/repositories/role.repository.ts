@@ -100,8 +100,7 @@ export class RoleRepository {
   }
 
   async checkDuplicateId(id: string): Promise<boolean> {
-    const existingRole = await this.findById(id);
-    return existingRole !== null;
+    return this.gitService.exists(id);
   }
 
   async findWithCounts(): Promise<RoleWithCount[]> {
