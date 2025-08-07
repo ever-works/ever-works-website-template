@@ -300,4 +300,68 @@ export interface CheckoutSessionParams {
   collection_method?: string
   
 }
+/*
+ * Formats an amount in cents to a currency string.
+ * @param cents The amount in cents.
+ * @param currency The currency code.
+ * @param locale The locale to use for formatting.
+ * @returns The formatted currency string.
+ */
+export function formatCentsToCurrency(cents: number, currency: string = 'USD', locale: string = 'en-US'): string {
+  const amount = cents / 100;
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(amount);
+}
 
+/*
+ * Converts an amount in cents to a decimal amount.
+ * @param cents The amount in cents.
+ * @returns The amount as a decimal.
+ */
+export function convertCentsToDecimal(cents: number): number {
+  return parseFloat((cents / 100).toFixed(2));
+}
+
+export function convertDecimalToCents(decimal: number): number {
+  return Math.round(decimal * 100);
+}
+
+/*
+ * Converts a timestamp in seconds to a Date object.
+ * @param timestamp The timestamp in seconds.
+ * @returns The Date object.
+ */
+export function convertNumberToDate(timestamp?: number): Date | null {
+  if (typeof timestamp !== 'number' || isNaN(timestamp)) {
+    return null;
+  }
+
+  const date = new Date(timestamp * 1000);
+  return isNaN(date.getTime()) ? null : date;
+}
+
+
+/**
+ * Safely convert timestamp to Date, handling null/undefined values
+ */
+export function safeTimestampToDate(timestamp: number | null | undefined): Date | undefined {
+  if (!timestamp || isNaN(timestamp)) {
+    return undefined;
+  }
+
+  // Handle both seconds and milliseconds timestamps
+  const ts = timestamp < 10000000000 ? timestamp * 1000 : timestamp;
+  const date = new Date(ts);
+
+  // Validate the resulting date
+  if (isNaN(date.getTime())) {
+    console.warn(`Invalid timestamp: ${timestamp}`);
+    return undefined;
+  }
+
+  return date;
+}
