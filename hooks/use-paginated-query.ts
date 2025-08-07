@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { PaginatedResponse, PaginationParams, QueryParams, fetcherPaginated } from '@/lib/api/api-client';
 
-interface UsePaginatedQueryOptions<T> {
+interface UsePaginatedQueryOptions {
   endpoint: string;
   limit?: number;
   sort?: string;
@@ -17,7 +17,7 @@ export function usePaginatedQuery<T>({
   order,
   filters = {},
   enabled = true,
-}: UsePaginatedQueryOptions<T>) {
+}: UsePaginatedQueryOptions) {
   return useInfiniteQuery({
     queryKey: [endpoint, { limit, sort, order, ...filters }],
     queryFn: async ({ pageParam = 1 }) => {

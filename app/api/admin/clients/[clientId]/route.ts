@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getClientWithUser, updateClient, deleteClient } from "@/lib/db/queries";
-import type { UpdateClientRequest, ClientResponse } from "@/lib/types/client";
+import type { UpdateClientRequest } from "@/lib/types/client";
 
 export async function GET(
   request: NextRequest,
@@ -35,9 +35,9 @@ export async function GET(
       );
     }
 
-    const response: ClientResponse = {
+    const response = {
       success: true,
-      client
+      data: client
     };
 
     return NextResponse.json(response);
@@ -84,10 +84,9 @@ export async function PUT(
       );
     }
 
-    const response: ClientResponse = {
+    const response = {
       success: true,
-      client,
-      message: 'Client updated successfully'
+      data: client
     };
 
     return NextResponse.json(response);

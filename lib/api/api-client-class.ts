@@ -75,6 +75,11 @@ export class ApiClient {
       params,
       ...config
     });
+    
+    if (!response.data.success) {
+      throw new Error(response.data.error || 'Request failed');
+    }
+    
     return response.data.data;
   }
 
@@ -84,6 +89,11 @@ export class ApiClient {
     config?: AxiosRequestConfig
   ): Promise<T> {
     const response = await this.client.post<ApiResponse<T>>(endpoint, data, config);
+    
+    if (!response.data.success) {
+      throw new Error(response.data.error || 'Request failed');
+    }
+    
     return response.data.data;
   }
 
@@ -93,6 +103,11 @@ export class ApiClient {
     config?: AxiosRequestConfig
   ): Promise<T> {
     const response = await this.client.put<ApiResponse<T>>(endpoint, data, config);
+    
+    if (!response.data.success) {
+      throw new Error(response.data.error || 'Request failed');
+    }
+    
     return response.data.data;
   }
 
@@ -102,6 +117,11 @@ export class ApiClient {
     config?: AxiosRequestConfig
   ): Promise<T> {
     const response = await this.client.patch<ApiResponse<T>>(endpoint, data, config);
+    
+    if (!response.data.success) {
+      throw new Error(response.data.error || 'Request failed');
+    }
+    
     return response.data.data;
   }
 
@@ -110,6 +130,11 @@ export class ApiClient {
     config?: AxiosRequestConfig
   ): Promise<T> {
     const response = await this.client.delete<ApiResponse<T>>(endpoint, config);
+    
+    if (!response.data.success) {
+      throw new Error(response.data.error || 'Request failed');
+    }
+    
     return response.data.data;
   }
 
