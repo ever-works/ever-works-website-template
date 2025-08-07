@@ -163,10 +163,6 @@ export class RoleDbService {
     }
   }
 
-  async checkDuplicateId(id: string): Promise<boolean> {
-    return this.exists(id);
-  }
-
   private mapDbToRoleData(dbRole: typeof roles.$inferSelect): RoleData {
     return {
       id: dbRole.id,
