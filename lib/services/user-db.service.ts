@@ -126,7 +126,9 @@ export class UserDbService {
       if (status) conditions.push(eq(users.status, status));
       if (search) {
         // Escape SQL wildcards in search term
-        const escapedSearch = search.replace(/[%_]/g, '\\$&');
+        const escapedSearch = search
+          .replace(/\\/g, '\\\\') // Escape backslashes first
+          .replace(/[%_]/g, '\\$&'); // Then escape % and _
         conditions.push(or(
           like(users.name, `%${escapedSearch}%`),
           like(users.username, `%${escapedSearch}%`),
