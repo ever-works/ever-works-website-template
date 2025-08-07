@@ -41,7 +41,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
     name: user?.name || '',
     title: user?.title || '',
     avatar: user?.avatar || '',
-    role: user?.role || 'user',
+    role: user?.role || '',
     status: user?.status || 'active',
     password: '',
   });
@@ -302,6 +302,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
               <option value="">Loading roles...</option>
             ) : (
               <>
+                <option value="">Select a role</option>
                 {roles
                   .filter(role => role.status === 'active')
                   .map(role => (
