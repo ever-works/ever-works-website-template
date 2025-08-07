@@ -18,3 +18,4 @@ ALTER TABLE "users" ADD COLUMN "created_by" text DEFAULT 'system';--> statement-
 CREATE INDEX "roles_status_idx" ON "roles" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "roles_created_at_idx" ON "roles" USING btree ("created_at");--> statement-breakpoint
 ALTER TABLE "users" ADD CONSTRAINT "users_username_unique" UNIQUE("username");
+ALTER TABLE "users" ADD CONSTRAINT "users_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE SET NULL;

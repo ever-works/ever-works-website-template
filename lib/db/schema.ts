@@ -25,7 +25,7 @@ export const users = pgTable("users", {
   passwordHash: text("password_hash"),
   title: text("title"),
   avatar: text("avatar"),
-  role_id: text("role_id"),
+  role_id: text("role_id").references(() => roles.id, { onDelete: "set null" }),
   status: text("status", { enum: ["active", "inactive"] }).default("active"),
   created_by: text("created_by").default("system"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
