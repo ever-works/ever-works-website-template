@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check for duplicate ID
-    const isDuplicate = await roleRepository.checkDuplicateId(roleData.id);
+    const isDuplicate = await roleRepository.findById(roleData.id);
     if (isDuplicate) {
       return NextResponse.json(
         { error: `Role with ID '${roleData.id}' already exists` },
