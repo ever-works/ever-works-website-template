@@ -166,7 +166,7 @@ async function handleSubscriptionCreated(data: any) {
 	console.log('Subscription created:', data.id);
 
 	try {
-		await webhookSubscriptionService.handleSubscriptionCreated(data)
+		await webhookSubscriptionService.handleSubscriptionCreated(data);
 
 		const customerInfo = extractCustomerInfo(data);
 
@@ -175,6 +175,7 @@ async function handleSubscriptionCreated(data: any) {
 		const planName = getPlanName(priceId);
 		const amount = formatAmount(data.items?.data?.[0]?.price?.unit_amount || 0, data.currency);
 		const billingPeriod = getBillingPeriod(data.items?.data?.[0]?.price?.recurring?.interval);
+		const emailConfig = await getEmailConfig();
 
 		// Prepare email data
 		const emailData = {
@@ -187,9 +188,9 @@ async function handleSubscriptionCreated(data: any) {
 			nextBillingDate: data.current_period_end ? formatBillingDate(data.current_period_end) : undefined,
 			subscriptionId: data.id,
 			manageSubscriptionUrl: `${process.env.NEXT_PUBLIC_APP_URL}/settings/subscription`,
-			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://ever.works',
-			supportEmail: process.env.SUPPORT_EMAIL || 'support@ever.works',
+			companyName: emailConfig?.companyName,
+			companyUrl: emailConfig?.companyUrl,
+			supportEmail: process.env.SUPPORT_EMAI,
 			features: getSubscriptionFeatures(planName)
 		};
 
@@ -233,8 +234,8 @@ async function handleSubscriptionUpdated(data: any) {
 			subscriptionId: data.id,
 			manageSubscriptionUrl: `${process.env.NEXT_PUBLIC_APP_URL}/settings/subscription`,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://ever.works',
-			supportEmail: process.env.SUPPORT_EMAIL || 'support@ever.works',
+			companyUrl: process.env.NEXT_PUBLIC_APP_URL,
+			supportEmail: process.env.SUPPORT_EMAIL,
 			features: getSubscriptionFeatures(planName)
 		};
 
