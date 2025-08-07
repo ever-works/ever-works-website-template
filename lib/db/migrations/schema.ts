@@ -137,7 +137,7 @@ export const accounts = pgTable("accounts", {
 	idToken: text("id_token"),
 	sessionState: text("session_state"),
 	displayName: text("display_name"),
-	username: text(),
+	username: text().notNull(),
 	bio: text(),
 	jobTitle: text("job_title"),
 	company: text(),
