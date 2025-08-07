@@ -71,8 +71,8 @@ export default function ClientsPage() {
       
       if (data.success) {
         setClients(data.data.clients);
-        setTotalPages(data.totalPages || 1);
-        setCurrentPage(data.page || 1);
+        setTotalPages(data.meta?.totalPages || 1);
+        setCurrentPage(data.meta?.page || 1);
       } else {
         toast.error(data.error || 'Failed to fetch clients');
       }

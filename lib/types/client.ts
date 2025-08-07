@@ -86,7 +86,14 @@ export interface UpdateClientRequest {
 import type { ApiResponse } from '@/lib/api/types';
 
 // Client-specific response types using the shared ApiResponse
-export type ClientListResponse = ApiResponse<{ clients: ClientWithUser[] }>;
+export type ClientListResponse = ApiResponse<{ clients: ClientWithUser[] }> & {
+  meta?: {
+    page: number;
+    totalPages: number;
+    total: number;
+    limit: number;
+  };
+};
 export type ClientResponse = ApiResponse<{ client: ClientWithUser }>;
 
 export interface ClientListOptions {

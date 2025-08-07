@@ -1,5 +1,6 @@
-ALTER TABLE "clients" DISABLE ROW LEVEL SECURITY;--> statement-breakpoint
-DROP TABLE "clients" CASCADE;--> statement-breakpoint
+-- Skip clients table operations as it doesn't exist
+-- ALTER TABLE "clients" DISABLE ROW LEVEL SECURITY;
+-- DROP TABLE "clients" CASCADE;
 DROP INDEX "provider_subscription_idx";--> statement-breakpoint
 DROP INDEX "subscription_created_at_idx";--> statement-breakpoint
 DROP INDEX "subscription_plan_idx";--> statement-breakpoint

@@ -1,4 +1,4 @@
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, sql, type SQL } from "drizzle-orm";
 import { db } from "./drizzle";
 import {
   activityLogs,
@@ -829,7 +829,7 @@ export async function getClients(params: {
   const { page = 1, limit = 10, search, status, plan, accountType } = params;
   const offset = (page - 1) * limit;
 
-  const whereConditions = [];
+  const whereConditions: SQL[] = [];
 
   if (search) {
     const escapedSearch = search
@@ -837,8 +837,7 @@ export async function getClients(params: {
       .replace(/[%_]/g, '\\$&'); // Then escape % and _
     
     whereConditions.push(
-      sql`(${accounts.displayName} ILIKE ${`%${escapedSearch}%`} OR 
-           ${accounts.username} ILIKE ${`%${escapedSearch}%`} OR 
+      sql`(${accounts.username} ILIKE ${`%${escapedSearch}%`} OR 
            ${users.name} ILIKE ${`%${escapedSearch}%`} OR 
            ${users.email} ILIKE ${`%${escapedSearch}%`})`
     );

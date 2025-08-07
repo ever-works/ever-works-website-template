@@ -1,0 +1,20 @@
+-- Add client management fields to accounts table
+ALTER TABLE "accounts" ADD COLUMN "display_name" text;
+ALTER TABLE "accounts" ADD COLUMN "username" text;
+ALTER TABLE "accounts" ADD COLUMN "bio" text;
+ALTER TABLE "accounts" ADD COLUMN "job_title" text;
+ALTER TABLE "accounts" ADD COLUMN "company" text;
+ALTER TABLE "accounts" ADD COLUMN "industry" text;
+ALTER TABLE "accounts" ADD COLUMN "phone" text;
+ALTER TABLE "accounts" ADD COLUMN "website" text;
+ALTER TABLE "accounts" ADD COLUMN "location" text;
+ALTER TABLE "accounts" ADD COLUMN "account_type" text DEFAULT 'individual';
+ALTER TABLE "accounts" ADD COLUMN "status" text DEFAULT 'active';
+ALTER TABLE "accounts" ADD COLUMN "plan" text DEFAULT 'free';
+ALTER TABLE "accounts" ADD COLUMN "timezone" text DEFAULT 'UTC';
+ALTER TABLE "accounts" ADD COLUMN "language" text DEFAULT 'en';
+ALTER TABLE "accounts" ADD COLUMN "two_factor_enabled" boolean DEFAULT false;
+ALTER TABLE "accounts" ADD COLUMN "email_verified" boolean DEFAULT false;
+ALTER TABLE "accounts" ADD COLUMN "total_submissions" integer DEFAULT 0;
+ALTER TABLE "accounts" ADD COLUMN "created_at" timestamp DEFAULT now() NOT NULL;
+ALTER TABLE "accounts" ADD COLUMN "updated_at" timestamp DEFAULT now() NOT NULL; 

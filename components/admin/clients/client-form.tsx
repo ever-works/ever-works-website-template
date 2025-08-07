@@ -136,12 +136,24 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
   return (
     <div className={containerClasses}>
       <div className={headerClasses}>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          {mode === 'create' ? 'Create New Client' : 'Edit Client'}
-        </h2>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-          {mode === 'create' ? 'Add a new client to the system' : 'Update client information'}
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              {mode === 'create' ? 'Create New Client' : 'Edit Client'}
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              {mode === 'create' ? 'Add a new client to the system' : 'Update client information'}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            aria-label="Close modal"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className={formClasses}>

@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     // Return in the expected format with meta and data
     return NextResponse.json({
       success: true,
-      data: result.clients,
+      data: { clients: result.clients },
       meta: {
         page: result.page,
         totalPages: result.totalPages,
