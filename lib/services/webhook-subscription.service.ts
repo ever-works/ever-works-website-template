@@ -80,7 +80,7 @@ export const formatData = (data: any): WebhookSubscriptionData => {
 		},
 		createdAt: new Date(),
 		updatedAt: new Date(),
-		paymentProvider: PaymentProvider as any,
+		paymentProvider: PaymentProvider.STRIPE,
 		customer_email: data.customer_email,
 		customer_name: data.customer_name,
 		periodEnd: data.period_end,
@@ -192,7 +192,7 @@ export class WebhookSubscriptionService {
 		try {
 			// Find existing subscription
 			const existingSubscription = await queries.getSubscriptionByProviderSubscriptionId(
-				response.paymentProvider as PaymentProvider.STRIPE,
+				PaymentProvider.STRIPE,
 				response.subscriptionId
 			);
 
@@ -285,7 +285,7 @@ export class WebhookSubscriptionService {
 
 			// Find existing subscription
 			const existingSubscription = await queries.getSubscriptionByProviderSubscriptionId(
-				response.paymentProvider as PaymentProvider.STRIPE,
+				PaymentProvider.STRIPE,
 				response.subscriptionId
 			);
 
@@ -431,7 +431,7 @@ export class WebhookSubscriptionService {
 
 			// Find existing subscription
 			const existingSubscription = await queries.getSubscriptionByProviderSubscriptionId(
-				response.paymentProvider as PaymentProvider.STRIPE,
+				PaymentProvider.STRIPE,
 				response.subscriptionId
 			);
 
@@ -508,7 +508,7 @@ export class WebhookSubscriptionService {
 
 			// Find existing subscription
 			const existingSubscription = await queries.getSubscriptionByProviderSubscriptionId(
-				response.paymentProvider as PaymentProvider.STRIPE,
+				PaymentProvider.STRIPE,
 				response.subscriptionId
 			);
 
@@ -659,6 +659,23 @@ export class WebhookSubscriptionService {
 
 		return true;
 	}
+
+	private sanitizeMetadata(metadata: any): Record<string, any> {
+		if (!metadata || typeof metadata !== 'object') return {};
+		
+		const sanitized: Record<string, any> = {};
+		for (const [key, value] of Object.entries(metadata)) {
+		  // Only allow primitive types and arrays of primitives
+		  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+			sanitized[key] = value;
+		  } else if (Array.isArray(value) && value.every(v => 
+			typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean'
+		  )) {
+			sanitized[key] = value;
+		  }
+		}
+		return sanitized;
+	  }
 
 	/**
 	 * Process webhook event based on type

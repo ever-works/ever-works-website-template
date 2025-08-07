@@ -95,7 +95,6 @@ async function handlePaymentSucceeded(data: any) {
 	try {
 		const emailConfig = await getEmailConfig();
 		const paymentMethod = formatPaymentMethod(data.payment_method);
-		console.log('urfueueueueu', emailConfig);
 		const baseEmailData = {
 			customerName: data.customer_name,
 			customerEmail: data.customer_email,
