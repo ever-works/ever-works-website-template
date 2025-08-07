@@ -800,6 +800,63 @@ export async function updateClient(userId: string, provider: string, providerAcc
 }
 
 /**
+ * Create new client account
+ */
+export async function createClient(data: {
+  userId: string;
+  displayName?: string | null;
+  username?: string | null;
+  bio?: string | null;
+  jobTitle?: string | null;
+  company?: string | null;
+  industry?: string | null;
+  phone?: string | null;
+  website?: string | null;
+  location?: string | null;
+  accountType?: string;
+  status?: string;
+  plan?: string;
+  timezone?: string;
+  language?: string;
+  twoFactorEnabled?: boolean;
+  emailVerified?: boolean;
+  totalSubmissions?: number;
+}) {
+  const accountData = {
+    userId: data.userId,
+    type: 'oauth' as const,
+    provider: 'manual',
+    providerAccountId: `manual_${data.userId}_${Date.now()}`,
+    displayName: data.displayName,
+    username: data.username,
+    bio: data.bio,
+    jobTitle: data.jobTitle,
+    company: data.company,
+    industry: data.industry,
+    phone: data.phone,
+    website: data.website,
+    location: data.location,
+    accountType: data.accountType || 'individual',
+    status: data.status || 'active',
+    plan: data.plan || 'free',
+    timezone: data.timezone || 'UTC',
+    language: data.language || 'en',
+    twoFactorEnabled: data.twoFactorEnabled || false,
+    emailVerified: data.emailVerified || false,
+    totalSubmissions: data.totalSubmissions || 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const [newAccount] = await db
+    .insert(accounts)
+    .values(accountData)
+    .returning();
+
+  return newAccount;
+}
+
+/**
  * Delete client account
  */
 export async function deleteClient(userId: string, provider: string, providerAccountId: string): Promise<boolean> {
