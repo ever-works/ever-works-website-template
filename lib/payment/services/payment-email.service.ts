@@ -113,7 +113,6 @@ export class PaymentEmailService {
       await this.ensureEmailService();
       
       const template = getPaymentSuccessTemplate(data);
-      
       const result = await sendEmailSafely(
         this.emailService!,
         this.emailConfig,

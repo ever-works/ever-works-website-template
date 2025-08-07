@@ -45,7 +45,7 @@ export const getPaymentSuccessTemplate = (data: PaymentSuccessData) => {
     customerEmail,
     amount,
     currency,
-    paymentMethod,
+    //paymentMethod,
     transactionId,
     planName,
     billingPeriod,
@@ -61,7 +61,7 @@ export const getPaymentSuccessTemplate = (data: PaymentSuccessData) => {
   const safeCustomerEmail = escapeHtml(customerEmail);
   const safeAmount = escapeHtml(amount);
   const safeCurrency = escapeHtml(currency);
-  const safePaymentMethod = escapeHtml(paymentMethod);
+  // const safePaymentMethod = escapeHtml(paymentMethod);
   const safeTransactionId = escapeHtml(transactionId);
   const safePlanName = planName ? escapeHtml(planName) : null;
   const safeBillingPeriod = billingPeriod ? escapeHtml(billingPeriod) : null;
@@ -276,10 +276,7 @@ export const getPaymentSuccessTemplate = (data: PaymentSuccessData) => {
               <span class="detail-label">Amount:</span>
               <span class="detail-value amount-highlight">${currencySymbol}${safeAmount}</span>
             </div>
-            <div class="detail-row">
-              <span class="detail-label">Payment Method:</span>
-              <span class="detail-value">${safePaymentMethod}</span>
-            </div>
+         
             <div class="detail-row">
               <span class="detail-label">Transaction ID:</span>
               <span class="detail-value">${safeTransactionId}</span>
@@ -350,7 +347,6 @@ export const getPaymentSuccessTemplate = (data: PaymentSuccessData) => {
 
     Payment Details:
     - Amount: ${currencySymbol}${safeAmount}
-    - Payment Method: ${safePaymentMethod}
     - Transaction ID: ${safeTransactionId}
     - Email: ${safeCustomerEmail}
     ${safePlanName ? `- Plan: ${safePlanName}` : ''}
