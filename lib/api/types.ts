@@ -1,53 +1,32 @@
-import { AxiosError, AxiosRequestConfig } from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 
-export type ApiEndpoint = string;
+// Improved API response types using discriminated unions
+export type ApiResponse<T = any> = 
+  | { success: true; data: T; total?: number; page?: number; limit?: number; totalPages?: number }
+  | { success: false; error: string };
 
-export type QueryParams = Readonly<Record<string, string | number | boolean | undefined>>;
-
-export type RequestBody = Readonly<Record<string, unknown>>;
-
-export interface PaginationParams {
-  readonly page?: number;
-  readonly limit?: number;
-  readonly sort?: string;
-  readonly order?: 'asc' | 'desc';
-}
-
-export interface PaginatedMeta {
-  readonly total: number;
-  readonly page: number;
-  readonly limit: number;
-  readonly totalPages: number;
-}
-
-export interface PaginatedResponse<T> {
-  readonly data: ReadonlyArray<T>;
-  readonly meta: PaginatedMeta;
-}
-
-export interface ApiResponse<T> {
-  readonly data: T;
-  readonly status: number;
-  readonly message: string;
-}
-
-export interface ErrorResponse {
-  readonly message: string;
-  readonly code: string;
-  readonly details?: Readonly<Record<string, unknown>>;
-}
+export type PaginatedResponse<T> = ApiResponse<T> & {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
 
 export interface ApiClientConfig extends Partial<AxiosRequestConfig> {
-  readonly baseURL?: string;
-  readonly timeout?: number;
-  readonly headers?: Readonly<Record<string, string>>;
+  baseURL?: string;
+  timeout?: number;
+  headers?: Record<string, string>;
 }
 
-export interface ApiError extends Error {
-  readonly code?: string;
-  readonly details?: Readonly<Record<string, unknown>>;
-  readonly status?: number;
+export interface FetchOptions {
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+  headers?: Record<string, string>;
+  body?: any;
+  params?: Record<string, any>;
 }
 
-export type ApiErrorHandler = (error: AxiosError) => never;
-export type ApiResponseInterceptor = (error: AxiosError) => Promise<never>; 
+export interface ApiError {
+  message: string;
+  status?: number;
+  code?: string;
+} 

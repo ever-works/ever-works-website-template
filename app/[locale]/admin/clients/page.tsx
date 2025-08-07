@@ -6,20 +6,7 @@ import { Plus, Edit, Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { ClientForm } from "@/components/admin/clients/client-form";
 import { UniversalPagination } from "@/components/universal-pagination";
-import type { ClientWithUser } from "@/lib/types/client";
-
-interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  clients?: T;
-  client?: any;
-  error?: string;
-  message?: string;
-  total?: number;
-  page?: number;
-  limit?: number;
-  totalPages?: number;
-}
+import type { ClientWithUser, ClientListResponse, ClientResponse } from "@/lib/types/client";
 
 export default function ClientsPage() {
   const [clients, setClients] = useState<ClientWithUser[]>([]);
@@ -64,10 +51,10 @@ export default function ClientsPage() {
       });
       
       const response = await fetch(`/api/admin/clients?${params}`);
-      const data: ApiResponse<ClientWithUser[]> = await response.json();
+      const data: ClientListResponse = await response.json();
       
-      if (data.success && data.clients) {
-        setClients(data.clients);
+      if (data.success) {
+        setClients(data.data.clients);
         setTotalPages(data.totalPages || 1);
         setCurrentPage(data.page || 1);
       } else {
@@ -91,10 +78,10 @@ export default function ClientsPage() {
         body: JSON.stringify(data),
       });
       
-      const result: ApiResponse<any> = await response.json();
+      const result: ClientResponse = await response.json();
       
       if (result.success) {
-        toast.success(result.message || 'Client created successfully');
+        toast.success('Client created successfully');
         onClose();
         fetchClients();
       } else {
@@ -118,10 +105,10 @@ export default function ClientsPage() {
         body: JSON.stringify(data),
       });
       
-      const result: ApiResponse<any> = await response.json();
+      const result: ClientResponse = await response.json();
       
       if (result.success) {
-        toast.success(result.message || 'Client updated successfully');
+        toast.success('Client updated successfully');
         onClose();
         fetchClients();
       } else {
@@ -146,10 +133,10 @@ export default function ClientsPage() {
         method: 'DELETE',
       });
       
-      const result: ApiResponse = await response.json();
+      const result: ClientResponse = await response.json();
       
       if (result.success) {
-        toast.success(result.message || 'Client deleted successfully');
+        toast.success('Client deleted successfully');
         fetchClients();
       } else {
         toast.error(result.error || 'Failed to delete client');

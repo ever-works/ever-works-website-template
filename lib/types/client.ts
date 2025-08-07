@@ -83,22 +83,11 @@ export interface UpdateClientRequest {
   emailVerified?: boolean;
 }
 
-export interface ClientListResponse {
-  success: boolean;
-  clients?: ClientWithUser[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-  error?: string;
-}
+import type { ApiResponse } from '@/lib/api/types';
 
-export interface ClientResponse {
-  success: boolean;
-  client?: ClientWithUser;
-  error?: string;
-  message?: string;
-}
+// Client-specific response types using the shared ApiResponse
+export type ClientListResponse = ApiResponse<{ clients: ClientWithUser[] }>;
+export type ClientResponse = ApiResponse<{ client: ClientWithUser }>;
 
 export interface ClientListOptions {
   status?: 'active' | 'inactive' | 'suspended' | 'trial';
