@@ -17,16 +17,36 @@ export const users = pgTable("users", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
+  username: text("username").unique(),
   name: text("name"),
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
   passwordHash: text("password_hash"),
+  title: text("title"),
+  avatar: text("avatar"),
+  role_id: text("role_id").references(() => roles.id, { onDelete: "set null" }),
+  status: text("status", { enum: ["active", "inactive"] }).default("active"),
+  created_by: text("created_by").default("system"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   deletedAt: timestamp("deleted_at"),
   isAdmin: boolean("is_admin").notNull().default(false),
 });
+
+export const roles = pgTable("roles", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  status: text("status", { enum: ["active", "inactive"] }).default("active"),
+  permissions: text("permissions").notNull(), // JSON string
+  created_by: text("created_by").default("system"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  statusIndex: index("roles_status_idx").on(table.status),
+  createdAtIndex: index("roles_created_at_idx").on(table.createdAt),
+}));
 
 export const accounts = pgTable(
   "accounts",
@@ -315,6 +335,7 @@ export type CommentWithUser = Comment & { user: typeof users.$inferSelect };
 export type Vote = typeof votes.$inferSelect;
 export type InsertVote = typeof votes.$inferInsert;
 export type NewUser = typeof users.$inferInsert;
+export type User = typeof users.$inferSelect;
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type NewActivityLog = typeof activityLogs.$inferInsert;
 export type NewsletterSubscription =
@@ -322,6 +343,8 @@ export type NewsletterSubscription =
 export type NewNewsletterSubscription =
   typeof newsletterSubscriptions.$inferInsert;
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
+export type Role = typeof roles.$inferSelect;
+export type NewRole = typeof roles.$inferInsert;
 
 // ######################### Subscription Types #########################
 export type Subscription = typeof subscriptions.$inferSelect;

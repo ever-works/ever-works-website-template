@@ -1,4 +1,4 @@
-import { Users, FileText, BarChart3, FolderTree, Tag, Package } from "lucide-react";
+import { Users, FileText, BarChart3, FolderTree, Tag, Package, Shield } from "lucide-react";
 import { AdminFeatureCard } from "./admin-feature-card";
 import { AdminFeature } from "./types";
 
@@ -25,7 +25,21 @@ const ADMIN_FEATURES: AdminFeature[] = [
     emoji: "📦"
   },
   {
+    icon: Shield,
+    title: "Manage Roles",
+    description: "Create, edit, and manage user roles and permissions.",
+    href: "/admin/roles",
+    emoji: "🛡️"
+  },
+  {
     icon: Users,
+    title: "Manage Users",
+    description: "View and manage platform users and permissions.",
+    href: "/admin/users",
+    emoji: "👤"
+  },
+  {
+    icon: Package,
     title: "Manage Clients",
     description: "View and manage client accounts and information.",
     href: "/admin/clients",

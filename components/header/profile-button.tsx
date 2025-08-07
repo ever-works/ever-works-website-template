@@ -1,6 +1,6 @@
 "use client";
 
-import { User, LogOut, Settings, FolderTree, Tag, Package, Users } from "lucide-react";
+import { User, LogOut, Settings, FolderTree, Tag, Package, Shield, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
@@ -34,23 +34,35 @@ export function ProfileButton() {
         align-items: center;
         z-index: 9999;
       ">
-        <div style="
-          background: white;
-          padding: 20px;
-          border-radius: 8px;
-          text-align: center;
-        ">
-          <div style="margin-bottom: 10px;">Logging out...</div>
-          <div style="
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-          "></div>
-        </div>
+                  <div style="
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            max-width: 300px;
+          ">
+            <div style="
+              width: 40px;
+              height: 40px;
+              border: 4px solid #f3f3f3;
+              border-top: 4px solid #3b82f6;
+              border-radius: 50%;
+              animation: spin 1s linear infinite;
+              margin: 0 auto 1rem auto;
+            "></div>
+            <h3 style="
+              margin: 0 0 0.5rem 0;
+              font-size: 1.2rem;
+              font-weight: 600;
+              color: #1f2937;
+            ">Signing Out</h3>
+            <p style="
+              margin: 0;
+              color: #6b7280;
+              font-size: 0.9rem;
+            ">Please wait while we log you out...</p>
+          </div>
       </div>
       <style>
         @keyframes spin {
@@ -120,7 +132,7 @@ export function ProfileButton() {
                 onClick={() => setIsProfileMenuOpen(false)}
               >
                 <Settings className="mr-3 h-4 w-4 text-gray-400" />
-                Admin Dashboard
+                {t("common.ANALYTICS_DASHBOARD")}
               </Link>
               <Link
                 href="/admin/clients"
@@ -138,7 +150,7 @@ export function ProfileButton() {
                 onClick={() => setIsProfileMenuOpen(false)}
               >
                 <FolderTree className="mr-3 h-4 w-4 text-gray-400" />
-                Manage Categories
+                {t("common.CATEGORY")}
               </Link>
               <Link
                 href="/admin/tags"
@@ -147,7 +159,7 @@ export function ProfileButton() {
                 onClick={() => setIsProfileMenuOpen(false)}
               >
                 <Tag className="mr-3 h-4 w-4 text-gray-400" />
-                Manage Tags
+                {t("common.TAG")}
               </Link>
               <Link
                 href="/admin/items"
@@ -156,7 +168,25 @@ export function ProfileButton() {
                 onClick={() => setIsProfileMenuOpen(false)}
               >
                 <Package className="mr-3 h-4 w-4 text-gray-400" />
-                Manage Items
+                {t("common.ITEMS")}
+              </Link>
+              <Link
+                href="/admin/roles"
+                className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                role="menuitem"
+                onClick={() => setIsProfileMenuOpen(false)}
+              >
+                <Shield className="mr-3 h-4 w-4 text-gray-400" />
+                Roles
+              </Link>
+              <Link
+                href="/admin/users"
+                className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                role="menuitem"
+                onClick={() => setIsProfileMenuOpen(false)}
+              >
+                <Users className="mr-3 h-4 w-4 text-gray-400" />
+                {t("common.USER_MANAGEMENT")}
               </Link>
             </>
           ) : (
