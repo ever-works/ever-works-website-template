@@ -48,10 +48,6 @@ export class RoleRepository {
     return this.dbService.hardDeleteRole(id);
   }
 
-  async checkDuplicateId(id: string): Promise<boolean> {
-    return this.dbService.checkDuplicateId(id);
-  }
-
   async findWithCounts(): Promise<RoleWithCount[]> {
     const roles = await this.findAll();
     
@@ -64,7 +60,7 @@ export class RoleRepository {
   }
 
   async findActive(): Promise<RoleData[]> {
-    const roles = await this.findAll();
-    return roles.filter(role => role.status === 'active');
+    const result = await this.dbService.findRoles({ status: 'active', limit: 1000 });
+    return result.roles;
   }
 } 
