@@ -125,7 +125,60 @@
     "SECURITY": "安全",
     "LEGAL": "法律",
     "HELP": "帮助中心",
-    "LOGOUT": "退出登录"
+    "LOGOUT": "退出登录",
+    "SECURITY_PAGE": {
+      "TITLE": "安全设置",
+      "BACK_TO_SETTINGS": "返回设置",
+      "CHANGE_PASSWORD": {
+        "TITLE": "更改密码",
+        "DESCRIPTION": "选择一个您在其他地方没有使用过的强密码。密码更改后，我们会向您发送确认邮件。"
+      },
+      "SECURITY_TIPS": {
+        "TITLE": "安全提示",
+        "TIP_1": "使用您在其他账户中未使用的唯一密码",
+        "TIP_2": "包含大写字母、小写字母、数字和特殊字符的组合",
+        "TIP_3": "考虑启用双因素身份验证以增强安全性",
+        "TIP_4": "定期检查您的登录活动和活跃会话"
+      },
+      "CHANGE_PASSWORD_FORM": {
+        "CURRENT_PASSWORD": "当前密码",
+        "CURRENT_PASSWORD_PLACEHOLDER": "输入您的当前密码",
+        "NEW_PASSWORD": "新密码",
+        "NEW_PASSWORD_PLACEHOLDER": "输入您的新密码",
+        "CONFIRM_PASSWORD": "确认新密码",
+        "CONFIRM_PASSWORD_PLACEHOLDER": "确认您的新密码",
+        "UPDATE_PASSWORD": "更新密码",
+        "UPDATING_PASSWORD": "正在更新密码...",
+        "CANCEL": "取消",
+        "SHOW_PASSWORD": "显示密码",
+        "HIDE_PASSWORD": "隐藏密码",
+        "SUCCESS_MESSAGE": "密码更改成功！",
+        "SUCCESS_DESCRIPTION": "确认邮件已发送到您的邮箱地址。",
+        "VALIDATION": {
+          "CURRENT_REQUIRED": "当前密码为必填项",
+          "NEW_REQUIRED": "新密码为必填项",
+          "MIN_LENGTH": "密码至少需要8个字符",
+          "UPPERCASE": "密码必须包含至少一个大写字母",
+          "LOWERCASE": "密码必须包含至少一个小写字母",
+          "NUMBER": "密码必须包含至少一个数字",
+          "SPECIAL": "密码必须包含至少一个特殊字符",
+          "CONFIRM_REQUIRED": "请确认您的密码",
+          "PASSWORDS_MATCH": "密码不匹配"
+        },
+        "STRENGTH": {
+          "WEAK": "弱",
+          "FAIR": "一般",
+          "GOOD": "良好",
+          "STRONG": "强",
+          "REQUIREMENTS": "密码要求：",
+          "AT_LEAST_8": "至少8个字符",
+          "ONE_UPPERCASE": "一个大写字母",
+          "ONE_LOWERCASE": "一个小写字母",
+          "ONE_NUMBER": "一个数字",
+          "ONE_SPECIAL": "一个特殊字符"
+        }
+      }
+    }
   },
   "newsletter": {
     "NEWSLETTER": "新闻通讯",

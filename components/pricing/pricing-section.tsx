@@ -77,7 +77,7 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 
 	const calculatePrice = useCallback(
 		(plan: PricingConfig): number => {
-			if (billingInterval !==PaymentInterval?.YEARLY || !plan.annualDiscount) {
+			if (billingInterval !== PaymentInterval.YEARLY || !plan.annualDiscount) {
 				return plan.price;
 			}
 
@@ -191,15 +191,15 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 			</div>
 
 			{/* Billing Interval Selector */}
-			<div className="flex justify-center mb-6">
-				<div className="relative inline-flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5">
+			<div className="flex justify-center mb-14">
+				<div className="relative inline-flex items-center bg-slate-100 dark:bg-slate-800/50 rounded-xl p-1 border border-slate-200 dark:border-slate-700/50 shadow-sm backdrop-blur-sm">
 					<button
 						onClick={() => setBillingInterval(PaymentInterval.MONTHLY)}
 						className={cn(
-							'relative px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200 z-10',
+							'relative px-6 py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 z-10 min-w-[100px]',
 							billingInterval === PaymentInterval.MONTHLY
-								? 'text-gray-900 dark:text-white'
-								: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+								? 'text-slate-900 dark:text-white shadow-sm'
+								: 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700/30'
 						)}
 					>
 						{tBilling('MONTHLY')}
@@ -207,26 +207,24 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 					<button
 						onClick={() => setBillingInterval(PaymentInterval.YEARLY)}
 						className={cn(
-							'relative px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200 z-10',
+							'relative px-6 py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 z-10 min-w-[100px] flex items-center justify-center gap-2',
 							billingInterval === PaymentInterval.YEARLY
-								? 'text-gray-900 dark:text-white'
-								: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+								? 'text-slate-900 dark:text-white shadow-sm'
+								: 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700/30'
 						)}
 					>
-						{tBilling('YEARLY')}
-						{billingInterval === PaymentInterval.YEARLY && (
-							<span className="ml-1 px-1.5 py-0.5 text-xs font-semibold bg-green-500 text-white rounded">
-								{tBilling('SAVE_UP_TO')}
-							</span>
-						)}
+						<span>{tBilling('YEARLY')}</span>
+						<span className="px-2 py-0.5 text-xs font-bold bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full shadow-sm">
+							{tBilling('SAVE_UP_TO')}
+						</span>
 					</button>
-					{/* Sliding background */}
+					{/* Enhanced sliding background */}
 					<div
 						className={cn(
-							'absolute top-0.5 h-[calc(100%-4px)] bg-white dark:bg-gray-700 rounded-md shadow-sm transition-all duration-200 ease-out',
+							'absolute top-1 h-[calc(100%-8px)] bg-white dark:bg-slate-700 rounded-lg shadow-md border border-slate-200/50 dark:border-slate-600/50 transition-all duration-300 ease-out backdrop-blur-sm',
 							billingInterval === PaymentInterval.MONTHLY
-								? 'left-0.5 w-[calc(50%-2px)]'
-								: 'left-[calc(50%+2px)] w-[calc(50%-2px)]'
+								? 'left-1 w-[calc(50%-4px)]'
+								: 'left-[calc(50%+2px)] w-[calc(50%-4px)]'
 						)}
 					/>
 				</div>
@@ -246,8 +244,8 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 						<PlanCard
 							plan={PaymentPlan.FREE}
 							title={getPlanConfig(PaymentPlan.FREE).name.toUpperCase()}
-							price={`${config.pricing?.currency}${FREE?.price}`}
-							priceUnit={getPlanConfig(PaymentPlan.FREE).period}
+							price={`${config.pricing?.currency}${FREE ? calculatePrice(FREE) : 0}`}
+							priceUnit={'/month'}
 							features={freePlanFeatures}
 							isSelected={selectedPlan === PaymentPlan.FREE}
 							onSelect={handleSelectPlan}
@@ -264,7 +262,13 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 							isLoading={processingPlan === FREE?.id && isLoading}
 							isButton={false}
 							onClick={() => handleCheckout(FREE as PricingConfig)}
-						/>
+						>
+							{FREE && getSavingsText(FREE) && (
+								<div className="text-green-600 dark:text-green-400 text-sm font-medium">
+									{getSavingsText(FREE)}
+								</div>
+							)}
+						</PlanCard>
 					</div>
 				</div>
 
@@ -283,8 +287,8 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 						<PlanCard
 							plan={PaymentPlan.STANDARD}
 							title={getPlanConfig(PaymentPlan.STANDARD).name.toUpperCase()}
-							price={`${config.pricing?.currency}${STANDARD?.price}`}
-							priceUnit={getPlanConfig(PaymentPlan.STANDARD).period}
+							price={`${config.pricing?.currency}${STANDARD ? calculatePrice(STANDARD) : 0}`}
+							priceUnit={billingInterval === PaymentInterval.YEARLY ? '/year' : '/month'}
 							features={standardPlanFeatures}
 							isPopular={true}
 							isSelected={selectedPlan === STANDARD?.id}
@@ -328,8 +332,8 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 						<PlanCard
 							plan={PaymentPlan.PREMIUM}
 							title={getPlanConfig(PaymentPlan.PREMIUM).name.toUpperCase()}
-							price={`${config.pricing?.currency}${PREMIUM?.price}`}
-							priceUnit={getPlanConfig(PaymentPlan.PREMIUM).period}
+							price={`${config.pricing?.currency}${PREMIUM ? calculatePrice(PREMIUM) : 0}`}
+							priceUnit={billingInterval === PaymentInterval.YEARLY ? '/year' : '/month'}
 							features={premiumPlanFeatures}
 							isSelected={selectedPlan === PREMIUM?.id}
 							onSelect={handleSelectPlan}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PageContainer } from "@/components/ui/container";
 import {
   HowItWorks,
@@ -34,6 +34,8 @@ export default function HelpPage() {
   const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
   const [showProgress, setShowProgress] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const contentSectionRef = useRef<HTMLDivElement>(null);
 
   const navigationSteps: NavigationStep[] = [
     {
@@ -138,18 +140,32 @@ export default function HelpPage() {
   const nextStep = () => {
     if (currentStep < navigationSteps.length - 1) {
       markStepCompleted(navigationSteps[currentStep].id);
-      setCurrentStep(currentStep + 1);
+      goToStep(currentStep + 1);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+      goToStep(currentStep - 1);
     }
   };
 
   const goToStep = (index: number) => {
     setCurrentStep(index);
+
+    // Auto scroll to content section
+    setTimeout(() => {
+      if (contentSectionRef.current) {
+        const yOffset = -80; // Offset to account for fixed progress bar
+        const element = contentSectionRef.current;
+        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+        window.scrollTo({
+          top: y,
+          behavior: 'smooth'
+        });
+      }
+    }, 100); // Small delay to allow state to update
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -182,7 +198,7 @@ export default function HelpPage() {
                 </span>
                 <div className="w-32 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-theme-primary-500 to-cyan-500 transition-all duration-500"
                     style={{ width: `${progressPercentage}%` }}
                   ></div>
                 </div>
@@ -233,15 +249,15 @@ export default function HelpPage() {
             </div>
 
             {/* Steps Grid */}
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="p-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {filteredSteps.map((step, index) => (
                   <div
                     key={step.id}
                     onClick={() => goToStep(index)}
-                    className={`relative p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:transform hover:scale-105 ${
+                    className={`relative p-4 rounded-lg border-2 cursor-pointer transition-all duration-300 hover:transform hover:scale-105 hover:shadow-lg group ${
                       currentStep === index
-                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg shadow-blue-500/25"
+                        ? "border-theme-primary-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg shadow-blue-500/25"
                         : completedSteps.has(step.id)
                         ? "border-green-500 bg-green-50 dark:bg-green-900/20"
                         : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:border-slate-300 dark:hover:border-slate-600"
@@ -255,43 +271,47 @@ export default function HelpPage() {
                     )}
 
                     {/* Step Number */}
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
                         currentStep === index
-                          ? "bg-blue-500 text-white"
+                          ? "bg-theme-primary-500 text-white"
                           : completedSteps.has(step.id)
                           ? "bg-green-500 text-white"
                           : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400"
                       }`}>
                         {index + 1}
                       </div>
-                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${step.gradient} flex items-center justify-center text-white text-lg shadow-lg`}>
+                      <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${step.gradient} flex items-center justify-center text-white text-base shadow-lg`}>
                         {step.icon}
                       </div>
                     </div>
 
                     {/* Content */}
                     <div>
-                      <h3 className={`font-bold text-lg mb-2 ${step.color}`}>
+                      <h3 className={`font-bold text-base mb-1 ${step.color}`}>
                         {step.title}
                       </h3>
-                      <p className="text-slate-600 dark:text-slate-400 text-sm mb-4 leading-relaxed">
+                      <p className="text-slate-600 dark:text-slate-400 text-xs mb-2 leading-relaxed">
                         {step.description}
                       </p>
-                      
+
                       {/* Meta Info */}
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getDifficultyColor(step.difficulty)}`}>
+                        <div className="flex items-center gap-1">
+                          <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full ${getDifficultyColor(step.difficulty)}`}>
                             {step.difficulty}
                           </span>
                           <span className="text-xs text-slate-500 dark:text-slate-400">
                             ⏱️ {step.estimatedTime}
                           </span>
                         </div>
-                        {currentStep === index && (
-                          <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                        {currentStep === index ? (
+                          <span className="text-xs text-theme-primary-600 dark:text-theme-primary-400 font-medium">
                             {t("CURRENT")}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            📍 Click to view
                           </span>
                         )}
                       </div>
@@ -304,7 +324,7 @@ export default function HelpPage() {
         </div>
 
         {/* Current Step Content */}
-        <div className="mb-16">
+        <div ref={contentSectionRef} className="mb-16">
           <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
             {/* Step Header */}
             <div className="bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
@@ -361,7 +381,7 @@ export default function HelpPage() {
               <button
                 key={step.id}
                 onClick={() => goToStep(index)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:transform hover:scale-105 ${
                   currentStep === index
                     ? "bg-theme-primary-600 text-white shadow-lg shadow-blue-500/25"
                     : completedSteps.has(step.id)

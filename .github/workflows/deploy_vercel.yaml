@@ -21,12 +21,29 @@ jobs:
       - name: Target environment
         run: echo "Target ${{ inputs.environment }}"
       - uses: actions/checkout@v2
+
+      - name: Detect package manager
+        id: detect-pm
+        run: |
+          if [ -f "pnpm-lock.yaml" ]; then
+            echo "manager=pnpm" >> $GITHUB_OUTPUT
+            echo "global-cmd=pnpm add --global" >> $GITHUB_OUTPUT
+          elif [ -f "yarn.lock" ]; then
+            echo "manager=yarn" >> $GITHUB_OUTPUT
+            echo "global-cmd=yarn global add" >> $GITHUB_OUTPUT
+          else
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "global-cmd=npm install --global" >> $GITHUB_OUTPUT
+          fi
+
       - name: Setup pnpm
+        if: steps.detect-pm.outputs.manager == 'pnpm'
         uses: pnpm/action-setup@v4
         with:
           version: 9
+
       - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+        run: ${{ steps.detect-pm.outputs.global-cmd }} vercel@latest
       - name: Link Vercel project
         run: vercel link --yes --project ${{ github.event.repository.name }} --token=${{ secrets.VERCEL_TOKEN }}
       - name: Set data repository env variable

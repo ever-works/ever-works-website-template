@@ -9,21 +9,16 @@ on:
     - cron: '0 6 * * 1'  # Weekly on Monday at 6 AM
   workflow_dispatch:  # Allow manual triggering
 
-env:
-  # Set to true to run advanced CodeQL analysis
-  ENABLE_ADVANCED_CODEQL: true
-
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
     timeout-minutes: 360
-    # Only run if advanced CodeQL is enabled
-    if: env.ENABLE_ADVANCED_CODEQL == 'true'
     permissions:
       actions: read
       contents: read
       security-events: write
+      pull-requests: read
 
     strategy:
       fail-fast: false
@@ -34,19 +29,62 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Detect package manager
+      id: detect-pm
+      run: |
+        if [ -f "pnpm-lock.yaml" ]; then
+          echo "manager=pnpm" >> $GITHUB_OUTPUT
+          echo "install-cmd=pnpm install" >> $GITHUB_OUTPUT
+        elif [ -f "yarn.lock" ]; then
+          echo "manager=yarn" >> $GITHUB_OUTPUT
+          echo "install-cmd=yarn install --frozen-lockfile" >> $GITHUB_OUTPUT
+        elif [ -f "package-lock.json" ]; then
+          echo "manager=npm" >> $GITHUB_OUTPUT
+          echo "install-cmd=npm ci" >> $GITHUB_OUTPUT
+        else
+          echo "manager=npm" >> $GITHUB_OUTPUT
+          echo "install-cmd=npm install" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Setup pnpm
+      if: steps.detect-pm.outputs.manager == 'pnpm'
+      uses: pnpm/action-setup@v4
+      with:
+        version: 8
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: ${{ steps.detect-pm.outputs.manager }}
+
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
         config-file: ./.github/codeql/codeql-config.yml
-        # Use a different category to avoid conflicts
         category: "/language:${{ matrix.language }}/advanced"
+
+    - name: Setup CodeQL environment
+      run: node scripts/codeql-setup.js
+
+    - name: Install dependencies
+      run: ${{ steps.detect-pm.outputs.install-cmd }}
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
+      env:
+        # Environment variables needed for build
+        NEXT_PUBLIC_APP_URL: http://localhost:3000
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+        NEXTAUTH_SECRET: "codeql-test-secret-not-for-production"
+        NEXTAUTH_URL: "http://localhost:3000"
+        DATA_REPOSITORY: "codeql-test-repo-not-used"
+        CONTENT_WARNINGS_SILENT: "true"
+        CI: "true"
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{ matrix.language }}/advanced"
-        upload: true 
+        upload: true

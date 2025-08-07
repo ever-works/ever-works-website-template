@@ -13,6 +13,9 @@ paths-ignore:
   - "**/*.bundle.js"
   - "public/**"
   - "**/*.d.ts"
+  - "scripts/**"
+  - "**/*.config.js"
+  - "**/*.config.ts"
 
 # Include only source files
 paths:
