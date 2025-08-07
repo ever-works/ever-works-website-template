@@ -184,7 +184,7 @@ export class UserDbService {
     try {
       let query = db.select().from(users).where(eq(users.username, username));
       if (excludeId) {
-        query = query.where(and(eq(users.username, username), sql`id != ${excludeId}`));
+        query = query.where(sql`id != ${excludeId}`);
       }
       const result = await query;
       return result.length > 0;
@@ -198,7 +198,7 @@ export class UserDbService {
     try {
       let query = db.select().from(users).where(eq(users.email, email));
       if (excludeId) {
-        query = query.where(and(eq(users.email, email), sql`id != ${excludeId}`));
+        query = query.where(sql`id != ${excludeId}`);
       }
       const result = await query;
       return result.length > 0;
