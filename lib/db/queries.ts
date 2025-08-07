@@ -406,10 +406,7 @@ export async function getSubscriptionByProviderSubscriptionId(
 				eq(subscriptions.subscriptionId, subscriptionId)
 			)
 		)
-		.limit(1);
-
-			console.log('=jkssjksdjk===========>', result[0]);
-	
+		.limit(1);	
 	return result[0];
 }
 
