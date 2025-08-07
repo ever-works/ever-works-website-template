@@ -41,6 +41,15 @@ export default function ClientsPage() {
   
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const inputClass =
+    "w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
+
+  const selectClass =
+    "px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
+
+  const buttonClass =
+    "px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors";
+
   // Fetch clients
   const fetchClients = async (page: number = currentPage) => {
     try {
@@ -247,7 +256,7 @@ export default function ClientsPage() {
               placeholder="Search clients..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className={inputClass}
             />
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -263,7 +272,7 @@ export default function ClientsPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className={selectClass}
           >
             <option value="">All Status</option>
             <option value="active">Active</option>
@@ -277,7 +286,7 @@ export default function ClientsPage() {
           <select
             value={planFilter}
             onChange={(e) => setPlanFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className={selectClass}
           >
             <option value="">All Plans</option>
             <option value="free">Free</option>
@@ -289,7 +298,7 @@ export default function ClientsPage() {
           <select
             value={accountTypeFilter}
             onChange={(e) => setAccountTypeFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className={selectClass}
           >
             <option value="">All Types</option>
             <option value="individual">Individual</option>
@@ -301,7 +310,7 @@ export default function ClientsPage() {
           {(searchTerm || statusFilter || planFilter || accountTypeFilter) && (
             <button
               onClick={clearFilters}
-              className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className={buttonClass}
             >
               Clear
             </button>
