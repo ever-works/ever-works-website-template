@@ -59,6 +59,14 @@ export class UserDbService {
 
   async updateUser(id: string, data: UpdateUserRequest): Promise<UserData> {
     try {
+      // Validate uniqueness for username/email if being updated
+      if (data.username !== undefined && await this.usernameExists(data.username, id)) {
+        throw new Error(`Username '${data.username}' already exists`);
+      }
+      if (data.email !== undefined && await this.emailExists(data.email, id)) {
+        throw new Error(`Email '${data.email}' already exists`);
+      }
+
       const updateData: Record<string, unknown> = {};
       
       if (data.username !== undefined) updateData.username = data.username;
