@@ -25,8 +25,6 @@ export function EditPaymentMethodModal({
 
   const [formData, setFormData] = useState({
     holderName: "",
-    expiryMonth: "",
-    expiryYear: "",
     isDefault: false
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,8 +35,6 @@ export function EditPaymentMethodModal({
     if (paymentMethod) {
       setFormData({
         holderName: paymentMethod.billing_details?.name || "",
-        expiryMonth: paymentMethod.card?.exp_month?.toString() || "",
-        expiryYear: paymentMethod.card?.exp_year?.toString() || "",
         isDefault: paymentMethod.is_default || false
       });
     }
@@ -49,22 +45,6 @@ export function EditPaymentMethodModal({
 
     if (!formData.holderName.trim()) {
       newErrors.holderName = t("VALIDATION_CARDHOLDER_REQUIRED");
-    }
-
-    if (!formData.expiryMonth) {
-      newErrors.expiryMonth = t("VALIDATION_EXPIRY_MONTH_REQUIRED");
-    } else if (parseInt(formData.expiryMonth) < 1 || parseInt(formData.expiryMonth) > 12) {
-      newErrors.expiryMonth = t("VALIDATION_INVALID_MONTH");
-    }
-
-    if (!formData.expiryYear) {
-      newErrors.expiryYear = t("VALIDATION_EXPIRY_YEAR_REQUIRED");
-    } else {
-      const currentYear = new Date().getFullYear();
-      const year = parseInt(formData.expiryYear);
-      if (year < currentYear || year > currentYear + 20) {
-        newErrors.expiryYear = t("VALIDATION_INVALID_YEAR");
-      }
     }
 
     setErrors(newErrors);
@@ -84,13 +64,8 @@ export function EditPaymentMethodModal({
         billing_details: {
           name: formData.holderName
         },
-        card: {
-          exp_month: parseInt(formData.expiryMonth),
-          exp_year: parseInt(formData.expiryYear)
-        },
         set_as_default: formData.isDefault
-      };
-
+      }
       const updatedPaymentMethod = await updatePaymentMethodAsync({
         paymentMethodId: paymentMethod.id,
         updateData
@@ -109,9 +84,7 @@ export function EditPaymentMethodModal({
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
-    // Clear error when user starts typing
-    if (errors[field]) {
+        if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: "" }));
     }
   };
@@ -165,56 +138,6 @@ export function EditPaymentMethodModal({
               <p className="text-red-500 text-xs mt-1">{errors.holderName}</p>
             )}
           </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label htmlFor="expiryMonth" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                {t("EXPIRY_MONTH")}
-              </label>
-              <input
-                id="expiryMonth"
-                type="number"
-                value={formData.expiryMonth}
-                onChange={(e) => handleInputChange("expiryMonth", e.target.value)}
-                placeholder="MM"
-                min="1"
-                max="12"
-                className={`w-full h-12 px-4 pr-10 text-center bg-transparent border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 ${
-                  errors.expiryMonth
-                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
-                    : "border-gray-300 focus:border-theme-primary-10 focus:ring-theme-primary-10"
-                  }`}
-              />
-              {errors.expiryMonth && (
-                <p className="text-red-500 text-xs mt-1">{errors.expiryMonth}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="expiryYear" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                {t("EXPIRY_YEAR")}
-              </label>
-              <input
-                id="expiryYear"
-                type="number"
-                value={formData.expiryYear}
-                onChange={(e) => handleInputChange("expiryYear", e.target.value)}
-                placeholder="YYYY"
-                min={new Date().getFullYear()}
-                max={new Date().getFullYear() + 20}
-                maxLength={4}
-                className={`w-full h-12 px-4 pr-10 text-center bg-transparent border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 ${
-                  errors.expiryYear
-                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
-                    : "border-gray-300 focus:border-theme-primary-10 focus:ring-theme-primary-10"
-                  }`}
-              />
-              {errors.expiryYear && (
-                <p className="text-red-500 text-xs mt-1">{errors.expiryYear}</p>
-              )}
-            </div>
-          </div>
-
           <div className="flex items-center space-x-2">
             <input
               id="isDefault"

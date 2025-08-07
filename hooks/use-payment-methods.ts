@@ -15,8 +15,6 @@ export interface PaymentMethodData {
   card: {
     brand: string;
     last4: string;
-    exp_month: number;
-    exp_year: number;
     funding: 'credit' | 'debit' | 'prepaid' | 'unknown';
     country?: string;
     fingerprint?: string;
@@ -352,9 +350,6 @@ export const getCardBrandInfo = (brand: string) => {
   }
 };
 
-export const formatExpiryDate = (month: number, year: number): string => {
-  return `${month.toString().padStart(2, '0')}/${year.toString().slice(-2)}`;
-};
 
 export const isCardExpired = (month: number, year: number): boolean => {
   const now = new Date();

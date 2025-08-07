@@ -60,8 +60,6 @@ export async function GET(
         card: paymentMethod.card ? {
           brand: paymentMethod.card.brand,
           last4: paymentMethod.card.last4,
-          exp_month: paymentMethod.card.exp_month,
-          exp_year: paymentMethod.card.exp_year,
           funding: paymentMethod.card.funding,
           country: paymentMethod.card.country,
           fingerprint: paymentMethod.card.fingerprint,

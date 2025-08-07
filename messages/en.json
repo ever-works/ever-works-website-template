@@ -888,7 +888,6 @@
     "DELETING_CARD": "Deleting...",
     "DELETE_CARD_BUTTON": "Delete Card",
     "CARD_NUMBER_NOT_EDITABLE": "Card number cannot be modified",
-    "SECURITY_NOTICE": "Only certain information can be modified for security reasons",
     "UPDATING_CARD": "Updating...",
     "SAVE": "Save"
   }

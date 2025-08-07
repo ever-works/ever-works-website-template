@@ -43,6 +43,13 @@
       "when": 1754518977141,
       "tag": "0005_rare_captain_cross",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1754606196525,
+      "tag": "0006_marvelous_xorn",
+      "breakpoints": true
     }
   ]
 }

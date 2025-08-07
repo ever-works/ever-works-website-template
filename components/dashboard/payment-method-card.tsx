@@ -1,6 +1,6 @@
 'use client';
 
-import { Edit, Trash2, Star, Calendar, Shield, Loader2 } from 'lucide-react';
+import { Edit, Trash2, Star, Shield, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { getCardBrandInfo, PaymentMethodData } from '@/hooks/use-payment-methods';
@@ -17,12 +17,6 @@ interface PaymentMethodCardProps {
 	className?: string;
 }
 
-const formatExpiryDate = (month: number, year: number) => {
-	return `${month.toString().padStart(2, '0')}/${year.toString().slice(-2)}`;
-};
-
-
-
 export function PaymentMethodCard({
 	paymentMethod,
 	isDefault,
@@ -34,7 +28,6 @@ export function PaymentMethodCard({
 	const t = useTranslations('billing');
 	const { card } = paymentMethod;
 	const info = getCardBrandInfo(card.brand);
-	const expiryDate = formatExpiryDate(card.exp_month, card.exp_year);
 
 	return (
 		<div className="relative group">
@@ -70,11 +63,6 @@ export function PaymentMethodCard({
 
 								<div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
 									<div className="flex items-center space-x-1">
-										<div className="flex items-center space-x-1">
-											<Calendar className="h-3 w-3" />
-											<span>{t('EXPIRES', { date: expiryDate })}</span>
-										</div>
-
 										<div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
 											<span className="capitalize">
 												{card.funding} • {card.brand}
@@ -136,32 +124,6 @@ export function PaymentMethodCard({
 						)}
 					</div>
 				</div>
-
-				{(() => {
-					const currentDate = new Date();
-					// const expiryDate = new Date(expiryYear, expiryMonth - 1);
-					const monthsUntilExpiry =
-						(card.exp_year - currentDate.getFullYear()) * 12 + (card.exp_month - currentDate.getMonth());
-
-					if (monthsUntilExpiry < 0) {
-						return (
-							<div className="mt-3 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
-								<p className="text-xs text-red-800 dark:text-red-200 font-medium">
-									{t('CARD_EXPIRED')}
-								</p>
-							</div>
-						);
-					} else if (monthsUntilExpiry <= 2) {
-						return (
-							<div className="mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
-								<p className="text-xs text-yellow-800 dark:text-yellow-200 font-medium">
-									{t('CARD_EXPIRES_SOON', { months: monthsUntilExpiry })}
-								</p>
-							</div>
-						);
-					}
-					return null;
-				})()}
 			</div>
 		</div>
 	);
