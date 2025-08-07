@@ -3,6 +3,7 @@ import { users } from '@/lib/db/schema';
 import { eq, like, desc, asc, and, or, sql } from 'drizzle-orm';
 import { UserData, CreateUserRequest, UpdateUserRequest, UserListOptions, UserStatus } from '@/lib/types/user';
 import { generateUserId } from '@/lib/types/user';
+import { hash } from 'bcryptjs';
 
 export class UserDbService {
   async readUsers(): Promise<UserData[]> {
@@ -37,6 +38,9 @@ export class UserDbService {
         throw new Error(`Email '${data.email}' already exists`);
       }
 
+      // Hash the password
+      const passwordHash = await hash(data.password, 10);
+
       const userData = {
         id: generateUserId(),
         username: data.username,
@@ -47,6 +51,7 @@ export class UserDbService {
         role_id: data.role,
         status: 'active',
         created_by: createdBy,
+        passwordHash,
       };
 
       const result = await db.insert(users).values(userData).returning();
