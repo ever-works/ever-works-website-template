@@ -15,6 +15,9 @@ export default function ClientsPage() {
   const [selectedClient, setSelectedClient] = useState<any | null>(null);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   
+  // Delete confirmation state
+  const [clientToDelete, setClientToDelete] = useState<string | null>(null);
+  
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -27,6 +30,7 @@ export default function ClientsPage() {
   const [accountTypeFilter, setAccountTypeFilter] = useState<string>('');
   
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
   const inputClass =
     "w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
@@ -122,14 +126,18 @@ export default function ClientsPage() {
     }
   };
 
-  // Delete client
-  const handleDelete = async (compositeKey: string) => {
-    if (!confirm('Are you sure you want to delete this client? This action cannot be undone.')) {
-      return;
-    }
+  // Show delete confirmation modal
+  const handleDeleteClick = (compositeKey: string) => {
+    setClientToDelete(compositeKey);
+    onDeleteOpen();
+  };
+
+  // Confirm delete action
+  const confirmDelete = async () => {
+    if (!clientToDelete) return;
 
     try {
-      const response = await fetch(`/api/admin/clients/${compositeKey}`, {
+      const response = await fetch(`/api/admin/clients/${clientToDelete}`, {
         method: 'DELETE',
       });
       
@@ -144,7 +152,16 @@ export default function ClientsPage() {
     } catch (error) {
       console.error('Failed to delete client:', error);
       toast.error('Failed to delete client');
+    } finally {
+      setClientToDelete(null);
+      onDeleteClose();
     }
+  };
+
+  // Cancel delete action
+  const cancelDelete = () => {
+    setClientToDelete(null);
+    onDeleteClose();
   };
 
   // Form handlers
@@ -385,7 +402,7 @@ export default function ClientsPage() {
                       size="sm"
                       color="danger"
                       variant="bordered"
-                      onPress={() => handleDelete(`${client.userId}:${client.provider}:${client.providerAccountId}`)}
+                      onPress={() => handleDeleteClick(`${client.userId}:${client.provider}:${client.providerAccountId}`)}
                       startContent={<Trash2 className="w-4 h-4" />}
                     >
                       Delete
@@ -420,6 +437,40 @@ export default function ClientsPage() {
               isLoading={isSubmitting}
               mode={formMode}
             />
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-xl shadow-xl p-6">
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900 mb-4">
+                <Trash2 className="h-6 w-6 text-red-600 dark:text-red-400" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                Delete Client
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                Are you sure you want to delete this client? This action cannot be undone.
+              </p>
+              <div className="flex justify-center space-x-3">
+                <Button
+                  color="default"
+                  variant="bordered"
+                  onPress={cancelDelete}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  color="danger"
+                  onPress={confirmDelete}
+                >
+                  Delete
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       )}
