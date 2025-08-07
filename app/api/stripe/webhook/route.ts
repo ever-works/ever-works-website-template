@@ -257,10 +257,7 @@ async function handleSubscriptionCancelled(data: any) {
 
 	try {
 		await webhookSubscriptionService.handleSubscriptionCancelled(data);
-		// Extract customer information
 		const customerInfo = extractCustomerInfo(data);
-
-		// Extract subscription information
 		const priceId = data.items?.data?.[0]?.price?.id;
 		const planName = getPlanName(priceId);
 		const amount = formatAmount(data.items?.data?.[0]?.price?.unit_amount || 0, data.currency);

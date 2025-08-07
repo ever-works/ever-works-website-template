@@ -46,8 +46,6 @@ export async function GET() {
 				? {
 						brand: pm.card.brand,
 						last4: pm.card.last4,
-						exp_month: pm.card.exp_month,
-						exp_year: pm.card.exp_year,
 						funding: pm.card.funding,
 						country: pm.card.country
 					}

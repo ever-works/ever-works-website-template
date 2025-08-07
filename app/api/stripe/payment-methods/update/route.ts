@@ -27,17 +27,6 @@ const updatePaymentMethodSchema = z.object({
 				.optional()
 		})
 		.optional(),
-	card: z
-		.object({
-			exp_month: z.number().int().min(1).max(12).optional(),
-			exp_year: z
-				.number()
-				.int()
-				.min(new Date().getFullYear())
-				.max(new Date().getFullYear() + 20)
-				.optional()
-		})
-		.optional(),
 	set_as_default: z.boolean().optional()
 });
 
@@ -55,8 +44,6 @@ interface PaymentMethodResponse {
 	card: {
 		brand: string;
 		last4: string;
-		exp_month: number;
-		exp_year: number;
 		funding: string;
 	} | null;
 	billing_details: Stripe.PaymentMethod.BillingDetails | null;
@@ -148,8 +135,6 @@ function formatPaymentMethodResponse(paymentMethod: Stripe.PaymentMethod, isDefa
 			? {
 					brand: paymentMethod.card.brand,
 					last4: paymentMethod.card.last4,
-					exp_month: paymentMethod.card.exp_month,
-					exp_year: paymentMethod.card.exp_year,
 					funding: paymentMethod.card.funding
 				}
 			: null,
@@ -213,7 +198,7 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
 		// Parse and validate request body
 		const body = await request.json();
 		const validatedData = updatePaymentMethodSchema.parse(body);
-		const { payment_method_id, metadata, billing_details, card, set_as_default } = validatedData;
+		const { payment_method_id, metadata, billing_details, set_as_default } = validatedData;
 
 		// Validate payment method ownership
 		const ownershipResult = await validatePaymentMethodOwnership(payment_method_id, userId);
@@ -239,11 +224,6 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
 			updateData.billing_details = billing_details;
 		}
 
-		// Note: Card details (exp_month, exp_year) cannot be updated via Stripe API
-		// This is a Stripe limitation for security reasons
-		if (card) {
-			console.warn('Card details cannot be updated via Stripe API for security reasons');
-		}
 
 		// Update the payment method
 		const updatedPaymentMethod = await stripe.paymentMethods.update(payment_method_id, updateData);

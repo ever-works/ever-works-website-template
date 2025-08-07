@@ -5,8 +5,7 @@ import { AlertTriangle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
 import {
-  formatExpiryDate,
-  getCardBrandInfo, type PaymentMethodData
+	getCardBrandInfo, type PaymentMethodData
 } from '@/hooks/use-payment-methods';
 
 interface DeletePaymentMethodModalProps {
@@ -24,7 +23,6 @@ export function DeletePaymentMethodModal({ isOpen, onClose, paymentMethod, isDef
 	if (!paymentMethod) return null;
 
 	const { card } = paymentMethod;
-	const expiryDate = formatExpiryDate(card.exp_month, card.exp_year);
 	const brandInfo = getCardBrandInfo(card.brand);
 
 	const handleConfirm = () => {
@@ -47,11 +45,6 @@ export function DeletePaymentMethodModal({ isOpen, onClose, paymentMethod, isDef
 								{card.brand} •••• {card.last4}
 							</p>
 							<p className="text-sm text-gray-600 dark:text-gray-400"> {brandInfo.text}</p>
-							<p className="text-sm text-gray-500 dark:text-gray-400">
-								{t('EXPIRES', {
-									date:expiryDate
-								})}
-							</p>
 						</div>
 					</div>
 				</div>
