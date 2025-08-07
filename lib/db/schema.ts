@@ -13,7 +13,6 @@ import {
 import type { AdapterAccountType } from 'next-auth/adapters';
 import { PaymentPlan, PaymentProvider } from '../constants';
 
-<<<<<<< HEAD
 export const users = pgTable("users", {
   id: text("id")
     .primaryKey()
@@ -33,21 +32,6 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   deletedAt: timestamp("deleted_at"),
   isAdmin: boolean("is_admin").notNull().default(false),
-=======
-export const users = pgTable('users', {
-	id: text('id')
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
-	name: text('name'),
-	email: text('email').unique(),
-	emailVerified: timestamp('emailVerified', { mode: 'date' }),
-	image: text('image'),
-	passwordHash: text('password_hash'),
-	createdAt: timestamp('created_at').notNull().defaultNow(),
-	updatedAt: timestamp('updated_at').notNull().defaultNow(),
-	deletedAt: timestamp('deleted_at'),
-	isAdmin: boolean('is_admin').notNull().default(false)
->>>>>>> 39d1e39 (feat: integrate Stripe webhook to sync subscription events)
 });
 
 export const roles = pgTable("roles", {
