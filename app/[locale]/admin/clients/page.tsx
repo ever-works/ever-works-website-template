@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
 import { Plus, Edit, Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
@@ -41,14 +41,26 @@ export default function ClientsPage() {
   const buttonClass =
     "px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors";
 
+  // Debounced search term
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   // Fetch clients
-  const fetchClients = async (page: number = currentPage) => {
+  const fetchClients = useCallback(async (page: number = currentPage) => {
     try {
       setIsLoading(true);
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
-        search: searchTerm,
+        search: debouncedSearchTerm,
         status: statusFilter,
         plan: planFilter,
         accountType: accountTypeFilter,
@@ -70,7 +82,7 @@ export default function ClientsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [debouncedSearchTerm, statusFilter, planFilter, accountTypeFilter, currentPage, limit]);
 
   // Create client
   const handleCreate = async (data: any) => {
@@ -201,7 +213,7 @@ export default function ClientsPage() {
 
   useEffect(() => {
     fetchClients();
-  }, []);
+  }, [fetchClients]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
