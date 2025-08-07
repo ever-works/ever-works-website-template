@@ -120,29 +120,17 @@ export class RoleDbService {
       const total = Number(countResult[0].count);
       
       // Apply sorting and pagination
-      let result;
-      if (sortBy === 'name') {
-        result = await query
-          .orderBy(sortOrder === 'desc' ? desc(roles.name) : asc(roles.name))
-          .limit(limit)
-          .offset((page - 1) * limit);
-      } else if (sortBy === 'id') {
-        result = await query
-          .orderBy(sortOrder === 'desc' ? desc(roles.id) : asc(roles.id))
-          .limit(limit)
-          .offset((page - 1) * limit);
-      } else if (sortBy === 'created_at') {
-        result = await query
-          .orderBy(sortOrder === 'desc' ? desc(roles.createdAt) : asc(roles.createdAt))
-          .limit(limit)
-          .offset((page - 1) * limit);
-      } else {
-        // Default to name sorting
-        result = await query
-          .orderBy(asc(roles.name))
-          .limit(limit)
-          .offset((page - 1) * limit);
-      }
+      const sortFieldMap = {
+        name: roles.name,
+        id: roles.id,
+        created_at: roles.createdAt
+      };
+      const sortField = sortFieldMap[sortBy] || roles.name;
+      const orderFn = sortOrder === 'desc' ? desc : asc;
+      const result = await query
+        .orderBy(orderFn(sortField))
+        .limit(limit)
+        .offset((page - 1) * limit);
       
       return {
         roles: result.map(this.mapDbToRoleData),
