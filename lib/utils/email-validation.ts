@@ -54,7 +54,8 @@ export function isValidEmail(email: string): boolean {
       return false;
     }
     // Domain parts should start and end with alphanumeric
-    if (!/^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$/.test(part)) {
+    // Handle single-character parts specially
+    if (part.length === 1 ? !/^[a-zA-Z0-9]$/.test(part) : !/^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$/.test(part)) {
       return false;
     }
   }

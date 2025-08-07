@@ -124,8 +124,12 @@ export class UserDbService {
         query = query.where(and(...conditions));
       }
       
-      // Get total count
-      const countResult = await db.select({ count: sql`count(*)` }).from(users);
+      // Get total count with same filters
+      let countQuery = db.select({ count: sql`count(*)` }).from(users);
+      if (conditions.length > 0) {
+        countQuery = countQuery.where(and(...conditions));
+      }
+      const countResult = await countQuery;
       const total = Number(countResult[0].count);
       
       // Apply sorting and pagination

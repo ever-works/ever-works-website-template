@@ -77,7 +77,14 @@ export async function GET(request: NextRequest) {
     const userRepository = new UserRepository();
     const result = await userRepository.findAll(options);
 
-    return NextResponse.json(result);
+    return NextResponse.json({
+      success: true,
+      data: result.users,
+      total: result.total,
+      page: result.page,
+      limit: result.limit,
+      totalPages: result.totalPages,
+    });
   } catch (error) {
     console.error('Error in GET /api/admin/users:', error);
     return NextResponse.json(

@@ -19,7 +19,10 @@ export async function GET() {
     const userRepository = new UserRepository();
     const stats = await userRepository.getStats();
 
-    return NextResponse.json(stats);
+    return NextResponse.json({
+      success: true,
+      data: stats,
+    });
   } catch (error) {
     console.error('Error in GET /api/admin/users/stats:', error);
     return NextResponse.json(
