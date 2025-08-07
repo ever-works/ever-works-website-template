@@ -111,8 +111,12 @@ export class RoleDbService {
         query = query.where(eq(roles.status, status));
       }
       
-      // Get total count
-      const countResult = await db.select({ count: sql`count(*)` }).from(roles);
+      // Get total count with same filters
+      let countQuery = db.select({ count: sql`count(*)` }).from(roles);
+      if (status) {
+        countQuery = countQuery.where(eq(roles.status, status));
+      }
+      const countResult = await countQuery;
       const total = Number(countResult[0].count);
       
       // Apply sorting and pagination
