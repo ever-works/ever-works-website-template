@@ -65,7 +65,9 @@ export function ProfileButton() {
       await signOut({ callbackUrl: '/' });
     } catch (error) {
       console.error('Logout error:', error);
-      document.body.removeChild(overlay);
+      if (overlay && document.body.contains(overlay)) {
+        document.body.removeChild(overlay);
+      }
     }
   };
 
