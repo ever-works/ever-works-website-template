@@ -135,39 +135,19 @@ export class UserDbService {
       const total = Number(countResult[0].count);
       
       // Apply sorting and pagination
-      let result;
-      if (sortBy === 'name') {
-        result = await query
-          .orderBy(sortOrder === 'desc' ? desc(users.name) : asc(users.name))
-          .limit(limit)
-          .offset((page - 1) * limit);
-      } else if (sortBy === 'username') {
-        result = await query
-          .orderBy(sortOrder === 'desc' ? desc(users.username) : asc(users.username))
-          .limit(limit)
-          .offset((page - 1) * limit);
-      } else if (sortBy === 'email') {
-        result = await query
-          .orderBy(sortOrder === 'desc' ? desc(users.email) : asc(users.email))
-          .limit(limit)
-          .offset((page - 1) * limit);
-      } else if (sortBy === 'role') {
-        result = await query
-          .orderBy(sortOrder === 'desc' ? desc(users.role_id) : asc(users.role_id))
-          .limit(limit)
-          .offset((page - 1) * limit);
-      } else if (sortBy === 'created_at') {
-        result = await query
-          .orderBy(sortOrder === 'desc' ? desc(users.createdAt) : asc(users.createdAt))
-          .limit(limit)
-          .offset((page - 1) * limit);
-      } else {
-        // Default to name sorting
-        result = await query
-          .orderBy(asc(users.name))
-          .limit(limit)
-          .offset((page - 1) * limit);
-      }
+      const sortFieldMap = {
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        role: users.role_id,
+        created_at: users.createdAt
+      };
+      const sortField = sortFieldMap[sortBy] || users.name;
+      const orderFn = sortOrder === 'desc' ? desc : asc;
+      const result = await query
+        .orderBy(orderFn(sortField))
+        .limit(limit)
+        .offset((page - 1) * limit);
       
       return {
         users: result.map(this.mapDbToUserData),
