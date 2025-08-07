@@ -131,10 +131,4 @@ export const validateAndNormalizeEmail = (email: string): string => {
   return email.toLowerCase().trim();
 };
 
-/**
- * Checks if email is valid format
- */
-export const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}; 
+export { isValidEmail as validateEmail } from '@/lib/utils/email-validation'; 

@@ -36,6 +36,13 @@
       "when": 1754166224431,
       "tag": "0004_fine_old_lace",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1754518977141,
+      "tag": "0005_rare_captain_cross",
+      "breakpoints": true
     }
   ]
 }

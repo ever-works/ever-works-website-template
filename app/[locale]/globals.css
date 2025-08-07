@@ -693,9 +693,7 @@
 
 /* Enhanced focus states */
 .focus-ring:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.5);
-  border-color: #667eea;
+  outline: none !important;
 }
 
 /* Elegant scroll animations */
@@ -853,4 +851,56 @@ select option:active {
 [data-slot="cursor"] {
   position: absolute !important;
   pointer-events: none !important;
+  background-color: hsl(var(--primary));
+}
+
+/* HeroUI Input Focus Overrides */
+[data-slot="input"]:focus,
+[data-slot="input"]:focus-within {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+[data-slot="input"]:focus-visible {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+[data-slot="input-wrapper"]:focus-within {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+[data-slot="input-wrapper"]:focus-visible {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Override HeroUI default focus colors */
+.focus-within\:border-primary:focus-within {
+  border-color: var(--theme-primary) !important;
+}
+
+.focus\:border-primary:focus {
+  border-color: var(--theme-primary) !important;
+}
+
+.focus-visible\:border-primary:focus-visible {
+  border-color: var(--theme-primary) !important;
+}
+
+.focus-within\:ring-primary:focus-within {
+  --tw-ring-color: var(--theme-primary) !important;
+}
+
+.focus\:ring-primary:focus {
+  --tw-ring-color: var(--theme-primary) !important;
+}
+
+.focus-visible\:ring-primary:focus-visible {
+  --tw-ring-color: var(--theme-primary) !important;
 }
