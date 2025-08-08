@@ -183,28 +183,6 @@ export const accounts = pgTable("accounts", {
 	unique("accounts_username_unique").on(table.username),
 ]);
 
-export const subscriptionHistory = pgTable("subscription_history", {
-	id: text().primaryKey().notNull(),
-	subscriptionId: text("subscription_id").notNull(),
-	action: text().notNull(),
-	previousStatus: text("previous_status"),
-	newStatus: text("new_status"),
-	previousPlan: text("previous_plan"),
-	newPlan: text("new_plan"),
-	reason: text(),
-	metadata: text(),
-	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
-}, (table) => [
-	index("subscription_action_idx").using("btree", table.action.asc().nullsLast().op("text_ops")),
-	index("subscription_history_created_at_idx").using("btree", table.createdAt.asc().nullsLast().op("timestamp_ops")),
-	index("subscription_history_idx").using("btree", table.subscriptionId.asc().nullsLast().op("text_ops")),
-	foreignKey({
-			columns: [table.subscriptionId],
-			foreignColumns: [subscriptions.id],
-			name: "subscription_history_subscription_id_subscriptions_id_fk"
-		}).onDelete("cascade"),
-]);
-
 export const subscriptions = pgTable("subscriptions", {
 	id: text().primaryKey().notNull(),
 	userId: text("user_id").notNull(),
@@ -240,5 +218,27 @@ export const subscriptions = pgTable("subscriptions", {
 			columns: [table.userId],
 			foreignColumns: [users.id],
 			name: "subscriptions_user_id_users_id_fk"
+		}).onDelete("cascade"),
+]);
+
+export const subscriptionHistory = pgTable("subscription_history", {
+	id: text().primaryKey().notNull(),
+	subscriptionId: text("subscription_id").notNull(),
+	action: text().notNull(),
+	previousStatus: text("previous_status"),
+	newStatus: text("new_status"),
+	previousPlan: text("previous_plan"),
+	newPlan: text("new_plan"),
+	reason: text(),
+	metadata: text(),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	index("subscription_action_idx").using("btree", table.action.asc().nullsLast().op("text_ops")),
+	index("subscription_history_created_at_idx").using("btree", table.createdAt.asc().nullsLast().op("timestamp_ops")),
+	index("subscription_history_idx").using("btree", table.subscriptionId.asc().nullsLast().op("text_ops")),
+	foreignKey({
+			columns: [table.subscriptionId],
+			foreignColumns: [subscriptions.id],
+			name: "subscription_history_subscription_id_subscriptions_id_fk"
 		}).onDelete("cascade"),
 ]);
