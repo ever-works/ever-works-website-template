@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
         apiKey: process.env.STRIPE_SECRET_KEY,
         webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
         options: {
-          apiVersion: '2023-10-16',
+          apiVersion: "2023-10-16",
           publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
         }
 

@@ -34,6 +34,16 @@ export const users = pgTable("users", {
   isAdmin: boolean("is_admin").notNull().default(false),
 });
 
+export const payment_accounts=pgTable(
+  "payment_accounts",{
+    id:text('id')
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+    userId:text('userId')
+  }
+)
+
 export const roles = pgTable("roles", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),

@@ -7,12 +7,12 @@ import { useTranslations } from "next-intl";
 import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { cn } from "@/lib/utils/index";
 import React, {
-    memo,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 import Image from "next/image";
 
@@ -86,7 +86,7 @@ const CategoryButton = memo(
               className={cn(
                 "ml-1 sm:ml-2 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-xs transition-all duration-300 capitalize",
                 isActive
-                  ? "bg-blue-500/20 text-blue-600 dark:text-blue-300 dark:bg-blue-500/30 scale-105"
+                  ? "bg-theme-primary-20 text-white dark:text-theme-primary-300 dark:bg-theme-primary-10 scale-105"
                   : "bg-gray-200/80 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300"
               )}
             >
@@ -106,7 +106,7 @@ const CategoryButton = memo(
             className={cn(
               "group h-7 sm:h-9 whitespace-nowrap py-1 sm:py-1.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-300 ease-in-out hover:scale-105",
               {
-                "bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-blue-700/20 ring-2 ring-white/20 dark:ring-blue-500/30":
+                "bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20 ring-2 ring-white/20 dark:ring-blue-500/30":
                   isActive,
                 "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700/70 bg-white dark:bg-gray-800/90 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md":
                   !isActive,
@@ -267,7 +267,7 @@ export function HomeTwoCategories({
       <div className="md:hidden w-full px-1">
         <div className="relative">
           <select
-            className="w-full p-3 pr-10 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            className="w-full p-3 pr-10 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 appearance-none focus:ring-2 focus:ring-theme-primary-500 focus:border-transparent transition-all duration-200"
             value={selectedCategory}
             onChange={handleCategoryChange}
             aria-label="Select category"
@@ -348,7 +348,7 @@ export function HomeTwoCategories({
               {hiddenCategories.length > 0 && (
                 <Popover>
                   <PopoverTrigger>
-                    <Button className="h-8 py-1.5 text-xs flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-800/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 shadow-sm hover:shadow transition-all rounded-md">
+                    <Button className="h-8 py-1.5 text-xs flex items-center gap-1.5 bg-theme-primary-10 hover:bg-theme-primary-10 dark:bg-theme-primary-10 dark:hover:bg-theme-primary-10 text-theme-primary-700 dark:text-theme-primary-300 border border-theme-primary-200 dark:border-theme-primary-800 shadow-sm hover:shadow transition-all rounded-md">
                       <span className="font-medium">
                         +{hiddenCategories.length}
                       </span>
@@ -386,7 +386,7 @@ export function HomeTwoCategories({
                                 ? `${basePath}/${category.id}`
                                 : `/categories/${category.id}`
                             }
-                            className="flex justify-between items-center h-8 text-xs py-1.5 px-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/70 rounded-md transition-colors border border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-800 w-full"
+                            className="flex justify-between items-center h-8 text-xs py-1.5 px-3 text-gray-700 dark:text-gray-300 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/70 rounded-md transition-colors border border-gray-100 dark:border-gray-700 hover:border-theme-primary-200 dark:hover:border-theme-primary-800 w-full"
                           >
                             <span className="truncate max-w-[140px] text-left">
                               {category.name}
