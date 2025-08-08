@@ -64,9 +64,28 @@ export const accounts = pgTable(
     scope: text("scope"),
     id_token: text("id_token"),
     session_state: text("session_state"),
-    // Client Management Fields
+  },
+  (account) => [
+    {
+      compoundKey: primaryKey({
+        columns: [account.provider, account.providerAccountId],
+      }),
+    },
+  ]
+);
+
+// ######################### Client Profiles Schema #########################
+export const clientProfiles = pgTable(
+  "client_profiles",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     displayName: text("display_name"),
-    username: text("username"),
+    username: text("username").unique(),
     bio: text("bio"),
     jobTitle: text("job_title"),
     company: text("company"),
@@ -88,15 +107,18 @@ export const accounts = pgTable(
     twoFactorEnabled: boolean("two_factor_enabled").default(false),
     emailVerified: boolean("email_verified").default(false),
     totalSubmissions: integer("total_submissions").default(0),
+    notes: text("notes"),
+    tags: text("tags"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
-  (account) => [
-    {
-      compoundKey: primaryKey({
-        columns: [account.provider, account.providerAccountId],
-      }),
-    },
+  (clientProfile) => [
+    index("client_profile_user_id_idx").on(clientProfile.userId),
+    index("client_profile_status_idx").on(clientProfile.status),
+    index("client_profile_plan_idx").on(clientProfile.plan),
+    index("client_profile_account_type_idx").on(clientProfile.accountType),
+    index("client_profile_username_idx").on(clientProfile.username),
+    index("client_profile_created_at_idx").on(clientProfile.createdAt),
   ]
 );
 
@@ -364,3 +386,10 @@ export enum ActivityType {
   DELETE_ACCOUNT = "DELETE_ACCOUNT",
   UPDATE_ACCOUNT = "UPDATE_ACCOUNT",
 }
+
+// ######################### Client Profile Types #########################
+export type ClientProfile = typeof clientProfiles.$inferSelect;
+export type NewClientProfile = typeof clientProfiles.$inferInsert;
+export type ClientProfileWithUser = ClientProfile & {
+  user: typeof users.$inferSelect;
+};

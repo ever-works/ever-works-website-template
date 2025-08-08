@@ -57,6 +57,13 @@
       "when": 1754373189533,
       "tag": "0007_wealthy_rogue",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1754643888157,
+      "tag": "0008_past_quicksilver",
+      "breakpoints": true
     }
   ]
 }
