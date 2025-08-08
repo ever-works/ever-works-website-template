@@ -4,12 +4,14 @@ import {
   createClientProfile, 
   getClientProfiles, 
   updateClientProfile, 
-  deleteClientProfile
+  deleteClientProfile,
+  getUserByEmail
 } from '@/lib/db/queries';
+import { UserDbService } from '@/lib/services/user-db.service';
 
 // Type definitions for request bodies
 interface CreateClientRequest {
-  userId: string;
+  userId: string; // This will be the email address
   displayName?: string;
   username?: string;
   bio?: string;
@@ -111,12 +113,55 @@ export async function POST(request: NextRequest) {
     
     // Validate required fields
     if (!body.userId) {
-      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    // Create client with the provided data
+    // Check if user exists, if not create one
+    let user = await getUserByEmail(body.userId);
+    
+    if (!user) {
+      try {
+        // Create a new user with the email
+        const userService = new UserDbService();
+        
+        // Generate a temporary password
+        const tempPassword = `Temp${Math.random().toString(36).substring(2, 10)}!`;
+        
+        // Generate username from email if not provided
+        const username = body.username || body.userId.split('@')[0];
+        
+        // Generate name from display name or email prefix
+        const name = body.displayName || body.userId.split('@')[0];
+        
+        const newUser = await userService.createUser({
+          username,
+          email: body.userId,
+          name,
+          role: 'client', // Default role for clients
+          password: tempPassword,
+        }, session.user.id || 'system');
+        
+        user = newUser;
+      } catch (userError) {
+        console.error('Error creating user for client:', userError);
+        return NextResponse.json(
+          { error: `Failed to create user: ${userError instanceof Error ? userError.message : 'Unknown error'}` },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Ensure we have a valid user
+    if (!user || !user.id) {
+      return NextResponse.json(
+        { error: 'Failed to create or find user for client' },
+        { status: 400 }
+      );
+    }
+
+    // Create client with the actual user ID
     const clientData = {
-      userId: body.userId,
+      userId: user.id,
       displayName: body.displayName || null,
       username: body.username || null,
       bio: body.bio || null,
