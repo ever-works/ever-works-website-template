@@ -21,12 +21,13 @@ import {
   type NewSubscription,
   type SubscriptionHistory as SubscriptionHistoryType,
   type NewSubscriptionHistory,
-  type SubscriptionWithUser,
-  accounts
+  type SubscriptionWithUser
 } from "./schema";
 import { desc, isNull, count, asc, lte } from "drizzle-orm";
 import type { NewComment, CommentWithUser } from "@/lib/types/comment";
-import type { ClientWithUser, UpdateClientRequest } from "@/lib/types/client";
+import type { ClientProfile, NewClientProfile, ClientProfileWithUser } from "./schema";
+import { clientProfiles } from "./schema";
+
 import { PaymentPlan } from "../constants";
 
 export async function logActivity(
@@ -702,251 +703,61 @@ export async function getSubscriptionStats() {
   };
 }
 
-// ######################### Client Management Queries #########################
+// ######################### Client Profile Queries #########################
 
 /**
- * Get client with user details
+ * Create a new client profile
  */
-export async function getClientWithUser(userId: string, provider: string, providerAccountId: string): Promise<ClientWithUser | null> {
-  const [account] = await db
+export async function createClientProfile(data: NewClientProfile): Promise<ClientProfile> {
+  const [profile] = await db
+    .insert(clientProfiles)
+    .values(data)
+    .returning();
+
+  return profile;
+}
+
+/**
+ * Find client profile by ID
+ */
+export async function getClientProfileById(id: string): Promise<ClientProfile | null> {
+  const [profile] = await db
     .select()
-    .from(accounts)
-    .where(and(
-      eq(accounts.userId, userId),
-      eq(accounts.provider, provider),
-      eq(accounts.providerAccountId, providerAccountId)
-    ));
+    .from(clientProfiles)
+    .where(eq(clientProfiles.id, id));
 
-  if (!account) return null;
-
-  const user = await getUserById(userId);
-  if (!user) return null;
-
-  return {
-    userId: account.userId,
-    type: account.type,
-    provider: account.provider,
-    providerAccountId: account.providerAccountId,
-    refresh_token: account.refresh_token,
-    access_token: account.access_token,
-    expires_at: account.expires_at,
-    token_type: account.token_type,
-    scope: account.scope,
-    id_token: account.id_token,
-    session_state: account.session_state,
-    displayName: account.displayName,
-    username: account.username,
-    bio: account.bio,
-    jobTitle: account.jobTitle,
-    company: account.company,
-    industry: account.industry,
-    phone: account.phone,
-    website: account.website,
-    location: account.location,
-    accountType: account.accountType as 'individual' | 'business' | 'enterprise',
-    status: account.status as 'active' | 'inactive' | 'suspended' | 'trial',
-    plan: account.plan as 'free' | 'standard' | 'premium',
-    timezone: account.timezone,
-    language: account.language,
-    twoFactorEnabled: account.twoFactorEnabled,
-    emailVerified: account.emailVerified,
-    totalSubmissions: account.totalSubmissions,
-    createdAt: account.createdAt,
-    updatedAt: account.updatedAt,
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      image: user.image,
-      createdAt: user.createdAt,
-    },
-  };
+  return profile || null;
 }
 
 /**
- * Update client information
+ * Find client profile with user data
  */
-export async function updateClient(userId: string, provider: string, providerAccountId: string, data: UpdateClientRequest) {
-  const updateData: any = {};
-  
-  if (data.displayName !== undefined) updateData.displayName = data.displayName;
-  if (data.username !== undefined) updateData.username = data.username;
-  if (data.bio !== undefined) updateData.bio = data.bio;
-  if (data.jobTitle !== undefined) updateData.jobTitle = data.jobTitle;
-  if (data.company !== undefined) updateData.company = data.company;
-  if (data.industry !== undefined) updateData.industry = data.industry;
-  if (data.phone !== undefined) updateData.phone = data.phone;
-  if (data.website !== undefined) updateData.website = data.website;
-  if (data.location !== undefined) updateData.location = data.location;
-  if (data.accountType !== undefined) updateData.accountType = data.accountType;
-  if (data.status !== undefined) updateData.status = data.status;
-  if (data.plan !== undefined) updateData.plan = data.plan;
-  if (data.timezone !== undefined) updateData.timezone = data.timezone;
-  if (data.language !== undefined) updateData.language = data.language;
-  if (data.twoFactorEnabled !== undefined) updateData.twoFactorEnabled = data.twoFactorEnabled;
-  if (data.emailVerified !== undefined) updateData.emailVerified = data.emailVerified;
-
-  const [account] = await db
-    .update(accounts)
-    .set(updateData)
-    .where(and(
-      eq(accounts.userId, userId),
-      eq(accounts.provider, provider),
-      eq(accounts.providerAccountId, providerAccountId)
-    ))
-    .returning();
-
-  return account;
-}
-
-/**
- * Create new client account
- */
-export async function createClient(data: {
-  userId: string;
-  displayName?: string | null;
-  username?: string | null;
-  bio?: string | null;
-  jobTitle?: string | null;
-  company?: string | null;
-  industry?: string | null;
-  phone?: string | null;
-  website?: string | null;
-  location?: string | null;
-  accountType?: string;
-  status?: string;
-  plan?: string;
-  timezone?: string;
-  language?: string;
-  twoFactorEnabled?: boolean;
-  emailVerified?: boolean;
-  totalSubmissions?: number;
-}) {
-  const accountData = {
-    userId: data.userId,
-    type: 'oauth' as const,
-    provider: 'manual',
-    providerAccountId: `manual_${data.userId}_${Date.now()}`,
-    displayName: data.displayName,
-    username: data.username,
-    bio: data.bio,
-    jobTitle: data.jobTitle,
-    company: data.company,
-    industry: data.industry,
-    phone: data.phone,
-    website: data.website,
-    location: data.location,
-    accountType: data.accountType || 'individual',
-    status: data.status || 'active',
-    plan: data.plan || 'free',
-    timezone: data.timezone || 'UTC',
-    language: data.language || 'en',
-    twoFactorEnabled: data.twoFactorEnabled || false,
-    emailVerified: data.emailVerified || false,
-    totalSubmissions: data.totalSubmissions || 0,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  const [newAccount] = await db
-    .insert(accounts)
-    .values(accountData)
-    .returning();
-
-  return newAccount;
-}
-
-/**
- * Delete client account
- */
-export async function deleteClient(userId: string, provider: string, providerAccountId: string): Promise<boolean> {
-  const [account] = await db
-    .delete(accounts)
-    .where(and(
-      eq(accounts.userId, userId),
-      eq(accounts.provider, provider),
-      eq(accounts.providerAccountId, providerAccountId)
-    ))
-    .returning();
-
-  return !!account;
-}
-
-/**
- * Get all clients with pagination and filtering
- */
-export async function getClients(params: {
-  page?: number;
-  limit?: number;
-  search?: string;
-  status?: string;
-  plan?: string;
-  accountType?: string;
-}) {
-  const { page = 1, limit = 10, search, status, plan, accountType } = params;
-  const offset = (page - 1) * limit;
-
-  const whereConditions: SQL[] = [];
-
-  if (search) {
-    const escapedSearch = search
-      .replace(/\\/g, '\\\\') // Escape backslashes first
-      .replace(/[%_]/g, '\\$&'); // Then escape % and _
-    
-    whereConditions.push(
-      sql`(${accounts.username} ILIKE ${`%${escapedSearch}%`} OR 
-           ${users.name} ILIKE ${`%${escapedSearch}%`} OR 
-           ${users.email} ILIKE ${`%${escapedSearch}%`})`
-    );
-  }
-
-  if (status) {
-    whereConditions.push(eq(accounts.status, status as any));
-  }
-
-  if (plan) {
-    whereConditions.push(eq(accounts.plan, plan as any));
-  }
-
-  if (accountType) {
-    whereConditions.push(eq(accounts.accountType, accountType as any));
-  }
-
-  const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
-
-  // Get clients with user data
-  const clients = await db
+export async function getClientProfileWithUser(id: string): Promise<ClientProfileWithUser | null> {
+  const [profile] = await db
     .select({
-      userId: accounts.userId,
-      type: accounts.type,
-      provider: accounts.provider,
-      providerAccountId: accounts.providerAccountId,
-      refresh_token: accounts.refresh_token,
-      access_token: accounts.access_token,
-      expires_at: accounts.expires_at,
-      token_type: accounts.token_type,
-      scope: accounts.scope,
-      id_token: accounts.id_token,
-      session_state: accounts.session_state,
-      displayName: accounts.displayName,
-      username: accounts.username,
-      bio: accounts.bio,
-      jobTitle: accounts.jobTitle,
-      company: accounts.company,
-      industry: accounts.industry,
-      phone: accounts.phone,
-      website: accounts.website,
-      location: accounts.location,
-      accountType: accounts.accountType,
-      status: accounts.status,
-      plan: accounts.plan,
-      timezone: accounts.timezone,
-      language: accounts.language,
-      twoFactorEnabled: accounts.twoFactorEnabled,
-      emailVerified: accounts.emailVerified,
-      totalSubmissions: accounts.totalSubmissions,
-      createdAt: accounts.createdAt,
-      updatedAt: accounts.updatedAt,
+      id: clientProfiles.id,
+      userId: clientProfiles.userId,
+      displayName: clientProfiles.displayName,
+      username: clientProfiles.username,
+      bio: clientProfiles.bio,
+      jobTitle: clientProfiles.jobTitle,
+      company: clientProfiles.company,
+      industry: clientProfiles.industry,
+      phone: clientProfiles.phone,
+      website: clientProfiles.website,
+      location: clientProfiles.location,
+      accountType: clientProfiles.accountType,
+      status: clientProfiles.status,
+      plan: clientProfiles.plan,
+      timezone: clientProfiles.timezone,
+      language: clientProfiles.language,
+      twoFactorEnabled: clientProfiles.twoFactorEnabled,
+      emailVerified: clientProfiles.emailVerified,
+      totalSubmissions: clientProfiles.totalSubmissions,
+      notes: clientProfiles.notes,
+      tags: clientProfiles.tags,
+      createdAt: clientProfiles.createdAt,
+      updatedAt: clientProfiles.updatedAt,
       user: {
         id: users.id,
         name: users.name,
@@ -955,74 +766,191 @@ export async function getClients(params: {
         createdAt: users.createdAt,
       },
     })
-    .from(accounts)
-    .leftJoin(users, eq(accounts.userId, users.id))
+    .from(clientProfiles)
+    .leftJoin(users, eq(clientProfiles.userId, users.id))
+    .where(eq(clientProfiles.id, id));
+
+  return profile || null;
+}
+
+/**
+ * Get all client profiles with pagination
+ */
+export async function getClientProfiles(params: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: string;
+  plan?: string;
+  accountType?: string;
+}): Promise<{
+  profiles: ClientProfileWithUser[];
+  total: number;
+  page: number;
+  totalPages: number;
+  limit: number;
+}> {
+  const { page = 1, limit = 10, search, status, plan, accountType } = params;
+  const offset = (page - 1) * limit;
+
+  const whereConditions: SQL[] = [];
+
+  if (search) {
+    const escapedSearch = search
+      .replace(/\\/g, '\\\\')
+      .replace(/[%_]/g, '\\$&');
+    
+    whereConditions.push(
+      sql`(${clientProfiles.username} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.displayName} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.company} ILIKE ${`%${escapedSearch}%`} OR
+           ${users.name} ILIKE ${`%${escapedSearch}%`} OR
+           ${users.email} ILIKE ${`%${escapedSearch}%`})`
+    );
+  }
+
+  if (status) {
+    whereConditions.push(eq(clientProfiles.status, status as any));
+  }
+
+  if (plan) {
+    whereConditions.push(eq(clientProfiles.plan, plan as any));
+  }
+
+  if (accountType) {
+    whereConditions.push(eq(clientProfiles.accountType, accountType as any));
+  }
+
+  const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+  // Get total count
+  const countResult = await db
+    .select({ count: sql`count(*)` })
+    .from(clientProfiles)
+    .leftJoin(users, eq(clientProfiles.userId, users.id))
+    .where(whereClause);
+
+  const total = Number(countResult[0]?.count || 0);
+
+  // Get profiles with user data
+  const profiles = await db
+    .select({
+      id: clientProfiles.id,
+      userId: clientProfiles.userId,
+      displayName: clientProfiles.displayName,
+      username: clientProfiles.username,
+      bio: clientProfiles.bio,
+      jobTitle: clientProfiles.jobTitle,
+      company: clientProfiles.company,
+      industry: clientProfiles.industry,
+      phone: clientProfiles.phone,
+      website: clientProfiles.website,
+      location: clientProfiles.location,
+      accountType: clientProfiles.accountType,
+      status: clientProfiles.status,
+      plan: clientProfiles.plan,
+      timezone: clientProfiles.timezone,
+      language: clientProfiles.language,
+      twoFactorEnabled: clientProfiles.twoFactorEnabled,
+      emailVerified: clientProfiles.emailVerified,
+      totalSubmissions: clientProfiles.totalSubmissions,
+      notes: clientProfiles.notes,
+      tags: clientProfiles.tags,
+      createdAt: clientProfiles.createdAt,
+      updatedAt: clientProfiles.updatedAt,
+      user: {
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        image: users.image,
+        createdAt: users.createdAt,
+      },
+    })
+    .from(clientProfiles)
+    .leftJoin(users, eq(clientProfiles.userId, users.id))
     .where(whereClause)
-    .orderBy(desc(accounts.createdAt))
+    .orderBy(desc(clientProfiles.createdAt))
     .limit(limit)
     .offset(offset);
 
-  // Get total count for pagination
-  const countResult = await db
-    .select({ count: count() })
-    .from(accounts)
-    .leftJoin(users, eq(accounts.userId, users.id))
-    .where(whereClause);
-
-  const total = countResult[0]?.count || 0;
-  const totalPages = Math.ceil(total / limit);
-
   return {
-    clients: clients as ClientWithUser[],
+    profiles,
     total,
     page,
+    totalPages: Math.ceil(total / limit),
     limit,
-    totalPages,
   };
 }
 
 /**
- * Get client statistics
+ * Update client profile
  */
-export async function getClientStats() {
-  const totalClients = await db
-    .select({ count: count() })
-    .from(accounts);
+export async function updateClientProfile(id: string, data: Partial<NewClientProfile>): Promise<ClientProfile | null> {
+  const [profile] = await db
+    .update(clientProfiles)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(clientProfiles.id, id))
+    .returning();
 
-  const activeClients = await db
-    .select({ count: count() })
-    .from(accounts)
-    .where(eq(accounts.status, 'active'));
+  return profile || null;
+}
 
-  const statusDistribution = await db
-    .select({
-      status: accounts.status,
-      count: count()
-    })
-    .from(accounts)
-    .groupBy(accounts.status);
+/**
+ * Delete client profile
+ */
+export async function deleteClientProfile(id: string): Promise<boolean> {
+  const [profile] = await db
+    .delete(clientProfiles)
+    .where(eq(clientProfiles.id, id))
+    .returning();
 
-  const planDistribution = await db
-    .select({
-      plan: accounts.plan,
-      count: count()
-    })
-    .from(accounts)
-    .groupBy(accounts.plan);
+  return !!profile;
+}
 
-  const accountTypeDistribution = await db
-    .select({
-      accountType: accounts.accountType,
-      count: count()
-    })
-    .from(accounts)
-    .groupBy(accounts.accountType);
+/**
+ * Get client profile statistics
+ */
+export async function getClientProfileStats() {
+  const totalResult = await db
+    .select({ count: sql`count(*)` })
+    .from(clientProfiles);
+
+  const activeResult = await db
+    .select({ count: sql`count(*)` })
+    .from(clientProfiles)
+    .where(eq(clientProfiles.status, 'active'));
+
+  const inactiveResult = await db
+    .select({ count: sql`count(*)` })
+    .from(clientProfiles)
+    .where(eq(clientProfiles.status, 'inactive'));
+
+  const planStats = await db
+    .select({ plan: clientProfiles.plan, count: sql`count(*)` })
+    .from(clientProfiles)
+    .groupBy(clientProfiles.plan);
+
+  const accountTypeStats = await db
+    .select({ accountType: clientProfiles.accountType, count: sql`count(*)` })
+    .from(clientProfiles)
+    .groupBy(clientProfiles.accountType);
+
+  const byPlan: Record<string, number> = {};
+  planStats.forEach((stat: { plan: string | null; count: number }) => {
+    byPlan[stat.plan || 'unknown'] = Number(stat.count);
+  });
+
+  const byAccountType: Record<string, number> = {};
+  accountTypeStats.forEach((stat: { accountType: string | null; count: number }) => {
+    byAccountType[stat.accountType || 'unknown'] = Number(stat.count);
+  });
 
   return {
-    total: totalClients[0]?.count || 0,
-    active: activeClients[0]?.count || 0,
-    statusDistribution,
-    planDistribution,
-    accountTypeDistribution,
+    total: Number(totalResult[0]?.count || 0),
+    active: Number(activeResult[0]?.count || 0),
+    inactive: Number(inactiveResult[0]?.count || 0),
+    byPlan,
+    byAccountType,
   };
 }
+

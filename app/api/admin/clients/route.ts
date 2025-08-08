@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { getClients, createClient, updateClient, deleteClient } from '@/lib/db/queries';
+import { 
+  createClientProfile, 
+  getClientProfiles, 
+  updateClientProfile, 
+  deleteClientProfile
+} from '@/lib/db/queries';
 
 // Type definitions for request bodies
 interface CreateClientRequest {
@@ -25,9 +30,7 @@ interface CreateClientRequest {
 }
 
 interface UpdateClientRequest {
-  userId: string;
-  provider: string;
-  providerAccountId: string;
+  id: string;
   displayName?: string;
   username?: string;
   bio?: string;
@@ -47,9 +50,7 @@ interface UpdateClientRequest {
 }
 
 interface DeleteClientRequest {
-  userId: string;
-  provider: string;
-  providerAccountId: string;
+  id: string;
 }
 
 export async function GET(request: NextRequest) {
@@ -68,7 +69,8 @@ export async function GET(request: NextRequest) {
     const plan = searchParams.get('plan') || undefined;
     const accountType = searchParams.get('accountType') || undefined;
 
-    const result = await getClients({
+
+    const result = await getClientProfiles({
       page,
       limit,
       search,
@@ -80,7 +82,7 @@ export async function GET(request: NextRequest) {
     // Return in the expected format with meta and data
     return NextResponse.json({
       success: true,
-      data: { clients: result.clients },
+      data: { clients: result.profiles },
       meta: {
         page: result.page,
         totalPages: result.totalPages,
@@ -134,7 +136,7 @@ export async function POST(request: NextRequest) {
       totalSubmissions: body.totalSubmissions || 0,
     };
 
-    const newClient = await createClient(clientData);
+    const newClient = await createClientProfile(clientData);
 
     return NextResponse.json({
       success: true,
@@ -161,17 +163,14 @@ export async function PUT(request: NextRequest) {
     const body = await request.json() as UpdateClientRequest;
     
     // Validate required fields for update
-    if (!body.userId || !body.provider || !body.providerAccountId) {
+    if (!body.id) {
       return NextResponse.json({ 
-        error: 'User ID, provider, and provider account ID are required for updates' 
+        error: 'Client ID is required for updates' 
       }, { status: 400 });
     }
 
-    // Create the update data object with the required fields for the updateClient function
+    // Create the update data object
     const updateData = {
-      userId: body.userId,
-      provider: body.provider,
-      providerAccountId: body.providerAccountId,
       displayName: body.displayName,
       username: body.username,
       bio: body.bio,
@@ -190,12 +189,7 @@ export async function PUT(request: NextRequest) {
       emailVerified: body.emailVerified,
     };
 
-    const updatedClient = await updateClient(
-      body.userId, 
-      body.provider, 
-      body.providerAccountId, 
-      updateData
-    );
+    const updatedClient = await updateClientProfile(body.id, updateData);
 
     if (!updatedClient) {
       return NextResponse.json(
@@ -229,13 +223,13 @@ export async function DELETE(request: NextRequest) {
     const body = await request.json() as DeleteClientRequest;
     
     // Validate required fields for deletion
-    if (!body.userId || !body.provider || !body.providerAccountId) {
+    if (!body.id) {
       return NextResponse.json({ 
-        error: 'User ID, provider, and provider account ID are required for deletion' 
+        error: 'Client ID is required for deletion' 
       }, { status: 400 });
     }
 
-    const success = await deleteClient(body.userId, body.provider, body.providerAccountId);
+    const success = await deleteClientProfile(body.id);
 
     if (!success) {
       return NextResponse.json(

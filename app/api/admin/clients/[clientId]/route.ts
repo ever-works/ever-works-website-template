@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { getClientWithUser, updateClient, deleteClient } from "@/lib/db/queries";
-import type { UpdateClientRequest } from "@/lib/types/client";
+import { 
+  getClientProfileWithUser, 
+  updateClientProfile, 
+  deleteClientProfile 
+} from "@/lib/db/queries";
 
 export async function GET(
   request: NextRequest,
@@ -16,17 +19,7 @@ export async function GET(
 
     const { clientId } = await params;
 
-    // Parse the clientId which should be in format: userId:provider:providerAccountId
-    const [userId, provider, providerAccountId] = clientId.split(':');
-    
-    if (!userId || !provider || !providerAccountId) {
-      return NextResponse.json(
-        { error: 'Invalid client ID format' },
-        { status: 400 }
-      );
-    }
-
-    const client = await getClientWithUser(userId, provider, providerAccountId);
+    const client = await getClientProfileWithUser(clientId);
 
     if (!client) {
       return NextResponse.json(
@@ -63,19 +56,9 @@ export async function PUT(
 
     const { clientId } = await params;
 
-    // Parse the clientId which should be in format: userId:provider:providerAccountId
-    const [userId, provider, providerAccountId] = clientId.split(':');
-    
-    if (!userId || !provider || !providerAccountId) {
-      return NextResponse.json(
-        { error: 'Invalid client ID format' },
-        { status: 400 }
-      );
-    }
+    const data = await request.json();
 
-    const data: UpdateClientRequest = await request.json();
-
-    const client = await updateClient(userId, provider, providerAccountId, data);
+    const client = await updateClientProfile(clientId, data);
 
     if (!client) {
       return NextResponse.json(
@@ -112,17 +95,7 @@ export async function DELETE(
 
     const { clientId } = await params;
 
-    // Parse the clientId which should be in format: userId:provider:providerAccountId
-    const [userId, provider, providerAccountId] = clientId.split(':');
-    
-    if (!userId || !provider || !providerAccountId) {
-      return NextResponse.json(
-        { error: 'Invalid client ID format' },
-        { status: 400 }
-      );
-    }
-
-    const success = await deleteClient(userId, provider, providerAccountId);
+    const success = await deleteClientProfile(clientId);
 
     if (!success) {
       return NextResponse.json(

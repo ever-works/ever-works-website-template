@@ -4,14 +4,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Save, X } from "lucide-react";
 import type { 
-  ClientData, 
   CreateClientRequest, 
   UpdateClientRequest
 } from "@/lib/types/client";
+import type { ClientProfileWithUser } from "@/lib/db/schema";
 import { CLIENT_VALIDATION } from "@/lib/types/client";
 
 interface ClientFormProps {
-  client?: ClientData;
+  client?: ClientProfileWithUser;
   onSubmit: (data: CreateClientRequest | UpdateClientRequest) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
@@ -118,7 +118,41 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
     }
 
     try {
-      await onSubmit(formData);
+      if (mode === 'create') {
+        const createData: CreateClientRequest = {
+          userId: formData.email, // For now, using email as userId
+          displayName: formData.displayName,
+          username: formData.username,
+          bio: formData.bio,
+          jobTitle: formData.jobTitle,
+          company: formData.company,
+          industry: formData.industry,
+          phone: formData.phone,
+          website: formData.website,
+          location: formData.location,
+          accountType: formData.accountType,
+          timezone: formData.timezone,
+          language: formData.language,
+        };
+        await onSubmit(createData);
+      } else {
+        const updateData: UpdateClientRequest = {
+          id: client?.id || '',
+          displayName: formData.displayName,
+          username: formData.username,
+          bio: formData.bio,
+          jobTitle: formData.jobTitle,
+          company: formData.company,
+          industry: formData.industry,
+          phone: formData.phone,
+          website: formData.website,
+          location: formData.location,
+          accountType: formData.accountType,
+          timezone: formData.timezone,
+          language: formData.language,
+        };
+        await onSubmit(updateData);
+      }
     } catch (error) {
       console.error('Form submission error:', error);
     }

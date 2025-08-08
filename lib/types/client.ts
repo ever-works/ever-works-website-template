@@ -1,50 +1,9 @@
 // ######################### Client Types #########################
 
-export interface ClientData {
-  userId: string;
-  type: string;
-  provider: string;
-  providerAccountId: string;
-  refresh_token?: string;
-  access_token?: string;
-  expires_at?: number;
-  token_type?: string;
-  scope?: string;
-  id_token?: string;
-  session_state?: string;
-  displayName?: string;
-  username?: string;
-  bio?: string;
-  jobTitle?: string;
-  company?: string;
-  industry?: string;
-  phone?: string;
-  website?: string;
-  location?: string;
-  accountType: 'individual' | 'business' | 'enterprise';
-  status: 'active' | 'inactive' | 'suspended' | 'trial';
-  plan: 'free' | 'standard' | 'premium';
-  timezone: string;
-  language: string;
-  twoFactorEnabled: boolean;
-  emailVerified: boolean;
-  totalSubmissions: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface ClientWithUser extends ClientData {
-  user: {
-    id: string;
-    name?: string;
-    email: string;
-    image?: string;
-    createdAt: Date;
-  };
-}
+import type { ClientProfileWithUser } from '@/lib/db/schema';
 
 export interface CreateClientRequest {
-  email: string;
+  userId: string;
   displayName?: string;
   username?: string;
   bio?: string;
@@ -59,12 +18,13 @@ export interface CreateClientRequest {
   plan?: 'free' | 'standard' | 'premium';
   timezone?: string;
   language?: string;
+  twoFactorEnabled?: boolean;
+  emailVerified?: boolean;
+  totalSubmissions?: number;
 }
 
 export interface UpdateClientRequest {
-  userId: string;
-  provider: string;
-  providerAccountId: string;
+  id: string;
   displayName?: string;
   username?: string;
   bio?: string;
@@ -86,7 +46,7 @@ export interface UpdateClientRequest {
 import type { ApiResponse } from '@/lib/api/types';
 
 // Client-specific response types using the shared ApiResponse
-export type ClientListResponse = ApiResponse<{ clients: ClientWithUser[] }> & {
+export type ClientListResponse = ApiResponse<{ clients: ClientProfileWithUser[] }> & {
   meta?: {
     page: number;
     totalPages: number;
@@ -94,7 +54,7 @@ export type ClientListResponse = ApiResponse<{ clients: ClientWithUser[] }> & {
     limit: number;
   };
 };
-export type ClientResponse = ApiResponse<{ client: ClientWithUser }>;
+export type ClientResponse = ApiResponse<ClientProfileWithUser>;
 
 export interface ClientListOptions {
   status?: 'active' | 'inactive' | 'suspended' | 'trial';

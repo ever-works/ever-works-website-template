@@ -6,10 +6,11 @@ import { Plus, Edit, Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { ClientForm } from "@/components/admin/clients/client-form";
 import { UniversalPagination } from "@/components/universal-pagination";
-import type { ClientWithUser, ClientListResponse, ClientResponse } from "@/lib/types/client";
+import type { ClientListResponse, ClientResponse } from "@/lib/types/client";
+import type { ClientProfileWithUser } from "@/lib/db/schema";
 
 export default function ClientsPage() {
-  const [clients, setClients] = useState<ClientWithUser[]>([]);
+  const [clients, setClients] = useState<ClientProfileWithUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedClient, setSelectedClient] = useState<any | null>(null);
@@ -362,7 +363,7 @@ export default function ClientsPage() {
             <div className="space-y-4">
               {clients.map((client) => (
                 <div
-                  key={`${client.userId}:${client.provider}:${client.providerAccountId}`}
+                  key={client.id}
                   className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
                   <div className="flex-1">
@@ -388,14 +389,14 @@ export default function ClientsPage() {
                     </div>
                     
                     <div className="flex items-center space-x-2 mt-2">
-                      <Chip size="sm" color={getStatusColor(client.status)}>
-                        {client.status}
+                      <Chip size="sm" color={getStatusColor(client.status || 'active')}>
+                        {client.status || 'active'}
                       </Chip>
-                      <Chip size="sm" color={getPlanColor(client.plan)}>
-                        {client.plan}
+                      <Chip size="sm" color={getPlanColor(client.plan || 'free')}>
+                        {client.plan || 'free'}
                       </Chip>
-                      <Chip size="sm" color={getAccountTypeColor(client.accountType)}>
-                        {client.accountType}
+                      <Chip size="sm" color={getAccountTypeColor(client.accountType || 'individual')}>
+                        {client.accountType || 'individual'}
                       </Chip>
                     </div>
                   </div>
@@ -414,7 +415,7 @@ export default function ClientsPage() {
                       size="sm"
                       color="danger"
                       variant="bordered"
-                      onPress={() => handleDeleteClick(`${client.userId}:${client.provider}:${client.providerAccountId}`)}
+                      onPress={() => handleDeleteClick(client.id)}
                       startContent={<Trash2 className="w-4 h-4" />}
                     >
                       Delete

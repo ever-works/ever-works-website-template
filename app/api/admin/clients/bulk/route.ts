@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { updateClient, deleteClient } from '@/lib/db/queries';
+import { updateClientProfile, deleteClientProfile } from '@/lib/db/queries';
 
 export async function PUT(request: NextRequest) {
   try {
@@ -26,19 +26,16 @@ export async function PUT(request: NextRequest) {
     for (const [index, clientData] of body.clients.entries()) {
       try {
         // Validate required fields for each client
-        if (!clientData.userId || !clientData.provider || !clientData.providerAccountId) {
+        if (!clientData.id) {
           errors.push({
             index,
-            error: 'User ID, provider, and provider account ID are required',
+            error: 'Client ID is required',
             clientData
           });
           continue;
         }
 
         const updateData = {
-          userId: clientData.userId,
-          provider: clientData.provider,
-          providerAccountId: clientData.providerAccountId,
           displayName: clientData.displayName,
           username: clientData.username,
           bio: clientData.bio,
@@ -57,12 +54,7 @@ export async function PUT(request: NextRequest) {
           emailVerified: clientData.emailVerified,
         };
 
-        const updatedClient = await updateClient(
-          clientData.userId,
-          clientData.provider,
-          clientData.providerAccountId,
-          updateData
-        );
+        const updatedClient = await updateClientProfile(clientData.id, updateData);
 
         if (updatedClient) {
           results.push({
@@ -130,26 +122,22 @@ export async function DELETE(request: NextRequest) {
     for (const [index, clientData] of body.clients.entries()) {
       try {
         // Validate required fields for each client
-        if (!clientData.userId || !clientData.provider || !clientData.providerAccountId) {
+        if (!clientData.id) {
           errors.push({
             index,
-            error: 'User ID, provider, and provider account ID are required',
+            error: 'Client ID is required',
             clientData
           });
           continue;
         }
 
-        const success = await deleteClient(
-          clientData.userId,
-          clientData.provider,
-          clientData.providerAccountId
-        );
+        const success = await deleteClientProfile(clientData.id);
 
         if (success) {
           results.push({
             index,
             success: true,
-            clientId: `${clientData.userId}:${clientData.provider}:${clientData.providerAccountId}`
+            clientId: clientData.id
           });
         } else {
           errors.push({
