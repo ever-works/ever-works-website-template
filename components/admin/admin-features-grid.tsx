@@ -1,4 +1,4 @@
-import { Users, FileText, BarChart3, FolderTree, Tag, Package, Shield } from "lucide-react";
+import { Users, FileText, BarChart3, FolderTree, Tag, Package, Shield, Building2 } from "lucide-react";
 import { AdminFeatureCard } from "./admin-feature-card";
 import { AdminFeature } from "./types";
 
@@ -39,7 +39,7 @@ const ADMIN_FEATURES: AdminFeature[] = [
     emoji: "👤"
   },
   {
-    icon: Package,
+    icon: Building2,
     title: "Manage Clients",
     description: "View and manage client accounts and information.",
     href: "/admin/clients",
