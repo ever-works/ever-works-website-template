@@ -44,7 +44,7 @@ ALTER TABLE "subscriptions" ADD COLUMN "stripe_customer_id" text;--> statement-b
 ALTER TABLE "subscriptions" ADD COLUMN "stripe_subscription_id" text;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD COLUMN "stripe_price_id" text;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD COLUMN "stripe_product_id" text;--> statement-breakpoint
-ALTER TABLE "subscriptions" ADD COLUMN "plan" text NOT NULL;--> statement-breakpoint
+ALTER TABLE "subscriptions" ADD COLUMN "plan" text NOT NULL DEFAULT 'free';--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD COLUMN "current_period_start" timestamp;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD COLUMN "current_period_end" timestamp;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD COLUMN "canceled_at" timestamp;--> statement-breakpoint
