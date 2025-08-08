@@ -2,6 +2,56 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { getClients, createClient, updateClient, deleteClient } from '@/lib/db/queries';
 
+// Type definitions for request bodies
+interface CreateClientRequest {
+  userId: string;
+  displayName?: string;
+  username?: string;
+  bio?: string;
+  jobTitle?: string;
+  company?: string;
+  industry?: string;
+  phone?: string;
+  website?: string;
+  location?: string;
+  accountType?: 'individual' | 'business' | 'enterprise';
+  status?: 'active' | 'inactive' | 'suspended' | 'trial';
+  plan?: 'free' | 'standard' | 'premium';
+  timezone?: string;
+  language?: string;
+  twoFactorEnabled?: boolean;
+  emailVerified?: boolean;
+  totalSubmissions?: number;
+}
+
+interface UpdateClientRequest {
+  userId: string;
+  provider: string;
+  providerAccountId: string;
+  displayName?: string;
+  username?: string;
+  bio?: string;
+  jobTitle?: string;
+  company?: string;
+  industry?: string;
+  phone?: string;
+  website?: string;
+  location?: string;
+  accountType?: 'individual' | 'business' | 'enterprise';
+  status?: 'active' | 'inactive' | 'suspended' | 'trial';
+  plan?: 'free' | 'standard' | 'premium';
+  timezone?: string;
+  language?: string;
+  twoFactorEnabled?: boolean;
+  emailVerified?: boolean;
+}
+
+interface DeleteClientRequest {
+  userId: string;
+  provider: string;
+  providerAccountId: string;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
@@ -55,7 +105,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
+    const body = await request.json() as CreateClientRequest;
     
     // Validate required fields
     if (!body.userId) {
@@ -108,7 +158,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
+    const body = await request.json() as UpdateClientRequest;
     
     // Validate required fields for update
     if (!body.userId || !body.provider || !body.providerAccountId) {
@@ -176,7 +226,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
+    const body = await request.json() as DeleteClientRequest;
     
     // Validate required fields for deletion
     if (!body.userId || !body.provider || !body.providerAccountId) {

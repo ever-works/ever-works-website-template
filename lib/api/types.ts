@@ -17,10 +17,10 @@ export interface PaginationParams {
 }
 
 // Response interceptor type
-export type ApiResponseInterceptor = (error: any) => Promise<never>;
+export type ApiResponseInterceptor = (error: unknown) => Promise<never>;
 
 // Improved API response types using discriminated unions
-export type ApiResponse<T = any> = 
+export type ApiResponse<T = unknown> = 
   | { success: true; data: T; total?: number; page?: number; limit?: number; totalPages?: number }
   | { success: false; error: string };
 
@@ -44,8 +44,8 @@ export interface ApiClientConfig extends Partial<AxiosRequestConfig> {
 export interface FetchOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   headers?: Record<string, string>;
-  body?: any;
-  params?: Record<string, any>;
+  body?: unknown;
+  params?: Record<string, string | number | boolean | undefined>;
 }
 
 export interface ApiError {
