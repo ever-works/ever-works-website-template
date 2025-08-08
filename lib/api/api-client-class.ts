@@ -40,9 +40,13 @@ export class ApiClient {
   }
 
   private handleResponseError: ApiResponseInterceptor = async (error) => {
-    if (error.response?.status === API_CONSTANTS.STATUS.UNAUTHORIZED) {
-      if (typeof window !== 'undefined' && env.AUTH_ENDPOINT_LOGIN) {
-        window.location.href = env.AUTH_ENDPOINT_LOGIN;
+    // Type guard to check if error has response property
+    if (error && typeof error === 'object' && 'response' in error) {
+      const responseError = error as { response?: { status?: number } };
+      if (responseError.response?.status === API_CONSTANTS.STATUS.UNAUTHORIZED) {
+        if (typeof window !== 'undefined' && env.AUTH_ENDPOINT_LOGIN) {
+          window.location.href = env.AUTH_ENDPOINT_LOGIN;
+        }
       }
     }
     throw this.formatError(error);
@@ -50,10 +54,10 @@ export class ApiClient {
 
   private formatError(error: unknown): ApiError {
     if (error instanceof AxiosError && error.response?.data) {
-      const errorData = error.response.data as any;
-      const message = errorData.message || errorData.error || 'An error occurred';
-      const code = errorData.code;
-      const details = errorData.details;
+      const errorData = error.response.data as Record<string, unknown>;
+      const message = (errorData.message as string) || (errorData.error as string) || 'An error occurred';
+      const code = errorData.code as string | undefined;
+      const details = errorData.details as unknown;
 
       const formattedError = new Error(message) as ApiError;
       Object.assign(formattedError, {
