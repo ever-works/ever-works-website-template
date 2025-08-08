@@ -8,6 +8,7 @@ import {
   getUserByEmail
 } from '@/lib/db/queries';
 import { UserDbService } from '@/lib/services/user-db.service';
+import crypto from 'crypto';
 
 // Type definitions for request bodies
 interface CreateClientRequest {
@@ -124,8 +125,10 @@ export async function POST(request: NextRequest) {
         // Create a new user with the email
         const userService = new UserDbService();
         
-        // Generate a temporary password
-        const tempPassword = `Temp${Math.random().toString(36).substring(2, 10)}!`;
+        // Generate a cryptographically secure temporary password
+        const randomBytes = crypto.randomBytes(6);
+        const randomString = randomBytes.toString('hex').toLowerCase();
+        const tempPassword = `Temp${randomString}!`;
         
         // Generate username from email if not provided
         const username = body.username || body.userId.split('@')[0];
