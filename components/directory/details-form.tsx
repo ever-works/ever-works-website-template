@@ -80,7 +80,7 @@ const STEPS = [
 		description: 'Basic Information Description',
 		icon: Type,
 		fields: ['name', 'mainLink'],
-		color: 'from-blue-500 to-purple-500'
+		color: 'from-theme-primary-500 to-purple-500'
 	},
 	{
 		id: 2,
@@ -247,7 +247,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack }: DetailsFormP
 								<div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 dark:from-blue-400/30 dark:to-purple-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 								<div className="relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/30 p-8 shadow-2xl">
 									<div className="flex items-center gap-3 mb-8">
-										<div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+										<div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-theme-primary-500 to-purple-500 flex items-center justify-center">
 											<Type className="w-6 h-6 text-white" />
 										</div>
 										<h3 className="text-2xl font-bold text-gray-900 dark:text-white">

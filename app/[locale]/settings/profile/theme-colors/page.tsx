@@ -85,7 +85,7 @@ export default function ThemeColorsPage() {
                       {/* Selection Indicator */}
                       {isSelected && (
                         <div className="absolute top-3 right-3">
-                          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-theme-primary-500 text-white shadow-sm">
+                          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-theme-primary-500 shadow-sm">
                             <FiCheck className="w-4 h-4" />
                           </div>
                         </div>
@@ -118,11 +118,6 @@ export default function ThemeColorsPage() {
                       <p className={`text-sm leading-relaxed ${isSelected ? "text-theme-primary-600 dark:text-theme-primary-300" : "text-gray-600 dark:text-gray-300"}`}>
                         {theme.description}
                       </p>
-
-                      {/* Selected State Overlay */}
-                      {isSelected && (
-                        <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-theme-primary-500/5 to-theme-primary-600/5 pointer-events-none" />
-                      )}
                     </button>
                   );
                 })}

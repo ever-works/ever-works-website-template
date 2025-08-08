@@ -71,8 +71,8 @@ export function Paginate({
                   wrapper: "gap-2 p-2",
                   item: cn(
                     "min-w-10 h-10 text-sm font-medium transition-all duration-300 ease-out",
-                    "bg-transparent hover:bg-theme-primary hover:bg-theme-primary-900 hover:to-theme-primary-900",
-                    "dark:hover:bg-theme-primary-900 dark:hover:to-theme-primary-900",
+                    "bg-transparent hover:bg-theme-primary hover:bg-theme-primary hover:to-theme-primary",
+                    "dark:hover:bg-theme-primary dark:hover:to-theme-primary",
                     "text-gray-700 dark:text-gray-300 hover:text-theme-primary dark:hover:text-theme-primary",
                     "border border-transparent hover:border-theme-primary dark:hover:border-theme-primary",
                     "hover:shadow-md hover:scale-105 active:scale-95",
@@ -81,7 +81,7 @@ export function Paginate({
                     "cursor-pointer relative overflow-hidden"
                   ),
                   cursor: cn(
-                    "bg-theme-primary text-white font-semibold",
+                    "!bg-theme-primary text-white font-semibold",
                     "shadow-lg shadow-theme-primary dark:shadow-theme-primary",
                     "border-2 border-theme-primary dark:border-theme-primary",
                     "relative overflow-hidden"

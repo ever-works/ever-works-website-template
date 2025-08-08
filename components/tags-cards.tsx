@@ -70,7 +70,7 @@ export function TagsCards({ tags, className }: TagsCardsProps) {
         )}
         <Card
           className={cn(
-            "bg-gray-900/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-700/50 dark:border-gray-700/70",
+            "dark:bg-gray-800/90 backdrop-blur-sm border border-gray-50 dark:border-gray-700/70",
             "hover:border-theme-primary-400 dark:hover:border-theme-primary-500",
             isActive && "ring-2 ring-theme-primary-500 dark:ring-theme-primary-400"
           )}
@@ -85,15 +85,15 @@ export function TagsCards({ tags, className }: TagsCardsProps) {
                 )}>
                   <Hash className={cn(
                     "w-5 h-5 transition-colors duration-300",
-                    "text-theme-primary-400 dark:text-theme-primary-300",
-                    "group-hover:text-theme-primary-300 dark:group-hover:text-theme-primary-200"
+                    "text-theme-primary-500 dark:text-theme-primary-500",
+                    "group-hover:text-theme-primary-300 dark:group-hover:text-theme-primary-500"
                   )} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className={cn(
                     "text-lg sm:text-xl font-bold transition-colors duration-300 line-clamp-1",
-                    "text-gray-100 dark:text-gray-50",
-                    "group-hover:text-theme-primary-300 dark:group-hover:text-theme-primary-200"
+                    "text-gray-800 dark:text-gray-50",
+                    "group-hover:text-theme-primary-500 dark:group-hover:text-theme-primary-500 capitalize"
                   )}>
                     {tag.name}
                   </h3>
@@ -110,8 +110,8 @@ export function TagsCards({ tags, className }: TagsCardsProps) {
             <div className="flex items-center justify-between w-full">
               <span className={cn(
                 "text-sm font-medium transition-colors duration-300",
-                "text-gray-400 dark:text-gray-400",
-                "group-hover:text-theme-primary-200 dark:group-hover:text-theme-primary-100"
+                "text-gray-500 dark:text-gray-500",
+                "group-hover:text-theme-primary-500 dark:group-hover:text-theme-primary-500"
               )}>
                 {tag.count || 0} items
               </span>

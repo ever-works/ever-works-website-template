@@ -1,5 +1,4 @@
 import { Pagination, cn } from "@heroui/react";
-import React from "react";
 
 interface UniversalPaginationProps {
   page: number;
@@ -45,7 +44,7 @@ export function UniversalPagination({ page, totalPages, onPageChange, className 
                 "cursor-pointer relative overflow-hidden"
               ),
               cursor: cn(
-                "bg-theme-primary text-white font-semibold",
+                "!bg-theme-primary text-white font-semibold",
                 "shadow-lg shadow-theme-primary dark:shadow-theme-primary",
                 "border-2 border-theme-primary dark:border-theme-primary",
                 "relative overflow-hidden"

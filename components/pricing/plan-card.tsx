@@ -103,12 +103,10 @@ export function PlanCard({
   const router = useRouter();
 
   const cardStyles = useMemo(() => cn(
-    // Style exactly like reference image with dark/light mode support
     "relative flex flex-col",
     "w-full rounded-xl border",
     "backdrop-blur-sm transition-all duration-300 ease-out",
     "hover:shadow-xl dark:hover:shadow-2xl hover:-translate-y-1",
-    // Add top margin for popular badge
     (title.toUpperCase() === 'STANDARD' || isPopular) ? "mt-6" : "mt-2",
 
     ...getCardStyles(title, isPopular),

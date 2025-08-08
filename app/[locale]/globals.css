@@ -296,6 +296,10 @@
   .bg-theme-primary-10 {
     background-color: rgba(var(--theme-primary-rgb), 0.1);
   }
+
+  .bg-theme-primary-5 {
+    background-color: rgba(var(--theme-primary-rgb), 0.05);
+  }
   
   .bg-theme-primary-20 {
     background-color: rgba(var(--theme-primary-rgb), 0.2);

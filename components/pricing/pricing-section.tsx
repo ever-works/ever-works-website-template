@@ -214,9 +214,6 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 						)}
 					>
 						<span>{tBilling('YEARLY')}</span>
-						<span className="px-2 py-0.5 text-xs font-bold bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full shadow-sm">
-							{tBilling('SAVE_UP_TO')}
-						</span>
 					</button>
 					{/* Enhanced sliding background */}
 					<div

@@ -194,7 +194,7 @@ export default function PortfolioPage() {
                 {success && <p className="text-green-600 text-sm font-medium">{success}</p>}
 
                 <div className="flex justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-                  <Button type="submit" className="inline-flex items-center gap-2">
+                  <Button type="submit" className="inline-flex items-center gap-2 bg-theme-primary-500 hover:bg-theme-primary-500">
                     <FiPlus className="w-4 h-4" />
                     Add Project
                   </Button>
