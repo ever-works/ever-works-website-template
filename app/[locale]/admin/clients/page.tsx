@@ -6,14 +6,14 @@ import { Plus, Edit, Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { ClientForm } from "@/components/admin/clients/client-form";
 import { UniversalPagination } from "@/components/universal-pagination";
-import type { ClientListResponse, ClientResponse } from "@/lib/types/client";
+import type { ClientListResponse, ClientResponse, CreateClientRequest, UpdateClientRequest } from "@/lib/types/client";
 import type { ClientProfileWithUser } from "@/lib/db/schema";
 
 export default function ClientsPage() {
   const [clients, setClients] = useState<ClientProfileWithUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<any | null>(null);
+  const [selectedClient, setSelectedClient] = useState<ClientProfileWithUser | null>(null);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   
   // Delete confirmation state
@@ -86,7 +86,7 @@ export default function ClientsPage() {
   }, [debouncedSearchTerm, statusFilter, planFilter, accountTypeFilter, currentPage, limit]);
 
   // Create client
-  const handleCreate = async (data: any) => {
+  const handleCreate = async (data: CreateClientRequest) => {
     try {
       setIsSubmitting(true);
       const response = await fetch('/api/admin/clients', {
@@ -113,7 +113,7 @@ export default function ClientsPage() {
   };
 
   // Update client
-  const handleUpdate = async (data: any) => {
+  const handleUpdate = async (data: UpdateClientRequest) => {
     try {
       setIsSubmitting(true);
       const response = await fetch(`/api/admin/clients/${data.id}`, {
@@ -184,17 +184,17 @@ export default function ClientsPage() {
     onOpen();
   };
 
-  const openEditForm = (client: any) => {
+  const openEditForm = (client: ClientProfileWithUser) => {
     setSelectedClient(client);
     setFormMode('edit');
     onOpen();
   };
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: CreateClientRequest | UpdateClientRequest) => {
     if (formMode === 'create') {
-      await handleCreate(data as any);
+      await handleCreate(data as CreateClientRequest);
     } else {
-      await handleUpdate(data as any);
+      await handleUpdate(data as UpdateClientRequest);
     }
   };
 
