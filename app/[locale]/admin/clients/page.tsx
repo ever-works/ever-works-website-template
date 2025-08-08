@@ -221,7 +221,6 @@ export default function ClientsPage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    fetchClients(page);
   };
 
   const clearFilters = () => {
@@ -230,7 +229,6 @@ export default function ClientsPage() {
     setPlanFilter('');
     setAccountTypeFilter('');
     setCurrentPage(1);
-    fetchClients(1);
   };
 
   useEffect(() => {
