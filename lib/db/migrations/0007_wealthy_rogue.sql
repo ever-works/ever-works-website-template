@@ -68,7 +68,7 @@ ALTER TABLE "subscriptions" ADD COLUMN "billing_country" text;--> statement-brea
 CREATE INDEX "account_status_idx" ON "accounts" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "account_plan_idx" ON "accounts" USING btree ("plan");--> statement-breakpoint
 CREATE INDEX "account_type_idx" ON "accounts" USING btree ("account_type");--> statement-breakpoint
-CREATE INDEX "account_username_idx" ON "accounts" USING btree ("username");--> statement-breakpoint
+
 CREATE INDEX "stripe_customer_idx" ON "subscriptions" USING btree ("stripe_customer_id");--> statement-breakpoint
 CREATE INDEX "stripe_subscription_idx" ON "subscriptions" USING btree ("stripe_subscription_id");--> statement-breakpoint
 CREATE INDEX "subscription_plan_idx" ON "subscriptions" USING btree ("plan");--> statement-breakpoint
