@@ -72,6 +72,17 @@ CREATE INDEX "account_username_idx" ON "accounts" USING btree ("username");--> s
 CREATE INDEX "stripe_customer_idx" ON "subscriptions" USING btree ("stripe_customer_id");--> statement-breakpoint
 CREATE INDEX "stripe_subscription_idx" ON "subscriptions" USING btree ("stripe_subscription_id");--> statement-breakpoint
 CREATE INDEX "subscription_plan_idx" ON "subscriptions" USING btree ("plan");--> statement-breakpoint
+
+-- Migrate legacy subscription data to new columns before dropping
+UPDATE "subscriptions"
+SET "current_period_start" = COALESCE("current_period_start", "start_date"),
+    "current_period_end"   = COALESCE("current_period_end", "end_date")
+WHERE "start_date" IS NOT NULL OR "end_date" IS NOT NULL;--> statement-breakpoint
+
+UPDATE "subscriptions"
+SET "canceled_at" = COALESCE("canceled_at", "cancelled_at")
+WHERE "cancelled_at" IS NOT NULL;--> statement-breakpoint
+
 ALTER TABLE "newsletter_subscriptions" DROP COLUMN "is_active";--> statement-breakpoint
 ALTER TABLE "newsletter_subscriptions" DROP COLUMN "subscribed_at";--> statement-breakpoint
 ALTER TABLE "newsletter_subscriptions" DROP COLUMN "unsubscribed_at";--> statement-breakpoint
