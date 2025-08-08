@@ -12,7 +12,9 @@ import crypto from 'crypto';
 
 // Type definitions for request bodies
 interface CreateClientRequest {
-  userId: string; // This will be the email address
+  /** @deprecated use `email` instead */
+  userId?: string;
+  email: string;
   displayName?: string;
   username?: string;
   bio?: string;
@@ -110,15 +112,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json() as CreateClientRequest;
-    
-    // Validate required fields
-    if (!body.userId) {
+    const raw = await request.json() as Partial<CreateClientRequest>;
+    const email = raw.email ?? raw.userId;
+    if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
     // Check if user exists, if not create one
-    let user = await getUserByEmail(body.userId);
+    let user = await getUserByEmail(email);
     
     if (!user) {
       try {
@@ -131,14 +132,14 @@ export async function POST(request: NextRequest) {
         const tempPassword = `Temp${randomString}!`;
         
         // Generate username from email if not provided
-        const username = body.username || body.userId.split('@')[0];
+        const username = raw.username || email.split('@')[0];
         
         // Generate name from display name or email prefix
-        const name = body.displayName || body.userId.split('@')[0];
+        const name = raw.displayName || email.split('@')[0];
         
         const newUser = await userService.createUser({
           username,
-          email: body.userId,
+          email: email,
           name,
           role: 'client', // Default role for clients
           password: tempPassword,
@@ -165,23 +166,23 @@ export async function POST(request: NextRequest) {
     // Create client with the actual user ID
     const clientData = {
       userId: user.id,
-      displayName: body.displayName || null,
-      username: body.username || null,
-      bio: body.bio || null,
-      jobTitle: body.jobTitle || null,
-      company: body.company || null,
-      industry: body.industry || null,
-      phone: body.phone || null,
-      website: body.website || null,
-      location: body.location || null,
-      accountType: body.accountType || 'individual',
-      status: body.status || 'active',
-      plan: body.plan || 'free',
-      timezone: body.timezone || 'UTC',
-      language: body.language || 'en',
-      twoFactorEnabled: body.twoFactorEnabled || false,
-      emailVerified: body.emailVerified || false,
-      totalSubmissions: body.totalSubmissions || 0,
+      displayName: raw.displayName || null,
+      username: raw.username || null,
+      bio: raw.bio || null,
+      jobTitle: raw.jobTitle || null,
+      company: raw.company || null,
+      industry: raw.industry || null,
+      phone: raw.phone || null,
+      website: raw.website || null,
+      location: raw.location || null,
+      accountType: raw.accountType || 'individual',
+      status: raw.status || 'active',
+      plan: raw.plan || 'free',
+      timezone: raw.timezone || 'UTC',
+      language: raw.language || 'en',
+      twoFactorEnabled: raw.twoFactorEnabled || false,
+      emailVerified: raw.emailVerified || false,
+      totalSubmissions: raw.totalSubmissions || 0,
     };
 
     const newClient = await createClientProfile(clientData);

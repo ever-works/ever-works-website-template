@@ -3,7 +3,9 @@
 import type { ClientProfileWithUser } from '@/lib/db/schema';
 
 export interface CreateClientRequest {
-  userId: string;
+  /** @deprecated use `email` instead */
+  userId?: string;
+  email: string;
   displayName?: string;
   username?: string;
   bio?: string;

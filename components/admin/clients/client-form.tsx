@@ -120,7 +120,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
     try {
       if (mode === 'create') {
         const createData: CreateClientRequest = {
-          userId: formData.email, // For now, using email as userId
+          email: formData.email,
           displayName: formData.displayName,
           username: formData.username,
           bio: formData.bio,
