@@ -1375,7 +1375,7 @@
         "identifier": {
           "name": "identifier",
           "type": "text",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true
         },
         "email": {
@@ -1387,7 +1387,7 @@
         "token": {
           "name": "token",
           "type": "text",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true
         },
         "expires": {
@@ -1399,7 +1399,12 @@
       },
       "indexes": {},
       "foreignKeys": {},
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "verificationTokens_identifier_token_pkey": {
+          "name": "verificationTokens_identifier_token_pkey",
+          "columns": ["identifier", "token"]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},

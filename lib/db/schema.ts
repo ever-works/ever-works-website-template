@@ -130,12 +130,22 @@ export const sessions = pgTable("sessions", {
   expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 
-export const verificationTokens = pgTable("verificationTokens", {
-  identifier: text("identifier").notNull(),
-  email: text("email").notNull(),
-  token: text("token").notNull(),
-  expires: timestamp("expires", { mode: "date" }).notNull(),
-});
+export const verificationTokens = pgTable(
+  "verificationTokens",
+  {
+    identifier: text("identifier").notNull(),
+    email: text("email").notNull(),
+    token: text("token").notNull(),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
+  },
+  (table) => [
+    {
+      compositePK: primaryKey({
+        columns: [table.identifier, table.token],
+      }),
+    },
+  ]
+);
 
 export const authenticators = pgTable(
   "authenticators",

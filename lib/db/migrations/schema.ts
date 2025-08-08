@@ -1,4 +1,4 @@
-import { pgTable, unique, text, timestamp, boolean, foreignKey, serial, varchar, integer, index, uniqueIndex } from "drizzle-orm/pg-core"
+import { pgTable, unique, text, timestamp, boolean, foreignKey, serial, varchar, integer, index, uniqueIndex, primaryKey } from "drizzle-orm/pg-core"
 
 
 
@@ -43,7 +43,12 @@ export const verificationTokens = pgTable("verificationTokens", {
 	email: text().notNull(),
 	token: text().notNull(),
 	expires: timestamp({ mode: 'string' }).notNull(),
-});
+}, (table) => [
+	primaryKey({
+		columns: [table.identifier, table.token],
+		name: "verificationTokens_identifier_token_pkey"
+	}),
+]);
 
 export const activityLogs = pgTable("activityLogs", {
 	id: serial().primaryKey().notNull(),

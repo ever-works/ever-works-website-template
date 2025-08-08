@@ -85,7 +85,8 @@ CREATE TABLE "verificationTokens" (
 	"identifier" text NOT NULL,
 	"email" text NOT NULL,
 	"token" text NOT NULL,
-	"expires" timestamp NOT NULL
+	"expires" timestamp NOT NULL,
+	CONSTRAINT "verificationTokens_identifier_token_pkey" PRIMARY KEY("identifier", "token")
 );
 --> statement-breakpoint
 CREATE TABLE "votes" (
