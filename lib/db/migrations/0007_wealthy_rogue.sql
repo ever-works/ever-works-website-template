@@ -5,6 +5,10 @@ DROP INDEX IF EXISTS "provider_subscription_idx";--> statement-breakpoint
 DROP INDEX IF EXISTS "subscription_created_at_idx";--> statement-breakpoint
 DROP INDEX IF EXISTS "subscription_plan_idx";--> statement-breakpoint
 ALTER TABLE "subscriptions" ALTER COLUMN "status" DROP DEFAULT;--> statement-breakpoint
+-- Backfill to avoid NOT NULL violation
+UPDATE "subscriptions"
+SET "cancel_at_period_end" = false
+WHERE "cancel_at_period_end" IS NULL;--> statement-breakpoint
 ALTER TABLE "subscriptions" ALTER COLUMN "cancel_at_period_end" SET NOT NULL;--> statement-breakpoint
 ALTER TABLE "accounts" ADD COLUMN "display_name" text;--> statement-breakpoint
 ALTER TABLE "accounts" ADD COLUMN "username" text;--> statement-breakpoint
