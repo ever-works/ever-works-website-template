@@ -4,8 +4,8 @@ import type { AxiosRequestConfig } from 'axios';
 export type ApiEndpoint = string;
 
 // Request/Response types
-export type QueryParams = Record<string, any>;
-export type RequestBody = any;
+export type QueryParams = Record<string, string | number | boolean | undefined>;
+export type RequestBody = Record<string, unknown>;
 
 // Pagination types
 export interface PaginationParams {
