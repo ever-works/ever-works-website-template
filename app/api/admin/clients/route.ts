@@ -3,8 +3,6 @@ import { auth } from '@/lib/auth';
 import { 
   createClientProfile, 
   getClientProfiles, 
-  updateClientProfile, 
-  deleteClientProfile,
   getUserByEmail
 } from '@/lib/db/queries';
 import { UserDbService } from '@/lib/services/user-db.service';
@@ -34,29 +32,7 @@ interface CreateClientRequest {
   totalSubmissions?: number;
 }
 
-interface UpdateClientRequest {
-  id: string;
-  displayName?: string;
-  username?: string;
-  bio?: string;
-  jobTitle?: string;
-  company?: string;
-  industry?: string;
-  phone?: string;
-  website?: string;
-  location?: string;
-  accountType?: 'individual' | 'business' | 'enterprise';
-  status?: 'active' | 'inactive' | 'suspended' | 'trial';
-  plan?: 'free' | 'standard' | 'premium';
-  timezone?: string;
-  language?: string;
-  twoFactorEnabled?: boolean;
-  emailVerified?: boolean;
-}
 
-interface DeleteClientRequest {
-  id: string;
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -201,101 +177,4 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function PUT(request: NextRequest) {
-  try {
-    const session = await auth();
-    
-    if (!session?.user?.isAdmin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const body = await request.json() as UpdateClientRequest;
-    
-    // Validate required fields for update
-    if (!body.id) {
-      return NextResponse.json({ 
-        error: 'Client ID is required for updates' 
-      }, { status: 400 });
-    }
-
-    // Create the update data object
-    const updateData = {
-      displayName: body.displayName,
-      username: body.username,
-      bio: body.bio,
-      jobTitle: body.jobTitle,
-      company: body.company,
-      industry: body.industry,
-      phone: body.phone,
-      website: body.website,
-      location: body.location,
-      accountType: body.accountType,
-      status: body.status,
-      plan: body.plan,
-      timezone: body.timezone,
-      language: body.language,
-      twoFactorEnabled: body.twoFactorEnabled,
-      emailVerified: body.emailVerified,
-    };
-
-    const updatedClient = await updateClientProfile(body.id, updateData);
-
-    if (!updatedClient) {
-      return NextResponse.json(
-        { error: 'Client not found' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      data: updatedClient,
-      message: 'Client updated successfully',
-    });
-  } catch (error) {
-    console.error('Error updating client:', error);
-    return NextResponse.json(
-      { error: 'Failed to update client' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function DELETE(request: NextRequest) {
-  try {
-    const session = await auth();
-    
-    if (!session?.user?.isAdmin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const body = await request.json() as DeleteClientRequest;
-    
-    // Validate required fields for deletion
-    if (!body.id) {
-      return NextResponse.json({ 
-        error: 'Client ID is required for deletion' 
-      }, { status: 400 });
-    }
-
-    const success = await deleteClientProfile(body.id);
-
-    if (!success) {
-      return NextResponse.json(
-        { error: 'Client not found' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: 'Client deleted successfully',
-    });
-  } catch (error) {
-    console.error('Error deleting client:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete client' },
-      { status: 500 }
-    );
-  }
-} 
+ 
