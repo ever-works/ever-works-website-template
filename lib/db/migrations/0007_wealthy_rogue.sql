@@ -44,6 +44,11 @@ ALTER TABLE "newsletter_subscriptions" ADD COLUMN "last_name" text;--> statement
 ALTER TABLE "newsletter_subscriptions" ADD COLUMN "is_subscribed" boolean DEFAULT true NOT NULL;--> statement-breakpoint
 ALTER TABLE "newsletter_subscriptions" ADD COLUMN "created_at" timestamp DEFAULT now() NOT NULL;--> statement-breakpoint
 ALTER TABLE "newsletter_subscriptions" ADD COLUMN "updated_at" timestamp DEFAULT now() NOT NULL;--> statement-breakpoint
+
+-- Preserve historical subscription state before dropping old columns
+UPDATE "newsletter_subscriptions"
+SET "is_subscribed" = COALESCE("is_subscribed", "is_active")
+WHERE "is_active" IS NOT NULL;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD COLUMN "stripe_customer_id" text;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD COLUMN "stripe_subscription_id" text;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD COLUMN "stripe_price_id" text;--> statement-breakpoint
