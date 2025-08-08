@@ -296,7 +296,6 @@ export default function ClientsPage() {
             <option value="inactive">Inactive</option>
             <option value="suspended">Suspended</option>
             <option value="trial">Trial</option>
-            <option value="cancelled">Cancelled</option>
           </select>
 
           {/* Plan Filter */}
@@ -319,7 +318,7 @@ export default function ClientsPage() {
           >
             <option value="">All Types</option>
             <option value="individual">Individual</option>
-            <option value="team">Team</option>
+            <option value="business">Business</option>
             <option value="enterprise">Enterprise</option>
           </select>
 
