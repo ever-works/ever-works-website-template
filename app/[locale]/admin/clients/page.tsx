@@ -68,6 +68,12 @@ export default function ClientsPage() {
       if (accountTypeFilter) params.append('accountType', accountTypeFilter);
       
       const response = await fetch(`/api/admin/clients?${params}`);
+      
+      if (!response.ok) {
+        const message = await response.text().catch(() => '');
+        throw new Error(message || `Request failed (${response.status})`);
+      }
+      
       const data: ClientListResponse = await response.json();
       
       if (data.success) {
@@ -95,6 +101,11 @@ export default function ClientsPage() {
         body: JSON.stringify(data),
       });
       
+      if (!response.ok) {
+        const message = await response.text().catch(() => '');
+        throw new Error(message || `Request failed (${response.status})`);
+      }
+      
       const result: ClientResponse = await response.json();
       
       if (result.success) {
@@ -121,6 +132,11 @@ export default function ClientsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
+      
+      if (!response.ok) {
+        const message = await response.text().catch(() => '');
+        throw new Error(message || `Request failed (${response.status})`);
+      }
       
       const result: ClientResponse = await response.json();
       
@@ -153,6 +169,11 @@ export default function ClientsPage() {
       const response = await fetch(`/api/admin/clients/${clientToDelete}`, {
         method: 'DELETE',
       });
+      
+      if (!response.ok) {
+        const message = await response.text().catch(() => '');
+        throw new Error(message || `Request failed (${response.status})`);
+      }
       
       const result: ClientResponse = await response.json();
       
