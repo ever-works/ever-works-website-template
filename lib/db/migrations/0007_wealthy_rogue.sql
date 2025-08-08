@@ -1,9 +1,9 @@
 -- Skip clients table operations as it doesn't exist
 -- ALTER TABLE "clients" DISABLE ROW LEVEL SECURITY;
 -- DROP TABLE "clients" CASCADE;
-DROP INDEX "provider_subscription_idx";--> statement-breakpoint
-DROP INDEX "subscription_created_at_idx";--> statement-breakpoint
-DROP INDEX "subscription_plan_idx";--> statement-breakpoint
+DROP INDEX IF EXISTS "provider_subscription_idx";--> statement-breakpoint
+DROP INDEX IF EXISTS "subscription_created_at_idx";--> statement-breakpoint
+DROP INDEX IF EXISTS "subscription_plan_idx";--> statement-breakpoint
 ALTER TABLE "subscriptions" ALTER COLUMN "status" DROP DEFAULT;--> statement-breakpoint
 ALTER TABLE "subscriptions" ALTER COLUMN "cancel_at_period_end" SET NOT NULL;--> statement-breakpoint
 ALTER TABLE "accounts" ADD COLUMN "display_name" text;--> statement-breakpoint
@@ -82,4 +82,17 @@ ALTER TABLE "subscriptions" DROP COLUMN "interval_count";--> statement-breakpoin
 ALTER TABLE "subscriptions" DROP COLUMN "cancelled_at";--> statement-breakpoint
 ALTER TABLE "subscriptions" DROP COLUMN "cancel_reason";--> statement-breakpoint
 ALTER TABLE "subscriptions" DROP COLUMN "metadata";--> statement-breakpoint
+-- Prevent migration failure if duplicate usernames exist
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT username
+    FROM accounts
+    WHERE username IS NOT NULL
+    GROUP BY username
+    HAVING COUNT(*) > 1
+  ) THEN
+    RAISE EXCEPTION 'Cannot add UNIQUE constraint: duplicate usernames found';
+  END IF;
+END $$;--> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_username_unique" UNIQUE("username");
