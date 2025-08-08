@@ -58,14 +58,14 @@ export default function ClientsPage() {
   const fetchClients = useCallback(async (page: number = currentPage) => {
     try {
       setIsLoading(true);
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: limit.toString(),
-        search: debouncedSearchTerm,
-        status: statusFilter,
-        plan: planFilter,
-        accountType: accountTypeFilter,
+      const params = new URLSearchParams({ 
+        page: String(page), 
+        limit: String(limit) 
       });
+      if (debouncedSearchTerm) params.append('search', debouncedSearchTerm);
+      if (statusFilter) params.append('status', statusFilter);
+      if (planFilter) params.append('plan', planFilter);
+      if (accountTypeFilter) params.append('accountType', accountTypeFilter);
       
       const response = await fetch(`/api/admin/clients?${params}`);
       const data: ClientListResponse = await response.json();
