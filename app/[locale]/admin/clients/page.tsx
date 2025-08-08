@@ -127,7 +127,8 @@ export default function ClientsPage() {
   const handleUpdate = async (data: UpdateClientRequest) => {
     try {
       setIsSubmitting(true);
-      const response = await fetch(`/api/admin/clients/${data.id}`, {
+      const safeId = encodeURIComponent(data.id);
+      const response = await fetch(`/api/admin/clients/${safeId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -166,7 +167,8 @@ export default function ClientsPage() {
     if (!clientToDelete) return;
 
     try {
-      const response = await fetch(`/api/admin/clients/${clientToDelete}`, {
+      const safeId = encodeURIComponent(clientToDelete);
+      const response = await fetch(`/api/admin/clients/${safeId}`, {
         method: 'DELETE',
       });
       
