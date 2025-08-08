@@ -49,6 +49,7 @@ export function usePaginatedQuery<T>({
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
+      if (!lastPage.success) return undefined;
       const nextPage = lastPage.meta.page + 1;
       return nextPage <= lastPage.meta.totalPages ? nextPage : undefined;
     },
@@ -60,10 +61,10 @@ export function usePaginatedQuery<T>({
 
 export function extractAllItems<T>(pages?: PaginatedResponse<T>[]): T[] {
   if (!pages) return [];
-  return pages.flatMap(page => page.data);
+  return pages.flatMap(page => page.success ? page.data : []);
 }
 
 export function getTotalItems<T>(pages?: PaginatedResponse<T>[]): number {
-  if (!pages?.length) return 0;
+  if (!pages?.length || !pages[0].success) return 0;
   return pages[0].meta.total;
 } 

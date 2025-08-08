@@ -43,18 +43,28 @@ export interface UpdateClientRequest {
   emailVerified?: boolean;
 }
 
-import type { ApiResponse } from '@/lib/api/types';
 
-// Client-specific response types using the shared ApiResponse
-export type ClientListResponse = ApiResponse<{ clients: ClientProfileWithUser[] }> & {
-  meta?: {
-    page: number;
-    totalPages: number;
-    total: number;
-    limit: number;
-  };
-};
-export type ClientResponse = ApiResponse<ClientProfileWithUser>;
+
+// Client-specific response types using the shared PaginatedResponse
+export type ClientListResponse = 
+  | {
+      success: true;
+      data: { clients: ClientProfileWithUser[] };
+      meta: {
+        page: number;
+        totalPages: number;
+        total: number;
+        limit: number;
+      };
+    }
+  | { success: false; error: string };
+
+export type ClientResponse = 
+  | {
+      success: true;
+      data: ClientProfileWithUser;
+    }
+  | { success: false; error: string };
 
 export interface ClientListOptions {
   status?: 'active' | 'inactive' | 'suspended' | 'trial';

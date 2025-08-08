@@ -32,6 +32,7 @@ export function usePaginatedQuery<T>({
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage: PaginatedResponse<T>) => {
+      if (!lastPage.success) return undefined;
       const nextPage = lastPage.meta.page + 1;
       return nextPage <= lastPage.meta.totalPages ? nextPage : undefined;
     },

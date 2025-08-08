@@ -24,16 +24,18 @@ export type ApiResponse<T = unknown> =
   | { success: true; data: T; total?: number; page?: number; limit?: number; totalPages?: number }
   | { success: false; error: string };
 
-export type PaginatedResponse<T> = {
-  success: boolean;
-  data: T[];
-  meta: {
-    page: number;
-    totalPages: number;
-    total: number;
-    limit: number;
-  };
-};
+export type PaginatedResponse<T> = 
+  | {
+      success: true;
+      data: T[];
+      meta: {
+        page: number;
+        totalPages: number;
+        total: number;
+        limit: number;
+      };
+    }
+  | { success: false; error: string };
 
 export interface ApiClientConfig extends Partial<AxiosRequestConfig> {
   baseURL?: string;
