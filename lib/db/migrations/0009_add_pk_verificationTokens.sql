@@ -15,11 +15,15 @@ USING d
 WHERE t.ctid = d.ctid
   AND d.rn > 1;
 
--- 2) Apply the composite primary key
+-- 2) Create unique index concurrently (non-blocking)
+CREATE UNIQUE INDEX CONCURRENTLY "verificationTokens_identifier_token_uidx"
+  ON "verificationTokens" ("identifier","token");
+
+-- 3) Apply the composite primary key using the existing index (minimal lock time)
 ALTER TABLE "verificationTokens"
   ADD CONSTRAINT "verificationTokens_identifier_token_pkey"
-  PRIMARY KEY ("identifier","token");
+  PRIMARY KEY USING INDEX "verificationTokens_identifier_token_uidx";
 
--- 3) Accelerate expiration-based cleanup
-CREATE INDEX IF NOT EXISTS "verificationTokens_expires_idx"
+-- 4) Create expires index concurrently (non-blocking)
+CREATE INDEX CONCURRENTLY "verificationTokens_expires_idx"
   ON "verificationTokens" ("expires"); 
