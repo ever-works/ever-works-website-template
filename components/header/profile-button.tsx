@@ -11,8 +11,6 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 export function ProfileButton() {
   const t = useTranslations();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [notifications, setNotifications] = useState(3);
   const { user, isLoading } = useCurrentUser();
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -194,12 +192,6 @@ export function ProfileButton() {
   // Function to get online status
   const getOnlineStatus = () => {
     return "Online";
-  };
-
-  // Function to toggle dark mode
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    // Here you can add logic to change the theme
   };
 
   if (isLoading) {
