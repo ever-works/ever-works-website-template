@@ -90,7 +90,6 @@ export async function POST(request: NextRequest) {
 }
 
 async function handlePaymentSucceeded(data: any) {
-	console.log('Payment succeeded:', data);
 
 	try {
 		const emailConfig = await getEmailConfig();
