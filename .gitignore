@@ -10,6 +10,7 @@
 !.yarn/releases
 !.yarn/versions
 .pnp.js
+.claude
 
 # testing
 /coverage
