@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Button, Card, CardBody, Chip, Input } from "@heroui/react";
-import { Trash2, MessageSquare, Search } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Button, Card, CardBody, Chip } from "@heroui/react";
+import { Trash2, MessageSquare, Search, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
 interface AdminCommentUser {
@@ -34,53 +34,64 @@ interface ListResponse {
 export default function AdminCommentsPage() {
   const [comments, setComments] = useState<AdminCommentItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isFiltering, setIsFiltering] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
-  const [page, setPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [total, setTotal] = useState<number>(0);
-  const [search, setSearch] = useState<string>("");
-  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
+  const [totalComments, setTotalComments] = useState<number>(0);
+  const [limit] = useState<number>(10);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
-  useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(search), 300);
-    return () => clearTimeout(t);
-  }, [search]);
-
-  const fetchComments = async (targetPage: number = page) => {
+  const fetchComments = useCallback(async (page: number = currentPage) => {
     try {
-      setIsLoading(true);
+      if (page === 1) {
+        setIsFiltering(true);
+      } else {
+        setIsLoading(true);
+      }
       const params = new URLSearchParams({
-        page: String(targetPage),
-        limit: "10",
-        ...(debouncedSearch && { search: debouncedSearch }),
+        page: page.toString(),
+        limit: limit.toString(),
+        ...(searchTerm && { search: searchTerm }),
       });
-      const res = await fetch(`/api/admin/comments?${params.toString()}`);
-      if (!res.ok) throw new Error("Failed to load comments");
-      const data: ListResponse = await res.json();
-      setComments(data.comments);
-      setPage(data.page);
-      setTotalPages(data.totalPages);
-      setTotal(data.total);
-    } catch (e) {
-      toast.error("Failed to load comments");
+      
+      const response = await fetch(`/api/admin/comments?${params}`);
+      const data: ListResponse = await response.json();
+      
+      if (data.comments) {
+        setComments(data.comments);
+        setTotalComments(data.total || 0);
+        setTotalPages(data.totalPages || 1);
+        setCurrentPage(data.page || 1);
+      } else {
+        toast.error('Failed to fetch comments');
+      }
+    } catch (error) {
+      console.error('Failed to fetch comments:', error);
+      toast.error('Failed to fetch comments');
     } finally {
       setIsLoading(false);
+      setIsFiltering(false);
     }
+  }, [currentPage, limit, searchTerm]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    fetchComments(page);
   };
 
-  useEffect(() => {
-    fetchComments(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearch]);
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+  };
 
-  const confirmAndDelete = async (id: string) => {
+  const handleDelete = async (id: string) => {
     if (!id) return;
     try {
       setIsDeleting(id);
       const res = await fetch(`/api/admin/comments/${id}`, { method: "DELETE" });
       if (!res.ok && res.status !== 204) throw new Error("Delete failed");
       toast.success("Comment deleted");
-      // Refresh current page
       fetchComments();
     } catch (e) {
       toast.error("Failed to delete comment");
@@ -89,100 +100,273 @@ export default function AdminCommentsPage() {
     }
   };
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Manage Comments</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">View and delete user comments</p>
-        </div>
-        <Chip color="primary" variant="flat" startContent={<MessageSquare className="h-4 w-4" />}>{total} total</Chip>
-      </div>
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
 
-      <Card className="border border-gray-200 dark:border-gray-700 shadow-sm">
-        <CardBody className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="relative w-full max-w-md">
-              <Input
-                startContent={<Search className="h-4 w-4 text-gray-400" />}
-                value={search}
-                onValueChange={setSearch}
-                placeholder="Search by content, author name or email"
-                variant="bordered"
-              />
+  // Debounced search effect
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchTerm !== '') {
+        fetchComments(1);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, fetchComments]);
+
+  if (isLoading) {
+    return (
+      <div className="p-6 max-w-7xl mx-auto">
+        {/* Loading Header */}
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse"></div>
+                <div>
+                  <div className="h-8 w-48 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse mb-2"></div>
+                  <div className="h-4 w-64 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                </div>
+              </div>
             </div>
           </div>
-        </CardBody>
-      </Card>
+        </div>
 
-      <Card className="border border-gray-200 dark:border-gray-700 shadow-sm">
-        <CardBody className="p-0">
-          <div className="divide-y divide-gray-200 dark:divide-gray-800">
-            {isLoading ? (
-              <div className="p-6 text-sm text-gray-500">Loading comments...</div>
-            ) : comments.length === 0 ? (
-              <div className="p-6 text-sm text-gray-500">No comments found.</div>
-            ) : (
-              comments.map((c) => (
-                <div key={c.id} className="p-4 flex items-start gap-4 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <p className="font-medium text-gray-900 dark:text-white truncate">
-                          {c.user.name || c.user.email || "Unknown User"}
-                        </p>
-                        <span className="text-xs text-gray-400">•</span>
-                        <p className="text-xs text-gray-500 truncate">{new Date(c.createdAt || '').toLocaleString()}</p>
+
+
+        {/* Loading Table */}
+        <Card className="border-0 shadow-lg">
+          <CardBody className="p-0">
+            <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+              <div className="flex items-center justify-between">
+                <div className="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+              </div>
+            </div>
+            <div className="divide-y divide-gray-100 dark:divide-gray-800">
+              {Array.from({ length: 5 }, (_, i) => (
+                <div key={i} className="px-6 py-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4 flex-1">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                        <div className="w-8 h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {typeof c.rating === "number" && (
-                          <Chip size="sm" variant="flat" color="warning">{c.rating} / 5</Chip>
-                        )}
-                        <Button
-                          color="danger"
-                          variant="flat"
-                          size="sm"
-                          isDisabled={isDeleting === c.id}
-                          onPress={() => confirmAndDelete(c.id)}
-                          startContent={<Trash2 className="h-4 w-4" />}
-                        >
-                          Delete
-                        </Button>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+                        <div className="w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                        <div className="flex-1">
+                          <div className="h-5 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-1"></div>
+                          <div className="h-3 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                        </div>
                       </div>
                     </div>
-                    <p className="mt-2 text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words">{c.content}</p>
-                    <div className="mt-2 text-xs text-gray-400">Item ID: {c.itemId}</div>
+                    <div className="flex items-center space-x-4">
+                      <div className="w-16 h-6 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+                      <div className="flex space-x-1">
+                        <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardBody>
+        </Card>
+
+        {/* Loading indicator with text */}
+        <div className="mt-8 text-center">
+          <div className="inline-flex items-center space-x-2 text-gray-500 dark:text-gray-400">
+            <div className="w-4 h-4 border-2 border-theme-primary border-t-transparent rounded-full animate-spin"></div>
+            <span className="text-sm font-medium">Loading comments...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 max-w-7xl mx-auto">
+      {/* Enhanced Header */}
+      <div className="mb-8">
+        <div className="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-theme-primary to-theme-accent rounded-xl flex items-center justify-center shadow-lg">
+                <MessageSquare className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                  Comment Management
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center space-x-2">
+                  <span>Review and manage user comments</span>
+                  <span className="hidden sm:inline">•</span>
+                  <span className="text-sm px-2 py-1 bg-theme-primary/10 text-theme-primary rounded-full font-medium">
+                    {totalComments} total
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      {/* Modern SaaS-Style Filters */}
+      <div className="mb-6">
+        {/* Search Bar */}
+        <div className="relative mb-4">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search comments by content, author name or email..."
+            value={searchTerm}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+          />
+          {isFiltering && (
+            <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+              <div className="w-4 h-4 border-2 border-theme-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+        </div>
+
+        {/* Active Filters Count */}
+        {searchTerm && (
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              1 filter applied
+            </span>
+            <Button
+              variant="light"
+              size="sm"
+              color="danger"
+              onPress={() => {
+                setSearchTerm('');
+                setCurrentPage(1);
+                fetchComments(1);
+              }}
+              className="h-6 px-2 text-xs"
+            >
+              Clear all
+            </Button>
+          </div>
+        )}
+
+        {/* Results Summary */}
+        {!isLoading && (
+          <div className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+            <span>
+              Showing {comments.length} of {totalComments} comments
+              {searchTerm && (
+                <span className="ml-1">
+                  • filtered
+                </span>
+              )}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Comments List */}
+      <Card className="border-0 shadow-lg">
+        <CardBody className="p-0">
+          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Comments</h3>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {totalComments} total
+              </div>
+            </div>
+          </div>
+          
+          <div className="divide-y divide-gray-100 dark:divide-gray-800">
+            {comments.length === 0 ? (
+              <div className="px-6 py-12 text-center">
+                <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No comments found</h3>
+                <p className="text-gray-500 dark:text-gray-400">
+                  {searchTerm ? "Try adjusting your search terms" : "Comments will appear here"}
+                </p>
+              </div>
+            ) : (
+              comments.map((comment) => (
+                <div key={comment.id} className="px-6 py-4 hover:bg-gray-50/50 dark:hover:bg-gray-900/50 transition-colors">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-8 h-8 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white text-sm font-medium">
+                            {(comment.user.name || comment.user.email || "U").charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900 dark:text-white">
+                              {comment.user.name || comment.user.email || "Unknown User"}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {new Date(comment.createdAt || '').toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                        {comment.rating !== null && (
+                          <Chip size="sm" variant="flat" color="warning" className="ml-2">
+                            {comment.rating} / 5
+                          </Chip>
+                        )}
+                      </div>
+                      <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words mb-2">
+                        {comment.content}
+                      </p>
+                      <div className="text-xs text-gray-400">
+                        Item ID: {comment.itemId}
+                      </div>
+                    </div>
+                    <div className="ml-4 flex-shrink-0">
+                      <Button
+                        color="danger"
+                        variant="flat"
+                        size="sm"
+                        isDisabled={isDeleting === comment.id}
+                        onPress={() => handleDelete(comment.id)}
+                        startContent={<Trash2 className="h-4 w-4" />}
+                        className="bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/30"
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))
             )}
           </div>
+
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="p-4 flex items-center justify-between">
-              <Button
-                variant="bordered"
-                onPress={() => {
-                  const next = Math.max(1, page - 1);
-                  setPage(next);
-                  fetchComments(next);
-                }}
-                isDisabled={page <= 1}
-              >
-                Previous
-              </Button>
-              <div className="text-sm text-gray-500">Page {page} of {totalPages}</div>
-              <Button
-                variant="bordered"
-                onPress={() => {
-                  const next = Math.min(totalPages, page + 1);
-                  setPage(next);
-                  fetchComments(next);
-                }}
-                isDisabled={page >= totalPages}
-              >
-                Next
-              </Button>
+            <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+              <div className="flex items-center justify-between">
+                <Button
+                  variant="bordered"
+                  onPress={() => handlePageChange(Math.max(1, currentPage - 1))}
+                  isDisabled={currentPage <= 1}
+                  className="border-gray-300 dark:border-gray-600"
+                >
+                  Previous
+                </Button>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Page {currentPage} of {totalPages}
+                </div>
+                <Button
+                  variant="bordered"
+                  onPress={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                  isDisabled={currentPage >= totalPages}
+                  className="border-gray-300 dark:border-gray-600"
+                >
+                  Next
+                </Button>
+              </div>
             </div>
           )}
         </CardBody>
