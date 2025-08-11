@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { 
   Modal, 
@@ -8,7 +9,7 @@ import {
   ModalBody, 
   ModalFooter 
 } from '@/components/ui/modal';
-import { AlertTriangle, Trash2, MessageSquare, X } from 'lucide-react';
+import { AlertTriangle, Trash2, MessageSquare, X, Loader2 } from 'lucide-react';
 
 interface AdminCommentUser {
   id: string;
@@ -41,6 +42,19 @@ export default function DeleteCommentDialog({
   onOpenChange, 
   onConfirm 
 }: DeleteCommentDialogProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleConfirm = async () => {
+    setIsLoading(true);
+    try {
+      await onConfirm();
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Modal 
       isOpen={open} 
@@ -127,17 +141,28 @@ export default function DeleteCommentDialog({
             <Button 
               variant="outline"
               onClick={() => onOpenChange(false)}
+              disabled={isLoading}
               className="flex-1"
             >
               Cancel
             </Button>
             <Button 
               variant="destructive"
-              onClick={onConfirm}
+              onClick={handleConfirm}
+              disabled={isLoading}
               className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
             >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete Comment
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete Comment
+                </>
+              )}
             </Button>
           </div>
         </ModalFooter>
