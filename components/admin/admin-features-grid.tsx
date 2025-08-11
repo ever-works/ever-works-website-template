@@ -1,4 +1,4 @@
-import { Users, FileText, BarChart3, FolderTree, Tag, Package, Shield, Building2 } from "lucide-react";
+import { Users, FileText, BarChart3, FolderTree, Tag, Package, Shield, Building2, MessageSquare } from "lucide-react";
 import { AdminFeatureCard } from "./admin-feature-card";
 import { AdminFeature } from "./types";
 
@@ -37,6 +37,13 @@ const ADMIN_FEATURES: AdminFeature[] = [
     description: "View and manage platform users and permissions.",
     href: "/admin/users",
     emoji: "👤"
+  },
+  {
+    icon: MessageSquare,
+    title: "Manage Comments",
+    description: "Review and delete user comments.",
+    href: "/admin/comments",
+    emoji: "💬"
   },
   {
     icon: Building2,
