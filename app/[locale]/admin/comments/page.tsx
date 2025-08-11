@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Button, Card, CardBody, Chip } from "@heroui/react";
 import { Trash2, MessageSquare, Search } from "lucide-react";
 import { UniversalPagination } from "@/components/universal-pagination";
+import DeleteCommentDialog from "@/components/admin/comments/delete-comment-dialog";
 import { toast } from "sonner";
 
 interface AdminCommentUser {
@@ -42,6 +43,8 @@ export default function AdminCommentsPage() {
   const [totalComments, setTotalComments] = useState<number>(0);
   const [limit] = useState<number>(10);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const [commentToDelete, setCommentToDelete] = useState<AdminCommentItem | null>(null);
 
   const fetchComments = useCallback(async (page: number = currentPage) => {
     try {
@@ -100,6 +103,22 @@ export default function AdminCommentsPage() {
     } finally {
       setIsDeleting(null);
     }
+  };
+
+  const openDeleteDialog = (comment: AdminCommentItem) => {
+    setCommentToDelete(comment);
+    setDeleteDialogOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setDeleteDialogOpen(false);
+    setCommentToDelete(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!commentToDelete) return;
+    await handleDelete(commentToDelete.id);
+    closeDeleteDialog();
   };
 
   useEffect(() => {
@@ -332,7 +351,7 @@ export default function AdminCommentsPage() {
                         variant="flat"
                         size="sm"
                         isDisabled={isDeleting === comment.id}
-                        onPress={() => handleDelete(comment.id)}
+                        onPress={() => openDeleteDialog(comment)}
                         startContent={<Trash2 className="h-4 w-4" />}
                         className="bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/30"
                       >
@@ -378,6 +397,16 @@ export default function AdminCommentsPage() {
       )}
         </CardBody>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      {commentToDelete && (
+        <DeleteCommentDialog
+          comment={commentToDelete}
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          onConfirm={confirmDelete}
+        />
+      )}
     </div>
   );
 }
