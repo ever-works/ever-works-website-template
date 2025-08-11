@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Button, Card, CardBody, Chip } from "@heroui/react";
-import { Trash2, MessageSquare, Search, ChevronDown } from "lucide-react";
+import { Trash2, MessageSquare, Search } from "lucide-react";
+import { UniversalPagination } from "@/components/universal-pagination";
 import { toast } from "sonner";
 
 interface AdminCommentUser {
@@ -94,6 +95,7 @@ export default function AdminCommentsPage() {
       toast.success("Comment deleted");
       fetchComments();
     } catch (e) {
+      console.error("Failed to delete comment:", e);
       toast.error("Failed to delete comment");
     } finally {
       setIsDeleting(null);
@@ -343,32 +345,37 @@ export default function AdminCommentsPage() {
             )}
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
-              <div className="flex items-center justify-between">
-                <Button
-                  variant="bordered"
-                  onPress={() => handlePageChange(Math.max(1, currentPage - 1))}
-                  isDisabled={currentPage <= 1}
-                  className="border-gray-300 dark:border-gray-600"
-                >
-                  Previous
-                </Button>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  Page {currentPage} of {totalPages}
-                </div>
-                <Button
-                  variant="bordered"
-                  onPress={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                  isDisabled={currentPage >= totalPages}
-                  className="border-gray-300 dark:border-gray-600"
-                >
-                  Next
-                </Button>
+      {/* Enhanced Pagination and Stats */}
+      {totalComments > 0 && (
+        <div className="mt-8 space-y-6">
+          {/* Results Info */}
+          <div className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 px-6 py-4 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-theme-primary rounded-full"></div>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Showing {((currentPage - 1) * limit) + 1} to {Math.min(currentPage * limit, totalComments)} of {totalComments} comments
+                </span>
+              </div>
+              <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-500">
+                <span>Page {currentPage} of {totalPages}</span>
+                <span>•</span>
+                <span>{limit} per page</span>
               </div>
             </div>
-          )}
+          </div>
+          
+          {/* Pagination Controls */}
+          <div className="flex justify-center">
+            <UniversalPagination
+              page={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              className="shadow-lg"
+            />
+          </div>
+        </div>
+      )}
         </CardBody>
       </Card>
     </div>
