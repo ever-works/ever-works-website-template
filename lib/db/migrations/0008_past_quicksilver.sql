@@ -27,12 +27,15 @@ CREATE TABLE "client_profiles" (
 
 
 ALTER TABLE "client_profiles" ADD CONSTRAINT "client_profiles_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "client_profile_user_id_idx" ON "client_profiles" USING btree ("userId");--> statement-breakpoint
-CREATE INDEX "client_profile_status_idx" ON "client_profiles" USING btree ("status");--> statement-breakpoint
-CREATE INDEX "client_profile_plan_idx" ON "client_profiles" USING btree ("plan");--> statement-breakpoint
-CREATE INDEX "client_profile_account_type_idx" ON "client_profiles" USING btree ("account_type");--> statement-breakpoint
-CREATE INDEX "client_profile_username_idx" ON "client_profiles" USING btree ("username");--> statement-breakpoint
-CREATE INDEX "client_profile_created_at_idx" ON "client_profiles" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "client_profile_user_id_idx" ON "client_profiles" ("userId");--> statement-breakpoint
+CREATE INDEX "client_profile_status_idx" ON "client_profiles" ("status");--> statement-breakpoint
+CREATE INDEX "client_profile_plan_idx" ON "client_profiles" ("plan");--> statement-breakpoint
+CREATE INDEX "client_profile_account_type_idx" ON "client_profiles" ("account_type");--> statement-breakpoint
+CREATE INDEX "client_profile_username_idx" ON "client_profiles" ("username");--> statement-breakpoint
+CREATE INDEX "client_profile_created_at_idx" ON "client_profiles" ("created_at");--> statement-breakpoint
+
+-- Add unique constraint on userId to support ON CONFLICT ("userId")
+ALTER TABLE "client_profiles" ADD CONSTRAINT "client_profiles_userId_unique" UNIQUE ("userId");--> statement-breakpoint
 
 -- Migrate existing client data from accounts to client_profiles
 -- Only migrate accounts that have client-related data

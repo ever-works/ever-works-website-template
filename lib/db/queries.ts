@@ -21,11 +21,13 @@ import {
 	type NewSubscription,
 	type SubscriptionHistory as SubscriptionHistoryType,
 	type NewSubscriptionHistory,
-	type SubscriptionWithUser
+	type SubscriptionWithUser,
+	paymentProviders,
+	paymentAccounts
 } from './schema';
 import { desc, isNull, count, asc, lte } from 'drizzle-orm';
 import type { NewComment, CommentWithUser } from '@/lib/types/comment';
-import type { ClientProfile, NewClientProfile, ClientProfileWithUser } from './schema';
+import type { ClientProfile, NewClientProfile, ClientProfileWithUser, OldPaymentProvider, PaymentAccount, NewPaymentAccount, NewPaymentProvider } from './schema';
 import { clientProfiles } from './schema';
 
 import { PaymentPlan } from '../constants';
@@ -876,6 +878,324 @@ export async function getClientProfileStats() {
 		byPlan,
 		byAccountType
 	};
+}
+
+
+// ######################### Payment Provider Queries #########################
+
+export async function getPaymentProvider(id: string): Promise<OldPaymentProvider | null> {
+  const result = await db
+    .select()
+    .from(paymentProviders)
+    .where(eq(paymentProviders.id, id))
+    .limit(1);
+
+  return result[0] || null;
+}
+
+export async function getPaymentProviderByName(name: string): Promise<OldPaymentProvider | null> {
+  const result = await db
+    .select()
+    .from(paymentProviders)
+    .where(eq(paymentProviders.name, name))
+    .limit(1);
+
+  return result[0] || null;
+}
+
+
+
+// ######################### Payment Account Queries #########################
+
+export async function getPaymentAccountByUserId(userId: string): Promise<PaymentAccount | null> {
+  const result = await db
+    .select({
+      id: paymentAccounts.id,
+      userId: paymentAccounts.userId,
+      providerId: paymentAccounts.providerId,
+      customerId: paymentAccounts.customerId,
+      accountId: paymentAccounts.accountId,
+      provider: {
+        id: paymentProviders.id,
+        name: paymentProviders.name,
+        isActive: paymentProviders.isActive,
+      },
+      user: {
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        image: users.image,
+      },
+    })
+    .from(paymentAccounts)
+    .innerJoin(paymentProviders, eq(paymentAccounts.providerId, paymentProviders.id))
+    .innerJoin(users, eq(paymentAccounts.userId, users.id))
+    .where(
+      and(
+        eq(paymentAccounts.userId, userId),
+        eq(paymentProviders.isActive, true)
+      )
+    )
+    .limit(1);
+
+  return result[0] || null;
+}
+
+
+export async function createPaymentAccount(data: NewPaymentAccount): Promise<PaymentAccount> {
+  const result = await db
+    .insert(paymentAccounts)
+    .values({
+      ...data,
+      lastUsed: new Date()
+    })
+    .returning();
+
+  return result[0];
+}
+
+export async function getPaymentAccountByCustomerId(customerId: string, providerId: string): Promise<PaymentAccount | null> {
+  const result = await db
+    .select()
+    .from(paymentAccounts)
+    .where(
+      and(
+        eq(paymentAccounts.customerId, customerId),
+        eq(paymentAccounts.providerId, providerId)
+      )
+    )
+    .limit(1);
+
+  return result[0] || null;
+}
+
+export async function updatePaymentAccountLastUsed(accountId: string): Promise<void> {
+  await db
+    .update(paymentAccounts)
+    .set({ lastUsed: new Date() })
+    .where(eq(paymentAccounts.id, accountId));
+}
+
+export async function getActivePaymentProviders(): Promise<OldPaymentProvider[]> {
+  const result = await db
+    .select()
+    .from(paymentProviders)
+    .where(eq(paymentProviders.isActive, true))
+    .orderBy(paymentProviders.name);
+
+  return result;
+}
+
+export async function createPaymentProvider(data: NewPaymentProvider): Promise<OldPaymentProvider> {
+  const result = await db
+    .insert(paymentProviders)
+    .values(data)
+    .returning();
+
+  return result[0];
+}
+
+export async function updatePaymentProvider(id: string, data: Partial<NewPaymentProvider>): Promise<OldPaymentProvider | null> {
+  const result = await db
+    .update(paymentProviders)
+    .set(data)
+    .where(eq(paymentProviders.id, id))
+    .returning();
+
+  return result[0] || null;
+}
+
+export async function deactivatePaymentProvider(id: string): Promise<OldPaymentProvider | null> {
+  const result = await db
+    .update(paymentProviders)
+    .set({ isActive: false })
+    .where(eq(paymentProviders.id, id))
+    .returning();
+
+  if (result.length === 0) {
+    console.warn(`No payment provider found with ID ${id} to deactivate`);
+    return null;
+  }
+
+  return result[0];
+}
+
+/**
+ * Complete function that handles the creation/retrieval of the provider and PaymentAccount
+ * 
+ * @param providerName - Name of the provider (e.g., 'stripe', 'lemonsqueezy')
+ * @param userId - ID of the connected user
+ * @param customerId - Customer ID at the provider
+ * @param accountId - Account ID at the provider (optional)
+ * @returns Promise<PaymentAccount> with complete PaymentAccount data
+ */
+export async function ensurePaymentAccount(
+  providerName: string,
+  userId: string,
+  customerId: string,
+  accountId?: string
+): Promise<PaymentAccount> {
+  try {
+    // 1. Check if the provider exists, if not create it
+    let provider = await getPaymentProviderByName(providerName);
+    
+    if (!provider) {
+      console.log(`Provider ${providerName} does not exist, creating...`);
+      
+      const newProviderData: NewPaymentProvider = {
+        name: providerName,
+        isActive: true
+      };
+      
+      provider = await createPaymentProvider(newProviderData);
+      console.log(`Provider ${providerName} created with ID: ${provider.id}`);
+    } else {
+      console.log(`Provider ${providerName} found with ID: ${provider.id}`);
+    }
+
+    // 2. Check if PaymentAccount already exists for this user and provider
+    let paymentAccount = await getPaymentAccountByUserId(userId);
+    
+    if (paymentAccount && paymentAccount.providerId === provider.id) {
+      console.log(`Existing PaymentAccount found for user ${userId} and provider ${providerName}`);
+      
+      // Update lastUsed and return existing account
+      await updatePaymentAccountLastUsed(paymentAccount.id);
+      return paymentAccount;
+    }
+
+    // 3. Create a new PaymentAccount
+    console.log(`Creating a new PaymentAccount for user ${userId} and provider ${providerName}`);
+    
+    const newPaymentAccountData: NewPaymentAccount = {
+      userId,
+      providerId: provider.id,
+      customerId,
+      accountId: accountId || null
+    };
+
+    const createdAccount = await createPaymentAccount(newPaymentAccountData);
+    console.log(`PaymentAccount created with ID: ${createdAccount.id}`);
+
+    return createdAccount;
+
+  } catch (error) {
+    console.error(`Error during PaymentAccount creation/validation:`, error);
+    throw new Error(`Unable to create/validate PaymentAccount: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+
+/**
+ * Utility function to get or create a PaymentAccount with automatic provider management
+ * 
+ * @param providerName - Name of the provider
+ * @param userId - User ID
+ * @param customerId - Customer ID at the provider
+ * @param accountId - Account ID at the provider (optional)
+ * @returns Promise<PaymentAccount> with complete data
+ */
+export async function getOrCreatePaymentAccount(
+  providerName: string,
+  userId: string,
+  customerId: string,
+  accountId?: string
+): Promise<PaymentAccount> {
+  return ensurePaymentAccount(providerName, userId, customerId, accountId);
+}
+
+/**
+ * Function to check if a user already has a PaymentAccount for a specific provider
+ * 
+ * @param providerName - Name of the provider
+ * @param userId - User ID
+ * @returns Promise<PaymentAccount | null> - The PaymentAccount if it exists, null otherwise
+ */
+export async function getUserPaymentAccountByProvider(
+  userId: string,
+  providerName: string
+): Promise<PaymentAccount | null> {
+  try {
+    // Get the provider
+    const provider = await getPaymentProviderByName(providerName);
+    if (!provider) {
+      return null; // Provider does not exist
+    }
+
+    // Get the PaymentAccount
+    const paymentAccount = await getPaymentAccountByUserId(userId);
+    
+    if (paymentAccount && paymentAccount.providerId === provider.id) {
+      return paymentAccount;
+    }
+
+    return null;
+  } catch (error) {
+    console.error(`Error checking PaymentAccount:`, error);
+    return null;
+  }
+}
+
+
+export async function setupUserPaymentAccount(
+  providerName: string,
+  userId: string,
+  customerId: string,
+  accountId?: string
+): Promise<PaymentAccount> {
+  try {
+    let provider = await getPaymentProviderByName(providerName);
+    if (!provider) {
+      const newProviderData: NewPaymentProvider = {
+        name: providerName,
+        isActive: true
+      };
+      
+      provider = await createPaymentProvider(newProviderData);
+      console.log(`✅ Provider ${providerName} created with ID: ${provider.id}`);
+    } else {
+      console.log(`✅ Provider ${providerName} found with ID: ${provider.id}`);
+    }
+    let paymentAccount = await getPaymentAccountByUserId(userId);
+    
+    if (paymentAccount && paymentAccount.providerId === provider.id) {
+      await updatePaymentAccountLastUsed(paymentAccount.id);
+      return paymentAccount;
+    }
+    const newPaymentAccountData: NewPaymentAccount = {
+      userId,
+      providerId: provider.id,
+      customerId,
+      accountId: accountId || null
+    };
+
+    const createdAccount = await createPaymentAccount(newPaymentAccountData);
+    return createdAccount;
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const fullError = `Unable to configure PaymentAccount for ${providerName} - ${errorMessage}`;
+    
+    console.error(`💥 Error details:`, {
+      providerName,
+      userId,
+      customerId,
+      accountId,
+      error: errorMessage,
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    
+    throw new Error(fullError);
+  }
+}
+
+
+export async function createOrGetPaymentAccount(
+  providerName: string,
+  userId: string,
+  customerId: string,
+  accountId?: string
+): Promise<PaymentAccount> {
+  return setupUserPaymentAccount(providerName, userId, customerId, accountId);
 }
 
 // ######################### Subscription Queries #########################

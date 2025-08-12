@@ -8,10 +8,12 @@ declare module "next-auth" {
       id?: string;
       provider?: string;
       isAdmin?: boolean;
+      customerId?: string;
     } & DefaultSession["user"];
   }
   interface User extends DefaultUser {
     isAdmin?: boolean;
+    customerId?: string;
   }
 }
 
@@ -20,5 +22,6 @@ declare module "next-auth/jwt" {
     userId?: string;
     provider?: string;
     isAdmin?: boolean;
+    customerId?: string;
   }
 }

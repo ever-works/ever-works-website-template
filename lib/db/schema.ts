@@ -187,16 +187,16 @@ export const passwordResetTokens = pgTable('passwordResetTokens', {
 	expires: timestamp('expires', { mode: 'date' }).notNull()
 });
 
-export const newsletterSubscriptions = pgTable('newsletter_subscriptions', {
-	id: text('id')
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
-	email: text('email').notNull().unique(),
-	isActive: boolean('is_active').notNull().default(true),
-	subscribedAt: timestamp('subscribed_at').notNull().defaultNow(),
-	unsubscribedAt: timestamp('unsubscribed_at'),
-	lastEmailSent: timestamp('last_email_sent'),
-	source: text('source').default('footer') // footer, popup, etc.
+export const newsletterSubscriptions = pgTable("newsletterSubscriptions", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  email: text("email").notNull().unique(),
+  isActive: boolean("is_active").notNull().default(true),
+  subscribedAt: timestamp("subscribed_at").notNull().defaultNow(),
+  unsubscribedAt: timestamp("unsubscribed_at"),
+  lastEmailSent: timestamp("last_email_sent"),
+  source: text("source").default("footer"), // footer, popup, etc.
 });
 
 // ######################### Comment Schema #########################
@@ -311,29 +311,77 @@ export const subscriptions = pgTable(
 
 // ######################### Subscription History Schema #########################
 export const subscriptionHistory = pgTable(
-	'subscription_history',
-	{
-		id: text('id')
-			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
-		subscriptionId: text('subscription_id')
-			.notNull()
-			.references(() => subscriptions.id, { onDelete: 'cascade' }),
-		action: text('action').notNull(),
-		previousStatus: text('previous_status'),
-		newStatus: text('new_status'),
-		previousPlan: text('previous_plan'),
-		newPlan: text('new_plan'),
-		reason: text('reason'),
-		metadata: text('metadata'),
-		createdAt: timestamp('created_at').notNull().defaultNow()
-	},
-	(table) => ({
-		subscriptionHistoryIndex: index('subscription_history_idx').on(table.subscriptionId),
-		actionIndex: index('subscription_action_idx').on(table.action),
-		createdAtIndex: index('subscription_history_created_at_idx').on(table.createdAt)
-	})
+  "subscriptionHistory",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    subscriptionId: text("subscription_id")
+      .notNull()
+      .references(() => subscriptions.id, { onDelete: "cascade" }),
+    action: text("action").notNull(),
+    previousStatus: text("previous_status"),
+    newStatus: text("new_status"),
+    previousPlan: text("previous_plan"),
+    newPlan: text("new_plan"),
+    reason: text("reason"),
+    metadata: text("metadata"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => ({
+    subscriptionHistoryIndex: index("subscription_history_idx").on(
+      table.subscriptionId
+    ),
+    actionIndex: index("subscription_action_idx").on(table.action),
+    createdAtIndex: index("subscription_history_created_at_idx").on(
+      table.createdAt
+    ),
+  })
 );
+
+  // ######################### Payment Provider Schema #########################
+  export const paymentProviders = pgTable("paymentProviders", {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    name: text("name").notNull().unique().default(PaymentProvider.STRIPE),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  }, (table) => ({
+    activeIndex: index("payment_provider_active_idx").on(table.isActive),
+    createdAtIndex: index("payment_provider_created_at_idx").on(table.createdAt),
+  }));
+  
+  // ######################### Payment Account Schema #########################
+  export const paymentAccounts = pgTable("paymentAccounts", {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    providerId: text("providerId")
+      .notNull()
+      .references(() => paymentProviders.id, { onDelete: "cascade" }),
+    customerId: text("customerId").notNull(),
+    accountId: text("accountId"),
+    lastUsed: timestamp("lastUsed", { mode: "date" }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  }, (table) => ({
+    userProviderIndex: uniqueIndex("user_provider_unique_idx").on(
+      table.userId,
+      table.providerId
+    ),
+    customerProviderIndex: uniqueIndex("customer_provider_unique_idx").on(
+      table.customerId,
+      table.providerId
+    ),
+    customerIdIndex: index("payment_account_customer_id_idx").on(table.customerId),
+    providerIndex: index("payment_account_provider_idx").on(table.providerId),
+    createdAtIndex: index("payment_account_created_at_idx").on(table.createdAt),
+  }));
 
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
@@ -358,6 +406,11 @@ export type NewSubscriptionHistory = typeof subscriptionHistory.$inferInsert;
 export type SubscriptionWithUser = Subscription & {
 	user: typeof users.$inferSelect;
 };
+
+export type OldPaymentProvider = typeof paymentProviders.$inferSelect;
+export type NewPaymentProvider = typeof paymentProviders.$inferInsert;
+export type PaymentAccount = typeof paymentAccounts.$inferSelect;
+export type NewPaymentAccount = typeof paymentAccounts.$inferInsert;
 
 export enum ActivityType {
 	SIGN_UP = 'SIGN_UP',
