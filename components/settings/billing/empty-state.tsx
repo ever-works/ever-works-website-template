@@ -131,9 +131,9 @@ export function EmptyState({ type, onAction, className = '' }: EmptyStateProps) 
       </p>
 
       {/* Action Button */}
-      {config.actionLabel && config.onAction && (
+      {config.actionLabel && onAction && (
         <button
-          onClick={config.onAction}
+          onClick={onAction}
           className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-theme-primary-600 to-theme-primary-700 text-white font-medium rounded-lg hover:from-theme-primary-700 hover:to-theme-primary-800 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 mb-8"
         >
           {ActionIcon && <ActionIcon className="w-4 h-4" />}

@@ -1,20 +1,20 @@
 'use client';
 import { useState } from 'react';
-import { PaymentCard } from '@/components/settings/billing/PaymentCard';
-import { SubscriptionCard } from '@/components/settings/billing/SubscriptionCard';
-import { SubscriptionHistoryCard } from '@/components/settings/billing/SubscriptionHistoryCard';
+import { PaymentCard } from '@/components/settings/billing/payment-card';
+import { SubscriptionCard } from '@/components/settings/billing/subscription-card';
+import { SubscriptionHistoryCard } from '@/components/settings/billing/subscription-history-card';
 import { useBillingData } from '@/hooks/use-billing-data';
 import { Container } from '@/components/ui/container';
 import { CreditCard, Zap, ChevronRight, Plus, Download } from 'lucide-react';
-import { BillingStats } from '@/components/settings/billing/BillingStats';
-import { TabNavigation } from '@/components/settings/billing/TabNavigation';
-import { SearchAndFilters } from '@/components/settings/billing/SearchAndFilters';
+import { BillingStats } from '@/components/settings/billing/billing-stats';
+import { TabNavigation } from '@/components/settings/billing/tab-navigation';
+import { SearchAndFilters } from '@/components/settings/billing/search-and-filters';
 import {
   SubscriptionEmptyState,
   PaymentsEmptyState,
   SubscriptionsEmptyState,
   OverviewEmptyState
-} from '@/components/settings/billing/EmptyState';
+} from '@/components/settings/billing/empty-state';
 
 export default function BillingPage() {
 	const {
@@ -43,7 +43,7 @@ export default function BillingPage() {
 						</div>
 						<h2 className="text-2xl font-bold text-gray-900 mb-3">Welcome to Ever Works!</h2>
 						<p className="text-gray-600 mb-8">
-							You're currently on the free plan. Upgrade to unlock premium features and start building
+							You&apos;re currently on the free plan. Upgrade to unlock premium features and start building
 							your success.
 						</p>
 						<div className="space-y-3">

@@ -183,7 +183,7 @@ export function SearchAndFilters({
                   <span className="text-sm text-slate-600 dark:text-slate-400">Active filters:</span>
                   {searchTerm && (
                     <span className="inline-flex items-center gap-1 px-2 py-1 bg-theme-primary-100 dark:bg-theme-primary-900/20 text-theme-primary-700 dark:text-theme-primary-300 text-xs font-medium rounded-full">
-                      Search: "{searchTerm}"
+                      Search: &quot;{searchTerm}&quot;
                       <button
                         onClick={() => onSearchChange('')}
                         className="ml-1 hover:text-theme-primary-800 dark:hover:text-theme-primary-200"

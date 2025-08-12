@@ -49,19 +49,13 @@ export const queryClient = new QueryClient({
       
       // Refetch on mount if data is stale
       refetchOnMount: true,
-      
-      // Keep previous data while refetching
-      keepPreviousData: true,
-      
-      // Show loading state for background refetches
+
       notifyOnChangeProps: ['data', 'error', 'isLoading', 'isFetching'],
     },
     mutations: {
       // Retry failed mutations
       retry: 1,
-      
-      // Keep previous data while mutating
-      keepPreviousData: true,
+
     },
   },
 });

@@ -204,7 +204,7 @@ export function CacheStatus({
       <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
         <div className="text-xs text-slate-500 dark:text-slate-400">
           <strong>Tip:</strong> The cache automatically manages data freshness and performance. 
-          Use "Refresh" to update data and "Invalidate" to clear cached data.
+          Use &quot;Refresh&quot; to update data and &quot;Invalidate&quot; to clear cached data.
         </div>
       </div>
     </div>
