@@ -21,7 +21,8 @@ import {
   type NewSubscription,
   type SubscriptionHistory as SubscriptionHistoryType,
   type NewSubscriptionHistory,
-  type SubscriptionWithUser
+  type SubscriptionWithUser,
+  accounts
 } from "./schema";
 import { desc, isNull, count, asc, lte } from "drizzle-orm";
 import type { NewComment, CommentWithUser } from "@/lib/types/comment";
@@ -29,6 +30,7 @@ import type { ClientProfile, NewClientProfile, ClientProfileWithUser } from "./s
 import { clientProfiles } from "./schema";
 
 import { PaymentPlan } from "../constants";
+import { comparePasswords } from "../auth/credentials";
 
 export async function logActivity(
   userId: string,
@@ -1004,5 +1006,87 @@ export async function getClientProfileStats() {
     byPlan,
     byAccountType,
   };
+}
+
+/**
+ * Create account record for client with password
+ */
+export async function createClientAccount(userId: string, email: string, passwordHash: string): Promise<any> {
+  try {
+    // Check if account already exists
+    const existingAccount = await db
+      .select()
+      .from(accounts)
+      .where(eq(accounts.userId, userId))
+      .limit(1);
+
+    if (existingAccount.length > 0) {
+      console.log(`Account already exists for user: ${userId}`);
+      return existingAccount[0];
+    }
+
+    // Create account record for client
+    const newAccount = {
+      userId,
+      type: "credentials" as any,
+      provider: "credentials",
+      providerAccountId: userId, // Use userId as providerAccountId for credentials
+      email,
+      passwordHash,
+      refresh_token: null,
+      access_token: null,
+      expires_at: null,
+      token_type: null,
+      scope: null,
+      id_token: null,
+      session_state: null,
+    };
+
+    const [account] = await db
+      .insert(accounts)
+      .values(newAccount)
+      .returning();
+
+    return account || null;
+  } catch (error) {
+    console.error("Error creating client account:", error);
+    return null;
+  }
+}
+
+/**
+ * Get client account by email
+ */
+export async function getClientAccountByEmail(email: string): Promise<any> {
+  try {
+    const [account] = await db
+      .select()
+      .from(accounts)
+      .where(eq(accounts.email, email))
+      .limit(1);
+
+    return account || null;
+  } catch (error) {
+    console.error("Error getting client account by email:", error);
+    return null;
+  }
+}
+
+/**
+ * Verify client password
+ */
+export async function verifyClientPassword(email: string, password: string): Promise<boolean> {
+  try {
+    const account = await getClientAccountByEmail(email);
+    if (!account || !account.passwordHash) {
+      return false;
+    }
+
+    const isValid = await comparePasswords(password, account.passwordHash);
+    return isValid;
+  } catch (error) {
+    console.error("Error verifying client password:", error);
+    return false;
+  }
 }
 

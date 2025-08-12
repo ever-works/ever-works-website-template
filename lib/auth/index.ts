@@ -8,7 +8,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { accounts, sessions, users, verificationTokens } from "../db/schema";
 import { db } from "../db/drizzle";
 import authConfig from "../../auth.config";
-import { getUserByEmail } from "../db/queries";
+import { getUserByEmail, createClientProfile } from "../db/queries";
 
 // Check if DATABASE_URL is set
 const isDatabaseAvailable = !!process.env.DATABASE_URL;
@@ -95,6 +95,33 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         const isAdmin = dbUser.isAdmin ?? dbUser.is_admin;
         if (typeof isAdmin === "boolean") {
           token.isAdmin = isAdmin;
+        }
+        
+        // Create client profile for OAuth users if they don't have one and are not admin
+        if (account?.provider !== "credentials" && !isAdmin && dbUser.id) {
+          try {
+            // Check if user already has a client profile
+            const { getClientProfileByUserId } = await import("../db/queries");
+            const existingProfile = await getClientProfileByUserId(dbUser.id);
+            
+            if (!existingProfile) {
+              await createClientProfile({
+                userId: dbUser.id,
+                displayName: dbUser.name,
+                username: dbUser.username || dbUser.email?.split('@')[0] || 'user',
+                bio: "Welcome! I'm a new user on this platform.",
+                jobTitle: "User",
+                company: "Unknown",
+                status: "active",
+                plan: "free",
+                accountType: "individual",
+              });
+              console.log(`Client profile created for OAuth user: ${dbUser.email}`);
+            }
+          } catch (profileError) {
+            console.error("Failed to create client profile for OAuth user:", profileError);
+            // Don't fail the auth if profile creation fails
+          }
         }
       }
       

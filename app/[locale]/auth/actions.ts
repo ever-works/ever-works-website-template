@@ -24,6 +24,7 @@ import {
   updateUser,
   updateUserPassword,
   updateUserVerification,
+  createClientProfile,
 } from "@/lib/db/queries";
 import { signIn } from "@/lib/auth";
 import {
@@ -157,6 +158,28 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
   }
 
   logActivity(createdUser.id, ActivityType.SIGN_UP);
+
+  // Create client profile for new user (only for non-admin users)
+  if (!createdUser.isAdmin) {
+    try {
+      await createClientProfile({
+        userId: createdUser.id,
+        displayName: createdUser.name,
+        username: createdUser.username || createdUser.email?.split('@')[0] || 'user',
+        bio: "Welcome! I'm a new user on this platform.",
+        jobTitle: "User",
+        company: "Unknown",
+        status: "active",
+        plan: "free",
+        accountType: "individual",
+      });
+      console.log(`Client profile created for user: ${createdUser.email}`);
+    } catch (profileError) {
+      console.error("Failed to create client profile:", profileError);
+      // Don't fail the signup if profile creation fails
+      // The user can still use the system and create profile later
+    }
+  }
 
   const verificationToken = await generateVerificationToken(email);
   if (verificationToken) {

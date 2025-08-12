@@ -57,6 +57,10 @@ export const accounts = pgTable(
     type: text("type").$type<AdapterAccountType>().notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
+    // Client authentication fields
+    email: text("email"),
+    passwordHash: text("password_hash"),
+    // OAuth fields
     refresh_token: text("refresh_token"),
     access_token: text("access_token"),
     expires_at: integer("expires_at"),
