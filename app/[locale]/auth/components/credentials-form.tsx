@@ -120,6 +120,7 @@ export function CredentialsForm({
       const res = await signIn('credentials', {
         email,
         password,
+        isAdmin: clientMode ? "true" : "false", // Pass isAdmin flag for admin signin
         redirect: false,
       });
 
@@ -483,6 +484,15 @@ export function CredentialsForm({
             )}
           </Button>
         </div>
+      )}
+
+      {/* Hidden input for isAdmin flag */}
+      {clientMode && (
+        <input
+          type="hidden"
+          name="isAdmin"
+          value="true"
+        />
       )}
     </div>
   );

@@ -63,13 +63,20 @@
       "version": "7",
       "when": 1754643888157,
       "tag": "0008_past_quicksilver",
-            "breakpoints": true
+      "breakpoints": true
     },
     {
       "idx": 9,
       "version": "7",
       "when": 1754686947344,
       "tag": "0009_add_pk_verificationTokens",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1755006467200,
+      "tag": "0010_skinny_logan",
       "breakpoints": true
     }
   ]

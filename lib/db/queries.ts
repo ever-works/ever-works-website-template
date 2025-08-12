@@ -1011,7 +1011,7 @@ export async function getClientProfileStats() {
 /**
  * Create account record for client with password
  */
-export async function createClientAccount(userId: string, email: string, passwordHash: string): Promise<any> {
+export async function createClientAccount(userId: string, email: string, passwordHash?: string | null): Promise<any> {
   try {
     // Check if account already exists
     const existingAccount = await db
@@ -1032,7 +1032,7 @@ export async function createClientAccount(userId: string, email: string, passwor
       provider: "credentials",
       providerAccountId: userId, // Use userId as providerAccountId for credentials
       email,
-      passwordHash,
+      passwordHash: passwordHash || null, // Allow null for OAuth users
       refresh_token: null,
       access_token: null,
       expires_at: null,
@@ -1069,6 +1069,24 @@ export async function getClientAccountByEmail(email: string): Promise<any> {
   } catch (error) {
     console.error("Error getting client account by email:", error);
     return null;
+  }
+}
+
+/**
+ * Check if user has access to client routes (has account record)
+ */
+export async function hasClientAccess(userId: string): Promise<boolean> {
+  try {
+    const [account] = await db
+      .select()
+      .from(accounts)
+      .where(eq(accounts.userId, userId))
+      .limit(1);
+
+    return !!account;
+  } catch (error) {
+    console.error("Error checking client access:", error);
+    return false;
   }
 }
 

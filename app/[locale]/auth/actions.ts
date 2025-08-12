@@ -25,6 +25,7 @@ import {
   updateUserPassword,
   updateUserVerification,
   createClientProfile,
+  createClientAccount,
 } from "@/lib/db/queries";
 import { signIn } from "@/lib/auth";
 import {
@@ -45,12 +46,13 @@ const signInSchema = z.object({
   password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
   authProvider: z.enum(authProviderTypes).default('next-auth'),
   captchaToken: z.string().optional(),
+  isAdmin: z.string().optional(), // Add isAdmin flag
 });
 
 export const signInAction = validatedAction(signInSchema, async (data) => {
   try {
     const authService = authServiceFactory(data.authProvider);
-    const { error } = await authService.signIn(data.email, data.password);
+    const { error } = await authService.signIn(data.email, data.password, data.isAdmin);
     if (error) {
       throw error;
     }
@@ -145,7 +147,8 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
   const newUser: NewUser = {
     name,
     email,
-    passwordHash,
+    // For client registrations, we store password in accounts table, not users table
+    // passwordHash is intentionally omitted here for clients; admins will be handled via a separate flow
   };
 
   const [createdUser] = await insertNewUser(newUser);
@@ -159,9 +162,13 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
 
   logActivity(createdUser.id, ActivityType.SIGN_UP);
 
-  // Create client profile for new user (only for non-admin users)
+  // Create client account + profile for new user (only for non-admin users)
   if (!createdUser.isAdmin) {
     try {
+      // 1) Create credentials account record holding the password hash
+      await createClientAccount(createdUser.id, email, passwordHash);
+
+      // 2) Create client profile record
       await createClientProfile({
         userId: createdUser.id,
         displayName: createdUser.name,
@@ -173,11 +180,10 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
         plan: "free",
         accountType: "individual",
       });
-      console.log(`Client profile created for user: ${createdUser.email}`);
+      console.log(`Client account + profile created for user: ${createdUser.email}`);
     } catch (profileError) {
-      console.error("Failed to create client profile:", profileError);
-      // Don't fail the signup if profile creation fails
-      // The user can still use the system and create profile later
+      console.error("Failed to create client account/profile:", profileError);
+      // Don't fail the signup if creation fails. The user can still proceed and fix later.
     }
   }
 

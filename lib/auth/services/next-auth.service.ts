@@ -14,11 +14,12 @@ export class NextAuthService implements AuthService {
     return NextAuthService.instance;
   }
 
-  async signIn(email: string, password: string): Promise<any> {
+  async signIn(email: string, password: string, isAdmin?: string): Promise<any> {
     try {
       const result = await signIn(AuthProviders.CREDENTIALS, {
         email,
         password,
+        isAdmin, // Pass isAdmin flag to credentials provider
         redirect: false,
       });
       return { error: result?.error || null };

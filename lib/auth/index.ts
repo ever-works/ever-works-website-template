@@ -101,10 +101,11 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         if (account?.provider !== "credentials" && !isAdmin && dbUser.id) {
           try {
             // Check if user already has a client profile
-            const { getClientProfileByUserId } = await import("../db/queries");
+            const { getClientProfileByUserId, createClientAccount } = await import("../db/queries");
             const existingProfile = await getClientProfileByUserId(dbUser.id);
             
             if (!existingProfile) {
+              // Create client profile
               await createClientProfile({
                 userId: dbUser.id,
                 displayName: dbUser.name,
@@ -118,8 +119,14 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
               });
               console.log(`Client profile created for OAuth user: ${dbUser.email}`);
             }
+
+            // Create account record for OAuth users (without password since they use OAuth)
+            if (dbUser.email) {
+              await createClientAccount(dbUser.id, dbUser.email, null);
+              console.log(`Account record created for OAuth user: ${dbUser.email}`);
+            }
           } catch (profileError) {
-            console.error("Failed to create client profile for OAuth user:", profileError);
+            console.error("Failed to create client profile/account for OAuth user:", profileError);
             // Don't fail the auth if profile creation fails
           }
         }
