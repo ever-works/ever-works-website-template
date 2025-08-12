@@ -1,6 +1,6 @@
-import { DashboardContent } from "./content";
+import { redirect } from "next/navigation";
 
 export default function DashboardPage() {
-  // No auth required - pass null session
-  return <DashboardContent session={null} />;
+  // Redirect old dashboard route to new client dashboard
+  redirect('/client/dashboard');
 }

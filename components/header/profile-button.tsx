@@ -1,6 +1,6 @@
 "use client";
 
-import { User, LogOut, Settings, FolderTree, Tag, Package, Shield, Users } from "lucide-react";
+import { User, LogOut, Settings, FolderTree, Tag, Package, Shield, Users, Activity } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
@@ -192,6 +192,15 @@ export function ProfileButton() {
           ) : (
             // Regular user menu items
             <>
+              <Link
+                href="/client/dashboard"
+                className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                role="menuitem"
+                onClick={() => setIsProfileMenuOpen(false)}
+              >
+                <Activity className="mr-3 h-4 w-4 text-gray-400" />
+                Dashboard
+              </Link>
               <Link
                 href={profilePath}
                 className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"

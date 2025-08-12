@@ -82,6 +82,19 @@ export default async function middleware(req: NextRequest) {
   const hasLocale = routing.locales.includes(maybeLocale as any);
   const pathWithoutLocale = hasLocale ? `/${segments.slice(1).join("/")}` : originalPathname;
 
+  // Check if admin user is trying to access client dashboard - redirect to admin
+  if (pathWithoutLocale === "/client/dashboard") {
+    if (cfg.provider === "next-auth") {
+      const { auth } = await import("@/lib/auth");
+      const session = await auth();
+      if (session?.user?.isAdmin === true) {
+        const url = req.nextUrl.clone();
+        url.pathname = "/admin";
+        return NextResponse.redirect(url);
+      }
+    }
+  }
+  
   if (pathWithoutLocale.startsWith(ADMIN_PREFIX) && pathWithoutLocale !== ADMIN_SIGNIN) {
     if (cfg.provider === "supabase") {
       return supabaseGuard(req, intlResponse);
