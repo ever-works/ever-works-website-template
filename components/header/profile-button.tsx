@@ -12,8 +12,16 @@ export function ProfileButton() {
   const t = useTranslations();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const { user, isLoading } = useCurrentUser();
-  const profilePath = `/profile/${user?.id || user?.email?.split('@')[0] || 'profile'}`;
+  const profilePath = `/client/profile/${user?.id || user?.email?.split('@')[0] || 'profile'}`;
   const isAdmin = user?.isAdmin === true;
+  
+  // Debug: Log profile path
+  console.log('ProfileButton Debug:', {
+    user: user,
+    userId: user?.id,
+    userEmail: user?.email,
+    profilePath: profilePath
+  });
 
   const handleLogout = async () => {
     setIsProfileMenuOpen(false);
@@ -211,7 +219,7 @@ export function ProfileButton() {
                 {user?.name || "Your Profile"}
               </Link>
               <Link
-                href="/settings/profile"
+                href="/client/settings"
                 className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 role="menuitem"
                 onClick={() => setIsProfileMenuOpen(false)}

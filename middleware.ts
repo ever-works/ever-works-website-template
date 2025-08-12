@@ -82,8 +82,8 @@ export default async function middleware(req: NextRequest) {
   const hasLocale = routing.locales.includes(maybeLocale as any);
   const pathWithoutLocale = hasLocale ? `/${segments.slice(1).join("/")}` : originalPathname;
 
-  // Check if admin user is trying to access client dashboard - redirect to admin
-  if (pathWithoutLocale === "/client/dashboard") {
+  // Check if admin user is trying to access client routes - redirect to admin
+  if (pathWithoutLocale.startsWith("/client/")) {
     if (cfg.provider === "next-auth") {
       const { auth } = await import("@/lib/auth");
       const session = await auth();

@@ -1,4 +1,7 @@
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { Container } from "@/components/ui/container";
+import { ProfileHeader, ProfileContent } from "@/components/profile";
 
 // Dummy data for development
 const dummyProfile = {
@@ -89,28 +92,41 @@ const dummyProfile = {
   ],
 };
 
-interface ProfilePageProps {
-  params: Promise<{ username: string; locale: string }>;
+interface ClientProfilePageProps {
+  params: Promise<{ username: string }>;
 }
 
-function ProfileSkeleton() {
+export default async function ClientProfilePage({ params }: ClientProfilePageProps) {
+  const session = await auth();
+  
+  // Check if user is authenticated
+  if (!session?.user) {
+    redirect('/auth/signin');
+  }
+  
+  // Check if user is admin - redirect to admin dashboard
+  if (session.user.isAdmin === true) {
+    redirect('/admin');
+  }
+  
+  const { username } = await params;
+
+  // For now, we'll use dummy data
+  // In the future, this will fetch from the database based on username
+  const profile = username === "johndoe" ? dummyProfile : null;
+
+  if (!profile) {
+    redirect('/client/dashboard');
+  }
+  
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Container maxWidth="7xl" padding="default">
         <div className="space-y-8 pb-16">
-          <div className="animate-pulse">
-            <div className="h-32 bg-gray-200 dark:bg-gray-800 rounded-lg mb-4"></div>
-            <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-3/4"></div>
-          </div>
+          <ProfileHeader profile={profile} />
+          <ProfileContent profile={profile} />
         </div>
       </Container>
     </div>
   );
 }
-
-export default async function ProfilePage({ params }: ProfilePageProps) {
-  const { username } = await params;
-  
-  // Redirect old profile route to new client profile route
-  redirect(`/client/profile/${username}`);
-} 
