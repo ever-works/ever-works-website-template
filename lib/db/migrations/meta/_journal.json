@@ -78,6 +78,13 @@
       "when": 1755006467200,
       "tag": "0010_skinny_logan",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1755038448575,
+      "tag": "0011_luxuriant_edwin_jarvis",
+      "breakpoints": true
     }
   ]
 }

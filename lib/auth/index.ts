@@ -92,13 +92,11 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       
       // Add isAdmin to token if available from dbUser
       if (dbUser) {
-        const isAdmin = dbUser.isAdmin ?? dbUser.is_admin;
-        if (typeof isAdmin === "boolean") {
-          token.isAdmin = isAdmin;
-        }
+        // All users in users table are considered admin
+        token.isAdmin = true;
         
-        // Create client profile for OAuth users if they don't have one and are not admin
-        if (account?.provider !== "credentials" && !isAdmin && dbUser.id) {
+        // Create client profile for OAuth users if they don't have one
+        if (account?.provider !== "credentials" && dbUser.id) {
           try {
             // Check if user already has a client profile
             const { getClientProfileByUserId, createClientAccount } = await import("../db/queries");

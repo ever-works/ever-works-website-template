@@ -44,29 +44,53 @@ export const credentialsProvider = Credentials({
       const isAdminSignin = credentials.isAdmin === "true" || 
                            referer.includes("/admin/auth/signin");
 
+      console.log('🔐 Auth Debug:', {
+        email,
+        isAdminSignin,
+        credentialsIsAdmin: credentials.isAdmin,
+        referer,
+        hasPassword: !!password
+      });
+
       // First, try to find user in users table (admin authentication)
       const foundUser = await getUserByEmail(email);
       
+      console.log('👤 User Debug:', {
+        foundUser: !!foundUser,
+        hasPasswordHash: !!foundUser?.passwordHash
+      });
+      
       if (foundUser && foundUser.passwordHash) {
-        // Check if this is an admin user with password in users table
+        // Check if this is a user with password in users table
         const isPasswordValid = await comparePasswords(password, foundUser.passwordHash);
         
+        console.log('🔑 Password Debug:', {
+          isPasswordValid,
+          isAdminSignin
+        });
+        
         if (isPasswordValid) {
-          // Only allow admin authentication if it's an admin signin attempt
-          if (isAdminSignin && foundUser.isAdmin) {
+          // Allow admin authentication for any user in users table
+          if (isAdminSignin) {
+            console.log('✅ Admin authentication successful');
             logActivity(foundUser.id, ActivityType.SIGN_IN);
             return foundUser;
           }
           
-          // If admin user tries to sign in through client form, deny access
-          if (!isAdminSignin && foundUser.isAdmin) {
-            throw new Error("Admin users must sign in through the admin portal.");
+          // If user tries to sign in through client form, deny access
+          if (!isAdminSignin) {
+            console.log('❌ User trying to sign in through client form');
+            throw new Error("Users must sign in through the admin portal.");
           }
         }
       }
 
       // If not found in users table or password doesn't match, try accounts table (client authentication)
       const clientAccount = await getClientAccountByEmail(email);
+      
+      console.log('👥 Client Account Debug:', {
+        hasClientAccount: !!clientAccount
+      });
       
       if (clientAccount) {
         const isClientPasswordValid = await verifyClientPassword(email, password);
@@ -77,9 +101,11 @@ export const credentialsProvider = Credentials({
           if (clientUser) {
             // Only allow client authentication if it's not an admin signin attempt
             if (!isAdminSignin) {
+              console.log('✅ Client authentication successful');
               logActivity(clientUser.id, ActivityType.SIGN_IN);
               return clientUser;
             } else {
+              console.log('❌ Client user trying to sign in through admin form');
               throw new Error("Client users cannot access admin portal.");
             }
           }
@@ -87,6 +113,7 @@ export const credentialsProvider = Credentials({
       }
 
       // If we get here, authentication failed
+      console.log('❌ Authentication failed - no valid credentials found');
       throw new Error("Invalid email or password. Please try again.");
     } catch (error: any) {
       console.error("Authentication error:", error);
