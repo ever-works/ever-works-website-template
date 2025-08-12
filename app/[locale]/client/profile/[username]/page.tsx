@@ -2,101 +2,9 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { ProfileHeader, ProfileContent } from "@/components/profile";
+import { getUserByEmail, getClientProfileByUserId } from "@/lib/db/queries";
 
-// Dummy data for development
-const dummyProfile = {
-  username: "johndoe",
-  displayName: "John Doe",
-  bio: "Full-stack developer passionate about creating amazing web experiences. I love working with React, TypeScript, and modern web technologies.",
-  avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-  location: "San Francisco, CA",
-  company: "Tech Corp",
-  jobTitle: "Senior Software Engineer",
-  skills: [
-    { name: "React", level: 90 },
-    { name: "TypeScript", level: 85 },
-    { name: "Node.js", level: 80 },
-    { name: "Next.js", level: 85 },
-    { name: "Tailwind CSS", level: 90 },
-  ],
-  interests: ["Web Development", "Open Source", "AI/ML", "Design"],
-  website: "https://johndoe.dev",
-  socialLinks: [
-    { platform: "github", url: "https://github.com/johndoe", displayName: "GitHub" },
-    { platform: "linkedin", url: "https://linkedin.com/in/johndoe", displayName: "LinkedIn" },
-    { platform: "twitter", url: "https://twitter.com/johndoe", displayName: "Twitter" },
-  ],
-  portfolio: [
-    {
-      id: "1",
-      title: "E-commerce Platform",
-      description: "A modern e-commerce platform built with Next.js and Stripe",
-      imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop",
-      externalUrl: "https://example.com/project1",
-      tags: ["Next.js", "Stripe", "E-commerce"],
-      isFeatured: true,
-    },
-    {
-      id: "2",
-      title: "Task Management App",
-      description: "A collaborative task management application with real-time updates",
-      imageUrl: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=300&fit=crop",
-      externalUrl: "https://example.com/project2",
-      tags: ["React", "Firebase", "Real-time"],
-      isFeatured: true,
-    },
-    {
-      id: "3",
-      title: "Weather Dashboard",
-      description: "A beautiful weather dashboard with location-based forecasts",
-      imageUrl: "https://images.unsplash.com/photo-1592210454359-9043f067919b?w=400&h=300&fit=crop",
-      externalUrl: "https://example.com/project3",
-      tags: ["Vue.js", "Weather API", "Dashboard"],
-      isFeatured: false,
-    },
-  ],
-  themeColor: "#3B82F6", // Blue theme
-  isPublic: true,
-  memberSince: "2022-03-15",
-  submissions: [
-    {
-      id: "1",
-      title: "E-commerce Platform",
-      description: "A modern e-commerce platform built with Next.js and Stripe",
-      category: "Web Development",
-      status: "approved" as const,
-      submittedAt: "2024-01-15",
-      updatedAt: "2024-01-20",
-      url: "/items/ecommerce-platform",
-    },
-    {
-      id: "2",
-      title: "Task Management App",
-      description: "A collaborative task management application with real-time updates",
-      category: "Mobile Development",
-      status: "pending" as const,
-      submittedAt: "2024-02-01",
-      updatedAt: "2024-02-01",
-      url: "/items/task-management-app",
-    },
-    {
-      id: "3",
-      title: "Weather Dashboard",
-      description: "A beautiful weather dashboard with location-based forecasts",
-      category: "Web Development",
-      status: "rejected" as const,
-      submittedAt: "2024-01-10",
-      updatedAt: "2024-01-12",
-      url: "/items/weather-dashboard",
-    },
-  ],
-};
-
-interface ClientProfilePageProps {
-  params: Promise<{ username: string }>;
-}
-
-export default async function ClientProfilePage({ params }: ClientProfilePageProps) {
+export default async function ClientProfilePage() {
   const session = await auth();
   
   // Check if user is authenticated
@@ -109,15 +17,53 @@ export default async function ClientProfilePage({ params }: ClientProfilePagePro
     redirect('/admin');
   }
   
-  const { username } = await params;
-
-  // For now, we'll use dummy data
-  // In the future, this will fetch from the database based on username
-  const profile = username === "johndoe" ? dummyProfile : null;
-
-  if (!profile) {
+  // Get the actual user data from the database
+  const dbUser = await getUserByEmail(session.user.email!);
+  
+  if (!dbUser) {
     redirect('/client/dashboard');
   }
+
+  // Try to get client profile data first
+  const clientProfile = await getClientProfileByUserId(dbUser.id);
+  
+  // If client profile exists, use it; otherwise fallback to user data
+  const profile = clientProfile ? {
+    username: clientProfile.username || dbUser.username || dbUser.email?.split('@')[0] || 'user',
+    displayName: clientProfile.displayName || dbUser.name || dbUser.email?.split('@')[0] || 'User',
+    bio: clientProfile.bio || "User profile",
+    avatar: clientProfile.user.avatar || clientProfile.user.image || dbUser.avatar || dbUser.image || null,
+    location: clientProfile.location || "Unknown",
+    company: clientProfile.company || dbUser.title || "Unknown",
+    jobTitle: clientProfile.jobTitle || dbUser.title || "User",
+    skills: [], // This would come from a separate skills table in the future
+    interests: [], // This would come from a separate interests table in the future
+    website: clientProfile.website || "",
+    socialLinks: [], // This would come from a separate social links table in the future
+    portfolio: [], // This would come from a separate portfolio table in the future
+    themeColor: "#3B82F6",
+    isPublic: true,
+    memberSince: clientProfile.createdAt?.toISOString().split('T')[0] || dbUser.createdAt?.toISOString().split('T')[0] || "2024-01-01",
+    submissions: [], // This would come from submissions table
+  } : {
+    // Fallback to user data if no client profile exists
+    username: dbUser.username || dbUser.email?.split('@')[0] || 'user',
+    displayName: dbUser.name || dbUser.email?.split('@')[0] || 'User',
+    bio: "User profile",
+    avatar: dbUser.avatar || dbUser.image || null,
+    location: "Unknown",
+    company: dbUser.title || "Unknown",
+    jobTitle: dbUser.title || "User",
+    skills: [],
+    interests: [],
+    website: "",
+    socialLinks: [],
+    portfolio: [],
+    themeColor: "#3B82F6",
+    isPublic: true,
+    memberSince: dbUser.createdAt?.toISOString().split('T')[0] || "2024-01-01",
+    submissions: [],
+  };
   
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">

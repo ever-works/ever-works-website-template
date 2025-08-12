@@ -24,6 +24,7 @@ export interface Profile {
     isFeatured: boolean;
   }>;
   themeColor: string;
+  isPublic: boolean;
   memberSince: string;
   submissions: Array<{
     id: string;

@@ -235,7 +235,7 @@ export default function BasicInfoPage() {
           {/* Header */}
           <div className="flex items-center gap-4">
             <Link
-              href="/settings/profile"
+                              href="/client/settings/profile"
               className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
             >
               <FiArrowLeft className="w-4 h-4" />
@@ -477,7 +477,7 @@ export default function BasicInfoPage() {
                 <div className="pt-8 border-t border-gray-100 dark:border-gray-800">
                   <div className="flex flex-col md:flex-row justify-end gap-4 mt-4">
                     <Link
-                      href="/settings/profile"
+                      href="/client/settings/profile"
                       className="px-6 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors text-center md:text-left"
                     >
                       Cancel

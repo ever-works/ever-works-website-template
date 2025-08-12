@@ -908,6 +908,58 @@ export async function deleteClientProfile(id: string): Promise<boolean> {
 }
 
 /**
+ * Get client profile by user ID
+ */
+export async function getClientProfileByUserId(userId: string): Promise<ClientProfileWithUser | null> {
+  try {
+    const [profile] = await db
+      .select({
+        id: clientProfiles.id,
+        userId: clientProfiles.userId,
+        displayName: clientProfiles.displayName,
+        username: clientProfiles.username,
+        bio: clientProfiles.bio,
+        jobTitle: clientProfiles.jobTitle,
+        company: clientProfiles.company,
+        industry: clientProfiles.industry,
+        phone: clientProfiles.phone,
+        website: clientProfiles.website,
+        location: clientProfiles.location,
+        accountType: clientProfiles.accountType,
+        status: clientProfiles.status,
+        plan: clientProfiles.plan,
+        timezone: clientProfiles.timezone,
+        language: clientProfiles.language,
+        twoFactorEnabled: clientProfiles.twoFactorEnabled,
+        emailVerified: clientProfiles.emailVerified,
+        totalSubmissions: clientProfiles.totalSubmissions,
+        notes: clientProfiles.notes,
+        tags: clientProfiles.tags,
+        createdAt: clientProfiles.createdAt,
+        updatedAt: clientProfiles.updatedAt,
+        user: {
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          image: users.image,
+          avatar: users.avatar,
+          title: users.title,
+          createdAt: users.createdAt,
+        },
+      })
+      .from(clientProfiles)
+      .leftJoin(users, eq(clientProfiles.userId, users.id))
+      .where(eq(clientProfiles.userId, userId))
+      .limit(1);
+
+    return profile || null;
+  } catch (error) {
+    console.error("Error getting client profile by user ID:", error);
+    return null;
+  }
+}
+
+/**
  * Get client profile statistics
  */
 export async function getClientProfileStats() {
