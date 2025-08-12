@@ -1054,7 +1054,7 @@ export async function ensurePaymentAccount(
     }
 
     // 2. Check if PaymentAccount already exists for this user and provider
-    let paymentAccount = await getPaymentAccountByUserId(userId);
+    const paymentAccount = await getPaymentAccountByUserId(userId);
     
     if (paymentAccount && paymentAccount.providerId === provider.id) {
       console.log(`Existing PaymentAccount found for user ${userId} and provider ${providerName}`);
@@ -1155,7 +1155,7 @@ export async function setupUserPaymentAccount(
     } else {
       console.log(`✅ Provider ${providerName} found with ID: ${provider.id}`);
     }
-    let paymentAccount = await getPaymentAccountByUserId(userId);
+    const paymentAccount = await getPaymentAccountByUserId(userId);
     
     if (paymentAccount && paymentAccount.providerId === provider.id) {
       await updatePaymentAccountLastUsed(paymentAccount.id);

@@ -79,7 +79,7 @@ export function AdminRecentActivity({ data, isLoading }: AdminRecentActivityProp
             </div>
           ) : (
             data.map((activity, index) => (
-              <div key={`${activity.timestamp}-${activity.description}-${index}`} className="flex items-start space-x-3 group">
+              <div key={`${activity.timestamp}-${activity.description}-${index}`} className="flex items-start space-x-3 group dark:bg-slate-800">
                 <div className={`p-2 rounded-full ${getActivityColor(activity.type)} group-hover:scale-110 transition-transform`}>
                   {getActivityIcon(activity.type)}
                 </div>
