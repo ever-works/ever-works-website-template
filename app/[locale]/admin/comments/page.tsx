@@ -363,6 +363,8 @@ export default function AdminCommentsPage() {
               ))
             )}
           </div>
+        </CardBody>
+      </Card>
 
       {/* Enhanced Pagination and Stats */}
       {totalComments > 0 && (
@@ -395,8 +397,6 @@ export default function AdminCommentsPage() {
           </div>
         </div>
       )}
-        </CardBody>
-      </Card>
 
       {/* Delete Confirmation Dialog */}
       {commentToDelete && (
