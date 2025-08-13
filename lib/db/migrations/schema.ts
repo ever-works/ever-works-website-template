@@ -218,8 +218,7 @@ export const clientProfiles = pgTable("client_profiles", {
 	index("client_profile_plan_idx").using("btree", table.plan.asc().nullsLast().op("text_ops")),
 	index("client_profile_status_idx").using("btree", table.status.asc().nullsLast().op("text_ops")),
 	index("client_profile_username_idx").using("btree", table.username.asc().nullsLast().op("text_ops")),
-	unique("client_profiles_username_unique").on(table.username),
-	unique("client_profiles_email_unique").on(table.email),
+
 ]);
 
 export const subscriptions = pgTable("subscriptions", {

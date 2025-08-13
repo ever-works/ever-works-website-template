@@ -11,7 +11,7 @@ export default async function ClientSettingsPage() {
   }
   
   // Check if user is admin - redirect to admin dashboard
-  if (session.user.isAdmin === true) {
+  if (session.user.isAdmin) {
     redirect('/admin');
   }
   
