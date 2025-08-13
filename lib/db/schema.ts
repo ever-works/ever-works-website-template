@@ -50,9 +50,7 @@ export const roles = pgTable("roles", {
 export const accounts = pgTable(
   "accounts",
   {
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+    userId: text("userId"), // Remove .notNull() and .references() for client accounts
     type: text("type").$type<AdapterAccountType>().notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
@@ -84,9 +82,8 @@ export const clientProfiles = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+    email: text("email").unique(),
+    name: text("name"),
     displayName: text("display_name"),
     username: text("username").unique(),
     bio: text("bio"),
@@ -116,7 +113,7 @@ export const clientProfiles = pgTable(
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
   (clientProfile) => [
-    index("client_profile_user_id_idx").on(clientProfile.userId),
+    index("client_profile_email_idx").on(clientProfile.email),
     index("client_profile_status_idx").on(clientProfile.status),
     index("client_profile_plan_idx").on(clientProfile.plan),
     index("client_profile_account_type_idx").on(clientProfile.accountType),
@@ -175,10 +172,10 @@ export const authenticators = pgTable(
 
 export const activityLogs = pgTable("activityLogs", {
   id: serial("id").primaryKey(),
-  userId: text("userId").references(() => users.id),
+  userId: text("userId"), // Make nullable for client activity logs
   action: text("action").notNull(),
   timestamp: timestamp("timestamp").notNull().defaultNow(),
-  ipAddress: varchar("ipAddress", { length: 45 }),
+  ipAddress: varchar("ip_address", { length: 45 }),
 });
 
 export const passwordResetTokens = pgTable("passwordResetTokens", {

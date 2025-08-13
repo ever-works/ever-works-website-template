@@ -1,4 +1,5 @@
 import { pgTable, unique, text, timestamp, boolean, foreignKey, serial, varchar, integer, index, uniqueIndex, primaryKey } from "drizzle-orm/pg-core"
+import { sql } from "drizzle-orm"
 
 
 
@@ -33,21 +34,15 @@ export const users = pgTable("users", {
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 	deletedAt: timestamp("deleted_at", { mode: 'string' }),
-	isAdmin: boolean("is_admin").default(false).notNull(),
+	username: text(),
+	title: text(),
+	avatar: text(),
+	roleId: text("role_id"),
+	status: text().default('active'),
+	createdBy: text("created_by").default('system'),
 }, (table) => [
 	unique("users_email_unique").on(table.email),
-]);
-
-export const verificationTokens = pgTable("verificationTokens", {
-	identifier: text().notNull(),
-	email: text().notNull(),
-	token: text().notNull(),
-	expires: timestamp({ mode: 'string' }).notNull(),
-}, (table) => [
-	primaryKey({
-		columns: [table.identifier, table.token],
-		name: "verificationTokens_identifier_token_pkey"
-	}),
+	unique("users_username_unique").on(table.username),
 ]);
 
 export const activityLogs = pgTable("activityLogs", {
@@ -129,8 +124,44 @@ export const votes = pgTable("votes", {
 		}).onDelete("cascade"),
 ]);
 
+export const roles = pgTable("roles", {
+	id: text().primaryKey().notNull(),
+	name: text().notNull(),
+	description: text(),
+	status: text().default('active'),
+	permissions: text().notNull(),
+	createdBy: text("created_by").default('system'),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	index("roles_created_at_idx").using("btree", table.createdAt.asc().nullsLast().op("timestamp_ops")),
+	index("roles_status_idx").using("btree", table.status.asc().nullsLast().op("text_ops")),
+]);
+
+export const subscriptionHistory = pgTable("subscription_history", {
+	id: text().primaryKey().notNull(),
+	subscriptionId: text("subscription_id").notNull(),
+	action: text().notNull(),
+	previousStatus: text("previous_status"),
+	newStatus: text("new_status"),
+	previousPlan: text("previous_plan"),
+	newPlan: text("new_plan"),
+	reason: text(),
+	metadata: text(),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	index("subscription_action_idx").using("btree", table.action.asc().nullsLast().op("text_ops")),
+	index("subscription_history_created_at_idx").using("btree", table.createdAt.asc().nullsLast().op("timestamp_ops")),
+	index("subscription_history_idx").using("btree", table.subscriptionId.asc().nullsLast().op("text_ops")),
+	foreignKey({
+			columns: [table.subscriptionId],
+			foreignColumns: [subscriptions.id],
+			name: "subscription_history_subscription_id_subscriptions_id_fk"
+		}).onDelete("cascade"),
+]);
+
 export const accounts = pgTable("accounts", {
-	userId: text().notNull(),
+	userId: text(),
 	type: text().notNull(),
 	provider: text().notNull(),
 	providerAccountId: text().notNull(),
@@ -141,6 +172,22 @@ export const accounts = pgTable("accounts", {
 	scope: text(),
 	idToken: text("id_token"),
 	sessionState: text("session_state"),
+	trialStartDate: timestamp("trial_start_date", { mode: 'string' }),
+	trialEndDate: timestamp("trial_end_date", { mode: 'string' }),
+	subscriptionStartDate: timestamp("subscription_start_date", { mode: 'string' }),
+	subscriptionEndDate: timestamp("subscription_end_date", { mode: 'string' }),
+	lastLoginAt: timestamp("last_login_at", { mode: 'string' }),
+	lastActivityAt: timestamp("last_activity_at", { mode: 'string' }),
+	emailNotifications: boolean("email_notifications").default(true),
+	marketingEmails: boolean("marketing_emails").default(false),
+	notes: text(),
+	tags: text(),
+	email: text(),
+	passwordHash: text("password_hash"),
+});
+
+export const clientProfiles = pgTable("client_profiles", {
+	id: text().primaryKey().notNull(),
 	displayName: text("display_name"),
 	username: text(),
 	bio: text(),
@@ -153,34 +200,26 @@ export const accounts = pgTable("accounts", {
 	accountType: text("account_type").default('individual'),
 	status: text().default('active'),
 	plan: text().default('free'),
-	trialStartDate: timestamp("trial_start_date", { mode: 'string' }),
-	trialEndDate: timestamp("trial_end_date", { mode: 'string' }),
-	subscriptionStartDate: timestamp("subscription_start_date", { mode: 'string' }),
-	subscriptionEndDate: timestamp("subscription_end_date", { mode: 'string' }),
-	totalSubmissions: integer("total_submissions").default(0),
-	lastLoginAt: timestamp("last_login_at", { mode: 'string' }),
-	lastActivityAt: timestamp("last_activity_at", { mode: 'string' }),
 	timezone: text().default('UTC'),
 	language: text().default('en'),
-	emailNotifications: boolean("email_notifications").default(true),
-	marketingEmails: boolean("marketing_emails").default(false),
 	twoFactorEnabled: boolean("two_factor_enabled").default(false),
 	emailVerified: boolean("email_verified").default(false),
+	totalSubmissions: integer("total_submissions").default(0),
 	notes: text(),
 	tags: text(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+	email: text(),
+	name: text(),
 }, (table) => [
-	index("account_plan_idx").using("btree", table.plan.asc().nullsLast().op("text_ops")),
-	index("account_status_idx").using("btree", table.status.asc().nullsLast().op("text_ops")),
-	index("account_type_idx").using("btree", table.accountType.asc().nullsLast().op("text_ops")),
-	index("account_username_idx").using("btree", table.username.asc().nullsLast().op("text_ops")),
-	foreignKey({
-			columns: [table.userId],
-			foreignColumns: [users.id],
-			name: "accounts_userId_users_id_fk"
-		}).onDelete("cascade"),
-	unique("accounts_username_unique").on(table.username),
+	index("client_profile_account_type_idx").using("btree", table.accountType.asc().nullsLast().op("text_ops")),
+	index("client_profile_created_at_idx").using("btree", table.createdAt.asc().nullsLast().op("timestamp_ops")),
+	index("client_profile_email_idx").using("btree", table.email.asc().nullsLast().op("text_ops")),
+	index("client_profile_plan_idx").using("btree", table.plan.asc().nullsLast().op("text_ops")),
+	index("client_profile_status_idx").using("btree", table.status.asc().nullsLast().op("text_ops")),
+	index("client_profile_username_idx").using("btree", table.username.asc().nullsLast().op("text_ops")),
+	unique("client_profiles_username_unique").on(table.username),
+	unique("client_profiles_email_unique").on(table.email),
 ]);
 
 export const subscriptions = pgTable("subscriptions", {
@@ -221,24 +260,12 @@ export const subscriptions = pgTable("subscriptions", {
 		}).onDelete("cascade"),
 ]);
 
-export const subscriptionHistory = pgTable("subscription_history", {
-	id: text().primaryKey().notNull(),
-	subscriptionId: text("subscription_id").notNull(),
-	action: text().notNull(),
-	previousStatus: text("previous_status"),
-	newStatus: text("new_status"),
-	previousPlan: text("previous_plan"),
-	newPlan: text("new_plan"),
-	reason: text(),
-	metadata: text(),
-	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+export const verificationTokens = pgTable("verificationTokens", {
+	identifier: text().notNull(),
+	email: text().notNull(),
+	token: text().notNull(),
+	expires: timestamp({ mode: 'string' }).notNull(),
 }, (table) => [
-	index("subscription_action_idx").using("btree", table.action.asc().nullsLast().op("text_ops")),
-	index("subscription_history_created_at_idx").using("btree", table.createdAt.asc().nullsLast().op("timestamp_ops")),
-	index("subscription_history_idx").using("btree", table.subscriptionId.asc().nullsLast().op("text_ops")),
-	foreignKey({
-			columns: [table.subscriptionId],
-			foreignColumns: [subscriptions.id],
-			name: "subscription_history_subscription_id_subscriptions_id_fk"
-		}).onDelete("cascade"),
+	index("verificationTokens_expires_idx").using("btree", table.expires.asc().nullsLast().op("timestamp_ops")),
+	primaryKey({ columns: [table.identifier, table.token], name: "verificationTokens_identifier_token_pkey"}),
 ]);

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { users, activityLogs, authenticators, sessions, comments, votes, accounts, subscriptions, subscriptionHistory } from "./schema";
+import { users, activityLogs, authenticators, sessions, comments, votes, subscriptions, subscriptionHistory } from "./schema";
 
 export const activityLogsRelations = relations(activityLogs, ({one}) => ({
 	user: one(users, {
@@ -14,7 +14,6 @@ export const usersRelations = relations(users, ({many}) => ({
 	sessions: many(sessions),
 	comments: many(comments),
 	votes: many(votes),
-	accounts: many(accounts),
 	subscriptions: many(subscriptions),
 }));
 
@@ -42,13 +41,6 @@ export const commentsRelations = relations(comments, ({one}) => ({
 export const votesRelations = relations(votes, ({one}) => ({
 	user: one(users, {
 		fields: [votes.userid],
-		references: [users.id]
-	}),
-}));
-
-export const accountsRelations = relations(accounts, ({one}) => ({
-	user: one(users, {
-		fields: [accounts.userId],
 		references: [users.id]
 	}),
 }));

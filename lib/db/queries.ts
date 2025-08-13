@@ -26,7 +26,7 @@ import {
 } from "./schema";
 import { desc, isNull, count, asc, lte } from "drizzle-orm";
 import type { NewComment, CommentWithUser } from "@/lib/types/comment";
-import type { ClientProfile, NewClientProfile, ClientProfileWithUser } from "./schema";
+import type { ClientProfile, NewClientProfile } from "./schema";
 import { clientProfiles } from "./schema";
 
 import { PaymentPlan } from "../constants";
@@ -708,12 +708,54 @@ export async function getSubscriptionStats() {
 // ######################### Client Profile Queries #########################
 
 /**
+ * Create a new client user (creates user record but marks as client)
+ */
+export async function createClientUser(name: string, email: string): Promise<any> {
+  try {
+    // Create user record for client (without password hash)
+    const newUser: NewUser = {
+      name,
+      email,
+      // No passwordHash - clients store passwords in accounts table
+    };
+
+    const [createdUser] = await insertNewUser(newUser);
+    return createdUser || null;
+  } catch (error) {
+    console.error("Error creating client user:", error);
+    return null;
+  }
+}
+
+/**
  * Create a new client profile
  */
-export async function createClientProfile(data: NewClientProfile): Promise<ClientProfile> {
+export async function createClientProfile(data: {
+  email: string;
+  name: string;
+  displayName?: string;
+  username?: string;
+  bio?: string;
+  jobTitle?: string;
+  company?: string;
+  status?: string;
+  plan?: string;
+  accountType?: string;
+}): Promise<ClientProfile> {
   const [profile] = await db
     .insert(clientProfiles)
-    .values(data)
+    .values({
+      email: data.email,
+      name: data.name,
+      displayName: data.displayName || data.name,
+      username: data.username || data.email.split('@')[0] || 'user',
+      bio: data.bio || "Welcome! I'm a new user on this platform.",
+      jobTitle: data.jobTitle || "User",
+      company: data.company || "Unknown",
+      status: data.status || "active",
+      plan: data.plan || "free",
+      accountType: data.accountType || "individual",
+    })
     .returning();
 
   return profile;
@@ -732,50 +774,6 @@ export async function getClientProfileById(id: string): Promise<ClientProfile | 
 }
 
 /**
- * Find client profile with user data
- */
-export async function getClientProfileWithUser(id: string): Promise<ClientProfileWithUser | null> {
-  const [profile] = await db
-    .select({
-      id: clientProfiles.id,
-      userId: clientProfiles.userId,
-      displayName: clientProfiles.displayName,
-      username: clientProfiles.username,
-      bio: clientProfiles.bio,
-      jobTitle: clientProfiles.jobTitle,
-      company: clientProfiles.company,
-      industry: clientProfiles.industry,
-      phone: clientProfiles.phone,
-      website: clientProfiles.website,
-      location: clientProfiles.location,
-      accountType: clientProfiles.accountType,
-      status: clientProfiles.status,
-      plan: clientProfiles.plan,
-      timezone: clientProfiles.timezone,
-      language: clientProfiles.language,
-      twoFactorEnabled: clientProfiles.twoFactorEnabled,
-      emailVerified: clientProfiles.emailVerified,
-      totalSubmissions: clientProfiles.totalSubmissions,
-      notes: clientProfiles.notes,
-      tags: clientProfiles.tags,
-      createdAt: clientProfiles.createdAt,
-      updatedAt: clientProfiles.updatedAt,
-      user: {
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        image: users.image,
-        createdAt: users.createdAt,
-      },
-    })
-    .from(clientProfiles)
-    .leftJoin(users, eq(clientProfiles.userId, users.id))
-    .where(eq(clientProfiles.id, id));
-
-  return profile || null;
-}
-
-/**
  * Get all client profiles with pagination
  */
 export async function getClientProfiles(params: {
@@ -786,7 +784,7 @@ export async function getClientProfiles(params: {
   plan?: string;
   accountType?: string;
 }): Promise<{
-  profiles: ClientProfileWithUser[];
+  profiles: ClientProfile[];
   total: number;
   page: number;
   totalPages: number;
@@ -806,8 +804,8 @@ export async function getClientProfiles(params: {
       sql`(${clientProfiles.username} ILIKE ${`%${escapedSearch}%`} OR
            ${clientProfiles.displayName} ILIKE ${`%${escapedSearch}%`} OR
            ${clientProfiles.company} ILIKE ${`%${escapedSearch}%`} OR
-           ${users.name} ILIKE ${`%${escapedSearch}%`} OR
-           ${users.email} ILIKE ${`%${escapedSearch}%`})`
+           ${clientProfiles.name} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.email} ILIKE ${`%${escapedSearch}%`})`
     );
   }
 
@@ -829,47 +827,14 @@ export async function getClientProfiles(params: {
   const countResult = await db
     .select({ count: sql`count(*)` })
     .from(clientProfiles)
-    .leftJoin(users, eq(clientProfiles.userId, users.id))
     .where(whereClause);
 
   const total = Number(countResult[0]?.count || 0);
 
-  // Get profiles with user data
+  // Get profiles
   const profiles = await db
-    .select({
-      id: clientProfiles.id,
-      userId: clientProfiles.userId,
-      displayName: clientProfiles.displayName,
-      username: clientProfiles.username,
-      bio: clientProfiles.bio,
-      jobTitle: clientProfiles.jobTitle,
-      company: clientProfiles.company,
-      industry: clientProfiles.industry,
-      phone: clientProfiles.phone,
-      website: clientProfiles.website,
-      location: clientProfiles.location,
-      accountType: clientProfiles.accountType,
-      status: clientProfiles.status,
-      plan: clientProfiles.plan,
-      timezone: clientProfiles.timezone,
-      language: clientProfiles.language,
-      twoFactorEnabled: clientProfiles.twoFactorEnabled,
-      emailVerified: clientProfiles.emailVerified,
-      totalSubmissions: clientProfiles.totalSubmissions,
-      notes: clientProfiles.notes,
-      tags: clientProfiles.tags,
-      createdAt: clientProfiles.createdAt,
-      updatedAt: clientProfiles.updatedAt,
-      user: {
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        image: users.image,
-        createdAt: users.createdAt,
-      },
-    })
+    .select()
     .from(clientProfiles)
-    .leftJoin(users, eq(clientProfiles.userId, users.id))
     .where(whereClause)
     .orderBy(desc(clientProfiles.createdAt))
     .limit(limit)
@@ -910,55 +875,15 @@ export async function deleteClientProfile(id: string): Promise<boolean> {
 }
 
 /**
- * Get client profile by user ID
+ * Find client profile by email
  */
-export async function getClientProfileByUserId(userId: string): Promise<ClientProfileWithUser | null> {
-  try {
-    const [profile] = await db
-      .select({
-        id: clientProfiles.id,
-        userId: clientProfiles.userId,
-        displayName: clientProfiles.displayName,
-        username: clientProfiles.username,
-        bio: clientProfiles.bio,
-        jobTitle: clientProfiles.jobTitle,
-        company: clientProfiles.company,
-        industry: clientProfiles.industry,
-        phone: clientProfiles.phone,
-        website: clientProfiles.website,
-        location: clientProfiles.location,
-        accountType: clientProfiles.accountType,
-        status: clientProfiles.status,
-        plan: clientProfiles.plan,
-        timezone: clientProfiles.timezone,
-        language: clientProfiles.language,
-        twoFactorEnabled: clientProfiles.twoFactorEnabled,
-        emailVerified: clientProfiles.emailVerified,
-        totalSubmissions: clientProfiles.totalSubmissions,
-        notes: clientProfiles.notes,
-        tags: clientProfiles.tags,
-        createdAt: clientProfiles.createdAt,
-        updatedAt: clientProfiles.updatedAt,
-        user: {
-          id: users.id,
-          name: users.name,
-          email: users.email,
-          image: users.image,
-          avatar: users.avatar,
-          title: users.title,
-          createdAt: users.createdAt,
-        },
-      })
-      .from(clientProfiles)
-      .leftJoin(users, eq(clientProfiles.userId, users.id))
-      .where(eq(clientProfiles.userId, userId))
-      .limit(1);
+export async function getClientProfileByEmail(email: string): Promise<ClientProfile | null> {
+  const [profile] = await db
+    .select()
+    .from(clientProfiles)
+    .where(eq(clientProfiles.email, email));
 
-    return profile || null;
-  } catch (error) {
-    console.error("Error getting client profile by user ID:", error);
-    return null;
-  }
+  return profile || null;
 }
 
 /**
@@ -1011,26 +936,26 @@ export async function getClientProfileStats() {
 /**
  * Create account record for client with password
  */
-export async function createClientAccount(userId: string, email: string, passwordHash?: string | null): Promise<any> {
+export async function createClientAccount(userId: string | undefined, email: string, passwordHash?: string | null): Promise<any> {
   try {
     // Check if account already exists
     const existingAccount = await db
       .select()
       .from(accounts)
-      .where(eq(accounts.userId, userId))
+      .where(eq(accounts.email, email))
       .limit(1);
 
     if (existingAccount.length > 0) {
-      console.log(`Account already exists for user: ${userId}`);
+      console.log(`Account already exists for email: ${email}`);
       return existingAccount[0];
     }
 
     // Create account record for client
     const newAccount = {
-      userId,
+      userId: userId || null, // Allow null for client accounts
       type: "credentials" as any,
       provider: "credentials",
-      providerAccountId: userId, // Use userId as providerAccountId for credentials
+      providerAccountId: userId || email, // Use userId or email as providerAccountId
       email,
       passwordHash: passwordHash || null, // Allow null for OAuth users
       refresh_token: null,
@@ -1077,6 +1002,26 @@ export async function getClientAccountByEmail(email: string): Promise<any> {
  */
 export async function hasClientAccess(userId: string): Promise<boolean> {
   try {
+    // For client users, userId is actually the client profile ID
+    // We need to get the client profile first, then check for account by email
+    const clientProfile = await db
+      .select()
+      .from(clientProfiles)
+      .where(eq(clientProfiles.id, userId))
+      .limit(1);
+
+    if (clientProfile.length > 0) {
+      // This is a client user, check for account by email
+      const [account] = await db
+        .select()
+        .from(accounts)
+        .where(eq(accounts.email, clientProfile[0].email))
+        .limit(1);
+
+      return !!account;
+    }
+
+    // For admin users, check for account by userId
     const [account] = await db
       .select()
       .from(accounts)
@@ -1095,12 +1040,19 @@ export async function hasClientAccess(userId: string): Promise<boolean> {
  */
 export async function verifyClientPassword(email: string, password: string): Promise<boolean> {
   try {
+    
     const account = await getClientAccountByEmail(email);
-    if (!account || !account.passwordHash) {
+    
+    if (!account) {
       return false;
     }
-
+    
+    if (!account.passwordHash) {
+      return false;
+    }
+    
     const isValid = await comparePasswords(password, account.passwordHash);
+    
     return isValid;
   } catch (error) {
     console.error("Error verifying client password:", error);

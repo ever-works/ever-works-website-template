@@ -1,6 +1,6 @@
 import { compare, hash } from "bcryptjs";
 import Credentials from "next-auth/providers/credentials";
-import { getUserByEmail, logActivity, getClientAccountByEmail, verifyClientPassword } from "../db/queries";
+import { getUserByEmail, logActivity, getClientAccountByEmail, verifyClientPassword, getClientProfileByEmail } from "../db/queries";
 import { ActivityType } from "../db/schema";
 
 const SALT_ROUNDS = 10;
@@ -96,13 +96,23 @@ export const credentialsProvider = Credentials({
         const isClientPasswordValid = await verifyClientPassword(email, password);
         
         if (isClientPasswordValid) {
-          // Get the user record for the client account
-          const clientUser = await getUserByEmail(email);
-          if (clientUser) {
+          // Get the client profile for the account
+          const clientProfile = await getClientProfileByEmail(email);
+          if (clientProfile) {
+            // Create a user-like object for the client
+            const clientUser = {
+              id: clientProfile.id,
+              name: clientProfile.name || clientProfile.displayName,
+              email: clientProfile.email,
+              image: null,
+              // Mark as client user
+              isClient: true,
+            };
+            
             // Only allow client authentication if it's not an admin signin attempt
             if (!isAdminSignin) {
               console.log('✅ Client authentication successful');
-              logActivity(clientUser.id, ActivityType.SIGN_IN);
+              logActivity(clientProfile.id, ActivityType.SIGN_IN);
               return clientUser;
             } else {
               console.log('❌ Client user trying to sign in through admin form');

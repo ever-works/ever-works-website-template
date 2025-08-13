@@ -49,7 +49,9 @@ export function CredentialsForm({
       if (onSuccess) {
         onSuccess();
       } else {
-        router.push(redirect || "/dashboard");
+        // Use custom redirect from server response if available, otherwise use default
+        const redirectPath = (state as any).redirect || redirect || "/dashboard";
+        router.push(redirectPath);
         router.refresh();
       }
     }
@@ -126,9 +128,17 @@ export function CredentialsForm({
 
       if (res && !res.error) {
         setClientSuccess(true);
-        // Small delay to show success message before redirect
+        // Redirect based on user type
         setTimeout(() => {
-          if (onSuccess) onSuccess();
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            // For admin login, redirect to admin dashboard
+            // For client login, redirect to client dashboard
+            const redirectPath = clientMode ? "/admin" : "/client/dashboard";
+            router.push(redirectPath);
+            router.refresh();
+          }
         }, 1000);
       } else {
         setClientError(res?.error || 'Authentication failed');

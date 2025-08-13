@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { ActivityType, NewUser } from "@/lib/db/schema";
+import { ActivityType } from "@/lib/db/schema";
 import { redirect } from "next/navigation";
 import {
   validatedAction,
@@ -18,7 +18,6 @@ import {
   getPasswordResetTokenByToken,
   getUserByEmail,
   getVerificationTokenByToken,
-  insertNewUser,
   logActivity,
   softDeleteUser,
   updateUser,
@@ -26,6 +25,7 @@ import {
   updateUserVerification,
   createClientProfile,
   createClientAccount,
+  getClientAccountByEmail,
 } from "@/lib/db/queries";
 import { signIn } from "@/lib/auth";
 import {
@@ -56,7 +56,17 @@ export const signInAction = validatedAction(signInSchema, async (data) => {
     if (error) {
       throw error;
     }
-    return { success: true };
+    
+    // Check if this is a client user (not admin)
+    const clientAccount = await getClientAccountByEmail(data.email);
+    
+    if (clientAccount && !data.isAdmin) {
+      // Client user, redirect to client dashboard
+      return { success: true, redirect: "/client/dashboard" };
+    }
+    
+    // Admin user, redirect to admin dashboard
+    return { success: true, redirect: "/admin" };
   } catch (error) {
     console.error(error);
     return {
@@ -133,72 +143,46 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
       }
     }
 
-  const existingUser = await getUserByEmail(email).catch(() => null);
+    const passwordHash = await hashPassword(password);
 
-  if (existingUser) {
-    return {
-      error: "Failed to create user. Please try again.",
-      ...data,
-    };
-  }
+    // For client registrations, we only create records in client_profiles and accounts tables
+    // We don't create a user record in the users table for clients
+    
+    // 1) Create client profile record
+    const clientProfile = await createClientProfile({
+      email,
+      name,
+      displayName: name,
+      username: email.split('@')[0] || 'user',
+      bio: "Welcome! I'm a new user on this platform.",
+      jobTitle: "User",
+      company: "Unknown",
+      status: "active",
+      plan: "free",
+      accountType: "individual",
+    });
 
-  const passwordHash = await hashPassword(password);
+    // 2) Create credentials account record holding the password hash (no userId for clients)
+    await createClientAccount(undefined, email, passwordHash);
 
-  const newUser: NewUser = {
-    name,
-    email,
-    // For client registrations, we store password in accounts table, not users table
-    // passwordHash is intentionally omitted here for clients; admins will be handled via a separate flow
-  };
+    console.log(`Client account + profile created for user: ${email}`);
 
-  const [createdUser] = await insertNewUser(newUser);
+    // Log activity using the client profile ID
+    logActivity(clientProfile.id, ActivityType.SIGN_UP);
 
-  if (!createdUser) {
-    return {
-      error: "Failed to create user. Please try again.",
-      ...data,
-    };
-  }
-
-  logActivity(createdUser.id, ActivityType.SIGN_UP);
-
-  // Create client account + profile for new user (only for non-admin users)
-  if (!createdUser.isAdmin) {
-    try {
-      // 1) Create credentials account record holding the password hash
-      await createClientAccount(createdUser.id, email, passwordHash);
-
-      // 2) Create client profile record
-      await createClientProfile({
-        userId: createdUser.id,
-        displayName: createdUser.name,
-        username: createdUser.username || createdUser.email?.split('@')[0] || 'user',
-        bio: "Welcome! I'm a new user on this platform.",
-        jobTitle: "User",
-        company: "Unknown",
-        status: "active",
-        plan: "free",
-        accountType: "individual",
-      });
-      console.log(`Client account + profile created for user: ${createdUser.email}`);
-    } catch (profileError) {
-      console.error("Failed to create client account/profile:", profileError);
-      // Don't fail the signup if creation fails. The user can still proceed and fix later.
+    const verificationToken = await generateVerificationToken(email);
+    if (verificationToken) {
+      sendVerificationEmail(email, verificationToken.token);
     }
-  }
 
-  const verificationToken = await generateVerificationToken(email);
-  if (verificationToken) {
-    sendVerificationEmail(email, verificationToken.token);
-  }
+    await signIn(AuthProviders.CREDENTIALS, {
+      email,
+      password,
+      redirect: false,
+    });
 
-  await signIn(AuthProviders.CREDENTIALS, {
-    email,
-    password,
-    redirect: false,
-  });
-
-  return { success: true };
+    // Redirect clients to client dashboard
+    return { success: true, redirect: "/client/dashboard" };
   } catch (error) {
     console.error('SignUp error:', error);
     return {
