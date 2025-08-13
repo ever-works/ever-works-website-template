@@ -70,7 +70,7 @@ interface DeleteCommentDialogProps {
   comment: AdminCommentItem;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
+  onConfirm: () => Promise<void>;
 }
 
 export default function DeleteCommentDialog({ 
