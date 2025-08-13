@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { 
-  getClientProfileWithUser, 
+  getClientProfileById, 
   updateClientProfile, 
   deleteClientProfile 
 } from "@/lib/db/queries";
@@ -19,7 +19,7 @@ export async function GET(
 
     const { clientId } = await params;
 
-    const client = await getClientProfileWithUser(clientId);
+    const client = await getClientProfileById(clientId);
 
     if (!client) {
       return NextResponse.json(
