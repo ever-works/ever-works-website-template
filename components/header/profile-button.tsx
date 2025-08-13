@@ -141,7 +141,7 @@ export function ProfileButton() {
                 onClick={() => setIsProfileMenuOpen(false)}
               >
                 <Users className="mr-3 h-4 w-4 text-gray-400" />
-                Manage Clients
+                {t("common.MANAGE_CLIENTS")}
               </Link>
               <Link
                 href="/admin/categories"
@@ -177,7 +177,7 @@ export function ProfileButton() {
                 onClick={() => setIsProfileMenuOpen(false)}
               >
                 <MessageSquare className="mr-3 h-4 w-4 text-gray-400" />
-                Comments
+                {t("common.COMMENTS")}
               </Link>
               <Link
                 href="/admin/roles"
@@ -186,7 +186,7 @@ export function ProfileButton() {
                 onClick={() => setIsProfileMenuOpen(false)}
               >
                 <Shield className="mr-3 h-4 w-4 text-gray-400" />
-                Roles
+                {t("common.ROLES")}
               </Link>
               <Link
                 href="/admin/users"

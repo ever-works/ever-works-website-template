@@ -52,7 +52,10 @@
     "OF": "von",
     "LOADING": "Wird geladen...",
     "END_OF_CONTENT": "Sie haben das Ende erreicht",
-    "RETRY": "Erneut versuchen"
+    "RETRY": "Erneut versuchen",
+    "COMMENTS": "Kommentare",
+    "ROLES": "Rollen",
+    "MANAGE_CLIENTS": "Kunden verwalten"
   },
   "listing": {
     "ALL": "Alle",

@@ -52,7 +52,10 @@
     "OF": "之",
     "LOADING": "加载中...",
     "END_OF_CONTENT": "已到达末尾",
-    "RETRY": "重试"
+    "RETRY": "重试",
+    "COMMENTS": "评论",
+    "ROLES": "角色",
+    "MANAGE_CLIENTS": "管理客户"
   },
   "listing": {
     "ALL": "全部",
