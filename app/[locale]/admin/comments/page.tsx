@@ -328,7 +328,7 @@ export default function AdminCommentsPage() {
                               {comment.user.name || comment.user.email || "Unknown User"}
                             </p>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                              {new Date(comment.createdAt || '').toLocaleString()}
+                              {comment.createdAt ? new Date(comment.createdAt).toLocaleString() : 'Unknown date'}
                             </p>
                           </div>
                         </div>
