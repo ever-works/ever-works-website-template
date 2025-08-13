@@ -49,8 +49,7 @@ export function CredentialsForm({
       if (onSuccess) {
         onSuccess();
       } else {
-        // Use custom redirect from server response if available, otherwise use default
-        const redirectPath = (state as any).redirect || redirect || "/dashboard";
+        const redirectPath = (state as any).redirect || redirect || "/client/dashboard";
         router.push(redirectPath);
         router.refresh();
       }
@@ -122,24 +121,18 @@ export function CredentialsForm({
       const res = await signIn('credentials', {
         email,
         password,
-        isAdmin: clientMode ? "true" : "false", // Pass isAdmin flag for admin signin
+        isAdmin: clientMode ? "true" : "false",
         redirect: false,
       });
 
       if (res && !res.error) {
         setClientSuccess(true);
-        // Redirect based on user type
         setTimeout(() => {
-          if (onSuccess) {
-            onSuccess();
-          } else {
-            // For admin login, redirect to admin dashboard
-            // For client login, redirect to client dashboard
-            const redirectPath = clientMode ? "/admin" : "/client/dashboard";
-            router.push(redirectPath);
-            router.refresh();
-          }
-        }, 1000);
+          const redirectPath = clientMode ? "/admin" : "/client/dashboard";
+          router.push(redirectPath);
+          router.refresh();
+          if (onSuccess) onSuccess();
+        }, 400);
       } else {
         setClientError(res?.error || 'Authentication failed');
       }

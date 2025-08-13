@@ -17,7 +17,6 @@ const intl = createIntlMiddleware(routing);
 
 const ADMIN_PREFIX = "/admin";
 const ADMIN_SIGNIN = "/admin/auth/signin";
-const CLIENT_SIGNIN = "/auth/signin";
 
 /* ────────────────────────────────── NextAuth guard ────────────────────────────────── */
 
@@ -32,43 +31,6 @@ const nextAuthGuard: any = (auth as any)(
   },
   { callbacks: { authorized: () => true } },
 );
-
-/* ────────────────────────────── Client access guard ────────────────────────────── */
-async function checkClientAccess(req: NextRequest, baseRes: NextResponse): Promise<NextResponse> {
-  try {
-    const { auth } = await import("@/lib/auth");
-    const session = await auth();
-    
-    if (!session?.user?.id) {
-      // No session, redirect to client signin
-      const url = req.nextUrl.clone();
-      url.pathname = CLIENT_SIGNIN;
-      url.searchParams.set('callbackUrl', req.nextUrl.pathname);
-      return NextResponse.redirect(url);
-    }
-
-    // Check if user has client access (account record)
-    const { hasClientAccess } = await import("@/lib/db/queries");
-    const hasAccess = await hasClientAccess(session.user.id);
-    
-    if (!hasAccess) {
-      // User doesn't have client access, redirect to signin
-      const url = req.nextUrl.clone();
-      url.pathname = CLIENT_SIGNIN;
-      url.searchParams.set('callbackUrl', req.nextUrl.pathname);
-      return NextResponse.redirect(url);
-    }
-
-    return baseRes;
-  } catch (error) {
-    console.error("Error checking client access:", error);
-    // On error, redirect to signin for safety
-    const url = req.nextUrl.clone();
-    url.pathname = CLIENT_SIGNIN;
-    url.searchParams.set('callbackUrl', req.nextUrl.pathname);
-    return NextResponse.redirect(url);
-  }
-}
 
 /* ────────────────────────────── Supabase guard helper ────────────────────────────── */
 async function supabaseGuard(req: NextRequest, baseRes: NextResponse): Promise<NextResponse> {
@@ -120,9 +82,8 @@ export default async function middleware(req: NextRequest) {
   const hasLocale = routing.locales.includes(maybeLocale as any);
   const pathWithoutLocale = hasLocale ? `/${segments.slice(1).join("/")}` : originalPathname;
 
-  // Check client route access
+  // Only redirect admins away from /client/* without DB calls.
   if (pathWithoutLocale.startsWith("/client/")) {
-    // Redirect admin users away from client routes
     if (cfg.provider === "next-auth") {
       const { auth } = await import("@/lib/auth");
       const session = await auth();
@@ -132,9 +93,7 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.redirect(url);
       }
     }
-    
-    // Check client access for non-admin users
-    return checkClientAccess(req, intlResponse);
+    return intlResponse;
   }
   
   if (pathWithoutLocale.startsWith(ADMIN_PREFIX) && pathWithoutLocale !== ADMIN_SIGNIN) {
