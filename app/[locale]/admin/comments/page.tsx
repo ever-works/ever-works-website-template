@@ -46,7 +46,7 @@ export default function AdminCommentsPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const [commentToDelete, setCommentToDelete] = useState<AdminCommentItem | null>(null);
 
-  const fetchComments = useCallback(async (page: number = currentPage) => {
+  const fetchComments = useCallback(async (page: number = currentPage, search: string = searchTerm) => {
     try {
       if (page === 1) {
         setIsFiltering(true);
@@ -56,7 +56,7 @@ export default function AdminCommentsPage() {
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
-        ...(searchTerm && { search: searchTerm }),
+        ...(search && { search }),
       });
       
       const response = await fetch(`/api/admin/comments?${params}`);
@@ -96,7 +96,7 @@ export default function AdminCommentsPage() {
       const res = await fetch(`/api/admin/comments/${id}`, { method: "DELETE" });
       if (!res.ok && res.status !== 204) throw new Error("Delete failed");
       toast.success("Comment deleted");
-      fetchComments();
+      fetchComments(currentPage, searchTerm);
     } catch (e) {
       console.error("Failed to delete comment:", e);
       toast.error("Failed to delete comment");
@@ -122,14 +122,14 @@ export default function AdminCommentsPage() {
   };
 
   useEffect(() => {
-    fetchComments();
-  }, [fetchComments]);
+    fetchComments(currentPage, searchTerm);
+  }, [fetchComments, currentPage, searchTerm]);
 
   // Debounced search effect
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (searchTerm !== '') {
-        fetchComments(1);
+        fetchComments(1, searchTerm);
       }
     }, 300);
 
