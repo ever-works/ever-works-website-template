@@ -246,6 +246,8 @@ export default function AdminCommentsPage() {
             placeholder="Search comments by content, author name or email..."
             value={searchTerm}
             onChange={(e) => handleSearch(e.target.value)}
+            aria-label="Search comments"
+            role="searchbox"
             className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
           {isFiltering && (
