@@ -1,10 +1,8 @@
 "use client";
 
-import { Session } from "next-auth";
 import { Container } from "@/components/ui/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { FiUser, FiDroplet, FiBriefcase, FiFileText, FiArrowRight } from "react-icons/fi";
-import { useLocale } from "next-intl";
 import Link from "next/link";
 
 interface SettingsCardProps {
@@ -41,12 +39,7 @@ function SettingsCard({ title, description, icon, href }: SettingsCardProps) {
   );
 }
 
-interface SettingsContentProps {
-  session: Session;
-}
-
-export function SettingsContent({ session }: SettingsContentProps) {
-  const locale = useLocale();
+export function SettingsContent() {
 
   const settingsCards = [
     {

@@ -15,5 +15,5 @@ export default async function ClientSettingsPage() {
     redirect('/admin');
   }
   
-  return <SettingsContent session={session} />;
+  return <SettingsContent />;
 }

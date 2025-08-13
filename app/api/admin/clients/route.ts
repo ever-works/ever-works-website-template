@@ -139,26 +139,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create client with the actual user ID
+    // Create client profile with required email and name
     const clientData = {
-      userId: user.id,
-      displayName: raw.displayName || null,
-      username: raw.username || null,
-      bio: raw.bio || null,
-      jobTitle: raw.jobTitle || null,
-      company: raw.company || null,
-      industry: raw.industry || null,
-      phone: raw.phone || null,
-      website: raw.website || null,
-      location: raw.location || null,
-      accountType: raw.accountType || 'individual',
+      email: user.email,
+      name: user.name,
+      displayName: raw.displayName,
+      username: raw.username,
+      bio: raw.bio,
+      jobTitle: raw.jobTitle,
+      company: raw.company,
       status: raw.status || 'active',
       plan: raw.plan || 'free',
-      timezone: raw.timezone || 'UTC',
-      language: raw.language || 'en',
-      twoFactorEnabled: raw.twoFactorEnabled || false,
-      emailVerified: raw.emailVerified || false,
-      totalSubmissions: raw.totalSubmissions || 0,
+      accountType: raw.accountType || 'individual',
     };
 
     const newClient = await createClientProfile(clientData);
