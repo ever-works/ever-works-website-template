@@ -50,7 +50,9 @@ export const roles = pgTable("roles", {
 export const accounts = pgTable(
   "accounts",
   {
-    userId: text("userId").notNull(), // References client_profiles.id (not nullable)
+    userId: text("userId")
+      .notNull()
+      .references(() => clientProfiles.id, { onDelete: "cascade" }), // References client_profiles.id
     type: text("type").$type<AdapterAccountType>().notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
