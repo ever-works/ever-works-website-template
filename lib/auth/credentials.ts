@@ -65,7 +65,11 @@ export const credentialsProvider = Credentials({
           // Allow authentication for any user in users table (admin)
           console.log('✅ Admin authentication successful');
           logActivity(foundUser.id, ActivityType.SIGN_IN);
-          return foundUser;
+          // Return admin user with consistent structure
+          return {
+            ...foundUser,
+            isClient: false, // Explicitly mark as admin user
+          };
         }
       }
 
