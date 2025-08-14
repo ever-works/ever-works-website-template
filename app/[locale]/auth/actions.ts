@@ -171,10 +171,8 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
       throw new Error("Failed to create client account");
     }
 
-    console.log(`Client account + profile created for user: ${email}`);
-
     // Log activity using the client profile ID
-    logActivity(clientProfile.id, ActivityType.SIGN_UP);
+    await logActivity(clientProfile.id, ActivityType.SIGN_UP);
 
     const verificationToken = await generateVerificationToken(email);
     if (verificationToken) {
