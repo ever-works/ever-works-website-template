@@ -755,10 +755,13 @@ export async function createClientProfile(data: {
   plan?: string;
   accountType?: string;
 }): Promise<ClientProfile> {
+  // Normalize email for consistency
+  const normalizedEmail = data.email.toLowerCase().trim();
+  
   // Generate a unique username if not provided
   let finalUsername = data.username;
   if (!finalUsername) {
-    const extractedUsername = extractUsernameFromEmail(data.email);
+    const extractedUsername = extractUsernameFromEmail(normalizedEmail);
     if (extractedUsername) {
       finalUsername = await ensureUniqueUsername(extractedUsername);
     } else {
@@ -767,14 +770,14 @@ export async function createClientProfile(data: {
       finalUsername = await ensureUniqueUsername(`user${timestamp}`);
     }
   } else {
-    // Ensure provided username is also unique
-    finalUsername = await ensureUniqueUsername(finalUsername);
+    // Ensure provided username is also unique and normalized
+    finalUsername = await ensureUniqueUsername(finalUsername.toLowerCase());
   }
 
   const [profile] = await db
     .insert(clientProfiles)
     .values({
-      email: data.email,
+      email: normalizedEmail,
       name: data.name,
       displayName: data.displayName || data.name,
       username: finalUsername,
