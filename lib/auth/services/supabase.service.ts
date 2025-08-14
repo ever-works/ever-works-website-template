@@ -11,7 +11,7 @@ export class SupabaseService implements AuthService {
     return SupabaseService.instance;
   }
 
-  async signIn(email: string, password: string, isAdmin?: boolean): Promise<any> {
+  async signIn(email: string, password: string): Promise<any> {
     try {
       const { error } = await supabaseAuth.signInWithPassword(email, password);
       return { error };
