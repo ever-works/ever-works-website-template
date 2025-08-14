@@ -192,7 +192,13 @@ export function SocialLogin() {
                   "focus:outline-none focus:ring-2 focus:ring-theme-primary/20",
                   "transition-colors duration-150",
                   "flex items-center justify-center",
-                  "disabled:opacity-50 disabled:cursor-not-allowed"
+                  "disabled:opacity-50 disabled:cursor-not-allowed",
+                  styles.gradient,
+                  styles.hoverGradient,
+                  styles.border,
+                  styles.hoverBorder,
+                  styles.shadow,
+                  styles.hoverShadow,
                 )}
               >
                 <span className="text-base">
@@ -206,14 +212,14 @@ export function SocialLogin() {
 
       {/* Elegant security badge */}
       <div className="mt-6 flex justify-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200/50 dark:border-green-800/50 shadow-sm">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full  dark:from-theme-primary-20 dark:to-emerald-20 border dark:border-theme-primary-800 shadow-sm">
           <div className="relative">
-            <svg className="w-3 h-3 text-theme-primary-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-3 h-3 text-theme-primary-600 dark:text-theme-primary-400" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
             </svg>
-            <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+            <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-theme-primary-400 rounded-full animate-pulse" />
           </div>
-          <span className="text-xs font-medium text-green-700 dark:text-green-300">
+          <span className="text-xs font-medium text-theme-primary-700 dark:text-theme-primary-300">
             {t("SECURE_CONNECTION")}
           </span>
         </div>
