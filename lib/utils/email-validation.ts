@@ -73,7 +73,8 @@ export function isValidEmailRegex(email: string): boolean {
   // Pattern: local@domain.tld where:
   // - local: 1-64 chars, alphanumeric + some special chars
   // - domain: valid domain structure
-  const secureEmailRegex = /^[a-zA-Z0-9.!#$%&'*+\-/=?^_`{|}~]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+    const secureEmailRegex = /^[a-zA-Z0-9.!#$%&'*+\-/=?^_`{|}~]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
   
   return secureEmailRegex.test(email);
 } 

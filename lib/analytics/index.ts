@@ -3,19 +3,19 @@ import type { Properties, PostHogConfig } from 'posthog-js';
 import * as Sentry from '@sentry/nextjs';
 import type { Event as SentryEvent } from '@sentry/nextjs';
 import {
-    POSTHOG_KEY,
-    POSTHOG_HOST,
-    POSTHOG_ENABLED,
-    POSTHOG_DEBUG,
-    POSTHOG_SESSION_RECORDING_ENABLED,
-    POSTHOG_AUTO_CAPTURE,
-    POSTHOG_SAMPLE_RATE,
-    POSTHOG_SESSION_RECORDING_SAMPLE_RATE,
-    SENTRY_ENABLED,
-    EXCEPTION_TRACKING_PROVIDER,
-    POSTHOG_EXCEPTION_TRACKING,
-    SENTRY_EXCEPTION_TRACKING,
-    type ExceptionTrackingProvider,
+  POSTHOG_KEY,
+  POSTHOG_HOST,
+  POSTHOG_ENABLED,
+  POSTHOG_DEBUG,
+  POSTHOG_SESSION_RECORDING_ENABLED,
+  POSTHOG_AUTO_CAPTURE,
+  POSTHOG_SAMPLE_RATE,
+  POSTHOG_SESSION_RECORDING_SAMPLE_RATE,
+  SENTRY_ENABLED,
+  EXCEPTION_TRACKING_PROVIDER,
+  POSTHOG_EXCEPTION_TRACKING,
+  SENTRY_EXCEPTION_TRACKING,
+  type ExceptionTrackingProvider,
 } from '@/lib/constants';
 
 type EventProperties = Properties;
@@ -74,10 +74,16 @@ export class Analytics {
   init() {
     if (this.initialized) return;
     
-    const posthogKey = POSTHOG_KEY.value;
-    const posthogHost = POSTHOG_HOST.value;
+    // Ensure we're on the client side
+    if (typeof window === 'undefined') {
+      console.warn('Analytics.init() called during server-side rendering');
+      return;
+    }
     
-    if (typeof window !== 'undefined' && POSTHOG_ENABLED && posthogKey && posthogHost) {
+    const posthogKey = POSTHOG_KEY?.value;
+    const posthogHost = POSTHOG_HOST?.value;
+    
+    if (POSTHOG_ENABLED && posthogKey && posthogHost) {
       // Initialize PostHog with centralized configuration
       const baseConfig: Partial<PostHogConfig> = {
         api_host: posthogHost,
@@ -161,8 +167,8 @@ export class Analytics {
         type: 'window.onerror',
       });
       
-      // Call original handler if it exists
-      if (originalOnError) {
+      // Call original handler if it exists and is a function
+      if (typeof originalOnError === 'function') {
         return originalOnError.call(window, message, source, lineno, colno, error);
       }
       return false;
@@ -182,7 +188,7 @@ export class Analytics {
 
   // User Identification and Properties
   identify(userId: string, properties?: UserProperties) {
-    if (!this.initialized || !POSTHOG_ENABLED) return;
+    if (!this.initialized || !POSTHOG_ENABLED || typeof window === 'undefined') return;
     posthog?.identify(userId, properties);
     if (SENTRY_ENABLED) {
       Sentry.setUser({ id: userId, ...properties });
@@ -190,7 +196,7 @@ export class Analytics {
   }
 
   reset() {
-    if (!this.initialized || !POSTHOG_ENABLED) return;
+    if (!this.initialized || !POSTHOG_ENABLED || typeof window === 'undefined') return;
     posthog?.reset();
     if (SENTRY_ENABLED) {
       Sentry.setUser(null);
@@ -199,13 +205,13 @@ export class Analytics {
 
   // Event Tracking
   track(eventName: string, properties?: EventProperties) {
-    if (!this.initialized || !POSTHOG_ENABLED) return;
+    if (!this.initialized || !POSTHOG_ENABLED || typeof window === 'undefined') return;
     posthog?.capture(eventName, properties);
   }
 
   // Page Views
   trackPageView(url: string, properties?: EventProperties) {
-    if (!this.initialized || !POSTHOG_ENABLED) return;
+    if (!this.initialized || !POSTHOG_ENABLED || typeof window === 'undefined') return;
     posthog?.capture('$pageview', {
       $current_url: url,
       ...properties,
@@ -214,12 +220,12 @@ export class Analytics {
 
   // Feature Flags
   isFeatureEnabled(flagKey: string, defaultValue = false): boolean {
-    if (!this.initialized || !POSTHOG_ENABLED) return defaultValue;
+    if (!this.initialized || !POSTHOG_ENABLED || typeof window === 'undefined') return defaultValue;
     return posthog?.isFeatureEnabled(flagKey) ?? defaultValue;
   }
 
   async reloadFeatureFlags(): Promise<void> {
-    if (!this.initialized || !POSTHOG_ENABLED) return;
+    if (!this.initialized || !POSTHOG_ENABLED || typeof window === 'undefined') return;
     await posthog?.reloadFeatureFlags();
   }
 
@@ -231,7 +237,7 @@ export class Analytics {
 
   // Exception Tracking - New unified method
   captureException(error: Error | string, context?: Record<string, any>) {
-    if (!this.initialized) return;
+    if (!this.initialized || typeof window === 'undefined') return;
     
     const errorObject = typeof error === 'string' ? new Error(error) : error;
     const provider = this.exceptionTrackingProvider;
@@ -262,13 +268,13 @@ export class Analytics {
 
   // User Properties
   setUserProperties(properties: UserProperties) {
-    if (!this.initialized || !POSTHOG_ENABLED) return;
+    if (!this.initialized || !POSTHOG_ENABLED || typeof window === 'undefined') return;
     posthog?.people.set(properties);
   }
 
   // Super Properties (properties sent with every event)
   setSuperProperties(properties: Record<string, any>) {
-    if (!this.initialized || !POSTHOG_ENABLED) return;
+    if (!this.initialized || !POSTHOG_ENABLED || typeof window === 'undefined') return;
     posthog?.register(properties);
   }
 }

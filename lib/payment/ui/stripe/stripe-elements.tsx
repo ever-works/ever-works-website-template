@@ -5,6 +5,7 @@ import { PaymentElement, useStripe, useElements, Elements } from '@stripe/react-
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import { PaymentFormProps } from '../../types/payment-types';
 import { Button } from '@heroui/react';
+import { useSetupIntent } from '@/hooks/use-setup-intent';
 
 // Wrapper with Stripe Elements
 interface StripeElementsWrapperProps extends PaymentFormProps {
@@ -348,10 +349,11 @@ export function StripePaymentForm({
 
 export function StripeElementsWrapper({
   stripePublicKey,
-  clientSecret,
   ...props
 }: StripeElementsWrapperProps) {
   const [stripePromise, setStripePromise] = useState<Promise<any> | null>(null);
+  const { clientSecret, isReady } = useSetupIntent();
+
 
   useEffect(() => {
     if (stripePublicKey) {
@@ -359,7 +361,7 @@ export function StripeElementsWrapper({
     }
   }, [stripePublicKey]);
 
-  if (!clientSecret || !stripePromise) {
+  if (!isReady) {
     return (
       <div className="w-full py-8">
         <div className="max-w-md mx-auto">

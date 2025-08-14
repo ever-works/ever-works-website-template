@@ -66,9 +66,29 @@ export function ProfileButton() {
   const handleLogout = async () => {
     setIsProfileMenuOpen(false);
 
-    // Create enhanced overlay with better animations
+    // Function to get current theme colors
+    const getThemeColors = () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      return {
+        background: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.6)',
+        cardBg: isDark 
+          ? 'linear-gradient(135deg, #1f2937 0%, #111827 100%)' 
+          : 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+        cardShadow: isDark 
+          ? '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)' 
+          : '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.2)',
+        border: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.2)',
+        spinnerBorder: isDark ? '#374151' : '#e5e7eb',
+        titleColor: isDark ? '#f9fafb' : '#1f2937',
+        textColor: isDark ? '#9ca3af' : '#6b7280'
+      };
+    };
+    
+    // Create enhanced overlay with better animations and dark mode support
     const overlay = document.createElement('div');
     overlay.id = 'logout-overlay';
+    
+    const colors = getThemeColors();
     overlay.innerHTML = `
       <div style="
         position: fixed;
@@ -76,7 +96,7 @@ export function ProfileButton() {
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.6);
+        background: ${colors.background};
         display: flex;
         justify-content: center;
         align-items: center;
@@ -85,19 +105,19 @@ export function ProfileButton() {
         animation: fadeIn 0.3s ease-out;
       ">
         <div style="
-          background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+          background: ${colors.cardBg};
           padding: 2.5rem;
           border-radius: 20px;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          box-shadow: ${colors.cardShadow};
           text-align: center;
           max-width: 360px;
           animation: slideInScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 1px solid ${colors.border};
         ">
           <div style="
             width: 56px;
             height: 56px;
-            border: 3px solid #e5e7eb;
+            border: 3px solid ${colors.spinnerBorder};
             border-top: 3px solid #3b82f6;
             border-radius: 50%;
             animation: spin 1.2s linear infinite;
@@ -108,12 +128,12 @@ export function ProfileButton() {
             margin: 0 0 0.75rem 0;
             font-size: 1.375rem;
             font-weight: 700;
-            color: #1f2937;
+            color: ${colors.titleColor};
             letter-spacing: -0.025em;
           ">Signing Out</h3>
           <p style="
             margin: 0;
-            color: #6b7280;
+            color: ${colors.textColor};
             font-size: 0.9375rem;
             line-height: 1.6;
             font-weight: 500;
@@ -143,6 +163,34 @@ export function ProfileButton() {
     `;
     document.body.appendChild(overlay);
 
+    // Add theme change listener to update overlay colors dynamically
+    const updateOverlayTheme = () => {
+      const overlayElement = document.getElementById('logout-overlay');
+      if (overlayElement) {
+        const colors = getThemeColors();
+        const overlayDiv = overlayElement.querySelector('div > div') as HTMLElement;
+        const titleElement = overlayElement.querySelector('h3') as HTMLElement;
+        const textElement = overlayElement.querySelector('p') as HTMLElement;
+        const spinnerElement = overlayElement.querySelector('div > div > div') as HTMLElement;
+        
+        if (overlayDiv) {
+          overlayDiv.style.background = colors.cardBg;
+          overlayDiv.style.boxShadow = colors.cardShadow;
+          overlayDiv.style.border = `1px solid ${colors.border}`;
+        }
+        if (titleElement) titleElement.style.color = colors.titleColor;
+        if (textElement) textElement.style.color = colors.textColor;
+        if (spinnerElement) spinnerElement.style.border = `3px solid ${colors.spinnerBorder} 3px solid #3b82f6`;
+      }
+    };
+
+    // Listen for theme changes
+    const observer = new MutationObserver(updateOverlayTheme);
+    observer.observe(document.documentElement, { 
+      attributes: true, 
+      attributeFilter: ['class'] 
+    });
+
     try {
       await signOut({ callbackUrl: '/' });
     } catch (error) {
@@ -150,6 +198,8 @@ export function ProfileButton() {
       if (overlay && document.body.contains(overlay)) {
         document.body.removeChild(overlay);
       }
+    } finally {
+      observer.disconnect();
     }
   };
 
@@ -244,16 +294,16 @@ export function ProfileButton() {
         </button>
       </div>
 
-                {isProfileMenuOpen && (
-            <div
-              ref={menuRef}
-              className="origin-top-right absolute right-0 mt-3 w-80 rounded-2xl shadow-2xl py-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl ring-1 ring-black/5 dark:ring-white/10 focus:outline-none z-50 animate-in slide-in-from-top-2 duration-300"
-              role="menu"
-              aria-orientation="vertical"
-              aria-labelledby="user-menu"
-            >
+      {isProfileMenuOpen && (
+        <div
+          ref={menuRef}
+          className="origin-top-right absolute right-0 mt-3 w-80 rounded-2xl shadow-2xl py-3 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl ring-1 ring-black/5 dark:ring-white/10 focus:outline-none z-50 animate-in slide-in-from-top-2 duration-300"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="user-menu"
+        >
           {/* User section with detailed information */}
-          <div className="px-5 py-4 border-b border-gray-100/50 dark:border-gray-700/50">
+          <div className="px-5 py-4 border-b border-gray-100/50 dark:border-gray-600/50">
             <div className="flex items-start space-x-4">
               <div className="relative flex-shrink-0">
                 <Avatar
@@ -286,7 +336,7 @@ export function ProfileButton() {
                   }`}>
                     {getDisplayRole()}
                   </span>
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300">
                     {getOnlineStatus()}
                   </span>
                 </div>
@@ -448,7 +498,7 @@ export function ProfileButton() {
           </div>
 
           {/* Separator */}
-          <div className="border-t border-gray-100/50 dark:border-gray-700/50 my-2"></div>
+          <div className="border-t border-gray-100/50 dark:border-gray-600/50 my-2"></div>
 
           {/* Logout button */}
           <button

@@ -30,7 +30,9 @@ export function getNextPublicEnv<O extends Options<unknown>>(name: string, optio
 		get value() {
 			const defaultValue = typeof options === 'string' ? options : options?.default;
 
-			let value = NEXT_PUBLIC_ENVS.value[name] || defaultValue;
+			// Ensure NEXT_PUBLIC_ENVS.value exists before accessing it
+			const envs = NEXT_PUBLIC_ENVS?.value || {};
+			let value = envs[name] || defaultValue;
 			if (typeof options === 'object' && options.map) {
 				value = options.map(value) as any;
 			}
@@ -53,6 +55,10 @@ export function getServerRuntimeConfig() {
 
 export function setNextPublicEnv(envs: Env) {
 	if (envs) {
+		// Ensure NEXT_PUBLIC_ENVS.value is initialized
+		if (!NEXT_PUBLIC_ENVS.value) {
+			NEXT_PUBLIC_ENVS.value = {};
+		}
 		NEXT_PUBLIC_ENVS.value = {
 			...NEXT_PUBLIC_ENVS.value,
 			...envs
@@ -61,6 +67,11 @@ export function setNextPublicEnv(envs: Env) {
 }
 
 export function loadNextPublicEnvs() {
+	// Ensure process.env exists (for SSR safety)
+	if (typeof process === 'undefined' || !process.env) {
+		return {};
+	}
+	
 	return Object.keys(process.env)
 		.filter((key) => key.startsWith('NEXT_PUBLIC'))
 		.reduce((acc, value) => {
@@ -70,4 +81,11 @@ export function loadNextPublicEnvs() {
 }
 
 // Preload Some variables
-setNextPublicEnv(loadNextPublicEnvs());
+try {
+	const envs = loadNextPublicEnvs();
+	setNextPublicEnv(envs);
+} catch (error) {
+	console.warn('Failed to load environment variables:', error);
+	// Initialize with empty object as fallback
+	setNextPublicEnv({});
+}

@@ -8,6 +8,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { accounts, sessions, users, verificationTokens } from "../db/schema";
 import { db } from "../db/drizzle";
 import authConfig from "../../auth.config";
+import { createProviderConfigs, StripeProvider } from "../payment";
 
 // Define proper interface for user objects with admin/client properties
 interface ExtendedUser {
@@ -27,6 +28,32 @@ const drizzle = isDatabaseAvailable ? DrizzleAdapter(db, {
   sessionsTable: sessions as any,
   verificationTokensTable: verificationTokens as any,
 }) : undefined;
+
+
+export function initializeStripeProvider() {
+  const requiredEnvVars = {
+    apiKey: process.env.STRIPE_SECRET_KEY,
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+    publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  };
+
+  if (!requiredEnvVars.apiKey || !requiredEnvVars.webhookSecret || !requiredEnvVars.publishableKey) {
+    throw new Error('Stripe configuration is incomplete');
+  }
+
+  const configs = createProviderConfigs({
+    apiKey: requiredEnvVars.apiKey,
+    webhookSecret: requiredEnvVars.webhookSecret,
+    options: {
+      publishableKey: requiredEnvVars.publishableKey,
+      apiVersion: process.env.STRIPE_API_VERSION || '2023-10-16'
+    }
+  });
+
+  return new StripeProvider(configs.stripe);
+}
+
+
 
 export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   adapter: drizzle,
