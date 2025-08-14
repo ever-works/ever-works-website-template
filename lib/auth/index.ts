@@ -9,6 +9,14 @@ import { accounts, sessions, users, verificationTokens } from "../db/schema";
 import { db } from "../db/drizzle";
 import authConfig from "../../auth.config";
 
+// Define proper interface for user objects with admin/client properties
+interface ExtendedUser {
+  id?: string;
+  email?: string;
+  isAdmin?: boolean;
+  isClient?: boolean;
+}
+
 // Check if DATABASE_URL is set
 const isDatabaseAvailable = !!process.env.DATABASE_URL;
 
@@ -55,8 +63,10 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
     },
     jwt: async ({ token, user, account }) => {
       // Do not query DB here (Edge runtime). Just carry flags from user if present.
-      if (user?.id && typeof user.id === "string") {
-        token.userId = user.id;
+      const extendedUser = user as ExtendedUser;
+      
+      if (extendedUser?.id && typeof extendedUser.id === "string") {
+        token.userId = extendedUser.id;
       }
       if (!token.userId && typeof token.sub === "string") {
         token.userId = token.sub;
@@ -64,11 +74,14 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       if (account?.provider) {
         token.provider = account.provider;
       }
-      if (typeof (user as any)?.isAdmin === "boolean") {
-        token.isAdmin = (user as any).isAdmin;
-      } else if (typeof (user as any)?.isClient === "boolean") {
-        token.isAdmin = !(user as any).isClient;
+      
+      // Set admin flag based on user properties
+      if (typeof extendedUser?.isAdmin === "boolean") {
+        token.isAdmin = extendedUser.isAdmin;
+      } else if (typeof extendedUser?.isClient === "boolean") {
+        token.isAdmin = !extendedUser.isClient;
       }
+      
       return token;
     },
     session: async ({ session, token }) => {
