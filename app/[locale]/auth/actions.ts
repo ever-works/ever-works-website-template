@@ -176,7 +176,7 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
 
     const verificationToken = await generateVerificationToken(email);
     if (verificationToken) {
-      sendVerificationEmail(email, verificationToken.token);
+      await sendVerificationEmail(email, verificationToken.token);
     }
 
     await signIn(AuthProviders.CREDENTIALS, {
