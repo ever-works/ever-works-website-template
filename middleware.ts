@@ -85,7 +85,6 @@ export default async function middleware(req: NextRequest) {
   // Only redirect admins away from /client/* without DB calls.
   if (pathWithoutLocale.startsWith("/client/")) {
     if (cfg.provider === "next-auth") {
-      const { auth } = await import("@/lib/auth");
       const session = await auth();
       if (session?.user?.isAdmin) {
         const url = req.nextUrl.clone();

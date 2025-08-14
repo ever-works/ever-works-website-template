@@ -5,6 +5,7 @@ import { User } from "next-auth";
 export type ActionState = {
   error?: string;
   success?: string;
+  redirect?: string;
   [key: string]: any; // This allows for additional properties
 };
 

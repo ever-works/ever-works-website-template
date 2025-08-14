@@ -49,7 +49,7 @@ export function CredentialsForm({
       if (onSuccess) {
         onSuccess();
       } else {
-        const redirectPath = (state as any).redirect || redirect || "/client/dashboard";
+        const redirectPath = state.redirect || redirect || "/client/dashboard";
         router.push(redirectPath);
         router.refresh();
       }
