@@ -14,7 +14,7 @@ export class NextAuthService implements AuthService {
     return NextAuthService.instance;
   }
 
-  async signIn(email: string, password: string, isAdmin?: string): Promise<any> {
+  async signIn(email: string, password: string, isAdmin?: boolean): Promise<any> {
     try {
       const result = await signIn(AuthProviders.CREDENTIALS, {
         email,

@@ -46,7 +46,7 @@ const signInSchema = z.object({
   password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
   authProvider: z.enum(authProviderTypes).default('next-auth'),
   captchaToken: z.string().optional(),
-  isAdmin: z.string().optional(), // Add isAdmin flag
+  isAdmin: z.boolean().optional(), // Add isAdmin flag
 });
 
 export const signInAction = validatedAction(signInSchema, async (data) => {

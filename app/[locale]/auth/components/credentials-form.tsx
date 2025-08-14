@@ -121,7 +121,7 @@ export function CredentialsForm({
       const res = await signIn('credentials', {
         email,
         password,
-        isAdmin: clientMode ? "true" : "false",
+        isAdmin: clientMode,
         redirect: false,
       });
 

@@ -11,7 +11,7 @@ interface AuthResult {
 }
 
 export interface AuthService {
-  signIn(email: string, password: string): Promise<AuthResult>;
+  signIn(email: string, password: string, isAdmin?: boolean): Promise<AuthResult>;
   signOut(): Promise<void>;
   signUp(email: string, password: string): Promise<AuthResult>;
   getCurrentUser(): Promise<any | null>;
