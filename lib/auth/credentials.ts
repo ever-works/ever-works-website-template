@@ -93,8 +93,8 @@ export const credentialsProvider = Credentials({
               name: clientProfile.name || clientProfile.displayName,
               email: clientProfile.email,
               image: null,
-              // Mark as client user
-              isClient: true,
+              // Explicitly mark as non-admin
+              isAdmin: false,
             };
             
             // Allow client authentication
