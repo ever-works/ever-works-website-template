@@ -172,7 +172,7 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
     }
 
     // Log activity using the client profile ID
-    await logActivity(clientProfile.id, ActivityType.SIGN_UP);
+    		await logActivity(ActivityType.SIGN_UP, undefined, clientProfile.id);
 
     const verificationToken = await generateVerificationToken(email);
     if (verificationToken) {
@@ -236,7 +236,7 @@ export const updatePassword = validatedActionWithUser(
 
     await Promise.all([
       updateUserPassword(newPasswordHash, dbUser.id),
-      logActivity(dbUser.id, ActivityType.UPDATE_PASSWORD),
+      		logActivity(ActivityType.UPDATE_PASSWORD, dbUser.id),
     ]);
 
     return { success: "Password updated successfully." };
@@ -265,7 +265,7 @@ export const deleteAccount = validatedActionWithUser(
       return { error: "Incorrect password. Account deletion failed." };
     }
 
-    await logActivity(dbUser.id, ActivityType.DELETE_ACCOUNT);
+    		await logActivity(ActivityType.DELETE_ACCOUNT, dbUser.id);
 
     await softDeleteUser(dbUser.id);
     const authService = authServiceFactory(provider);
@@ -295,7 +295,7 @@ export const updateAccount = validatedActionWithUser(
     }
     await Promise.all([
       updateUser({ name, email }, dbUser.id),
-      logActivity(dbUser.id, ActivityType.UPDATE_ACCOUNT),
+      		logActivity(ActivityType.UPDATE_ACCOUNT, dbUser.id),
     ]);
 
     return { success: "Account updated successfully." };
@@ -355,7 +355,7 @@ export const verifyEmailAction = async (token: string) => {
     deleteVerificationToken(existingToken.token),
   ]);
 
-  logActivity(existingUser.id, ActivityType.VERIFY_EMAIL);
+  		logActivity(ActivityType.VERIFY_EMAIL, existingUser.id);
 
   return { success: true };
 };
@@ -405,7 +405,7 @@ export const newPasswordAction = validatedAction(
       deletePasswordResetToken(data.token),
     ]);
 
-    logActivity(result.userId, ActivityType.UPDATE_PASSWORD);
+    		logActivity(ActivityType.UPDATE_PASSWORD, result.userId);
 
     return { success: true };
   }

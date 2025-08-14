@@ -59,9 +59,15 @@ function extractUsernameFromEmail(email: string): string | null {
   return cleanUsername.length > 0 ? cleanUsername : null;
 }
 
-export async function logActivity(userId: string, type: ActivityType, ipAddress?: string) {
+export async function logActivity(
+  type: ActivityType, 
+  userId?: string, 
+  clientId?: string,
+  ipAddress?: string
+) {
 	const newActivity: NewActivityLog = {
-		userId,
+		userId: userId || null,
+		clientId: clientId || null,
 		action: type,
 		ipAddress: ipAddress || ''
 	};
