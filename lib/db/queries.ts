@@ -987,7 +987,7 @@ export async function createClientAccount(userId: string | undefined, email: str
 
     // Create account record for client
     const newAccount = {
-      userId: userId || null, // Allow null for client accounts
+      userId: userId || crypto.randomUUID(), // Always required, references client_profiles.id
       type: "credentials" as any,
       provider: "credentials",
       providerAccountId: userId || crypto.randomUUID(), // Generate unique ID if userId is null
@@ -1037,16 +1037,11 @@ export async function getClientAccountByEmail(email: string): Promise<any> {
  */
 export async function hasClientAccess(userId: string): Promise<boolean> {
   try {
-    // Check if account exists for the user (either direct userId or via client profile email)
+    // Check if account exists for the user (userId references client_profiles.id)
     const [account] = await db
       .select()
       .from(accounts)
-      .where(
-        sql`${accounts.userId} = ${userId} OR 
-            ${accounts.email} IN (
-              SELECT email FROM ${clientProfiles} WHERE id = ${userId}
-            )`
-      )
+      .where(eq(accounts.userId, userId))
       .limit(1);
 
     return !!account;

@@ -50,7 +50,7 @@ export const roles = pgTable("roles", {
 export const accounts = pgTable(
   "accounts",
   {
-    userId: text("userId"), // Remove .notNull() and .references() for client accounts
+    userId: text("userId").notNull(), // References client_profiles.id (not nullable)
     type: text("type").$type<AdapterAccountType>().notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
@@ -72,6 +72,8 @@ export const accounts = pgTable(
         columns: [account.provider, account.providerAccountId],
       }),
     },
+    // Index on email for client authentication lookups
+    index("accounts_email_idx").on(account.email),
   ]
 );
 
@@ -82,8 +84,8 @@ export const clientProfiles = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    email: text("email").unique(),
-    name: text("name"),
+    email: text("email").unique().notNull(),
+    name: text("name").notNull(),
     displayName: text("display_name"),
     username: text("username").unique(),
     bio: text("bio"),

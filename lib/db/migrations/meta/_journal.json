@@ -99,6 +99,20 @@
       "when": 1755053956123,
       "tag": "0013_thin_scarlet_witch",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1755190857342,
+      "tag": "0014_soft_reavers",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1755191614472,
+      "tag": "0015_light_nightshade",
+      "breakpoints": true
     }
   ]
 }
