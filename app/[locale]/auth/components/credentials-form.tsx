@@ -381,6 +381,7 @@ export function CredentialsForm({
                     }}
                     theme="light"
                     size="normal"
+                    className="scale-90 transform-gpu"
                   />
             </div>
           </div>
@@ -394,7 +395,7 @@ export function CredentialsForm({
 
           {/* Simple loading indicator */}
           {isVerifying && (
-            <div className="mt-2 text-sm text-blue-600 dark:text-blue-400">
+            <div className="mt-2 text-sm text-theme-primary-600 dark:text-theme-primary-400">
               Verifying...
             </div>
           )}

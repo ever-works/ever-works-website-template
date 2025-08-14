@@ -183,33 +183,21 @@ export function SocialLogin() {
                   provider.provider === 'x' ? 'X' :
                   provider.provider}`}
                 className={cn(
-                  "group relative w-12 h-12 rounded-xl border-2 backdrop-blur-sm",
-                  "bg-gradient-to-br bg-white/80 dark:bg-gray-800/80",
-                  styles.gradient,
-                  styles.hoverGradient,
-                  styles.border,
-                  styles.hoverBorder,
-                  "shadow-lg shadow-black/5",
-                  styles.shadow,
-                  styles.hoverShadow,
-                  "hover:shadow-xl",
-                  "focus:outline-none focus:ring-4 focus:ring-theme-primary/20 focus:border-theme-primary/60",
-                  "transition-all duration-300 ease-out",
+                  "w-9 h-9 rounded-md border",
+                  "bg-white dark:bg-gray-800",
+                  "border-gray-200 dark:border-gray-700",
+                  "hover:border-gray-300 dark:hover:border-gray-600",
+                  "hover:bg-gray-50 dark:hover:bg-gray-700",
+                  "shadow-sm hover:shadow",
+                  "focus:outline-none focus:ring-2 focus:ring-theme-primary/20",
+                  "transition-colors duration-150",
                   "flex items-center justify-center",
-                  "disabled:opacity-50 disabled:cursor-not-allowed",
-                  "hover:scale-105 hover:-translate-y-0.5 active:scale-100 active:translate-y-0",
-                  "before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300"
+                  "disabled:opacity-50 disabled:cursor-not-allowed"
                 )}
               >
-                <span className="relative z-10 text-xl transition-transform duration-300 group-hover:scale-110">
+                <span className="text-base">
                   {provider.icon}
                 </span>
-
-                {/* Animated shine effect */}
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out opacity-0 group-hover:opacity-100" />
-
-                {/* Floating particles on hover */}
-                <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-ping" />
               </Button>
             </form>
           );
@@ -220,7 +208,7 @@ export function SocialLogin() {
       <div className="mt-6 flex justify-center">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200/50 dark:border-green-800/50 shadow-sm">
           <div className="relative">
-            <svg className="w-3 h-3 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-3 h-3 text-theme-primary-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
             </svg>
             <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
