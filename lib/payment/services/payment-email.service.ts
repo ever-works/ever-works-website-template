@@ -9,10 +9,60 @@ import { sendEmailSafely } from '@/lib/newsletter/utils';
 import { getPaymentSuccessTemplate } from '@/lib/mail/templates/payment-success';
 import { getPaymentFailedTemplate } from '@/lib/mail/templates/payment-failed';
 import {
-    getNewSubscriptionTemplate,
-    getUpdatedSubscriptionTemplate,
-    getCancelledSubscriptionTemplate
+  getNewSubscriptionTemplate,
+  getUpdatedSubscriptionTemplate,
+  getCancelledSubscriptionTemplate
 } from '@/lib/mail/templates/subscription-events';
+
+// Simple template functions for new subscription management features
+const getSubscriptionCancellingTemplate = (data: SubscriptionCancellingEmailData) => ({
+  subject: `Your ${data.companyName || 'Ever Works'} subscription is being cancelled`,
+  html: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2>Subscription Cancellation</h2>
+      <p>Hello ${data.customerName},</p>
+      <p>Your subscription to the ${data.planName} plan has been cancelled.</p>
+      <p>You will continue to have access to your current plan until ${new Date(data.currentPeriodEnd).toLocaleDateString()}.</p>
+      <p>If you change your mind, you can reactivate your subscription anytime before the end of your current period.</p>
+      <p><a href="${data.reactivateUrl || data.companyUrl}">Reactivate Subscription</a></p>
+      <p>If you have any questions, please contact us at ${data.supportEmail}.</p>
+      <p>Best regards,<br>The ${data.companyName || 'Ever Works'} Team</p>
+    </div>
+  `,
+  text: `Subscription Cancellation\n\nHello ${data.customerName},\n\nYour subscription to the ${data.planName} plan has been cancelled.\n\nYou will continue to have access to your current plan until ${new Date(data.currentPeriodEnd).toLocaleDateString()}.\n\nIf you change your mind, you can reactivate your subscription anytime before the end of your current period.\n\nReactivate Subscription: ${data.reactivateUrl || data.companyUrl}\n\nIf you have any questions, please contact us at ${data.supportEmail}.\n\nBest regards,\nThe ${data.companyName || 'Ever Works'} Team`
+});
+
+const getSubscriptionReactivatedTemplate = (data: SubscriptionReactivatedEmailData) => ({
+  subject: `Your ${data.companyName || 'Ever Works'} subscription has been reactivated`,
+  html: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2>Subscription Reactivated</h2>
+      <p>Hello ${data.customerName},</p>
+      <p>Great news! Your subscription to the ${data.planName} plan has been reactivated.</p>
+      <p>Your subscription will continue as normal, and you won't lose access to any features.</p>
+      <p><a href="${data.manageSubscriptionUrl || data.companyUrl}">Manage Subscription</a></p>
+      <p>If you have any questions, please contact us at ${data.supportEmail}.</p>
+      <p>Best regards,<br>The ${data.companyName || 'Ever Works'} Team</p>
+    </div>
+  `,
+  text: `Subscription Reactivated\n\nHello ${data.customerName},\n\nGreat news! Your subscription to the ${data.planName} plan has been reactivated.\n\nYour subscription will continue as normal, and you won't lose access to any features.\n\nManage Subscription: ${data.manageSubscriptionUrl || data.companyUrl}\n\nIf you have any questions, please contact us at ${data.supportEmail}.\n\nBest regards,\nThe ${data.companyName || 'Ever Works'} Team`
+});
+
+const getSubscriptionPlanChangedTemplate = (data: SubscriptionPlanChangedEmailData) => ({
+  subject: `Your ${data.companyName || 'Ever Works'} subscription plan has been updated`,
+  html: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2>Plan Updated</h2>
+      <p>Hello ${data.customerName},</p>
+      <p>Your subscription has been updated from ${data.oldPlanName} to ${data.newPlanName}.</p>
+      <p>The changes will take effect immediately, and you'll see the updated billing on your next invoice.</p>
+      <p><a href="${data.manageSubscriptionUrl || data.companyUrl}">Manage Subscription</a></p>
+      <p>If you have any questions, please contact us at ${data.supportEmail}.</p>
+      <p>Best regards,<br>The ${data.companyName || 'Ever Works'} Team</p>
+    </div>
+  `,
+  text: `Plan Updated\n\nHello ${data.customerName},\n\nYour subscription has been updated from ${data.oldPlanName} to ${data.newPlanName}.\n\nThe changes will take effect immediately, and you'll see the updated billing on your next invoice.\n\nManage Subscription: ${data.manageSubscriptionUrl || data.companyUrl}\n\nIf you have any questions, please contact us at ${data.supportEmail}.\n\nBest regards,\nThe ${data.companyName || 'Ever Works'} Team`
+});
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -61,6 +111,42 @@ export interface SubscriptionEmailData {
   cancellationDate?: string;
   cancellationReason?: string;
   reactivateUrl?: string;
+}
+
+export interface SubscriptionCancellingEmailData {
+  customerName: string;
+  customerEmail: string;
+  planName: string;
+  subscriptionId: string;
+  cancelAtPeriodEnd: boolean;
+  currentPeriodEnd: Date | string;
+  companyName?: string;
+  companyUrl?: string;
+  supportEmail?: string;
+  reactivateUrl?: string;
+}
+
+export interface SubscriptionReactivatedEmailData {
+  customerName: string;
+  customerEmail: string;
+  planName: string;
+  subscriptionId: string;
+  companyName?: string;
+  companyUrl?: string;
+  supportEmail?: string;
+  manageSubscriptionUrl?: string;
+}
+
+export interface SubscriptionPlanChangedEmailData {
+  customerName: string;
+  customerEmail: string;
+  oldPlanName: string;
+  newPlanName: string;
+  subscriptionId: string;
+  companyName?: string;
+  companyUrl?: string;
+  supportEmail?: string;
+  manageSubscriptionUrl?: string;
 }
 
 interface EmailResult {
@@ -330,6 +416,99 @@ export class PaymentEmailService {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.error(`❌ Subscription payment failed email error:`, errorMessage);
+      return { success: false, error: errorMessage };
+    }
+  }
+
+  /**
+   * Send subscription cancelling notification email
+   */
+  async sendSubscriptionCancellingEmail(data: SubscriptionCancellingEmailData): Promise<EmailResult> {
+    try {
+      await this.ensureEmailService();
+      
+      const template = getSubscriptionCancellingTemplate(data);
+      
+      const result = await sendEmailSafely(
+        this.emailService!,
+        this.emailConfig,
+        template,
+        data.customerEmail,
+        'subscription cancelling'
+      );
+
+      if (result.success) {
+        console.log(`✅ Subscription cancelling email sent to ${data.customerEmail}`);
+        return { success: true };
+      } else {
+        console.error(`❌ Failed to send subscription cancelling email: ${result.error}`);
+        return { success: false, error: result.error };
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error(`❌ Subscription cancelling email error:`, errorMessage);
+      return { success: false, error: errorMessage };
+    }
+  }
+
+  /**
+   * Send subscription reactivated confirmation email
+   */
+  async sendSubscriptionReactivatedEmail(data: SubscriptionReactivatedEmailData): Promise<EmailResult> {
+    try {
+      await this.ensureEmailService();
+      
+      const template = getSubscriptionReactivatedTemplate(data);
+      
+      const result = await sendEmailSafely(
+        this.emailService!,
+        this.emailConfig,
+        template,
+        data.customerEmail,
+        'subscription reactivated'
+      );
+
+      if (result.success) {
+        console.log(`✅ Subscription reactivated email sent to ${data.customerEmail}`);
+        return { success: true };
+      } else {
+        console.error(`❌ Failed to send subscription reactivated email: ${result.error}`);
+        return { success: false, error: result.error };
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error(`❌ Subscription reactivated email error:`, errorMessage);
+      return { success: false, error: errorMessage };
+    }
+  }
+
+  /**
+   * Send subscription plan changed confirmation email
+   */
+  async sendSubscriptionPlanChangedEmail(data: SubscriptionPlanChangedEmailData): Promise<EmailResult> {
+    try {
+      await this.ensureEmailService();
+      
+      const template = getSubscriptionPlanChangedTemplate(data);
+      
+      const result = await sendEmailSafely(
+        this.emailService!,
+        this.emailConfig,
+        template,
+        data.customerEmail,
+        'subscription plan changed'
+      );
+
+      if (result.success) {
+        console.log(`✅ Subscription plan changed email sent to ${data.customerEmail}`);
+        return { success: true };
+      } else {
+        console.error(`❌ Failed to send subscription plan changed email: ${result.error}`);
+        return { success: false, error: result.error };
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error(`❌ Subscription plan changed email error:`, errorMessage);
       return { success: false, error: errorMessage };
     }
   }

@@ -23,6 +23,7 @@ import {
 } from '../../types/payment-types';
 import StripeElementsWrapper from '../../ui/stripe/stripe-elements';
 import { PRICES } from '../utils/prices';
+import { NewSubscription } from '@/lib/db/schema';
 
 // Import dynamically in actual implementation
 // For this file, we'll define placeholders
@@ -86,7 +87,7 @@ export class StripeProvider implements PaymentProviderInterface {
 
   constructor(config: PaymentProviderConfig) {
     this.stripe = new Stripe(config.apiKey, {
-      apiVersion: '2025-04-30.basil' as Stripe.LatestApiVersion,
+      apiVersion: '2025-07-30.basil' as Stripe.LatestApiVersion,
     });
     this.webhookSecret = config.webhookSecret!;
     this.publishableKey = config.options?.publishableKey || '';
@@ -351,6 +352,18 @@ export class StripeProvider implements PaymentProviderInterface {
         subscription = await this.stripe.subscriptions.cancel(subscriptionId);
       }
 
+      // Update the subscription in the database
+      const updateData: Partial<NewSubscription> = {
+        updatedAt: new Date(),
+        subscriptionId:subscriptionId,
+      };
+
+      if (cancelAtPeriodEnd) {
+        updateData.cancelAtPeriodEnd = true;
+        updateData.cancelledAt = new Date();
+      } else {
+        updateData.status = 'cancelled';
+      }
       return {
         id: subscription.id,
         customerId: subscription.customer as string,

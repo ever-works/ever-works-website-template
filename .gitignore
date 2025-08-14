@@ -10,6 +10,7 @@
 !.yarn/releases
 !.yarn/versions
 .pnp.js
+.claude
 
 # testing
 /coverage
@@ -46,3 +47,4 @@ next-env.d.ts
 
 .content
 analyze/
+.claude
