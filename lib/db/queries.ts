@@ -51,12 +51,47 @@ function extractUsernameFromEmail(email: string): string | null {
     return null;
   }
   
-  // Remove any invalid characters and limit length
+  // Remove any invalid characters, limit length, and normalize to lowercase
   const cleanUsername = username
+    .toLowerCase() // Normalize to lowercase for consistency
     .replace(/[^a-zA-Z0-9._-]/g, '') // Only allow alphanumeric, dots, underscores, hyphens
     .substring(0, 30); // Limit length to 30 characters
   
   return cleanUsername.length > 0 ? cleanUsername : null;
+}
+
+/**
+ * Ensure a username is unique by appending a numeric suffix if needed
+ * @param baseUsername - The base username to check
+ * @returns A unique username
+ */
+async function ensureUniqueUsername(baseUsername: string): Promise<string> {
+  let username = baseUsername;
+  let counter = 1;
+  
+  // Check if username exists, append number if it does
+  while (true) {
+    const existingProfile = await db
+      .select()
+      .from(clientProfiles)
+      .where(eq(clientProfiles.username, username))
+      .limit(1);
+    
+    if (existingProfile.length === 0) {
+      return username; // Username is unique
+    }
+    
+    // Append counter and try again
+    username = `${baseUsername}${counter}`;
+    counter++;
+    
+    // Prevent infinite loops (max 999 attempts)
+    if (counter > 999) {
+      // Fallback to timestamp-based username
+      const timestamp = Date.now().toString().slice(-6);
+      return `${baseUsername}${timestamp}`;
+    }
+  }
 }
 
 export async function logActivity(
@@ -720,13 +755,29 @@ export async function createClientProfile(data: {
   plan?: string;
   accountType?: string;
 }): Promise<ClientProfile> {
+  // Generate a unique username if not provided
+  let finalUsername = data.username;
+  if (!finalUsername) {
+    const extractedUsername = extractUsernameFromEmail(data.email);
+    if (extractedUsername) {
+      finalUsername = await ensureUniqueUsername(extractedUsername);
+    } else {
+      // Fallback: generate unique username from timestamp
+      const timestamp = Date.now().toString().slice(-6);
+      finalUsername = await ensureUniqueUsername(`user${timestamp}`);
+    }
+  } else {
+    // Ensure provided username is also unique
+    finalUsername = await ensureUniqueUsername(finalUsername);
+  }
+
   const [profile] = await db
     .insert(clientProfiles)
     .values({
       email: data.email,
       name: data.name,
       displayName: data.displayName || data.name,
-      username: data.username || extractUsernameFromEmail(data.email) || 'user',
+      username: finalUsername,
       bio: data.bio || "Welcome! I'm a new user on this platform.",
       jobTitle: data.jobTitle || "User",
       company: data.company || "Unknown",
