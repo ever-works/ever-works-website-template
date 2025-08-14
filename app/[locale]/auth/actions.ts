@@ -46,27 +46,30 @@ const signInSchema = z.object({
   password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
   authProvider: z.enum(authProviderTypes).default('next-auth'),
   captchaToken: z.string().optional(),
-  isAdmin: z.boolean().optional(), // Add isAdmin flag
 });
 
 export const signInAction = validatedAction(signInSchema, async (data) => {
   try {
     const authService = authServiceFactory(data.authProvider);
-    const { error } = await authService.signIn(data.email, data.password, data.isAdmin);
+    const { error } = await authService.signIn(data.email, data.password);
     if (error) {
       throw error;
     }
     
-    // Check if this is a client user (not admin)
+    // Check if user exists in users table (admin) or client_profiles table (client)
+    const foundUser = await getUserByEmail(data.email);
     const clientAccount = await getClientAccountByEmail(data.email);
     
-    if (clientAccount && !data.isAdmin) {
-      // Client user, redirect to client dashboard
+    if (foundUser) {
+      // User exists in users table = admin
+      return { success: true, redirect: "/admin" };
+    } else if (clientAccount) {
+      // User exists in client_profiles table = client
       return { success: true, redirect: "/client/dashboard" };
     }
     
-    // Admin user, redirect to admin dashboard
-    return { success: true, redirect: "/admin" };
+    // Fallback to client dashboard for new users
+    return { success: true, redirect: "/client/dashboard" };
   } catch (error) {
     console.error(error);
     return {

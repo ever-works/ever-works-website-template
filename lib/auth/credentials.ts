@@ -34,21 +34,14 @@ export const credentialsProvider = Credentials({
   credentials: {
     email: { type: "email" },
     password: { type: "password" },
-    isAdmin: { type: "text" }, // Add flag to distinguish admin vs client signin
   },
-  authorize: async (credentials, req) => {
+  authorize: async (credentials) => {
     try {
       const email = credentials.email as string;
       const password = credentials.password as string;
-      const referer = req?.headers?.get?.('referer') || '';
-      const isAdminSignin = credentials.isAdmin === "true" || 
-                           referer.includes("/admin/auth/signin");
 
       console.log('🔐 Auth Debug:', {
         email,
-        isAdminSignin,
-        credentialsIsAdmin: credentials.isAdmin,
-        referer,
         hasPassword: !!password
       });
 
@@ -65,23 +58,14 @@ export const credentialsProvider = Credentials({
         const isPasswordValid = await comparePasswords(password, foundUser.passwordHash);
         
         console.log('🔑 Password Debug:', {
-          isPasswordValid,
-          isAdminSignin
+          isPasswordValid
         });
         
         if (isPasswordValid) {
-          // Allow admin authentication for any user in users table
-          if (isAdminSignin) {
-            console.log('✅ Admin authentication successful');
-            logActivity(foundUser.id, ActivityType.SIGN_IN);
-            return foundUser;
-          }
-          
-          // If user tries to sign in through client form, deny access
-          if (!isAdminSignin) {
-            console.log('❌ User trying to sign in through client form');
-            throw new Error("Users must sign in through the admin portal.");
-          }
+          // Allow authentication for any user in users table (admin)
+          console.log('✅ Admin authentication successful');
+          logActivity(foundUser.id, ActivityType.SIGN_IN);
+          return foundUser;
         }
       }
 
@@ -109,15 +93,10 @@ export const credentialsProvider = Credentials({
               isClient: true,
             };
             
-            // Only allow client authentication if it's not an admin signin attempt
-            if (!isAdminSignin) {
-              console.log('✅ Client authentication successful');
-              logActivity(clientProfile.id, ActivityType.SIGN_IN);
-              return clientUser;
-            } else {
-              console.log('❌ Client user trying to sign in through admin form');
-              throw new Error("Client users cannot access admin portal.");
-            }
+            // Allow client authentication
+            console.log('✅ Client authentication successful');
+            logActivity(clientProfile.id, ActivityType.SIGN_IN);
+            return clientUser;
           }
         }
       }
