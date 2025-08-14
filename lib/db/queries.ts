@@ -32,6 +32,33 @@ import { clientProfiles } from "./schema";
 import { PaymentPlan } from "../constants";
 import { comparePasswords } from "../auth/credentials";
 
+/**
+ * Safely extract username from email address
+ * Handles edge cases like empty strings, malformed emails, etc.
+ */
+function extractUsernameFromEmail(email: string): string | null {
+  if (!email || typeof email !== 'string') {
+    return null;
+  }
+  
+  const parts = email.split('@');
+  if (parts.length !== 2) {
+    return null;
+  }
+  
+  const username = parts[0].trim();
+  if (!username || username.length === 0) {
+    return null;
+  }
+  
+  // Remove any invalid characters and limit length
+  const cleanUsername = username
+    .replace(/[^a-zA-Z0-9._-]/g, '') // Only allow alphanumeric, dots, underscores, hyphens
+    .substring(0, 30); // Limit length to 30 characters
+  
+  return cleanUsername.length > 0 ? cleanUsername : null;
+}
+
 export async function logActivity(
   userId: string,
   type: ActivityType,
@@ -748,7 +775,7 @@ export async function createClientProfile(data: {
       email: data.email,
       name: data.name,
       displayName: data.displayName || data.name,
-      username: data.username || data.email.split('@')[0] || 'user',
+      username: data.username || extractUsernameFromEmail(data.email) || 'user',
       bio: data.bio || "Welcome! I'm a new user on this platform.",
       jobTitle: data.jobTitle || "User",
       company: data.company || "Unknown",
