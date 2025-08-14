@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { DashboardContent } from "../../dashboard/content";
+import { DashboardContent } from "@/components/dashboard";
 
 export default async function ClientDashboardPage() {
   const session = await auth();
