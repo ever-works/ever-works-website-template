@@ -3,7 +3,7 @@
 import { Container } from "@/components/ui/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { FiUser, FiDroplet, FiBriefcase, FiFileText, FiArrowRight } from "react-icons/fi";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 interface SettingsCardProps {
   title: string;
