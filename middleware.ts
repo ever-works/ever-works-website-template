@@ -87,7 +87,60 @@ export default async function middleware(req: NextRequest) {
     if (cfg.provider === "next-auth") {
       const { auth } = await import("@/lib/auth");
       const session = await auth();
-      if (session?.user?.isAdmin === true) {
+      if (session?.user?.isAdmin) {
+        const url = req.nextUrl.clone();
+        url.pathname = "/admin";
+        return NextResponse.redirect(url);
+      }
+    } else if (cfg.provider === "supabase") {
+      // For Supabase, check user metadata for admin flag
+      const { createServerClient } = await import('@supabase/ssr');
+      const { data: { user } } = await createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            getAll() { return req.cookies.getAll(); },
+            setAll(cookiesToSet) {
+              cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
+            },
+          },
+        }
+      ).auth.getUser();
+
+      const isAdmin = user?.user_metadata?.isAdmin === true || user?.user_metadata?.role === 'admin';
+      if (isAdmin) {
+        const url = req.nextUrl.clone();
+        url.pathname = "/admin";
+        return NextResponse.redirect(url);
+      }
+    } else if (cfg.provider === "both") {
+      // For 'both' provider, check NextAuth first, then Supabase
+      const { auth } = await import("@/lib/auth");
+      const session = await auth();
+      if (session?.user?.isAdmin) {
+        const url = req.nextUrl.clone();
+        url.pathname = "/admin";
+        return NextResponse.redirect(url);
+      }
+
+      // Fallback to Supabase check
+      const { createServerClient } = await import('@supabase/ssr');
+      const { data: { user } } = await createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            getAll() { return req.cookies.getAll(); },
+            setAll(cookiesToSet) {
+              cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
+            },
+          },
+        }
+      ).auth.getUser();
+
+      const isAdmin = user?.user_metadata?.isAdmin === true || user?.user_metadata?.role === 'admin';
+      if (isAdmin) {
         const url = req.nextUrl.clone();
         url.pathname = "/admin";
         return NextResponse.redirect(url);
