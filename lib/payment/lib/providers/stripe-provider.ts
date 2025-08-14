@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 import React from 'react';
-import { User } from '@supabase/auth-js';
+import { User } from '@supabase/supabase-js';
 import {
 	PaymentProviderInterface,
 	PaymentIntent,
@@ -22,7 +22,7 @@ import {
 } from '../../types/payment-types';
 import StripeElementsWrapper from '../../ui/stripe/stripe-elements';
 import { PRICES } from '../utils/prices';
-import { setupUserPaymentAccount, getUserPaymentAccountByProvider } from '@/lib/db/queries';
+import { paymentAccountClient } from '../client/payment-account-client';
 
 const stripeCardBrands: CardBrandIcon[] = [
 	{
@@ -158,7 +158,7 @@ export class StripeProvider implements PaymentProviderInterface {
 	}
 	private async retrieveCustomerIdFromDatabase(userId: string): Promise<string | null> {
 		try {
-			const existingPaymentAccount = await getUserPaymentAccountByProvider(userId, 'stripe');
+			const existingPaymentAccount = await paymentAccountClient.getPaymentAccount(userId, 'stripe');
 
 			if (existingPaymentAccount?.customerId) {
 				this.logger.debug('Existing PaymentAccount found in database', {
@@ -216,15 +216,19 @@ export class StripeProvider implements PaymentProviderInterface {
 
 	private async synchronizePaymentAccount(userId: string, customerId: string): Promise<void> {
 		try {
-			const paymentAccount = await setupUserPaymentAccount('stripe', userId, customerId);
-			this.logger.info('PaymentAccount synchronized successfully', {
+			const paymentAccount = await paymentAccountClient.setupPaymentAccount({
+				provider: 'stripe',
+				userId,
+				customerId
+			});
+			this.logger.info('PaymentAccount synchronized successfully in database', {
 				userId,
 				customerId,
 				accountId: paymentAccount.id,
 				providerId: paymentAccount.providerId
 			});
 		} catch (error) {
-			this.logger.error('Failed to synchronize PaymentAccount', {
+			this.logger.error('Failed to synchronize PaymentAccount in database', {
 				userId,
 				customerId,
 				error: this.formatErrorMessage(error)
