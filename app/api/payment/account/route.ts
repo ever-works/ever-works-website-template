@@ -50,8 +50,6 @@ export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
     const { id, provider, userId, customerId } = body;
-
-    // Validation des données
     if (!id) {
       return NextResponse.json(
         { error: 'Account ID is required' },
@@ -80,7 +78,6 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Mettre à jour le compte de paiement existant
     const paymentAccount = await setupUserPaymentAccount(provider, userId, customerId);
 
     return NextResponse.json({
