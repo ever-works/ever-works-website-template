@@ -4,8 +4,8 @@ import { Container } from "@/components/ui/container";
 import { ProfileHeader, ProfileContent } from "@/components/profile";
 import { getClientProfileByEmail } from "@/lib/db/queries";
 
-export default async function ClientProfilePage({ params }: { params: Promise<{ username: string }> }) {
-  const { username } = await params;
+export default async function ClientProfilePage({ params }: { params: { username: string } }) {
+  const { username } = params;
   const session = await auth();
   
   // Check if user is authenticated
