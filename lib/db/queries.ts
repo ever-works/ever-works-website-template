@@ -990,7 +990,7 @@ export async function createClientAccount(userId: string | undefined, email: str
       userId: userId || null, // Allow null for client accounts
       type: "credentials" as any,
       provider: "credentials",
-      providerAccountId: userId || email, // Use userId or email as providerAccountId
+      providerAccountId: userId || crypto.randomUUID(), // Generate unique ID if userId is null
       email,
       passwordHash: passwordHash || null, // Allow null for OAuth users
       refresh_token: null,
