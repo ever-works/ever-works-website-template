@@ -4,7 +4,7 @@ import { Container } from "@/components/ui/container";
 import { ProfileHeader, ProfileContent } from "@/components/profile";
 import { getClientProfileByEmail } from "@/lib/db/queries";
 
-export default async function ClientProfilePage() {
+export default async function ClientProfilePage({ params }: { params: { username: string } }) {
   const session = await auth();
   
   // Check if user is authenticated
@@ -26,6 +26,12 @@ export default async function ClientProfilePage() {
   const clientProfile = await getClientProfileByEmail(session.user.email);
   
   if (!clientProfile) {
+    redirect('/client/dashboard');
+  }
+  
+  // Validate that the username in the URL matches the authenticated user
+  const userUsername = clientProfile.username || clientProfile.email?.split('@')[0] || 'user';
+  if (params.username !== userUsername) {
     redirect('/client/dashboard');
   }
 
