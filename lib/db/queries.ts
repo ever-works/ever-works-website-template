@@ -902,10 +902,12 @@ export async function deleteClientProfile(id: string): Promise<boolean> {
  * Find client profile by email
  */
 export async function getClientProfileByEmail(email: string): Promise<ClientProfile | null> {
+  const normalizedEmail = email.toLowerCase().trim();
   const [profile] = await db
     .select()
     .from(clientProfiles)
-    .where(eq(clientProfiles.email, email));
+    .where(eq(clientProfiles.email, normalizedEmail))
+    .limit(1);
 
   return profile || null;
 }
