@@ -739,10 +739,18 @@ export async function getSubscriptionStats() {
  */
 export async function createClientUser(name: string, email: string): Promise<any> {
   try {
+    // Normalize and validate email, ensure uniqueness
+    const normalizedEmail = email.toLowerCase().trim();
+    const existingUser = await getUserByEmail(normalizedEmail);
+    if (existingUser) {
+      console.error(`User already exists with email: ${normalizedEmail}`);
+      return null;
+    }
+
     // Create user record for client (without password hash)
     const newUser: NewUser = {
       name,
-      email,
+      email: normalizedEmail,
       // No passwordHash - clients store passwords in accounts table
     };
 
