@@ -17,8 +17,13 @@ export default async function ClientProfilePage() {
     redirect('/admin');
   }
   
+  // Validate that user has an email
+  if (!session.user.email) {
+    redirect('/auth/signin');
+  }
+  
   // Get the client profile data directly
-  const clientProfile = await getClientProfileByEmail(session.user.email!);
+  const clientProfile = await getClientProfileByEmail(session.user.email);
   
   if (!clientProfile) {
     redirect('/client/dashboard');
