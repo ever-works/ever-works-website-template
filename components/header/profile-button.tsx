@@ -14,14 +14,6 @@ export function ProfileButton() {
   const { user, isLoading } = useCurrentUser();
   const profilePath = `/client/profile/${user?.id || user?.email?.split('@')[0] || 'profile'}`;
   const isAdmin = user?.isAdmin === true;
-  
-  // Debug: Log profile path
-  console.log('ProfileButton Debug:', {
-    user: user,
-    userId: user?.id,
-    userEmail: user?.email,
-    profilePath: profilePath
-  });
 
   const handleLogout = async () => {
     setIsProfileMenuOpen(false);

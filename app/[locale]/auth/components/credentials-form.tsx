@@ -169,6 +169,15 @@ export function CredentialsForm({
           className="space-y-5 animate-fade-in"
           aria-label={isLogin ? t("SIGN_IN") : t("CREATE_ACCOUNT")}
         >
+          {/* Hidden input for isAdmin flag */}
+          {clientMode && (
+            <input
+              type="hidden"
+              name="isAdmin"
+              value="true"
+            />
+          )}
+          
           {/* Name field (signup only) */}
       {!isLogin && (
         <div className="space-y-2">
@@ -487,15 +496,6 @@ export function CredentialsForm({
             )}
           </Button>
         </div>
-      )}
-
-      {/* Hidden input for isAdmin flag */}
-      {clientMode && (
-        <input
-          type="hidden"
-          name="isAdmin"
-          value="true"
-        />
       )}
     </div>
   );

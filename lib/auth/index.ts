@@ -76,10 +76,13 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       }
       
       // Set admin flag based on user properties
-      if (typeof extendedUser?.isAdmin === "boolean") {
-        token.isAdmin = extendedUser.isAdmin;
-      } else if (typeof extendedUser?.isClient === "boolean") {
+      // Any user in the users table is considered an admin
+      // Client users (from client_profiles) are not admins
+      if (typeof extendedUser?.isClient === "boolean") {
         token.isAdmin = !extendedUser.isClient;
+      } else {
+        // If user is not marked as client, they are from users table = admin
+        token.isAdmin = true;
       }
       
       return token;
