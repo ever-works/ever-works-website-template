@@ -9,6 +9,7 @@ import { accounts, sessions, users, verificationTokens } from '../db/schema';
 import { db } from '../db/drizzle';
 import authConfig from '../../auth.config';
 import { getUserByEmail, getUserPaymentAccountByProvider } from '../db/queries';
+import { createProviderConfigs, StripeProvider } from '../payment';
 
 // Check if DATABASE_URL is set
 const isDatabaseAvailable = !!process.env.DATABASE_URL;
@@ -40,7 +41,7 @@ export function initializeStripeProvider() {
     webhookSecret: requiredEnvVars.webhookSecret,
     options: {
       publishableKey: requiredEnvVars.publishableKey,
-      apiVersion: process.env.STRIPE_API_VERSION || '2023-10-16'
+      apiVersion: process.env.STRIPE_API_VERSION || '2025-04-30.basil'
     }
   });
 
