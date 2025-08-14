@@ -1037,30 +1037,16 @@ export async function getClientAccountByEmail(email: string): Promise<any> {
  */
 export async function hasClientAccess(userId: string): Promise<boolean> {
   try {
-    // For client users, userId is actually the client profile ID
-    // We need to get the client profile first, then check for account by email
-    const clientProfile = await db
-      .select()
-      .from(clientProfiles)
-      .where(eq(clientProfiles.id, userId))
-      .limit(1);
-
-    if (clientProfile.length > 0) {
-      // This is a client user, check for account by email
-      const [account] = await db
-        .select()
-        .from(accounts)
-        .where(eq(accounts.email, clientProfile[0].email))
-        .limit(1);
-
-      return !!account;
-    }
-
-    // For admin users, check for account by userId
+    // Check if account exists for the user (either direct userId or via client profile email)
     const [account] = await db
       .select()
       .from(accounts)
-      .where(eq(accounts.userId, userId))
+      .where(
+        sql`${accounts.userId} = ${userId} OR 
+            ${accounts.email} IN (
+              SELECT email FROM ${clientProfiles} WHERE id = ${userId}
+            )`
+      )
       .limit(1);
 
     return !!account;
