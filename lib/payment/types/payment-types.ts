@@ -230,13 +230,23 @@ export enum WebhookEventType {
   PAYMENT_SUCCEEDED = "payment_succeeded",
   PAYMENT_FAILED = "payment_failed",
   REFUND_SUCCEEDED = "refund_succeeded",
+
   SUBSCRIPTION_CREATED = "subscription_created",
   SUBSCRIPTION_UPDATED = "subscription_updated",
   SUBSCRIPTION_CANCELLED = "subscription_cancelled",
   SUBSCRIPTION_TRIAL_ENDING = "subscription_trial_ending",
   SUBSCRIPTION_PAYMENT_SUCCEEDED = "subscription_payment_succeeded",
   SUBSCRIPTION_PAYMENT_FAILED = "subscription_payment_failed",
+
+  PAYMENT_INTENT_SUCCEEDED = "payment_intent_succeeded",
+  PAYMENT_INTENT_FAILED = "payment_intent_failed",
+  CHARGE_SUCCEEDED = "charge_succeeded",
+  CHARGE_FAILED = "charge_failed",
+  INVOICE_PAID = "invoice_paid",
+  INVOICE_PAYMENT_FAILED = "invoice_payment_failed",
+  REFUND_CREATED = "refund_created"
 }
+
 
 // Supported providers type
 export type SupportedProvider = "stripe" | "solidgate" | "lemonsqueezy";
@@ -287,6 +297,71 @@ export interface CheckoutSessionParams {
   };
   allow_promotion_codes?: boolean;
   payment_method_types?: string[];
+  collection_method?: string
   
 }
+/*
+ * Formats an amount in cents to a currency string.
+ * @param cents The amount in cents.
+ * @param currency The currency code.
+ * @param locale The locale to use for formatting.
+ * @returns The formatted currency string.
+ */
+export function formatCentsToCurrency(cents: number, currency: string = 'USD', locale: string = 'en-US'): string {
+  const amount = cents / 100;
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(amount);
+}
 
+/*
+ * Converts an amount in cents to a decimal amount.
+ * @param cents The amount in cents.
+ * @returns The amount as a decimal.
+ */
+export function convertCentsToDecimal(cents: number): number {
+  return parseFloat((cents / 100).toFixed(2));
+}
+
+export function convertDecimalToCents(decimal: number): number {
+  return Math.round(decimal * 100);
+}
+
+/*
+ * Converts a timestamp in seconds to a Date object.
+ * @param timestamp The timestamp in seconds.
+ * @returns The Date object.
+ */
+export function convertNumberToDate(timestamp?: number): Date | null {
+  if (typeof timestamp !== 'number' || isNaN(timestamp)) {
+    return null;
+  }
+
+  const date = new Date(timestamp * 1000);
+  return isNaN(date.getTime()) ? null : date;
+}
+
+
+/**
+ * Safely convert timestamp to Date, handling null/undefined values
+ */
+export function safeTimestampToDate(timestamp: number | null | undefined): Date | undefined {
+  if (!timestamp || isNaN(timestamp)) {
+    return undefined;
+  }
+
+  // Handle both seconds and milliseconds timestamps
+  const ts = timestamp < 10000000000 ? timestamp * 1000 : timestamp;
+  const date = new Date(ts);
+
+  // Validate the resulting date
+  if (isNaN(date.getTime())) {
+    console.warn(`Invalid timestamp: ${timestamp}`);
+    return undefined;
+  }
+
+  return date;
+}

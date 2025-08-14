@@ -6,4 +6,5 @@ export { EngagementChart } from "./engagement-chart";
 export { SubmissionTimeline } from "./submission-timeline";
 export { EngagementOverview } from "./engagement-overview";
 export { StatusBreakdown } from "./status-breakdown";
-export { TopItems } from "./top-items"; 
+export { TopItems } from "./top-items";
+export { BillingSection } from "./billing-section";

@@ -29,7 +29,7 @@ export const JWT_REFRESH_TOKEN_EXPIRES_IN = getNextPublicEnv('JWT_REFRESH_TOKEN_
 // ============================================
 export const POSTHOG_KEY = getNextPublicEnv('NEXT_PUBLIC_POSTHOG_KEY');
 export const POSTHOG_HOST = getNextPublicEnv('NEXT_PUBLIC_POSTHOG_HOST');
-export const POSTHOG_ENABLED = POSTHOG_KEY && POSTHOG_HOST;
+export const POSTHOG_ENABLED = POSTHOG_KEY?.value && POSTHOG_HOST?.value;
 export const POSTHOG_DEBUG = getNextPublicEnv('POSTHOG_DEBUG');
 
 // PostHog Features
@@ -47,7 +47,7 @@ export const SENTRY_DSN = getNextPublicEnv('NEXT_PUBLIC_SENTRY_DSN');
 export const SENTRY_ENABLE_DEV = getNextPublicEnv('SENTRY_ENABLE_DEV');
 export const SENTRY_DEBUG = getNextPublicEnv('SENTRY_DEBUG');
 export const SENTRY_ENABLED =
-	SENTRY_DSN && (SENTRY_ENABLE_DEV.value === 'true' || process.env.NODE_ENV === 'production');
+	SENTRY_DSN?.value && (SENTRY_ENABLE_DEV?.value === 'true' || process.env.NODE_ENV === 'production');
 
 // ============================================
 // EXCEPTION TRACKING - UNIFIED

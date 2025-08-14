@@ -363,24 +363,19 @@ export function CredentialsForm({
                     onChange={(token: string | null) => {
                       setCaptchaToken(token);
                       setCaptchaError(null);
-                      if (token) {
-                        console.log('ReCAPTCHA token received, ready for verification on submit');
-                      }
-                    }}
-                    onLoad={() => {
-                      console.log('ReCAPTCHA loaded successfully');
                     }}
                     onError={(error) => {
                       console.error('ReCAPTCHA error:', error);
                       setCaptchaError('Failed to load security verification. Please refresh the page.');
                     }}
                     onExpired={() => {
-                      console.log('ReCAPTCHA expired');
                       setCaptchaToken(null);
                       setCaptchaError('Security verification expired. Please complete it again.');
                     }}
                     theme="light"
                     size="normal"
+                    className="scale-90 transform-gpu w-[50px] flex justify-center"
+                    tabindex={0}
                   />
             </div>
           </div>

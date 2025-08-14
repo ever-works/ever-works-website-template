@@ -71,6 +71,13 @@
       "when": 1754686947344,
       "tag": "0009_add_pk_verificationTokens",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1754606196525,
+      "tag": "0006_marvelous_xorn",
+      "breakpoints": true
     }
   ]
 }
