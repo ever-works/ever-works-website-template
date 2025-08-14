@@ -57,7 +57,7 @@ export const accounts = pgTable(
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
     // Client authentication fields
-    email: text("email"),
+    email: text("email").unique(),
     passwordHash: text("password_hash"),
     // OAuth fields
     refresh_token: text("refresh_token"),
@@ -86,7 +86,7 @@ export const clientProfiles = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    email: text("email").unique().notNull(),
+    email: text("email").notNull(),
     name: text("name").notNull(),
     displayName: text("display_name"),
     username: text("username").unique(),
