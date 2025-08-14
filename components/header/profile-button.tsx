@@ -12,7 +12,12 @@ export function ProfileButton() {
   const t = useTranslations();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const { user, isLoading } = useCurrentUser();
-  const profilePath = `/client/profile/${user?.id || user?.email?.split('@')[0] || 'profile'}`;
+  const username =
+    (user as any)?.username ||
+    (user as any)?.clientProfile?.username ||
+    (user?.email ? user.email.split("@")[0] : undefined) ||
+    "profile";
+  const profilePath = `/client/profile/${encodeURIComponent(username)}`;
   const isAdmin = user?.isAdmin === true;
 
   const handleLogout = async () => {
