@@ -1,6 +1,7 @@
 import { fetchItems } from "@/lib/content";
 import { LOCALES } from "@/lib/constants";
 import ListingCategories from "./listing-categories";
+import { Suspense } from "react";
 
 export const revalidate = 10;
 export async function generateStaticParams() {
@@ -22,14 +23,16 @@ export default async function CategoriesPage({
   const basePath = "/categories";
 
   return (
-    <ListingCategories 
-      categories={categories}
-      tags={tags}
-      items={items}
-      total={total}
-      start={start}
-      page={page}
-      basePath={basePath}
-    />
+    <Suspense fallback={<div>Loading...</div>}>
+      <ListingCategories 
+        categories={categories}
+        tags={tags}
+        items={items}
+        total={total}
+        start={start}
+        page={page}
+        basePath={basePath}
+      />
+    </Suspense>
   );
 }

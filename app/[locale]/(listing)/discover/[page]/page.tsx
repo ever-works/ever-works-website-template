@@ -2,6 +2,7 @@ import { fetchItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
 import { LOCALES } from "@/lib/constants";
 import Listing from "../../listing";
+import { Suspense } from "react";
 
 export const revalidate = 10;
 
@@ -34,14 +35,16 @@ export default async function DiscoverListing({
   const { items, categories, total, tags } = await fetchItems({ lang: locale });
 
   return (
-    <Listing
-      tags={tags}
-      categories={categories}
-      items={items}
-      start={start}
-      page={page}
-      total={total}
-      basePath="/discover"
-    />
+    <Suspense fallback={<div>Loading...</div>}>
+      <Listing
+        tags={tags}
+        categories={categories}
+        items={items}
+        start={start}
+        page={page}
+        total={total}
+        basePath="/discover"
+      />
+    </Suspense>
   );
 }

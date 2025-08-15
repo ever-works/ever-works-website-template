@@ -5,6 +5,7 @@ import { LOCALES } from "@/lib/constants";
 import { getTranslations } from "next-intl/server";
 import { ItemDetail } from "@/components/item-detail";
 import { Container } from "@/components/ui/container";
+import { Suspense } from "react";
 
 export const revalidate = 10;
 
@@ -40,12 +41,14 @@ export default async function ItemDetails({
 
   return (
     <Container maxWidth="7xl" padding="default">
-      <ItemDetail
-        meta={metaWithVideo}
-        content={content}
-        categoryName={categoryName}
-        noContentMessage={t("NO_CONTENT_PROVIDED")}
-      />
+      <Suspense fallback={<div>Loading...</div>}>
+        <ItemDetail
+          meta={metaWithVideo}
+          content={content}
+          categoryName={categoryName}
+          noContentMessage={t("NO_CONTENT_PROVIDED")}
+        />
+      </Suspense>
     </Container>
   );
 }
