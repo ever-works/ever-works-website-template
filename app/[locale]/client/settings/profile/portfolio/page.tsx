@@ -3,7 +3,7 @@ import { Container } from "@/components/ui/container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FiBriefcase, FiArrowLeft, FiPlus, FiEdit, FiTrash2, FiStar, FiExternalLink } from "react-icons/fi";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { dummyPortfolio } from "@/lib/dummy-data";
 import React, { useState } from "react";
 import Image from "next/image";

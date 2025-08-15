@@ -1,7 +1,7 @@
 import { Container } from "@/components/ui/container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FiFileText, FiArrowLeft, FiClock, FiCheck, FiX, FiPlus } from "react-icons/fi";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { SubmissionItem } from "@/components/submissions/submission-item";
 import { dummySubmissions } from "@/lib/dummy-data";
 

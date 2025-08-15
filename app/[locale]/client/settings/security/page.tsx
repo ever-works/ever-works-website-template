@@ -1,12 +1,12 @@
 import { Container } from '@/components/ui/container';
 import { Card, CardContent } from '@/components/ui/card';
 import { FiShield, FiArrowLeft } from 'react-icons/fi';
-import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
+import { getTranslations } from 'next-intl/server';
 import { ChangePasswordForm } from '@/components/settings/security';
 
-export default function SecuritySettingsPage() {
-	const t = useTranslations('settings.SECURITY_PAGE');
+export default async function SecuritySettingsPage() {
+	const t = await getTranslations('settings.SECURITY_PAGE');
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
