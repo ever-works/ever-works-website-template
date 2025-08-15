@@ -90,8 +90,11 @@ export default async function middleware(req: NextRequest) {
       const isAdmin = user?.user_metadata?.isAdmin === true || user?.user_metadata?.role === 'admin';
       if (isAdmin) {
         const url = req.nextUrl.clone();
-        url.pathname = "/admin";
-        return NextResponse.redirect(url);
+        const rootLocalePrefix = hasLocale ? `/${maybeLocale}` : "";
+        url.pathname = `${rootLocalePrefix}/admin`;
+        const redirectRes = NextResponse.redirect(url);
+        intlResponse.cookies.getAll().forEach((c) => redirectRes.cookies.set(c));
+        return redirectRes;
       }
     } else if (cfg.provider === "both") {
       // For 'both' provider, skip NextAuth check in Edge Runtime, only check Supabase
@@ -114,8 +117,11 @@ export default async function middleware(req: NextRequest) {
       const isAdmin = user?.user_metadata?.isAdmin === true || user?.user_metadata?.role === 'admin';
       if (isAdmin) {
         const url = req.nextUrl.clone();
-        url.pathname = "/admin";
-        return NextResponse.redirect(url);
+        const rootLocalePrefix = hasLocale ? `/${maybeLocale}` : "";
+        url.pathname = `${rootLocalePrefix}/admin`;
+        const redirectRes = NextResponse.redirect(url);
+        intlResponse.cookies.getAll().forEach((c) => redirectRes.cookies.set(c));
+        return redirectRes;
       }
     }
     return intlResponse;
