@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { auth, initializeStripeProvider } from '@/lib/auth';
 import { StripeProvider } from '@/lib/payment/lib/providers/stripe-provider';
 import { createProviderConfigs } from '@/lib/payment/config/provider-configs';
 
@@ -14,30 +14,7 @@ export async function POST(request: NextRequest) {
     const { priceId, paymentMethodId, trialPeriodDays } = await request.json();
 
     // Initialize Stripe provider
-    function initializeStripeProvider() { 
-      const requiredEnvVars = {
-        apiKey: process.env.STRIPE_SECRET_KEY,
-        webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
-        options: {
-          apiVersion: "2023-10-16",
-          publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-        }
-
-      };
-      if (!requiredEnvVars.apiKey || !requiredEnvVars.webhookSecret || !requiredEnvVars.options.publishableKey) {
-        throw new Error('Stripe configuration is incomplete');
-      }
-    
-    const configs = createProviderConfigs({
-      apiKey: requiredEnvVars.apiKey,
-      webhookSecret: requiredEnvVars.webhookSecret,
-      options: requiredEnvVars.options
-    });
-
-    return new StripeProvider(configs.stripe);
-  }
     const stripeProvider = initializeStripeProvider();
-
     // Get or create customer
     const customerId = await stripeProvider.getCustomerId(session.user as any);
     
@@ -113,16 +90,7 @@ export async function DELETE(request: NextRequest) {
     const { subscriptionId, cancelAtPeriodEnd } = await request.json();
 
     // Initialize Stripe provider
-    const configs = createProviderConfigs({
-      apiKey: process.env.STRIPE_SECRET_KEY!,
-      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-      options: {
-        publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-        apiVersion: '2023-10-16'
-      }
-    });
-
-    const stripeProvider = new StripeProvider(configs.stripe);
+    const stripeProvider = initializeStripeProvider();
 
     // Cancel subscription
     const subscription = await stripeProvider.cancelSubscription(subscriptionId, cancelAtPeriodEnd);

@@ -1,5 +1,4 @@
-import { auth } from '@/lib/auth';
-import { createProviderConfigs, StripeProvider } from '@/lib/payment';
+import { auth, initializeStripeProvider } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -25,31 +24,8 @@ export async function GET(
       );
     }
 
-    function initializeStripeProvider() {
-			const requiredEnvVars = {
-				apiKey: process.env.STRIPE_SECRET_KEY,
-				webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
-				publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-			};
-
-			if (!requiredEnvVars.apiKey || !requiredEnvVars.webhookSecret || !requiredEnvVars.publishableKey) {
-				throw new Error('Stripe configuration is incomplete');
-			}
-
-			const configs = createProviderConfigs({
-				apiKey: requiredEnvVars.apiKey,
-				webhookSecret: requiredEnvVars.webhookSecret,
-				options: {
-					publishableKey: requiredEnvVars.publishableKey,
-					apiVersion: process.env.STRIPE_API_VERSION || '2023-10-16'
-				}
-			});
-
-			return new StripeProvider(configs.stripe);
-		}
-
     const stripeProvider = initializeStripeProvider();
-    const stripe = stripeProvider.getStripeInstance();
+		const stripe = stripeProvider.getStripeInstance();
 
     // Retrieve the setup intent
     const setupIntent = await stripe.setupIntents.retrieve(id);

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { auth, initializeStripeProvider } from '@/lib/auth';
 import { StripeProvider } from '@/lib/payment/lib/providers/stripe-provider';
 import { createProviderConfigs } from '@/lib/payment/config/provider-configs';
 
@@ -67,16 +67,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Initialize Stripe provider
-    const configs = createProviderConfigs({
-      apiKey: process.env.STRIPE_SECRET_KEY!,
-      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-      options: {
-        publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-        apiVersion: '2023-10-16'
-      }
-    });
-
-    const stripeProvider = new StripeProvider(configs.stripe);
+    const stripeProvider = initializeStripeProvider();
 
     // Verify payment
     const verification = await stripeProvider.verifyPayment(paymentIntentId);
