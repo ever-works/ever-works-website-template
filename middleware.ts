@@ -67,7 +67,7 @@ export default async function middleware(req: NextRequest) {
   const pathWithoutLocale = hasLocale ? `/${segments.slice(1).join("/")}` : originalPathname;
 
   // Only redirect admins away from /client/* without DB calls.
-  if (pathWithoutLocale.startsWith("/client/")) {
+  if (pathWithoutLocale === "/client" || pathWithoutLocale.startsWith("/client/")) {
     if (cfg.provider === "next-auth") {
       // For NextAuth, we'll skip admin redirect in Edge Runtime to avoid Node.js modules
       // Admin redirect will be handled by the client-side logic
