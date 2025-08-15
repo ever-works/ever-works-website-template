@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth, initializeStripeProvider } from '@/lib/auth';
+import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,8 +11,8 @@ export async function POST(request: NextRequest) {
 
     const { amount, currency = 'usd', metadata, planId } = await request.json();
 
-    // Initialize Stripe provider
-    const stripeProvider = initializeStripeProvider();
+    // Get or create Stripe provider (singleton)
+    const stripeProvider = getOrCreateStripeProvider();
     // Get or create customer
     const customerId = await stripeProvider.getCustomerId(session.user as any);
     
@@ -54,8 +54,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Payment intent ID required' }, { status: 400 });
     }
 
-    // Initialize Stripe provider
-    const stripeProvider = initializeStripeProvider();
+    // Get or create Stripe provider (singleton)
+    const stripeProvider = getOrCreateStripeProvider();
 
     // Verify payment
     const verification = await stripeProvider.verifyPayment(paymentIntentId);

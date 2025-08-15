@@ -24,30 +24,103 @@ const drizzle = isDatabaseAvailable
 		})
 	: undefined;
 
+/**
+ * Stripe Provider Singleton
+ * Ensures single instance across the application
+ */
+class StripeProviderSingleton {
+  private static instance: StripeProvider | null = null;
+  private static isInitializing = false;
 
-export function initializeStripeProvider() {
-  const requiredEnvVars = {
-    apiKey: process.env.STRIPE_SECRET_KEY,
-    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
-    publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-  };
+  private constructor() {}
 
-  if (!requiredEnvVars.apiKey || !requiredEnvVars.webhookSecret || !requiredEnvVars.publishableKey) {
-    throw new Error('Stripe configuration is incomplete');
+  public static getInstance(): StripeProvider {
+    if (!StripeProviderSingleton.instance && !StripeProviderSingleton.isInitializing) {
+      StripeProviderSingleton.isInitializing = true;
+      
+      const requiredEnvVars = {
+        apiKey: process.env.STRIPE_SECRET_KEY,
+        webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+        publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+      };
+
+      if (!requiredEnvVars.apiKey || !requiredEnvVars.webhookSecret || !requiredEnvVars.publishableKey) {
+        throw new Error('Stripe configuration is incomplete');
+      }
+
+      const configs = createProviderConfigs({
+        apiKey: requiredEnvVars.apiKey,
+        webhookSecret: requiredEnvVars.webhookSecret,
+        options: {
+          publishableKey: requiredEnvVars.publishableKey,
+          apiVersion: process.env.STRIPE_API_VERSION || '2025-04-30.basil'
+        }
+      });
+
+      StripeProviderSingleton.instance = new StripeProvider(configs.stripe);
+      StripeProviderSingleton.isInitializing = false;
+    }
+
+    if (!StripeProviderSingleton.instance) {
+      throw new Error('Failed to initialize Stripe provider');
+    }
+
+    return StripeProviderSingleton.instance;
   }
 
-  const configs = createProviderConfigs({
-    apiKey: requiredEnvVars.apiKey,
-    webhookSecret: requiredEnvVars.webhookSecret,
-    options: {
-      publishableKey: requiredEnvVars.publishableKey,
-      apiVersion: process.env.STRIPE_API_VERSION || '2025-04-30.basil'
-    }
-  });
+  /**
+   * Reset singleton instance (useful for testing)
+   */
+  public static reset(): void {
+    StripeProviderSingleton.instance = null;
+    StripeProviderSingleton.isInitializing = false;
+  }
 
-  return new StripeProvider(configs.stripe);
+  /**
+   * Check if singleton is initialized
+   */
+  public static isInitialized(): boolean {
+    return StripeProviderSingleton.instance !== null;
+  }
 }
 
+/**
+ * Initialize Stripe provider (singleton pattern)
+ * @returns StripeProvider instance
+ */
+export function initializeStripeProvider(): StripeProvider {
+  return StripeProviderSingleton.getInstance();
+}
+
+/**
+ * Get Stripe provider instance without initialization
+ * @returns StripeProvider instance or null if not initialized
+ */
+export function getStripeProvider(): StripeProvider | null {
+  return StripeProviderSingleton.isInitialized() ? StripeProviderSingleton.getInstance() : null;
+}
+
+/**
+ * Reset Stripe provider singleton (useful for testing)
+ */
+export function resetStripeProvider(): void {
+  StripeProviderSingleton.reset();
+}
+
+/**
+ * Get or create Stripe provider instance (most efficient)
+ * @returns StripeProvider instance
+ */
+export function getOrCreateStripeProvider(): StripeProvider {
+  // Try to get existing instance first
+  const existingProvider = getStripeProvider();
+  if (existingProvider) {
+    return existingProvider;
+  }
+  
+  // Create new instance if none exists
+  return initializeStripeProvider();
+}
 
 
 export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({

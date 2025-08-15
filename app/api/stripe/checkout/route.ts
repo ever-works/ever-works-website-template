@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth, initializeStripeProvider } from '@/lib/auth';
+import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 import { CheckoutSessionParams } from '@/lib/payment/types/payment-types';
 
 export async function POST(request: NextRequest) {
@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Initialize Stripe provider inside the function
-		const stripeProvider = initializeStripeProvider();
+		// Get or create Stripe provider (singleton)
+		const stripeProvider = getOrCreateStripeProvider();
 		const stripe = stripeProvider.getStripeInstance();
 
 		const {
@@ -132,8 +132,8 @@ export async function GET(request: NextRequest) {
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
 
-		// Initialize Stripe provider inside the function
-		const stripeProvider = initializeStripeProvider();
+		// Get or create Stripe provider (singleton)
+		const stripeProvider = getOrCreateStripeProvider();
 		const stripe = stripeProvider.getStripeInstance();
 
 		const { searchParams } = new URL(request.url);
