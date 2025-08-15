@@ -98,19 +98,8 @@ copyright_year: ${new Date().getFullYear()}
     return;
   }
 
-  // Skip repository sync during build to avoid blocking the build process
-  if (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build') {
-    console.log("Skipping repository sync during production build...");
-    const dest = getContentPath();
-    await fs.promises.mkdir(dest, { recursive: true });
-    
-    // Ensure minimal config exists
-    const configPath = path.join(dest, "config.yml");
-    if (!(await fsExists(configPath))) {
-      await fs.promises.writeFile(configPath, DEFAULT_CONFIG);
-    }
-    return;
-  }
+  // Note: Repository sync will happen during build to ensure content is available
+  // Error handling is in place to gracefully handle any sync issues
 
   const dest = getContentPath();
   const auth = getGitAuth(token);
