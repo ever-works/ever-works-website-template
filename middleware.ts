@@ -35,7 +35,7 @@ async function supabaseGuard(req: NextRequest, baseRes: NextResponse): Promise<N
       cookies: {
         getAll() { return req.cookies.getAll(); },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => baseRes.cookies.set(name, value));
+          cookiesToSet.forEach((cookie) => baseRes.cookies.set(cookie));
         },
       },
     }
@@ -81,7 +81,7 @@ export default async function middleware(req: NextRequest) {
           cookies: {
             getAll() { return req.cookies.getAll(); },
             setAll(cookiesToSet) {
-              cookiesToSet.forEach(({ name, value }) => intlResponse.cookies.set(name, value));
+              cookiesToSet.forEach((cookie) => intlResponse.cookies.set(cookie));
             },
           },
         }
@@ -108,7 +108,7 @@ export default async function middleware(req: NextRequest) {
           cookies: {
             getAll() { return req.cookies.getAll(); },
             setAll(cookiesToSet) {
-              cookiesToSet.forEach(({ name, value }) => intlResponse.cookies.set(name, value));
+              cookiesToSet.forEach((cookie) => intlResponse.cookies.set(cookie));
             },
           },
         }
