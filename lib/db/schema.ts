@@ -57,7 +57,7 @@ export const accounts = pgTable(
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
     // Client authentication fields
-    email: text("email").unique(),
+    email: text("email"),
     passwordHash: text("password_hash"),
     // OAuth fields
     refresh_token: text("refresh_token"),
@@ -76,6 +76,7 @@ export const accounts = pgTable(
     },
     // Index on email for client authentication lookups
     index("accounts_email_idx").on(account.email),
+
   ]
 );
 

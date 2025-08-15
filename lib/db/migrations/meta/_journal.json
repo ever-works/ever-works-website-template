@@ -134,6 +134,13 @@
       "when": 1755210526141,
       "tag": "0018_cultured_proemial_gods",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1755246222873,
+      "tag": "0019_powerful_spitfire",
+      "breakpoints": true
     }
   ]
 }
