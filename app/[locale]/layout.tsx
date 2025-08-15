@@ -5,7 +5,7 @@ import "./globals.css";
 import { getCachedConfig } from "@/lib/content";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { getMessages } from "next-intl/server";
+import { getMessages, unstable_setRequestLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { Toaster } from "sonner";
 import { PHProvider } from "./integration/posthog/provider";
@@ -51,6 +51,9 @@ export default async function RootLayout({
   if (!routing.locales.includes(locale as Locale)) {
     notFound();
   }
+
+  // Ensure server-side i18n helpers use the current route locale
+  unstable_setRequestLocale(locale);
 
   const config = await getCachedConfig();
   const messages = await getMessages();
