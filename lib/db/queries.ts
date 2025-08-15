@@ -1022,14 +1022,22 @@ export async function createClientAccount(userId: string | undefined, email: str
 }
 
 /**
- * Get client account by email
+ * Get client account by email (credentials provider only)
  */
 export async function getClientAccountByEmail(email: string): Promise<any> {
   try {
+    const normalizedEmail = email.toLowerCase().trim();
+    
+    // Get credentials account specifically (not OAuth accounts)
     const [account] = await db
       .select()
       .from(accounts)
-      .where(eq(accounts.email, email))
+      .where(
+        and(
+          eq(accounts.provider, "credentials" as any),
+          eq(accounts.email, normalizedEmail)
+        )
+      )
       .limit(1);
 
     return account || null;
