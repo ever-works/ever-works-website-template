@@ -3,37 +3,39 @@ import { redirect } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { ProfileHeader, ProfileContent } from "@/components/profile";
 import { getClientProfileByEmail } from "@/lib/db/queries";
+import { getLocale } from "next-intl/server";
 
 export default async function ClientProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params;
+  const locale = await getLocale();
   const session = await auth();
   
   // Check if user is authenticated
   if (!session?.user) {
-    redirect('/auth/signin');
+    redirect(`/${locale}/auth/signin`);
   }
   
   // Check if user is admin - redirect to admin dashboard
   if (session.user.isAdmin === true) {
-    redirect('/admin');
+    redirect(`/${locale}/admin`);
   }
   
   // Validate that user has an email
   if (!session.user.email) {
-    redirect('/auth/signin');
+    redirect(`/${locale}/auth/signin`);
   }
   
   // Get the client profile data directly
   const clientProfile = await getClientProfileByEmail(session.user.email);
   
   if (!clientProfile) {
-    redirect('/client/dashboard');
+    redirect(`/${locale}/client/dashboard`);
   }
   
   // Validate that the username in the URL matches the authenticated user
   const userUsername = clientProfile.username || clientProfile.email?.split('@')[0] || 'user';
   if (username !== userUsername) {
-    redirect('/client/dashboard');
+    redirect(`/${locale}/client/dashboard`);
   }
 
   // Use client profile data

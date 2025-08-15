@@ -2,7 +2,7 @@
 
 import { Button, cn } from "@heroui/react";
 import { useConfig } from "../../config";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   IconFacebook,
@@ -24,6 +24,7 @@ type SocialProvider = {
 
 export function SocialLogin() {
   const t = useTranslations("common");
+  const locale = useLocale();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("redirect") || "/dashboard";
   const router = useRouter();
@@ -46,10 +47,14 @@ export function SocialLogin() {
 
   useEffect(() => {
     if (state.success) {
-      router.push(redirectUrl);
+      // Handle locale preservation for social login redirects
+      const finalRedirectUrl = locale !== 'en' 
+        ? `/${locale}${redirectUrl}` 
+        : redirectUrl;
+      router.push(finalRedirectUrl);
       router.refresh();
     }
-  }, [state, redirectUrl, router]);
+  }, [state, redirectUrl, router, locale]);
 
   const enabledProviders = Object.keys(auth)
     .filter((key) => key !== "credentials")

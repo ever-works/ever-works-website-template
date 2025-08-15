@@ -62,14 +62,14 @@ export const signInAction = validatedAction(signInSchema, async (data) => {
     
     if (foundUser) {
       // User exists in users table = admin
-      return { success: true, redirect: "/admin" };
+      return { success: true, redirect: "/admin", preserveLocale: true };
     } else if (clientAccount) {
       // User exists in client_profiles table = client
-      return { success: true, redirect: "/client/dashboard" };
+      return { success: true, redirect: "/client/dashboard", preserveLocale: true };
     }
     
     // Fallback to client dashboard for new users
-    return { success: true, redirect: "/client/dashboard" };
+    return { success: true, redirect: "/client/dashboard", preserveLocale: true };
   } catch (error) {
     console.error(error);
     return {
@@ -186,7 +186,7 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
     });
 
     // Redirect clients to client dashboard
-    return { success: true, redirect: "/client/dashboard" };
+    return { success: true, redirect: "/client/dashboard", preserveLocale: true };
   } catch (error) {
     console.error('SignUp error:', error);
     return {
