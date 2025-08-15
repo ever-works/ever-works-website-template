@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { Session } from "next-auth";
 import {
-    MessageSquare,
-    ThumbsUp,
-    TrendingUp,
-    Activity,
-    Calendar,
-    RefreshCw
+  MessageSquare,
+  ThumbsUp,
+  TrendingUp,
+  Activity,
+  Calendar,
+  RefreshCw
 } from "lucide-react";
 import { StatsCard } from "./stats-card";
 import { ActivityItem } from "./activity-item";

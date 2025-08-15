@@ -40,7 +40,10 @@
     "BROWSE_CATEGORIES": "Explorar categorías",
     "BROWSE_TAGS": "Explorar etiquetas",
     "CATEGORIES_DESCRIPTION": "Explore nuestra colección de categorías para encontrar lo que busca.",
-    "TAGS_DESCRIPTION": "Explore nuestra colección de etiquetas para encontrar lo que busca."
+    "TAGS_DESCRIPTION": "Explore nuestra colección de etiquetas para encontrar lo que busca.",
+    "COMMENTS": "Comentarios",
+    "ROLES": "Roles",
+    "MANAGE_CLIENTS": "Gestionar Clientes"
   },
   "footer": {
     "ALL_RIGHTS_RESERVED": "Todos los derechos reservados",

@@ -2,7 +2,8 @@
 
 import { Container } from "@/components/ui/container";
 import { Card, CardContent } from "@/components/ui/card";
-import { FiUser, FiDroplet, FiBriefcase, FiFileText, FiArrowRight } from "react-icons/fi";
+import { FiUser, FiDroplet, FiBriefcase, FiFileText, FiArrowRight, FiCreditCard } from "react-icons/fi";
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
 interface SettingsCardProps {
@@ -40,6 +41,7 @@ function SettingsCard({ title, description, icon, href }: SettingsCardProps) {
 }
 
 export function SettingsContent() {
+  const locale = useLocale();
 
   const settingsCards = [
     {
@@ -77,6 +79,13 @@ export function SettingsContent() {
       icon: <FiFileText className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
       href: `/client/settings/profile/submissions`
     },
+    {
+      id: "billing",
+      title: "Billing",
+      description: "Manage your billing information and subscription details",
+      icon: <FiCreditCard className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
+      href: `/${locale}/settings/billing`
+    }
   ];
 
   return (

@@ -137,6 +137,7 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 		},
 		[user, router, processingPlan, createCheckoutSession, billingInterval]
 	);
+	const isButton = selectedFlow === 'pay_at_end';
 
 	return (
 		<div className="relative z-10 px-4">
@@ -231,7 +232,8 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 					<div
 						className={cn(
 							'relative transition-all duration-500 hover:scale-105 hover:-translate-y-2',
-							selectedPlan === PaymentPlan.FREE && 'ring-2 ring-theme-primary-500/50 dark:ring-theme-primary-400/50'
+							selectedPlan === PaymentPlan.FREE &&
+								'ring-2 ring-theme-primary-500/50 dark:ring-theme-primary-400/50'
 						)}
 					>
 						<PlanCard
@@ -253,7 +255,7 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 							}
 							actionHref="/submit"
 							isLoading={processingPlan === FREE?.id && isLoading}
-							isButton={false}
+							isButton={isButton}
 							onClick={() => handleCheckout(FREE as PricingConfig)}
 						>
 							{FREE && getSavingsText(FREE) && (
@@ -298,7 +300,7 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 							actionVariant="default"
 							actionHref="/submit"
 							isLoading={processingPlan === STANDARD?.id && isLoading}
-							isButton={false}
+							isButton={isButton}
 							onClick={() => handleCheckout(STANDARD as PricingConfig)}
 						>
 							{getSavingsText(STANDARD as PricingConfig) && (
@@ -341,7 +343,7 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 							}
 							actionVariant="default"
 							actionHref="/submit"
-							isButton={false}
+							isButton={isButton}
 							isLoading={processingPlan === PREMIUM?.id && isLoading}
 							onClick={() => handleCheckout(PREMIUM as PricingConfig)}
 						>

@@ -8,6 +8,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { accounts, sessions, users, verificationTokens } from "../db/schema";
 import { db } from "../db/drizzle";
 import authConfig from "../../auth.config";
+
 import { createProviderConfigs, StripeProvider } from "../payment";
 
 // Define proper interface for user objects with admin/client properties
@@ -46,7 +47,7 @@ export function initializeStripeProvider() {
     webhookSecret: requiredEnvVars.webhookSecret,
     options: {
       publishableKey: requiredEnvVars.publishableKey,
-      apiVersion: process.env.STRIPE_API_VERSION || '2023-10-16'
+      apiVersion: process.env.STRIPE_API_VERSION || '2025-04-30.basil'
     }
   });
 
