@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, initializeStripeProvider } from '@/lib/auth';
-import { StripeProvider } from '@/lib/payment/lib/providers/stripe-provider';
-import { createProviderConfigs } from '@/lib/payment/config/provider-configs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,17 +49,7 @@ export async function PUT(request: NextRequest) {
     const { subscriptionId, priceId, cancelAtPeriodEnd } = await request.json();
 
     // Initialize Stripe provider
-    const configs = createProviderConfigs({
-      apiKey: process.env.STRIPE_SECRET_KEY!,
-      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-      options: {
-        publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-        apiVersion: '2023-10-16'
-      }
-    });
-
-    const stripeProvider = new StripeProvider(configs.stripe);
-
+    const stripeProvider = initializeStripeProvider();
     // Update subscription
     const subscription = await stripeProvider.updateSubscription({
       subscriptionId,
