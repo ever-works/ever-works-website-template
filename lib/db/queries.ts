@@ -28,6 +28,7 @@ import { desc, isNull, count, asc, lte } from "drizzle-orm";
 import type { NewComment, CommentWithUser } from "@/lib/types/comment";
 import type { ClientProfile, NewClientProfile } from "./schema";
 import { clientProfiles } from "./schema";
+import { randomUUID } from "crypto";
 
 import { PaymentPlan } from "../constants";
 import { comparePasswords } from "../auth/credentials";
@@ -962,26 +963,43 @@ export async function getClientProfileStats() {
  */
 export async function createClientAccount(userId: string | undefined, email: string, passwordHash?: string | null): Promise<any> {
   try {
-    // Check if account already exists
-    const existingAccount = await db
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Resolve client profile ID when userId isn't provided
+    let resolvedUserId = userId;
+    if (!resolvedUserId) {
+      const profile = await getClientProfileByEmail(normalizedEmail);
+      if (!profile) {
+        console.error(`No client profile found for email: ${normalizedEmail}`);
+        return null;
+      }
+      resolvedUserId = profile.id;
+    }
+
+    // Check if credentials account already exists for this email
+    const [existing] = await db
       .select()
       .from(accounts)
-      .where(eq(accounts.email, email))
+      .where(
+        and(
+          eq(accounts.provider, "credentials" as any),
+          eq(accounts.email, normalizedEmail)
+        )
+      )
       .limit(1);
 
-    if (existingAccount.length > 0) {
-      console.log(`Account already exists for email: ${email}`);
-      return existingAccount[0];
+    if (existing) {
+      return existing;
     }
 
     // Create account record for client
     const newAccount = {
-      userId: userId || crypto.randomUUID(), // Always required, references client_profiles.id
+      userId: resolvedUserId, // Must reference client_profiles.id
       type: "credentials" as any,
       provider: "credentials",
-      providerAccountId: userId || crypto.randomUUID(), // Generate unique ID if userId is null
-      email,
-      passwordHash: passwordHash || null, // Allow null for OAuth users
+      providerAccountId: randomUUID(), // Opaque stable identifier per provider
+      email: normalizedEmail,
+      passwordHash: passwordHash || null,
       refresh_token: null,
       access_token: null,
       expires_at: null,
