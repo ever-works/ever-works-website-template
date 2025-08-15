@@ -1,82 +1,12 @@
 {
-  "version": "7",
+  "version": "5",
   "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
       "version": "7",
-      "when": 1752161646557,
-      "tag": "0000_curved_anita_blake",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1752162196435,
-      "tag": "0001_eminent_malcolm_colcord",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1752165151977,
-      "tag": "0002_burly_abomination",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1753415723627,
-      "tag": "0003_absurd_kabuki",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1754166224431,
-      "tag": "0004_fine_old_lace",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1754343250968,
-      "tag": "0005_freezing_mephisto",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1754351105196,
-      "tag": "0006_good_frank_castle",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1754373189533,
-      "tag": "0007_wealthy_rogue",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1754643888157,
-      "tag": "0008_past_quicksilver",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1754686947344,
-      "tag": "0009_add_pk_verificationTokens",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1754606196525,
-      "tag": "0006_marvelous_xorn",
+      "when": 1755218309825,
+      "tag": "0000_ordinary_joystick",
       "breakpoints": true
     }
   ]

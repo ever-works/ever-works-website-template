@@ -1,6 +1,4 @@
-import { pgTable, unique, text, timestamp, boolean, foreignKey, serial, varchar, integer, index, uniqueIndex, primaryKey } from "drizzle-orm/pg-core"
-
-
+import { pgTable, unique, text, timestamp, boolean, foreignKey, serial, varchar, integer, index, uniqueIndex, primaryKey } from "drizzle-orm/pg-core";
 
 export const passwordResetTokens = pgTable("passwordResetTokens", {
 	id: text().primaryKey().notNull(),
@@ -11,16 +9,16 @@ export const passwordResetTokens = pgTable("passwordResetTokens", {
 	unique("passwordResetTokens_token_unique").on(table.token),
 ]);
 
-export const newsletterSubscriptions = pgTable("newsletter_subscriptions", {
+export const newsletterSubscriptions = pgTable("newsletterSubscriptions", {
 	id: text().primaryKey().notNull(),
 	email: text().notNull(),
-	firstName: text("first_name"),
-	lastName: text("last_name"),
-	isSubscribed: boolean("is_subscribed").default(true).notNull(),
-	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
-	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+	isActive: boolean("is_active").default(true).notNull(),
+	subscribedAt: timestamp("subscribed_at", { mode: 'string' }).defaultNow().notNull(),
+	unsubscribedAt: timestamp("unsubscribed_at", { mode: 'string' }),
+	lastEmailSent: timestamp("last_email_sent", { mode: 'string' }),
+	source: text().default('footer'),
 }, (table) => [
-	unique("newsletter_subscriptions_email_unique").on(table.email),
+	unique("newsletterSubscriptions_email_unique").on(table.email),
 ]);
 
 export const users = pgTable("users", {
@@ -221,7 +219,7 @@ export const subscriptions = pgTable("subscriptions", {
 		}).onDelete("cascade"),
 ]);
 
-export const subscriptionHistory = pgTable("subscription_history", {
+export const subscriptionHistory = pgTable("subscriptionHistory", {
 	id: text().primaryKey().notNull(),
 	subscriptionId: text("subscription_id").notNull(),
 	action: text().notNull(),
@@ -239,6 +237,6 @@ export const subscriptionHistory = pgTable("subscription_history", {
 	foreignKey({
 			columns: [table.subscriptionId],
 			foreignColumns: [subscriptions.id],
-			name: "subscription_history_subscription_id_subscriptions_id_fk"
+			name: "subscriptionHistory_subscription_id_subscriptions_id_fk"
 		}).onDelete("cascade"),
 ]);

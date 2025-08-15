@@ -25,6 +25,7 @@ export async function GET(
     }
 
     const paymentAccount = await getUserPaymentAccountByProvider(userId, provider);
+
     if (!paymentAccount) {
       return NextResponse.json(
         { error: 'Payment account not found' },
@@ -37,6 +38,8 @@ export async function GET(
       userId: paymentAccount.userId,
       providerId: paymentAccount.providerId,
       customerId: paymentAccount.customerId,
+      accountId: paymentAccount.accountId,
+      lastUsed: paymentAccount.lastUsed,
       createdAt: paymentAccount.createdAt,
       updatedAt: paymentAccount.updatedAt
     });

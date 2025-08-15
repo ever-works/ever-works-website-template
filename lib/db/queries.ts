@@ -1155,12 +1155,34 @@ export async function setupUserPaymentAccount(
     } else {
       console.log(`✅ Provider ${providerName} found with ID: ${provider.id}`);
     }
-    const paymentAccount = await getPaymentAccountByUserId(userId);
+
+    // Check if payment account already exists for this user and provider
+    const existingAccount = await getUserPaymentAccountByProvider(userId, providerName);
     
-    if (paymentAccount && paymentAccount.providerId === provider.id) {
-      await updatePaymentAccountLastUsed(paymentAccount.id);
-      return paymentAccount;
+    if (existingAccount) {
+      console.log(`✅ Payment account already exists for user ${userId} and provider ${providerName}`);
+      // Update the existing account with new customerId if different
+      if (existingAccount.customerId !== customerId) {
+        console.log(`🔄 Updating customer ID from ${existingAccount.customerId} to ${customerId}`);
+        // Update the payment account directly in the database
+        await db
+          .update(paymentAccounts)
+          .set({ 
+            customerId, 
+            accountId: accountId || existingAccount.accountId,
+            lastUsed: new Date(),
+            updatedAt: new Date()
+          })
+          .where(eq(paymentAccounts.id, existingAccount.id));
+        
+        return await getUserPaymentAccountByProvider(userId, providerName) as PaymentAccount;
+      }
+      // Update last used timestamp
+      await updatePaymentAccountLastUsed(existingAccount.id);
+      return existingAccount;
     }
+
+    // Create new payment account
     const newPaymentAccountData: NewPaymentAccount = {
       userId,
       providerId: provider.id,
@@ -1168,6 +1190,7 @@ export async function setupUserPaymentAccount(
       accountId: accountId || null
     };
 
+    console.log(`🆕 Creating new payment account for user ${userId} and provider ${providerName}`);
     const createdAccount = await createPaymentAccount(newPaymentAccountData);
     return createdAccount;
 

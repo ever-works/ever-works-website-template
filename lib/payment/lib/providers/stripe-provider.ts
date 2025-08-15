@@ -172,6 +172,12 @@ export class StripeProvider implements PaymentProviderInterface {
 			this.logger.debug('No existing PaymentAccount found in database', { userId });
 			return null;
 		} catch (error) {
+			// Handle 404 errors gracefully (account doesn't exist yet)
+			if (error instanceof Error && error.message.includes('404')) {
+				this.logger.debug('Payment account not found (404) - this is expected for new users', { userId });
+				return null;
+			}
+			
 			this.logger.warn('Error retrieving from database', {
 				userId,
 				error: this.formatErrorMessage(error)
@@ -228,6 +234,34 @@ export class StripeProvider implements PaymentProviderInterface {
 				providerId: paymentAccount.providerId
 			});
 		} catch (error) {
+			// Handle duplicate key constraint violations
+			if (error instanceof Error && error.message.includes('duplicate key value violates unique constraint')) {
+				this.logger.warn('Payment account already exists - attempting to update', {
+					userId,
+					customerId,
+					error: this.formatErrorMessage(error)
+				});
+				
+				// Try to get the existing account and update it
+				try {
+					const existingAccount = await paymentAccountClient.getPaymentAccount(userId, 'stripe');
+					if (existingAccount) {
+						this.logger.info('Found existing payment account - synchronization completed', {
+							userId,
+							customerId,
+							accountId: existingAccount.id
+						});
+						return;
+					}
+				} catch (updateError) {
+					this.logger.error('Failed to retrieve existing payment account', {
+						userId,
+						customerId,
+						error: this.formatErrorMessage(updateError)
+					});
+				}
+			}
+			
 			this.logger.error('Failed to synchronize PaymentAccount in database', {
 				userId,
 				customerId,
