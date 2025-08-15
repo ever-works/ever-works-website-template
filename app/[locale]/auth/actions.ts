@@ -165,8 +165,8 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
       accountType: "individual",
     });
 
-    // 2) Create credentials account record holding the password hash (no userId for clients)
-    const clientAccount = await createClientAccount(undefined, email, passwordHash);
+    // 2) Create credentials account record holding the password hash linked to client profile
+    const clientAccount = await createClientAccount(clientProfile.id, email, passwordHash);
     if (!clientAccount) {
       throw new Error("Failed to create client account");
     }
