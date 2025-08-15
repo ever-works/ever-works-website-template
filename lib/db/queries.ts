@@ -903,13 +903,16 @@ export async function deleteClientProfile(id: string): Promise<boolean> {
  * Find client profile by email
  */
 export async function getClientProfileByEmail(email: string): Promise<ClientProfile | null> {
-  const normalizedEmail = email.toLowerCase().trim();
+  // Resolve deterministic profile via accounts (accounts.email will be unique after migration)
+  const account = await getClientAccountByEmail(email);
+  if (!account) return null;
+  
   const [profile] = await db
     .select()
     .from(clientProfiles)
-    .where(eq(clientProfiles.email, normalizedEmail))
+    .where(eq(clientProfiles.id, account.userId))
     .limit(1);
-
+    
   return profile || null;
 }
 
