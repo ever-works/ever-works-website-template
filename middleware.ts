@@ -81,7 +81,7 @@ export default async function middleware(req: NextRequest) {
           cookies: {
             getAll() { return req.cookies.getAll(); },
             setAll(cookiesToSet) {
-              cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
+              cookiesToSet.forEach(({ name, value }) => intlResponse.cookies.set(name, value));
             },
           },
         }
@@ -105,7 +105,7 @@ export default async function middleware(req: NextRequest) {
           cookies: {
             getAll() { return req.cookies.getAll(); },
             setAll(cookiesToSet) {
-              cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
+              cookiesToSet.forEach(({ name, value }) => intlResponse.cookies.set(name, value));
             },
           },
         }
