@@ -129,6 +129,7 @@ export interface ItemData {
 	updated_at: string; // raw string timestamp
 	updatedAt: Date; // timestamp
 	promo_code?: PromoCode; // New field for promotional codes
+	markdown?: string; // Optional markdown content from YAML
 }
 
 export interface AuthOptions {
@@ -225,18 +226,34 @@ export const getCachedConfig = unstable_cache(
 );
 
 async function parseItem(base: string, filename: string) {
-	// Sanitize filename to prevent path traversal attacks
-	const sanitizedFilename = sanitizeFilename(filename);
+	try {
+		// Sanitize filename to prevent path traversal attacks
+		const sanitizedFilename = sanitizeFilename(filename);
 
-	const filepath = path.join(base, sanitizedFilename);
+		const filepath = path.join(base, sanitizedFilename);
 
-	// Use secure file reading function
-	const content = await safeReadFile(filepath, base);
-	const meta = yaml.parse(content) as ItemData;
-	meta.slug = path.basename(sanitizedFilename, path.extname(sanitizedFilename));
-	meta.updatedAt = parse(meta.updated_at, 'yyyy-MM-dd HH:mm', new Date());
+		// Use secure file reading function
+		const content = await safeReadFile(filepath, base);
+		const meta = yaml.parse(content) as ItemData;
+		meta.slug = path.basename(sanitizedFilename, path.extname(sanitizedFilename));
+		meta.updatedAt = parse(meta.updated_at, 'yyyy-MM-dd HH:mm', new Date());
 
-	return meta;
+		return meta;
+	} catch (error) {
+		console.error(`Failed to parse item ${filename}:`, error);
+		// Return a fallback meta object so the page can still render
+		return {
+			name: filename.replace(/\.(yml|yaml)$/, ''),
+			description: 'Content temporarily unavailable',
+			category: 'unknown',
+			tags: [],
+			slug: filename.replace(/\.(yml|yaml)$/, ''),
+			source_url: '#', // Required field, using placeholder
+			updatedAt: new Date(),
+			updated_at: new Date().toISOString().split('T')[0] + ' 00:00',
+			markdown: undefined // Optional field
+		} as ItemData;
+	}
 }
 
 async function parseTranslation(base: string, filename: string) {
@@ -333,8 +350,8 @@ export async function fetchItems(options: FetchOptions = {}) {
 	const categories = await readCategories(options);
 	const tags = await readTags(options);
 
-	const items = await Promise.all(
-		files.map(async (slug) => {
+	const itemsPromises = files.map(async (slug) => {
+		try {
 			// Sanitize slug even though it comes from filesystem
 			const sanitizedSlug = sanitizeFilename(slug);
 
@@ -363,8 +380,15 @@ export async function fetchItems(options: FetchOptions = {}) {
 			}
 
 			return item;
-		})
-	);
+		} catch (error) {
+			console.error(`Failed to load item ${slug}:`, error);
+			// Return null for failed items, we'll filter them out
+			return null;
+		}
+	});
+
+	const itemsResults = await Promise.all(itemsPromises);
+	const items = itemsResults.filter((item): item is NonNullable<typeof item> => item !== null);
 
 	const tagsArray = Array.from(tags.values());
 	const sortedTags = options.sortTags ? tagsArray.sort((a, b) => a.name.localeCompare(b.name)) : tagsArray;
@@ -462,10 +486,24 @@ export async function fetchItem(slug: string, options: FetchOptions = {}) {
 		}
 
 		// Use secure file reading function that validates path and prevents traversal
-		const content = await safeReadFile(contentPath, base);
-		return { meta, content };
-	} catch {
-		return;
+		try {
+			const content = await safeReadFile(contentPath, base);
+			return { meta, content };
+		} catch (contentError) {
+			console.warn(`Failed to load content file for ${sanitizedSlug}:`, contentError);
+			
+			// Fallback: try to use markdown field from YAML if available
+			if (meta.markdown) {
+				console.log(`Using markdown field from YAML for ${sanitizedSlug}`);
+				return { meta, content: meta.markdown };
+			}
+			
+			// Return item with meta but no content, so the page can still render
+			return { meta, content: null };
+		}
+	} catch (error) {
+		console.error(`Failed to load item ${sanitizedSlug}:`, error);
+		return null;
 	}
 }
 

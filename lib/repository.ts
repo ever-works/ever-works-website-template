@@ -53,6 +53,18 @@ export async function pullChanges(url: string, dest: string, auth: GitAuth) {
         dir: dest,
         singleBranch: true,
       });
+    } else if (err instanceof Error && err.message.includes("Could not find master")) {
+      console.error("Repository branch issue detected, trying to clone fresh...");
+      await fs.promises.rm(dest, { recursive: true });
+      await fs.promises.mkdir(dest, { recursive: true });
+      await git.clone({
+        onAuth: () => auth,
+        fs,
+        http,
+        url,
+        dir: dest,
+        singleBranch: true,
+      });
     } else {
       throw err;
     }
@@ -68,6 +80,7 @@ items_name: Items
 copyright_year: ${new Date().getFullYear()}
 `;
 
+  // Skip repository sync during build if no DATA_REPOSITORY is configured
   if (!url) {
     console.warn(
       "'DATA_REPOSITORY' is not defined. Content features will be limited."
@@ -82,6 +95,20 @@ copyright_year: ${new Date().getFullYear()}
       await fs.promises.writeFile(configPath, DEFAULT_CONFIG);
     }
 
+    return;
+  }
+
+  // Skip repository sync during build to avoid blocking the build process
+  if (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build') {
+    console.log("Skipping repository sync during production build...");
+    const dest = getContentPath();
+    await fs.promises.mkdir(dest, { recursive: true });
+    
+    // Ensure minimal config exists
+    const configPath = path.join(dest, "config.yml");
+    if (!(await fsExists(configPath))) {
+      await fs.promises.writeFile(configPath, DEFAULT_CONFIG);
+    }
     return;
   }
 
@@ -101,19 +128,31 @@ copyright_year: ${new Date().getFullYear()}
     }
   } catch (error) {
     console.error("Error during repository sync check:", error);
-    // Continue with cloning as fallback or return based on your error handling strategy
+    // Continue with cloning as fallback
   }
 
-  console.log("Clonning repository...");
-  await fs.promises.mkdir(dest, { recursive: true });
-  await git.clone({
-    onAuth: () => auth,
-    fs,
-    http,
-    url,
-    dir: dest,
-    singleBranch: true,
-  });
+  try {
+    console.log("Clonning repository...");
+    await fs.promises.mkdir(dest, { recursive: true });
+    await git.clone({
+      onAuth: () => auth,
+      fs,
+      http,
+      url,
+      dir: dest,
+      singleBranch: true,
+    });
+  } catch (error) {
+    console.error("Failed to clone repository:", error);
+    console.warn("Continuing with local content only...");
+    
+    // Ensure content directory exists with minimal config
+    await fs.promises.mkdir(dest, { recursive: true });
+    const configPath = path.join(dest, "config.yml");
+    if (!(await fsExists(configPath))) {
+      await fs.promises.writeFile(configPath, DEFAULT_CONFIG);
+    }
+  }
 
   return;
 }

@@ -25,7 +25,7 @@ export interface ItemDetailProps {
     slug?: string;
     promo_code?: PromoCode;
   };
-  content?: string;
+  content?: string | null;
   categoryName: string;
   noContentMessage: string;
 }

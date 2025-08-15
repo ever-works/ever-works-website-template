@@ -2,6 +2,7 @@ import { fetchItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
 import { LOCALES } from "@/lib/constants";
 import ListingTags from "../../listing-tags";
+import { Suspense } from "react";
 
 export const revalidate = 10;
 
@@ -49,11 +50,13 @@ export default async function TagPagingPage({
   });
 
   return (
-    <ListingTags
-      total={tags.length}
-      page={page}
-      basePath="/tags/paging"
-      tags={paginatedTags} // <-- Only pass paginated tags!
-    />
+    <Suspense fallback={<div>Loading...</div>}>
+      <ListingTags
+        total={tags.length}
+        page={page}
+        basePath="/tags/paging"
+        tags={paginatedTags} // <-- Only pass paginated tags!
+      />
+    </Suspense>
   );
 }

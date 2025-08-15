@@ -1,35 +1,36 @@
-import { fetchByTag, fetchItems } from "@/lib/content";
-import { paginateMeta, totalPages } from "@/lib/paginate";
-import { LOCALES } from "@/lib/constants";
+import { fetchByTag } from "@/lib/content";
+import { paginateMeta } from "@/lib/paginate";
 import Listing from "../../listing";
 import { Suspense } from "react";
 
-export const revalidate = 10;
+// Disable static generation to prevent content loading errors during build
+export const dynamic = 'force-dynamic';
 
-export async function generateStaticParams() {
-  async function fetchItemsTags(locale: string) {
-    const { tags } = await fetchItems({ lang: locale });
-    const paths = [];
+// Remove generateStaticParams to prevent build-time content loading
+// export async function generateStaticParams() {
+//   async function fetchItemsTags(locale: string) {
+//     const { tags } = await fetchItems({ lang: locale });
+//     const paths = [];
 
-    for (const tag of tags) {
-      const pages = totalPages(tag.count || 0);
+//     for (const tag of tags) {
+//       const pages = totalPages(tag.count || 0);
 
-      for (let i = 1; i <= pages; ++i) {
-        if (i === 1) {
-          paths.push({ tag: [tag.id], locale });
-        } else {
-          paths.push({ tag: [tag.id, i.toString()], locale });
-        }
-      }
-    }
+//       for (let i = 1; i <= pages; ++i) {
+//       if (i === 1) {
+//         paths.push({ tag: [tag.id], locale });
+//       } else {
+//         paths.push({ tag: [tag.id, i.toString()], locale });
+//       }
+//     }
+//   }
 
-    return paths;
-  }
+//   return paths;
+// }
 
-  const params = LOCALES.map((locale) => fetchItemsTags(locale));
+//   const params = LOCALES.map((locale) => fetchItemsTags(locale));
 
-  return (await Promise.all(params)).flat();
-}
+//   return (await Promise.all(params)).flat();
+// }
 
 export default async function TagListing({
   params,

@@ -2,6 +2,7 @@ import { fetchByTag, fetchItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
 import { LOCALES } from "@/lib/constants";
 import ListingTags from "../../listing-tags";
+import { Suspense } from "react";
 
 export const revalidate = 10;
 
@@ -45,11 +46,13 @@ export default async function TagListing({
   });
   
   return (
-    <ListingTags
-      total={total}
-      page={page}
-      basePath={`/tags/tag/${tag}`}
-      tags={tags}
-    />
+    <Suspense fallback={<div>Loading...</div>}>
+      <ListingTags
+        total={total}
+        page={page}
+        basePath={`/tags/tag/${tag}`}
+        tags={tags}
+      />
+    </Suspense>
   );
 } 

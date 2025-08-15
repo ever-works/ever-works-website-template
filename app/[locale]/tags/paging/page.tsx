@@ -2,6 +2,7 @@ import { fetchItems } from "@/lib/content";
 import { paginateMeta, PER_PAGE } from "@/lib/paginate";
 import { LOCALES } from "@/lib/constants";
 import ListingTags from "../listing-tags";
+import { Suspense } from "react";
 
 export const revalidate = 10;
 export async function generateStaticParams() {
@@ -23,11 +24,13 @@ export default async function TagPagingPage({
   const paginatedTags = sortedTags.slice(start, start + PER_PAGE);
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
       <ListingTags
         total={total}
         page={page}
         basePath="/tags/paging"
         tags={paginatedTags}
       />
+    </Suspense>
   );
 } 

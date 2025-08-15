@@ -1,7 +1,7 @@
 import { MDX } from "@/components/mdx";
 
 interface ItemContentProps {
-  content?: string;
+  content?: string | null;
   noContentMessage: string;
 }
 

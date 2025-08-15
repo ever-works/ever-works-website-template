@@ -4,7 +4,7 @@ import { MarkdownTag, MarkdownTags, TagsSection } from "./markdown-tags";
 
 export function MDX(props: MDXRemoteProps) {
   return (
-    <div className="prose dark:prose-invert max-w-none ">
+    <div className="prose dark:prose-invert max-w-none">
       <MDXRemote
         {...props}
         components={{

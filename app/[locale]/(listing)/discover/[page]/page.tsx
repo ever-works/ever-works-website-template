@@ -1,28 +1,29 @@
 import { fetchItems } from "@/lib/content";
-import { paginateMeta, totalPages } from "@/lib/paginate";
-import { LOCALES } from "@/lib/constants";
+import { paginateMeta } from "@/lib/paginate";
 import Listing from "../../listing";
 import { Suspense } from "react";
 
-export const revalidate = 10;
+// Disable static generation to prevent content loading errors during build
+export const dynamic = 'force-dynamic';
 
-export async function generateStaticParams() {
-  async function fetchItemsPages(locale: string) {
-    const { items } = await fetchItems({ lang: locale });
-    const paths = [];
-    const pages = totalPages(items.length);
+// Remove generateStaticParams to prevent build-time content loading
+// export async function generateStaticParams() {
+//   async function fetchItemsPages(locale: string) {
+//     const { items } = await fetchItems({ lang: locale });
+//     const paths = [];
+//     const pages = totalPages(items.length);
 
-    for (let i = 1; i <= pages; ++i) {
-      paths.push({ page: i.toString(), locale });
-    }
+//     for (let i = 1; i <= pages; ++i) {
+//       paths.push({ page: i.toString(), locale });
+//     }
 
-    return paths;
-  }
+//     return paths;
+//   }
 
-  const params = LOCALES.map((locale) => fetchItemsPages(locale));
+//   const params = LOCALES.map((locale) => fetchItemsPages(locale));
 
-  return (await Promise.all(params)).flat();
-}
+//   return (await Promise.all(params)).flat();
+// }
 
 export default async function DiscoverListing({
   params,
