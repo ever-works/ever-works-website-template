@@ -35,7 +35,7 @@ async function supabaseGuard(req: NextRequest, baseRes: NextResponse): Promise<N
       cookies: {
         getAll() { return req.cookies.getAll(); },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
+          cookiesToSet.forEach(({ name, value }) => baseRes.cookies.set(name, value));
         },
       },
     }
