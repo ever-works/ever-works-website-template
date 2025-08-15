@@ -6,7 +6,7 @@ interface ActivityItemProps {
   itemId: string;
   itemTitle?: string;
   type: "comment" | "vote";
-  content?: string;
+  content?: string | null;
   rating?: number;
   voteType?: string;
   createdAt: Date;

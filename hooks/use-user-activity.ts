@@ -5,7 +5,7 @@ interface UserActivity {
   itemId: string;
   createdAt: Date;
   type: "comment" | "vote";
-  content?: string;
+  content?: string | null;
   rating?: number;
   voteType?: "upvote" | "downvote";
 }
