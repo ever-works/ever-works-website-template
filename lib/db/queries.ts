@@ -1063,8 +1063,19 @@ export async function hasClientAccess(userId: string): Promise<boolean> {
  */
 export async function verifyClientPassword(email: string, password: string): Promise<boolean> {
   try {
+    const normalizedEmail = email.toLowerCase().trim();
     
-    const account = await getClientAccountByEmail(email);
+    // Get credentials account specifically (not OAuth accounts)
+    const [account] = await db
+      .select()
+      .from(accounts)
+      .where(
+        and(
+          eq(accounts.provider, "credentials" as any),
+          eq(accounts.email, normalizedEmail)
+        )
+      )
+      .limit(1);
     
     if (!account) {
       return false;
