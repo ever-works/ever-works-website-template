@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth, initializeStripeProvider } from '@/lib/auth';
+import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,8 +11,8 @@ export async function POST(request: NextRequest) {
 
     const { priceId, paymentMethodId, trialPeriodDays } = await request.json();
 
-    // Initialize Stripe provider
-    const stripeProvider = initializeStripeProvider();
+    // Get or create Stripe provider (singleton)
+    const stripeProvider = getOrCreateStripeProvider();
     // Get or create customer
     const customerId = await stripeProvider.getCustomerId(session.user as any);
     
@@ -48,8 +48,8 @@ export async function PUT(request: NextRequest) {
 
     const { subscriptionId, priceId, cancelAtPeriodEnd } = await request.json();
 
-    // Initialize Stripe provider
-    const stripeProvider = initializeStripeProvider();
+    // Get or create Stripe provider (singleton)
+    const stripeProvider = getOrCreateStripeProvider();
     // Update subscription
     const subscription = await stripeProvider.updateSubscription({
       subscriptionId,
@@ -77,8 +77,8 @@ export async function DELETE(request: NextRequest) {
 
     const { subscriptionId, cancelAtPeriodEnd } = await request.json();
 
-    // Initialize Stripe provider
-    const stripeProvider = initializeStripeProvider();
+    // Get or create Stripe provider (singleton)
+    const stripeProvider = getOrCreateStripeProvider();
 
     // Cancel subscription
     const subscription = await stripeProvider.cancelSubscription(subscriptionId, cancelAtPeriodEnd);

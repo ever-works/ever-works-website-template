@@ -53,7 +53,7 @@ class StripeProviderSingleton {
         webhookSecret: requiredEnvVars.webhookSecret,
         options: {
           publishableKey: requiredEnvVars.publishableKey,
-          apiVersion: process.env.STRIPE_API_VERSION || '2025-04-30.basil'
+          apiVersion: process.env.STRIPE_API_VERSION || '2023-10-16'
         }
       });
 
