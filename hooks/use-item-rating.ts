@@ -1,4 +1,5 @@
 "use client";
+import { apiUtils, serverClient } from "@/lib/api/server-api-client";
 import { useQuery } from "@tanstack/react-query";
 
 interface RatingData {
@@ -12,14 +13,14 @@ export function useItemRating(itemId: string) {
     isLoading,
     error,
   } = useQuery<RatingData>({
-    queryKey: ["itemRating", itemId],
+    queryKey: ["item-rating", itemId],
     queryFn: async () => {
       const encodedItemId = encodeURIComponent(itemId);
-      const response = await fetch(`/api/items/${encodedItemId}/comments/rating`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch rating");
+      const response = await serverClient.get<RatingData>(`/api/items/${encodedItemId}/comments/rating`);
+      if (!apiUtils.isSuccess(response)) {
+        throw new Error(apiUtils.getErrorMessage(response) || "Failed to fetch rating");
       }
-      return response.json();
+      return response.data;
     },
   });
 
