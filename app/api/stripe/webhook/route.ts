@@ -14,7 +14,7 @@ import {
 // Import server configuration utility
 import { getEmailConfig } from '@/lib/config/server-config';
 import { WebhookSubscriptionService } from '@/lib/services/webhook-subscription.service';
-import { initializeStripeProvider } from '@/lib/auth';
+import { getOrCreateStripeProvider } from '@/lib/auth';
 const webhookSubscriptionService = new WebhookSubscriptionService();
 
 // Utility function to create email data with secure configuration
@@ -37,8 +37,8 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: 'No signature provided' }, { status: 400 });
 		}
 
-		// Initialize Stripe provider
-		const stripeProvider = initializeStripeProvider();
+		// Get or create Stripe provider (singleton)
+		const stripeProvider = getOrCreateStripeProvider();
 		const webhookResult = await stripeProvider.handleWebhook(body, signature);
 
 		if (!webhookResult.received) {

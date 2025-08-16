@@ -1,4 +1,4 @@
-import { auth, initializeStripeProvider } from '@/lib/auth';
+import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -24,7 +24,7 @@ export async function GET(
       );
     }
 
-    const stripeProvider = initializeStripeProvider();
+    const stripeProvider = getOrCreateStripeProvider();
 		const stripe = stripeProvider.getStripeInstance();
 
     // Retrieve the setup intent

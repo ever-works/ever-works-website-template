@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth, initializeStripeProvider } from '@/lib/auth';
+import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 import { db } from '@/lib/db/drizzle';
 import { subscriptions } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
@@ -29,7 +29,7 @@ export async function POST(
       );
     }
 
-    const stripeProvider = initializeStripeProvider();
+    const stripeProvider = getOrCreateStripeProvider();
     // Verify the subscription belongs to the user
     const userSubscription = await getSubscriptionByProviderSubscriptionId('stripe',subscriptionId);
 

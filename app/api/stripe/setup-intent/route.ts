@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth, initializeStripeProvider } from '@/lib/auth';
+import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 
 export async function POST() {
   try {
@@ -9,7 +9,7 @@ export async function POST() {
     }
 
     
-    const stripeProvider = initializeStripeProvider();
+    const stripeProvider = getOrCreateStripeProvider();
 
     // Create setup intent
     const setupIntent = await stripeProvider.createSetupIntent(session.user as any);

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth, initializeStripeProvider } from '@/lib/auth';
+import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 import { getSubscriptionByProviderSubscriptionId, updateSubscriptionBySubscriptionId } from '@/lib/db/queries';
 import { paymentEmailService } from '@/lib/payment/services/payment-email.service';
 
@@ -17,7 +17,7 @@ export async function POST(
     const { subscriptionId } = await params;
 
     // Initialize Stripe provider
-    const stripeProvider = initializeStripeProvider();
+    const stripeProvider = getOrCreateStripeProvider();
 
     // Verify the subscription belongs to the user
     const userSubscription = await getSubscriptionByProviderSubscriptionId('stripe',subscriptionId);

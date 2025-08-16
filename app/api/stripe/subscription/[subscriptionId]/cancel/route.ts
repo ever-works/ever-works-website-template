@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth, initializeStripeProvider } from '@/lib/auth';
+import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 import { paymentEmailService } from '@/lib/payment/services/payment-email.service';
 import { updateSubscriptionBySubscriptionId } from '@/lib/db/queries';
 
@@ -17,7 +17,7 @@ export async function POST(
     const { cancelAtPeriodEnd = true } = await request.json();
     const { subscriptionId } = await params;
 
-    const stripeProvider = initializeStripeProvider();
+    const stripeProvider = getOrCreateStripeProvider();
      
     const cancelledSubscription = await stripeProvider.cancelSubscription(
         subscriptionId,

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth, initializeStripeProvider } from '@/lib/auth';
+import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 import Stripe from 'stripe';
 import { z } from 'zod';
 import {
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { setup_intent_id, set_as_default, metadata } = createPaymentMethodSchema.parse(body);
-    const stripeProvider = initializeStripeProvider();
+    const stripeProvider = getOrCreateStripeProvider();
 		const stripe = stripeProvider.getStripeInstance();
     const setupIntent = await stripe.setupIntents.retrieve(setup_intent_id);
 

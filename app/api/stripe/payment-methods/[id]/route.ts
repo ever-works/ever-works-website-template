@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth, initializeStripeProvider } from '@/lib/auth';
+import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 import Stripe from 'stripe';
 
 
@@ -17,7 +17,7 @@ export async function GET(
         { status: 401 }
       );
     }
-    const stripeProvider = initializeStripeProvider();
+    const stripeProvider = getOrCreateStripeProvider();
     const stripe = stripeProvider.getStripeInstance();
     const { id } = await params;
 
@@ -120,7 +120,7 @@ export async function DELETE(
         { status: 401 }
       );
     }
-    const stripeProvider = initializeStripeProvider();
+    const stripeProvider = getOrCreateStripeProvider();
     const stripe = stripeProvider.getStripeInstance();
     const { id } = await params;
 
