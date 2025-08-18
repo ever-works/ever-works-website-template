@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { StripeProvider } from '@/lib/payment/lib/providers/stripe-provider';
-import { createProviderConfigs } from '@/lib/payment/config/provider-configs';
+import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 
 export async function POST() {
   try {
@@ -11,17 +9,7 @@ export async function POST() {
     }
 
     
-    // Initialize Stripe provider
-    const configs = createProviderConfigs({
-      apiKey: process.env.STRIPE_SECRET_KEY!,
-      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-      options: {
-        publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-        apiVersion: '2023-10-16'
-      }
-    });
-
-    const stripeProvider = new StripeProvider(configs.stripe);
+    const stripeProvider = getOrCreateStripeProvider();
 
     // Create setup intent
     const setupIntent = await stripeProvider.createSetupIntent(session.user as any);

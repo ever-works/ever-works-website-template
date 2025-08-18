@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth, initializeStripeProvider } from '@/lib/auth';
+import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 import Stripe from 'stripe';
 import { getUserStripeCustomerId } from '@/lib/stripe-helpers';
 
@@ -11,7 +11,7 @@ export async function GET() {
 		if (!session?.user?.id) {
 			return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 		}
-		const stripeProvider = initializeStripeProvider();
+		const stripeProvider = getOrCreateStripeProvider();
 		const stripe = stripeProvider.getStripeInstance();
 
 		const stripeCustomerId = await getUserStripeCustomerId(session.user.id, stripe);

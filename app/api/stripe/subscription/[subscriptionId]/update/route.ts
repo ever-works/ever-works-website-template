@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { StripeProvider } from '@/lib/payment/lib/providers/stripe-provider';
-import { createProviderConfigs } from '@/lib/payment/config/provider-configs';
+import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 import { db } from '@/lib/db/drizzle';
 import { subscriptions } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
@@ -31,18 +29,7 @@ export async function POST(
       );
     }
 
-    // Initialize Stripe provider
-    const configs = createProviderConfigs({
-      apiKey: process.env.STRIPE_SECRET_KEY!,
-      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-      options: {
-        publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-        apiVersion: '2023-10-16'
-      }
-    });
-
-    const stripeProvider = new StripeProvider(configs.stripe);
-
+    const stripeProvider = getOrCreateStripeProvider();
     // Verify the subscription belongs to the user
     const userSubscription = await getSubscriptionByProviderSubscriptionId('stripe',subscriptionId);
 

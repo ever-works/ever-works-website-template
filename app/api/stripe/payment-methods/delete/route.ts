@@ -1,4 +1,4 @@
-import { auth, initializeStripeProvider } from '@/lib/auth';
+import { auth, getOrCreateStripeProvider, initializeStripeProvider } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { z } from 'zod';
@@ -59,7 +59,7 @@ async function validatePaymentMethodOwnership(
   userId: string
 ): Promise<{ paymentMethod: Stripe.PaymentMethod; customer: Stripe.Customer } | NextResponse> {
   try {
-    const stripeProvider = initializeStripeProvider();
+    const stripeProvider = getOrCreateStripeProvider();
 const stripe = stripeProvider.getStripeInstance();
     // Retrieve payment method
     const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);

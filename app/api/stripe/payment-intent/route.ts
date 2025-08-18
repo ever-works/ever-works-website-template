@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { StripeProvider } from '@/lib/payment/lib/providers/stripe-provider';
-import { createProviderConfigs } from '@/lib/payment/config/provider-configs';
+import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,18 +11,8 @@ export async function POST(request: NextRequest) {
 
     const { amount, currency = 'usd', metadata, planId } = await request.json();
 
-    // Initialize Stripe provider
-    const configs = createProviderConfigs({
-      apiKey: process.env.STRIPE_SECRET_KEY!,
-      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-      options: {
-        publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-        apiVersion: '2023-10-16'
-      }
-    });
-
-    const stripeProvider = new StripeProvider(configs.stripe);
-
+    // Get or create Stripe provider (singleton)
+    const stripeProvider = getOrCreateStripeProvider();
     // Get or create customer
     const customerId = await stripeProvider.getCustomerId(session.user as any);
     
@@ -66,17 +54,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Payment intent ID required' }, { status: 400 });
     }
 
-    // Initialize Stripe provider
-    const configs = createProviderConfigs({
-      apiKey: process.env.STRIPE_SECRET_KEY!,
-      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-      options: {
-        publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-        apiVersion: '2023-10-16'
-      }
-    });
-
-    const stripeProvider = new StripeProvider(configs.stripe);
+    // Get or create Stripe provider (singleton)
+    const stripeProvider = getOrCreateStripeProvider();
 
     // Verify payment
     const verification = await stripeProvider.verifyPayment(paymentIntentId);

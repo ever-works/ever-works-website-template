@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import { StripeProvider } from '@/lib/payment/lib/providers/stripe-provider';
-import { createProviderConfigs } from '@/lib/payment/config/provider-configs';
 import { WebhookEventType } from '@/lib/payment/types/payment-types';
 import {
 	paymentEmailService,
@@ -16,6 +14,7 @@ import {
 // Import server configuration utility
 import { getEmailConfig } from '@/lib/config/server-config';
 import { WebhookSubscriptionService } from '@/lib/services/webhook-subscription.service';
+import { getOrCreateStripeProvider } from '@/lib/auth';
 const webhookSubscriptionService = new WebhookSubscriptionService();
 
 // Utility function to create email data with secure configuration
@@ -38,16 +37,8 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: 'No signature provided' }, { status: 400 });
 		}
 
-		// Initialize Stripe provider
-		const configs = createProviderConfigs({
-			apiKey: process.env.STRIPE_SECRET_KEY!,
-			webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-			options: {
-				apiVersion: '2023-10-16'
-			}
-		});
-
-		const stripeProvider = new StripeProvider(configs.stripe);
+		// Get or create Stripe provider (singleton)
+		const stripeProvider = getOrCreateStripeProvider();
 		const webhookResult = await stripeProvider.handleWebhook(body, signature);
 
 		if (!webhookResult.received) {
