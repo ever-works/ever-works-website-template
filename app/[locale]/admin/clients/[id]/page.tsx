@@ -44,7 +44,6 @@ export default async function ClientDetailPage({
   }
 
   const lastLogin = await getLastLoginActivity(profile.userId);
-  console.log('Last login for client:', profile.id, 'userId:', profile.userId, lastLogin);
 
   const locale = (await getLocale()) || "en";
 

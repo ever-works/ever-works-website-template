@@ -40,27 +40,13 @@ export const credentialsProvider = Credentials({
       const email = credentials.email as string;
       const password = credentials.password as string;
 
-      console.log('🔐 Auth Debug:', {
-        email,
-        hasPassword: !!password
-      });
-
       // First, try to find user in users table (admin authentication)
       const foundUser = await getUserByEmail(email);
-      
-      console.log('👤 User Debug:', {
-        foundUser: !!foundUser,
-        hasPasswordHash: !!foundUser?.passwordHash
-      });
       
       if (foundUser && foundUser.passwordHash) {
         // Check if this is a user with password in users table
         const isPasswordValid = await comparePasswords(password, foundUser.passwordHash);
-        
-        console.log('🔑 Password Debug:', {
-          isPasswordValid
-        });
-        
+
         if (isPasswordValid) {
           // Allow authentication for any user in users table (admin)
           console.log('✅ Admin authentication successful');
@@ -75,10 +61,6 @@ export const credentialsProvider = Credentials({
 
       // If not found in users table or password doesn't match, try accounts table (client authentication)
       const clientAccount = await getClientAccountByEmail(email);
-      
-      console.log('👥 Client Account Debug:', {
-        hasClientAccount: !!clientAccount
-      });
       
       if (clientAccount) {
         const isClientPasswordValid = await verifyClientPassword(email, password);

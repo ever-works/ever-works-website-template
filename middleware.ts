@@ -19,25 +19,15 @@ const ADMIN_SIGNIN = "/admin/auth/signin";
 /* ────────────────────────────────── NextAuth guard ────────────────────────────────── */
 
 async function nextAuthGuard(req: NextRequest, baseRes: NextResponse): Promise<NextResponse> {
-  console.log('DEBUG: NextAuth guard called for', req.nextUrl.pathname);
-  
   try {
     // Import auth dynamically to avoid Edge Runtime issues
     const { auth } = await import("@/lib/auth");
     const session = await auth();
-    console.log('DEBUG: NextAuth session:', { 
-      exists: !!session, 
-      user: !!session?.user, 
-      isAdmin: session?.user?.isAdmin,
-      email: session?.user?.email 
-    });
     
     if (session?.user?.isAdmin) {
-      console.log('DEBUG: Admin user authenticated, allowing access');
       return baseRes;
     }
     
-    console.log('DEBUG: No admin session, redirecting to signin');
     const url = req.nextUrl.clone();
     const locale = req.nextUrl.pathname.split('/')[1];
     url.pathname = `/${locale}${ADMIN_SIGNIN}`;
@@ -164,7 +154,6 @@ export default async function middleware(req: NextRequest) {
   }
   
   if (pathWithoutLocale.startsWith(ADMIN_PREFIX) && pathWithoutLocale !== ADMIN_SIGNIN) {
-    console.log('DEBUG: Admin route accessed:', pathWithoutLocale, 'provider:', cfg.provider);
     
     if (cfg.provider === "supabase") {
       return supabaseGuard(req, intlResponse);
