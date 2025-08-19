@@ -145,21 +145,21 @@
     {
       "idx": 20,
       "version": "7",
-      "when": 1755220000000,
+      "when": 1755246223000,
       "tag": "0020_create_payment_tables",
       "breakpoints": true
     },
     {
       "idx": 21,
       "version": "7",
-      "when": 1755220100000,
+      "when": 1755246224000,
       "tag": "0021_cleanup_is_admin_column",
       "breakpoints": true
     },
     {
       "idx": 22,
       "version": "7",
-      "when": 1755220200000,
+      "when": 1755246225000,
       "tag": "0022_add_userid_to_client_profiles",
       "breakpoints": true
     },
@@ -167,7 +167,7 @@
       "idx": 23,
       "version": "7",
       "when": 1755317817331,
-      "tag": "0001_dusty_demogoblin",
+      "tag": "0023_dusty_demogoblin",
       "breakpoints": true
     }
   ]
