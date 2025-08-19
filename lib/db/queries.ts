@@ -1477,7 +1477,8 @@ export async function updateSubscriptionBySubscriptionId(
  * Get the last login activity for a client
  */
 export async function getLastLoginActivity(clientId: string): Promise<ActivityLog | null> {
-	const [lastLogin] = await db
+	// Try to find by clientId first, then by userId if no results
+	const [lastLoginByClient] = await db
 		.select()
 		.from(activityLogs)
 		.where(
@@ -1489,5 +1490,22 @@ export async function getLastLoginActivity(clientId: string): Promise<ActivityLo
 		.orderBy(desc(activityLogs.timestamp))
 		.limit(1);
 
-	return lastLogin || null;
+	if (lastLoginByClient) {
+		return lastLoginByClient;
+	}
+
+	// If no client-specific login found, try to find by userId
+	const [lastLoginByUser] = await db
+		.select()
+		.from(activityLogs)
+		.where(
+			and(
+				eq(activityLogs.userId, clientId),
+				eq(activityLogs.action, ActivityType.SIGN_IN)
+			)
+		)
+		.orderBy(desc(activityLogs.timestamp))
+		.limit(1);
+
+	return lastLoginByUser || null;
 }

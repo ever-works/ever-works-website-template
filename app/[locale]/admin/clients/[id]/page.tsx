@@ -44,7 +44,8 @@ export default async function ClientDetailPage({
     notFound();
   }
 
-  const lastLogin = await getLastLoginActivity(profile.id);
+  const lastLogin = await getLastLoginActivity(profile.userId);
+  console.log('Last login for client:', profile.id, 'userId:', profile.userId, lastLogin);
 
   const locale = (await getLocale()) || "en";
 
@@ -136,12 +137,10 @@ export default async function ClientDetailPage({
                       <Star className="w-4 h-4" />
                       <span>{profile.totalSubmissions || 0} submissions</span>
                     </div>
-                    {lastLogin && (
-                      <div className="flex items-center space-x-2">
-                        <Clock className="w-4 h-4" />
-                        <span>Last login {toDateTime(lastLogin.timestamp)}</span>
-                      </div>
-                    )}
+                    <div className="flex items-center space-x-2">
+                      <Clock className="w-4 h-4" />
+                      <span>Last login {lastLogin ? toDateTime(lastLogin.timestamp) : 'Never'}</span>
+                    </div>
                   </div>
                 </div>
               </div>
