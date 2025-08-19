@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { getClientProfileById } from "@/lib/db/queries";
+import { getClientProfileById, getLastLoginActivity } from "@/lib/db/queries";
 import { type ClientProfile } from "@/lib/db/schema";
 import { Link } from "@/i18n/navigation";
 import { getLocale } from "next-intl/server";
@@ -44,7 +44,7 @@ export default async function ClientDetailPage({
     notFound();
   }
 
-
+  const lastLogin = await getLastLoginActivity(profile.id);
 
   const locale = (await getLocale()) || "en";
 
@@ -136,6 +136,12 @@ export default async function ClientDetailPage({
                       <Star className="w-4 h-4" />
                       <span>{profile.totalSubmissions || 0} submissions</span>
                     </div>
+                    {lastLogin && (
+                      <div className="flex items-center space-x-2">
+                        <Clock className="w-4 h-4" />
+                        <span>Last login {toDateTime(lastLogin.timestamp)}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

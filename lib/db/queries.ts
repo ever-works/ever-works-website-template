@@ -4,6 +4,7 @@ import {
   activityLogs,
   ActivityType,
   type NewActivityLog,
+  type ActivityLog,
   NewUser,
   passwordResetTokens,
   users,
@@ -1468,4 +1469,25 @@ export async function updateSubscriptionBySubscriptionId(
 		.where(eq(subscriptions.subscriptionId, updateData.subscriptionId!));
 
 	return result[0] || null;
+}
+
+// ######################### Activity Log Queries #########################
+
+/**
+ * Get the last login activity for a client
+ */
+export async function getLastLoginActivity(clientId: string): Promise<ActivityLog | null> {
+	const [lastLogin] = await db
+		.select()
+		.from(activityLogs)
+		.where(
+			and(
+				eq(activityLogs.clientId, clientId),
+				eq(activityLogs.action, ActivityType.SIGN_IN)
+			)
+		)
+		.orderBy(desc(activityLogs.timestamp))
+		.limit(1);
+
+	return lastLogin || null;
 }
