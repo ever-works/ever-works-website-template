@@ -297,14 +297,13 @@ export default async function ClientDetailPage({
                     </Chip>
                   </div>
                   <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
-                    <div className="grid grid-cols-2 gap-4 text-center">
-                      <div className="p-3 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg">
-                        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    <div className="text-center">
+                      <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg">
+                        <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                           {profile.totalSubmissions || 0}
                         </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400">Submissions</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">Submissions</div>
                       </div>
-
                     </div>
                   </div>
                 </div>
