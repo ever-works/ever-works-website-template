@@ -20,8 +20,7 @@ import {
   Languages,
   Star,
   ExternalLink,
-  Edit,
-  MessageSquare
+  Edit
 } from "lucide-react";
 
 type Params = { id: string; locale?: string };
@@ -66,24 +65,17 @@ export default async function ClientDetailPage({
               </Button>
             </Link>
             <div className="flex items-center space-x-3">
-              <Button
-                color="primary"
-                variant="flat"
-                size="sm"
-                startContent={<Edit className="w-4 h-4" />}
-                className="bg-gradient-to-r from-theme-primary to-theme-accent text-white shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                Edit Client
-              </Button>
-              <Button
-                color="default"
-                variant="bordered"
-                size="sm"
-                startContent={<MessageSquare className="w-4 h-4" />}
-                className="border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-              >
-                Send Message
-              </Button>
+              <Link href={`/${locale}/admin/clients?edit=${profile.id}`}>
+                <Button
+                  color="primary"
+                  variant="flat"
+                  size="sm"
+                  startContent={<Edit className="w-4 h-4" />}
+                  className="bg-gradient-to-r from-theme-primary to-theme-accent text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Edit Client
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -199,7 +191,7 @@ export default async function ClientDetailPage({
                   {profile.bio && (
                     <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
                       <div className="flex items-center space-x-2 mb-3">
-                        <MessageSquare className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                        <User className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                         <span className="text-sm font-medium text-gray-900 dark:text-white">Bio</span>
                       </div>
                       <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-blue-100 dark:border-blue-800">
