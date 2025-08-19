@@ -24,13 +24,14 @@ import {
   type SubscriptionWithUser,
   accounts,
   paymentProviders,
-  paymentAccounts
+  paymentAccounts,
+  clientProfiles
 } from "./schema";
 import { desc, isNull, count, asc, lte } from "drizzle-orm";
 import type { NewComment, CommentWithUser } from "@/lib/types/comment";
 import type { ClientProfile, NewClientProfile, OldPaymentProvider, PaymentAccount, NewPaymentAccount, NewPaymentProvider } from "./schema";
-import { clientProfiles } from "./schema";
-import { randomUUID } from "crypto";
+
+// import { randomUUID } from "crypto"; // Removed for Edge Runtime compatibility
 
 import { PaymentPlan } from "../constants";
 import { comparePasswords } from "../auth/credentials";
@@ -1002,7 +1003,7 @@ export async function createClientAccount(userId: string | undefined, email: str
       userId: resolvedUserId, // Must reference client_profiles.id
       type: "credentials" as any,
       provider: "credentials",
-      providerAccountId: randomUUID(), // Opaque stable identifier per provider
+      providerAccountId: crypto.randomUUID(), // Opaque stable identifier per provider
       email: normalizedEmail,
       passwordHash: passwordHash || null,
       refresh_token: null,

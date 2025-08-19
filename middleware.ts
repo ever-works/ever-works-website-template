@@ -16,6 +16,42 @@ const intl = createIntlMiddleware(routing);
 const ADMIN_PREFIX = "/admin";
 const ADMIN_SIGNIN = "/admin/auth/signin";
 
+/* ────────────────────────────────── NextAuth guard ────────────────────────────────── */
+
+async function nextAuthGuard(req: NextRequest, baseRes: NextResponse): Promise<NextResponse> {
+  console.log('DEBUG: NextAuth guard called for', req.nextUrl.pathname);
+  
+  try {
+    // Import auth dynamically to avoid Edge Runtime issues
+    const { auth } = await import("@/lib/auth");
+    const session = await auth();
+    console.log('DEBUG: NextAuth session:', { 
+      exists: !!session, 
+      user: !!session?.user, 
+      isAdmin: session?.user?.isAdmin,
+      email: session?.user?.email 
+    });
+    
+    if (session?.user?.isAdmin) {
+      console.log('DEBUG: Admin user authenticated, allowing access');
+      return baseRes;
+    }
+    
+    console.log('DEBUG: No admin session, redirecting to signin');
+    const url = req.nextUrl.clone();
+    const locale = req.nextUrl.pathname.split('/')[1];
+    url.pathname = `/${locale}${ADMIN_SIGNIN}`;
+    url.searchParams.set('callbackUrl', req.nextUrl.pathname);
+    return NextResponse.redirect(url);
+  } catch (error) {
+    console.error('DEBUG: NextAuth guard error:', error);
+    const url = req.nextUrl.clone();
+    const locale = req.nextUrl.pathname.split('/')[1];
+    url.pathname = `/${locale}${ADMIN_SIGNIN}`;
+    return NextResponse.redirect(url);
+  }
+}
+
 /* ────────────────────────────── Supabase guard helper ────────────────────────────── */
 async function supabaseGuard(req: NextRequest, baseRes: NextResponse): Promise<NextResponse> {
   // Refresh Supabase session & get proper cookies
@@ -128,15 +164,15 @@ export default async function middleware(req: NextRequest) {
   }
   
   if (pathWithoutLocale.startsWith(ADMIN_PREFIX) && pathWithoutLocale !== ADMIN_SIGNIN) {
+    console.log('DEBUG: Admin route accessed:', pathWithoutLocale, 'provider:', cfg.provider);
+    
     if (cfg.provider === "supabase") {
       return supabaseGuard(req, intlResponse);
     } else if (cfg.provider === "next-auth") {
-      // Skip NextAuth guard in Edge Runtime to avoid Node.js modules
-      // Admin access will be handled by client-side logic
-      return intlResponse;
+      return nextAuthGuard(req, intlResponse);
     } else if (cfg.provider === "both") {
-      // For 'both' provider, only use Supabase guard in Edge Runtime
-      return supabaseGuard(req, intlResponse);
+      // Check NextAuth session first
+      return nextAuthGuard(req, intlResponse);
     }
   }
 

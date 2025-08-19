@@ -64,7 +64,7 @@ export const credentialsProvider = Credentials({
         if (isPasswordValid) {
           // Allow authentication for any user in users table (admin)
           console.log('✅ Admin authentication successful');
-          			logActivity(ActivityType.SIGN_IN, foundUser.id);
+          logActivity(ActivityType.SIGN_IN, foundUser.id);
           // Return admin user with consistent structure
           return {
             ...foundUser,
@@ -99,7 +99,7 @@ export const credentialsProvider = Credentials({
             
             // Allow client authentication
             console.log('✅ Client authentication successful');
-            			logActivity(ActivityType.SIGN_IN, undefined, clientProfile.id);
+            logActivity(ActivityType.SIGN_IN, undefined, clientProfile.id);
             return clientUser;
           }
         }

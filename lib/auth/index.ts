@@ -131,7 +131,7 @@ export function getOrCreateStripeProvider(): StripeProvider {
 
 export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   adapter: drizzle,
-  session: { 
+  session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
     updateAge: 24 * 60 * 60, // 24 hours
@@ -152,18 +152,28 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
     },
     signIn: async ({ user, account }) => {
       try {
-        // Avoid any database work here (Edge runtime).
-        // If we have an email/user from provider, allow; otherwise, default to provider behavior.
         if (!user?.email) {
-          return account?.provider !== "credentials";
+          console.warn('Sign-in attempt without email', { provider: account?.provider });
+          return account?.provider !== 'credentials';
         }
+
+        // If DATABASE_URL is not set, we can't validate against the database
+        if (!process.env.DATABASE_URL) {
+          console.warn('DATABASE_URL is not set, skipping database validation');
+          // Allow OAuth sign-ins but not credentials without a database
+          return account?.provider !== 'credentials';
+        }
+
+        // For Edge runtime compatibility, avoid database calls in signIn callback
+        // Validation is handled in the credentials provider authorize function
         return true;
-      } catch {
-        return false;
+      } catch (error) {
+        console.error('Error during sign-in validation:', error);
+        return account?.provider !== 'credentials';
       }
     },
     jwt: async ({ token, user, account }) => {
-      // Do not query DB here (Edge runtime). Just carry flags from user if present.
+      // Handle user properties from credentials provider
       const extendedUser = user as ExtendedUser;
       
       if (extendedUser?.id && typeof extendedUser.id === "string") {
@@ -176,15 +186,23 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         token.provider = account.provider;
       }
       
-      // Set admin flag based on user properties
-      // Any user in the users table is considered an admin
-      // Client users (from client_profiles) are not admins
+      // Set admin flag based on user properties from credentials provider
+      // The credentials provider already determined admin status
       if (typeof extendedUser?.isClient === "boolean") {
         token.isAdmin = !extendedUser.isClient;
+      } else if (typeof extendedUser?.isAdmin === "boolean") {
+        token.isAdmin = extendedUser.isAdmin;
       } else {
-        // If user is not marked as client, they are from users table = admin
+        // Default for users table entries (admin users)
         token.isAdmin = true;
       }
+      
+      console.log('DEBUG JWT: Token admin status set:', { 
+        isAdmin: token.isAdmin, 
+        isClient: extendedUser?.isClient,
+        userIsAdmin: extendedUser?.isAdmin,
+        email: extendedUser?.email || token.email
+      });
       
       return token;
     },

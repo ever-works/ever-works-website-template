@@ -87,6 +87,9 @@ export const clientProfiles = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     email: text("email").notNull(),
     name: text("name").notNull(),
     displayName: text("display_name"),
@@ -118,6 +121,7 @@ export const clientProfiles = pgTable(
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
   (clientProfile) => [
+    index("client_profile_user_id_idx").on(clientProfile.userId),
     index("client_profile_email_idx").on(clientProfile.email),
     index("client_profile_status_idx").on(clientProfile.status),
     index("client_profile_plan_idx").on(clientProfile.plan),
@@ -181,7 +185,7 @@ export const activityLogs = pgTable("activityLogs", {
   clientId: text("clientId").references(() => clientProfiles.id, { onDelete: "cascade" }), // For client activities
   action: text("action").notNull(),
   timestamp: timestamp("timestamp").notNull().defaultNow(),
-  ipAddress: varchar("ip_address", { length: 45 }),
+  ipAddress: varchar("ip_address", { length: 45 }), // Map to actual DB column name
 }, (table) => [
   index("activity_logs_user_idx").on(table.userId),
   index("activity_logs_client_idx").on(table.clientId),
