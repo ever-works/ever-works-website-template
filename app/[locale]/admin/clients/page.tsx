@@ -630,14 +630,14 @@ export default function ClientsPage() {
                         title="Click to view client details"
                       >
                         <div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                          {(client.displayName || client.user.name || 'U').charAt(0).toUpperCase()}
+                          {(client.displayName || client.user?.name || 'U').charAt(0).toUpperCase()}
                         </div>
                         <div className="flex-1">
                           <h4 className="font-medium text-gray-900 dark:text-white hover:text-theme-primary transition-colors">
-                            {client.displayName || client.user.name || 'Unnamed Client'}
+                            {client.displayName || client.user?.name || 'Unnamed Client'}
                           </h4>
                           <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {client.username ? `@${client.username}` : ''} {client.username && client.user.email ? '•' : ''} {client.user.email}
+                            {client.username ? `@${client.username}` : ''} {client.username && client.user?.email ? '•' : ''} {client.user?.email || ''}
                           </p>
                           {client.jobTitle && (
                             <p className="text-xs text-gray-400 dark:text-gray-500">{client.jobTitle}</p>
