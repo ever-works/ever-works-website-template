@@ -1,9 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getClientProfileById } from "@/lib/db/queries";
-import { db } from "@/lib/db/drizzle";
-import { accounts, type ClientProfile } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { type ClientProfile } from "@/lib/db/schema";
 import { Link } from "@/i18n/navigation";
 import { getLocale } from "next-intl/server";
 import { Button, Card, CardBody, Chip } from "@heroui/react";
@@ -46,10 +44,7 @@ export default async function ClientDetailPage({
     notFound();
   }
 
-  const linkedAccounts = await db
-    .select()
-    .from(accounts)
-    .where(eq(accounts.userId, profile.userId));
+
 
   const locale = (await getLocale()) || "en";
 
@@ -309,66 +304,14 @@ export default async function ClientDetailPage({
                         </div>
                         <div className="text-xs text-gray-600 dark:text-gray-400">Submissions</div>
                       </div>
-                      <div className="p-3 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg">
-                        <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                          {linkedAccounts.length}
-                        </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400">Accounts</div>
-                      </div>
+
                     </div>
                   </div>
                 </div>
               </CardBody>
             </Card>
 
-            {/* Linked Accounts */}
-            <Card className="border-0 shadow-xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
-              <CardBody className="p-0">
-                <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <Shield className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-                      <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Linked Accounts</h2>
-                    </div>
-                    <Chip size="sm" variant="flat" color="primary" className="shadow-sm">
-                      {linkedAccounts.length}
-                    </Chip>
-                  </div>
-                </div>
-                <div className="p-6">
-                  {linkedAccounts.length === 0 ? (
-                    <div className="text-center py-8">
-                      <Shield className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500 dark:text-gray-400">No linked accounts</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {linkedAccounts.map((acc: typeof accounts.$inferSelect) => (
-                        <div 
-                          key={`${acc.provider}:${acc.providerAccountId}`} 
-                          className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 rounded-xl border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-200"
-                        >
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
-                              <ExternalLink className="w-5 h-5 text-white" />
-                            </div>
-                            <div>
-                              <h4 className="font-semibold text-gray-900 dark:text-white capitalize">{acc.provider}</h4>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">{acc.type}</p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm font-mono text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
-                              {acc.providerAccountId.slice(0, 8)}...
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </CardBody>
-            </Card>
+
 
             {/* Billing & Subscription */}
             <Card className="border-0 shadow-xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
