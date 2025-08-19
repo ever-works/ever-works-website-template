@@ -18,6 +18,7 @@ export default function ClientsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedClient, setSelectedClient] = useState<ClientProfileWithUser | null>(null);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
+  const [navigatingClientId, setNavigatingClientId] = useState<string | null>(null);
   
   // Delete confirmation state
   const [clientToDelete, setClientToDelete] = useState<string | null>(null);
@@ -233,9 +234,10 @@ export default function ClientsPage() {
     onOpen();
   };
 
-  const viewClientDetails = (clientId: string) => {
+  const viewClientDetails = async (clientId: string) => {
+    setNavigatingClientId(clientId);
     const locale = params.locale || 'en';
-    router.push(`/${locale}/admin/clients/${clientId}`);
+    await router.push(`/${locale}/admin/clients/${clientId}`);
   };
 
   const handleFormSubmit = async (data: CreateClientRequest | UpdateClientRequest) => {
@@ -618,21 +620,29 @@ export default function ClientsPage() {
             <div className="divide-y divide-gray-100 dark:divide-gray-800">
               {clients.map((client) => (
                 <div key={client.id} className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4 flex-1">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">#{client.id.slice(0, 8)}</span>
-                      </div>
-                      <div 
-                        className="flex items-center space-x-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg p-2 -m-2 transition-colors"
-                        onClick={() => viewClientDetails(client.id)}
-                        title="Click to view client details"
-                      >
-                        <div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                          {(client.displayName || client.user?.name || 'U').charAt(0).toUpperCase()}
+                                      <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4 flex-1 min-w-0">
+                        <div className="flex items-center space-x-2 flex-shrink-0">
+                          <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                          <span className="text-sm text-gray-500 dark:text-gray-400">#{client.id.slice(0, 8)}</span>
                         </div>
-                        <div className="flex-1">
+                        <div 
+                          className={`flex items-center space-x-3 rounded-lg p-2 -m-2 transition-colors flex-1 min-w-0 ${
+                            navigatingClientId === client.id 
+                              ? 'cursor-wait opacity-60' 
+                              : 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700'
+                          }`}
+                          onClick={() => navigatingClientId !== client.id && viewClientDetails(client.id)}
+                          title={navigatingClientId === client.id ? 'Loading...' : 'Click to view client details'}
+                        >
+                        <div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm relative">
+                          {navigatingClientId === client.id ? (
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          ) : (
+                            (client.displayName || client.user?.name || 'U').charAt(0).toUpperCase()
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0 pr-4">
                           <h4 className="font-medium text-gray-900 dark:text-white hover:text-theme-primary transition-colors">
                             {client.displayName || client.user?.name || 'Unnamed Client'}
                           </h4>
@@ -648,8 +658,8 @@ export default function ClientsPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-3 flex-shrink-0">
+                      <div className="flex items-center space-x-1">
                         <Chip
                           color={getStatusColor(client.status || 'active')}
                           variant="flat"
@@ -672,15 +682,22 @@ export default function ClientsPage() {
                           {(client.accountType || 'individual').charAt(0).toUpperCase() + (client.accountType || 'individual').slice(1)}
                         </Chip>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-1">
                         <Button
                           size="sm"
                           color="default"
                           variant="light"
+                          isDisabled={navigatingClientId === client.id}
                           onPress={() => viewClientDetails(client.id)}
-                          startContent={<Eye className="w-4 h-4" />}
+                          startContent={
+                            navigatingClientId === client.id ? (
+                              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                            ) : (
+                              <Eye className="w-4 h-4" />
+                            )
+                          }
                         >
-                          View
+                          {navigatingClientId === client.id ? 'Loading...' : 'View'}
                         </Button>
                         <Button
                           size="sm"
