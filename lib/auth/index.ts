@@ -158,7 +158,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         }
 
         // If DATABASE_URL is not set, we can't validate against the database
-        if (!process.env.DATABASE_URL) {
+        if (!isDatabaseAvailable) {
           console.warn('DATABASE_URL is not set, skipping database validation');
           // Allow OAuth sign-ins but not credentials without a database
           return account?.provider !== 'credentials';
