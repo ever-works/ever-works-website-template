@@ -29,15 +29,22 @@ async function nextAuthGuard(req: NextRequest, baseRes: NextResponse): Promise<N
     }
     
     const url = req.nextUrl.clone();
-    const locale = req.nextUrl.pathname.split('/')[1];
-    url.pathname = `/${locale}${ADMIN_SIGNIN}`;
+    // Build locale-aware signin path without duplicating /admin
+    const segments = req.nextUrl.pathname.split('/').filter(Boolean);
+    const maybeLocale = segments[0];
+    const hasLocale = routing.locales.includes(maybeLocale as any);
+    const rootLocalePrefix = hasLocale ? `/${maybeLocale}` : "";
+    url.pathname = `${rootLocalePrefix}${ADMIN_SIGNIN}`;
     url.searchParams.set('callbackUrl', req.nextUrl.pathname);
     return NextResponse.redirect(url);
   } catch (error) {
     console.error('DEBUG: NextAuth guard error:', error);
     const url = req.nextUrl.clone();
-    const locale = req.nextUrl.pathname.split('/')[1];
-    url.pathname = `/${locale}${ADMIN_SIGNIN}`;
+    const segments = req.nextUrl.pathname.split('/').filter(Boolean);
+    const maybeLocale = segments[0];
+    const hasLocale = routing.locales.includes(maybeLocale as any);
+    const rootLocalePrefix = hasLocale ? `/${maybeLocale}` : "";
+    url.pathname = `${rootLocalePrefix}${ADMIN_SIGNIN}`;
     return NextResponse.redirect(url);
   }
 }
@@ -71,7 +78,12 @@ async function supabaseGuard(req: NextRequest, baseRes: NextResponse): Promise<N
   const isAdmin = user?.user_metadata?.isAdmin === true || user?.user_metadata?.role === 'admin';
   if (!isAdmin) {
     const url = req.nextUrl.clone();
-    url.pathname = "/admin/auth/signin";
+    // Respect locale in redirect path
+    const segments = req.nextUrl.pathname.split('/').filter(Boolean);
+    const maybeLocale = segments[0];
+    const hasLocale = routing.locales.includes(maybeLocale as any);
+    const rootLocalePrefix = hasLocale ? `/${maybeLocale}` : "";
+    url.pathname = `${rootLocalePrefix}${ADMIN_SIGNIN}`;
     url.searchParams.set('callbackUrl', req.nextUrl.pathname);
     return NextResponse.redirect(url);
   }

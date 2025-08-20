@@ -55,6 +55,7 @@ export const credentialsProvider = Credentials({
           return {
             ...foundUser,
             isClient: false, // Explicitly mark as admin user
+            isAdmin: true,
           };
         }
       }

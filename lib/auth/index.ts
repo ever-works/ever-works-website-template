@@ -186,16 +186,30 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         token.provider = account.provider;
       }
       
-      // Set admin flag based on user properties from credentials provider
-      // The credentials provider already determined admin status
-      if (typeof extendedUser?.isClient === "boolean") {
-        token.isAdmin = !extendedUser.isClient;
-      } else if (typeof extendedUser?.isAdmin === "boolean") {
-        token.isAdmin = extendedUser.isAdmin;
-      } else {
-        // Default to non-admin when flags are missing
-        token.isAdmin = false;
+      // Set/Persist admin flag
+      // If this callback is triggered due to an active sign-in (user present), derive from flags
+      // Otherwise, preserve existing token.isAdmin
+      if (user) {
+        if (typeof extendedUser?.isClient === "boolean") {
+          token.isAdmin = !extendedUser.isClient;
+        } else if (typeof extendedUser?.isAdmin === "boolean") {
+          token.isAdmin = extendedUser.isAdmin;
+        } else if (typeof token.isAdmin !== "boolean") {
+          // First time without explicit flags: default to non-admin
+          token.isAdmin = false;
+        }
       }
+
+      // Debug: trace auth token composition
+      try {
+        console.log('[auth][jwt] token composed', {
+          userId: token.userId,
+          provider: token.provider,
+          isAdmin: token.isAdmin,
+          hasUser: !!user,
+          accountProvider: account?.provider,
+        });
+      } catch {}
       
       return token;
     },
@@ -209,6 +223,14 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
           session.user.isAdmin = token.isAdmin;
         }
       }
+      // Debug: trace session payload
+      try {
+        console.log('[auth][session] session built', {
+          userId: session.user?.id,
+          isAdmin: (session.user as any)?.isAdmin,
+          provider: (session.user as any)?.provider,
+        });
+      } catch {}
       return session;
     },
   },
