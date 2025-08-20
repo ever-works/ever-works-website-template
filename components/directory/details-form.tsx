@@ -1,13 +1,28 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Check, ArrowRight, ArrowLeft, Tag, Type, FileText, Eye, Star, Grid3X3, Sparkles } from 'lucide-react';
+import {
+	Check,
+	ArrowRight,
+	ArrowLeft,
+	Tag,
+	Type,
+	FileText,
+	Eye,
+	Star,
+	Grid3X3,
+	Sparkles,
+	MoreHorizontal,
+	ChevronUp
+} from 'lucide-react';
 import { cn, getVideoEmbedUrl } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import InputLink from './input-link';
 import { useDetailForm } from '@/hooks/use-detail-form';
 import { Container } from '../ui/container';
 import { PricingSection } from '../pricing/pricing-section';
+import { Category, ItemData, Tag as TagType } from '@/lib/content';
 
 interface ProductLink {
 	id: string;
@@ -29,49 +44,17 @@ interface FormData {
 	[key: string]: any;
 }
 
+type ListingProps = {
+	categories?: Category[];
+	tags?: TagType[];
+	items?: ItemData[];
+};
 interface DetailsFormProps {
 	initialData?: Partial<FormData>;
 	onSubmit: (data: FormData) => void;
 	onBack: () => void;
+	listingProps?: ListingProps;
 }
-
-const CATEGORIES = [
-	'AI Tools',
-	'Analytics',
-	'API',
-	'Automation',
-	'Business',
-	'Content',
-	'Design',
-	'Development',
-	'E-commerce',
-	'Education',
-	'Finance',
-	'Health',
-	'Marketing',
-	'Productivity',
-	'Security',
-	'Social',
-	'Other'
-];
-
-const TAGS = [
-	'Free',
-	'Paid',
-	'Open Source',
-	'SaaS',
-	'Mobile',
-	'Desktop',
-	'Web',
-	'API',
-	'AI',
-	'Machine Learning',
-	'Automation',
-	'No-Code',
-	'Low-Code',
-	'Developer Tools',
-	'Business Tools'
-];
 
 const STEPS = [
 	{
@@ -100,8 +83,10 @@ const STEPS = [
 	}
 ];
 
-export function DetailsForm({ initialData = {}, onSubmit, onBack }: DetailsFormProps) {
+export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }: DetailsFormProps) {
 	const t = useTranslations();
+	const [showAllTags, setShowAllTags] = useState(false);
+	const [tagsToShow] = useState(18);
 
 	const {
 		currentStep,
@@ -395,13 +380,13 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack }: DetailsFormP
 													<option value="" disabled className="text-gray-500">
 														{t('directory.DETAILS_FORM.CATEGORY_PLACEHOLDER')}
 													</option>
-													{CATEGORIES.map((category) => (
+													{listingProps?.categories?.map((category) => (
 														<option
-															key={category}
-															value={category}
+															key={category.id}
+															value={category.id}
 															className="py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
 														>
-															{category}
+															{category.name}
 														</option>
 													))}
 												</select>
@@ -428,21 +413,49 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack }: DetailsFormP
 											</div>
 
 											<div className="flex flex-wrap gap-3">
-												{TAGS.map((tag) => (
-													<button
-														key={tag}
-														type="button"
-														onClick={() => handleTagToggle(tag)}
-														className={cn(
-															'px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover:scale-105 border-2',
-															formData.tags.includes(tag)
-																? 'bg-gradient-to-r from-theme-primary-500 to-purple-500 text-white border-transparent shadow-lg hover:shadow-xl hover:from-theme-primary-600 hover:to-purple-600'
-																: 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-														)}
-													>
-														{tag}
-													</button>
-												))}
+												{listingProps?.tags
+													?.slice(0, showAllTags ? undefined : tagsToShow)
+													.map((tag) => (
+														<button
+															key={tag.id}
+															type="button"
+															onClick={() => handleTagToggle(tag.id)}
+															className={cn(
+																'px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover:scale-105 border-2',
+																formData.tags.includes(tag.id)
+																	? 'bg-gradient-to-r from-theme-primary-500 to-purple-500 text-white border-transparent shadow-lg hover:shadow-xl hover:from-theme-primary-600 hover:to-purple-600'
+																	: 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+															)}
+														>
+															{tag.name}
+														</button>
+													))}
+
+												{listingProps?.tags &&
+													listingProps.tags.length > tagsToShow &&
+													!showAllTags && (
+														<button
+															type="button"
+															onClick={() => setShowAllTags(true)}
+															className="px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover:scale-105 border-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 flex items-center gap-2"
+														>
+															<MoreHorizontal className="w-4 h-4" />
+															{`Show ${listingProps.tags.length - tagsToShow} more`}
+														</button>
+													)}
+
+												{showAllTags &&
+													listingProps?.tags &&
+													listingProps.tags.length > tagsToShow && (
+														<button
+															type="button"
+															onClick={() => setShowAllTags(false)}
+															className="px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover:scale-105 border-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 flex items-center gap-2"
+														>
+															<ChevronUp className="w-4 h-4" />
+															Show less
+														</button>
+													)}
 											</div>
 
 											{formData.tags.length > 0 && (

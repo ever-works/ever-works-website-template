@@ -1,36 +1,25 @@
-"use client";
-
-import { useState } from "react";
-import { DetailsForm } from "@/components/directory/details-form";
 
 
+import { fetchItems } from "@/lib/content";
+import { SubmitFormClient } from "@/components/submit/submit-form-client";
 
-function SubmitPage() {
-
-  const [formData, setFormData] = useState({
-    link: "",
-    name: "",
-    category: "",
-    tags: [] as string[],
-    description: "",
-    introduction: "",
+export default async function SubmitPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const { items, categories, tags } = await fetchItems({
+    lang: locale,
   });
-
-
-  const handleFormSubmit = (data: typeof formData) => {
-    setFormData(data);
-  };
-
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
-              <DetailsForm
-                initialData={formData}
-                onSubmit={handleFormSubmit}
-                onBack={() => {}}
-              />
+      <SubmitFormClient
+        initialData={{ items, categories, tags }}
+        locale={locale}
+      />
     </div>
   );
 }
 
-export default SubmitPage;
