@@ -134,7 +134,7 @@ export function SubscriptionActions({
 			'Billing portal session created successfully.',
 			'Failed to create billing portal session. Please try again.'
 		);
-	}, [createBillingPortalSession, handleActionWithToast]);
+	}, [createBillingPortalSession, handleActionWithToast, router]);
 
 	// Memoized action configurations based on subscription status
 	const availableActions = useMemo((): ActionConfig[] => {

@@ -8,7 +8,7 @@ import { fetchItems } from '@/lib/content';
 export default async function FavoritesPage({
     params,
   }: {
-    params: Promise<{ tag: string[]; locale: string }>;
+    params: Promise<{locale: string }>;
   }) {
     const t = await getTranslations('common');
     const { locale } = await params;
