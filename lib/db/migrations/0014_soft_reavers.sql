@@ -1,5 +1,10 @@
--- Cleanup null userId rows before enforcing NOT NULL
-DELETE FROM "accounts" WHERE "userId" IS NULL;
+-- Safety check: fail fast if NULL userId rows exist
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM "accounts" WHERE "userId" IS NULL) THEN
+    RAISE EXCEPTION 'Cannot set NOT NULL on accounts.userId while NULL rows exist. Please backfill before applying.';
+  END IF;
+END $$;
 
 -- Add user_type with default to avoid failures
 ALTER TABLE "accounts" ADD COLUMN IF NOT EXISTS "user_type" text NOT NULL DEFAULT 'client';--> statement-breakpoint
