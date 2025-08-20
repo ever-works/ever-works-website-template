@@ -46,6 +46,18 @@ ALTER TABLE "subscriptions" ADD COLUMN IF NOT EXISTS "hosted_invoice_url" text;-
 ALTER TABLE "subscriptions" ADD COLUMN IF NOT EXISTS "invoice_pdf" text;--> statement-breakpoint
 
 -- Add foreign key constraint for accounts.userId -> client_profiles.id (safe operation)
-DO $$ BEGIN
-  ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_client_profiles_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."client_profiles"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$
+BEGIN
+  IF to_regclass('public.accounts') IS NOT NULL
+     AND to_regclass('public.client_profiles') IS NOT NULL THEN
+    BEGIN
+      ALTER TABLE "accounts"
+        ADD CONSTRAINT "accounts_userId_client_profiles_id_fk"
+        FOREIGN KEY ("userId")
+        REFERENCES "public"."client_profiles"("id")
+        ON DELETE cascade ON UPDATE no action;
+    EXCEPTION WHEN duplicate_object THEN
+      NULL;
+    END;
+  END IF;
+END $$;
