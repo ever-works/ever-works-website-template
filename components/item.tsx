@@ -103,7 +103,7 @@ export default function Item(props: ItemProps) {
                 itemSlug={props.slug}
                 itemName={props.name}
                 itemIconUrl={props.icon_url}
-                itemCategory={Array.isArray(props.category) ? props.category[0].toString() : props.category.toString()}
+                itemCategory={Array.isArray(props.category) ? (typeof props.category[0] === 'string' ? props.category[0] : props.category[0]?.name) : (typeof props.category === 'string' ? props.category : props.category?.name)}
                 variant="star"
                 size="sm"
                 className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"

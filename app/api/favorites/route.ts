@@ -12,10 +12,7 @@ const addFavoriteSchema = z.object({
   itemCategory: z.string().optional(),
 });
 
-/**
- * GET /api/favorites
- * Get all favorites for the authenticated user
- */
+
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
@@ -49,10 +46,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/**
- * POST /api/favorites
- * Add a new favorite
- */
+
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();

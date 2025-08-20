@@ -114,7 +114,7 @@ export function ItemDetail({
                   itemSlug={meta.slug || ''}
                   itemName={meta.name}
                   itemIconUrl={meta.icon_url}
-                  itemCategory={Array.isArray(meta.category) ? meta.category[0]?.name : meta.category?.name}
+                  itemCategory={Array.isArray(meta.category) ? (typeof meta.category[0] === 'string' ? meta.category[0] : meta.category[0]?.name) : (typeof meta.category === 'string' ? meta.category : meta.category?.name)}
                   variant="heart"
                   size="lg"
                   showText={true}
