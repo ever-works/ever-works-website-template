@@ -18,6 +18,9 @@ DO $$ BEGIN
     WHERE table_schema = 'public' AND table_name = 'subscriptions' AND column_name = 'payment_provider'
   ) THEN
     EXECUTE 'ALTER TABLE "subscriptions" ALTER COLUMN "payment_provider" SET DEFAULT ''stripe''';
+    -- Backfill NULLs to 'stripe' before enforcing NOT NULL
+    EXECUTE 'UPDATE "subscriptions" SET "payment_provider" = ''stripe'' WHERE "payment_provider" IS NULL';
+    EXECUTE 'ALTER TABLE "subscriptions" ALTER COLUMN "payment_provider" SET NOT NULL';
   END IF;
 END $$;
 
