@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react";
 import { LogOut, Zap } from "lucide-react";
 
 interface LogoutButtonProps {
@@ -5,10 +6,15 @@ interface LogoutButtonProps {
   logoutText: string;
 }
 
-export function LogoutButton({ onLogout, logoutText }: LogoutButtonProps) {
+function LogoutButton({ onLogout, logoutText }: LogoutButtonProps) {
+  // Memoize the click handler to prevent unnecessary re-renders
+  const handleLogout = useCallback(() => {
+    onLogout();
+  }, [onLogout]);
+
   return (
     <button
-      onClick={onLogout}
+      onClick={handleLogout}
       className="group flex w-full items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 dark:hover:from-red-900/10 dark:hover:to-pink-900/10 transition-all duration-200"
       role="menuitem"
     >
@@ -23,3 +29,6 @@ export function LogoutButton({ onLogout, logoutText }: LogoutButtonProps) {
     </button>
   );
 }
+
+// Export memoized component for better performance
+export default memo(LogoutButton);

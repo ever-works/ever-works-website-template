@@ -1,23 +1,30 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 
 export function useProfileMenu() {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
+  // Memoize event handlers to prevent unnecessary re-renders
+  const handleClickOutside = useCallback((event: MouseEvent) => {
+    if (
+      menuRef.current &&
+      !menuRef.current.contains(event.target as Node) &&
+      buttonRef.current &&
+      !buttonRef.current.contains(event.target as Node)
+    ) {
+      setIsProfileMenuOpen(false);
+    }
+  }, []);
+
+  const handleEscape = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      setIsProfileMenuOpen(false);
+    }
+  }, []);
+
   // Close menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
-      ) {
-        setIsProfileMenuOpen(false);
-      }
-    };
-
     if (isProfileMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
@@ -25,16 +32,10 @@ export function useProfileMenu() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isProfileMenuOpen]);
+  }, [isProfileMenuOpen, handleClickOutside]);
 
   // Close menu with Escape key
   useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsProfileMenuOpen(false);
-      }
-    };
-
     if (isProfileMenuOpen) {
       document.addEventListener('keydown', handleEscape);
     }
@@ -42,21 +43,24 @@ export function useProfileMenu() {
     return () => {
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [isProfileMenuOpen]);
+  }, [isProfileMenuOpen, handleEscape]);
 
   const toggleMenu = useCallback(() => {
-    setIsProfileMenuOpen(!isProfileMenuOpen);
-  }, [isProfileMenuOpen]);
+    setIsProfileMenuOpen(prev => !prev);
+  }, []);
 
   const closeMenu = useCallback(() => {
     setIsProfileMenuOpen(false);
   }, []);
 
-  return {
+  // Memoize return object to prevent unnecessary re-renders
+  const result = useMemo(() => ({
     isProfileMenuOpen,
     menuRef,
     buttonRef,
     toggleMenu,
     closeMenu,
-  };
+  }), [isProfileMenuOpen, toggleMenu, closeMenu]);
+
+  return result;
 }

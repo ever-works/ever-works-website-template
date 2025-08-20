@@ -1,7 +1,8 @@
+import { memo } from "react";
 import { ExtendedUser } from "@/types/profile-button.types";
-import { ProfileHeader } from "./profile-header";
-import { MenuItems } from "./menu-items";
-import { LogoutButton } from "./logout-button";
+import ProfileHeader from "./profile-header";
+import MenuItems from "./menu-items";
+import LogoutButton from "./logout-button";
 
 interface ProfileMenuProps {
   isOpen: boolean;
@@ -16,7 +17,7 @@ interface ProfileMenuProps {
   logoutText: string;
 }
 
-export function ProfileMenu({
+function ProfileMenu({
   isOpen,
   menuRef,
   user,
@@ -58,3 +59,6 @@ export function ProfileMenu({
     </div>
   );
 }
+
+// Export memoized component for better performance
+export default memo(ProfileMenu);

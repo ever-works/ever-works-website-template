@@ -1,9 +1,12 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { signOut } from "next-auth/react";
 import { LOGOUT_OVERLAY_CONFIG } from "@/constants/profile-button.constants";
 import { getThemeColors, createLogoutOverlayHTML } from "@/utils/profile-button.utils";
 
 export function useLogoutOverlay() {
+  // Use ref to store observer to prevent memory leaks
+  const observerRef = useRef<MutationObserver | null>(null);
+
   const handleLogout = useCallback(async () => {
     // Create enhanced overlay with better animations and dark mode support
     const overlay = document.createElement('div');
@@ -34,9 +37,14 @@ export function useLogoutOverlay() {
       }
     };
 
+    // Clean up previous observer if exists
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
     // Listen for theme changes
-    const observer = new MutationObserver(updateOverlayTheme);
-    observer.observe(document.documentElement, { 
+    observerRef.current = new MutationObserver(updateOverlayTheme);
+    observerRef.current.observe(document.documentElement, { 
       attributes: true, 
       attributeFilter: ['class'] 
     });
@@ -50,7 +58,11 @@ export function useLogoutOverlay() {
         document.body.removeChild(overlayElement);
       }
     } finally {
-      observer.disconnect();
+      // Clean up observer
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
     }
   }, []);
 
