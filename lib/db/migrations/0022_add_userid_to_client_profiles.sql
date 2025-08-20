@@ -40,7 +40,7 @@ BEGIN
             INSERT INTO users (id, email, name, created_at, updated_at)
             VALUES (
                 gen_random_uuid(),
-                'client-' || profile_record.id || '@placeholder.com',
+                COALESCE(profile_record.display_name || '-' || profile_record.id || '@placeholder.com', 'client-' || profile_record.id || '@placeholder.com'),
                 COALESCE(profile_record.display_name, 'Client User'),
                 profile_record.created_at,
                 now()
