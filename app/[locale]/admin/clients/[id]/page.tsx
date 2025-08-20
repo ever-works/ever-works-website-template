@@ -122,7 +122,7 @@ export default async function ClientDetailPage({
                   <div className="flex items-center space-x-6 text-sm text-gray-500 dark:text-gray-400">
                     <div className="flex items-center space-x-2">
                       <Calendar className="w-4 h-4" />
-                      <span>Joined {toDateTime(profile.createdAt)}</span>
+                      <span>Joined {toDateTime(profile.createdAt, locale)}</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Star className="w-4 h-4" />
@@ -130,7 +130,7 @@ export default async function ClientDetailPage({
                     </div>
                     <div className="flex items-center space-x-2">
                       <Clock className="w-4 h-4" />
-                      <span>Last login {lastLogin ? toDateTime(lastLogin.timestamp) : 'Never'}</span>
+                      <span>Last login {lastLogin ? toDateTime(lastLogin.timestamp, locale) : 'Never'}</span>
                     </div>
                   </div>
                 </div>
@@ -409,12 +409,12 @@ function getPlanColor(plan: string) {
   }
 }
 
-function toDateTime(date: unknown): string {
+function toDateTime(date: unknown, locale: string = "en"): string {
   try {
     if (!date) return "—";
     const d = new Date(String(date));
     if (Number.isNaN(d.getTime())) return "—";
-    return new Intl.DateTimeFormat("en-US", {
+    return new Intl.DateTimeFormat(locale, {
       year: "numeric",
       month: "short",
       day: "2-digit",
