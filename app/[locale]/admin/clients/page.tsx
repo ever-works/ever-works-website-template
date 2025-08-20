@@ -304,17 +304,13 @@ export default function ClientsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter, planFilter, accountTypeFilter]);
 
-  // Debounced search effect
+  // Fetch when debounced search term changes, including when cleared
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (searchTerm !== '') {
-        fetchClients(1);
-      }
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
+    if (!isInitialLoad.current) {
+      fetchClients(1);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm]);
+  }, [debouncedSearchTerm]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
