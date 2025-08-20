@@ -193,16 +193,9 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       } else if (typeof extendedUser?.isAdmin === "boolean") {
         token.isAdmin = extendedUser.isAdmin;
       } else {
-        // Default for users table entries (admin users)
-        token.isAdmin = true;
+        // Default to non-admin when flags are missing
+        token.isAdmin = false;
       }
-      
-      console.log('DEBUG JWT: Token admin status set:', { 
-        isAdmin: token.isAdmin, 
-        isClient: extendedUser?.isClient,
-        userIsAdmin: extendedUser?.isAdmin,
-        email: extendedUser?.email || token.email
-      });
       
       return token;
     },
