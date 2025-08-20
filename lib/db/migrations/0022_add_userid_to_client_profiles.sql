@@ -58,12 +58,16 @@ END $$;
 -- Now add the NOT NULL constraint and foreign key
 ALTER TABLE "client_profiles" ALTER COLUMN "userId" SET NOT NULL;
 
--- Add foreign key constraint if not exists
+-- Add foreign key constraint if not exists (NOT VALID for zero-downtime deployment)
 DO $$ BEGIN
   ALTER TABLE "client_profiles"
     ADD CONSTRAINT "client_profiles_userId_users_id_fk"
-    FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE;
+    FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE
+    NOT VALID;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- Validate the constraint after deployment (run separately in production)
+-- ALTER TABLE "client_profiles" VALIDATE CONSTRAINT "client_profiles_userId_users_id_fk";
 
 -- Create index if not exists
 CREATE INDEX IF NOT EXISTS "client_profile_user_id_idx" ON "client_profiles" ("userId");
