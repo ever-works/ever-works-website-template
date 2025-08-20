@@ -10,23 +10,26 @@ export async function GET() {
       return NextResponse.json({ 
         success: false, 
         error: 'Unauthorized' 
-      }, { status: 401 });
+      }, { status: 403 });
     }
 
-    // Get all clients to calculate stats
-    const result = await getClientProfiles({
-      page: 1,
-      limit: 1000, // Get a large number to count all
-    });
-
-    const { profiles: clients } = result;
+    // Compute counts via DB totals to avoid scanning large datasets
+    const [activeRes, inactiveRes, suspendedRes, trialRes] = await Promise.all(
+      (['active', 'inactive', 'suspended', 'trial'] as const).map((status) =>
+        getClientProfiles({ page: 1, limit: 1, status })
+      )
+    );
 
     const stats = {
-      total: clients.length,
-      active: clients.filter(c => c.status === 'active').length,
-      inactive: clients.filter(c => c.status === 'inactive').length,
-      suspended: clients.filter(c => c.status === 'suspended').length,
-      trial: clients.filter(c => c.status === 'trial').length,
+      total:
+        activeRes.total +
+        inactiveRes.total +
+        suspendedRes.total +
+        trialRes.total,
+      active: activeRes.total,
+      inactive: inactiveRes.total,
+      suspended: suspendedRes.total,
+      trial: trialRes.total,
     };
 
     return NextResponse.json({
