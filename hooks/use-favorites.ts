@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { useSession } from 'next-auth/react';
 import { serverClient } from '@/lib/api/server-api-client';
+import { useCurrentUser } from './use-current-user';
 
 export interface Favorite {
   id: string;
@@ -48,8 +48,8 @@ const removeFavorite = async (itemSlug: string): Promise<void> => {
 };
 
 export function useFavorites() {
-  const { data: session } = useSession();
   const queryClient = useQueryClient();
+  const { user } = useCurrentUser();
 
   // Query for fetching favorites
   const {
@@ -60,7 +60,7 @@ export function useFavorites() {
   } = useQuery({
     queryKey: ['favorites'],
     queryFn: fetchFavorites,
-    enabled: !!session?.user?.id,
+    enabled: !!user?.id,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
@@ -78,7 +78,7 @@ export function useFavorites() {
       queryClient.setQueryData<Favorite[]>(['favorites'], (old = []) => {
         const optimisticFavorite: Favorite = {
           id: `temp-${Date.now()}`,
-          userId: session?.user?.id || '',
+          userId: user?.id || '',
           itemSlug: newFavorite.itemSlug,
           itemName: newFavorite.itemName,
           itemIconUrl: newFavorite.itemIconUrl,

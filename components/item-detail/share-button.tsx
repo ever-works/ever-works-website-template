@@ -1,4 +1,5 @@
 "use client";
+import { cn } from "@/lib/utils";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -56,7 +57,7 @@ export const ShareButton = ({ url, title }: { url: string; title: string }) => {
     return (
       <Dropdown isOpen={isOpen} onOpenChange={setIsOpen}>
         <DropdownTrigger>
-          <button className="group inline-flex items-center px-6 py-3 bg-white/90 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-semibold transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+          <button className={cn("group inline-flex items-center px-6 py-3 bg-white/90 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-semibold transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600 shadow-md hover:shadow-lg transform hover:-translate-y-0.5")}>
             <svg
               className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-12"
               fill="none"

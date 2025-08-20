@@ -4,10 +4,7 @@ import { db } from '@/lib/db/drizzle';
 import { favorites } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 
-/**
- * DELETE /api/favorites/[itemSlug]
- * Remove a favorite by item slug
- */
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ itemSlug: string }> }

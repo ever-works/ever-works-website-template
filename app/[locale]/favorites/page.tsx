@@ -2,9 +2,19 @@ import { Suspense } from 'react';
 import { Container } from '@/components/ui/container';
 import { FavoritesClient } from '@/components/favorites/favorites-client';
 import { getTranslations } from 'next-intl/server';
+import { fetchItems } from '@/lib/content';
 
-export default async function FavoritesPage() {
-  const t = await getTranslations('common');
+
+export default async function FavoritesPage({
+    params,
+  }: {
+    params: Promise<{ tag: string[]; locale: string }>;
+  }) {
+    const t = await getTranslations('common');
+    const { locale } = await params;
+    const { items, categories, total, tags } = await fetchItems({
+        lang: locale,
+    });
 
   return (
     
@@ -23,7 +33,13 @@ export default async function FavoritesPage() {
 
           {/* Favorites Grid */}
           <Suspense fallback={<FavoritesSkeleton />}>
-            <FavoritesClient />
+            <FavoritesClient 
+              items={items}
+              categories={categories}
+              total={total}
+              tags={tags}
+              basePath={`/`}
+            />
           </Suspense>
         </div>
       </Container>

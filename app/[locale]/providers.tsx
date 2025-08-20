@@ -2,15 +2,15 @@
 
 import type { Config } from '@/lib/content';
 import { HeroUIProvider } from '@heroui/react';
-import { SessionProvider } from 'next-auth/react';
 import { ConfigProvider } from './config';
 import {
 	ErrorProvider,
 	FilterProvider,
 	LayoutProvider,
 	QueryClientProvider,
-	ThemeProvider,
+	ThemeProvider
 } from '@/components/providers';
+import { SessionProvider } from 'next-auth/react';
 
 interface ProvidersProps {
 	config: Config;
@@ -27,7 +27,7 @@ export function Providers({ config, children, dehydratedState }: ProvidersProps)
 						<FilterProvider>
 							<ConfigProvider config={config}>
 								<ThemeProvider>
-										<HeroUIProvider>{children}</HeroUIProvider>
+									<HeroUIProvider>{children}</HeroUIProvider>
 								</ThemeProvider>
 							</ConfigProvider>
 						</FilterProvider>

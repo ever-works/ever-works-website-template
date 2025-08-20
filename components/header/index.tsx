@@ -14,6 +14,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useCallback, useState } from "react";
+import { useSession } from "next-auth/react";
 import { LayoutSwitcher } from "../layout-switcher";
 import { NavigationControls } from "../navigation-controls";
 import { ProfileButton } from "./profile-button";
@@ -116,22 +117,30 @@ const STYLES = {
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: session } = useSession();
   const t = useTranslations("common");
   const tListing = useTranslations("listing");
   const config = useConfig();
   const pathname = usePathname();
 
   const navigationItems = useMemo((): NavigationItem[] => {
-    return NAVIGATION_CONFIG.map((item) => ({
-      key: item.key,
-      href: item.href,
-      label: item.translationKey
-        ? item.translationNamespace === "listing"
-          ? tListing(item.translationKey as any)
-          : t(item.translationKey as any)
-        : item.staticLabel || item.key,
-    }));
-  }, [t, tListing]);
+    return NAVIGATION_CONFIG
+      .filter((item) => {
+        if (item.key === "favorites" && !session?.user?.id) {
+          return false;
+        }
+        return true;
+      })
+      .map((item) => ({
+        key: item.key,
+        href: item.href,
+        label: item.translationKey
+          ? item.translationNamespace === "listing"
+            ? tListing(item.translationKey as any)
+            : t(item.translationKey as any)
+          : item.staticLabel || item.key,
+      }));
+  }, [t, tListing, session?.user?.id]);
 
   const isActiveLink = useCallback(
     (href: string): boolean => {
