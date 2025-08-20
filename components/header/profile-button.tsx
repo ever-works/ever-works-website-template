@@ -7,6 +7,20 @@ import { signOut } from "next-auth/react";
 import { Link } from "@/i18n/navigation";
 import { Avatar } from "./avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { ExtendedUser } from "@/types/profile-button.types";
+import { 
+  SIZES,
+  LOGOUT_OVERLAY_CONFIG
+} from "@/constants/profile-button.constants";
+import { 
+  formatDisplayName, 
+  getInitials, 
+  getDisplayRole, 
+  getOnlineStatus, 
+  getProfilePath,
+  getThemeColors,
+  createLogoutOverlayHTML
+} from "@/utils/profile-button.utils";
 
 export function ProfileButton() {
   const t = useTranslations();
@@ -16,12 +30,7 @@ export function ProfileButton() {
   const buttonRef = useRef<HTMLButtonElement>(null);
   
   // Build stable, URL-safe profile path with proper encoding
-  const username =
-    (user as any)?.username ||
-    (user as any)?.clientProfile?.username ||
-    (user?.email ? user.email.split("@")[0] : undefined) ||
-    "profile";
-  const profilePath = `/client/profile/${encodeURIComponent(username)}`;
+  const profilePath = getProfilePath(user as ExtendedUser);
   const isAdmin = user?.isAdmin === true;
 
   // Close menu when clicking outside
@@ -66,106 +75,17 @@ export function ProfileButton() {
   const handleLogout = async () => {
     setIsProfileMenuOpen(false);
 
-    // Function to get current theme colors
-    const getThemeColors = () => {
-      const isDark = document.documentElement.classList.contains('dark');
-      return {
-        background: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.6)',
-        cardBg: isDark 
-          ? 'linear-gradient(135deg, #1f2937 0%, #111827 100%)' 
-          : 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-        cardShadow: isDark 
-          ? '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)' 
-          : '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.2)',
-        border: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.2)',
-        spinnerBorder: isDark ? '#374151' : '#e5e7eb',
-        titleColor: isDark ? '#f9fafb' : '#1f2937',
-        textColor: isDark ? '#9ca3af' : '#6b7280'
-      };
-    };
-    
     // Create enhanced overlay with better animations and dark mode support
     const overlay = document.createElement('div');
-    overlay.id = 'logout-overlay';
+    overlay.id = LOGOUT_OVERLAY_CONFIG.ID;
     
     const colors = getThemeColors();
-    overlay.innerHTML = `
-      <div style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: ${colors.background};
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        backdrop-filter: blur(8px);
-        animation: fadeIn 0.3s ease-out;
-      ">
-        <div style="
-          background: ${colors.cardBg};
-          padding: 2.5rem;
-          border-radius: 20px;
-          box-shadow: ${colors.cardShadow};
-          text-align: center;
-          max-width: 360px;
-          animation: slideInScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-          border: 1px solid ${colors.border};
-        ">
-          <div style="
-            width: 56px;
-            height: 56px;
-            border: 3px solid ${colors.spinnerBorder};
-            border-top: 3px solid #3b82f6;
-            border-radius: 50%;
-            animation: spin 1.2s linear infinite;
-            margin: 0 auto 1.5rem auto;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-          "></div>
-          <h3 style="
-            margin: 0 0 0.75rem 0;
-            font-size: 1.375rem;
-            font-weight: 700;
-            color: ${colors.titleColor};
-            letter-spacing: -0.025em;
-          ">Signing Out</h3>
-          <p style="
-            margin: 0;
-            color: ${colors.textColor};
-            font-size: 0.9375rem;
-            line-height: 1.6;
-            font-weight: 500;
-          ">Please wait while we securely log you out and clear your session...</p>
-        </div>
-      </div>
-      <style>
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes slideInScale {
-          from {
-            opacity: 0;
-            transform: translateY(-20px) scale(0.9);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      </style>
-    `;
+    overlay.innerHTML = createLogoutOverlayHTML(colors);
     document.body.appendChild(overlay);
 
     // Add theme change listener to update overlay colors dynamically
     const updateOverlayTheme = () => {
-      const overlayElement = document.getElementById('logout-overlay');
+      const overlayElement = document.getElementById(LOGOUT_OVERLAY_CONFIG.ID);
       if (overlayElement) {
         const colors = getThemeColors();
         const overlayDiv = overlayElement.querySelector('div > div') as HTMLElement;
@@ -195,60 +115,16 @@ export function ProfileButton() {
       await signOut({ callbackUrl: '/' });
     } catch (error) {
       console.error('Logout error:', error);
-      if (overlay && document.body.contains(overlay)) {
-        document.body.removeChild(overlay);
+      const overlayElement = document.getElementById(LOGOUT_OVERLAY_CONFIG.ID);
+      if (overlayElement && document.body.contains(overlayElement)) {
+        document.body.removeChild(overlayElement);
       }
     } finally {
       observer.disconnect();
     }
   };
 
-  // Function to format name intelligently
-  const formatDisplayName = (name: string) => {
-    if (!name) return "User";
-    
-    // If name is short, display as is
-    if (name.length <= 20) return name;
-    
-    // Split name into words
-    const words = name.split(' ').filter(word => word.length > 0);
-    
-    // If single word, truncate it
-    if (words.length === 1) {
-      return name.substring(0, 18) + '...';
-    }
-    
-    // If two words, keep them
-    if (words.length === 2) {
-      return words.join(' ');
-    }
-    
-    // If more than two words, take the first two
-    return words.slice(0, 2).join(' ') + '...';
-  };
 
-  // Function to get initials
-  const getInitials = (name: string) => {
-    if (!name) return "U";
-    
-    const words = name.split(' ').filter(word => word.length > 0);
-    if (words.length === 1) {
-      return words[0].charAt(0).toUpperCase();
-    }
-    
-    return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
-  };
-
-  // Function to get display role
-  const getDisplayRole = () => {
-    if (isAdmin) return "Administrator";
-    return "User";
-  };
-
-  // Function to get online status
-  const getOnlineStatus = () => {
-    return "Online";
-  };
 
   if (isLoading) {
     return (
@@ -280,7 +156,7 @@ export function ProfileButton() {
               src={user?.image}
               alt={user?.name || "User"}
               fallback={getInitials(user?.name || "User")}
-              size="sm"
+              size={SIZES.AVATAR_SM}
               className="ring-2 ring-white dark:ring-gray-800 shadow-lg group-hover:shadow-xl transition-all duration-300"
             />
             {/* Online status indicator */}
@@ -310,7 +186,7 @@ export function ProfileButton() {
                   src={user?.image}
                   alt={user?.name || "User"}
                   fallback={getInitials(user?.name || "User")}
-                  size="md"
+                  size={SIZES.AVATAR_MD}
                   className="ring-3 ring-white dark:ring-gray-700 shadow-xl"
                 />
                 {/* Online status indicator */}
@@ -334,7 +210,7 @@ export function ProfileButton() {
                       ? 'bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-800 dark:from-yellow-900/30 dark:to-orange-900/30 dark:text-yellow-200'
                       : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
                   }`}>
-                    {getDisplayRole()}
+                    {getDisplayRole(isAdmin)}
                   </span>
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300">
                     {getOnlineStatus()}
