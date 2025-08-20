@@ -9,7 +9,7 @@ ALTER TABLE "client_profiles" ADD COLUMN IF NOT EXISTS "userId" text;
 INSERT INTO "users" (id, email, name, created_at, updated_at)
 SELECT 
   gen_random_uuid(),
-  COALESCE(cp.display_name || '@placeholder.com', 'client-' || cp.id || '@placeholder.com'),
+  COALESCE(cp.display_name || '-' || cp.id || '@placeholder.com', 'client-' || cp.id || '@placeholder.com'),
   COALESCE(cp.display_name, 'Client User'),
   cp.created_at,
   cp.updated_at
@@ -32,7 +32,7 @@ BEGIN
         -- Find or create a user for this profile
         SELECT id INTO user_id 
         FROM users 
-        WHERE email = COALESCE(profile_record.display_name || '@placeholder.com', 'client-' || profile_record.id || '@placeholder.com')
+        WHERE email = COALESCE(profile_record.display_name || '-' || profile_record.id || '@placeholder.com', 'client-' || profile_record.id || '@placeholder.com')
         LIMIT 1;
         
         -- If no user found, create one
