@@ -13,6 +13,7 @@ import Image from "next/image";
 import { useFilters } from "@/components/filters/context/filter-context";
 import { usePathname } from "next/navigation";
 import { PromoCodeComponent } from "./promo-code";
+import { FavoriteButton } from "./favorite-button";
 
 type ItemProps = ItemData & {
   onNavigate?: () => void;
@@ -96,6 +97,18 @@ export default function Item(props: ItemProps) {
               </div>
             </div>
 
+            <div className="flex items-center gap-2">
+              {/* Favorite Button */}
+              <FavoriteButton
+                itemSlug={props.slug}
+                itemName={props.name}
+                itemIconUrl={props.icon_url}
+                itemCategory={Array.isArray(props.category) ? props.category[0].toString() : props.category.toString()}
+                variant="star"
+                size="sm"
+                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              />
+
               {props.featured && (
                 <div className="relative">
                   <Badge
@@ -110,6 +123,7 @@ export default function Item(props: ItemProps) {
                   <div className="absolute inset-0 bg-amber-400/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
               )}
+            </div>
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">

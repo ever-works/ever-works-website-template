@@ -80,6 +80,12 @@ const NAVIGATION_CONFIG: Array<{
     translationNamespace: "common",
   },
   {
+    key: "favorites",
+    href: "/favorites",
+    translationKey: "FAVORITES",
+    translationNamespace: "common",
+  },
+  {
     key: "pricing",
     href: "/pricing",
     translationKey: "PRICING",

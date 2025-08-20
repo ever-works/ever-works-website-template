@@ -1,6 +1,6 @@
 "use client";
 
-import { User, LogOut, Settings, FolderTree, Tag, Package, Shield, Users, Crown, Zap, Star, Activity, MessageSquare } from "lucide-react";
+import { User, LogOut, Settings, FolderTree, Tag, Package, Shield, Users, Crown, Zap, Star, Activity, MessageSquare, Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useRef, useEffect } from "react";
 import { signOut } from "next-auth/react";
@@ -346,6 +346,23 @@ export function ProfileButton() {
 
           {/* Menu items with icons and descriptions */}
           <div className="py-1">
+            {/* Favorites link for all users */}
+            <Link
+              href="/favorites"
+              className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 dark:hover:from-red-900/20 dark:hover:to-pink-900/20 transition-all duration-200"
+              role="menuitem"
+              onClick={() => setIsProfileMenuOpen(false)}
+            >
+              <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-xl bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900/30 dark:to-pink-900/30 group-hover:from-red-200 group-hover:to-pink-200 dark:group-hover:from-red-900/40 dark:group-hover:to-pink-900/40 transition-all duration-200">
+                <Heart className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
+              <div className="flex-1">
+                <span className="font-semibold">Favorites</span>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Your saved items</p>
+              </div>
+              <Activity className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+            </Link>
+
             {isAdmin ? (
               <>
                 <Link

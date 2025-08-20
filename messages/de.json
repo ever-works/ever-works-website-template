@@ -55,7 +55,19 @@
     "RETRY": "Erneut versuchen",
     "COMMENTS": "Kommentare",
     "ROLES": "Rollen",
-    "MANAGE_CLIENTS": "Kunden verwalten"
+    "MANAGE_CLIENTS": "Kunden verwalten",
+    "FAVORITES": "Favoriten",
+    "FAVORITES_DESCRIPTION": "Ihre gespeicherten Elemente und Tools. Greifen Sie schnell darauf zu.",
+    "SIGN_IN_TO_VIEW_FAVORITES": "Melden Sie sich an, um Ihre Favoriten zu sehen",
+    "FAVORITES_SIGN_IN_DESCRIPTION": "Erstellen Sie ein Konto oder melden Sie sich an, um Elemente zu speichern und Ihre Favoriten zu sehen.",
+    "ERROR_LOADING_FAVORITES": "Fehler beim Laden der Favoriten",
+    "FAVORITES_ERROR_DESCRIPTION": "Beim Laden Ihrer Favoriten ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+    "NO_FAVORITES_YET": "Noch keine Favoriten",
+    "FAVORITES_EMPTY_DESCRIPTION": "Beginnen Sie mit der Erkundung und fügen Sie Elemente zu Ihren Favoriten hinzu, um sie hier zu sehen.",
+    "FAVORITE_ITEMS": "Favoriten-Elemente",
+    "EXPLORE_ITEMS": "Elemente erkunden",
+    "VIEW_DETAILS": "Details anzeigen",
+    "ADDED_ON": "Hinzugefügt am"
   },
   "listing": {
     "ALL": "Alle",

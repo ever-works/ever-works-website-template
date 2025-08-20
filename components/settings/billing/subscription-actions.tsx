@@ -5,6 +5,7 @@ import { Play, Pause, Settings, AlertTriangle, Loader2 } from 'lucide-react';
 import { useSubscription } from '@/hooks/use-subscription';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export interface SubscriptionActionsProps {
 	subscriptionId: string;
@@ -57,6 +58,7 @@ export function SubscriptionActions({
 		isCreateBillingPortalSessionSuccess,
 		isCreateBillingPortalSessionError
 	} = useSubscription();
+	const router = useRouter();
 
 	// Helper function to handle toast lifecycle and UI state
 	const handleActionWithToast = useCallback(async (
@@ -126,7 +128,7 @@ export function SubscriptionActions({
 		await handleActionWithToast(
 			async () => {
 				const result = await createBillingPortalSession.mutateAsync();
-				window.open(result.data.url, '_blank');
+				router.push(result.data.url);
 			},
 			'Creating billing portal session...',
 			'Billing portal session created successfully.',

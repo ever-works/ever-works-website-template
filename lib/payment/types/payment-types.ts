@@ -244,7 +244,16 @@ export enum WebhookEventType {
   CHARGE_FAILED = "charge_failed",
   INVOICE_PAID = "invoice_paid",
   INVOICE_PAYMENT_FAILED = "invoice_payment_failed",
-  REFUND_CREATED = "refund_created"
+  REFUND_CREATED = "refund_created",
+
+  BILLING_PORTAL_SESSION_CREATED = "billing_portal_session_created",
+  BILLING_PORTAL_SESSION_EXPIRED = "billing_portal_session_expired",
+  BILLING_PORTAL_SESSION_UPDATED = "billing_portal_session_updated",
+  BILLING_PORTAL_SESSION_DELETED = "billing_portal_session_deleted",
+  BILLING_PORTAL_SESSION_VIEWED = "billing_portal_session_viewed",
+  BILLING_PORTAL_SESSION_VIEWED_EXPIRED = "billing_portal_session_viewed_expired",
+  BILLING_PORTAL_SESSION_VIEWED_UPDATED = "billing_portal_session_viewed_updated",
+  BILLING_PORTAL_SESSION_VIEWED_DELETED = "billing_portal_session_viewed_deleted",
 }
 
 

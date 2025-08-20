@@ -11,6 +11,7 @@ import { RatingDisplay } from "./rating-display";
 import ReportButton from "../report-button";
 import { PromoCode } from "@/lib/content";
 import { PromoCodeComponent } from "../promo-code/promo-code";
+import { FavoriteButton } from "../favorite-button";
 
 export interface ItemDetailProps {
   meta: {
@@ -107,17 +108,19 @@ export function ItemDetail({
                   <span className="mr-2 text-lg">🌐</span>
                   <span className="relative">{t("common.VISIT_WEBSITE")}</span>
                 </a>
-                <button className="group inline-flex items-center px-6 py-3 bg-white/90 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-semibold transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-theme-primary-300 dark:hover:border-theme-primary-600 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                  <svg
-                    className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:scale-110"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path>
-                  </svg>
-                  {t("common.SAVE")}
-                </button>
+                
+                {/* Favorite Button */}
+                <FavoriteButton
+                  itemSlug={meta.slug || ''}
+                  itemName={meta.name}
+                  itemIconUrl={meta.icon_url}
+                  itemCategory={Array.isArray(meta.category) ? meta.category[0]?.name : meta.category?.name}
+                  variant="heart"
+                  size="lg"
+                  showText={true}
+                  className="inline-flex items-center px-6 py-3 bg-white/90 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-semibold transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-600 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                />
+                
                 <ShareButton url={meta.source_url || ""} title={meta.name} />
                 <VoteButton
                   itemId={meta.name}
