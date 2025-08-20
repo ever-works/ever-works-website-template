@@ -2,127 +2,28 @@
 
 import { User, LogOut, Settings, FolderTree, Tag, Package, Shield, Users, Crown, Zap, Star, Activity, MessageSquare } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState, useRef, useEffect } from "react";
-import { signOut } from "next-auth/react";
+
+
 import { Link } from "@/i18n/navigation";
 import { Avatar } from "./avatar";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import { ExtendedUser } from "@/types/profile-button.types";
+import { useProfileMenu } from "@/hooks/use-profile-menu";
+import { useLogoutOverlay } from "@/hooks/use-logout-overlay";
+import { useUserUtils } from "@/hooks/use-user-utils";
 import { 
-  SIZES,
-  LOGOUT_OVERLAY_CONFIG
+  SIZES
 } from "@/constants/profile-button.constants";
 import { 
   formatDisplayName, 
-  getInitials, 
-  getDisplayRole, 
-  getOnlineStatus, 
-  getProfilePath,
-  getThemeColors,
-  createLogoutOverlayHTML
+  getInitials
 } from "@/utils/profile-button.utils";
 
 export function ProfileButton() {
   const t = useTranslations();
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const { user, isLoading } = useCurrentUser();
-  const menuRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  
-  // Build stable, URL-safe profile path with proper encoding
-  const profilePath = getProfilePath(user as ExtendedUser);
-  const isAdmin = user?.isAdmin === true;
+  const { isProfileMenuOpen, menuRef, buttonRef, toggleMenu, closeMenu } = useProfileMenu();
+  const { handleLogout } = useLogoutOverlay();
+  const { user, profilePath, isAdmin, displayRole, onlineStatus, isLoading } = useUserUtils();
 
-  // Close menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
-      ) {
-        setIsProfileMenuOpen(false);
-      }
-    };
 
-    if (isProfileMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isProfileMenuOpen]);
-
-  // Close menu with Escape key
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsProfileMenuOpen(false);
-      }
-    };
-
-    if (isProfileMenuOpen) {
-      document.addEventListener('keydown', handleEscape);
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, [isProfileMenuOpen]);
-
-  const handleLogout = async () => {
-    setIsProfileMenuOpen(false);
-
-    // Create enhanced overlay with better animations and dark mode support
-    const overlay = document.createElement('div');
-    overlay.id = LOGOUT_OVERLAY_CONFIG.ID;
-    
-    const colors = getThemeColors();
-    overlay.innerHTML = createLogoutOverlayHTML(colors);
-    document.body.appendChild(overlay);
-
-    // Add theme change listener to update overlay colors dynamically
-    const updateOverlayTheme = () => {
-      const overlayElement = document.getElementById(LOGOUT_OVERLAY_CONFIG.ID);
-      if (overlayElement) {
-        const colors = getThemeColors();
-        const overlayDiv = overlayElement.querySelector('div > div') as HTMLElement;
-        const titleElement = overlayElement.querySelector('h3') as HTMLElement;
-        const textElement = overlayElement.querySelector('p') as HTMLElement;
-        const spinnerElement = overlayElement.querySelector('div > div > div') as HTMLElement;
-        
-        if (overlayDiv) {
-          overlayDiv.style.background = colors.cardBg;
-          overlayDiv.style.boxShadow = colors.cardShadow;
-          overlayDiv.style.border = `1px solid ${colors.border}`;
-        }
-        if (titleElement) titleElement.style.color = colors.titleColor;
-        if (textElement) textElement.style.color = colors.textColor;
-        if (spinnerElement) spinnerElement.style.border = `3px solid ${colors.spinnerBorder} 3px solid #3b82f6`;
-      }
-    };
-
-    // Listen for theme changes
-    const observer = new MutationObserver(updateOverlayTheme);
-    observer.observe(document.documentElement, { 
-      attributes: true, 
-      attributeFilter: ['class'] 
-    });
-
-    try {
-      await signOut({ callbackUrl: '/' });
-    } catch (error) {
-      console.error('Logout error:', error);
-      const overlayElement = document.getElementById(LOGOUT_OVERLAY_CONFIG.ID);
-      if (overlayElement && document.body.contains(overlayElement)) {
-        document.body.removeChild(overlayElement);
-      }
-    } finally {
-      observer.disconnect();
-    }
-  };
 
 
 
@@ -148,7 +49,7 @@ export function ProfileButton() {
           id="user-menu"
           aria-expanded={isProfileMenuOpen}
           aria-haspopup="true"
-          onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+          onClick={toggleMenu}
         >
           <span className="sr-only">Open user menu</span>
           <div className="relative">
@@ -210,10 +111,10 @@ export function ProfileButton() {
                       ? 'bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-800 dark:from-yellow-900/30 dark:to-orange-900/30 dark:text-yellow-200'
                       : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
                   }`}>
-                    {getDisplayRole(isAdmin)}
+                    {displayRole}
                   </span>
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300">
-                    {getOnlineStatus()}
+                    {onlineStatus}
                   </span>
                 </div>
               </div>
@@ -228,7 +129,7 @@ export function ProfileButton() {
                   href="/admin"
                   className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 transition-all duration-200"
                   role="menuitem"
-                  onClick={() => setIsProfileMenuOpen(false)}
+                  onClick={closeMenu}
                 >
                   <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 group-hover:from-blue-200 group-hover:to-indigo-200 dark:group-hover:from-blue-900/40 dark:group-hover:to-indigo-900/40 transition-all duration-200">
                     <Settings className="h-5 w-5 text-theme-primary-600 dark:text-theme-primary-400" />
@@ -244,7 +145,7 @@ export function ProfileButton() {
                   href="/admin/clients"
                   className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 dark:hover:from-green-900/20 dark:hover:to-emerald-900/20 transition-all duration-200"
                   role="menuitem"
-                  onClick={() => setIsProfileMenuOpen(false)}
+                  onClick={closeMenu}
                 >
                   <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-xl bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 group-hover:from-green-200 group-hover:to-emerald-200 dark:group-hover:from-green-900/40 dark:group-hover:to-emerald-900/40 transition-all duration-200">
                     <Users className="h-5 w-5 text-green-600 dark:text-green-400" />
@@ -260,7 +161,7 @@ export function ProfileButton() {
                   href="/admin/categories"
                   className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-50 hover:to-violet-50 dark:hover:from-purple-900/20 dark:hover:to-violet-900/20 transition-all duration-200"
                   role="menuitem"
-                  onClick={() => setIsProfileMenuOpen(false)}
+                  onClick={closeMenu}
                 >
                   <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-xl bg-gradient-to-br from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30 group-hover:from-purple-200 group-hover:to-violet-200 dark:group-hover:from-purple-900/40 dark:group-hover:to-violet-900/40 transition-all duration-200">
                     <FolderTree className="h-5 w-5 text-purple-600 dark:text-purple-400" />
@@ -276,7 +177,7 @@ export function ProfileButton() {
                   href="/admin/tags"
                   className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-blue-50 dark:hover:from-indigo-900/20 dark:hover:to-blue-900/20 transition-all duration-200"
                   role="menuitem"
-                  onClick={() => setIsProfileMenuOpen(false)}
+                  onClick={closeMenu}
                 >
                   <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-xl bg-gradient-to-br from-indigo-100 to-blue-100 dark:from-indigo-900/30 dark:to-blue-900/30 group-hover:from-indigo-200 group-hover:to-blue-200 dark:group-hover:from-indigo-900/40 dark:group-hover:to-blue-900/40 transition-all duration-200">
                     <Tag className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
@@ -292,7 +193,7 @@ export function ProfileButton() {
                   href="/admin/items"
                   className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 dark:hover:from-orange-900/20 dark:hover:to-amber-900/20 transition-all duration-200"
                   role="menuitem"
-                  onClick={() => setIsProfileMenuOpen(false)}
+                  onClick={closeMenu}
                 >
                   <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-xl bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30 group-hover:from-orange-200 group-hover:to-amber-200 dark:group-hover:from-orange-900/40 dark:group-hover:to-amber-900/40 transition-all duration-200">
                     <Package className="h-5 w-5 text-orange-600 dark:text-orange-400" />
@@ -308,7 +209,7 @@ export function ProfileButton() {
                   href="/admin/comments"
                   className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 dark:hover:from-blue-900/20 dark:hover:to-cyan-900/20 transition-all duration-200"
                   role="menuitem"
-                  onClick={() => setIsProfileMenuOpen(false)}
+                  onClick={closeMenu}
                 >
                   <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-xl bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 group-hover:from-blue-200 group-hover:to-cyan-200 dark:group-hover:from-blue-900/40 dark:group-hover:to-cyan-900/40 transition-all duration-200">
                     <MessageSquare className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -324,7 +225,7 @@ export function ProfileButton() {
                   href="/admin/roles"
                   className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 dark:hover:from-red-900/20 dark:hover:to-pink-900/20 transition-all duration-200"
                   role="menuitem"
-                  onClick={() => setIsProfileMenuOpen(false)}
+                  onClick={closeMenu}
                 >
                   <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-xl bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900/30 dark:to-pink-900/30 group-hover:from-red-200 group-hover:to-pink-200 dark:group-hover:from-red-900/40 dark:group-hover:to-pink-900/40 transition-all duration-200">
                     <Shield className="h-5 w-5 text-red-600 dark:text-red-400" />
@@ -340,7 +241,7 @@ export function ProfileButton() {
                   href="/admin/users"
                   className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50 dark:hover:from-teal-900/20 dark:hover:to-cyan-900/20 transition-all duration-200"
                   role="menuitem"
-                  onClick={() => setIsProfileMenuOpen(false)}
+                  onClick={closeMenu}
                 >
                   <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-xl bg-gradient-to-br from-teal-100 to-cyan-100 dark:from-teal-900/30 dark:to-cyan-900/30 group-hover:from-teal-200 group-hover:to-cyan-200 dark:group-hover:from-teal-900/40 dark:group-hover:to-cyan-900/40 transition-all duration-200">
                     <Users className="h-5 w-5 text-teal-600 dark:text-teal-400" />
@@ -358,7 +259,7 @@ export function ProfileButton() {
                   href={profilePath}
                   className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 transition-all duration-200"
                   role="menuitem"
-                  onClick={() => setIsProfileMenuOpen(false)}
+                  onClick={closeMenu}
                 >
                   <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 group-hover:from-blue-200 group-hover:to-indigo-200 dark:group-hover:from-blue-900/40 dark:group-hover:to-indigo-900/40 transition-all duration-200">
                     <User className="h-5 w-5 text-theme-primary-600 dark:text-theme-primary-400" />
@@ -374,7 +275,7 @@ export function ProfileButton() {
                   href="/client/settings"
                   className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-slate-50 dark:hover:from-gray-700/50 dark:hover:to-slate-700/50 transition-all duration-200"
                   role="menuitem"
-                  onClick={() => setIsProfileMenuOpen(false)}
+                  onClick={closeMenu}
                 >
                   <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-xl bg-gradient-to-br from-gray-100 to-slate-100 dark:from-gray-700 dark:to-slate-700 group-hover:from-gray-200 group-hover:to-slate-200 dark:group-hover:from-gray-600 dark:group-hover:to-slate-600 transition-all duration-200">
                     <Settings className="h-5 w-5 text-gray-600 dark:text-gray-400" />

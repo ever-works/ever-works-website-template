@@ -1,0 +1,60 @@
+import { useCallback } from "react";
+import { signOut } from "next-auth/react";
+import { LOGOUT_OVERLAY_CONFIG } from "@/constants/profile-button.constants";
+import { getThemeColors, createLogoutOverlayHTML } from "@/utils/profile-button.utils";
+
+export function useLogoutOverlay() {
+  const handleLogout = useCallback(async () => {
+    // Create enhanced overlay with better animations and dark mode support
+    const overlay = document.createElement('div');
+    overlay.id = LOGOUT_OVERLAY_CONFIG.ID;
+    
+    const colors = getThemeColors();
+    overlay.innerHTML = createLogoutOverlayHTML(colors);
+    document.body.appendChild(overlay);
+
+    // Add theme change listener to update overlay colors dynamically
+    const updateOverlayTheme = () => {
+      const overlayElement = document.getElementById(LOGOUT_OVERLAY_CONFIG.ID);
+      if (overlayElement) {
+        const colors = getThemeColors();
+        const overlayDiv = overlayElement.querySelector('div > div') as HTMLElement;
+        const titleElement = overlayElement.querySelector('h3') as HTMLElement;
+        const textElement = overlayElement.querySelector('p') as HTMLElement;
+        const spinnerElement = overlayElement.querySelector('div > div > div') as HTMLElement;
+        
+        if (overlayDiv) {
+          overlayDiv.style.background = colors.cardBg;
+          overlayDiv.style.boxShadow = colors.cardShadow;
+          overlayDiv.style.border = `1px solid ${colors.border}`;
+        }
+        if (titleElement) titleElement.style.color = colors.titleColor;
+        if (textElement) textElement.style.color = colors.textColor;
+        if (spinnerElement) spinnerElement.style.border = `3px solid ${colors.spinnerBorder} 3px solid #3b82f6`;
+      }
+    };
+
+    // Listen for theme changes
+    const observer = new MutationObserver(updateOverlayTheme);
+    observer.observe(document.documentElement, { 
+      attributes: true, 
+      attributeFilter: ['class'] 
+    });
+
+    try {
+      await signOut({ callbackUrl: '/' });
+    } catch (error) {
+      console.error('Logout error:', error);
+      const overlayElement = document.getElementById(LOGOUT_OVERLAY_CONFIG.ID);
+      if (overlayElement && document.body.contains(overlayElement)) {
+        document.body.removeChild(overlayElement);
+      }
+    } finally {
+      observer.disconnect();
+    }
+  }, []);
+
+  return {
+    handleLogout,
+  };
+}
