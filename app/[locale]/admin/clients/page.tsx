@@ -234,10 +234,10 @@ export default function ClientsPage() {
     onOpen();
   };
 
-  const viewClientDetails = async (clientId: string) => {
+  const viewClientDetails = (clientId: string) => {
     setNavigatingClientId(clientId);
     const locale = params.locale || 'en';
-    await router.push(`/${locale}/admin/clients/${clientId}`);
+    router.push(`/${locale}/admin/clients/${clientId}`);
   };
 
   const handleFormSubmit = async (data: CreateClientRequest | UpdateClientRequest) => {
