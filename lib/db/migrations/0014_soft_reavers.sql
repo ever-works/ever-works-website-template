@@ -13,5 +13,28 @@ ALTER TABLE "accounts" ADD COLUMN IF NOT EXISTS "user_type" text NOT NULL DEFAUL
 
 -- Now enforce NOT NULL
 ALTER TABLE "accounts" ALTER COLUMN "userId" SET NOT NULL;--> statement-breakpoint
-CREATE INDEX IF NOT EXISTS "accounts_userId_userType_idx" ON "accounts" USING btree ("userId","user_type");--> statement-breakpoint
-CREATE INDEX IF NOT EXISTS "accounts_email_idx" ON "accounts" USING btree ("email");
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_indexes
+    WHERE schemaname = 'public'
+      AND tablename = 'accounts'
+      AND indexdef LIKE 'CREATE INDEX%ON public.accounts USING btree ("userId","user_type")%'
+  ) THEN
+    CREATE INDEX "accounts_userId_userType_idx" ON "accounts" USING btree ("userId","user_type");
+  END IF;
+END $$;--> statement-breakpoint
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_indexes
+    WHERE schemaname = 'public'
+      AND tablename = 'accounts'
+      AND indexdef LIKE 'CREATE INDEX%ON public.accounts USING btree ("email")%'
+  ) THEN
+    CREATE INDEX "accounts_email_idx" ON "accounts" USING btree ("email");
+  END IF;
+END $$;
