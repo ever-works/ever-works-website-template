@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { memo } from "react";
 import { LogOut, Zap } from "lucide-react";
 
 interface LogoutButtonProps {
@@ -7,10 +7,7 @@ interface LogoutButtonProps {
 }
 
 function LogoutButton({ onLogout, logoutText }: LogoutButtonProps) {
-  // Memoize the click handler to prevent unnecessary re-renders
-  const handleLogout = useCallback(() => {
-    onLogout();
-  }, [onLogout]);
+  const handleLogout = onLogout;
 
   return (
     <button
