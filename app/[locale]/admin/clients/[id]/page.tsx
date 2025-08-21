@@ -364,7 +364,7 @@ function ModernField({
       <div className="text-gray-900 dark:text-white font-medium">
         {isLink && value && value !== "Not provided" ? (
           <a 
-            href={value.startsWith('http') ? value : `https://${value}`} 
+            href={/^https?:\/\//i.test(value) || value.startsWith('mailto:') ? value : `https://${value}`}
             target="_blank" 
             rel="noopener noreferrer"
             className="text-blue-600 dark:text-blue-400 hover:underline flex items-center space-x-1"
