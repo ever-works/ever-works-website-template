@@ -8,7 +8,7 @@ ALTER TABLE "client_profiles" ADD COLUMN IF NOT EXISTS "userId" text;
 -- Create user records for client profiles that don't have a userId
 INSERT INTO "users" (id, email, name, created_at, updated_at)
 SELECT 
-  gen_random_uuid(),
+  gen_random_uuid()::text,
   COALESCE(cp.display_name || '-' || cp.id || '@placeholder.com', 'client-' || cp.id || '@placeholder.com'),
   COALESCE(cp.display_name, 'Client User'),
   cp.created_at,

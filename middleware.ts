@@ -35,8 +35,10 @@ async function nextAuthGuard(req: NextRequest, baseRes: NextResponse): Promise<N
     const hasLocale = routing.locales.includes(maybeLocale as any);
     const rootLocalePrefix = hasLocale ? `/${maybeLocale}` : "";
     url.pathname = `${rootLocalePrefix}${ADMIN_SIGNIN}`;
-    url.searchParams.set('callbackUrl', req.nextUrl.pathname);
-    return NextResponse.redirect(url);
+    url.searchParams.set('callbackUrl', req.nextUrl.pathname + req.nextUrl.search);
+    const redirectRes = NextResponse.redirect(url);
+    baseRes.cookies.getAll().forEach((c) => redirectRes.cookies.set(c));
+    return redirectRes;
   } catch (error) {
     console.error('DEBUG: NextAuth guard error:', error);
     const url = req.nextUrl.clone();
@@ -45,7 +47,10 @@ async function nextAuthGuard(req: NextRequest, baseRes: NextResponse): Promise<N
     const hasLocale = routing.locales.includes(maybeLocale as any);
     const rootLocalePrefix = hasLocale ? `/${maybeLocale}` : "";
     url.pathname = `${rootLocalePrefix}${ADMIN_SIGNIN}`;
-    return NextResponse.redirect(url);
+    url.searchParams.set('callbackUrl', req.nextUrl.pathname + req.nextUrl.search);
+    const redirectRes = NextResponse.redirect(url);
+    baseRes.cookies.getAll().forEach((c) => redirectRes.cookies.set(c));
+    return redirectRes;
   }
 }
 
@@ -84,8 +89,10 @@ async function supabaseGuard(req: NextRequest, baseRes: NextResponse): Promise<N
     const hasLocale = routing.locales.includes(maybeLocale as any);
     const rootLocalePrefix = hasLocale ? `/${maybeLocale}` : "";
     url.pathname = `${rootLocalePrefix}${ADMIN_SIGNIN}`;
-    url.searchParams.set('callbackUrl', req.nextUrl.pathname);
-    return NextResponse.redirect(url);
+    url.searchParams.set('callbackUrl', req.nextUrl.pathname + req.nextUrl.search);
+    const redirectRes = NextResponse.redirect(url);
+    baseRes.cookies.getAll().forEach((c) => redirectRes.cookies.set(c));
+    return redirectRes;
   }
 
   return baseRes;
