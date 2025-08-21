@@ -884,6 +884,39 @@ export async function getClientProfiles(params: {
 }
 
 /**
+ * Get client statistics efficiently using GROUP BY
+ * Returns counts per status and total count in a single query
+ */
+export async function getClientStats(): Promise<{
+	byStatus: { status: string; count: number }[];
+	total: number;
+}> {
+	// Get counts by status using GROUP BY
+	const statusCounts = await db
+		.select({
+			status: clientProfiles.status,
+			count: sql<number>`count(*)`
+		})
+		.from(clientProfiles)
+		.groupBy(clientProfiles.status);
+
+	// Get total count
+	const totalResult = await db
+		.select({ count: sql<number>`count(*)` })
+		.from(clientProfiles);
+
+	const total = Number(totalResult[0]?.count || 0);
+
+	return {
+		byStatus: statusCounts.map((row: { status: string | null; count: number }) => ({
+			status: row.status || 'unknown',
+			count: Number(row.count)
+		})),
+		total
+	};
+}
+
+/**
  * Update client profile
  */
 export async function updateClientProfile(id: string, data: Partial<NewClientProfile>): Promise<ClientProfile | null> {

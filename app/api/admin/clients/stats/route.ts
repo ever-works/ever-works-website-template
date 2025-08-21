@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { getClientProfiles } from '@/lib/db/queries';
+import { getClientStats } from '@/lib/db/queries';
 
 export async function GET() {
   try {
@@ -18,28 +18,21 @@ export async function GET() {
       );
     }
 
-    // Compute counts via DB totals to avoid scanning large datasets
-    const [activeRes, inactiveRes, suspendedRes, trialRes] = await Promise.all(
-      (['active', 'inactive', 'suspended', 'trial'] as const).map((status) =>
-        getClientProfiles({ page: 1, limit: 1, status })
-      )
-    );
+    // Get client statistics efficiently using GROUP BY
+    const stats = await getClientStats();
 
-    const stats = {
-      total:
-        activeRes.total +
-        inactiveRes.total +
-        suspendedRes.total +
-        trialRes.total,
-      active: activeRes.total,
-      inactive: inactiveRes.total,
-      suspended: suspendedRes.total,
-      trial: trialRes.total,
+    // Transform to expected format
+    const statsByStatus = {
+      total: stats.total,
+      active: stats.byStatus.find(s => s.status === 'active')?.count || 0,
+      inactive: stats.byStatus.find(s => s.status === 'inactive')?.count || 0,
+      suspended: stats.byStatus.find(s => s.status === 'suspended')?.count || 0,
+      trial: stats.byStatus.find(s => s.status === 'trial')?.count || 0,
     };
 
     return NextResponse.json({
       success: true,
-      data: stats
+      data: statsByStatus
     });
 
   } catch (error) {
