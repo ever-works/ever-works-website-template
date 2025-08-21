@@ -11,7 +11,7 @@ DO $$ BEGIN
 END $$;
 
 -- Ensure subscriptions.payment_provider exists and set default
-ALTER TABLE "subscriptions" ADD COLUMN IF NOT EXISTS "payment_provider" text;--> statement-breakpoint
+ALTER TABLE public."subscriptions" ADD COLUMN IF NOT EXISTS "payment_provider" text;--> statement-breakpoint
 DO $$ BEGIN
   IF EXISTS (
     SELECT 1 FROM information_schema.columns 
@@ -25,10 +25,10 @@ DO $$ BEGIN
 END $$;
 
 -- Ensure subscriptions.subscription_id column exists and is nullable
-ALTER TABLE "subscriptions" ADD COLUMN IF NOT EXISTS "subscription_id" text;--> statement-breakpoint
+ALTER TABLE public."subscriptions" ADD COLUMN IF NOT EXISTS "subscription_id" text;--> statement-breakpoint
 
 -- Ensure subscriptions.amount exists and default 0
-ALTER TABLE "subscriptions" ADD COLUMN IF NOT EXISTS "amount" integer;--> statement-breakpoint
+ALTER TABLE public."subscriptions" ADD COLUMN IF NOT EXISTS "amount" integer;--> statement-breakpoint
 DO $$ BEGIN
   IF EXISTS (
     SELECT 1 FROM information_schema.columns 
@@ -39,11 +39,11 @@ DO $$ BEGIN
 END $$;
 
 -- Additional fields (add only if missing)
-ALTER TABLE "subscriptions" ADD COLUMN IF NOT EXISTS "invoice_id" text;--> statement-breakpoint
-ALTER TABLE "subscriptions" ADD COLUMN IF NOT EXISTS "amount_due" integer DEFAULT 0;--> statement-breakpoint
-ALTER TABLE "subscriptions" ADD COLUMN IF NOT EXISTS "amount_paid" integer DEFAULT 0;--> statement-breakpoint
-ALTER TABLE "subscriptions" ADD COLUMN IF NOT EXISTS "hosted_invoice_url" text;--> statement-breakpoint
-ALTER TABLE "subscriptions" ADD COLUMN IF NOT EXISTS "invoice_pdf" text;--> statement-breakpoint
+ALTER TABLE public."subscriptions" ADD COLUMN IF NOT EXISTS "invoice_id" text;--> statement-breakpoint
+ALTER TABLE public."subscriptions" ADD COLUMN IF NOT EXISTS "amount_due" integer DEFAULT 0;--> statement-breakpoint
+ALTER TABLE public."subscriptions" ADD COLUMN IF NOT EXISTS "amount_paid" integer DEFAULT 0;--> statement-breakpoint
+ALTER TABLE public."subscriptions" ADD COLUMN IF NOT EXISTS "hosted_invoice_url" text;--> statement-breakpoint
+ALTER TABLE public."subscriptions" ADD COLUMN IF NOT EXISTS "invoice_pdf" text;--> statement-breakpoint
 
 -- Add foreign key constraint for accounts.userId -> users.id (NextAuth requirement)
 DO $$
