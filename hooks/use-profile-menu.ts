@@ -25,23 +25,27 @@ export function useProfileMenu() {
 
   // Close menu when clicking outside
   useEffect(() => {
-    if (isProfileMenuOpen) {
+    if (isProfileMenuOpen && typeof document !== 'undefined') {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('mousedown', handleClickOutside);
+      }
     };
   }, [isProfileMenuOpen, handleClickOutside]);
 
   // Close menu with Escape key
   useEffect(() => {
-    if (isProfileMenuOpen) {
+    if (isProfileMenuOpen && typeof document !== 'undefined') {
       document.addEventListener('keydown', handleEscape);
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('keydown', handleEscape);
+      }
     };
   }, [isProfileMenuOpen, handleEscape]);
 

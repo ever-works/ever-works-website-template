@@ -80,7 +80,7 @@ export const getThemeColors = (): {
   titleColor: string;
   textColor: string;
 } => {
-  const isDark = document.documentElement.classList.contains('dark');
+  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
   
   return {
     background: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.6)',

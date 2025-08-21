@@ -8,6 +8,13 @@ export function useLogoutOverlay() {
   const observerRef = useRef<MutationObserver | null>(null);
 
   const handleLogout = useCallback(async () => {
+    // Ensure we're on the client side
+    if (typeof document === 'undefined') {
+      console.warn('Logout overlay can only be created on the client side');
+      await signOut({ callbackUrl: '/' });
+      return;
+    }
+
     // Create enhanced overlay with better animations and dark mode support
     const overlay = document.createElement('div');
     overlay.id = LOGOUT_OVERLAY_CONFIG.ID;
