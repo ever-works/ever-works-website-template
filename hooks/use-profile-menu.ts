@@ -14,12 +14,16 @@ export function useProfileMenu() {
       !buttonRef.current.contains(event.target as Node)
     ) {
       setIsProfileMenuOpen(false);
+      // Restore focus to trigger button
+      buttonRef.current?.focus();
     }
   }, []);
 
   const handleEscape = useCallback((event: KeyboardEvent) => {
     if (event.key === 'Escape') {
       setIsProfileMenuOpen(false);
+      // Restore focus to trigger button
+      buttonRef.current?.focus();
     }
   }, []);
 
@@ -55,6 +59,8 @@ export function useProfileMenu() {
 
   const closeMenu = useCallback(() => {
     setIsProfileMenuOpen(false);
+    // Restore focus to trigger button
+    buttonRef.current?.focus();
   }, []);
 
   // Memoize return object to prevent unnecessary re-renders
