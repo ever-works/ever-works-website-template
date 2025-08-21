@@ -176,6 +176,13 @@
       "when": 1755317817332,
       "tag": "0024_fix_accounts_userid_fk",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1755317817333,
+      "tag": "0025_enforce_accounts_composite_pk",
+      "breakpoints": true
     }
   ]
 }
