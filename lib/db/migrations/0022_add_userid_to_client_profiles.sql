@@ -19,41 +19,12 @@ ON CONFLICT (email) DO NOTHING;
 
 -- Update client_profiles to link to the created user records
 -- For simplicity, we'll create a one-to-one mapping
-DO $$
-DECLARE
-    profile_record RECORD;
-    user_id text;
-BEGIN
-    FOR profile_record IN 
-        SELECT id, display_name, created_at 
-        FROM client_profiles 
-        WHERE "userId" IS NULL
-    LOOP
-        -- Find or create a user for this profile
-        SELECT id INTO user_id 
-        FROM users 
-        WHERE email = COALESCE(profile_record.display_name || '-' || profile_record.id || '@placeholder.com', 'client-' || profile_record.id || '@placeholder.com')
-        LIMIT 1;
-        
-        -- If no user found, create one
-        IF user_id IS NULL THEN
-            INSERT INTO users (id, email, name, created_at, updated_at)
-            VALUES (
-                gen_random_uuid(),
-                COALESCE(profile_record.display_name || '-' || profile_record.id || '@placeholder.com', 'client-' || profile_record.id || '@placeholder.com'),
-                COALESCE(profile_record.display_name, 'Client User'),
-                profile_record.created_at,
-                now()
-            )
-            RETURNING id INTO user_id;
-        END IF;
-        
-        -- Update the client profile with the user id
-        UPDATE client_profiles 
-        SET "userId" = user_id 
-        WHERE id = profile_record.id;
-    END LOOP;
-END $$;
+-- Link client_profiles to their newly created user records (set-based, no row-by-row loop)
+UPDATE "client_profiles" cp
+SET "userId" = u.id
+FROM "public"."users" u
+WHERE cp."userId" IS NULL
+  AND u.email = 'client-' || cp.id || '@example.invalid';
 
 -- Now add the NOT NULL constraint and foreign key
 ALTER TABLE "client_profiles" ALTER COLUMN "userId" SET NOT NULL;
