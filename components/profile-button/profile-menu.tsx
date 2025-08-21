@@ -1,5 +1,7 @@
 import { memo } from "react";
+import { cn } from "@/lib/utils";
 import { ExtendedUser } from "@/types/profile-button.types";
+import { MENU_STYLES } from "@/constants/profile-button.constants";
 import ProfileHeader from "./profile-header";
 import MenuItems from "./menu-items";
 import LogoutButton from "./logout-button";
@@ -34,7 +36,12 @@ function ProfileMenu({
   return (
     <div
       ref={menuRef}
-      className="origin-top-right absolute right-0 mt-3 w-80 rounded-2xl shadow-2xl py-3 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl ring-1 ring-black/5 dark:ring-white/10 focus:outline-none z-50 animate-in slide-in-from-top-2 duration-300"
+      className={cn(
+        MENU_STYLES.CONTAINER.base,
+        MENU_STYLES.CONTAINER.background,
+        MENU_STYLES.CONTAINER.border,
+        MENU_STYLES.CONTAINER.animation
+      )}
       role="menu"
       aria-orientation="vertical"
       aria-labelledby="user-menu"

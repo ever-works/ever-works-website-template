@@ -233,3 +233,36 @@ export const LOGOUT_OVERLAY_CONFIG = {
     SPINNER_SHADOW: "rgba(59, 130, 246, 0.3)",
   },
 } as const;
+
+// Profile menu style constants for better readability
+export const MENU_STYLES = {
+  CONTAINER: {
+    base: [
+      'origin-top-right',
+      'absolute',
+      'right-0',
+      'mt-3',
+      'w-80',
+      'rounded-2xl',
+      'shadow-2xl',
+      'py-3',
+      'focus:outline-none',
+      'z-50',
+    ],
+    background: [
+      'bg-white/95',
+      'dark:bg-gray-900/95',
+      'backdrop-blur-xl',
+    ],
+    border: [
+      'ring-1',
+      'ring-black/5',
+      'dark:ring-white/10',
+    ],
+    animation: [
+      'animate-in',
+      'slide-in-from-top-2',
+      'duration-300',
+    ],
+  },
+} as const;
