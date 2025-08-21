@@ -1,7 +1,8 @@
 "use server";
 
 import { z } from "zod";
-import { ActivityType } from "@/lib/db/schema";
+import { ActivityType, users } from "@/lib/db/schema";
+import { db } from "@/lib/db/drizzle";
 import { redirect } from "next/navigation";
 import {
   validatedAction,
@@ -148,11 +149,22 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
 
     const passwordHash = await hashPassword(password);
 
-    // For client registrations, we only create records in client_profiles and accounts tables
-    // We don't create a user record in the users table for clients
+    // For client registrations, we need to create a user record first, then client profile
     
-    // 1) Create client profile record
+    // 1) Create user record
+    const userId = crypto.randomUUID();
+    await db.insert(users).values({
+      id: userId,
+      email,
+      name,
+      username: email.split('@')[0] || 'user',
+      status: 'active',
+      created_by: 'system',
+    });
+    
+    // 2) Create client profile record
     const clientProfile = await createClientProfile({
+      userId,
       email,
       name,
       displayName: name,
