@@ -3,7 +3,6 @@ import { auth } from "@/lib/auth";
 import { getClientProfileById, getLastLoginActivity } from "@/lib/db/queries";
 import { type ClientProfile } from "@/lib/db/schema";
 import { Link } from "@/i18n/navigation";
-import { getLocale } from "next-intl/server";
 import { Button, Card, CardBody, Chip } from "@heroui/react";
 import { 
   ArrowLeft, 
@@ -30,11 +29,11 @@ export default async function ClientDetailPage({
 }: {
   params: Promise<Params>;
 }) {
-  const { id } = await params;
+  const { id, locale: paramLocale } = await params;
 
   const session = await auth();
   if (!session?.user?.isAdmin) {
-    const locale = (await getLocale()) || "en";
+    const locale = paramLocale || "en";
     redirect(`/${locale}/auth/signin`);
   }
 
@@ -45,7 +44,7 @@ export default async function ClientDetailPage({
 
   const lastLogin = await getLastLoginActivity(profile.userId);
 
-  const locale = (await getLocale()) || "en";
+  const locale = paramLocale || "en";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
