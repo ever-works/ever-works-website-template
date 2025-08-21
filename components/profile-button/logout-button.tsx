@@ -11,6 +11,7 @@ function LogoutButton({ onLogout, logoutText }: LogoutButtonProps) {
 
   return (
     <button
+      type="button"
       onClick={handleLogout}
       className="group flex w-full items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 dark:hover:from-red-900/10 dark:hover:to-pink-900/10 transition-all duration-200"
       role="menuitem"
