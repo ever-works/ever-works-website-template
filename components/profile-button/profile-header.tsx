@@ -34,7 +34,7 @@ function ProfileHeader({ user, isAdmin, displayRole, onlineStatus }: ProfileHead
             alt={user?.name || "User"}
             fallback={userInitials}
             size={SIZES.AVATAR_MD}
-            className="ring-3 ring-white dark:ring-gray-700 shadow-xl"
+            className="ring-2 ring-white dark:ring-gray-700 shadow-xl"
           />
           {/* Online status indicator */}
           <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-700 shadow-sm"></div>
