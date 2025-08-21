@@ -70,6 +70,11 @@ export function useLogoutOverlay() {
         observerRef.current.disconnect();
         observerRef.current = null;
       }
+      // Remove overlay if it still exists
+      const overlayElement = document.getElementById(LOGOUT_OVERLAY_CONFIG.ID);
+      if (overlayElement && document.body.contains(overlayElement)) {
+        document.body.removeChild(overlayElement);
+      }
     }
   }, []);
 
