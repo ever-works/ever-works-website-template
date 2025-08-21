@@ -544,6 +544,7 @@ export default function ClientsPage() {
           {/* Status Filter */}
           <div className="relative">
             <select 
+              aria-label="Filter by status"
               value={statusFilter} 
               onChange={(e) => handleStatusFilter(e.target.value)}
               className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 pr-8 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
