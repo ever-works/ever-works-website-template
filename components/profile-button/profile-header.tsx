@@ -44,7 +44,7 @@ function ProfileHeader({ user, isAdmin, displayRole, onlineStatus }: ProfileHead
           ></div>
           {isAdmin && (
             <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-lg">
-              <Crown className="w-3.5 h-3.5 text-white" />
+              <Crown aria-hidden="true" className="w-3.5 h-3.5 text-white" />
             </div>
           )}
         </div>
