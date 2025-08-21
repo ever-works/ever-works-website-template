@@ -107,7 +107,11 @@ function ProfileButton() {
   const { user, profilePath, isAdmin, displayRole, onlineStatus, isLoading } = useUserUtils();
 
   if (isLoading) {
-    return <LoadingSkeleton />;
+    return (
+      <div aria-busy="true" aria-live="polite">
+        <LoadingSkeleton />
+      </div>
+    );
   }
 
   if (!user) {
