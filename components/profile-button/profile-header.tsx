@@ -37,7 +37,11 @@ function ProfileHeader({ user, isAdmin, displayRole, onlineStatus }: ProfileHead
             className="ring-2 ring-white dark:ring-gray-700 shadow-xl"
           />
           {/* Online status indicator */}
-          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-700 shadow-sm"></div>
+          <div
+            className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white dark:border-gray-700 shadow-sm ${
+              onlineStatus.toLowerCase().includes('online') ? 'bg-green-500' : 'bg-gray-400'
+            }`}
+          ></div>
           {isAdmin && (
             <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-lg">
               <Crown className="w-3.5 h-3.5 text-white" />
@@ -55,7 +59,11 @@ function ProfileHeader({ user, isAdmin, displayRole, onlineStatus }: ProfileHead
             <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${roleBadgeClasses}`}>
               {displayRole}
             </span>
-            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300">
+            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+              onlineStatus.toLowerCase().includes('online') 
+                ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' 
+                : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+            }`}>
               {onlineStatus}
             </span>
           </div>
