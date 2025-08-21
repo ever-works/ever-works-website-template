@@ -27,6 +27,7 @@ export default function ClientsPage() {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [filteredTotal, setFilteredTotal] = useState(0);
   const [limit] = useState(10);
   
   // Filter state
@@ -113,6 +114,7 @@ export default function ClientsPage() {
         setClients(data.data.clients);
         setTotalPages(data.meta.totalPages);
         setCurrentPage(data.meta.page);
+        setFilteredTotal(data.meta.total);
       } else {
         toast.error(data.error || 'Failed to fetch clients');
       }
@@ -616,12 +618,7 @@ export default function ClientsPage() {
         {!isLoading && (
           <div className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
             <span>
-              Showing {clients.length} of {stats.total} clients
-              {(searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter) && (
-                <span className="ml-1">
-                  • filtered
-                </span>
-              )}
+              Showing {clients.length} of {filteredTotal} {(searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter) ? 'filtered ' : ''}clients
             </span>
             {totalPages > 1 && (
               <span>
