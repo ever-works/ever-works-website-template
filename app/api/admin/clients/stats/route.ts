@@ -5,12 +5,17 @@ import { getClientProfiles } from '@/lib/db/queries';
 export async function GET() {
   try {
     const session = await auth();
-    
-    if (!session?.user?.isAdmin) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Unauthorized' 
-      }, { status: 403 });
+    if (!session) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+    if (!session.user?.isAdmin) {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden' },
+        { status: 403 }
+      );
     }
 
     // Compute counts via DB totals to avoid scanning large datasets
