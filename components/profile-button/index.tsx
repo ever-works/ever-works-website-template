@@ -57,7 +57,11 @@ const ProfileAvatar = memo(({ user, isAdmin }: { user: ExtendedUser; isAdmin: bo
     {/* Online status indicator */}
     <div className={cn(MENU_STYLES.AVATAR.onlineIndicator)}></div>
     {isAdmin && (
-      <div className={cn(MENU_STYLES.AVATAR.adminBadge)}>
+      <div
+        className={cn(MENU_STYLES.AVATAR.adminBadge)}
+        aria-label="Admin"
+        title="Admin"
+      >
         <Crown className="w-2.5 h-2.5 text-white" />
       </div>
     )}
