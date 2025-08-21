@@ -6,13 +6,14 @@ import { Plus, Edit, Trash2, Users, UserCheck, UserX, Search, ChevronDown, Build
 import { toast } from "sonner";
 import { ClientForm } from "@/components/admin/clients/client-form";
 import { UniversalPagination } from "@/components/universal-pagination";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import type { ClientListResponse, ClientResponse, CreateClientRequest, UpdateClientRequest } from "@/lib/types/client";
 import type { ClientProfileWithUser } from "@/lib/db/schema";
 
 export default function ClientsPage() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const [clients, setClients] = useState<ClientProfileWithUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,7 +48,19 @@ export default function ClientsPage() {
   // Track if this is the initial load
   const isInitialLoad = useRef(true);
 
+  const clearEditParam = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    url.searchParams.delete('edit');
+    const nextHref = url.pathname + (url.searchParams.toString() ? `?${url.searchParams.toString()}` : '');
+    router.replace(nextHref);
+  }, [router]);
 
+  const closeForm = useCallback(() => {
+    onClose();
+    clearEditParam();
+    setSelectedClient(null);
+  }, [onClose, clearEditParam]);
 
   // Debounce search term
   useEffect(() => {
@@ -131,7 +144,7 @@ export default function ClientsPage() {
       
       if (result.success) {
         toast.success('Client created successfully');
-        onClose();
+        closeForm();
         fetchClients();
       } else {
         toast.error(result.error || 'Failed to create client');
@@ -164,7 +177,7 @@ export default function ClientsPage() {
       
       if (result.success) {
         toast.success('Client updated successfully');
-        onClose();
+        closeForm();
         fetchClients();
       } else {
         toast.error(result.error || 'Failed to update client');
@@ -294,6 +307,41 @@ export default function ClientsPage() {
     loadInitialData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run on mount
+
+  // Open edit modal when ?edit=<id> is present
+  useEffect(() => {
+    const editId = searchParams.get('edit');
+    if (editId) {
+      const existing = clients.find((c) => c.id === editId);
+      if (existing) {
+        setSelectedClient(existing);
+        setFormMode('edit');
+        onOpen();
+        return;
+      }
+      (async () => {
+        try {
+          const resp = await fetch(`/api/admin/clients/${encodeURIComponent(editId)}`);
+          if (!resp.ok) throw new Error('Failed to load client');
+          const data: ClientResponse = await resp.json();
+          if (data.success && (data as any).data) {
+            setSelectedClient((data as any).data as ClientProfileWithUser);
+            setFormMode('edit');
+            onOpen();
+          } else {
+            toast.error('Client not found');
+          }
+        } catch (e) {
+          console.error(e);
+          toast.error('Failed to load client');
+        }
+      })();
+    } else {
+      if (isOpen) onClose();
+      setSelectedClient(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, clients]);
 
   // Fetch when filters change (excluding search term which has its own debounced effect)
   useEffect(() => {
@@ -753,7 +801,7 @@ export default function ClientsPage() {
             <ClientForm
               client={selectedClient || undefined}
               onSubmit={handleFormSubmit}
-              onCancel={onClose}
+              onCancel={closeForm}
               isLoading={isSubmitting}
               mode={formMode}
             />
