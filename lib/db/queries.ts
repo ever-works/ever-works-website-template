@@ -749,6 +749,7 @@ export async function createClientUser(name: string, email: string): Promise<any
  * Create a new client profile
  */
 export async function createClientProfile(data: {
+  userId: string;
   email: string;
   name: string;
   displayName?: string;
@@ -782,6 +783,7 @@ export async function createClientProfile(data: {
   const [profile] = await db
     .insert(clientProfiles)
     .values({
+      userId: data.userId,
       email: normalizedEmail,
       name: data.name,
       displayName: data.displayName || data.name,

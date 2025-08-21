@@ -141,6 +141,7 @@ export async function POST(request: NextRequest) {
 
     // Create client profile with required email and name
     const clientData = {
+      userId: user.id,
       email: user.email,
       name: user.name,
       displayName: raw.displayName,
@@ -151,7 +152,7 @@ export async function POST(request: NextRequest) {
       status: raw.status || 'active',
       plan: raw.plan || 'free',
       accountType: raw.accountType || 'individual',
-    };
+    } as const;
 
     const newClient = await createClientProfile(clientData);
 
