@@ -15,7 +15,7 @@ interface ProfileMenuProps {
   displayRole: string;
   onlineStatus: string;
   onItemClick: () => void;
-  onLogout: () => void;
+  onLogout: () => void | Promise<void>;
   logoutText: string;
 }
 
