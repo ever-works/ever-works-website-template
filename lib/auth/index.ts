@@ -28,16 +28,49 @@ interface ProviderConfig {
 // Environment variables validation and configuration
 class ConfigManager {
 	private static config: ProviderConfig | null = null;
+	private static initializedProviders: Set<string> = new Set();
 
-	public static getConfig(): ProviderConfig {
+	private static ensureConfig(): ProviderConfig {
 		if (!this.config) {
-			this.validateAndSetConfig();
+			this.config = {
+				stripe: {
+					apiKey: process.env.STRIPE_SECRET_KEY || '',
+					webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
+					publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
+					apiVersion: '2023-10-16'
+				},
+				lemonsqueezy: {
+					apiKey: process.env.LEMONSQUEEZY_API_KEY || ''
+				}
+			};
+			console.log('✅ ConfigManager initialized with default values');
 		}
-		return this.config!;
+		return this.config;
 	}
 
-	private static validateAndSetConfig(): void {
-		// Validate Stripe configuration
+	public static getConfig(): ProviderConfig {
+		return this.ensureConfig();
+	}
+
+	public static getStripeConfig() {
+		// Only validate Stripe when actually requested
+		if (!this.initializedProviders.has('stripe')) {
+			this.validateStripeConfig();
+			this.initializedProviders.add('stripe');
+		}
+		return this.ensureConfig().stripe;
+	}
+
+	public static getLemonsqueezyConfig() {
+		// Only validate LemonSqueezy when actually requested
+		if (!this.initializedProviders.has('lemonsqueezy')) {
+			this.validateLemonsqueezyConfig();
+			this.initializedProviders.add('lemonsqueezy');
+		}
+		return this.ensureConfig().lemonsqueezy;
+	}
+
+	private static validateStripeConfig(): void {
 		const stripeApiKey = process.env.STRIPE_SECRET_KEY;
 		const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 		const stripePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
@@ -47,34 +80,29 @@ class ConfigManager {
 			throw new Error('Stripe configuration is incomplete. Required: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY');
 		}
 
-		// Validate Lemonsqueezy configuration
+		// Set validated Stripe configuration
+		this.ensureConfig().stripe = {
+			apiKey: stripeApiKey,
+			webhookSecret: stripeWebhookSecret,
+			publishableKey: stripePublishableKey,
+			apiVersion: stripeApiVersion
+		};
+
+		console.log('✅ Stripe configuration validated successfully');
+	}
+
+	private static validateLemonsqueezyConfig(): void {
 		const lemonsqueezyApiKey = process.env.LEMONSQUEEZY_API_KEY;
 		if (!lemonsqueezyApiKey) {
 			throw new Error('Lemonsqueezy configuration is incomplete. Required: LEMONSQUEEZY_API_KEY');
 		}
 
-		// Set validated configuration
-		this.config = {
-			stripe: {
-				apiKey: stripeApiKey,
-				webhookSecret: stripeWebhookSecret,
-				publishableKey: stripePublishableKey,
-				apiVersion: stripeApiVersion
-			},
-			lemonsqueezy: {
-				apiKey: lemonsqueezyApiKey
-			}
+		// Set validated LemonSqueezy configuration
+		this.ensureConfig().lemonsqueezy = {
+			apiKey: lemonsqueezyApiKey
 		};
 
-		console.log('✅ All provider configurations validated successfully');
-	}
-
-	public static getStripeConfig() {
-		return this.getConfig().stripe;
-	}
-
-	public static getLemonsqueezyConfig() {
-		return this.getConfig().lemonsqueezy;
+		console.log('✅ LemonSqueezy configuration validated successfully');
 	}
 }
 
