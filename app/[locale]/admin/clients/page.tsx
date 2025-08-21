@@ -315,6 +315,7 @@ export default function ClientsPage() {
   useEffect(() => {
     const editId = searchParams.get('edit');
     if (editId) {
+      // First try to find in existing clients
       const existing = clients.find((c) => c.id === editId);
       if (existing) {
         setSelectedClient(existing);
@@ -322,29 +323,33 @@ export default function ClientsPage() {
         onOpen();
         return;
       }
-      (async () => {
-        try {
-          const resp = await fetch(`/api/admin/clients/${encodeURIComponent(editId)}`);
-          if (!resp.ok) throw new Error('Failed to load client');
-          const data: ClientResponse = await resp.json();
-          if (data.success && (data as any).data) {
-            setSelectedClient((data as any).data as ClientProfileWithUser);
-            setFormMode('edit');
-            onOpen();
-          } else {
-            toast.error('Client not found');
+      
+      // If not found in existing clients and we're not loading, fetch individually
+      if (!isLoading) {
+        (async () => {
+          try {
+            const resp = await fetch(`/api/admin/clients/${encodeURIComponent(editId)}`);
+            if (!resp.ok) throw new Error('Failed to load client');
+            const data: ClientResponse = await resp.json();
+            if (data.success && (data as any).data) {
+              setSelectedClient((data as any).data as ClientProfileWithUser);
+              setFormMode('edit');
+              onOpen();
+            } else {
+              toast.error('Client not found');
+            }
+          } catch (e) {
+            console.error(e);
+            toast.error('Failed to load client');
           }
-        } catch (e) {
-          console.error(e);
-          toast.error('Failed to load client');
-        }
-      })();
+        })();
+      }
     } else {
       if (isOpen) onClose();
       setSelectedClient(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams, clients]);
+  }, [searchParams, clients, isLoading]);
 
   // Fetch when filters change (excluding search term which has its own debounced effect)
   useEffect(() => {
