@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { ExtendedUser } from "@/types/profile-button.types";
 import { getProfilePath, getDisplayRole, getOnlineStatus } from "@/utils/profile-button.utils";
 
 export function useUserUtils() {
@@ -10,14 +9,13 @@ export function useUserUtils() {
   const userData = useMemo(() => {
     if (!user) return null;
 
-    const extendedUser = user as ExtendedUser;
-    const profilePath = getProfilePath(extendedUser);
+    const profilePath = getProfilePath(user);
     const isAdmin = user.isAdmin === true;
     const displayRole = getDisplayRole(isAdmin);
     const onlineStatus = getOnlineStatus();
 
     return {
-      user: extendedUser,
+      user,
       profilePath,
       isAdmin,
       displayRole,

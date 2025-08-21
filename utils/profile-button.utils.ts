@@ -1,4 +1,3 @@
-import { ExtendedUser } from "@/types/profile-button.types";
 import { NAME_LIMITS } from "@/constants/profile-button.constants";
 
 /**
@@ -58,7 +57,11 @@ export const getOnlineStatus = (): string => {
 /**
  * Builds stable, URL-safe profile path with proper encoding
  */
-export const getProfilePath = (user: ExtendedUser | null): string => {
+export const getProfilePath = (user: { 
+  username?: string; 
+  clientProfile?: { username?: string }; 
+  email?: string | null; 
+} | null): string => {
   const username =
     user?.username ||
     user?.clientProfile?.username ||

@@ -1,7 +1,9 @@
 import { LucideIcon } from "lucide-react";
-import { User } from "next-auth";
 
-export interface ExtendedUser extends User {
+export interface ExtendedUser {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
   username?: string;
   clientProfile?: {
     username?: string;
