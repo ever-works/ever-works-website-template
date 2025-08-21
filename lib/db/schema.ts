@@ -281,7 +281,7 @@ export const subscriptions = pgTable(
 		id: text('id')
 			.primaryKey()
 			.$defaultFn(() => crypto.randomUUID()),
-		userId: text('userId')
+		userId: text('user_id')
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 		planId: text('plan_id').notNull().default(PaymentPlan.FREE),
