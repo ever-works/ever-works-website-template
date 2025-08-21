@@ -13,7 +13,8 @@ import { getInitials } from "@/utils/profile-button.utils";
 import { ExtendedUser } from "@/types/profile-button.types";
 
 // Lazy load the ProfileMenu component for better performance
-const ProfileMenu = lazy(() => import("./profile-menu"));
+const loadProfileMenu = () => import("./profile-menu");
+const ProfileMenu = lazy(loadProfileMenu);
 
 // Loading fallback for lazy-loaded component
 const MenuLoadingFallback = () => (
@@ -110,7 +111,7 @@ function ProfileButton() {
   }
 
   return (
-    <div className="relative ml-3">
+    <div className="relative ml-3" onMouseEnter={loadProfileMenu} onFocus={loadProfileMenu}>
       <div>
         <ProfileButtonTrigger
           buttonRef={buttonRef}
