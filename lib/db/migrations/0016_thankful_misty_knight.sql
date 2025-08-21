@@ -34,7 +34,28 @@ DO $$ BEGIN
     SELECT 1 FROM information_schema.columns 
     WHERE table_schema = 'public' AND table_name = 'subscriptions' AND column_name = 'amount'
   ) THEN
-    EXECUTE 'ALTER TABLE "subscriptions" ALTER COLUMN "amount" SET DEFAULT 0';
+    EXECUTE 'ALTER TABLE public."subscriptions" ALTER COLUMN "amount" SET DEFAULT 0';
+    -- Backfill existing rows so amount is never NULL
+    EXECUTE 'UPDATE public."subscriptions" SET "amount" = 0 WHERE "amount" IS NULL';
+    -- Enforce NOT NULL to match application assumptions
+    EXECUTE 'ALTER TABLE public."subscriptions" ALTER COLUMN "amount" SET NOT NULL';
+  END IF;
+END $$;
+
+-- Convert to bigint for better headroom (e.g., storing cents)
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+      FROM information_schema.columns
+     WHERE table_schema='public'
+       AND table_name='subscriptions'
+       AND column_name='amount'
+       AND data_type='integer'
+  ) THEN
+    EXECUTE
+      'ALTER TABLE public."subscriptions"
+         ALTER COLUMN "amount" TYPE bigint USING "amount"::bigint';
   END IF;
 END $$;
 
