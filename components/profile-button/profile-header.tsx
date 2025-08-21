@@ -16,7 +16,7 @@ function ProfileHeader({ user, isAdmin, displayRole, onlineStatus }: ProfileHead
   // Memoize expensive computations
   const displayName = useMemo(() => formatDisplayName(user?.name || "User"), [user?.name]);
   const userInitials = useMemo(() => getInitials(user?.name || "User"), [user?.name]);
-  const userEmail = useMemo(() => user?.email, [user?.email]);
+  const userEmail = user?.email;
 
   // Memoize role badge classes
   const roleBadgeClasses = useMemo(() => {
