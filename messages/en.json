@@ -91,7 +91,13 @@
     "ANALYTICS_DASHBOARD_DESC": "Access platform statistics and reports",
     "COMMENTS": "Comments",
     "ROLES": "Roles",
-    "MANAGE_CLIENTS": "Manage Clients"
+    "MANAGE_CLIENTS": "Manage Clients",
+    "MANAGE_CLIENTS_DESC": "View and manage client profiles",
+    "MANAGE_CATEGORIES_DESC": "Manage categories",
+    "MANAGE_TAGS_DESC": "Manage tags",
+    "MANAGE_ITEMS_DESC": "Manage items",
+    "MANAGE_COMMENTS_DESC": "Manage comments",
+    "MANAGE_USER_ROLES_DESC": "Manage user roles"
   },
   "listing": {
     "ALL": "All",
@@ -231,6 +237,8 @@
     "LEGAL": "Legal",
     "HELP": "Help Center",
     "LOGOUT": "Sign out",
+    "PROFILE_DESC": "View and edit your profile",
+    "ACCOUNT_SETTINGS_DESC": "Account settings and preferences",
     "SECURITY_PAGE": {
       "TITLE": "Security Settings",
       "BACK_TO_SETTINGS": "Back to Settings",

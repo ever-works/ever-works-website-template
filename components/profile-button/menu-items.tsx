@@ -49,7 +49,7 @@ function MenuItems({ isAdmin, profilePath, onItemClick }: MenuItemsProps) {
           </div>
           <div className="flex-1">
             <span className="font-semibold">{translations.analyticsDashboard}</span>
-            <p className="text-xs text-gray-500 dark:text-gray-400">View analytics and reports</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t("common.ANALYTICS_DASHBOARD_DESC")}</p>
           </div>
           <Zap aria-hidden="true" className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
         </Link>
@@ -64,8 +64,8 @@ function MenuItems({ isAdmin, profilePath, onItemClick }: MenuItemsProps) {
             <Users aria-hidden="true" className="h-5 w-5 text-green-600 dark:text-green-400" />
           </div>
           <div className="flex-1">
-            <span className="font-semibold">Manage Clients</span>
-            <p className="text-xs text-gray-500 dark:text-gray-400">View and manage client profiles</p>
+            <span className="font-semibold">{t("common.MANAGE_CLIENTS")}</span>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t("common.MANAGE_CLIENTS_DESC")}</p>
           </div>
           <Activity aria-hidden="true" className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
         </Link>
@@ -81,7 +81,7 @@ function MenuItems({ isAdmin, profilePath, onItemClick }: MenuItemsProps) {
           </div>
           <div className="flex-1">
             <span className="font-semibold">{translations.category}</span>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Manage categories</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t("common.MANAGE_CATEGORIES_DESC")}</p>
           </div>
           <Star aria-hidden="true" className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
         </Link>
@@ -97,7 +97,7 @@ function MenuItems({ isAdmin, profilePath, onItemClick }: MenuItemsProps) {
           </div>
           <div className="flex-1">
             <span className="font-semibold">{translations.tag}</span>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Manage tags</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t("common.MANAGE_TAGS_DESC")}</p>
           </div>
           <Zap aria-hidden="true" className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
         </Link>
@@ -113,7 +113,7 @@ function MenuItems({ isAdmin, profilePath, onItemClick }: MenuItemsProps) {
           </div>
           <div className="flex-1">
             <span className="font-semibold">{translations.items}</span>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Manage items</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t("common.MANAGE_ITEMS_DESC")}</p>
           </div>
           <Activity aria-hidden="true" className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
         </Link>
@@ -129,7 +129,7 @@ function MenuItems({ isAdmin, profilePath, onItemClick }: MenuItemsProps) {
           </div>
           <div className="flex-1">
             <span className="font-semibold">{translations.comments}</span>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Manage comments</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t("common.MANAGE_COMMENTS_DESC")}</p>
           </div>
           <Zap aria-hidden="true" className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
         </Link>
@@ -144,8 +144,8 @@ function MenuItems({ isAdmin, profilePath, onItemClick }: MenuItemsProps) {
             <Shield aria-hidden="true" className="h-5 w-5 text-red-600 dark:text-red-400" />
           </div>
           <div className="flex-1">
-            <span className="font-semibold">Roles</span>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Manage user roles</p>
+            <span className="font-semibold">{t("common.ROLES")}</span>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t("common.MANAGE_USER_ROLES_DESC")}</p>
           </div>
           <Star aria-hidden="true" className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
         </Link>
@@ -161,7 +161,7 @@ function MenuItems({ isAdmin, profilePath, onItemClick }: MenuItemsProps) {
           </div>
           <div className="flex-1">
             <span className="font-semibold">{translations.userManagement}</span>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Manage users</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t("common.USER_MANAGEMENT_DESC")}</p>
           </div>
           <Zap aria-hidden="true" className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
         </Link>
@@ -197,8 +197,8 @@ function MenuItems({ isAdmin, profilePath, onItemClick }: MenuItemsProps) {
           <Settings aria-hidden="true" className="h-5 w-5 text-gray-600 dark:text-gray-400" />
         </div>
         <div className="flex-1">
-          <span className="font-semibold">{translations.settings}</span>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Account settings and preferences</p>
+          <span className="font-semibold">{t("settings.PROFILE")}</span>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t("settings.PROFILE_DESC")}</p>
         </div>
         <Activity aria-hidden="true" className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
       </Link>
