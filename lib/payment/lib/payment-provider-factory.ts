@@ -28,7 +28,7 @@ export class PaymentProviderFactory {
         // return new SolidgateProvider(config);
         throw new Error('Solidgate provider not implemented yet');
       case 'lemonsqueezy':
-        return new LemonSqueezyProvider(config as LemonSqueezyConfig);
+        return new LemonSqueezyProvider(config as unknown as LemonSqueezyConfig);
       default:
         throw new Error(`Unsupported payment provider: ${providerType}`);
     }

@@ -115,6 +115,13 @@ export interface CardBrandIcon {
   height: number;
 }
 
+export interface CheckoutParams {
+  variantId?: number;
+  email?: string;
+  customPrice?: number;
+  metadata?: Record<string, any>;
+}
+
 export interface UIComponents {
   // The main payment form component
   PaymentForm: React.ComponentType<PaymentFormProps>;
@@ -164,6 +171,9 @@ export interface PaymentProviderInterface {
 
   // Method to get the front-end configurations
   getClientConfig(): ClientConfig;
+
+  // Method to create a custom checkout
+  createCustomCheckout(params: CheckoutParams): Promise<string>;
 
   // Method to get the UI components
   getUIComponents(): UIComponents;
@@ -224,6 +234,7 @@ export interface ClientConfig {
   paymentGateway: "stripe" | "solidgate" | "lemonsqueezy";
   options?: Record<string, any>;
 }
+
 
 // Webhook event type
 export enum WebhookEventType {
