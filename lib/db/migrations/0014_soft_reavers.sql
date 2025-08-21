@@ -1,8 +1,10 @@
 -- Safety check: fail fast if NULL userId rows exist
 DO $$
 BEGIN
-  IF EXISTS (SELECT 1 FROM "accounts" WHERE "userId" IS NULL) THEN
-    RAISE EXCEPTION 'Cannot set NOT NULL on accounts.userId while NULL rows exist. Please backfill before applying.';
+  IF to_regclass('public.accounts') IS NOT NULL THEN
+    IF EXISTS (SELECT 1 FROM "accounts" WHERE "userId" IS NULL) THEN
+      RAISE EXCEPTION 'Cannot set NOT NULL on accounts.userId while NULL rows exist. Please backfill before applying.';
+    END IF;
   END IF;
 END $$;
 
