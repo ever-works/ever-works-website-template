@@ -123,6 +123,49 @@ export const roles = pgTable("roles", {
 	index("roles_status_idx").using("btree", table.status.asc().nullsLast().op("text_ops")),
 ]);
 
+export const clientProfiles = pgTable("client_profiles", {
+	id: text().primaryKey().notNull(),
+	displayName: text("display_name"),
+	username: text(),
+	bio: text(),
+	jobTitle: text("job_title"),
+	company: text(),
+	industry: text(),
+	phone: text(),
+	website: text(),
+	location: text(),
+	accountType: text("account_type").default('individual'),
+	status: text().default('active'),
+	plan: text().default('free'),
+	timezone: text().default('UTC'),
+	language: text().default('en'),
+	twoFactorEnabled: boolean("two_factor_enabled").default(false),
+	emailVerified: boolean("email_verified").default(false),
+	totalSubmissions: integer("total_submissions").default(0),
+	notes: text(),
+	tags: text(),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+	email: text(),
+	name: text(),
+	userId: text().notNull(),
+}, (table) => [
+	index("client_profile_account_type_idx").using("btree", table.accountType.asc().nullsLast().op("text_ops")),
+	index("client_profile_created_at_idx").using("btree", table.createdAt.asc().nullsLast().op("timestamp_ops")),
+	index("client_profile_email_idx").using("btree", table.email.asc().nullsLast().op("text_ops")),
+	index("client_profile_plan_idx").using("btree", table.plan.asc().nullsLast().op("text_ops")),
+	index("client_profile_status_idx").using("btree", table.status.asc().nullsLast().op("text_ops")),
+	index("client_profile_user_id_idx").using("btree", table.userId.asc().nullsLast().op("text_ops")),
+	index("client_profile_username_idx").using("btree", table.username.asc().nullsLast().op("text_ops")),
+	foreignKey({
+			columns: [table.userId],
+			foreignColumns: [users.id],
+			name: "client_profiles_userId_users_id_fk"
+		}).onDelete("cascade"),
+	unique("client_profiles_username_unique").on(table.username),
+	unique("client_profiles_email_unique").on(table.email),
+]);
+
 export const activityLogs = pgTable("activityLogs", {
 	id: serial().primaryKey().notNull(),
 	userId: text(),
@@ -241,49 +284,6 @@ export const subscriptions = pgTable("subscriptions", {
 			foreignColumns: [users.id],
 			name: "subscriptions_user_id_users_id_fk"
 		}).onDelete("cascade"),
-]);
-
-export const clientProfiles = pgTable("client_profiles", {
-	id: text().primaryKey().notNull(),
-	displayName: text("display_name"),
-	username: text(),
-	bio: text(),
-	jobTitle: text("job_title"),
-	company: text(),
-	industry: text(),
-	phone: text(),
-	website: text(),
-	location: text(),
-	accountType: text("account_type").default('individual'),
-	status: text().default('active'),
-	plan: text().default('free'),
-	timezone: text().default('UTC'),
-	language: text().default('en'),
-	twoFactorEnabled: boolean("two_factor_enabled").default(false),
-	emailVerified: boolean("email_verified").default(false),
-	totalSubmissions: integer("total_submissions").default(0),
-	notes: text(),
-	tags: text(),
-	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
-	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
-	email: text(),
-	name: text(),
-	userId: text().notNull(),
-}, (table) => [
-	index("client_profile_account_type_idx").using("btree", table.accountType.asc().nullsLast().op("text_ops")),
-	index("client_profile_created_at_idx").using("btree", table.createdAt.asc().nullsLast().op("timestamp_ops")),
-	index("client_profile_email_idx").using("btree", table.email.asc().nullsLast().op("text_ops")),
-	index("client_profile_plan_idx").using("btree", table.plan.asc().nullsLast().op("text_ops")),
-	index("client_profile_status_idx").using("btree", table.status.asc().nullsLast().op("text_ops")),
-	index("client_profile_user_id_idx").using("btree", table.userId.asc().nullsLast().op("text_ops")),
-	index("client_profile_username_idx").using("btree", table.username.asc().nullsLast().op("text_ops")),
-	foreignKey({
-			columns: [table.userId],
-			foreignColumns: [users.id],
-			name: "client_profiles_userId_users_id_fk"
-		}).onDelete("cascade"),
-	unique("client_profiles_username_unique").on(table.username),
-	unique("client_profiles_email_unique").on(table.email),
 ]);
 
 export const paymentAccounts = pgTable("paymentAccounts", {
