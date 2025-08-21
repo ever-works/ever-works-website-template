@@ -6,7 +6,7 @@ DO $$ BEGIN
     SELECT 1 FROM information_schema.columns 
     WHERE table_schema = 'public' AND table_name = 'subscriptions' AND column_name = 'start_date'
   ) THEN
-    EXECUTE 'ALTER TABLE "subscriptions" ALTER COLUMN "start_date" DROP NOT NULL';
+    EXECUTE 'ALTER TABLE public."subscriptions" ALTER COLUMN "start_date" DROP NOT NULL';
   END IF;
 END $$;
 
