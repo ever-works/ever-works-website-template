@@ -135,32 +135,14 @@ export default async function middleware(req: NextRequest) {
         return redirectRes;
       }
     } else if (cfg.provider === "both") {
-      // For 'both' provider, skip NextAuth check in Edge Runtime, only check Supabase
-
-      // Fallback to Supabase check
-      const { createServerClient } = await import('@supabase/ssr');
-      const { data: { user } } = await createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          cookies: {
-            getAll() { return req.cookies.getAll(); },
-            setAll(cookiesToSet) {
-              cookiesToSet.forEach((cookie) => intlResponse.cookies.set(cookie));
-            },
-          },
-        }
-      ).auth.getUser();
-
-      const isAdmin = user?.user_metadata?.isAdmin === true || user?.user_metadata?.role === 'admin';
-      if (isAdmin) {
-        const url = req.nextUrl.clone();
-        const rootLocalePrefix = hasLocale ? `/${maybeLocale}` : "";
-        url.pathname = `${rootLocalePrefix}/admin`;
-        const redirectRes = NextResponse.redirect(url);
-        intlResponse.cookies.getAll().forEach((c) => redirectRes.cookies.set(c));
-        return redirectRes;
+      // Check NextAuth session first; if it redirects, fallback to Supabase guard
+      const nextAuthRes = await nextAuthGuard(req, intlResponse);
+      // If NextAuth allowed (no redirect), use it
+      if (nextAuthRes.status !== 307) {
+        return nextAuthRes;
       }
+      // Otherwise try Supabase
+      return supabaseGuard(req, intlResponse);
     }
     return intlResponse;
   }
