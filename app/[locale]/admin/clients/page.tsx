@@ -271,7 +271,6 @@ export default function ClientsPage() {
     setPlanFilter('');
     setAccountTypeFilter('');
     setCurrentPage(1);
-    fetchClients(1);
   };
 
   const handleSearch = (value: string) => {
