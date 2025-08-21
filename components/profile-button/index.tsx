@@ -19,6 +19,7 @@ const ProfileMenu = lazy(loadProfileMenu);
 // Loading fallback for lazy-loaded component
 const MenuLoadingFallback = () => (
   <div className={cn(
+    SIZES.MENU_WIDTH,
     MENU_STYLES.LOADING_FALLBACK.base,
     MENU_STYLES.LOADING_FALLBACK.background,
     MENU_STYLES.LOADING_FALLBACK.border
