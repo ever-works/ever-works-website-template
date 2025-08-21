@@ -299,9 +299,11 @@ export default function ClientsPage() {
   // Initial fetch on component mount
   useEffect(() => {
     const loadInitialData = async () => {
-      await fetchClients();
-      await fetchStats();
-      isInitialLoad.current = false; // Mark initial load as complete
+      try {
+        await Promise.all([fetchClients(), fetchStats()]);
+      } finally {
+        isInitialLoad.current = false; // Mark initial load as complete
+      }
     };
     loadInitialData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
