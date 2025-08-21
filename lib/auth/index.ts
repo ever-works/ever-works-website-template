@@ -151,29 +151,27 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       return baseUrl;
     },
     signIn: async ({ user, account }) => {
+      const isCredentials = account?.provider === 'credentials';
       try {
         if (!user?.email) {
           console.warn('Sign-in attempt without email', { provider: account?.provider });
-          return account?.provider !== 'credentials';
+          return !isCredentials;
         }
 
         // If DATABASE_URL is not set, we can't validate against the database
         if (!isDatabaseAvailable) {
           console.warn('DATABASE_URL is not set, skipping database validation');
-          // Allow OAuth sign-ins but not credentials without a database
-          return account?.provider !== 'credentials';
+          return !isCredentials;
         }
 
-        // For Edge runtime compatibility, avoid database calls in signIn callback
-        // Validation is handled in the credentials provider authorize function
         return true;
       } catch (error) {
         console.error('Error during sign-in validation:', error);
-        return account?.provider !== 'credentials';
+        return !isCredentials;
       }
     },
     jwt: async ({ token, user, account }) => {
-      // Handle user properties from credentials provider
+
       const extendedUser = user as ExtendedUser;
       
       if (extendedUser?.id && typeof extendedUser.id === "string") {
@@ -185,10 +183,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       if (account?.provider) {
         token.provider = account.provider;
       }
-      
-      // Set/Persist admin flag
-      // If this callback is triggered due to an active sign-in (user present), derive from flags
-      // Otherwise, preserve existing token.isAdmin
+
       if (user) {
         if (typeof extendedUser?.isClient === "boolean") {
           token.isAdmin = !extendedUser.isClient;
