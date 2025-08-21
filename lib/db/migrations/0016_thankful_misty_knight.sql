@@ -45,16 +45,16 @@ ALTER TABLE "subscriptions" ADD COLUMN IF NOT EXISTS "amount_paid" integer DEFAU
 ALTER TABLE "subscriptions" ADD COLUMN IF NOT EXISTS "hosted_invoice_url" text;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD COLUMN IF NOT EXISTS "invoice_pdf" text;--> statement-breakpoint
 
--- Add foreign key constraint for accounts.userId -> client_profiles.id (safe operation)
+-- Add foreign key constraint for accounts.userId -> users.id (NextAuth requirement)
 DO $$
 BEGIN
   IF to_regclass('public.accounts') IS NOT NULL
-     AND to_regclass('public.client_profiles') IS NOT NULL THEN
+     AND to_regclass('public.users') IS NOT NULL THEN
     BEGIN
       ALTER TABLE "accounts"
-        ADD CONSTRAINT "accounts_userId_client_profiles_id_fk"
+        ADD CONSTRAINT "accounts_userId_users_id_fk"
         FOREIGN KEY ("userId")
-        REFERENCES "public"."client_profiles"("id")
+        REFERENCES "public"."users"("id")
         ON DELETE cascade ON UPDATE no action;
     EXCEPTION WHEN duplicate_object THEN
       NULL;
