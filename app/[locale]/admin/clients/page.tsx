@@ -624,12 +624,23 @@ export default function ClientsPage() {
                           <span className="text-sm text-gray-500 dark:text-gray-400">#{client.id.slice(0, 8)}</span>
                         </div>
                         <div 
+                          role="button"
+                          tabIndex={0}
+                          aria-disabled={navigatingClientId === client.id}
+                          aria-busy={navigatingClientId === client.id}
                           className={`flex items-center space-x-3 rounded-lg p-2 -m-2 transition-colors flex-1 min-w-0 ${
                             navigatingClientId === client.id 
                               ? 'cursor-wait opacity-60' 
                               : 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700'
                           }`}
                           onClick={() => navigatingClientId !== client.id && viewClientDetails(client.id)}
+                          onKeyDown={(e) => {
+                            if (navigatingClientId === client.id) return;
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              viewClientDetails(client.id);
+                            }
+                          }}
                           title={navigatingClientId === client.id ? 'Loading...' : 'Click to view client details'}
                         >
                         <div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm relative">
