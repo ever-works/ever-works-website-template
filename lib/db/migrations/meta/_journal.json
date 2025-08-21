@@ -190,6 +190,13 @@
       "when": 1755756867313,
       "tag": "0026_volatile_hobgoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1755756867314,
+      "tag": "0027_forward_migration_template",
+      "breakpoints": true
     }
   ]
 }
