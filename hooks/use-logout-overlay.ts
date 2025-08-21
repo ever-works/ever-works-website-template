@@ -40,7 +40,7 @@ export function useLogoutOverlay() {
         }
         if (titleElement) titleElement.style.color = colors.titleColor;
         if (textElement) textElement.style.color = colors.textColor;
-        if (spinnerElement) spinnerElement.style.border = `3px solid ${colors.spinnerBorder} 3px solid #3b82f6`;
+        if (spinnerElement) spinnerElement.style.border = `3px solid ${colors.spinnerBorder}`;
       }
     };
 
