@@ -286,6 +286,18 @@ export const subscriptions = pgTable("subscriptions", {
 		}).onDelete("cascade"),
 ]);
 
+export const paymentProviders = pgTable("paymentProviders", {
+	id: text().primaryKey().notNull(),
+	name: text().notNull(),
+	isActive: boolean("is_active").default(true).notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	index("payment_provider_active_idx").using("btree", table.isActive.asc().nullsLast().op("bool_ops")),
+	index("payment_provider_created_at_idx").using("btree", table.createdAt.asc().nullsLast().op("timestamp_ops")),
+	unique("paymentProviders_name_unique").on(table.name),
+]);
+
 export const paymentAccounts = pgTable("paymentAccounts", {
 	id: text().primaryKey().notNull(),
 	userId: text().notNull(),
@@ -311,18 +323,6 @@ export const paymentAccounts = pgTable("paymentAccounts", {
 			foreignColumns: [paymentProviders.id],
 			name: "paymentAccounts_providerId_paymentProviders_id_fk"
 		}).onDelete("cascade"),
-]);
-
-export const paymentProviders = pgTable("paymentProviders", {
-	id: text().primaryKey().notNull(),
-	name: text().notNull(),
-	isActive: boolean("is_active").default(true).notNull(),
-	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
-	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
-}, (table) => [
-	index("payment_provider_active_idx").using("btree", table.isActive.asc().nullsLast().op("bool_ops")),
-	index("payment_provider_created_at_idx").using("btree", table.createdAt.asc().nullsLast().op("timestamp_ops")),
-	unique("paymentProviders_name_unique").on(table.name),
 ]);
 
 export const verificationTokens = pgTable("verificationTokens", {
