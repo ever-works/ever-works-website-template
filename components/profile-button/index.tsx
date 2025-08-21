@@ -2,18 +2,24 @@ import { Crown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { memo, lazy, Suspense } from "react";
 import { Avatar } from "../header/avatar";
+import { cn } from "@/lib/utils";
 import { useProfileMenu } from "@/hooks/use-profile-menu";
 import { useLogoutOverlay } from "@/hooks/use-logout-overlay";
 import { useUserUtils } from "@/hooks/use-user-utils";
-import { SIZES } from "@/constants/profile-button.constants";
+import { SIZES, MENU_STYLES } from "@/constants/profile-button.constants";
 import { getInitials } from "@/utils/profile-button.utils";
+import { ExtendedUser } from "@/types/profile-button.types";
 
 // Lazy load the ProfileMenu component for better performance
 const ProfileMenu = lazy(() => import("./profile-menu"));
 
 // Loading fallback for lazy-loaded component
 const MenuLoadingFallback = () => (
-  <div className="origin-top-right absolute right-0 mt-3 w-80 rounded-2xl shadow-2xl py-3 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl ring-1 ring-black/5 dark:ring-white/10 animate-pulse">
+  <div className={cn(
+    MENU_STYLES.LOADING_FALLBACK.base,
+    MENU_STYLES.LOADING_FALLBACK.background,
+    MENU_STYLES.LOADING_FALLBACK.border
+  )}>
     <div className="px-5 py-4">
       <div className="flex items-center space-x-4">
         <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
@@ -28,27 +34,27 @@ const MenuLoadingFallback = () => (
 
 // Memoized loading skeleton component
 const LoadingSkeleton = memo(() => (
-  <div className="relative ml-3">
-    <div className="w-10 h-10 bg-gradient-to-br from-slate-200 via-slate-300 to-slate-400 dark:from-slate-700 dark:via-slate-600 dark:to-slate-500 rounded-full animate-pulse shadow-lg"></div>
+  <div className={MENU_STYLES.SKELETON.container}>
+    <div className={cn(MENU_STYLES.SKELETON.avatar)}></div>
   </div>
 ));
 
 LoadingSkeleton.displayName = "LoadingSkeleton";
 
 // Memoized avatar component with admin indicator
-const ProfileAvatar = memo(({ user, isAdmin }: { user: any; isAdmin: boolean }) => (
-  <div className="relative">
+const ProfileAvatar = memo(({ user, isAdmin }: { user: ExtendedUser; isAdmin: boolean }) => (
+  <div className={MENU_STYLES.AVATAR.container}>
     <Avatar
       src={user?.image}
       alt={user?.name || "User"}
       fallback={getInitials(user?.name || "User")}
       size={SIZES.AVATAR_SM}
-      className="ring-2 ring-white dark:ring-gray-800 shadow-lg group-hover:shadow-xl transition-all duration-300"
+      className={cn(MENU_STYLES.AVATAR.image)}
     />
     {/* Online status indicator */}
-    <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white dark:border-gray-800 shadow-sm"></div>
+    <div className={cn(MENU_STYLES.AVATAR.onlineIndicator)}></div>
     {isAdmin && (
-      <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+      <div className={cn(MENU_STYLES.AVATAR.adminBadge)}>
         <Crown className="w-2.5 h-2.5 text-white" />
       </div>
     )}
@@ -68,13 +74,13 @@ const ProfileButtonTrigger = memo(({
   buttonRef: React.RefObject<HTMLButtonElement | null>;
   isProfileMenuOpen: boolean;
   toggleMenu: () => void;
-  user: any;
+  user: ExtendedUser;
   isAdmin: boolean;
 }) => (
   <button
     ref={buttonRef}
     type="button"
-    className="group flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-theme-primary transition-all duration-300 hover:scale-105 active:scale-95"
+    className={cn(MENU_STYLES.BUTTON.base)}
     id="user-menu"
     aria-expanded={isProfileMenuOpen}
     aria-haspopup="true"
