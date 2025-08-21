@@ -468,7 +468,7 @@ export default function ClientsPage() {
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Users className="w-6 h-6 text-white" />
+                <Users aria-hidden="true" className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardBody>
@@ -482,7 +482,7 @@ export default function ClientsPage() {
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.active}</p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-                <UserCheck className="w-6 h-6 text-white" />
+                <UserCheck aria-hidden="true" className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardBody>
@@ -496,7 +496,7 @@ export default function ClientsPage() {
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.inactive}</p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center shadow-lg">
-                <UserX className="w-6 h-6 text-white" />
+                <UserX aria-hidden="true" className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardBody>
@@ -510,7 +510,7 @@ export default function ClientsPage() {
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.suspended}</p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
-                <UserX className="w-6 h-6 text-white" />
+                <UserX aria-hidden="true" className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardBody>
