@@ -1,6 +1,8 @@
+"use client";
 import { Crown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { memo, lazy, Suspense } from "react";
+import type { RefObject, MutableRefObject } from "react";
 import { Avatar } from "../header/avatar";
 import { cn } from "@/lib/utils";
 import { useProfileMenu } from "@/hooks/use-profile-menu";
@@ -71,7 +73,7 @@ const ProfileButtonTrigger = memo(({
   user, 
   isAdmin 
 }: {
-  buttonRef: React.RefObject<HTMLButtonElement | null>;
+  buttonRef: MutableRefObject<HTMLButtonElement | null> | RefObject<HTMLButtonElement>;
   isProfileMenuOpen: boolean;
   toggleMenu: () => void;
   user: ExtendedUser;
