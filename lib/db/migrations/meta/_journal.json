@@ -183,6 +183,13 @@
       "when": 1755317817333,
       "tag": "0025_enforce_accounts_composite_pk",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1755756867313,
+      "tag": "0026_volatile_hobgoblin",
+      "breakpoints": true
     }
   ]
 }
