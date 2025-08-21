@@ -1,6 +1,6 @@
 import { compare, hash } from "bcryptjs";
 import Credentials from "next-auth/providers/credentials";
-import { getUserByEmail, logActivity, getClientAccountByEmail, verifyClientPassword, getClientProfileByEmail } from "../db/queries";
+import { getUserByEmail, logActivity, getClientAccountByEmail, verifyClientPassword, getClientProfileById } from "../db/queries";
 import { ActivityType } from "../db/schema";
 
 const SALT_ROUNDS = 10;
@@ -63,20 +63,20 @@ export const credentialsProvider = Credentials({
         const isClientPasswordValid = await verifyClientPassword(email, password);
         
         if (isClientPasswordValid) {
-
-          const clientProfile = await getClientProfileByEmail(email);
-          if (clientProfile) {
-            const clientUser = {
-              id: clientProfile.id,
-              name: clientProfile.name || clientProfile.displayName,
-              email: clientProfile.email,
-              image: null,
-              isAdmin: false,
-            };
-            
-            void logActivity(ActivityType.SIGN_IN, undefined, clientProfile.id).catch(() => {});
-            return clientUser;
+          const clientProfile = await getClientProfileById(clientAccount.userId);
+          if (!clientProfile) {
+            throw new Error("Invalid email or password. Please try again.");
           }
+          const clientUser = {
+            id: clientProfile.id,
+            name: clientProfile.name || clientProfile.displayName,
+            email: clientProfile.email,
+            image: null,
+            isClient: true,
+            isAdmin: false,
+          };
+          void logActivity(ActivityType.SIGN_IN, undefined, clientProfile.id).catch(() => {});
+          return clientUser;
         }
       }
 
