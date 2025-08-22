@@ -44,4 +44,4 @@ DO $$ BEGIN
 END $$;
 
 -- Create index for the foreign key if not exists
-CREATE INDEX IF NOT EXISTS "accounts_userId_idx" ON "accounts" ("userId");
+CREATE INDEX IF NOT EXISTS "accounts_userId_idx" ON public."accounts" ("userId");
