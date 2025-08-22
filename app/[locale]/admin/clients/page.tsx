@@ -251,7 +251,7 @@ export default function ClientsPage() {
 
   const viewClientDetails = (clientId: string) => {
     setNavigatingClientId(clientId);
-    const locale = params.locale || 'en';
+    const locale = (Array.isArray(params.locale) ? params.locale[0] : params.locale) || 'en';
     router.push(`/${locale}/admin/clients/${clientId}`);
   };
 
@@ -443,7 +443,7 @@ export default function ClientsPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Building2 className="w-6 h-6 text-white" />
+                <Building2 aria-hidden="true" className="w-6 h-6 text-white" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Client Management</h1>
@@ -674,12 +674,11 @@ export default function ClientsPage() {
                           <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
                           <span className="text-sm text-gray-500 dark:text-gray-400">#{client.id.slice(0, 8)}</span>
                         </div>
-                        <div 
-                          role="button"
-                          tabIndex={0}
+                        <button
+                          type="button"
                           aria-disabled={navigatingClientId === client.id}
                           aria-busy={navigatingClientId === client.id}
-                          className={`flex items-center space-x-3 rounded-lg p-2 -m-2 transition-colors flex-1 min-w-0 ${
+                          className={`text-left flex items-center space-x-3 rounded-lg p-2 -m-2 transition-colors flex-1 min-w-0 ${
                             navigatingClientId === client.id 
                               ? 'cursor-wait opacity-60' 
                               : 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700'
@@ -715,7 +714,7 @@ export default function ClientsPage() {
                             <p className="text-xs text-gray-400 dark:text-gray-500">{client.company}</p>
                           )}
                         </div>
-                      </div>
+                      </button>
                     </div>
                     <div className="flex items-center space-x-3 flex-shrink-0">
                       <div className="flex items-center space-x-1">

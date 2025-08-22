@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { users, authenticators, sessions, comments, votes, activityLogs, clientProfiles, subscriptions, subscriptionHistory, paymentAccounts, paymentProviders } from "./schema";
+import { users, authenticators, sessions, comments, votes, activityLogs, clientProfiles, subscriptions, paymentAccounts, paymentProviders } from "./schema";
 
 export const authenticatorsRelations = relations(authenticators, ({one}) => ({
 	user: one(users, {
@@ -59,15 +59,17 @@ export const clientProfilesRelations = relations(clientProfiles, ({one, many}) =
 	}),
 }));
 
-export const subscriptionHistoryRelations = relations(subscriptionHistory, ({one}) => ({
-	subscription: one(subscriptions, {
-		fields: [subscriptionHistory.subscriptionId],
-		references: [subscriptions.id]
-	}),
-}));
+// Legacy table - removed in migration 0026
+// export const subscriptionHistoryRelations = relations(subscriptionHistory, ({one}) => ({
+// 	subscription: one(subscriptions, {
+// 		fields: [subscriptionHistory.subscriptionId],
+// 		references: [subscriptions.id]
+// 	}),
+// }));
 
 export const subscriptionsRelations = relations(subscriptions, ({one, many}) => ({
-	subscriptionHistories: many(subscriptionHistory),
+	// Legacy table - removed in migration 0026
+	// subscriptionHistories: many(subscriptionHistory),
 	user: one(users, {
 		fields: [subscriptions.userId],
 		references: [users.id]
