@@ -1,8 +1,18 @@
 import { useMemo } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { getProfilePath, getDisplayRole, getOnlineStatus } from "@/utils/profile-button.utils";
+import type { ExtendedUser } from "@/types/profile-button.types";
 
-export function useUserUtils() {
+export type UseUserUtilsResult = {
+  user: ExtendedUser | null;
+  profilePath: string;
+  isAdmin: boolean;
+  displayRole: string;
+  onlineStatus: string;
+  isLoading: boolean;
+};
+
+export function useUserUtils(): UseUserUtilsResult {
   const { user, isLoading } = useCurrentUser();
 
   // Memoize user data processing
@@ -25,7 +35,7 @@ export function useUserUtils() {
 
   return {
     user: userData?.user || null,
-    profilePath: userData?.profilePath || "",
+    profilePath: userData?.profilePath || "/client/profile/profile",
     isAdmin: userData?.isAdmin || false,
     displayRole: userData?.displayRole || "User",
     onlineStatus: userData?.onlineStatus || "Online",
