@@ -2,7 +2,7 @@
 import { Crown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { memo, lazy, Suspense } from "react";
-import type { RefObject, MutableRefObject } from "react";
+import type { RefObject } from "react";
 import { Avatar } from "../header/avatar";
 import { cn } from "@/lib/utils";
 import { useProfileMenu } from "@/hooks/use-profile-menu";
@@ -60,7 +60,6 @@ const ProfileAvatar = memo(({ user, isAdmin }: { user: ExtendedUser; isAdmin: bo
     {isAdmin && (
       <div
         className={cn(MENU_STYLES.AVATAR.adminBadge)}
-        aria-label="Admin"
         title="Admin"
       >
         <Crown className="w-2.5 h-2.5 text-white" />
@@ -77,13 +76,17 @@ const ProfileButtonTrigger = memo(({
   isProfileMenuOpen, 
   toggleMenu, 
   user, 
-  isAdmin 
+  isAdmin,
+  onMouseEnter,
+  onFocus
 }: {
-  buttonRef: MutableRefObject<HTMLButtonElement | null> | RefObject<HTMLButtonElement>;
+  buttonRef: RefObject<HTMLButtonElement>;
   isProfileMenuOpen: boolean;
   toggleMenu: () => void;
   user: ExtendedUser;
   isAdmin: boolean;
+  onMouseEnter: () => void;
+  onFocus: () => void;
 }) => (
   <button
     ref={buttonRef}
@@ -93,6 +96,8 @@ const ProfileButtonTrigger = memo(({
     aria-expanded={isProfileMenuOpen}
     aria-haspopup="true"
     onClick={toggleMenu}
+    onMouseEnter={onMouseEnter}
+    onFocus={onFocus}
   >
     <span className="sr-only">Open user menu</span>
     <ProfileAvatar user={user} isAdmin={isAdmin} />
@@ -120,7 +125,7 @@ function ProfileButton() {
   }
 
   return (
-    <div className="relative ml-3" onMouseEnter={loadProfileMenu} onFocus={loadProfileMenu}>
+    <div className="relative ml-3" role="none">
       <div>
         <ProfileButtonTrigger
           buttonRef={buttonRef}
@@ -128,6 +133,8 @@ function ProfileButton() {
           toggleMenu={toggleMenu}
           user={user}
           isAdmin={isAdmin}
+          onMouseEnter={loadProfileMenu}
+          onFocus={loadProfileMenu}
         />
       </div>
 
