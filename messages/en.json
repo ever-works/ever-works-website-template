@@ -237,6 +237,7 @@
     "LEGAL": "Legal",
     "HELP": "Help Center",
     "LOGOUT": "Sign out",
+    "LOGOUT_DESC": "Sign out of your account",
     "PROFILE_DESC": "View and edit your profile",
     "ACCOUNT_SETTINGS_DESC": "Account settings and preferences",
     "SECURITY_PAGE": {

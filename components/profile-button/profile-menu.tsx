@@ -16,6 +16,7 @@ interface ProfileMenuProps {
   onItemClick: () => void;
   onLogout: () => void | Promise<void>;
   logoutText: string;
+  logoutDescription?: string;
 }
 
 function ProfileMenu({
@@ -28,6 +29,7 @@ function ProfileMenu({
   onItemClick,
   onLogout,
   logoutText,
+  logoutDescription,
 }: ProfileMenuProps) {
   if (!isOpen || !user) return null;
 
@@ -62,7 +64,7 @@ function ProfileMenu({
       {/* Separator */}
       <div className="border-t border-gray-100/50 dark:border-gray-600/50 my-2"></div>
 
-      <LogoutButton onLogout={onLogout} logoutText={logoutText} />
+      <LogoutButton onLogout={onLogout} logoutText={logoutText} logoutDescription={logoutDescription} />
     </div>
   );
 }

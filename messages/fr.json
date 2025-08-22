@@ -191,6 +191,7 @@
     "LEGAL": "Légal",
     "HELP": "Centre d'aide",
     "LOGOUT": "Se déconnecter",
+    "LOGOUT_DESC": "Se déconnecter de votre compte",
     "SECURITY_PAGE": {
       "TITLE": "Paramètres de sécurité",
       "BACK_TO_SETTINGS": "Retour aux paramètres",

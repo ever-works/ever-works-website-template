@@ -2,11 +2,12 @@ import { memo } from "react";
 import { LogOut, Zap } from "lucide-react";
 
 interface LogoutButtonProps {
-  onLogout: () => void;
+  onLogout: () => void | Promise<void>;
   logoutText: string;
+  logoutDescription?: string;
 }
 
-function LogoutButton({ onLogout, logoutText }: LogoutButtonProps) {
+function LogoutButton({ onLogout, logoutText, logoutDescription }: LogoutButtonProps) {
   const handleLogout = onLogout;
 
   return (
@@ -21,7 +22,9 @@ function LogoutButton({ onLogout, logoutText }: LogoutButtonProps) {
       </div>
       <div className="flex-1">
         <span className="font-semibold">{logoutText}</span>
-        <p className="text-xs text-gray-500 dark:text-gray-400">Sign out of your account</p>
+        {logoutDescription ? (
+          <p className="text-xs text-gray-500 dark:text-gray-400">{logoutDescription}</p>
+        ) : null}
       </div>
       <Zap aria-hidden="true" className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
     </button>

@@ -159,6 +159,7 @@
     "LEGAL": "Legal",
     "HELP": "Centro de ayuda",
     "LOGOUT": "Cerrar sesión",
+    "LOGOUT_DESC": "Cerrar sesión de tu cuenta",
     "SECURITY_PAGE": {
       "TITLE": "Configuración de seguridad",
       "BACK_TO_SETTINGS": "Volver a configuración",

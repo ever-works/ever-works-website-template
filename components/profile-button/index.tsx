@@ -150,6 +150,7 @@ function ProfileButton() {
             onItemClick={closeMenu}
             onLogout={handleLogout}
             logoutText={t("settings.LOGOUT")}
+            logoutDescription={t("settings.LOGOUT_DESC")}
           />
         </Suspense>
       )}
