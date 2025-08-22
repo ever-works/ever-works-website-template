@@ -1,4 +1,5 @@
 import { NAME_LIMITS } from "@/constants/profile-button.constants";
+import type { ThemeColors } from "@/types/profile-button.types";
 
 /**
  * Formats display name intelligently based on length and word count
@@ -74,15 +75,7 @@ export const getProfilePath = (user: {
 /**
  * Gets current theme colors for logout overlay
  */
-export const getThemeColors = (): {
-  background: string;
-  cardBg: string;
-  cardShadow: string;
-  border: string;
-  spinnerBorder: string;
-  titleColor: string;
-  textColor: string;
-} => {
+export const getThemeColors = (): ThemeColors => {
   const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
   
   return {
@@ -103,7 +96,7 @@ export const getThemeColors = (): {
 /**
  * Creates logout overlay HTML with theme-aware styling
  */
-export const createLogoutOverlayHTML = (colors: ReturnType<typeof getThemeColors>): string => {
+export const createLogoutOverlayHTML = (colors: ThemeColors): string => {
   return `
     <div style="
       position: fixed;
