@@ -1,4 +1,4 @@
-import { NAME_LIMITS, LOGOUT_OVERLAY_CONFIG } from "@/constants/profile-button.constants";
+import { NAME_LIMITS } from "@/constants/profile-button.constants";
 import type { ThemeColors } from "@/types/profile-button.types";
 
 /**
@@ -91,82 +91,4 @@ export const getThemeColors = (): ThemeColors => {
     titleColor: isDark ? '#f9fafb' : '#1f2937',
     textColor: isDark ? '#9ca3af' : '#6b7280'
   };
-};
-
-/**
- * Creates logout overlay HTML with theme-aware styling
- */
-export const createLogoutOverlayHTML = (colors: ThemeColors): string => {
-  return `
-    <div data-logout-root role="dialog" aria-modal="true" aria-label="Signing Out" style="
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: ${colors.background};
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      backdrop-filter: blur(8px);
-      animation: fadeIn 0.3s ease-out;
-    ">
-      <div data-logout-card style="
-        background: ${colors.cardBg};
-        padding: 2.5rem;
-        border-radius: 20px;
-        box-shadow: ${colors.cardShadow};
-        text-align: center;
-        max-width: 360px;
-        animation: slideInScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        border: 1px solid ${colors.border};
-      ">
-        <div data-logout-spinner role="status" aria-live="polite" aria-busy="true" style="
-          width: 56px;
-          height: 56px;
-          border: 3px solid ${colors.spinnerBorder};
-          border-top: 3px solid ${LOGOUT_OVERLAY_CONFIG.COLORS.SPINNER_ACCENT};
-          border-radius: 50%;
-          animation: spin 1.2s linear infinite;
-          margin: 0 auto 1.5rem auto;
-          box-shadow: 0 4px 12px ${LOGOUT_OVERLAY_CONFIG.COLORS.SPINNER_SHADOW};
-        "></div>
-        <h3 data-logout-title style="
-          margin: 0 0 0.75rem 0;
-          font-size: 1.375rem;
-          font-weight: 700;
-          color: ${colors.titleColor};
-          letter-spacing: -0.025em;
-        ">Signing Out</h3>
-        <p data-logout-text style="
-          margin: 0;
-          color: ${colors.textColor};
-          font-size: 0.9375rem;
-          line-height: 1.6;
-          font-weight: 500;
-        ">Please wait while we securely log you out and clear your session...</p>
-      </div>
-    </div>
-    <style>
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-      @keyframes slideInScale {
-        from {
-          opacity: 0;
-          transform: translateY(-20px) scale(0.9);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
-      }
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    </style>
-  `;
 };
