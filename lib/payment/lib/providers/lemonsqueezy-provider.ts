@@ -2,21 +2,24 @@ import { User } from '@supabase/auth-js';
 import axios from 'axios';
 import * as crypto from 'crypto';
 import {
-    PaymentProviderInterface,
-    PaymentIntent,
-    PaymentVerificationResult,
-    WebhookResult,
-    CreatePaymentParams,
-    ClientConfig,
-    PaymentProviderConfig,
-    CreateCustomerParams,
-    CustomerResult,
-    CreateSubscriptionParams,
-    UpdateSubscriptionParams,
-    SubscriptionInfo,
-    SetupIntent,
-    UIComponents,
+  PaymentProviderInterface,
+  PaymentIntent,
+  PaymentVerificationResult,
+  WebhookResult,
+  CreatePaymentParams,
+  ClientConfig,
+  PaymentProviderConfig,
+  CreateCustomerParams,
+  CustomerResult,
+  CreateSubscriptionParams,
+  UpdateSubscriptionParams,
+  SubscriptionInfo,
+  SetupIntent,
+  UIComponents,
+  CheckoutParams,
 } from '../../types/payment-types';
+import { createCheckout } from '@lemonsqueezy/lemonsqueezy.js';
+import { env } from '@/lib/config/env';
 
 export interface LemonSqueezyConfig extends PaymentProviderConfig {
   apiKey: string;
@@ -190,6 +193,45 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
     // LemonSqueezy doesn't use setup intents like Stripe
     // This is a placeholder implementation
     throw new Error('Setup intents not supported by LemonSqueezy');
+  }
+
+  async createCustomCheckout(params: CheckoutParams): Promise<string> {
+    try {
+      const { data, error } = await createCheckout(
+        Number(this.storeId),
+        params.variantId ?? Number(this.storeId), 
+        {
+          customPrice: params.customPrice, 
+          productOptions: {
+            redirectUrl: `${env.API_BASE_URL}/billing/success`,
+          },
+          checkoutOptions: { 
+            embed: true,
+            media: false,
+            logo: false,
+          },
+          checkoutData: { 
+            email: params.email,
+            custom: params.metadata ?? {},
+          },
+          preview: false,
+          testMode: process.env.NODE_ENV === 'development',
+        }
+      );
+
+      if (error) {
+        throw new Error(`Lemonsqueezy checkout error: ${error.message || 'Unknown error'}`);
+      }
+
+      if (!data?.data?.attributes?.url) {
+        throw new Error('Invalid response from Lemonsqueezy: missing checkout URL');
+      }
+
+      return data.data.attributes.url;
+    } catch (error) {
+      console.error('Error creating LemonSqueezy subscription:', error);
+      throw new Error('Failed to create subscription');
+    }
   }
 
   async createSubscription(params: CreateSubscriptionParams): Promise<SubscriptionInfo> {

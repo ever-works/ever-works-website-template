@@ -145,6 +145,11 @@ export class SolidgateProvider implements PaymentProviderInterface {
     throw new Error('Solidgate refund process not implemented yet');
   }
 
+  async createCustomCheckout(): Promise<string> {
+    // Implement Solidgate custom checkout
+    throw new Error('Solidgate custom checkout not implemented yet');
+  }
+
   getClientConfig(): ClientConfig {
     return {
       publicKey: this.publishableKey,
