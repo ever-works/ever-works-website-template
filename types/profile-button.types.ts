@@ -1,5 +1,3 @@
-import { LucideIcon } from "lucide-react";
-
 export interface ExtendedUser {
   name?: string | null;
   email?: string | null;
@@ -9,25 +7,6 @@ export interface ExtendedUser {
     username?: string;
   };
   isAdmin?: boolean;
-}
-
-export interface MenuItem {
-  href: string;
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  colorScheme: ColorScheme;
-}
-
-export interface ColorScheme {
-  bg: string;
-  hover: string;
-  icon: string;
-  dark: {
-    bg: string;
-    hover: string;
-    icon: string;
-  };
 }
 
 export interface ThemeColors {
@@ -63,10 +42,7 @@ export interface MenuItemsProps {
   onItemClick: () => void;
 }
 
-export interface MenuItemProps {
-  item: MenuItem;
-  onClick: () => void;
-}
+
 
 export interface LogoutOverlayProps {
   isVisible: boolean;
