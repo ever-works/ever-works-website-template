@@ -80,7 +80,7 @@ const ProfileButtonTrigger = memo(({
   onMouseEnter,
   onFocus
 }: {
-  buttonRef: RefObject<HTMLButtonElement>;
+  buttonRef: RefObject<HTMLButtonElement | null>;
   isProfileMenuOpen: boolean;
   toggleMenu: () => void;
   user: ExtendedUser;
