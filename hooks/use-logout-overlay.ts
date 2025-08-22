@@ -9,9 +9,8 @@ export function useLogoutOverlay() {
 
   const handleLogout = useCallback(async () => {
     // Ensure we're on the client side
-    if (typeof document === 'undefined') {
-      console.warn('Logout overlay can only be created on the client side');
-      await signOut({ callbackUrl: '/' });
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      // In SSR, do nothing; signOut requires a browser environment.
       return;
     }
 
@@ -28,10 +27,10 @@ export function useLogoutOverlay() {
       const overlayElement = document.getElementById(LOGOUT_OVERLAY_CONFIG.ID);
       if (overlayElement) {
         const colors = getThemeColors();
-        const overlayDiv = overlayElement.querySelector('div > div') as HTMLElement;
-        const titleElement = overlayElement.querySelector('h3') as HTMLElement;
-        const textElement = overlayElement.querySelector('p') as HTMLElement;
-        const spinnerElement = overlayElement.querySelector('div > div > div') as HTMLElement;
+        const overlayDiv = overlayElement.querySelector('[data-logout-card]') as HTMLElement;
+        const titleElement = overlayElement.querySelector('[data-logout-title]') as HTMLElement;
+        const textElement = overlayElement.querySelector('[data-logout-text]') as HTMLElement;
+        const spinnerElement = overlayElement.querySelector('[data-logout-spinner]') as HTMLElement;
         
         if (overlayDiv) {
           overlayDiv.style.background = colors.cardBg;

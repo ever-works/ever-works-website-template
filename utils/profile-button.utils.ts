@@ -112,7 +112,7 @@ export const createLogoutOverlayHTML = (colors: ThemeColors): string => {
       backdrop-filter: blur(8px);
       animation: fadeIn 0.3s ease-out;
     ">
-      <div style="
+      <div data-logout-card style="
         background: ${colors.cardBg};
         padding: 2.5rem;
         border-radius: 20px;
@@ -122,7 +122,7 @@ export const createLogoutOverlayHTML = (colors: ThemeColors): string => {
         animation: slideInScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         border: 1px solid ${colors.border};
       ">
-        <div style="
+        <div data-logout-spinner style="
           width: 56px;
           height: 56px;
           border: 3px solid ${colors.spinnerBorder};
@@ -132,14 +132,14 @@ export const createLogoutOverlayHTML = (colors: ThemeColors): string => {
           margin: 0 auto 1.5rem auto;
           box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         "></div>
-        <h3 style="
+        <h3 data-logout-title style="
           margin: 0 0 0.75rem 0;
           font-size: 1.375rem;
           font-weight: 700;
           color: ${colors.titleColor};
           letter-spacing: -0.025em;
         ">Signing Out</h3>
-        <p style="
+        <p data-logout-text style="
           margin: 0;
           color: ${colors.textColor};
           font-size: 0.9375rem;
