@@ -202,6 +202,13 @@
       "idx": 28,
       "version": "7",
       "when": 1755756867315,
+      "tag": "0028_standardize_naming_convention",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1755756867316,
       "tag": "0001_eminent_malcolm_colcord",
       "breakpoints": true
     }

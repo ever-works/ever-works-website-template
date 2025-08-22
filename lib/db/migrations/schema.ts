@@ -2,13 +2,13 @@ import { pgTable, unique, text, timestamp, boolean, foreignKey, integer, index, 
 
 
 
-export const passwordResetTokens = pgTable("passwordResetTokens", {
+export const passwordResetTokens = pgTable("password_reset_tokens", {
 	id: text().primaryKey().notNull(),
 	email: text().notNull(),
 	token: text().notNull(),
 	expires: timestamp({ mode: 'string' }).notNull(),
 }, (table) => [
-	unique("passwordResetTokens_token_unique").on(table.token),
+	unique("password_reset_tokens_token_unique").on(table.token),
 ]);
 
 // Legacy table - removed in migration 0026
