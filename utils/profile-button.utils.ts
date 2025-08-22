@@ -1,4 +1,4 @@
-import { NAME_LIMITS } from "@/constants/profile-button.constants";
+import { NAME_LIMITS, LOGOUT_OVERLAY_CONFIG } from "@/constants/profile-button.constants";
 import type { ThemeColors } from "@/types/profile-button.types";
 
 /**
@@ -98,7 +98,7 @@ export const getThemeColors = (): ThemeColors => {
  */
 export const createLogoutOverlayHTML = (colors: ThemeColors): string => {
   return `
-    <div style="
+    <div data-logout-root role="dialog" aria-modal="true" aria-label="Signing Out" style="
       position: fixed;
       top: 0;
       left: 0;
@@ -122,15 +122,15 @@ export const createLogoutOverlayHTML = (colors: ThemeColors): string => {
         animation: slideInScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         border: 1px solid ${colors.border};
       ">
-        <div data-logout-spinner style="
+        <div data-logout-spinner role="status" aria-live="polite" aria-busy="true" style="
           width: 56px;
           height: 56px;
           border: 3px solid ${colors.spinnerBorder};
-          border-top: 3px solid #3b82f6;
+          border-top: 3px solid ${LOGOUT_OVERLAY_CONFIG.COLORS.SPINNER_ACCENT};
           border-radius: 50%;
           animation: spin 1.2s linear infinite;
           margin: 0 auto 1.5rem auto;
-          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+          box-shadow: 0 4px 12px ${LOGOUT_OVERLAY_CONFIG.COLORS.SPINNER_SHADOW};
         "></div>
         <h3 data-logout-title style="
           margin: 0 0 0.75rem 0;
