@@ -18,12 +18,9 @@ function ProfileHeader({ user, isAdmin, displayRole, onlineStatus }: ProfileHead
   const userInitials = useMemo(() => getInitials(user?.name || "User"), [user?.name]);
   const userEmail = user?.email;
 
-  // Memoize role badge classes
-  const roleBadgeClasses = useMemo(() => {
-    return isAdmin 
-      ? 'bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-800 dark:from-yellow-900/30 dark:to-orange-900/30 dark:text-yellow-200'
-      : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
-  }, [isAdmin]);
+  const roleBadgeClasses = isAdmin 
+    ? 'bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-800 dark:from-yellow-900/30 dark:to-orange-900/30 dark:text-yellow-200'
+    : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
 
   return (
     <div className="px-5 py-4 border-b border-gray-100/50 dark:border-gray-600/50">
