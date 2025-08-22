@@ -67,7 +67,7 @@ export const clientProfilesRelations = relations(clientProfiles, ({one, many}) =
 // 	}),
 // }));
 
-export const subscriptionsRelations = relations(subscriptions, ({one, many}) => ({
+export const subscriptionsRelations = relations(subscriptions, ({one}) => ({
 	// Legacy table - removed in migration 0026
 	// subscriptionHistories: many(subscriptionHistory),
 	user: one(users, {
