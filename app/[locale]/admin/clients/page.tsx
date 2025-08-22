@@ -12,7 +12,7 @@ import type { ClientProfileWithUser } from "@/lib/db/schema";
 
 export default function ClientsPage() {
   const router = useRouter();
-  const params = useParams();
+  const params = useParams<{ locale: string }>();
   const searchParams = useSearchParams();
   const [clients, setClients] = useState<ClientProfileWithUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -251,8 +251,10 @@ export default function ClientsPage() {
 
   const viewClientDetails = (clientId: string) => {
     setNavigatingClientId(clientId);
-    const locale = (Array.isArray(params.locale) ? params.locale[0] : params.locale) || 'en';
-    router.push(`/${locale}/admin/clients/${clientId}`);
+    const locale = (params?.locale ?? 'en').toString();
+    const safeLocale = encodeURIComponent(locale);
+    const safeId = encodeURIComponent(clientId);
+    router.push(`/${safeLocale}/admin/clients/${safeId}`);
   };
 
   const handleFormSubmit = async (data: CreateClientRequest | UpdateClientRequest) => {
