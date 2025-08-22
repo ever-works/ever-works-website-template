@@ -2,7 +2,9 @@
 import { createCheckout } from "@lemonsqueezy/lemonsqueezy.js";
 import { initializeLemonsqueezyProvider } from '@/lib/auth';
 
-initializeLemonsqueezyProvider();
+// Remove global initialization - will be called when needed
+// initializeLemonsqueezyProvider();
+
 export const validateEnvironment = () => {
   const requiredEnvVars = {
     LEMONSQUEEZY_STORE_ID: process.env.LEMONSQUEEZY_STORE_ID,
@@ -32,9 +34,11 @@ interface CheckoutParams {
   metadata?: Record<string, any>;
 }
 
-
 export async function createCustomCheckout(params: CheckoutParams): Promise<string> {
   try {
+    // Initialize LemonSqueezy provider when needed
+    initializeLemonsqueezyProvider();
+    
     const { variantId, email, customPrice, metadata } = params;
     
     if (customPrice !== undefined && (customPrice < 0 || !Number.isInteger(customPrice))) {
