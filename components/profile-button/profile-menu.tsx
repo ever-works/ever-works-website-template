@@ -10,7 +10,6 @@ interface ProfileMenuProps {
   isOpen: boolean;
   menuRef: React.RefObject<HTMLDivElement | null>;
   user: ExtendedUser | null;
-  isAdmin: boolean;
   profilePath: string;
   displayRole: string;
   onlineStatus: string;
@@ -23,7 +22,6 @@ function ProfileMenu({
   isOpen,
   menuRef,
   user,
-  isAdmin,
   profilePath,
   displayRole,
   onlineStatus,
@@ -32,6 +30,8 @@ function ProfileMenu({
   logoutText,
 }: ProfileMenuProps) {
   if (!isOpen || !user) return null;
+
+  const isAdmin = user.isAdmin === true;
 
   return (
     <div

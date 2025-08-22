@@ -137,7 +137,6 @@ function ProfileButton() {
             isOpen={isProfileMenuOpen}
             menuRef={menuRef}
             user={user}
-            isAdmin={isAdmin}
             profilePath={profilePath}
             displayRole={displayRole}
             onlineStatus={onlineStatus}
