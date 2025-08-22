@@ -73,7 +73,11 @@
     "TAGS_DESCRIPTION": "Explorez notre collection de tags pour trouver ce que vous cherchez.",
     "COMMENTS": "Commentaires",
     "ROLES": "Rôles",
-    "MANAGE_CLIENTS": "Gérer les Clients"
+    "MANAGE_CLIENTS": "Gérer les Clients",
+    "MANAGE_CLIENTS_DESC": "Afficher et gérer les profils clients",
+    "YOUR_PROFILE": "Votre profil",
+    "YOUR_PROFILE_DESC": "Afficher et modifier votre profil",
+    "MANAGE_CATEGORIES_DESC": "Gérer les catégories"
   },
   "footer": {
     "ALL_RIGHTS_RESERVED": "Tous droits réservés",

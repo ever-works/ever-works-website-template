@@ -43,7 +43,11 @@
     "TAGS_DESCRIPTION": "Explore nuestra colección de etiquetas para encontrar lo que busca.",
     "COMMENTS": "Comentarios",
     "ROLES": "Roles",
-    "MANAGE_CLIENTS": "Gestionar Clientes"
+    "MANAGE_CLIENTS": "Gestionar clientes",
+    "MANAGE_CLIENTS_DESC": "Ver y gestionar perfiles de clientes",
+    "YOUR_PROFILE": "Tu perfil",
+    "YOUR_PROFILE_DESC": "Ver y editar tu perfil",
+    "MANAGE_CATEGORIES_DESC": "Gestionar categorías"
   },
   "footer": {
     "ALL_RIGHTS_RESERVED": "Todos los derechos reservados",

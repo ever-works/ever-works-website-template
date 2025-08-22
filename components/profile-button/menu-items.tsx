@@ -33,6 +33,9 @@ function MenuItems({ isAdmin, profilePath, onItemClick }: MenuItemsProps) {
     comments: t("common.COMMENTS"),
     userManagement: t("common.USER_MANAGEMENT"),
     settings: t("settings.SETTINGS"),
+    yourProfile: t("common.YOUR_PROFILE"),
+    yourProfileDesc: t("common.YOUR_PROFILE_DESC"),
+    accountSettingsDesc: t("settings.ACCOUNT_SETTINGS_DESC"),
   }), [t]);
 
   if (isAdmin) {
@@ -181,8 +184,8 @@ function MenuItems({ isAdmin, profilePath, onItemClick }: MenuItemsProps) {
           <User aria-hidden="true" className="h-5 w-5 text-theme-primary-600 dark:text-theme-primary-400" />
         </div>
         <div className="flex-1">
-          <span className="font-semibold">Your Profile</span>
-          <p className="text-xs text-gray-500 dark:text-gray-400">View and edit your profile</p>
+          <span className="font-semibold">{translations.yourProfile}</span>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{translations.yourProfileDesc}</p>
         </div>
         <Zap aria-hidden="true" className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
       </Link>
@@ -197,8 +200,8 @@ function MenuItems({ isAdmin, profilePath, onItemClick }: MenuItemsProps) {
           <Settings aria-hidden="true" className="h-5 w-5 text-gray-600 dark:text-gray-400" />
         </div>
         <div className="flex-1">
-          <span className="font-semibold">{t("settings.PROFILE")}</span>
-          <p className="text-xs text-gray-500 dark:text-gray-400">{t("settings.PROFILE_DESC")}</p>
+          <span className="font-semibold">{translations.settings}</span>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{translations.accountSettingsDesc}</p>
         </div>
         <Activity aria-hidden="true" className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
       </Link>

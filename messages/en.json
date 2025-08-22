@@ -93,6 +93,8 @@
     "ROLES": "Roles",
     "MANAGE_CLIENTS": "Manage Clients",
     "MANAGE_CLIENTS_DESC": "View and manage client profiles",
+    "YOUR_PROFILE": "Your Profile",
+    "YOUR_PROFILE_DESC": "View and edit your profile",
     "MANAGE_CATEGORIES_DESC": "Manage categories",
     "MANAGE_TAGS_DESC": "Manage tags",
     "MANAGE_ITEMS_DESC": "Manage items",
