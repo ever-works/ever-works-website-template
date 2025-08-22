@@ -121,7 +121,7 @@ export const clientProfiles = pgTable(
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
   (clientProfile) => [
-    index("client_profile_user_id_idx").on(clientProfile.userId),
+    uniqueIndex("client_profile_user_id_unique_idx").on(clientProfile.userId),
     index("client_profile_email_idx").on(clientProfile.email),
     index("client_profile_status_idx").on(clientProfile.status),
     index("client_profile_plan_idx").on(clientProfile.plan),
@@ -281,7 +281,7 @@ export const subscriptions = pgTable(
 		id: text('id')
 			.primaryKey()
 			.$defaultFn(() => crypto.randomUUID()),
-		userId: text('user_id')
+		userId: text('userId')
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 		planId: text('plan_id').notNull().default(PaymentPlan.FREE),
