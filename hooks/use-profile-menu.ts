@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 export function useProfileMenu() {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -63,14 +63,11 @@ export function useProfileMenu() {
     buttonRef.current?.focus();
   }, []);
 
-  // Memoize return object to prevent unnecessary re-renders
-  const result = useMemo(() => ({
+  return {
     isProfileMenuOpen,
     menuRef,
     buttonRef,
     toggleMenu,
     closeMenu,
-  }), [isProfileMenuOpen, toggleMenu, closeMenu]);
-
-  return result;
+  };
 }
