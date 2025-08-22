@@ -11,17 +11,18 @@ export const passwordResetTokens = pgTable("passwordResetTokens", {
 	unique("passwordResetTokens_token_unique").on(table.token),
 ]);
 
-export const newsletterSubscriptions = pgTable("newsletter_subscriptions", {
-	id: text().primaryKey().notNull(),
-	email: text().notNull(),
-	firstName: text("first_name"),
-	lastName: text("last_name"),
-	isSubscribed: boolean("is_subscribed").default(true).notNull(),
-	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
-	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
-}, (table) => [
-	unique("newsletter_subscriptions_email_unique").on(table.email),
-]);
+// Legacy table - removed in migration 0026
+// export const newsletterSubscriptions = pgTable("newsletter_subscriptions", {
+// 	id: text().primaryKey().notNull(),
+// 	email: text().notNull(),
+// 	firstName: text("first_name"),
+// 	lastName: text("last_name"),
+// 	isSubscribed: boolean("is_subscribed").default(true).notNull(),
+// 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+// 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
+// }, (table) => [
+// 	unique("newsletter_subscriptions_email_unique").on(table.email),
+// ]);
 
 export const users = pgTable("users", {
 	id: text().primaryKey().notNull(),
@@ -188,27 +189,28 @@ export const activityLogs = pgTable("activityLogs", {
 		}).onDelete("cascade"),
 ]);
 
-export const subscriptionHistory = pgTable("subscription_history", {
-	id: text().primaryKey().notNull(),
-	subscriptionId: text("subscription_id").notNull(),
-	action: text().notNull(),
-	previousStatus: text("previous_status"),
-	newStatus: text("new_status"),
-	previousPlan: text("previous_plan"),
-	newPlan: text("new_plan"),
-	reason: text(),
-	metadata: text(),
-	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
-}, (table) => [
-	index("subscription_action_idx").using("btree", table.action.asc().nullsLast().op("text_ops")),
-	index("subscription_history_created_at_idx").using("btree", table.createdAt.asc().nullsLast().op("timestamp_ops")),
-	index("subscription_history_idx").using("btree", table.subscriptionId.asc().nullsLast().op("text_ops")),
-	foreignKey({
-			columns: [table.subscriptionId],
-			foreignColumns: [subscriptions.id],
-			name: "subscription_history_subscription_id_subscriptions_id_fk"
-		}).onDelete("cascade"),
-]);
+// Legacy table - removed in migration 0026
+// export const subscriptionHistory = pgTable("subscription_history", {
+// 	id: text().primaryKey().notNull(),
+// 	subscriptionId: text("subscription_id").notNull(),
+// 	action: text().notNull(),
+// 	previousStatus: text("previous_status"),
+// 	newStatus: text("new_status"),
+// 	previousPlan: text("previous_plan"),
+// 	newPlan: text("new_plan"),
+// 	reason: text(),
+// 	metadata: text(),
+// 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+// }, (table) => [
+// 	index("subscription_action_idx").using("btree", table.action.asc().nullsLast().op("text_ops")),
+// 	index("subscription_history_created_at_idx").using("btree", table.createdAt.asc().nullsLast().op("timestamp_ops")),
+// 	index("subscription_history_idx").using("btree", table.subscriptionId.asc().nullsLast().op("text_ops")),
+// 	foreignKey({
+// 			columns: [table.subscriptionId],
+// 			foreignColumns: [subscriptions.id],
+// 			name: "subscription_history_subscription_id_subscriptions_id_fk"
+// 		}).onDelete("cascade"),
+// ]);
 
 export const accounts = pgTable("accounts", {
 	userId: text().notNull(),

@@ -42,13 +42,51 @@ CREATE TABLE "subscriptionHistory" (
 	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+-- Migrate data from legacy tables to new tables before dropping
+-- Migrate newsletter_subscriptions to newsletterSubscriptions
+-- Legacy table has: id, email, is_subscribed, created_at, updated_at, first_name, last_name
+-- New table has: id, email, is_active, subscribed_at, unsubscribed_at, last_email_sent, source
+INSERT INTO "newsletterSubscriptions" (id, email, is_active, subscribed_at, source)
+SELECT 
+  gen_random_uuid()::text,
+  email,
+  is_subscribed,
+  created_at,
+  'migrated'
+FROM "newsletter_subscriptions"
+WHERE NOT EXISTS (
+  SELECT 1 FROM "newsletterSubscriptions" ns WHERE ns.email = newsletter_subscriptions.email
+)
+ON CONFLICT (email) DO NOTHING;
+
+-- Migrate subscription_history to subscriptionHistory
+INSERT INTO "subscriptionHistory" (id, subscription_id, action, previous_status, new_status, previous_plan, new_plan, reason, metadata, created_at)
+SELECT 
+  gen_random_uuid()::text,
+  subscription_id,
+  action,
+  previous_status,
+  new_status,
+  previous_plan,
+  new_plan,
+  reason,
+  metadata,
+  created_at
+FROM "subscription_history"
+WHERE NOT EXISTS (
+  SELECT 1 FROM "subscriptionHistory" sh WHERE sh.subscription_id = subscription_history.subscription_id AND sh.created_at = subscription_history.created_at
+);
+
+-- Disable RLS and drop legacy tables
 ALTER TABLE "newsletter_subscriptions" DISABLE ROW LEVEL SECURITY;--> statement-breakpoint
 ALTER TABLE "subscription_history" DISABLE ROW LEVEL SECURITY;--> statement-breakpoint
 DROP TABLE "newsletter_subscriptions" CASCADE;--> statement-breakpoint
 DROP TABLE "subscription_history" CASCADE;--> statement-breakpoint
 ALTER TABLE "accounts" DROP CONSTRAINT "accounts_userId_client_profiles_id_fk";
 --> statement-breakpoint
-ALTER TABLE "client_profiles" ADD COLUMN "userId" text NOT NULL;--> statement-breakpoint
+-- Note: userId column already added in migration 0022 with proper data backfill
+-- This statement is redundant and would fail on existing databases
+-- ALTER TABLE "client_profiles" ADD COLUMN "userId" text NOT NULL;
 ALTER TABLE "paymentAccounts" ADD CONSTRAINT "paymentAccounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "paymentAccounts" ADD CONSTRAINT "paymentAccounts_providerId_paymentProviders_id_fk" FOREIGN KEY ("providerId") REFERENCES "public"."paymentProviders"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscriptionHistory" ADD CONSTRAINT "subscriptionHistory_subscription_id_subscriptions_id_fk" FOREIGN KEY ("subscription_id") REFERENCES "public"."subscriptions"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -63,5 +101,7 @@ CREATE INDEX "subscription_history_idx" ON "subscriptionHistory" USING btree ("s
 CREATE INDEX "subscription_action_idx" ON "subscriptionHistory" USING btree ("action");--> statement-breakpoint
 CREATE INDEX "subscription_history_created_at_idx" ON "subscriptionHistory" USING btree ("created_at");--> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "client_profiles" ADD CONSTRAINT "client_profiles_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "client_profile_user_id_idx" ON "client_profiles" USING btree ("userId");
+-- Note: This foreign key already added in migration 0022
+-- ALTER TABLE "client_profiles" ADD CONSTRAINT "client_profiles_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+-- Note: This index already created in migration 0022
+-- CREATE INDEX "client_profile_user_id_idx" ON "client_profiles" USING btree ("userId");
