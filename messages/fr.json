@@ -73,7 +73,19 @@
     "TAGS_DESCRIPTION": "Explorez notre collection de tags pour trouver ce que vous cherchez.",
     "COMMENTS": "Commentaires",
     "ROLES": "Rôles",
-    "MANAGE_CLIENTS": "Gérer les Clients"
+    "MANAGE_CLIENTS": "Gérer les Clients",
+    "FAVORITES": "Favoris",
+    "FAVORITES_DESCRIPTION": "Vos éléments et outils sauvegardés. Accédez-y rapidement depuis ici.",
+    "SIGN_IN_TO_VIEW_FAVORITES": "Connectez-vous pour voir vos favoris",
+    "FAVORITES_SIGN_IN_DESCRIPTION": "Créez un compte ou connectez-vous pour sauvegarder et voir vos éléments favoris.",
+    "ERROR_LOADING_FAVORITES": "Erreur lors du chargement des favoris",
+    "FAVORITES_ERROR_DESCRIPTION": "Une erreur s'est produite lors du chargement de vos favoris. Veuillez réessayer.",
+    "NO_FAVORITES_YET": "Aucun favori pour le moment",
+    "FAVORITES_EMPTY_DESCRIPTION": "Commencez à explorer et ajoutez des éléments à vos favoris pour les voir ici.",
+    "FAVORITE_ITEMS": "éléments favoris",
+    "EXPLORE_ITEMS": "Explorer les éléments",
+    "VIEW_DETAILS": "Voir les détails",
+    "ADDED_ON": "Ajouté le"
   },
   "footer": {
     "ALL_RIGHTS_RESERVED": "Tous droits réservés",

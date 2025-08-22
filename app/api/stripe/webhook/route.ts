@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
 				await handleSubscriptionCreated(webhookResult.data);
 				break;
 			case WebhookEventType.SUBSCRIPTION_UPDATED:
+				console.log('Subscription updated:', webhookResult.data);
 				await handleSubscriptionUpdated(webhookResult.data);
 				break;
 			case WebhookEventType.SUBSCRIPTION_CANCELLED:
@@ -68,6 +69,9 @@ export async function POST(request: NextRequest) {
 				break;
 			case WebhookEventType.SUBSCRIPTION_TRIAL_ENDING:
 				await handleSubscriptionTrialEnding(webhookResult.data);
+				break;
+			case WebhookEventType.BILLING_PORTAL_SESSION_UPDATED:
+				console.log('Billing portal session updated:', webhookResult.data);
 				break;
 			default:
 				console.log(`Unhandled webhook event: ${webhookResult.type}`);

@@ -91,7 +91,19 @@
     "ANALYTICS_DASHBOARD_DESC": "Access platform statistics and reports",
     "COMMENTS": "Comments",
     "ROLES": "Roles",
-    "MANAGE_CLIENTS": "Manage Clients"
+    "MANAGE_CLIENTS": "Manage Clients",
+    "FAVORITES": "Favorites",
+    "FAVORITES_DESCRIPTION": "Your saved items and tools. Access them quickly from here.",
+    "SIGN_IN_TO_VIEW_FAVORITES": "Sign in to view your favorites",
+    "FAVORITES_SIGN_IN_DESCRIPTION": "Create an account or sign in to save and view your favorite items.",
+    "ERROR_LOADING_FAVORITES": "Error loading favorites",
+    "FAVORITES_ERROR_DESCRIPTION": "There was an error loading your favorites. Please try again.",
+    "NO_FAVORITES_YET": "No favorites yet",
+    "FAVORITES_EMPTY_DESCRIPTION": "Start exploring and add items to your favorites to see them here.",
+    "FAVORITE_ITEMS": "favorite items",
+    "EXPLORE_ITEMS": "Explore Items",
+    "VIEW_DETAILS": "View Details",
+    "ADDED_ON": "Added"
   },
   "listing": {
     "ALL": "All",
