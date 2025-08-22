@@ -1,12 +1,13 @@
-import { pgTable, unique, text, timestamp, boolean, foreignKey, integer, index, uniqueIndex, serial, varchar, primaryKey } from "drizzle-orm/pg-core"
+import { pgTable, unique, text, timestamp, boolean, foreignKey, integer, index, uniqueIndex, serial, varchar, primaryKey, check } from "drizzle-orm/pg-core"
+import { sql } from "drizzle-orm"
 
 
 
 export const passwordResetTokens = pgTable("password_reset_tokens", {
-	id: text().primaryKey().notNull(),
-	email: text().notNull(),
-	token: text().notNull(),
-	expires: timestamp({ mode: 'string' }).notNull(),
+	id: text("id").primaryKey().notNull(),
+	email: text("email").notNull(),
+	token: text("token").notNull(),
+	expires: timestamp("expires", { mode: 'string' }).notNull(),
 }, (table) => [
 	unique("password_reset_tokens_token_unique").on(table.token),
 ]);
@@ -25,20 +26,20 @@ export const passwordResetTokens = pgTable("password_reset_tokens", {
 // ]);
 
 export const users = pgTable("users", {
-	id: text().primaryKey().notNull(),
-	name: text(),
-	email: text(),
-	emailVerified: timestamp({ mode: 'string' }),
-	image: text(),
+	id: text("id").primaryKey().notNull(),
+	name: text("name"),
+	email: text("email"),
+	emailVerified: timestamp("email_verified", { mode: 'string' }),
+	image: text("image"),
 	passwordHash: text("password_hash"),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 	deletedAt: timestamp("deleted_at", { mode: 'string' }),
-	username: text(),
-	title: text(),
-	avatar: text(),
+	username: text("username"),
+	title: text("title"),
+	avatar: text("avatar"),
 	roleId: text("role_id"),
-	status: text().default('active'),
+	status: text("status").default('active'),
 	createdBy: text("created_by").default('system'),
 }, (table) => [
 	unique("users_email_unique").on(table.email),
@@ -46,14 +47,14 @@ export const users = pgTable("users", {
 ]);
 
 export const authenticators = pgTable("authenticators", {
-	credentialId: text().notNull(),
-	userId: text().notNull(),
-	providerAccountId: text().notNull(),
-	credentialPublicKey: text().notNull(),
-	counter: integer().notNull(),
-	credentialDeviceType: text().notNull(),
-	credentialBackedUp: boolean().notNull(),
-	transports: text(),
+	credentialId: text("credential_id").notNull(),
+	userId: text("user_id").notNull(),
+	providerAccountId: text("provider_account_id").notNull(),
+	credentialPublicKey: text("credential_public_key").notNull(),
+	counter: integer("counter").notNull(),
+	credentialDeviceType: text("credential_device_type").notNull(),
+	credentialBackedUp: boolean("credential_backed_up").notNull(),
+	transports: text("transports"),
 }, (table) => [
 	foreignKey({
 			columns: [table.userId],
@@ -64,9 +65,9 @@ export const authenticators = pgTable("authenticators", {
 ]);
 
 export const sessions = pgTable("sessions", {
-	sessionToken: text().primaryKey().notNull(),
-	userId: text().notNull(),
-	expires: timestamp({ mode: 'string' }).notNull(),
+	sessionToken: text("session_token").primaryKey().notNull(),
+	userId: text("user_id").notNull(),
+	expires: timestamp("expires", { mode: 'string' }).notNull(),
 }, (table) => [
 	foreignKey({
 			columns: [table.userId],
@@ -168,12 +169,12 @@ export const clientProfiles = pgTable("client_profiles", {
 ]);
 
 export const activityLogs = pgTable("activityLogs", {
-	id: serial().primaryKey().notNull(),
-	userId: text(),
-	action: text().notNull(),
-	timestamp: timestamp({ mode: 'string' }).defaultNow().notNull(),
+	id: serial("id").primaryKey().notNull(),
+	userId: text("user_id"),
+	action: text("action").notNull(),
+	timestamp: timestamp("timestamp", { mode: 'string' }).defaultNow().notNull(),
 	ipAddress: varchar("ip_address", { length: 45 }),
-	clientId: text(),
+	clientId: text("client_id"),
 }, (table) => [
 	index("activity_logs_client_idx").using("btree", table.clientId.asc().nullsLast().op("text_ops")),
 	index("activity_logs_user_idx").using("btree", table.userId.asc().nullsLast().op("text_ops")),
@@ -187,6 +188,7 @@ export const activityLogs = pgTable("activityLogs", {
 			foreignColumns: [clientProfiles.id],
 			name: "activityLogs_clientId_client_profiles_id_fk"
 		}).onDelete("cascade"),
+	check("activity_logs_user_or_client", sql`("user_id" is not null) OR ("client_id" is not null)`),
 ]);
 
 // Legacy table - removed in migration 0026
