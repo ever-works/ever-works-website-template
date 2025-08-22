@@ -3,8 +3,14 @@
 
 -- Drop the incorrect foreign key if it exists
 DO $$ BEGIN
-  ALTER TABLE "accounts" DROP CONSTRAINT "accounts_userId_client_profiles_id_fk";
-EXCEPTION WHEN undefined_object THEN NULL; END $$;
+  IF to_regclass('public.accounts') IS NOT NULL THEN
+    BEGIN
+      ALTER TABLE public."accounts" DROP CONSTRAINT "accounts_userId_client_profiles_id_fk";
+    EXCEPTION WHEN undefined_object THEN
+      NULL;
+    END;
+  END IF;
+END $$;
 
 -- Add the correct foreign key to users table
 DO $$ BEGIN
