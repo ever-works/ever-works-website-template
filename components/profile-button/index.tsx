@@ -19,7 +19,6 @@ const ProfileMenu = lazy(loadProfileMenu);
 // Loading fallback for lazy-loaded component
 const MenuLoadingFallback = () => (
   <div className={cn(
-    SIZES.MENU_WIDTH,
     MENU_STYLES.LOADING_FALLBACK.base,
     MENU_STYLES.LOADING_FALLBACK.background,
     MENU_STYLES.LOADING_FALLBACK.border
@@ -46,7 +45,15 @@ const LoadingSkeleton = memo(() => (
 LoadingSkeleton.displayName = "LoadingSkeleton";
 
 // Memoized avatar component with admin indicator
-const ProfileAvatar = memo(({ user, isAdmin }: { user: ExtendedUser; isAdmin: boolean }) => (
+const ProfileAvatar = memo(({
+  user,
+  isAdmin,
+  onlineStatus = "Online",
+}: {
+  user: ExtendedUser;
+  isAdmin: boolean;
+  onlineStatus?: "Online" | "Away" | "Busy" | "Offline" | string;
+}) => (
   <div className={MENU_STYLES.AVATAR.container}>
     <Avatar
       src={user?.image}
@@ -56,7 +63,16 @@ const ProfileAvatar = memo(({ user, isAdmin }: { user: ExtendedUser; isAdmin: bo
       className={cn(MENU_STYLES.AVATAR.image)}
     />
     {/* Online status indicator */}
-    <div className={cn(MENU_STYLES.AVATAR.onlineIndicator)}></div>
+    <div
+      className={cn(
+        MENU_STYLES.AVATAR.onlineIndicator,
+        onlineStatus === "Online"   ? "bg-green-500"  :
+        onlineStatus === "Away"     ? "bg-yellow-500" :
+        onlineStatus === "Busy"     ? "bg-red-500"    :
+        onlineStatus === "Offline"  ? "bg-gray-400"   : "bg-green-500"
+      )}
+      title={onlineStatus}
+    />
     {isAdmin && (
       <div
         className={cn(MENU_STYLES.AVATAR.adminBadge)}
@@ -77,6 +93,7 @@ const ProfileButtonTrigger = memo(({
   toggleMenu, 
   user, 
   isAdmin,
+  onlineStatus,
   onMouseEnter,
   onFocus
 }: {
@@ -85,6 +102,7 @@ const ProfileButtonTrigger = memo(({
   toggleMenu: () => void;
   user: ExtendedUser;
   isAdmin: boolean;
+  onlineStatus?: "Online" | "Away" | "Busy" | "Offline" | string;
   onMouseEnter: () => void;
   onFocus: () => void;
 }) => (
@@ -100,7 +118,7 @@ const ProfileButtonTrigger = memo(({
     onFocus={onFocus}
   >
     <span className="sr-only">Open user menu</span>
-    <ProfileAvatar user={user} isAdmin={isAdmin} />
+    <ProfileAvatar user={user} isAdmin={isAdmin} onlineStatus={onlineStatus} />
   </button>
 ));
 
@@ -133,6 +151,7 @@ function ProfileButton() {
           toggleMenu={toggleMenu}
           user={user}
           isAdmin={isAdmin}
+          onlineStatus={onlineStatus}
           onMouseEnter={loadProfileMenu}
           onFocus={loadProfileMenu}
         />
