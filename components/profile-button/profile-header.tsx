@@ -1,22 +1,18 @@
 import { memo, useMemo } from "react";
 import { Crown } from "lucide-react";
 import { Avatar } from "../header/avatar";
-import { ExtendedUser } from "@/types/profile-button.types";
+import type { ProfileHeaderProps } from "@/types/profile-button.types";
 import { SIZES } from "@/constants/profile-button.constants";
 import { formatDisplayName, getInitials } from "@/utils/profile-button.utils";
-
-interface ProfileHeaderProps {
-  user: ExtendedUser;
-  isAdmin: boolean;
-  displayRole: string;
-  onlineStatus: string;
-}
 
 function ProfileHeader({ user, isAdmin, displayRole, onlineStatus }: ProfileHeaderProps) {
   // Memoize expensive computations
   const displayName = useMemo(() => formatDisplayName(user?.name || "User"), [user?.name]);
   const userInitials = useMemo(() => getInitials(user?.name || "User"), [user?.name]);
   const userEmail = user?.email;
+
+  // Normalize status once
+  const isOnline = (onlineStatus ?? '').toLowerCase().includes('online');
 
   const roleBadgeClasses = isAdmin 
     ? 'bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-800 dark:from-yellow-900/30 dark:to-orange-900/30 dark:text-yellow-200'
@@ -35,8 +31,9 @@ function ProfileHeader({ user, isAdmin, displayRole, onlineStatus }: ProfileHead
           />
           {/* Online status indicator */}
           <div
+            aria-hidden="true"
             className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white dark:border-gray-700 shadow-sm ${
-              onlineStatus.toLowerCase().includes('online') ? 'bg-green-500' : 'bg-gray-400'
+              isOnline ? 'bg-green-500' : 'bg-gray-400'
             }`}
           ></div>
           {isAdmin && (
@@ -57,8 +54,8 @@ function ProfileHeader({ user, isAdmin, displayRole, onlineStatus }: ProfileHead
               {displayRole}
             </span>
             <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-              onlineStatus.toLowerCase().includes('online') 
-                ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' 
+              isOnline
+                ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
                 : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
             }`}>
               {onlineStatus}

@@ -34,6 +34,8 @@ export interface ProfileMenuProps {
 export interface ProfileHeaderProps {
   user: ExtendedUser;
   isAdmin: boolean;
+  displayRole: string;
+  onlineStatus: string;
 }
 
 export interface MenuItemsProps {
