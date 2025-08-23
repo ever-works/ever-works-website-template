@@ -1,8 +1,9 @@
 "use server";
 
 import { z } from "zod";
-import { ActivityType, users } from "@/lib/db/schema";
+import { ActivityType, users, clientProfiles } from "@/lib/db/schema";
 import { db } from "@/lib/db/drizzle";
+import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import {
   validatedAction,
@@ -24,7 +25,6 @@ import {
   updateUser,
   updateUserPassword,
   updateUserVerification,
-  createClientProfile,
   createClientAccount,
   getClientAccountByEmail,
 } from "@/lib/db/queries";
@@ -149,33 +149,56 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
 
     const passwordHash = await hashPassword(password);
 
-    // For client registrations, we need to create a user record first, then client profile
-    
-    // 1) Create user record
-    const userId = crypto.randomUUID();
-    await db.insert(users).values({
-      id: userId,
-      email,
-      name,
-      username: email.split('@')[0] || 'user',
-      status: 'active',
-      created_by: 'system',
+    // Wrap in transaction to ensure atomicity
+    const result = await db.transaction(async (tx: typeof db) => {
+      // 1) Create user record
+      const userId = crypto.randomUUID();
+      const [user] = await tx.insert(users).values({
+        id: userId,
+        email,
+        name,
+        username: email.split('@')[0] || 'user',
+        status: 'active',
+        created_by: 'system',
+      }).returning();
+      
+      // 2) Create client profile record using transaction
+      const normalizedEmail = email.toLowerCase().trim();
+      const extractedUsername = normalizedEmail.split('@')[0] || 'user';
+      // Generate unique username with timestamp fallback
+      let finalUsername = extractedUsername;
+      let counter = 1;
+      while (true) {
+        const testUsername = counter === 1 ? finalUsername : `${extractedUsername}${counter}`;
+        const existing = await tx.select().from(clientProfiles).where(eq(clientProfiles.username, testUsername)).limit(1);
+        if (existing.length === 0) {
+          finalUsername = testUsername;
+          break;
+        }
+        counter++;
+      }
+      
+      const [clientProfile] = await tx
+        .insert(clientProfiles)
+        .values({
+          userId: user.id,
+          email: normalizedEmail,
+          name,
+          displayName: name,
+          username: finalUsername,
+          bio: "Welcome! I'm a new user on this platform.",
+          jobTitle: "User",
+          company: "Unknown",
+          status: "active",
+          plan: "free",
+          accountType: "individual",
+        })
+        .returning();
+      
+      return { user, clientProfile };
     });
     
-    // 2) Create client profile record
-    const clientProfile = await createClientProfile({
-      userId,
-      email,
-      name,
-      displayName: name,
-      username: email.split('@')[0] || 'user',
-      bio: "Welcome! I'm a new user on this platform.",
-      jobTitle: "User",
-      company: "Unknown",
-      status: "active",
-      plan: "free",
-      accountType: "individual",
-    });
+    const { clientProfile } = result;
 
     // 2) Create credentials account record holding the password hash linked to client profile
     const clientAccount = await createClientAccount(clientProfile.id, email, passwordHash);
