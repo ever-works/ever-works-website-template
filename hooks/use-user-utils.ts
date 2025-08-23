@@ -33,12 +33,14 @@ export function useUserUtils(): UseUserUtilsResult {
     };
   }, [user]);
 
-  return {
-    user: userData?.user || null,
-    profilePath: userData?.profilePath || "/client/profile/profile",
-    isAdmin: userData?.isAdmin || false,
-    displayRole: userData?.displayRole || "User",
-    onlineStatus: userData?.onlineStatus || "Online",
+  const result = useMemo(() => ({
+    user: userData?.user ?? null,
+    profilePath: userData?.profilePath ?? getProfilePath(null),
+    isAdmin: userData?.isAdmin ?? false,
+    displayRole: userData?.displayRole ?? "User",
+    onlineStatus: userData?.onlineStatus ?? "Online",
     isLoading,
-  };
+  }), [userData, isLoading]);
+
+  return result;
 }
