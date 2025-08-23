@@ -50,7 +50,11 @@
     "MANAGE_CLIENTS_DESC": "Ver y gestionar perfiles de clientes",
     "YOUR_PROFILE": "Tu perfil",
     "YOUR_PROFILE_DESC": "Ver y editar tu perfil",
-    "MANAGE_CATEGORIES_DESC": "Gestionar categorías"
+    "MANAGE_CATEGORIES_DESC": "Gestionar categorías",
+    "MANAGE_TAGS_DESC": "Gestionar etiquetas",
+    "MANAGE_ITEMS_DESC": "Gestionar elementos",
+    "MANAGE_COMMENTS_DESC": "Gestionar comentarios",
+    "MANAGE_USER_ROLES_DESC": "Gestionar roles de usuario"
   },
   "footer": {
     "ALL_RIGHTS_RESERVED": "Todos los derechos reservados",

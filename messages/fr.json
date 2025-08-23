@@ -76,11 +76,15 @@
     "TAGS_DESCRIPTION": "Explorez notre collection de tags pour trouver ce que vous cherchez.",
     "COMMENTS": "Commentaires",
     "ROLES": "Rôles",
-    "MANAGE_CLIENTS": "Gérer les Clients",
+    "MANAGE_CLIENTS": "Gérer les clients",
     "MANAGE_CLIENTS_DESC": "Afficher et gérer les profils clients",
     "YOUR_PROFILE": "Votre profil",
     "YOUR_PROFILE_DESC": "Afficher et modifier votre profil",
-    "MANAGE_CATEGORIES_DESC": "Gérer les catégories"
+    "MANAGE_CATEGORIES_DESC": "Gérer les catégories",
+    "MANAGE_TAGS_DESC": "Gérer les tags",
+    "MANAGE_ITEMS_DESC": "Gérer les éléments",
+    "MANAGE_COMMENTS_DESC": "Gérer les commentaires",
+    "MANAGE_USER_ROLES_DESC": "Gérer les rôles des utilisateurs"
   },
   "footer": {
     "ALL_RIGHTS_RESERVED": "Tous droits réservés",
