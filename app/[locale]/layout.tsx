@@ -12,9 +12,9 @@ import { PHProvider } from './integration/posthog/provider';
 import PostHogPageView from './integration/posthog/page-view';
 import { Locale } from '@/lib/constants';
 import { LoginModalProvider } from '@/components/auth/login-modal-provider';
-import { ConditionalLayout } from '@/components/layout/conditional-layout';
 import { Suspense } from 'react';
 import Script from 'next/script';
+import { ConditionalLayout } from '@/components/layout/Conditional-layout';
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -62,9 +62,7 @@ export default async function RootLayout({
 	return (
 		<html lang={locale} suppressHydrationWarning>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-dark--theme-950`}>
-				<Script 
-					src="https://assets.lemonsqueezy.com/lemon.js" 
-					strategy="beforeInteractive"/>
+				<Script src="https://assets.lemonsqueezy.com/lemon.js" strategy="beforeInteractive" />
 				<PHProvider>
 					<Suspense fallback={null}>
 						<PostHogPageView />
