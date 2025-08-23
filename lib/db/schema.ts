@@ -286,7 +286,7 @@ export const subscriptions = pgTable(
 			.references(() => users.id, { onDelete: 'cascade' }),
 		planId: text('plan_id').notNull().default(PaymentPlan.FREE),
 		status: text('status').notNull().default(SubscriptionStatus.PENDING),
-		startDate: timestamp('start_date', { mode: 'date' }),
+		startDate: timestamp('start_date', { mode: 'date' }).notNull().defaultNow(),
 		endDate: timestamp('end_date', { mode: 'date' }),
 		paymentProvider: text('payment_provider').default(PaymentProvider.STRIPE).notNull(),
 		subscriptionId: text('subscription_id'),

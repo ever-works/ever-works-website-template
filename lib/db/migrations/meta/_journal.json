@@ -239,6 +239,13 @@
       "when": 1755756867320,
       "tag": "0032_add_accounts_email_unique_index",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1755756867321,
+      "tag": "0033_adjust_subscriptions_and_accounts",
+      "breakpoints": true
     }
   ]
 }
