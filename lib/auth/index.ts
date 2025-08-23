@@ -195,16 +195,17 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         }
       }
 
-      // Debug: trace auth token composition
-      try {
-        console.log('[auth][jwt] token composed', {
-          userId: token.userId,
-          provider: token.provider,
-          isAdmin: token.isAdmin,
-          hasUser: !!user,
-          accountProvider: account?.provider,
-        });
-      } catch {}
+      // Debug (dev only): trace non-PII auth token composition
+      if (process.env.NODE_ENV === 'development') {
+        try {
+          console.debug('[auth][jwt] token composed', {
+            provider: token.provider,
+            isAdmin: token.isAdmin,
+            hasUser: !!user,
+            accountProvider: account?.provider,
+          });
+        } catch {}
+      }
       
       return token;
     },
@@ -218,14 +219,15 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
           session.user.isAdmin = token.isAdmin;
         }
       }
-      // Debug: trace session payload
-      try {
-        console.log('[auth][session] session built', {
-          userId: session.user?.id,
-          isAdmin: (session.user as any)?.isAdmin,
-          provider: (session.user as any)?.provider,
-        });
-      } catch {}
+      // Debug (dev only): trace session payload without PII
+      if (process.env.NODE_ENV === 'development') {
+        try {
+          console.debug('[auth][session] session built', {
+            isAdmin: (session.user as any)?.isAdmin,
+            provider: (session.user as any)?.provider,
+          });
+        } catch {}
+      }
       return session;
     },
   },

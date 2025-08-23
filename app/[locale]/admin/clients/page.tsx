@@ -20,32 +20,32 @@ export default function ClientsPage() {
   const [selectedClient, setSelectedClient] = useState<ClientProfileWithUser | null>(null);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [navigatingClientId, setNavigatingClientId] = useState<string | null>(null);
-  
+
   // Delete confirmation state
   const [clientToDelete, setClientToDelete] = useState<string | null>(null);
-  
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [filteredTotal, setFilteredTotal] = useState(0);
   const [limit] = useState(10);
-  
+
   // Filter state
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('active');
   const [planFilter, setPlanFilter] = useState<string>('');
   const [accountTypeFilter, setAccountTypeFilter] = useState<string>('');
   const [isFiltering, setIsFiltering] = useState(false);
-  
+
   // Stats state
   const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0, suspended: 0 });
-  
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
-  
+
   // Debounced search term
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
-  
+
   // Track if this is the initial load
   const isInitialLoad = useRef(true);
 
@@ -92,24 +92,24 @@ export default function ClientsPage() {
     try {
       setIsLoading(true);
       setIsFiltering(true);
-      const params = new URLSearchParams({ 
-        page: String(page), 
-        limit: String(limit) 
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit)
       });
       if (debouncedSearchTerm) params.append('search', debouncedSearchTerm);
       if (statusFilter) params.append('status', statusFilter);
       if (planFilter) params.append('plan', planFilter);
       if (accountTypeFilter) params.append('accountType', accountTypeFilter);
-      
+
       const response = await fetch(`/api/admin/clients?${params}`);
-      
+
       if (!response.ok) {
         const message = await response.text().catch(() => '');
         throw new Error(message || `Request failed (${response.status})`);
       }
-      
+
       const data: ClientListResponse = await response.json();
-      
+
       if (data.success) {
         setClients(data.data.clients);
         setTotalPages(data.meta.totalPages);
@@ -136,14 +136,14 @@ export default function ClientsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) {
         const message = await response.text().catch(() => '');
         throw new Error(message || `Request failed (${response.status})`);
       }
-      
+
       const result: ClientResponse = await response.json();
-      
+
       if (result.success) {
         toast.success('Client created successfully');
         closeForm();
@@ -169,14 +169,14 @@ export default function ClientsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) {
         const message = await response.text().catch(() => '');
         throw new Error(message || `Request failed (${response.status})`);
       }
-      
+
       const result: ClientResponse = await response.json();
-      
+
       if (result.success) {
         toast.success('Client updated successfully');
         closeForm();
@@ -207,14 +207,14 @@ export default function ClientsPage() {
       const response = await fetch(`/api/admin/clients/${safeId}`, {
         method: 'DELETE',
       });
-      
+
       if (!response.ok) {
         const message = await response.text().catch(() => '');
         throw new Error(message || `Request failed (${response.status})`);
       }
-      
+
       const result: ClientResponse = await response.json();
-      
+
       if (result.success) {
         toast.success('Client deleted successfully');
         fetchClients();
@@ -327,7 +327,7 @@ export default function ClientsPage() {
         onOpen();
         return;
       }
-      
+
       // If not found in existing clients and we're not loading, fetch individually
       if (!isLoading) {
         (async () => {
@@ -552,9 +552,9 @@ export default function ClientsPage() {
         <div className="flex flex-wrap items-center gap-3">
           {/* Status Filter */}
           <div className="relative">
-            <select 
+            <select
               aria-label="Filter by status"
-              value={statusFilter} 
+              value={statusFilter}
               onChange={(e) => handleStatusFilter(e.target.value)}
               className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 pr-8 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
             >
@@ -569,9 +569,9 @@ export default function ClientsPage() {
 
           {/* Plan Filter */}
           <div className="relative">
-            <select 
+            <select
               aria-label="Filter by plan"
-              value={planFilter} 
+              value={planFilter}
               onChange={(e) => handlePlanFilter(e.target.value)}
               className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 pr-8 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
             >
@@ -585,8 +585,8 @@ export default function ClientsPage() {
 
           {/* Account Type Filter */}
           <div className="relative">
-            <select 
-              value={accountTypeFilter} 
+            <select
+              value={accountTypeFilter}
               onChange={(e) => handleAccountTypeFilter(e.target.value)}
               className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 pr-8 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
             >
@@ -651,7 +651,7 @@ export default function ClientsPage() {
               </span>
             </div>
           </div>
-          
+
           {clients.length === 0 ? (
             <div className="px-6 py-12 text-center">
               <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -672,31 +672,30 @@ export default function ClientsPage() {
             <div className="divide-y divide-gray-100 dark:divide-gray-800">
               {clients.map((client) => (
                 <div key={client.id} className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                                      <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4 flex-1 min-w-0">
-                        <div className="flex items-center space-x-2 flex-shrink-0">
-                          <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                          <span className="text-sm text-gray-500 dark:text-gray-400">#{client.id.slice(0, 8)}</span>
-                        </div>
-                        <button
-                          type="button"
-                          aria-disabled={navigatingClientId === client.id}
-                          aria-busy={navigatingClientId === client.id}
-                          className={`text-left flex items-center space-x-3 rounded-lg p-2 -m-2 transition-colors flex-1 min-w-0 ${
-                            navigatingClientId === client.id 
-                              ? 'cursor-wait opacity-60' 
-                              : 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700'
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4 flex-1 min-w-0">
+                      <div className="flex items-center space-x-2 flex-shrink-0">
+                        <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">#{client.id.slice(0, 8)}</span>
+                      </div>
+                      <button
+                        type="button"
+                        aria-disabled={navigatingClientId === client.id}
+                        aria-busy={navigatingClientId === client.id}
+                        className={`text-left flex items-center space-x-3 rounded-lg p-2 -m-2 transition-colors flex-1 min-w-0 ${navigatingClientId === client.id
+                            ? 'cursor-wait opacity-60'
+                            : 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700'
                           }`}
-                          onClick={() => navigatingClientId !== client.id && viewClientDetails(client.id)}
-                          onKeyDown={(e) => {
-                            if (navigatingClientId === client.id) return;
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              viewClientDetails(client.id);
-                            }
-                          }}
-                          title={navigatingClientId === client.id ? 'Loading...' : 'Click to view client details'}
-                        >
+                        onClick={() => navigatingClientId !== client.id && viewClientDetails(client.id)}
+                        onKeyDown={(e) => {
+                          if (navigatingClientId === client.id) return;
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            viewClientDetails(client.id);
+                          }
+                        }}
+                        title={navigatingClientId === client.id ? 'Loading...' : 'Click to view client details'}
+                      >
                         <div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm relative">
                           {navigatingClientId === client.id ? (
                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
