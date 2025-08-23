@@ -1,143 +1,53 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { PlanCard } from './plan-card';
 import { Check, ArrowRight, Zap, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
-import { PaymentFlow, PaymentInterval, PaymentPlan } from '@/lib/constants';
+import { PaymentInterval, PaymentPlan } from '@/lib/constants';
 import { PaymentFlowIndicator } from '../payment/flow-indicator';
-import { usePaymentFlow } from '@/hooks/use-payment-flow';
 import { PaymentFlowSelectorModal } from '../payment';
-import { useCreateCheckoutSession } from '@/hooks/use-create-checkout';
-import { useCurrentUser } from '@/hooks/use-current-user';
-import { toast } from 'sonner';
-import { usePricingFeatures } from '@/hooks/use-pricing-features';
-import { useConfig } from '@/app/[locale]/config';
 import { PricingConfig } from '@/lib/content';
+import { usePricingSection } from '@/hooks/use-pricing-section';
 
 interface PricingSectionProps {
 	onSelectPlan?: (plan: PaymentPlan) => void;
 }
 
 export function PricingSection({ onSelectPlan }: PricingSectionProps) {
-	const searchParams = useSearchParams();
-	const { user } = useCurrentUser();
-	const { freePlanFeatures, standardPlanFeatures, premiumPlanFeatures, getPlanConfig, getActionText } =
-		usePricingFeatures();
-	const router = useRouter();
-	const t = useTranslations('pricing');
-	const tBilling = useTranslations('billing');
-	const [showSelector, setShowSelector] = useState(false);
-	// Removed unused currentPlan state
-	const [billingInterval, setBillingInterval] = useState<PaymentInterval>(PaymentInterval.MONTHLY);
-	const [processingPlan, setProcessingPlan] = useState<string | null>(null);
-	const config = useConfig();
-	const { FREE, STANDARD, PREMIUM } = config.pricing?.plans ?? {};
-	const { createCheckoutSession, isLoading, error, isSuccess } = useCreateCheckoutSession();
-
-	const { selectedFlow, selectFlow, triggerAnimation } = usePaymentFlow({
-		enableAnimations: true,
-		autoSave: true
+	const {
+		FREE,
+		STANDARD,
+		PREMIUM,
+		getPlanConfig,
+		getActionText,
+		isLoading,
+		error,
+		user,
+		config,
+		t,
+		tBilling,
+		router,
+		showSelector,
+		setShowSelector,
+		billingInterval,
+		setBillingInterval,
+		processingPlan,
+		selectedPlan,
+		selectedFlow,
+		isButton,
+		handleFlowChange,
+		handleFlowSelect,
+		handleSelectPlan,
+		handleCheckout,
+		calculatePrice,
+		getSavingsText,
+		freePlanFeatures,
+		standardPlanFeatures,
+		premiumPlanFeatures
+	} = usePricingSection({
+		onSelectPlan: onSelectPlan
 	});
-	const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(null);
-	const handleFlowChange = () => {
-		setShowSelector(true);
-	};
-
-	const handleFlowSelect = async (flow: PaymentFlow) => {
-		await selectFlow(flow);
-		triggerAnimation();
-	};
-
-	const handleSelectPlan = (plan: PaymentPlan) => {
-		setSelectedPlan(plan);
-		if (onSelectPlan) {
-			onSelectPlan(plan);
-		}
-	};
-	useEffect(() => {
-		const planFromUrl = searchParams.get('plan');
-		const availablePlans = [FREE, STANDARD, PREMIUM];
-		if (!planFromUrl || selectedPlan) return;
-
-		const matchedPlan = availablePlans.find((plan) => plan?.id === planFromUrl);
-
-		if (matchedPlan) {
-			// Plan found from URL - could be used for analytics or other purposes
-			console.log('Plan selected from URL:', matchedPlan.id);
-		}
-	}, [searchParams, selectedPlan, FREE, STANDARD, PREMIUM]);
-
-	const calculatePrice = useCallback(
-		(plan: PricingConfig): number => {
-			if (billingInterval !== PaymentInterval.YEARLY || !plan.annualDiscount) {
-				return plan.price;
-			}
-
-			const annualPrice = plan.price * 12;
-			const discountMultiplier = 1 - plan.annualDiscount / 100;
-
-			return Math.round(annualPrice * discountMultiplier);
-		},
-		[billingInterval]
-	);
-
-	const getSavingsText = useCallback(
-		(plan: PricingConfig): string | null => {
-			if (billingInterval !== PaymentInterval.YEARLY || !plan.annualDiscount) {
-				return null;
-			}
-
-			const monthlyTotal = plan.price * 12;
-			const yearlyPrice = calculatePrice(plan);
-			const savings = monthlyTotal - yearlyPrice;
-			return `Save $${savings}/year`;
-		},
-		[billingInterval, calculatePrice]
-	);
-
-	useEffect(() => {
-		if (error) {
-			toast.error('Failed to create checkout session. Please try again.');
-			setProcessingPlan(null);
-			return;
-		}
-
-		if (isSuccess) {
-			toast.success('Checkout session created! Redirecting to Stripe...');
-			setProcessingPlan(null);
-		}
-	}, [error, isSuccess]);
-
-	const handleCheckout = useCallback(
-		async (plan: PricingConfig) => {
-			if (!user?.id) {
-				toast.info('Please sign in to continue with your purchase.');
-				router.push('/auth/signin');
-				return;
-			}
-
-			if (processingPlan) {
-				toast.warning('Please wait, processing your previous request...');
-				return;
-			}
-
-			setProcessingPlan(plan.id);
-
-			try {
-				await createCheckoutSession(plan, user as any, billingInterval);
-			} catch (checkoutError) {
-				console.error('Checkout error:', checkoutError);
-				toast.error('Failed to create checkout session. Please try again.');
-				setProcessingPlan(null);
-			}
-		},
-		[user, router, processingPlan, createCheckoutSession, billingInterval]
-	);
-	const isButton = selectedFlow === 'pay_at_end';
 
 	return (
 		<div className="relative z-10 px-4">

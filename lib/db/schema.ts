@@ -432,8 +432,39 @@ export enum ActivityType {
 }
 
 // ######################### Client Profile Types #########################
+// ######################### Favorites Schema #########################
+export const favorites = pgTable("favorites", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  itemSlug: text("item_slug").notNull(),
+  itemName: text("item_name").notNull(),
+  itemIconUrl: text("item_icon_url"),
+  itemCategory: text("item_category"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  userItemIndex: uniqueIndex("user_item_favorite_unique_idx").on(
+    table.userId,
+    table.itemSlug
+  ),
+  userIdIndex: index("favorites_user_id_idx").on(table.userId),
+  itemSlugIndex: index("favorites_item_slug_idx").on(table.itemSlug),
+  createdAtIndex: index("favorites_created_at_idx").on(table.createdAt),
+}));
+
 export type ClientProfile = typeof clientProfiles.$inferSelect;
 export type NewClientProfile = typeof clientProfiles.$inferInsert;
 export type ClientProfileWithUser = ClientProfile & {
+  user: typeof users.$inferSelect;
+};
+
+// ######################### Favorites Types #########################
+export type Favorite = typeof favorites.$inferSelect;
+export type NewFavorite = typeof favorites.$inferInsert;
+export type FavoriteWithUser = Favorite & {
   user: typeof users.$inferSelect;
 };

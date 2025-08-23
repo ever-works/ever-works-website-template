@@ -156,6 +156,11 @@ export class StripeProvider implements PaymentProviderInterface {
 		const customerId = user.user_metadata?.customerId;
 		return typeof customerId === 'string' && customerId.length > 0 ? customerId : null;
 	}
+
+	async createCustomCheckout(): Promise<string> {
+		return '';
+	}
+
 	private async retrieveCustomerIdFromDatabase(userId: string): Promise<string | null> {
 		try {
 			const existingPaymentAccount = await paymentAccountClient.getPaymentAccount(userId, 'stripe');

@@ -115,6 +115,13 @@ export interface CardBrandIcon {
   height: number;
 }
 
+export interface CheckoutParams {
+  variantId?: number;
+  email?: string;
+  customPrice?: number;
+  metadata?: Record<string, any>;
+}
+
 export interface UIComponents {
   // The main payment form component
   PaymentForm: React.ComponentType<PaymentFormProps>;
@@ -164,6 +171,9 @@ export interface PaymentProviderInterface {
 
   // Method to get the front-end configurations
   getClientConfig(): ClientConfig;
+
+  // Method to create a custom checkout
+  createCustomCheckout(params: CheckoutParams): Promise<string>;
 
   // Method to get the UI components
   getUIComponents(): UIComponents;
@@ -225,6 +235,7 @@ export interface ClientConfig {
   options?: Record<string, any>;
 }
 
+
 // Webhook event type
 export enum WebhookEventType {
   PAYMENT_SUCCEEDED = "payment_succeeded",
@@ -244,7 +255,16 @@ export enum WebhookEventType {
   CHARGE_FAILED = "charge_failed",
   INVOICE_PAID = "invoice_paid",
   INVOICE_PAYMENT_FAILED = "invoice_payment_failed",
-  REFUND_CREATED = "refund_created"
+  REFUND_CREATED = "refund_created",
+
+  BILLING_PORTAL_SESSION_CREATED = "billing_portal_session_created",
+  BILLING_PORTAL_SESSION_EXPIRED = "billing_portal_session_expired",
+  BILLING_PORTAL_SESSION_UPDATED = "billing_portal_session_updated",
+  BILLING_PORTAL_SESSION_DELETED = "billing_portal_session_deleted",
+  BILLING_PORTAL_SESSION_VIEWED = "billing_portal_session_viewed",
+  BILLING_PORTAL_SESSION_VIEWED_EXPIRED = "billing_portal_session_viewed_expired",
+  BILLING_PORTAL_SESSION_VIEWED_UPDATED = "billing_portal_session_viewed_updated",
+  BILLING_PORTAL_SESSION_VIEWED_DELETED = "billing_portal_session_viewed_deleted",
 }
 
 

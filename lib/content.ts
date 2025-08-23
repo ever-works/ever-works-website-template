@@ -84,6 +84,9 @@ export interface PricingConfig {
 	isFeatured?: boolean;
 	envKey?: string;
 	disabled?: boolean;
+	
+	lemonVariantId?: string;
+	lemonCheckoutUrl?: string;
 }
 
 export interface PricingPlans {
