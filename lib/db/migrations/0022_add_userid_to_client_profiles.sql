@@ -20,7 +20,7 @@ ON CONFLICT (email) DO NOTHING;
 -- Update client_profiles to link to the created user records
 -- For simplicity, we'll create a one-to-one mapping
 -- Link client_profiles to their newly created user records (set-based, no row-by-row loop)
-UPDATE "client_profiles" cp
+UPDATE "public"."client_profiles" cp
 SET "userId" = u.id
 FROM "public"."users" u
 WHERE cp."userId" IS NULL

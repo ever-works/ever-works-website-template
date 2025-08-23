@@ -218,6 +218,20 @@
       "when": 1755756867317,
       "tag": "0029_create_client_profile_user_id_index_concurrently",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1755756867318,
+      "tag": "0030_add_users_email_unique_index",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1755756867319,
+      "tag": "0031_enforce_client_profiles_userid_unique",
+      "breakpoints": true
     }
   ]
 }
