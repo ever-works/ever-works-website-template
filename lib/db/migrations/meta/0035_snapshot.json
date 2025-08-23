@@ -1,6 +1,6 @@
 {
-  "id": "b82d4cad-a773-4774-8518-dc056ab1874c",
-  "prevId": "25000000-0000-0000-0000-000000000025",
+  "id": "204afc8c-a648-4277-8fb9-28d9c266f5bc",
+  "prevId": "27000000-0000-0000-0000-000000000027",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -482,8 +482,8 @@
         }
       },
       "indexes": {
-        "client_profile_user_id_idx": {
-          "name": "client_profile_user_id_idx",
+        "client_profile_user_id_unique_idx": {
+          "name": "client_profile_user_id_unique_idx",
           "columns": [
             {
               "expression": "userId",
@@ -492,7 +492,7 @@
               "nulls": "last"
             }
           ],
-          "isUnique": false,
+          "isUnique": true,
           "concurrently": false,
           "method": "btree",
           "with": {}
@@ -1355,8 +1355,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "user_id": {
-          "name": "user_id",
+        "userId": {
+          "name": "userId",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -1379,7 +1379,8 @@
           "name": "start_date",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
         "end_date": {
           "name": "end_date",
@@ -1529,7 +1530,7 @@
           "name": "user_subscription_idx",
           "columns": [
             {
-              "expression": "user_id",
+              "expression": "userId",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1608,12 +1609,12 @@
         }
       },
       "foreignKeys": {
-        "subscriptions_user_id_users_id_fk": {
-          "name": "subscriptions_user_id_users_id_fk",
+        "subscriptions_userId_users_id_fk": {
+          "name": "subscriptions_userId_users_id_fk",
           "tableFrom": "subscriptions",
           "tableTo": "users",
           "columnsFrom": [
-            "user_id"
+            "userId"
           ],
           "columnsTo": [
             "id"
