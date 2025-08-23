@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { cn } from "@/lib/utils";
-import { ExtendedUser } from "@/types/profile-button.types";
+import { ExtendedUser, RoleLabel, PresenceStatus } from "@/types/profile-button.types";
 import { MENU_STYLES } from "@/constants/profile-button.constants";
 import ProfileHeader from "./profile-header";
 import MenuItems from "./menu-items";
@@ -11,8 +11,8 @@ interface ProfileMenuProps {
   menuRef: React.RefObject<HTMLDivElement | null>;
   user: ExtendedUser | null;
   profilePath: string;
-  displayRole: string;
-  onlineStatus: string;
+  displayRole: RoleLabel;
+  onlineStatus: PresenceStatus;
   onItemClick: () => void;
   onLogout: () => void | Promise<void>;
   logoutText: string;
@@ -51,13 +51,12 @@ function ProfileMenu({
     >
       <ProfileHeader
         user={user}
-        isAdmin={isAdmin}
         displayRole={displayRole}
         onlineStatus={onlineStatus}
       />
 
       <MenuItems
-        isAdmin={isAdmin}
+        user={user}
         profilePath={profilePath}
         onItemClick={onItemClick}
       />

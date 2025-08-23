@@ -1,5 +1,5 @@
 import { NAME_LIMITS } from "@/constants/profile-button.constants";
-import type { ThemeColors } from "@/types/profile-button.types";
+import type { ThemeColors, RoleLabel, PresenceStatus } from "@/types/profile-button.types";
 
 /**
  * Formats display name intelligently based on length and word count
@@ -44,15 +44,15 @@ export const getInitials = (name: string): string => {
 /**
  * Gets display role based on admin status
  */
-export const getDisplayRole = (isAdmin: boolean): string => {
-  return isAdmin ? "Administrator" : "User";
+export const getDisplayRole = (isAdmin: boolean): RoleLabel => {
+  return isAdmin ? "Admin" : "User";
 };
 
 /**
  * Gets online status (currently hardcoded, could be dynamic in future)
  */
-export const getOnlineStatus = (): string => {
-  return "Online";
+export const getOnlineStatus = (): PresenceStatus => {
+  return "online";
 };
 
 /**

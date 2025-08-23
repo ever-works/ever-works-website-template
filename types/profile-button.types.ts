@@ -2,12 +2,14 @@ export interface ExtendedUser {
   name?: string | null;
   email?: string | null;
   image?: string | null;
-  username?: string;
   clientProfile?: {
     username?: string;
   };
   isAdmin?: boolean;
 }
+
+// Derived alias for backward compatibility - use clientProfile.username as canonical source
+export type Username = string;
 
 export interface ThemeColors {
   background: string;
@@ -31,20 +33,19 @@ export interface ProfileMenuProps {
   profilePath: string;
 }
 
+export type PresenceStatus = 'online' | 'offline' | 'away' | 'busy';
+export type RoleLabel = 'Admin' | 'User' | 'Client' | string; // extend as needed
+
 export interface ProfileHeaderProps {
   user: ExtendedUser;
-  isAdmin: boolean;
-  displayRole: string;
-  onlineStatus: string;
+  displayRole: RoleLabel;
+  onlineStatus: PresenceStatus;
 }
 
 export interface MenuItemsProps {
-  isAdmin: boolean;
   profilePath: string;
   onItemClick: () => void;
 }
-
-
 
 export interface LogoutOverlayProps {
   isVisible: boolean;

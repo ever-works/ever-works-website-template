@@ -1,14 +1,14 @@
 import { useMemo } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { getProfilePath, getDisplayRole, getOnlineStatus } from "@/utils/profile-button.utils";
-import type { ExtendedUser } from "@/types/profile-button.types";
+import type { ExtendedUser, RoleLabel, PresenceStatus } from "@/types/profile-button.types";
 
 export type UseUserUtilsResult = {
   user: ExtendedUser | null;
   profilePath: string;
   isAdmin: boolean;
-  displayRole: string;
-  onlineStatus: string;
+  displayRole: RoleLabel;
+  onlineStatus: PresenceStatus;
   isLoading: boolean;
 };
 
@@ -38,7 +38,7 @@ export function useUserUtils(): UseUserUtilsResult {
     profilePath: userData?.profilePath ?? getProfilePath(null),
     isAdmin: userData?.isAdmin ?? false,
     displayRole: userData?.displayRole ?? "User",
-    onlineStatus: userData?.onlineStatus ?? "Online",
+    onlineStatus: userData?.onlineStatus ?? "online",
     isLoading,
   }), [userData, isLoading]);
 

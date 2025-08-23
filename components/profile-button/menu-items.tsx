@@ -14,14 +14,17 @@ import {
   Activity, 
   MessageSquare 
 } from "lucide-react";
+import type { ExtendedUser } from "@/types/profile-button.types";
 
 interface MenuItemsProps {
-  isAdmin: boolean;
+  user: ExtendedUser;
   profilePath: string;
   onItemClick: () => void;
 }
 
-function MenuItems({ isAdmin, profilePath, onItemClick }: MenuItemsProps) {
+function MenuItems({ user, profilePath, onItemClick }: MenuItemsProps) {
+  // Derive isAdmin from user prop
+  const isAdmin = user.isAdmin === true;
   const t = useTranslations();
 
   // Memoize translations to prevent unnecessary re-renders

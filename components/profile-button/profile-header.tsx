@@ -5,7 +5,9 @@ import type { ProfileHeaderProps } from "@/types/profile-button.types";
 import { SIZES } from "@/constants/profile-button.constants";
 import { formatDisplayName, getInitials } from "@/utils/profile-button.utils";
 
-function ProfileHeader({ user, isAdmin, displayRole, onlineStatus }: ProfileHeaderProps) {
+function ProfileHeader({ user, displayRole, onlineStatus }: ProfileHeaderProps) {
+  // Derive isAdmin from user prop
+  const isAdmin = user.isAdmin === true;
   // Memoize expensive computations
   const displayName = useMemo(() => formatDisplayName(user?.name || "User"), [user?.name]);
   const userInitials = useMemo(() => getInitials(user?.name || "User"), [user?.name]);
