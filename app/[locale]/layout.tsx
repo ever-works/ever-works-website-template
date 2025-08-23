@@ -14,7 +14,7 @@ import { Locale } from '@/lib/constants';
 import { LoginModalProvider } from '@/components/auth/login-modal-provider';
 import { Suspense } from 'react';
 import Script from 'next/script';
-import { ConditionalLayout } from '@/components/layout/Conditional-layout';
+import { ConditionalLayout } from '@/components/layout/conditional-layout';
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
