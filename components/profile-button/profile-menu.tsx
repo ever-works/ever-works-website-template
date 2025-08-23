@@ -33,7 +33,6 @@ function ProfileMenu({
 }: ProfileMenuProps) {
   if (!isOpen || !user) return null;
 
-  const isAdmin = user.isAdmin === true;
 
   return (
     <div
