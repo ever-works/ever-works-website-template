@@ -271,10 +271,12 @@ export default function ClientsPage() {
 
   const clearFilters = () => {
     setSearchTerm('');
-    setStatusFilter('active');
+    setStatusFilter('');
     setPlanFilter('');
     setAccountTypeFilter('');
     setCurrentPage(1);
+    // Optional: short-circuit debounce for immediate fetch
+    // setDebouncedSearchTerm('');
   };
 
   const handleSearch = (value: string) => {
