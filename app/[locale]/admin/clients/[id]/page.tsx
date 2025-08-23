@@ -52,27 +52,20 @@ export default async function ClientDetailPage({
       <div className="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 border-b border-gray-100 dark:border-gray-800 shadow-lg">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex items-center justify-between mb-6">
-            <Link href={`/${locale}/admin/clients`}>
-              <Button
-                variant="light"
-                size="sm"
-                startContent={<ArrowLeft aria-hidden="true" className="w-4 h-4" />}
-                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-              >
-                Back to Clients
-              </Button>
+            <Link
+              href={`/${encodeURIComponent(locale)}/admin/clients`}
+              className="inline-flex items-center px-2 py-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 rounded transition-colors"
+            >
+              <ArrowLeft aria-hidden="true" className="w-4 h-4 mr-1" />
+              Back to Clients
             </Link>
             <div className="flex items-center space-x-3">
-              <Link href={`/${encodeURIComponent(locale)}/admin/clients?edit=${encodeURIComponent(profile.id)}`}>
-                <Button
-                  color="primary"
-                  variant="flat"
-                  size="sm"
-                  startContent={<Edit aria-hidden="true" className="w-4 h-4" />}
-                  className="bg-gradient-to-r from-theme-primary to-theme-accent text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  Edit Client
-                </Button>
+              <Link
+                href={`/${encodeURIComponent(locale)}/admin/clients?edit=${encodeURIComponent(profile.id)}`}
+                className="inline-flex items-center px-2 py-1 bg-gradient-to-r from-theme-primary to-theme-accent text-white shadow-lg hover:shadow-xl rounded transition-all duration-300"
+              >
+                <Edit aria-hidden="true" className="w-4 h-4 mr-1" />
+                Edit Client
               </Link>
             </div>
           </div>
@@ -120,15 +113,15 @@ export default async function ClientDetailPage({
                   )}
                   <div className="flex items-center space-x-6 text-sm text-gray-500 dark:text-gray-400">
                     <div className="flex items-center space-x-2">
-                      <Calendar className="w-4 h-4" />
+                      <Calendar aria-hidden="true" className="w-4 h-4" />
                       <span>Joined {toDateTime(profile.createdAt, locale)}</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Star className="w-4 h-4" />
+                      <Star aria-hidden="true" className="w-4 h-4" />
                       <span>{profile.totalSubmissions || 0} submissions</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Clock className="w-4 h-4" />
+                      <Clock aria-hidden="true" className="w-4 h-4" />
                       <span>Last login {lastLogin ? toDateTime(lastLogin.timestamp, locale) : 'Never'}</span>
                     </div>
                   </div>
@@ -368,7 +361,7 @@ function ModernField({
             className="text-blue-600 dark:text-blue-400 hover:underline flex items-center space-x-1"
           >
             <span>{value}</span>
-            <ExternalLink className="w-3 h-3" />
+            <ExternalLink aria-hidden="true" className="w-3 h-3" />
           </a>
         ) : (
           value || "—"
