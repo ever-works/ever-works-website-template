@@ -683,8 +683,8 @@ export default function ClientsPage() {
                         aria-disabled={navigatingClientId === client.id}
                         aria-busy={navigatingClientId === client.id}
                         className={`text-left flex items-center space-x-3 rounded-lg p-2 -m-2 transition-colors flex-1 min-w-0 ${navigatingClientId === client.id
-                            ? 'cursor-wait opacity-60'
-                            : 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700'
+                          ? 'cursor-wait opacity-60'
+                          : 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700'
                           }`}
                         onClick={() => navigatingClientId !== client.id && viewClientDetails(client.id)}
                         onKeyDown={(e) => {
