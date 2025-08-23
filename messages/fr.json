@@ -1,21 +1,24 @@
 {
   "auth": {
-    "ALREADY_HAVE_AN_ACCOUNT": "Vous avez déjà un compte? \nSe connecter",
-    "CREATE_ACCOUNT": "Créer un compte",
-    "EMAIL_ADDRESS": "Adresse e-mail",
-    "ENTER_YOUR_CREDENTIALS_HEADER": "Entrez vos identifiants pour accéder à votre compte",
-    "ENTER_YOUR_EMAIL": "Entrez votre e-mail",
-    "ENTER_YOUR_FULL_NAME": "Entrez votre nom complet",
-    "ENTER_YOUR_PASSWORD": "Entrez votre mot de passe",
-    "FILL_IN_OUR_DIRECTORY": "Remplissez le formulaire pour rejoindre notre annuaire",
-    "FORGOT_PASSWORD": "Mot de passe oublié ?",
     "FULL_NAME": "Nom complet",
-    "LOGIN": "Connexion",
-    "NEED_AN_ACCOUNT": "Besoin d'un compte ? Inscrivez-vous",
+    "EMAIL_ADDRESS": "Adresse e-mail",
     "PASSWORD": "Mot de passe",
-    "REMEMBER_ME": "Se souvenir de moi",
     "SIGN_IN": "Se connecter",
-    "SIGN_UP": "S'inscrire"
+    "LOGIN": "Connexion",
+    "SIGN_UP": "S'inscrire",
+    "CREATE_ACCOUNT": "Créer un compte",
+    "FORGOT_PASSWORD": "Mot de passe oublié ?",
+    "REMEMBER_ME": "Se souvenir de moi",
+    "ENTER_YOUR_FULL_NAME": "Entrez votre nom complet",
+    "ENTER_YOUR_EMAIL": "Entrez votre e-mail",
+    "ENTER_YOUR_PASSWORD": "Entrez votre mot de passe",
+    "ENTER_YOUR_CREDENTIALS_HEADER": "Entrez vos identifiants pour accéder à votre compte",
+    "FILL_IN_OUR_DIRECTORY": "Remplissez le formulaire pour rejoindre notre répertoire",
+    "NEED_AN_ACCOUNT": "Besoin d'un compte ? Inscrivez-vous",
+    "ALREADY_HAVE_AN_ACCOUNT": "Vous avez déjà un compte ? Connectez-vous"
+  },
+  "header": {
+    "OPEN_USER_MENU": "Ouvrir le menu utilisateur"
   },
   "common": {
     "ABOUT": "À propos",

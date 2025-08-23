@@ -95,7 +95,8 @@ const ProfileButtonTrigger = memo(({
   isAdmin,
   onlineStatus,
   onMouseEnter,
-  onFocus
+  onFocus,
+  openUserMenuLabel,
 }: {
   buttonRef: RefObject<HTMLButtonElement | null>;
   isProfileMenuOpen: boolean;
@@ -105,19 +106,21 @@ const ProfileButtonTrigger = memo(({
   onlineStatus?: "Online" | "Away" | "Busy" | "Offline" | string;
   onMouseEnter: () => void;
   onFocus: () => void;
+  openUserMenuLabel: string;
 }) => (
   <button
     ref={buttonRef}
     type="button"
     className={cn(MENU_STYLES.BUTTON.base)}
-    id="user-menu"
+    id="user-menu-button"
     aria-expanded={isProfileMenuOpen}
-    aria-haspopup="true"
+    aria-haspopup="menu"
+    aria-controls="profile-menu"
     onClick={toggleMenu}
     onMouseEnter={onMouseEnter}
     onFocus={onFocus}
   >
-    <span className="sr-only">Open user menu</span>
+    <span className="sr-only">{openUserMenuLabel}</span>
     <ProfileAvatar user={user} isAdmin={isAdmin} onlineStatus={onlineStatus} />
   </button>
 ));
@@ -154,6 +157,7 @@ function ProfileButton() {
           onlineStatus={onlineStatus}
           onMouseEnter={loadProfileMenu}
           onFocus={loadProfileMenu}
+          openUserMenuLabel={t("header.OPEN_USER_MENU")}
         />
       </div>
 

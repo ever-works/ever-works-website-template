@@ -38,6 +38,7 @@ function ProfileMenu({
   return (
     <div
       ref={menuRef}
+      id="profile-menu"
       className={cn(
         MENU_STYLES.CONTAINER.base,
         MENU_STYLES.CONTAINER.background,
@@ -46,7 +47,7 @@ function ProfileMenu({
       )}
       role="menu"
       aria-orientation="vertical"
-      aria-labelledby="user-menu"
+      aria-labelledby="user-menu-button"
     >
       <ProfileHeader
         user={user}
