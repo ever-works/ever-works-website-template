@@ -41,4 +41,5 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 -- ALTER TABLE "client_profiles" VALIDATE CONSTRAINT "client_profiles_userId_users_id_fk";
 
 -- Create index if not exists
-CREATE INDEX IF NOT EXISTS "client_profile_user_id_idx" ON "client_profiles" ("userId");
+-- Note: This index is now created concurrently in migration 0029 to avoid blocking writes
+-- CREATE INDEX IF NOT EXISTS "client_profile_user_id_idx" ON "client_profiles" ("userId");
