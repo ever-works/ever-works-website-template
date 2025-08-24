@@ -143,109 +143,17 @@
       "breakpoints": true
     },
     {
-      "idx": 20,
-      "version": "7",
-      "when": 1755246223000,
-      "tag": "0020_create_payment_tables",
-      "breakpoints": true
-    },
-    {
-      "idx": 21,
-      "version": "7",
-      "when": 1755246224000,
-      "tag": "0021_cleanup_is_admin_column",
-      "breakpoints": true
-    },
-    {
-      "idx": 22,
-      "version": "7",
-      "when": 1755246225000,
-      "tag": "0022_add_userid_to_client_profiles",
-      "breakpoints": true
-    },
-    {
-      "idx": 23,
+      "idx": 1,
       "version": "7",
       "when": 1755317817331,
-      "tag": "0023_dusty_demogoblin",
+      "tag": "0001_dusty_demogoblin",
       "breakpoints": true
     },
     {
-      "idx": 24,
+      "idx": 2,
       "version": "7",
-      "when": 1755317817332,
-      "tag": "0024_fix_accounts_userid_fk",
-      "breakpoints": true
-    },
-    {
-      "idx": 25,
-      "version": "7",
-      "when": 1755317817333,
-      "tag": "0025_enforce_accounts_composite_pk",
-      "breakpoints": true
-    },
-    {
-      "idx": 26,
-      "version": "7",
-      "when": 1755756867313,
-      "tag": "0026_volatile_hobgoblin",
-      "breakpoints": true
-    },
-    {
-      "idx": 27,
-      "version": "7",
-      "when": 1755756867314,
-      "tag": "0027_forward_migration_template",
-      "breakpoints": true
-    },
-    {
-      "idx": 28,
-      "version": "7",
-      "when": 1755756867315,
-      "tag": "0028_standardize_naming_convention",
-      "breakpoints": true
-    },
-
-    {
-      "idx": 30,
-      "version": "7",
-      "when": 1755756867317,
-      "tag": "0029_create_client_profile_user_id_index_concurrently",
-      "breakpoints": true
-    },
-    {
-      "idx": 31,
-      "version": "7",
-      "when": 1755756867318,
-      "tag": "0030_add_users_email_unique_index",
-      "breakpoints": true
-    },
-    {
-      "idx": 32,
-      "version": "7",
-      "when": 1755756867319,
-      "tag": "0031_enforce_client_profiles_userid_unique",
-      "breakpoints": true
-    },
-    {
-      "idx": 33,
-      "version": "7",
-      "when": 1755756867320,
-      "tag": "0032_add_accounts_email_unique_index",
-      "breakpoints": true
-    },
-    {
-      "idx": 34,
-      "version": "7",
-      "when": 1755756867321,
-      "tag": "0033_adjust_subscriptions_and_accounts",
-      "breakpoints": true
-    },
-    {
-      "idx": 35,
-      "version": "7",
-      "when": 1755939450597,
-      "tag": "0035_skinny_wither",
+      "when": 1755683550313,
+      "tag": "0002_giant_absorbing_man",
       "breakpoints": true
     }
   ]

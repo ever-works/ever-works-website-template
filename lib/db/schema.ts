@@ -52,7 +52,7 @@ export const accounts = pgTable(
   {
     userId: text("userId")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }), // References users.id
+      .references(() => clientProfiles.id, { onDelete: "cascade" }), // References client_profiles.id
     type: text("type").$type<AdapterAccountType>().notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
@@ -87,9 +87,6 @@ export const clientProfiles = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
     email: text("email").notNull(),
     name: text("name").notNull(),
     displayName: text("display_name"),
@@ -121,7 +118,6 @@ export const clientProfiles = pgTable(
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
   (clientProfile) => [
-    uniqueIndex("client_profile_user_id_unique_idx").on(clientProfile.userId),
     index("client_profile_email_idx").on(clientProfile.email),
     index("client_profile_status_idx").on(clientProfile.status),
     index("client_profile_plan_idx").on(clientProfile.plan),
@@ -185,7 +181,7 @@ export const activityLogs = pgTable("activityLogs", {
   clientId: text("clientId").references(() => clientProfiles.id, { onDelete: "cascade" }), // For client activities
   action: text("action").notNull(),
   timestamp: timestamp("timestamp").notNull().defaultNow(),
-  ipAddress: varchar("ip_address", { length: 45 }), // Map to actual DB column name
+  ipAddress: varchar("ip_address", { length: 45 }),
 }, (table) => [
   index("activity_logs_user_idx").on(table.userId),
   index("activity_logs_client_idx").on(table.clientId),
@@ -286,7 +282,7 @@ export const subscriptions = pgTable(
 			.references(() => users.id, { onDelete: 'cascade' }),
 		planId: text('plan_id').notNull().default(PaymentPlan.FREE),
 		status: text('status').notNull().default(SubscriptionStatus.PENDING),
-		startDate: timestamp('start_date', { mode: 'date' }).notNull().defaultNow(),
+		startDate: timestamp('start_date', { mode: 'date' }),
 		endDate: timestamp('end_date', { mode: 'date' }),
 		paymentProvider: text('payment_provider').default(PaymentProvider.STRIPE).notNull(),
 		subscriptionId: text('subscription_id'),
@@ -436,8 +432,39 @@ export enum ActivityType {
 }
 
 // ######################### Client Profile Types #########################
+// ######################### Favorites Schema #########################
+export const favorites = pgTable("favorites", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  itemSlug: text("item_slug").notNull(),
+  itemName: text("item_name").notNull(),
+  itemIconUrl: text("item_icon_url"),
+  itemCategory: text("item_category"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  userItemIndex: uniqueIndex("user_item_favorite_unique_idx").on(
+    table.userId,
+    table.itemSlug
+  ),
+  userIdIndex: index("favorites_user_id_idx").on(table.userId),
+  itemSlugIndex: index("favorites_item_slug_idx").on(table.itemSlug),
+  createdAtIndex: index("favorites_created_at_idx").on(table.createdAt),
+}));
+
 export type ClientProfile = typeof clientProfiles.$inferSelect;
 export type NewClientProfile = typeof clientProfiles.$inferInsert;
 export type ClientProfileWithUser = ClientProfile & {
+  user: typeof users.$inferSelect;
+};
+
+// ######################### Favorites Types #########################
+export type Favorite = typeof favorites.$inferSelect;
+export type NewFavorite = typeof favorites.$inferInsert;
+export type FavoriteWithUser = Favorite & {
   user: typeof users.$inferSelect;
 };
