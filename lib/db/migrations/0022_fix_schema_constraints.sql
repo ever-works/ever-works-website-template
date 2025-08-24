@@ -10,9 +10,21 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- 2. Fix client_profiles.userId unique constraint
 -- Drop any existing non-unique index first
-DO $$ BEGIN
-    DROP INDEX IF EXISTS "client_profile_user_id_idx";
-EXCEPTION WHEN undefined_object THEN NULL; END $$;
+DROP INDEX IF EXISTS "client_profile_user_id_idx";
+--> statement-breakpoint
+
+-- Pre-check for duplicates (will abort if any found)
+DO $$ 
+DECLARE _dup_count bigint;
+BEGIN
+  SELECT COUNT(*) INTO _dup_count
+  FROM (
+    SELECT "userId" FROM "client_profiles" GROUP BY "userId" HAVING COUNT(*) > 1
+  ) d;
+  IF _dup_count > 0 THEN
+    RAISE EXCEPTION 'Cannot create unique index: found % duplicate userId(s) in client_profiles', _dup_count;
+  END IF;
+END $$;
 --> statement-breakpoint
 
 -- Create the proper unique index
