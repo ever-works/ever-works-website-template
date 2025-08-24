@@ -51,7 +51,7 @@ interface CheckoutSessionApiResponse {
   data: CheckoutSessionResponse;
   status: number;
   message: string;
-  error?: string;
+  isError?: string;
 }
 
 class CheckoutSessionError extends Error {

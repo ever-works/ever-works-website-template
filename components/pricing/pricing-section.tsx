@@ -47,7 +47,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 		standardPlanFeatures,
 		premiumPlanFeatures
 	} = usePricingSection({
-		onSelectPlan: onSelectPlan
+		onSelectPlan: onSelectPlan,
 	});
 
 	return (

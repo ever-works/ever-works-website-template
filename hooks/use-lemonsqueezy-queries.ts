@@ -116,6 +116,7 @@ export function useLemonSqueezyEmbeddedCheckout() {
     clearCheckout,
     isLoading: createCheckoutMutation.isPending,
     error: createCheckoutMutation.error,
+    isSuccess: createCheckoutMutation.isSuccess,
     isError: createCheckoutMutation.isError,
   };
 }
@@ -135,7 +136,9 @@ export function useLemonSqueezyCheckoutWithRedirect() {
       if (result.checkoutUrl) {
         const success = openCheckoutInNewTab({
           url: result.checkoutUrl,
-          fallbackToRedirect: true
+          windowFeatures: 'noopener,noreferrer',
+          fallbackToRedirect: true,
+          windowName: '_self'
         });
         
         if (!success) {
@@ -158,5 +161,6 @@ export function useLemonSqueezyCheckoutWithRedirect() {
     isLoading: createCheckoutMutation.isPending,
     error: createCheckoutMutation.error,
     isError: createCheckoutMutation.isError,
+    isSuccess: createCheckoutMutation.isSuccess,
   };
 }
