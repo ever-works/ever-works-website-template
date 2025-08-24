@@ -144,7 +144,10 @@ export function useLogoutOverlay() {
         }
         if (titleElement) titleElement.style.color = colors.titleColor;
         if (textElement) textElement.style.color = colors.textColor;
-        if (spinnerElement) spinnerElement.style.border = `3px solid ${colors.spinnerBorder}`;
+        if (spinnerElement) {
+          spinnerElement.style.border = `3px solid ${colors.spinnerBorder}`;
+          (spinnerElement.style as CSSStyleDeclaration).borderTopColor = LOGOUT_OVERLAY_CONFIG.COLORS.SPINNER_ACCENT;
+        }
       }
     };
 
