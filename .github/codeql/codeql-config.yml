@@ -32,4 +32,4 @@ queries:
   - uses: security-and-quality
 
 # Disable problematic queries that might conflict
-disable-default-queries: false 
+disable-default-queries: true 
