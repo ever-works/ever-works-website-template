@@ -143,17 +143,10 @@
       "breakpoints": true
     },
     {
-      "idx": 1,
+      "idx": 20,
       "version": "7",
-      "when": 1755317817331,
-      "tag": "0001_dusty_demogoblin",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1755683550313,
-      "tag": "0002_giant_absorbing_man",
+      "when": 1756006339929,
+      "tag": "0020_funny_korath",
       "breakpoints": true
     }
   ]

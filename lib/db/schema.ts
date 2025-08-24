@@ -52,7 +52,7 @@ export const accounts = pgTable(
   {
     userId: text("userId")
       .notNull()
-      .references(() => clientProfiles.id, { onDelete: "cascade" }), // References client_profiles.id
+      .references(() => users.id, { onDelete: "cascade" }), // References users.id
     type: text("type").$type<AdapterAccountType>().notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
@@ -87,6 +87,9 @@ export const clientProfiles = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     email: text("email").notNull(),
     name: text("name").notNull(),
     displayName: text("display_name"),
@@ -118,6 +121,7 @@ export const clientProfiles = pgTable(
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
   (clientProfile) => [
+    uniqueIndex("client_profile_user_id_unique_idx").on(clientProfile.userId),
     index("client_profile_email_idx").on(clientProfile.email),
     index("client_profile_status_idx").on(clientProfile.status),
     index("client_profile_plan_idx").on(clientProfile.plan),
@@ -282,7 +286,7 @@ export const subscriptions = pgTable(
 			.references(() => users.id, { onDelete: 'cascade' }),
 		planId: text('plan_id').notNull().default(PaymentPlan.FREE),
 		status: text('status').notNull().default(SubscriptionStatus.PENDING),
-		startDate: timestamp('start_date', { mode: 'date' }),
+		startDate: timestamp('start_date', { mode: 'date' }).notNull().defaultNow(),
 		endDate: timestamp('end_date', { mode: 'date' }),
 		paymentProvider: text('payment_provider').default(PaymentProvider.STRIPE).notNull(),
 		subscriptionId: text('subscription_id'),
