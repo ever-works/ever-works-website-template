@@ -10,7 +10,7 @@ import { useLogoutOverlay } from "@/hooks/use-logout-overlay";
 import { useUserUtils } from "@/hooks/use-user-utils";
 import { SIZES, MENU_STYLES } from "@/constants/profile-button.constants";
 import { getInitials } from "@/utils/profile-button.utils";
-import { ExtendedUser } from "@/types/profile-button.types";
+import type { ExtendedUser, PresenceStatus } from "@/types/profile-button.types";
 
 // Lazy load the ProfileMenu component for better performance
 const loadProfileMenu = () => import("./profile-menu");
@@ -48,11 +48,11 @@ LoadingSkeleton.displayName = "LoadingSkeleton";
 const ProfileAvatar = memo(({
   user,
   isAdmin,
-  onlineStatus = "Online",
+  onlineStatus = "online",
 }: {
   user: ExtendedUser;
   isAdmin: boolean;
-  onlineStatus?: "Online" | "Away" | "Busy" | "Offline" | string;
+  onlineStatus?: PresenceStatus;
 }) => (
   <div className={MENU_STYLES.AVATAR.container}>
     <Avatar
@@ -66,10 +66,10 @@ const ProfileAvatar = memo(({
     <div
       className={cn(
         MENU_STYLES.AVATAR.onlineIndicator,
-        onlineStatus === "Online"   ? "bg-green-500"  :
-        onlineStatus === "Away"     ? "bg-yellow-500" :
-        onlineStatus === "Busy"     ? "bg-red-500"    :
-        onlineStatus === "Offline"  ? "bg-gray-400"   : "bg-green-500"
+        onlineStatus === "online"   ? "bg-green-500"  :
+        onlineStatus === "away"     ? "bg-yellow-500" :
+        onlineStatus === "busy"     ? "bg-red-500"    :
+        onlineStatus === "offline"  ? "bg-gray-400"   : "bg-green-500"
       )}
       title={onlineStatus}
     />
@@ -103,7 +103,7 @@ const ProfileButtonTrigger = memo(({
   toggleMenu: () => void;
   user: ExtendedUser;
   isAdmin: boolean;
-  onlineStatus?: "Online" | "Away" | "Busy" | "Offline" | string;
+  onlineStatus?: PresenceStatus;
   onMouseEnter: () => void;
   onFocus: () => void;
   openUserMenuLabel: string;
