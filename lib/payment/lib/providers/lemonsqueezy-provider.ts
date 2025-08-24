@@ -1,404 +1,570 @@
 import { User } from '@supabase/auth-js';
-import axios from 'axios';
 import * as crypto from 'crypto';
 import {
-  PaymentProviderInterface,
-  PaymentIntent,
-  PaymentVerificationResult,
-  WebhookResult,
-  CreatePaymentParams,
-  ClientConfig,
-  PaymentProviderConfig,
-  CreateCustomerParams,
-  CustomerResult,
-  CreateSubscriptionParams,
-  UpdateSubscriptionParams,
-  SubscriptionInfo,
-  SetupIntent,
-  UIComponents,
-  CheckoutParams,
+	PaymentProviderInterface,
+	PaymentIntent,
+	PaymentVerificationResult,
+	WebhookResult,
+	CreatePaymentParams,
+	ClientConfig,
+	PaymentProviderConfig,
+	CreateCustomerParams,
+	CustomerResult,
+	UpdateSubscriptionParams,
+	SubscriptionInfo,
+	SetupIntent,
+	UIComponents,
+	CheckoutParams,
+	SubscriptionStatus
 } from '../../types/payment-types';
-import { createCheckout } from '@lemonsqueezy/lemonsqueezy.js';
+import {
+	createCheckout,
+	createCustomer,
+	getOrder,
+	cancelSubscription,
+	updateSubscription,
+	lemonSqueezySetup
+} from '@lemonsqueezy/lemonsqueezy.js';
+
 import { env } from '@/lib/config/env';
+import { paymentAccountClient } from '../client/payment-account-client';
 
 export interface LemonSqueezyConfig extends PaymentProviderConfig {
-  apiKey: string;
-  webhookSecret: string;
-  options?: {
-    storeId?: string;
-    testMode?: boolean;
-  };
+	apiKey: string;
+	webhookSecret: string;
+	options?: {
+		storeId?: string;
+		testMode?: boolean;
+	};
 }
 
 export class LemonSqueezyProvider implements PaymentProviderInterface {
-  private apiKey: string;
-  private webhookSecret: string;
-  private storeId?: string;
-  private testMode: boolean;
-  private baseURL: string;
+	private apiKey: string;
+	private webhookSecret: string;
+	private storeId?: string;
+	private testMode: boolean;
 
-  constructor(config: LemonSqueezyConfig) {
-    this.apiKey = config.apiKey;
-    this.webhookSecret = config.webhookSecret;
-    this.storeId = config.options?.storeId;
-    this.testMode = config.options?.testMode || false;
-    this.baseURL = 'https://api.lemonsqueezy.com/v1';
-  }
+	constructor(config: LemonSqueezyConfig) {
+		this.apiKey = config.apiKey;
+		this.webhookSecret = config.webhookSecret;
+		this.storeId = config.options?.storeId;
+		this.testMode = config.options?.testMode || false;
+		console.log('initialisation lemonsqueezy===>', this.apiKey, this.webhookSecret, this.storeId, this.testMode);
+		lemonSqueezySetup({ apiKey: this.apiKey });
+	}
 
-  private getHeaders() {
-    return {
-      'Authorization': `Bearer ${this.apiKey}`,
-      'Content-Type': 'application/vnd.api+json',
-      'Accept': 'application/vnd.api+json',
-    };
-  }
+	hasCustomerId(user: User | null): boolean {
+		return !!user?.user_metadata?.lemonsqueezy_customer_id;
+	}
 
-  hasCustomerId(user: User | null): boolean {
-    return !!user?.user_metadata?.lemonsqueezy_customer_id;
-  }
+	private isValidUser(user: User | null): user is User {
+		return user !== null && typeof user.id === 'string' && user.id.length > 0;
+	}
 
-  async getCustomerId(user: User | null): Promise<string | null> {
-    if (!user) return null;
-    return user.user_metadata?.lemonsqueezy_customer_id || null;
-  }
+	private extractCustomerIdFromMetadata(user: User): string | null {
+		if (!this.hasCustomerId(user)) {
+			return null;
+		}
 
-  async createCustomer(params: CreateCustomerParams): Promise<CustomerResult> {
-    try {
-      const response = await axios.post(
-        `${this.baseURL}/customers`,
-        {
-          data: {
-            type: 'customers',
-            attributes: {
-              name: params.name,
-              email: params.email,
-            },
-            relationships: {
-              store: {
-                data: {
-                  type: 'stores',
-                  id: this.storeId,
-                },
-              },
-            },
-          },
-        },
-        { headers: this.getHeaders() }
-      );
+		const customerId = user.user_metadata?.customerId;
+		return typeof customerId === 'string' && customerId.length > 0 ? customerId : null;
+	}
 
-      return {
-        id: response.data.data.id,
-        email: params.email,
-        name: params.name,
-        metadata: params.metadata,
-      };
-    } catch (error) {
-      console.error('Error creating LemonSqueezy customer:', error);
-      throw new Error('Failed to create customer');
-    }
-  }
+	async getCustomerId(user: User | null): Promise<string | null> {
+		const userId = user?.id;
+		if (!this.isValidUser(user)) {
+			this.logger.warn('getCustomerId: Invalid or disconnected user', { userId: userId || 'undefined' });
+			return null;
+		}
+		const validatedUserId = user?.id;
+		this.logger.info('Starting Stripe customer retrieval/creation', { userId: validatedUserId });
 
-  async createPaymentIntent(params: CreatePaymentParams): Promise<PaymentIntent> {
-    try {
-      const response = await axios.post(
-        `${this.baseURL}/checkouts`,
-        {
-          data: {
-            type: 'checkouts',
-            attributes: {
-              custom_price: params.amount,
-              product_options: {
-                name: 'Payment',
-                description: 'Payment checkout',
-                media: [],
-              },
-              checkout_options: {
-                embed: false,
-                media: false,
-                logo: false,
-              },
-              checkout_data: {
-                custom: params.metadata,
-              },
-            },
-            relationships: {
-              store: {
-                data: {
-                  type: 'stores',
-                  id: this.storeId,
-                },
-              },
-            },
-          },
-        },
-        { headers: this.getHeaders() }
-      );
+		try {
+			const customerIdFromMetadata = this.extractCustomerIdFromMetadata(user);
+			if (customerIdFromMetadata) {
+				this.logger.info('Stripe customer retrieved from metadata', {
+					userId: validatedUserId,
+					customerId: customerIdFromMetadata
+				});
+				return customerIdFromMetadata;
+			}
+			const customerIdFromDatabase = await this.retrieveCustomerIdFromDatabase(validatedUserId);
+			if (customerIdFromDatabase) {
+				this.logger.info('Stripe customer retrieved from database', {
+					userId: validatedUserId,
+					customerId: customerIdFromDatabase
+				});
+				return customerIdFromDatabase;
+			}
+			this.logger.info('Creating new Stripe customer', { userId: validatedUserId });
+			const newCustomer = await this.createNewStripeCustomer(user);
+			await this.synchronizePaymentAccount(validatedUserId, newCustomer.id);
 
-      return {
-        id: response.data.data.id,
-        amount: params.amount,
-        currency: params.currency,
-        status: 'requires_payment_method',
-        clientSecret: response.data.data.attributes.url,
-        customerId: params.customerId,
-      };
-    } catch (error) {
-      console.error('Error creating LemonSqueezy checkout:', error);
-      throw new Error('Failed to create payment intent');
-    }
-  }
+			this.logger.info('New Stripe customer created successfully', {
+				userId: validatedUserId,
+				customerId: newCustomer.id
+			});
+			return newCustomer.id;
+		} catch (error) {
+			const errorMessage = this.formatErrorMessage(error);
+			this.logger.error('Failed to retrieve/create Stripe customer', {
+				userId: validatedUserId,
+				error: errorMessage
+			});
+			throw new Error(`Unable to retrieve/create Stripe customer: ${errorMessage}`);
+		}
+	}
 
-  async confirmPayment(paymentId: string): Promise<PaymentIntent> {
-    // LemonSqueezy doesn't have a separate confirm step, return the payment intent
-    return this.verifyPayment(paymentId).then(result => {
-      if (result.isValid) {
-        return {
-          id: paymentId,
-          amount: 0,
-          currency: 'usd',
-          status: result.status,
-          clientSecret: '',
-        };
-      }
-      throw new Error('Payment confirmation failed');
-    });
-  }
+	private async retrieveCustomerIdFromDatabase(userId: string): Promise<string | null> {
+		try {
+			const existingPaymentAccount = await paymentAccountClient.getPaymentAccount(userId, 'lemonsqueezy');
 
-  async verifyPayment(paymentId: string): Promise<PaymentVerificationResult> {
-    try {
-      const response = await axios.get(
-        `${this.baseURL}/orders/${paymentId}`,
-        { headers: this.getHeaders() }
-      );
+			if (existingPaymentAccount?.customerId) {
+				this.logger.debug('Existing PaymentAccount found in database', {
+					userId,
+					accountId: existingPaymentAccount.id,
+					customerId: existingPaymentAccount.customerId
+				});
+				return existingPaymentAccount.customerId;
+			}
 
-      const order = response.data.data;
-      return {
-        isValid: true,
-        paymentId: paymentId,
-        status: order.attributes.status,
-        details: order.attributes,
-      };
-    } catch (error) {
-      console.error('Error verifying LemonSqueezy payment:', error);
-      return {
-        isValid: false,
-        paymentId: paymentId,
-        status: 'failed',
-        details: error,
-      };
-    }
-  }
+			this.logger.debug('No existing PaymentAccount found in database', { userId });
+			return null;
+		} catch (error) {
+			if (error instanceof Error && error.message.includes('404')) {
+				this.logger.debug('Payment account not found (404) - this is expected for new users', { userId });
+				return null;
+			}
 
-  async createSetupIntent(): Promise<SetupIntent> {
-    // LemonSqueezy doesn't use setup intents like Stripe
-    // This is a placeholder implementation
-    throw new Error('Setup intents not supported by LemonSqueezy');
-  }
+			this.logger.warn('Error retrieving from database', {
+				userId,
+				error: this.formatErrorMessage(error)
+			});
+			return null;
+		}
+	}
 
-  async createCustomCheckout(params: CheckoutParams): Promise<string> {
-    try {
-      const { data, error } = await createCheckout(
-        Number(this.storeId),
-        params.variantId ?? Number(this.storeId), 
-        {
-          customPrice: params.customPrice, 
-          productOptions: {
-            redirectUrl: `${env.API_BASE_URL}/billing/success`,
-          },
-          checkoutOptions: { 
-            embed: true,
-            media: false,
-            logo: false,
-          },
-          checkoutData: { 
-            email: params.email,
-            custom: params.metadata ?? {},
-          },
-          preview: false,
-          testMode: process.env.NODE_ENV === 'development',
-        }
-      );
+	async createCustomer(params: CreateCustomerParams): Promise<CustomerResult> {
+		try {
+			const { data, error } = await createCustomer(Number(this.storeId), {
+				email: params.email,
+				name: params.name || '',
+				city: params.metadata?.city || '',
+				region: params.metadata?.region || '',
+				country: params.metadata?.country || ''
+			});
 
-      if (error) {
-        throw new Error(`Lemonsqueezy checkout error: ${error.message || 'Unknown error'}`);
-      }
+			if (error) {
+				throw new Error(`LemonSqueezy error: ${error.message}`);
+			}
+			return {
+				id: data?.data?.id,
+				email: data?.data?.attributes?.email,
+				name: data?.data?.attributes?.name,
+				metadata: {
+					city: data?.data?.attributes?.city,
+					region: data?.data?.attributes?.region,
+					country: data?.data?.attributes?.country
+				}
+			};
+		} catch (error) {
+			console.error('Error creating LemonSqueezy customer:', error);
+			throw new Error('Failed to create customer');
+		}
+	}
+	private reportSynchronizationFailure(userId: string, customerId: string, error: unknown): void {
+		this.logger.warn('Synchronization failure reported', {
+			userId,
+			customerId,
+			error: this.formatErrorMessage(error),
+			timestamp: new Date().toISOString()
+		});
+	}
 
-      if (!data?.data?.attributes?.url) {
-        throw new Error('Invalid response from Lemonsqueezy: missing checkout URL');
-      }
+	private get logger() {
+		return {
+			info: (message: string, context?: Record<string, any>) =>
+				console.log(`[StripeProvider] ${message}`, context || ''),
+			warn: (message: string, context?: Record<string, any>) =>
+				console.warn(`[StripeProvider] ${message}`, context || ''),
+			error: (message: string, context?: Record<string, any>) =>
+				console.error(`[StripeProvider] ${message}`, context || ''),
+			debug: (message: string, context?: Record<string, any>) =>
+				console.log(`[StripeProvider] ${message}`, context || '')
+		};
+	}
 
-      return data.data.attributes.url;
-    } catch (error) {
-      console.error('Error creating LemonSqueezy subscription:', error);
-      throw new Error('Failed to create subscription');
-    }
-  }
+	private async createNewStripeCustomer(user: User): Promise<CustomerResult> {
+		const customerData = this.buildCustomerData(user);
+		try {
+			const customer = await this.createCustomer(customerData);
+			this.logger.debug('Stripe customer created successfully', {
+				userId: user.id,
+				customerId: customer.id,
+				email: customer.email
+			});
+			return customer;
+		} catch (error) {
+			this.logger.error('Failed to create LemonSqueezy customer', {
+				userId: user.id,
+				error: this.formatErrorMessage(error),
+				customerData
+			});
+			throw error;
+		}
+	}
 
-  async createSubscription(params: CreateSubscriptionParams): Promise<SubscriptionInfo> {
-    try {
-      const response = await axios.post(
-        `${this.baseURL}/subscriptions`,
-        {
-          data: {
-            type: 'subscriptions',
-            attributes: {
-              product_id: params.priceId,
-              variant_id: params.priceId,
-            },
-            relationships: {
-              store: {
-                data: {
-                  type: 'stores',
-                  id: this.storeId,
-                },
-              },
-              customer: {
-                data: {
-                  type: 'customers',
-                  id: params.customerId,
-                },
-              },
-            },
-          },
-        },
-        { headers: this.getHeaders() }
-      );
+	private buildCustomerData(user: User): CreateCustomerParams {
+		return {
+			email: user.email || '',
+			name: user.user_metadata?.name || undefined,
+			metadata: {
+				userId: user.id,
+				planId: user.user_metadata?.planId || undefined,
+				planName: user.user_metadata?.planName || undefined,
+				billingInterval: user.user_metadata?.billingInterval || undefined
+			}
+		};
+	}
 
-      return {
-        id: response.data.data.id,
-        customerId: params.customerId,
-        status: response.data.data.attributes.status,
-        priceId: params.priceId,
-        paymentIntentId: response.data.data.id,
-      };
-    } catch (error) {
-      console.error('Error creating LemonSqueezy subscription:', error);
-      throw new Error('Failed to create subscription');
-    }
-  }
+	private async synchronizePaymentAccount(userId: string, customerId: string): Promise<void> {
+		try {
+			const paymentAccount = await paymentAccountClient.setupPaymentAccount({
+				provider: 'stripe',
+				userId,
+				customerId
+			});
+			this.logger.info('PaymentAccount synchronized successfully in database', {
+				userId,
+				customerId,
+				accountId: paymentAccount.id,
+				providerId: paymentAccount.providerId
+			});
+		} catch (error) {
+			// Handle duplicate key constraint violations
+			if (error instanceof Error && error.message.includes('duplicate key value violates unique constraint')) {
+				this.logger.warn('Payment account already exists - attempting to update', {
+					userId,
+					customerId,
+					error: this.formatErrorMessage(error)
+				});
 
-  async cancelSubscription(subscriptionId: string, cancelAtPeriodEnd?: boolean): Promise<SubscriptionInfo> {
-    try {
-      const response = await axios.patch(
-        `${this.baseURL}/subscriptions/${subscriptionId}`,
-        {
-          data: {
-            type: 'subscriptions',
-            id: subscriptionId,
-            attributes: {
-              cancelled: true,
-            },
-          },
-        },
-        { headers: this.getHeaders() }
-      );
+				// Try to get the existing account and update it
+				try {
+					const existingAccount = await paymentAccountClient.getPaymentAccount(userId, 'lemonsqueezy');
+					if (existingAccount) {
+						this.logger.info('Found existing payment account - synchronization completed', {
+							userId,
+							customerId,
+							accountId: existingAccount.id
+						});
+						return;
+					}
+				} catch (updateError) {
+					this.logger.error('Failed to retrieve existing payment account', {
+						userId,
+						customerId,
+						error: this.formatErrorMessage(updateError)
+					});
+				}
+			}
 
-      return {
-        id: subscriptionId,
-        customerId: response.data.data.attributes.customer_id,
-        status: response.data.data.attributes.status,
-        priceId: response.data.data.attributes.product_id,
-        cancelAtPeriodEnd,
-      };
-    } catch (error) {
-      console.error('Error cancelling LemonSqueezy subscription:', error);
-      throw new Error('Failed to cancel subscription');
-    }
-  }
+			this.logger.error('Failed to synchronize PaymentAccount in database', {
+				userId,
+				customerId,
+				error: this.formatErrorMessage(error)
+			});
 
-  async updateSubscription(params: UpdateSubscriptionParams): Promise<SubscriptionInfo> {
-    try {
-      const response = await axios.patch(
-        `${this.baseURL}/subscriptions/${params.subscriptionId}`,
-        {
-          data: {
-            type: 'subscriptions',
-            id: params.subscriptionId,
-            attributes: {
-              product_id: params.priceId,
-              cancelled: params.cancelAtPeriodEnd,
-            },
-          },
-        },
-        { headers: this.getHeaders() }
-      );
+			this.reportSynchronizationFailure(userId, customerId, error);
+		}
+	}
 
-      return {
-        id: params.subscriptionId,
-        customerId: response.data.data.attributes.customer_id,
-        status: response.data.data.attributes.status,
-        priceId: params.priceId || response.data.data.attributes.product_id,
-        cancelAtPeriodEnd: params.cancelAtPeriodEnd,
-      };
-    } catch (error) {
-      console.error('Error updating LemonSqueezy subscription:', error);
-      throw new Error('Failed to update subscription');
-    }
-  }
+	private formatErrorMessage(error: unknown): string {
+		if (error instanceof Error) {
+			return error.message;
+		}
+		if (typeof error === 'string') {
+			return error;
+		}
+		return 'Unknown error';
+	}
 
-  async handleWebhook(payload: any, signature: string): Promise<WebhookResult> {
-    try {
-      // LemonSqueezy uses HMAC-SHA256 for webhook verification
-      const hmac = crypto.createHmac('sha256', this.webhookSecret);
-      hmac.update(JSON.stringify(payload));
-      const calculatedSignature = hmac.digest('hex');
+	async createPaymentIntent(params: CreatePaymentParams): Promise<PaymentIntent> {
+		try {
+			return {
+				id: '',
+				amount: params.amount,
+				currency: params.currency,
+				status: 'requires_payment_method',
+				clientSecret: '',
+				customerId: params.customerId
+			};
+		} catch (error) {
+			console.error('Error creating LemonSqueezy checkout:', error);
+			throw new Error('Failed to create payment intent');
+		}
+	}
 
-      if (calculatedSignature !== signature) {
-        return { 
-          received: false, 
-          type: 'verification_failed', 
-          id: '', 
-          data: { error: 'Invalid signature' } 
-        };
-      }
+	async confirmPayment(paymentId: string): Promise<PaymentIntent> {
+		// LemonSqueezy doesn't have a separate confirm step, return the payment intent
+		return this.verifyPayment(paymentId).then((result) => {
+			if (result.isValid) {
+				return {
+					id: paymentId,
+					amount: 0,
+					currency: 'usd',
+					status: result.status,
+					clientSecret: ''
+				};
+			}
+			throw new Error('Payment confirmation failed');
+		});
+	}
 
-      const event = payload;
-      return { 
-        received: true, 
-        type: event.meta.event_name, 
-        id: event.data.id, 
-        data: event.data 
-      };
-    } catch (error) {
-      console.error('Error handling LemonSqueezy webhook:', error);
-      return { 
-        received: false, 
-        type: 'processing_error', 
-        id: '', 
-        data: { error: 'Webhook processing failed' } 
-      };
-    }
-  }
+	async verifyPayment(paymentId: string): Promise<PaymentVerificationResult> {
+		try {
+			const order = await getOrder(Number(paymentId));
+			return {
+				isValid: true,
+				paymentId: paymentId,
+				status: order?.data?.data?.attributes?.status || 'failed',
+				details: order?.data?.data?.attributes?.currency || 'failed'
+			};
+		} catch (error) {
+			console.error('Error verifying LemonSqueezy payment:', error);
+			return {
+				isValid: false,
+				paymentId: paymentId,
+				status: 'failed',
+				details: error
+			};
+		}
+	}
 
-  async refundPayment(): Promise<any> {
-    // LemonSqueezy doesn't have a direct refund API
-    // Refunds are typically handled through the dashboard
-    throw new Error('Refunds must be processed through LemonSqueezy dashboard');
-  }
+	async createSetupIntent(): Promise<SetupIntent> {
+		// LemonSqueezy doesn't use setup intents like Stripe
+		// This is a placeholder implementation
+		throw new Error('Setup intents not supported by LemonSqueezy');
+	}
 
-  getClientConfig(): ClientConfig {
-    return {
-      publicKey: this.apiKey,
-      paymentGateway: 'lemonsqueezy',
-      options: {
-        storeId: this.storeId,
-        testMode: this.testMode,
-      },
-    };
-  }
+	async createCustomCheckout(params: CheckoutParams): Promise<string> {
+		console.log('params', params, this.storeId);
+		try {
+			const { data, error } = await createCheckout(
+				Number(this.storeId),
+				Number(params.variantId),
+				{
+					customPrice: params.customPrice,
+					productOptions: {
+						redirectUrl: `${env.API_BASE_URL}/billing/success`
+					},
+					checkoutOptions: {
+						embed: true,
+						media: false,
+						logo: false
+					},
+					checkoutData: {
+						email: params.email,
+						custom: params.metadata ?? {}
+					},
+					preview: false,
+					testMode: process.env.NODE_ENV === 'development'
+				}
+			);
 
-  getUIComponents(): UIComponents {
-    return {
-      PaymentForm: () => null, // Placeholder component
-      logo: '/logos/lemonsqueezy-logo.svg',
-      cardBrands: [],
-      supportedPaymentMethods: ['card', 'paypal'],
-      translations: {
-        en: {
-          'button.pay': 'Pay with LemonSqueezy',
-          'button.subscribe': 'Subscribe with LemonSqueezy',
-        },
-      },
-    };
-  }
+			if (error) {
+				throw new Error(`Lemonsqueezy checkout error: ${error.message || 'Unknown error'}`);
+			}
+
+			if (!data?.data?.attributes?.url) {
+				throw new Error('Invalid response from Lemonsqueezy: missing checkout URL');
+			}
+
+			return data.data.attributes.url;
+		} catch (error) {
+			console.error('Error creating LemonSqueezy subscription:', error);
+			throw new Error('Failed to create subscription');
+		}
+	}
+
+	async createSubscription(params: CheckoutParams): Promise<SubscriptionInfo> {
+		try {
+			const { variantId, email, customPrice, metadata } = params;
+
+			const finalProductId = variantId ?? Number(process.env.LEMONSQUEEZY_VARIANT_ID);
+			if (!finalProductId) {
+				throw new Error('Product ID is required');
+			}
+
+			const { data, error } = await createCheckout(Number(this.storeId), finalProductId, {
+				customPrice,
+				productOptions: {
+					redirectUrl: metadata?.successUrl || '',
+					name: metadata?.name || 'Subscription',
+					description: metadata?.description || 'Subscription checkout',
+					media: []
+				},
+				checkoutOptions: {
+					embed: true,
+					media: false,
+					logo: false
+				},
+				checkoutData: {
+					email: email || '',
+					custom: metadata ?? {}
+				},
+				preview: false,
+				testMode: process.env.NODE_ENV === 'development'
+			});
+
+			if (error) {
+				throw new Error(`Lemonsqueezy checkout error: ${error.message || 'Unknown error'}`);
+			}
+
+			if (!data?.data?.attributes?.url) {
+				throw new Error('Invalid response from Lemonsqueezy: missing checkout URL');
+			}
+			return {
+				id: data.data.id,
+				customerId: '',
+				status: 'pending' as SubscriptionStatus,
+				priceId: '',
+				cancelAtPeriodEnd: false,
+				checkoutData: {
+					...data.data.attributes,
+					relationships: data.data.relationships,
+					type: data.data.type,
+					links: data.data.links
+				}
+			};
+		} catch (error) {
+			console.error('Error creating LemonSqueezy subscription:', error);
+			throw new Error('Failed to create subscription');
+		}
+	}
+
+	async cancelSubscription(subscriptionId: string, cancelAtPeriodEnd?: boolean): Promise<SubscriptionInfo> {
+		try {
+			const { data, error } = await cancelSubscription(Number(subscriptionId));
+
+			if (error) throw new Error(`Lemonsqueezy cancel subscription error: ${error.message || 'Unknown error'}`);
+			return {
+				id: subscriptionId,
+				customerId: '',
+				status: 'canceled' as SubscriptionStatus,
+				priceId: '',
+				cancelAtPeriodEnd: cancelAtPeriodEnd,
+				checkoutData: {
+					...data?.data?.attributes,
+					relationships: data?.data?.relationships,
+					type: data?.data?.type,
+					links: data?.data?.links
+				}
+			};
+		} catch (error) {
+			console.error('Error cancelling LemonSqueezy subscription:', error);
+			throw new Error('Failed to cancel subscription');
+		}
+	}
+
+	async updateSubscription(params: UpdateSubscriptionParams): Promise<SubscriptionInfo> {
+		try {
+			const { data, error } = await updateSubscription(Number(params.subscriptionId), {
+				variantId: params.priceId ? Number(params.priceId) : undefined,
+				pause: {
+					mode: 'void' as 'void' | 'free',
+					resumesAt: params.cancelAtPeriodEnd ? new Date().toISOString() : undefined
+				},
+				cancelled: params.cancelAtPeriodEnd ? true : false,
+				trialEndsAt: params.cancelAtPeriodEnd ? new Date().toISOString() : undefined,
+				billingAnchor: params.cancelAtPeriodEnd ? 0 : undefined,
+				invoiceImmediately: params.cancelAtPeriodEnd ? true : false,
+				disableProrations: params.cancelAtPeriodEnd ? true : false
+			});
+
+			if (error) throw new Error(`Lemonsqueezy update subscription error: ${error.message || 'Unknown error'}`);
+
+			return {
+				id: params.subscriptionId,
+				customerId: '',
+				status: 'active' as SubscriptionStatus,
+				priceId: '',
+				cancelAtPeriodEnd: params.cancelAtPeriodEnd,
+				checkoutData: {
+					...data?.data?.attributes,
+					relationships: data?.data?.relationships,
+					type: data?.data?.type,
+					links: data?.data?.links
+				}
+			};
+		} catch (error) {
+			console.error('Error updating LemonSqueezy subscription:', error);
+			throw new Error('Failed to update subscription');
+		}
+	}
+
+	async handleWebhook(payload: any, signature: string): Promise<WebhookResult> {
+		try {
+			const hmac = crypto.createHmac('sha256', this.webhookSecret);
+			hmac.update(JSON.stringify(payload));
+			const calculatedSignature = hmac.digest('hex');
+
+			if (calculatedSignature !== signature) {
+				return {
+					received: false,
+					type: 'verification_failed',
+					id: '',
+					data: { error: 'Invalid signature' }
+				};
+			}
+
+			const event = payload;
+			return {
+				received: true,
+				type: event.meta.event_name,
+				id: event.data.id,
+				data: event.data
+			};
+		} catch (error) {
+			console.error('Error handling LemonSqueezy webhook:', error);
+			return {
+				received: false,
+				type: 'processing_error',
+				id: '',
+				data: { error: 'Webhook processing failed' }
+			};
+		}
+	}
+
+	async refundPayment(): Promise<any> {
+		// LemonSqueezy doesn't have a direct refund API
+		// Refunds are typically handled through the dashboard
+		throw new Error('Refunds must be processed through LemonSqueezy dashboard');
+	}
+
+	getClientConfig(): ClientConfig {
+		return {
+			publicKey: this.apiKey,
+			paymentGateway: 'lemonsqueezy',
+			options: {
+				storeId: this.storeId,
+				testMode: this.testMode
+			}
+		};
+	}
+
+	getUIComponents(): UIComponents {
+		return {
+			PaymentForm: () => null, // Placeholder component
+			logo: '/logos/lemonsqueezy-logo.svg',
+			cardBrands: [],
+			supportedPaymentMethods: ['card', 'paypal'],
+			translations: {
+				en: {
+					'button.pay': 'Pay with LemonSqueezy',
+					'button.subscribe': 'Subscribe with LemonSqueezy'
+				}
+			}
+		};
+	}
 }
