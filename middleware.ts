@@ -108,10 +108,8 @@ export default async function middleware(req: NextRequest) {
 
   const intlResponse = await intl(req as any);
 
-  const segments = originalPathname.split("/").filter(Boolean);
-  const maybeLocale = segments[0];
-  const hasLocale = routing.locales.includes(maybeLocale as any);
-  const pathWithoutLocale = hasLocale ? `/${segments.slice(1).join("/")}` : originalPathname;
+  const { prefix: localePrefix, hasLocale } = resolveLocalePrefix(originalPathname);
+  const pathWithoutLocale = hasLocale ? `/${originalPathname.split("/").filter(Boolean).slice(1).join("/")}` : originalPathname;
 
   // Only redirect admins away from /client/* without DB calls.
   if (pathWithoutLocale === "/client" || pathWithoutLocale.startsWith("/client/")) {
@@ -137,8 +135,7 @@ export default async function middleware(req: NextRequest) {
       const isAdmin = user?.user_metadata?.isAdmin === true || user?.user_metadata?.role === 'admin';
       if (isAdmin) {
         const url = req.nextUrl.clone();
-        const rootLocalePrefix = hasLocale ? `/${maybeLocale}` : "";
-        url.pathname = `${rootLocalePrefix}/admin`;
+        url.pathname = `${localePrefix}/admin`;
         const redirectRes = NextResponse.redirect(url);
         intlResponse.cookies.getAll().forEach((c) => redirectRes.cookies.set(c));
         return redirectRes;
