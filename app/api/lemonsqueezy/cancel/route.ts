@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
             Boolean(cancelAtPeriodEnd)
         );
         return NextResponse.json(subscription, { status: 200 });
-    } catch (err) {
-        return NextResponse.json({ error: 'Failed to cancel subscription' }, { status: 502 });
+    } catch (error) {
+        return NextResponse.json({ error: `Failed to cancel subscription: ${error}`, details: error as string }, { status: 502 });
     }
 }
