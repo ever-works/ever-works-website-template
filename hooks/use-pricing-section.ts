@@ -93,7 +93,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 
 	// Extract plan configurations
 	const { FREE, STANDARD, PREMIUM } = config.pricing?.plans ?? {};
-	const paymentHook = config.pricing?.provider === 'lemonsqueezy' ? lemonsqueezyHook : stripeHook;
+	const paymentHook = config.pricing?.provider === PaymentProvider.LEMONSQUEEZY ? lemonsqueezyHook : stripeHook;
 	const { isLoading, isError, isSuccess, error } = paymentHook;
 
 	/**
@@ -178,7 +178,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 			setProcessingPlan(plan.id);
 
 			try {
-				if (config.pricing?.provider === 'lemonsqueezy') {
+				if (config.pricing?.provider === PaymentProvider.LEMONSQUEEZY) {
 					await lemonsqueezyHook.handleSubmitWithParams({
 						variantId: Number(plan.lemonVariantId),
 						defaultPrice: plan.price,
@@ -275,6 +275,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 		getActionText: (planId: string) => getActionText(planId as PaymentPlan),
 		isLoading,
 		error,
+		provider: config.pricing?.provider,
 		isSuccess,
 		t,
 		tBilling,
