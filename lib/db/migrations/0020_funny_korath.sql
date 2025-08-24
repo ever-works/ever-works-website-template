@@ -53,10 +53,18 @@ CREATE TABLE "subscriptionHistory" (
 	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "newsletter_subscriptions" DISABLE ROW LEVEL SECURITY;--> statement-breakpoint
-ALTER TABLE "subscription_history" DISABLE ROW LEVEL SECURITY;--> statement-breakpoint
-DROP TABLE "newsletter_subscriptions" CASCADE;--> statement-breakpoint
-DROP TABLE "subscription_history" CASCADE;--> statement-breakpoint
+DO $$ BEGIN
+  IF to_regclass('public.newsletter_subscriptions') IS NOT NULL THEN
+    EXECUTE 'ALTER TABLE "newsletter_subscriptions" DISABLE ROW LEVEL SECURITY';
+    EXECUTE 'DROP TABLE IF EXISTS "newsletter_subscriptions" CASCADE';
+  END IF;
+END $$;--> statement-breakpoint
+DO $$ BEGIN
+  IF to_regclass('public.subscription_history') IS NOT NULL THEN
+    EXECUTE 'ALTER TABLE "subscription_history" DISABLE ROW LEVEL SECURITY';
+    EXECUTE 'DROP TABLE IF EXISTS "subscription_history" CASCADE';
+  END IF;
+END $$;--> statement-breakpoint
 -- Drop foreign key constraints safely
 DO $$ BEGIN
     ALTER TABLE "accounts" DROP CONSTRAINT IF EXISTS "accounts_userId_client_profiles_id_fk";
