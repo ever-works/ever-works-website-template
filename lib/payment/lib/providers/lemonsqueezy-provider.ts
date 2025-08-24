@@ -49,7 +49,6 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 		this.webhookSecret = config.webhookSecret;
 		this.storeId = config.options?.storeId;
 		this.testMode = config.options?.testMode || false;
-		console.log('initialisation lemonsqueezy===>', this.apiKey, this.webhookSecret, this.storeId, this.testMode);
 		lemonSqueezySetup({ apiKey: this.apiKey });
 	}
 
@@ -77,12 +76,12 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 			return null;
 		}
 		const validatedUserId = user?.id;
-		this.logger.info('Starting Stripe customer retrieval/creation', { userId: validatedUserId });
+		this.logger.info('Starting LemonSqueezy customer retrieval/creation', { userId: validatedUserId });
 
 		try {
 			const customerIdFromMetadata = this.extractCustomerIdFromMetadata(user);
 			if (customerIdFromMetadata) {
-				this.logger.info('Stripe customer retrieved from metadata', {
+				this.logger.info('LemonSqueezy customer retrieved from metadata', {
 					userId: validatedUserId,
 					customerId: customerIdFromMetadata
 				});
@@ -90,28 +89,28 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 			}
 			const customerIdFromDatabase = await this.retrieveCustomerIdFromDatabase(validatedUserId);
 			if (customerIdFromDatabase) {
-				this.logger.info('Stripe customer retrieved from database', {
+				this.logger.info('LemonSqueezy customer retrieved from database', {
 					userId: validatedUserId,
 					customerId: customerIdFromDatabase
 				});
 				return customerIdFromDatabase;
 			}
-			this.logger.info('Creating new Stripe customer', { userId: validatedUserId });
-			const newCustomer = await this.createNewStripeCustomer(user);
+			this.logger.info('Creating new LemonSqueezy customer', { userId: validatedUserId });
+			const newCustomer = await this.createNewLemonSqueezyCustomer(user);
 			await this.synchronizePaymentAccount(validatedUserId, newCustomer.id);
 
-			this.logger.info('New Stripe customer created successfully', {
+			this.logger.info('New LemonSqueezy customer created successfully', {
 				userId: validatedUserId,
 				customerId: newCustomer.id
 			});
 			return newCustomer.id;
 		} catch (error) {
 			const errorMessage = this.formatErrorMessage(error);
-			this.logger.error('Failed to retrieve/create Stripe customer', {
+			this.logger.error('Failed to retrieve/create LemonSqueezy customer', {
 				userId: validatedUserId,
 				error: errorMessage
 			});
-			throw new Error(`Unable to retrieve/create Stripe customer: ${errorMessage}`);
+			throw new Error(`Unable to retrieve/create LemonSqueezy customer: ${errorMessage}`);
 		}
 	}
 
@@ -184,21 +183,21 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 	private get logger() {
 		return {
 			info: (message: string, context?: Record<string, any>) =>
-				console.log(`[StripeProvider] ${message}`, context || ''),
+				console.log(`[LemonSqueezyProvider] ${message}`, context || ''),
 			warn: (message: string, context?: Record<string, any>) =>
-				console.warn(`[StripeProvider] ${message}`, context || ''),
+				console.warn(`[LemonSqueezyProvider] ${message}`, context || ''),
 			error: (message: string, context?: Record<string, any>) =>
-				console.error(`[StripeProvider] ${message}`, context || ''),
+				console.error(`[LemonSqueezyProvider] ${message}`, context || ''),
 			debug: (message: string, context?: Record<string, any>) =>
-				console.log(`[StripeProvider] ${message}`, context || '')
+				console.log(`[LemonSqueezyProvider] ${message}`, context || '')
 		};
 	}
 
-	private async createNewStripeCustomer(user: User): Promise<CustomerResult> {
+	private async createNewLemonSqueezyCustomer(user: User): Promise<CustomerResult> {
 		const customerData = this.buildCustomerData(user);
 		try {
 			const customer = await this.createCustomer(customerData);
-			this.logger.debug('Stripe customer created successfully', {
+			this.logger.debug('LemonSqueezy customer created successfully', {
 				userId: user.id,
 				customerId: customer.id,
 				email: customer.email
@@ -230,7 +229,7 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 	private async synchronizePaymentAccount(userId: string, customerId: string): Promise<void> {
 		try {
 			const paymentAccount = await paymentAccountClient.setupPaymentAccount({
-				provider: 'stripe',
+				provider: 'lemonsqueezy',
 				userId,
 				customerId
 			});
@@ -348,7 +347,6 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 	}
 
 	async createCustomCheckout(params: CheckoutParams): Promise<string> {
-		console.log('params', params, this.storeId);
 		try {
 			const { data, error } = await createCheckout(
 				Number(this.storeId),

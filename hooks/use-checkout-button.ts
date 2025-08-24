@@ -72,12 +72,13 @@ export function useCheckoutButton(params?: CheckoutButtonParams): UseCheckoutBut
 	 * Execute checkout based on mode
 	 */
 	const executeCheckout = useCallback(
-		async (params?: CheckoutButtonParams) => {
+		async () => {
 			try {
+				const params = createCheckoutParams();
 				if (embedded) {
-					await embeddedHook.createEmbeddedCheckout(params || createCheckoutParams());
+					await embeddedHook.createEmbeddedCheckout(params);
 				} else {
-					await redirectHook.createCheckoutAndRedirect(params || createCheckoutParams());
+					await redirectHook.createCheckoutAndRedirect(params);
 				}
 			} catch (err) {
 				console.error('Checkout failed:', err);
@@ -100,9 +101,9 @@ export function useCheckoutButton(params?: CheckoutButtonParams): UseCheckoutBut
 
 	const handleSubmitWithParams = useCallback(
 		async (params?: CheckoutButtonParams) => {
-			await executeCheckout(params);
+			await executeCheckout();
 		},
-		[executeCheckout, params]
+		[executeCheckout]
 	);
 
 	/**
