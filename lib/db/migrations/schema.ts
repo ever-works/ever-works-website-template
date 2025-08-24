@@ -201,7 +201,7 @@ export const accounts = pgTable("accounts", {
 
 export const subscriptions = pgTable("subscriptions", {
 	id: text().primaryKey().notNull(),
-	userId: text("user_id").notNull(),
+	userId: text("userId").notNull(),
 	status: text().notNull(),
 	trialStart: timestamp("trial_start", { mode: 'string' }),
 	trialEnd: timestamp("trial_end", { mode: 'string' }),
@@ -241,7 +241,7 @@ export const subscriptions = pgTable("subscriptions", {
 	foreignKey({
 			columns: [table.userId],
 			foreignColumns: [users.id],
-			name: "subscriptions_user_id_users_id_fk"
+			name: "subscriptions_userId_users_id_fk"
 		}).onDelete("cascade"),
 ]);
 
