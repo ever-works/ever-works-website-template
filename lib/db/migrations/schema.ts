@@ -12,7 +12,7 @@ export const passwordResetTokens = pgTable("passwordResetTokens", {
 	unique("passwordResetTokens_token_unique").on(table.token),
 ]);
 
-export const newsletterSubscriptions = pgTable("newsletter_subscriptions", {
+export const newsletterSubscriptions = pgTable("newsletterSubscriptions", {
 	id: text().primaryKey().notNull(),
 	email: text().notNull(),
 	firstName: text("first_name"),
@@ -21,7 +21,7 @@ export const newsletterSubscriptions = pgTable("newsletter_subscriptions", {
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
-	unique("newsletter_subscriptions_email_unique").on(table.email),
+	unique("newsletterSubscriptions_email_unique").on(table.email),
 ]);
 
 export const users = pgTable("users", {
