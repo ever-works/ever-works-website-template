@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { ActivityType, users, clientProfiles } from "@/lib/db/schema";
 import { db } from "@/lib/db/drizzle";
-import { eq } from "drizzle-orm";
+
 import { redirect } from "next/navigation";
 import {
   validatedAction,
@@ -149,13 +149,16 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
 
     const passwordHash = await hashPassword(password);
 
+    // Normalize email once for consistency across all operations
+    const normalizedEmail = email.toLowerCase().trim();
+
     // Wrap in transaction to ensure atomicity
     const result = await db.transaction(async (tx: typeof db) => {
       // 1) Create user record
       const userId = crypto.randomUUID();
       const [user] = await tx.insert(users).values({
         id: userId,
-        email,
+        email: normalizedEmail,
         name,
         username: email.split('@')[0] || 'user',
         status: 'active',
@@ -163,37 +166,37 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
       }).returning();
       
       // 2) Create client profile record using transaction
-      const normalizedEmail = email.toLowerCase().trim();
       const extractedUsername = normalizedEmail.split('@')[0] || 'user';
-      // Generate unique username with timestamp fallback
-      let finalUsername = extractedUsername;
+      
+      // Generate unique username via onConflictDoNothing + retry
       let counter = 1;
-      while (true) {
-        const testUsername = counter === 1 ? finalUsername : `${extractedUsername}${counter}`;
-        const existing = await tx.select().from(clientProfiles).where(eq(clientProfiles.username, testUsername)).limit(1);
-        if (existing.length === 0) {
-          finalUsername = testUsername;
+      let clientProfile;
+      for (;;) {
+        const candidate = counter === 1 ? extractedUsername : `${extractedUsername}${counter}`;
+        const inserted = await tx
+          .insert(clientProfiles)
+          .values({
+            userId: user.id,
+            email: normalizedEmail,
+            name,
+            displayName: name,
+            username: candidate,
+            bio: "Welcome! I'm a new user on this platform.",
+            jobTitle: "User",
+            company: "Unknown",
+            status: "active",
+            plan: "free",
+            accountType: "individual",
+          })
+          .onConflictDoNothing({ target: clientProfiles.username })
+          .returning();
+        if (inserted.length) {
+          clientProfile = inserted[0];
           break;
         }
         counter++;
+        if (counter > 50) throw new Error("Failed to allocate unique username after 50 attempts");
       }
-      
-      const [clientProfile] = await tx
-        .insert(clientProfiles)
-        .values({
-          userId: user.id,
-          email: normalizedEmail,
-          name,
-          displayName: name,
-          username: finalUsername,
-          bio: "Welcome! I'm a new user on this platform.",
-          jobTitle: "User",
-          company: "Unknown",
-          status: "active",
-          plan: "free",
-          accountType: "individual",
-        })
-        .returning();
       
       return { user, clientProfile };
     });
@@ -201,7 +204,7 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
     const { clientProfile } = result;
 
     // 2) Create credentials account record holding the password hash linked to client profile
-    const clientAccount = await createClientAccount(clientProfile.id, email, passwordHash);
+    const clientAccount = await createClientAccount(clientProfile.id, normalizedEmail, passwordHash);
     if (!clientAccount) {
       throw new Error("Failed to create client account");
     }
@@ -209,9 +212,9 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
     // Log activity using the client profile ID
     		await logActivity(ActivityType.SIGN_UP, undefined, clientProfile.id);
 
-    const verificationToken = await generateVerificationToken(email);
+    const verificationToken = await generateVerificationToken(normalizedEmail);
     if (verificationToken) {
-      await sendVerificationEmail(email, verificationToken.token);
+      await sendVerificationEmail(normalizedEmail, verificationToken.token);
     }
 
     await signIn(AuthProviders.CREDENTIALS, {
