@@ -232,7 +232,6 @@ export function getOrCreateStripeProvider(): StripeProvider {
 }
 
 export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
-
   adapter: drizzle,
   session: {
     strategy: "jwt",
@@ -342,5 +341,4 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
     newUser: "/auth/register",
   },
   ...authConfig,
-
 });
