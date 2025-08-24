@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useLemonSqueezyCheckoutWithRedirect, useLemonSqueezyEmbeddedCheckout } from '@/hooks/use-lemonsqueezy-queries';
 
 export interface CheckoutButtonParams {
@@ -51,34 +51,35 @@ export function useCheckoutButton(params?: CheckoutButtonParams): UseCheckoutBut
 	// Extract embedded-specific state
 	const checkoutUrl = embedded ? embeddedHook.checkoutUrl : null;
 	const isEmbedReady = embedded ? embeddedHook.isEmbedReady : true;
+	const memoizedMetadata = useMemo(() => ({
+		...metadata,
+		source: 'checkout-button'
+	}), [metadata]);
 
-	/**
-	 * Create checkout parameters with metadata
-	 */
+
 	const createCheckoutParams = useCallback(
 		() => ({
 			customPrice,
 			variantId,
 			metadata: {
-				...metadata,
-				source: 'checkout-button',
+				...memoizedMetadata,
 				timestamp: new Date().toISOString()
 			}
 		}),
-		[customPrice, variantId, metadata]
+		[customPrice, variantId, memoizedMetadata]
 	);
 
 	/**
 	 * Execute checkout based on mode
 	 */
 	const executeCheckout = useCallback(
-		async () => {
+		async (params?: CheckoutButtonParams) => {
 			try {
-				const params = createCheckoutParams();
+				const checkoutParams = params || createCheckoutParams();
 				if (embedded) {
-					await embeddedHook.createEmbeddedCheckout(params);
+					await embeddedHook.createEmbeddedCheckout(checkoutParams);
 				} else {
-					await redirectHook.createCheckoutAndRedirect(params);
+					await redirectHook.createCheckoutAndRedirect(checkoutParams);
 				}
 			} catch (err) {
 				console.error('Checkout failed:', err);
@@ -101,7 +102,7 @@ export function useCheckoutButton(params?: CheckoutButtonParams): UseCheckoutBut
 
 	const handleSubmitWithParams = useCallback(
 		async (params?: CheckoutButtonParams) => {
-			await executeCheckout();
+			await executeCheckout(params);
 		},
 		[executeCheckout]
 	);

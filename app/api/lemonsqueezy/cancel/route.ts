@@ -3,14 +3,33 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
     const session = await auth();
-    if (!session) {
+    if (!session?.user?.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    const { subscriptionId, cancelAtPeriodEnd } = await request.json();
 
-    console.log('session', session.user.id);
-    const lemonsqueezyProvider = PaymentProviderManager.getLemonsqueezyProvider();
+    let body: unknown;
+    try {
+        body = await request.json();
+    } catch {
+        return NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 });
+    }
 
-  const subscription = await lemonsqueezyProvider.cancelSubscription(subscriptionId, cancelAtPeriodEnd);
-  return NextResponse.json(subscription);
+    const { subscriptionId, cancelAtPeriodEnd } = (body ?? {}) as {
+        subscriptionId?: string;
+        cancelAtPeriodEnd?: boolean;
+    };
+    if (!subscriptionId || typeof subscriptionId !== 'string') {
+        return NextResponse.json({ error: 'subscriptionId is required' }, { status: 400 });
+    }
+
+    try {
+        const lemonsqueezyProvider = PaymentProviderManager.getLemonsqueezyProvider();
+        const subscription = await lemonsqueezyProvider.cancelSubscription(
+            subscriptionId,
+            Boolean(cancelAtPeriodEnd)
+        );
+        return NextResponse.json(subscription, { status: 200 });
+    } catch (err) {
+        return NextResponse.json({ error: 'Failed to cancel subscription' }, { status: 502 });
+    }
 }

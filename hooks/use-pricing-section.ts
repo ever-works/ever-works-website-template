@@ -71,11 +71,9 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 	const t = useTranslations('pricing');
 	const tBilling = useTranslations('billing');
 
-	//  const { handleSubmitWithParams, isLoading: isCheckoutLoading, isError: isCheckoutError }
 	const { freePlanFeatures, standardPlanFeatures, premiumPlanFeatures, getPlanConfig, getActionText } =
 		usePricingFeatures();
 
-	// const { createCheckoutSession, isLoading, error, isSuccess } =
 	const stripeHook = useCreateCheckoutSession();
 	const lemonsqueezyHook = useCheckoutButton();
 
@@ -179,6 +177,10 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 
 			try {
 				if (config.pricing?.provider === PaymentProvider.LEMONSQUEEZY) {
+					if(!plan.lemonVariantId) {
+						toast.error('No variant ID found for plan');
+						return;
+					}
 					await lemonsqueezyHook.handleSubmitWithParams({
 						variantId: Number(plan.lemonVariantId),
 						defaultPrice: plan.price,

@@ -49,6 +49,9 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 		this.webhookSecret = config.webhookSecret;
 		this.storeId = config.options?.storeId;
 		this.testMode = config.options?.testMode || false;
+		if (!this.storeId || !Number.isFinite(Number(this.storeId))) {
+			throw new Error('LemonSqueezyProvider: a valid numeric storeId is required');
+		}
 		lemonSqueezySetup({ apiKey: this.apiKey });
 	}
 
@@ -348,6 +351,7 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 
 	async createCustomCheckout(params: CheckoutParams): Promise<string> {
 		try {
+			console.log('params', params, this.storeId);
 			const { data, error } = await createCheckout(
 				Number(this.storeId),
 				Number(params.variantId),

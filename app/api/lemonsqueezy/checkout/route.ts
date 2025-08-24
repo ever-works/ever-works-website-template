@@ -31,7 +31,6 @@ export async function POST(request: NextRequest) {
             );
         }
         const lemonsqueezyProvider = getOrCreateLemonsqueezyProvider();
-
         const validation = validateCheckoutRequestBody(body);
         if (!validation.isValid) {
             return NextResponse.json(
