@@ -8,8 +8,7 @@ import {
   serial,
   varchar,
   uniqueIndex,
-  index,
-  unique
+  index
 } from 'drizzle-orm/pg-core';
 import type { AdapterAccountType } from 'next-auth/adapters';
 import { PaymentPlan, PaymentProvider } from '../constants';
