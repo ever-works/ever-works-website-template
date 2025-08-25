@@ -254,7 +254,6 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
     },
     signIn: async ({ user, account }) => {
       const isCredentials = account?.provider === 'credentials';
-      const isKnownProvider = Boolean(account?.provider && ['google', 'github', 'facebook', 'twitter', 'credentials'].includes(account.provider));
       try {
         if (!user?.email) {
           console.warn('Sign-in attempt without email', { provider: account?.provider });
@@ -275,8 +274,8 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
             ? { name: error.name, message: error.message }
             : { message: 'Unknown error' }
         );
-        // Default-deny if provider is unknown; allow only known non-credentials providers
-        return isKnownProvider && !isCredentials;
+        // Fail closed on validation errors
+        return false;
       }
     },
     jwt: async ({ token, user, account }) => {
