@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useFavorites } from '@/hooks/use-favorites';
 import { cn } from '@/lib/utils';
 import { Heart, Star } from 'lucide-react';
-import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
+import { useLoginModal } from '@/hooks/use-login-modal';
 
 interface FavoriteButtonProps {
 	itemSlug: string;
@@ -34,6 +34,7 @@ export function FavoriteButton({
 
 	const { isFavorited, toggleFavorite, isAdding, isRemoving } = useFavorites();
 	const [isHovered, setIsHovered] = useState(false);
+	const loginModal = useLoginModal();
 
 	const isFav = isFavorited(itemSlug);
 	const isLoading = isAdding || isRemoving;
@@ -43,7 +44,7 @@ export function FavoriteButton({
 		e.stopPropagation();
 
 		if (!session?.user?.id) {
-			toast.error('Please sign in to add favorites');
+			loginModal.onOpen('Please sign in to add favorites');
 			return;
 		}
 

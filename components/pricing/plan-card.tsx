@@ -135,7 +135,7 @@ export function PlanCard({
     <article className={cardStyles}>
       {(title.toUpperCase() === 'STANDARD' || isPopular) && (
         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-30">
-          <div className="bg-gradient-to-r from-theme-primary-500 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-bold shadow-xl whitespace-nowrap">
+          <div className="bg-theme-primary-20 text-white px-4 py-1 rounded-full text-sm font-normal shadow-xl whitespace-nowrap">
             Most Popular
           </div>
         </div>

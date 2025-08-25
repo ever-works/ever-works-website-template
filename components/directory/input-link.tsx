@@ -178,7 +178,7 @@ function InputLink({
           <button
             type="button"
             onClick={addLink}
-            className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-theme-primary-600 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 transition-colors rounded-xl border-2 border-dashed border-theme-primary-200 dark:border-theme-primary-800 hover:border-theme-primary-300 dark:hover:border-theme-primary-700 hover:bg-theme-primary-50 dark:hover:bg-theme-primary-900/20"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-theme-primary-600 hover:text-theme-primary-700 transition-colors rounded-lg border border-dashed border-theme-primary-300 hover:bg-theme-primary-20 capitalize dark:hover:text-white"
           >
             <Plus className="w-4 h-4" />
             {t("directory.DETAILS_FORM.ADD_MORE_LINKS")}

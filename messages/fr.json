@@ -85,7 +85,15 @@
     "FAVORITE_ITEMS": "éléments favoris",
     "EXPLORE_ITEMS": "Explorer les éléments",
     "VIEW_DETAILS": "Voir les détails",
-    "ADDED_ON": "Ajouté le"
+    "ADDED_ON": "Ajouté le",
+    "DASHBOARD": "Tableau de bord",
+    "USE_CODE": "Utiliser le code",
+    "EXPIRED": "Expiré",
+    "PROMO_CODE": "Code promo",
+    "COPIED": "Copié !",
+    "COPY": "Copier",
+    "TERMS": "Conditions",
+    "EXPIRES": "Expire le"
   },
   "footer": {
     "ALL_RIGHTS_RESERVED": "Tous droits réservés",
@@ -854,6 +862,30 @@
     "CARD_NUMBER_NOT_EDITABLE": "Numéro de carte non modifiable",
     "SECURITY_NOTICE": "Seules certaines informations peuvent être modifiées pour des raisons de sécurité",
     "UPDATING_CARD": "Modification...",
-    "SAVE": "Enregistrer"
+    "SAVE": "Enregistrer",
+    "WELCOME_TO_EVER_WORKS": "Bienvenue sur Ever Works !",
+    "FREE_PLAN_MESSAGE": "Vous êtes actuellement sur le plan gratuit. Mettez à niveau pour débloquer les fonctionnalités premium et commencer à construire votre succès.",
+    "VIEW_PLANS": "Voir les plans",
+    "BACK_TO_SETTINGS": "Retour aux paramètres",
+    "REFRESH_ALL": "Actualiser tout",
+    "REFRESHING": "Actualisation...",
+    "EXPORT": "Exporter",
+    "BILLING_SUBSCRIPTION_TITLE": "Facturation et abonnement",
+    "BILLING_SUBSCRIPTION_SUBTITLE": "Gérez votre abonnement, consultez l'historique des paiements et surveillez votre statut de facturation",
+    "LOADING_BILLING_INFO": "Chargement des informations de facturation...",
+    "TOTAL_SPENT": "Total dépensé",
+    "ACTIVE_PAYMENTS": "Paiements actifs",
+    "MONTHLY_AVERAGE": "Moyenne mensuelle",
+    "CURRENCY": "EUR",
+    "BASIC_PLAN": "Plan de base",
+    "OVERVIEW": "Aperçu",
+    "PAYMENTS": "Paiements",
+    "SUBSCRIPTIONS": "Abonnements",
+    "RECENT_ACTIVITY": "Activité récente",
+    "VIEW_ALL_ACTIVITY": "Voir toute l'activité",
+    "SUBSCRIPTION_HISTORY": "Historique des abonnements",
+    "REFRESH": "Actualiser",
+    "SEARCH_AND_FILTERS": "Recherche et filtres",
+    "TOTAL_RESULTS": "Total des résultats"
   }
 }

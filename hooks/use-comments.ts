@@ -1,7 +1,8 @@
 "use client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CommentWithUser } from "@/lib/types/comment";
-// import { useLoginModal } from "./use-login-modal";
+import { useLoginModal } from "./use-login-modal";
+import { serverClient, apiUtils } from "@/lib/api/server-api-client";
 
 interface CreateCommentData {
   content: string;
@@ -11,35 +12,32 @@ interface CreateCommentData {
 
 export function useComments(itemId: string) {
   const queryClient = useQueryClient();
-  //   const { openLoginModal } = useLoginModal();
+  const loginModal = useLoginModal();
 
   const { data: comments = [], isLoading } = useQuery<CommentWithUser[]>({
     queryKey: ["comments", itemId],
     queryFn: async () => {
-      const response = await fetch(`/api/items/${itemId}/comments`);
-      if (!response.ok) throw new Error("Failed to fetch comments");
-      return response.json();
+      const response = await serverClient.get<CommentWithUser[]>(`/api/items/${itemId}/comments`);
+      if (!apiUtils.isSuccess(response)) {
+        throw new Error(apiUtils.getErrorMessage(response));
+      }
+      return response.data;
     },
   });
 
   const { mutate: createComment, isPending: isCreating } = useMutation({
     mutationFn: async ({ content, itemId, rating }: CreateCommentData) => {
-      const response = await fetch(`/api/items/${itemId}/comments`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content, rating }),
-      });
+      const response = await serverClient.post(`/api/items/${itemId}/comments`, { content, rating });
 
-      if (response.status === 401) {
-        // openLoginModal();
-        throw new Error("Please login to comment");
+      if (!apiUtils.isSuccess(response)) {
+        if (response.error?.includes('401') || response.error?.includes('Unauthorized')) {
+          loginModal.onOpen('Please sign in to comment');
+          return;
+        }
+        throw new Error(apiUtils.getErrorMessage(response));
       }
 
-      if (!response.ok) {
-        throw new Error("Failed to create comment");
-      }
-
-      return response.json();
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
@@ -48,16 +46,13 @@ export function useComments(itemId: string) {
 
   const { mutate: deleteComment, isPending: isDeleting } = useMutation({
     mutationFn: async (commentId: string) => {
-      const response = await fetch(`/api/items/${itemId}/comments/${commentId}`, {
-        method: "DELETE",
-      });
+      const response = await serverClient.delete(`/api/items/${itemId}/comments/${commentId}`);
 
-      if (response.status === 401) {
-        throw new Error("Please login to delete comment");
-      }
-
-      if (!response.ok) {
-        throw new Error("Failed to delete comment");
+      if (!apiUtils.isSuccess(response)) {
+        if (response.error?.includes('401') || response.error?.includes('Unauthorized')) {
+          throw new Error("Please login to delete comment");
+        }
+        throw new Error(apiUtils.getErrorMessage(response));
       }
     },
     onSuccess: () => {
@@ -68,19 +63,17 @@ export function useComments(itemId: string) {
   const { mutate: rateCommentMutation, isPending: isRatingComment } = useMutation({
     mutationFn: async ({ commentId, rating }: { commentId: string; rating: number }) => {
       const encodedItemId = encodeURIComponent(itemId);
-      const response = await fetch(`/api/items/${encodedItemId}/comments/rating`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ commentId, rating }),
-      });
+      const response = await serverClient.post(`/api/items/${encodedItemId}/comments/rating`, { commentId, rating });
 
-      if (!response.ok) {
-        throw new Error("Failed to rate comment");
+      if (!apiUtils.isSuccess(response)) {
+        if (response.error?.includes('401') || response.error?.includes('Unauthorized')) {
+          loginModal.onOpen('Please sign in to rate comment');
+          return;
+        }
+        throw new Error(apiUtils.getErrorMessage(response));
       }
 
-      return response.json();
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
@@ -91,19 +84,17 @@ export function useComments(itemId: string) {
   const { mutate: updateCommentRatingMutation, isPending: isUpdatingRating } = useMutation({
     mutationFn: async ({ commentId, rating }: { commentId: string; rating: number }) => {
       const encodedItemId = encodeURIComponent(itemId);
-      const response = await fetch(`/api/items/${encodedItemId}/comments/rating`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ commentId, rating }),
-      });
+      const response = await serverClient.put(`/api/items/${encodedItemId}/comments/rating`, { commentId, rating });
 
-      if (!response.ok) {
-        throw new Error("Failed to update comment rating");
+      if (!apiUtils.isSuccess(response)) {
+        if (response.error?.includes('401') || response.error?.includes('Unauthorized')) {
+          loginModal.onOpen('Please sign in to rate comment');
+          return;
+        }
+        throw new Error(apiUtils.getErrorMessage(response));
       }
 
-      return response.json();
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
@@ -115,10 +106,11 @@ export function useComments(itemId: string) {
   const { data: commentRating = 0, isLoading: isLoadingRating } = useQuery({
     queryKey: ["commentRating", itemId],
     queryFn: async () => {
-      const response = await fetch(`/api/items/comments/rating/${itemId}`, {
-        method: "GET",
-      });
-      return response.json();
+      const response = await serverClient.get(`/api/items/comments/rating/${itemId}`);
+      if (!apiUtils.isSuccess(response)) {
+        throw new Error(apiUtils.getErrorMessage(response));
+      }
+      return response.data;
     },
   });
 

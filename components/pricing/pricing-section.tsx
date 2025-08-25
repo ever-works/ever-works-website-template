@@ -12,9 +12,10 @@ import { usePricingSection } from '@/hooks/use-pricing-section';
 
 interface PricingSectionProps {
 	onSelectPlan?: (plan: PaymentPlan) => void;
+	isReview?: boolean;
 }
 
-export function PricingSection({ onSelectPlan }: PricingSectionProps) {
+export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) {
 	const {
 		FREE,
 		STANDARD,
@@ -52,51 +53,54 @@ export function PricingSection({ onSelectPlan }: PricingSectionProps) {
 	return (
 		<div className="relative z-10 px-4">
 			{/* Enhanced Header */}
-			<div className="text-center mb-16 animate-fade-in-up">
-				<div className="flex items-center justify-center mb-6">
-					<div className="flex items-center text-gray-900 dark:text-gray-200 bg-gray-200 dark:bg-[#1F2937] py-2 px-4 rounded-full gap-2 text-sm font-medium">
-						<div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
-						{t('CHOOSE_YOUR_PERFECT_PLAN')}
+			{!isReview && (
+				<div className="text-center mb-16 animate-fade-in-up">
+					<div className="flex items-center justify-center mb-6">
+						<div className="flex items-center text-gray-900 dark:text-gray-200 bg-gray-200 dark:bg-[#1F2937] py-2 px-4 rounded-full gap-2 text-sm font-medium">
+							<div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
+							{t('CHOOSE_YOUR_PERFECT_PLAN')}
+						</div>
+					</div>
+					<h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent transition-colors duration-300">
+						{t('START_YOUR_JOURNEY')}
+						<br className="hidden md:block" />
+						<span className="bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 bg-clip-text text-transparent">
+							{t('CHOOSE_WHAT_FITS_YOU')}
+						</span>
+					</h1>
+
+					<p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed transition-colors duration-300">
+						{t('DESCRIPTION')}
+					</p>
+
+					{/* Trust Indicators */}
+					<div className="mt-8 inline-flex items-center gap-3 p-1 rounded-xl bg-gray-200/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-300/30 dark:border-gray-700/30">
+						<div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/60 dark:bg-gray-900/60">
+							<Check className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+							<span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+								{t('NO_HIDDEN_FEES')}
+							</span>
+						</div>
+						<div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/60 dark:bg-gray-900/60">
+							<Zap className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+							<span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+								{t('INSTANT_ACTIVATION')}
+							</span>
+						</div>
 					</div>
 				</div>
-				<h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent transition-colors duration-300">
-					{t('START_YOUR_JOURNEY')}
-					<br className="hidden md:block" />
-					<span className="bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 bg-clip-text text-transparent">
-						{t('CHOOSE_WHAT_FITS_YOU')}
-					</span>
-				</h1>
+			)}
 
-				<p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed transition-colors duration-300">
-					{t('DESCRIPTION')}
-				</p>
-
-				{/* Trust Indicators */}
-				<div className="mt-8 inline-flex items-center gap-3 p-1 rounded-xl bg-gray-200/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-300/30 dark:border-gray-700/30">
-					<div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/60 dark:bg-gray-900/60">
-						<Check className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-						<span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-							{t('NO_HIDDEN_FEES')}
-						</span>
-					</div>
-					<div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/60 dark:bg-gray-900/60">
-						<Zap className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-						<span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-							{t('INSTANT_ACTIVATION')}
-						</span>
-					</div>
+			{!isReview && (
+				<div className="text-center mb-8">
+					<PaymentFlowIndicator
+						selectedFlow={selectedFlow}
+						onFlowChange={handleFlowChange}
+						showChangeButton={true}
+						animated={true}
+					/>
 				</div>
-			</div>
-
-			<div className="text-center mb-8">
-				<PaymentFlowIndicator
-					selectedFlow={selectedFlow}
-					onFlowChange={handleFlowChange}
-					showChangeButton={true}
-					animated={true}
-				/>
-			</div>
-
+			)}
 			{/* Billing Interval Selector */}
 			<div className="flex justify-center mb-14">
 				<div className="relative inline-flex items-center bg-slate-100 dark:bg-slate-800/50 rounded-xl p-1 border border-slate-200 dark:border-slate-700/50 shadow-sm backdrop-blur-sm">
