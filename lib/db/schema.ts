@@ -47,6 +47,52 @@ export const roles = pgTable("roles", {
   createdAtIndex: index("roles_created_at_idx").on(table.createdAt),
 }));
 
+// ######################### Permissions Schema #########################
+export const permissions = pgTable("permissions", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  key: text("key").notNull().unique(),
+  description: text("description"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  keyIndex: index("permissions_key_idx").on(table.key),
+  createdAtIndex: index("permissions_created_at_idx").on(table.createdAt),
+}));
+
+// ######################### Role Permissions Schema #########################
+export const rolePermissions = pgTable("role_permissions", {
+  roleId: text("role_id")
+    .notNull()
+    .references(() => roles.id, { onDelete: "cascade" }),
+  permissionId: text("permission_id")
+    .notNull()
+    .references(() => permissions.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => ({
+  rolePermissionPk: primaryKey({ columns: [table.roleId, table.permissionId] }),
+  roleIndex: index("role_permissions_role_idx").on(table.roleId),
+  permissionIndex: index("role_permissions_permission_idx").on(table.permissionId),
+  createdAtIndex: index("role_permissions_created_at_idx").on(table.createdAt),
+}));
+
+// ######################### User Roles Schema #########################
+export const userRoles = pgTable("user_roles", {
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  roleId: text("role_id")
+    .notNull()
+    .references(() => roles.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => ({
+  userRolePk: primaryKey({ columns: [table.userId, table.roleId] }),
+  userIndex: index("user_roles_user_idx").on(table.userId),
+  roleIndex: index("user_roles_role_idx").on(table.roleId),
+  createdAtIndex: index("user_roles_created_at_idx").on(table.createdAt),
+}));
+
 export const accounts = pgTable(
   "accounts",
   {
@@ -406,6 +452,14 @@ export type NewNewsletterSubscription = typeof newsletterSubscriptions.$inferIns
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 export type Role = typeof roles.$inferSelect;
 export type NewRole = typeof roles.$inferInsert;
+
+// ######################### Permission Types #########################
+export type Permission = typeof permissions.$inferSelect;
+export type NewPermission = typeof permissions.$inferInsert;
+export type RolePermission = typeof rolePermissions.$inferSelect;
+export type NewRolePermission = typeof rolePermissions.$inferInsert;
+export type UserRole = typeof userRoles.$inferSelect;
+export type NewUserRole = typeof userRoles.$inferInsert;
 
 // ######################### Subscription Types #########################
 export type Subscription = typeof subscriptions.$inferSelect;
