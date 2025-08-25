@@ -6,13 +6,9 @@ const PLAN_HIERARCHY: readonly PlanType[] = ["FREE", "STANDARD", "PREMIUM"] as c
 
 export interface User {
   readonly id: string
-  readonly email: string
-  readonly name: string
-  readonly image: string
-  readonly role: string
-  readonly createdAt: Date
-  readonly updatedAt: Date
   readonly plan: PlanType
+  readonly featureOverrides?: readonly string[] // Feature flags for special access
+  readonly isAdmin?: boolean // Admin override
 }
 
 export interface FeatureGuardProps {
@@ -22,6 +18,8 @@ export interface FeatureGuardProps {
   readonly fallback?: React.ReactNode
   readonly showFallback?: boolean
   readonly onAccessDenied?: (userPlan: PlanType, requiredPlan: PlanType) => void
+  readonly featureId?: string // Unique identifier for the feature
+  readonly allowOverride?: boolean // Whether to check for overrides
 }
 
 // Utility type for plan comparison
@@ -29,6 +27,7 @@ type PlanComparison = {
   readonly userLevel: number
   readonly requiredLevel: number
   readonly hasAccess: boolean
+  readonly isOverride?: boolean
 }
 
 /**
@@ -58,6 +57,27 @@ export const hasAccess = (userPlan: PlanType, requiredPlan: PlanType): boolean =
   return comparePlans(userPlan, requiredPlan).hasAccess
 }
 
+/**
+ * Checks if user has override access to a specific feature
+ */
+export const hasFeatureOverride = (user: User, featureId: string): boolean => {
+  return user.isAdmin || user.featureOverrides?.includes(featureId) || false
+}
+
+/**
+ * Global feature override configuration
+ */
+export const FEATURE_OVERRIDES = {
+  // Temporarily allow FREE users to access PREMIUM features
+  ALLOW_FREE_PREMIUM: process.env.NODE_ENV === 'development' || false,
+  
+  // Specific features that FREE users can access
+  FREE_ACCESS_FEATURES: [
+    'premium-analytics',
+    'advanced-export',
+    'priority-support'
+  ] as const
+} as const
 
 const FeatureGuard: React.FC<FeatureGuardProps> = memo(({ 
   user, 
@@ -65,24 +85,54 @@ const FeatureGuard: React.FC<FeatureGuardProps> = memo(({
   children, 
   fallback = null,
   showFallback = false,
-  onAccessDenied
+  onAccessDenied,
+  featureId,
+  allowOverride = true
 }) => {
   const accessResult = useMemo(() => {
     if (!user) {
-      return { hasAccess: false, userPlan: null as PlanType | null }
+      return { hasAccess: false, userPlan: null as PlanType | null, isOverride: false }
     }
     
     const comparison = comparePlans(user.plan, requiredPlan)
+    let hasAccess = comparison.hasAccess
+    let isOverride = false
     
-    if (!comparison.hasAccess && onAccessDenied) {
+    // Check for overrides if access is denied and overrides are allowed
+    if (!hasAccess && allowOverride) {
+      // Admin override
+      if (user.isAdmin) {
+        hasAccess = true
+        isOverride = true
+      }
+      // Feature-specific override
+      else if (featureId && hasFeatureOverride(user, featureId)) {
+        hasAccess = true
+        isOverride = true
+      }
+      // Global override for development
+      else if (FEATURE_OVERRIDES.ALLOW_FREE_PREMIUM && user.plan === 'FREE') {
+        hasAccess = true
+        isOverride = true
+      }
+      // Specific feature overrides
+      else if (featureId && FEATURE_OVERRIDES.FREE_ACCESS_FEATURES.includes(featureId as any)) {
+        hasAccess = true
+        isOverride = true
+      }
+    }
+    
+    // Call callback only if access is still denied after overrides
+    if (!hasAccess && onAccessDenied) {
       onAccessDenied(user.plan, requiredPlan)
     }
     
     return { 
-      hasAccess: comparison.hasAccess, 
-      userPlan: user.plan 
+      hasAccess, 
+      userPlan: user.plan,
+      isOverride
     }
-  }, [user?.plan, requiredPlan, onAccessDenied])
+  }, [user?.plan, user?.featureOverrides, user?.isAdmin, requiredPlan, onAccessDenied, featureId, allowOverride])
 
   if (!accessResult.hasAccess) {
     return showFallback ? <>{fallback}</> : null
