@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { getAuthConfig } from "@/lib/auth/config";
 import { updateSession as supabaseUpdate } from "@/lib/auth/supabase/middleware";
+import { getToken } from 'next-auth/jwt';
 
 const intl = createIntlMiddleware(routing);
 
@@ -18,14 +19,16 @@ const ADMIN_SIGNIN = "/admin/auth/signin";
 
 /* ────────────────────────────── Locale helper ───────────────────────────────────── */
 
-function resolveLocalePrefix(pathname: string): { prefix: string; hasLocale: boolean; locale?: string } {
+function resolveLocalePrefix(pathname: string): { prefix: string; hasLocale: boolean; locale?: string; pathWithoutLocale: string } {
   const segments = pathname.split('/').filter(Boolean);
   const maybeLocale = segments[0];
   const hasLocale = routing.locales.includes(maybeLocale as any);
-  return { 
-    prefix: hasLocale ? `/${maybeLocale}` : "", 
-    hasLocale, 
-    locale: hasLocale ? maybeLocale : undefined 
+  const pathWithoutLocale = hasLocale ? `/${segments.slice(1).join('/')}` : pathname;
+  return {
+    prefix: hasLocale ? `/${maybeLocale}` : "",
+    hasLocale,
+    locale: hasLocale ? maybeLocale : undefined,
+    pathWithoutLocale
   };
 }
 
@@ -33,31 +36,24 @@ function resolveLocalePrefix(pathname: string): { prefix: string; hasLocale: boo
 
 async function nextAuthGuard(req: NextRequest, baseRes: NextResponse): Promise<NextResponse> {
   try {
-    // Import auth dynamically to avoid Edge Runtime issues
-    const { auth } = await import("@/lib/auth");
-    const session = await auth();
-    
-    if (session?.user?.isAdmin) {
+    const token = await getToken({ req });
+    if (token?.isAdmin === true) {
       return baseRes;
     }
-    
-    const url = req.nextUrl.clone();
-    const { prefix: rootLocalePrefix } = resolveLocalePrefix(req.nextUrl.pathname);
-    url.pathname = `${rootLocalePrefix}${ADMIN_SIGNIN}`;
-    url.searchParams.set('callbackUrl', req.nextUrl.pathname + req.nextUrl.search);
-    const redirectRes = NextResponse.redirect(url);
-    baseRes.cookies.getAll().forEach((c) => redirectRes.cookies.set(c));
-    return redirectRes;
   } catch (error) {
-    console.error('DEBUG: NextAuth guard error:', error);
-    const url = req.nextUrl.clone();
-    const { prefix: rootLocalePrefix } = resolveLocalePrefix(req.nextUrl.pathname);
-    url.pathname = `${rootLocalePrefix}${ADMIN_SIGNIN}`;
-    url.searchParams.set('callbackUrl', req.nextUrl.pathname + req.nextUrl.search);
-    const redirectRes = NextResponse.redirect(url);
-    baseRes.cookies.getAll().forEach((c) => redirectRes.cookies.set(c));
-    return redirectRes;
+    console.error(
+      'NextAuth guard error',
+      error instanceof Error ? { name: error.name, message: error.message } : undefined
+    );
   }
+  // Redirect non-admins or on error
+  const url = req.nextUrl.clone();
+  const { prefix: rootLocalePrefix } = resolveLocalePrefix(req.nextUrl.pathname);
+  url.pathname = `${rootLocalePrefix}${ADMIN_SIGNIN}`;
+  url.searchParams.set('callbackUrl', req.nextUrl.pathname + req.nextUrl.search);
+  const redirectRes = NextResponse.redirect(url);
+  baseRes.cookies.getAll().forEach((c) => redirectRes.cookies.set(c));
+  return redirectRes;
 }
 
 /* ────────────────────────────── Supabase guard helper ────────────────────────────── */
@@ -108,8 +104,7 @@ export default async function middleware(req: NextRequest) {
 
   const intlResponse = await intl(req as any);
 
-  const { prefix: localePrefix, hasLocale } = resolveLocalePrefix(originalPathname);
-  const pathWithoutLocale = hasLocale ? `/${originalPathname.split("/").filter(Boolean).slice(1).join("/")}` : originalPathname;
+  const { prefix: localePrefix, pathWithoutLocale } = resolveLocalePrefix(originalPathname);
 
   // Only redirect admins away from /client/* without DB calls.
   if (pathWithoutLocale === "/client" || pathWithoutLocale.startsWith("/client/")) {
