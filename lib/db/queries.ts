@@ -1,36 +1,38 @@
 import { and, eq, sql, type SQL } from 'drizzle-orm';
 import { db } from './drizzle';
 import {
-	activityLogs,
-	ActivityType,
-	type NewActivityLog,
-	NewUser,
-	passwordResetTokens,
-	users,
-	verificationTokens,
-	newsletterSubscriptions,
-	type NewNewsletterSubscription,
-	type NewsletterSubscription,
-	comments,
-	votes,
-	InsertVote,
-	subscriptions,
-	subscriptionHistory,
-	SubscriptionStatus,
-	type Subscription,
-	type NewSubscription,
-	type SubscriptionHistory as SubscriptionHistoryType,
-	type NewSubscriptionHistory,
-	type SubscriptionWithUser,
-	accounts,
-	paymentProviders,
-	paymentAccounts
+  activityLogs,
+  ActivityType,
+  type NewActivityLog,
+  type ActivityLog,
+  NewUser,
+  passwordResetTokens,
+  users,
+  verificationTokens,
+  newsletterSubscriptions,
+  type NewNewsletterSubscription,
+  type NewsletterSubscription,
+  comments,
+  votes,
+  InsertVote,
+  subscriptions,
+  subscriptionHistory,
+  SubscriptionStatus,
+  type Subscription,
+  type NewSubscription,
+  type SubscriptionHistory as SubscriptionHistoryType,
+  type NewSubscriptionHistory,
+  type SubscriptionWithUser,
+  accounts,
+  paymentProviders,
+  paymentAccounts,
+  clientProfiles
 } from "./schema";
 import { desc, isNull, count, asc, lte } from "drizzle-orm";
 import type { NewComment, CommentWithUser } from "@/lib/types/comment";
 import type { ClientProfile, NewClientProfile, OldPaymentProvider, PaymentAccount, NewPaymentAccount, NewPaymentProvider } from "./schema";
-import { clientProfiles } from "./schema";
-import { randomUUID } from "crypto";
+
+// import { randomUUID } from "crypto"; // Removed for Edge Runtime compatibility
 
 import { PaymentPlan } from "../constants";
 import { comparePasswords } from "../auth/credentials";
@@ -747,6 +749,7 @@ export async function createClientUser(name: string, email: string): Promise<any
  * Create a new client profile
  */
 export async function createClientProfile(data: {
+  userId: string;
   email: string;
   name: string;
   displayName?: string;
@@ -780,6 +783,7 @@ export async function createClientProfile(data: {
   const [profile] = await db
     .insert(clientProfiles)
     .values({
+      userId: data.userId,
       email: normalizedEmail,
       name: data.name,
       displayName: data.displayName || data.name,
@@ -876,6 +880,39 @@ export async function getClientProfiles(params: {
 		page,
 		totalPages: Math.ceil(total / limit),
 		limit
+	};
+}
+
+/**
+ * Get client statistics efficiently using GROUP BY
+ * Returns counts per status and total count in a single query
+ */
+export async function getClientStats(): Promise<{
+	byStatus: { status: string; count: number }[];
+	total: number;
+}> {
+	// Get counts by status using GROUP BY
+	const statusCounts = await db
+		.select({
+			status: clientProfiles.status,
+			count: sql<number>`count(*)`
+		})
+		.from(clientProfiles)
+		.groupBy(clientProfiles.status);
+
+	// Get total count
+	const totalResult = await db
+		.select({ count: sql<number>`count(*)` })
+		.from(clientProfiles);
+
+	const total = Number(totalResult[0]?.count || 0);
+
+	return {
+		byStatus: statusCounts.map((row: { status: string | null; count: number }) => ({
+			status: row.status || 'unknown',
+			count: Number(row.count)
+		})),
+		total
 	};
 }
 
@@ -1002,7 +1039,7 @@ export async function createClientAccount(userId: string | undefined, email: str
       userId: resolvedUserId, // Must reference client_profiles.id
       type: "credentials" as any,
       provider: "credentials",
-      providerAccountId: randomUUID(), // Opaque stable identifier per provider
+      providerAccountId: crypto.randomUUID(), // Opaque stable identifier per provider
       email: normalizedEmail,
       passwordHash: passwordHash || null,
       refresh_token: null,
@@ -1467,4 +1504,43 @@ export async function updateSubscriptionBySubscriptionId(
 		.where(eq(subscriptions.subscriptionId, updateData.subscriptionId!));
 
 	return result[0] || null;
+}
+
+// ######################### Activity Log Queries #########################
+
+/**
+ * Get the last login activity for a client
+ */
+export async function getLastLoginActivity(clientId: string): Promise<ActivityLog | null> {
+	// Try to find by clientId first, then by userId if no results
+	const [lastLoginByClient] = await db
+		.select()
+		.from(activityLogs)
+		.where(
+			and(
+				eq(activityLogs.clientId, clientId),
+				eq(activityLogs.action, ActivityType.SIGN_IN)
+			)
+		)
+		.orderBy(desc(activityLogs.timestamp))
+		.limit(1);
+
+	if (lastLoginByClient) {
+		return lastLoginByClient;
+	}
+
+	// If no client-specific login found, try to find by userId
+	const [lastLoginByUser] = await db
+		.select()
+		.from(activityLogs)
+		.where(
+			and(
+				eq(activityLogs.userId, clientId),
+				eq(activityLogs.action, ActivityType.SIGN_IN)
+			)
+		)
+		.orderBy(desc(activityLogs.timestamp))
+		.limit(1);
+
+	return lastLoginByUser || null;
 }

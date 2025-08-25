@@ -14,9 +14,8 @@ export const generateVerificationToken = async (email: string) => {
   const existingToken = await getVerificationTokenByEmail(email);
 
   if (existingToken) {
-    await db
-      .delete(verificationTokens)
-      .where(eq(verificationTokens.identifier, existingToken.identifier));
+    // Remove any stale tokens for this email to avoid duplicates
+    await db.delete(verificationTokens).where(eq(verificationTokens.email, email));
   }
 
   const items = await db

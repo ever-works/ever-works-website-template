@@ -17,6 +17,9 @@
     "NEED_AN_ACCOUNT": "Need an account? Sign up",
     "ALREADY_HAVE_AN_ACCOUNT": "Already have an account? Sign in"
   },
+  "header": {
+    "OPEN_USER_MENU": "Open user menu"
+  },
   "common": {
     "DISCOVER": "Discover",
     "HOME": "Home",
@@ -100,6 +103,14 @@
     "COMMENTS": "Comments",
     "ROLES": "Roles",
     "MANAGE_CLIENTS": "Manage Clients",
+    "MANAGE_CLIENTS_DESC": "View and manage client profiles",
+    "YOUR_PROFILE": "Your Profile",
+    "YOUR_PROFILE_DESC": "View and edit your profile",
+    "MANAGE_CATEGORIES_DESC": "Manage categories",
+    "MANAGE_TAGS_DESC": "Manage tags",
+    "MANAGE_ITEMS_DESC": "Manage items",
+    "MANAGE_COMMENTS_DESC": "Manage comments",
+    "MANAGE_USER_ROLES_DESC": "Manage user roles",
     "FAVORITES": "Favorites",
     "FAVORITES_DESCRIPTION": "Your saved items and tools. Access them quickly from here.",
     "SIGN_IN_TO_VIEW_FAVORITES": "Sign in to view your favorites",
@@ -251,6 +262,9 @@
     "LEGAL": "Legal",
     "HELP": "Help Center",
     "LOGOUT": "Sign out",
+    "LOGOUT_DESC": "Sign out of your account",
+    "PROFILE_DESC": "View and edit your profile",
+    "ACCOUNT_SETTINGS_DESC": "Account settings and preferences",
     "SECURITY_PAGE": {
       "TITLE": "Security Settings",
       "BACK_TO_SETTINGS": "Back to Settings",

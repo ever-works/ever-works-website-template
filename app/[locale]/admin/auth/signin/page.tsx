@@ -1,14 +1,13 @@
 "use client";
 
 import { AuthForm } from "@/app/[locale]/auth/components/auth-form";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 export default function AdminLoginPage() {
   const params = useParams();
-  const router = useRouter();
 
   const handleLoginSuccess = () => {
-    router.push(`/${params.locale}/admin`);
+    window.location.href = `/${params.locale}/admin`;
   };
 
   return (

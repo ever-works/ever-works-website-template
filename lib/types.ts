@@ -6,7 +6,7 @@ export type SessionProps = {
 	session: Session | null;
 };
 export const defaultPricingConfig: PricingPlanConfig = {
-	provider: PaymentProvider.STRIPE, // Default provider set to Stripe, can be changed to 'lemonsqueezy' or 'manual' ,
+	provider: PaymentProvider.LEMONSQUEEZY, // Default provider set to Stripe, can be changed to 'lemonsqueezy' or 'manual' ,
 	lemonCheckoutUrl: '', // Ignored by default as provider is 'stripe'
 	currency: '$',
 	plans: {

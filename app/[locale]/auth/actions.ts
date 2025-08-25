@@ -1,7 +1,9 @@
 "use server";
 
 import { z } from "zod";
-import { ActivityType } from "@/lib/db/schema";
+import { ActivityType, users, clientProfiles } from "@/lib/db/schema";
+import { db } from "@/lib/db/drizzle";
+
 import { redirect } from "next/navigation";
 import {
   validatedAction,
@@ -23,7 +25,6 @@ import {
   updateUser,
   updateUserPassword,
   updateUserVerification,
-  createClientProfile,
   createClientAccount,
   getClientAccountByEmail,
 } from "@/lib/db/queries";
@@ -148,35 +149,73 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
 
     const passwordHash = await hashPassword(password);
 
-    // For client registrations, we only create records in client_profiles and accounts tables
-    // We don't create a user record in the users table for clients
-    
-    // 1) Create client profile record
-    const clientProfile = await createClientProfile({
-      email,
-      name,
-      displayName: name,
-      username: email.split('@')[0] || 'user',
-      bio: "Welcome! I'm a new user on this platform.",
-      jobTitle: "User",
-      company: "Unknown",
-      status: "active",
-      plan: "free",
-      accountType: "individual",
+    // Normalize email once for consistency across all operations
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Wrap in transaction to ensure atomicity
+    const result = await db.transaction(async (tx: typeof db) => {
+      // 1) Create user record
+      const userId = crypto.randomUUID();
+      const [user] = await tx.insert(users).values({
+        id: userId,
+        email: normalizedEmail,
+        name,
+        username: email.split('@')[0] || 'user',
+        status: 'active',
+        created_by: 'system',
+      }).returning();
+      
+      // 2) Create client profile record using transaction
+      const extractedUsername = normalizedEmail.split('@')[0] || 'user';
+      const base = (extractedUsername.replace(/[^a-z0-9_]/gi, '').toLowerCase() || 'user').slice(0, 30);
+      
+      // Generate unique username via onConflictDoNothing + retry
+      let counter = 1;
+      let clientProfile;
+      for (;;) {
+        const candidate = counter === 1 ? base : `${base}${counter}`;
+        const inserted = await tx
+          .insert(clientProfiles)
+          .values({
+            userId: user.id,
+            email: normalizedEmail,
+            name,
+            displayName: name,
+            username: candidate,
+            bio: "Welcome! I'm a new user on this platform.",
+            jobTitle: "User",
+            company: "Unknown",
+            status: "active",
+            plan: "free",
+            accountType: "individual",
+          })
+          .onConflictDoNothing({ target: clientProfiles.username })
+          .returning();
+        if (inserted.length) {
+          clientProfile = inserted[0];
+          break;
+        }
+        counter++;
+        if (counter > 50) throw new Error("Failed to allocate unique username after 50 attempts");
+      }
+      
+      return { user, clientProfile };
     });
+    
+    const { user, clientProfile } = result;
 
     // 2) Create credentials account record holding the password hash linked to client profile
-    const clientAccount = await createClientAccount(clientProfile.id, email, passwordHash);
+    const clientAccount = await createClientAccount(clientProfile.id, normalizedEmail, passwordHash);
     if (!clientAccount) {
       throw new Error("Failed to create client account");
     }
 
     // Log activity using the client profile ID
-    		await logActivity(ActivityType.SIGN_UP, undefined, clientProfile.id);
+    		await logActivity(ActivityType.SIGN_UP, user.id, clientProfile.id);
 
-    const verificationToken = await generateVerificationToken(email);
+    const verificationToken = await generateVerificationToken(normalizedEmail);
     if (verificationToken) {
-      await sendVerificationEmail(email, verificationToken.token);
+      await sendVerificationEmail(normalizedEmail, verificationToken.token);
     }
 
     await signIn(AuthProviders.CREDENTIALS, {

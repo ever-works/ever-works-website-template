@@ -47,6 +47,7 @@ export interface SubscriptionInfo {
   trialEnd?: number | null;
   priceId: string;
   paymentIntentId?: string;
+  checkoutData?: Record<string, any>;
 }
 
 export enum SubscriptionStatus {
@@ -173,7 +174,7 @@ export interface PaymentProviderInterface {
   getClientConfig(): ClientConfig;
 
   // Method to create a custom checkout
-  createCustomCheckout(params: CheckoutParams): Promise<string>;
+  // createCustomCheckout(params: CheckoutParams): Promise<string>;
 
   // Method to get the UI components
   getUIComponents(): UIComponents;

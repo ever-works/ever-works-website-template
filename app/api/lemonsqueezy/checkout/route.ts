@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createCustomCheckout } from "@/lib/payment/lib/lemonsqueezy";
 import { validateCheckoutRequestBody, validateCheckoutQueryParams } from '@/lib/payment/config/validation';
 import {
     HTTP_STATUS,
@@ -7,7 +6,7 @@ import {
     CreateCheckoutResponse,
     CreateCheckoutError
 } from '@/lib/payment/config/types';
-import { auth } from '@/lib/auth';
+import { auth, getOrCreateLemonsqueezyProvider, PaymentProviderManager } from '@/lib/auth';
 
 
 export async function POST(request: NextRequest) {
@@ -31,7 +30,7 @@ export async function POST(request: NextRequest) {
                 { status: HTTP_STATUS.BAD_REQUEST }
             );
         }
-
+        const lemonsqueezyProvider = getOrCreateLemonsqueezyProvider();
         const validation = validateCheckoutRequestBody(body);
         if (!validation.isValid) {
             return NextResponse.json(
@@ -43,7 +42,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const checkoutUrl = await createCustomCheckout({
+        const checkoutUrl = await lemonsqueezyProvider.createCustomCheckout({
             email: session.user.email!,
             customPrice: body.customPrice,
             variantId: body.variantId,
@@ -142,7 +141,8 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const checkoutUrl = await createCustomCheckout(validation.data!);
+        const lemonsqueezyProvider = PaymentProviderManager.getLemonsqueezyProvider();
+        const checkoutUrl = await lemonsqueezyProvider.createCustomCheckout(validation.data!);
 
         const response: CreateCheckoutResponse = {
             success: true,

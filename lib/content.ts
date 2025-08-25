@@ -96,7 +96,7 @@ export interface PricingPlans {
 }
 
 export interface PricingPlanConfig {
-	provider: PaymentProvider;
+	provider?: PaymentProvider;
 	plans: PricingPlans;
 	currency?: string;
 	lemonCheckoutUrl?: string;
