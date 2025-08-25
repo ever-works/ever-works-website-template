@@ -169,6 +169,13 @@
       "when": 1756006600000,
       "tag": "0023_add_accounts_provider_unique_constraint",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1756006700000,
+      "tag": "0023_enhance_accounts_table",
+      "breakpoints": true
     }
   ]
 }
