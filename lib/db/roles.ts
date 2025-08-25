@@ -65,8 +65,18 @@ export async function hasPermission(userId: string, permissionKey: string): Prom
 /**
  * Assign a role to a user
  */
-export async function assignRoleToUser(userId: string, roleId: string) {
+export async function assignRoleToUser(userId: string, roleId: string): Promise<boolean> {
   try {
+    // Validate that the role exists and is active
+    const activeRole = await db.select({ id: roles.id, status: roles.status })
+      .from(roles)
+      .where(and(eq(roles.id, roleId), eq(roles.status, 'active')))
+      .limit(1);
+    
+    if (!activeRole.length) {
+      throw new Error(`Role ${roleId} does not exist or is not active`);
+    }
+
     const result = await db
       .insert(userRoles)
       .values({
@@ -77,7 +87,7 @@ export async function assignRoleToUser(userId: string, roleId: string) {
       .onConflictDoNothing()
       .returning();
 
-    return result[0];
+    return result.length > 0; // true if newly assigned, false if already present
   } catch (error) {
     console.error('Error assigning role to user:', error);
     throw error;
@@ -87,7 +97,7 @@ export async function assignRoleToUser(userId: string, roleId: string) {
 /**
  * Remove a role from a user
  */
-export async function removeRoleFromUser(userId: string, roleId: string) {
+export async function removeRoleFromUser(userId: string, roleId: string): Promise<boolean> {
   try {
     const result = await db
       .delete(userRoles)
@@ -99,7 +109,7 @@ export async function removeRoleFromUser(userId: string, roleId: string) {
       )
       .returning();
 
-    return result[0];
+    return result.length > 0; // true if role was removed, false if role wasn't assigned
   } catch (error) {
     console.error('Error removing role from user:', error);
     throw error;
