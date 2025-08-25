@@ -77,8 +77,7 @@ export const accounts = pgTable(
     },
     // Index on email for client authentication lookups
     index("accounts_email_idx").on(account.email),
-    // Unique constraint for credentials provider email
-    unique("accounts_credentials_email_unique").on(account.email),
+
     // Performance index for provider lookups
     index("accounts_provider_idx").on(account.provider),
   ]
