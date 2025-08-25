@@ -40,9 +40,16 @@ export async function seedPermissions() {
 export async function linkRolesToPermissions() {
   // Get existing roles
   const existingRoles: Role[] = await db.select().from(roles);
+  const roleById = new Map(existingRoles.map(r => [r.id, r]));
+  const requiredRoles = ['admin', 'client'];
+  const missing = requiredRoles.filter(r => !roleById.has(r) || roleById.get(r)?.status !== 'active');
+  if (missing.length) {
+    throw new Error(`Missing or inactive required roles: ${missing.join(', ')}`);
+  }
   
   // Get permissions
   const allPermissions: Permission[] = await db.select().from(permissions);
+  const permByKey = new Map(allPermissions.map(p => [p.key, p]));
   
   // Create role-permission mappings
   const rolePermissionMappings = [
@@ -66,28 +73,16 @@ export async function linkRolesToPermissions() {
     },
   ];
 
-  const now = new Date();
-  const rolePermissionValues = rolePermissionMappings
-    .map(mapping => {
-      const role = existingRoles.find((r: Role) => r.name === mapping.roleName);
-      const permission = allPermissions.find((p: Permission) => p.key === mapping.permissionKey);
-      
-      if (role && permission) {
-        return {
-          roleId: role.id,
-          permissionId: permission.id,
-          createdAt: now,
-        };
-      }
-      return null;
+  const values = rolePermissionMappings
+    .map(m => {
+      const role = roleById.get(m.roleName);
+      const perm = permByKey.get(m.permissionKey);
+      return role && perm ? { roleId: role.id, permissionId: perm.id, createdAt: new Date() } : null;
     })
-    .filter(Boolean);
-
-  if (rolePermissionValues.length > 0) {
-    await db
-      .insert(rolePermissions)
-      .values(rolePermissionValues)
-      .onConflictDoNothing();
+    .filter(Boolean) as Array<{ roleId: string; permissionId: string; createdAt: Date }>;
+  
+  if (values.length) {
+    await db.insert(rolePermissions).values(values).onConflictDoNothing();
   }
 
   console.log('✅ Role-permission mappings created successfully');
