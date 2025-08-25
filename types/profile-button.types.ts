@@ -1,3 +1,5 @@
+import type { RefObject } from "react";
+
 export interface ExtendedUser {
   name?: string | null;
   email?: string | null;
@@ -21,16 +23,17 @@ export interface ThemeColors {
   textColor: string;
 }
 
-export interface ProfileButtonProps {
-  className?: string;
-}
-
 export interface ProfileMenuProps {
   isOpen: boolean;
-  onClose: () => void;
-  user: ExtendedUser | null;
-  isAdmin: boolean;
+  menuRef: RefObject<HTMLDivElement>;
+  user: ExtendedUser;
   profilePath: string;
+  displayRole: RoleLabel;
+  onlineStatus: PresenceStatus;
+  onItemClick: () => void;
+  onLogout: () => void;
+  logoutText: string;
+  logoutDescription: string;
 }
 
 export type PresenceStatus = 'online' | 'offline' | 'away' | 'busy';
