@@ -81,6 +81,7 @@ DROP INDEX IF EXISTS "user_subscription_idx";--> statement-breakpoint
 
 -- Update subscriptions start_date
 ALTER TABLE "subscriptions" ALTER COLUMN "start_date" SET DEFAULT now();--> statement-breakpoint
+UPDATE "subscriptions" SET "start_date" = now() WHERE "start_date" IS NULL;--> statement-breakpoint
 ALTER TABLE "subscriptions" ALTER COLUMN "start_date" SET NOT NULL;--> statement-breakpoint
 
 -- Add userId column to client_profiles if it doesn't exist
