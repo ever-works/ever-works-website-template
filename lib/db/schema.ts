@@ -57,7 +57,6 @@ export const permissions = pgTable("permissions", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 }, (table) => ({
-  keyIndex: index("permissions_key_idx").on(table.key),
   createdAtIndex: index("permissions_created_at_idx").on(table.createdAt),
 }));
 

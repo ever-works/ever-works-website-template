@@ -155,6 +155,13 @@
       "when": 1756150347518,
       "tag": "0021_typical_cable",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1756151214199,
+      "tag": "0022_drop_redundant_permissions_key_index",
+      "breakpoints": true
     }
   ]
 }

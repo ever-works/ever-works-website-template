@@ -212,7 +212,6 @@ export const permissions = pgTable("permissions", {
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	index("permissions_created_at_idx").using("btree", table.createdAt.asc().nullsLast().op("timestamp_ops")),
-	index("permissions_key_idx").using("btree", table.key.asc().nullsLast().op("text_ops")),
 	unique("permissions_key_unique").on(table.key),
 ]);
 

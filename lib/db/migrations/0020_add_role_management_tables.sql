@@ -34,8 +34,6 @@ ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_user_id_users_id_fk" FOREIGN
 ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE cascade ON UPDATE no action;
 
 -- Add indexes for performance
-CREATE INDEX "permissions_key_idx" ON "permissions" USING btree ("key");
-
 CREATE INDEX "permissions_created_at_idx" ON "permissions" USING btree ("created_at");
 
 CREATE INDEX "role_permissions_role_idx" ON "role_permissions" USING btree ("role_id");
