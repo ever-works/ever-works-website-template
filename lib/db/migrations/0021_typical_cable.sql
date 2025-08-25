@@ -1,3 +1,7 @@
--- This migration is a no-op since all RBAC tables were created in 0020
--- and the accounts constraint doesn't exist
--- Migration 0021 is intentionally empty to avoid conflicts
+-- Add foreign key constraint for accounts.userId to users.id
+-- Drop any existing constraint first to ensure clean state
+ALTER TABLE "accounts" DROP CONSTRAINT IF EXISTS "accounts_userId_client_profiles_id_fk";
+ALTER TABLE "accounts" DROP CONSTRAINT IF EXISTS "accounts_userid_users_id_fk";
+ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk" 
+  FOREIGN KEY ("userId") REFERENCES "public"."users"("id") 
+  ON DELETE cascade ON UPDATE no action;
