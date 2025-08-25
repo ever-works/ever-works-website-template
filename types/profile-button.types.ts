@@ -7,9 +7,6 @@ export interface ExtendedUser extends NextAuthUser {
   };
 }
 
-// Derived alias for backward compatibility - use clientProfile.username as canonical source
-export type Username = string;
-
 export interface ThemeColors {
   background: string;
   cardBg: string;
@@ -33,8 +30,11 @@ export interface ProfileMenuProps {
   logoutDescription: string;
 }
 
-export type PresenceStatus = 'online' | 'offline' | 'away' | 'busy';
-export type RoleLabel = 'Admin' | 'User' | 'Client' | string; // extend as needed
+export const PRESENCE_STATUSES = ['online', 'offline', 'away', 'busy'] as const;
+export type PresenceStatus = typeof PRESENCE_STATUSES[number];
+
+export const ROLE_LABELS = ['Admin', 'User', 'Client'] as const;
+export type RoleLabel = typeof ROLE_LABELS[number];
 
 export interface ProfileHeaderProps {
   user: ExtendedUser;
