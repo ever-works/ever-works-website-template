@@ -1,5 +1,5 @@
 import { db } from './drizzle';
-import { users, roles, userRoles, permissions, rolePermissions } from './schema';
+import { roles, userRoles, permissions, rolePermissions } from './schema';
 import { eq, and } from 'drizzle-orm';
 
 /**
