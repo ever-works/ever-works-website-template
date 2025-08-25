@@ -1,13 +1,10 @@
 import type { RefObject } from "react";
+import type { User as NextAuthUser } from "next-auth";
 
-export interface ExtendedUser {
-  name?: string | null;
-  email?: string | null;
-  image?: string | null;
+export interface ExtendedUser extends NextAuthUser {
   clientProfile?: {
     username?: string;
   };
-  isAdmin?: boolean;
 }
 
 // Derived alias for backward compatibility - use clientProfile.username as canonical source
@@ -50,6 +47,4 @@ export interface MenuItemsProps {
   onItemClick: () => void;
 }
 
-export interface LogoutOverlayProps {
-  isVisible: boolean;
-}
+
