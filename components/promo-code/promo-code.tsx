@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { FiCopy, FiCheck, FiPercent, FiDollarSign, FiTruck, FiClock, FiExternalLink } from "react-icons/fi";
 import { PromoCode } from "@/lib/content";
 import { cn } from "@heroui/react";
+import { useTranslations } from "next-intl";
 
 interface PromoCodeProps {
   promoCode: PromoCode;
@@ -23,6 +24,7 @@ export function PromoCodeComponent({
   onCodeCopied,
 }: PromoCodeProps) {
   const [copied, setCopied] = useState(false);
+  const t = useTranslations();
 
   const copyToClipboard = useCallback(async () => {
     try {
@@ -150,7 +152,7 @@ export function PromoCodeComponent({
                   <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                     <FiClock className="w-3 h-3" />
                     <span>
-                      Expires {new Date(promoCode.expires_at).toLocaleDateString()}
+                      {t("common.EXPIRES")} {new Date(promoCode.expires_at).toLocaleDateString()}
                     </span>
                   </div>
                 )}
@@ -165,7 +167,7 @@ export function PromoCodeComponent({
 
           {isExpired && (
             <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-full">
-              Expired
+              {t("common.EXPIRED")}
             </span>
           )}
         </div>
@@ -175,7 +177,7 @@ export function PromoCodeComponent({
           <div className="flex items-center gap-3 p-4 bg-white/80 dark:bg-gray-800/50 rounded-xl border border-green-200/50 dark:border-green-700/30">
             <div className="flex-1">
               <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">
-                Promo Code
+                {t("common.PROMO_CODE")}
               </label>
               <code className="text-lg font-bold font-mono text-gray-900 dark:text-white tracking-wider">
                 {promoCode.code}
@@ -197,12 +199,12 @@ export function PromoCodeComponent({
                 {copied ? (
                   <>
                     <FiCheck className="w-4 h-4" />
-                    <span className="text-sm">Copied!</span>
+                    <span className="text-sm">{t("common.COPIED")}</span>
                   </>
                 ) : (
                   <>
                     <FiCopy className="w-4 h-4" />
-                    <span className="text-sm">Copy</span>
+                    <span className="text-sm">{t("common.COPY")}</span>
                   </>
                 )}
               </button>
@@ -219,7 +221,7 @@ export function PromoCodeComponent({
                   )}
                 >
                   <FiExternalLink className="w-4 h-4" />
-                  <span className="text-sm">Use Code</span>
+                  <span className="text-sm">{t("common.USE_CODE")}</span>
                 </button>
               )}
             </div>
@@ -229,7 +231,7 @@ export function PromoCodeComponent({
         {/* Terms */}
         {showTerms && promoCode.terms && (
           <div className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-            <span className="font-medium">Terms:</span> {promoCode.terms}
+            <span className="font-medium">{t("common.TERMS")}:</span> {promoCode.terms}
           </div>
         )}
       </div>

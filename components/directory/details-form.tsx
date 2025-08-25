@@ -10,9 +10,7 @@ import {
 	Type,
 	FileText,
 	Eye,
-	Star,
-	Grid3X3,
-	Sparkles,
+	Star, Sparkles,
 	MoreHorizontal,
 	ChevronUp
 } from 'lucide-react';
@@ -128,8 +126,8 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 				<div className="relative z-10 px-2 py-12">
 					{/* Enhanced Header Section */}
 					<div className="text-center mb-16 animate-fade-in-up">
-						<div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 mb-6 shadow-lg">
-							<div className="w-8 h-8 rounded-full bg-gradient-to-r from-theme-primary-500 to-purple-500 flex items-center justify-center">
+						<div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 mb-6 ">
+							<div className="w-8 h-8 rounded-full bg-theme-primary-500 flex items-center justify-center">
 								<Sparkles className="w-4 h-4 text-white animate-pulse" />
 							</div>
 							<span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -215,7 +213,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 							{/* Progress Bar */}
 							<div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
 								<div
-									className="h-full bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 rounded-full transition-all duration-700 ease-out shadow-lg"
+									className="h-full bg-theme-primary-500 rounded-full transition-all duration-700 ease-out shadow-lg"
 									style={{ width: `${progressPercentage}%` }}
 								>
 									<div className="absolute inset-0 bg-white/20 rounded-full animate-shimmer"></div>
@@ -229,10 +227,12 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 						{/* Step Content */}
 						{currentStep === 1 && (
 							<div className="relative group animate-fade-in-up">
-								<div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 dark:from-blue-400/30 dark:to-purple-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-								<div className="relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/30 p-8 shadow-2xl">
+								<div className="absolute inset-0 bg-theme-primary-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+								<div 
+									className="relative  py-8"
+								>
 									<div className="flex items-center gap-3 mb-8">
-										<div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-theme-primary-500 to-purple-500 flex items-center justify-center">
+										<div className="w-12 h-12 rounded-2xl bg-theme-primary-500 flex items-center justify-center">
 											<Type className="w-6 h-6 text-white" />
 										</div>
 										<h3 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -279,17 +279,9 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 														'w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400',
 														focusedField === 'name' &&
 															'scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20',
-														completedFields.has('name') &&
-															'border-green-500/70 bg-green-50/40 dark:bg-green-900/20 ring-2 ring-green-500/20'
 													)}
 												/>
-												{completedFields.has('name') && (
-													<div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-														<div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center animate-scale-in">
-															<Check className="h-4 w-4 text-white" />
-														</div>
-													</div>
-												)}
+											
 											</div>
 										</div>
 										<div className="space-y-3">
@@ -373,8 +365,6 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 														'w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 hover:border-gray-300 dark:hover:border-gray-500 appearance-none cursor-pointer outline-none text-gray-900 dark:text-white',
 														focusedField === 'category' &&
 															'scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20',
-														completedFields.has('category') &&
-															'border-green-500/70 bg-green-50/40 dark:bg-green-900/20 ring-2 ring-green-500/20'
 													)}
 												>
 													<option value="" disabled className="text-gray-500">
@@ -390,14 +380,6 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 														</option>
 													))}
 												</select>
-												<div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center gap-3 pointer-events-none">
-													{completedFields.has('category') && (
-														<div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center animate-scale-in">
-															<Check className="h-4 w-4 text-white" />
-														</div>
-													)}
-													<Grid3X3 className="w-5 h-5 text-gray-400" />
-												</div>
 											</div>
 										</div>
 
@@ -421,9 +403,9 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 															type="button"
 															onClick={() => handleTagToggle(tag.id)}
 															className={cn(
-																'px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover:scale-105 border-2',
+																'px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover:scale-105 border-2 capitalize',
 																formData.tags.includes(tag.id)
-																	? 'bg-gradient-to-r from-theme-primary-500 to-purple-500 text-white border-transparent shadow-lg hover:shadow-xl hover:from-theme-primary-600 hover:to-purple-600'
+																	? 'text-white border-transparent shadow-lg bg-theme-primary-500'
 																	: 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
 															)}
 														>
@@ -453,13 +435,13 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 															className="px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover:scale-105 border-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 flex items-center gap-2"
 														>
 															<ChevronUp className="w-4 h-4" />
-															Show less
+															{t('common.SHOW_LESS')}
 														</button>
 													)}
 											</div>
 
 											{formData.tags.length > 0 && (
-												<div className="p-4 bg-theme-primary-50 dark:bg-theme-primary-900/20 rounded-2xl border border-theme-primary-200 dark:border-theme-primary-800">
+												<div className="p-4 bg-theme-primary-50 dark:bg-gray-800 rounded-2xl border border-theme-primary-200 dark:border-theme-primary-800">
 													<div className="flex items-center gap-2 mb-2">
 														<Star className="w-4 h-4 text-theme-primary-500 dark:text-theme-primary-400" />
 														<span className="text-sm font-semibold text-theme-primary-700 dark:text-theme-primary-300">
@@ -472,7 +454,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 														{formData.tags.map((tag) => (
 															<span
 																key={tag}
-																className="px-3 py-1 text-xs font-medium bg-theme-primary-500 text-white rounded-lg"
+																className="px-3 py-1 text-xs font-medium bg-theme-primary-500 text-white rounded-lg capitalize"
 															>
 																{tag}
 															</span>
@@ -506,17 +488,8 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 														'w-full px-6 py-4 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 hover:border-gray-300 dark:hover:border-gray-500 resize-none outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400',
 														focusedField === 'description' &&
 															'scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20',
-														completedFields.has('description') &&
-															'border-green-500/70 bg-green-50/40 dark:bg-green-900/20 ring-2 ring-green-500/20'
 													)}
 												/>
-												<div className="absolute top-4 right-4 flex items-center gap-3">
-													{completedFields.has('description') && (
-														<div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center animate-scale-in">
-															<Check className="h-4 w-4 text-white" />
-														</div>
-													)}
-												</div>
 												<div className="absolute bottom-4 right-6 text-xs text-gray-500 dark:text-gray-400">
 													{formData.description.length}/150
 												</div>
@@ -545,17 +518,8 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 														'w-full px-6 py-4 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 hover:border-gray-300 dark:hover:border-gray-500 resize-none outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400',
 														focusedField === 'introduction' &&
 															'scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20',
-														formData.introduction.trim() &&
-															'border-green-500/70 bg-green-50/40 dark:bg-green-900/20 ring-2 ring-green-500/20'
 													)}
 												/>
-												{formData.introduction.trim() && (
-													<div className="absolute top-4 right-4">
-														<div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center animate-scale-in">
-															<Check className="h-4 w-4 text-white" />
-														</div>
-													</div>
-												)}
 											</div>
 											<p className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-2">
 												<FileText className="w-3 h-3" />
@@ -568,7 +532,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 						)}
 
 						{/* Step 2: Payment */}
-						{currentStep === 2 && <PricingSection />}
+						{currentStep === 2 && <PricingSection isReview={true} />}
 
 						{currentStep === 3 && (
 							<div className="relative group animate-fade-in-up">
@@ -629,7 +593,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 														))
 													) : (
 														<p className="text-gray-600 dark:text-gray-300">
-															No tags selected
+															{t('tagsModal.NO_TAGS_SELECTED')}
 														</p>
 													)}
 												</div>
@@ -705,7 +669,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 											'h-14 px-12 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl min-w-[200px]',
 											!canProceed
 												? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-												: 'bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 hover:from-theme-primary-600 hover:via-purple-600 hover:to-theme-primary-700 text-white hover:shadow-theme-primary-500/30'
+												: 'bg-theme-primary-500 text-white hover:shadow-theme-primary-500/30'
 										)}
 									>
 										<div className="flex items-center gap-3">

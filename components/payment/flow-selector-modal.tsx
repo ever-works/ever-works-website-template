@@ -10,8 +10,7 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-  Card,
-  Badge,
+  Card
 } from "@heroui/react";
 import {
   CreditCard,
@@ -21,6 +20,7 @@ import {
   Loader2,
   RotateCcw,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface PaymentFlowSelectorModalProps {
   isOpen: boolean;
@@ -96,7 +96,7 @@ export function PaymentFlowSelectorModal({
       size="lg"
       scrollBehavior="inside"
       classNames={{
-        base: "border-0 shadow-2xl bg-white dark:bg-gray-900",
+        base: "border-0 shadow-lg bg-white dark:bg-gray-900",
         backdrop: "bg-black/50",
         wrapper: "p-4",
       }}
@@ -123,24 +123,25 @@ export function PaymentFlowSelectorModal({
                 return (
                   <Card
                     key={flowOption.flow}
-                    className={`
-                      transition-all duration-200 hover:shadow-lg
-                      ${
+                    className={
+                      cn(
+                        "transition-colors duration-300",
                         isSelected
-                          ? `bg-gradient-to-r ${flowOption.gradient}/10 border-2 border-${flowOption.flow === PaymentFlow.PAY_AT_START ? "emerald" : "blue"}-300 shadow-md`
-                          : "border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
-                      }
-                      ${isLoading ? "opacity-50" : "hover:scale-[1.02]"}
-                    `}
+                          ? "bg-blue-50 dark:bg-theme-primary-20 border-2 border-blue-300 dark:border-theme-primary-700"
+                          : "border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-900",
+                        isLoading ? "opacity-50" : ""
+                      )
+                    }
+
                   >
                     <div className="p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-3">
                           <div
                             className={`
-                            w-10 h-10 rounded-lg bg-gradient-to-r ${flowOption.gradient} 
-                            flex items-center justify-center shadow-md
-                            ${isSelected ? "ring-2 ring-white ring-offset-2" : ""}
+                            w-10 h-10 rounded-lg bg-theme-primary-500 dark:bg-theme-primary-600
+                            flex items-center justify-center
+                            ${isSelected ? "ring-2 ring-theme-primary-200 dark:ring-theme-primary-700" : ""}
                           `}
                           >
                             <IconComponent className="w-5 h-5 text-white" />
@@ -148,22 +149,9 @@ export function PaymentFlowSelectorModal({
 
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
                                 {flowOption.title}
                               </h3>
-                              {isSelected && (
-                                <Badge
-                                  color={
-                                    flowOption.flow === PaymentFlow.PAY_AT_START
-                                      ? "success"
-                                      : "primary"
-                                  }
-                                  variant="solid"
-                                  size="sm"
-                                >
-                                  Current
-                                </Badge>
-                              )}
                             </div>
 
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
@@ -209,7 +197,7 @@ export function PaymentFlowSelectorModal({
                                 )
                               }
                               disabled={isLoading}
-                              className="bg-gradient-to-r from-theme-primary-500 to-purple-500 hover:from-theme-primary-500 hover:to-purple-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
+                              className="bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white transition-colors"
                             >
                               {isLoading ? (
                                 <Loader2 className="w-3 h-3 animate-spin" />
@@ -232,7 +220,7 @@ export function PaymentFlowSelectorModal({
                                 )
                               }
                               disabled={isLoading}
-                              className="border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200"
+                              className="border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                             >
                               {isLoading ? (
                                 <Loader2 className="w-3 h-3 animate-spin" />
@@ -265,7 +253,7 @@ export function PaymentFlowSelectorModal({
                   Cancel
                 </Button>
                 <Button
-                  className="bg-theme-primary-500 hover:bg-theme-primary-600"
+                  className="bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white"
                   size="sm"
                   onClick={onClose}
                   disabled={isLoading}

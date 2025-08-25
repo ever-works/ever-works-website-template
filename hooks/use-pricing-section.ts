@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { usePricingFeatures } from '@/hooks/use-pricing-features';
 import { useConfig } from '@/app/[locale]/config';
 import { PricingConfig } from '@/lib/content';
+import { useLoginModal } from './use-login-modal';
 
 export interface UsePricingSectionParams {
   onSelectPlan?: (plan: PaymentPlan) => void;
@@ -90,6 +91,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
   const [billingInterval, setBillingInterval] = useState<PaymentInterval>(PaymentInterval.MONTHLY);
   const [processingPlan, setProcessingPlan] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(null);
+  const loginModal = useLoginModal();
 
   // Extract plan configurations
   const { FREE, STANDARD, PREMIUM } = config.pricing?.plans ?? {};
@@ -152,8 +154,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
    */
   const handleCheckout = useCallback(async (plan: PricingConfig) => {
     if (!user?.id) {
-      toast.info('Please sign in to continue with your purchase.');
-      router.push('/auth/signin');
+      loginModal.onOpen('Please sign in to continue with your purchase.');
       return;
     }
 

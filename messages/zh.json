@@ -55,7 +55,15 @@
     "RETRY": "重试",
     "COMMENTS": "评论",
     "ROLES": "角色",
-    "MANAGE_CLIENTS": "管理客户"
+    "MANAGE_CLIENTS": "管理客户",
+    "DASHBOARD": "仪表板",
+    "USE_CODE": "使用代码",
+    "EXPIRED": "已过期",
+    "PROMO_CODE": "促销代码",
+    "COPIED": "已复制！",
+    "COPY": "复制",
+    "TERMS": "条款",
+    "EXPIRES": "过期"
   },
   "listing": {
     "ALL": "全部",
@@ -613,6 +621,30 @@
     "CARD_NUMBER_NOT_EDITABLE": "卡号不可修改",
     "SECURITY_NOTICE": "出于安全考虑，只能修改某些信息",
     "UPDATING_CARD": "更新中...",
-    "SAVE": "保存"
+    "SAVE": "保存",
+    "WELCOME_TO_EVER_WORKS": "欢迎使用 Ever Works！",
+    "FREE_PLAN_MESSAGE": "您目前使用的是免费计划。升级以解锁高级功能并开始构建您的成功之路。",
+    "VIEW_PLANS": "查看计划",
+    "BACK_TO_SETTINGS": "返回设置",
+    "REFRESH_ALL": "全部刷新",
+    "REFRESHING": "刷新中...",
+    "EXPORT": "导出",
+    "BILLING_SUBSCRIPTION_TITLE": "账单和订阅",
+    "BILLING_SUBSCRIPTION_SUBTITLE": "管理您的订阅、查看付款历史并监控您的账单状态",
+    "LOADING_BILLING_INFO": "正在加载账单信息...",
+    "TOTAL_SPENT": "总支出",
+    "ACTIVE_PAYMENTS": "活跃付款",
+    "MONTHLY_AVERAGE": "月平均",
+    "CURRENCY": "CNY",
+    "BASIC_PLAN": "基础计划",
+    "OVERVIEW": "概览",
+    "PAYMENTS": "付款",
+    "SUBSCRIPTIONS": "订阅",
+    "RECENT_ACTIVITY": "最近活动",
+    "VIEW_ALL_ACTIVITY": "查看所有活动",
+    "SUBSCRIPTION_HISTORY": "订阅历史",
+    "REFRESH": "刷新",
+    "SEARCH_AND_FILTERS": "搜索和筛选",
+    "TOTAL_RESULTS": "总结果数"
   }
 }

@@ -67,7 +67,15 @@
     "FAVORITE_ITEMS": "Favoriten-Elemente",
     "EXPLORE_ITEMS": "Elemente erkunden",
     "VIEW_DETAILS": "Details anzeigen",
-    "ADDED_ON": "Hinzugefügt am"
+    "ADDED_ON": "Hinzugefügt am",
+    "DASHBOARD": "Dashboard",
+    "USE_CODE": "Code verwenden",
+    "EXPIRED": "Abgelaufen",
+    "PROMO_CODE": "Promo-Code",
+    "COPIED": "Kopiert!",
+    "COPY": "Kopieren",
+    "TERMS": "Bedingungen",
+    "EXPIRES": "Läuft ab"
   },
   "listing": {
     "ALL": "Alle",
@@ -625,6 +633,30 @@
     "CARD_NUMBER_NOT_EDITABLE": "Kartennummer kann nicht geändert werden",
     "SECURITY_NOTICE": "Aus Sicherheitsgründen können nur bestimmte Informationen geändert werden",
     "UPDATING_CARD": "Wird aktualisiert...",
-    "SAVE": "Speichern"
+    "SAVE": "Speichern",
+    "WELCOME_TO_EVER_WORKS": "Willkommen bei Ever Works!",
+    "FREE_PLAN_MESSAGE": "Sie sind derzeit im kostenlosen Plan. Upgraden Sie, um Premium-Funktionen freizuschalten und mit dem Aufbau Ihres Erfolgs zu beginnen.",
+    "VIEW_PLANS": "Pläne anzeigen",
+    "BACK_TO_SETTINGS": "Zurück zu den Einstellungen",
+    "REFRESH_ALL": "Alles aktualisieren",
+    "REFRESHING": "Wird aktualisiert...",
+    "EXPORT": "Exportieren",
+    "BILLING_SUBSCRIPTION_TITLE": "Abrechnung & Abonnement",
+    "BILLING_SUBSCRIPTION_SUBTITLE": "Verwalten Sie Ihr Abonnement, sehen Sie den Zahlungsverlauf und überwachen Sie Ihren Abrechnungsstatus",
+    "LOADING_BILLING_INFO": "Abrechnungsinformationen werden geladen...",
+    "TOTAL_SPENT": "Gesamtausgaben",
+    "ACTIVE_PAYMENTS": "Aktive Zahlungen",
+    "MONTHLY_AVERAGE": "Monatlicher Durchschnitt",
+    "CURRENCY": "EUR",
+    "BASIC_PLAN": "Basis-Plan",
+    "OVERVIEW": "Übersicht",
+    "PAYMENTS": "Zahlungen",
+    "SUBSCRIPTIONS": "Abonnements",
+    "RECENT_ACTIVITY": "Letzte Aktivität",
+    "VIEW_ALL_ACTIVITY": "Alle Aktivitäten anzeigen",
+    "SUBSCRIPTION_HISTORY": "Abonnementverlauf",
+    "REFRESH": "Aktualisieren",
+    "SEARCH_AND_FILTERS": "Suche und Filter",
+    "TOTAL_RESULTS": "Gesamtergebnisse"
   }
 }
