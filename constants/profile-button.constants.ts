@@ -49,20 +49,21 @@ export const LOGOUT_OVERLAY_CONFIG = {
 } as const;
 
 // Profile menu style constants for better readability
+export const MENU_CONTAINER_BASE = [
+  'origin-top-right',
+  'absolute',
+  'right-0',
+  'mt-3',
+  SIZES.MENU_WIDTH,
+  'rounded-2xl',
+  'shadow-2xl',
+  'py-3',
+  'z-50',
+] as const;
+
 export const MENU_STYLES = {
   CONTAINER: {
-    base: [
-      'origin-top-right',
-      'absolute',
-      'right-0',
-      'mt-3',
-      'w-80',
-      'rounded-2xl',
-      'shadow-2xl',
-      'py-3',
-      'focus:outline-none',
-      'z-50',
-    ],
+    base: [...MENU_CONTAINER_BASE, 'focus:outline-none'],
     background: [
       'bg-white/95',
       'dark:bg-gray-900/95',
@@ -80,18 +81,7 @@ export const MENU_STYLES = {
     ],
   },
   LOADING_FALLBACK: {
-    base: [
-      'origin-top-right',
-      'absolute',
-      'right-0',
-      'mt-3',
-      'w-80',
-      'rounded-2xl',
-      'shadow-2xl',
-      'py-3',
-      'animate-pulse',
-      'z-50',
-    ],
+    base: [...MENU_CONTAINER_BASE, 'animate-pulse'],
     background: [
       'bg-white/95',
       'dark:bg-gray-900/95',
