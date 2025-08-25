@@ -88,14 +88,30 @@ ALTER TABLE "client_profiles" ADD COLUMN IF NOT EXISTS "userId" text;--> stateme
 
 -- Add userId column to subscriptions if it doesn't exist  
 ALTER TABLE "subscriptions" ADD COLUMN IF NOT EXISTS "userId" text;--> statement-breakpoint
+-- Backfill new column from legacy column, idempotent
+UPDATE "subscriptions"
+SET "userId" = "user_id"
+WHERE "userId" IS NULL AND "user_id" IS NOT NULL;--> statement-breakpoint
 
 -- TODO: Backfill userId values before making them NOT NULL
 -- This should be done after setting up proper user relationships
 -- For now, we'll leave them nullable and handle in application code
-ALTER TABLE "favorites" ADD CONSTRAINT "favorites_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "paymentAccounts" ADD CONSTRAINT "paymentAccounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "paymentAccounts" ADD CONSTRAINT "paymentAccounts_providerId_paymentProviders_id_fk" FOREIGN KEY ("providerId") REFERENCES "public"."paymentProviders"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "subscriptionHistory" ADD CONSTRAINT "subscriptionHistory_subscription_id_subscriptions_id_fk" FOREIGN KEY ("subscription_id") REFERENCES "public"."subscriptions"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "favorites" ADD CONSTRAINT "favorites_userId_users_id_fk"
+  FOREIGN KEY ("userId") REFERENCES "public"."users"("id")
+  ON DELETE cascade ON UPDATE no action NOT VALID;--> statement-breakpoint
+ALTER TABLE "favorites" VALIDATE CONSTRAINT "favorites_userId_users_id_fk";--> statement-breakpoint
+ALTER TABLE "paymentAccounts" ADD CONSTRAINT "paymentAccounts_userId_users_id_fk"
+  FOREIGN KEY ("userId") REFERENCES "public"."users"("id")
+  ON DELETE cascade ON UPDATE no action NOT VALID;--> statement-breakpoint
+ALTER TABLE "paymentAccounts" VALIDATE CONSTRAINT "paymentAccounts_userId_users_id_fk";--> statement-breakpoint
+ALTER TABLE "paymentAccounts" ADD CONSTRAINT "paymentAccounts_providerId_paymentProviders_id_fk"
+  FOREIGN KEY ("providerId") REFERENCES "public"."paymentProviders"("id")
+  ON DELETE cascade ON UPDATE no action NOT VALID;--> statement-breakpoint
+ALTER TABLE "paymentAccounts" VALIDATE CONSTRAINT "paymentAccounts_providerId_paymentProviders_id_fk";--> statement-breakpoint
+ALTER TABLE "subscriptionHistory" ADD CONSTRAINT "subscriptionHistory_subscription_id_subscriptions_id_fk"
+  FOREIGN KEY ("subscription_id") REFERENCES "public"."subscriptions"("id")
+  ON DELETE cascade ON UPDATE no action NOT VALID;--> statement-breakpoint
+ALTER TABLE "subscriptionHistory" VALIDATE CONSTRAINT "subscriptionHistory_subscription_id_subscriptions_id_fk";--> statement-breakpoint
 CREATE UNIQUE INDEX "user_item_favorite_unique_idx" ON "favorites" USING btree ("userId","item_slug");--> statement-breakpoint
 CREATE INDEX "favorites_user_id_idx" ON "favorites" USING btree ("userId");--> statement-breakpoint
 CREATE INDEX "favorites_item_slug_idx" ON "favorites" USING btree ("item_slug");--> statement-breakpoint
@@ -112,19 +128,32 @@ CREATE INDEX "subscription_action_idx" ON "subscriptionHistory" USING btree ("ac
 CREATE INDEX "subscription_history_created_at_idx" ON "subscriptionHistory" USING btree ("created_at");--> statement-breakpoint
 -- Add foreign key constraints safely
 DO $$ BEGIN
-    ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+    ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk"
+      FOREIGN KEY ("userId") REFERENCES "public"."users"("id")
+      ON DELETE cascade ON UPDATE no action NOT VALID;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;--> statement-breakpoint
+ALTER TABLE "accounts" VALIDATE CONSTRAINT "accounts_userId_users_id_fk";--> statement-breakpoint
 
 DO $$ BEGIN
-    ALTER TABLE "client_profiles" ADD CONSTRAINT "client_profiles_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+    ALTER TABLE "client_profiles" ADD CONSTRAINT "client_profiles_userId_users_id_fk"
+      FOREIGN KEY ("userId") REFERENCES "public"."users"("id")
+      ON DELETE cascade ON UPDATE no action NOT VALID;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;--> statement-breakpoint
+ALTER TABLE "client_profiles" VALIDATE CONSTRAINT "client_profiles_userId_users_id_fk";--> statement-breakpoint
 
 DO $$ BEGIN
-    ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+    ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_userId_users_id_fk"
+      FOREIGN KEY ("userId") REFERENCES "public"."users"("id")
+      ON DELETE cascade ON UPDATE no action NOT VALID;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;--> statement-breakpoint
+ALTER TABLE "subscriptions" VALIDATE CONSTRAINT "subscriptions_userId_users_id_fk";--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "client_profile_user_id_unique_idx" ON "client_profiles" USING btree ("userId");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "user_subscription_idx" ON "subscriptions" USING btree ("userId");--> statement-breakpoint
 -- Drop old column safely
 DO $$ BEGIN
+    -- Optionally assert no rows remain with userId NULL but user_id NOT NULL
+    IF EXISTS (SELECT 1 FROM "subscriptions" WHERE "userId" IS NULL AND "user_id" IS NOT NULL) THEN
+      RAISE EXCEPTION 'Backfill incomplete: subscriptions.userId still NULL where user_id is set';
+    END IF;
     ALTER TABLE "subscriptions" DROP COLUMN IF EXISTS "user_id";
 EXCEPTION WHEN undefined_column THEN NULL; END $$;
