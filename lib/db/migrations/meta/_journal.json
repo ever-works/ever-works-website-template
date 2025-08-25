@@ -148,7 +148,13 @@
       "when": 1756138648515,
       "tag": "0020_add_role_management_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1756150347518,
+      "tag": "0021_typical_cable",
+      "breakpoints": true
     }
-
   ]
 }
