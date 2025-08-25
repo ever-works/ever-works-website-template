@@ -27,14 +27,10 @@ export const NAME_LIMITS = {
   TRUNCATE_LENGTH: 18,
 } as const;
 
-
-
-
-
 // Logout overlay configuration
 export const LOGOUT_OVERLAY_CONFIG = {
   ID: "logout-overlay",
-  Z_INDEX: 9999,
+  Z_INDEX: Z_INDEX.OVERLAY,
   ANIMATION_DURATION: {
     FADE_IN: 300,
     SLIDE_IN: 400,
