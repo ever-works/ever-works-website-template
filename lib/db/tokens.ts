@@ -3,6 +3,7 @@ import { db } from "./drizzle";
 import {
   getPasswordResetTokenByEmail,
   getVerificationTokenByEmail,
+  deleteVerificationToken,
 } from "./queries";
 import { passwordResetTokens, verificationTokens } from "./schema";
 import { eq } from "drizzle-orm";
@@ -14,9 +15,7 @@ export const generateVerificationToken = async (email: string) => {
   const existingToken = await getVerificationTokenByEmail(email);
 
   if (existingToken) {
-    await db
-      .delete(verificationTokens)
-      .where(eq(verificationTokens.identifier, existingToken.identifier));
+    await deleteVerificationToken(existingToken.token);
   }
 
   const items = await db

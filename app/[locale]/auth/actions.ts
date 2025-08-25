@@ -167,12 +167,13 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
       
       // 2) Create client profile record using transaction
       const extractedUsername = normalizedEmail.split('@')[0] || 'user';
+      const base = (extractedUsername.replace(/[^a-z0-9_]/gi, '').toLowerCase() || 'user').slice(0, 30);
       
       // Generate unique username via onConflictDoNothing + retry
       let counter = 1;
       let clientProfile;
       for (;;) {
-        const candidate = counter === 1 ? extractedUsername : `${extractedUsername}${counter}`;
+        const candidate = counter === 1 ? base : `${base}${counter}`;
         const inserted = await tx
           .insert(clientProfiles)
           .values({
@@ -201,7 +202,7 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
       return { user, clientProfile };
     });
     
-    const { clientProfile } = result;
+    const { user, clientProfile } = result;
 
     // 2) Create credentials account record holding the password hash linked to client profile
     const clientAccount = await createClientAccount(clientProfile.id, normalizedEmail, passwordHash);
@@ -210,7 +211,7 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
     }
 
     // Log activity using the client profile ID
-    		await logActivity(ActivityType.SIGN_UP, undefined, clientProfile.id);
+    		await logActivity(ActivityType.SIGN_UP, user.id, clientProfile.id);
 
     const verificationToken = await generateVerificationToken(normalizedEmail);
     if (verificationToken) {
