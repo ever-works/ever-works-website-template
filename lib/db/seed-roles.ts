@@ -93,8 +93,10 @@ export async function linkRolesToPermissions() {
  */
 export async function seedRolesAndPermissions() {
   try {
-    await seedPermissions();
-    await linkRolesToPermissions();
+    await db.transaction(async () => {
+      await seedPermissions();
+      await linkRolesToPermissions();
+    });
     console.log('✅ Role and permission seeding completed');
   } catch (error) {
     console.error('❌ Error seeding roles and permissions:', error);
