@@ -14,17 +14,22 @@ export async function seedPermissions() {
     { key: 'user:write', description: 'Can write user data' },
   ];
 
-  for (const permission of initialPermissions) {
-    await db
-      .insert(permissions)
-      .values({
-        key: permission.key,
-        description: permission.description,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
-      .onConflictDoNothing();
-  }
+  const now = new Date();
+  await db
+    .insert(permissions)
+    .values(initialPermissions.map(p => ({
+      key: p.key,
+      description: p.description,
+      createdAt: now,
+      updatedAt: now,
+    })))
+    .onConflictDoUpdate({
+      target: permissions.key,
+      set: {
+        description: permissions.description,
+        updatedAt: now,
+      },
+    });
 
   console.log('✅ Permissions seeded successfully');
 }
@@ -61,20 +66,28 @@ export async function linkRolesToPermissions() {
     },
   ];
 
-  for (const mapping of rolePermissionMappings) {
-    const role = existingRoles.find((r: Role) => r.name === mapping.roleName);
-    const permission = allPermissions.find((p: Permission) => p.key === mapping.permissionKey);
-
-    if (role && permission) {
-      await db
-        .insert(rolePermissions)
-        .values({
+  const now = new Date();
+  const rolePermissionValues = rolePermissionMappings
+    .map(mapping => {
+      const role = existingRoles.find((r: Role) => r.name === mapping.roleName);
+      const permission = allPermissions.find((p: Permission) => p.key === mapping.permissionKey);
+      
+      if (role && permission) {
+        return {
           roleId: role.id,
           permissionId: permission.id,
-          createdAt: new Date(),
-        })
-        .onConflictDoNothing();
-    }
+          createdAt: now,
+        };
+      }
+      return null;
+    })
+    .filter(Boolean);
+
+  if (rolePermissionValues.length > 0) {
+    await db
+      .insert(rolePermissions)
+      .values(rolePermissionValues)
+      .onConflictDoNothing();
   }
 
   console.log('✅ Role-permission mappings created successfully');
