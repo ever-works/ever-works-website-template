@@ -34,6 +34,7 @@ export const NAME_LIMITS = {
 // Logout overlay configuration
 export const LOGOUT_OVERLAY_CONFIG = {
   ID: "logout-overlay",
+  Z_INDEX: 9999,
   ANIMATION_DURATION: {
     FADE_IN: 300,
     SLIDE_IN: 400,

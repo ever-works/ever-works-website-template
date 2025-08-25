@@ -6,8 +6,13 @@ import { getThemeColors } from "@/utils/profile-button.utils";
 export function useLogoutOverlay() {
   // Use ref to store observer to prevent memory leaks
   const observerRef = useRef<MutationObserver | null>(null);
+  // Prevent multiple concurrent logout flows
+  const isLoggingOutRef = useRef<boolean>(false);
 
-  const createOverlayElement = (colors: ReturnType<typeof getThemeColors>) => {
+  const createOverlayElement = (
+    colors: ReturnType<typeof getThemeColors>,
+    texts?: { title?: string; description?: string }
+  ) => {
     const overlay = document.createElement('div');
     overlay.id = LOGOUT_OVERLAY_CONFIG.ID;
     overlay.setAttribute('data-logout-root', '');
@@ -25,7 +30,7 @@ export function useLogoutOverlay() {
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 9999;
+      z-index: ${LOGOUT_OVERLAY_CONFIG.Z_INDEX};
       backdrop-filter: blur(8px);
       animation: fadeIn ${LOGOUT_OVERLAY_CONFIG.ANIMATION_DURATION.FADE_IN}ms ease-out;
     `;
@@ -61,7 +66,7 @@ export function useLogoutOverlay() {
 
     const title = document.createElement('h3');
     title.setAttribute('data-logout-title', '');
-    title.textContent = 'Signing Out';
+    title.textContent = texts?.title ?? 'Signing Out';
     title.id = 'logout-overlay-title';
     title.style.cssText = `
       margin: 0 0 0.75rem 0;
@@ -73,7 +78,7 @@ export function useLogoutOverlay() {
 
     const text = document.createElement('p');
     text.setAttribute('data-logout-text', '');
-    text.textContent = 'Please wait while we securely log you out and clear your session...';
+    text.textContent = texts?.description ?? 'Please wait while we securely log you out and clear your session...';
     text.style.cssText = `
       margin: 0;
       color: ${colors.textColor};
@@ -113,17 +118,27 @@ export function useLogoutOverlay() {
     return overlay;
   };
 
-  const handleLogout = useCallback(async () => {
+  const handleLogout = useCallback(async (texts?: { title?: string; description?: string }) => {
     // Ensure we're on the client side
     if (typeof window === 'undefined' || typeof document === 'undefined') {
       // In SSR, do nothing; signOut requires a browser environment.
       return;
     }
 
+    // No-op if a logout flow is already in progress or an overlay exists
+    if (isLoggingOutRef.current || document.getElementById(LOGOUT_OVERLAY_CONFIG.ID)) {
+      return;
+    }
+    isLoggingOutRef.current = true;
+
     // Create enhanced overlay with better animations and dark mode support
+    const prevActiveElement = document.activeElement as (HTMLElement | null);
     const colors = getThemeColors();
-    const overlay = createOverlayElement(colors);
+    const overlay = createOverlayElement(colors, texts);
     document.body.appendChild(overlay);
+    // Make overlay programmatically focusable and focus it
+    (overlay as HTMLDivElement).tabIndex = -1;
+    (overlay as HTMLDivElement).focus();
 
     // Add theme change listener to update overlay colors dynamically
     const updateOverlayTheme = () => {
@@ -182,6 +197,9 @@ export function useLogoutOverlay() {
       if (overlayElement && document.body.contains(overlayElement)) {
         document.body.removeChild(overlayElement);
       }
+      // Restore focus to the previously focused element
+      prevActiveElement?.focus?.();
+      isLoggingOutRef.current = false;
     }
   }, []);
 
