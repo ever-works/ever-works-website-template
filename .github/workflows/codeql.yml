@@ -1,4 +1,4 @@
-name: "CodeQL Advanced"
+name: "CodeQL"
 
 on:
   push:
@@ -63,7 +63,6 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         config-file: ./.github/codeql/codeql-config.yml
-        category: "/language:${{ matrix.language }}/advanced"
 
     - name: Setup CodeQL environment
       run: node scripts/codeql-setup.js
@@ -85,6 +84,3 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{ matrix.language }}/advanced"
-        upload: true

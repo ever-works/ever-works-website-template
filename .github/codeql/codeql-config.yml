@@ -1,4 +1,4 @@
-name: "CodeQL Advanced Configuration"
+name: "CodeQL Configuration"
 
 # Exclude generated and build files from analysis
 paths-ignore:
@@ -27,9 +27,6 @@ paths:
   - "auth.config.ts"
   - "next.config.ts"
 
-# Use security and quality queries
+# Use standard security queries
 queries:
-  - uses: security-and-quality
-
-# Disable problematic queries that might conflict
-disable-default-queries: true 
+  - uses: security-and-quality 
