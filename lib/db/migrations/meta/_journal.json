@@ -169,6 +169,20 @@
       "when": 1756006600000,
       "tag": "0023_add_accounts_provider_unique_constraint",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1756006900000,
+      "tag": "0024_add_accounts_constraints",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1756007000000,
+      "tag": "0025_migrate_profile_data",
+      "breakpoints": true
     }
   ]
 }
