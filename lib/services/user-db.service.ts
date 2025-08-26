@@ -1,5 +1,5 @@
 import { db } from '@/lib/db/drizzle';
-import { users } from '@/lib/db/schema';
+import { users, clientProfiles } from '@/lib/db/schema';
 import { eq, desc, asc, and, sql } from 'drizzle-orm';
 import { UserData, CreateUserRequest, UpdateUserRequest, UserListOptions, UserStatus } from '@/lib/types/user';
 import { generateUserId } from '@/lib/types/user';
@@ -129,6 +129,34 @@ export class UserDbService {
     } catch (error) {
       console.error('Error finding users:', error);
       throw new Error('Failed to retrieve users');
+    }
+  }
+
+  /**
+   * Get user statistics from clientProfiles
+   */
+  async getUserStats(): Promise<{
+    total: number;
+    active: number;
+    inactive: number;
+  }> {
+    try {
+      const result = await db
+        .select({
+          total: sql<number>`count(*)`,
+          active: sql<number>`count(*) filter (where ${clientProfiles.status} = 'active')`,
+          inactive: sql<number>`count(*) filter (where ${clientProfiles.status} != 'active')`
+        })
+        .from(clientProfiles);
+
+      return {
+        total: Number(result[0].total),
+        active: Number(result[0].active),
+        inactive: Number(result[0].inactive)
+      };
+    } catch (error) {
+      console.error('Error getting user stats from clientProfiles:', error);
+      throw new Error('Failed to retrieve user statistics');
     }
   }
 

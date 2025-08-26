@@ -132,13 +132,7 @@ export class UserRepository {
     inactive: number;
   }> {
     try {
-      const all = await this.userDbService.readUsers();
-      // users table no longer has status; return totals with active==total, inactive==0 for now
-      return {
-        total: all.length,
-        active: all.length,
-        inactive: 0,
-      };
+      return await this.userDbService.getUserStats();
     } catch (error) {
       console.error('Error getting user stats:', error);
       throw new Error('Failed to retrieve user statistics');
