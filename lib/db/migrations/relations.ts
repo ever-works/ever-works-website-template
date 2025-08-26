@@ -11,9 +11,6 @@ export const authenticatorsRelations = relations(authenticators, ({one}) => ({
 export const usersRelations = relations(users, ({many}) => ({
 	authenticators: many(authenticators),
 	sessions: many(sessions),
-	comments: many(comments),
-	votes: many(votes),
-	activityLogs: many(activityLogs),
 	accounts: many(accounts),
 	subscriptions: many(subscriptions),
 	clientProfiles: many(clientProfiles),
@@ -29,31 +26,29 @@ export const sessionsRelations = relations(sessions, ({one}) => ({
 }));
 
 export const commentsRelations = relations(comments, ({one}) => ({
-	user: one(users, {
+	clientProfile: one(clientProfiles, {
 		fields: [comments.userId],
-		references: [users.id]
+		references: [clientProfiles.id]
 	}),
 }));
 
 export const votesRelations = relations(votes, ({one}) => ({
-	user: one(users, {
+	clientProfile: one(clientProfiles, {
 		fields: [votes.userid],
-		references: [users.id]
+		references: [clientProfiles.id]
 	}),
 }));
 
 export const activityLogsRelations = relations(activityLogs, ({one}) => ({
-	user: one(users, {
-		fields: [activityLogs.userId],
-		references: [users.id]
-	}),
 	clientProfile: one(clientProfiles, {
-		fields: [activityLogs.clientId],
+		fields: [activityLogs.userId],
 		references: [clientProfiles.id]
 	}),
 }));
 
 export const clientProfilesRelations = relations(clientProfiles, ({one, many}) => ({
+	comments: many(comments),
+	votes: many(votes),
 	activityLogs: many(activityLogs),
 	user: one(users, {
 		fields: [clientProfiles.userId],
