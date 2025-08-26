@@ -197,6 +197,7 @@ export const accounts = pgTable("accounts", {
 	uniqueIndex("accounts_credentials_email_unique").using("btree", table.email.asc().nullsLast().op("text_ops")).where(sql`((provider = 'credentials'::text) AND (email IS NOT NULL))`),
 	index("accounts_email_idx").using("btree", table.email.asc().nullsLast().op("text_ops")),
 	index("accounts_provider_idx").using("btree", table.provider.asc().nullsLast().op("text_ops")),
+	uniqueIndex("accounts_provider_providerAccountId_unique_idx").using("btree", table.provider.asc().nullsLast().op("text_ops"), table.providerAccountId.asc().nullsLast().op("text_ops")),
 	index("accounts_userId_userType_idx").using("btree", table.userId.asc().nullsLast().op("text_ops"), table.userType.asc().nullsLast().op("text_ops")),
 	foreignKey({
 			columns: [table.userId],
