@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
           name,
           role: 'client', // Default role for clients
           password: tempPassword,
-        }, session.user.id || 'system');
+        });
         
         user = newUser;
       } catch (userError) {
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
     const clientData = {
       userId: user.id,
       email: user.email,
-      name: user.name,
+      name,
       displayName: raw.displayName,
       username: raw.username,
       bio: raw.bio,

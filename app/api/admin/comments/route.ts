@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/drizzle";
-import { comments, users } from "@/lib/db/schema";
+import { comments, clientProfiles } from "@/lib/db/schema";
 import { and, desc, eq, isNull, sql, type SQL } from "drizzle-orm";
 
 export const runtime = "nodejs";
@@ -57,7 +57,7 @@ export async function GET(request: Request) {
     if (search) {
       const escaped = search.replace(/\\/g, "\\\\").replace(/[%_]/g, "\\$&");
       whereConditions.push(
-        sql`(${comments.content} ILIKE ${`%${escaped}%`} OR ${users.name} ILIKE ${`%${escaped}%`} OR ${users.email} ILIKE ${`%${escaped}%`})`
+        sql`(${comments.content} ILIKE ${`%${escaped}%`} OR ${clientProfiles.name} ILIKE ${`%${escaped}%`} OR ${clientProfiles.email} ILIKE ${`%${escaped}%`})`
       );
     }
     const whereClause = whereConditions.length > 1 ? and(...whereConditions) : whereConditions[0];
@@ -65,7 +65,7 @@ export async function GET(request: Request) {
     const totalResult = await db
       .select({ count: sql`count(*)` })
       .from(comments)
-      .leftJoin(users, eq(comments.userId, users.id))
+      .leftJoin(clientProfiles, eq(comments.userId, clientProfiles.id))
       .where(whereClause);
     const total = Number(totalResult[0]?.count || 0);
 
@@ -79,14 +79,14 @@ export async function GET(request: Request) {
         createdAt: comments.createdAt,
         updatedAt: comments.updatedAt,
         user: {
-          id: users.id,
-          name: users.name,
-          email: users.email,
-          image: users.image,
+          id: clientProfiles.id,
+          name: clientProfiles.name,
+          email: clientProfiles.email,
+          image: clientProfiles.avatar,
         },
       })
       .from(comments)
-      .leftJoin(users, eq(comments.userId, users.id))
+      .leftJoin(clientProfiles, eq(comments.userId, clientProfiles.id))
       .where(whereClause)
       .orderBy(desc(comments.createdAt))
       .limit(limit)

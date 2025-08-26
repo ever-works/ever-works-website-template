@@ -161,7 +161,7 @@ export async function softDeleteUser(userId: string) {
 		.where(eq(users.id, userId));
 }
 
-export async function updateUser(values: Pick<NewUser, 'email' | 'name'>, userId: string) {
+export async function updateUser(values: Pick<NewUser, 'email'>, userId: string) {
 	return db.update(users).set(values).where(eq(users.id, userId));
 }
 
@@ -170,6 +170,13 @@ export async function updateUserVerification(email: string, verified: boolean) {
 		.update(users)
 		.set({ emailVerified: verified ? new Date() : null })
 		.where(eq(users.email, email));
+}
+
+export async function updateClientProfileName(userId: string, name: string) {
+	return db
+		.update(clientProfiles)
+		.set({ name, updatedAt: new Date() })
+		.where(eq(clientProfiles.userId, userId));
 }
 
 // ######################### Password Token Queries #########################
@@ -407,13 +414,14 @@ export async function getCommentsByItemId(itemId: string): Promise<CommentWithUs
 			createdAt: comments.createdAt,
 			updatedAt: comments.updatedAt,
 			user: {
-				id: users.id,
-				name: users.name,
-				image: users.image
+				id: clientProfiles.id,
+				name: clientProfiles.name,
+				email: clientProfiles.email,
+				image: clientProfiles.avatar
 			}
 		})
 		.from(comments)
-		.innerJoin(users, eq(comments.userId, users.id))
+		.innerJoin(clientProfiles, eq(comments.userId, clientProfiles.id))
 		.where(and(eq(comments.itemId, itemId), isNull(comments.deletedAt)))
 		.orderBy(desc(comments.createdAt));
 }
@@ -732,7 +740,6 @@ export async function createClientUser(name: string, email: string): Promise<any
 
     // Create user record for client (without password hash)
     const newUser: NewUser = {
-      name,
       email: normalizedEmail,
       // No passwordHash - clients store passwords in accounts table
     };
@@ -1102,9 +1109,7 @@ export async function getPaymentAccountByUserId(userId: string): Promise<Payment
       },
       user: {
         id: users.id,
-        name: users.name,
         email: users.email,
-        image: users.image,
       },
     })
     .from(paymentAccounts)

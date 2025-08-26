@@ -17,17 +17,9 @@ export const users = pgTable("users", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  username: text("username").unique(),
-  name: text("name"),
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
-  image: text("image"),
   passwordHash: text("password_hash"),
-  title: text("title"),
-  avatar: text("avatar"),
-  role_id: text("role_id").references(() => roles.id, { onDelete: "set null" }),
-  status: text("status", { enum: ["active", "inactive"] }).default("active"),
-  created_by: text("created_by").default("system"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   deletedAt: timestamp("deleted_at"),
@@ -74,9 +66,7 @@ export const accounts = pgTable(
         columns: [account.provider, account.providerAccountId],
       }),
     },
-    // Index on email for client authentication lookups
     index("accounts_email_idx").on(account.email),
-
   ]
 );
 
@@ -101,6 +91,7 @@ export const clientProfiles = pgTable(
     phone: text("phone"),
     website: text("website"),
     location: text("location"),
+    avatar: text("avatar"),
     accountType: text("account_type", {
       enum: ["individual", "business", "enterprise"],
     }).default("individual"),
@@ -220,7 +211,7 @@ export const comments = pgTable('comments', {
 	content: text('content').notNull(),
 	userId: text('userId')
 		.notNull()
-		.references(() => users.id, { onDelete: 'cascade' }),
+		.references(() => clientProfiles.id, { onDelete: 'cascade' }),
 	itemId: text('itemId').notNull(),
 	rating: integer('rating').notNull().default(0),
 	createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -245,7 +236,7 @@ export const votes = pgTable(
 			.$defaultFn(() => crypto.randomUUID()),
 		userId: text('userid')
 			.notNull()
-			.references(() => users.id, { onDelete: 'cascade' }),
+			.references(() => clientProfiles.id, { onDelete: 'cascade' }),
 		itemId: text('item_id').notNull(),
 		voteType: text('vote_type', { enum: [VoteType.UPVOTE, VoteType.DOWNVOTE] })
 			.notNull()
@@ -398,7 +389,7 @@ export const subscriptionHistory = pgTable(
 
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
-export type CommentWithUser = Comment & { user: typeof users.$inferSelect };
+export type CommentWithUser = Comment & { user: typeof clientProfiles.$inferSelect };
 export type Vote = typeof votes.$inferSelect;
 export type InsertVote = typeof votes.$inferInsert;
 export type NewUser = typeof users.$inferInsert;
