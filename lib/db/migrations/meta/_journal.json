@@ -183,6 +183,13 @@
       "when": 1756007000000,
       "tag": "0025_migrate_profile_data",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1756007100000,
+      "tag": "0026_cleanup_users_table",
+      "breakpoints": true
     }
   ]
 }
