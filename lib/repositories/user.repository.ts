@@ -50,13 +50,13 @@ export class UserRepository {
   /**
    * Create a new user
    */
-  async create(data: CreateUserRequest, createdBy: string): Promise<UserData> {
+  async create(data: CreateUserRequest): Promise<UserData> {
     try {
       // Validate input data
       const validatedData = userValidationSchema.parse(data);
 
       // Create user (duplicate checking is handled in the service)
-      const user = await this.userDbService.createUser(validatedData, createdBy);
+      const user = await this.userDbService.createUser(validatedData);
       return user;
     } catch (error) {
       if (error instanceof Error) {
@@ -132,7 +132,13 @@ export class UserRepository {
     inactive: number;
   }> {
     try {
-      return await this.userDbService.getUserStats();
+      const all = await this.userDbService.readUsers();
+      // users table no longer has status; return totals with active==total, inactive==0 for now
+      return {
+        total: all.length,
+        active: all.length,
+        inactive: 0,
+      };
     } catch (error) {
       console.error('Error getting user stats:', error);
       throw new Error('Failed to retrieve user statistics');
@@ -142,9 +148,11 @@ export class UserRepository {
   /**
    * Check if username exists
    */
-  async usernameExists(username: string, excludeId?: string): Promise<boolean> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async usernameExists(_username: string, _excludeId?: string): Promise<boolean> {
     try {
-      return await this.userDbService.usernameExists(username, excludeId);
+      // users table no longer stores username; always return false
+      return false;
     } catch (error) {
       console.error('Error checking username existence:', error);
       throw new Error('Failed to check username availability');
@@ -156,7 +164,9 @@ export class UserRepository {
    */
   async emailExists(email: string, excludeId?: string): Promise<boolean> {
     try {
-      return await this.userDbService.emailExists(email, excludeId);
+      // For now, delegate to service readUsers and check in memory
+      const all = await this.userDbService.readUsers();
+      return all.some(u => u.email.toLowerCase() === email.toLowerCase() && (!excludeId || u.id !== excludeId));
     } catch (error) {
       console.error('Error checking email existence:', error);
       throw new Error('Failed to check email availability');

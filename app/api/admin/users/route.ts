@@ -184,7 +184,7 @@ export async function POST(request: NextRequest) {
 
     // Create user
     const userRepository = new UserRepository();
-    const newUser = await userRepository.create(userData, session.user.id || 'system');
+    const newUser = await userRepository.create(userData);
 
     return NextResponse.json({ user: newUser }, { status: 201 });
   } catch (error) {
