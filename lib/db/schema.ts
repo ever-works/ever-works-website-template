@@ -389,7 +389,6 @@ export const subscriptionHistory = pgTable(
 
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
-export type CommentWithUser = Comment & { user: typeof clientProfiles.$inferSelect };
 export type Vote = typeof votes.$inferSelect;
 export type InsertVote = typeof votes.$inferInsert;
 export type NewUser = typeof users.$inferInsert;
