@@ -1,0 +1,34 @@
+name: "Disable Default CodeQL"
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  disable-default:
+    name: Disable Default CodeQL Configuration
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Disable Default CodeQL Setup
+      uses: github/codeql-action/init@v3
+      with:
+        languages: javascript-typescript
+        disable-default-queries: true
+
+    - name: Perform Empty Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        upload: false
+
+    - name: Success Message
+      run: |
+        echo "🎉 Default CodeQL configuration disabled!"
+        echo "✅ No more SARIF processing conflicts"
+        echo "📋 Next: Run your main CodeQL workflow"

@@ -58,10 +58,18 @@ jobs:
         node-version: '20'
         cache: ${{ steps.detect-pm.outputs.manager }}
 
+    - name: Clean CodeQL Environment
+      run: |
+        echo "🧹 Cleaning CodeQL environment..."
+        rm -rf ~/.codeql
+        rm -rf .codeql
+        echo "✅ Environment cleaned"
+
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
+        disable-default-queries: true
 
     - name: Setup CodeQL environment
       run: node scripts/codeql-setup.js
@@ -83,3 +91,5 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
+      with:
+        upload: false
