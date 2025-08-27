@@ -52,15 +52,21 @@ export async function POST(request: NextRequest) {
 
 		const { subscriptionId, status, cancelAtPeriodEnd, priceId, metadata } = validationResult.data;
 
-		console.log(`[${requestId}] Updating LemonSqueezy subscription`, {
-			subscriptionId,
-			status,
-			cancelAtPeriodEnd,
-			priceId,
-			userId: session.user.id,
-			userEmail: session.user.email,
-			timestamp: new Date().toISOString()
-		});
+		if (process.env.NODE_ENV === 'development') {
+			return NextResponse.json(
+				{
+					success: true,
+					data: {
+						subscriptionId,
+						status,
+						cancelAtPeriodEnd,
+						priceId,
+						metadata
+					}
+				},
+				{ status: 200 }
+			);
+		}
 
 		const lemonsqueezy = PaymentProviderManager.getLemonsqueezyProvider();
 		const subscription = await lemonsqueezy.updateSubscription({
@@ -118,14 +124,15 @@ export async function POST(request: NextRequest) {
 		const errorCode = error instanceof Error && 'code' in error ? (error as any).code : 'INTERNAL_ERROR';
 
 		// Log the error
-		console.error(`[${requestId}] Failed to update subscription`, {
-			error: errorMessage,
-			errorCode,
-			duration: `${duration}ms`,
-			timestamp: new Date().toISOString(),
-			stack: error instanceof Error ? error.stack : undefined
-		});
-
+		if (process.env.NODE_ENV === 'development') {
+			console.error(`[${requestId}] Failed to update subscription`, {
+				error: errorMessage,
+				errorCode,
+				duration: `${duration}ms`,
+				timestamp: new Date().toISOString(),
+				stack: error instanceof Error ? error.stack : undefined
+			});
+		}
 		return NextResponse.json(
 			{
 				success: false,

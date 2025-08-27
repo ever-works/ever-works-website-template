@@ -1407,6 +1407,19 @@ export async function setupUserPaymentAccount(
   accountId?: string
 ): Promise<PaymentAccount> {
   try {
+    // First, verify that the user exists
+    const user = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (!user || user.length === 0) {
+      throw new Error(`User with ID ${userId} does not exist in the users table`);
+    }
+
+    console.log(`✅ User ${userId} verified in database`);
+
     let provider = await getPaymentProviderByName(providerName);
     if (!provider) {
       const newProviderData: NewPaymentProvider = {
@@ -1454,7 +1467,7 @@ export async function setupUserPaymentAccount(
       accountId: accountId || null
     };
 
-    console.log(`🆕 Creating new payment account for user ${userId} and provider ${providerName}`);
+    console.log(`🔄 Creating new payment account for user ${userId} and provider ${providerName}`);
     const createdAccount = await createPaymentAccount(newPaymentAccountData);
     return createdAccount;
 
