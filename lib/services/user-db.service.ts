@@ -1,6 +1,6 @@
 import { db } from '@/lib/db/drizzle';
 import { users, clientProfiles } from '@/lib/db/schema';
-import { eq, desc, asc, and, sql } from 'drizzle-orm';
+import { eq, desc, asc, and, sql, isNull, type SQL } from 'drizzle-orm';
 import { UserData, CreateUserRequest, UpdateUserRequest, UserListOptions, UserStatus } from '@/lib/types/user';
 import { generateUserId } from '@/lib/types/user';
 import { hash } from 'bcryptjs';
@@ -8,7 +8,10 @@ import { hash } from 'bcryptjs';
 export class UserDbService {
   async readUsers(): Promise<UserData[]> {
     try {
-      const result = await db.select().from(users);
+      const result = await db
+        .select()
+        .from(users)
+        .where(isNull(users.deletedAt));
       return result.map(this.mapDbToUserData);
     } catch (error) {
       console.error('Error reading users from database:', error);
@@ -18,7 +21,10 @@ export class UserDbService {
 
   async findById(id: string): Promise<UserData | null> {
     try {
-      const result = await db.select().from(users).where(eq(users.id, id));
+      const result = await db
+        .select()
+        .from(users)
+        .where(and(eq(users.id, id), isNull(users.deletedAt)));
       return result.length > 0 ? this.mapDbToUserData(result[0]) : null;
     } catch (error) {
       console.error('Error finding user by ID:', error);
@@ -88,7 +94,8 @@ export class UserDbService {
       const { page = 1, limit = 10, search, sortBy = 'email', sortOrder = 'asc' } = options as any;
       
       let query = db.select().from(users);
-      const conditions = [] as any[];
+      const conditions: SQL[] = [];
+      conditions.push(isNull(users.deletedAt));
 
       if (search) {
         // Filter by email only in minimized schema
