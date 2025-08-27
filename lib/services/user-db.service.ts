@@ -1,38 +1,38 @@
 import { db } from '@/lib/db/drizzle';
 import { users, clientProfiles } from '@/lib/db/schema';
 import { eq, desc, asc, and, sql, isNull, type SQL } from 'drizzle-orm';
-import { UserData, CreateUserRequest, UpdateUserRequest, UserListOptions, UserStatus } from '@/lib/types/user';
+import { AuthUserData, CreateUserRequest, UpdateUserRequest, UserListOptions } from '@/lib/types/user';
 import { generateUserId } from '@/lib/types/user';
 import { hash } from 'bcryptjs';
 
 export class UserDbService {
-  async readUsers(): Promise<UserData[]> {
+  async readUsers(): Promise<AuthUserData[]> {
     try {
       const result = await db
         .select()
         .from(users)
         .where(isNull(users.deletedAt));
-      return result.map(this.mapDbToUserData);
+      return result.map(this.mapDbToAuthUserData);
     } catch (error) {
       console.error('Error reading users from database:', error);
       throw new Error('Failed to retrieve users');
     }
   }
 
-  async findById(id: string): Promise<UserData | null> {
+  async findById(id: string): Promise<AuthUserData | null> {
     try {
       const result = await db
         .select()
         .from(users)
         .where(and(eq(users.id, id), isNull(users.deletedAt)));
-      return result.length > 0 ? this.mapDbToUserData(result[0]) : null;
+      return result.length > 0 ? this.mapDbToAuthUserData(result[0]) : null;
     } catch (error) {
       console.error('Error finding user by ID:', error);
       throw new Error('Failed to retrieve user');
     }
   }
 
-  async createUser(data: CreateUserRequest): Promise<UserData> {
+  async createUser(data: CreateUserRequest): Promise<AuthUserData> {
     try {
       // Hash the password
       const passwordHash = await hash(data.password, 10);
@@ -44,14 +44,14 @@ export class UserDbService {
       };
 
       const result = await db.insert(users).values(userData).returning();
-      return this.mapDbToUserData(result[0]);
+      return this.mapDbToAuthUserData(result[0]);
     } catch (error) {
       console.error('Error creating user:', error);
       throw error;
     }
   }
 
-  async updateUser(id: string, data: UpdateUserRequest): Promise<UserData> {
+  async updateUser(id: string, data: UpdateUserRequest): Promise<AuthUserData> {
     try {
       const updateData: Record<string, unknown> = {};
       if (data.email !== undefined) updateData.email = data.email;
@@ -65,7 +65,7 @@ export class UserDbService {
         throw new Error(`User with ID '${id}' not found`);
       }
 
-      return this.mapDbToUserData(result[0]);
+      return this.mapDbToAuthUserData(result[0]);
     } catch (error) {
       console.error('Error updating user:', error);
       throw error;
@@ -84,7 +84,7 @@ export class UserDbService {
   }
 
   async findUsers(options: UserListOptions = {}): Promise<{
-    users: UserData[];
+    users: AuthUserData[];
     total: number;
     page: number;
     limit: number;
@@ -127,7 +127,7 @@ export class UserDbService {
         .offset((page - 1) * limit);
       
       return {
-        users: result.map(this.mapDbToUserData),
+        users: result.map(this.mapDbToAuthUserData),
         total,
         page,
         limit,
@@ -192,19 +192,12 @@ export class UserDbService {
     }
   }
 
-  private mapDbToUserData(dbUser: typeof users.$inferSelect): UserData {
+  private mapDbToAuthUserData(dbUser: typeof users.$inferSelect): AuthUserData {
     return {
       id: dbUser.id,
-      username: '',
       email: dbUser.email || '',
-      name: '',
-      title: undefined,
-      avatar: undefined,
-      role: '',
-      status: 'active' as UserStatus,
       created_at: dbUser.createdAt.toISOString(),
       updated_at: dbUser.updatedAt.toISOString(),
-      created_by: 'system',
     };
   }
 } 

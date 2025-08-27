@@ -1,10 +1,10 @@
 import { UserDbService } from '@/lib/services/user-db.service';
 import { 
-  UserData, 
+  AuthUserData, 
   CreateUserRequest, 
   UpdateUserRequest, 
   UserListOptions,
-  UserListResponse,
+  AuthUserListResponse,
   userValidationSchema,
   updateUserValidationSchema
 } from '@/lib/types/user';
@@ -19,7 +19,7 @@ export class UserRepository {
   /**
    * Get all users with filtering and pagination
    */
-  async findAll(options: UserListOptions = {}): Promise<UserListResponse> {
+  async findAll(options: UserListOptions = {}): Promise<AuthUserListResponse> {
     try {
       const result = await this.userDbService.findUsers(options);
       return {
@@ -38,7 +38,7 @@ export class UserRepository {
   /**
    * Get a single user by ID
    */
-  async findById(id: string): Promise<UserData | null> {
+  async findById(id: string): Promise<AuthUserData | null> {
     try {
       return await this.userDbService.findById(id);
     } catch (error) {
@@ -50,7 +50,7 @@ export class UserRepository {
   /**
    * Create a new user
    */
-  async create(data: CreateUserRequest): Promise<UserData> {
+  async create(data: CreateUserRequest): Promise<AuthUserData> {
     try {
       // Validate input data
       const validatedData = userValidationSchema.parse(data);
@@ -70,7 +70,7 @@ export class UserRepository {
   /**
    * Update an existing user
    */
-  async update(id: string, data: UpdateUserRequest): Promise<UserData> {
+  async update(id: string, data: UpdateUserRequest): Promise<AuthUserData> {
     try {
       // Validate input data
       const validatedData = updateUserValidationSchema.parse(data);
@@ -104,14 +104,8 @@ export class UserRepository {
         throw new Error('User not found');
       }
 
-      // Prevent deletion of the last super admin
-      if (existingUser.role === 'super-admin') {
-        const allUsers = await this.userDbService.readUsers();
-        const superAdmins = allUsers.filter(user => user.role === 'super-admin' && user.status === 'active');
-        if (superAdmins.length <= 1) {
-          throw new Error('Cannot delete the last super admin');
-        }
-      }
+      // Note: Role-based deletion checks are now handled at the profile level
+      // since AuthUserData only contains authentication information
 
       await this.userDbService.deleteUser(id);
     } catch (error) {
@@ -168,7 +162,7 @@ export class UserRepository {
   /**
    * Get all users (for dropdowns, etc.)
    */
-  async getAllUsers(): Promise<UserData[]> {
+  async getAllUsers(): Promise<AuthUserData[]> {
     try {
       return await this.userDbService.readUsers();
     } catch (error) {
