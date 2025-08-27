@@ -145,29 +145,22 @@
     {
       "idx": 20,
       "version": "7",
-      "when": 1756006339929,
-      "tag": "0020_funny_korath",
+      "when": 1756138648515,
+      "tag": "0020_add_role_management_tables",
       "breakpoints": true
     },
     {
       "idx": 21,
       "version": "7",
-      "when": 1756006400000,
-      "tag": "0021_reconcile_database_state",
+      "when": 1756150347518,
+      "tag": "0021_typical_cable",
       "breakpoints": true
     },
     {
       "idx": 22,
       "version": "7",
-      "when": 1756006500000,
-      "tag": "0022_fix_schema_constraints",
-      "breakpoints": true
-    },
-    {
-      "idx": 23,
-      "version": "7",
-      "when": 1756006600000,
-      "tag": "0023_add_accounts_provider_unique_constraint",
+      "when": 1756151214199,
+      "tag": "0022_drop_redundant_permissions_key_index",
       "breakpoints": true
     },
     {
