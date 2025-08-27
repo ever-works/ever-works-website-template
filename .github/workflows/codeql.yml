@@ -62,7 +62,6 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        disable-default-queries: true
 
     - name: Setup CodeQL environment
       run: node scripts/codeql-setup.js
@@ -84,5 +83,3 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{matrix.language}}"
