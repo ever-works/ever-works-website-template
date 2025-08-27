@@ -4,5 +4,5 @@
 -- Add email column to client_profiles table
 ALTER TABLE "client_profiles" ADD COLUMN IF NOT EXISTS "email" text;
 
--- Add index on email for performance
-CREATE INDEX IF NOT EXISTS "client_profile_email_idx" ON "client_profiles" ("email");
+-- Case-insensitive lookup support
+CREATE INDEX IF NOT EXISTS "client_profiles_email_ci_idx" ON "client_profiles" (lower("email"));
