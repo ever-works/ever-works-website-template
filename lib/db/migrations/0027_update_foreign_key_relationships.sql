@@ -22,7 +22,7 @@ END $$;
 DO $$
 BEGIN
   -- Drop existing foreign key constraint
-  ALTER TABLE "votes" DROP CONSTRAINT IF EXISTS "votes_user_id_users_id_fk";
+  ALTER TABLE "votes" DROP CONSTRAINT IF EXISTS "votes_userid_users_id_fk";
   
   -- Add new foreign key constraint to client_profiles
   ALTER TABLE "votes" 
