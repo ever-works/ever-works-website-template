@@ -31,7 +31,10 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   deletedAt: timestamp("deleted_at"),
-});
+}, (table) => ({
+  statusIndex: index("users_status_idx").on(table.status),
+  createdAtIndex: index("users_created_at_idx").on(table.createdAt),
+}));
 
 export const roles = pgTable("roles", {
   id: text("id").primaryKey(),
@@ -189,6 +192,8 @@ export const activityLogs = pgTable("activityLogs", {
 }, (table) => [
   index("activity_logs_user_idx").on(table.userId),
   index("activity_logs_client_idx").on(table.clientId),
+  index("activity_logs_created_at_idx").on(table.timestamp),
+  index("activity_logs_action_idx").on(table.action),
 ]);
 
 export const passwordResetTokens = pgTable('passwordResetTokens', {
