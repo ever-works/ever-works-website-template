@@ -83,3 +83,16 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
+      with:
+        upload: false
+
+    - name: Display Analysis Results
+      run: |
+        echo "✅ CodeQL analysis completed successfully!"
+        echo "📊 Analysis results are available locally"
+        echo "🔧 To enable uploads, disable default CodeQL in GitHub Settings:"
+        echo "   1. Go to Settings → Security → Code security and analysis"
+        echo "   2. Find 'Code scanning' and click Configure"
+        echo "   3. Disable the default CodeQL setup"
+        echo "   4. Save changes"
+        echo "   5. Remove 'upload: false' from this workflow"
