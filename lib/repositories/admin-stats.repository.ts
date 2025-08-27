@@ -1,6 +1,7 @@
 import { db } from '@/lib/db/drizzle';
 import { users, comments, votes, newsletterSubscriptions } from '@/lib/db/schema';
 import { eq, count, and, gte } from 'drizzle-orm';
+import { ItemRepository } from '@/lib/repositories/item.repository';
 
 export interface UserStats {
   totalUsers: number;
@@ -66,13 +67,13 @@ export class AdminStatsRepository {
 
   async getSubmissionStats(): Promise<SubmissionStats> {
     try {
-      // Note: This is a placeholder since we don't have a submissions table yet
-      // In a real implementation, you would query the actual submissions table
+      const itemRepository = new ItemRepository();
+      const stats = await itemRepository.getStats();
       return {
-        totalSubmissions: 0,
-        pendingSubmissions: 0,
-        approvedSubmissions: 0,
-        rejectedSubmissions: 0,
+        totalSubmissions: stats.total,
+        pendingSubmissions: stats.pending,
+        approvedSubmissions: stats.approved,
+        rejectedSubmissions: stats.rejected,
       };
     } catch (error) {
       console.error('Error fetching submission stats:', error);

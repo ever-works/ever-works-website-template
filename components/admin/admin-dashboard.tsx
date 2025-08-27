@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 
 export function AdminDashboard() {
   const { data: session, status } = useSession();
-  const { data: stats, isLoading, refetch, isFetching } = useAdminStats();
+  const { data: stats, isLoading, refetch, isFetching, isError, error } = useAdminStats();
   
   if (status === "loading") {
     return <AdminDashboardSkeleton />;
@@ -24,6 +24,7 @@ export function AdminDashboard() {
   const adminName = session?.user?.name || session?.user?.email || "Admin";
 
   const refreshIconClass = `h-4 w-4${isFetching ? ' animate-spin' : ''}`;
+  const errorBoxClass = "rounded-md border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200";
 
   return (
     <div className="space-y-8">
@@ -41,6 +42,20 @@ export function AdminDashboard() {
           <span>Refresh</span>
         </Button>
       </div>
+
+      {/* Error State */}
+      {isError && (
+        <div className={errorBoxClass}>
+          <div className="flex items-start justify-between gap-4">
+            <p className="text-sm">
+              {error instanceof Error ? error.message : "Failed to load admin statistics."}
+            </p>
+            <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
+              Retry
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Stats Overview */}
       <AdminStatsOverview stats={stats} isLoading={isLoading} />
