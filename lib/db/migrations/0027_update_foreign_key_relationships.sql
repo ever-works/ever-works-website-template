@@ -26,8 +26,8 @@ BEGIN
   
   -- Add new foreign key constraint to client_profiles
   ALTER TABLE "votes" 
-    ADD CONSTRAINT "votes_user_id_client_profiles_id_fk" 
-    FOREIGN KEY ("user_id") 
+    ADD CONSTRAINT "votes_userid_client_profiles_id_fk" 
+    FOREIGN KEY ("userid") 
     REFERENCES "client_profiles" ("id") 
     ON DELETE CASCADE;
 EXCEPTION WHEN duplicate_object THEN NULL;

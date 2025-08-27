@@ -10,11 +10,11 @@ FROM "client_profiles" cp
 WHERE "comments"."userId" = cp."userId"
   AND cp."userId" IS NOT NULL;
 
--- Update votes.user_id to reference client_profiles.id instead of users.id
+-- Update votes.userid to reference client_profiles.id instead of users.id
 UPDATE "votes" 
-SET "user_id" = cp."id"
+SET "userid" = cp."id"
 FROM "client_profiles" cp
-WHERE "votes"."user_id" = cp."userId"
+WHERE "votes"."userid" = cp."userId"
   AND cp."userId" IS NOT NULL;
 
 -- Update activityLogs.userId to reference client_profiles.id instead of users.id

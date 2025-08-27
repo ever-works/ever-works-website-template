@@ -211,6 +211,13 @@
       "when": 1756007400000,
       "tag": "0029_fix_comment_data_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1756007500000,
+      "tag": "0030_fix_votes_column_name",
+      "breakpoints": true
     }
   ]
 }
