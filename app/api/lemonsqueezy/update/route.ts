@@ -92,7 +92,6 @@ export async function POST(request: NextRequest) {
 			timestamp: new Date().toISOString()
 		});
 
-		// Return success response
 		return NextResponse.json(
 			{
 				success: true,
