@@ -160,6 +160,31 @@ export class UserDbService {
     }
   }
 
+  /**
+   * Check if username exists in clientProfiles
+   */
+  async clientProfileUsernameExists(username: string, excludeId?: string): Promise<boolean> {
+    try {
+      let query = db
+        .select({ id: clientProfiles.id })
+        .from(clientProfiles)
+        .where(eq(clientProfiles.username, username));
+
+      if (excludeId) {
+        query = query.where(and(
+          eq(clientProfiles.username, username),
+          sql`${clientProfiles.id} != ${excludeId}`
+        ));
+      }
+
+      const result = await query;
+      return result.length > 0;
+    } catch (error) {
+      console.error('Error checking username existence in clientProfiles:', error);
+      throw new Error('Failed to check username availability');
+    }
+  }
+
   private mapDbToUserData(dbUser: typeof users.$inferSelect): UserData {
     return {
       id: dbUser.id,

@@ -142,11 +142,9 @@ export class UserRepository {
   /**
    * Check if username exists
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async usernameExists(_username: string, _excludeId?: string): Promise<boolean> {
+  async usernameExists(username: string, excludeId?: string): Promise<boolean> {
     try {
-      // users table no longer stores username; always return false
-      return false;
+      return await this.userDbService.clientProfileUsernameExists(username, excludeId);
     } catch (error) {
       console.error('Error checking username existence:', error);
       throw new Error('Failed to check username availability');
