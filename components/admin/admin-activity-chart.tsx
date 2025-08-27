@@ -32,9 +32,27 @@ export function AdminActivityChart({ data, isLoading }: AdminActivityChartProps)
     );
   }
 
-  const maxValue = data.length > 0 
-    ? Math.max(...data.map(d => Math.max(d.views, d.votes, d.comments)))
-    : 1; // Default to 1 to avoid division by zero
+  if (data.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <TrendingUp className="h-5 w-5 text-blue-600" />
+            <span>Weekly Activity Trends</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            No activity data available
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const maxValue = Math.max(...data.map(d => Math.max(d.views, d.votes, d.comments)));
+
+  const barBaseClass = "rounded-t opacity-80 hover:opacity-100 transition-opacity";
 
   return (
     <Card>
@@ -69,7 +87,7 @@ export function AdminActivityChart({ data, isLoading }: AdminActivityChartProps)
                 {/* Bars */}
                 <div className="w-full flex items-end space-x-0.5 h-40">
                   <div 
-                    className="bg-blue-500 rounded-t opacity-80 hover:opacity-100 transition-opacity"
+                    className={`bg-blue-500 ${barBaseClass}`}
                     style={{ 
                       height: `${(item.views / maxValue) * 100}%`,
                       minHeight: '2px',
@@ -78,7 +96,7 @@ export function AdminActivityChart({ data, isLoading }: AdminActivityChartProps)
                     title={`Views: ${item.views}`}
                   />
                   <div 
-                    className="bg-green-500 rounded-t opacity-80 hover:opacity-100 transition-opacity"
+                    className={`bg-green-500 ${barBaseClass}`}
                     style={{ 
                       height: `${(item.votes / maxValue) * 100}%`,
                       minHeight: '2px',
@@ -87,7 +105,7 @@ export function AdminActivityChart({ data, isLoading }: AdminActivityChartProps)
                     title={`Votes: ${item.votes}`}
                   />
                   <div 
-                    className="bg-purple-500 rounded-t opacity-80 hover:opacity-100 transition-opacity"
+                    className={`bg-purple-500 ${barBaseClass}`}
                     style={{ 
                       height: `${(item.comments / maxValue) * 100}%`,
                       minHeight: '2px',
