@@ -53,7 +53,10 @@ export class UserRepository {
   async create(data: CreateUserRequest): Promise<AuthUserData> {
     try {
       // Validate input data
-      const validatedData = userValidationSchema.parse(data);
+      // Only validate persisted auth fields
+      const validatedData = userValidationSchema
+        .pick({ email: true, password: true })
+        .parse(data);
 
       // Create user (duplicate checking is handled in the service)
       const user = await this.userDbService.createUser(validatedData);

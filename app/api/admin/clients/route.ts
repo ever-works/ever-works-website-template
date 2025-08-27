@@ -110,14 +110,11 @@ export async function POST(request: NextRequest) {
         const randomString = randomBytes.toString('hex').toLowerCase();
         const tempPassword = `Temp${randomString}!`;
         
-        // Generate username from email if not provided
-        const username = raw.username || email.split('@')[0];
+        // Generate username from email if not provided (no longer used here)
+        // const username = raw.username || email.split('@')[0];
         
         const newUser = await userService.createUser({
-          username,
           email: email,
-          name: profileName,
-          role: 'client', // Default role for clients
           password: tempPassword,
         });
         

@@ -32,7 +32,7 @@ export class UserDbService {
     }
   }
 
-  async createUser(data: CreateUserRequest): Promise<AuthUserData> {
+  async createUser(data: Pick<CreateUserRequest, 'email' | 'password'>): Promise<AuthUserData> {
     try {
       // Hash the password
       const passwordHash = await hash(data.password, 10);
