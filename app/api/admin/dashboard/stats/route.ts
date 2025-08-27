@@ -26,6 +26,13 @@ export async function GET() {
     // Fetch all admin stats
     const stats = await adminStatsRepository.getAllStats();
 
+    // Map submission counts to chart data
+    const submissionStatusData = [
+      { status: 'Approved', count: stats.submissions.approvedSubmissions, color: '#10B981' },
+      { status: 'Pending', count: stats.submissions.pendingSubmissions, color: '#F59E0B' },
+      { status: 'Rejected', count: stats.submissions.rejectedSubmissions, color: '#EF4444' }
+    ];
+
     // Transform to match the expected AdminStats interface
     const adminStats = {
       // Platform Overview
@@ -46,13 +53,13 @@ export async function GET() {
       newsletterSubscribers: stats.newsletter.totalSubscribers,
       recentSubscribers: stats.newsletter.recentSubscribers,
       
-      // Trends (placeholder data for now)
+      // Trends (minimal for MVP)
       userGrowthData: [],
-      submissionStatusData: [],
+      submissionStatusData,
       activityTrendData: [],
       topItemsData: [],
       
-      // Recent Activity (placeholder data for now)
+      // Recent Activity (placeholder for now)
       recentActivity: [],
     };
 
