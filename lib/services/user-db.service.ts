@@ -2,7 +2,6 @@ import { db } from '@/lib/db/drizzle';
 import { users, clientProfiles } from '@/lib/db/schema';
 import { eq, desc, asc, and, sql, isNull, type SQL } from 'drizzle-orm';
 import { AuthUserData, CreateUserRequest, UpdateUserRequest, UserListOptions } from '@/lib/types/user';
-import { generateUserId } from '@/lib/types/user';
 import { hash } from 'bcryptjs';
 
 export class UserDbService {
@@ -38,16 +37,36 @@ export class UserDbService {
       const passwordHash = await hash(data.password, 10);
 
       const userData = {
-        id: generateUserId(),
-        email: data.email,
+        email: data.email.trim().toLowerCase(),
         passwordHash,
-      };
+      } as const;
 
       const result = await db.insert(users).values(userData).returning();
       return this.mapDbToAuthUserData(result[0]);
     } catch (error) {
       console.error('Error creating user:', error);
       throw error;
+    }
+  }
+
+  async emailExists(email: string, excludeId?: string): Promise<boolean> {
+    try {
+      const conditions: SQL[] = [
+        sql`lower(${users.email}) = lower(${email})`,
+        isNull(users.deletedAt)
+      ];
+      if (excludeId) {
+        conditions.push(sql`${users.id} != ${excludeId}`);
+      }
+      const res = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(and(...conditions))
+        .limit(1);
+      return res.length > 0;
+    } catch (error) {
+      console.error('Error checking email existence:', error);
+      throw new Error('Failed to check email availability');
     }
   }
 

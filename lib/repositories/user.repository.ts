@@ -58,6 +58,12 @@ export class UserRepository {
         .pick({ email: true, password: true })
         .parse(data);
 
+      // Enforce email uniqueness before create
+      const exists = await this.userDbService.emailExists(validatedData.email);
+      if (exists) {
+        throw new Error('Email already in use');
+      }
+
       // Create user (duplicate checking is handled in the service)
       const user = await this.userDbService.createUser(validatedData);
       return user;
