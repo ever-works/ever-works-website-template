@@ -15,7 +15,9 @@ import {
 	SetupIntent,
 	UIComponents,
 	CheckoutParams,
-	SubscriptionStatus
+	SubscriptionStatus,
+	CheckoutListResult,
+	CheckoutData
 } from '../../types/payment-types';
 import {
 	createCheckout,
@@ -23,7 +25,7 @@ import {
 	getOrder,
 	cancelSubscription,
 	updateSubscription,
-	lemonSqueezySetup
+	lemonSqueezySetup, listSubscriptions
 } from '@lemonsqueezy/lemonsqueezy.js';
 
 import { env } from '@/lib/config/env';
@@ -36,6 +38,31 @@ export interface LemonSqueezyConfig extends PaymentProviderConfig {
 		storeId?: string;
 		testMode?: boolean;
 	};
+}
+
+// Types for better code organization
+// Types for better code organization
+export const statuses = ['active', 'cancelled', 'expired', 'on_trial', 'past_due', 'paused', 'unpaid'] as const;
+interface ListCheckoutsOptions {
+	status?: (typeof statuses)[number];
+	limit?: number;
+	page?: number;
+	customerEmail?: string;
+	dateFrom?: Date;
+	dateTo?: Date;
+}
+
+interface ApiFilter {
+	storeId: number;
+	status?: (typeof statuses)[number];
+	userEmail?: string;
+	dateFrom?: Date;
+	dateTo?: Date;
+}
+
+interface PaginationConfig {
+	size: number;
+	number: number;
 }
 
 export class LemonSqueezyProvider implements PaymentProviderInterface {
@@ -352,10 +379,7 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 	async createCustomCheckout(params: CheckoutParams): Promise<string> {
 		try {
 			console.log('params', params, this.storeId);
-			const { data, error } = await createCheckout(
-				Number(this.storeId),
-				Number(params.variantId),
-				{
+			const { data, error } = await createCheckout(Number(this.storeId), Number(params.variantId), {
 					customPrice: params.customPrice,
 					productOptions: {
 						redirectUrl: `${env.API_BASE_URL}/billing/success`
@@ -371,8 +395,7 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 					},
 					preview: false,
 					testMode: process.env.NODE_ENV === 'development'
-				}
-			);
+			});
 
 			if (error) {
 				throw new Error(`Lemonsqueezy checkout error: ${error.message || 'Unknown error'}`);
@@ -535,6 +558,268 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 				id: '',
 				data: { error: 'Webhook processing failed' }
 			};
+		}
+	}
+
+	async listCheckouts(options: ListCheckoutsOptions = {}): Promise<CheckoutListResult> {
+		const { status, limit = 50, page = 1, customerEmail, dateFrom, dateTo } = options;
+
+		try {
+			this.logger.info('Fetching LemonSqueezy checkouts', { storeId: this.storeId, ...options });
+			
+			this.validateStoreId();
+			const pageConfig = this.buildPaginationConfig(limit, page);
+			const apiFilter = this.buildApiFilter({ status, customerEmail, dateFrom, dateTo });
+			
+			const response = await this.fetchSubscriptions(apiFilter);
+
+			const responseData = this.validateResponse(response);
+			if (!responseData) {
+				return this.createEmptyResult(pageConfig);
+			}
+
+			const checkouts = this.processCheckouts(responseData.data, { dateFrom, dateTo });
+			const result = this.buildResult(checkouts, pageConfig, responseData.meta);
+
+			this.logger.info('Successfully fetched LemonSqueezy checkouts', {
+				count: checkouts.length,
+				total: result.total,
+				hasMore: result.hasMore
+			});
+
+			return result;
+		} catch (error) {
+			return this.handleError(error, 'Failed to fetch LemonSqueezy checkouts');
+		}
+	}
+
+	// Private helper methods for better code organization
+	private validateStoreId(): void {
+		if (!this.storeId || !Number.isFinite(Number(this.storeId))) {
+			throw new Error('Invalid store ID for LemonSqueezy checkouts');
+		}
+	}
+
+	private buildPaginationConfig(limit: number, page: number): PaginationConfig {
+		return {
+			size: Math.min(limit, 100), // LemonSqueezy max is 100
+			number: Math.max(page, 1)
+		};
+	}
+
+	private buildApiFilter(filters: Partial<ListCheckoutsOptions>): ApiFilter {
+		const apiFilter: ApiFilter = {
+			storeId: Number(this.storeId)
+		};
+		
+		if (filters.status) apiFilter.status = filters.status;
+		if (filters.customerEmail) apiFilter.userEmail = filters.customerEmail;
+		if (filters.dateFrom) apiFilter.dateFrom = filters.dateFrom;
+		if (filters.dateTo) apiFilter.dateTo = filters.dateTo;
+		
+		return apiFilter;
+	}
+
+	private async fetchSubscriptions(apiFilter: ApiFilter) {
+		return await listSubscriptions({
+			filter: apiFilter,
+			include: [
+				'store',
+				'variant',
+				'customer',
+				'order',
+				'order-item',
+				'product',
+				'subscription-items',
+				'subscription-invoices'
+			]
+		});
+	}
+
+	private validateResponse(response: any): any {
+		const responseData = response.data as any;
+		
+		if (responseData && responseData.errors) {
+			this.logger.error('LemonSqueezy API returned errors', { errors: responseData.errors });
+			throw new Error(`LemonSqueezy API errors: ${JSON.stringify(responseData.errors)}`);
+		}
+
+		if (!responseData || !responseData.data) {
+			this.logger.warn('No checkout data received from LemonSqueezy', { responseData });
+			return null;
+		}
+
+		if (!Array.isArray(responseData.data)) {
+			this.logger.error('LemonSqueezy response.data.data is not an array', {
+				responseDataType: typeof responseData.data,
+				responseData: responseData.data
+			});
+			return null;
+		}
+
+		return responseData;
+	}
+
+	private createEmptyResult(pageConfig: PaginationConfig): CheckoutListResult {
+		return {
+			checkouts: [],
+			total: 0,
+			page: pageConfig.number,
+			limit: pageConfig.size,
+			hasMore: false
+		};
+	}
+
+	private processCheckouts(data: any[], dateFilters: { dateFrom?: Date; dateTo?: Date }): CheckoutData[] {
+		return data
+			.map((checkout: any) => this.transformCheckoutData(checkout))
+			.filter((checkout: any) => {
+				if (dateFilters.dateFrom && new Date(checkout.createdAt) < dateFilters.dateFrom) {
+					return false;
+				}
+				if (dateFilters.dateTo && new Date(checkout.createdAt) > dateFilters.dateTo) {
+					return false;
+				}
+				return true;
+			});
+	}
+
+	private buildResult(checkouts: CheckoutData[], pageConfig: PaginationConfig, meta: any): CheckoutListResult {
+		return {
+			checkouts,
+			total: checkouts.length,
+			page: pageConfig.number,
+			limit: pageConfig.size,
+			hasMore: meta?.page?.last_page > pageConfig.number
+		};
+	}
+
+	private handleError(error: any, message: string): never {
+		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+		this.logger.error(message, {
+			error: errorMessage,
+			storeId: this.storeId,
+			stack: error instanceof Error ? error.stack : undefined
+		});
+		
+		if (errorMessage.includes('map is not a function')) {
+			throw new Error('LemonSqueezy API response format error: response.data is not an array. Please check your API configuration.');
+		}
+
+		throw new Error(`${message}: ${errorMessage}`);
+	}
+
+	private transformCheckoutData(checkout: any): CheckoutData {
+		
+		let amount = 0;
+		const attrs = checkout.attributes || {};
+		if (attrs.total) {
+			amount = attrs.total / 100; 
+		} else if (attrs.unit_price) {
+			amount = attrs.unit_price / 100;
+		} else if (attrs.price) {
+			amount = attrs.price / 100;
+		} else if (attrs.amount) {
+			amount = attrs.amount / 100;
+		} else if (attrs.first_subscription_item?.price_id) {
+			amount = (attrs.first_subscription_item.unit_price || 0) / 100;
+		}
+	
+		// Extract all relationship data
+		const relationships = checkout.relationships || {};
+		const included = checkout.included || [];
+		
+		// Helper function to find included data by type and id
+		const findIncluded = (type: string, id: string) => {
+			return included.find((item: any) => item.type === type && item.id === id);
+		};
+		
+		// Extract specific relationship data
+		const store = relationships.store?.data ? findIncluded('stores', relationships.store.data.id) : null;
+		const customer = relationships.customer?.data ? findIncluded('customers', relationships.customer.data.id) : null;
+		const order = relationships.order?.data ? findIncluded('orders', relationships.order.data.id) : null;
+		const orderItem = relationships['order-item']?.data ? findIncluded('order-items', relationships['order-item'].data.id) : null;
+		const product = relationships.product?.data ? findIncluded('products', relationships.product.data.id) : null;
+		const variant = relationships.variant?.data ? findIncluded('variants', relationships.variant.data.id) : null;
+		const subscriptionItems = relationships['subscription-items']?.data || [];
+		const subscriptionInvoices = relationships['subscription-invoices']?.data || [];
+		
+		const transformed = {
+			id: checkout.id.toString(),
+			checkoutId: attrs.checkout_id || attrs.subscription_id || checkout.id.toString(),
+			storeId: attrs.store_id || Number(this.storeId),
+			customerEmail: attrs.customer_email || attrs.user_email,
+			productName: attrs.product_name,
+			variantName: attrs.variant_name,
+			amount: amount,
+			currency: attrs.currency || 'USD',
+			status: attrs.status || 'unknown',
+			createdAt: attrs.first_subscription_item?.created_at || attrs.created_at,
+			updatedAt: attrs.first_subscription_item?.updated_at || attrs.updated_at,
+			completedAt: attrs.completed_at,
+			metadata: {
+				...attrs.custom_data,
+				priceId: attrs.first_subscription_item?.price_id,
+				quantity: attrs.first_subscription_item?.quantity,
+				isUsageBased: attrs.first_subscription_item?.is_usage_based,
+				// Include all relationship data
+				relationships: {
+					store: store?.attributes || null,
+					customer: customer?.attributes || null,
+					order: order?.attributes || null,
+					orderItem: orderItem?.attributes || null,
+					product: product?.attributes || null,
+					variant: variant?.attributes || null,
+					subscriptionItems: subscriptionItems.map((item: any) => findIncluded('subscription-items', item.id)?.attributes || null),
+					subscriptionInvoices: subscriptionInvoices.map((item: any) => findIncluded('subscription-invoices', item.id)?.attributes || null)
+				},
+				// Include all raw relationship data for debugging
+				rawRelationships: relationships,
+				rawIncluded: included
+			}
+		};
+		
+
+		console.log('Date information:', {
+			originalCreatedAt: attrs.created_at,
+			originalUpdatedAt: attrs.updated_at,
+			originalCompletedAt: attrs.completed_at,
+			subscriptionCreatedAt: attrs.first_subscription_item?.created_at,
+			subscriptionUpdatedAt: attrs.first_subscription_item?.updated_at,
+			finalCreatedAt: transformed.createdAt,
+			finalUpdatedAt: transformed.updatedAt,
+			finalCompletedAt: transformed.completedAt
+		});
+		
+		return transformed;
+	}
+
+	/**
+	 * Get checkout by ID
+	 * @param checkoutId - The checkout ID to retrieve
+	 * @returns Promise<CheckoutData | null>
+	 */
+	async getCheckout(checkoutId: string): Promise<CheckoutData | null> {
+		try {
+			this.logger.info('Fetching LemonSqueezy checkout by ID', { checkoutId });
+
+			const result = await this.listCheckouts({ limit: 100 });
+			const checkout = result.checkouts.find((c: CheckoutData) => c.checkoutId === checkoutId);
+
+			if (!checkout) {
+				this.logger.warn('Checkout not found', { checkoutId });
+				return null;
+			}
+
+			this.logger.info('Successfully fetched checkout', { checkoutId });
+			return checkout;
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+			this.logger.error('Failed to fetch checkout by ID', {
+				error: errorMessage,
+				checkoutId
+			});
+			throw new Error(`Failed to fetch checkout: ${errorMessage}`);
 		}
 	}
 

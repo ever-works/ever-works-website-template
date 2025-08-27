@@ -145,29 +145,85 @@
     {
       "idx": 20,
       "version": "7",
-      "when": 1756006339929,
-      "tag": "0020_funny_korath",
+      "when": 1756138648515,
+      "tag": "0020_add_role_management_tables",
       "breakpoints": true
     },
     {
       "idx": 21,
       "version": "7",
-      "when": 1756006400000,
-      "tag": "0021_reconcile_database_state",
+      "when": 1756150347518,
+      "tag": "0021_typical_cable",
       "breakpoints": true
     },
     {
       "idx": 22,
       "version": "7",
-      "when": 1756006500000,
-      "tag": "0022_fix_schema_constraints",
+      "when": 1756151214199,
+      "tag": "0022_drop_redundant_permissions_key_index",
       "breakpoints": true
     },
     {
-      "idx": 23,
+      "idx": 24,
       "version": "7",
-      "when": 1756006600000,
-      "tag": "0023_add_accounts_provider_unique_constraint",
+      "when": 1756006700000,
+      "tag": "0023_enhance_accounts_table",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1756006800000,
+      "tag": "0024_add_accounts_constraints",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1756006900000,
+      "tag": "0024_add_accounts_constraints",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1756007000000,
+      "tag": "0025_migrate_profile_data",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1756007100000,
+      "tag": "0026_cleanup_users_table",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1756007200000,
+      "tag": "0027_update_foreign_key_relationships",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1756007300000,
+      "tag": "0028_add_email_to_client_profiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1756007400000,
+      "tag": "0029_fix_comment_data_migration",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1756007500000,
+      "tag": "0030_fix_votes_column_name",
       "breakpoints": true
     }
   ]

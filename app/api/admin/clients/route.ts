@@ -94,6 +94,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
+    // Generate a stable profile name from display name or email prefix
+    const profileName = raw.displayName || email.split('@')[0];
+
     // Check if user exists, if not create one
     let user = await getUserByEmail(email);
     
@@ -107,19 +110,13 @@ export async function POST(request: NextRequest) {
         const randomString = randomBytes.toString('hex').toLowerCase();
         const tempPassword = `Temp${randomString}!`;
         
-        // Generate username from email if not provided
-        const username = raw.username || email.split('@')[0];
-        
-        // Generate name from display name or email prefix
-        const name = raw.displayName || email.split('@')[0];
+        // Generate username from email if not provided (no longer used here)
+        // const username = raw.username || email.split('@')[0];
         
         const newUser = await userService.createUser({
-          username,
           email: email,
-          name,
-          role: 'client', // Default role for clients
           password: tempPassword,
-        }, session.user.id || 'system');
+        });
         
         user = newUser;
       } catch (userError) {
@@ -143,7 +140,7 @@ export async function POST(request: NextRequest) {
     const clientData = {
       userId: user.id,
       email: user.email,
-      name: user.name,
+      name: profileName,
       displayName: raw.displayName,
       username: raw.username,
       bio: raw.bio,
@@ -152,7 +149,7 @@ export async function POST(request: NextRequest) {
       status: raw.status || 'active',
       plan: raw.plan || 'free',
       accountType: raw.accountType || 'individual',
-    } as const;
+    };
 
     const newClient = await createClientProfile(clientData);
 

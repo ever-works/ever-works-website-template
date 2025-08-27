@@ -27,6 +27,7 @@ import {
   updateUserVerification,
   createClientAccount,
   getClientAccountByEmail,
+  updateClientProfileName,
 } from "@/lib/db/queries";
 import { signIn } from "@/lib/auth";
 import {
@@ -333,7 +334,8 @@ export const updateAccount = validatedActionWithUser(
       return { error: "User not found" };
     }
     await Promise.all([
-      updateUser({ name, email }, dbUser.id),
+      updateUser({ email }, dbUser.id),
+      updateClientProfileName(dbUser.id, name),
       		logActivity(ActivityType.UPDATE_ACCOUNT, dbUser.id),
     ]);
 

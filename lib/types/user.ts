@@ -3,7 +3,15 @@ import { z } from "zod";
 // User status enum
 export type UserStatus = 'active' | 'inactive';
 
-// User data interface
+// Authentication-only user data interface (for users table)
+export interface AuthUserData {
+  id: string;
+  email: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Full user data interface (includes profile data from clientProfiles)
 export interface UserData {
   id: string;
   username: string;
@@ -38,6 +46,15 @@ export interface UpdateUserRequest {
   avatar?: string;
   role?: string;
   status?: UserStatus;
+}
+
+// Authentication user list response
+export interface AuthUserListResponse {
+  users: AuthUserData[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 // User list response

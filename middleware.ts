@@ -36,7 +36,7 @@ function resolveLocalePrefix(pathname: string): { prefix: string; hasLocale: boo
 
 async function nextAuthGuard(req: NextRequest, baseRes: NextResponse): Promise<NextResponse> {
   try {
-    const token = await getToken({ req });
+    const token = await getToken({ req, secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET });
     if (token?.isAdmin === true) {
       return baseRes;
     }

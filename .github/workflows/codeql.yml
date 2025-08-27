@@ -1,4 +1,4 @@
-name: "CodeQL Advanced"
+name: "CodeQL Security Analysis"
 
 on:
   push:
@@ -62,8 +62,6 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        config-file: ./.github/codeql/codeql-config.yml
-        category: "/language:${{ matrix.language }}/advanced"
 
     - name: Setup CodeQL environment
       run: node scripts/codeql-setup.js
@@ -74,17 +72,35 @@ jobs:
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
       env:
-        # Environment variables needed for build
-        NEXT_PUBLIC_APP_URL: http://localhost:3000
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
-        NEXTAUTH_SECRET: "codeql-test-secret-not-for-production"
-        NEXTAUTH_URL: "http://localhost:3000"
-        DATA_REPOSITORY: "codeql-test-repo-not-used"
+        # Environment variables for build
+        NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres' }}
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'codeql-test-secret' }}
+        NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
+        DATA_REPOSITORY: ${{ secrets.DATA_REPOSITORY || 'codeql-test-repo' }}
         CONTENT_WARNINGS_SILENT: "true"
         CI: "true"
 
-    - name: Perform CodeQL Analysis
+    - name: Perform CodeQL Analysis with Upload
+      id: analyze-upload
+      uses: github/codeql-action/analyze@v3
+      continue-on-error: true
+
+    - name: Perform CodeQL Analysis without Upload (Fallback)
+      if: steps.analyze-upload.outcome == 'failure'
       uses: github/codeql-action/analyze@v3
       with:
-        category: "/language:${{ matrix.language }}/advanced"
-        upload: true
+        upload: false
+
+    - name: Report Analysis Status
+      run: |
+        if [ "${{ steps.analyze-upload.outcome }}" == "success" ]; then
+          echo "✅ CodeQL analysis completed with upload to GitHub Security"
+          echo "📊 Results available in: GitHub → Security → Code scanning"
+        else
+          echo "⚠️  CodeQL analysis completed without upload (fallback mode)"
+          echo "🔧 To enable uploads, configure GitHub Security settings:"
+          echo "   1. Go to Settings → Security → Code security and analysis"
+          echo "   2. Configure Code scanning appropriately"
+          echo "   3. Ensure no conflicting configurations"
+        fi

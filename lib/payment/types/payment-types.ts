@@ -117,10 +117,45 @@ export interface CardBrandIcon {
 }
 
 export interface CheckoutParams {
-  variantId?: number;
-  email?: string;
-  customPrice?: number;
-  metadata?: Record<string, any>;
+	priceId?: string;
+	variantId?: number;
+	quantity?: number;
+	successUrl?: string;
+	cancelUrl?: string;
+	customerEmail?: string;
+	email?: string;
+	customPrice?: number;
+	metadata?: Record<string, any>;
+}
+
+/**
+ * Standardized checkout data structure
+ */
+export interface CheckoutData {
+  id: string;
+  checkoutId: string;
+  storeId: number;
+  customerEmail?: string;
+  productName?: string;
+  variantName?: string;
+  amount: number;
+  currency: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  completedAt?: string;
+  metadata: Record<string, any>;
+}
+
+/**
+ * Result structure for checkout listing operations
+ */
+export interface CheckoutListResult {
+  checkouts: CheckoutData[];
+  total: number;
+  page: number;
+  limit: number;
+  hasMore: boolean;
 }
 
 export interface UIComponents {
