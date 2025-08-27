@@ -58,13 +58,6 @@ jobs:
         node-version: '20'
         cache: ${{ steps.detect-pm.outputs.manager }}
 
-    - name: Clean CodeQL Environment
-      run: |
-        echo "🧹 Cleaning CodeQL environment..."
-        rm -rf ~/.codeql
-        rm -rf .codeql
-        echo "✅ Environment cleaned"
-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
@@ -80,16 +73,16 @@ jobs:
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
       env:
-        # Environment variables needed for build
-        NEXT_PUBLIC_APP_URL: http://localhost:3000
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
-        NEXTAUTH_SECRET: "codeql-test-secret-not-for-production"
-        NEXTAUTH_URL: "http://localhost:3000"
-        DATA_REPOSITORY: "codeql-test-repo-not-used"
+        # Environment variables for build
+        NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres' }}
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'codeql-test-secret' }}
+        NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
+        DATA_REPOSITORY: ${{ secrets.DATA_REPOSITORY || 'codeql-test-repo' }}
         CONTENT_WARNINGS_SILENT: "true"
         CI: "true"
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
-        upload: false
+        category: "/language:${{matrix.language}}"
