@@ -63,6 +63,7 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         config-file: ./.github/codeql/codeql-config.yml
+        disable-default-queries: true
 
     - name: Setup CodeQL environment
       run: node scripts/codeql-setup.js

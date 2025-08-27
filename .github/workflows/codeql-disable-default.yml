@@ -1,0 +1,29 @@
+name: "Disable Default CodeQL Setup"
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  disable-default:
+    name: Disable Default CodeQL Configuration
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Disable Default CodeQL Setup
+      uses: github/codeql-action/init@v3
+      with:
+        languages: javascript-typescript
+        disable-default-queries: true
+        config-file: ./.github/codeql/codeql-config.yml
+
+    - name: Perform Empty Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        upload: false  # Don't upload results, just disable default setup
