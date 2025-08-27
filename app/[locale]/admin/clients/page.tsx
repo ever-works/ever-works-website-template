@@ -700,15 +700,15 @@ export default function ClientsPage() {
                           {navigatingClientId === client.id ? (
                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                           ) : (
-                            (client.displayName || client.user?.name || 'U').charAt(0).toUpperCase()
+                            (client.displayName || client.name || 'U').charAt(0).toUpperCase()
                           )}
                         </div>
                         <div className="flex-1 min-w-0 pr-4">
                           <h4 className="font-medium text-gray-900 dark:text-white hover:text-theme-primary transition-colors">
-                            {client.displayName || client.user?.name || 'Unnamed Client'}
+                            {client.displayName || client.name || 'Unnamed Client'}
                           </h4>
                           <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {client.username ? `@${client.username}` : ''} {client.username && client.user?.email ? '•' : ''} {client.user?.email || ''}
+                            {client.username ? `@${client.username}` : ''} {client.username && client.email ? '•' : ''} {client.email || ''}
                           </p>
                           {client.jobTitle && (
                             <p className="text-xs text-gray-400 dark:text-gray-500">{client.jobTitle}</p>

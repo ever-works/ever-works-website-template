@@ -176,6 +176,55 @@
       "when": 1756006800000,
       "tag": "0024_add_accounts_constraints",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1756006900000,
+      "tag": "0024_add_accounts_constraints",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1756007000000,
+      "tag": "0025_migrate_profile_data",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1756007100000,
+      "tag": "0026_cleanup_users_table",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1756007200000,
+      "tag": "0027_update_foreign_key_relationships",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1756007300000,
+      "tag": "0028_add_email_to_client_profiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1756007400000,
+      "tag": "0029_fix_comment_data_migration",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1756007500000,
+      "tag": "0030_fix_votes_column_name",
+      "breakpoints": true
     }
   ]
 }

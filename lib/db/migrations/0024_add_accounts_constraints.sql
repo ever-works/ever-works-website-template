@@ -20,3 +20,8 @@ END$$;
 -- Add composite unique index for (provider, providerAccountId) to prevent duplicate OAuth accounts
 CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS "accounts_provider_providerAccountId_unique_idx"
   ON "accounts" ("provider", "providerAccountId");
+
+-- Add performance index on provider column
+CREATE INDEX IF NOT EXISTS "accounts_provider_idx"
+  ON "accounts" ("provider");
+
