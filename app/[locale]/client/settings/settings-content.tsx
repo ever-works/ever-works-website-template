@@ -3,7 +3,7 @@
 import { Container } from "@/components/ui/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { FiUser, FiDroplet, FiBriefcase, FiFileText, FiArrowRight, FiCreditCard } from "react-icons/fi";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
 interface SettingsCardProps {
@@ -41,7 +41,6 @@ function SettingsCard({ title, description, icon, href }: SettingsCardProps) {
 }
 
 export function SettingsContent() {
-  const locale = useLocale();
   const t = useTranslations('settings');
 
   const settingsCards = [
