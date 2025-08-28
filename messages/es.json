@@ -179,6 +179,35 @@
     "HELP": "Centro de ayuda",
     "LOGOUT": "Cerrar sesión",
     "LOGOUT_DESC": "Cerrar sesión de tu cuenta",
+    "PROFILE_DESC": "Ver y editar tu perfil",
+    "ACCOUNT_SETTINGS_DESC": "Configuración y preferencias de la cuenta",
+    "PROFILE_SETTINGS": "Configuración del perfil",
+    "SETTINGS_CARDS": {
+      "BASIC_INFO": {
+        "TITLE": "Información básica",
+        "DESCRIPTION": "Actualiza tu nombre, biografía, ubicación y detalles de contacto para personalizar tu perfil"
+      },
+      "SECURITY": {
+        "TITLE": "Seguridad y contraseña",
+        "DESCRIPTION": "Cambia tu contraseña, habilita la autenticación de dos factores y gestiona la seguridad de tu cuenta"
+      },
+      "THEME_COLORS": {
+        "TITLE": "Tema y apariencia",
+        "DESCRIPTION": "Personaliza los colores de tu perfil y el estilo visual para que coincida con tu marca"
+      },
+      "PORTFOLIO": {
+        "TITLE": "Gestión del portfolio",
+        "DESCRIPTION": "Añade, edita y organiza tus proyectos de portfolio para mostrar tu trabajo"
+      },
+      "SUBMISSIONS": {
+        "TITLE": "Envíos",
+        "DESCRIPTION": "Gestiona tus envíos al directorio y rastrea su estado de aprobación"
+      },
+      "BILLING": {
+        "TITLE": "Facturación",
+        "DESCRIPTION": "Gestiona tu información de facturación y detalles de suscripción"
+      }
+    },
     "SECURITY_PAGE": {
       "TITLE": "Configuración de seguridad",
       "BACK_TO_SETTINGS": "Volver a configuración",
@@ -638,6 +667,75 @@
     "SUBSCRIPTION_HISTORY": "Historial de Suscripciones",
     "REFRESH": "Actualizar",
     "SEARCH_AND_FILTERS": "Búsqueda y filtros",
-    "TOTAL_RESULTS": "Total de Resultados"
+    "TOTAL_RESULTS": "Total de Resultados",
+    "WELCOME_TITLE": "¡Bienvenido a Ever Works!",
+    "FREE_PLAN_MESSAGE": "Actualmente estás en el plan gratuito. Actualiza para desbloquear funciones premium y comenzar a construir tu éxito.",
+    "UPGRADE_NOW": "Actualizar ahora",
+    "CURRENT_SUBSCRIPTION": "Suscripción actual",
+    "SUBSCRIPTION_EMPTY_STATE": "No se encontró suscripción activa",
+    "SUBSCRIPTION_EMPTY_DESCRIPTION": "No tienes suscripciones activas en este momento.",
+    "PAYMENTS_EMPTY_STATE": "Sin historial de pagos",
+    "PAYMENTS_EMPTY_DESCRIPTION": "Tus transacciones de pago aparecerán aquí una vez que hagas una compra.",
+    "SUBSCRIPTIONS_EMPTY_STATE": "Sin historial de suscripciones",
+    "SUBSCRIPTIONS_EMPTY_DESCRIPTION": "Tu historial de suscripciones aparecerá aquí una vez que tengas suscripciones activas.",
+    "OVERVIEW_EMPTY_STATE": "Sin actividad reciente",
+    "OVERVIEW_EMPTY_DESCRIPTION": "Tu actividad de facturación reciente aparecerá aquí una vez que tengas transacciones."
+  },
+  "profile": {
+    "BASIC_INFO_TITLE": "Información básica",
+    "BASIC_INFO_DESCRIPTION": "Actualiza tu información personal y detalles de contacto. Esta información se mostrará en tu perfil público y ayuda a otros a descubrirte y conectarse contigo.",
+    "PERSONAL_INFORMATION": "Información personal",
+    "PERSONAL_INFO_DESCRIPTION": "Cuéntanos sobre ti y cómo te gustaría ser representado",
+    "BACK_TO_SETTINGS": "Volver a configuración",
+    "UPLOAD_AVATAR": "Subir avatar",
+    "AVATAR_FILE_TYPES": "JPG, PNG o GIF. Máx. 2MB.",
+    "DISPLAY_NAME": "Nombre para mostrar",
+    "DISPLAY_NAME_PLACEHOLDER": "Ingresa tu nombre para mostrar",
+    "DISPLAY_NAME_HELP": "Así es como tu nombre aparecerá a otros",
+    "USERNAME": "Nombre de usuario",
+    "USERNAME_PLACEHOLDER": "Ingresa tu nombre de usuario",
+    "USERNAME_HELP": "Tu identificador único de perfil",
+    "BIO": "Biografía",
+    "BIO_PLACEHOLDER": "Cuéntanos sobre ti...",
+    "BIO_HELP": "Una breve descripción sobre ti y tu trabajo",
+    "SKILLS": "Habilidades",
+    "SKILL_NAME_PLACEHOLDER": "Nombre de la habilidad",
+    "ADD_SKILL": "Agregar habilidad",
+    "REMOVE_SKILL": "Eliminar habilidad",
+    "INTERESTS": "Intereses",
+    "INTERESTS_PLACEHOLDER": "ej. Open Source, UI/UX, Startups",
+    "INTERESTS_HELP": "Separa los intereses con comas. Se mostrarán como etiquetas en tu perfil.",
+    "LOCATION": "Ubicación",
+    "LOCATION_PLACEHOLDER": "Ciudad, País",
+    "LOCATION_HELP": "Dónde te encuentras",
+    "COMPANY": "Empresa",
+    "COMPANY_PLACEHOLDER": "Nombre de tu empresa",
+    "COMPANY_HELP": "Tu empleador u organización actual",
+    "JOB_TITLE": "Título del trabajo",
+    "JOB_TITLE_PLACEHOLDER": "Tu título de trabajo",
+    "JOB_TITLE_HELP": "Tu rol o posición actual",
+    "WEBSITE": "Sitio web",
+    "WEBSITE_PLACEHOLDER": "https://tusitio.com",
+    "WEBSITE_HELP": "Tu sitio web personal o portfolio",
+    "CANCEL": "Cancelar",
+    "SAVE_CHANGES": "Guardar cambios",
+    "SAVING": "Guardando...",
+    "PROFILE_UPDATED": "¡Perfil actualizado!",
+    "ERROR_UPDATING_PROFILE": "Error al actualizar el perfil",
+    "INVALID_IMAGE_FILE": "Por favor selecciona un archivo de imagen válido (JPG, PNG o GIF)",
+    "FILE_SIZE_TOO_LARGE": "El tamaño del archivo debe ser menor a 2MB",
+    "ERROR_READING_FILE": "Error al leer el archivo. Por favor intenta de nuevo.",
+    "SKILL_NAME_REQUIRED": "El nombre de la habilidad es requerido",
+    "SKILL_NAME_MIN_LENGTH": "El nombre de la habilidad debe tener al menos 2 caracteres",
+    "DISPLAY_NAME_REQUIRED": "El nombre para mostrar es requerido",
+    "USERNAME_MIN_LENGTH": "El nombre de usuario debe tener al menos 3 caracteres",
+    "BIO_MAX_LENGTH": "La biografía debe tener menos de 500 caracteres",
+    "INVALID_URL": "Debe ser una URL válida",
+    "SKILL_CATEGORIES": {
+      "FRONTEND": "Frontend",
+      "BACKEND": "Backend",
+      "TOOLS_FRAMEWORKS": "Herramientas y frameworks",
+      "OTHER": "Otro"
+    }
   }
 }

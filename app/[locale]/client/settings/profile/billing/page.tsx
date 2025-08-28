@@ -18,8 +18,10 @@ import {
 } from '@/components/settings/billing/empty-state';
 import { FiArrowLeft } from 'react-icons/fi';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 export default function BillingPage() {
+	const t = useTranslations('billing');
 	const {
 		subscription,
 		payments,
@@ -44,19 +46,18 @@ export default function BillingPage() {
 							<CreditCard className="w-12 h-12 text-theme-primary-600" />
 						</div>
 						<h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-							Welcome to Ever Works!
+							{t('WELCOME_TITLE')}
 						</h2>
 						<p className="text-gray-600 dark:text-gray-300 mb-8">
-							You&apos;re currently on the free plan. Upgrade to unlock premium features and start
-							building your success.
+							{t('FREE_PLAN_MESSAGE')}
 						</p>
 						<div className="space-y-3">
 							<button className="w-full bg-gradient-to-r from-theme-primary-600 to-theme-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-theme-primary-700 hover:to-theme-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
 								<Plus className="w-5 h-5 inline mr-2" />
-								Upgrade Now
+								{t('UPGRADE_NOW')}
 							</button>
 							<button className="w-full bg-gray-100 text-gray-700 px-6 py-3 rounded-xl font-medium hover:bg-gray-200 transition-colors">
-								View Plans
+								{t('VIEW_PLANS')}
 							</button>
 						</div>
 					</div>
@@ -90,7 +91,7 @@ export default function BillingPage() {
 						className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
 					>
 						<FiArrowLeft className="w-4 h-4" />
-						Back to Settings
+						{t('BACK_TO_SETTINGS')}
 					</Link>
 					<div className="flex items-center gap-3">
 						<button
@@ -99,22 +100,22 @@ export default function BillingPage() {
 							className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors disabled:opacity-50 dark:text-slate-100"
 						>
 							<Zap className="w-4 h-4" />
-							{isRefreshing ? 'Refreshing...' : 'Refresh All'}
+							{isRefreshing ? t('REFRESHING') : t('REFRESH_ALL')}
 						</button>
 
 						<button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-theme-primary-600 rounded-lg hover:bg-theme-primary-700 transition-colors">
 							<Download className="w-4 h-4" />
-							Export
+							{t('EXPORT')}
 						</button>
 					</div>
 				</div>
 				<div className="flex flex-col items-center justify-center">
 					<div className='space-y-4 text-center'>
 						<h1 className="text-3xl font-bold text-gray-600 dark:text-gray-100 mb-2">
-							Billing & Subscription
+							{t('BILLING_SUBSCRIPTION_TITLE')}
 						</h1>
 						<p className="text-gray-600 dark:text-gray-400 text-center">
-							Manage your subscription, view payment history, and monitor your billing status
+							{t('BILLING_SUBSCRIPTION_SUBTITLE')}
 						</p>
 					</div>
 
@@ -127,7 +128,7 @@ export default function BillingPage() {
 				<div className="text-center py-16 dark:bg-slate-800 dark:text-slate-100">
 					<div className="inline-flex items-center gap-3 px-6 py-3 bg-theme-primary-50 border border-theme-primary-200 rounded-full">
 						<div className="animate-spin rounded-full h-5 w-5 border-b-2 border-theme-primary-600"></div>
-						<span className="text-theme-primary-700 font-medium">Loading billing information...</span>
+						<span className="text-theme-primary-700 font-medium">{t('LOADING_BILLING_INFO')}</span>
 					</div>
 				</div>
 			)}
@@ -160,14 +161,14 @@ export default function BillingPage() {
 							<div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
 								<div className="flex items-center justify-between mb-3">
 									<h2 className="text-base font-semibold text-gray-900 dark:text-slate-100">
-										Current Subscription
+										{t('CURRENT_SUBSCRIPTION')}
 									</h2>
 									<button
 										onClick={refreshSubscription}
 										disabled={isRefreshingSubscription}
 										className="inline-flex items-center gap-1 px-2 py-1 text-xs text-blue-600 hover:text-blue-700 underline disabled:opacity-50"
 									>
-										{isRefreshingSubscription ? 'Refreshing...' : 'Refresh'}
+										{isRefreshingSubscription ? t('REFRESHING') : t('REFRESH')}
 									</button>
 								</div>
 
@@ -192,7 +193,7 @@ export default function BillingPage() {
 							{/* Recent Activity */}
 							<div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
 								<h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-6">
-									Recent Activity
+									{t('RECENT_ACTIVITY')}
 								</h2>
 
 								{payments.length === 0 ? (
@@ -234,7 +235,7 @@ export default function BillingPage() {
 
 										{payments.length > 3 && (
 											<button className="w-full text-center py-3 text-theme-primary-600 hover:text-theme-primary-700 font-medium transition-colors">
-												View All Activity
+												{t('VIEW_ALL_ACTIVITY')}
 												<ChevronRight className="w-4 h-4 inline ml-2" />
 											</button>
 										)}
@@ -272,14 +273,14 @@ export default function BillingPage() {
 						<div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
 							<div className="flex items-center justify-between mb-6">
 								<h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">
-									Subscription History
+									{t('SUBSCRIPTION_HISTORY')}
 								</h2>
 								<button
 									onClick={refreshSubscription}
 									disabled={isRefreshingSubscription}
 									className="inline-flex items-center gap-2 px-3 py-2 text-sm text-theme-primary-600 hover:text-theme-primary-700 underline disabled:opacity-50"
 								>
-									{isRefreshingSubscription ? 'Refreshing...' : 'Refresh'}
+									{isRefreshingSubscription ? t('REFRESHING') : t('REFRESH')}
 								</button>
 							</div>
 

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FiUser, FiMapPin, FiBriefcase, FiGlobe, FiArrowLeft, FiUpload, FiPlus, FiTrash2 } from "react-icons/fi";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
@@ -25,6 +26,7 @@ interface Skill {
 }
 
 function SkillsEditor({ initialSkills = [], onChange }: { initialSkills?: Skill[], onChange: (skills: Skill[]) => void }) {
+  const t = useTranslations('profile');
   const [skills, setSkills] = useState<Skill[]>(
     initialSkills.length > 0
       ? initialSkills
@@ -50,11 +52,11 @@ function SkillsEditor({ initialSkills = [], onChange }: { initialSkills?: Skill[
 
   const validateSkill = (idx: number, skillName: string) => {
     if (!skillName.trim()) {
-      setErrors(prev => ({ ...prev, [idx]: "Skill name is required" }));
+      setErrors(prev => ({ ...prev, [idx]: t('SKILL_NAME_REQUIRED') }));
       return false;
     }
     if (skillName.length < 2) {
-      setErrors(prev => ({ ...prev, [idx]: "Skill name must be at least 2 characters" }));
+      setErrors(prev => ({ ...prev, [idx]: t('SKILL_NAME_MIN_LENGTH') }));
       return false;
     }
     return true;
@@ -89,14 +91,14 @@ function SkillsEditor({ initialSkills = [], onChange }: { initialSkills?: Skill[
   return (
     <div className="space-y-4">
       <label className="block font-semibold text-gray-800 dark:text-gray-100 mb-1">
-        Skills
+        {t('SKILLS')}
       </label>
       <div className="space-y-4">
         {skills.map((skill, idx) => (
           <div key={idx} className="flex flex-col md:flex-row items-center gap-4 bg-gray-50 dark:bg-gray-900/40 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
             <input
               type="text"
-              placeholder="Skill name"
+              placeholder={t('SKILL_NAME_PLACEHOLDER')}
               value={skill.name}
               onChange={e => handleSkillChange(idx, "name", e.target.value)}
               onBlur={() => validateSkill(idx, skill.name)}
@@ -129,7 +131,7 @@ function SkillsEditor({ initialSkills = [], onChange }: { initialSkills?: Skill[
               type="button"
               onClick={() => removeSkill(idx)}
               className="p-2 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400"
-              title="Remove skill"
+              title={t('REMOVE_SKILL')}
               disabled={skills.length === 1}
             >
               <FiTrash2 className="w-4 h-4" />
@@ -144,31 +146,32 @@ function SkillsEditor({ initialSkills = [], onChange }: { initialSkills?: Skill[
         onClick={addSkill}
       >
         <FiPlus className="w-4 h-4" />
-        Add Skill
+        {t('ADD_SKILL')}
       </Button>
     </div>
   );
 }
 
-const profileSchema = z.object({
-  displayName: z.string().min(1, "Display name is required").max(100),
-  username: z.string().min(3, "Username must be at least 3 characters").max(50),
-  bio: z.string().max(500, "Bio must be less than 500 characters"),
+const createProfileSchema = (t: any) => z.object({
+  displayName: z.string().min(1, t('DISPLAY_NAME_REQUIRED')).max(100),
+  username: z.string().min(3, t('USERNAME_MIN_LENGTH')).max(50),
+  bio: z.string().max(500, t('BIO_MAX_LENGTH')),
   location: z.string().max(100),
   company: z.string().max(100),
   jobTitle: z.string().max(100),
-  website: z.string().url("Must be a valid URL").or(z.literal("")),
+  website: z.string().url(t('INVALID_URL')).or(z.literal("")),
   interests: z.string().max(200),
   skills: z.array(z.object({
-    name: z.string().min(1, "Skill name is required"),
+    name: z.string().min(1, t('SKILL_NAME_REQUIRED')),
     category: z.enum(["Frontend", "Backend", "Tools & Frameworks", "Other"]),
     proficiency: z.number().min(0).max(100),
   })).optional(),
 });
 
-type ProfileFormData = z.infer<typeof profileSchema>;
+type ProfileFormData = z.infer<ReturnType<typeof createProfileSchema>>;
 
 export default function BasicInfoPage() {
+  const t = useTranslations('profile');
   // Bypass auth for testing
   const session = { user: { name: "John Doe", email: "john@example.com" } };
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
@@ -184,12 +187,12 @@ export default function BasicInfoPage() {
       // Validate file type
       const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
       if (!allowedTypes.includes(file.type)) {
-        alert('Please select a valid image file (JPG, PNG, or GIF)');
+        alert(t('INVALID_IMAGE_FILE'));
         return;
       }
       // Validate file size (2MB limit)
       if (file.size > 2 * 1024 * 1024) {
-        alert('File size must be less than 2MB');
+        alert(t('FILE_SIZE_TOO_LARGE'));
         return;
       }
       // Create preview
@@ -198,7 +201,7 @@ export default function BasicInfoPage() {
         setAvatarPreview(e.target?.result as string);
       };
       reader.onerror = () => {
-        alert('Error reading file. Please try again.');
+        alert(t('ERROR_READING_FILE'));
         setAvatarPreview(null);
       };
       reader.readAsDataURL(file);
@@ -210,7 +213,7 @@ export default function BasicInfoPage() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ProfileFormData>({
-    resolver: zodResolver(profileSchema),
+    resolver: zodResolver(createProfileSchema(t)),
   });
 
   const onSubmit = async (data: ProfileFormData) => {
@@ -220,11 +223,11 @@ export default function BasicInfoPage() {
       // Implement API call to save profile data
       // await updateProfile(formDataWithSkills);
       // Show success message
-      alert(`Profile updated! (demo mode): ${JSON.stringify(formDataWithSkills)}`);
+      alert(`${t('PROFILE_UPDATED')} (demo mode): ${JSON.stringify(formDataWithSkills)}`);
     } catch (error) {
       console.error("Error updating profile:", error);
       // Show error message
-      alert("Error updating profile");
+      alert(t('ERROR_UPDATING_PROFILE'));
     }
   };
 
@@ -239,7 +242,7 @@ export default function BasicInfoPage() {
               className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
             >
               <FiArrowLeft className="w-4 h-4" />
-              Back to Settings
+              {t('BACK_TO_SETTINGS')}
             </Link>
           </div>
 
@@ -248,11 +251,10 @@ export default function BasicInfoPage() {
               <FiUser className="w-8 h-8 text-theme-primary-600 dark:text-theme-primary-400" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-              Basic Information
+              {t('BASIC_INFO_TITLE')}
             </h1>
             <p className="text-gray-600 dark:text-gray-300 text-lg max-w-3xl mx-auto leading-relaxed">
-              Update your personal information and contact details. This information will be displayed on your public profile
-              and helps others discover and connect with you.
+              {t('BASIC_INFO_DESCRIPTION')}
             </p>
           </div>
 
@@ -261,10 +263,10 @@ export default function BasicInfoPage() {
             <CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-800">
               <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <FiUser className="w-5 h-5 text-theme-primary-500" />
-                Personal Information
+                {t('PERSONAL_INFORMATION')}
               </CardTitle>
               <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                Tell us about yourself and how you&apos;d like to be represented
+                {t('PERSONAL_INFO_DESCRIPTION')}
               </p>
             </CardHeader>
             <CardContent>
@@ -288,7 +290,7 @@ export default function BasicInfoPage() {
                   </div>
                   <label htmlFor="avatar" className="inline-flex items-center gap-2 px-4 py-2 bg-theme-primary-600 hover:bg-theme-primary-700 text-white rounded-lg cursor-pointer transition-colors">
                     <FiUpload className="w-4 h-4" />
-                    Upload Avatar
+                    {t('UPLOAD_AVATAR')}
                     <input
                       id="avatar"
                       name="avatar"
@@ -298,19 +300,19 @@ export default function BasicInfoPage() {
                       onChange={handleAvatarChange}
                     />
                   </label>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">JPG, PNG, or GIF. Max 2MB.</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{t('AVATAR_FILE_TYPES')}</p>
                 </div>
 
                 {/* Name & Username */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-4">
                     <label htmlFor="displayName" className="block font-semibold text-gray-800 dark:text-gray-100 mb-1">
-                      Display Name
+                      {t('DISPLAY_NAME')}
                     </label>
                     <input
                       id="displayName"
                       type="text"
-                      placeholder="Enter your display name"
+                      placeholder={t('DISPLAY_NAME_PLACEHOLDER')}
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                       {...register("displayName")}
                       defaultValue={session.user?.name || ""}
@@ -319,18 +321,18 @@ export default function BasicInfoPage() {
                       <p className="text-red-500 text-sm mt-1">{errors.displayName.message}</p>
                     )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      This is how your name will appear to others
+                      {t('DISPLAY_NAME_HELP')}
                     </p>
                   </div>
                   <div className="space-y-4">
                     <label htmlFor="username" className="block font-semibold text-gray-800 dark:text-gray-100 mb-1">
-                      Username
+                      {t('USERNAME')}
                     </label>
                     <input
                       id="username"
                       type="text"
                       defaultValue={session.user?.name?.toLowerCase().replace(/\s+/g, '') || ""}
-                      placeholder="Enter your username"
+                      placeholder={t('USERNAME_PLACEHOLDER')}
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                       {...register("username")}
                     />
@@ -338,7 +340,7 @@ export default function BasicInfoPage() {
                       <p className="text-red-500 text-sm mt-1">{errors.username.message}</p>
                     )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Your unique profile identifier
+                      {t('USERNAME_HELP')}
                     </p>
                   </div>
                 </div>
@@ -346,12 +348,12 @@ export default function BasicInfoPage() {
                 {/* Bio */}
                 <div className="space-y-4">
                   <label htmlFor="bio" className="block font-semibold text-gray-800 dark:text-gray-100 mb-1">
-                    Bio
+                    {t('BIO')}
                   </label>
                   <textarea
                     id="bio"
                     rows={4}
-                    placeholder="Tell us about yourself..."
+                    placeholder={t('BIO_PLACEHOLDER')}
                     className="w-full px-6 py-4 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 hover:border-gray-300 dark:hover:border-gray-500 resize-none outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                     {...register("bio")}
                     defaultValue="Full-stack developer passionate about creating amazing web experiences. I love working with React, TypeScript, and modern web technologies."
@@ -360,7 +362,7 @@ export default function BasicInfoPage() {
                     <p className="text-red-500 text-sm mt-1">{errors.bio.message}</p>
                   )}
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    A brief description about yourself and your work
+                    {t('BIO_HELP')}
                   </p>
                 </div>
 
@@ -370,12 +372,12 @@ export default function BasicInfoPage() {
                 {/* Interests */}
                 <div className="space-y-4">
                   <label htmlFor="interests" className="block font-semibold text-gray-800 dark:text-gray-100 mb-1">
-                    Interests
+                    {t('INTERESTS')}
                   </label>
                   <input
                     id="interests"
                     type="text"
-                    placeholder="e.g. Open Source, UI/UX, Startups"
+                    placeholder={t('INTERESTS_PLACEHOLDER')}
                     className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                     {...register("interests")}
                   />
@@ -383,7 +385,7 @@ export default function BasicInfoPage() {
                     <p className="text-red-500 text-sm mt-1">{errors.interests.message}</p>
                   )}
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Separate interests with commas. These will be shown as tags on your profile.
+                    {t('INTERESTS_HELP')}
                   </p>
                 </div>
 
@@ -395,12 +397,12 @@ export default function BasicInfoPage() {
                   <div className="space-y-4">
                     <label htmlFor="location" className="font-semibold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-1">
                       <FiMapPin className="w-4 h-4" />
-                      Location
+                      {t('LOCATION')}
                     </label>
                     <input
                       id="location"
                       type="text"
-                      placeholder="City, Country"
+                      placeholder={t('LOCATION_PLACEHOLDER')}
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                       {...register("location")}
                       defaultValue="" // TODO: Use real user data from session or database
@@ -409,18 +411,18 @@ export default function BasicInfoPage() {
                       <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>
                     )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Where you&apos;re based
+                      {t('LOCATION_HELP')}
                     </p>
                   </div>
                   <div className="space-y-4">
                     <label htmlFor="company" className="font-semibold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-1">
                       <FiBriefcase className="w-4 h-4" />
-                      Company
+                      {t('COMPANY')}
                     </label>
                     <input
                       id="company"
                       type="text"
-                      placeholder="Your company name"
+                      placeholder={t('COMPANY_PLACEHOLDER')}
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                       {...register("company")}
                       defaultValue="" // TODO: Use real user data from session or database
@@ -429,17 +431,17 @@ export default function BasicInfoPage() {
                       <p className="text-red-500 text-sm mt-1">{errors.company.message}</p>
                     )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Your current employer or organization
+                      {t('COMPANY_HELP')}
                     </p>
                   </div>
                   <div className="space-y-4">
                     <label htmlFor="jobTitle" className="block font-semibold text-gray-800 dark:text-gray-100 mb-1">
-                      Job Title
+                      {t('JOB_TITLE')}
                     </label>
                     <input
                       id="jobTitle"
                       type="text"
-                      placeholder="Your job title"
+                      placeholder={t('JOB_TITLE_PLACEHOLDER')}
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                       {...register("jobTitle")}
                       defaultValue="" // TODO: Use real user data from session or database
@@ -448,18 +450,18 @@ export default function BasicInfoPage() {
                       <p className="text-red-500 text-sm mt-1">{errors.jobTitle.message}</p>
                     )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Your current role or position
+                      {t('JOB_TITLE_HELP')}
                     </p>
                   </div>
                   <div className="space-y-4">
                     <label htmlFor="website" className="font-semibold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-1">
                       <FiGlobe className="w-4 h-4" />
-                      Website
+                      {t('WEBSITE')}
                     </label>
                     <input
                       id="website"
                       type="url"
-                      placeholder="https://yourwebsite.com"
+                      placeholder={t('WEBSITE_PLACEHOLDER')}
                       className="w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:theme-primary:border-blue-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                       {...register("website")}
                       defaultValue="" // TODO: Use real user data from session or database
@@ -468,7 +470,7 @@ export default function BasicInfoPage() {
                       <p className="text-red-500 text-sm mt-1">{errors.website.message}</p>
                     )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Your personal website or portfolio
+                      {t('WEBSITE_HELP')}
                     </p>
                   </div>
                 </div>
@@ -480,14 +482,14 @@ export default function BasicInfoPage() {
                       href="/client/settings/profile"
                       className="px-6 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors text-center md:text-left"
                     >
-                      Cancel
+                      {t('CANCEL')}
                     </Link>
                     <Button
                       type="submit"
                       className="inline-flex items-center gap-2 px-6 py-2 text-base font-semibold bg-theme-primary-600 hover:bg-theme-primary-700 text-white rounded-md transition-colors shadow-md w-full md:w-auto justify-center"
                       disabled={isSubmitting}
                     >
-                      {isSubmitting ? "Saving..." : "Save Changes"}
+                      {isSubmitting ? t('SAVING') : t('SAVE_CHANGES')}
                     </Button>
                   </div>
                 </div>

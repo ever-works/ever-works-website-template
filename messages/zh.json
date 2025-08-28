@@ -137,6 +137,36 @@
     "LEGAL": "法律",
     "HELP": "帮助中心",
     "LOGOUT": "退出登录",
+    "LOGOUT_DESC": "退出您的账户",
+    "PROFILE_DESC": "查看和编辑您的个人资料",
+    "ACCOUNT_SETTINGS_DESC": "账户设置和偏好",
+    "PROFILE_SETTINGS": "个人资料设置",
+    "SETTINGS_CARDS": {
+      "BASIC_INFO": {
+        "TITLE": "基本信息",
+        "DESCRIPTION": "更新您的姓名、简介、位置和联系信息以个性化您的个人资料"
+      },
+      "SECURITY": {
+        "TITLE": "安全和密码",
+        "DESCRIPTION": "更改您的密码，启用双因素身份验证并管理账户安全"
+      },
+      "THEME_COLORS": {
+        "TITLE": "主题和外观",
+        "DESCRIPTION": "自定义您的个人资料颜色和视觉样式以匹配您的品牌"
+      },
+      "PORTFOLIO": {
+        "TITLE": "作品集管理",
+        "DESCRIPTION": "添加、编辑和组织您的作品集项目以展示您的工作"
+      },
+      "SUBMISSIONS": {
+        "TITLE": "提交",
+        "DESCRIPTION": "管理您的目录提交并跟踪其批准状态"
+      },
+      "BILLING": {
+        "TITLE": "账单",
+        "DESCRIPTION": "管理您的账单信息和订阅详情"
+      }
+    },
     "SECURITY_PAGE": {
       "TITLE": "安全设置",
       "BACK_TO_SETTINGS": "返回设置",
@@ -645,6 +675,75 @@
     "SUBSCRIPTION_HISTORY": "订阅历史",
     "REFRESH": "刷新",
     "SEARCH_AND_FILTERS": "搜索和筛选",
-    "TOTAL_RESULTS": "总结果数"
+    "TOTAL_RESULTS": "总结果数",
+    "WELCOME_TITLE": "欢迎使用 Ever Works！",
+    "FREE_PLAN_MESSAGE": "您目前使用的是免费计划。升级以解锁高级功能并开始构建您的成功。",
+    "UPGRADE_NOW": "立即升级",
+    "CURRENT_SUBSCRIPTION": "当前订阅",
+    "SUBSCRIPTION_EMPTY_STATE": "未找到活跃订阅",
+    "SUBSCRIPTION_EMPTY_DESCRIPTION": "您目前没有任何活跃订阅。",
+    "PAYMENTS_EMPTY_STATE": "无支付历史",
+    "PAYMENTS_EMPTY_DESCRIPTION": "一旦您进行购买，您的支付交易将显示在这里。",
+    "SUBSCRIPTIONS_EMPTY_STATE": "无订阅历史",
+    "SUBSCRIPTIONS_EMPTY_DESCRIPTION": "一旦您有活跃订阅，您的订阅历史将显示在这里。",
+    "OVERVIEW_EMPTY_STATE": "无最近活动",
+    "OVERVIEW_EMPTY_DESCRIPTION": "一旦您有交易，您最近的账单活动将显示在这里。"
+  },
+  "profile": {
+    "BASIC_INFO_TITLE": "基本信息",
+    "BASIC_INFO_DESCRIPTION": "更新您的个人信息和联系详情。这些信息将显示在您的公开档案中，帮助他人发现并与您联系。",
+    "PERSONAL_INFORMATION": "个人信息",
+    "PERSONAL_INFO_DESCRIPTION": "告诉我们关于您自己以及您希望如何被代表",
+    "BACK_TO_SETTINGS": "返回设置",
+    "UPLOAD_AVATAR": "上传头像",
+    "AVATAR_FILE_TYPES": "JPG、PNG或GIF。最大2MB。",
+    "DISPLAY_NAME": "显示名称",
+    "DISPLAY_NAME_PLACEHOLDER": "输入您的显示名称",
+    "DISPLAY_NAME_HELP": "这是您的名字向他人显示的方式",
+    "USERNAME": "用户名",
+    "USERNAME_PLACEHOLDER": "输入您的用户名",
+    "USERNAME_HELP": "您的唯一档案标识符",
+    "BIO": "个人简介",
+    "BIO_PLACEHOLDER": "告诉我们关于您自己...",
+    "BIO_HELP": "关于您自己和工作的简短描述",
+    "SKILLS": "技能",
+    "SKILL_NAME_PLACEHOLDER": "技能名称",
+    "ADD_SKILL": "添加技能",
+    "REMOVE_SKILL": "删除技能",
+    "INTERESTS": "兴趣",
+    "INTERESTS_PLACEHOLDER": "例如：开源、UI/UX、创业公司",
+    "INTERESTS_HELP": "用逗号分隔兴趣。这些将作为标签显示在您的档案中。",
+    "LOCATION": "位置",
+    "LOCATION_PLACEHOLDER": "城市，国家",
+    "LOCATION_HELP": "您所在的位置",
+    "COMPANY": "公司",
+    "COMPANY_PLACEHOLDER": "您的公司名称",
+    "COMPANY_HELP": "您当前的雇主或组织",
+    "JOB_TITLE": "职位",
+    "JOB_TITLE_PLACEHOLDER": "您的职位",
+    "JOB_TITLE_HELP": "您当前的职位或角色",
+    "WEBSITE": "网站",
+    "WEBSITE_PLACEHOLDER": "https://您的网站.com",
+    "WEBSITE_HELP": "您的个人网站或作品集",
+    "CANCEL": "取消",
+    "SAVE_CHANGES": "保存更改",
+    "SAVING": "保存中...",
+    "PROFILE_UPDATED": "档案已更新！",
+    "ERROR_UPDATING_PROFILE": "更新档案时出错",
+    "INVALID_IMAGE_FILE": "请选择有效的图片文件（JPG、PNG或GIF）",
+    "FILE_SIZE_TOO_LARGE": "文件大小必须小于2MB",
+    "ERROR_READING_FILE": "读取文件时出错。请重试。",
+    "SKILL_NAME_REQUIRED": "技能名称为必填项",
+    "SKILL_NAME_MIN_LENGTH": "技能名称至少需要2个字符",
+    "DISPLAY_NAME_REQUIRED": "显示名称为必填项",
+    "USERNAME_MIN_LENGTH": "用户名至少需要3个字符",
+    "BIO_MAX_LENGTH": "个人简介必须少于500个字符",
+    "INVALID_URL": "必须是有效的URL",
+    "SKILL_CATEGORIES": {
+      "FRONTEND": "前端",
+      "BACKEND": "后端",
+      "TOOLS_FRAMEWORKS": "工具和框架",
+      "OTHER": "其他"
+    }
   }
 }

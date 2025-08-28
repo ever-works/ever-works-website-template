@@ -265,6 +265,33 @@
     "LOGOUT_DESC": "Sign out of your account",
     "PROFILE_DESC": "View and edit your profile",
     "ACCOUNT_SETTINGS_DESC": "Account settings and preferences",
+    "PROFILE_SETTINGS": "Profile Settings",
+    "SETTINGS_CARDS": {
+      "BASIC_INFO": {
+        "TITLE": "Basic Information",
+        "DESCRIPTION": "Update your name, bio, location, and contact details to personalize your profile"
+      },
+      "SECURITY": {
+        "TITLE": "Security & Password",
+        "DESCRIPTION": "Change your password, enable two-factor authentication, and manage account security"
+      },
+      "THEME_COLORS": {
+        "TITLE": "Theme & Appearance",
+        "DESCRIPTION": "Customize your profile colors and visual style to match your brand"
+      },
+      "PORTFOLIO": {
+        "TITLE": "Portfolio Management",
+        "DESCRIPTION": "Add, edit, and organize your portfolio projects to showcase your work"
+      },
+      "SUBMISSIONS": {
+        "TITLE": "Submissions",
+        "DESCRIPTION": "Manage your directory submissions and track their approval status"
+      },
+      "BILLING": {
+        "TITLE": "Billing",
+        "DESCRIPTION": "Manage your billing information and subscription details"
+      }
+    },
     "SECURITY_PAGE": {
       "TITLE": "Security Settings",
       "BACK_TO_SETTINGS": "Back to Settings",
@@ -999,7 +1026,76 @@
     "FEATURE_DEFAULT_MANAGEMENT": "Default card management",
     "FEATURE_EXPIRY_ALERTS": "Alerts for expired or soon-to-expire cards",
     "FEATURE_RESPONSIVE": "Responsive and accessible interface",
-    "CARD_NUMBER_NOT_EDITABLE": "Card number cannot be modified"
+    "CARD_NUMBER_NOT_EDITABLE": "Card number cannot be modified",
+    "WELCOME_TITLE": "Welcome to Ever Works!",
+    "FREE_PLAN_MESSAGE": "You're currently on the free plan. Upgrade to unlock premium features and start building your success.",
+    "UPGRADE_NOW": "Upgrade Now",
+    "CURRENT_SUBSCRIPTION": "Current Subscription",
+    "SUBSCRIPTION_EMPTY_STATE": "No active subscription found",
+    "SUBSCRIPTION_EMPTY_DESCRIPTION": "You don't have any active subscriptions at the moment.",
+    "PAYMENTS_EMPTY_STATE": "No payment history",
+    "PAYMENTS_EMPTY_DESCRIPTION": "Your payment transactions will appear here once you make a purchase.",
+    "SUBSCRIPTIONS_EMPTY_STATE": "No subscription history",
+    "SUBSCRIPTIONS_EMPTY_DESCRIPTION": "Your subscription history will appear here once you have active subscriptions.",
+    "OVERVIEW_EMPTY_STATE": "No recent activity",
+    "OVERVIEW_EMPTY_DESCRIPTION": "Your recent billing activity will appear here once you have transactions."
+  },
+  "profile": {
+    "BASIC_INFO_TITLE": "Basic Information",
+    "BASIC_INFO_DESCRIPTION": "Update your personal information and contact details. This information will be displayed on your public profile and helps others discover and connect with you.",
+    "PERSONAL_INFORMATION": "Personal Information",
+    "PERSONAL_INFO_DESCRIPTION": "Tell us about yourself and how you'd like to be represented",
+    "BACK_TO_SETTINGS": "Back to Settings",
+    "UPLOAD_AVATAR": "Upload Avatar",
+    "AVATAR_FILE_TYPES": "JPG, PNG, or GIF. Max 2MB.",
+    "DISPLAY_NAME": "Display Name",
+    "DISPLAY_NAME_PLACEHOLDER": "Enter your display name",
+    "DISPLAY_NAME_HELP": "This is how your name will appear to others",
+    "USERNAME": "Username",
+    "USERNAME_PLACEHOLDER": "Enter your username",
+    "USERNAME_HELP": "Your unique profile identifier",
+    "BIO": "Bio",
+    "BIO_PLACEHOLDER": "Tell us about yourself...",
+    "BIO_HELP": "A brief description about yourself and your work",
+    "SKILLS": "Skills",
+    "SKILL_NAME_PLACEHOLDER": "Skill name",
+    "ADD_SKILL": "Add Skill",
+    "REMOVE_SKILL": "Remove skill",
+    "INTERESTS": "Interests",
+    "INTERESTS_PLACEHOLDER": "e.g. Open Source, UI/UX, Startups",
+    "INTERESTS_HELP": "Separate interests with commas. These will be shown as tags on your profile.",
+    "LOCATION": "Location",
+    "LOCATION_PLACEHOLDER": "City, Country",
+    "LOCATION_HELP": "Where you're based",
+    "COMPANY": "Company",
+    "COMPANY_PLACEHOLDER": "Your company name",
+    "COMPANY_HELP": "Your current employer or organization",
+    "JOB_TITLE": "Job Title",
+    "JOB_TITLE_PLACEHOLDER": "Your job title",
+    "JOB_TITLE_HELP": "Your current role or position",
+    "WEBSITE": "Website",
+    "WEBSITE_PLACEHOLDER": "https://yourwebsite.com",
+    "WEBSITE_HELP": "Your personal website or portfolio",
+    "CANCEL": "Cancel",
+    "SAVE_CHANGES": "Save Changes",
+    "SAVING": "Saving...",
+    "PROFILE_UPDATED": "Profile updated!",
+    "ERROR_UPDATING_PROFILE": "Error updating profile",
+    "INVALID_IMAGE_FILE": "Please select a valid image file (JPG, PNG, or GIF)",
+    "FILE_SIZE_TOO_LARGE": "File size must be less than 2MB",
+    "ERROR_READING_FILE": "Error reading file. Please try again.",
+    "SKILL_NAME_REQUIRED": "Skill name is required",
+    "SKILL_NAME_MIN_LENGTH": "Skill name must be at least 2 characters",
+    "DISPLAY_NAME_REQUIRED": "Display name is required",
+    "USERNAME_MIN_LENGTH": "Username must be at least 3 characters",
+    "BIO_MAX_LENGTH": "Bio must be less than 500 characters",
+    "INVALID_URL": "Must be a valid URL",
+    "SKILL_CATEGORIES": {
+      "FRONTEND": "Frontend",
+      "BACKEND": "Backend",
+      "TOOLS_FRAMEWORKS": "Tools & Frameworks",
+      "OTHER": "Other"
+    }
   }
 }
 
