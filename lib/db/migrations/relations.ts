@@ -29,29 +29,31 @@ export const sessionsRelations = relations(sessions, ({one}) => ({
 }));
 
 export const commentsRelations = relations(comments, ({one}) => ({
-	clientProfile: one(clientProfiles, {
+	user: one(users, {
 		fields: [comments.userId],
-		references: [clientProfiles.id]
+		references: [users.id]
 	}),
 }));
 
 export const votesRelations = relations(votes, ({one}) => ({
-	clientProfile: one(clientProfiles, {
+	user: one(users, {
 		fields: [votes.userid],
-		references: [clientProfiles.id]
+		references: [users.id]
 	}),
 }));
 
 export const activityLogsRelations = relations(activityLogs, ({one}) => ({
-	clientProfile: one(clientProfiles, {
+	user: one(users, {
 		fields: [activityLogs.userId],
+		references: [users.id]
+	}),
+	clientProfile: one(clientProfiles, {
+		fields: [activityLogs.clientId],
 		references: [clientProfiles.id]
 	}),
 }));
 
 export const clientProfilesRelations = relations(clientProfiles, ({one, many}) => ({
-	comments: many(comments),
-	votes: many(votes),
 	activityLogs: many(activityLogs),
 	user: one(users, {
 		fields: [clientProfiles.userId],
