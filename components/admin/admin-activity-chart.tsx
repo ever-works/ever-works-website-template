@@ -50,7 +50,27 @@ export function AdminActivityChart({ data, isLoading }: AdminActivityChartProps)
     );
   }
 
-  const maxValue = Math.max(...data.map(d => Math.max(d.views, d.votes, d.comments)));
+  const computedMax = Math.max(...data.map(d => Math.max(d.views, d.votes, d.comments)));
+  
+  if (computedMax === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <TrendingUp className="h-5 w-5 text-blue-600" />
+            <span>Weekly Activity Trends</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            No activity data available
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+  
+  const maxValue = computedMax;
 
   const barBaseClass = "rounded-t opacity-80 hover:opacity-100 transition-opacity";
 
