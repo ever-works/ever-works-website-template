@@ -203,7 +203,7 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
       return { user, clientProfile };
     });
     
-    const { user, clientProfile } = result;
+    const { clientProfile } = result;
 
     // 2) Create credentials account record holding the password hash linked to client profile
     const clientAccount = await createClientAccount(clientProfile.id, normalizedEmail, passwordHash);
@@ -212,7 +212,7 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
     }
 
     // Log activity using the client profile ID
-    		await logActivity(ActivityType.SIGN_UP, user.id, clientProfile.id);
+    		await logActivity(ActivityType.SIGN_UP, clientProfile.id);
 
     const verificationToken = await generateVerificationToken(normalizedEmail);
     if (verificationToken) {

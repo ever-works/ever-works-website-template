@@ -75,7 +75,7 @@ export const credentialsProvider = Credentials({
             isClient: true,
             isAdmin: false,
           };
-          void logActivity(ActivityType.SIGN_IN, undefined, clientProfile.id).catch(() => {});
+          void logActivity(ActivityType.SIGN_IN, clientProfile.id).catch(() => {});
           return clientUser;
         }
       }
