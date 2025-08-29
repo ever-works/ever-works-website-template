@@ -5,6 +5,8 @@ export interface AdminStats {
   totalUsers: number;
   activeUsers: number;
   newUsersToday: number;
+  newUsersThisWeek: number;
+  newUsersThisMonth: number;
   totalSubmissions: number;
   pendingSubmissions: number;
   approvedSubmissions: number;
@@ -16,7 +18,7 @@ export interface AdminStats {
   totalComments: number;
   
   // Newsletter
-  newsletterSubscribers: number;
+  totalSubscribers: number;
   recentSubscribers: number;
   
   // Trends
