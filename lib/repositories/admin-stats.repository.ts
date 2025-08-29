@@ -102,8 +102,8 @@ export class AdminStatsRepository {
       // Note: Views are not tracked in the current schema, so we'll use 0 for now
       return {
         totalViews: 0,
-        totalVotes: totalVotesResult[0]?.count || 0,
-        totalComments: totalCommentsResult[0]?.count || 0,
+        totalVotes: Number(totalVotesResult[0]?.count ?? 0),
+        totalComments: Number(totalCommentsResult[0]?.count ?? 0),
       };
     } catch (error) {
       console.error('Error fetching activity stats:', error);
@@ -138,19 +138,27 @@ export class AdminStatsRepository {
 
   async getAllStats(): Promise<AdminDashboardStats> {
     try {
-      const [userStats, submissionStats, activityStats, newsletterStats] = await Promise.all([
+      const [u, s, a, n] = await Promise.allSettled([
         this.getUserStats(),
         this.getSubmissionStats(),
         this.getActivityStats(),
         this.getNewsletterStats(),
       ]);
 
-      return {
-        users: userStats,
-        submissions: submissionStats,
-        activity: activityStats,
-        newsletter: newsletterStats,
-      };
+      const users: UserStats =
+        u.status === 'fulfilled'
+          ? u.value
+          : { totalUsers: 0, activeUsers: 0, newUsersToday: 0, newUsersThisWeek: 0, newUsersThisMonth: 0 };
+      const submissions: SubmissionStats =
+        s.status === 'fulfilled'
+          ? s.value
+          : { totalSubmissions: 0, pendingSubmissions: 0, approvedSubmissions: 0, rejectedSubmissions: 0 };
+      const activity: ActivityStats =
+        a.status === 'fulfilled' ? a.value : { totalViews: 0, totalVotes: 0, totalComments: 0 };
+      const newsletter: NewsletterStats =
+        n.status === 'fulfilled' ? n.value : { totalSubscribers: 0, recentSubscribers: 0 };
+
+      return { users, submissions, activity, newsletter };
     } catch (error) {
       console.error('Error fetching all admin stats:', error);
       throw new Error('Failed to fetch admin dashboard statistics');
