@@ -1,6 +1,6 @@
 import { db } from '@/lib/db/drizzle';
 import { users, comments, votes, newsletterSubscriptions } from '@/lib/db/schema';
-import { eq, count, and, gte } from 'drizzle-orm';
+import { eq, count, and, gte, isNull } from 'drizzle-orm';
 import { ItemRepository } from '@/lib/repositories/item.repository';
 
 export interface UserStats {
@@ -37,6 +37,8 @@ export interface AdminDashboardStats {
 }
 
 export class AdminStatsRepository {
+  private readonly itemRepository = new ItemRepository();
+  
   async getUserStats(): Promise<UserStats> {
     try {
       const now = new Date();
@@ -45,20 +47,29 @@ export class AdminStatsRepository {
       const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
       const [totalUsersResult, newUsersTodayResult, newUsersWeekResult, newUsersMonthResult] = await Promise.all([
-        db.select({ count: count() }).from(users),
-        db.select({ count: count() }).from(users).where(gte(users.createdAt, today)),
-        db.select({ count: count() }).from(users).where(gte(users.createdAt, weekAgo)),
-        db.select({ count: count() }).from(users).where(gte(users.createdAt, monthAgo)),
+        db.select({ count: count() }).from(users).where(isNull(users.deletedAt)),
+        db
+          .select({ count: count() })
+          .from(users)
+          .where(and(isNull(users.deletedAt), gte(users.createdAt, today))),
+        db
+          .select({ count: count() })
+          .from(users)
+          .where(and(isNull(users.deletedAt), gte(users.createdAt, weekAgo))),
+        db
+          .select({ count: count() })
+          .from(users)
+          .where(and(isNull(users.deletedAt), gte(users.createdAt, monthAgo))),
       ]);
 
-      const totalUsers = totalUsersResult[0]?.count || 0;
+      const totalUsers = Number(totalUsersResult[0]?.count ?? 0);
 
       return {
         totalUsers,
         activeUsers: totalUsers, // For now, assume all users are active since no status field
-        newUsersToday: newUsersTodayResult[0]?.count || 0,
-        newUsersThisWeek: newUsersWeekResult[0]?.count || 0,
-        newUsersThisMonth: newUsersMonthResult[0]?.count || 0,
+        newUsersToday: Number(newUsersTodayResult[0]?.count ?? 0),
+        newUsersThisWeek: Number(newUsersWeekResult[0]?.count ?? 0),
+        newUsersThisMonth: Number(newUsersMonthResult[0]?.count ?? 0),
       };
     } catch (error) {
       console.error('Error fetching user stats:', error);
@@ -68,8 +79,7 @@ export class AdminStatsRepository {
 
   async getSubmissionStats(): Promise<SubmissionStats> {
     try {
-      const itemRepository = new ItemRepository();
-      const stats = await itemRepository.getStats();
+      const stats = await this.itemRepository.getStats();
       return {
         totalSubmissions: stats.total,
         pendingSubmissions: stats.pending,
