@@ -43,12 +43,8 @@ export const votesRelations = relations(votes, ({one}) => ({
 }));
 
 export const activityLogsRelations = relations(activityLogs, ({one}) => ({
-	user: one(users, {
-		fields: [activityLogs.userId],
-		references: [users.id]
-	}),
 	clientProfile: one(clientProfiles, {
-		fields: [activityLogs.clientId],
+		fields: [activityLogs.userId],
 		references: [clientProfiles.id]
 	}),
 }));
