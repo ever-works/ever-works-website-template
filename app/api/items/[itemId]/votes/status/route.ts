@@ -1,5 +1,5 @@
 import { auth } from '@/lib/auth';
-import { getVoteByUserIdAndItemId } from '@/lib/db/queries';
+import { getVoteByUserIdAndItemId, getClientProfileByUserId } from '@/lib/db/queries';
 import { NextResponse } from 'next/server';
 
 export async function GET(
@@ -16,7 +16,12 @@ export async function GET(
     }
 
     const { itemId } = await context.params;
-    const votes = await getVoteByUserIdAndItemId(session.user.id, itemId);
+    const clientProfile = await getClientProfileByUserId(session.user.id);
+    if (!clientProfile) {
+      return NextResponse.json({ error: 'Client profile not found' }, { status: 404 });
+    }
+    
+    const votes = await getVoteByUserIdAndItemId(clientProfile.id, itemId);
     return NextResponse.json(votes[0] || null);
   } catch (error) {
     console.error('Error fetching vote status:', error);

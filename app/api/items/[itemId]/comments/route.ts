@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { getCommentsByItemId, createComment } from "@/lib/db/queries";
+import { getCommentsByItemId, createComment, getClientProfileByUserId } from "@/lib/db/queries";
 
 export async function GET(
   request: Request,
@@ -47,10 +47,18 @@ export async function POST(
       );
     }
 
+    const clientProfile = await getClientProfileByUserId(session.user.id!);
+    if (!clientProfile) {
+      return NextResponse.json(
+        { error: "Client profile not found" },
+        { status: 404 }
+      );
+    }
+
     const comment = await createComment({
       content,
       rating,
-      userId: session.user.id!,
+      userId: clientProfile.id,
       itemId: (await params).itemId,
     });
 

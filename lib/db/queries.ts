@@ -817,6 +817,15 @@ export async function getClientProfileById(id: string): Promise<ClientProfile | 
 }
 
 /**
+ * Find client profile by user ID
+ */
+export async function getClientProfileByUserId(userId: string): Promise<ClientProfile | null> {
+	const [profile] = await db.select().from(clientProfiles).where(eq(clientProfiles.userId, userId));
+
+	return profile || null;
+}
+
+/**
  * Get all client profiles with pagination
  */
 export async function getClientProfiles(params: {
