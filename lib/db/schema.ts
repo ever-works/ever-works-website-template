@@ -24,7 +24,6 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   deletedAt: timestamp("deleted_at"),
 }, (table) => ({
-  statusIndex: index("users_status_idx").on(table.status),
   createdAtIndex: index("users_created_at_idx").on(table.createdAt),
 }));
 

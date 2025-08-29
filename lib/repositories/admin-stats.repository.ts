@@ -44,17 +44,18 @@ export class AdminStatsRepository {
       const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
       const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-      const [totalUsersResult, activeUsersResult, newUsersTodayResult, newUsersWeekResult, newUsersMonthResult] = await Promise.all([
+      const [totalUsersResult, newUsersTodayResult, newUsersWeekResult, newUsersMonthResult] = await Promise.all([
         db.select({ count: count() }).from(users),
-        db.select({ count: count() }).from(users).where(eq(users.status, 'active')),
         db.select({ count: count() }).from(users).where(gte(users.createdAt, today)),
         db.select({ count: count() }).from(users).where(gte(users.createdAt, weekAgo)),
         db.select({ count: count() }).from(users).where(gte(users.createdAt, monthAgo)),
       ]);
 
+      const totalUsers = totalUsersResult[0]?.count || 0;
+
       return {
-        totalUsers: totalUsersResult[0]?.count || 0,
-        activeUsers: activeUsersResult[0]?.count || 0,
+        totalUsers,
+        activeUsers: totalUsers, // For now, assume all users are active since no status field
         newUsersToday: newUsersTodayResult[0]?.count || 0,
         newUsersThisWeek: newUsersWeekResult[0]?.count || 0,
         newUsersThisMonth: newUsersMonthResult[0]?.count || 0,
