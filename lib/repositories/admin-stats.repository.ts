@@ -96,7 +96,7 @@ export class AdminStatsRepository {
     try {
       const [totalVotesResult, totalCommentsResult] = await Promise.all([
         db.select({ count: count() }).from(votes),
-        db.select({ count: count() }).from(comments),
+        db.select({ count: count() }).from(comments).where(isNull(comments.deletedAt)),
       ]);
 
       // Note: Views are not tracked in the current schema, so we'll use 0 for now
@@ -127,8 +127,8 @@ export class AdminStatsRepository {
       ]);
 
       return {
-        totalSubscribers: totalSubscribersResult[0]?.count || 0,
-        recentSubscribers: recentSubscribersResult[0]?.count || 0,
+        totalSubscribers: Number(totalSubscribersResult[0]?.count ?? 0),
+        recentSubscribers: Number(recentSubscribersResult[0]?.count ?? 0),
       };
     } catch (error) {
       console.error('Error fetching newsletter stats:', error);
