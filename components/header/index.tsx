@@ -6,9 +6,9 @@ import {
   NavbarBrand,
   NavbarContent,
   NavbarItem,
-  NavbarMenu,
-  NavbarMenuItem,
   NavbarMenuToggle,
+  NavbarMenu,
+  NavbarMenuItem
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";

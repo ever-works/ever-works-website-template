@@ -136,7 +136,37 @@
     "SECURITY": "الأمان",
     "LEGAL": "القانونية",
     "HELP": "مركز المساعدة",
-    "LOGOUT": "تسجيل الخروج"
+    "LOGOUT": "تسجيل الخروج",
+    "LOGOUT_DESC": "تسجيل الخروج من حسابك",
+    "PROFILE_DESC": "عرض وتعديل ملفك الشخصي",
+    "ACCOUNT_SETTINGS_DESC": "إعدادات الحساب والتفضيلات",
+    "PROFILE_SETTINGS": "إعدادات الملف الشخصي",
+    "SETTINGS_CARDS": {
+      "BASIC_INFO": {
+        "TITLE": "المعلومات الأساسية",
+        "DESCRIPTION": "حدث اسمك والسيرة الذاتية والموقع وتفاصيل الاتصال لتخصيص ملفك الشخصي"
+      },
+      "SECURITY": {
+        "TITLE": "الأمان وكلمة المرور",
+        "DESCRIPTION": "غير كلمة المرور الخاصة بك، وفعل المصادقة الثنائية، وأدر أمان حسابك"
+      },
+      "THEME_COLORS": {
+        "TITLE": "المظهر والتصميم",
+        "DESCRIPTION": "خصص ألوان ملفك الشخصي والنمط البصري ليتطابق مع علامتك التجارية"
+      },
+      "PORTFOLIO": {
+        "TITLE": "إدارة المحفظة",
+        "DESCRIPTION": "أضف وعدل ونظم مشاريع محفظتك لعرض عملك"
+      },
+      "SUBMISSIONS": {
+        "TITLE": "الطلبات المقدمة",
+        "DESCRIPTION": "أدر طلبات الدليل الخاصة بك وتتبع حالة الموافقة عليها"
+      },
+      "BILLING": {
+        "TITLE": "الفواتير",
+        "DESCRIPTION": "أدر معلومات الفواتير الخاصة بك وتفاصيل الاشتراك"
+      }
+    }
   },
   "newsletter": {
     "NEWSLETTER": "النشرة الإخبارية",
@@ -592,6 +622,75 @@
     "SUBSCRIPTION_HISTORY": "سجل الاشتراكات",
     "REFRESH": "تحديث",
     "SEARCH_AND_FILTERS": "البحث والمرشحات",
-    "TOTAL_RESULTS": "إجمالي النتائج"
+    "TOTAL_RESULTS": "إجمالي النتائج",
+    "WELCOME_TITLE": "مرحباً بك في Ever Works!",
+    "FREE_PLAN_MESSAGE": "أنت حالياً على الخطة المجانية. قم بالترقية لفتح الميزات المميزة وابدأ في بناء نجاحك.",
+    "UPGRADE_NOW": "ترقية الآن",
+    "CURRENT_SUBSCRIPTION": "الاشتراك الحالي",
+    "SUBSCRIPTION_EMPTY_STATE": "لم يتم العثور على اشتراك نشط",
+    "SUBSCRIPTION_EMPTY_DESCRIPTION": "ليس لديك اشتراكات نشطة في الوقت الحالي.",
+    "PAYMENTS_EMPTY_STATE": "لا يوجد سجل مدفوعات",
+    "PAYMENTS_EMPTY_DESCRIPTION": "ستظهر معاملات الدفع الخاصة بك هنا بمجرد إجراء عملية شراء.",
+    "SUBSCRIPTIONS_EMPTY_STATE": "لا يوجد سجل اشتراكات",
+    "SUBSCRIPTIONS_EMPTY_DESCRIPTION": "سيظهر سجل اشتراكاتك هنا بمجرد أن يكون لديك اشتراكات نشطة.",
+    "OVERVIEW_EMPTY_STATE": "لا توجد نشاطات حديثة",
+    "OVERVIEW_EMPTY_DESCRIPTION": "ستظهر نشاطات الفوترة الحديثة الخاصة بك هنا بمجرد أن يكون لديك معاملات."
+  },
+  "profile": {
+    "BASIC_INFO_TITLE": "المعلومات الأساسية",
+    "BASIC_INFO_DESCRIPTION": "حدث معلوماتك الشخصية وتفاصيل الاتصال. ستظهر هذه المعلومات في ملفك الشخصي العام وتساعد الآخرين على اكتشافك والتواصل معك.",
+    "PERSONAL_INFORMATION": "المعلومات الشخصية",
+    "PERSONAL_INFO_DESCRIPTION": "أخبرنا عن نفسك وكيف تريد أن تكون ممثلاً",
+    "BACK_TO_SETTINGS": "العودة إلى الإعدادات",
+    "UPLOAD_AVATAR": "رفع الصورة الرمزية",
+    "AVATAR_FILE_TYPES": "JPG أو PNG أو GIF. الحد الأقصى 2 ميجابايت.",
+    "DISPLAY_NAME": "اسم العرض",
+    "DISPLAY_NAME_PLACEHOLDER": "أدخل اسم العرض الخاص بك",
+    "DISPLAY_NAME_HELP": "هكذا سيظهر اسمك للآخرين",
+    "USERNAME": "اسم المستخدم",
+    "USERNAME_PLACEHOLDER": "أدخل اسم المستخدم الخاص بك",
+    "USERNAME_HELP": "معرف ملفك الشخصي الفريد",
+    "BIO": "السيرة الذاتية",
+    "BIO_PLACEHOLDER": "أخبرنا عن نفسك...",
+    "BIO_HELP": "وصف موجز عن نفسك وعملك",
+    "SKILLS": "المهارات",
+    "SKILL_NAME_PLACEHOLDER": "اسم المهارة",
+    "ADD_SKILL": "إضافة مهارة",
+    "REMOVE_SKILL": "إزالة المهارة",
+    "INTERESTS": "الاهتمامات",
+    "INTERESTS_PLACEHOLDER": "مثل: المصدر المفتوح، واجهة المستخدم، الشركات الناشئة",
+    "INTERESTS_HELP": "افصل الاهتمامات بفواصل. ستظهر كعلامات في ملفك الشخصي.",
+    "LOCATION": "الموقع",
+    "LOCATION_PLACEHOLDER": "المدينة، البلد",
+    "LOCATION_HELP": "حيث أنت مقيم",
+    "COMPANY": "الشركة",
+    "COMPANY_PLACEHOLDER": "اسم شركتك",
+    "COMPANY_HELP": "صاحب العمل أو المنظمة الحالية",
+    "JOB_TITLE": "المسمى الوظيفي",
+    "JOB_TITLE_PLACEHOLDER": "المسمى الوظيفي الخاص بك",
+    "JOB_TITLE_HELP": "دورك أو منصبك الحالي",
+    "WEBSITE": "الموقع الإلكتروني",
+    "WEBSITE_PLACEHOLDER": "https://موقعك.com",
+    "WEBSITE_HELP": "موقعك الشخصي أو المحفظة",
+    "CANCEL": "إلغاء",
+    "SAVE_CHANGES": "حفظ التغييرات",
+    "SAVING": "جاري الحفظ...",
+    "PROFILE_UPDATED": "تم تحديث الملف الشخصي!",
+    "ERROR_UPDATING_PROFILE": "خطأ في تحديث الملف الشخصي",
+    "INVALID_IMAGE_FILE": "يرجى تحديد ملف صورة صالح (JPG أو PNG أو GIF)",
+    "FILE_SIZE_TOO_LARGE": "يجب أن يكون حجم الملف أقل من 2 ميجابايت",
+    "ERROR_READING_FILE": "خطأ في قراءة الملف. يرجى المحاولة مرة أخرى.",
+    "SKILL_NAME_REQUIRED": "اسم المهارة مطلوب",
+    "SKILL_NAME_MIN_LENGTH": "يجب أن يكون اسم المهارة حرفين على الأقل",
+    "DISPLAY_NAME_REQUIRED": "اسم العرض مطلوب",
+    "USERNAME_MIN_LENGTH": "يجب أن يكون اسم المستخدم 3 أحرف على الأقل",
+    "BIO_MAX_LENGTH": "يجب أن تكون السيرة الذاتية أقل من 500 حرف",
+    "INVALID_URL": "يجب أن تكون URL صالحة",
+    "SKILL_CATEGORIES": {
+      "FRONTEND": "الواجهة الأمامية",
+      "BACKEND": "الخلفية",
+      "TOOLS_FRAMEWORKS": "الأدوات والإطارات",
+      "OTHER": "أخرى"
+    }
   }
 }

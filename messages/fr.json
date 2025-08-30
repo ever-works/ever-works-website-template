@@ -223,6 +223,35 @@
     "HELP": "Centre d'aide",
     "LOGOUT": "Se déconnecter",
     "LOGOUT_DESC": "Se déconnecter de votre compte",
+    "PROFILE_DESC": "Afficher et modifier votre profil",
+    "ACCOUNT_SETTINGS_DESC": "Paramètres et préférences du compte",
+    "PROFILE_SETTINGS": "Paramètres du profil",
+    "SETTINGS_CARDS": {
+      "BASIC_INFO": {
+        "TITLE": "Informations de base",
+        "DESCRIPTION": "Mettez à jour votre nom, bio, localisation et coordonnées pour personnaliser votre profil"
+      },
+      "SECURITY": {
+        "TITLE": "Sécurité et mot de passe",
+        "DESCRIPTION": "Changez votre mot de passe, activez l'authentification à deux facteurs et gérez la sécurité de votre compte"
+      },
+      "THEME_COLORS": {
+        "TITLE": "Thème et apparence",
+        "DESCRIPTION": "Personnalisez les couleurs de votre profil et le style visuel pour correspondre à votre marque"
+      },
+      "PORTFOLIO": {
+        "TITLE": "Gestion du portfolio",
+        "DESCRIPTION": "Ajoutez, modifiez et organisez vos projets de portfolio pour présenter votre travail"
+      },
+      "SUBMISSIONS": {
+        "TITLE": "Soumissions",
+        "DESCRIPTION": "Gérez vos soumissions d'annuaire et suivez leur statut d'approbation"
+      },
+      "BILLING": {
+        "TITLE": "Facturation",
+        "DESCRIPTION": "Gérez vos informations de facturation et les détails de votre abonnement"
+      }
+    },
     "SECURITY_PAGE": {
       "TITLE": "Paramètres de sécurité",
       "BACK_TO_SETTINGS": "Retour aux paramètres",
@@ -814,7 +843,6 @@
     "CARD_EXPIRES_SOON": "⚠️ Cette carte expire bientôt ({months} mois)",
     "ADD_PAYMENT_METHOD": "Ajouter une méthode de paiement",
     "EDIT_PAYMENT_METHOD": "Modifier la carte",
-    "DELETE_PAYMENT_METHOD": "Supprimer la carte",
     "CARD_HOLDER_NAME": "Nom du titulaire",
     "CARD_NUMBER": "Numéro de carte",
     "EXPIRY_MONTH": "Mois",
@@ -835,7 +863,6 @@
     "ADDING_CARD": "Ajout en cours...",
     "UPDATING_CARD": "Modification...",
     "DELETING_CARD": "Suppression...",
-    "CONFIRM_DELETE": "Êtes-vous sûr de vouloir supprimer cette méthode de paiement ? Cette action est irréversible.",
     "DEFAULT_CARD_WARNING": "Carte par défaut",
     "DEFAULT_CARD_WARNING_DESC": "Cette carte est actuellement définie comme votre méthode de paiement par défaut. Vous devrez définir une autre carte comme méthode par défaut si vous en avez d'autres.",
     "DELETE_CONSEQUENCES": "Conséquences de la suppression :",
@@ -898,6 +925,75 @@
     "SUBSCRIPTION_HISTORY": "Historique des abonnements",
     "REFRESH": "Actualiser",
     "SEARCH_AND_FILTERS": "Recherche et filtres",
-    "TOTAL_RESULTS": "Total des résultats"
+    "TOTAL_RESULTS": "Total des résultats",
+    "WELCOME_TITLE": "Bienvenue sur Ever Works !",
+    "FREE_PLAN_MESSAGE": "Vous êtes actuellement sur le plan gratuit. Passez à la version premium pour débloquer des fonctionnalités avancées et commencer à construire votre succès.",
+    "UPGRADE_NOW": "Passer à la version premium",
+    "CURRENT_SUBSCRIPTION": "Abonnement actuel",
+    "SUBSCRIPTION_EMPTY_STATE": "Aucun abonnement actif trouvé",
+    "SUBSCRIPTION_EMPTY_DESCRIPTION": "Vous n'avez aucun abonnement actif pour le moment.",
+    "PAYMENTS_EMPTY_STATE": "Aucun historique de paiement",
+    "PAYMENTS_EMPTY_DESCRIPTION": "Vos transactions de paiement apparaîtront ici une fois que vous aurez effectué un achat.",
+    "SUBSCRIPTIONS_EMPTY_STATE": "Aucun historique d'abonnement",
+    "SUBSCRIPTIONS_EMPTY_DESCRIPTION": "Votre historique d'abonnement apparaîtra ici une fois que vous aurez des abonnements actifs.",
+    "OVERVIEW_EMPTY_STATE": "Aucune activité récente",
+    "OVERVIEW_EMPTY_DESCRIPTION": "Votre activité de facturation récente apparaîtra ici une fois que vous aurez des transactions."
+  },
+  "profile": {
+    "BASIC_INFO_TITLE": "Informations de base",
+    "BASIC_INFO_DESCRIPTION": "Mettez à jour vos informations personnelles et coordonnées. Ces informations seront affichées sur votre profil public et aident les autres à vous découvrir et à vous contacter.",
+    "PERSONAL_INFORMATION": "Informations personnelles",
+    "PERSONAL_INFO_DESCRIPTION": "Parlez-nous de vous et de la façon dont vous souhaitez être représenté",
+    "BACK_TO_SETTINGS": "Retour aux paramètres",
+    "UPLOAD_AVATAR": "Télécharger l'avatar",
+    "AVATAR_FILE_TYPES": "JPG, PNG ou GIF. Max 2MB.",
+    "DISPLAY_NAME": "Nom d'affichage",
+    "DISPLAY_NAME_PLACEHOLDER": "Entrez votre nom d'affichage",
+    "DISPLAY_NAME_HELP": "C'est ainsi que votre nom apparaîtra aux autres",
+    "USERNAME": "Nom d'utilisateur",
+    "USERNAME_PLACEHOLDER": "Entrez votre nom d'utilisateur",
+    "USERNAME_HELP": "Votre identifiant de profil unique",
+    "BIO": "Biographie",
+    "BIO_PLACEHOLDER": "Parlez-nous de vous...",
+    "BIO_HELP": "Une brève description de vous et de votre travail",
+    "SKILLS": "Compétences",
+    "SKILL_NAME_PLACEHOLDER": "Nom de la compétence",
+    "ADD_SKILL": "Ajouter une compétence",
+    "REMOVE_SKILL": "Supprimer la compétence",
+    "INTERESTS": "Centres d'intérêt",
+    "INTERESTS_PLACEHOLDER": "ex. Open Source, UI/UX, Startups",
+    "INTERESTS_HELP": "Séparez les centres d'intérêt par des virgules. Ils seront affichés comme des tags sur votre profil.",
+    "LOCATION": "Localisation",
+    "LOCATION_PLACEHOLDER": "Ville, Pays",
+    "LOCATION_HELP": "Où vous êtes basé",
+    "COMPANY": "Entreprise",
+    "COMPANY_PLACEHOLDER": "Nom de votre entreprise",
+    "COMPANY_HELP": "Votre employeur ou organisation actuel",
+    "JOB_TITLE": "Poste",
+    "JOB_TITLE_PLACEHOLDER": "Votre titre de poste",
+    "JOB_TITLE_HELP": "Votre rôle ou position actuel",
+    "WEBSITE": "Site web",
+    "WEBSITE_PLACEHOLDER": "https://votresite.com",
+    "WEBSITE_HELP": "Votre site web personnel ou portfolio",
+    "CANCEL": "Annuler",
+    "SAVE_CHANGES": "Enregistrer les modifications",
+    "SAVING": "Enregistrement...",
+    "PROFILE_UPDATED": "Profil mis à jour !",
+    "ERROR_UPDATING_PROFILE": "Erreur lors de la mise à jour du profil",
+    "INVALID_IMAGE_FILE": "Veuillez sélectionner un fichier image valide (JPG, PNG ou GIF)",
+    "FILE_SIZE_TOO_LARGE": "La taille du fichier doit être inférieure à 2MB",
+    "ERROR_READING_FILE": "Erreur lors de la lecture du fichier. Veuillez réessayer.",
+    "SKILL_NAME_REQUIRED": "Le nom de la compétence est requis",
+    "SKILL_NAME_MIN_LENGTH": "Le nom de la compétence doit contenir au moins 2 caractères",
+    "DISPLAY_NAME_REQUIRED": "Le nom d'affichage est requis",
+    "USERNAME_MIN_LENGTH": "Le nom d'utilisateur doit contenir au moins 3 caractères",
+    "BIO_MAX_LENGTH": "La biographie doit contenir moins de 500 caractères",
+    "INVALID_URL": "Doit être une URL valide",
+    "SKILL_CATEGORIES": {
+      "FRONTEND": "Frontend",
+      "BACKEND": "Backend",
+      "TOOLS_FRAMEWORKS": "Outils et frameworks",
+      "OTHER": "Autre"
+    }
   }
 }

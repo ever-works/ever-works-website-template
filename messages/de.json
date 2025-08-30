@@ -149,6 +149,36 @@
     "LEGAL": "Rechtliches",
     "HELP": "Hilfe-Center",
     "LOGOUT": "Abmelden",
+    "LOGOUT_DESC": "Von Ihrem Konto abmelden",
+    "PROFILE_DESC": "Ihr Profil anzeigen und bearbeiten",
+    "ACCOUNT_SETTINGS_DESC": "Kontoeinstellungen und Präferenzen",
+    "PROFILE_SETTINGS": "Profileinstellungen",
+    "SETTINGS_CARDS": {
+      "BASIC_INFO": {
+        "TITLE": "Grundinformationen",
+        "DESCRIPTION": "Aktualisieren Sie Ihren Namen, Bio, Standort und Kontaktdaten, um Ihr Profil zu personalisieren"
+      },
+      "SECURITY": {
+        "TITLE": "Sicherheit & Passwort",
+        "DESCRIPTION": "Ändern Sie Ihr Passwort, aktivieren Sie die Zwei-Faktor-Authentifizierung und verwalten Sie die Kontosicherheit"
+      },
+      "THEME_COLORS": {
+        "TITLE": "Design & Erscheinungsbild",
+        "DESCRIPTION": "Passen Sie Ihre Profilfarben und den visuellen Stil an Ihre Marke an"
+      },
+      "PORTFOLIO": {
+        "TITLE": "Portfolio-Verwaltung",
+        "DESCRIPTION": "Fügen Sie Portfolio-Projekte hinzu, bearbeiten und organisieren Sie diese, um Ihre Arbeit zu präsentieren"
+      },
+      "SUBMISSIONS": {
+        "TITLE": "Einreichungen",
+        "DESCRIPTION": "Verwalten Sie Ihre Verzeichniseinreichungen und verfolgen Sie deren Genehmigungsstatus"
+      },
+      "BILLING": {
+        "TITLE": "Abrechnung",
+        "DESCRIPTION": "Verwalten Sie Ihre Abrechnungsinformationen und Abonnementdetails"
+      }
+    },
     "SECURITY_PAGE": {
       "TITLE": "Sicherheitseinstellungen",
       "BACK_TO_SETTINGS": "Zurück zu den Einstellungen",
@@ -657,6 +687,75 @@
     "SUBSCRIPTION_HISTORY": "Abonnementverlauf",
     "REFRESH": "Aktualisieren",
     "SEARCH_AND_FILTERS": "Suche und Filter",
-    "TOTAL_RESULTS": "Gesamtergebnisse"
+    "TOTAL_RESULTS": "Gesamtergebnisse",
+    "WELCOME_TITLE": "Willkommen bei Ever Works!",
+    "FREE_PLAN_MESSAGE": "Sie befinden sich derzeit im kostenlosen Plan. Upgraden Sie, um Premium-Funktionen freizuschalten und mit dem Aufbau Ihres Erfolgs zu beginnen.",
+    "UPGRADE_NOW": "Jetzt upgraden",
+    "CURRENT_SUBSCRIPTION": "Aktuelles Abonnement",
+    "SUBSCRIPTION_EMPTY_STATE": "Kein aktives Abonnement gefunden",
+    "SUBSCRIPTION_EMPTY_DESCRIPTION": "Sie haben derzeit keine aktiven Abonnements.",
+    "PAYMENTS_EMPTY_STATE": "Keine Zahlungshistorie",
+    "PAYMENTS_EMPTY_DESCRIPTION": "Ihre Zahlungstransaktionen werden hier angezeigt, sobald Sie einen Kauf getätigt haben.",
+    "SUBSCRIPTIONS_EMPTY_STATE": "Keine Abonnement-Historie",
+    "SUBSCRIPTIONS_EMPTY_DESCRIPTION": "Ihre Abonnement-Historie wird hier angezeigt, sobald Sie aktive Abonnements haben.",
+    "OVERVIEW_EMPTY_STATE": "Keine kürzliche Aktivität",
+    "OVERVIEW_EMPTY_DESCRIPTION": "Ihre kürzliche Abrechnungsaktivität wird hier angezeigt, sobald Sie Transaktionen haben."
+  },
+  "profile": {
+    "BASIC_INFO_TITLE": "Grundinformationen",
+    "BASIC_INFO_DESCRIPTION": "Aktualisieren Sie Ihre persönlichen Informationen und Kontaktdaten. Diese Informationen werden in Ihrem öffentlichen Profil angezeigt und helfen anderen, Sie zu entdecken und zu kontaktieren.",
+    "PERSONAL_INFORMATION": "Persönliche Informationen",
+    "PERSONAL_INFO_DESCRIPTION": "Erzählen Sie uns von sich und wie Sie dargestellt werden möchten",
+    "BACK_TO_SETTINGS": "Zurück zu den Einstellungen",
+    "UPLOAD_AVATAR": "Avatar hochladen",
+    "AVATAR_FILE_TYPES": "JPG, PNG oder GIF. Max. 2MB.",
+    "DISPLAY_NAME": "Anzeigename",
+    "DISPLAY_NAME_PLACEHOLDER": "Geben Sie Ihren Anzeigenamen ein",
+    "DISPLAY_NAME_HELP": "So wird Ihr Name anderen angezeigt",
+    "USERNAME": "Benutzername",
+    "USERNAME_PLACEHOLDER": "Geben Sie Ihren Benutzernamen ein",
+    "USERNAME_HELP": "Ihr eindeutiger Profil-Identifier",
+    "BIO": "Biografie",
+    "BIO_PLACEHOLDER": "Erzählen Sie uns von sich...",
+    "BIO_HELP": "Eine kurze Beschreibung über sich und Ihre Arbeit",
+    "SKILLS": "Fähigkeiten",
+    "SKILL_NAME_PLACEHOLDER": "Fähigkeitsname",
+    "ADD_SKILL": "Fähigkeit hinzufügen",
+    "REMOVE_SKILL": "Fähigkeit entfernen",
+    "INTERESTS": "Interessen",
+    "INTERESTS_PLACEHOLDER": "z.B. Open Source, UI/UX, Startups",
+    "INTERESTS_HELP": "Trennen Sie Interessen durch Kommas. Diese werden als Tags in Ihrem Profil angezeigt.",
+    "LOCATION": "Standort",
+    "LOCATION_PLACEHOLDER": "Stadt, Land",
+    "LOCATION_HELP": "Wo Sie ansässig sind",
+    "COMPANY": "Unternehmen",
+    "COMPANY_PLACEHOLDER": "Name Ihres Unternehmens",
+    "COMPANY_HELP": "Ihr aktueller Arbeitgeber oder Organisation",
+    "JOB_TITLE": "Berufsbezeichnung",
+    "JOB_TITLE_PLACEHOLDER": "Ihre Berufsbezeichnung",
+    "JOB_TITLE_HELP": "Ihre aktuelle Rolle oder Position",
+    "WEBSITE": "Website",
+    "WEBSITE_PLACEHOLDER": "https://ihrewebsite.com",
+    "WEBSITE_HELP": "Ihre persönliche Website oder Portfolio",
+    "CANCEL": "Abbrechen",
+    "SAVE_CHANGES": "Änderungen speichern",
+    "SAVING": "Speichern...",
+    "PROFILE_UPDATED": "Profil aktualisiert!",
+    "ERROR_UPDATING_PROFILE": "Fehler beim Aktualisieren des Profils",
+    "INVALID_IMAGE_FILE": "Bitte wählen Sie eine gültige Bilddatei (JPG, PNG oder GIF)",
+    "FILE_SIZE_TOO_LARGE": "Dateigröße muss kleiner als 2MB sein",
+    "ERROR_READING_FILE": "Fehler beim Lesen der Datei. Bitte versuchen Sie es erneut.",
+    "SKILL_NAME_REQUIRED": "Fähigkeitsname ist erforderlich",
+    "SKILL_NAME_MIN_LENGTH": "Fähigkeitsname muss mindestens 2 Zeichen lang sein",
+    "DISPLAY_NAME_REQUIRED": "Anzeigename ist erforderlich",
+    "USERNAME_MIN_LENGTH": "Benutzername muss mindestens 3 Zeichen lang sein",
+    "BIO_MAX_LENGTH": "Biografie muss weniger als 500 Zeichen haben",
+    "INVALID_URL": "Muss eine gültige URL sein",
+    "SKILL_CATEGORIES": {
+      "FRONTEND": "Frontend",
+      "BACKEND": "Backend",
+      "TOOLS_FRAMEWORKS": "Tools & Frameworks",
+      "OTHER": "Sonstiges"
+    }
   }
 }

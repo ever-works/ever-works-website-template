@@ -378,11 +378,18 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 
 	async createCustomCheckout(params: CheckoutParams): Promise<string> {
 		try {
-			console.log('params', params, this.storeId);
 			const { data, error } = await createCheckout(Number(this.storeId), Number(params.variantId), {
 					customPrice: params.customPrice,
 					productOptions: {
-						redirectUrl: `${env.API_BASE_URL}/billing/success`
+						redirectUrl: `${env.API_BASE_URL}/billing/success`,
+						receiptButtonText: 'View Receipt',
+						receiptLinkUrl: `${env.API_BASE_URL}/billing/receipt`,
+						receiptThankYouNote: 'Thank you for your purchase!',
+						enabledVariants: [Number(params.variantId)],
+						name: params.metadata?.name || 'Subscription',
+						description: params.metadata?.description || 'Subscription checkout for ' + params.metadata?.name,
+						media: [],
+				
 					},
 					checkoutOptions: {
 						embed: true,
@@ -391,10 +398,17 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 					},
 					checkoutData: {
 						email: params.email,
-						custom: params.metadata ?? {}
+						custom: params.metadata ?? {},
+						variantQuantities: [
+							{
+								variantId: Number(params.variantId),
+								quantity: 1
+							}
+						]
 					},
 					preview: false,
-					testMode: process.env.NODE_ENV === 'development'
+					testMode: process.env.NODE_ENV === 'development',
+					expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(), // 30 days
 			});
 
 			if (error) {

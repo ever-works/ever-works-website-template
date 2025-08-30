@@ -23,7 +23,9 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   deletedAt: timestamp("deleted_at"),
-});
+}, (table) => ({
+  createdAtIndex: index("users_created_at_idx").on(table.createdAt),
+}));
 
 export const roles = pgTable("roles", {
   id: text("id").primaryKey(),
@@ -225,6 +227,9 @@ export const activityLogs = pgTable("activityLogs", {
   ipAddress: varchar("ip_address", { length: 45 }),
 }, (table) => [
   index("activity_logs_user_idx").on(table.userId),
+  index("activity_logs_client_idx").on(table.clientId),
+  index("activity_logs_timestamp_idx").on(table.timestamp),
+  index("activity_logs_action_idx").on(table.action)
 ]);
 
 export const passwordResetTokens = pgTable('passwordResetTokens', {
