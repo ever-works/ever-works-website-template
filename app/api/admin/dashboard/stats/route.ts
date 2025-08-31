@@ -46,7 +46,7 @@ export async function GET() {
     const adminStats = {
       // User statistics
       totalUsers: stats.users.totalUsers,
-      activeUsers: stats.users.activeUsers,
+      registeredUsers: stats.users.registeredUsers, // Renamed from activeUsers for clarity
       newUsersToday: stats.users.newUsersToday,
       newUsersLast7Days: stats.users.newUsersThisWeek, // Backend still uses old names
       newUsersLast30Days: stats.users.newUsersThisMonth, // Backend still uses old names

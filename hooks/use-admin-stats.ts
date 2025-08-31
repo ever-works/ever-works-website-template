@@ -13,7 +13,7 @@ class HttpError extends Error {
 export interface AdminStats {
   // Platform Overview
   totalUsers: number;
-  activeUsers: number;
+  registeredUsers: number; // Renamed from activeUsers for clarity
   newUsersToday: number;
   newUsersLast7Days: number; // Changed from newUsersThisWeek for clarity (rolling window)
   newUsersLast30Days: number; // Changed from newUsersThisMonth for clarity (rolling window)
