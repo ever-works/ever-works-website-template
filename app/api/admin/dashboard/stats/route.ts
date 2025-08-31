@@ -48,8 +48,8 @@ export async function GET() {
       totalUsers: stats.users.totalUsers,
       activeUsers: stats.users.activeUsers,
       newUsersToday: stats.users.newUsersToday,
-      newUsersThisWeek: stats.users.newUsersThisWeek,
-      newUsersThisMonth: stats.users.newUsersThisMonth,
+      newUsersLast7Days: stats.users.newUsersThisWeek, // Backend still uses old names
+      newUsersLast30Days: stats.users.newUsersThisMonth, // Backend still uses old names
 
       // Activity statistics
       totalViews: stats.activity.totalViews,
