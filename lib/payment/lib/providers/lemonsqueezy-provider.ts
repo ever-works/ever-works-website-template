@@ -25,7 +25,10 @@ import {
 	getOrder,
 	cancelSubscription,
 	updateSubscription,
-	lemonSqueezySetup, listSubscriptions
+	lemonSqueezySetup,
+	listSubscriptions,
+	Variant,
+	listVariants
 } from '@lemonsqueezy/lemonsqueezy.js';
 
 import { env } from '@/lib/config/env';
@@ -379,36 +382,35 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 	async createCustomCheckout(params: CheckoutParams): Promise<string> {
 		try {
 			const { data, error } = await createCheckout(Number(this.storeId), Number(params.variantId), {
-					customPrice: params.customPrice,
-					productOptions: {
-						redirectUrl: `${env.API_BASE_URL}/billing/success`,
-						receiptButtonText: 'View Receipt',
-						receiptLinkUrl: `${env.API_BASE_URL}/billing/receipt`,
-						receiptThankYouNote: 'Thank you for your purchase!',
-						enabledVariants: [Number(params.variantId)],
-						name: params.metadata?.name || 'Subscription',
-						description: params.metadata?.description || 'Subscription checkout for ' + params.metadata?.name,
-						media: [],
-				
-					},
-					checkoutOptions: {
-						embed: true,
-						media: false,
-						logo: false
-					},
-					checkoutData: {
-						email: params.email,
-						custom: params.metadata ?? {},
-						variantQuantities: [
-							{
-								variantId: Number(params.variantId),
-								quantity: 1
-							}
-						]
-					},
-					preview: false,
-					testMode: process.env.NODE_ENV === 'development',
-					expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(), // 30 days
+				customPrice: params.customPrice,
+				productOptions: {
+					redirectUrl: `${env.API_BASE_URL}/billing/success`,
+					receiptButtonText: 'View Receipt',
+					receiptLinkUrl: `${env.API_BASE_URL}/billing/receipt`,
+					receiptThankYouNote: 'Thank you for your purchase!',
+					enabledVariants: [Number(params.variantId)],
+					name: params.metadata?.name || 'Subscription',
+					description: params.metadata?.description || 'Subscription checkout for ' + params.metadata?.name,
+					media: []
+				},
+				checkoutOptions: {
+					embed: true,
+					media: false,
+					logo: false
+				},
+				checkoutData: {
+					email: params.email,
+					custom: params.metadata ?? {},
+					variantQuantities: [
+						{
+							variantId: Number(params.variantId),
+							quantity: 1
+						}
+					]
+				},
+				preview: false,
+				testMode: process.env.NODE_ENV === 'development',
+				expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString() // 30 days
 			});
 
 			if (error) {
@@ -506,29 +508,155 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 		}
 	}
 
-	async updateSubscription(params: UpdateSubscriptionParams): Promise<SubscriptionInfo> {
+	async listVariants(): Promise<Variant[]> {
+		const { data, error } = await listVariants({
+			filter: {
+				productId: Number(this.storeId)
+			}
+		});
+		if (error) throw new Error(`Lemonsqueezy list variants error: ${error.message || 'Unknown error'}`);
+		return data.data as unknown as Variant[];
+	}
+
+	async getSubscription(subscriptionId: string): Promise<any> {
 		try {
-			const { data, error } = await updateSubscription(Number(params.subscriptionId), {
-				variantId: params.priceId ? Number(params.priceId) : undefined,
-				pause: {
-					mode: 'void' as 'void' | 'free',
-					resumesAt: params.cancelAtPeriodEnd ? new Date().toISOString() : undefined
-				},
-				cancelled: params.cancelAtPeriodEnd ? true : false,
-				trialEndsAt: params.cancelAtPeriodEnd ? new Date().toISOString() : undefined,
-				billingAnchor: params.cancelAtPeriodEnd ? 0 : undefined,
-				invoiceImmediately: params.cancelAtPeriodEnd ? true : false,
-				disableProrations: params.cancelAtPeriodEnd ? true : false
+			const { data, error } = await listSubscriptions({
+				filter: {
+					storeId: Number(this.storeId)
+				}
 			});
 
-			if (error) throw new Error(`Lemonsqueezy update subscription error: ${error.message || 'Unknown error'}`);
+			if (error) {
+				console.error('Error fetching subscriptions:', error);
+				return null;
+			}
+
+			if (data.data && data.data.length > 0) {
+				const subscription = data.data.find((sub: any) => sub.id === Number(subscriptionId));
+				return subscription || null;
+			}
+
+			return null;
+		} catch (error) {
+			console.error('Error getting subscription:', error);
+			return null;
+		}
+	}
+
+	async updateSubscription(params: UpdateSubscriptionParams): Promise<SubscriptionInfo> {
+		try {
+			const currentSubscription = await this.getSubscription(params.subscriptionId);
+			if (!currentSubscription) {
+				throw new Error(`Subscription ${params.subscriptionId} not found`);
+			}
+
+			if (currentSubscription.status === 'cancelled' || currentSubscription.status === 'expired') {
+				if (!params.metadata?.resumeAction && !params.metadata?.reactivateAction) {
+					throw new Error(`Cannot modify subscription in ${currentSubscription.status} status`);
+				}
+			}
+			if (
+				params.priceId &&
+				currentSubscription.status !== 'active' &&
+				currentSubscription.status !== 'on_trial' &&
+				currentSubscription.status !== 'past_due'
+
+			) {
+				throw new Error(
+					`Cannot update plan for subscription in ${currentSubscription.status} status. Only active, trial, or past due subscriptions can be updated.`
+				);
+			}
+
+			const updatePayload: {
+				variantId?: number;
+				pause?: {
+					mode: 'void' | 'free';
+					resumesAt?: string | null;
+				} | null;
+				cancelled?: boolean;
+				trialEndsAt?: string | null;
+				billingAnchor?: number | null;
+				invoiceImmediately?: boolean;
+				disableProrations?: boolean;
+			} = {};
+
+			if (params.priceId) {
+				const variantId = Number(params.priceId);
+				if (isNaN(variantId)) {
+					throw new Error(`Invalid variant ID: ${params.priceId}. Must be a valid number.`);
+				}
+				updatePayload.variantId = variantId; // Use variantId as per LemonSqueezy types
+			}
+ 
+			if (params.cancelAtPeriodEnd !== undefined) {
+				updatePayload.cancelled = params.cancelAtPeriodEnd;
+			}
+
+			if (params.metadata?.pauseMode) {
+				updatePayload.pause = {
+					mode: params.metadata.pauseMode as 'void' | 'free',
+					resumesAt: params.metadata.pauseUntil || null
+				};
+				console.log('Pause action: Using LemonSqueezy pause object');
+			}
+
+			if (params.metadata?.resumeAction) {
+				if (currentSubscription?.status === 'paused') {
+					updatePayload.pause = null;
+				} else if (currentSubscription?.status === 'cancelled') {
+					updatePayload.cancelled = false;
+					console.log('Resume action: Reactivating cancelled subscription');
+				} else {
+					throw new Error(
+						`Cannot resume subscription in ${currentSubscription?.status} status. Only paused or cancelled subscriptions can be resumed.`
+					);
+				}
+			}
+
+			if (params.metadata?.reactivateAction) {
+				updatePayload.cancelled = false;
+			}
+			if (params.metadata?.billingAnchor !== undefined) {
+				updatePayload.billingAnchor = params.metadata.billingAnchor;
+			}
+			if (params.metadata?.invoiceImmediately !== undefined) {
+				updatePayload.invoiceImmediately = params.metadata.invoiceImmediately;
+			}
+			if (params.metadata?.disableProrations !== undefined) {
+				updatePayload.disableProrations = params.metadata.disableProrations;
+			}
+
+			if (params.metadata?.trialEndsAt !== undefined) {
+				updatePayload.trialEndsAt = params.metadata.trialEndsAt;
+			}
+			if (process.env.NODE_ENV === 'development') {
+				updatePayload.trialEndsAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString();
+				console.log('LemonSqueezy update payload:', {
+					subscriptionId: params.subscriptionId,
+					payload: updatePayload,
+					metadata: params.metadata,
+					currentStatus: currentSubscription?.status
+				});
+			}
+
+			const { data, error } = await updateSubscription(Number(params.subscriptionId), updatePayload);
+
+			if (error) {
+				console.error('LemonSqueezy API error details:', {
+					error,
+					payload: updatePayload,
+					subscriptionId: params.subscriptionId,
+					currentStatus: currentSubscription?.status
+				});
+				throw new Error(`Lemonsqueezy update subscription error: ${error.message || 'Unknown error'}`);
+			}
 
 			return {
 				id: params.subscriptionId,
 				customerId: '',
 				status: 'active' as SubscriptionStatus,
-				priceId: '',
-				cancelAtPeriodEnd: params.cancelAtPeriodEnd,
+				priceId: params.priceId || '',
+				cancelAtPeriodEnd: params.cancelAtPeriodEnd || false,
 				checkoutData: {
 					...data?.data?.attributes,
 					relationships: data?.data?.relationships,
@@ -580,11 +708,11 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 
 		try {
 			this.logger.info('Fetching LemonSqueezy checkouts', { storeId: this.storeId, ...options });
-			
+
 			this.validateStoreId();
 			const pageConfig = this.buildPaginationConfig(limit, page);
 			const apiFilter = this.buildApiFilter({ status, customerEmail, dateFrom, dateTo });
-			
+
 			const response = await this.fetchSubscriptions(apiFilter);
 
 			const responseData = this.validateResponse(response);
@@ -625,12 +753,12 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 		const apiFilter: ApiFilter = {
 			storeId: Number(this.storeId)
 		};
-		
+
 		if (filters.status) apiFilter.status = filters.status;
 		if (filters.customerEmail) apiFilter.userEmail = filters.customerEmail;
 		if (filters.dateFrom) apiFilter.dateFrom = filters.dateFrom;
 		if (filters.dateTo) apiFilter.dateTo = filters.dateTo;
-		
+
 		return apiFilter;
 	}
 
@@ -652,7 +780,7 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 
 	private validateResponse(response: any): any {
 		const responseData = response.data as any;
-		
+
 		if (responseData && responseData.errors) {
 			this.logger.error('LemonSqueezy API returned errors', { errors: responseData.errors });
 			throw new Error(`LemonSqueezy API errors: ${JSON.stringify(responseData.errors)}`);
@@ -715,20 +843,21 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 			storeId: this.storeId,
 			stack: error instanceof Error ? error.stack : undefined
 		});
-		
+
 		if (errorMessage.includes('map is not a function')) {
-			throw new Error('LemonSqueezy API response format error: response.data is not an array. Please check your API configuration.');
+			throw new Error(
+				'LemonSqueezy API response format error: response.data is not an array. Please check your API configuration.'
+			);
 		}
 
 		throw new Error(`${message}: ${errorMessage}`);
 	}
 
 	private transformCheckoutData(checkout: any): CheckoutData {
-		
 		let amount = 0;
 		const attrs = checkout.attributes || {};
 		if (attrs.total) {
-			amount = attrs.total / 100; 
+			amount = attrs.total / 100;
 		} else if (attrs.unit_price) {
 			amount = attrs.unit_price / 100;
 		} else if (attrs.price) {
@@ -738,26 +867,30 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 		} else if (attrs.first_subscription_item?.price_id) {
 			amount = (attrs.first_subscription_item.unit_price || 0) / 100;
 		}
-	
+
 		// Extract all relationship data
 		const relationships = checkout.relationships || {};
 		const included = checkout.included || [];
-		
+
 		// Helper function to find included data by type and id
 		const findIncluded = (type: string, id: string) => {
 			return included.find((item: any) => item.type === type && item.id === id);
 		};
-		
+
 		// Extract specific relationship data
 		const store = relationships.store?.data ? findIncluded('stores', relationships.store.data.id) : null;
-		const customer = relationships.customer?.data ? findIncluded('customers', relationships.customer.data.id) : null;
+		const customer = relationships.customer?.data
+			? findIncluded('customers', relationships.customer.data.id)
+			: null;
 		const order = relationships.order?.data ? findIncluded('orders', relationships.order.data.id) : null;
-		const orderItem = relationships['order-item']?.data ? findIncluded('order-items', relationships['order-item'].data.id) : null;
+		const orderItem = relationships['order-item']?.data
+			? findIncluded('order-items', relationships['order-item'].data.id)
+			: null;
 		const product = relationships.product?.data ? findIncluded('products', relationships.product.data.id) : null;
 		const variant = relationships.variant?.data ? findIncluded('variants', relationships.variant.data.id) : null;
 		const subscriptionItems = relationships['subscription-items']?.data || [];
 		const subscriptionInvoices = relationships['subscription-invoices']?.data || [];
-		
+
 		const transformed = {
 			id: checkout.id.toString(),
 			checkoutId: attrs.checkout_id || attrs.subscription_id || checkout.id.toString(),
@@ -784,15 +917,18 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 					orderItem: orderItem?.attributes || null,
 					product: product?.attributes || null,
 					variant: variant?.attributes || null,
-					subscriptionItems: subscriptionItems.map((item: any) => findIncluded('subscription-items', item.id)?.attributes || null),
-					subscriptionInvoices: subscriptionInvoices.map((item: any) => findIncluded('subscription-invoices', item.id)?.attributes || null)
+					subscriptionItems: subscriptionItems.map(
+						(item: any) => findIncluded('subscription-items', item.id)?.attributes || null
+					),
+					subscriptionInvoices: subscriptionInvoices.map(
+						(item: any) => findIncluded('subscription-invoices', item.id)?.attributes || null
+					)
 				},
 				// Include all raw relationship data for debugging
 				rawRelationships: relationships,
 				rawIncluded: included
 			}
 		};
-		
 
 		console.log('Date information:', {
 			originalCreatedAt: attrs.created_at,
@@ -804,7 +940,7 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 			finalUpdatedAt: transformed.updatedAt,
 			finalCompletedAt: transformed.completedAt
 		});
-		
+
 		return transformed;
 	}
 

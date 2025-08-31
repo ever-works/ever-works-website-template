@@ -102,12 +102,10 @@ async function ensureUniqueUsername(baseUsername: string): Promise<string> {
 export async function logActivity(
   type: ActivityType, 
   userId?: string, 
-  clientId?: string,
   ipAddress?: string
 ) {
 	const newActivity: NewActivityLog = {
 		userId: userId || null,
-		clientId: clientId || null,
 		action: type,
 		ipAddress: ipAddress || ''
 	};
@@ -817,6 +815,15 @@ export async function getClientProfileById(id: string): Promise<ClientProfile | 
 }
 
 /**
+ * Find client profile by user ID
+ */
+export async function getClientProfileByUserId(userId: string): Promise<ClientProfile | null> {
+	const [profile] = await db.select().from(clientProfiles).where(eq(clientProfiles.userId, userId));
+
+	return profile || null;
+}
+
+/**
  * Get all client profiles with pagination
  */
 export async function getClientProfiles(params: {
@@ -1517,25 +1524,7 @@ export async function updateSubscriptionBySubscriptionId(
  * Get the last login activity for a client
  */
 export async function getLastLoginActivity(clientId: string): Promise<ActivityLog | null> {
-	// Try to find by clientId first, then by userId if no results
-	const [lastLoginByClient] = await db
-		.select()
-		.from(activityLogs)
-		.where(
-			and(
-				eq(activityLogs.clientId, clientId),
-				eq(activityLogs.action, ActivityType.SIGN_IN)
-			)
-		)
-		.orderBy(desc(activityLogs.timestamp))
-		.limit(1);
-
-	if (lastLoginByClient) {
-		return lastLoginByClient;
-	}
-
-	// If no client-specific login found, try to find by userId
-	const [lastLoginByUser] = await db
+	const [lastLogin] = await db
 		.select()
 		.from(activityLogs)
 		.where(
@@ -1547,5 +1536,5 @@ export async function getLastLoginActivity(clientId: string): Promise<ActivityLo
 		.orderBy(desc(activityLogs.timestamp))
 		.limit(1);
 
-	return lastLoginByUser || null;
+	return lastLogin || null;
 }

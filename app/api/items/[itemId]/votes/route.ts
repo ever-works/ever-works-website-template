@@ -4,7 +4,8 @@ import {
     createVote,
     getVoteByUserIdAndItemId,
     getVoteCountForItem,
-    deleteVote
+    deleteVote,
+    getClientProfileByUserId
 } from "@/lib/db/queries";
 import { VoteType } from "@/lib/db/schema";
 
@@ -24,9 +25,12 @@ export async function GET(
 
     let userVote = null;
     if (session?.user?.id) {
-      const votes = await getVoteByUserIdAndItemId(session.user.id, itemId);
-      if (votes.length > 0) {
-        userVote = votes[0].voteType === VoteType.UPVOTE ? "up" : "down";
+      const clientProfile = await getClientProfileByUserId(session.user.id);
+      if (clientProfile) {
+        const votes = await getVoteByUserIdAndItemId(clientProfile.id, itemId);
+        if (votes.length > 0) {
+          userVote = votes[0].voteType === VoteType.UPVOTE ? "up" : "down";
+        }
       }
     }
 
@@ -59,14 +63,22 @@ export async function POST(
 
     const { type } = await request.json();
 
-    const existingVotes = await getVoteByUserIdAndItemId(session.user.id, itemId);
+    const clientProfile = await getClientProfileByUserId(session.user.id);
+    if (!clientProfile) {
+      return NextResponse.json(
+        { error: "Client profile not found" },
+        { status: 404 }
+      );
+    }
+
+    const existingVotes = await getVoteByUserIdAndItemId(clientProfile.id, itemId);
     if (existingVotes.length > 0) {
       await deleteVote(existingVotes[0].id);
     }
 
     const voteType = type === "up" ? VoteType.UPVOTE : VoteType.DOWNVOTE;
     await createVote({
-      userId: session.user.id,
+      userId: clientProfile.id,
       itemId,
       voteType
     });
@@ -100,7 +112,15 @@ export async function DELETE(
       );
     }
 
-    const existingVotes = await getVoteByUserIdAndItemId(session.user.id, itemId);
+    const clientProfile = await getClientProfileByUserId(session.user.id);
+    if (!clientProfile) {
+      return NextResponse.json(
+        { error: "Client profile not found" },
+        { status: 404 }
+      );
+    }
+
+    const existingVotes = await getVoteByUserIdAndItemId(clientProfile.id, itemId);
     if (existingVotes.length > 0) {
       await deleteVote(existingVotes[0].id);
     }

@@ -225,6 +225,20 @@
       "when": 1756007500000,
       "tag": "0030_fix_votes_column_name",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1756007600000,
+      "tag": "0031_fix_schema_inconsistencies",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1756007700000,
+      "tag": "0032_add_performance_indexes",
+      "breakpoints": true
     }
   ]
 }

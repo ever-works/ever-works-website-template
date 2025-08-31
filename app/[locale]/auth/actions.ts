@@ -160,10 +160,6 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
       const [user] = await tx.insert(users).values({
         id: userId,
         email: normalizedEmail,
-        name,
-        username: email.split('@')[0] || 'user',
-        status: 'active',
-        created_by: 'system',
       }).returning();
       
       // 2) Create client profile record using transaction
@@ -205,14 +201,14 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
     
     const { user, clientProfile } = result;
 
-    // 2) Create credentials account record holding the password hash linked to client profile
-    const clientAccount = await createClientAccount(clientProfile.id, normalizedEmail, passwordHash);
+    // 2) Create credentials account record holding the password hash linked to user
+    const clientAccount = await createClientAccount(user.id, normalizedEmail, passwordHash);
     if (!clientAccount) {
       throw new Error("Failed to create client account");
     }
 
     // Log activity using the client profile ID
-    		await logActivity(ActivityType.SIGN_UP, user.id, clientProfile.id);
+    		await logActivity(ActivityType.SIGN_UP, clientProfile.id);
 
     const verificationToken = await generateVerificationToken(normalizedEmail);
     if (verificationToken) {

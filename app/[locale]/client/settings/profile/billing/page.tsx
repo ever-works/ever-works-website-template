@@ -4,7 +4,6 @@ import { PaymentCard } from '@/components/settings/billing/payment-card';
 import { SubscriptionCard } from '@/components/settings/billing/subscription-card';
 import { SubscriptionHistoryCard } from '@/components/settings/billing/subscription-history-card';
 import { SubscriptionActions } from '@/components/settings/billing/subscription-actions';
-import { useBillingData } from '@/hooks/use-billing-data';
 import { Container } from '@/components/ui/container';
 import { CreditCard, ChevronRight, Plus, Download, Zap } from 'lucide-react';
 import { BillingStats } from '@/components/settings/billing/billing-stats';
@@ -19,9 +18,13 @@ import {
 import { FiArrowLeft } from 'react-icons/fi';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { useProviderPayment } from '@/hooks/use-provider-payment';
+import { PaymentProvider } from '@/lib/constants';
 
 export default function BillingPage() {
 	const t = useTranslations('billing');
+
+	// Use the unified provider payment hook
 	const {
 		subscription,
 		payments,
@@ -31,8 +34,14 @@ export default function BillingPage() {
 		refreshPayments,
 		isRefreshing,
 		isRefreshingSubscription,
-		isRefreshingPayments
-	} = useBillingData();
+		isRefreshingPayments,
+		totalSpent,
+		activePayments,
+		monthlyAverage,
+		totalPayments,
+		hasPaymentHistory,
+		hasSubscriptionHistory
+	} = useProviderPayment();
 
 	const [activeTab, setActiveTab] = useState<'overview' | 'payments' | 'subscriptions'>('overview');
 	const [searchTerm, setSearchTerm] = useState('');
@@ -48,9 +57,7 @@ export default function BillingPage() {
 						<h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
 							{t('WELCOME_TITLE')}
 						</h2>
-						<p className="text-gray-600 dark:text-gray-300 mb-8">
-							{t('FREE_PLAN_MESSAGE')}
-						</p>
+						<p className="text-gray-600 dark:text-gray-300 mb-8">{t('FREE_PLAN_MESSAGE')}</p>
 						<div className="space-y-3">
 							<button className="w-full bg-gradient-to-r from-theme-primary-600 to-theme-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-theme-primary-700 hover:to-theme-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
 								<Plus className="w-5 h-5 inline mr-2" />
@@ -72,13 +79,11 @@ export default function BillingPage() {
 			payment?.plan?.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			payment?.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			payment?.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			payment?.planId?.toLowerCase().includes(searchTerm.toLowerCase())
+			payment?.planId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			payment?.subscriptionId.toLowerCase().includes(searchTerm.toLowerCase())
 	);
 
-	// Calculate summary statistics
-	const totalSpent = payments.reduce((sum, payment) => sum + payment.amount, 0);
-	const activePayments = payments.filter((p) => p.status === 'Paid').length;
-	const monthlyAverage = payments.length > 0 ? totalSpent / payments.length : 0;
+	// Statistics are now provided by useProviderPayment hook
 
 	return (
 		<Container maxWidth="7xl" padding="default">
@@ -94,6 +99,8 @@ export default function BillingPage() {
 						{t('BACK_TO_SETTINGS')}
 					</Link>
 					<div className="flex items-center gap-3">
+						{/* Provider indicator */}
+
 						<button
 							onClick={refresh}
 							disabled={isRefreshing}
@@ -110,7 +117,7 @@ export default function BillingPage() {
 					</div>
 				</div>
 				<div className="flex flex-col items-center justify-center">
-					<div className='space-y-4 text-center'>
+					<div className="space-y-4 text-center">
 						<h1 className="text-3xl font-bold text-gray-600 dark:text-gray-100 mb-2">
 							{t('BILLING_SUBSCRIPTION_TITLE')}
 						</h1>
@@ -118,8 +125,6 @@ export default function BillingPage() {
 							{t('BILLING_SUBSCRIPTION_SUBTITLE')}
 						</p>
 					</div>
-
-				
 				</div>
 			</div>
 
@@ -140,7 +145,7 @@ export default function BillingPage() {
 						activePayments={activePayments}
 						monthlyAverage={monthlyAverage}
 						hasActiveSubscription={subscription?.hasActiveSubscription || false}
-						totalPayments={payments.length}
+						totalPayments={totalPayments}
 						currency={subscription?.currentSubscription?.currency || 'USD'}
 						planName={subscription?.currentSubscription?.planName || 'Basic Plan'}
 						currentPeriodEnd={subscription?.currentSubscription?.currentPeriodEnd || ''}
@@ -196,7 +201,7 @@ export default function BillingPage() {
 									{t('RECENT_ACTIVITY')}
 								</h2>
 
-								{payments.length === 0 ? (
+								{!hasPaymentHistory ? (
 									<OverviewEmptyState />
 								) : (
 									<div className="space-y-4">
@@ -216,6 +221,22 @@ export default function BillingPage() {
 														<p className="text-sm text-gray-500 dark:text-slate-400">
 															{payment.description}
 														</p>
+														{/* Show payment provider */}
+														<div className="flex items-center gap-2 mt-1">
+															<span
+																className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+																	payment.paymentProvider ===
+																	PaymentProvider.LEMONSQUEEZY
+																		? 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300'
+																		: 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300'
+																}`}
+															>
+																{payment.paymentProvider ===
+																PaymentProvider.LEMONSQUEEZY
+																	? PaymentProvider.LEMONSQUEEZY
+																	: PaymentProvider.STRIPE}
+															</span>
+														</div>
 													</div>
 												</div>
 												<div className="text-right">
@@ -254,7 +275,6 @@ export default function BillingPage() {
 								isRefreshing={isRefreshingPayments}
 								totalResults={filteredPayments.length}
 							/>
-
 							{filteredPayments.length === 0 ? (
 								<PaymentsEmptyState />
 							) : (
@@ -284,11 +304,11 @@ export default function BillingPage() {
 								</button>
 							</div>
 
-							{!subscription?.subscriptionHistory || subscription.subscriptionHistory.length === 0 ? (
+							{!hasSubscriptionHistory ? (
 								<SubscriptionsEmptyState />
 							) : (
 								<div className="space-y-4">
-									{subscription.subscriptionHistory.map((sub) => (
+									{subscription?.subscriptionHistory?.map((sub) => (
 										<SubscriptionHistoryCard key={sub.id} subscription={sub} />
 									))}
 								</div>

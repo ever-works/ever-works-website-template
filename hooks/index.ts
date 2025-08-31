@@ -13,4 +13,6 @@ export * from './use-payment-flow'
 export * from './use-create-checkout'
 export * from './use-pricing-features'
 export * from './use-success-page-features'
-export * from './use-payment-flow'
+
+// Payment provider hooks
+export { useProviderPayment } from './use-provider-payment';

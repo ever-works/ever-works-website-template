@@ -3,9 +3,9 @@ import { getOrCreateLemonsqueezyProvider } from "@/lib/payment/config/payment-pr
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-const cancelSubscriptionSchema = z.object({
+
+const reactivateSubscriptionSchema = z.object({
   subscriptionId: z.string().min(1),
-  cancelAtPeriodEnd: z.boolean().optional().default(true),
 });
 
 export async function POST(request: NextRequest) {
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const validationResult = cancelSubscriptionSchema.safeParse(body);
+    const validationResult = reactivateSubscriptionSchema.safeParse(body);
     
     if (!validationResult.success) {
       return NextResponse.json(
@@ -37,44 +37,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { subscriptionId, cancelAtPeriodEnd } = validationResult.data;
+    const { subscriptionId } = validationResult.data;
 
     const lemonsqueezy = getOrCreateLemonsqueezyProvider();
 
     const result = await lemonsqueezy.updateSubscription({
       subscriptionId,
-      cancelAtPeriodEnd,
+      cancelAtPeriodEnd: false,
       metadata: {
-        action: 'cancel',
-        cancelledAt: new Date().toISOString(),
-        cancelledBy: session.user.email,
-        cancelledAtPeriodEnd: cancelAtPeriodEnd,
+        action: 'reactivate',
+        reactivateAction: true,
+        reactivatedAt: new Date().toISOString(),
+        reactivatedBy: session.user.email
       }
     });
 
     return NextResponse.json({
       success: true,
       data: result,
-      message: cancelAtPeriodEnd 
-        ? 'Subscription will be cancelled at the end of the current period'
-        : 'Subscription cancelled immediately',
+      message: 'Subscription reactivated successfully',
       timestamp: new Date().toISOString(),
     }, { status: 200 });
 
   } catch (error) {
-    console.error('Cancel subscription error:', {
+    console.error('Reactivate subscription error:', {
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
       timestamp: new Date().toISOString(),
-      endpoint: '/api/lemonsqueezy/subscriptions/cancel',
+      endpoint: '/api/lemonsqueezy/subscriptions/reactivate',
       method: 'POST'
     });
 
     return NextResponse.json(
       { 
-        error: 'Failed to cancel subscription',
+        error: 'Failed to reactivate subscription',
         message: error instanceof Error ? error.message : 'Unknown error occurred',
-        code: 'CANCEL_FAILED',
+        code: 'REACTIVATE_FAILED',
         timestamp: new Date().toISOString()
       },
       { status: 500 }

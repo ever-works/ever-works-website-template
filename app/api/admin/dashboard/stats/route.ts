@@ -34,10 +34,10 @@ export async function GET() {
     const hasAdminRole = adminCheckResult[0]?.is_admin;
 
     if (!hasAdminRole) {
-      return NextResponse.json(
-        { success: false, error: 'Insufficient permissions' },
-        { status: 403 }
-      );
+              return NextResponse.json(
+          { success: false, error: 'Insufficient permissions' },
+          { status: 403 }
+        );
     }
 
     const stats = await adminStatsRepository.getAllStats();

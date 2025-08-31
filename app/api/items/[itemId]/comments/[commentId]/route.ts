@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { deleteComment } from "@/lib/db/queries";
+import { deleteComment, getClientProfileByUserId } from "@/lib/db/queries";
 import { db } from "@/lib/db/drizzle";
 import { comments } from "@/lib/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
@@ -15,13 +15,18 @@ export async function DELETE(
   }
 
   try {
+    const clientProfile = await getClientProfileByUserId(session.user.id);
+    if (!clientProfile) {
+      return new NextResponse("Client profile not found", { status: 404 });
+    }
+
     const [comment] = await db
       .select()
       .from(comments)
       .where(
         and(
           eq(comments.id, (await params).commentId),
-          eq(comments.userId, session.user.id),
+          eq(comments.userId, clientProfile.id),
           isNull(comments.deletedAt)
         )
       );
