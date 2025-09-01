@@ -8,6 +8,8 @@ export { AdminActivityChart } from "./admin-activity-chart";
 export { AdminSubmissionStatus } from "./admin-submission-status";
 export { AdminRecentActivity } from "./admin-recent-activity";
 export { AdminTopItems } from "./admin-top-items";
+export { AdminCharts } from "./admin-charts";
+export { AdminAnalyticsSimple } from "./admin-analytics-simple";
 export { AdminErrorBoundary, AdminErrorFallback } from "./admin-error-boundary";
 export { 
   AdminGridSkeleton, 
