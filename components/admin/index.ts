@@ -11,6 +11,7 @@ export { AdminTopItems } from "./admin-top-items";
 export { AdminCharts } from "./admin-charts";
 export { AdminAnalyticsSimple } from "./admin-analytics-simple";
 export { AdminPerformanceMonitor } from "./admin-performance-monitor";
+export { AdminDataExport } from "./admin-data-export";
 export { AdminErrorBoundary, AdminErrorFallback } from "./admin-error-boundary";
 export { 
   AdminGridSkeleton, 

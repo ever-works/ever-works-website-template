@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { AdminCharts, UserGrowthData, ActivityTrendData, TopItemData, RecentActivityData } from './admin-charts';
 import { RefreshCw } from 'lucide-react';
 import { AdminPerformanceMonitor } from './admin-performance-monitor';
+import { AdminDataExport } from './admin-data-export';
 
 // Constants for className strings
 const ANALYTICS_CONTAINER_STYLES = "space-y-6";
@@ -203,6 +204,9 @@ export function AdminAnalyticsSimple() {
 
       {/* Performance Monitor */}
       <AdminPerformanceMonitor />
+
+      {/* Data Export & Reports */}
+      <AdminDataExport />
     </div>
   );
 }
