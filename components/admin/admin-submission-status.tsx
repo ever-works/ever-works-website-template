@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { AdminStats } from "@/hooks/use-admin-stats";
 import { CheckCircle, Clock, XCircle } from "lucide-react";
+import { AdminPieChartSkeleton } from "./admin-loading-skeleton";
 
 interface AdminSubmissionStatusProps {
   data: AdminStats['submissionStatusData'];
@@ -10,31 +10,7 @@ interface AdminSubmissionStatusProps {
 
 export function AdminSubmissionStatus({ data, isLoading }: AdminSubmissionStatusProps) {
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-6 w-40" />
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex justify-center">
-              <Skeleton className="h-32 w-32 rounded-full" />
-            </div>
-            <div className="space-y-2">
-              {Array.from({ length: 3 }, (_, i) => (
-                <div key={i} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Skeleton className="h-3 w-3 rounded-full" />
-                    <Skeleton className="h-4 w-16" />
-                  </div>
-                  <Skeleton className="h-4 w-8" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return <AdminPieChartSkeleton />;
   }
 
   const total = data.reduce((sum, item) => sum + item.count, 0);

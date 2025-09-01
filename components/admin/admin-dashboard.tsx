@@ -12,6 +12,16 @@ import { AdminTopItems } from "./admin-top-items";
 import { useAdminStats } from "@/hooks/use-admin-stats";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AdminErrorBoundary } from "./admin-error-boundary";
+
+// Design system constants
+const DASHBOARD_CONTAINER_STYLES = "space-y-8";
+const HEADER_CONTAINER_STYLES = "flex items-center justify-between";
+const REFRESH_BUTTON_STYLES = "flex items-center space-x-2";
+const ERROR_BOX_STYLES = "rounded-md border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200";
+const ERROR_CONTENT_STYLES = "flex items-start justify-between gap-4";
+const GRID_TWO_COLS_STYLES = "grid grid-cols-1 lg:grid-cols-2 gap-6";
+const ADMIN_TOOLS_TITLE_STYLES = "text-xl font-semibold text-gray-900 dark:text-white mb-6";
 
 export function AdminDashboard() {
   const { data: session, status } = useSession();
@@ -24,19 +34,18 @@ export function AdminDashboard() {
   const adminName = session?.user?.name || session?.user?.email || "Admin";
 
   const refreshIconClass = `h-4 w-4${isFetching ? ' animate-spin' : ''}`;
-  const errorBoxClass = "rounded-md border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200";
 
   return (
-    <div className="space-y-8">
+    <div className={DASHBOARD_CONTAINER_STYLES}>
       {/* Welcome Section */}
-      <div className="flex items-center justify-between">
+      <div className={HEADER_CONTAINER_STYLES}>
         <AdminWelcomeSection adminName={adminName} />
         <Button
           variant="outline"
           size="sm"
           onClick={() => refetch()}
           disabled={isFetching}
-          className="flex items-center space-x-2"
+          className={REFRESH_BUTTON_STYLES}
         >
           <RefreshCw className={refreshIconClass} />
           <span>Refresh</span>
@@ -45,8 +54,8 @@ export function AdminDashboard() {
 
       {/* Error State */}
       {isError && (
-        <div className={errorBoxClass}>
-          <div className="flex items-start justify-between gap-4">
+        <div className={ERROR_BOX_STYLES}>
+          <div className={ERROR_CONTENT_STYLES}>
             <p className="text-sm">
               {error instanceof Error ? error.message : "Failed to load admin statistics."}
             </p>
@@ -58,23 +67,33 @@ export function AdminDashboard() {
       )}
 
       {/* Stats Overview */}
-      <AdminStatsOverview stats={stats} isLoading={isLoading} />
+      <AdminErrorBoundary>
+        <AdminStatsOverview stats={stats} isLoading={isLoading} />
+      </AdminErrorBoundary>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <AdminActivityChart data={stats?.activityTrendData || []} isLoading={isLoading} />
-        <AdminSubmissionStatus data={stats?.submissionStatusData || []} isLoading={isLoading} />
+      <div className={GRID_TWO_COLS_STYLES}>
+        <AdminErrorBoundary>
+          <AdminActivityChart data={stats?.activityTrendData || []} isLoading={isLoading} />
+        </AdminErrorBoundary>
+        <AdminErrorBoundary>
+          <AdminSubmissionStatus data={stats?.submissionStatusData || []} isLoading={isLoading} />
+        </AdminErrorBoundary>
       </div>
 
       {/* Activity and Top Items */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <AdminRecentActivity data={stats?.recentActivity || []} isLoading={isLoading} />
-        <AdminTopItems data={stats?.topItemsData || []} isLoading={isLoading} />
+      <div className={GRID_TWO_COLS_STYLES}>
+        <AdminErrorBoundary>
+          <AdminRecentActivity data={stats?.recentActivity || []} isLoading={isLoading} />
+        </AdminErrorBoundary>
+        <AdminErrorBoundary>
+          <AdminTopItems data={stats?.topItemsData || []} isLoading={isLoading} />
+        </AdminErrorBoundary>
       </div>
 
       {/* Admin Features */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+        <h2 className={ADMIN_TOOLS_TITLE_STYLES}>
           Admin Tools
         </h2>
         <AdminFeaturesGrid />

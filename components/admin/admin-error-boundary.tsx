@@ -1,0 +1,118 @@
+import { Component, ReactNode } from 'react';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+// Design system constants
+const ERROR_CARD_STYLES = "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950";
+const ERROR_TITLE_STYLES = "flex items-center space-x-2 text-red-800 dark:text-red-200";
+const ERROR_TEXT_STYLES = "text-sm text-red-700 dark:text-red-300";
+const ERROR_BUTTON_STYLES = "border-red-300 text-red-700 hover:bg-red-100 dark:border-red-700 dark:text-red-300 dark:hover:bg-red-900/20";
+
+interface Props {
+  children: ReactNode;
+  fallback?: ReactNode;
+  onError?: (error: Error, errorInfo: any) => void;
+}
+
+interface State {
+  hasError: boolean;
+  error?: Error;
+}
+
+export class AdminErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: any) {
+    console.error('Admin component error:', error, errorInfo);
+    this.props.onError?.(error, errorInfo);
+  }
+
+  handleRetry = () => {
+    this.setState({ hasError: false, error: undefined });
+  };
+
+  render() {
+    if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+
+      return (
+        <Card className={ERROR_CARD_STYLES}>
+          <CardHeader>
+            <CardTitle className={ERROR_TITLE_STYLES}>
+              <AlertTriangle className="h-5 w-5" />
+              <span>Something went wrong</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <p className={ERROR_TEXT_STYLES}>
+                {this.state.error?.message || 'An unexpected error occurred while loading this component.'}
+              </p>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={this.handleRetry}
+                  className={ERROR_BUTTON_STYLES}
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Try Again
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+// Functional component wrapper for easier use
+export function AdminErrorFallback({ 
+  error, 
+  retry 
+}: { 
+  error?: Error; 
+  retry: () => void; 
+}) {
+  return (
+    <Card className={ERROR_CARD_STYLES}>
+      <CardHeader>
+        <CardTitle className={ERROR_TITLE_STYLES}>
+          <AlertTriangle className="h-5 w-5" />
+          <span>Failed to load data</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <p className={ERROR_TEXT_STYLES}>
+            {error?.message || 'Unable to load the requested information.'}
+          </p>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={retry}
+              className={ERROR_BUTTON_STYLES}
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Retry
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

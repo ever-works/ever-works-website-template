@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { AdminStats } from "@/hooks/use-admin-stats";
 import { TrendingUp } from "lucide-react";
+import { AdminChartSkeleton } from "./admin-loading-skeleton";
 
 interface AdminActivityChartProps {
   data: AdminStats['activityTrendData'];
@@ -10,26 +10,7 @@ interface AdminActivityChartProps {
 
 export function AdminActivityChart({ data, isLoading }: AdminActivityChartProps) {
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <div className="flex items-center space-x-2">
-            <Skeleton className="h-5 w-5" />
-            <Skeleton className="h-6 w-32" />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="h-64 space-y-3">
-            {Array.from({ length: 7 }, (_, i) => (
-              <div key={i} className="flex items-end space-x-2">
-                <Skeleton className="h-8 w-12" />
-                <Skeleton className="w-full" style={{ height: `${Math.floor(Math.random() * 32) + 8 * 4}px` }} />
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return <AdminChartSkeleton title="Weekly Activity Trends" />;
   }
 
   if (data.length === 0) {

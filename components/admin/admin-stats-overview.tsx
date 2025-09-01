@@ -1,6 +1,7 @@
 import { Users, FileText, Eye, MessageSquare } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { AdminStats } from "@/hooks/use-admin-stats";
+import { AdminGridSkeleton } from "./admin-loading-skeleton";
 
 interface AdminStatsOverviewProps {
   stats: AdminStats | undefined;
@@ -8,6 +9,10 @@ interface AdminStatsOverviewProps {
 }
 
 export function AdminStatsOverview({ stats, isLoading }: AdminStatsOverviewProps) {
+  if (isLoading) {
+    return <AdminGridSkeleton items={4} />;
+  }
+
   const growthPercentage = stats ? 
     stats.totalUsers > 0 
       ? Math.round((stats.newUsersToday / stats.totalUsers) * 100 * 100) / 100
