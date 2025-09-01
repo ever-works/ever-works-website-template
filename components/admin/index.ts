@@ -10,6 +10,7 @@ export { AdminRecentActivity } from "./admin-recent-activity";
 export { AdminTopItems } from "./admin-top-items";
 export { AdminCharts } from "./admin-charts";
 export { AdminAnalyticsSimple } from "./admin-analytics-simple";
+export { AdminPerformanceMonitor } from "./admin-performance-monitor";
 export { AdminErrorBoundary, AdminErrorFallback } from "./admin-error-boundary";
 export { 
   AdminGridSkeleton, 

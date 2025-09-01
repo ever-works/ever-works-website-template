@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AdminCharts, UserGrowthData, ActivityTrendData, TopItemData, RecentActivityData } from './admin-charts';
 import { RefreshCw } from 'lucide-react';
+import { AdminPerformanceMonitor } from './admin-performance-monitor';
 
 // Constants for className strings
 const ANALYTICS_CONTAINER_STYLES = "space-y-6";
@@ -199,6 +200,9 @@ export function AdminAnalyticsSimple() {
         topItemsData={MOCK_TOP_ITEMS}
         recentActivityData={MOCK_RECENT_ACTIVITY}
       />
+
+      {/* Performance Monitor */}
+      <AdminPerformanceMonitor />
     </div>
   );
 }
