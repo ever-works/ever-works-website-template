@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdminStats } from "@/hooks/use-admin-stats";
 import { UserPlus, FileText, MessageSquare, ThumbsUp, Activity } from "lucide-react";
 import { AdminActivityListSkeleton } from "./admin-loading-skeleton";
-import { AdminResponsiveText, AdminResponsiveSpacing } from "./admin-responsive";
+
 
 interface AdminRecentActivityProps {
   data: AdminStats['recentActivity'];

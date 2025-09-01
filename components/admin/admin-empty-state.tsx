@@ -31,7 +31,6 @@ const ICON_CONTAINER_STYLES = "flex justify-center mb-4";
 const ICON_STYLES = "h-16 w-16";
 const TITLE_STYLES = "text-lg font-semibold";
 const DESCRIPTION_STYLES = "text-sm mb-6";
-const BUTTON_CONTAINER_STYLES = "flex items-center space-x-2";
 
 interface AdminEmptyStateProps {
   icon: LucideIcon;

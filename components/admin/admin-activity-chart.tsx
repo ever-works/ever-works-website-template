@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdminStats } from "@/hooks/use-admin-stats";
 import { TrendingUp } from "lucide-react";
 import { AdminChartSkeleton } from "./admin-loading-skeleton";
-import { AdminResponsiveText, AdminResponsiveSpacing } from "./admin-responsive";
+
 
 // Design system constants for accessibility
 const CHART_TITLE_STYLES = "flex items-center space-x-2";
@@ -19,7 +19,7 @@ interface AdminActivityChartProps {
 
 export function AdminActivityChart({ data, isLoading }: AdminActivityChartProps) {
   if (isLoading) {
-    return <AdminChartSkeleton title="Weekly Activity Trends" />;
+    return <AdminChartSkeleton />;
   }
 
   if (data.length === 0) {

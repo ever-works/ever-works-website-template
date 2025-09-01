@@ -26,7 +26,7 @@ export function AdminStatsCardSkeleton() {
 }
 
 // Chart Skeleton
-export function AdminChartSkeleton({ title = "Chart Loading" }: { title?: string }) {
+export function AdminChartSkeleton() {
   return (
     <Card>
       <CardHeader>

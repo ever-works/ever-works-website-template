@@ -2,7 +2,7 @@ import { Users, FileText, Eye, MessageSquare } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { AdminStats } from "@/hooks/use-admin-stats";
 import { AdminGridSkeleton } from "./admin-loading-skeleton";
-import { AdminResponsiveGrid, AdminResponsiveText } from "./admin-responsive";
+import { AdminResponsiveGrid } from "./admin-responsive";
 
 // Design system constants for accessibility
 const STATS_REGION_LABEL = "Key performance metrics";
@@ -29,12 +29,11 @@ export function AdminStatsOverview({ stats, isLoading }: AdminStatsOverviewProps
     : 0;
 
   return (
-    <AdminResponsiveGrid 
-      cols={4} 
-      gap="md"
-      role="region"
-      aria-label={STATS_REGION_LABEL}
-    >
+    <div role="region" aria-label={STATS_REGION_LABEL}>
+      <AdminResponsiveGrid 
+        cols={4} 
+        gap="md"
+      >
       <StatsCard
         title="Total Users"
         value={stats?.totalUsers || 0}
@@ -67,6 +66,7 @@ export function AdminStatsOverview({ stats, isLoading }: AdminStatsOverviewProps
         icon={MessageSquare}
         isLoading={isLoading}
       />
+      </AdminResponsiveGrid>
     </div>
   );
 } 

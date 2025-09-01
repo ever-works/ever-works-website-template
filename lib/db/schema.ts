@@ -33,11 +33,13 @@ export const roles = pgTable("roles", {
   description: text("description"),
   status: text("status", { enum: ["active", "inactive"] }).default("active"),
   permissions: text("permissions").notNull(), // JSON string
+  is_admin: boolean("is_admin").notNull().default(false),
   created_by: text("created_by").default("system"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 }, (table) => ({
   statusIndex: index("roles_status_idx").on(table.status),
+  isAdminIndex: index("roles_is_admin_idx").on(table.is_admin),
   createdAtIndex: index("roles_created_at_idx").on(table.createdAt),
 }));
 
@@ -227,7 +229,6 @@ export const activityLogs = pgTable("activityLogs", {
   ipAddress: varchar("ip_address", { length: 45 }),
 }, (table) => [
   index("activity_logs_user_idx").on(table.userId),
-  index("activity_logs_client_idx").on(table.clientId),
   index("activity_logs_timestamp_idx").on(table.timestamp),
   index("activity_logs_action_idx").on(table.action)
 ]);

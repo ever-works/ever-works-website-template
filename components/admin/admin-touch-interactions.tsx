@@ -1,11 +1,10 @@
-import { ReactNode, useState, useRef, useEffect } from 'react';
+import React, { ReactNode, useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 // Design system constants for touch interactions
 const TOUCH_TARGET_SIZE = "min-h-[44px] min-w-[44px]";
 const TOUCH_FEEDBACK_STYLES = "active:scale-95 transition-transform duration-150";
 const SWIPE_THRESHOLD = 50;
-const SWIPE_DURATION = 300;
 
 // Touch-friendly button with proper sizing and feedback
 interface AdminTouchButtonProps {

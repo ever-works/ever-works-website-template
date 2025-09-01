@@ -18,10 +18,10 @@ interface ExtendedUser {
 	isClient?: boolean;
 }
 
-// Check if DATABASE_URL is set
-const isDatabaseAvailable = !!process.env.DATABASE_URL;
+// Check if DATABASE_URL is set and database is properly initialized
+const isDatabaseAvailable = !!process.env.DATABASE_URL && typeof db !== 'undefined' && db.isRealConnection && db.isRealConnection();
 
-// Only create the Drizzle adapter if DATABASE_URL is available
+// Only create the Drizzle adapter if we have a real database connection
 const drizzle = isDatabaseAvailable
 	? DrizzleAdapter(db, {
 			usersTable: users as any,

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdminStats } from "@/hooks/use-admin-stats";
 import { CheckCircle, Clock, XCircle } from "lucide-react";
 import { AdminPieChartSkeleton } from "./admin-loading-skeleton";
-import { AdminResponsiveText, AdminResponsiveSpacing } from "./admin-responsive";
+
 
 interface AdminSubmissionStatusProps {
   data: AdminStats['submissionStatusData'];

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdminStats } from "@/hooks/use-admin-stats";
 import { Trophy, Eye, ThumbsUp } from "lucide-react";
 import { AdminTableSkeleton } from "./admin-loading-skeleton";
-import { AdminResponsiveText, AdminResponsiveSpacing } from "./admin-responsive";
+
 
 interface AdminTopItemsProps {
   data: AdminStats['topItemsData'];
