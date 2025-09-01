@@ -2,14 +2,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdminStats } from "@/hooks/use-admin-stats";
 import { TrendingUp } from "lucide-react";
 import { AdminChartSkeleton } from "./admin-loading-skeleton";
+import { AdminResponsiveText, AdminResponsiveSpacing } from "./admin-responsive";
 
 // Design system constants for accessibility
 const CHART_TITLE_STYLES = "flex items-center space-x-2";
-const LEGEND_CONTAINER_STYLES = "flex items-center space-x-6";
+const LEGEND_CONTAINER_STYLES = "flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-6";
 const LEGEND_ITEM_STYLES = "flex items-center space-x-2";
-const CHART_CONTAINER_STYLES = "h-48 flex items-end space-x-1";
+const CHART_CONTAINER_STYLES = "h-40 sm:h-48 md:h-56 flex items-end space-x-1";
 const BAR_BASE_STYLES = "rounded-t opacity-80 hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-blue-500";
-const EMPTY_STATE_STYLES = "text-center py-8 text-gray-500 dark:text-gray-400";
+const EMPTY_STATE_STYLES = "text-center py-6 sm:py-8 text-gray-500 dark:text-gray-400";
 
 interface AdminActivityChartProps {
   data: AdminStats['activityTrendData'];

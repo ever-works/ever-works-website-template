@@ -20,6 +20,13 @@ import {
   AdminStatusAnnouncer,
   AdminAccessibleButton 
 } from "./admin-accessibility";
+import { 
+  AdminResponsiveGrid, 
+  AdminResponsiveCard, 
+  AdminResponsiveText,
+  AdminResponsiveSpacing 
+} from "./admin-responsive";
+import { AdminPullToRefresh } from "./admin-touch-interactions";
 
 // Design system constants
 const DASHBOARD_CONTAINER_STYLES = "space-y-8";
@@ -103,9 +110,10 @@ export function AdminDashboard() {
           </AdminLandmark>
         )}
 
-        {/* Stats Overview */}
-        <AdminLandmark as="section" label="Dashboard Statistics" id="dashboard-stats">
-          <AdminHeading level={2} visualLevel={3} className="mb-6">
+        <AdminPullToRefresh onRefresh={refetch}>
+          {/* Stats Overview */}
+          <AdminLandmark as="section" label="Dashboard Statistics" id="dashboard-stats">
+          <AdminHeading level={2} visualLevel={3} className="mb-4 md:mb-6">
             Dashboard Statistics
           </AdminHeading>
           <AdminErrorBoundary>
@@ -115,32 +123,32 @@ export function AdminDashboard() {
 
         {/* Charts Section */}
         <AdminLandmark as="section" label="Charts and Analytics" id="dashboard-charts">
-          <AdminHeading level={2} visualLevel={3} className="mb-6">
+          <AdminHeading level={2} visualLevel={3} className="mb-4 md:mb-6">
             Analytics Overview
           </AdminHeading>
-          <div className={GRID_TWO_COLS_STYLES}>
+          <AdminResponsiveGrid cols={2} gap="lg">
             <AdminErrorBoundary>
               <AdminActivityChart data={stats?.activityTrendData || []} isLoading={isLoading} />
             </AdminErrorBoundary>
             <AdminErrorBoundary>
               <AdminSubmissionStatus data={stats?.submissionStatusData || []} isLoading={isLoading} />
             </AdminErrorBoundary>
-          </div>
+          </AdminResponsiveGrid>
         </AdminLandmark>
 
         {/* Activity and Top Items */}
         <AdminLandmark as="section" label="Recent Activity and Top Items">
-          <AdminHeading level={2} visualLevel={3} className="mb-6">
+          <AdminHeading level={2} visualLevel={3} className="mb-4 md:mb-6">
             Recent Activity & Performance
           </AdminHeading>
-          <div className={GRID_TWO_COLS_STYLES}>
+          <AdminResponsiveGrid cols={2} gap="lg">
             <AdminErrorBoundary>
               <AdminRecentActivity data={stats?.recentActivity || []} isLoading={isLoading} />
             </AdminErrorBoundary>
             <AdminErrorBoundary>
               <AdminTopItems data={stats?.topItemsData || []} isLoading={isLoading} />
             </AdminErrorBoundary>
-          </div>
+          </AdminResponsiveGrid>
         </AdminLandmark>
 
         {/* Admin Features */}
@@ -150,6 +158,7 @@ export function AdminDashboard() {
           </AdminHeading>
           <AdminFeaturesGrid />
         </AdminLandmark>
+        </AdminPullToRefresh>
       </AdminLandmark>
     </>)
   );

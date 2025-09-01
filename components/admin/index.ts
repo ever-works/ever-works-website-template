@@ -31,4 +31,23 @@ export {
   AdminFocusTrap,
   AdminAccessibleButton
 } from "./admin-accessibility";
+export { 
+  AdminResponsiveGrid, 
+  AdminResponsiveCard, 
+  AdminResponsiveTable, 
+  AdminResponsiveNav, 
+  AdminResponsiveText, 
+  AdminResponsiveSpacing, 
+  AdminResponsiveButtonGroup, 
+  AdminResponsiveDataDisplay, 
+  AdminResponsiveChart 
+} from "./admin-responsive";
+export { 
+  AdminTouchButton, 
+  AdminSwipeableCard, 
+  AdminPullToRefresh, 
+  AdminTouchList, 
+  AdminTouchGrid, 
+  AdminTouchSearch 
+} from "./admin-touch-interactions";
 export type { AdminFeature } from "./types"; 
