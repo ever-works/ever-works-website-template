@@ -13,6 +13,13 @@ import { useAdminStats } from "@/hooks/use-admin-stats";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AdminErrorBoundary } from "./admin-error-boundary";
+import { 
+  AdminSkipLink, 
+  AdminLandmark, 
+  AdminHeading, 
+  AdminStatusAnnouncer,
+  AdminAccessibleButton 
+} from "./admin-accessibility";
 
 // Design system constants
 const DASHBOARD_CONTAINER_STYLES = "space-y-8";
@@ -32,72 +39,118 @@ export function AdminDashboard() {
   }
 
   const adminName = session?.user?.name || session?.user?.email || "Admin";
-
   const refreshIconClass = `h-4 w-4${isFetching ? ' animate-spin' : ''}`;
 
+  // Screen reader announcements
+  const loadingMessage = isLoading ? "Loading dashboard data..." : "";
+  const errorMessage = isError ? "Error loading dashboard data. Please try refreshing." : "";
+  const successMessage = stats && !isLoading && !isError ? "Dashboard data loaded successfully" : "";
+
   return (
-    <div className={DASHBOARD_CONTAINER_STYLES}>
-      {/* Welcome Section */}
-      <div className={HEADER_CONTAINER_STYLES}>
-        <AdminWelcomeSection adminName={adminName} />
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => refetch()}
-          disabled={isFetching}
-          className={REFRESH_BUTTON_STYLES}
-        >
-          <RefreshCw className={refreshIconClass} />
-          <span>Refresh</span>
-        </Button>
-      </div>
+    <>
+      {/* Skip navigation for keyboard users */}
+      <AdminSkipLink href="#main-content">Skip to main content</AdminSkipLink>
+      <AdminSkipLink href="#dashboard-stats">Skip to statistics</AdminSkipLink>
+      <AdminSkipLink href="#dashboard-charts">Skip to charts</AdminSkipLink>
+      <AdminSkipLink href="#admin-tools">Skip to admin tools</AdminSkipLink>
 
-      {/* Error State */}
-      {isError && (
-        <div className={ERROR_BOX_STYLES}>
-          <div className={ERROR_CONTENT_STYLES}>
-            <p className="text-sm">
-              {error instanceof Error ? error.message : "Failed to load admin statistics."}
-            </p>
-            <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
-              Retry
-            </Button>
+      {/* Status announcements for screen readers */}
+      <AdminStatusAnnouncer message={loadingMessage} />
+      <AdminStatusAnnouncer message={errorMessage} priority="assertive" />
+      <AdminStatusAnnouncer message={successMessage} />
+
+      <AdminLandmark as="main" label="Admin Dashboard" className={DASHBOARD_CONTAINER_STYLES} id="main-content">
+        {/* Dashboard Header */}
+        <AdminLandmark as="header" label="Dashboard Header" className={HEADER_CONTAINER_STYLES}>
+          <AdminWelcomeSection adminName={adminName} />
+          <AdminAccessibleButton
+            variant="secondary"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isFetching}
+            loading={isFetching}
+            aria-label={isFetching ? "Refreshing dashboard data" : "Refresh dashboard data"}
+            className={REFRESH_BUTTON_STYLES}
+          >
+            <RefreshCw className={refreshIconClass} aria-hidden="true" />
+            <span>Refresh</span>
+          </AdminAccessibleButton>
+        </AdminLandmark>
+
+        {/* Error State */}
+        {isError && (
+          <AdminLandmark 
+            as="section" 
+            label="Error notification"
+            role="alert"
+            aria-live="assertive"
+            className={ERROR_BOX_STYLES}
+          >
+            <div className={ERROR_CONTENT_STYLES}>
+              <p className="text-sm">
+                {error instanceof Error ? error.message : "Failed to load admin statistics."}
+              </p>
+              <AdminAccessibleButton 
+                variant="secondary" 
+                size="sm" 
+                onClick={() => refetch()} 
+                disabled={isFetching}
+                aria-label="Retry loading dashboard data"
+              >
+                Retry
+              </AdminAccessibleButton>
+            </div>
+          </AdminLandmark>
+        )}
+
+        {/* Stats Overview */}
+        <AdminLandmark as="section" label="Dashboard Statistics" id="dashboard-stats">
+          <AdminHeading level={2} visualLevel={3} className="mb-6">
+            Dashboard Statistics
+          </AdminHeading>
+          <AdminErrorBoundary>
+            <AdminStatsOverview stats={stats} isLoading={isLoading} />
+          </AdminErrorBoundary>
+        </AdminLandmark>
+
+        {/* Charts Section */}
+        <AdminLandmark as="section" label="Charts and Analytics" id="dashboard-charts">
+          <AdminHeading level={2} visualLevel={3} className="mb-6">
+            Analytics Overview
+          </AdminHeading>
+          <div className={GRID_TWO_COLS_STYLES}>
+            <AdminErrorBoundary>
+              <AdminActivityChart data={stats?.activityTrendData || []} isLoading={isLoading} />
+            </AdminErrorBoundary>
+            <AdminErrorBoundary>
+              <AdminSubmissionStatus data={stats?.submissionStatusData || []} isLoading={isLoading} />
+            </AdminErrorBoundary>
           </div>
-        </div>
-      )}
+        </AdminLandmark>
 
-      {/* Stats Overview */}
-      <AdminErrorBoundary>
-        <AdminStatsOverview stats={stats} isLoading={isLoading} />
-      </AdminErrorBoundary>
+        {/* Activity and Top Items */}
+        <AdminLandmark as="section" label="Recent Activity and Top Items">
+          <AdminHeading level={2} visualLevel={3} className="mb-6">
+            Recent Activity & Performance
+          </AdminHeading>
+          <div className={GRID_TWO_COLS_STYLES}>
+            <AdminErrorBoundary>
+              <AdminRecentActivity data={stats?.recentActivity || []} isLoading={isLoading} />
+            </AdminErrorBoundary>
+            <AdminErrorBoundary>
+              <AdminTopItems data={stats?.topItemsData || []} isLoading={isLoading} />
+            </AdminErrorBoundary>
+          </div>
+        </AdminLandmark>
 
-      {/* Charts Section */}
-      <div className={GRID_TWO_COLS_STYLES}>
-        <AdminErrorBoundary>
-          <AdminActivityChart data={stats?.activityTrendData || []} isLoading={isLoading} />
-        </AdminErrorBoundary>
-        <AdminErrorBoundary>
-          <AdminSubmissionStatus data={stats?.submissionStatusData || []} isLoading={isLoading} />
-        </AdminErrorBoundary>
-      </div>
-
-      {/* Activity and Top Items */}
-      <div className={GRID_TWO_COLS_STYLES}>
-        <AdminErrorBoundary>
-          <AdminRecentActivity data={stats?.recentActivity || []} isLoading={isLoading} />
-        </AdminErrorBoundary>
-        <AdminErrorBoundary>
-          <AdminTopItems data={stats?.topItemsData || []} isLoading={isLoading} />
-        </AdminErrorBoundary>
-      </div>
-
-      {/* Admin Features */}
-      <div>
-        <h2 className={ADMIN_TOOLS_TITLE_STYLES}>
-          Admin Tools
-        </h2>
-        <AdminFeaturesGrid />
-      </div>
-    </div>
+        {/* Admin Features */}
+        <AdminLandmark as="section" label="Admin Tools" id="admin-tools">
+          <AdminHeading level={2} visualLevel={3} className={ADMIN_TOOLS_TITLE_STYLES}>
+            Admin Tools
+          </AdminHeading>
+          <AdminFeaturesGrid />
+        </AdminLandmark>
+      </AdminLandmark>
+    </>)
   );
 } 

@@ -3,6 +3,11 @@ import { StatsCard } from "@/components/dashboard/stats-card";
 import { AdminStats } from "@/hooks/use-admin-stats";
 import { AdminGridSkeleton } from "./admin-loading-skeleton";
 
+// Design system constants for accessibility
+const STATS_GRID_STYLES = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6";
+const STATS_REGION_LABEL = "Key performance metrics";
+const LOADING_LABEL = "Loading statistics data";
+
 interface AdminStatsOverviewProps {
   stats: AdminStats | undefined;
   isLoading: boolean;
@@ -10,7 +15,11 @@ interface AdminStatsOverviewProps {
 
 export function AdminStatsOverview({ stats, isLoading }: AdminStatsOverviewProps) {
   if (isLoading) {
-    return <AdminGridSkeleton items={4} />;
+    return (
+      <div role="region" aria-label={LOADING_LABEL}>
+        <AdminGridSkeleton items={4} />
+      </div>
+    );
   }
 
   const growthPercentage = stats ? 
@@ -20,7 +29,11 @@ export function AdminStatsOverview({ stats, isLoading }: AdminStatsOverviewProps
     : 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div 
+      className={STATS_GRID_STYLES}
+      role="region"
+      aria-label={STATS_REGION_LABEL}
+    >
       <StatsCard
         title="Total Users"
         value={stats?.totalUsers || 0}
