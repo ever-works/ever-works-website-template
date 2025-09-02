@@ -159,7 +159,7 @@ export class AdminAnalyticsOptimizedRepository {
             'vote' as activity_type,
             COUNT(*) as count
           FROM votes 
-          WHERE created_at >= CURRENT_DATE - INTERVAL '${days} days'
+          WHERE created_at >= CURRENT_DATE - (${days}::int || ' days')::interval
           GROUP BY DATE(created_at)
           
           UNION ALL
@@ -170,7 +170,7 @@ export class AdminAnalyticsOptimizedRepository {
             COUNT(*) as count
           FROM comments 
           WHERE deleted_at IS NULL 
-            AND created_at >= CURRENT_DATE - INTERVAL '${days} days'
+            AND created_at >= CURRENT_DATE - (${days}::int || ' days')::interval
           GROUP BY DATE(created_at)
         )
         SELECT 
@@ -240,7 +240,8 @@ export class AdminAnalyticsOptimizedRepository {
         ORDER BY rank ASC
       `);
 
-      const topItems: TopItem[] = topItemsQuery.rows.map((item: any) => ({
+      const rows: any[] = Array.isArray((topItemsQuery as any).rows) ? (topItemsQuery as any).rows : [];
+      const topItems: TopItem[] = rows.map((item: any) => ({
         name: `Item ${item.item_id}`,
         views: 0, // Views not tracked
         votes: Number(item.vote_count),
@@ -284,7 +285,7 @@ export class AdminAnalyticsOptimizedRepository {
         (
           SELECT 
             'comment' as activity_type,
-            user_id as user_info,
+            "userId" as user_info,
             created_at as activity_time,
             'New comment added' as description
           FROM comments 
@@ -296,7 +297,7 @@ export class AdminAnalyticsOptimizedRepository {
         (
           SELECT 
             'vote' as activity_type,
-            user_id as user_info,
+            "userId" as user_info,
             created_at as activity_time,
             CONCAT('New ', vote_type, ' vote') as description
           FROM votes
@@ -307,7 +308,8 @@ export class AdminAnalyticsOptimizedRepository {
         LIMIT ${limit}
       `);
 
-      const activities: RecentActivity[] = recentActivityQuery.rows.map((row: any) => ({
+      const recentRows: any[] = Array.isArray((recentActivityQuery as any).rows) ? (recentActivityQuery as any).rows : [];
+      const activities: RecentActivity[] = recentRows.map((row: any) => ({
         type: row.activity_type as 'user_signup' | 'comment' | 'vote',
         description: row.description,
         timestamp: row.activity_time,
