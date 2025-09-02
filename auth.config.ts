@@ -11,6 +11,9 @@ const configureProviders = () => {
         enabled: true,
         clientId: process.env.GOOGLE_CLIENT_ID || '',
         clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+        options: {
+          allowDangerousEmailAccountLinking: true,
+        },
       } : { enabled: false },
       github: oauthProviders.find(p => p.id === 'github') ? {
         enabled: true,
