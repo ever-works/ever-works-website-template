@@ -2,31 +2,31 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { SessionProvider } from "next-auth/react";
 
 function AdminAuthGuard({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
-
-  // Debug logging
-  console.log("AdminAuthGuard:", { session, status, isAdmin: session?.user?.isAdmin });
+  const hasRedirectedRef = useRef(false);
 
   useEffect(() => {
-    if (status === "loading") return; // Still loading
+    if (status === "loading" || hasRedirectedRef.current) return;
 
     if (!session) {
       console.log("No session, redirecting to signin");
+      hasRedirectedRef.current = true;
       // Not authenticated, redirect to admin signin
-      router.push("/admin/auth/signin");
+      router.replace("/admin/auth/signin");
       return;
     }
 
     // Check if user is admin
     if (!session.user?.isAdmin) {
       console.log("User not admin, redirecting to dashboard");
+      hasRedirectedRef.current = true;
       // Not admin, redirect to dashboard
-      router.push("/dashboard");
+      router.replace("/dashboard");
       return;
     }
 
