@@ -70,6 +70,13 @@ export class AnalyticsBackgroundProcessor {
     this.jobStatuses.set(id, jobStatus);
 
     const timeout = setInterval(async () => {
+      // Check if job is already running to prevent overlapping executions
+      const currentStatus = this.jobStatuses.get(id);
+      if (currentStatus && currentStatus.status === 'running') {
+        console.log(`Job ${id} is already running, skipping execution`);
+        return;
+      }
+      
       await this.executeJob(id, job);
     }, interval);
 
