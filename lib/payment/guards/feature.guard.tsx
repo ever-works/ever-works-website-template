@@ -182,7 +182,7 @@ const FeatureGuard: React.FC<FeatureGuardProps> = memo(({
       isGracePeriod,
       reason
     }
-  }, [user?.plan, user?.planExpiresAt, user?.featureOverrides, user?.isAdmin, requiredPlan, featureId, allowOverride, respectGracePeriod])
+  }, [user, requiredPlan, featureId, allowOverride, respectGracePeriod])
 
   useEffect(() => {
     if (!accessResult.hasAccess && onAccessDenied) {
