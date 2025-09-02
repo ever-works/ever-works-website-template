@@ -120,9 +120,12 @@ export class AdminAnalyticsOptimizedRepository {
         FROM monthly_stats
         ORDER BY month_start ASC
       `);
+      const ugRows: any[] = Array.isArray((userGrowthQuery as any).rows)
+        ? (userGrowthQuery as any).rows
+        : (Array.isArray(userGrowthQuery as any) ? (userGrowthQuery as any) : []);
 
       // Transform the results
-      for (const row of userGrowthQuery.rows) {
+      for (const row of ugRows) {
         const monthStart = new Date(row.month_start);
         trends.push({
           month: monthStart.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
@@ -191,7 +194,10 @@ export class AdminAnalyticsOptimizedRepository {
         const dayKey = dayStart.toISOString().split('T')[0];
         
         // Find matching data or use 0
-        const dayData = activityQuery.rows.find((row: any) => row.activity_date === dayKey);
+        const aRows: any[] = Array.isArray((activityQuery as any).rows)
+          ? (activityQuery as any).rows
+          : (Array.isArray(activityQuery as any) ? (activityQuery as any) : []);
+        const dayData = aRows.find((row: any) => row.activity_date === dayKey);
         
         trends.push({
           day: dayStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
@@ -297,7 +303,7 @@ export class AdminAnalyticsOptimizedRepository {
         (
           SELECT 
             'vote' as activity_type,
-            "userId" as user_info,
+            userid as user_info,
             created_at as activity_time,
             CONCAT('New ', vote_type, ' vote') as description
           FROM votes

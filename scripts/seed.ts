@@ -4,6 +4,9 @@
 */
 
 import 'dotenv/config';
+import fs from 'fs';
+import path from 'path';
+import dotenv from 'dotenv';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import {
@@ -24,6 +27,11 @@ import {
 import { eq, sql } from 'drizzle-orm';
 
 async function main() {
+  // Prefer .env.local if present
+  const envLocalPath = path.resolve(process.cwd(), '.env.local');
+  if (fs.existsSync(envLocalPath)) {
+    dotenv.config({ path: envLocalPath });
+  }
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) {
     console.error('DATABASE_URL is required to run the seed script.');
@@ -83,7 +91,7 @@ async function main() {
     // Client profiles
     const profileRows: NewClientProfile[] = userRows.map((u, i) => ({
       id: crypto.randomUUID(),
-      userId: u.id,
+      userId: u.id as string,
       email: u.email!,
       name: `User ${i + 1}`,
       displayName: `User ${i + 1}`,
@@ -114,7 +122,7 @@ async function main() {
 
     // Assign roles: first user is admin
     const userRoleRows: NewUserRole[] = userRows.map((u, i) => ({
-      userId: u.id,
+      userId: u.id as string,
       roleId: i === 0 ? 'role-admin' : 'role-user',
       createdAt: now
     }));
