@@ -42,7 +42,7 @@ export function AdminChartSkeleton() {
               <Skeleton className="h-8 w-12" />
               <Skeleton 
                 className="w-full" 
-                style={{ height: `${Math.floor(Math.random() * 32) + 8 * 4}px` }} 
+                style={{ height: `${((i % 4) + 1) * 16 + 16}px` }} 
               />
             </div>
           ))}
