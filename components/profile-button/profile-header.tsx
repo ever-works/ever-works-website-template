@@ -34,12 +34,16 @@ function ProfileHeader({ user, displayRole, onlineStatus }: ProfileHeaderProps) 
           {/* Online status indicator */}
           <div
             aria-hidden="true"
-            className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white dark:border-gray-700 shadow-sm ${
-              isOnline ? 'bg-green-500' : 'bg-gray-400'
+            className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white dark:border-gray-700 shadow-sm transition-all duration-200 ${
+              isOnline ? 'bg-green-500 scale-100' : 'bg-gray-400 scale-90'
             }`}
+            title={`Status: ${onlineStatus}`}
           ></div>
           {isAdmin && (
-            <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-lg">
+            <div 
+              className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-lg animate-pulse"
+              title="Administrator"
+            >
               <Crown aria-hidden="true" className="w-3.5 h-3.5 text-white" />
             </div>
           )}

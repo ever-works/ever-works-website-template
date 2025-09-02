@@ -1,7 +1,7 @@
 "use client";
 import { Crown } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { memo, lazy, Suspense } from "react";
+import { memo, lazy, Suspense, useEffect } from "react";
 import type { RefObject } from "react";
 import { Avatar } from "../header/avatar";
 import { cn } from "@/lib/utils";
@@ -30,6 +30,10 @@ const MenuLoadingFallback = () => (
           <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
           <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-3/4"></div>
         </div>
+      </div>
+      <div className="mt-4 space-y-2">
+        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-2/3"></div>
       </div>
     </div>
   </div>
@@ -133,6 +137,20 @@ function ProfileButton() {
   const { handleLogout } = useLogoutOverlay();
   const { user, profilePath, isAdmin, displayRole, onlineStatus, isLoading } = useUserUtils();
 
+  // Add keyboard navigation support
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isProfileMenuOpen) {
+        closeMenu();
+      }
+    };
+
+    if (isProfileMenuOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isProfileMenuOpen, closeMenu]);
+
   if (isLoading) {
     return (
       <div aria-busy="true" aria-live="polite">
@@ -143,6 +161,18 @@ function ProfileButton() {
 
   if (!user) {
     return null;
+  }
+
+  // Add error boundary for user data issues
+  if (!user.email || !user.name) {
+    console.warn('User data incomplete:', user);
+    return (
+      <div className="relative ml-3">
+        <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+          <span className="text-red-600 dark:text-red-400 text-sm font-medium">!</span>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -160,6 +190,15 @@ function ProfileButton() {
           openUserMenuLabel={t("header.OPEN_USER_MENU")}
         />
       </div>
+
+      {/* Add backdrop for better UX when menu is open */}
+      {isProfileMenuOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/20 dark:bg-black/40"
+          onClick={closeMenu}
+          aria-hidden="true"
+        />
+      )}
 
       {isProfileMenuOpen && (
         <Suspense fallback={<MenuLoadingFallback />}>
