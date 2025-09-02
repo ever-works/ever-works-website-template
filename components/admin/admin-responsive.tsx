@@ -289,12 +289,12 @@ export function AdminResponsiveDataDisplay({
 
   return (
     <div className={cn("flex flex-col sm:flex-row sm:items-center sm:justify-between", className)}>
-      <dt className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1 sm:mb-0">
+      <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1 sm:mb-0">
         {label}
-      </dt>
-      <dd className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+      </div>
+      <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
         {formatValue()}
-      </dd>
+      </div>
     </div>
   );
 }
