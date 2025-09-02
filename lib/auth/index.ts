@@ -19,7 +19,7 @@ interface ExtendedUser {
 }
 
 // Check if DATABASE_URL is set and database is properly initialized
-const isDatabaseAvailable = !!process.env.DATABASE_URL && typeof db !== 'undefined' && db.isRealConnection && db.isRealConnection();
+const isDatabaseAvailable = !!process.env.DATABASE_URL && typeof db !== 'undefined' && db.isRealConnection();
 
 // Only create the Drizzle adapter if we have a real database connection
 const drizzle = isDatabaseAvailable
