@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { LucideIcon } from "lucide-react";
 
 // Design system constants for accessibility
@@ -30,13 +31,18 @@ export function StatsCard({
   className = "",
   isLoading = false,
 }: StatsCardProps) {
+  const uid = useId();
+  const base = `${title.toLowerCase().replace(/\s+/g, '-')}-${uid}`;
+  const titleId = `${base}-title`;
+  const descId = `${base}-description`;
   if (isLoading) {
     return (
       <div 
         className={`${CARD_BASE_STYLES} ${className}`}
-        role="img" 
-        aria-label={`Loading ${title} statistic`}
+        aria-busy="true"
+        aria-live="polite"
       >
+        <span className="sr-only">{`Loading ${title} statistic`}</span>
         <div className="animate-pulse">
           <div className="flex items-center space-x-2">
             <div className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg">
@@ -60,9 +66,8 @@ export function StatsCard({
   return (
     <article 
       className={`${CARD_BASE_STYLES} ${className}`}
-      role="article"
-      aria-labelledby={`${title.toLowerCase().replace(/\s+/g, '-')}-title`}
-      aria-describedby={`${title.toLowerCase().replace(/\s+/g, '-')}-description`}
+      aria-labelledby={titleId}
+      {...(description ? { 'aria-describedby': descId } : {})}
     >
       <div className="flex items-center">
         <div className="flex-1">
@@ -72,32 +77,27 @@ export function StatsCard({
             </div>
             <div>
               <h3 
-                id={`${title.toLowerCase().replace(/\s+/g, '-')}-title`}
+                id={titleId}
                 className={TITLE_STYLES}
               >
                 {title}
               </h3>
-              <p 
-                className={VALUE_STYLES}
-                aria-label={`${title}: ${formattedValue}`}
-              >
+              <p className={VALUE_STYLES}>
                 {formattedValue}
               </p>
             </div>
           </div>
           {description && (
             <p 
-              id={`${title.toLowerCase().replace(/\s+/g, '-')}-description`}
+              id={descId}
               className={DESCRIPTION_STYLES}
             >
               {description}
             </p>
           )}
           {trend && (
-            <div 
-              className="mt-2 flex items-center space-x-1"
-              aria-label={trendDescription}
-            >
+            <div className="mt-2 flex items-center space-x-1">
+              <span className="sr-only">{trendDescription}</span>
               <span
                 className={`text-sm font-medium ${
                   trend.isPositive
