@@ -1,4 +1,4 @@
-import { forwardRef, HTMLAttributes } from 'react';
+import { forwardRef, HTMLAttributes, ButtonHTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 
 // Design system constants for accessibility
@@ -89,14 +89,9 @@ export function AdminStatusAnnouncer({
   priority?: 'polite' | 'assertive';
 }) {
   return (
-    <div
-      role="status"
-      aria-live={priority}
-      aria-atomic="true"
-      className="sr-only"
-    >
+    <output aria-live={priority} aria-atomic="true" className="sr-only">
       {message}
-    </div>
+    </output>
   );
 }
 
@@ -112,6 +107,8 @@ export function AdminFocusTrap({
 }) {
   return (
     <div
+      role="group"
+      tabIndex={-1}
       className={cn("focus-within:ring-1 focus-within:ring-blue-500", className)}
       onKeyDown={(e) => {
         if (!active) return;
@@ -149,12 +146,10 @@ export function AdminFocusTrap({
 }
 
 // Accessible button with proper focus styles
-interface AdminAccessibleButtonProps extends HTMLAttributes<HTMLButtonElement> {
+interface AdminAccessibleButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
-  disabled?: boolean;
   loading?: boolean;
-  type?: 'button' | 'submit' | 'reset';
 }
 
 export const AdminAccessibleButton = forwardRef<HTMLButtonElement, AdminAccessibleButtonProps>(
