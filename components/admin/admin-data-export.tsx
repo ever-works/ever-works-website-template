@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Download, FileText, Calendar, Clock, Settings, RefreshCw } from 'lucide-react';
+// Removed dummy data service; scheduled reports will be backed by DB seeding
 
 // Constants for className strings
 const EXPORT_CONTAINER_STYLES = "space-y-6";
@@ -32,15 +33,7 @@ interface ExportOption {
   action: () => void;
 }
 
-interface ScheduledReport {
-  id: string;
-  name: string;
-  schedule: string;
-  lastGenerated?: string;
-  nextGeneration?: string;
-  status: 'generated' | 'failed' | 'pending';
-  format: string;
-}
+
 
 export function AdminDataExport() {
   const [isExporting, setIsExporting] = useState(false);
@@ -48,45 +41,8 @@ export function AdminDataExport() {
   const [selectedFormat, setSelectedFormat] = useState<'csv' | 'json'>('csv');
   const [includeMetadata, setIncludeMetadata] = useState(true);
 
-  // Mock scheduled reports data
-  const scheduledReports: ScheduledReport[] = [
-    {
-      id: 'daily-activity',
-      name: 'Daily Activity Summary',
-      schedule: 'Daily at 9:00 AM',
-      lastGenerated: '2024-01-15 09:00 AM',
-      nextGeneration: '2024-01-16 09:00 AM',
-      status: 'generated',
-      format: 'CSV'
-    },
-    {
-      id: 'weekly-growth',
-      name: 'Weekly User Growth',
-      schedule: 'Weekly on Monday at 9:00 AM',
-      lastGenerated: '2024-01-15 09:00 AM',
-      nextGeneration: '2024-01-22 09:00 AM',
-      status: 'generated',
-      format: 'CSV'
-    },
-    {
-      id: 'monthly-comprehensive',
-      name: 'Monthly Comprehensive Report',
-      schedule: 'Monthly on 1st at 9:00 AM',
-      lastGenerated: '2024-01-01 09:00 AM',
-      nextGeneration: '2024-02-01 09:00 AM',
-      status: 'pending',
-      format: 'JSON'
-    },
-    {
-      id: 'quarterly-performance',
-      name: 'Quarterly Performance Review',
-      schedule: 'Quarterly on 1st at 9:00 AM',
-      lastGenerated: '2024-01-01 09:00 AM',
-      nextGeneration: '2024-04-01 09:00 AM',
-      status: 'pending',
-      format: 'CSV'
-    }
-  ];
+  // Placeholder until DB-backed scheduled reports are seeded
+  const scheduledReports: Array<{ id: string; name: string; schedule: string; format: string; status: string; lastGenerated?: string; nextGeneration?: string; recipients: string[]; }> = [];
 
   const exportOptions: ExportOption[] = [
     {

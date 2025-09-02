@@ -63,7 +63,7 @@ const ADMIN_FEATURES: AdminFeature[] = [
     icon: BarChart3,
     title: "Analytics",
     description: "View platform statistics and reports.",
-    href: "/admin/analytics",
+    href: "/admin",
     emoji: "📊"
   }
 ];

@@ -9,7 +9,6 @@ export { AdminSubmissionStatus } from "./admin-submission-status";
 export { AdminRecentActivity } from "./admin-recent-activity";
 export { AdminTopItems } from "./admin-top-items";
 export { AdminCharts } from "./admin-charts";
-export { AdminAnalyticsSimple } from "./admin-analytics-simple";
 export { AdminPerformanceMonitor } from "./admin-performance-monitor";
 export { AdminDataExport } from "./admin-data-export";
 export { AdminErrorBoundary, AdminErrorFallback } from "./admin-error-boundary";
@@ -54,4 +53,6 @@ export {
   AdminTouchGrid, 
   AdminTouchSearch 
 } from "./admin-touch-interactions";
-export type { AdminFeature } from "./types"; 
+export type { AdminFeature } from "./types";
+
+// Removed dummy analytics service export

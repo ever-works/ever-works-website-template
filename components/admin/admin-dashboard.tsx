@@ -10,6 +10,8 @@ import { AdminRecentActivity } from "./admin-recent-activity";
 import { AdminTopItems } from "./admin-top-items";
 import { AdminFeaturesGrid } from "./admin-features-grid";
 import { AdminWelcomeSection } from "./admin-welcome-section";
+import { AdminPerformanceMonitor } from "./admin-performance-monitor";
+import { AdminDataExport } from "./admin-data-export";
 import { 
   AdminSkipLink, 
   AdminLandmark, 
@@ -164,6 +166,26 @@ export function AdminDashboard() {
                 <AdminTopItems data={stats?.topItemsData || []} isLoading={false} />
               </AdminErrorBoundary>
             </AdminResponsiveGrid>
+          </AdminLandmark>
+
+          {/* Performance Monitor */}
+          <AdminLandmark as="section" label="Performance Monitor" id="performance-monitor">
+            <AdminHeading level={2} visualLevel={3} className="mb-4 md:mb-6">
+              Performance
+            </AdminHeading>
+            <AdminErrorBoundary>
+              <AdminPerformanceMonitor />
+            </AdminErrorBoundary>
+          </AdminLandmark>
+
+          {/* Data Export & Reports */}
+          <AdminLandmark as="section" label="Data Export and Reports" id="data-export">
+            <AdminHeading level={2} visualLevel={3} className="mb-4 md:mb-6">
+              Data Export & Reports
+            </AdminHeading>
+            <AdminErrorBoundary>
+              <AdminDataExport />
+            </AdminErrorBoundary>
           </AdminLandmark>
 
           {/* Admin Features */}

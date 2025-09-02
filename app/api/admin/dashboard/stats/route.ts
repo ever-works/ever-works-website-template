@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { AdminStatsRepository } from '@/lib/repositories/admin-stats.repository';
+import { AdminAnalyticsOptimizedRepository } from '@/lib/repositories/admin-analytics-optimized.repository';
 
 const adminStatsRepository = new AdminStatsRepository();
+const analyticsRepository = new AdminAnalyticsOptimizedRepository();
 
 export async function GET() {
   try {
@@ -20,6 +22,14 @@ export async function GET() {
     // This should be replaced with proper admin role verification
 
     const stats = await adminStatsRepository.getAllStats();
+
+    // Fetch analytics data for charts
+    const analytics = await analyticsRepository.getBatchAnalytics({
+      userGrowthMonths: 12,
+      activityTrendDays: 14,
+      topItemsLimit: 10,
+      recentActivityLimit: 20
+    });
 
     // Transform the data to match the expected frontend format
     const adminStats = {
@@ -52,11 +62,11 @@ export async function GET() {
         { status: 'Rejected', count: stats.submissions.rejectedSubmissions, color: '#EF4444' },
       ],
 
-      // Empty arrays for MVP - these will be implemented in future phases
-      userGrowthData: [],
-      activityTrendData: [],
-      topItemsData: [],
-      recentActivity: [],
+      // Analytics data for charts
+      userGrowthData: analytics.userGrowth,
+      activityTrendData: analytics.activityTrends,
+      topItemsData: analytics.topItems,
+      recentActivity: analytics.recentActivity,
     };
 
     return NextResponse.json({ success: true, data: adminStats });

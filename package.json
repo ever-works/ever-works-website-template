@@ -31,7 +31,8 @@
 		"check-env:silent": "node scripts/check-env.js --silent",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
-		"db:studio": "drizzle-kit studio"
+		"db:studio": "drizzle-kit studio",
+		"seed": "tsx scripts/seed.ts"
 	},
 	"dependencies": {
 		"@auth/drizzle-adapter": "^1.8.0",
