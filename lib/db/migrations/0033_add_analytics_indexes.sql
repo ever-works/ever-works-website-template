@@ -13,8 +13,8 @@ CREATE INDEX IF NOT EXISTS "comments_analytics_idx" ON "comments" USING btree ("
 -- Add index for top items ranking (item_id + created_at)
 CREATE INDEX IF NOT EXISTS "votes_item_ranking_idx" ON "votes" USING btree ("item_id", "created_at");
 
--- Add index for recent activity aggregation
-CREATE INDEX IF NOT EXISTS "activity_aggregation_idx" ON "users" USING btree ("created_at", "deleted_at");
+-- Note: activity_aggregation_idx removed - duplicate of users_analytics_idx
+-- The users_analytics_idx already covers (created_at, deleted_at) for users table
 
 -- Add index for newsletter analytics
 CREATE INDEX IF NOT EXISTS "newsletter_analytics_idx" ON "newsletterSubscriptions" USING btree ("is_active", "subscribed_at");
