@@ -221,7 +221,7 @@ export const authenticators = pgTable(
 
 export const activityLogs = pgTable("activityLogs", {
   id: serial("id").primaryKey(),
-  userId: text("userId").references(() => clientProfiles.id, { onDelete: "cascade" }), // For client activities
+  userId: text("userId").references(() => users.id, { onDelete: "cascade" }), // For user activities
   clientId: text("clientId").references(() => clientProfiles.id, { onDelete: "cascade" }), // For client activities
   action: text("action").notNull(),
   timestamp: timestamp("timestamp").notNull().defaultNow(),
