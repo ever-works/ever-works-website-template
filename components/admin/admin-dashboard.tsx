@@ -10,7 +10,6 @@ import { AdminSubmissionStatus } from "./admin-submission-status";
 import { AdminRecentActivity } from "./admin-recent-activity";
 import { AdminTopItems } from "./admin-top-items";
 import { AdminFeaturesGrid } from "./admin-features-grid";
-import { AdminWelcomeSection } from "./admin-welcome-section";
 import { AdminPerformanceMonitor } from "./admin-performance-monitor";
 import { AdminDataExport } from "./admin-data-export";
 import { 
@@ -26,8 +25,6 @@ import {
 import { AdminPullToRefresh } from "./admin-touch-interactions";
 
 // Design system constants
-const DASHBOARD_CONTAINER_STYLES = "min-h-screen bg-gray-50 dark:bg-gray-900";
-const HEADER_CONTAINER_STYLES = "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700";
 const REFRESH_BUTTON_STYLES = "flex items-center space-x-2";
 const ERROR_BOX_STYLES = "mx-6 mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg";
 const ERROR_CONTENT_STYLES = "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4";
@@ -45,9 +42,6 @@ export function AdminDashboard() {
     refetch, 
     isFetching 
   } = useAdminStats();
-
-  // Use default admin name
-  const adminName = "Admin";
 
   // Show loading state while fetching data
   if (isLoading) {
