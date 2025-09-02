@@ -32,7 +32,7 @@ const ICON_STYLES = "h-16 w-16";
 const TITLE_STYLES = "text-lg font-semibold";
 const DESCRIPTION_STYLES = "text-sm mb-6";
 
-interface AdminEmptyStateProps {
+export interface AdminEmptyStateProps {
   icon: LucideIcon;
   title: string;
   description: string;

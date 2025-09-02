@@ -1,4 +1,4 @@
-import { Component, ReactNode } from 'react';
+import { Component, ReactNode, type ErrorInfo } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,8 +11,8 @@ const ERROR_BUTTON_STYLES = "border-red-300 text-red-700 hover:bg-red-100 dark:b
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: any) => void;
+  fallback?: (error: Error, retry: () => void) => ReactNode;
+  onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
 interface State {
@@ -41,8 +41,8 @@ export class AdminErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback;
+      if (this.props.fallback && this.state.error) {
+        return this.props.fallback(this.state.error, this.handleRetry);
       }
 
       return (
@@ -80,6 +80,7 @@ export class AdminErrorBoundary extends Component<Props, State> {
 }
 
 // Functional component wrapper for easier use
+// Can be used as a fallback prop: fallback={(e, r) => <AdminErrorFallback error={e} retry={r} />}
 export function AdminErrorFallback({ 
   error, 
   retry 
