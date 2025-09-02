@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAdminStats } from "@/hooks/use-admin-stats";
 import { RefreshCw } from "lucide-react";
 import { AdminErrorBoundary } from "./admin-error-boundary";
@@ -43,6 +43,18 @@ export function AdminDashboard() {
     isFetching 
   } = useAdminStats();
 
+  // Screen reader announcements (driven by fetch transitions)
+  const [srMessage, setSrMessage] = useState("");
+  useEffect(() => {
+    if (isFetching) {
+      setSrMessage("Refreshing dashboard data…");
+    } else if (isError) {
+      setSrMessage("Error loading dashboard data. Please try refreshing.");
+    } else if (stats) {
+      setSrMessage("Dashboard data loaded successfully.");
+    }
+  }, [isFetching, isError, stats]);
+
   // Show loading state while fetching data
   if (isLoading) {
     return (
@@ -63,11 +75,6 @@ export function AdminDashboard() {
     await refetch();
   };
 
-  // Screen reader announcements
-  const loadingMessage = isLoading ? "Loading dashboard data..." : "";
-  const errorMessage = isError ? "Error loading dashboard data. Please try refreshing." : "";
-  const successMessage = stats && !isLoading && !isError ? "Dashboard data loaded successfully" : "";
-
   return (
     <>
       {/* Skip navigation for keyboard users */}
@@ -77,9 +84,7 @@ export function AdminDashboard() {
       <AdminSkipLink href="#admin-tools">Skip to admin tools</AdminSkipLink>
 
       {/* Status announcements for screen readers */}
-      <AdminStatusAnnouncer message={loadingMessage} />
-      <AdminStatusAnnouncer message={errorMessage} priority="assertive" />
-      <AdminStatusAnnouncer message={successMessage} />
+      <AdminStatusAnnouncer message={srMessage} priority={isError ? "assertive" : "polite"} />
 
       <div className="p-6 max-w-7xl mx-auto" id="main-content">
         {/* Gradient Header to match other admin pages */}
@@ -169,6 +174,7 @@ export function AdminDashboard() {
           </AdminLandmark>
         )}
 
+        {!isError && (
         <AdminPullToRefresh onRefresh={handleRefresh}>
           {/* Overview Tab */}
           {activeTab === 'overview' && (
@@ -261,6 +267,7 @@ export function AdminDashboard() {
             </section>
           )}
         </AdminPullToRefresh>
+        )}
       </div>
     </>
   );
