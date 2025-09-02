@@ -42,7 +42,8 @@ function ProfileMenu({
         MENU_STYLES.CONTAINER.base,
         MENU_STYLES.CONTAINER.background,
         MENU_STYLES.CONTAINER.border,
-        MENU_STYLES.CONTAINER.animation
+        MENU_STYLES.CONTAINER.animation,
+        "max-h-[calc(100vh-2rem)]" // Ensure menu doesn't exceed viewport height
       )}
       role="menu"
       aria-orientation="vertical"

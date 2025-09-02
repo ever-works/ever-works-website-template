@@ -43,7 +43,7 @@ function MenuItems({ user, profilePath, onItemClick }: MenuItemsProps) {
 
   if (isAdmin) {
     return (
-      <div className="py-1">
+      <div className="py-1 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
         <Link
           href="/admin"
           className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 transition-all duration-200"
@@ -176,7 +176,7 @@ function MenuItems({ user, profilePath, onItemClick }: MenuItemsProps) {
   }
 
   return (
-    <div className="py-1">
+    <div className="py-1 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
       <Link
         href={profilePath}
         className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 transition-all duration-200"
