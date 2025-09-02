@@ -88,47 +88,37 @@ export function AdminActivityChart({ data, isLoading }: AdminActivityChartProps)
           </div>
 
           {/* Legend */}
-          <div className={LEGEND_CONTAINER_STYLES} role="img" aria-label="Chart legend">
-            <div className={LEGEND_ITEM_STYLES}>
+          <ul className={LEGEND_CONTAINER_STYLES} aria-label="Chart legend">
+            <li className={LEGEND_ITEM_STYLES}>
               <div className="w-3 h-3 bg-blue-500 rounded-full" aria-hidden="true"></div>
               <span className="text-sm text-gray-600 dark:text-gray-400">Views</span>
-            </div>
-            <div className={LEGEND_ITEM_STYLES}>
+            </li>
+            <li className={LEGEND_ITEM_STYLES}>
               <div className="w-3 h-3 bg-green-500 rounded-full" aria-hidden="true"></div>
               <span className="text-sm text-gray-600 dark:text-gray-400">Votes</span>
-            </div>
-            <div className={LEGEND_ITEM_STYLES}>
+            </li>
+            <li className={LEGEND_ITEM_STYLES}>
               <div className="w-3 h-3 bg-purple-500 rounded-full" aria-hidden="true"></div>
               <span className="text-sm text-gray-600 dark:text-gray-400">Comments</span>
-            </div>
-          </div>
+            </li>
+          </ul>
 
           {/* Chart */}
-          <div className={CHART_CONTAINER_STYLES} role="img" aria-label="Bar chart visualization">
-            {data.map((item, index) => (
-              <div 
-                key={index} 
+          <ul className={CHART_CONTAINER_STYLES} aria-label="Chart data by day">
+            {data.map((item) => (
+              <li 
+                key={item.day}
                 className="flex-1 flex flex-col items-center space-y-1"
-                role="group"
                 aria-label={`${item.day}: ${item.views} views, ${item.votes} votes, ${item.comments} comments`}
               >
                 {/* Bars */}
-                <div className="w-full flex items-end space-x-0.5 h-40">
+                <div className="w-full flex items-end space-x-0.5 h-40" aria-hidden="true">
                   <div 
                     className={`bg-blue-500 ${BAR_BASE_STYLES}`}
                     style={{ 
                       height: `${(item.views / maxValue) * 100}%`,
                       minHeight: '2px',
                       width: '30%'
-                    }}
-                    role="img"
-                    aria-label={`Views: ${item.views}`}
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        // Could announce detailed info or trigger action
-                      }
                     }}
                   />
                   <div 
@@ -138,15 +128,6 @@ export function AdminActivityChart({ data, isLoading }: AdminActivityChartProps)
                       minHeight: '2px',
                       width: '30%'
                     }}
-                    role="img"
-                    aria-label={`Votes: ${item.votes}`}
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        // Could announce detailed info or trigger action
-                      }
-                    }}
                   />
                   <div 
                     className={`bg-purple-500 ${BAR_BASE_STYLES}`}
@@ -155,24 +136,15 @@ export function AdminActivityChart({ data, isLoading }: AdminActivityChartProps)
                       minHeight: '2px',
                       width: '30%'
                     }}
-                    role="img"
-                    aria-label={`Comments: ${item.comments}`}
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        // Could announce detailed info or trigger action
-                      }
-                    }}
                   />
                 </div>
                 {/* Day label */}
                 <span className="text-xs text-gray-500 dark:text-gray-400" aria-hidden="true">
                   {item.day}
                 </span>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </CardContent>
     </Card>
