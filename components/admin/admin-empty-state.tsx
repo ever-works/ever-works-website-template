@@ -59,7 +59,7 @@ export function AdminEmptyState({
     <Card className={`${styles.card} ${className}`}>
       <CardHeader className="text-center">
         <div className={ICON_CONTAINER_STYLES}>
-          <Icon className={`${ICON_STYLES} ${styles.icon}`} />
+          <Icon aria-hidden="true" focusable="false" className={`${ICON_STYLES} ${styles.icon}`} />
         </div>
         <CardTitle className={`${TITLE_STYLES} ${styles.title}`}>
           {title}

@@ -11,7 +11,7 @@ const SKELETON_CONTENT_STYLES = "flex-1";
 // Stats Card Skeleton
 export function AdminStatsCardSkeleton() {
   return (
-    <div className={STATS_CARD_STYLES}>
+    <div role="status" aria-live="polite" aria-label="Loading" className={STATS_CARD_STYLES}>
       <div className={SKELETON_CONTAINER_STYLES}>
         <div className={`${SKELETON_ICON_CONTAINER_STYLES} ${SHIMMER_STYLES}`}>
           <div className="h-5 w-5 bg-gray-300 dark:bg-gray-600 rounded"></div>
@@ -28,7 +28,7 @@ export function AdminStatsCardSkeleton() {
 // Chart Skeleton
 export function AdminChartSkeleton() {
   return (
-    <Card>
+    <Card role="status" aria-live="polite" aria-label="Loading chart">
       <CardHeader>
         <div className="flex items-center space-x-2">
           <Skeleton className="h-5 w-5" />
@@ -55,7 +55,7 @@ export function AdminChartSkeleton() {
 // Activity List Skeleton
 export function AdminActivityListSkeleton({ itemCount = 4 }: { itemCount?: number }) {
   return (
-    <Card>
+    <Card role="status" aria-live="polite" aria-label="Loading activity">
       <CardHeader>
         <Skeleton className="h-6 w-32" />
       </CardHeader>
@@ -79,7 +79,7 @@ export function AdminActivityListSkeleton({ itemCount = 4 }: { itemCount?: numbe
 // Table Skeleton
 export function AdminTableSkeleton({ rows = 5, columns = 3 }: { rows?: number; columns?: number }) {
   return (
-    <Card>
+    <Card role="status" aria-live="polite" aria-label="Loading table">
       <CardHeader>
         <Skeleton className="h-6 w-32" />
       </CardHeader>
@@ -108,7 +108,7 @@ export function AdminTableSkeleton({ rows = 5, columns = 3 }: { rows?: number; c
 // Pie Chart Skeleton
 export function AdminPieChartSkeleton() {
   return (
-    <Card>
+    <Card role="status" aria-live="polite" aria-label="Loading chart">
       <CardHeader>
         <Skeleton className="h-6 w-40" />
       </CardHeader>
@@ -143,7 +143,7 @@ export function AdminGridSkeleton({
   className?: string; 
 }) {
   return (
-    <div className={className}>
+    <div role="status" aria-live="polite" aria-label="Loading overview" className={className}>
       {Array.from({ length: items }, (_, i) => (
         <AdminStatsCardSkeleton key={i} />
       ))}
