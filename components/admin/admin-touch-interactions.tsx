@@ -56,6 +56,7 @@ export function AdminTouchButton({
     <button
       onClick={onClick}
       disabled={disabled}
+      type="button"
       className={cn(
         "inline-flex items-center justify-center rounded-lg font-medium",
         "transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
@@ -160,6 +161,7 @@ export function AdminPullToRefresh({
   const isPulling = useRef(false);
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    if (isRefreshing) return;
     if (containerRef.current?.scrollTop === 0) {
       startY.current = e.touches[0].clientY;
       isPulling.current = true;
@@ -179,7 +181,7 @@ export function AdminPullToRefresh({
   };
 
   const handleTouchEnd = async () => {
-    if (!isPulling.current) return;
+    if (!isPulling.current || isRefreshing) return;
 
     if (pullDistance > 50) {
       setIsRefreshing(true);
@@ -309,6 +311,7 @@ interface AdminTouchSearchProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  loading?: boolean;
   className?: string;
 }
 
@@ -316,6 +319,7 @@ export function AdminTouchSearch({
   value, 
   onChange, 
   placeholder = "Search...",
+  loading = false,
   className = '' 
 }: AdminTouchSearchProps) {
   return (
@@ -325,6 +329,7 @@ export function AdminTouchSearch({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
+        aria-busy={loading}
         className={cn(
           "w-full px-4 py-3 text-base",
           "border border-gray-300 dark:border-gray-600 rounded-lg",
@@ -334,11 +339,11 @@ export function AdminTouchSearch({
           TOUCH_TARGET_SIZE
         )}
       />
-      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      </div>
+      {loading && (
+        <div className="absolute right-3 top-1/2 -translate-y-1/2" aria-hidden="true">
+          <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
     </div>
   );
 }
