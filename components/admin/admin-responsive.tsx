@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useId, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -74,14 +74,16 @@ export function AdminResponsiveCard({
 // Responsive table that stacks on mobile
 interface AdminResponsiveTableProps {
   headers: string[];
-  children: ReactNode;
+  children: ReactNode; // table rows (<tr>)
+  mobileRows?: ReactNode; // mobile-friendly rows (cards/list items)
   className?: string;
 }
 
 export function AdminResponsiveTable({ 
-  headers, 
-  children, 
-  className = '' 
+  headers,
+  children,
+  mobileRows,
+  className = ''
 }: AdminResponsiveTableProps) {
   return (
     <div className={cn("overflow-x-auto", className)}>
@@ -105,9 +107,11 @@ export function AdminResponsiveTable({
       </table>
 
       {/* Mobile cards */}
-      <div className="md:hidden space-y-3">
-        {children}
-      </div>
+      {mobileRows && (
+        <div className="md:hidden space-y-3" role="list">
+          {mobileRows}
+        </div>
+      )}
     </div>
   );
 }
@@ -125,6 +129,7 @@ export function AdminResponsiveNav({
   className = '' 
 }: AdminResponsiveNavProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const contentId = useId();
 
   return (
     <nav className={cn("relative", className)}>
@@ -137,7 +142,10 @@ export function AdminResponsiveNav({
           variant="ghost"
           size="sm"
           onClick={() => setIsOpen(!isOpen)}
+          type="button"
           aria-label={isOpen ? "Close navigation" : "Open navigation"}
+          aria-expanded={isOpen}
+          aria-controls={contentId}
           className="p-2"
         >
           {isOpen ? (
@@ -149,7 +157,7 @@ export function AdminResponsiveNav({
       </div>
 
       {/* Navigation content */}
-      <div className={cn(
+      <div id={contentId} className={cn(
         "md:block",
         isOpen ? "block" : "hidden"
       )}>
