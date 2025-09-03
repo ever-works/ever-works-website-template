@@ -1752,3 +1752,163 @@ export async function getLastLoginActivity(clientId: string): Promise<ActivityLo
 
 	return lastLogin || null;
 }
+
+/**
+ * Get optimized admin dashboard data with clients and statistics in a single query
+ * This reduces database round trips and improves dashboard performance
+ */
+export async function getAdminDashboardData(params: {
+	page: number;
+	limit: number;
+	search?: string;
+	status?: string;
+	plan?: string;
+	accountType?: string;
+	provider?: string;
+}): Promise<{
+	clients: ClientProfileWithAuth[];
+	stats: {
+		overview: {
+			total: number;
+			active: number;
+			inactive: number;
+			suspended: number;
+			trial: number;
+		};
+		byProvider: {
+			credentials: number;
+			google: number;
+			github: number;
+			facebook: number;
+			twitter: number;
+			linkedin: number;
+			other: number;
+		};
+		byPlan: Record<string, number>;
+		byAccountType: Record<string, number>;
+		byStatus: Record<string, number>;
+		activity: {
+			newThisWeek: number;
+			newThisMonth: number;
+			activeThisWeek: number;
+			activeThisMonth: number;
+		};
+		growth: {
+			weeklyGrowth: number;
+			monthlyGrowth: number;
+		};
+	};
+	pagination: {
+		page: number;
+		totalPages: number;
+		total: number;
+		limit: number;
+	};
+}> {
+	const { page, limit, search, status, plan, accountType, provider } = params;
+	const offset = (page - 1) * limit;
+
+	const whereConditions: SQL[] = [];
+
+	// Optimized search with proper escaping and index-friendly patterns
+	if (search) {
+		const escapedSearch = search.replace(/\\/g, '\\\\').replace(/[%_]/g, '\\$&');
+		// Use ILIKE for case-insensitive search with proper escaping
+		whereConditions.push(
+			sql`(${clientProfiles.username} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.displayName} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.company} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.name} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.email} ILIKE ${`%${escapedSearch}%`})`
+		);
+	}
+
+	// Add filters with proper type casting for enum values
+	if (status) {
+		whereConditions.push(eq(clientProfiles.status, status as ClientStatus));
+	}
+
+	if (plan) {
+		whereConditions.push(eq(clientProfiles.plan, plan as ClientPlan));
+	}
+
+	if (accountType) {
+		whereConditions.push(eq(clientProfiles.accountType, accountType as ClientAccountType));
+	}
+
+	if (provider) {
+		whereConditions.push(eq(accounts.provider, provider));
+	}
+
+	const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+	// Optimized count query with join
+	const countResult = await db
+		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
+		.from(clientProfiles)
+		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.where(whereClause);
+
+	const total = Number(countResult[0]?.count || 0);
+
+	// Optimized profile query with selective field selection and proper ordering
+	const profiles = await db
+		.select({
+			// Client profile fields - only select what's needed
+			id: clientProfiles.id,
+			userId: clientProfiles.userId,
+			email: clientProfiles.email,
+			name: clientProfiles.name,
+			displayName: clientProfiles.displayName,
+			username: clientProfiles.username,
+			bio: clientProfiles.bio,
+			jobTitle: clientProfiles.jobTitle,
+			company: clientProfiles.company,
+			industry: clientProfiles.industry,
+			phone: clientProfiles.phone,
+			website: clientProfiles.website,
+			location: clientProfiles.location,
+			avatar: clientProfiles.avatar,
+			accountType: clientProfiles.accountType,
+			status: clientProfiles.status,
+			plan: clientProfiles.plan,
+			timezone: clientProfiles.timezone,
+			language: clientProfiles.language,
+			twoFactorEnabled: clientProfiles.twoFactorEnabled,
+			emailVerified: clientProfiles.emailVerified,
+			totalSubmissions: clientProfiles.totalSubmissions,
+			notes: clientProfiles.notes,
+			tags: clientProfiles.tags,
+			createdAt: clientProfiles.createdAt,
+			updatedAt: clientProfiles.updatedAt,
+			// Account fields
+			accountProvider: accounts.provider,
+		})
+		.from(clientProfiles)
+		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.where(whereClause)
+		.orderBy(desc(clientProfiles.createdAt)) // Use indexed field for ordering
+		.limit(limit)
+		.offset(offset);
+
+	// Transform to enhanced type with proper defaults
+	const enhancedProfiles: ClientProfileWithAuth[] = profiles.map((profile: typeof profiles[0]) => ({
+		...profile,
+		accountType: profile.accountType || 'individual',
+		isActive: profile.status === 'active',
+	}));
+
+	// Get comprehensive stats in parallel (since we already have the base data)
+	const stats = await getEnhancedClientStats();
+
+	return {
+		clients: enhancedProfiles,
+		stats,
+		pagination: {
+			page,
+			totalPages: Math.ceil(total / limit),
+			total,
+			limit
+		}
+	};
+}

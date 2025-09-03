@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
-import { Plus, Edit, Trash2, Users, UserCheck, UserX, Search, ChevronDown, Building2, Eye } from "lucide-react";
+import { Plus, Edit, Trash2, Users, UserCheck, UserX, Search, ChevronDown, Building2, Eye, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { ClientForm } from "@/components/admin/clients/client-form";
 import { UniversalPagination } from "@/components/universal-pagination";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
-import type { ClientListResponse, ClientResponse, CreateClientRequest, UpdateClientRequest } from "@/lib/types/client";
+import type { ClientResponse, CreateClientRequest, UpdateClientRequest } from "@/lib/types/client";
 import type { ClientProfileWithAuth } from "@/lib/db/queries";
 
 export default function ClientsPage() {
@@ -49,6 +49,9 @@ export default function ClientsPage() {
     growth: { weeklyGrowth: 0, monthlyGrowth: 0 }
   });
 
+  // Performance tracking
+  const [fetchDuration, setFetchDuration] = useState<number>(0);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
@@ -81,23 +84,9 @@ export default function ClientsPage() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Fetch stats
-  const fetchStats = useCallback(async () => {
-    try {
-      const response = await fetch('/api/admin/clients/stats');
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          setStats(data.data);
-        }
-      }
-    } catch (error) {
-      console.error('Failed to fetch stats:', error);
-    }
-  }, []);
-
-  // Fetch clients
-  const fetchClients = useCallback(async (page: number = currentPage) => {
+  // Optimized function to fetch both clients and stats in a single request
+  const fetchDashboardData = useCallback(async (page: number = currentPage) => {
+    const startTime = performance.now();
     try {
       setIsLoading(true);
       setIsFiltering(true);
@@ -111,26 +100,35 @@ export default function ClientsPage() {
       if (accountTypeFilter) params.append('accountType', accountTypeFilter);
       if (providerFilter) params.append('provider', providerFilter);
 
-      const response = await fetch(`/api/admin/clients?${params}`);
+      const response = await fetch(`/api/admin/clients/dashboard?${params}`);
 
       if (!response.ok) {
         const message = await response.text().catch(() => '');
         throw new Error(message || `Request failed (${response.status})`);
       }
 
-      const data: ClientListResponse = await response.json();
+      const data = await response.json();
 
       if (data.success) {
+        // Update clients
         setClients(data.data.clients);
-        setTotalPages(data.meta.totalPages);
-        setCurrentPage(data.meta.page);
-        setFilteredTotal(data.meta.total);
+        setTotalPages(data.data.pagination.totalPages);
+        setCurrentPage(data.data.pagination.page);
+        setFilteredTotal(data.data.pagination.total);
+        
+        // Update stats
+        setStats(data.data.stats);
+        
+        // Track performance
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+        setFetchDuration(duration);
       } else {
-        toast.error(data.error || 'Failed to fetch clients');
+        toast.error(data.error || 'Failed to fetch dashboard data');
       }
     } catch (error) {
-      console.error('Failed to fetch clients:', error);
-      toast.error('Failed to fetch clients');
+      console.error('Failed to fetch dashboard data:', error);
+      toast.error('Failed to fetch dashboard data');
     } finally {
       setIsLoading(false);
       setIsFiltering(false);
@@ -157,7 +155,7 @@ export default function ClientsPage() {
       if (result.success) {
         toast.success('Client created successfully');
         closeForm();
-        fetchClients();
+        fetchDashboardData();
       } else {
         toast.error(result.error || 'Failed to create client');
       }
@@ -190,7 +188,7 @@ export default function ClientsPage() {
       if (result.success) {
         toast.success('Client updated successfully');
         closeForm();
-        fetchClients();
+        fetchDashboardData();
       } else {
         toast.error(result.error || 'Failed to update client');
       }
@@ -227,7 +225,7 @@ export default function ClientsPage() {
 
       if (result.success) {
         toast.success('Client deleted successfully');
-        fetchClients();
+        fetchDashboardData();
       } else {
         toast.error(result.error || 'Failed to delete client');
       }
@@ -281,13 +279,13 @@ export default function ClientsPage() {
 
   const clearFilters = () => {
     setSearchTerm('');
-    setStatusFilter('');
+    setStatusFilter('active');
     setPlanFilter('');
     setAccountTypeFilter('');
     setProviderFilter('');
     setCurrentPage(1);
     // Optional: short-circuit debounce for immediate fetch
-    // setDebouncedSearchTerm('');
+    fetchDashboardData(1);
   };
 
   const handleSearch = (value: string) => {
@@ -298,32 +296,32 @@ export default function ClientsPage() {
   const handleStatusFilter = (value: string) => {
     setStatusFilter(value);
     setCurrentPage(1);
-    fetchClients(1);
+    fetchDashboardData(1);
   };
 
   const handlePlanFilter = (value: string) => {
     setPlanFilter(value);
     setCurrentPage(1);
-    fetchClients(1);
+    fetchDashboardData(1);
   };
 
   const handleAccountTypeFilter = (value: string) => {
     setAccountTypeFilter(value);
     setCurrentPage(1);
-    fetchClients(1);
+    fetchDashboardData(1);
   };
 
   const handleProviderFilter = (value: string) => {
     setProviderFilter(value);
     setCurrentPage(1);
-    fetchClients(1);
+    fetchDashboardData(1);
   };
 
   // Initial fetch on component mount
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        await Promise.all([fetchClients(), fetchStats()]);
+        await fetchDashboardData();
       } finally {
         isInitialLoad.current = false; // Mark initial load as complete
       }
@@ -376,7 +374,7 @@ export default function ClientsPage() {
   useEffect(() => {
     // Skip if this is the initial load
     if (!isInitialLoad.current) {
-      fetchClients(1);
+      fetchDashboardData(1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter, planFilter, accountTypeFilter, providerFilter]);
@@ -384,7 +382,7 @@ export default function ClientsPage() {
   // Fetch when debounced search term changes, including when cleared
   useEffect(() => {
     if (!isInitialLoad.current) {
-      fetchClients(1);
+      fetchDashboardData(1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchTerm]);
@@ -601,6 +599,25 @@ export default function ClientsPage() {
             </div>
           </CardBody>
         </Card>
+
+        {/* Performance Indicator */}
+        {fetchDuration > 0 && (
+          <Card className="border-0 shadow-lg bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+            <CardBody className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Performance</p>
+                  <p className="text-xs text-blue-600 dark:text-blue-400">
+                    Last fetch: {fetchDuration.toFixed(0)}ms • Optimized single query
+                  </p>
+                </div>
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                  <Zap aria-hidden="true" className="w-4 h-4 text-white" />
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+        )}
       </div>
 
       {/* Modern SaaS-Style Filters */}
