@@ -84,7 +84,7 @@ export function AdminActivityChart({ data, isLoading }: AdminActivityChartProps)
         <div className="space-y-4">
           {/* Screen reader summary */}
           <div id="activity-chart-details" className="sr-only">
-            {chartSummary}. Use arrow keys to navigate through individual data points.
+            {chartSummary}.
           </div>
 
           {/* Legend */}
