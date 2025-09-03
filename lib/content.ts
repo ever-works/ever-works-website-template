@@ -456,7 +456,7 @@ function cleanExpiredCache(): void {
  * @param useCache - Whether to use caching (default: true)
  * @returns Promise<SimilarItem[]> - Array of similar items with scores
  */
-export async function fetchItemBySlug(
+export async function fetchSimilarItems(
 	currentItem: ItemData,
 	maxResults: number = 6,
 	options: FetchOptions = {},

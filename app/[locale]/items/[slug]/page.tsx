@@ -1,4 +1,4 @@
-import { fetchItem, fetchItemBySlug } from "@/lib/content";
+import { fetchItem, fetchSimilarItems } from "@/lib/content";
 import { notFound } from "next/navigation";
 import { getCategoriesName } from "@/lib/utils";
 import { getTranslations } from "next-intl/server";
@@ -42,7 +42,7 @@ export default async function ItemDetails({
 
     const { meta, content } = item;
     const categoryName = getCategoriesName(meta.category);
-    const similarItems = await fetchItemBySlug(meta, 6, { lang: locale }).then((items) => items.flatMap((item) => item.item));
+    const similarItems = await fetchSimilarItems(meta, 6, { lang: locale }).then((items) => items.flatMap((item) => item.item));
 
 
     const metaWithVideo = {
