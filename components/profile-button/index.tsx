@@ -171,17 +171,6 @@ function ProfileButton() {
     return null;
   }
 
-  // Add error boundary for user data issues
-  if (!user.email || !user.name) {
-    return (
-      <div className="relative ml-3" role="alert" aria-live="polite" aria-label="User data incomplete: missing name or email">
-        <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
-          <span className="text-red-600 dark:text-red-400 text-sm font-medium">!</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="relative ml-3" role="none">
       <div>
