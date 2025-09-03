@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
-import { Plus, Edit, Trash2, Users, UserCheck, UserX, Search, ChevronDown, Building2, Eye, Zap } from "lucide-react";
+import { Button, Card, CardBody, Chip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Select, SelectItem, Input } from "@heroui/react";
+import { Plus, Edit, Trash2, Users, UserCheck, Search, Building2, Eye, Shield, TrendingUp, Filter } from "lucide-react";
 import { toast } from "sonner";
 import { ClientForm } from "@/components/admin/clients/client-form";
 import { UniversalPagination } from "@/components/universal-pagination";
@@ -27,7 +27,6 @@ export default function ClientsPage() {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [filteredTotal, setFilteredTotal] = useState(0);
   const [limit] = useState(10);
 
   // Filter state
@@ -55,17 +54,28 @@ export default function ClientsPage() {
     growth: { weeklyGrowth: 0, monthlyGrowth: 0 }
   });
 
-  // Performance tracking
-  const [fetchDuration, setFetchDuration] = useState<number>(0);
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+  const { isOpen: isFilterModalOpen, onOpen: onOpenFilterModal, onClose: onCloseFilterModal } = useDisclosure();
 
   // Debounced search term
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
 
   // Track if this is the initial load
   const isInitialLoad = useRef(true);
+
+  // Calculate active filter count
+  const activeFilterCount = [
+    searchTerm,
+    statusFilter !== 'active' ? statusFilter : null,
+    planFilter,
+    accountTypeFilter,
+    providerFilter,
+    createdAfter,
+    createdBefore,
+    updatedAfter,
+    updatedBefore,
+  ].filter(Boolean).length;
 
   const clearEditParam = useCallback(() => {
     if (typeof window === 'undefined') return;
@@ -92,7 +102,6 @@ export default function ClientsPage() {
 
   // Optimized function to fetch both clients and stats in a single request
   const fetchDashboardData = useCallback(async (page: number = currentPage) => {
-    const startTime = performance.now();
     try {
       setIsLoading(true);
       setIsFiltering(true);
@@ -110,7 +119,6 @@ export default function ClientsPage() {
       if (updatedAfter) params.append('updatedAfter', updatedAfter);
       if (updatedBefore) params.append('updatedBefore', updatedBefore);
 
-
       const response = await fetch(`/api/admin/clients/dashboard?${params}`);
 
       if (!response.ok) {
@@ -125,15 +133,9 @@ export default function ClientsPage() {
         setClients(data.data.clients);
         setTotalPages(data.data.pagination.totalPages);
         setCurrentPage(data.data.pagination.page);
-        setFilteredTotal(data.data.pagination.total);
         
         // Update stats
         setStats(data.data.stats);
-        
-        // Track performance
-        const endTime = performance.now();
-        const duration = endTime - startTime;
-        setFetchDuration(duration);
       } else {
         toast.error(data.error || 'Failed to fetch dashboard data');
       }
@@ -308,30 +310,6 @@ export default function ClientsPage() {
     setCurrentPage(1);
   };
 
-  const handleStatusFilter = (value: string) => {
-    setStatusFilter(value);
-    setCurrentPage(1);
-    fetchDashboardData(1);
-  };
-
-  const handlePlanFilter = (value: string) => {
-    setPlanFilter(value);
-    setCurrentPage(1);
-    fetchDashboardData(1);
-  };
-
-  const handleAccountTypeFilter = (value: string) => {
-    setAccountTypeFilter(value);
-    setCurrentPage(1);
-    fetchDashboardData(1);
-  };
-
-  const handleProviderFilter = (value: string) => {
-    setProviderFilter(value);
-    setCurrentPage(1);
-    fetchDashboardData(1);
-  };
-
   // Initial fetch on component mount
   useEffect(() => {
     const loadInitialData = async () => {
@@ -500,13 +478,17 @@ export default function ClientsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* Total Clients */}
         <Card className="border-0 shadow-lg">
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Clients</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.overview.total}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  +{stats.activity.newThisWeek} this week
+                </p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                 <Users aria-hidden="true" className="w-6 h-6 text-white" />
@@ -515,12 +497,16 @@ export default function ClientsPage() {
           </CardBody>
         </Card>
 
+        {/* Active Clients */}
         <Card className="border-0 shadow-lg">
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Clients</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.overview.active}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {stats.overview.total > 0 ? Math.round((stats.overview.active / stats.overview.total) * 100) : 0}% of total
+                </p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
                 <UserCheck aria-hidden="true" className="w-6 h-6 text-white" />
@@ -529,65 +515,7 @@ export default function ClientsPage() {
           </CardBody>
         </Card>
 
-        <Card className="border-0 shadow-lg">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Inactive Clients</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.overview.inactive}</p>
-              </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center shadow-lg">
-                <UserX aria-hidden="true" className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card className="border-0 shadow-lg">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Suspended</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.overview.suspended}</p>
-              </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
-                <UserX aria-hidden="true" className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Enhanced Stats Cards */}
-        <Card className="border-0 shadow-lg">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">New This Week</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.activity.newThisWeek}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">+{stats.growth.weeklyGrowth}% growth</p>
-              </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Users aria-hidden="true" className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card className="border-0 shadow-lg">
-          <CardBody className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active This Month</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.activity.activeThisMonth}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Engaged users</p>
-              </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-                <UserCheck aria-hidden="true" className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-
+        {/* Top Provider */}
         <Card className="border-0 shadow-lg">
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
@@ -597,7 +525,8 @@ export default function ClientsPage() {
                   {(() => {
                     const providers = Object.entries(stats.byProvider);
                     const topProvider = providers.reduce((a, b) => a[1] > b[1] ? a : b);
-                    return topProvider[0].charAt(0).toUpperCase() + topProvider[0].slice(1);
+                    const providerName = topProvider[0] === 'credentials' ? 'Email' : topProvider[0].charAt(0).toUpperCase() + topProvider[0].slice(1);
+                    return providerName;
                   })()}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -608,31 +537,32 @@ export default function ClientsPage() {
                   })()}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Building2 aria-hidden="true" className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Shield aria-hidden="true" className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardBody>
         </Card>
 
-        {/* Performance Indicator */}
-        {fetchDuration > 0 && (
-          <Card className="border-0 shadow-lg bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
-            <CardBody className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Performance</p>
-                  <p className="text-xs text-blue-600 dark:text-blue-400">
-                    Last fetch: {fetchDuration.toFixed(0)}ms • Optimized single query
-                  </p>
-                </div>
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                  <Zap aria-hidden="true" className="w-4 h-4 text-white" />
-                </div>
+        {/* Growth Rate */}
+        <Card className="border-0 shadow-lg">
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Monthly Growth</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  +{stats.growth.monthlyGrowth}%
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {stats.activity.newThisMonth} new clients
+                </p>
               </div>
-            </CardBody>
-          </Card>
-        )}
+              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                <TrendingUp aria-hidden="true" className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </CardBody>
+        </Card>
       </div>
 
       {/* Modern SaaS-Style Filters */}
@@ -655,210 +585,85 @@ export default function ClientsPage() {
           )}
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Status Filter */}
-          <div className="relative">
-            <select
-              aria-label="Filter by status"
-              value={statusFilter}
-              onChange={(e) => handleStatusFilter(e.target.value)}
-              className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 pr-8 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
-            >
-              <option value="active">Active</option>
-              <option value="">All Status</option>
-              <option value="inactive">Inactive</option>
-              <option value="suspended">Suspended</option>
-              <option value="trial">Trial</option>
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
-          </div>
-
-          {/* Plan Filter */}
-          <div className="relative">
-            <select
-              aria-label="Filter by plan"
-              value={planFilter}
-              onChange={(e) => handlePlanFilter(e.target.value)}
-              className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 pr-8 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
-            >
-              <option value="">All Plans</option>
-              <option value="free">Free</option>
-              <option value="standard">Standard</option>
-              <option value="premium">Premium</option>
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
-          </div>
-
-          {/* Account Type Filter */}
-          <div className="relative">
-            <select
-              value={accountTypeFilter}
-              onChange={(e) => handleAccountTypeFilter(e.target.value)}
-              className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 pr-8 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
-            >
-              <option value="">All Types</option>
-              <option value="individual">Individual</option>
-              <option value="business">Business</option>
-              <option value="enterprise">Enterprise</option>
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
-          </div>
-
-          {/* Provider Filter */}
-          <div className="relative">
-            <select
-              aria-label="Filter by provider"
-              value={providerFilter}
-              onChange={(e) => handleProviderFilter(e.target.value)}
-              className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 pr-8 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
-            >
-              <option value="">All Providers</option>
-              <option value="google">Google</option>
-              <option value="facebook">Facebook</option>
-              <option value="twitter">Twitter</option>
-              <option value="linkedin">LinkedIn</option>
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
-          </div>
-
-          {/* Date Range Filters */}
-          <div className="flex flex-col gap-2">
-            <span className="text-xs font-medium text-gray-600 dark:text-gray-400 px-2">Date Filters</span>
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs text-gray-500 dark:text-gray-400">Created After</label>
-                <input
-                  type="date"
-                  aria-label="Filter by created after"
-                  value={createdAfter}
-                  onChange={(e) => setCreatedAfter(e.target.value)}
-                  className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-xs text-gray-500 dark:text-gray-400">Created Before</label>
-                <input
-                  type="date"
-                  aria-label="Filter by created before"
-                  value={createdBefore}
-                  onChange={(e) => setCreatedBefore(e.target.value)}
-                  className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-xs text-gray-500 dark:text-gray-400">Updated After</label>
-                <input
-                  type="date"
-                  aria-label="Filter by updated after"
-                  value={updatedAfter}
-                  onChange={(e) => setUpdatedAfter(e.target.value)}
-                  className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-xs text-gray-500 dark:text-gray-400">Updated Before</label>
-                <input
-                  type="date"
-                  aria-label="Filter by updated before"
-                  value={updatedBefore}
-                  onChange={(e) => setUpdatedBefore(e.target.value)}
-                  className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Active Filters Indicator */}
-        {(searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter || providerFilter || createdAfter || createdBefore || updatedAfter || updatedBefore) && (
-          <div className="flex items-center justify-between mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-            <span className="text-sm text-blue-700 dark:text-blue-300">
-              {(() => {
-                const count = [
-                  searchTerm && 'search',
-                  statusFilter !== 'active' && 'status',
-                  planFilter && 'plan',
-                  accountTypeFilter && 'type',
-                  providerFilter && 'provider',
-                  createdAfter && 'createdAfter',
-                  createdBefore && 'createdBefore',
-                  updatedAfter && 'updatedAfter',
-                  updatedBefore && 'updatedBefore',
-                ].filter(Boolean).length;
-                return `${count} filter${count !== 1 ? 's' : ''} applied`;
-              })()}
-            </span>
+        {/* Filter Button and Active Filters */}
+        <div className="flex items-center justify-between mb-4">
+          <Button
+            size="sm"
+            variant="flat"
+            color="secondary"
+            startContent={<Filter className="w-4 h-4" />}
+            onPress={onOpenFilterModal}
+          >
+            Filters
+            {activeFilterCount > 0 && (
+              <Chip size="sm" variant="flat" color="primary" className="ml-2">
+                {activeFilterCount}
+              </Chip>
+            )}
+          </Button>
+          
+          {activeFilterCount > 0 && (
             <Button
-              variant="light"
               size="sm"
+              variant="light"
               color="danger"
               onPress={clearFilters}
-              className="h-6 px-2 text-xs"
             >
               Clear all
             </Button>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* Results Summary */}
-        {!isLoading && (
-          <div className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-            <span>
-              Showing {clients.length} of {filteredTotal} {(searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter || providerFilter || createdAfter || createdBefore || updatedAfter || updatedBefore) ? 'filtered ' : ''}clients
-            </span>
-            {totalPages > 1 && (
-              <span>
-                Page {currentPage} of {totalPages}
-              </span>
+        {/* Active Filters Display */}
+        {activeFilterCount > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {searchTerm && (
+              <Chip variant="flat" color="primary" onClose={() => setSearchTerm('')}>
+                Search: &ldquo;{searchTerm}&rdquo;
+              </Chip>
+            )}
+            {statusFilter !== 'active' && (
+              <Chip variant="flat" color="secondary" onClose={() => setStatusFilter('active')}>
+                Status: {statusFilter}
+              </Chip>
+            )}
+            {planFilter && (
+              <Chip variant="flat" color="success" onClose={() => setPlanFilter('')}>
+                Plan: {planFilter}
+              </Chip>
+            )}
+            {accountTypeFilter && (
+              <Chip variant="flat" color="warning" onClose={() => setAccountTypeFilter('')}>
+                Type: {accountTypeFilter}
+              </Chip>
+            )}
+            {providerFilter && (
+              <Chip variant="flat" color="default" onClose={() => setProviderFilter('')}>
+                Provider: {providerFilter}
+              </Chip>
+            )}
+            {createdAfter && (
+              <Chip variant="flat" color="secondary" onClose={() => setCreatedAfter('')}>
+                Created after: {createdAfter}
+              </Chip>
+            )}
+            {createdBefore && (
+              <Chip variant="flat" color="secondary" onClose={() => setCreatedBefore('')}>
+                Created before: {createdBefore}
+              </Chip>
+            )}
+            {updatedAfter && (
+              <Chip variant="flat" color="secondary" onClose={() => setUpdatedAfter('')}>
+                Updated after: {updatedAfter}
+              </Chip>
+            )}
+            {updatedBefore && (
+              <Chip variant="flat" color="secondary" onClose={() => setUpdatedBefore('')}>
+                Updated before: {updatedBefore}
+              </Chip>
             )}
           </div>
         )}
-
-        {/* Provider Distribution Overview */}
-        <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
-          <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Authentication Provider Distribution</h4>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {Object.entries(stats.byProvider).map(([provider, count]) => (
-              <div key={provider} className="text-center">
-                <div className="text-lg font-bold text-gray-900 dark:text-white">{count}</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 capitalize">
-                  {provider === 'credentials' ? 'Email/Password' : provider}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Plan & Account Type Overview */}
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Plan Distribution</h4>
-            <div className="space-y-2">
-              {Object.entries(stats.byPlan).map(([plan, count]) => (
-                <div key={plan} className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">{plan}</span>
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">{count}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Account Type Distribution</h4>
-            <div className="space-y-2">
-              {Object.entries(stats.byAccountType).map(([type, count]) => (
-                <div key={type} className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">{type}</span>
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">{count}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Clients Table */}
@@ -1068,6 +873,112 @@ export default function ClientsPage() {
           </div>
         </div>
       )}
+
+      {/* Filter Modal */}
+      <Modal isOpen={isFilterModalOpen} onClose={onCloseFilterModal} size="2xl">
+        <ModalContent>
+          <ModalHeader>Filter Clients</ModalHeader>
+          <ModalBody>
+            <div className="space-y-6">
+              {/* Basic Filters */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Basic Filters</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Select
+                    label="Status"
+                    placeholder="All Statuses"
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                  >
+                    <SelectItem key="active">Active</SelectItem>
+                    <SelectItem key="inactive">Inactive</SelectItem>
+                    <SelectItem key="suspended">Suspended</SelectItem>
+                    <SelectItem key="trial">Trial</SelectItem>
+                  </Select>
+
+                  <Select
+                    label="Plan"
+                    placeholder="All Plans"
+                    value={planFilter}
+                    onChange={(e) => setPlanFilter(e.target.value)}
+                  >
+                    <SelectItem key="free">Free</SelectItem>
+                    <SelectItem key="standard">Standard</SelectItem>
+                    <SelectItem key="premium">Premium</SelectItem>
+                  </Select>
+
+                  <Select
+                    label="Account Type"
+                    placeholder="All Types"
+                    value={accountTypeFilter}
+                    onChange={(e) => setAccountTypeFilter(e.target.value)}
+                  >
+                    <SelectItem key="individual">Individual</SelectItem>
+                    <SelectItem key="business">Business</SelectItem>
+                    <SelectItem key="enterprise">Enterprise</SelectItem>
+                  </Select>
+
+                  <Select
+                    label="Provider"
+                    placeholder="All Providers"
+                    value={providerFilter}
+                    onChange={(e) => setProviderFilter(e.target.value)}
+                  >
+                    <SelectItem key="credentials">Email/Password</SelectItem>
+                    <SelectItem key="google">Google</SelectItem>
+                    <SelectItem key="github">GitHub</SelectItem>
+                    <SelectItem key="facebook">Facebook</SelectItem>
+                    <SelectItem key="twitter">Twitter</SelectItem>
+                    <SelectItem key="linkedin">LinkedIn</SelectItem>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Date Filters */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Date Filters</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    label="Created After"
+                    type="date"
+                    value={createdAfter}
+                    onChange={(e) => setCreatedAfter(e.target.value)}
+                  />
+                  <Input
+                    label="Created Before"
+                    type="date"
+                    value={createdBefore}
+                    onChange={(e) => setCreatedBefore(e.target.value)}
+                  />
+                  <Input
+                    label="Updated After"
+                    type="date"
+                    value={updatedAfter}
+                    onChange={(e) => setUpdatedAfter(e.target.value)}
+                  />
+                  <Input
+                    label="Updated Before"
+                    type="date"
+                    value={updatedBefore}
+                    onChange={(e) => setUpdatedBefore(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="flat" onPress={clearFilters}>
+              Clear All
+            </Button>
+            <Button variant="flat" onPress={onCloseFilterModal}>
+              Cancel
+            </Button>
+            <Button color="primary" onPress={onCloseFilterModal}>
+              Apply Filters
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 } 
