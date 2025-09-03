@@ -38,14 +38,16 @@ interface ExportMetadata {
 export class AnalyticsExportService {
   private repository: AdminAnalyticsOptimizedRepository;
 
-  constructor() {
-    this.repository = new AdminAnalyticsOptimizedRepository();
+  constructor(repo: AdminAnalyticsOptimizedRepository = new AdminAnalyticsOptimizedRepository()) {
+    this.repository = repo;
   }
 
   /**
    * Export user growth trends data
    */
   async exportUserGrowthTrends(months: number = 12, options: ExportOptions): Promise<ExportResult> {
+    if (!this.validateExportOptions(options)) throw new Error('Invalid export options');
+    
     const data = await this.repository.getUserGrowthTrends(months);
     
     if (options.format === EXPORT_FORMATS.CSV) {
@@ -61,6 +63,8 @@ export class AnalyticsExportService {
    * Export activity trends data
    */
   async exportActivityTrends(days: number = 7, options: ExportOptions): Promise<ExportResult> {
+    if (!this.validateExportOptions(options)) throw new Error('Invalid export options');
+    
     const data = await this.repository.getActivityTrends(days);
     
     if (options.format === EXPORT_FORMATS.CSV) {
@@ -76,6 +80,8 @@ export class AnalyticsExportService {
    * Export top items data
    */
   async exportTopItems(limit: number = 10, options: ExportOptions): Promise<ExportResult> {
+    if (!this.validateExportOptions(options)) throw new Error('Invalid export options');
+    
     const data = await this.repository.getTopItems(limit);
     
     if (options.format === EXPORT_FORMATS.CSV) {
@@ -91,6 +97,8 @@ export class AnalyticsExportService {
    * Export recent activity data
    */
   async exportRecentActivity(limit: number = 10, options: ExportOptions): Promise<ExportResult> {
+    if (!this.validateExportOptions(options)) throw new Error('Invalid export options');
+    
     const data = await this.repository.getRecentActivity(limit);
     
     if (options.format === EXPORT_FORMATS.CSV) {
@@ -106,6 +114,8 @@ export class AnalyticsExportService {
    * Export comprehensive analytics report
    */
   async exportComprehensiveReport(options: ExportOptions): Promise<ExportResult> {
+    if (!this.validateExportOptions(options)) throw new Error('Invalid export options');
+    
     const [userGrowth, activityTrends, topItems, recentActivity] = await Promise.all([
       this.repository.getUserGrowthTrends(12),
       this.repository.getActivityTrends(30),
@@ -144,17 +154,31 @@ export class AnalyticsExportService {
     if (Array.isArray(data)) {
       // Handle array data
       if (data.length > 0) {
-        const headers = Object.keys(data[0]);
+        // Get union of all keys from all rows to handle missing properties
+        const headers = Array.from(
+          data.reduce((s: Set<string>, r: Record<string, any>) => {
+            if (r && typeof r === 'object') {
+              Object.keys(r).forEach((k) => s.add(k));
+            }
+            return s;
+          }, new Set<string>())
+        );
         csvContent += headers.join(',') + '\n';
         
+        // Improved CSV escaping function
+        const esc = (v: any) => {
+          if (v === null || v === undefined) return '';
+          const s = typeof v === 'string' ? v : String(v);
+          return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+        };
+        
         for (const row of data) {
-          const values = headers.map(header => {
-            const value = row[header];
-            // Escape commas and quotes in CSV
-            if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
-              return `"${value.replace(/"/g, '""')}"`;
+          const values = headers.map((h) => {
+            if (row && typeof row === 'object' && row !== null) {
+              const typedRow = row as Record<string, any>;
+              return esc(typedRow[h as keyof typeof typedRow]);
             }
-            return value;
+            return esc(undefined);
           });
           csvContent += values.join(',') + '\n';
         }
@@ -164,13 +188,12 @@ export class AnalyticsExportService {
       csvContent = this.objectToCSV(data);
     }
 
-    const timestamp = new Date().toISOString().split('T')[0];
-    const finalFilename = `${filename}-${timestamp}.csv`;
+    const finalFilename = this.generateFilename(filename, 'csv');
     
     return {
       data: csvContent,
       filename: finalFilename,
-      contentType: 'text/csv',
+      contentType: 'text/csv; charset=utf-8',
       size: Buffer.byteLength(csvContent, 'utf8'),
       timestamp: new Date()
     };
@@ -181,6 +204,13 @@ export class AnalyticsExportService {
    */
   private objectToCSV(obj: any, prefix: string = ''): string {
     let csvContent = '';
+    
+    // CSV escaping function
+    const esc = (v: any) => {
+      if (v === null || v === undefined) return '';
+      const s = typeof v === 'string' ? v : String(v);
+      return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
     
     for (const [key, value] of Object.entries(obj)) {
       const currentKey = prefix ? `${prefix}.${key}` : key;
@@ -194,25 +224,24 @@ export class AnalyticsExportService {
           csvContent += headers.join(',') + '\n';
           
           for (const row of value) {
-            const values = headers.map(header => {
-              const cellValue = row[header];
-              if (typeof cellValue === 'string' && (cellValue.includes(',') || cellValue.includes('"'))) {
-                return `"${cellValue.replace(/"/g, '""')}"`;
-              }
-              return cellValue;
-            });
-            csvContent += values.join(',') + '\n';
+            if (row && typeof row === 'object') {
+              const values = headers.map(header => {
+                const cellValue = (row as Record<string, any>)[header];
+                return esc(cellValue);
+              });
+              csvContent += values.join(',') + '\n';
+            }
           }
         } else {
           // Simple array
-          csvContent += `${currentKey},${value.join(',')}\n`;
+          csvContent += `${currentKey},${value.map(v => esc(v)).join(',')}\n`;
         }
       } else if (typeof value === 'object' && value !== null) {
         // Recursively handle nested objects
         csvContent += this.objectToCSV(value, currentKey);
       } else {
         // Simple value
-        csvContent += `${currentKey},${value}\n`;
+        csvContent += `${currentKey},${esc(value)}\n`;
       }
     }
     
