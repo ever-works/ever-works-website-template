@@ -151,6 +151,14 @@ function ProfileButton() {
     }
   }, [isProfileMenuOpen, closeMenu]);
 
+  // Warn once when user data is incomplete
+  useEffect(() => {
+    if (!user?.email || !user?.name) {
+      // eslint-disable-next-line no-console
+      console.warn('User data incomplete:', user);
+    }
+  }, [user?.email, user?.name]);
+
   if (isLoading) {
     return (
       <div aria-busy="true" aria-live="polite">
@@ -165,9 +173,8 @@ function ProfileButton() {
 
   // Add error boundary for user data issues
   if (!user.email || !user.name) {
-    console.warn('User data incomplete:', user);
     return (
-      <div className="relative ml-3">
+      <div className="relative ml-3" role="alert" aria-live="polite" aria-label="User data incomplete: missing name or email">
         <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
           <span className="text-red-600 dark:text-red-400 text-sm font-medium">!</span>
         </div>
