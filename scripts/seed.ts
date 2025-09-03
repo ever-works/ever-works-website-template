@@ -3,7 +3,6 @@
   Usage: DATABASE_URL=... yarn seed
 */
 
-import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
@@ -24,13 +23,16 @@ import {
   type NewUserRole,
   VoteType
 } from '@/lib/db/schema';
-import { eq, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
+import { randomUUID } from 'node:crypto';
 
 async function main() {
-  // Prefer .env.local if present
+  // Load env explicitly; prefer .env.local if present
   const envLocalPath = path.resolve(process.cwd(), '.env.local');
   if (fs.existsSync(envLocalPath)) {
-    dotenv.config({ path: envLocalPath });
+    dotenv.config({ path: envLocalPath, override: true });
+  } else {
+    dotenv.config();
   }
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) {
@@ -41,8 +43,9 @@ async function main() {
   const conn = postgres(databaseUrl, { max: 1 });
   const db = drizzle(conn);
 
-  // Seed roles (admin, user)
-  const existingRoles = await db.select().from(roles).limit(1);
+  try {
+    // Seed roles (admin, user)
+    const existingRoles = await db.select().from(roles).limit(1);
   if (existingRoles.length === 0) {
     const roleRows: NewRole[] = [
       {
@@ -77,7 +80,7 @@ async function main() {
   if (totalUsers === 0) {
     const now = new Date();
     const userRows: NewUser[] = Array.from({ length: 20 }).map((_, i) => ({
-      id: crypto.randomUUID(),
+      id: randomUUID(),
       email: `user${i + 1}@example.com`,
       emailVerified: now,
       passwordHash: null,
@@ -90,7 +93,7 @@ async function main() {
 
     // Client profiles
     const profileRows: NewClientProfile[] = userRows.map((u, i) => ({
-      id: crypto.randomUUID(),
+      id: randomUUID(),
       userId: u.id as string,
       email: u.email!,
       name: `User ${i + 1}`,
@@ -133,7 +136,7 @@ async function main() {
     const newsletterRows = userRows
       .filter((_, i) => i % 3 === 0)
       .map((u) => ({
-        id: crypto.randomUUID(),
+        id: randomUUID(),
         email: u.email!,
         isActive: true,
         subscribedAt: now,
@@ -147,9 +150,11 @@ async function main() {
     }
 
     // Activity logs
-    const profileIds = await db.select({ id: clientProfiles.id }).from(clientProfiles);
-    const activityRows = profileIds.slice(0, 30).map((p, i) => ({
-      userId: p.id,
+    const profiles = await db
+      .select({ profileId: clientProfiles.id, userId: clientProfiles.userId })
+      .from(clientProfiles);
+    const activityRows = profiles.slice(0, 30).map((p, i) => ({
+      userId: p.userId,
       action: i % 4 === 0 ? 'SIGN_UP' : i % 4 === 1 ? 'SIGN_IN' : i % 4 === 2 ? 'COMMENT' : 'VOTE',
       timestamp: new Date(now.getTime() - Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000),
       ipAddress: '127.0.0.1'
@@ -160,10 +165,10 @@ async function main() {
     }
 
     // Comments and votes (lightweight)
-    const commentRows = profileIds.slice(0, 15).map((p, i) => ({
-      id: crypto.randomUUID(),
+    const commentRows = profiles.slice(0, 15).map((p, i) => ({
+      id: randomUUID(),
       content: `This is a sample comment ${i + 1}`,
-      userId: p.id,
+      userId: p.userId,
       itemId: `item-${(i % 5) + 1}`,
       rating: (i % 5) + 1,
       createdAt: now,
@@ -175,9 +180,9 @@ async function main() {
       console.log('Seeded comments');
     }
 
-    const voteRows = profileIds.slice(0, 25).map((p, i) => ({
-      id: crypto.randomUUID(),
-      userId: p.id,
+    const voteRows = profiles.slice(0, 25).map((p, i) => ({
+      id: randomUUID(),
+      userId: p.userId,
       itemId: `item-${(i % 5) + 1}`,
       voteType: i % 4 === 0 ? VoteType.DOWNVOTE : VoteType.UPVOTE,
       createdAt: now,
@@ -188,9 +193,10 @@ async function main() {
       console.log('Seeded votes');
     }
   }
-
-  await conn.end({ timeout: 1 });
   console.log('Seed complete');
+} finally {
+  await conn.end({ timeout: 1 });
+}
 }
 
 main().catch((err) => {
