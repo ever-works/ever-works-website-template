@@ -41,7 +41,7 @@ function ProfileHeader({ user, displayRole, onlineStatus }: ProfileHeaderProps) 
           ></div>
           {isAdmin && (
             <div 
-              className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-lg animate-pulse"
+              className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-lg motion-safe:animate-pulse motion-reduce:animate-none"
               title="Administrator"
             >
               <Crown aria-hidden="true" className="w-3.5 h-3.5 text-white" />
