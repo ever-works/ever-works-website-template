@@ -231,11 +231,6 @@ export class AnalyticsScheduledReportsService {
       
       console.log(`Successfully generated report: ${template.name}`);
       
-      // In a real implementation, you would:
-      // 1. Send email notifications to recipients
-      // 2. Store the report in cloud storage
-      // 3. Update the database with report metadata
-      
     } catch (error) {
       console.error(`Failed to generate scheduled report: ${template.name}`, error);
       
@@ -382,12 +377,12 @@ export class AnalyticsScheduledReportsService {
     const updatedTemplate = { ...template, ...updates };
     this.reportTemplates.set(id, updatedTemplate);
     
-    // Reschedule if active status changed
-    if (updates.isActive !== undefined) {
-      if (updates.isActive) {
+    const activeChanged = updates.isActive !== undefined && updates.isActive !== template.isActive;
+    const scheduleChanged = updates.schedule !== undefined && updates.schedule !== template.schedule;
+    if (activeChanged || scheduleChanged) {
+      this.unscheduleReport(id);
+      if (updatedTemplate.isActive) {
         this.scheduleReport(updatedTemplate);
-      } else {
-        this.unscheduleReport(id);
       }
     }
     
