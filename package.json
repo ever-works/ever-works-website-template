@@ -32,7 +32,7 @@
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio",
-		"seed": "tsx scripts/seed.ts"
+		"seed": "tsx -r tsconfig-paths/register scripts/seed.ts"
 	},
 	"dependencies": {
 		"@auth/drizzle-adapter": "^1.8.0",
