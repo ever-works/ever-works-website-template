@@ -187,8 +187,7 @@ export class AnalyticsBackgroundProcessor {
     // Clean up expired cache entries
     this.metrics.lastCleanup = new Date();
     
-    // In a real implementation, this would clean up expired Redis keys
-    // For now, we just log the cleanup
+    await this.repository.clearCache();
     console.log('Cache cleanup completed at', this.metrics.lastCleanup);
   }
 
