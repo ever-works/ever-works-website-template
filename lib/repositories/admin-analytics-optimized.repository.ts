@@ -89,6 +89,9 @@ export class AdminAnalyticsOptimizedRepository {
   };
 
   async getUserGrowthTrends(months: number = 12): Promise<UserGrowthTrend[]> {
+    // Validate and clamp input to sane bounds
+    months = Math.max(1, Math.min(months, 120));
+    
     const cacheKey = `${this.CACHE_KEYS.USER_GROWTH}_${months}`;
     
     // Try cache first
@@ -100,24 +103,27 @@ export class AdminAnalyticsOptimizedRepository {
     try {
       const trends: UserGrowthTrend[] = [];
       
-      // Optimized: Use a single query with window functions for better performance
+      // Fixed: Compute cumulative across all months, then limit in outer query
       const userGrowthQuery = await db.execute(sql`
-        WITH monthly_stats AS (
-          SELECT 
-            DATE_TRUNC('month', created_at) as month_start,
-            COUNT(*) as new_users,
-            COUNT(*) OVER (ORDER BY DATE_TRUNC('month', created_at)) as cumulative_users
+        WITH monthly_counts AS (
+          SELECT DATE_TRUNC('month', created_at) AS month_start,
+                 COUNT(*) AS new_users
           FROM users 
           WHERE deleted_at IS NULL
           GROUP BY DATE_TRUNC('month', created_at)
+        ),
+        cum_counts AS (
+          SELECT month_start,
+                 new_users,
+                 SUM(new_users) OVER (ORDER BY month_start) AS cumulative_users
+          FROM monthly_counts
+        )
+        SELECT month_start, new_users, cumulative_users
+        FROM (
+          SELECT * FROM cum_counts
           ORDER BY month_start DESC
           LIMIT ${months}
-        )
-        SELECT 
-          month_start,
-          new_users,
-          cumulative_users
-        FROM monthly_stats
+        ) t
         ORDER BY month_start ASC
       `);
       const ugRows: any[] = Array.isArray((userGrowthQuery as any).rows)
@@ -145,6 +151,9 @@ export class AdminAnalyticsOptimizedRepository {
   }
   
   async getActivityTrends(days: number = 7): Promise<ActivityTrend[]> {
+    // Validate and clamp input to sane bounds
+    days = Math.max(1, Math.min(days, 365));
+    
     const cacheKey = `${this.CACHE_KEYS.ACTIVITY_TRENDS}_${days}`;
     
     // Try cache first
@@ -187,23 +196,30 @@ export class AdminAnalyticsOptimizedRepository {
 
       const trends: ActivityTrend[] = [];
       
+      // Performance optimization: Build date-keyed map once (O(n) instead of O(n²))
+      const aRows: any[] = Array.isArray((activityQuery as any).rows)
+        ? (activityQuery as any).rows
+        : (Array.isArray(activityQuery as any) ? (activityQuery as any) : []);
+      const byDate = new Map<string, { votes: number; comments: number }>();
+      for (const r of aRows) {
+        const k = new Date(r.activity_date).toISOString().split('T')[0];
+        byDate.set(k, { votes: Number(r.votes), comments: Number(r.comments) });
+      }
+      
       // Generate all days in range
       for (let i = days - 1; i >= 0; i--) {
         const dayStart = new Date();
         dayStart.setDate(dayStart.getDate() - i);
         const dayKey = dayStart.toISOString().split('T')[0];
         
-        // Find matching data or use 0
-        const aRows: any[] = Array.isArray((activityQuery as any).rows)
-          ? (activityQuery as any).rows
-          : (Array.isArray(activityQuery as any) ? (activityQuery as any) : []);
-        const dayData = aRows.find((row: any) => row.activity_date === dayKey);
+        // Use Map lookup instead of array.find (O(1) instead of O(n))
+        const dayData = byDate.get(dayKey);
         
         trends.push({
           day: dayStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
           views: 0, // Views not tracked in current schema
-          votes: dayData ? Number(dayData.votes) : 0,
-          comments: dayData ? Number(dayData.comments) : 0
+          votes: dayData ? dayData.votes : 0,
+          comments: dayData ? dayData.comments : 0
         });
       }
       
@@ -218,6 +234,9 @@ export class AdminAnalyticsOptimizedRepository {
   }
   
   async getTopItems(limit: number = 10): Promise<TopItem[]> {
+    // Validate and clamp input to sane bounds
+    limit = Math.max(1, Math.min(limit, 1000));
+    
     const cacheKey = `${this.CACHE_KEYS.TOP_ITEMS}_${limit}`;
     
     // Try cache first
@@ -265,6 +284,9 @@ export class AdminAnalyticsOptimizedRepository {
   }
   
   async getRecentActivity(limit: number = 10): Promise<RecentActivity[]> {
+    // Validate and clamp input to sane bounds
+    limit = Math.max(1, Math.min(limit, 500));
+    
     const cacheKey = `${this.CACHE_KEYS.RECENT_ACTIVITY}_${limit}`;
     
     // Try cache first
@@ -318,7 +340,9 @@ export class AdminAnalyticsOptimizedRepository {
       const activities: RecentActivity[] = recentRows.map((row: any) => ({
         type: row.activity_type as 'user_signup' | 'comment' | 'vote',
         description: row.description,
-        timestamp: row.activity_time,
+        timestamp: typeof row.activity_time === 'string'
+          ? row.activity_time
+          : new Date(row.activity_time).toISOString(),
         user: row.user_info
       }));
       
@@ -369,12 +393,11 @@ export class AdminAnalyticsOptimizedRepository {
     topItems: TopItem[];
     recentActivity: RecentActivity[];
   }> {
-    const {
-      userGrowthMonths = 12,
-      activityTrendDays = 7,
-      topItemsLimit = 10,
-      recentActivityLimit = 10
-    } = options;
+    // Validate and clamp all inputs to sane bounds
+    const userGrowthMonths = Math.max(1, Math.min(options.userGrowthMonths || 12, 120));
+    const activityTrendDays = Math.max(1, Math.min(options.activityTrendDays || 7, 365));
+    const topItemsLimit = Math.max(1, Math.min(options.topItemsLimit || 10, 1000));
+    const recentActivityLimit = Math.max(1, Math.min(options.recentActivityLimit || 10, 500));
 
     try {
       // Execute all queries in parallel for better performance
