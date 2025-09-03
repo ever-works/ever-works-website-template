@@ -1760,11 +1760,17 @@ export async function getLastLoginActivity(clientId: string): Promise<ActivityLo
 export async function getAdminDashboardData(params: {
 	page: number;
 	limit: number;
+	// Basic filters
 	search?: string;
 	status?: string;
 	plan?: string;
 	accountType?: string;
 	provider?: string;
+	// Date range filters
+	createdAfter?: Date;
+	createdBefore?: Date;
+	updatedAfter?: Date;
+	updatedBefore?: Date;
 }): Promise<{
 	clients: ClientProfileWithAuth[];
 	stats: {
@@ -1805,7 +1811,7 @@ export async function getAdminDashboardData(params: {
 		limit: number;
 	};
 }> {
-	const { page, limit, search, status, plan, accountType, provider } = params;
+	const { page, limit, search, status, plan, accountType, provider, createdAfter, createdBefore, updatedAfter, updatedBefore } = params;
 	const offset = (page - 1) * limit;
 
 	const whereConditions: SQL[] = [];
@@ -1838,6 +1844,23 @@ export async function getAdminDashboardData(params: {
 
 	if (provider) {
 		whereConditions.push(eq(accounts.provider, provider));
+	}
+
+	// Date range filters
+	if (createdAfter) {
+		whereConditions.push(gte(clientProfiles.createdAt, createdAfter));
+	}
+
+	if (createdBefore) {
+		whereConditions.push(lte(clientProfiles.createdAt, createdBefore));
+	}
+
+	if (updatedAfter) {
+		whereConditions.push(gte(clientProfiles.updatedAt, updatedAfter));
+	}
+
+	if (updatedBefore) {
+		whereConditions.push(lte(clientProfiles.updatedAt, updatedBefore));
 	}
 
 	const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;

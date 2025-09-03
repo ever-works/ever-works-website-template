@@ -18,6 +18,12 @@ export async function GET(request: NextRequest) {
     const plan = searchParams.get('plan') || undefined;
     const accountType = searchParams.get('accountType') || undefined;
     const provider = searchParams.get('provider') || undefined;
+    
+    // Date range parameters
+    const createdAfter = searchParams.get('createdAfter') || undefined;
+    const createdBefore = searchParams.get('createdBefore') || undefined;
+    const updatedAfter = searchParams.get('updatedAfter') || undefined;
+    const updatedBefore = searchParams.get('updatedBefore') || undefined;
 
     const result = await getAdminDashboardData({
       page,
@@ -27,6 +33,10 @@ export async function GET(request: NextRequest) {
       plan,
       accountType,
       provider,
+      createdAfter: createdAfter ? new Date(createdAfter) : undefined,
+      createdBefore: createdBefore ? new Date(createdBefore) : undefined,
+      updatedAfter: updatedAfter ? new Date(updatedAfter) : undefined,
+      updatedBefore: updatedBefore ? new Date(updatedBefore) : undefined,
     });
 
     return NextResponse.json({

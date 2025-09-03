@@ -38,6 +38,12 @@ export default function ClientsPage() {
   const [providerFilter, setProviderFilter] = useState<string>('');
   const [isFiltering, setIsFiltering] = useState(false);
 
+  // Date range filters
+  const [createdAfter, setCreatedAfter] = useState<string>('');
+  const [createdBefore, setCreatedBefore] = useState<string>('');
+  const [updatedAfter, setUpdatedAfter] = useState<string>('');
+  const [updatedBefore, setUpdatedBefore] = useState<string>('');
+
   // Stats state
   const [stats, setStats] = useState({
     overview: { total: 0, active: 0, inactive: 0, suspended: 0, trial: 0 },
@@ -99,6 +105,11 @@ export default function ClientsPage() {
       if (planFilter) params.append('plan', planFilter);
       if (accountTypeFilter) params.append('accountType', accountTypeFilter);
       if (providerFilter) params.append('provider', providerFilter);
+      if (createdAfter) params.append('createdAfter', createdAfter);
+      if (createdBefore) params.append('createdBefore', createdBefore);
+      if (updatedAfter) params.append('updatedAfter', updatedAfter);
+      if (updatedBefore) params.append('updatedBefore', updatedBefore);
+
 
       const response = await fetch(`/api/admin/clients/dashboard?${params}`);
 
@@ -133,7 +144,7 @@ export default function ClientsPage() {
       setIsLoading(false);
       setIsFiltering(false);
     }
-  }, [debouncedSearchTerm, statusFilter, planFilter, accountTypeFilter, providerFilter, currentPage, limit]);
+  }, [debouncedSearchTerm, statusFilter, planFilter, accountTypeFilter, providerFilter, currentPage, limit, createdAfter, createdBefore, updatedAfter, updatedBefore]);
 
   // Create client
   const handleCreate = async (data: CreateClientRequest) => {
@@ -283,6 +294,10 @@ export default function ClientsPage() {
     setPlanFilter('');
     setAccountTypeFilter('');
     setProviderFilter('');
+    setCreatedAfter('');
+    setCreatedBefore('');
+    setUpdatedAfter('');
+    setUpdatedBefore('');
     setCurrentPage(1);
     // Optional: short-circuit debounce for immediate fetch
     fetchDashboardData(1);
@@ -377,7 +392,7 @@ export default function ClientsPage() {
       fetchDashboardData(1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter, planFilter, accountTypeFilter, providerFilter]);
+  }, [statusFilter, planFilter, accountTypeFilter, providerFilter, createdAfter, createdBefore, updatedAfter, updatedBefore]);
 
   // Fetch when debounced search term changes, including when cleared
   useEffect(() => {
@@ -706,10 +721,60 @@ export default function ClientsPage() {
             </select>
             <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
           </div>
+
+          {/* Date Range Filters */}
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400 px-2">Date Filters</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-500 dark:text-gray-400">Created After</label>
+                <input
+                  type="date"
+                  aria-label="Filter by created after"
+                  value={createdAfter}
+                  onChange={(e) => setCreatedAfter(e.target.value)}
+                  className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-500 dark:text-gray-400">Created Before</label>
+                <input
+                  type="date"
+                  aria-label="Filter by created before"
+                  value={createdBefore}
+                  onChange={(e) => setCreatedBefore(e.target.value)}
+                  className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-500 dark:text-gray-400">Updated After</label>
+                <input
+                  type="date"
+                  aria-label="Filter by updated after"
+                  value={updatedAfter}
+                  onChange={(e) => setUpdatedAfter(e.target.value)}
+                  className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-500 dark:text-gray-400">Updated Before</label>
+                <input
+                  type="date"
+                  aria-label="Filter by updated before"
+                  value={updatedBefore}
+                  onChange={(e) => setUpdatedBefore(e.target.value)}
+                  className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Active Filters Indicator */}
-        {(searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter || providerFilter) && (
+        {(searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter || providerFilter || createdAfter || createdBefore || updatedAfter || updatedBefore) && (
           <div className="flex items-center justify-between mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
             <span className="text-sm text-blue-700 dark:text-blue-300">
               {(() => {
@@ -719,6 +784,10 @@ export default function ClientsPage() {
                   planFilter && 'plan',
                   accountTypeFilter && 'type',
                   providerFilter && 'provider',
+                  createdAfter && 'createdAfter',
+                  createdBefore && 'createdBefore',
+                  updatedAfter && 'updatedAfter',
+                  updatedBefore && 'updatedBefore',
                 ].filter(Boolean).length;
                 return `${count} filter${count !== 1 ? 's' : ''} applied`;
               })()}
@@ -739,7 +808,7 @@ export default function ClientsPage() {
         {!isLoading && (
           <div className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
             <span>
-              Showing {clients.length} of {filteredTotal} {(searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter || providerFilter) ? 'filtered ' : ''}clients
+              Showing {clients.length} of {filteredTotal} {(searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter || providerFilter || createdAfter || createdBefore || updatedAfter || updatedBefore) ? 'filtered ' : ''}clients
             </span>
             {totalPages > 1 && (
               <span>
@@ -809,7 +878,7 @@ export default function ClientsPage() {
               <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No clients found</h3>
               <p className="text-gray-500 dark:text-gray-400 mb-4">
-                {searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter || providerFilter
+                {searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter || providerFilter || createdAfter || createdBefore || updatedAfter || updatedBefore
                   ? 'Try adjusting your filters or search terms.'
                   : 'Get started by adding your first client.'
                 }
