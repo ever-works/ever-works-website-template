@@ -125,27 +125,25 @@ export class AnalyticsScheduledReportsService {
    * Schedule a specific report
    */
   private scheduleReport(template: ReportTemplate): void {
-    const interval = this.getScheduleInterval(template.schedule);
-    
-    // Calculate next generation time
+    // Clear any existing timer for this template
+    this.unscheduleReport(template.id);
+
     const now = new Date();
     const nextGeneration = this.calculateNextGenerationTime(template.schedule, now);
-    
-    // Update template with next generation time
     template.nextGeneration = nextGeneration;
     this.reportTemplates.set(template.id, template);
 
-    // Schedule the job
-    const timeout = setInterval(async () => {
+    const delay = Math.max(1000, nextGeneration.getTime() - now.getTime()); // min 1s
+    const timeout = setTimeout(async () => {
       await this.generateScheduledReport(template);
-      // Update next generation time
+      // After completion, compute next run and schedule again
       template.nextGeneration = this.calculateNextGenerationTime(template.schedule, new Date());
       this.reportTemplates.set(template.id, template);
-    }, interval);
+      this.scheduleReport(template);
+    }, delay);
 
     this.scheduledJobs.set(template.id, timeout);
-    
-    console.log(`Scheduled report: ${template.name} (${template.schedule}) - Next: ${nextGeneration}`);
+    console.log(`Scheduled report: ${template.name} (${template.schedule}) - Next: ${nextGeneration.toISOString()}`);
   }
 
   /**
