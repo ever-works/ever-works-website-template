@@ -28,7 +28,7 @@ import {
   paymentAccounts,
   clientProfiles
 } from "./schema";
-import { desc, isNull, count, asc, lte } from "drizzle-orm";
+import { desc, isNull, count, asc, lte, gte, or } from "drizzle-orm";
 import type { NewComment, CommentWithUser } from "@/lib/types/comment";
 import type { ClientProfile, NewClientProfile, OldPaymentProvider, PaymentAccount, NewPaymentAccount, NewPaymentProvider } from "./schema";
 
@@ -953,35 +953,194 @@ export async function getClientProfiles(params: {
 }
 
 /**
- * Get client statistics efficiently using GROUP BY
- * Returns counts per status and total count in a single query
+ * Get comprehensive client statistics with multiple dimensions
+ * Returns detailed analytics including provider distribution, plan analysis, and activity metrics
  */
-export async function getClientStats(): Promise<{
-	byStatus: { status: string; count: number }[];
-	total: number;
+export async function getEnhancedClientStats(): Promise<{
+	overview: {
+		total: number;
+		active: number;
+		inactive: number;
+		suspended: number;
+		trial: number;
+	};
+	byProvider: {
+		credentials: number;
+		google: number;
+		github: number;
+		facebook: number;
+		twitter: number;
+		linkedin: number;
+		other: number;
+	};
+	byPlan: Record<string, number>;
+	byAccountType: Record<string, number>;
+	byStatus: Record<string, number>;
+	activity: {
+		newThisWeek: number;
+		newThisMonth: number;
+		activeThisWeek: number;
+		activeThisMonth: number;
+	};
+	growth: {
+		weeklyGrowth: number;
+		monthlyGrowth: number;
+	};
 }> {
-	// Get counts by status using GROUP BY
-	const statusCounts = await db
+	// Get comprehensive stats with joins
+	const statsResult = await db
 		.select({
+			// Profile stats
 			status: clientProfiles.status,
-			count: sql<number>`count(*)`
+			plan: clientProfiles.plan,
+			accountType: clientProfiles.accountType,
+			createdAt: clientProfiles.createdAt,
+			// Provider stats
+			provider: accounts.provider,
+			// Counts
+			count: sql<number>`count(*)`,
 		})
 		.from(clientProfiles)
-		.groupBy(clientProfiles.status);
+		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.groupBy(clientProfiles.status, clientProfiles.plan, clientProfiles.accountType, clientProfiles.createdAt, accounts.provider);
 
 	// Get total count
 	const totalResult = await db
-		.select({ count: sql<number>`count(*)` })
-		.from(clientProfiles);
+		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
+		.from(clientProfiles)
+		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId));
 
 	const total = Number(totalResult[0]?.count || 0);
 
+	// Initialize counters
+	const byStatus: Record<string, number> = { active: 0, inactive: 0, suspended: 0, trial: 0 };
+	const byPlan: Record<string, number> = { free: 0, standard: 0, premium: 0 };
+	const byAccountType: Record<string, number> = { individual: 0, business: 0, enterprise: 0 };
+	const byProvider = { 
+		credentials: 0, 
+		google: 0, 
+		github: 0, 
+		facebook: 0, 
+		twitter: 0, 
+		linkedin: 0, 
+		other: 0 
+	};
+
+	// Process results
+	statsResult.forEach((row: typeof statsResult[0]) => {
+		const count = Number(row.count);
+		const status = row.status || 'unknown';
+		const plan = row.plan || 'free';
+		const accountType = row.accountType || 'individual';
+		const provider = row.provider || 'unknown';
+
+		// Count by status
+		if (status in byStatus) {
+			byStatus[status] += count;
+		}
+
+		// Count by plan
+		if (plan in byPlan) {
+			byPlan[plan] += count;
+		}
+
+		// Count by account type
+		if (accountType in byAccountType) {
+			byAccountType[accountType] += count;
+		}
+
+		// Count by provider
+		if (provider === 'credentials' || provider === 'google' || provider === 'github' || 
+			provider === 'facebook' || provider === 'twitter' || provider === 'linkedin') {
+			(byProvider as any)[provider] += count;
+		} else {
+			byProvider.other += count;
+		}
+	});
+
+	// Get activity metrics
+	const now = new Date();
+	const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+	const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+	// New clients this week
+	const newThisWeekResult = await db
+		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
+		.from(clientProfiles)
+		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.where(gte(clientProfiles.createdAt, oneWeekAgo));
+
+	const newThisWeek = Number(newThisWeekResult[0]?.count || 0);
+
+	// New clients this month
+	const newThisMonthResult = await db
+		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
+		.from(clientProfiles)
+		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.where(gte(clientProfiles.createdAt, oneMonthAgo));
+
+	const newThisMonth = Number(newThisMonthResult[0]?.count || 0);
+
+	// Active clients this week (have activity or recent login)
+	const activeThisWeekResult = await db
+		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
+		.from(clientProfiles)
+		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.where(
+			and(
+				eq(clientProfiles.status, 'active'),
+				or(
+					gte(clientProfiles.updatedAt, oneWeekAgo),
+					gte(clientProfiles.createdAt, oneWeekAgo)
+				)
+			)
+		);
+
+	const activeThisWeek = Number(activeThisWeekResult[0]?.count || 0);
+
+	// Active clients this month
+	const activeThisMonthResult = await db
+		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
+		.from(clientProfiles)
+		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.where(
+			and(
+				eq(clientProfiles.status, 'active'),
+				or(
+					gte(clientProfiles.updatedAt, oneMonthAgo),
+					gte(clientProfiles.createdAt, oneMonthAgo)
+				)
+			)
+		);
+
+	const activeThisMonth = Number(activeThisMonthResult[0]?.count || 0);
+
+	// Calculate growth rates (simplified - could be enhanced with historical data)
+	const weeklyGrowth = total > 0 ? Math.round((newThisWeek / total) * 100) : 0;
+	const monthlyGrowth = total > 0 ? Math.round((newThisMonth / total) * 100) : 0;
+
 	return {
-		byStatus: statusCounts.map((row: { status: string | null; count: number }) => ({
-			status: row.status || 'unknown',
-			count: Number(row.count)
-		})),
-		total
+		overview: {
+			total,
+			active: byStatus.active,
+			inactive: byStatus.inactive,
+			suspended: byStatus.suspended,
+			trial: byStatus.trial,
+		},
+		byProvider,
+		byPlan,
+		byAccountType,
+		byStatus,
+		activity: {
+			newThisWeek,
+			newThisMonth,
+			activeThisWeek,
+			activeThisMonth,
+		},
+		growth: {
+			weeklyGrowth,
+			monthlyGrowth,
+		},
 	};
 }
 

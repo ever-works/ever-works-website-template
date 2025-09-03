@@ -39,7 +39,15 @@ export default function ClientsPage() {
   const [isFiltering, setIsFiltering] = useState(false);
 
   // Stats state
-  const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0, suspended: 0 });
+  const [stats, setStats] = useState({
+    overview: { total: 0, active: 0, inactive: 0, suspended: 0, trial: 0 },
+    byProvider: { credentials: 0, google: 0, github: 0, facebook: 0, twitter: 0, linkedin: 0, other: 0 },
+    byPlan: { free: 0, standard: 0, premium: 0 },
+    byAccountType: { individual: 0, business: 0, enterprise: 0 },
+    byStatus: { active: 0, inactive: 0, suspended: 0, trial: 0 },
+    activity: { newThisWeek: 0, newThisMonth: 0, activeThisWeek: 0, activeThisMonth: 0 },
+    growth: { weeklyGrowth: 0, monthlyGrowth: 0 }
+  });
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
@@ -485,7 +493,7 @@ export default function ClientsPage() {
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Clients</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.overview.total}</p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                 <Users aria-hidden="true" className="w-6 h-6 text-white" />
@@ -499,7 +507,7 @@ export default function ClientsPage() {
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Clients</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.active}</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.overview.active}</p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
                 <UserCheck aria-hidden="true" className="w-6 h-6 text-white" />
@@ -513,7 +521,7 @@ export default function ClientsPage() {
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Inactive Clients</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.inactive}</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.overview.inactive}</p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center shadow-lg">
                 <UserX aria-hidden="true" className="w-6 h-6 text-white" />
@@ -527,10 +535,68 @@ export default function ClientsPage() {
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Suspended</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.suspended}</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.overview.suspended}</p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
                 <UserX aria-hidden="true" className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+
+        {/* Enhanced Stats Cards */}
+        <Card className="border-0 shadow-lg">
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">New This Week</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.activity.newThisWeek}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">+{stats.growth.weeklyGrowth}% growth</p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Users aria-hidden="true" className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="border-0 shadow-lg">
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active This Month</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.activity.activeThisMonth}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Engaged users</p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                <UserCheck aria-hidden="true" className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="border-0 shadow-lg">
+          <CardBody className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Top Provider</p>
+                <p className="text-lg font-bold text-gray-900 dark:text-white">
+                  {(() => {
+                    const providers = Object.entries(stats.byProvider);
+                    const topProvider = providers.reduce((a, b) => a[1] > b[1] ? a : b);
+                    return topProvider[0].charAt(0).toUpperCase() + topProvider[0].slice(1);
+                  })()}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {(() => {
+                    const providers = Object.entries(stats.byProvider);
+                    const topProvider = providers.reduce((a, b) => a[1] > b[1] ? a : b);
+                    return `${topProvider[1]} users`;
+                  })()}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Building2 aria-hidden="true" className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardBody>
@@ -665,6 +731,48 @@ export default function ClientsPage() {
             )}
           </div>
         )}
+
+        {/* Provider Distribution Overview */}
+        <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
+          <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Authentication Provider Distribution</h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {Object.entries(stats.byProvider).map(([provider, count]) => (
+              <div key={provider} className="text-center">
+                <div className="text-lg font-bold text-gray-900 dark:text-white">{count}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+                  {provider === 'credentials' ? 'Email/Password' : provider}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Plan & Account Type Overview */}
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Plan Distribution</h4>
+            <div className="space-y-2">
+              {Object.entries(stats.byPlan).map(([plan, count]) => (
+                <div key={plan} className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">{plan}</span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">{count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Account Type Distribution</h4>
+            <div className="space-y-2">
+              {Object.entries(stats.byAccountType).map(([type, count]) => (
+                <div key={type} className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">{type}</span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">{count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Clients Table */}
@@ -674,7 +782,7 @@ export default function ClientsPage() {
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Clients</h3>
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                {stats.total} clients total
+                {stats.overview.total} clients total
               </span>
             </div>
           </div>
