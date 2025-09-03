@@ -439,6 +439,31 @@ export const subscriptionHistory = pgTable(
     createdAtIndex: index("payment_account_created_at_idx").on(table.createdAt),
   }));
 
+// ######################### Notifications Schema #########################
+export const notifications = pgTable("notifications", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  type: text("type", { enum: ["item_submission", "comment_reported", "user_registered", "payment_failed", "system_alert"] }).notNull(),
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  data: text("data"), 
+  isRead: boolean("is_read").notNull().default(false),
+  readAt: timestamp("read_at", { mode: "date" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  userIndex: index("notifications_user_idx").on(table.userId),
+  typeIndex: index("notifications_type_idx").on(table.type),
+  isReadIndex: index("notifications_is_read_idx").on(table.isRead),
+  createdAtIndex: index("notifications_created_at_idx").on(table.createdAt),
+}));
+
+
+
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
 export type Vote = typeof votes.$inferSelect;
@@ -474,6 +499,10 @@ export type OldPaymentProvider = typeof paymentProviders.$inferSelect;
 export type NewPaymentProvider = typeof paymentProviders.$inferInsert;
 export type PaymentAccount = typeof paymentAccounts.$inferSelect;
 export type NewPaymentAccount = typeof paymentAccounts.$inferInsert;
+
+// ######################### Notification Types #########################
+export type Notification = typeof notifications.$inferSelect;
+export type NewNotification = typeof notifications.$inferInsert;
 
 export enum ActivityType {
 	SIGN_UP = 'SIGN_UP',

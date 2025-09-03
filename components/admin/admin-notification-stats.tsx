@@ -1,0 +1,119 @@
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Bell, MessageSquare, UserPlus, CreditCard, AlertTriangle } from "lucide-react";
+import { useAdminNotifications } from "@/hooks/use-admin-notifications";
+
+const notificationTypeIcons = {
+  item_submission: Bell,
+  comment_reported: MessageSquare,
+  user_registered: UserPlus,
+  payment_failed: CreditCard,
+  system_alert: AlertTriangle,
+};
+
+const notificationTypeLabels = {
+  item_submission: "Item Submissions",
+  comment_reported: "Comments Reported",
+  user_registered: "New Users",
+  payment_failed: "Payment Failures",
+  system_alert: "System Alerts",
+};
+
+export function AdminNotificationStats() {
+  const { stats, isLoading } = useAdminNotifications();
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        {[...Array(5)].map((_, i) => (
+          <Card key={i} className="animate-pulse">
+            <CardHeader className="pb-2">
+              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            </CardHeader>
+            <CardContent>
+              <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      {/* Total Notifications */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Total</CardTitle>
+          <Bell className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats.total}</div>
+          <p className="text-xs text-muted-foreground">
+            All notifications
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Unread Notifications */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Unread</CardTitle>
+          <Badge variant="destructive" className="h-4 w-4 rounded-full p-0 flex items-center justify-center">
+            {stats.unread}
+          </Badge>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats.unread}</div>
+          <p className="text-xs text-muted-foreground">
+            Require attention
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Item Submissions */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Submissions</CardTitle>
+          <Bell className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats.byType.item_submission || 0}</div>
+          <p className="text-xs text-muted-foreground">
+            Pending review
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Comments Reported */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Reported</CardTitle>
+          <MessageSquare className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats.byType.comment_reported || 0}</div>
+          <p className="text-xs text-muted-foreground">
+            Comments flagged
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* New Users */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">New Users</CardTitle>
+          <UserPlus className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats.byType.user_registered || 0}</div>
+          <p className="text-xs text-muted-foreground">
+            Recently registered
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
