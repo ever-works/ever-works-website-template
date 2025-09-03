@@ -1912,3 +1912,330 @@ export async function getAdminDashboardData(params: {
 		}
 	};
 }
+
+/**
+ * Advanced search with multiple criteria and complex filtering
+ * Supports date ranges, multiple search fields, and saved filter presets
+ */
+export async function advancedClientSearch(params: {
+	page: number;
+	limit: number;
+	// Basic filters
+	search?: string;
+	status?: string;
+	plan?: string;
+	accountType?: string;
+	provider?: string;
+	// Advanced filters
+	dateRange?: {
+		startDate?: Date;
+		endDate?: Date;
+	};
+	createdAfter?: Date;
+	createdBefore?: Date;
+	updatedAfter?: Date;
+	updatedBefore?: Date;
+	// Field-specific searches
+	emailDomain?: string;
+	companySearch?: string;
+	locationSearch?: string;
+	industrySearch?: string;
+	// Numeric filters
+	minSubmissions?: number;
+	maxSubmissions?: number;
+	// Boolean filters
+	hasAvatar?: boolean;
+	hasWebsite?: boolean;
+	hasPhone?: boolean;
+	emailVerified?: boolean;
+	twoFactorEnabled?: boolean;
+	// Sort options
+	sortBy?: 'createdAt' | 'updatedAt' | 'name' | 'email' | 'company' | 'totalSubmissions';
+	sortOrder?: 'asc' | 'desc';
+}): Promise<{
+	clients: ClientProfileWithAuth[];
+	pagination: {
+		page: number;
+		totalPages: number;
+		total: number;
+		limit: number;
+	};
+	searchMetadata: {
+		appliedFilters: string[];
+		searchTime: number;
+		resultCount: number;
+	};
+}> {
+	const {
+		page,
+		limit,
+		search,
+		status,
+		plan,
+		accountType,
+		provider,
+		dateRange,
+		createdAfter,
+		createdBefore,
+		updatedAfter,
+		updatedBefore,
+		emailDomain,
+		companySearch,
+		locationSearch,
+		industrySearch,
+		minSubmissions,
+		maxSubmissions,
+		hasAvatar,
+		hasWebsite,
+		hasPhone,
+		emailVerified,
+		twoFactorEnabled,
+		sortBy = 'createdAt',
+		sortOrder = 'desc'
+	} = params;
+
+	const offset = (page - 1) * limit;
+	const whereConditions: SQL[] = [];
+	const appliedFilters: string[] = [];
+
+	// Basic text search across multiple fields
+	if (search) {
+		const escapedSearch = search.replace(/\\/g, '\\\\').replace(/[%_]/g, '\\$&');
+		whereConditions.push(
+			sql`(${clientProfiles.username} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.displayName} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.company} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.name} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.email} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.bio} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.jobTitle} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.industry} ILIKE ${`%${escapedSearch}%`} OR
+           ${clientProfiles.location} ILIKE ${`%${escapedSearch}%`})`
+		);
+		appliedFilters.push(`Search: "${search}"`);
+	}
+
+	// Status filter
+	if (status) {
+		whereConditions.push(eq(clientProfiles.status, status as ClientStatus));
+		appliedFilters.push(`Status: ${status}`);
+	}
+
+	// Plan filter
+	if (plan) {
+		whereConditions.push(eq(clientProfiles.plan, plan as ClientPlan));
+		appliedFilters.push(`Plan: ${plan}`);
+	}
+
+	// Account type filter
+	if (accountType) {
+		whereConditions.push(eq(clientProfiles.accountType, accountType as ClientAccountType));
+		appliedFilters.push(`Type: ${accountType}`);
+	}
+
+	// Provider filter
+	if (provider) {
+		whereConditions.push(eq(accounts.provider, provider));
+		appliedFilters.push(`Provider: ${provider}`);
+	}
+
+	// Date range filters
+	if (dateRange?.startDate) {
+		whereConditions.push(gte(clientProfiles.createdAt, dateRange.startDate));
+		appliedFilters.push(`Created after: ${dateRange.startDate.toLocaleDateString()}`);
+	}
+
+	if (dateRange?.endDate) {
+		whereConditions.push(lte(clientProfiles.createdAt, dateRange.endDate));
+		appliedFilters.push(`Created before: ${dateRange.endDate.toLocaleDateString()}`);
+	}
+
+	if (createdAfter) {
+		whereConditions.push(gte(clientProfiles.createdAt, createdAfter));
+		appliedFilters.push(`Created after: ${createdAfter.toLocaleDateString()}`);
+	}
+
+	if (createdBefore) {
+		whereConditions.push(lte(clientProfiles.createdAt, createdBefore));
+		appliedFilters.push(`Created before: ${createdBefore.toLocaleDateString()}`);
+	}
+
+	if (updatedAfter) {
+		whereConditions.push(gte(clientProfiles.updatedAt, updatedAfter));
+		appliedFilters.push(`Updated after: ${updatedAfter.toLocaleDateString()}`);
+	}
+
+	if (updatedBefore) {
+		whereConditions.push(lte(clientProfiles.updatedAt, updatedBefore));
+		appliedFilters.push(`Updated before: ${updatedBefore.toLocaleDateString()}`);
+	}
+
+	// Field-specific searches
+	if (emailDomain) {
+		whereConditions.push(sql`${clientProfiles.email} ILIKE ${`%@${emailDomain}%`}`);
+		appliedFilters.push(`Email domain: ${emailDomain}`);
+	}
+
+	if (companySearch) {
+		const escapedCompany = companySearch.replace(/\\/g, '\\\\').replace(/[%_]/g, '\\$&');
+		whereConditions.push(sql`${clientProfiles.company} ILIKE ${`%${escapedCompany}%`}`);
+		appliedFilters.push(`Company: "${companySearch}"`);
+	}
+
+	if (locationSearch) {
+		const escapedLocation = locationSearch.replace(/\\/g, '\\\\').replace(/[%_]/g, '\\$&');
+		whereConditions.push(sql`${clientProfiles.location} ILIKE ${`%${escapedLocation}%`}`);
+		appliedFilters.push(`Location: "${locationSearch}"`);
+	}
+
+	if (industrySearch) {
+		const escapedIndustry = industrySearch.replace(/\\/g, '\\\\').replace(/[%_]/g, '\\$&');
+		whereConditions.push(sql`${clientProfiles.industry} ILIKE ${`%${escapedIndustry}%`}`);
+		appliedFilters.push(`Industry: "${industrySearch}"`);
+	}
+
+	// Numeric filters
+	if (minSubmissions !== undefined) {
+		whereConditions.push(gte(clientProfiles.totalSubmissions, minSubmissions));
+		appliedFilters.push(`Min submissions: ${minSubmissions}`);
+	}
+
+	if (maxSubmissions !== undefined) {
+		whereConditions.push(lte(clientProfiles.totalSubmissions, maxSubmissions));
+		appliedFilters.push(`Max submissions: ${maxSubmissions}`);
+	}
+
+	// Boolean filters
+	if (hasAvatar !== undefined) {
+		if (hasAvatar) {
+			whereConditions.push(sql`${clientProfiles.avatar} IS NOT NULL AND ${clientProfiles.avatar} != ''`);
+		} else {
+			whereConditions.push(sql`(${clientProfiles.avatar} IS NULL OR ${clientProfiles.avatar} = '')`);
+		}
+		appliedFilters.push(`Has avatar: ${hasAvatar}`);
+	}
+
+	if (hasWebsite !== undefined) {
+		if (hasWebsite) {
+			whereConditions.push(sql`${clientProfiles.website} IS NOT NULL AND ${clientProfiles.website} != ''`);
+		} else {
+			whereConditions.push(sql`(${clientProfiles.website} IS NULL OR ${clientProfiles.website} = '')`);
+		}
+		appliedFilters.push(`Has website: ${hasWebsite}`);
+	}
+
+	if (hasPhone !== undefined) {
+		if (hasPhone) {
+			whereConditions.push(sql`${clientProfiles.phone} IS NOT NULL AND ${clientProfiles.phone} != ''`);
+		} else {
+			whereConditions.push(sql`(${clientProfiles.phone} IS NULL OR ${clientProfiles.phone} = '')`);
+		}
+		appliedFilters.push(`Has phone: ${hasPhone}`);
+	}
+
+	if (emailVerified !== undefined) {
+		whereConditions.push(eq(clientProfiles.emailVerified, emailVerified));
+		appliedFilters.push(`Email verified: ${emailVerified}`);
+	}
+
+	if (twoFactorEnabled !== undefined) {
+		whereConditions.push(eq(clientProfiles.twoFactorEnabled, twoFactorEnabled));
+		appliedFilters.push(`2FA enabled: ${twoFactorEnabled}`);
+	}
+
+	const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+	// Get total count
+	const countResult = await db
+		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
+		.from(clientProfiles)
+		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.where(whereClause);
+
+	const total = Number(countResult[0]?.count || 0);
+
+	// Build sort clause
+	let sortClause;
+	switch (sortBy) {
+		case 'createdAt':
+			sortClause = sortOrder === 'asc' ? asc(clientProfiles.createdAt) : desc(clientProfiles.createdAt);
+			break;
+		case 'updatedAt':
+			sortClause = sortOrder === 'asc' ? asc(clientProfiles.updatedAt) : desc(clientProfiles.updatedAt);
+			break;
+		case 'name':
+			sortClause = sortOrder === 'asc' ? asc(clientProfiles.name) : desc(clientProfiles.name);
+			break;
+		case 'email':
+			sortClause = sortOrder === 'asc' ? asc(clientProfiles.email) : desc(clientProfiles.email);
+			break;
+		case 'company':
+			sortClause = sortOrder === 'asc' ? asc(clientProfiles.company) : desc(clientProfiles.company);
+			break;
+		case 'totalSubmissions':
+			sortClause = sortOrder === 'asc' ? asc(clientProfiles.totalSubmissions) : desc(clientProfiles.totalSubmissions);
+			break;
+		default:
+			sortClause = desc(clientProfiles.createdAt);
+	}
+
+	// Get profiles with sorting
+	const profiles = await db
+		.select({
+			id: clientProfiles.id,
+			userId: clientProfiles.userId,
+			email: clientProfiles.email,
+			name: clientProfiles.name,
+			displayName: clientProfiles.displayName,
+			username: clientProfiles.username,
+			bio: clientProfiles.bio,
+			jobTitle: clientProfiles.jobTitle,
+			company: clientProfiles.company,
+			industry: clientProfiles.industry,
+			phone: clientProfiles.phone,
+			website: clientProfiles.website,
+			location: clientProfiles.location,
+			avatar: clientProfiles.avatar,
+			accountType: clientProfiles.accountType,
+			status: clientProfiles.status,
+			plan: clientProfiles.plan,
+			timezone: clientProfiles.timezone,
+			language: clientProfiles.language,
+			twoFactorEnabled: clientProfiles.twoFactorEnabled,
+			emailVerified: clientProfiles.emailVerified,
+			totalSubmissions: clientProfiles.totalSubmissions,
+			notes: clientProfiles.notes,
+			tags: clientProfiles.tags,
+			createdAt: clientProfiles.createdAt,
+			updatedAt: clientProfiles.updatedAt,
+			accountProvider: accounts.provider,
+		})
+		.from(clientProfiles)
+		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.where(whereClause)
+		.orderBy(sortClause)
+		.limit(limit)
+		.offset(offset);
+
+	// Transform to enhanced type
+	const enhancedProfiles: ClientProfileWithAuth[] = profiles.map((profile: typeof profiles[0]) => ({
+		...profile,
+		accountType: profile.accountType || 'individual',
+		isActive: profile.status === 'active',
+	}));
+
+	return {
+		clients: enhancedProfiles,
+		pagination: {
+			page,
+			totalPages: Math.ceil(total / limit),
+			total,
+			limit
+		},
+		searchMetadata: {
+			appliedFilters,
+			searchTime: Date.now(),
+			resultCount: total
+		}
+	};
+}
