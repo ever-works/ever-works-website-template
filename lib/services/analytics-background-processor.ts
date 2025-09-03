@@ -87,6 +87,11 @@ export class AnalyticsBackgroundProcessor {
     const jobStatus = this.jobStatuses.get(id);
     if (!jobStatus) return;
 
+    // Skip if a previous run is still in progress
+    if (jobStatus.status === 'running') {
+      return;
+    }
+
     const startTime = Date.now();
     jobStatus.status = 'running';
     jobStatus.lastRun = new Date();
