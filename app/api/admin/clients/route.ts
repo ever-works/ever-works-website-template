@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status') || undefined;
     const plan = searchParams.get('plan') || undefined;
     const accountType = searchParams.get('accountType') || undefined;
-
+    const provider = searchParams.get('provider') || undefined;
 
     const result = await getClientProfiles({
       page,
@@ -58,6 +58,7 @@ export async function GET(request: NextRequest) {
       status,
       plan,
       accountType,
+      provider,
     });
 
     // Return in the expected format with meta and data

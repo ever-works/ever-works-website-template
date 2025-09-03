@@ -32,6 +32,17 @@ import { desc, isNull, count, asc, lte } from "drizzle-orm";
 import type { NewComment, CommentWithUser } from "@/lib/types/comment";
 import type { ClientProfile, NewClientProfile, OldPaymentProvider, PaymentAccount, NewPaymentAccount, NewPaymentProvider } from "./schema";
 
+// Enhanced client profile type with authentication data
+export type ClientProfileWithAuth = ClientProfile & {
+  accountProvider: string;
+  isActive: boolean;
+};
+
+// Type for the enum values
+type ClientStatus = "active" | "inactive" | "suspended" | "trial";
+type ClientPlan = "free" | "standard" | "premium";
+type ClientAccountType = "individual" | "business" | "enterprise";
+
 // import { randomUUID } from "crypto"; // Removed for Edge Runtime compatibility
 
 import { PaymentPlan } from "../constants";
@@ -824,7 +835,7 @@ export async function getClientProfileByUserId(userId: string): Promise<ClientPr
 }
 
 /**
- * Get all client profiles with pagination
+ * Get all client profiles with pagination and authentication data
  */
 export async function getClientProfiles(params: {
 	page?: number;
@@ -833,14 +844,15 @@ export async function getClientProfiles(params: {
 	status?: string;
 	plan?: string;
 	accountType?: string;
+	provider?: string; // New: filter by auth provider
 }): Promise<{
-	profiles: ClientProfile[];
+	profiles: ClientProfileWithAuth[];
 	total: number;
 	page: number;
 	totalPages: number;
 	limit: number;
 }> {
-	const { page = 1, limit = 10, search, status, plan, accountType } = params;
+	const { page = 1, limit = 10, search, status, plan, accountType, provider } = params;
 	const offset = (page - 1) * limit;
 
 	const whereConditions: SQL[] = [];
@@ -858,38 +870,81 @@ export async function getClientProfiles(params: {
 	}
 
 	if (status) {
-		whereConditions.push(eq(clientProfiles.status, status as any));
+		whereConditions.push(eq(clientProfiles.status, status as ClientStatus));
 	}
 
 	if (plan) {
-		whereConditions.push(eq(clientProfiles.plan, plan as any));
+		whereConditions.push(eq(clientProfiles.plan, plan as ClientPlan));
 	}
 
 	if (accountType) {
-		whereConditions.push(eq(clientProfiles.accountType, accountType as any));
+		whereConditions.push(eq(clientProfiles.accountType, accountType as ClientAccountType));
+	}
+
+	if (provider) {
+		whereConditions.push(eq(accounts.provider, provider));
 	}
 
 	const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
-	// Get total count
+	// Get total count with join
 	const countResult = await db
-		.select({ count: sql`count(*)` })
+		.select({ count: sql`count(distinct ${clientProfiles.id})` })
 		.from(clientProfiles)
+		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
 		.where(whereClause);
 
 	const total = Number(countResult[0]?.count || 0);
 
-	// Get profiles
+	// Get profiles with authentication data
 	const profiles = await db
-		.select()
+		.select({
+			// Client profile fields
+			id: clientProfiles.id,
+			userId: clientProfiles.userId,
+			email: clientProfiles.email,
+			name: clientProfiles.name,
+			displayName: clientProfiles.displayName,
+			username: clientProfiles.username,
+			bio: clientProfiles.bio,
+			jobTitle: clientProfiles.jobTitle,
+			company: clientProfiles.company,
+			industry: clientProfiles.industry,
+			phone: clientProfiles.phone,
+			website: clientProfiles.website,
+			location: clientProfiles.location,
+			avatar: clientProfiles.avatar,
+			accountType: clientProfiles.accountType,
+			status: clientProfiles.status,
+			plan: clientProfiles.plan,
+			timezone: clientProfiles.timezone,
+			language: clientProfiles.language,
+			twoFactorEnabled: clientProfiles.twoFactorEnabled,
+			emailVerified: clientProfiles.emailVerified,
+			totalSubmissions: clientProfiles.totalSubmissions,
+			notes: clientProfiles.notes,
+			tags: clientProfiles.tags,
+			createdAt: clientProfiles.createdAt,
+			updatedAt: clientProfiles.updatedAt,
+			// Account fields
+			accountProvider: accounts.provider,
+		})
 		.from(clientProfiles)
+		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
 		.where(whereClause)
 		.orderBy(desc(clientProfiles.createdAt))
 		.limit(limit)
 		.offset(offset);
 
+	// Transform to enhanced type
+	const enhancedProfiles: ClientProfileWithAuth[] = profiles.map((profile: typeof profiles[0]) => ({
+		...profile,
+		accountType: profile.accountType || 'individual',
+		isActive: profile.status === 'active',
+	}));
+
 	return {
-		profiles,
+		profiles: enhancedProfiles,
 		total,
 		page,
 		totalPages: Math.ceil(total / limit),

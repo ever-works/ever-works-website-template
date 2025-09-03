@@ -8,16 +8,16 @@ import { ClientForm } from "@/components/admin/clients/client-form";
 import { UniversalPagination } from "@/components/universal-pagination";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import type { ClientListResponse, ClientResponse, CreateClientRequest, UpdateClientRequest } from "@/lib/types/client";
-import type { ClientProfileWithUser } from "@/lib/db/schema";
+import type { ClientProfileWithAuth } from "@/lib/db/queries";
 
 export default function ClientsPage() {
   const router = useRouter();
   const params = useParams<{ locale: string }>();
   const searchParams = useSearchParams();
-  const [clients, setClients] = useState<ClientProfileWithUser[]>([]);
+  const [clients, setClients] = useState<ClientProfileWithAuth[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<ClientProfileWithUser | null>(null);
+  const [selectedClient, setSelectedClient] = useState<ClientProfileWithAuth | null>(null);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [navigatingClientId, setNavigatingClientId] = useState<string | null>(null);
 
@@ -35,6 +35,7 @@ export default function ClientsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('active');
   const [planFilter, setPlanFilter] = useState<string>('');
   const [accountTypeFilter, setAccountTypeFilter] = useState<string>('');
+  const [providerFilter, setProviderFilter] = useState<string>('');
   const [isFiltering, setIsFiltering] = useState(false);
 
   // Stats state
@@ -100,6 +101,7 @@ export default function ClientsPage() {
       if (statusFilter) params.append('status', statusFilter);
       if (planFilter) params.append('plan', planFilter);
       if (accountTypeFilter) params.append('accountType', accountTypeFilter);
+      if (providerFilter) params.append('provider', providerFilter);
 
       const response = await fetch(`/api/admin/clients?${params}`);
 
@@ -125,7 +127,7 @@ export default function ClientsPage() {
       setIsLoading(false);
       setIsFiltering(false);
     }
-  }, [debouncedSearchTerm, statusFilter, planFilter, accountTypeFilter, currentPage, limit]);
+  }, [debouncedSearchTerm, statusFilter, planFilter, accountTypeFilter, providerFilter, currentPage, limit]);
 
   // Create client
   const handleCreate = async (data: CreateClientRequest) => {
@@ -243,7 +245,7 @@ export default function ClientsPage() {
     onOpen();
   };
 
-  const openEditForm = (client: ClientProfileWithUser) => {
+  const openEditForm = (client: ClientProfileWithAuth) => {
     setSelectedClient(client);
     setFormMode('edit');
     onOpen();
@@ -274,6 +276,7 @@ export default function ClientsPage() {
     setStatusFilter('');
     setPlanFilter('');
     setAccountTypeFilter('');
+    setProviderFilter('');
     setCurrentPage(1);
     // Optional: short-circuit debounce for immediate fetch
     // setDebouncedSearchTerm('');
@@ -298,6 +301,12 @@ export default function ClientsPage() {
 
   const handleAccountTypeFilter = (value: string) => {
     setAccountTypeFilter(value);
+    setCurrentPage(1);
+    fetchClients(1);
+  };
+
+  const handleProviderFilter = (value: string) => {
+    setProviderFilter(value);
     setCurrentPage(1);
     fetchClients(1);
   };
@@ -336,7 +345,7 @@ export default function ClientsPage() {
             if (!resp.ok) throw new Error('Failed to load client');
             const data: ClientResponse = await resp.json();
             if (data.success && (data as any).data) {
-              setSelectedClient((data as any).data as ClientProfileWithUser);
+              setSelectedClient((data as any).data as ClientProfileWithAuth);
               setFormMode('edit');
               onOpen();
             } else {
@@ -362,7 +371,7 @@ export default function ClientsPage() {
       fetchClients(1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter, planFilter, accountTypeFilter]);
+  }, [statusFilter, planFilter, accountTypeFilter, providerFilter]);
 
   // Fetch when debounced search term changes, including when cleared
   useEffect(() => {
@@ -597,10 +606,27 @@ export default function ClientsPage() {
             </select>
             <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
           </div>
+
+          {/* Provider Filter */}
+          <div className="relative">
+            <select
+              aria-label="Filter by provider"
+              value={providerFilter}
+              onChange={(e) => handleProviderFilter(e.target.value)}
+              className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 pr-8 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
+            >
+              <option value="">All Providers</option>
+              <option value="google">Google</option>
+              <option value="facebook">Facebook</option>
+              <option value="twitter">Twitter</option>
+              <option value="linkedin">LinkedIn</option>
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+          </div>
         </div>
 
         {/* Active Filters Indicator */}
-        {(searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter) && (
+        {(searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter || providerFilter) && (
           <div className="flex items-center justify-between mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
             <span className="text-sm text-blue-700 dark:text-blue-300">
               {(() => {
@@ -609,6 +635,7 @@ export default function ClientsPage() {
                   statusFilter !== 'active' && 'status',
                   planFilter && 'plan',
                   accountTypeFilter && 'type',
+                  providerFilter && 'provider',
                 ].filter(Boolean).length;
                 return `${count} filter${count !== 1 ? 's' : ''} applied`;
               })()}
@@ -629,7 +656,7 @@ export default function ClientsPage() {
         {!isLoading && (
           <div className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
             <span>
-              Showing {clients.length} of {filteredTotal} {(searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter) ? 'filtered ' : ''}clients
+              Showing {clients.length} of {filteredTotal} {(searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter || providerFilter) ? 'filtered ' : ''}clients
             </span>
             {totalPages > 1 && (
               <span>
@@ -657,12 +684,12 @@ export default function ClientsPage() {
               <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No clients found</h3>
               <p className="text-gray-500 dark:text-gray-400 mb-4">
-                {searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter
+                {searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter || providerFilter
                   ? 'Try adjusting your filters or search terms.'
                   : 'Get started by adding your first client.'
                 }
               </p>
-              {!searchTerm && statusFilter === 'active' && !planFilter && !accountTypeFilter && (
+              {!searchTerm && statusFilter === 'active' && !planFilter && !accountTypeFilter && !providerFilter && (
                 <Button color="primary" onPress={openCreateForm}>
                   Add First Client
                 </Button>

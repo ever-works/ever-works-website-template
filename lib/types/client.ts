@@ -1,6 +1,6 @@
 // ######################### Client Types #########################
 
-import type { ClientProfileWithUser } from '@/lib/db/schema';
+import type { ClientProfileWithAuth } from '@/lib/db/queries';
 
 export interface CreateClientRequest {
   /** @deprecated use `email` instead */
@@ -45,13 +45,11 @@ export interface UpdateClientRequest {
   emailVerified?: boolean;
 }
 
-
-
 // Client-specific response types using the shared PaginatedResponse
 export type ClientListResponse = 
   | {
       success: true;
-      data: { clients: ClientProfileWithUser[] };
+      data: { clients: ClientProfileWithAuth[] };
       meta: {
         page: number;
         totalPages: number;
@@ -64,7 +62,7 @@ export type ClientListResponse =
 export type ClientResponse = 
   | {
       success: true;
-      data: ClientProfileWithUser;
+      data: ClientProfileWithAuth;
     }
   | { success: false; error: string };
 
@@ -72,6 +70,7 @@ export interface ClientListOptions {
   status?: 'active' | 'inactive' | 'suspended' | 'trial';
   plan?: 'free' | 'standard' | 'premium';
   accountType?: 'individual' | 'business' | 'enterprise';
+  provider?: string; // New: filter by authentication provider
   page?: number;
   limit?: number;
   offset?: number;

@@ -7,11 +7,11 @@ import type {
   CreateClientRequest, 
   UpdateClientRequest
 } from "@/lib/types/client";
-import type { ClientProfileWithUser } from "@/lib/db/schema";
+import type { ClientProfileWithAuth } from "@/lib/db/queries";
 import { CLIENT_VALIDATION } from "@/lib/types/client";
 
 interface ClientFormProps {
-  client?: ClientProfileWithUser;
+  client?: ClientProfileWithAuth;
   onSubmit: (data: CreateClientRequest | UpdateClientRequest) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
