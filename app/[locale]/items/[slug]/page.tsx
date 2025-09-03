@@ -1,4 +1,4 @@
-import { fetchItem } from "@/lib/content";
+import { fetchItem, fetchItemBySlug } from "@/lib/content";
 import { notFound } from "next/navigation";
 import { getCategoriesName } from "@/lib/utils";
 import { getTranslations } from "next-intl/server";
@@ -33,17 +33,22 @@ export default async function ItemDetails({
 
   try {
     const item = await fetchItem(slug, { lang: locale });
+
     if (!item) {
       return notFound();
     }
 
     const t = await getTranslations("common");
+
     const { meta, content } = item;
     const categoryName = getCategoriesName(meta.category);
+    const similarItems = await fetchItemBySlug(meta, 6, { lang: locale }).then((items) => items.flatMap((item) => item.item));
+
 
     const metaWithVideo = {
       ...meta,
-      video_url: "", // e.g. https://www.youtube.com/watch?v=eDqfg_LexCQ
+      video_url: "", // e.g. https://www.youtube.com/watch?v=eDqfg_LexCQ,
+      allItems: similarItems,
     };
 
     return (
