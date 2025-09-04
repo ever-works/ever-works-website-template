@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     
     // Use simple working query instead of complex function
     const { db } = await import('@/lib/db/drizzle');
-    const { clientProfiles, accounts, users } = await import('@/lib/db/schema');
+    const { clientProfiles, accounts, users, userRoles, roles } = await import('@/lib/db/schema');
     const { eq, desc, sql } = await import('drizzle-orm');
     
     const profiles = await db
@@ -37,7 +37,13 @@ export async function GET(request: NextRequest) {
       })
       .from(clientProfiles)
       .leftJoin(users, eq(clientProfiles.userId, users.id))
+      .leftJoin(userRoles, eq(userRoles.userId, users.id))
+      .leftJoin(roles, eq(userRoles.roleId, roles.id))
       .leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
+      .where(
+        // Treat null as false to keep users without explicit roles
+        sql`COALESCE(${roles.isAdmin}, false) = false`
+      )
       .orderBy(desc(clientProfiles.createdAt))
       .limit(limit)
       .offset((page - 1) * limit);
