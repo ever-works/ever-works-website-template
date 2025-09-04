@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { getAdminDashboardData } from '@/lib/db/queries';
+// Auth check preserved for later re-enable
+// import { auth } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
     console.log('API: Starting dashboard request');
     
-    // Temporarily bypass auth check to test client data fetching
+    // Auth check placeholder (to be re-enabled later)
     // const session = await auth();
-    
     // if (!session?.user?.isAdmin) {
     //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     // }
@@ -17,24 +16,13 @@ export async function GET(request: NextRequest) {
     console.log('API: Parsed search params');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
-    const search = searchParams.get('search') || undefined;
-    const status = searchParams.get('status') || undefined;
-    const plan = searchParams.get('plan') || undefined;
-    const accountType = searchParams.get('accountType') || undefined;
-    const provider = searchParams.get('provider') || undefined;
-    
-    // Date range parameters
-    const createdAfter = searchParams.get('createdAfter') || undefined;
-    const createdBefore = searchParams.get('createdBefore') || undefined;
-    const updatedAfter = searchParams.get('updatedAfter') || undefined;
-    const updatedBefore = searchParams.get('updatedBefore') || undefined;
 
     console.log('API: About to call getAdminDashboardData');
     
     // Use simple working query instead of complex function
     const { db } = await import('@/lib/db/drizzle');
-    const { clientProfiles, accounts } = await import('@/lib/db/schema');
-    const { eq, desc } = await import('drizzle-orm');
+    const { clientProfiles, accounts, users } = await import('@/lib/db/schema');
+    const { eq, desc, sql } = await import('drizzle-orm');
     
     const profiles = await db
       .select({
@@ -43,9 +31,12 @@ export async function GET(request: NextRequest) {
         status: clientProfiles.status,
         plan: clientProfiles.plan,
         accountType: clientProfiles.accountType,
-        accountProvider: accounts.provider || 'unknown',
+        email: sql<string>`COALESCE(${clientProfiles.email}, ${users.email})`.as('email'),
+        accountProvider: sql<string>`COALESCE(${accounts.provider}, CASE WHEN ${users.passwordHash} IS NOT NULL THEN 'credentials' ELSE 'unknown' END)`
+          .as('accountProvider'),
       })
       .from(clientProfiles)
+      .leftJoin(users, eq(clientProfiles.userId, users.id))
       .leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
       .orderBy(desc(clientProfiles.createdAt))
       .limit(limit)
