@@ -12,8 +12,12 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     console.log('API: Parsed search params');
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
+    
+    // Pagination with validation
+    const rawPage = Number(searchParams.get('page') ?? 1);
+    const rawLimit = Number(searchParams.get('limit') ?? 10);
+    const page = Number.isFinite(rawPage) && rawPage > 0 ? Math.floor(rawPage) : 1;
+    const limit = Number.isFinite(rawLimit) ? Math.min(Math.max(1, Math.floor(rawLimit)), 100) : 10;
 
     console.log('API: About to build dashboard data');
     
@@ -140,7 +144,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error fetching dashboard data:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch dashboard data' },
+      { success: false, error: 'Failed to fetch dashboard data' },
       { status: 500 }
     );
   }
