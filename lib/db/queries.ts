@@ -1034,9 +1034,9 @@ export async function getEnhancedClientStats(): Promise<{
 	};
 
 	// Process results
-	statsResult.forEach((row: typeof statsResult[0]) => {
+	for (const row of statsResult) {
 		const count = Number(row.count);
-		const status = row.status || 'unknown';
+		const status = row.status || 'active';  // Use a valid default
 		const plan = row.plan || 'free';
 		const accountType = row.accountType || 'individual';
 		const provider = row.provider || 'unknown';
@@ -1057,13 +1057,13 @@ export async function getEnhancedClientStats(): Promise<{
 		}
 
 		// Count by provider
-		if (provider === 'credentials' || provider === 'google' || provider === 'github' || 
-			provider === 'facebook' || provider === 'twitter' || provider === 'linkedin') {
-			(byProvider as any)[provider] += count;
+		const knownProviders = ['credentials', 'google', 'github', 'facebook', 'twitter', 'linkedin'] as const;
+		if (knownProviders.includes(provider as any)) {
+			byProvider[provider as keyof typeof byProvider] += count;
 		} else {
 			byProvider.other += count;
 		}
-	});
+	}
 
 	// Get activity metrics
 	const now = new Date();
@@ -1928,17 +1928,8 @@ export async function getAdminDashboardData(params: {
 		isActive: profile.status === 'active',
 	}));
 
-	// Get comprehensive stats in parallel (since we already have the base data)
-	// Temporarily use simple stats to isolate the issue
-	const stats = {
-		overview: { total: total, active: 0, inactive: 0, suspended: 0, trial: 0 },
-		byProvider: { credentials: 0, google: 0, github: 0, facebook: 0, twitter: 0, linkedin: 0, other: 0 },
-		byPlan: { free: 0, standard: 0, premium: 0 },
-		byAccountType: { individual: 0, business: 0, enterprise: 0 },
-		byStatus: { active: 0, inactive: 0, suspended: 0, trial: 0 },
-		activity: { newThisWeek: 0, newThisMonth: 0, activeThisWeek: 0, activeThisMonth: 0 },
-		growth: { weeklyGrowth: 0, monthlyGrowth: 0 }
-	};
+	// Get actual stats
+	const stats = await getEnhancedClientStats();
 
 	return {
 		clients: enhancedProfiles,
