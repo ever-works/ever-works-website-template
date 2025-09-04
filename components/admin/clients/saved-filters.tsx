@@ -220,8 +220,8 @@ export function SavedFilters({
                   </div>
                   
                   <div className="text-xs text-gray-400 mt-2">
-                    Created: {filter.createdAt.toLocaleDateString()}
-                    {filter.lastUsed && ` • Last used: ${filter.lastUsed.toLocaleDateString()}`}
+                    Created: {new Date(filter.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    {filter.lastUsed && ` • Last used: ${new Date(filter.lastUsed).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}`}
                   </div>
                 </div>
               ))}
