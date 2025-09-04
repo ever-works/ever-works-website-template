@@ -22,14 +22,8 @@ interface ExtendedUser {
 const isDatabaseAvailable = !!process.env.DATABASE_URL;
 
 // Only create the Drizzle adapter if DATABASE_URL is available
-const drizzle = isDatabaseAvailable
-	? DrizzleAdapter(db, {
-			usersTable: users as any,
-			accountsTable: accounts as any,
-			sessionsTable: sessions as any,
-			verificationTokensTable: verificationTokens as any
-		})
-	: undefined;
+// Temporarily disabled to test client list functionality
+const drizzle = undefined;
 
 /**
  * Stripe Provider Singleton

@@ -29,7 +29,7 @@ import {
   clientProfiles
 } from "./schema";
 import { desc, isNull, count, asc, lte, gte, or } from "drizzle-orm";
-import type { NewComment, CommentWithUser } from "@/lib/types/comment";
+// import type { NewComment, CommentWithUser } from "@/lib/types/comment";
 import type { ClientProfile, NewClientProfile, OldPaymentProvider, PaymentAccount, NewPaymentAccount, NewPaymentProvider } from "./schema";
 
 // Enhanced client profile type with authentication data
@@ -927,7 +927,7 @@ export async function getClientProfiles(params: {
 			createdAt: clientProfiles.createdAt,
 			updatedAt: clientProfiles.updatedAt,
 			// Account fields
-			accountProvider: accounts.provider,
+			accountProvider: accounts.provider || 'unknown',
 		})
 		.from(clientProfiles)
 		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
@@ -1869,7 +1869,7 @@ export async function getAdminDashboardData(params: {
 	const countResult = await db
 		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
 		.from(clientProfiles)
-		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
 		.where(whereClause);
 
 	const total = Number(countResult[0]?.count || 0);
@@ -1905,10 +1905,10 @@ export async function getAdminDashboardData(params: {
 			createdAt: clientProfiles.createdAt,
 			updatedAt: clientProfiles.updatedAt,
 			// Account fields
-			accountProvider: accounts.provider,
+			accountProvider: accounts.provider || 'unknown',
 		})
 		.from(clientProfiles)
-		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
 		.where(whereClause)
 		.orderBy(desc(clientProfiles.createdAt)) // Use indexed field for ordering
 		.limit(limit)
@@ -1922,7 +1922,16 @@ export async function getAdminDashboardData(params: {
 	}));
 
 	// Get comprehensive stats in parallel (since we already have the base data)
-	const stats = await getEnhancedClientStats();
+	// Temporarily use simple stats to isolate the issue
+	const stats = {
+		overview: { total: total, active: 0, inactive: 0, suspended: 0, trial: 0 },
+		byProvider: { credentials: 0, google: 0, github: 0, facebook: 0, twitter: 0, linkedin: 0, other: 0 },
+		byPlan: { free: 0, standard: 0, premium: 0 },
+		byAccountType: { individual: 0, business: 0, enterprise: 0 },
+		byStatus: { active: 0, inactive: 0, suspended: 0, trial: 0 },
+		activity: { newThisWeek: 0, newThisMonth: 0, activeThisWeek: 0, activeThisMonth: 0 },
+		growth: { weeklyGrowth: 0, monthlyGrowth: 0 }
+	};
 
 	return {
 		clients: enhancedProfiles,
@@ -2231,7 +2240,7 @@ export async function advancedClientSearch(params: {
 			tags: clientProfiles.tags,
 			createdAt: clientProfiles.createdAt,
 			updatedAt: clientProfiles.updatedAt,
-			accountProvider: accounts.provider,
+			accountProvider: accounts.provider || 'unknown',
 		})
 		.from(clientProfiles)
 		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
