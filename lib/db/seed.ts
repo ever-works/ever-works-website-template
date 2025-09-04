@@ -188,7 +188,7 @@ async function seedContent(ids: { adminProfileId: string; clientProfileId1: stri
   }
 
   // Activity Logs: try users first; if FK expects client_profiles, fallback
-  if (await tableExists('activitylogs')) {
+  if (await tableExists('activityLogs')) {
     try {
       await db.insert(activityLogs).values([
         { userId: ids.adminUserId, action: 'SIGN_IN' },
