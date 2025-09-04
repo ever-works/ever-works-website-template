@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-// Auth check preserved for later re-enable
-// import { auth } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
     console.log('API: Starting dashboard request');
     
-    // Auth check placeholder (to be re-enabled later)
-    // const session = await auth();
-    // if (!session?.user?.isAdmin) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+    const session = await auth();
+    if (!session?.user?.isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const { searchParams } = new URL(request.url);
     console.log('API: Parsed search params');
