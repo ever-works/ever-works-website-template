@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Button, Input, Select, SelectItem, Chip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
 import { Search, Filter, Calendar, Building2, MapPin, Briefcase, Mail, Hash, Shield } from 'lucide-react';
 
@@ -36,6 +36,11 @@ interface AdvancedSearchPanelProps {
 export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }: AdvancedSearchPanelProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [localFilters, setLocalFilters] = useState<AdvancedSearchFilters>(filters);
+
+  // Sync local state with parent filters when they change
+  useEffect(() => {
+    setLocalFilters(filters);
+  }, [filters]);
 
   const handleFilterChange = useCallback((key: keyof AdvancedSearchFilters, value: AdvancedSearchFilters[keyof AdvancedSearchFilters]) => {
     setLocalFilters(prev => ({ ...prev, [key]: value }));
