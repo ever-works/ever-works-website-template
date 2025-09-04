@@ -44,7 +44,7 @@ export default function ClientsPage() {
 
   // Filter state
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('active');
+  const [statusFilter, setStatusFilter] = useState<string>('');
   const [planFilter, setPlanFilter] = useState<string>('');
   const [accountTypeFilter, setAccountTypeFilter] = useState<string>('');
   const [providerFilter, setProviderFilter] = useState<string>('');
@@ -80,7 +80,7 @@ export default function ClientsPage() {
   // Calculate active filter count
   const activeFilterCount = [
     searchTerm,
-    statusFilter !== 'active' ? statusFilter : null,
+    statusFilter,
     planFilter,
     accountTypeFilter,
     providerFilter,
@@ -305,7 +305,7 @@ export default function ClientsPage() {
 
   const clearFilters = () => {
     setSearchTerm('');
-    setStatusFilter('active');
+    setStatusFilter('');
     setPlanFilter('');
     setAccountTypeFilter('');
     setProviderFilter('');
@@ -626,8 +626,8 @@ export default function ClientsPage() {
                 Search: &ldquo;{searchTerm}&rdquo;
               </Chip>
             )}
-            {statusFilter !== 'active' && (
-              <Chip variant="flat" color="secondary" onClose={() => setStatusFilter('active')}>
+            {statusFilter && (
+              <Chip variant="flat" color="secondary" onClose={() => setStatusFilter('')}>
                 Status: {statusFilter}
               </Chip>
             )}
@@ -687,12 +687,12 @@ export default function ClientsPage() {
               <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No clients found</h3>
               <p className="text-gray-500 dark:text-gray-400 mb-4">
-                {searchTerm || statusFilter !== 'active' || planFilter || accountTypeFilter || providerFilter || createdAfter || createdBefore || updatedAfter || updatedBefore
+                {searchTerm || statusFilter || planFilter || accountTypeFilter || providerFilter || createdAfter || createdBefore || updatedAfter || updatedBefore
                   ? 'Try adjusting your filters or search terms.'
                   : 'Get started by adding your first client.'
                 }
               </p>
-              {!searchTerm && statusFilter === 'active' && !planFilter && !accountTypeFilter && !providerFilter && (
+              {!searchTerm && !statusFilter && !planFilter && !accountTypeFilter && !providerFilter && (
                 <Button color="primary" onPress={openCreateForm}>
                   Add First Client
                 </Button>
@@ -891,9 +891,10 @@ export default function ClientsPage() {
                   <Select
                     label="Status"
                     placeholder="All Statuses"
-                    value={statusFilter}
+                    selectedKeys={statusFilter ? [statusFilter] : []}
                     onChange={(e) => setStatusFilter(e.target.value)}
                   >
+                    <SelectItem key="">All Statuses</SelectItem>
                     <SelectItem key="active">Active</SelectItem>
                     <SelectItem key="inactive">Inactive</SelectItem>
                     <SelectItem key="suspended">Suspended</SelectItem>
@@ -978,7 +979,7 @@ export default function ClientsPage() {
               Cancel
             </Button>
             <Button color="primary" onPress={onCloseFilterModal}>
-              Apply Filters
+              Close
             </Button>
           </ModalFooter>
         </ModalContent>
