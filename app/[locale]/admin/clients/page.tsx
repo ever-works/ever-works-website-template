@@ -10,6 +10,19 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import type { ClientResponse, CreateClientRequest, UpdateClientRequest } from "@/lib/types/client";
 import type { ClientProfileWithAuth } from "@/lib/db/queries";
 
+// Helper functions for provider stats
+function getTopProviderName(byProvider: Record<string, number>): string {
+  const providers = Object.entries(byProvider);
+  const topProvider = providers.reduce((a, b) => a[1] > b[1] ? a : b);
+  return topProvider[0] === 'credentials' ? 'Email' : topProvider[0].charAt(0).toUpperCase() + topProvider[0].slice(1);
+}
+
+function getTopProviderCount(byProvider: Record<string, number>): number {
+  const providers = Object.entries(byProvider);
+  const topProvider = providers.reduce((a, b) => a[1] > b[1] ? a : b);
+  return topProvider[1];
+}
+
 export default function ClientsPage() {
   const router = useRouter();
   const params = useParams<{ locale: string }>();
@@ -522,19 +535,10 @@ export default function ClientsPage() {
               <div className="flex-1">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Top Provider</p>
                 <p className="text-lg font-bold text-gray-900 dark:text-white">
-                  {(() => {
-                    const providers = Object.entries(stats.byProvider);
-                    const topProvider = providers.reduce((a, b) => a[1] > b[1] ? a : b);
-                    const providerName = topProvider[0] === 'credentials' ? 'Email' : topProvider[0].charAt(0).toUpperCase() + topProvider[0].slice(1);
-                    return providerName;
-                  })()}
+                  {getTopProviderName(stats.byProvider)}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {(() => {
-                    const providers = Object.entries(stats.byProvider);
-                    const topProvider = providers.reduce((a, b) => a[1] > b[1] ? a : b);
-                    return `${topProvider[1]} users`;
-                  })()}
+                  {getTopProviderCount(stats.byProvider)} users
                 </p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
