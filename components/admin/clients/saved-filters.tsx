@@ -36,8 +36,8 @@ export interface SavedFilter {
 }
 
 interface SavedFiltersProps {
-  currentFilters: any;
-  onApplyFilter: (filters: any) => void;
+  currentFilters: SavedFilter['filters'];
+  onApplyFilter: (filters: SavedFilter['filters']) => void;
   onSaveFilter: (filter: Omit<SavedFilter, 'id' | 'createdAt'>) => void;
   onDeleteFilter: (id: string) => void;
   savedFilters: SavedFilter[];
@@ -146,7 +146,7 @@ export function SavedFilters({
                 <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Current Filters:</p>
                 <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
                   {Object.entries(currentFilters).map(([key, value]) => {
-                    if (value && value !== '' && value !== false) {
+                    if (value !== undefined && value !== '' && value !== false) {
                       return (
                         <div key={key} className="flex justify-between">
                           <span className="capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}:</span>
@@ -156,7 +156,7 @@ export function SavedFilters({
                     }
                     return null;
                   }).filter(Boolean)}
-                  {Object.entries(currentFilters).every(([, value]) => !value || value === '' || value === false) && (
+                  {Object.entries(currentFilters).every(([, value]) => value === undefined || value === '' || value === false) && (
                     <span className="text-gray-500">No active filters</span>
                   )}
                 </div>
