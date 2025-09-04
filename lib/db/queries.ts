@@ -890,14 +890,14 @@ export async function getClientProfiles(params: {
 
 	const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
-	// Get total count with join and exclude admins (roles.is_admin = false)
+	// Get total count with join and exclude admins (roles.is_admin = false OR NULL)
 	const countResult = await db
 		.select({ count: sql`count(distinct ${clientProfiles.id})` })
 		.from(clientProfiles)
 		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
 		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
 		.leftJoin(roles, eq(userRoles.roleId, roles.id))
-		.where(whereClause ? and(whereClause, eq(roles.isAdmin, false)) : eq(roles.isAdmin, false));
+		.where(whereClause ? and(whereClause, sql`(${roles.isAdmin} = false OR ${roles.isAdmin} IS NULL)`) : sql`(${roles.isAdmin} = false OR ${roles.isAdmin} IS NULL)`);
 
 	const total = Number(countResult[0]?.count || 0);
 
@@ -938,7 +938,7 @@ export async function getClientProfiles(params: {
 		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
 		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
 		.leftJoin(roles, eq(userRoles.roleId, roles.id))
-		.where(whereClause ? and(whereClause, eq(roles.isAdmin, false)) : eq(roles.isAdmin, false))
+		.where(whereClause ? and(whereClause, sql`(${roles.isAdmin} = false OR ${roles.isAdmin} IS NULL)`) : sql`(${roles.isAdmin} = false OR ${roles.isAdmin} IS NULL)`)
 		.orderBy(desc(clientProfiles.createdAt))
 		.limit(limit)
 		.offset(offset);

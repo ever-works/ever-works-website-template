@@ -21,8 +21,8 @@ export async function GET(request: NextRequest) {
     const { clientProfiles, accounts, users, userRoles, roles } = await import('@/lib/db/schema');
     const { eq, desc, sql } = await import('drizzle-orm');
     
-    // Shared filter: exclude admins (treat null as non-admin)
-    const excludeAdmins = sql`COALESCE(${roles.isAdmin}, false) = false`;
+    // Shared filter: exclude admins (roles.is_admin = false OR NULL)
+    const excludeAdmins = sql`(${roles.isAdmin} = false OR ${roles.isAdmin} IS NULL)`;
     
     // Total count for pagination
     const totalResult = await db

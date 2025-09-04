@@ -1,6 +1,6 @@
 import { db } from './drizzle';
 import { roles, userRoles, permissions, rolePermissions } from './schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 
 /**
  * Get all roles assigned to a user
@@ -171,7 +171,7 @@ export async function isClient(userId: string): Promise<boolean> {
     .where(
       and(
         eq(userRoles.userId, userId),
-        eq(roles.isAdmin, false),
+        sql`(${roles.isAdmin} = false OR ${roles.isAdmin} IS NULL)`,
         eq(roles.status, 'active')
       )
     )
