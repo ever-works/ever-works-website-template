@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { Button, Card, CardBody, Chip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, Select, SelectItem } from '@heroui/react';
-import { Save, Filter, Trash2, Plus } from 'lucide-react';
+import { Button, Card, CardBody, Chip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input } from '@heroui/react';
+import { Filter, Trash2, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 export interface SavedFilter {
@@ -108,7 +108,7 @@ export function SavedFilters({
                 variant="flat"
                 color="secondary"
                 startContent={<Filter className="w-3 h-3" />}
-                onPress={() => handleApplyFilter(filter)}
+                onClick={() => handleApplyFilter(filter)}
                 className="cursor-pointer hover:bg-secondary-100 dark:hover:bg-secondary-800"
               >
                 {filter.name}
@@ -156,7 +156,7 @@ export function SavedFilters({
                     }
                     return null;
                   }).filter(Boolean)}
-                  {Object.entries(currentFilters).every(([_, value]) => !value || value === '' || value === false) && (
+                  {Object.entries(currentFilters).every(([, value]) => !value || value === '' || value === false) && (
                     <span className="text-gray-500">No active filters</span>
                   )}
                 </div>
