@@ -31,6 +31,7 @@ export const roles = pgTable("roles", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
+  isAdmin: boolean("is_admin").default(false),
   status: text("status", { enum: ["active", "inactive"] }).default("active"),
   permissions: text("permissions").notNull(), // JSON string
   created_by: text("created_by").default("system"),
@@ -38,6 +39,7 @@ export const roles = pgTable("roles", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 }, (table) => ({
   statusIndex: index("roles_status_idx").on(table.status),
+  isAdminIndex: index("roles_is_admin_idx").on(table.isAdmin),
   createdAtIndex: index("roles_created_at_idx").on(table.createdAt),
 }));
 

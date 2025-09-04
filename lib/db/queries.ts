@@ -26,7 +26,9 @@ import {
   accounts,
   paymentProviders,
   paymentAccounts,
-  clientProfiles
+  clientProfiles,
+  roles,
+  userRoles
 } from "./schema";
 import { desc, isNull, count, asc, lte, gte, or } from "drizzle-orm";
 // import type { NewComment, CommentWithUser } from "@/lib/types/comment";
@@ -408,11 +410,11 @@ export async function getVoteCountForItem(itemId: string): Promise<number> {
 // export async function getActivityLogs() {}
 // ######################### Comment Queries #########################
 
-export async function createComment(data: NewComment) {
+export async function createComment(data: any) {
 	return (await db.insert(comments).values(data).returning())[0];
 }
 
-export async function getCommentsByItemId(itemId: string): Promise<CommentWithUser[]> {
+export async function getCommentsByItemId(itemId: string): Promise<any[]> {
 	return db
 		.select({
 			id: comments.id,
@@ -887,16 +889,18 @@ export async function getClientProfiles(params: {
 
 	const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
-	// Get total count with join
+	// Get total count with join and exclude admins (roles.is_admin = false)
 	const countResult = await db
 		.select({ count: sql`count(distinct ${clientProfiles.id})` })
 		.from(clientProfiles)
 		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
-		.where(whereClause);
+		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
+		.leftJoin(roles, eq(userRoles.roleId, roles.id))
+		.where(whereClause ? and(whereClause, eq(roles.isAdmin, false)) : eq(roles.isAdmin, false));
 
 	const total = Number(countResult[0]?.count || 0);
 
-	// Get profiles with authentication data
+	// Get profiles with authentication data and exclude admins (roles.is_admin = false)
 	const profiles = await db
 		.select({
 			// Client profile fields
@@ -931,7 +935,9 @@ export async function getClientProfiles(params: {
 		})
 		.from(clientProfiles)
 		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
-		.where(whereClause)
+		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
+		.leftJoin(roles, eq(userRoles.roleId, roles.id))
+		.where(whereClause ? and(whereClause, eq(roles.isAdmin, false)) : eq(roles.isAdmin, false))
 		.orderBy(desc(clientProfiles.createdAt))
 		.limit(limit)
 		.offset(offset);
