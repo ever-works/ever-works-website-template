@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { Button, Card, CardBody, Input, Select, SelectItem, Chip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
-import { Search, Filter, X, Calendar, Building2, MapPin, Briefcase, Mail, Hash, Shield, Globe, Phone, UserCheck } from 'lucide-react';
+import { Button, Input, Select, SelectItem, Chip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
+import { Search, Filter, Calendar, Building2, MapPin, Briefcase, Mail, Hash, Shield } from 'lucide-react';
 
 interface AdvancedSearchFilters {
   search?: string;
@@ -37,7 +37,7 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [localFilters, setLocalFilters] = useState<AdvancedSearchFilters>(filters);
 
-  const handleFilterChange = useCallback((key: keyof AdvancedSearchFilters, value: any) => {
+  const handleFilterChange = useCallback((key: keyof AdvancedSearchFilters, value: AdvancedSearchFilters[keyof AdvancedSearchFilters]) => {
     setLocalFilters(prev => ({ ...prev, [key]: value }));
   }, []);
 
@@ -113,10 +113,10 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                   value={localFilters.status || ''}
                   onChange={(e) => handleFilterChange('status', e.target.value)}
                 >
-                  <SelectItem key="active" value="active">Active</SelectItem>
-                  <SelectItem key="inactive" value="inactive">Inactive</SelectItem>
-                  <SelectItem key="suspended" value="suspended">Suspended</SelectItem>
-                  <SelectItem key="trial" value="trial">Trial</SelectItem>
+                  <SelectItem key="active">Active</SelectItem>
+                  <SelectItem key="inactive">Inactive</SelectItem>
+                  <SelectItem key="suspended">Suspended</SelectItem>
+                  <SelectItem key="trial">Trial</SelectItem>
                 </Select>
 
                 <Select
@@ -125,9 +125,9 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                   value={localFilters.plan || ''}
                   onChange={(e) => handleFilterChange('plan', e.target.value)}
                 >
-                  <SelectItem key="free" value="free">Free</SelectItem>
-                  <SelectItem key="standard" value="standard">Standard</SelectItem>
-                  <SelectItem key="premium" value="premium">Premium</SelectItem>
+                  <SelectItem key="free">Free</SelectItem>
+                  <SelectItem key="standard">Standard</SelectItem>
+                  <SelectItem key="premium">Premium</SelectItem>
                 </Select>
 
                 <Select
@@ -136,9 +136,9 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                   value={localFilters.accountType || ''}
                   onChange={(e) => handleFilterChange('accountType', e.target.value)}
                 >
-                  <SelectItem key="individual" value="individual">Individual</SelectItem>
-                  <SelectItem key="business" value="business">Business</SelectItem>
-                  <SelectItem key="enterprise" value="enterprise">Enterprise</SelectItem>
+                  <SelectItem key="individual">Individual</SelectItem>
+                  <SelectItem key="business">Business</SelectItem>
+                  <SelectItem key="enterprise">Enterprise</SelectItem>
                 </Select>
               </div>
 
@@ -150,12 +150,12 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                   value={localFilters.provider || ''}
                   onChange={(e) => handleFilterChange('provider', e.target.value)}
                 >
-                  <SelectItem key="credentials" value="credentials">Email/Password</SelectItem>
-                  <SelectItem key="google" value="google">Google</SelectItem>
-                  <SelectItem key="github" value="github">GitHub</SelectItem>
-                  <SelectItem key="facebook" value="facebook">Facebook</SelectItem>
-                  <SelectItem key="twitter" value="twitter">Twitter</SelectItem>
-                  <SelectItem key="linkedin" value="linkedin">LinkedIn</SelectItem>
+                  <SelectItem key="credentials">Email/Password</SelectItem>
+                  <SelectItem key="google">Google</SelectItem>
+                  <SelectItem key="github">GitHub</SelectItem>
+                  <SelectItem key="facebook">Facebook</SelectItem>
+                  <SelectItem key="twitter">Twitter</SelectItem>
+                  <SelectItem key="linkedin">LinkedIn</SelectItem>
                 </Select>
 
                 <Select
@@ -163,12 +163,12 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                   value={localFilters.sortBy || 'createdAt'}
                   onChange={(e) => handleFilterChange('sortBy', e.target.value)}
                 >
-                  <SelectItem key="createdAt" value="createdAt">Created Date</SelectItem>
-                  <SelectItem key="updatedAt" value="updatedAt">Updated Date</SelectItem>
-                  <SelectItem key="name" value="name">Name</SelectItem>
-                  <SelectItem key="email" value="email">Email</SelectItem>
-                  <SelectItem key="company" value="company">Company</SelectItem>
-                  <SelectItem key="totalSubmissions" value="totalSubmissions">Submissions</SelectItem>
+                  <SelectItem key="createdAt">Created Date</SelectItem>
+                  <SelectItem key="updatedAt">Updated Date</SelectItem>
+                  <SelectItem key="name">Name</SelectItem>
+                  <SelectItem key="email">Email</SelectItem>
+                  <SelectItem key="company">Company</SelectItem>
+                  <SelectItem key="totalSubmissions">Submissions</SelectItem>
                 </Select>
 
                 <Select
@@ -176,8 +176,8 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                   value={localFilters.sortOrder || 'desc'}
                   onChange={(e) => handleFilterChange('sortOrder', e.target.value)}
                 >
-                  <SelectItem key="desc" value="desc">Descending</SelectItem>
-                  <SelectItem key="asc" value="asc">Ascending</SelectItem>
+                  <SelectItem key="desc">Descending</SelectItem>
+                  <SelectItem key="asc">Ascending</SelectItem>
                 </Select>
               </div>
 
@@ -264,15 +264,15 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                     label="Min Submissions"
                     type="number"
                     placeholder="0"
-                    value={localFilters.minSubmissions || ''}
-                    onChange={(e) => handleFilterChange('minSubmissions', e.target.value ? parseInt(e.target.value) : undefined)}
+                    value={localFilters.minSubmissions?.toString() || ''}
+                    onChange={(e) => handleFilterChange('minSubmissions', e.target.value ? parseInt(e.target.value, 10) : undefined)}
                   />
                   <Input
                     label="Max Submissions"
                     type="number"
                     placeholder="100"
-                    value={localFilters.maxSubmissions || ''}
-                    onChange={(e) => handleFilterChange('maxSubmissions', e.target.value ? parseInt(e.target.value) : undefined)}
+                    value={localFilters.maxSubmissions?.toString() || ''}
+                    onChange={(e) => handleFilterChange('maxSubmissions', e.target.value ? parseInt(e.target.value, 10) : undefined)}
                   />
                 </div>
               </div>
@@ -289,9 +289,9 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                     value={localFilters.hasAvatar?.toString() || ''}
                     onChange={(e) => handleFilterChange('hasAvatar', e.target.value === 'true' ? true : e.target.value === 'false' ? false : undefined)}
                   >
-                    <SelectItem key="" value="">Any</SelectItem>
-                    <SelectItem key="true" value="true">Yes</SelectItem>
-                    <SelectItem key="false" value="false">No</SelectItem>
+                    <SelectItem key="">Any</SelectItem>
+                    <SelectItem key="true">Yes</SelectItem>
+                    <SelectItem key="false">No</SelectItem>
                   </Select>
 
                   <Select
@@ -299,9 +299,9 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                     value={localFilters.hasWebsite?.toString() || ''}
                     onChange={(e) => handleFilterChange('hasWebsite', e.target.value === 'true' ? true : e.target.value === 'false' ? false : undefined)}
                   >
-                    <SelectItem key="" value="">Any</SelectItem>
-                    <SelectItem key="true" value="true">Yes</SelectItem>
-                    <SelectItem key="false" value="false">No</SelectItem>
+                    <SelectItem key="">Any</SelectItem>
+                    <SelectItem key="true">Yes</SelectItem>
+                    <SelectItem key="false">No</SelectItem>
                   </Select>
 
                   <Select
@@ -309,9 +309,9 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                     value={localFilters.hasPhone?.toString() || ''}
                     onChange={(e) => handleFilterChange('hasPhone', e.target.value === 'true' ? true : e.target.value === 'false' ? false : undefined)}
                   >
-                    <SelectItem key="" value="">Any</SelectItem>
-                    <SelectItem key="true" value="true">Yes</SelectItem>
-                    <SelectItem key="false" value="false">No</SelectItem>
+                    <SelectItem key="">Any</SelectItem>
+                    <SelectItem key="true">Yes</SelectItem>
+                    <SelectItem key="false">No</SelectItem>
                   </Select>
 
                   <Select
@@ -319,9 +319,9 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                     value={localFilters.emailVerified?.toString() || ''}
                     onChange={(e) => handleFilterChange('emailVerified', e.target.value === 'true' ? true : e.target.value === 'false' ? false : undefined)}
                   >
-                    <SelectItem key="" value="">Any</SelectItem>
-                    <SelectItem key="true" value="true">Yes</SelectItem>
-                    <SelectItem key="false" value="false">No</SelectItem>
+                    <SelectItem key="">Any</SelectItem>
+                    <SelectItem key="true">Yes</SelectItem>
+                    <SelectItem key="false">No</SelectItem>
                   </Select>
 
                   <Select
@@ -329,9 +329,9 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                     value={localFilters.twoFactorEnabled?.toString() || ''}
                     onChange={(e) => handleFilterChange('twoFactorEnabled', e.target.value === 'true' ? true : e.target.value === 'false' ? false : undefined)}
                   >
-                    <SelectItem key="" value="">Any</SelectItem>
-                    <SelectItem key="true" value="true">Yes</SelectItem>
-                    <SelectItem key="false" value="false">No</SelectItem>
+                    <SelectItem key="">Any</SelectItem>
+                    <SelectItem key="true">Yes</SelectItem>
+                    <SelectItem key="false">No</SelectItem>
                   </Select>
                 </div>
               </div>
