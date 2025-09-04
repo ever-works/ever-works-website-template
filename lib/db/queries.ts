@@ -13,6 +13,7 @@ import {
   type NewNewsletterSubscription,
   type NewsletterSubscription,
   comments,
+  type NewComment,
   votes,
   InsertVote,
   subscriptions,
@@ -410,7 +411,7 @@ export async function getVoteCountForItem(itemId: string): Promise<number> {
 // export async function getActivityLogs() {}
 // ######################### Comment Queries #########################
 
-export async function createComment(data: any) {
+export async function createComment(data: NewComment) {
 	return (await db.insert(comments).values(data).returning())[0];
 }
 
