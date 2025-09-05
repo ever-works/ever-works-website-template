@@ -15,14 +15,16 @@ import type { ClientProfileWithAuth } from "@/lib/db/queries";
 
 // Helper functions for provider stats
 function getTopProviderName(byProvider: Record<string, number>): string {
-  const providers = Object.entries(byProvider);
-  const topProvider = providers.reduce((a, b) => a[1] > b[1] ? a : b);
-  return topProvider[0] === 'credentials' ? 'Email' : topProvider[0].charAt(0).toUpperCase() + topProvider[0].slice(1);
+  const providers = Object.entries(byProvider || {});
+  if (providers.length === 0 || providers.every(([, n]) => n === 0)) return '—';
+  const [key] = providers.reduce((a, b) => (a[1] > b[1] ? a : b));
+  return key === 'credentials' ? 'Email' : key.charAt(0).toUpperCase() + key.slice(1);
 }
 
 function getTopProviderCount(byProvider: Record<string, number>): number {
-  const providers = Object.entries(byProvider);
-  const topProvider = providers.reduce((a, b) => a[1] > b[1] ? a : b);
+  const providers = Object.entries(byProvider || {});
+  if (providers.length === 0 || providers.every(([, n]) => n === 0)) return 0;
+  const topProvider = providers.reduce((a, b) => (a[1] > b[1] ? a : b));
   return topProvider[1];
 }
 
