@@ -31,10 +31,9 @@ export const roles = pgTable("roles", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
-  isAdmin: boolean("is_admin").default(false),
+  isAdmin: boolean("is_admin").notNull().default(false),
   status: text("status", { enum: ["active", "inactive"] }).default("active"),
   permissions: text("permissions").notNull(), // JSON string
-  isAdmin: boolean("is_admin").notNull().default(false),
   created_by: text("created_by").default("system"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -42,7 +41,6 @@ export const roles = pgTable("roles", {
   statusIndex: index("roles_status_idx").on(table.status),
   isAdminIndex: index("roles_is_admin_idx").on(table.isAdmin),
   createdAtIndex: index("roles_created_at_idx").on(table.createdAt),
-  isAdminIndex: index("roles_is_admin_idx").on(table.isAdmin),
 }));
 
 // ######################### Permissions Schema #########################
