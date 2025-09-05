@@ -892,12 +892,12 @@ export async function getClientProfiles(params: {
 
 	// Get total count with join and exclude admins (roles.is_admin = false OR NULL)
 	const countResult = await db
-		.select({ count: sql`count(distinct ${clientProfiles.id})` })
+		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
 		.from(clientProfiles)
-		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
 		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
-		.leftJoin(roles, eq(userRoles.roleId, roles.id))
-		.where(whereClause ? and(whereClause, sql`(${roles.isAdmin} = false OR ${roles.isAdmin} IS NULL)`) : sql`(${roles.isAdmin} = false OR ${roles.isAdmin} IS NULL)`);
+		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
+		.where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id));
 
 	const total = Number(countResult[0]?.count || 0);
 
@@ -932,13 +932,13 @@ export async function getClientProfiles(params: {
 			createdAt: clientProfiles.createdAt,
 			updatedAt: clientProfiles.updatedAt,
 			// Account fields
-			accountProvider: accounts.provider || 'unknown',
+			accountProvider: sql<string>`coalesce(${accounts.provider}, 'unknown')`,
 		})
 		.from(clientProfiles)
-		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
 		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
-		.leftJoin(roles, eq(userRoles.roleId, roles.id))
-		.where(whereClause ? and(whereClause, sql`(${roles.isAdmin} = false OR ${roles.isAdmin} IS NULL)`) : sql`(${roles.isAdmin} = false OR ${roles.isAdmin} IS NULL)`)
+		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
+		.where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id))
 		.orderBy(desc(clientProfiles.createdAt))
 		.limit(limit)
 		.offset(offset);
@@ -1921,7 +1921,7 @@ export async function getAdminDashboardData(params: {
 			createdAt: clientProfiles.createdAt,
 			updatedAt: clientProfiles.updatedAt,
 			// Account fields
-			accountProvider: accounts.provider || 'unknown',
+			accountProvider: sql<string>`coalesce(${accounts.provider}, 'unknown')`,
 		})
 		.from(clientProfiles)
 		.leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
@@ -2251,7 +2251,7 @@ export async function advancedClientSearch(params: {
 			tags: clientProfiles.tags,
 			createdAt: clientProfiles.createdAt,
 			updatedAt: clientProfiles.updatedAt,
-			accountProvider: accounts.provider || 'unknown',
+			accountProvider: sql<string>`coalesce(${accounts.provider}, 'unknown')`,
 		})
 		.from(clientProfiles)
 		.leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
