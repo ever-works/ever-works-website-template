@@ -31,7 +31,7 @@ import {
   roles,
   userRoles
 } from "./schema";
-import { desc, isNull, count, asc, lte, gte, or } from "drizzle-orm";
+import { desc, isNull, count, countDistinct, asc, lte, gte, or } from "drizzle-orm";
 // import type { NewComment, CommentWithUser } from "@/lib/types/comment";
 import type { ClientProfile, NewClientProfile, OldPaymentProvider, PaymentAccount, NewPaymentAccount, NewPaymentProvider } from "./schema";
 
@@ -997,25 +997,26 @@ export async function getEnhancedClientStats(): Promise<{
 	// Get comprehensive stats with joins
 	const statsResult = await db
 		.select({
-			// Profile stats
 			status: clientProfiles.status,
 			plan: clientProfiles.plan,
 			accountType: clientProfiles.accountType,
-			createdAt: clientProfiles.createdAt,
-			// Provider stats
 			provider: accounts.provider,
-			// Counts
-			count: sql<number>`count(*)`,
+			count: countDistinct(clientProfiles.id),
 		})
 		.from(clientProfiles)
-		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
-		.groupBy(clientProfiles.status, clientProfiles.plan, clientProfiles.accountType, clientProfiles.createdAt, accounts.provider);
+		.leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
+		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
+		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
+		.where(isNull(roles.id))
+		.groupBy(clientProfiles.status, clientProfiles.plan, clientProfiles.accountType, accounts.provider);
 
 	// Get total count
 	const totalResult = await db
-		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
+		.select({ count: countDistinct(clientProfiles.id) })
 		.from(clientProfiles)
-		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId));
+		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
+		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
+		.where(isNull(roles.id));
 
 	const total = Number(totalResult[0]?.count || 0);
 
@@ -1072,29 +1073,33 @@ export async function getEnhancedClientStats(): Promise<{
 
 	// New clients this week
 	const newThisWeekResult = await db
-		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
+		.select({ count: countDistinct(clientProfiles.id) })
 		.from(clientProfiles)
-		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
-		.where(gte(clientProfiles.createdAt, oneWeekAgo));
+		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
+		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
+		.where(and(isNull(roles.id), gte(clientProfiles.createdAt, oneWeekAgo)));
 
 	const newThisWeek = Number(newThisWeekResult[0]?.count || 0);
 
 	// New clients this month
 	const newThisMonthResult = await db
-		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
+		.select({ count: countDistinct(clientProfiles.id) })
 		.from(clientProfiles)
-		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
-		.where(gte(clientProfiles.createdAt, oneMonthAgo));
+		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
+		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
+		.where(and(isNull(roles.id), gte(clientProfiles.createdAt, oneMonthAgo)));
 
 	const newThisMonth = Number(newThisMonthResult[0]?.count || 0);
 
 	// Active clients this week (have activity or recent login)
 	const activeThisWeekResult = await db
-		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
+		.select({ count: countDistinct(clientProfiles.id) })
 		.from(clientProfiles)
-		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
+		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
 		.where(
 			and(
+				isNull(roles.id),
 				eq(clientProfiles.status, 'active'),
 				or(
 					gte(clientProfiles.updatedAt, oneWeekAgo),
@@ -1107,11 +1112,13 @@ export async function getEnhancedClientStats(): Promise<{
 
 	// Active clients this month
 	const activeThisMonthResult = await db
-		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
+		.select({ count: countDistinct(clientProfiles.id) })
 		.from(clientProfiles)
-		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
+		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
+		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
 		.where(
 			and(
+				isNull(roles.id),
 				eq(clientProfiles.status, 'active'),
 				or(
 					gte(clientProfiles.updatedAt, oneMonthAgo),
@@ -1877,7 +1884,9 @@ export async function getAdminDashboardData(params: {
 		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
 		.from(clientProfiles)
 		.leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
-		.where(whereClause);
+		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
+		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
+		.where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id));
 
 	const total = Number(countResult[0]?.count || 0);
 
@@ -1916,7 +1925,9 @@ export async function getAdminDashboardData(params: {
 		})
 		.from(clientProfiles)
 		.leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
-		.where(whereClause)
+		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
+		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
+		.where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id))
 		.orderBy(desc(clientProfiles.createdAt)) // Use indexed field for ordering
 		.limit(limit)
 		.offset(offset);
@@ -2179,8 +2190,10 @@ export async function advancedClientSearch(params: {
 	const countResult = await db
 		.select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
 		.from(clientProfiles)
-		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
-		.where(whereClause);
+		.leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
+		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
+		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
+		.where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id));
 
 	const total = Number(countResult[0]?.count || 0);
 
@@ -2241,8 +2254,10 @@ export async function advancedClientSearch(params: {
 			accountProvider: accounts.provider || 'unknown',
 		})
 		.from(clientProfiles)
-		.innerJoin(accounts, eq(clientProfiles.id, accounts.userId))
-		.where(whereClause)
+		.leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
+		.leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
+		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
+		.where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id))
 		.orderBy(sortClause)
 		.limit(limit)
 		.offset(offset);

@@ -1,3 +1,4 @@
+'use client';
 import { useState, useCallback } from 'react';
 import { Button, Card, CardBody, Chip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input } from '@heroui/react';
 import { Filter, Trash2, Plus } from 'lucide-react';

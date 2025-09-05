@@ -90,7 +90,7 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
       </div>
 
       {/* Advanced Search Modal */}
-      <Modal isOpen={isOpen} onClose={onClose} size="4xl" scrollBehavior="inside">
+      <Modal isOpen={isOpen} onClose={onClose} size="4xl" scrollBehavior="inside" onOpenChange={(open) => !open && onClose()}>
         <ModalContent>
           <ModalHeader>Advanced Search & Filters</ModalHeader>
           <ModalBody>
@@ -115,8 +115,11 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                 <Select
                   label="Status"
                   placeholder="All Statuses"
-                  value={localFilters.status || ''}
-                  onChange={(e) => handleFilterChange('status', e.target.value)}
+                  selectedKeys={localFilters.status ? new Set([localFilters.status]) : new Set()}
+                  onSelectionChange={(keys) => {
+                    const k = Array.from(keys as Set<string>)[0];
+                    handleFilterChange('status', k ?? '');
+                  }}
                 >
                   <SelectItem key="active">Active</SelectItem>
                   <SelectItem key="inactive">Inactive</SelectItem>
@@ -127,8 +130,11 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                 <Select
                   label="Plan"
                   placeholder="All Plans"
-                  value={localFilters.plan || ''}
-                  onChange={(e) => handleFilterChange('plan', e.target.value)}
+                  selectedKeys={localFilters.plan ? new Set([localFilters.plan]) : new Set()}
+                  onSelectionChange={(keys) => {
+                    const k = Array.from(keys as Set<string>)[0];
+                    handleFilterChange('plan', k ?? '');
+                  }}
                 >
                   <SelectItem key="free">Free</SelectItem>
                   <SelectItem key="standard">Standard</SelectItem>
@@ -138,8 +144,11 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                 <Select
                   label="Account Type"
                   placeholder="All Types"
-                  value={localFilters.accountType || ''}
-                  onChange={(e) => handleFilterChange('accountType', e.target.value)}
+                  selectedKeys={localFilters.accountType ? new Set([localFilters.accountType]) : new Set()}
+                  onSelectionChange={(keys) => {
+                    const k = Array.from(keys as Set<string>)[0];
+                    handleFilterChange('accountType', k ?? '');
+                  }}
                 >
                   <SelectItem key="individual">Individual</SelectItem>
                   <SelectItem key="business">Business</SelectItem>
@@ -152,8 +161,11 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                 <Select
                   label="Provider"
                   placeholder="All Providers"
-                  value={localFilters.provider || ''}
-                  onChange={(e) => handleFilterChange('provider', e.target.value)}
+                  selectedKeys={localFilters.provider ? new Set([localFilters.provider]) : new Set()}
+                  onSelectionChange={(keys) => {
+                    const k = Array.from(keys as Set<string>)[0];
+                    handleFilterChange('provider', k ?? '');
+                  }}
                 >
                   <SelectItem key="credentials">Email/Password</SelectItem>
                   <SelectItem key="google">Google</SelectItem>
@@ -165,8 +177,11 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
 
                 <Select
                   label="Sort By"
-                  value={localFilters.sortBy || 'createdAt'}
-                  onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                  selectedKeys={new Set([localFilters.sortBy || 'createdAt'])}
+                  onSelectionChange={(keys) => {
+                    const k = Array.from(keys as Set<string>)[0];
+                    handleFilterChange('sortBy', k ?? 'createdAt');
+                  }}
                 >
                   <SelectItem key="createdAt">Created Date</SelectItem>
                   <SelectItem key="updatedAt">Updated Date</SelectItem>
@@ -178,8 +193,11 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
 
                 <Select
                   label="Sort Order"
-                  value={localFilters.sortOrder || 'desc'}
-                  onChange={(e) => handleFilterChange('sortOrder', e.target.value)}
+                  selectedKeys={new Set([localFilters.sortOrder || 'desc'])}
+                  onSelectionChange={(keys) => {
+                    const k = Array.from(keys as Set<string>)[0];
+                    handleFilterChange('sortOrder', k ?? 'desc');
+                  }}
                 >
                   <SelectItem key="desc">Descending</SelectItem>
                   <SelectItem key="asc">Ascending</SelectItem>
@@ -269,14 +287,14 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                     label="Min Submissions"
                     type="number"
                     placeholder="0"
-                    value={localFilters.minSubmissions?.toString() || ''}
+                    value={localFilters.minSubmissions != null ? String(localFilters.minSubmissions) : ''}
                     onChange={(e) => handleFilterChange('minSubmissions', e.target.value ? parseInt(e.target.value, 10) : undefined)}
                   />
                   <Input
                     label="Max Submissions"
                     type="number"
                     placeholder="100"
-                    value={localFilters.maxSubmissions?.toString() || ''}
+                    value={localFilters.maxSubmissions != null ? String(localFilters.maxSubmissions) : ''}
                     onChange={(e) => handleFilterChange('maxSubmissions', e.target.value ? parseInt(e.target.value, 10) : undefined)}
                   />
                 </div>
@@ -291,8 +309,15 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                   <Select
                     label="Has Avatar"
-                    value={localFilters.hasAvatar?.toString() || ''}
-                    onChange={(e) => handleFilterChange('hasAvatar', e.target.value === 'true' ? true : e.target.value === 'false' ? false : undefined)}
+                    selectedKeys={
+                      typeof localFilters.hasAvatar === 'boolean'
+                        ? new Set([String(localFilters.hasAvatar)])
+                        : new Set()
+                    }
+                    onSelectionChange={(keys) => {
+                      const k = Array.from(keys as Set<string>)[0];
+                      handleFilterChange('hasAvatar', k === 'true' ? true : k === 'false' ? false : undefined);
+                    }}
                   >
                     <SelectItem key="">Any</SelectItem>
                     <SelectItem key="true">Yes</SelectItem>
@@ -301,8 +326,15 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
 
                   <Select
                     label="Has Website"
-                    value={localFilters.hasWebsite?.toString() || ''}
-                    onChange={(e) => handleFilterChange('hasWebsite', e.target.value === 'true' ? true : e.target.value === 'false' ? false : undefined)}
+                    selectedKeys={
+                      typeof localFilters.hasWebsite === 'boolean'
+                        ? new Set([String(localFilters.hasWebsite)])
+                        : new Set()
+                    }
+                    onSelectionChange={(keys) => {
+                      const k = Array.from(keys as Set<string>)[0];
+                      handleFilterChange('hasWebsite', k === 'true' ? true : k === 'false' ? false : undefined);
+                    }}
                   >
                     <SelectItem key="">Any</SelectItem>
                     <SelectItem key="true">Yes</SelectItem>
@@ -311,8 +343,15 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
 
                   <Select
                     label="Has Phone"
-                    value={localFilters.hasPhone?.toString() || ''}
-                    onChange={(e) => handleFilterChange('hasPhone', e.target.value === 'true' ? true : e.target.value === 'false' ? false : undefined)}
+                    selectedKeys={
+                      typeof localFilters.hasPhone === 'boolean'
+                        ? new Set([String(localFilters.hasPhone)])
+                        : new Set()
+                    }
+                    onSelectionChange={(keys) => {
+                      const k = Array.from(keys as Set<string>)[0];
+                      handleFilterChange('hasPhone', k === 'true' ? true : k === 'false' ? false : undefined);
+                    }}
                   >
                     <SelectItem key="">Any</SelectItem>
                     <SelectItem key="true">Yes</SelectItem>
@@ -321,8 +360,15 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
 
                   <Select
                     label="Email Verified"
-                    value={localFilters.emailVerified?.toString() || ''}
-                    onChange={(e) => handleFilterChange('emailVerified', e.target.value === 'true' ? true : e.target.value === 'false' ? false : undefined)}
+                    selectedKeys={
+                      typeof localFilters.emailVerified === 'boolean'
+                        ? new Set([String(localFilters.emailVerified)])
+                        : new Set()
+                    }
+                    onSelectionChange={(keys) => {
+                      const k = Array.from(keys as Set<string>)[0];
+                      handleFilterChange('emailVerified', k === 'true' ? true : k === 'false' ? false : undefined);
+                    }}
                   >
                     <SelectItem key="">Any</SelectItem>
                     <SelectItem key="true">Yes</SelectItem>
@@ -331,8 +377,15 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
 
                   <Select
                     label="2FA Enabled"
-                    value={localFilters.twoFactorEnabled?.toString() || ''}
-                    onChange={(e) => handleFilterChange('twoFactorEnabled', e.target.value === 'true' ? true : e.target.value === 'false' ? false : undefined)}
+                    selectedKeys={
+                      typeof localFilters.twoFactorEnabled === 'boolean'
+                        ? new Set([String(localFilters.twoFactorEnabled)])
+                        : new Set()
+                    }
+                    onSelectionChange={(keys) => {
+                      const k = Array.from(keys as Set<string>)[0];
+                      handleFilterChange('twoFactorEnabled', k === 'true' ? true : k === 'false' ? false : undefined);
+                    }}
                   >
                     <SelectItem key="">Any</SelectItem>
                     <SelectItem key="true">Yes</SelectItem>
