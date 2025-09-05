@@ -34,7 +34,6 @@ interface SelectProps {
 interface SelectItemProps {
   children: React.ReactNode;
   key: string;
-  value?: string;
   className?: string;
   disabled?: boolean;
   description?: string;
@@ -61,7 +60,6 @@ export function Select({
   selectedKeys = [],
   onSelectionChange,
   onChange,
-  value,
   className,
   disabled = false,
   size = "md",
@@ -230,7 +228,6 @@ export function Select({
 export function SelectItem({
   children,
   key,
-  value,
   className,
   disabled = false,
   description,
