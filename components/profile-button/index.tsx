@@ -1,7 +1,7 @@
 "use client";
 import { Crown } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { memo, lazy, Suspense, useEffect } from "react";
+import { memo, lazy, Suspense, useEffect, useRef } from "react";
 import type { RefObject } from "react";
 import { Avatar } from "../header/avatar";
 import { cn } from "@/lib/utils";
@@ -136,6 +136,7 @@ function ProfileButton() {
   const { isProfileMenuOpen, menuRef, buttonRef, toggleMenu, closeMenu } = useProfileMenu();
   const { handleLogout } = useLogoutOverlay();
   const { user, profilePath, isAdmin, displayRole, onlineStatus, isLoading } = useUserUtils();
+  const warnedRef = useRef(false);
 
   // Add keyboard navigation support
   useEffect(() => {
@@ -151,10 +152,13 @@ function ProfileButton() {
     }
   }, [isProfileMenuOpen, closeMenu]);
 
-  // Warn once when user data is incomplete
+  // Warn once when user data is incomplete (dev only)
   useEffect(() => {
+    if (process.env.NODE_ENV !== 'development') return;
+    if (warnedRef.current) return;
     if (!user?.email || !user?.name) {
       console.warn('User data incomplete:', user);
+      warnedRef.current = true;
     }
   }, [user]);
 
