@@ -168,7 +168,7 @@ async function main() {
     const commentRows = profiles.slice(0, 15).map((p, i) => ({
       id: randomUUID(),
       content: `This is a sample comment ${i + 1}`,
-      userId: p.userId,
+      userId: p.profileId, // Use profileId instead of userId
       itemId: `item-${(i % 5) + 1}`,
       rating: (i % 5) + 1,
       createdAt: now,
@@ -182,7 +182,7 @@ async function main() {
 
     const voteRows = profiles.slice(0, 25).map((p, i) => ({
       id: randomUUID(),
-      userId: p.userId,
+      userId: p.profileId, // Use profileId instead of userId
       itemId: `item-${(i % 5) + 1}`,
       voteType: i % 4 === 0 ? VoteType.DOWNVOTE : VoteType.UPVOTE,
       createdAt: now,
