@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Button, Input, Select, SelectItem, Chip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
+import { Button, Input, Chip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
+import { Select, SelectItem } from '@/components/ui/select';
 import { Search, Filter, Calendar, Building2, MapPin, Briefcase, Mail, Hash, Shield } from 'lucide-react';
 
 interface AdvancedSearchFilters {
@@ -115,44 +116,44 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                 <Select
                   label="Status"
                   placeholder="All Statuses"
-                  selectedKeys={localFilters.status ? new Set([localFilters.status]) : new Set()}
+                  selectedKeys={localFilters.status ? [localFilters.status] : []}
                   onSelectionChange={(keys) => {
-                    const k = Array.from(keys as Set<string>)[0];
+                    const k = keys[0];
                     handleFilterChange('status', k ?? '');
                   }}
                 >
-                  <SelectItem key="active">Active</SelectItem>
-                  <SelectItem key="inactive">Inactive</SelectItem>
-                  <SelectItem key="suspended">Suspended</SelectItem>
-                  <SelectItem key="trial">Trial</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="suspended">Suspended</SelectItem>
+                  <SelectItem value="trial">Trial</SelectItem>
                 </Select>
 
                 <Select
                   label="Plan"
                   placeholder="All Plans"
-                  selectedKeys={localFilters.plan ? new Set([localFilters.plan]) : new Set()}
+                  selectedKeys={localFilters.plan ? [localFilters.plan] : []}
                   onSelectionChange={(keys) => {
-                    const k = Array.from(keys as Set<string>)[0];
+                    const k = keys[0];
                     handleFilterChange('plan', k ?? '');
                   }}
                 >
-                  <SelectItem key="free">Free</SelectItem>
-                  <SelectItem key="standard">Standard</SelectItem>
-                  <SelectItem key="premium">Premium</SelectItem>
+                  <SelectItem value="free">Free</SelectItem>
+                  <SelectItem value="standard">Standard</SelectItem>
+                  <SelectItem value="premium">Premium</SelectItem>
                 </Select>
 
                 <Select
                   label="Account Type"
                   placeholder="All Types"
-                  selectedKeys={localFilters.accountType ? new Set([localFilters.accountType]) : new Set()}
+                  selectedKeys={localFilters.accountType ? [localFilters.accountType] : []}
                   onSelectionChange={(keys) => {
-                    const k = Array.from(keys as Set<string>)[0];
+                    const k = keys[0];
                     handleFilterChange('accountType', k ?? '');
                   }}
                 >
-                  <SelectItem key="individual">Individual</SelectItem>
-                  <SelectItem key="business">Business</SelectItem>
-                  <SelectItem key="enterprise">Enterprise</SelectItem>
+                  <SelectItem value="individual">Individual</SelectItem>
+                  <SelectItem value="business">Business</SelectItem>
+                  <SelectItem value="enterprise">Enterprise</SelectItem>
                 </Select>
               </div>
 
@@ -161,46 +162,46 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                 <Select
                   label="Provider"
                   placeholder="All Providers"
-                  selectedKeys={localFilters.provider ? new Set([localFilters.provider]) : new Set()}
+                  selectedKeys={localFilters.provider ? [localFilters.provider] : []}
                   onSelectionChange={(keys) => {
-                    const k = Array.from(keys as Set<string>)[0];
+                    const k = keys[0];
                     handleFilterChange('provider', k ?? '');
                   }}
                 >
-                  <SelectItem key="credentials">Email/Password</SelectItem>
-                  <SelectItem key="google">Google</SelectItem>
-                  <SelectItem key="github">GitHub</SelectItem>
-                  <SelectItem key="facebook">Facebook</SelectItem>
-                  <SelectItem key="twitter">Twitter</SelectItem>
-                  <SelectItem key="linkedin">LinkedIn</SelectItem>
+                  <SelectItem value="credentials">Email/Password</SelectItem>
+                  <SelectItem value="google">Google</SelectItem>
+                  <SelectItem value="github">GitHub</SelectItem>
+                  <SelectItem value="facebook">Facebook</SelectItem>
+                  <SelectItem value="twitter">Twitter</SelectItem>
+                  <SelectItem value="linkedin">LinkedIn</SelectItem>
                 </Select>
 
                 <Select
                   label="Sort By"
-                  selectedKeys={new Set([localFilters.sortBy || 'createdAt'])}
+                  selectedKeys={[localFilters.sortBy || 'createdAt']}
                   onSelectionChange={(keys) => {
-                    const k = Array.from(keys as Set<string>)[0];
+                    const k = keys[0];
                     handleFilterChange('sortBy', k ?? 'createdAt');
                   }}
                 >
-                  <SelectItem key="createdAt">Created Date</SelectItem>
-                  <SelectItem key="updatedAt">Updated Date</SelectItem>
-                  <SelectItem key="name">Name</SelectItem>
-                  <SelectItem key="email">Email</SelectItem>
-                  <SelectItem key="company">Company</SelectItem>
-                  <SelectItem key="totalSubmissions">Submissions</SelectItem>
+                  <SelectItem value="createdAt">Created Date</SelectItem>
+                  <SelectItem value="updatedAt">Updated Date</SelectItem>
+                  <SelectItem value="name">Name</SelectItem>
+                  <SelectItem value="email">Email</SelectItem>
+                  <SelectItem value="company">Company</SelectItem>
+                  <SelectItem value="totalSubmissions">Submissions</SelectItem>
                 </Select>
 
                 <Select
                   label="Sort Order"
-                  selectedKeys={new Set([localFilters.sortOrder || 'desc'])}
+                  selectedKeys={[localFilters.sortOrder || 'desc']}
                   onSelectionChange={(keys) => {
-                    const k = Array.from(keys as Set<string>)[0];
+                    const k = keys[0];
                     handleFilterChange('sortOrder', k ?? 'desc');
                   }}
                 >
-                  <SelectItem key="desc">Descending</SelectItem>
-                  <SelectItem key="asc">Ascending</SelectItem>
+                  <SelectItem value="desc">Descending</SelectItem>
+                  <SelectItem value="asc">Ascending</SelectItem>
                 </Select>
               </div>
 
@@ -311,85 +312,85 @@ export function AdvancedSearchPanel({ filters, onFiltersChange, onClearFilters }
                     label="Has Avatar"
                     selectedKeys={
                       typeof localFilters.hasAvatar === 'boolean'
-                        ? new Set([String(localFilters.hasAvatar)])
-                        : new Set()
+                        ? [String(localFilters.hasAvatar)]
+                        : []
                     }
                     onSelectionChange={(keys) => {
-                      const k = Array.from(keys as Set<string>)[0];
+                      const k = keys[0];
                       handleFilterChange('hasAvatar', k === 'true' ? true : k === 'false' ? false : undefined);
                     }}
                   >
-                    <SelectItem key="">Any</SelectItem>
-                    <SelectItem key="true">Yes</SelectItem>
-                    <SelectItem key="false">No</SelectItem>
+                    <SelectItem value="">Any</SelectItem>
+                    <SelectItem value="true">Yes</SelectItem>
+                    <SelectItem value="false">No</SelectItem>
                   </Select>
 
                   <Select
                     label="Has Website"
                     selectedKeys={
                       typeof localFilters.hasWebsite === 'boolean'
-                        ? new Set([String(localFilters.hasWebsite)])
-                        : new Set()
+                        ? [String(localFilters.hasWebsite)]
+                        : []
                     }
                     onSelectionChange={(keys) => {
-                      const k = Array.from(keys as Set<string>)[0];
+                      const k = keys[0];
                       handleFilterChange('hasWebsite', k === 'true' ? true : k === 'false' ? false : undefined);
                     }}
                   >
-                    <SelectItem key="">Any</SelectItem>
-                    <SelectItem key="true">Yes</SelectItem>
-                    <SelectItem key="false">No</SelectItem>
+                    <SelectItem value="">Any</SelectItem>
+                    <SelectItem value="true">Yes</SelectItem>
+                    <SelectItem value="false">No</SelectItem>
                   </Select>
 
                   <Select
                     label="Has Phone"
                     selectedKeys={
                       typeof localFilters.hasPhone === 'boolean'
-                        ? new Set([String(localFilters.hasPhone)])
-                        : new Set()
+                        ? [String(localFilters.hasPhone)]
+                        : []
                     }
                     onSelectionChange={(keys) => {
-                      const k = Array.from(keys as Set<string>)[0];
+                      const k = keys[0];
                       handleFilterChange('hasPhone', k === 'true' ? true : k === 'false' ? false : undefined);
                     }}
                   >
-                    <SelectItem key="">Any</SelectItem>
-                    <SelectItem key="true">Yes</SelectItem>
-                    <SelectItem key="false">No</SelectItem>
+                    <SelectItem value="">Any</SelectItem>
+                    <SelectItem value="true">Yes</SelectItem>
+                    <SelectItem value="false">No</SelectItem>
                   </Select>
 
                   <Select
                     label="Email Verified"
                     selectedKeys={
                       typeof localFilters.emailVerified === 'boolean'
-                        ? new Set([String(localFilters.emailVerified)])
-                        : new Set()
+                        ? [String(localFilters.emailVerified)]
+                        : []
                     }
                     onSelectionChange={(keys) => {
-                      const k = Array.from(keys as Set<string>)[0];
+                      const k = keys[0];
                       handleFilterChange('emailVerified', k === 'true' ? true : k === 'false' ? false : undefined);
                     }}
                   >
-                    <SelectItem key="">Any</SelectItem>
-                    <SelectItem key="true">Yes</SelectItem>
-                    <SelectItem key="false">No</SelectItem>
+                    <SelectItem value="">Any</SelectItem>
+                    <SelectItem value="true">Yes</SelectItem>
+                    <SelectItem value="false">No</SelectItem>
                   </Select>
 
                   <Select
                     label="2FA Enabled"
                     selectedKeys={
                       typeof localFilters.twoFactorEnabled === 'boolean'
-                        ? new Set([String(localFilters.twoFactorEnabled)])
-                        : new Set()
+                        ? [String(localFilters.twoFactorEnabled)]
+                        : []
                     }
                     onSelectionChange={(keys) => {
-                      const k = Array.from(keys as Set<string>)[0];
+                      const k = keys[0];
                       handleFilterChange('twoFactorEnabled', k === 'true' ? true : k === 'false' ? false : undefined);
                     }}
                   >
-                    <SelectItem key="">Any</SelectItem>
-                    <SelectItem key="true">Yes</SelectItem>
-                    <SelectItem key="false">No</SelectItem>
+                    <SelectItem value="">Any</SelectItem>
+                    <SelectItem value="true">Yes</SelectItem>
+                    <SelectItem value="false">No</SelectItem>
                   </Select>
                 </div>
               </div>

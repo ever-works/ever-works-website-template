@@ -9,7 +9,7 @@ interface SelectProps {
   label?: string;
   placeholder?: string;
   selectedKeys?: string[];
-  onSelectionChange?: (keys: Set<string>) => void;
+  onSelectionChange?: (keys: string[]) => void;
   onChange?: (e: { target: { value: string } }) => void;
   value?: string;
   className?: string;
@@ -33,7 +33,7 @@ interface SelectProps {
 
 interface SelectItemProps {
   children: React.ReactNode;
-  key: string;
+  value: string;
   className?: string;
   disabled?: boolean;
   description?: string;
@@ -42,12 +42,12 @@ interface SelectItemProps {
 }
 
 const SelectContext = React.createContext<{
-  selectedKeys: Set<string>;
-  onSelectionChange: (keys: Set<string>) => void;
+  selectedKeys: string[];
+  onSelectionChange: (keys: string[]) => void;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 }>({
-  selectedKeys: new Set(),
+  selectedKeys: [],
   onSelectionChange: () => {},
   isOpen: false,
   setIsOpen: () => {},
@@ -73,22 +73,21 @@ export function Select({
   classNames = {},
 }: SelectProps) {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [internalSelectedKeys, setInternalSelectedKeys] = React.useState<Set<string>>(new Set(selectedKeys));
+  const [internalSelectedKeys, setInternalSelectedKeys] = React.useState<string[]>(selectedKeys || []);
   const selectRef = React.useRef<HTMLDivElement>(null);
 
   // Update internal state when selectedKeys prop changes
   React.useEffect(() => {
-    setInternalSelectedKeys(new Set(selectedKeys));
+    setInternalSelectedKeys(selectedKeys || []);
   }, [selectedKeys]);
 
-  const handleSelectionChange = (keys: Set<string>) => {
+  const handleSelectionChange = (keys: string[]) => {
     setInternalSelectedKeys(keys);
     onSelectionChange?.(keys);
     
     // For backward compatibility with onChange
-    if (onChange && keys.size > 0) {
-      const firstKey = Array.from(keys)[0];
-      onChange({ target: { value: firstKey } });
+    if (onChange && keys.length > 0) {
+      onChange({ target: { value: keys[0] } });
     }
   };
 
@@ -130,14 +129,14 @@ export function Select({
   };
 
   const selectedValue = React.useMemo(() => {
-    if (internalSelectedKeys.size === 0) return placeholder;
+    if (internalSelectedKeys.length === 0) return placeholder;
     
     // Find the selected item's text
-    const selectedKey = Array.from(internalSelectedKeys)[0];
+    const selectedKey = internalSelectedKeys[0];
     const childrenArray = React.Children.toArray(children);
     
     for (const child of childrenArray) {
-      if (React.isValidElement(child) && (child.props as any).key === selectedKey) {
+      if (React.isValidElement(child) && (child.props as any).value === selectedKey) {
         return (child.props as any).children;
       }
     }
@@ -227,7 +226,7 @@ export function Select({
 
 export function SelectItem({
   children,
-  key,
+  value,
   className,
   disabled = false,
   description,
@@ -235,17 +234,16 @@ export function SelectItem({
   endContent,
 }: SelectItemProps) {
   const { selectedKeys, onSelectionChange, setIsOpen } = React.useContext(SelectContext);
-  const isSelected = selectedKeys.has(key);
+  const isSelected = selectedKeys.includes(value);
 
   const handleClick = () => {
     if (disabled) return;
     
-    const newKeys = new Set(selectedKeys);
+    let newKeys: string[];
     if (isSelected) {
-      newKeys.delete(key);
+      newKeys = selectedKeys.filter(key => key !== value);
     } else {
-      newKeys.clear(); // Single selection
-      newKeys.add(key);
+      newKeys = [value]; // Single selection
     }
     
     onSelectionChange(newKeys);

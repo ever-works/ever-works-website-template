@@ -901,11 +901,11 @@ export default function ClientsPage() {
                     selectedKeys={statusFilter ? [statusFilter] : []}
                     onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string || '')}
                   >
-                    <SelectItem key="">All Statuses</SelectItem>
-                    <SelectItem key="active">Active</SelectItem>
-                    <SelectItem key="inactive">Inactive</SelectItem>
-                    <SelectItem key="suspended">Suspended</SelectItem>
-                    <SelectItem key="trial">Trial</SelectItem>
+                    <SelectItem value="">All Statuses</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="suspended">Suspended</SelectItem>
+                    <SelectItem value="trial">Trial</SelectItem>
                   </Select>
 
                   <Select
@@ -914,9 +914,9 @@ export default function ClientsPage() {
                     selectedKeys={planFilter ? [planFilter] : []}
                     onSelectionChange={(keys) => setPlanFilter(Array.from(keys)[0] as string || '')}
                   >
-                    <SelectItem key="free">Free</SelectItem>
-                    <SelectItem key="standard">Standard</SelectItem>
-                    <SelectItem key="premium">Premium</SelectItem>
+                    <SelectItem value="free">Free</SelectItem>
+                    <SelectItem value="standard">Standard</SelectItem>
+                    <SelectItem value="premium">Premium</SelectItem>
                   </Select>
 
                   <Select
@@ -925,9 +925,9 @@ export default function ClientsPage() {
                     selectedKeys={accountTypeFilter ? [accountTypeFilter] : []}
                     onSelectionChange={(keys) => setAccountTypeFilter(Array.from(keys)[0] as string || '')}
                   >
-                    <SelectItem key="individual">Individual</SelectItem>
-                    <SelectItem key="business">Business</SelectItem>
-                    <SelectItem key="enterprise">Enterprise</SelectItem>
+                    <SelectItem value="individual">Individual</SelectItem>
+                    <SelectItem value="business">Business</SelectItem>
+                    <SelectItem value="enterprise">Enterprise</SelectItem>
                   </Select>
 
                   <Select
@@ -936,12 +936,12 @@ export default function ClientsPage() {
                     selectedKeys={providerFilter ? [providerFilter] : []}
                     onSelectionChange={(keys) => setProviderFilter(Array.from(keys)[0] as string || '')}
                   >
-                    <SelectItem key="credentials">Email/Password</SelectItem>
-                    <SelectItem key="google">Google</SelectItem>
-                    <SelectItem key="github">GitHub</SelectItem>
-                    <SelectItem key="facebook">Facebook</SelectItem>
-                    <SelectItem key="twitter">Twitter</SelectItem>
-                    <SelectItem key="linkedin">LinkedIn</SelectItem>
+                    <SelectItem value="credentials">Email/Password</SelectItem>
+                    <SelectItem value="google">Google</SelectItem>
+                    <SelectItem value="github">GitHub</SelectItem>
+                    <SelectItem value="facebook">Facebook</SelectItem>
+                    <SelectItem value="twitter">Twitter</SelectItem>
+                    <SelectItem value="linkedin">LinkedIn</SelectItem>
                   </Select>
                 </div>
               </div>
