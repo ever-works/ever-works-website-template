@@ -40,6 +40,7 @@ export default function ClientsPage() {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [limit] = useState(10);
 
   // Filter state
@@ -146,6 +147,7 @@ export default function ClientsPage() {
         setClients(data.data.clients);
         setTotalPages(data.data.pagination.totalPages);
         setCurrentPage(data.data.pagination.page);
+        setTotalCount(data.data.pagination.total);
         
         // Update stats
         setStats(data.data.stats);
@@ -677,7 +679,7 @@ export default function ClientsPage() {
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Clients</h3>
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                {stats.overview.total} clients total
+                {totalCount} clients total
               </span>
             </div>
           </div>
@@ -904,8 +906,8 @@ export default function ClientsPage() {
                   <Select
                     label="Plan"
                     placeholder="All Plans"
-                    value={planFilter}
-                    onChange={(e) => setPlanFilter(e.target.value)}
+                    selectedKeys={planFilter ? [planFilter] : []}
+                    onSelectionChange={(keys) => setPlanFilter(Array.from(keys)[0] as string || '')}
                   >
                     <SelectItem key="free">Free</SelectItem>
                     <SelectItem key="standard">Standard</SelectItem>
@@ -915,8 +917,8 @@ export default function ClientsPage() {
                   <Select
                     label="Account Type"
                     placeholder="All Types"
-                    value={accountTypeFilter}
-                    onChange={(e) => setAccountTypeFilter(e.target.value)}
+                    selectedKeys={accountTypeFilter ? [accountTypeFilter] : []}
+                    onSelectionChange={(keys) => setAccountTypeFilter(Array.from(keys)[0] as string || '')}
                   >
                     <SelectItem key="individual">Individual</SelectItem>
                     <SelectItem key="business">Business</SelectItem>
@@ -926,8 +928,8 @@ export default function ClientsPage() {
                   <Select
                     label="Provider"
                     placeholder="All Providers"
-                    value={providerFilter}
-                    onChange={(e) => setProviderFilter(e.target.value)}
+                    selectedKeys={providerFilter ? [providerFilter] : []}
+                    onSelectionChange={(keys) => setProviderFilter(Array.from(keys)[0] as string || '')}
                   >
                     <SelectItem key="credentials">Email/Password</SelectItem>
                     <SelectItem key="google">Google</SelectItem>
