@@ -2,24 +2,11 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bell, MessageSquare, UserPlus, CreditCard, AlertTriangle } from "lucide-react";
+import { Bell, MessageSquare, UserPlus } from "lucide-react";
 import { useAdminNotifications } from "@/hooks/use-admin-notifications";
 
-const notificationTypeIcons = {
-  item_submission: Bell,
-  comment_reported: MessageSquare,
-  user_registered: UserPlus,
-  payment_failed: CreditCard,
-  system_alert: AlertTriangle,
-};
-
-const notificationTypeLabels = {
-  item_submission: "Item Submissions",
-  comment_reported: "Comments Reported",
-  user_registered: "New Users",
-  payment_failed: "Payment Failures",
-  system_alert: "System Alerts",
-};
+// Removed unused notificationTypeIcons and notificationTypeLabels
+// These were defined but never used in the component
 
 export function AdminNotificationStats() {
   const { stats, isLoading } = useAdminNotifications();

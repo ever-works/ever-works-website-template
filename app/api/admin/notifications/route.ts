@@ -5,7 +5,7 @@ import { notifications } from '@/lib/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { auth } from '@/lib/auth';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
 	try {
 		const session = await auth();
 		if (!session?.user?.id) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Bell, X, Check, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +31,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   // Fetch notifications
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     if (!session?.user?.id) return;
     
     setIsLoading(true);
@@ -47,7 +47,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [session?.user?.id]);
 
   const markAsRead = async (notificationId: string) => {
     try {
@@ -146,7 +146,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
     const interval = setInterval(fetchNotifications, 30000);
     
     return () => clearInterval(interval);
-  }, [session?.user?.id]);
+  }, [session?.user?.id, fetchNotifications]);
 
   return (
     <div className={`relative ${className}`}>
@@ -210,7 +210,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                   </div>
                 ) : (
                   <div className="divide-y">
-                    {notifications.map((notification, index) => (
+                    {notifications.map((notification) => (
                       <div
                         key={notification.id}
                         className={`p-4 hover:bg-muted/50 cursor-pointer transition-colors ${

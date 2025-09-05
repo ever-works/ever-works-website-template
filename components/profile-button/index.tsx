@@ -154,10 +154,9 @@ function ProfileButton() {
   // Warn once when user data is incomplete
   useEffect(() => {
     if (!user?.email || !user?.name) {
-      // eslint-disable-next-line no-console
       console.warn('User data incomplete:', user);
     }
-  }, [user?.email, user?.name]);
+  }, [user]);
 
   if (isLoading) {
     return (
