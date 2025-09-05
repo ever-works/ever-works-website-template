@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Button, Card, CardBody, Chip, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Select, SelectItem, Input } from "@heroui/react";
+import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@/components/ui/modal";
+import { Select, SelectItem } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Plus, Edit, Trash2, Users, UserCheck, Search, Building2, Eye, Shield, TrendingUp, Filter } from "lucide-react";
 import { toast } from "sonner";
 import { ClientForm } from "@/components/admin/clients/client-form";
@@ -894,7 +897,7 @@ export default function ClientsPage() {
                     label="Status"
                     placeholder="All Statuses"
                     selectedKeys={statusFilter ? [statusFilter] : []}
-                    onChange={(e) => setStatusFilter(e.target.value)}
+                    onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string || '')}
                   >
                     <SelectItem key="">All Statuses</SelectItem>
                     <SelectItem key="active">Active</SelectItem>
