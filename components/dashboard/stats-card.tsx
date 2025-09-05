@@ -1,4 +1,13 @@
+import { useId } from "react";
 import { LucideIcon } from "lucide-react";
+
+// Design system constants for accessibility
+const CARD_BASE_STYLES = "bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700";
+const ICON_CONTAINER_STYLES = "p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg";
+const ICON_STYLES = "h-5 w-5 text-blue-600 dark:text-blue-400";
+const TITLE_STYLES = "text-sm font-medium text-gray-600 dark:text-gray-400";
+const VALUE_STYLES = "text-2xl font-bold text-gray-900 dark:text-gray-100";
+const DESCRIPTION_STYLES = "mt-2 text-sm text-gray-500 dark:text-gray-400";
 
 interface StatsCardProps {
   title: string;
@@ -22,9 +31,18 @@ export function StatsCard({
   className = "",
   isLoading = false,
 }: StatsCardProps) {
+  const uid = useId();
+  const base = `${title.toLowerCase().replace(/\s+/g, '-')}-${uid}`;
+  const titleId = `${base}-title`;
+  const descId = `${base}-description`;
   if (isLoading) {
     return (
-      <div className={`bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700 ${className}`}>
+      <div 
+        className={`${CARD_BASE_STYLES} ${className}`}
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <span className="sr-only">{`Loading ${title} statistic`}</span>
         <div className="animate-pulse">
           <div className="flex items-center space-x-2">
             <div className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg">
@@ -40,46 +58,63 @@ export function StatsCard({
     );
   }
 
+  const formattedValue = typeof value === 'number' ? value.toLocaleString() : value;
+  const trendDescription = trend 
+    ? `${trend.isPositive ? 'increased' : 'decreased'} by ${Math.abs(trend.value)}% from last month`
+    : '';
+
   return (
-    <div className={`bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700 ${className}`}>
+    <article 
+      className={`${CARD_BASE_STYLES} ${className}`}
+      aria-labelledby={titleId}
+      {...(description ? { 'aria-describedby': descId } : {})}
+    >
       <div className="flex items-center">
         <div className="flex-1">
           <div className="flex items-center space-x-2">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-              <Icon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <div className={ICON_CONTAINER_STYLES} aria-hidden="true">
+              <Icon className={ICON_STYLES} />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <h3 
+                id={titleId}
+                className={TITLE_STYLES}
+              >
                 {title}
-              </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {value}
+              </h3>
+              <p className={VALUE_STYLES}>
+                {formattedValue}
               </p>
             </div>
           </div>
           {description && (
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            <p 
+              id={descId}
+              className={DESCRIPTION_STYLES}
+            >
               {description}
             </p>
           )}
           {trend && (
             <div className="mt-2 flex items-center space-x-1">
+              <span className="sr-only">{trendDescription}</span>
               <span
                 className={`text-sm font-medium ${
                   trend.isPositive
                     ? "text-green-600 dark:text-green-400"
                     : "text-red-600 dark:text-red-400"
                 }`}
+                aria-hidden="true"
               >
                 {trend.isPositive ? "+" : "-"}{Math.abs(trend.value)}%
               </span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-gray-500 dark:text-gray-400" aria-hidden="true">
                 from last month
               </span>
             </div>
           )}
         </div>
       </div>
-    </div>
+    </article>
   );
 } 

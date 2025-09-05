@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
 import { Providers } from './providers';
 import './globals.css';
 import { getCachedConfig } from '@/lib/content';
@@ -15,16 +14,6 @@ import { LoginModalProvider } from '@/components/auth/login-modal-provider';
 import { Suspense } from 'react';
 import Script from 'next/script';
 import { ConditionalLayout } from '@/components/layout/conditional-layout';
-
-const geistSans = Geist({
-	variable: '--font-geist-sans',
-	subsets: ['latin']
-});
-
-const geistMono = Geist_Mono({
-	variable: '--font-geist-mono',
-	subsets: ['latin']
-});
 
 // Base metadata that will be enhanced with dynamic locale
 export const metadata: Metadata = {
@@ -61,7 +50,7 @@ export default async function RootLayout({
 	// Determine if the current locale is RTL
 	return (
 		<html lang={locale} suppressHydrationWarning>
-			<body className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-dark--theme-950`}>
+			<body className={`antialiased dark:bg-dark--theme-950`}>
 				<Script src="https://assets.lemonsqueezy.com/lemon.js" strategy="beforeInteractive" />
 				<PHProvider>
 					<Suspense fallback={null}>

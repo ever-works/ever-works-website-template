@@ -1,6 +1,12 @@
 import { Users, FileText, Eye, MessageSquare } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { AdminStats } from "@/hooks/use-admin-stats";
+import { AdminGridSkeleton } from "./admin-loading-skeleton";
+import { AdminResponsiveGrid } from "./admin-responsive";
+
+// Design system constants for accessibility
+const STATS_REGION_LABEL = "Key performance metrics";
+const LOADING_LABEL = "Loading statistics data";
 
 interface AdminStatsOverviewProps {
   stats: AdminStats | undefined;
@@ -8,6 +14,14 @@ interface AdminStatsOverviewProps {
 }
 
 export function AdminStatsOverview({ stats, isLoading }: AdminStatsOverviewProps) {
+  if (isLoading) {
+    return (
+      <div role="region" aria-label={LOADING_LABEL}>
+        <AdminGridSkeleton items={4} />
+      </div>
+    );
+  }
+
   const growthPercentage = stats ? 
     stats.totalUsers > 0 
       ? Math.round((stats.newUsersToday / stats.totalUsers) * 100 * 100) / 100
@@ -15,11 +29,15 @@ export function AdminStatsOverview({ stats, isLoading }: AdminStatsOverviewProps
     : 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div role="region" aria-label={STATS_REGION_LABEL}>
+      <AdminResponsiveGrid 
+        cols={4} 
+        gap="md"
+      >
       <StatsCard
         title="Total Users"
         value={stats?.totalUsers || 0}
-        description={`${stats?.activeUsers || 0} active users`}
+        description={`${stats?.registeredUsers || 0} registered users`}
         icon={Users}
         trend={{ value: growthPercentage, isPositive: growthPercentage >= 0 }}
         isLoading={isLoading}
@@ -48,6 +66,7 @@ export function AdminStatsOverview({ stats, isLoading }: AdminStatsOverviewProps
         icon={MessageSquare}
         isLoading={isLoading}
       />
+      </AdminResponsiveGrid>
     </div>
   );
 } 

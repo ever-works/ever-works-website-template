@@ -239,6 +239,13 @@
       "when": 1756007700000,
       "tag": "0032_add_performance_indexes",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1756811014546,
+      "tag": "0033_friendly_gorgon",
+      "breakpoints": true
     }
   ]
 }

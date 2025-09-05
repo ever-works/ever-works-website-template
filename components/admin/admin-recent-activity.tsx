@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { AdminStats } from "@/hooks/use-admin-stats";
 import { UserPlus, FileText, MessageSquare, ThumbsUp, Activity } from "lucide-react";
+import { AdminActivityListSkeleton } from "./admin-loading-skeleton";
+
 
 interface AdminRecentActivityProps {
   data: AdminStats['recentActivity'];
@@ -10,26 +11,7 @@ interface AdminRecentActivityProps {
 
 export function AdminRecentActivity({ data, isLoading }: AdminRecentActivityProps) {
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-6 w-32" />
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {Array.from({ length: 4 }, (_, i) => (
-              <div key={i} className="flex items-center space-x-3">
-                <Skeleton className="h-8 w-8 rounded-full" />
-                <div className="flex-1 space-y-1">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-3 w-20" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return <AdminActivityListSkeleton itemCount={4} />;
   }
 
   const getActivityIcon = (type: string) => {

@@ -1,12 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
 
+// Custom HTTP error class for better error handling
+class HttpError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'HttpError';
+    this.status = status;
+  }
+}
+
 export interface AdminStats {
   // Platform Overview
   totalUsers: number;
-  activeUsers: number;
+  registeredUsers: number; // Renamed from activeUsers for clarity
   newUsersToday: number;
-  newUsersThisWeek: number;
-  newUsersThisMonth: number;
+  newUsersLast7Days: number; // Changed from newUsersThisWeek for clarity (rolling window)
+  newUsersLast30Days: number; // Changed from newUsersThisMonth for clarity (rolling window)
   totalSubmissions: number;
   pendingSubmissions: number;
   approvedSubmissions: number;
@@ -45,8 +55,22 @@ interface ApiResponse {
 export function useAdminStats() {
   return useQuery<AdminStats>({
     queryKey: ["admin-stats"],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/dashboard/stats');
+    queryFn: async ({ signal }) => {
+      const response = await fetch('/api/admin/dashboard/stats', {
+        signal,
+        credentials: 'include',
+        headers: { Accept: 'application/json' },
+      });
+      
+      if (!response.ok) {
+        let message = `Request failed: ${response.status}`;
+        try {
+          const errBody = await response.json();
+          if (errBody?.error) message = String(errBody.error);
+        } catch {}
+        throw new HttpError(message, response.status);
+      }
+      
       const result: ApiResponse = await response.json();
       
       if (!result.success) {
@@ -56,5 +80,10 @@ export function useAdminStats() {
       return result.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: (failureCount, error) => {
+      if (error instanceof HttpError && error.status < 500) return false;
+      return failureCount < 3;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 } 

@@ -5,8 +5,8 @@
 
 import NextAuth from 'next-auth';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
-// Tables are registered via drizzle adapter; no direct references needed here
 import { db } from '../db/drizzle';
+import { users, accounts, sessions, verificationTokens } from '../db/schema';
 import authConfig from '../../auth.config';
 export * from '../payment/config/payment-provider-manager';
 
@@ -18,11 +18,18 @@ interface ExtendedUser {
 	isClient?: boolean;
 }
 
-// Check if DATABASE_URL is set
-const isDatabaseAvailable = !!process.env.DATABASE_URL;
+// Check if DATABASE_URL is set and database is properly initialized
+const isDatabaseAvailable = !!process.env.DATABASE_URL && typeof db !== 'undefined' && db.isRealConnection();
 
-// Only create the Drizzle adapter if DATABASE_URL is available
-const drizzle = DrizzleAdapter(db) as any;
+// Only create the Drizzle adapter if we have a real database connection
+const drizzle = isDatabaseAvailable
+	? DrizzleAdapter(db, {
+			usersTable: users as any,
+			accountsTable: accounts as any,
+			sessionsTable: sessions as any,
+			verificationTokensTable: verificationTokens as any
+		})
+	: undefined;
 
 /**
  * Stripe Provider Singleton

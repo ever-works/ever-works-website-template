@@ -133,6 +133,7 @@ export interface ItemData {
 	updatedAt: Date; // timestamp
 	promo_code?: PromoCode; // New field for promotional codes
 	markdown?: string; // Optional markdown content from YAML
+	is_source_url_active?: boolean;
 }
 
 export interface AuthOptions {
@@ -408,6 +409,261 @@ export async function fetchItems(options: FetchOptions = {}) {
 	};
 }
 
+// Cache for similarity calculations to avoid recomputing
+const similarityCache = new Map<string, { data: SimilarItem[]; timestamp: number; ttl: number }>();
+
+// Cache TTL in milliseconds (5 minutes)
+const CACHE_TTL = 5 * 60 * 1000;
+
+/**
+ * Generates cache key for similarity calculations
+ * @param currentItem - Current item data
+ * @param maxResults - Maximum results
+ * @param options - Fetch options
+ * @returns string - Cache key
+ */
+function generateCacheKey(currentItem: ItemData, maxResults: number, options: FetchOptions): string {
+	const optionsHash = JSON.stringify(options);
+	return `${currentItem.slug}_${maxResults}_${optionsHash}`;
+}
+
+/**
+ * Checks if cached data is still valid
+ * @param timestamp - Cache timestamp
+ * @param ttl - Time to live
+ * @returns boolean - True if cache is valid
+ */
+function isCacheValid(timestamp: number, ttl: number): boolean {
+	return Date.now() - timestamp < ttl;
+}
+
+/**
+ * Cleans expired cache entries
+ */
+function cleanExpiredCache(): void {
+	for (const [key, value] of similarityCache.entries()) {
+		if (!isCacheValid(value.timestamp, value.ttl)) {
+			similarityCache.delete(key);
+		}
+	}
+}
+
+/**
+ * Fetches similar items by slug with caching and advanced optimizations
+ * @param currentItem - The current item to find similarities for
+ * @param maxResults - Maximum number of similar items to return
+ * @param options - Fetch options for filtering
+ * @param useCache - Whether to use caching (default: true)
+ * @returns Promise<SimilarItem[]> - Array of similar items with scores
+ */
+export async function fetchSimilarItems(
+	currentItem: ItemData,
+	maxResults: number = 6,
+	options: FetchOptions = {},
+	useCache: boolean = true
+): Promise<SimilarItem[]> {
+	const startTime = performance.now();
+	
+	// Clean expired cache entries periodically
+	if (Math.random() < 0.1) { // 10% chance to clean cache
+		cleanExpiredCache();
+	}
+	
+	if (!currentItem.tags?.length && !currentItem.category) {
+		return [];
+	}
+
+	// Validate input parameters
+	if (!currentItem.slug) {
+		return [];
+	}
+
+	if (maxResults <= 0) {
+		maxResults = 6;
+	}
+
+	// Check cache if enabled
+	if (useCache) {
+		const cacheKey = generateCacheKey(currentItem, maxResults, options);
+		const cached = similarityCache.get(cacheKey);
+		
+		if (cached && isCacheValid(cached.timestamp, cached.ttl)) {
+			const cacheDuration = performance.now() - startTime;
+			updatePerformanceMetrics(cacheDuration, true);
+			return cached.data;
+		}
+	}
+
+	let items: ItemData[];
+	try {
+		const result = await fetchItems(options);
+		items = result.items;
+		
+	} catch {
+		const errorDuration = performance.now() - startTime;
+		updatePerformanceMetrics(errorDuration, false);
+		return [];
+	}
+
+	if (!items || items.length === 0) {
+		const emptyDuration = performance.now() - startTime;
+		updatePerformanceMetrics(emptyDuration, false);
+		return [];
+	}
+
+	const currentTags = normalizeTags(currentItem.tags);
+	const currentCategories = normalizeCategories(currentItem.category);
+	
+	// Calculate similarity scores efficiently with performance monitoring
+	const similarItems = items
+		.filter(item => {
+			// Filter out current item and invalid slugs
+			return item.slug && item.slug !== currentItem.slug;
+		})
+		.map(item => {
+			const itemTags = normalizeTags(item.tags);
+			const itemCategories = normalizeCategories(item.category);
+
+			const commonTags = calculateCommonElements(currentTags, itemTags);
+			const commonCategories = calculateCommonElements(currentCategories, itemCategories);
+
+			const score = calculateSimilarityScore(commonTags, commonCategories, currentTags.length, currentCategories.length);
+
+			return {
+				item,
+				score,
+				commonTags,
+				commonCategories,
+				similarityPercentage: Math.round(score * 100),
+				metadata: {
+					itemTagsCount: itemTags.length,
+					itemCategoriesCount: itemCategories.length,
+					hasCommonTags: commonTags > 0,
+					hasCommonCategories: commonCategories > 0
+				}
+			};
+		})
+		.filter(result => result.score > 0) // Only include items with positive similarity
+		.sort((a, b) => {
+			// Primary sort by score, secondary by common elements count
+			if (Math.abs(a.score - b.score) < 0.001) {
+				const aTotal = a.commonTags + a.commonCategories;
+				const bTotal = b.commonTags + b.commonCategories;
+				return bTotal - aTotal;
+			}
+			return b.score - a.score;
+		})
+		.slice(0, maxResults); // Limit results
+
+	const totalDuration = performance.now() - startTime;
+	
+
+	// Cache the results if caching is enabled
+	if (useCache && similarItems.length > 0) {
+		const cacheKey = generateCacheKey(currentItem, maxResults, options);
+		similarityCache.set(cacheKey, {
+			data: similarItems,
+			timestamp: Date.now(),
+			ttl: CACHE_TTL
+		});
+	}
+
+	// Update performance metrics
+	updatePerformanceMetrics(totalDuration, false);
+
+	return similarItems;
+}
+
+/**
+ * Normalizes tags to array of strings for consistent comparison
+ * @param tags - Tags in various formats
+ * @returns string[] - Normalized array of tag names
+ */
+function normalizeTags(tags: any): string[] {
+	if (!tags) return [];
+	
+	if (Array.isArray(tags)) {
+		return tags
+			.filter(tag => tag) // Remove null/undefined
+			.map(tag => typeof tag === 'string' ? tag : tag?.name)
+			.filter(Boolean) // Remove empty strings
+			.map(tag => tag.toLowerCase().trim()); // Normalize case and trim
+	}
+	
+	// Single tag
+	const tagName = typeof tags === 'string' ? tags : tags?.name;
+	return tagName ? [tagName.toLowerCase().trim()] : [];
+}
+
+/**
+ * Normalizes categories to array of strings for consistent comparison
+ * @param category - Category in various formats
+ * @returns string[] - Normalized array of category names
+ */
+function normalizeCategories(category: any): string[] {
+	if (!category) return [];
+	
+	if (Array.isArray(category)) {
+		return category
+			.filter(cat => cat) // Remove null/undefined
+			.map(cat => typeof cat === 'string' ? cat : cat?.name)
+			.filter(Boolean) // Remove empty strings
+			.map(cat => cat.toLowerCase().trim()); // Normalize case and trim
+	}
+	
+	// Single category
+	const catName = typeof category === 'string' ? category : category?.name;
+	return catName ? [catName.toLowerCase().trim()] : [];
+}
+
+/**
+ * Calculates the number of common elements between two arrays
+ * Uses Set for O(1) lookup performance
+ * @param array1 - First array
+ * @param array2 - Second array
+ * @returns number - Count of common elements
+ */
+function calculateCommonElements(array1: string[], array2: string[]): number {
+	if (!array1.length || !array2.length) return 0;
+	
+	// Use Set for O(1) lookup performance
+	const set1 = new Set(array1);
+	return array2.filter(item => set1.has(item)).length;
+}
+
+/**
+ * Calculates weighted similarity score with advanced normalization
+ * @param commonTags - Number of common tags
+ * @param commonCategories - Number of common categories
+ * @param totalTags - Total tags in current item
+ * @param totalCategories - Total categories in current item
+ * @returns number - Similarity score between 0 and 1
+ */
+function calculateSimilarityScore(
+	commonTags: number,
+	commonCategories: number,
+	totalTags: number,
+	totalCategories: number
+): number {
+	const tagWeight = 0.6;
+	const categoryWeight = 0.4;
+	
+	// Normalize by the maximum of tags or categories to avoid division by zero
+	const maxTotal = Math.max(totalTags, totalCategories, 1);
+	
+	// Calculate individual scores
+	const tagScore = (commonTags * tagWeight) / maxTotal;
+	const categoryScore = (commonCategories * categoryWeight) / maxTotal;
+	
+	// Combine scores and ensure they don't exceed 1
+	const combinedScore = tagScore + categoryScore;
+	
+	// Apply logarithmic scaling for better distribution of scores
+	const scaledScore = Math.log1p(combinedScore * 9) / Math.log(10);
+	
+	return Math.min(scaledScore, 1);
+}
+
 export async function fetchItem(slug: string, options: FetchOptions = {}) {
 	await trySyncRepository();
 
@@ -592,3 +848,100 @@ export async function fetchByCategoryAndTag(category: string, tag: string, optio
 		items: filteredItems
 	};
 }
+
+// Types for similar items
+export interface SimilarItem {
+	item: ItemData;
+	score: number;
+	commonTags: number;
+	commonCategories: number;
+}
+
+// Performance metrics collection
+const performanceMetrics = {
+	totalCalls: 0,
+	cacheHits: 0,
+	averageResponseTime: 0,
+	totalResponseTime: 0,
+	lastCallTime: 0
+};
+
+/**
+ * Updates performance metrics
+ * @param responseTime - Response time in milliseconds
+ * @param isCacheHit - Whether this was a cache hit
+ */
+function updatePerformanceMetrics(responseTime: number, isCacheHit: boolean = false): void {
+	performanceMetrics.totalCalls++;
+	performanceMetrics.totalResponseTime += responseTime;
+	performanceMetrics.averageResponseTime = performanceMetrics.totalResponseTime / performanceMetrics.totalCalls;
+	performanceMetrics.lastCallTime = Date.now();
+	
+	if (isCacheHit) {
+		performanceMetrics.cacheHits++;
+	}
+}
+
+/**
+ * Gets performance metrics for monitoring
+ * @returns Promise<object> - Performance statistics
+ */
+export async function getSimilarityPerformanceMetrics() {
+	const cacheHitRate = performanceMetrics.totalCalls > 0 
+		? (performanceMetrics.cacheHits / performanceMetrics.totalCalls) * 100 
+		: 0;
+	
+	return {
+		totalCalls: performanceMetrics.totalCalls,
+		cacheHits: performanceMetrics.cacheHits,
+		cacheHitRate: cacheHitRate.toFixed(2) + '%',
+		averageResponseTime: performanceMetrics.averageResponseTime.toFixed(2) + 'ms',
+		totalResponseTime: performanceMetrics.totalResponseTime.toFixed(2) + 'ms',
+		lastCallTime: new Date(performanceMetrics.lastCallTime).toISOString(),
+		cacheSize: similarityCache.size
+	};
+}
+
+/**
+ * Clears performance metrics (useful for testing)
+ */
+export async function clearSimilarityPerformanceMetrics(): Promise<void> {
+	performanceMetrics.totalCalls = 0;
+	performanceMetrics.cacheHits = 0;
+	performanceMetrics.averageResponseTime = 0;
+	performanceMetrics.totalResponseTime = 0;
+	performanceMetrics.lastCallTime = 0;
+}
+
+/**
+ * Clears similarity cache (useful for testing or memory management)
+ */
+export async function clearSimilarityCache(): Promise<void> {
+	similarityCache.clear();
+	console.log('[Similarity] Cache cleared');
+}
+
+/**
+ * Gets cache statistics
+ * @returns Promise<object> - Cache information
+ */
+export async function getSimilarityCacheStats() {
+	let validEntries = 0;
+	let expiredEntries = 0;
+	
+	for (const [, value] of similarityCache.entries()) {
+		if (isCacheValid(value.timestamp, value.ttl)) {
+			validEntries++;
+		} else {
+			expiredEntries++;
+		}
+	}
+	
+	return {
+		totalEntries: similarityCache.size,
+		validEntries,
+		expiredEntries,
+		cacheTTL: CACHE_TTL / 1000 + 's'
+	};
+}
+

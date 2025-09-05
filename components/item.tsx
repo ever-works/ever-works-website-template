@@ -27,9 +27,8 @@ export default function Item(props: ItemProps) {
 		if (tag && typeof tag === 'object' && 'name' in tag) return tag.name;
 		return '';
 	};
-
-	// Helper to get item detail path (locale-aware)
-	const getDetailPath = () => (locale ? `/${locale}/items/${props.slug}` : `/items/${props.slug}`);
+	const isSourceUrl = props.is_source_url_active === true ? '': `/${locale}`;
+	const getDetailPath = () => (locale ? `${isSourceUrl}/items/${props.slug}` : `/items/${props.slug}`);
 
 	return (
 		<Card

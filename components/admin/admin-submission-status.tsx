@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { AdminStats } from "@/hooks/use-admin-stats";
 import { CheckCircle, Clock, XCircle } from "lucide-react";
+import { AdminPieChartSkeleton } from "./admin-loading-skeleton";
+
 
 interface AdminSubmissionStatusProps {
   data: AdminStats['submissionStatusData'];
@@ -10,31 +11,7 @@ interface AdminSubmissionStatusProps {
 
 export function AdminSubmissionStatus({ data, isLoading }: AdminSubmissionStatusProps) {
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-6 w-40" />
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex justify-center">
-              <Skeleton className="h-32 w-32 rounded-full" />
-            </div>
-            <div className="space-y-2">
-              {Array.from({ length: 3 }, (_, i) => (
-                <div key={i} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Skeleton className="h-3 w-3 rounded-full" />
-                    <Skeleton className="h-4 w-16" />
-                  </div>
-                  <Skeleton className="h-4 w-8" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return <AdminPieChartSkeleton />;
   }
 
   const total = data.reduce((sum, item) => sum + item.count, 0);
@@ -92,8 +69,8 @@ export function AdminSubmissionStatus({ data, isLoading }: AdminSubmissionStatus
         <div className="space-y-6">
           {/* Simple Pie Chart */}
           <div className="flex justify-center">
-            <div className="relative w-32 h-32">
-              <svg width="128" height="128" className="transform -rotate-90">
+            <div className="relative w-24 h-24 sm:w-32 sm:h-32">
+              <svg width="96" height="96" className="sm:w-32 sm:h-32 transform -rotate-90">
                 {segments.map((segment, index) => {
                   const radius = 50;
                   const centerX = 64;
@@ -130,25 +107,25 @@ export function AdminSubmissionStatus({ data, isLoading }: AdminSubmissionStatus
           </div>
 
           {/* Legend */}
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {data.map((item, index) => (
               <div key={index} className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 sm:space-x-3">
                   <div 
                     className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: item.color }}
                   />
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-1 sm:space-x-2">
                     <span style={{ color: item.color }}>
                       {getStatusIcon(item.status)}
                     </span>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                       {item.status}
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                <div className="flex items-center space-x-1 sm:space-x-2">
+                  <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100">
                     {item.count}
                   </span>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -162,10 +139,10 @@ export function AdminSubmissionStatus({ data, isLoading }: AdminSubmissionStatus
           {/* Total */}
           <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <span className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                 Total Submissions
               </span>
-              <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+              <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
                 {total}
               </span>
             </div>
