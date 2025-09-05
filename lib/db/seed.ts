@@ -37,7 +37,11 @@ function uuid(): string {
 
 async function tableExists(name: string): Promise<boolean> {
   const res: any = await db.execute(
-    sql`SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = ${name.toLowerCase()} LIMIT 1`
+    sql`SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+          AND lower(table_name) = lower(${name})
+        LIMIT 1`
   );
   // postgres-js returns { rows: [...] }
   const rows = (res as any).rows ?? (Array.isArray(res) ? res : []);
