@@ -29,6 +29,9 @@ async function ensureDb() {
   if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL is not set. Aborting seed to prevent accidental DummyDb operations.');
   }
+  if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DB_SEED !== '1') {
+    throw new Error('Refusing to seed in production. Set ALLOW_DB_SEED=1 to proceed.');
+  }
 }
 
 function uuid(): string {
