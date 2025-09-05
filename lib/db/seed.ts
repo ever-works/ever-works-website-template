@@ -150,8 +150,8 @@ async function seedUsersAndProfiles(roleAdminId: string, roleClientId: string) {
   // Accounts (credentials for admin and client1; oauth for client2)
   if (hasAccounts) {
     await db.insert(accounts).values([
-      { userId: adminUserId, type: 'credentials', provider: 'credentials', providerAccountId: 'admin@example.com', email: 'admin@example.com', passwordHash: hashed },
-      { userId: clientUserId1, type: 'credentials', provider: 'credentials', providerAccountId: 'client1@example.com', email: 'client1@example.com', passwordHash: hashed },
+      { userId: adminUserId, type: 'email', provider: 'credentials', providerAccountId: 'admin@example.com', email: 'admin@example.com', passwordHash: hashed },
+      { userId: clientUserId1, type: 'email', provider: 'credentials', providerAccountId: 'client1@example.com', email: 'client1@example.com', passwordHash: hashed },
       { userId: clientUserId2, type: 'oauth', provider: 'google', providerAccountId: 'google-oauth-123' }
     ]);
   }
