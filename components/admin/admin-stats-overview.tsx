@@ -37,7 +37,7 @@ export function AdminStatsOverview({ stats, isLoading }: AdminStatsOverviewProps
       <StatsCard
         title="Total Users"
         value={stats?.totalUsers || 0}
-        description={`${stats?.activeUsers || 0} active users`}
+        description={`${stats?.registeredUsers || 0} registered users`}
         icon={Users}
         trend={{ value: growthPercentage, isPositive: growthPercentage >= 0 }}
         isLoading={isLoading}

@@ -33,7 +33,7 @@ export const roles = pgTable("roles", {
   description: text("description"),
   status: text("status", { enum: ["active", "inactive"] }).default("active"),
   permissions: text("permissions").notNull(), // JSON string
-  is_admin: boolean("is_admin").notNull().default(false),
+  isAdmin: boolean("is_admin").notNull().default(false),
   created_by: text("created_by").default("system"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -41,6 +41,7 @@ export const roles = pgTable("roles", {
   statusIndex: index("roles_status_idx").on(table.status),
   isAdminIndex: index("roles_is_admin_idx").on(table.is_admin),
   createdAtIndex: index("roles_created_at_idx").on(table.createdAt),
+  isAdminIndex: index("roles_is_admin_idx").on(table.isAdmin),
 }));
 
 // ######################### Permissions Schema #########################
@@ -223,7 +224,8 @@ export const authenticators = pgTable(
 
 export const activityLogs = pgTable("activityLogs", {
   id: serial("id").primaryKey(),
-  userId: text("userId").references(() => clientProfiles.id, { onDelete: "cascade" }), // For client activities
+  userId: text("userId").references(() => users.id, { onDelete: "cascade" }), // For user activities
+  clientId: text("clientId").references(() => clientProfiles.id, { onDelete: "cascade" }), // For client activities
   action: text("action").notNull(),
   timestamp: timestamp("timestamp").notNull().defaultNow(),
   ipAddress: varchar("ip_address", { length: 45 }),

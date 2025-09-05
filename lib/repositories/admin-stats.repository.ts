@@ -5,7 +5,7 @@ import { ItemRepository } from '@/lib/repositories/item.repository';
 
 export interface UserStats {
   totalUsers: number;
-  activeUsers: number;
+  registeredUsers: number; // Renamed from activeUsers for clarity
   newUsersToday: number;
   newUsersThisWeek: number;
   newUsersThisMonth: number;
@@ -42,31 +42,33 @@ export class AdminStatsRepository {
   async getUserStats(): Promise<UserStats> {
     try {
       const now = new Date();
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-      const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const todayUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+      const dow = todayUtc.getUTCDay(); // 0=Sun..6=Sat
+      const weekStartUtc = new Date(todayUtc);
+      weekStartUtc.setUTCDate(todayUtc.getUTCDate() - ((dow + 6) % 7)); // Monday-start week
+      const monthStartUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
 
       const [totalUsersResult, newUsersTodayResult, newUsersWeekResult, newUsersMonthResult] = await Promise.all([
         db.select({ count: count() }).from(users).where(isNull(users.deletedAt)),
         db
           .select({ count: count() })
           .from(users)
-          .where(and(isNull(users.deletedAt), gte(users.createdAt, today))),
+          .where(and(isNull(users.deletedAt), gte(users.createdAt, todayUtc))),
         db
           .select({ count: count() })
           .from(users)
-          .where(and(isNull(users.deletedAt), gte(users.createdAt, weekAgo))),
+          .where(and(isNull(users.deletedAt), gte(users.createdAt, weekStartUtc))),
         db
           .select({ count: count() })
           .from(users)
-          .where(and(isNull(users.deletedAt), gte(users.createdAt, monthAgo))),
+          .where(and(isNull(users.deletedAt), gte(users.createdAt, monthStartUtc))),
       ]);
 
       const totalUsers = Number(totalUsersResult[0]?.count ?? 0);
 
       return {
         totalUsers,
-        activeUsers: totalUsers, // For now, assume all users are active since no status field
+        registeredUsers: totalUsers, // All registered users (no activity tracking yet)
         newUsersToday: Number(newUsersTodayResult[0]?.count ?? 0),
         newUsersThisWeek: Number(newUsersWeekResult[0]?.count ?? 0),
         newUsersThisMonth: Number(newUsersMonthResult[0]?.count ?? 0),
@@ -114,14 +116,17 @@ export class AdminStatsRepository {
   async getNewsletterStats(): Promise<NewsletterStats> {
     try {
       const now = new Date();
-      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const todayUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+      const weekStartUtc = new Date(todayUtc);
+      const dow = todayUtc.getUTCDay(); // 0=Sun..6=Sat
+      weekStartUtc.setUTCDate(todayUtc.getUTCDate() - ((dow + 6) % 7)); // Monday-start week
 
       const [totalSubscribersResult, recentSubscribersResult] = await Promise.all([
         db.select({ count: count() }).from(newsletterSubscriptions).where(eq(newsletterSubscriptions.isActive, true)),
         db.select({ count: count() }).from(newsletterSubscriptions).where(
           and(
             eq(newsletterSubscriptions.isActive, true),
-            gte(newsletterSubscriptions.subscribedAt, weekAgo)
+            gte(newsletterSubscriptions.subscribedAt, weekStartUtc)
           )
         ),
       ]);
@@ -148,7 +153,7 @@ export class AdminStatsRepository {
       const users: UserStats =
         u.status === 'fulfilled'
           ? u.value
-          : { totalUsers: 0, activeUsers: 0, newUsersToday: 0, newUsersThisWeek: 0, newUsersThisMonth: 0 };
+          : { totalUsers: 0, registeredUsers: 0, newUsersToday: 0, newUsersThisWeek: 0, newUsersThisMonth: 0 };
       const submissions: SubmissionStats =
         s.status === 'fulfilled'
           ? s.value

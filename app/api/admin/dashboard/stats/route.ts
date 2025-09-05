@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { AdminStatsRepository } from '@/lib/repositories/admin-stats.repository';
 import { AdminAnalyticsOptimizedRepository } from '@/lib/repositories/admin-analytics-optimized.repository';
+import { db } from '@/lib/db/drizzle';
+
+// Disable caching for authenticated dynamic data
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
 
 const adminStatsRepository = new AdminStatsRepository();
 const analyticsRepository = new AdminAnalyticsOptimizedRepository();
@@ -17,9 +23,24 @@ export async function GET() {
       );
     }
 
-    // TODO: Add admin role check when role system is implemented
-    // For now, allow any authenticated user to access admin stats
-    // This should be replaced with proper admin role verification
+    // Check if user has admin role using the isAdmin field
+    const adminCheckResult = await db.execute(`
+      SELECT COUNT(*) > 0 as is_admin 
+      FROM users u 
+      JOIN user_roles ur ON u.id = ur.user_id 
+      JOIN roles r ON ur.role_id = r.id 
+      WHERE u.id = $1 
+      AND r.is_admin = true
+    `, [session.user.id]);
+
+    const hasAdminRole = adminCheckResult[0]?.is_admin;
+
+    if (!hasAdminRole) {
+              return NextResponse.json(
+          { success: false, error: 'Insufficient permissions' },
+          { status: 403 }
+        );
+    }
 
     const stats = await adminStatsRepository.getAllStats();
 
@@ -35,10 +56,10 @@ export async function GET() {
     const adminStats = {
       // User statistics
       totalUsers: stats.users.totalUsers,
-      activeUsers: stats.users.activeUsers,
+      registeredUsers: stats.users.registeredUsers, // Renamed from activeUsers for clarity
       newUsersToday: stats.users.newUsersToday,
-      newUsersThisWeek: stats.users.newUsersThisWeek,
-      newUsersThisMonth: stats.users.newUsersThisMonth,
+      newUsersLast7Days: stats.users.newUsersThisWeek, // Backend still uses old names
+      newUsersLast30Days: stats.users.newUsersThisMonth, // Backend still uses old names
 
       // Activity statistics
       totalViews: stats.activity.totalViews,
@@ -74,10 +95,7 @@ export async function GET() {
     console.error('Error fetching admin dashboard stats:', error);
     
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Internal server error' 
-      },
+      { success: false, error: 'Internal server error' },
       { status: 500 }
     );
   }

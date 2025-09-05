@@ -1,32 +1,32 @@
 import { and, eq, sql, type SQL } from 'drizzle-orm';
 import { db } from './drizzle';
 import {
-  activityLogs,
-  ActivityType,
-  type NewActivityLog,
-  type ActivityLog,
-  NewUser,
-  passwordResetTokens,
-  users,
-  verificationTokens,
-  newsletterSubscriptions,
-  type NewNewsletterSubscription,
-  type NewsletterSubscription,
-  comments,
-  votes,
-  InsertVote,
-  subscriptions,
-  subscriptionHistory,
-  SubscriptionStatus,
-  type Subscription,
-  type NewSubscription,
-  type SubscriptionHistory as SubscriptionHistoryType,
-  type NewSubscriptionHistory,
-  type SubscriptionWithUser,
-  accounts,
-  paymentProviders,
-  paymentAccounts,
-  clientProfiles
+	activityLogs,
+	ActivityType,
+	type NewActivityLog,
+	type ActivityLog,
+	NewUser,
+	passwordResetTokens,
+	users,
+	verificationTokens,
+	newsletterSubscriptions,
+	type NewNewsletterSubscription,
+	type NewsletterSubscription,
+	comments,
+	votes,
+	InsertVote,
+	subscriptions,
+	subscriptionHistory,
+	SubscriptionStatus,
+	type Subscription,
+	type NewSubscription,
+	type SubscriptionHistory as SubscriptionHistoryType,
+	type NewSubscriptionHistory,
+	type SubscriptionWithUser,
+	accounts,
+	paymentProviders,
+	paymentAccounts,
+	clientProfiles
 } from "./schema";
 import { desc, isNull, count, asc, lte } from "drizzle-orm";
 import type { NewComment, CommentWithUser } from "@/lib/types/comment";
@@ -1529,7 +1529,7 @@ export async function getLastLoginActivity(clientId: string): Promise<ActivityLo
 		.from(activityLogs)
 		.where(
 			and(
-				eq(activityLogs.userId, clientId),
+				eq(activityLogs.clientId, clientId),
 				eq(activityLogs.action, ActivityType.SIGN_IN)
 			)
 		)
