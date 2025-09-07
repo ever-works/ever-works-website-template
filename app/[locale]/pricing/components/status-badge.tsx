@@ -1,4 +1,4 @@
-	const getStatusBadge = (status: string) => {
+	export const getStatusBadge = (status: string) => {
 		const statusConfig = {
 			active: { color: 'bg-green-100 text-green-800', icon: '✓' },
 			on_trial: { color: 'bg-blue-100 text-blue-800', icon: '✓' },

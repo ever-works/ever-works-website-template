@@ -41,7 +41,7 @@ export function useSubscriptionActions() {
   // Update subscription plan
   const updatePlan = useMutation({
     mutationFn: async (data: UpdateSubscriptionPlanData) => {
-      const response = await serverClient.post('/api/lemonsqueezy/subscriptions/update-plan', data);
+      const response = await serverClient.post('/api/lemonsqueezy/update-plan', data);
       return response.data;
     },
     onSuccess: () => {
@@ -54,7 +54,7 @@ export function useSubscriptionActions() {
   // Cancel subscription
   const cancelSubscription = useMutation({
     mutationFn: async (data: CancelSubscriptionData) => {
-      const response = await serverClient.post('/api/lemonsqueezy/subscriptions/cancel', data);
+      const response = await serverClient.post('/api/lemonsqueezy/cancel', data);
       return response.data;
     },
     onSuccess: () => {
@@ -66,7 +66,7 @@ export function useSubscriptionActions() {
   // Pause subscription
   const pauseSubscription = useMutation({
     mutationFn: async (data: PauseSubscriptionData) => {
-      const response = await serverClient.post('/api/lemonsqueezy/subscriptions/pause', data);
+      const response = await serverClient.post('/api/lemonsqueezy/pause', data);
       return response.data;
     },
     onSuccess: () => {
@@ -78,7 +78,7 @@ export function useSubscriptionActions() {
   // Resume subscription
   const resumeSubscription = useMutation({
     mutationFn: async (data: ResumeSubscriptionData) => {
-      const response = await serverClient.post('/api/lemonsqueezy/subscriptions/resume', data);
+      const response = await serverClient.post('/api/lemonsqueezy/resume', data);
       return response.data;
     },
     onSuccess: () => {
@@ -90,7 +90,7 @@ export function useSubscriptionActions() {
   // Reactivate subscription
   const reactivateSubscription = useMutation({
     mutationFn: async (data: ReactivateSubscriptionData) => {
-      const response = await serverClient.post('/api/lemonsqueezy/subscriptions/reactivate', data);
+      const response = await serverClient.post('/api/lemonsqueezy/reactivate', data);
       return response.data;
     },
     onSuccess: () => {

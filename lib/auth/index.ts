@@ -59,6 +59,8 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
     },
     signIn: async ({ user, account, profile }) => {
       const isCredentials = account?.provider === 'credentials';
+      console.log('Sign-in attempt', { user, account, profile });
+
       try {
         if (!user?.email) {
           console.warn('Sign-in attempt without email', { provider: account?.provider });
