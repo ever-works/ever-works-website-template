@@ -41,16 +41,10 @@ export async function POST(request: NextRequest) {
 
     const lemonsqueezy = getOrCreateLemonsqueezyProvider();
 
-    const result = await lemonsqueezy.updateSubscription({
+    const result = await lemonsqueezy.cancelSubscription(
       subscriptionId,
       cancelAtPeriodEnd,
-      metadata: {
-        action: 'cancel',
-        cancelledAt: new Date().toISOString(),
-        cancelledBy: session.user.email,
-        cancelledAtPeriodEnd: cancelAtPeriodEnd,
-      }
-    });
+    );
 
     return NextResponse.json({
       success: true,

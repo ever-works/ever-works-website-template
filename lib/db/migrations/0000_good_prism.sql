@@ -37,6 +37,7 @@ CREATE TABLE "authenticators" (
 --> statement-breakpoint
 CREATE TABLE "client_profiles" (
 	"id" text PRIMARY KEY NOT NULL,
+	"userId" text NOT NULL,
 	"email" text NOT NULL,
 	"name" text NOT NULL,
 	"display_name" text,
@@ -48,6 +49,7 @@ CREATE TABLE "client_profiles" (
 	"phone" text,
 	"website" text,
 	"location" text,
+	"avatar" text,
 	"account_type" text DEFAULT 'individual',
 	"status" text DEFAULT 'active',
 	"plan" text DEFAULT 'free',
@@ -96,6 +98,19 @@ CREATE TABLE "newsletterSubscriptions" (
 	CONSTRAINT "newsletterSubscriptions_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
+CREATE TABLE "notifications" (
+	"id" text PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"type" text NOT NULL,
+	"title" text NOT NULL,
+	"message" text NOT NULL,
+	"data" text,
+	"is_read" boolean DEFAULT false NOT NULL,
+	"read_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "passwordResetTokens" (
 	"id" text PRIMARY KEY NOT NULL,
 	"email" text NOT NULL,
@@ -124,10 +139,27 @@ CREATE TABLE "paymentProviders" (
 	CONSTRAINT "paymentProviders_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
+CREATE TABLE "permissions" (
+	"id" text PRIMARY KEY NOT NULL,
+	"key" text NOT NULL,
+	"description" text,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "permissions_key_unique" UNIQUE("key")
+);
+--> statement-breakpoint
+CREATE TABLE "role_permissions" (
+	"role_id" text NOT NULL,
+	"permission_id" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "role_permissions_role_id_permission_id_pk" PRIMARY KEY("role_id","permission_id")
+);
+--> statement-breakpoint
 CREATE TABLE "roles" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"description" text,
+	"is_admin" boolean DEFAULT false NOT NULL,
 	"status" text DEFAULT 'active',
 	"permissions" text NOT NULL,
 	"created_by" text DEFAULT 'system',
@@ -159,7 +191,7 @@ CREATE TABLE "subscriptions" (
 	"userId" text NOT NULL,
 	"plan_id" text DEFAULT 'free' NOT NULL,
 	"status" text DEFAULT 'pending' NOT NULL,
-	"start_date" timestamp,
+	"start_date" timestamp DEFAULT now() NOT NULL,
 	"end_date" timestamp,
 	"payment_provider" text DEFAULT 'stripe' NOT NULL,
 	"subscription_id" text,
@@ -184,23 +216,21 @@ CREATE TABLE "subscriptions" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "user_roles" (
+	"user_id" text NOT NULL,
+	"role_id" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "user_roles_user_id_role_id_pk" PRIMARY KEY("user_id","role_id")
+);
+--> statement-breakpoint
 CREATE TABLE "users" (
 	"id" text PRIMARY KEY NOT NULL,
-	"username" text,
-	"name" text,
 	"email" text,
 	"emailVerified" timestamp,
-	"image" text,
 	"password_hash" text,
-	"title" text,
-	"avatar" text,
-	"role_id" text,
-	"status" text DEFAULT 'active',
-	"created_by" text DEFAULT 'system',
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp,
-	CONSTRAINT "users_username_unique" UNIQUE("username"),
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
@@ -220,22 +250,30 @@ CREATE TABLE "votes" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_client_profiles_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."client_profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "activityLogs" ADD CONSTRAINT "activityLogs_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "activityLogs" ADD CONSTRAINT "activityLogs_clientId_client_profiles_id_fk" FOREIGN KEY ("clientId") REFERENCES "public"."client_profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "authenticators" ADD CONSTRAINT "authenticators_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "comments" ADD CONSTRAINT "comments_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "client_profiles" ADD CONSTRAINT "client_profiles_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "comments" ADD CONSTRAINT "comments_userId_client_profiles_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."client_profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "favorites" ADD CONSTRAINT "favorites_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "notifications" ADD CONSTRAINT "notifications_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "paymentAccounts" ADD CONSTRAINT "paymentAccounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "paymentAccounts" ADD CONSTRAINT "paymentAccounts_providerId_paymentProviders_id_fk" FOREIGN KEY ("providerId") REFERENCES "public"."paymentProviders"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "role_permissions" ADD CONSTRAINT "role_permissions_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "role_permissions" ADD CONSTRAINT "role_permissions_permission_id_permissions_id_fk" FOREIGN KEY ("permission_id") REFERENCES "public"."permissions"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscriptionHistory" ADD CONSTRAINT "subscriptionHistory_subscription_id_subscriptions_id_fk" FOREIGN KEY ("subscription_id") REFERENCES "public"."subscriptions"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "users" ADD CONSTRAINT "users_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "votes" ADD CONSTRAINT "votes_userid_users_id_fk" FOREIGN KEY ("userid") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "votes" ADD CONSTRAINT "votes_userid_client_profiles_id_fk" FOREIGN KEY ("userid") REFERENCES "public"."client_profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "accounts_email_idx" ON "accounts" USING btree ("email");--> statement-breakpoint
+CREATE INDEX "accounts_provider_idx" ON "accounts" USING btree ("provider");--> statement-breakpoint
 CREATE INDEX "activity_logs_user_idx" ON "activityLogs" USING btree ("userId");--> statement-breakpoint
-CREATE INDEX "activity_logs_client_idx" ON "activityLogs" USING btree ("clientId");--> statement-breakpoint
+CREATE INDEX "activity_logs_timestamp_idx" ON "activityLogs" USING btree ("timestamp");--> statement-breakpoint
+CREATE INDEX "activity_logs_action_idx" ON "activityLogs" USING btree ("action");--> statement-breakpoint
+CREATE UNIQUE INDEX "client_profile_user_id_unique_idx" ON "client_profiles" USING btree ("userId");--> statement-breakpoint
 CREATE INDEX "client_profile_email_idx" ON "client_profiles" USING btree ("email");--> statement-breakpoint
 CREATE INDEX "client_profile_status_idx" ON "client_profiles" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "client_profile_plan_idx" ON "client_profiles" USING btree ("plan");--> statement-breakpoint
@@ -246,6 +284,10 @@ CREATE UNIQUE INDEX "user_item_favorite_unique_idx" ON "favorites" USING btree (
 CREATE INDEX "favorites_user_id_idx" ON "favorites" USING btree ("userId");--> statement-breakpoint
 CREATE INDEX "favorites_item_slug_idx" ON "favorites" USING btree ("item_slug");--> statement-breakpoint
 CREATE INDEX "favorites_created_at_idx" ON "favorites" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "notifications_user_idx" ON "notifications" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "notifications_type_idx" ON "notifications" USING btree ("type");--> statement-breakpoint
+CREATE INDEX "notifications_is_read_idx" ON "notifications" USING btree ("is_read");--> statement-breakpoint
+CREATE INDEX "notifications_created_at_idx" ON "notifications" USING btree ("created_at");--> statement-breakpoint
 CREATE UNIQUE INDEX "user_provider_unique_idx" ON "paymentAccounts" USING btree ("userId","providerId");--> statement-breakpoint
 CREATE UNIQUE INDEX "customer_provider_unique_idx" ON "paymentAccounts" USING btree ("customerId","providerId");--> statement-breakpoint
 CREATE INDEX "payment_account_customer_id_idx" ON "paymentAccounts" USING btree ("customerId");--> statement-breakpoint
@@ -253,7 +295,12 @@ CREATE INDEX "payment_account_provider_idx" ON "paymentAccounts" USING btree ("p
 CREATE INDEX "payment_account_created_at_idx" ON "paymentAccounts" USING btree ("created_at");--> statement-breakpoint
 CREATE INDEX "payment_provider_active_idx" ON "paymentProviders" USING btree ("is_active");--> statement-breakpoint
 CREATE INDEX "payment_provider_created_at_idx" ON "paymentProviders" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "permissions_created_at_idx" ON "permissions" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "role_permissions_role_idx" ON "role_permissions" USING btree ("role_id");--> statement-breakpoint
+CREATE INDEX "role_permissions_permission_idx" ON "role_permissions" USING btree ("permission_id");--> statement-breakpoint
+CREATE INDEX "role_permissions_created_at_idx" ON "role_permissions" USING btree ("created_at");--> statement-breakpoint
 CREATE INDEX "roles_status_idx" ON "roles" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "roles_is_admin_idx" ON "roles" USING btree ("is_admin");--> statement-breakpoint
 CREATE INDEX "roles_created_at_idx" ON "roles" USING btree ("created_at");--> statement-breakpoint
 CREATE INDEX "subscription_history_idx" ON "subscriptionHistory" USING btree ("subscription_id");--> statement-breakpoint
 CREATE INDEX "subscription_action_idx" ON "subscriptionHistory" USING btree ("action");--> statement-breakpoint
@@ -263,6 +310,10 @@ CREATE INDEX "subscription_status_idx" ON "subscriptions" USING btree ("status")
 CREATE UNIQUE INDEX "provider_subscription_idx" ON "subscriptions" USING btree ("payment_provider","subscription_id");--> statement-breakpoint
 CREATE INDEX "subscription_plan_idx" ON "subscriptions" USING btree ("plan_id");--> statement-breakpoint
 CREATE INDEX "subscription_created_at_idx" ON "subscriptions" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "user_roles_user_idx" ON "user_roles" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "user_roles_role_idx" ON "user_roles" USING btree ("role_id");--> statement-breakpoint
+CREATE INDEX "user_roles_created_at_idx" ON "user_roles" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "users_created_at_idx" ON "users" USING btree ("created_at");--> statement-breakpoint
 CREATE UNIQUE INDEX "unique_user_item_vote_idx" ON "votes" USING btree ("userid","item_id");--> statement-breakpoint
 CREATE INDEX "item_votes_idx" ON "votes" USING btree ("item_id");--> statement-breakpoint
 CREATE INDEX "votes_created_at_idx" ON "votes" USING btree ("created_at");

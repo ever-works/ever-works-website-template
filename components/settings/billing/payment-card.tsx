@@ -1,4 +1,5 @@
-import { CreditCard, Calendar, DollarSign, ExternalLink, Download, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { CreditCard, Calendar, DollarSign, ExternalLink, Download, CheckCircle, Clock, AlertCircle, X, Edit3 } from 'lucide-react';
+import { useState } from 'react';
 
 interface PaymentHistoryItem {
   id: string;
@@ -96,11 +97,13 @@ const getProviderIcon = (provider: string) => {
 };
 
 export function PaymentCard({ payment }: { payment: PaymentHistoryItem }) {
+  const [isModifyModalOpen, setIsModifyModalOpen] = useState(false);
   const statusConfig = getStatusConfig(payment.status);
   const StatusIcon = statusConfig.icon;
   const isPaid = payment.status.toLowerCase() === 'paid';
   const isPending = payment.status.toLowerCase() === 'pending';
-  
+
+
   return (
     <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 group">
       <div className="flex items-start justify-between">
@@ -200,6 +203,42 @@ export function PaymentCard({ payment }: { payment: PaymentHistoryItem }) {
               <Download className="w-3 h-3" />
               Download
             </button>
+            
+            {/* Subscription Management Buttons - Only for LemonSqueezy */}
+            {(() => {
+              console.log('Checking subscription conditions:', {
+                hasSubscriptionId: !!payment.subscriptionId,
+                paymentProvider: payment.paymentProvider,
+                isLemonSqueezy: payment.paymentProvider.toLowerCase() === 'lemonsqueezy',
+                shouldShow: payment.subscriptionId && payment.paymentProvider.toLowerCase() === 'lemonsqueezy'
+              });
+              return payment.subscriptionId && payment.paymentProvider.toLowerCase() === 'lemonsqueezy';
+            })() && (
+              <>
+                <button 
+                  className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors border border-emerald-200 dark:border-emerald-700/50"
+                  onClick={() => {
+                    console.log('Modify Plan button clicked, current state:', isModifyModalOpen);
+                    setIsModifyModalOpen(true);
+                    console.log('Modal should be open now');
+                  }}
+                >
+                  <Edit3 className="w-3 h-3" />
+                  Modify Plan
+                </button>
+                
+                <button 
+                  className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors border border-red-200 dark:border-red-700/50"
+                  onClick={() => {
+                    // TODO: Implement cancel subscription logic for LemonSqueezy
+                    console.log('Cancel LemonSqueezy subscription:', payment.subscriptionId);
+                  }}
+                >
+                  <X className="w-3 h-3" />
+                  Cancel Plan
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -233,7 +272,7 @@ export function PaymentCard({ payment }: { payment: PaymentHistoryItem }) {
             </button>
           </div>
         </div>
-      </div>
+      </div> 
     </div>
   );
 } 

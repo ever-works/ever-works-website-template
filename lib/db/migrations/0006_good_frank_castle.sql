@@ -1,2 +1,0 @@
--- Skip this migration as the clients table doesn't exist
--- This migration was for a separate clients table that was removed
