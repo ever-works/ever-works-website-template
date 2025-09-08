@@ -10,7 +10,7 @@ export interface JobStatus {
   id: string;
   name: string;
   status: JobStatusType;
-  lastRun: Date;
+  lastRun: Date | null;
   nextRun: Date;
   duration: number;
   error?: string;

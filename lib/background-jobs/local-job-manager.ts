@@ -29,7 +29,7 @@ export class LocalJobManager implements BackgroundJobManager {
       id,
       name,
       status: 'scheduled',
-      lastRun: new Date(),
+      lastRun: null,
       nextRun: new Date(Date.now() + interval),
       duration: 0
     };
@@ -148,6 +148,7 @@ export class LocalJobManager implements BackgroundJobManager {
       this.jobs.delete(id);
       this.jobFunctions.delete(id);
       this.jobIntervals.delete(id);
+      this.jobStatuses.delete(id);
       console.log(`⏹️  Stopped job: ${id}`);
     }
   }
