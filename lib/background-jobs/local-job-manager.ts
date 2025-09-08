@@ -76,8 +76,17 @@ export class LocalJobManager implements BackgroundJobManager {
       await jobFunction();
       
       jobStatus.status = 'completed';
+      jobStatus.error = undefined;
       jobStatus.duration = Date.now() - startTime;
-      jobStatus.nextRun = new Date(Date.now() + this.jobIntervals.get(id)!);
+      {
+        const interval = this.jobIntervals.get(id);
+        if (typeof interval === 'number') {
+          const base = jobStatus.nextRun ?? new Date();
+          jobStatus.nextRun = new Date(base.getTime() + interval);
+        } else {
+          jobStatus.nextRun = new Date();
+        }
+      }
       
       this.metrics.successfulJobs++;
       this.metrics.totalExecutions++;
@@ -88,7 +97,15 @@ export class LocalJobManager implements BackgroundJobManager {
       jobStatus.status = 'failed';
       jobStatus.duration = Date.now() - startTime;
       jobStatus.error = error instanceof Error ? error.message : 'Unknown error';
-      jobStatus.nextRun = new Date(Date.now() + this.jobIntervals.get(id)!);
+      {
+        const interval = this.jobIntervals.get(id);
+        if (typeof interval === 'number') {
+          const base = jobStatus.nextRun ?? new Date();
+          jobStatus.nextRun = new Date(base.getTime() + interval);
+        } else {
+          jobStatus.nextRun = new Date();
+        }
+      }
       
       this.metrics.failedJobs++;
       this.metrics.totalExecutions++;
