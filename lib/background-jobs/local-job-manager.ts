@@ -11,7 +11,7 @@ export class LocalJobManager implements BackgroundJobManager {
   private jobIntervals: Map<string, number> = new Map();
   
   private metrics: JobMetrics = {
-    totalJobs: 0,
+    totalExecutions: 0,
     successfulJobs: 0,
     failedJobs: 0,
     averageJobDuration: 0,
@@ -80,7 +80,7 @@ export class LocalJobManager implements BackgroundJobManager {
       jobStatus.nextRun = new Date(Date.now() + this.jobIntervals.get(id)!);
       
       this.metrics.successfulJobs++;
-      this.metrics.totalJobs++;
+      this.metrics.totalExecutions++;
       this.updateAverageJobDuration(jobStatus.duration);
       
       console.log(`✅ Job ${id} completed successfully in ${jobStatus.duration}ms`);
@@ -91,7 +91,7 @@ export class LocalJobManager implements BackgroundJobManager {
       jobStatus.nextRun = new Date(Date.now() + this.jobIntervals.get(id)!);
       
       this.metrics.failedJobs++;
-      this.metrics.totalJobs++;
+      this.metrics.totalExecutions++;
       this.updateAverageJobDuration(jobStatus.duration);
       
       console.error(`❌ Job ${id} failed:`, error);
@@ -117,11 +117,11 @@ export class LocalJobManager implements BackgroundJobManager {
    * Update average job duration
    */
   private updateAverageJobDuration(duration: number): void {
-    if (this.metrics.totalJobs === 1) {
+    if (this.metrics.totalExecutions === 1) {
       this.metrics.averageJobDuration = duration;
     } else {
       this.metrics.averageJobDuration = 
-        (this.metrics.averageJobDuration * (this.metrics.totalJobs - 1) + duration) / this.metrics.totalJobs;
+        (this.metrics.averageJobDuration * (this.metrics.totalExecutions - 1) + duration) / this.metrics.totalExecutions;
     }
   }
 

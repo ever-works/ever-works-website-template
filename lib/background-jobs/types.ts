@@ -1,7 +1,7 @@
 /**
  * Background job status types
  */
-export type JobStatusType = 'running' | 'completed' | 'failed' | 'scheduled';
+export type JobStatusType = 'running' | 'completed' | 'failed' | 'scheduled' | 'stopped';
 
 /**
  * Job status information
@@ -20,7 +20,10 @@ export interface JobStatus {
  * Job execution metrics
  */
 export interface JobMetrics {
-  totalJobs: number;
+  /**
+   * Total number of job executions (not the number of jobs scheduled)
+   */
+  totalExecutions: number;
   successfulJobs: number;
   failedJobs: number;
   averageJobDuration: number;
