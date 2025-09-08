@@ -1,5 +1,6 @@
 import { AnalyticsExportService } from './analytics-export.service';
 import { AdminAnalyticsOptimizedRepository } from '@/lib/repositories/admin-analytics-optimized.repository';
+import { getJobManager } from '@/lib/background-jobs';
 
 // Constants for report schedules
 const REPORT_SCHEDULES = {
@@ -49,7 +50,7 @@ export class AnalyticsScheduledReportsService {
   private repository: AdminAnalyticsOptimizedRepository;
   private reportTemplates: Map<string, ReportTemplate> = new Map();
   private scheduledReports: Map<string, ScheduledReport> = new Map();
-  private scheduledJobs: Map<string, NodeJS.Timeout> = new Map();
+  private scheduledJobs: Map<string, ReturnType<typeof setTimeout>> = new Map();
 
   constructor() {
     this.exportService = new AnalyticsExportService();
@@ -134,15 +135,21 @@ export class AnalyticsScheduledReportsService {
     this.reportTemplates.set(template.id, template);
 
     const delay = Math.max(1000, nextGeneration.getTime() - now.getTime()); // min 1s
-    const timeout = setTimeout(async () => {
+    // Delegate one-shot scheduling via BackgroundJobManager using interval
+    const manager = getJobManager();
+    const run = async () => {
       await this.generateScheduledReport(template);
-      // After completion, compute next run and schedule again
       template.nextGeneration = this.calculateNextGenerationTime(template.schedule, new Date());
       this.reportTemplates.set(template.id, template);
-      this.scheduleReport(template);
-    }, delay);
+    };
 
-    this.scheduledJobs.set(template.id, timeout);
+    // Use interval equivalent for simplicity in dev; precise cron to be handled by Trigger.dev in prod
+    manager.scheduleJob(
+      `report-${template.id}`,
+      `Report: ${template.name}`,
+      run,
+      Math.max(1000, nextGeneration.getTime() - now.getTime())
+    );
     console.log(`Scheduled report: ${template.name} (${template.schedule}) - Next: ${nextGeneration.toISOString()}`);
   }
 
@@ -408,7 +415,7 @@ export class AnalyticsScheduledReportsService {
   private unscheduleReport(id: string): void {
     const timeout = this.scheduledJobs.get(id);
     if (timeout) {
-      clearInterval(timeout);
+      clearTimeout(timeout);
       this.scheduledJobs.delete(id);
     }
   }
@@ -439,11 +446,8 @@ export class AnalyticsScheduledReportsService {
    * Stop all scheduled reports
    */
   stop(): void {
-    for (const [id, timeout] of this.scheduledJobs) {
-      clearInterval(timeout);
-      console.log(`Stopped scheduled report: ${id}`);
-    }
-    
+    const manager = getJobManager();
+    manager.stopAllJobs();
     this.scheduledJobs.clear();
     console.log('All scheduled reports stopped');
   }
