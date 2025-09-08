@@ -227,11 +227,15 @@ Object.entries(categorizedVars).forEach(([category, variables]) => {
     
     // Check background jobs configuration
     if (category === 'background-jobs') {
-      const triggerDevVars = variables.filter(v => v.startsWith('TRIGGER_DEV_'));
-      
-      if (triggerDevVars.length === 0) {
+      const REQUIRED_TRIGGER_VARS_COUNT = 3;
+      const hasEnabled = process.env.TRIGGER_DEV_ENABLED === 'true';
+      const hasKey = !!process.env.TRIGGER_DEV_API_KEY;
+      const hasUrl = !!process.env.TRIGGER_DEV_API_URL;
+      const presentCount = (hasEnabled ? 1 : 0) + (hasKey ? 1 : 0) + (hasUrl ? 1 : 0);
+
+      if (presentCount === 0) {
         allSuccess.push('✅ Background jobs: Using local scheduling (Trigger.dev not configured)');
-      } else if (triggerDevVars.length < 3) {
+      } else if (presentCount < REQUIRED_TRIGGER_VARS_COUNT) {
         allWarnings.push('⚠️  Trigger.dev partially configured. Will fall back to local scheduling.');
       } else {
         allSuccess.push('✅ Background jobs: Trigger.dev configured and ready');
