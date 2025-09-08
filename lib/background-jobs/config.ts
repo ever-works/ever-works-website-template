@@ -7,7 +7,8 @@ import { TriggerDevConfig } from './types';
 export function getTriggerDevConfig(): TriggerDevConfig {
   const apiKey = process.env.TRIGGER_DEV_API_KEY;
   const apiUrl = process.env.TRIGGER_DEV_API_URL;
-  const enabled = process.env.TRIGGER_DEV_ENABLED === 'true';
+  const enabledRaw = process.env.TRIGGER_DEV_ENABLED?.toLowerCase()?.trim();
+  const enabled = ['1', 'true', 'yes', 'on'].includes(enabledRaw || '');
   const environment = process.env.TRIGGER_DEV_ENVIRONMENT || 'development';
   
   return {

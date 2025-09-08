@@ -5,7 +5,7 @@ import { BackgroundJobManager, JobStatus, JobMetrics } from './types';
  * Used for development and fallback when Trigger.dev is not configured
  */
 export class LocalJobManager implements BackgroundJobManager {
-  private jobs: Map<string, NodeJS.Timeout> = new Map();
+  private jobs: Map<string, ReturnType<typeof setInterval>> = new Map();
   private jobStatuses: Map<string, JobStatus> = new Map();
   private jobFunctions: Map<string, () => Promise<void>> = new Map();
   private jobIntervals: Map<string, number> = new Map();
@@ -102,14 +102,14 @@ export class LocalJobManager implements BackgroundJobManager {
    * Convert cron expression to interval (simplified)
    */
   private cronToInterval(cronExpression: string): number {
-    // Simplified cron to interval conversion
+    // Simplified dev-only cron→interval mapping (non-deterministic for time-of-day schedules)
     if (cronExpression.includes('*/30 * * * * *')) return 30 * 1000; // 30 seconds
     if (cronExpression.includes('*/2 * * * *')) return 2 * 60 * 1000; // 2 minutes
     if (cronExpression.includes('*/5 * * * *')) return 5 * 60 * 1000; // 5 minutes
     if (cronExpression.includes('*/10 * * * *')) return 10 * 60 * 1000; // 10 minutes
     if (cronExpression.includes('*/15 * * * *')) return 15 * 60 * 1000; // 15 minutes
-    if (cronExpression.includes('0 * * * *')) return 60 * 60 * 1000; // 1 hour
-    if (cronExpression.includes('0 9 * * *')) return 24 * 60 * 60 * 1000; // Daily at 9 AM
+    if (cronExpression.includes('0 * * * *')) return 60 * 60 * 1000; // hourly (approximate)
+    if (cronExpression.includes('0 9 * * *')) return 24 * 60 * 60 * 1000; // daily (approximate; not time-accurate)
     return 60 * 1000; // Default 1 minute
   }
 
