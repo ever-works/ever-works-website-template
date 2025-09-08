@@ -93,7 +93,8 @@ const CATEGORY_PATTERNS = [
   { name: 'analytics', pattern: /^(ANALYTICS_|GA_|GOOGLE_ANALYTICS_|PLAUSIBLE_)/ },
   { name: 'storage', pattern: /^(STORAGE_|S3_|AWS_|CLOUDINARY_|UPLOAD_)/ },
   { name: 'api', pattern: /^(API_|ENDPOINT_)/ },
-  { name: 'security', pattern: /^(SECRET_|KEY_|ENCRYPTION_|CRYPTO_)/ }
+  { name: 'security', pattern: /^(SECRET_|KEY_|ENCRYPTION_|CRYPTO_)/ },
+  { name: 'background-jobs', pattern: /^(TRIGGER_DEV_|BACKGROUND_JOBS_)/ }
 ];
 
 // Get all environment variables
@@ -221,6 +222,19 @@ Object.entries(categorizedVars).forEach(([category, variables]) => {
         allWarnings.push('⚠️  Email configuration is incomplete. Email features may not work properly.');
       } else {
         allSuccess.push('✅ Email system is properly configured');
+      }
+    }
+    
+    // Check background jobs configuration
+    if (category === 'background-jobs') {
+      const triggerDevVars = variables.filter(v => v.startsWith('TRIGGER_DEV_'));
+      
+      if (triggerDevVars.length === 0) {
+        allSuccess.push('✅ Background jobs: Using local scheduling (Trigger.dev not configured)');
+      } else if (triggerDevVars.length < 3) {
+        allWarnings.push('⚠️  Trigger.dev partially configured. Will fall back to local scheduling.');
+      } else {
+        allSuccess.push('✅ Background jobs: Trigger.dev configured and ready');
       }
     }
   }
