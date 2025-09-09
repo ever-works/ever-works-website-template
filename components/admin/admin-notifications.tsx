@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Bell, X, Check, ExternalLink } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Bell, X, Check, ExternalLink, RefreshCw, AlertCircle, UserPlus, CreditCard, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,6 +29,31 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside or pressing Escape
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+        document.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [isOpen]);
 
   // Fetch notifications
   const fetchNotifications = useCallback(async () => {
@@ -90,19 +115,56 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
 
   // Get notification icon based on type
   const getNotificationIcon = (type: string) => {
+    const iconProps = { className: "h-5 w-5" };
+    
     switch (type) {
       case "item_submission":
-        return "📝";
+        return <ExternalLink {...iconProps} className="h-5 w-5 text-blue-500" />;
       case "comment_reported":
-        return "⚠️";
+        return <AlertCircle {...iconProps} className="h-5 w-5 text-orange-500" />;
       case "user_registered":
-        return "👤";
+        return <UserPlus {...iconProps} className="h-5 w-5 text-green-500" />;
       case "payment_failed":
-        return "💳";
+        return <CreditCard {...iconProps} className="h-5 w-5 text-red-500" />;
       case "system_alert":
-        return "🔔";
+        return <Settings {...iconProps} className="h-5 w-5 text-purple-500" />;
       default:
-        return "📢";
+        return <Bell {...iconProps} className="h-5 w-5 text-gray-500" />;
+    }
+  };
+
+  // Get notification type label
+  const getNotificationTypeLabel = (type: string) => {
+    switch (type) {
+      case "item_submission":
+        return "New Submission";
+      case "comment_reported":
+        return "Reported Comment";
+      case "user_registered":
+        return "New User";
+      case "payment_failed":
+        return "Payment Issue";
+      case "system_alert":
+        return "System Alert";
+      default:
+        return "Notification";
+    }
+  };
+
+  // Get notification priority color
+  const getNotificationPriorityColor = (type: string) => {
+    switch (type) {
+      case "payment_failed":
+      case "system_alert":
+        return "border-l-red-500";
+      case "comment_reported":
+        return "border-l-orange-500";
+      case "item_submission":
+        return "border-l-blue-500";
+      case "user_registered":
+        return "border-l-green-500";
+      default:
+        return "border-l-gray-300";
     }
   };
 
@@ -149,20 +211,26 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
   }, [session?.user?.id, fetchNotifications]);
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative ${className}`} ref={dropdownRef}>
       {/* Notification Bell */}
       <Button
         variant="ghost"
         size="icon"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative"
+        className={`relative transition-all duration-200 ${
+          isOpen 
+            ? "bg-primary/10 text-primary hover:bg-primary/20" 
+            : "hover:bg-muted/50"
+        }`}
         aria-label="Notifications"
       >
-        <Bell className="h-5 w-5" />
+        <Bell className={`h-5 w-5 transition-transform duration-200 ${
+          isOpen ? "scale-110" : ""
+        }`} />
         {unreadCount > 0 && (
           <Badge 
             variant="destructive" 
-            className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+            className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs font-medium animate-pulse"
           >
             {unreadCount > 99 ? "99+" : unreadCount}
           </Badge>
@@ -171,27 +239,43 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
 
       {/* Notifications Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 top-12 w-96 z-50">
-          <Card className="shadow-lg border-0">
-            <CardHeader className="pb-3">
+        <div className="absolute right-0 top-12 w-[420px] z-50 animate-in slide-in-from-top-2 duration-200">
+          <Card className="shadow-xl border bg-background/95 backdrop-blur-sm">
+            <CardHeader className="pb-3 border-b">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">Notifications</CardTitle>
                 <div className="flex items-center gap-2">
+                  <CardTitle className="text-lg font-semibold">Notifications</CardTitle>
+                  {unreadCount > 0 && (
+                    <Badge variant="secondary" className="px-2 py-0.5 text-xs">
+                      {unreadCount} new
+                    </Badge>
+                  )}
+                </div>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={fetchNotifications}
+                    className="h-8 w-8 p-0"
+                    disabled={isLoading}
+                  >
+                    <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+                  </Button>
                   {unreadCount > 0 && (
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={markAllAsRead}
-                      className="text-xs"
+                      className="text-xs h-8 px-3"
                     >
                       Mark all read
                     </Button>
                   )}
                   <Button
                     variant="ghost"
-                    size="icon"
+                    size="sm"
                     onClick={() => setIsOpen(false)}
-                    className="h-6 w-6"
+                    className="h-8 w-8 p-0"
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -200,57 +284,99 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
             </CardHeader>
             
             <CardContent className="p-0">
+              <div className="max-h-[400px] overflow-y-auto">
                 {isLoading ? (
-                  <div className="p-4 text-center text-muted-foreground">
-                    Loading notifications...
+                  <div className="flex flex-col items-center justify-center py-12 px-4">
+                    <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground mb-3" />
+                    <p className="text-sm text-muted-foreground">Loading notifications...</p>
                   </div>
                 ) : notifications.length === 0 ? (
-                  <div className="p-4 text-center text-muted-foreground">
-                    No notifications
+                  <div className="flex flex-col items-center justify-center py-12 px-4">
+                    <Bell className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                    <h3 className="font-medium text-sm text-foreground mb-1">No notifications</h3>
+                    <p className="text-xs text-muted-foreground text-center">
+                      You&apos;re all caught up! New notifications will appear here.
+                    </p>
                   </div>
                 ) : (
-                  <div className="divide-y">
+                  <div className="divide-y divide-border/50">
                     {notifications.map((notification) => (
                       <div
                         key={notification.id}
-                        className={`p-4 hover:bg-muted/50 cursor-pointer transition-colors ${
-                          !notification.isRead ? "bg-blue-50 dark:bg-blue-950/20" : ""
+                        className={`relative p-4 hover:bg-muted/30 cursor-pointer transition-all duration-200 border-l-4 ${
+                          getNotificationPriorityColor(notification.type)
+                        } ${
+                          !notification.isRead 
+                            ? "bg-primary/5 hover:bg-primary/10" 
+                            : "hover:bg-muted/50"
                         }`}
                         onClick={() => handleNotificationClick(notification)}
                       >
+                        {/* Unread indicator */}
+                        {!notification.isRead && (
+                          <div className="absolute top-4 left-2 w-2 h-2 bg-primary rounded-full"></div>
+                        )}
+                        
                         <div className="flex items-start gap-3">
-                          <span className="text-lg">
+                          <div className="flex-shrink-0 mt-0.5">
                             {getNotificationIcon(notification.type)}
-                          </span>
+                          </div>
                           
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2">
-                              <h4 className={`font-medium text-sm ${
-                                !notification.isRead ? "text-blue-900 dark:text-blue-100" : ""
-                              }`}>
-                                {notification.title}
-                              </h4>
+                            <div className="flex items-start justify-between gap-2 mb-1">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <Badge 
+                                    variant="outline" 
+                                    className="text-xs px-2 py-0 h-5 font-normal"
+                                  >
+                                    {getNotificationTypeLabel(notification.type)}
+                                  </Badge>
+                                  {!notification.isRead && (
+                                    <Badge 
+                                      variant="default" 
+                                      className="text-xs px-1.5 py-0 h-4 font-normal"
+                                    >
+                                      NEW
+                                    </Badge>
+                                  )}
+                                </div>
+                                <h4 className={`font-medium text-sm leading-snug ${
+                                  !notification.isRead 
+                                    ? "text-foreground" 
+                                    : "text-muted-foreground"
+                                }`}>
+                                  {notification.title}
+                                </h4>
+                              </div>
                               
-                              {!notification.isRead && (
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-5 w-5 -mt-1 -mr-1"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    markAsRead(notification.id);
-                                  }}
-                                >
-                                  <Check className="h-3 w-3" />
-                                </Button>
-                              )}
+                              <div className="flex items-center gap-1">
+                                {!notification.isRead && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-6 w-6 p-0 hover:bg-primary/20"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      markAsRead(notification.id);
+                                    }}
+                                  >
+                                    <Check className="h-3 w-3" />
+                                  </Button>
+                                )}
+                              </div>
                             </div>
                             
-                            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                            <p className="text-sm text-muted-foreground leading-relaxed mb-3 overflow-hidden text-ellipsis" 
+                               style={{ 
+                                 display: '-webkit-box', 
+                                 WebkitLineClamp: 2, 
+                                 WebkitBoxOrient: 'vertical' 
+                               }}>
                               {notification.message}
                             </p>
                             
-                            <div className="flex items-center justify-between mt-2">
+                            <div className="flex items-center justify-between">
                               <span className="text-xs text-muted-foreground">
                                 {formatDistanceToNow(new Date(notification.createdAt), {
                                   addSuffix: true,
@@ -260,16 +386,16 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                               
                               {getNotificationLink(notification) && (
                                 <Button
-                                  variant="ghost"
+                                  variant="outline"
                                   size="sm"
-                                  className="h-6 px-2 text-xs"
+                                  className="h-7 px-2 text-xs hover:bg-primary/10"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     window.open(getNotificationLink(notification)!, "_blank");
                                   }}
                                 >
                                   <ExternalLink className="h-3 w-3 mr-1" />
-                                  View
+                                  View Details
                                 </Button>
                               )}
                             </div>
@@ -279,6 +405,26 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                     ))}
                   </div>
                 )}
+              </div>
+              
+              {/* Footer with view all link */}
+              {notifications.length > 0 && (
+                <>
+                  <div className="border-t border-border/50" />
+                  <div className="p-3 bg-muted/20">
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-center text-sm h-8"
+                      onClick={() => {
+                        // Navigate to full notifications page
+                        window.location.href = "/admin/notifications";
+                      }}
+                    >
+                      View All Notifications
+                    </Button>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>
