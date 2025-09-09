@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@/components/ui/modal";
+import { Modal, ModalContent } from "@/components/ui/modal";
 import { Select, SelectItem } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Plus, Edit, Trash2, Users, UserCheck, Search, Building2, Eye, Shield, TrendingUp, Filter } from "lucide-react";
+import { Plus, Edit, Trash2, Users, UserCheck, Search, Building2, Eye, Shield, TrendingUp, Filter, Calendar } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { ClientForm } from "@/components/admin/clients/client-form";
 import { UniversalPagination } from "@/components/universal-pagination";
@@ -1006,53 +1007,120 @@ export default function ClientsPage() {
                   </div>
                   <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200/50 dark:border-gray-700/50 shadow-sm">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Created After</label>
-                        <Input
-                          type="date"
-                          value={createdAfter}
-                          onChange={(e) => setCreatedAfter(e.target.value)}
-                          classNames={{
-                            input: "bg-white dark:bg-gray-800",
-                            inputWrapper: "border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
-                          }}
-                        />
+                      <div className="space-y-3">
+                        <label className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-emerald-500" />
+                          Created After
+                        </label>
+                        <div className="relative group">
+                          <Input
+                            type="date"
+                            value={createdAfter}
+                            onChange={(e) => setCreatedAfter(e.target.value)}
+                            className="h-12"
+                            classNames={{
+                              base: "group-hover:scale-[1.01] transition-transform duration-200",
+                              input: "text-gray-900 dark:text-white text-sm font-medium bg-transparent",
+                              inputWrapper: cn(
+                                "bg-gradient-to-r from-white to-gray-50/50 dark:from-gray-800 dark:to-gray-900/50",
+                                "border-2 border-gray-200/60 dark:border-gray-600/40",
+                                "hover:border-emerald-400/60 dark:hover:border-emerald-500/60",
+                                "focus-within:border-emerald-500 dark:focus-within:border-emerald-400",
+                                "focus-within:ring-4 focus-within:ring-emerald-500/20",
+                                "rounded-xl shadow-sm hover:shadow-md transition-all duration-300",
+                                "backdrop-blur-sm"
+                              ),
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl"></div>
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Created Before</label>
-                        <Input
-                          type="date"
-                          value={createdBefore}
-                          onChange={(e) => setCreatedBefore(e.target.value)}
-                          classNames={{
-                            input: "bg-white dark:bg-gray-800",
-                            inputWrapper: "border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
-                          }}
-                        />
+                      
+                      <div className="space-y-3">
+                        <label className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-emerald-500" />
+                          Created Before
+                        </label>
+                        <div className="relative group">
+                          <Input
+                            type="date"
+                            value={createdBefore}
+                            onChange={(e) => setCreatedBefore(e.target.value)}
+                            className="h-12"
+                            classNames={{
+                              base: "group-hover:scale-[1.01] transition-transform duration-200",
+                              input: "text-gray-900 dark:text-white text-sm font-medium bg-transparent",
+                              inputWrapper: cn(
+                                "bg-gradient-to-r from-white to-gray-50/50 dark:from-gray-800 dark:to-gray-900/50",
+                                "border-2 border-gray-200/60 dark:border-gray-600/40",
+                                "hover:border-emerald-400/60 dark:hover:border-emerald-500/60",
+                                "focus-within:border-emerald-500 dark:focus-within:border-emerald-400",
+                                "focus-within:ring-4 focus-within:ring-emerald-500/20",
+                                "rounded-xl shadow-sm hover:shadow-md transition-all duration-300",
+                                "backdrop-blur-sm"
+                              ),
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl"></div>
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Updated After</label>
-                        <Input
-                          type="date"
-                          value={updatedAfter}
-                          onChange={(e) => setUpdatedAfter(e.target.value)}
-                          classNames={{
-                            input: "bg-white dark:bg-gray-800",
-                            inputWrapper: "border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
-                          }}
-                        />
+                      
+                      <div className="space-y-3">
+                        <label className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-blue-500" />
+                          Updated After
+                        </label>
+                        <div className="relative group">
+                          <Input
+                            type="date"
+                            value={updatedAfter}
+                            onChange={(e) => setUpdatedAfter(e.target.value)}
+                            className="h-12"
+                            classNames={{
+                              base: "group-hover:scale-[1.01] transition-transform duration-200",
+                              input: "text-gray-900 dark:text-white text-sm font-medium bg-transparent",
+                              inputWrapper: cn(
+                                "bg-gradient-to-r from-white to-gray-50/50 dark:from-gray-800 dark:to-gray-900/50",
+                                "border-2 border-gray-200/60 dark:border-gray-600/40",
+                                "hover:border-blue-400/60 dark:hover:border-blue-500/60",
+                                "focus-within:border-blue-500 dark:focus-within:border-blue-400",
+                                "focus-within:ring-4 focus-within:ring-blue-500/20",
+                                "rounded-xl shadow-sm hover:shadow-md transition-all duration-300",
+                                "backdrop-blur-sm"
+                              ),
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl"></div>
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Updated Before</label>
-                        <Input
-                          type="date"
-                          value={updatedBefore}
-                          onChange={(e) => setUpdatedBefore(e.target.value)}
-                          classNames={{
-                            input: "bg-white dark:bg-gray-800",
-                            inputWrapper: "border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
-                          }}
-                        />
+                      
+                      <div className="space-y-3">
+                        <label className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-blue-500" />
+                          Updated Before
+                        </label>
+                        <div className="relative group">
+                          <Input
+                            type="date"
+                            value={updatedBefore}
+                            onChange={(e) => setUpdatedBefore(e.target.value)}
+                            className="h-12"
+                            classNames={{
+                              base: "group-hover:scale-[1.01] transition-transform duration-200",
+                              input: "text-gray-900 dark:text-white text-sm font-medium bg-transparent",
+                              inputWrapper: cn(
+                                "bg-gradient-to-r from-white to-gray-50/50 dark:from-gray-800 dark:to-gray-900/50",
+                                "border-2 border-gray-200/60 dark:border-gray-600/40",
+                                "hover:border-blue-400/60 dark:hover:border-blue-500/60",
+                                "focus-within:border-blue-500 dark:focus-within:border-blue-400",
+                                "focus-within:ring-4 focus-within:ring-blue-500/20",
+                                "rounded-xl shadow-sm hover:shadow-md transition-all duration-300",
+                                "backdrop-blur-sm"
+                              ),
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl"></div>
+                        </div>
                       </div>
                     </div>
                   </div>
