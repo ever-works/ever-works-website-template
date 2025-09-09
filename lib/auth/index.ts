@@ -57,8 +57,10 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       }
       return baseUrl;
     },
-    signIn: async ({ user, account }) => {
+    signIn: async ({ user, account, profile }) => {
       const isCredentials = account?.provider === 'credentials';
+      console.log('Sign-in attempt', { user, account, profile });
+
       try {
         if (!user?.email) {
           console.warn('Sign-in attempt without email', { provider: account?.provider });
@@ -69,6 +71,12 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         if (!isDatabaseAvailable) {
           console.warn('DATABASE_URL is not set, skipping database validation');
           return !isCredentials;
+        }
+
+        // For OAuth providers, allow account linking to prevent OAuthAccountNotLinked errors
+        if (!isCredentials && account?.provider) {
+          console.log(`OAuth sign-in with ${account.provider} for email: ${user.email}`);
+          return true;
         }
 
         return true;

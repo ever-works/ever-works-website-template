@@ -1,17 +1,21 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { SessionProvider } from "next-auth/react";
 
 function AdminAuthGuard({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
   const hasRedirectedRef = useRef(false);
 
+  // Check if we're on an auth page (signin, signup, etc.)
+  const isAuthPage = pathname?.includes('/admin/auth/');
+
   useEffect(() => {
-    if (status === "loading" || hasRedirectedRef.current) return;
+    if (status === "loading" || hasRedirectedRef.current || isAuthPage) return;
 
     if (!session) {
       console.log("No session, redirecting to signin");
@@ -31,7 +35,7 @@ function AdminAuthGuard({ children }: { children: React.ReactNode }) {
     }
 
     console.log("User authenticated and is admin");
-  }, [session, status, router]);
+  }, [session, status, router, isAuthPage]);
 
   // Show loading while checking auth
   if (status === "loading") {
@@ -45,8 +49,8 @@ function AdminAuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Show loading while redirecting
-  if (!session || !session.user?.isAdmin) {
+  // Show loading while redirecting (but not on auth pages)
+  if (!isAuthPage && (!session || !session.user?.isAdmin)) {
     return (
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">

@@ -9,3 +9,5 @@ export {
   getNewSubscriptionTemplate,
 } from "./subscription-events";
 export { getPasswordChangeConfirmationTemplate } from "./password-change-confirmation";
+export { getAccountCreatedTemplate } from "./account-created";
+export { getEmailVerificationTemplate } from "./email-verification";

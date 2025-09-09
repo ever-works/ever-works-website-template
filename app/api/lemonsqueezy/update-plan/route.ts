@@ -3,9 +3,13 @@ import { getOrCreateLemonsqueezyProvider } from "@/lib/payment/config/payment-pr
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-const cancelSubscriptionSchema = z.object({
+const updatePlanSchema = z.object({
   subscriptionId: z.string().min(1),
-  cancelAtPeriodEnd: z.boolean().optional().default(true),
+  variantId: z.coerce.number().positive('Variant ID must be a positive number'),
+  proration: z.enum(['immediate', 'next_period']).optional().default('immediate'),
+  invoiceImmediately: z.boolean().optional().default(false),
+  disableProrations: z.boolean().optional().default(false),
+  billingAnchor: z.number().min(1).max(31).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -24,7 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const validationResult = cancelSubscriptionSchema.safeParse(body);
+    const validationResult = updatePlanSchema.safeParse(body);
     
     if (!validationResult.success) {
       return NextResponse.json(
@@ -37,38 +41,49 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { subscriptionId, cancelAtPeriodEnd } = validationResult.data;
+    const { subscriptionId, variantId, proration, invoiceImmediately, disableProrations, billingAnchor } = validationResult.data;
 
+    // Initialize LemonSqueezy provider
     const lemonsqueezy = getOrCreateLemonsqueezyProvider();
 
-    const result = await lemonsqueezy.cancelSubscription(
+    // Update the subscription plan
+    const result = await lemonsqueezy.updateSubscription({
       subscriptionId,
-      cancelAtPeriodEnd,
-    );
+      priceId: variantId.toString(),
+      metadata: {
+        action: 'update_plan',
+        proration,
+        invoiceImmediately,
+        disableProrations,
+        billingAnchor,
+        updatedAt: new Date().toISOString(),
+        updatedBy: session.user.email
+      }
+    });
 
     return NextResponse.json({
       success: true,
       data: result,
-      message: cancelAtPeriodEnd 
-        ? 'Subscription will be cancelled at the end of the current period'
-        : 'Subscription cancelled immediately',
+      message: 'Subscription plan updated successfully',
       timestamp: new Date().toISOString(),
     }, { status: 200 });
 
   } catch (error) {
-    console.error('Cancel subscription error:', {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Update subscription plan error:', {
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
       timestamp: new Date().toISOString(),
-      endpoint: '/api/lemonsqueezy/subscriptions/cancel',
+      endpoint: '/api/lemonsqueezy/update-plan',
       method: 'POST'
     });
+  }
 
     return NextResponse.json(
       { 
-        error: 'Failed to cancel subscription',
+        error: 'Failed to update subscription plan',
         message: error instanceof Error ? error.message : 'Unknown error occurred',
-        code: 'CANCEL_FAILED',
+        code: 'UPDATE_FAILED',
         timestamp: new Date().toISOString()
       },
       { status: 500 }

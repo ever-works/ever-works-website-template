@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 			cancelAtPeriodEnd,
 			metadata
 		});
-
+		console.log('Subscription updated:', subscription);
 		if (!subscription) {
 			return NextResponse.json(
 				{

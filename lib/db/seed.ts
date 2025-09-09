@@ -1,7 +1,26 @@
 
-import 'dotenv/config';
-import { db } from './drizzle';
+import { config } from 'dotenv';
 import bcrypt from 'bcryptjs';
+import * as fs from 'fs';
+import * as path from 'path';
+
+// Load environment variables from .env.local first, then .env as fallback
+const envLocalPath = path.resolve(process.cwd(), '.env.local');
+const envPath = path.resolve(process.cwd(), '.env');
+
+// Try to load from .env.local first
+if (fs.existsSync(envLocalPath)) {
+  config({ path: envLocalPath });
+  console.log('Loaded environment variables from .env.local');
+} else if (fs.existsSync(envPath)) {
+  // Fallback to .env if .env.local doesn't exist
+  config({ path: envPath });
+  console.log('Loaded environment variables from .env');
+} else {
+  console.warn('No .env.local or .env file found. Using system environment variables only.');
+}
+
+// Import schema types and sql
 import {
   users,
   accounts,
@@ -24,6 +43,9 @@ import {
 } from './schema';
 import { sql } from 'drizzle-orm';
 
+// Global database connection - will be initialized after environment loading
+let db: any;
+
 async function ensureDb() {
   // Quick sanity check similar to drizzle.ts behavior
   if (!process.env.DATABASE_URL) {
@@ -32,6 +54,10 @@ async function ensureDb() {
   if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DB_SEED !== '1') {
     throw new Error('Refusing to seed in production. Set ALLOW_DB_SEED=1 to proceed.');
   }
+  
+  // Initialize database connection
+  const { db: dbConnection } = await import('./drizzle');
+  db = dbConnection;
 }
 
 function uuid(): string {
@@ -188,9 +214,9 @@ async function seedContent(ids: { adminProfileId: string; clientProfileId1: stri
   // Comments: only if table exists
   if (await tableExists('comments')) {
     await db.insert(comments).values([
-      { id: uuid(), content: 'Welcome to the platform!', userId: ids.adminProfileId, itemId: 'item-1' },
-      { id: uuid(), content: 'Great product!', userId: ids.clientProfileId1, itemId: 'item-2', rating: 5 },
-      { id: uuid(), content: 'Trying it out.', userId: ids.clientProfileId2, itemId: 'item-3', rating: 4 }
+      { id: uuid(), content: 'Welcome to the platform!', userId: ids.adminUserId, itemId: 'item-1' },
+      { id: uuid(), content: 'Great product!', userId: ids.clientUserId1, itemId: 'item-2', rating: 5 },
+      { id: uuid(), content: 'Trying it out.', userId: ids.clientUserId2, itemId: 'item-3', rating: 4 }
     ]);
   }
 

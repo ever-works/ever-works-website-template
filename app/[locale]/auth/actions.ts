@@ -34,7 +34,7 @@ import {
   generatePasswordResetToken,
   generateVerificationToken,
 } from "@/lib/db/tokens";
-import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/mail";
+import { sendPasswordResetEmail, sendVerificationEmailWithTemplate } from "@/lib/mail";
 import { authServiceFactory } from "@/lib/auth/services";
 
 const PASSWORD_MIN_LENGTH = 8;
@@ -210,9 +210,17 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
     // Log activity using the client profile ID
     		await logActivity(ActivityType.SIGN_UP, clientProfile.id);
 
+    // // Send welcome email for account creation
+    // try {
+    //   await sendAccountCreatedEmail(name, normalizedEmail);
+    // } catch (emailError) {
+    //   console.error("Failed to send welcome email:", emailError);
+    //   // Don't fail the registration if email fails
+    // }
+
     const verificationToken = await generateVerificationToken(normalizedEmail);
     if (verificationToken) {
-      await sendVerificationEmail(normalizedEmail, verificationToken.token);
+      await sendVerificationEmailWithTemplate(normalizedEmail, verificationToken.token, name);
     }
 
     await signIn(AuthProviders.CREDENTIALS, {

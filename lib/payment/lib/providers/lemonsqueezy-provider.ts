@@ -17,7 +17,7 @@ import {
 	CheckoutParams,
 	SubscriptionStatus,
 	CheckoutListResult,
-	CheckoutData
+	CheckoutData,
 } from '../../types/payment-types';
 import {
 	createCheckout,
@@ -28,7 +28,8 @@ import {
 	lemonSqueezySetup,
 	listSubscriptions,
 	Variant,
-	listVariants
+	listVariants,
+	getPrice
 } from '@lemonsqueezy/lemonsqueezy.js';
 
 import { env } from '@/lib/config/env';
@@ -440,6 +441,7 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 			const { data, error } = await createCheckout(Number(this.storeId), finalProductId, {
 				customPrice,
 				productOptions: {
+					enabledVariants: [Number(variantId)],
 					redirectUrl: metadata?.successUrl || '',
 					name: metadata?.name || 'Subscription',
 					description: metadata?.description || 'Subscription checkout',
@@ -448,7 +450,9 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 				checkoutOptions: {
 					embed: true,
 					media: false,
-					logo: false
+					logo: true,
+					dark: true,
+					subscriptionPreview: true,
 				},
 				checkoutData: {
 					email: email || '',
@@ -525,7 +529,8 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 					storeId: Number(this.storeId)
 				}
 			});
-
+			const price = await getPrice(Number(subscriptionId));
+			console.log('Price:', price.data?.data?.attributes || 'No price found');
 			if (error) {
 				console.error('Error fetching subscriptions:', error);
 				return null;
@@ -638,9 +643,18 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 					currentStatus: currentSubscription?.status
 				});
 			}
-
-			const { data, error } = await updateSubscription(Number(params.subscriptionId), updatePayload);
-
+			console.log('LemonSqueezy update payload:', {
+				subscriptionId: params.subscriptionId,
+				payload: updatePayload,
+				metadata: params.metadata,
+				currentStatus: currentSubscription?.status,
+				variantId:Number(params.priceId)
+			});
+			const { data, error } = await updateSubscription(Number(params.subscriptionId), {
+				...updatePayload,
+				variantId: Number(params.priceId)
+			});
+			console.log('Subscription updated:', data);
 			if (error) {
 				console.error('LemonSqueezy API error details:', {
 					error,
