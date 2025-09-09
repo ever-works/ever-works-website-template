@@ -16,30 +16,28 @@ export async function GET() {
   try {
     // Check authentication
     const session = await auth();
+    console.log('API Debug - Session:', { 
+      hasSession: !!session, 
+      hasUser: !!session?.user, 
+      userId: session?.user?.id,
+      isAdmin: session?.user?.isAdmin,
+      email: session?.user?.email 
+    });
+    
     if (!session?.user) {
+      console.log('API Debug - No session or user');
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    // Check if user has admin role using the isAdmin field
-    const adminCheckResult = await db.execute(`
-      SELECT COUNT(*) > 0 as is_admin 
-      FROM users u 
-      JOIN user_roles ur ON u.id = ur.user_id 
-      JOIN roles r ON ur.role_id = r.id 
-      WHERE u.id = $1 
-      AND r.is_admin = true
-    `, [session.user.id]);
-
-    const hasAdminRole = adminCheckResult[0]?.is_admin;
-
-    if (!hasAdminRole) {
-              return NextResponse.json(
-          { success: false, error: 'Insufficient permissions' },
-          { status: 403 }
-        );
+    // Check if user has admin role using the session's isAdmin flag
+    if (!session.user.isAdmin) {
+      return NextResponse.json(
+        { success: false, error: 'Insufficient permissions' },
+        { status: 403 }
+      );
     }
 
     const stats = await adminStatsRepository.getAllStats();

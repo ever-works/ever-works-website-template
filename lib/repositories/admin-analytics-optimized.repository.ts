@@ -313,7 +313,7 @@ export class AdminAnalyticsOptimizedRepository {
         (
           SELECT 
             'comment' as activity_type,
-            userid as user_info,
+            "userId" as user_info,
             created_at as activity_time,
             'New comment added' as description
           FROM comments 
@@ -325,7 +325,7 @@ export class AdminAnalyticsOptimizedRepository {
         (
           SELECT 
             'vote' as activity_type,
-            userid as user_info,
+            "userId" as user_info,
             created_at as activity_time,
             CONCAT('New ', vote_type, ' vote') as description
           FROM votes

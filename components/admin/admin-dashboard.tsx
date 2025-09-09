@@ -115,6 +115,7 @@ export function AdminDashboard() {
 							{ key: 'tools', label: 'Tools' }
 						].map((tab) => (
 							<button
+                                type="button"
 								key={tab.key}
 								role="tab"
 								aria-selected={activeTab === (tab.key as any)}
@@ -258,10 +259,6 @@ export function AdminDashboard() {
 						)}
 					</AdminPullToRefresh>
 				)}
-				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-					<AdminActivityChart data={stats?.activityTrendData || []} isLoading={isLoading} />
-					<AdminSubmissionStatus data={stats?.submissionStatusData || []} isLoading={isLoading} />
-				</div>
 			</div>
       </div>
 		</>

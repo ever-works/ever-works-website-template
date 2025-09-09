@@ -248,7 +248,7 @@ export const newsletterSubscriptions = pgTable("newsletterSubscriptions", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   email: text("email").notNull().unique(),
-  isActive: boolean("is_active").notNull().default(true),
+  isActive: boolean("is_subscribed").notNull().default(true),
   subscribedAt: timestamp("subscribed_at").notNull().defaultNow(),
   unsubscribedAt: timestamp("unsubscribed_at"),
   lastEmailSent: timestamp("last_email_sent"),
