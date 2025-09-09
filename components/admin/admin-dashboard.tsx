@@ -21,12 +21,12 @@ import {
 } from './admin-accessibility';
 import { AdminResponsiveGrid } from './admin-responsive';
 import { AdminPullToRefresh } from './admin-touch-interactions';
-import { AdminWelcomeSection } from './admin-welcome-section';
+import { AdminWelcomeGradient } from './admin-welcome-section';
 import { AdminNotifications } from './admin-notifications';
 import { Button } from '../ui/button';
 
 // Design system constants
-const REFRESH_BUTTON_STYLES = 'flex items-center space-x-2';
+// const REFRESH_BUTTON_STYLES = 'flex items-center space-x-2';
 const ERROR_BOX_STYLES =
 	'mx-6 mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg';
 const ERROR_CONTENT_STYLES = 'flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4';
@@ -79,58 +79,30 @@ export function AdminDashboard() {
 			<AdminSkipLink href="#admin-tools">Skip to admin tools</AdminSkipLink>
       <div className="space-y-8">
       {/* Welcome Section */}
-      <div className="flex items-center justify-between">
-        <AdminWelcomeSection adminName="Admin Dashboard" />
-        <div className="flex items-center gap-3">
-          <AdminNotifications />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            disabled={isFetching}
-            className="flex items-center space-x-2"
-          >
-            <RefreshCw className={refreshIconClass} />
-            <span>Refresh</span>
-          </Button>
-        </div>
-      </div>
+      <AdminWelcomeGradient
+        title="Admin Dashboard"
+        subtitle="Overview, analytics and admin tools"
+        rightActions={(
+          <div className="flex items-center gap-3">
+            <AdminNotifications />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => refetch()}
+              disabled={isFetching}
+              className="flex items-center space-x-2"
+            >
+              <RefreshCw className={refreshIconClass} />
+              <span>Refresh</span>
+            </Button>
+          </div>
+        )}
+      />
 			{/* Status announcements for screen readers */}
 			<AdminStatusAnnouncer message={srMessage} priority={isError ? 'assertive' : 'polite'} />
 
 			<div className="p-6 max-w-7xl mx-auto" id="main-content">
-				{/* Gradient Header to match other admin pages */}
-				<div className="mb-8">
-					<div className="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6">
-						<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-							<div className="flex items-center space-x-4">
-								<div className="w-12 h-12 bg-gradient-to-br from-theme-primary to-theme-accent rounded-xl flex items-center justify-center shadow-lg">
-									<RefreshCw className="w-6 h-6 text-white" />
-								</div>
-								<div>
-									<h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-										Admin Dashboard
-									</h1>
-									<p className="text-gray-600 dark:text-gray-400 mt-1">
-										Overview, analytics and admin tools
-									</p>
-								</div>
-							</div>
-							<AdminAccessibleButton
-								variant="secondary"
-								size="sm"
-								onClick={() => refetch()}
-								disabled={isFetching}
-								loading={isFetching}
-								aria-label={isFetching ? 'Refreshing dashboard data' : 'Refresh dashboard data'}
-								className={REFRESH_BUTTON_STYLES}
-							>
-								<RefreshCw className={refreshIconClass} aria-hidden="true" />
-								<span>Refresh</span>
-							</AdminAccessibleButton>
-						</div>
-					</div>
-				</div>
+				{/* Gradient header moved into AdminWelcomeSection */}
 
 				{/* Tabs */}
 				<div className="mb-6">
