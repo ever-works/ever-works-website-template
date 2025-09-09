@@ -885,110 +885,210 @@ export default function ClientsPage() {
         </div>
       )}
 
-      {/* Filter Modal */}
+      {/* Modern Filter Modal */}
       <Modal isOpen={isFilterModalOpen} onClose={onCloseFilterModal} size="2xl">
         <ModalContent>
-          <ModalHeader>Filter Clients</ModalHeader>
-          <ModalBody>
-            <div className="space-y-6">
-              {/* Basic Filters */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Basic Filters</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Select
-                    label="Status"
-                    placeholder="All Statuses"
-                    selectedKeys={statusFilter ? [statusFilter] : []}
-                    onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string || '')}
-                  >
-                    <SelectItem value="">All Statuses</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                    <SelectItem value="suspended">Suspended</SelectItem>
-                    <SelectItem value="trial">Trial</SelectItem>
-                  </Select>
-
-                  <Select
-                    label="Plan"
-                    placeholder="All Plans"
-                    selectedKeys={planFilter ? [planFilter] : []}
-                    onSelectionChange={(keys) => setPlanFilter(Array.from(keys)[0] as string || '')}
-                  >
-                    <SelectItem value="free">Free</SelectItem>
-                    <SelectItem value="standard">Standard</SelectItem>
-                    <SelectItem value="premium">Premium</SelectItem>
-                  </Select>
-
-                  <Select
-                    label="Account Type"
-                    placeholder="All Types"
-                    selectedKeys={accountTypeFilter ? [accountTypeFilter] : []}
-                    onSelectionChange={(keys) => setAccountTypeFilter(Array.from(keys)[0] as string || '')}
-                  >
-                    <SelectItem value="individual">Individual</SelectItem>
-                    <SelectItem value="business">Business</SelectItem>
-                    <SelectItem value="enterprise">Enterprise</SelectItem>
-                  </Select>
-
-                  <Select
-                    label="Provider"
-                    placeholder="All Providers"
-                    selectedKeys={providerFilter ? [providerFilter] : []}
-                    onSelectionChange={(keys) => setProviderFilter(Array.from(keys)[0] as string || '')}
-                  >
-                    <SelectItem value="credentials">Email/Password</SelectItem>
-                    <SelectItem value="google">Google</SelectItem>
-                    <SelectItem value="github">GitHub</SelectItem>
-                    <SelectItem value="facebook">Facebook</SelectItem>
-                    <SelectItem value="twitter">Twitter</SelectItem>
-                    <SelectItem value="linkedin">LinkedIn</SelectItem>
-                  </Select>
+          <div className="relative overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900" />
+            <div 
+              className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]"
+              style={{
+                backgroundImage: "url('data:image/svg+xml,%3Csvg width=&apos;40&apos; height=&apos;40&apos; viewBox=&apos;0 0 40 40&apos; xmlns=&apos;http://www.w3.org/2000/svg&apos;%3E%3Cg fill=&apos;%23000000&apos; fill-opacity=&apos;0.05&apos; fill-rule=&apos;evenodd&apos;%3E%3Cpath d=&apos;M0 0h40v40H0V0zm1 1h38v38H1V1z&apos; /%3E%3C/g%3E%3C/svg%3E')"
+              }}
+            />
+            
+            {/* Header */}
+            <div className="relative z-10 px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gradient-to-r from-gray-50/50 to-white/50 dark:from-gray-800/50 dark:to-gray-900/50">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-theme-primary to-theme-accent rounded-lg flex items-center justify-center shadow-lg">
+                  <Filter className="w-4 h-4 text-white" />
                 </div>
-              </div>
-
-              {/* Date Filters */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Date Filters</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    label="Created After"
-                    type="date"
-                    value={createdAfter}
-                    onChange={(e) => setCreatedAfter(e.target.value)}
-                  />
-                  <Input
-                    label="Created Before"
-                    type="date"
-                    value={createdBefore}
-                    onChange={(e) => setCreatedBefore(e.target.value)}
-                  />
-                  <Input
-                    label="Updated After"
-                    type="date"
-                    value={updatedAfter}
-                    onChange={(e) => setUpdatedAfter(e.target.value)}
-                  />
-                  <Input
-                    label="Updated Before"
-                    type="date"
-                    value={updatedBefore}
-                    onChange={(e) => setUpdatedBefore(e.target.value)}
-                  />
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Filter Clients</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Refine your client search with advanced filters</p>
                 </div>
               </div>
             </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="flat" onPress={clearFilters}>
-              Clear All
-            </Button>
-            <Button variant="flat" onPress={onCloseFilterModal}>
-              Cancel
-            </Button>
-            <Button color="primary" onPress={onCloseFilterModal}>
-              Close
-            </Button>
-          </ModalFooter>
+
+            {/* Body */}
+            <div className="relative z-10 px-6 py-6">
+              <div className="space-y-8">
+                {/* Basic Filters */}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-1 h-6 bg-gradient-to-b from-theme-primary to-theme-accent rounded-full"></div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Basic Filters</h3>
+                  </div>
+                  <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200/50 dark:border-gray-700/50 shadow-sm">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+                        <Select
+                          placeholder="All Statuses"
+                          selectedKeys={statusFilter ? [statusFilter] : []}
+                          onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string || '')}
+                          className="w-full"
+                          classNames={{
+                            trigger: "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
+                          }}
+                        >
+                          <SelectItem key="" value="">All Statuses</SelectItem>
+                          <SelectItem key="active" value="active">Active</SelectItem>
+                          <SelectItem key="inactive" value="inactive">Inactive</SelectItem>
+                          <SelectItem key="suspended" value="suspended">Suspended</SelectItem>
+                          <SelectItem key="trial" value="trial">Trial</SelectItem>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Plan</label>
+                        <Select
+                          placeholder="All Plans"
+                          selectedKeys={planFilter ? [planFilter] : []}
+                          onSelectionChange={(keys) => setPlanFilter(Array.from(keys)[0] as string || '')}
+                          className="w-full"
+                          classNames={{
+                            trigger: "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
+                          }}
+                        >
+                          <SelectItem key="free" value="free">Free</SelectItem>
+                          <SelectItem key="standard" value="standard">Standard</SelectItem>
+                          <SelectItem key="premium" value="premium">Premium</SelectItem>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Account Type</label>
+                        <Select
+                          placeholder="All Types"
+                          selectedKeys={accountTypeFilter ? [accountTypeFilter] : []}
+                          onSelectionChange={(keys) => setAccountTypeFilter(Array.from(keys)[0] as string || '')}
+                          className="w-full"
+                          classNames={{
+                            trigger: "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
+                          }}
+                        >
+                          <SelectItem key="individual" value="individual">Individual</SelectItem>
+                          <SelectItem key="business" value="business">Business</SelectItem>
+                          <SelectItem key="enterprise" value="enterprise">Enterprise</SelectItem>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Provider</label>
+                        <Select
+                          placeholder="All Providers"
+                          selectedKeys={providerFilter ? [providerFilter] : []}
+                          onSelectionChange={(keys) => setProviderFilter(Array.from(keys)[0] as string || '')}
+                          className="w-full"
+                          classNames={{
+                            trigger: "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
+                          }}
+                        >
+                          <SelectItem key="credentials" value="credentials">Email/Password</SelectItem>
+                          <SelectItem key="google" value="google">Google</SelectItem>
+                          <SelectItem key="github" value="github">GitHub</SelectItem>
+                          <SelectItem key="facebook" value="facebook">Facebook</SelectItem>
+                          <SelectItem key="twitter" value="twitter">Twitter</SelectItem>
+                          <SelectItem key="linkedin" value="linkedin">LinkedIn</SelectItem>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Date Filters */}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-600 rounded-full"></div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Date Filters</h3>
+                  </div>
+                  <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200/50 dark:border-gray-700/50 shadow-sm">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Created After</label>
+                        <Input
+                          type="date"
+                          value={createdAfter}
+                          onChange={(e) => setCreatedAfter(e.target.value)}
+                          classNames={{
+                            input: "bg-white dark:bg-gray-800",
+                            inputWrapper: "border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
+                          }}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Created Before</label>
+                        <Input
+                          type="date"
+                          value={createdBefore}
+                          onChange={(e) => setCreatedBefore(e.target.value)}
+                          classNames={{
+                            input: "bg-white dark:bg-gray-800",
+                            inputWrapper: "border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
+                          }}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Updated After</label>
+                        <Input
+                          type="date"
+                          value={updatedAfter}
+                          onChange={(e) => setUpdatedAfter(e.target.value)}
+                          classNames={{
+                            input: "bg-white dark:bg-gray-800",
+                            inputWrapper: "border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
+                          }}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Updated Before</label>
+                        <Input
+                          type="date"
+                          value={updatedBefore}
+                          onChange={(e) => setUpdatedBefore(e.target.value)}
+                          classNames={{
+                            input: "bg-white dark:bg-gray-800",
+                            inputWrapper: "border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="relative z-10 px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-gradient-to-r from-gray-50/50 to-white/50 dark:from-gray-800/50 dark:to-gray-900/50">
+              <div className="flex items-center justify-between">
+                <Button 
+                  variant="flat" 
+                  onPress={clearFilters}
+                  className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 border-red-200 dark:border-red-800"
+                >
+                  Clear All
+                </Button>
+                <div className="flex space-x-3">
+                  <Button 
+                    variant="flat" 
+                    onPress={onCloseFilterModal}
+                    className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    color="primary" 
+                    onPress={onCloseFilterModal}
+                    className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
+                  >
+                    Apply Filters
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
         </ModalContent>
       </Modal>
     </div>
