@@ -22,7 +22,7 @@
 		"dev": "node scripts/check-env.js --quick && next dev",
 		"predev": "node scripts/clone.cjs",
 		"dev:check": "node scripts/check-env.js && next dev",
-		"build": "node scripts/check-env.js --silent && next build",
+		"build": "node scripts/check-env-ci.js --silent && next build",
 		"start": "node scripts/check-env.js --silent --quick && next start",
 		"lint": "next lint",
 		"prebuild": "node scripts/clone.cjs",
