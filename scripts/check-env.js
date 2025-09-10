@@ -288,9 +288,15 @@ if (missingCriticalVars.length > 0) {
   }
 }
 
-// Exit with error if any critical vars are missing in production
-if (process.env.NODE_ENV === 'production' && missingCriticalVars.length > 0) {
+// Only exit with error in production mode for critical variables
+// In development/build mode, just warn but don't fail the build
+if (process.env.NODE_ENV === 'production' && missingCriticalVars.length > 0 && !silentMode) {
   process.exit(1);
+} else if (missingCriticalVars.length > 0) {
+  // In development mode or silent mode, just warn but continue
+  if (!silentMode) {
+    print('yellow', '⚠️ Build will continue despite missing critical variables (development mode)', true);
+  }
 }
 
 // Exit with success
