@@ -281,8 +281,8 @@ if (missingCriticalVars.length > 0) {
   if (missingCriticalVars.includes('DATA_REPOSITORY') && process.env.NODE_ENV !== 'production') {
     // In development mode, we'll just warn but continue
     print('yellow', '⚠️ DATA_REPOSITORY is missing but continuing in development mode', true);
-  } else if (missingCriticalVars.includes('DATA_REPOSITORY')) {
-    // In production mode, exit with error
+  } else if (missingCriticalVars.includes('DATA_REPOSITORY') && process.env.NODE_ENV === 'production' && !silentMode) {
+    // In production mode and not silent, exit with error
     printCritical('❌ DATA_REPOSITORY is required for content management!');
     process.exit(1);
   }
