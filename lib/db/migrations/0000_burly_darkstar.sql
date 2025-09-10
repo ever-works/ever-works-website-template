@@ -226,6 +226,7 @@ CREATE TABLE "user_roles" (
 CREATE TABLE "users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"email" text,
+	"image" text,
 	"emailVerified" timestamp,
 	"password_hash" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
