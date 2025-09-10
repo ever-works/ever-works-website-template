@@ -57,7 +57,13 @@ export default function ClientsPage() {
   const [providerFilter, setProviderFilter] = useState<string>('');
   const [isFiltering, setIsFiltering] = useState(false);
 
-  // Date range filters
+  // Date filters - improved UX
+  const [datePreset, setDatePreset] = useState<'all' | 'last7' | 'last30' | 'last90' | 'thisMonth' | 'custom'>('all');
+  const [customDateFrom, setCustomDateFrom] = useState<string>('');
+  const [customDateTo, setCustomDateTo] = useState<string>('');
+  const [dateFilterType, setDateFilterType] = useState<'created' | 'updated'>('created');
+
+  // Legacy date filters (computed from new UX state)
   const [createdAfter, setCreatedAfter] = useState<string>('');
   const [createdBefore, setCreatedBefore] = useState<string>('');
   const [updatedAfter, setUpdatedAfter] = useState<string>('');
@@ -73,6 +79,55 @@ export default function ClientsPage() {
     activity: { newThisWeek: 0, newThisMonth: 0, activeThisWeek: 0, activeThisMonth: 0 },
     growth: { weeklyGrowth: 0, monthlyGrowth: 0 }
   });
+
+  // Compute date range from preset selection
+  const computeDateRange = useCallback((preset: typeof datePreset) => {
+    const now = new Date();
+    let from = '';
+    let to = '';
+
+    switch (preset) {
+      case 'last7':
+        from = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        break;
+      case 'last30':
+        from = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        break;
+      case 'last90':
+        from = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        break;
+      case 'thisMonth':
+        from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+        to = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+        break;
+      case 'custom':
+        from = customDateFrom;
+        to = customDateTo;
+        break;
+      default: // 'all'
+        from = '';
+        to = '';
+    }
+
+    return { from, to };
+  }, [customDateFrom, customDateTo]);
+
+  // Update legacy date filters when UX state changes
+  useEffect(() => {
+    const { from, to } = computeDateRange(datePreset);
+    
+    if (dateFilterType === 'created') {
+      setCreatedAfter(from);
+      setCreatedBefore(to);
+      setUpdatedAfter('');
+      setUpdatedBefore('');
+    } else {
+      setUpdatedAfter(from);
+      setUpdatedBefore(to);
+      setCreatedAfter('');
+      setCreatedBefore('');
+    }
+  }, [datePreset, dateFilterType, computeDateRange]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
@@ -91,10 +146,7 @@ export default function ClientsPage() {
     planFilter,
     accountTypeFilter,
     providerFilter,
-    createdAfter,
-    createdBefore,
-    updatedAfter,
-    updatedBefore,
+    datePreset !== 'all' ? 'dateFilter' : null,
   ].filter(Boolean).length;
 
   const clearEditParam = useCallback(() => {
@@ -317,10 +369,10 @@ export default function ClientsPage() {
     setPlanFilter('');
     setAccountTypeFilter('');
     setProviderFilter('');
-    setCreatedAfter('');
-    setCreatedBefore('');
-    setUpdatedAfter('');
-    setUpdatedBefore('');
+    setDatePreset('all');
+    setCustomDateFrom('');
+    setCustomDateTo('');
+    setDateFilterType('created');
     setCurrentPage(1);
     // Optional: short-circuit debounce for immediate fetch
     fetchDashboardData(1);
@@ -654,24 +706,24 @@ export default function ClientsPage() {
                 Provider: {providerFilter}
               </Chip>
             )}
-            {createdAfter && (
-              <Chip variant="flat" color="secondary" onClose={() => setCreatedAfter('')}>
-                Created after: {createdAfter}
-              </Chip>
-            )}
-            {createdBefore && (
-              <Chip variant="flat" color="secondary" onClose={() => setCreatedBefore('')}>
-                Created before: {createdBefore}
-              </Chip>
-            )}
-            {updatedAfter && (
-              <Chip variant="flat" color="secondary" onClose={() => setUpdatedAfter('')}>
-                Updated after: {updatedAfter}
-              </Chip>
-            )}
-            {updatedBefore && (
-              <Chip variant="flat" color="secondary" onClose={() => setUpdatedBefore('')}>
-                Updated before: {updatedBefore}
+            {datePreset !== 'all' && (
+              <Chip 
+                variant="flat" 
+                color="secondary" 
+                onClose={() => {
+                  setDatePreset('all');
+                  setCustomDateFrom('');
+                  setCustomDateTo('');
+                }}
+                className="flex items-center gap-1"
+              >
+                <Calendar className="w-3 h-3" />
+                {datePreset === 'last7' && 'Last 7 days'}
+                {datePreset === 'last30' && 'Last 30 days'}
+                {datePreset === 'last90' && 'Last 90 days'}
+                {datePreset === 'thisMonth' && 'This month'}
+                {datePreset === 'custom' && `${customDateFrom || '...'} to ${customDateTo || '...'}`}
+                {' '}({dateFilterType})
               </Chip>
             )}
           </div>
@@ -695,12 +747,12 @@ export default function ClientsPage() {
               <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No clients found</h3>
               <p className="text-gray-500 dark:text-gray-400 mb-4">
-                {searchTerm || statusFilter || planFilter || accountTypeFilter || providerFilter || createdAfter || createdBefore || updatedAfter || updatedBefore
+                {searchTerm || statusFilter || planFilter || accountTypeFilter || providerFilter || datePreset !== 'all'
                   ? 'Try adjusting your filters or search terms.'
                   : 'Get started by adding your first client.'
                 }
               </p>
-              {!searchTerm && !statusFilter && !planFilter && !accountTypeFilter && !providerFilter && (
+              {!searchTerm && !statusFilter && !planFilter && !accountTypeFilter && !providerFilter && datePreset === 'all' && (
                 <Button color="primary" onPress={openCreateForm}>
                   Add First Client
                 </Button>
@@ -999,130 +1051,154 @@ export default function ClientsPage() {
                   </div>
                 </div>
 
-                {/* Date Filters */}
+                {/* Date Filters - Improved UX */}
                 <div className="space-y-4">
                   <div className="flex items-center space-x-2">
                     <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-600 rounded-full"></div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Date Filters</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Date Range</h3>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full">
+                      Quick & Easy
+                    </div>
                   </div>
                   <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200/50 dark:border-gray-700/50 shadow-sm">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                      <div className="space-y-3">
-                        <label className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-emerald-500" />
-                          Created After
-                        </label>
-                        <div className="relative group">
-                          <Input
-                            type="date"
-                            value={createdAfter}
-                            onChange={(e) => setCreatedAfter(e.target.value)}
-                            className="h-12"
-                            classNames={{
-                              base: "group-hover:scale-[1.01] transition-transform duration-200",
-                              input: "text-gray-900 dark:text-white text-sm font-medium bg-transparent",
-                              inputWrapper: cn(
-                                "bg-gradient-to-r from-white to-gray-50/50 dark:from-gray-800 dark:to-gray-900/50",
-                                "border-2 border-gray-200/60 dark:border-gray-600/40",
-                                "hover:border-emerald-400/60 dark:hover:border-emerald-500/60",
-                                "focus-within:border-emerald-500 dark:focus-within:border-emerald-400",
-                                "focus-within:ring-4 focus-within:ring-emerald-500/20",
-                                "rounded-xl shadow-sm hover:shadow-md transition-all duration-300",
-                                "backdrop-blur-sm"
-                              ),
-                            }}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl"></div>
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-3">
-                        <label className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-emerald-500" />
-                          Created Before
-                        </label>
-                        <div className="relative group">
-                          <Input
-                            type="date"
-                            value={createdBefore}
-                            onChange={(e) => setCreatedBefore(e.target.value)}
-                            className="h-12"
-                            classNames={{
-                              base: "group-hover:scale-[1.01] transition-transform duration-200",
-                              input: "text-gray-900 dark:text-white text-sm font-medium bg-transparent",
-                              inputWrapper: cn(
-                                "bg-gradient-to-r from-white to-gray-50/50 dark:from-gray-800 dark:to-gray-900/50",
-                                "border-2 border-gray-200/60 dark:border-gray-600/40",
-                                "hover:border-emerald-400/60 dark:hover:border-emerald-500/60",
-                                "focus-within:border-emerald-500 dark:focus-within:border-emerald-400",
-                                "focus-within:ring-4 focus-within:ring-emerald-500/20",
-                                "rounded-xl shadow-sm hover:shadow-md transition-all duration-300",
-                                "backdrop-blur-sm"
-                              ),
-                            }}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl"></div>
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-3">
-                        <label className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-blue-500" />
-                          Updated After
-                        </label>
-                        <div className="relative group">
-                          <Input
-                            type="date"
-                            value={updatedAfter}
-                            onChange={(e) => setUpdatedAfter(e.target.value)}
-                            className="h-12"
-                            classNames={{
-                              base: "group-hover:scale-[1.01] transition-transform duration-200",
-                              input: "text-gray-900 dark:text-white text-sm font-medium bg-transparent",
-                              inputWrapper: cn(
-                                "bg-gradient-to-r from-white to-gray-50/50 dark:from-gray-800 dark:to-gray-900/50",
-                                "border-2 border-gray-200/60 dark:border-gray-600/40",
-                                "hover:border-blue-400/60 dark:hover:border-blue-500/60",
-                                "focus-within:border-blue-500 dark:focus-within:border-blue-400",
-                                "focus-within:ring-4 focus-within:ring-blue-500/20",
-                                "rounded-xl shadow-sm hover:shadow-md transition-all duration-300",
-                                "backdrop-blur-sm"
-                              ),
-                            }}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl"></div>
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-3">
-                        <label className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-blue-500" />
-                          Updated Before
-                        </label>
-                        <div className="relative group">
-                          <Input
-                            type="date"
-                            value={updatedBefore}
-                            onChange={(e) => setUpdatedBefore(e.target.value)}
-                            className="h-12"
-                            classNames={{
-                              base: "group-hover:scale-[1.01] transition-transform duration-200",
-                              input: "text-gray-900 dark:text-white text-sm font-medium bg-transparent",
-                              inputWrapper: cn(
-                                "bg-gradient-to-r from-white to-gray-50/50 dark:from-gray-800 dark:to-gray-900/50",
-                                "border-2 border-gray-200/60 dark:border-gray-600/40",
-                                "hover:border-blue-400/60 dark:hover:border-blue-500/60",
-                                "focus-within:border-blue-500 dark:focus-within:border-blue-400",
-                                "focus-within:ring-4 focus-within:ring-blue-500/20",
-                                "rounded-xl shadow-sm hover:shadow-md transition-all duration-300",
-                                "backdrop-blur-sm"
-                              ),
-                            }}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl"></div>
-                        </div>
+                    
+                    {/* Apply To Toggle */}
+                    <div className="mb-6">
+                      <label className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3 block">
+                        Apply date filter to:
+                      </label>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => setDateFilterType('created')}
+                          className={cn(
+                            "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                            dateFilterType === 'created'
+                              ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/30"
+                              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
+                          )}
+                        >
+                          <Calendar className="w-4 h-4 inline mr-2" />
+                          Created Date
+                        </button>
+                        <button
+                          onClick={() => setDateFilterType('updated')}
+                          className={cn(
+                            "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                            dateFilterType === 'updated'
+                              ? "bg-blue-500 text-white shadow-md shadow-blue-500/30"
+                              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                          )}
+                        >
+                          <Calendar className="w-4 h-4 inline mr-2" />
+                          Updated Date
+                        </button>
                       </div>
                     </div>
+
+                    {/* Quick Presets */}
+                    <div className="mb-6">
+                      <label className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3 block">
+                        Quick filters:
+                      </label>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {[
+                          { value: 'all', label: 'All Time', icon: '∞' },
+                          { value: 'last7', label: 'Last 7 Days', icon: '7d' },
+                          { value: 'last30', label: 'Last 30 Days', icon: '30d' },
+                          { value: 'last90', label: 'Last 90 Days', icon: '90d' },
+                          { value: 'thisMonth', label: 'This Month', icon: '📅' },
+                          { value: 'custom', label: 'Custom Range', icon: '⚙️' },
+                        ].map((preset) => (
+                          <button
+                            key={preset.value}
+                            onClick={() => setDatePreset(preset.value as typeof datePreset)}
+                            className={cn(
+                              "p-3 rounded-xl text-sm font-medium transition-all duration-200 text-left",
+                              "border-2 backdrop-blur-sm relative group overflow-hidden",
+                              datePreset === preset.value
+                                ? cn(
+                                    "border-emerald-500 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30",
+                                    "text-emerald-700 dark:text-emerald-300 shadow-lg shadow-emerald-500/20"
+                                  )
+                                : "border-gray-200 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 hover:border-emerald-300 dark:hover:border-emerald-600"
+                            )}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <div className="text-lg mb-1">{preset.icon}</div>
+                                <div className="font-semibold">{preset.label}</div>
+                              </div>
+                              {datePreset === preset.value && (
+                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                              )}
+                            </div>
+                            {datePreset === preset.value && (
+                              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 pointer-events-none"></div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Custom Date Range (Progressive Disclosure) */}
+                    {datePreset === 'custom' && (
+                      <div className="space-y-4 p-4 bg-gradient-to-r from-blue-50/50 to-cyan-50/50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-200/50 dark:border-blue-700/50">
+                        <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-300 flex items-center gap-2">
+                          <Calendar className="w-4 h-4" />
+                          Custom Date Range
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">From Date</label>
+                            <div className="relative group">
+                              <Input
+                                type="date"
+                                value={customDateFrom}
+                                onChange={(e) => setCustomDateFrom(e.target.value)}
+                                className="h-12"
+                                classNames={{
+                                  base: "group-hover:scale-[1.01] transition-transform duration-200",
+                                  input: "text-gray-900 dark:text-white text-sm font-medium bg-transparent",
+                                  inputWrapper: cn(
+                                    "bg-gradient-to-r from-white to-blue-50/30 dark:from-gray-800 dark:to-blue-900/30",
+                                    "border-2 border-blue-200/60 dark:border-blue-600/40",
+                                    "hover:border-blue-400/60 dark:hover:border-blue-500/60",
+                                    "focus-within:border-blue-500 dark:focus-within:border-blue-400",
+                                    "focus-within:ring-4 focus-within:ring-blue-500/20",
+                                    "rounded-xl shadow-sm hover:shadow-md transition-all duration-300",
+                                    "backdrop-blur-sm"
+                                  ),
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">To Date</label>
+                            <div className="relative group">
+                              <Input
+                                type="date"
+                                value={customDateTo}
+                                onChange={(e) => setCustomDateTo(e.target.value)}
+                                className="h-12"
+                                classNames={{
+                                  base: "group-hover:scale-[1.01] transition-transform duration-200",
+                                  input: "text-gray-900 dark:text-white text-sm font-medium bg-transparent",
+                                  inputWrapper: cn(
+                                    "bg-gradient-to-r from-white to-blue-50/30 dark:from-gray-800 dark:to-blue-900/30",
+                                    "border-2 border-blue-200/60 dark:border-blue-600/40",
+                                    "hover:border-blue-400/60 dark:hover:border-blue-500/60",
+                                    "focus-within:border-blue-500 dark:focus-within:border-blue-400",
+                                    "focus-within:ring-4 focus-within:ring-blue-500/20",
+                                    "rounded-xl shadow-sm hover:shadow-md transition-all duration-300",
+                                    "backdrop-blur-sm"
+                                  ),
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
