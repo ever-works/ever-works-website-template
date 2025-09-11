@@ -156,15 +156,15 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
     switch (type) {
       case "payment_failed":
       case "system_alert":
-        return "border-l-red-500";
+        return "border-red-500";
       case "comment_reported":
-        return "border-l-orange-500";
+        return "border-orange-500";
       case "item_submission":
-        return "border-l-blue-500";
+        return "border-blue-500";
       case "user_registered":
-        return "border-l-green-500";
+        return "border-green-500";
       default:
-        return "border-l-gray-300";
+        return "border-gray-300";
     }
   };
 
