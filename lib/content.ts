@@ -64,6 +64,11 @@ interface Identifiable {
 	name: string;
 	icon_url?: string;
 }
+
+interface TypePagination {
+	type: 'standard' | 'infinite';
+	itemsPerPage: number;
+}
 export interface PricingConfig {
 	id: string;
 	name: string;
@@ -199,6 +204,7 @@ export interface Config {
 	pr_update?: PrUpdate;
 	authConfig?: AuthConfig;
 	pricing?: PricingPlanConfig;
+	pagination?: TypePagination;
 }
 
 interface FetchOptions {
