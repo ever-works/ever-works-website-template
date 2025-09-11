@@ -1,11 +1,11 @@
-import { RefreshCw } from 'lucide-react';
+import { LayoutDashboard } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 interface AdminWelcomeSectionProps {
   adminName: string;
 }
 
-interface AdminWelcomeGradientProps {
+export interface AdminWelcomeGradientProps {
   title: string;
   subtitle?: string;
   rightActions?: ReactNode;
@@ -29,7 +29,7 @@ export function AdminWelcomeGradient({ title, subtitle, rightActions }: AdminWel
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-gradient-to-br from-theme-primary to-theme-accent rounded-xl flex items-center justify-center shadow-lg">
-              <RefreshCw className="w-6 h-6 text-white" />
+              <LayoutDashboard className="w-6 h-6 text-white" aria-hidden="true" focusable="false" />
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
