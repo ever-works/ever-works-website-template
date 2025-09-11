@@ -1,9 +1,9 @@
+import { RefreshCw } from 'lucide-react';
+import type { ReactNode } from 'react';
+
 interface AdminWelcomeSectionProps {
   adminName: string;
 }
-
-import { RefreshCw } from 'lucide-react';
-import { ReactNode } from 'react';
 
 interface AdminWelcomeGradientProps {
   title: string;
