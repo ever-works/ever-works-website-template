@@ -81,6 +81,23 @@ export function Select({
     setInternalSelectedKeys(selectedKeys || []);
   }, [selectedKeys]);
 
+  // Handle click outside to close dropdown
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
   const handleSelectionChange = (keys: string[]) => {
     setInternalSelectedKeys(keys);
     onSelectionChange?.(keys);

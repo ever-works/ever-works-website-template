@@ -948,7 +948,7 @@ export default function ClientsPage() {
       {/* Modern Filter Modal */}
       <Modal isOpen={isFilterModalOpen} onClose={onCloseFilterModal} size="2xl">
         <ModalContent>
-          <div className="relative overflow-hidden">
+          <div className="relative overflow-visible">
             {/* Background Pattern */}
             <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900" />
             <div 
@@ -975,7 +975,7 @@ export default function ClientsPage() {
             <div className="relative z-10 px-6 py-6">
               <div className="space-y-8">
                 {/* Basic Filters */}
-                <div className="space-y-4">
+                <div className="space-y-4 relative z-20">
                   <div className="flex items-center space-x-2">
                     <div className="w-1 h-6 bg-gradient-to-b from-theme-primary to-theme-accent rounded-full"></div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Basic Filters</h3>
@@ -1035,7 +1035,7 @@ export default function ClientsPage() {
                         </Select>
                       </div>
 
-                      <div className="space-y-2">
+                      <div className="space-y-2 relative z-30">
                         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Provider</label>
                         <Select
                           placeholder="All Providers"
@@ -1044,6 +1044,8 @@ export default function ClientsPage() {
                           className="w-full"
                           classNames={{
                             trigger: "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
+                            popover: "z-40",
+                            listbox: "z-40",
                           }}
                         >
                           <SelectItem key="credentials" value="credentials">Email/Password</SelectItem>
@@ -1059,7 +1061,7 @@ export default function ClientsPage() {
                 </div>
 
                 {/* Date Filters - Improved UX */}
-                <div className="space-y-4">
+                <div className="space-y-4 relative z-10">
                   <div className="flex items-center space-x-2">
                     <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-600 rounded-full"></div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Date Range</h3>
@@ -1067,7 +1069,7 @@ export default function ClientsPage() {
                       Quick & Easy
                     </div>
                   </div>
-                  <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200/50 dark:border-gray-700/50 shadow-sm">
+                  <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200/50 dark:border-gray-700/50 shadow-sm relative z-10">
                     
                     {/* Apply To Toggle */}
                     <div className="mb-6">
