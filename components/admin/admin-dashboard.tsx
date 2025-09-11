@@ -26,7 +26,6 @@ import { AdminNotifications } from './admin-notifications';
 import { Button } from '../ui/button';
 
 // Design system constants
-// const REFRESH_BUTTON_STYLES = 'flex items-center space-x-2';
 const ERROR_BOX_STYLES =
 	'mx-6 mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg';
 const ERROR_CONTENT_STYLES = 'flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4';
@@ -88,7 +87,7 @@ export function AdminDashboard() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => refetch()}
+              onClick={handleRefresh}
               disabled={isFetching}
               className="flex items-center space-x-2"
             >
@@ -102,7 +101,7 @@ export function AdminDashboard() {
 			<AdminStatusAnnouncer message={srMessage} priority={isError ? 'assertive' : 'polite'} />
 
 			<div className="p-6 max-w-7xl mx-auto" id="main-content">
-				{/* Gradient header moved into AdminWelcomeSection */}
+				{/* Gradient header moved into AdminWelcomeGradient */}
 
 				{/* Tabs */}
 				<div className="mb-6">
