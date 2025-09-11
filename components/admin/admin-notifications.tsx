@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
 
@@ -25,6 +26,7 @@ interface AdminNotificationsProps {
 
 export function AdminNotifications({ className }: AdminNotificationsProps) {
   const { data: session } = useSession();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -113,23 +115,21 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
     }
   };
 
-  // Get notification icon based on type
+  // Get notification icon based on type (no unused iconProps)
   const getNotificationIcon = (type: string) => {
-    const iconProps = { className: "h-5 w-5" };
-    
     switch (type) {
       case "item_submission":
-        return <ExternalLink {...iconProps} className="h-5 w-5 text-blue-500" />;
+        return <ExternalLink className="h-5 w-5 text-blue-500" />;
       case "comment_reported":
-        return <AlertCircle {...iconProps} className="h-5 w-5 text-orange-500" />;
+        return <AlertCircle className="h-5 w-5 text-orange-500" />;
       case "user_registered":
-        return <UserPlus {...iconProps} className="h-5 w-5 text-green-500" />;
+        return <UserPlus className="h-5 w-5 text-green-500" />;
       case "payment_failed":
-        return <CreditCard {...iconProps} className="h-5 w-5 text-red-500" />;
+        return <CreditCard className="h-5 w-5 text-red-500" />;
       case "system_alert":
-        return <Settings {...iconProps} className="h-5 w-5 text-purple-500" />;
+        return <Settings className="h-5 w-5 text-purple-500" />;
       default:
-        return <Bell {...iconProps} className="h-5 w-5 text-gray-500" />;
+        return <Bell className="h-5 w-5 text-gray-500" />;
     }
   };
 
@@ -367,12 +367,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                               </div>
                             </div>
                             
-                            <p className="text-sm text-muted-foreground leading-relaxed mb-3 overflow-hidden text-ellipsis" 
-                               style={{ 
-                                 display: '-webkit-box', 
-                                 WebkitLineClamp: 2, 
-                                 WebkitBoxOrient: 'vertical' 
-                               }}>
+                            <p className="text-sm text-muted-foreground leading-relaxed mb-3 line-clamp-2">
                               {notification.message}
                             </p>
                             
@@ -417,7 +412,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                       className="w-full justify-center text-sm h-8"
                       onClick={() => {
                         // Navigate to full notifications page
-                        window.location.href = "/admin/notifications";
+                        router.push("/admin/notifications");
                       }}
                     >
                       View All Notifications
