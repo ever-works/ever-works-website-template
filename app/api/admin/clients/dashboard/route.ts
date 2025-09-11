@@ -27,18 +27,22 @@ export async function GET(request: NextRequest) {
     const accountType = searchParams.get('accountType') || undefined;
     const provider = searchParams.get('provider') || undefined;
     
-    // Date parameters with validation
-    const parseDate = (v: string | null) => {
+    // Date parameters with validation (treat YYYY-MM-DD as UTC date-only)
+    const parseDateBound = (v: string | null, bound: 'start' | 'end') => {
       if (!v) return undefined;
+      if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
+        const [y, m, d] = v.split('-').map(Number);
+        return new Date(Date.UTC(y, m - 1, d, bound === 'end' ? 23 : 0, bound === 'end' ? 59 : 0, bound === 'end' ? 59 : 0, bound === 'end' ? 999 : 0));
+      }
       const d = new Date(v);
       return Number.isNaN(d.getTime()) ? undefined : d;
     };
-    const createdAfter = parseDate(searchParams.get('createdAfter'));
-    const createdBefore = parseDate(searchParams.get('createdBefore'));
-    const updatedAfter = parseDate(searchParams.get('updatedAfter'));
-    const updatedBefore = parseDate(searchParams.get('updatedBefore'));
+    const createdAfter = parseDateBound(searchParams.get('createdAfter'), 'start');
+    const createdBefore = parseDateBound(searchParams.get('createdBefore'), 'end');
+    const updatedAfter = parseDateBound(searchParams.get('updatedAfter'), 'start');
+    const updatedBefore = parseDateBound(searchParams.get('updatedBefore'), 'end');
 
-    console.log('API: About to build dashboard data with filters:', {
+    if (process.env.NODE_ENV !== 'production') console.log('API: About to build dashboard data with filters:', {
       search, status, plan, accountType, provider,
       createdAfter, createdBefore, updatedAfter, updatedBefore
     });
