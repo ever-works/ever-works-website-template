@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { AdminStatsRepository } from '@/lib/repositories/admin-stats.repository';
 import { AdminAnalyticsOptimizedRepository } from '@/lib/repositories/admin-analytics-optimized.repository';
-import { db } from '@/lib/db/drizzle';
 
 // Disable caching for authenticated dynamic data
 export const dynamic = 'force-dynamic';
@@ -16,13 +15,6 @@ export async function GET() {
   try {
     // Check authentication
     const session = await auth();
-    console.log('API Debug - Session:', { 
-      hasSession: !!session, 
-      hasUser: !!session?.user, 
-      userId: session?.user?.id,
-      isAdmin: session?.user?.isAdmin,
-      email: session?.user?.email 
-    });
     
     if (!session?.user) {
       console.log('API Debug - No session or user');
