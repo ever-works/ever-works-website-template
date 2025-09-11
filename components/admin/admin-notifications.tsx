@@ -223,6 +223,9 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
             : "hover:bg-muted/50"
         }`}
         aria-label="Notifications"
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        aria-controls="admin-notifications-dropdown"
       >
         <Bell className={`h-5 w-5 transition-transform duration-200 ${
           isOpen ? "scale-110" : ""
@@ -239,7 +242,11 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
 
       {/* Notifications Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 top-12 w-[420px] z-50 animate-in slide-in-from-top-2 duration-200">
+        <div
+          id="admin-notifications-dropdown"
+          role="menu"
+          className="absolute right-0 top-12 w-[420px] z-50 animate-in slide-in-from-top-2 duration-200"
+        >
           <Card className="shadow-xl border bg-background/95 backdrop-blur-sm">
             <CardHeader className="pb-3 border-b">
               <div className="flex items-center justify-between">
@@ -258,6 +265,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                     onClick={fetchNotifications}
                     className="h-8 w-8 p-0"
                     disabled={isLoading}
+                    aria-label="Refresh notifications"
                   >
                     <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
                   </Button>
@@ -276,6 +284,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                     size="sm"
                     onClick={() => setIsOpen(false)}
                     className="h-8 w-8 p-0"
+                    aria-label="Close notifications panel"
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -302,6 +311,8 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                   <div className="divide-y divide-border/50">
                     {notifications.map((notification) => (
                       <div
+                        role="button"
+                        tabIndex={0}
                         key={notification.id}
                         className={`relative p-4 hover:bg-muted/30 cursor-pointer transition-all duration-200 border-l-4 ${
                           getNotificationPriorityColor(notification.type)
@@ -311,6 +322,12 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                             : "hover:bg-muted/50"
                         }`}
                         onClick={() => handleNotificationClick(notification)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handleNotificationClick(notification);
+                          }
+                        }}
                       >
                         {/* Unread indicator */}
                         {!notification.isRead && (
