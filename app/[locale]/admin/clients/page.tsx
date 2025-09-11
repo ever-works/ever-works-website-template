@@ -715,15 +715,22 @@ export default function ClientsPage() {
                   setCustomDateFrom('');
                   setCustomDateTo('');
                 }}
-                className="flex items-center gap-1"
+                className="flex items-center gap-1 max-w-none"
+                classNames={{
+                  base: "h-auto py-1.5 px-3",
+                  content: "flex items-center gap-1.5 text-sm font-medium whitespace-nowrap",
+                  closeButton: "ml-2"
+                }}
               >
-                <Calendar className="w-3 h-3" />
-                {datePreset === 'last7' && 'Last 7 days'}
-                {datePreset === 'last30' && 'Last 30 days'}
-                {datePreset === 'last90' && 'Last 90 days'}
-                {datePreset === 'thisMonth' && 'This month'}
-                {datePreset === 'custom' && `${customDateFrom || '...'} to ${customDateTo || '...'}`}
-                {' '}({dateFilterType})
+                <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+                <span className="truncate">
+                  {datePreset === 'last7' && 'Last 7 days'}
+                  {datePreset === 'last30' && 'Last 30 days'}
+                  {datePreset === 'last90' && 'Last 90 days'}
+                  {datePreset === 'thisMonth' && 'This month'}
+                  {datePreset === 'custom' && `${customDateFrom || '...'} to ${customDateTo || '...'}`}
+                  <span className="text-xs opacity-75 ml-1">({dateFilterType})</span>
+                </span>
               </Chip>
             )}
           </div>
