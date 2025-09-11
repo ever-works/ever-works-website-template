@@ -983,7 +983,7 @@ export default function ClientsPage() {
                   <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200/50 dark:border-gray-700/50 shadow-sm">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Status</span>
                         <Select
                           placeholder="All Statuses"
                           selectedKeys={statusFilter ? [statusFilter] : []}
@@ -1002,7 +1002,7 @@ export default function ClientsPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Plan</label>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Plan</span>
                         <Select
                           placeholder="All Plans"
                           selectedKeys={planFilter ? [planFilter] : []}
@@ -1019,7 +1019,7 @@ export default function ClientsPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Account Type</label>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Account Type</span>
                         <Select
                           placeholder="All Types"
                           selectedKeys={accountTypeFilter ? [accountTypeFilter] : []}
@@ -1036,7 +1036,7 @@ export default function ClientsPage() {
                       </div>
 
                       <div className="space-y-2 relative z-30">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Provider</label>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Provider</span>
                         <Select
                           placeholder="All Providers"
                           selectedKeys={providerFilter ? [providerFilter] : []}
@@ -1073,11 +1073,13 @@ export default function ClientsPage() {
                     
                     {/* Apply To Toggle */}
                     <div className="mb-6">
-                      <label className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3 block">
+                      <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3 block">
                         Apply date filter to:
-                      </label>
+                      </span>
                       <div className="flex gap-3">
                         <button
+                          type="button"
+                          aria-pressed={dateFilterType === 'created'}
                           onClick={() => setDateFilterType('created')}
                           className={cn(
                             "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
@@ -1090,6 +1092,8 @@ export default function ClientsPage() {
                           Created Date
                         </button>
                         <button
+                          type="button"
+                          aria-pressed={dateFilterType === 'updated'}
                           onClick={() => setDateFilterType('updated')}
                           className={cn(
                             "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
@@ -1106,9 +1110,9 @@ export default function ClientsPage() {
 
                     {/* Quick Presets */}
                     <div className="mb-6">
-                      <label className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3 block">
+                      <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3 block">
                         Quick filters:
-                      </label>
+                      </span>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {[
                           { value: 'all', label: 'All Time', icon: '∞' },
@@ -1119,6 +1123,7 @@ export default function ClientsPage() {
                           { value: 'custom', label: 'Custom Range', icon: '⚙️' },
                         ].map((preset) => (
                           <button
+                            type="button"
                             key={preset.value}
                             onClick={() => setDatePreset(preset.value as typeof datePreset)}
                             className={cn(
@@ -1158,9 +1163,10 @@ export default function ClientsPage() {
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">From Date</label>
+                            <label htmlFor="custom-from" className="text-sm font-medium text-gray-700 dark:text-gray-300">From Date</label>
                             <div className="relative group">
                               <Input
+                                id="custom-from"
                                 type="date"
                                 value={customDateFrom}
                                 onChange={(e) => setCustomDateFrom(e.target.value)}
@@ -1182,9 +1188,10 @@ export default function ClientsPage() {
                             </div>
                           </div>
                           <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">To Date</label>
+                            <label htmlFor="custom-to" className="text-sm font-medium text-gray-700 dark:text-gray-300">To Date</label>
                             <div className="relative group">
                               <Input
+                                id="custom-to"
                                 type="date"
                                 value={customDateTo}
                                 onChange={(e) => setCustomDateTo(e.target.value)}
