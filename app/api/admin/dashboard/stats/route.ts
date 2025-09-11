@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
 import { AdminStatsRepository } from '@/lib/repositories/admin-stats.repository';
 import { AdminAnalyticsOptimizedRepository } from '@/lib/repositories/admin-analytics-optimized.repository';
+import { checkAdminAuth } from '@/lib/auth/admin-guard';
 
 // Disable caching for authenticated dynamic data
 export const dynamic = 'force-dynamic';
@@ -13,23 +13,10 @@ const analyticsRepository = new AdminAnalyticsOptimizedRepository();
 
 export async function GET() {
   try {
-    // Check authentication
-    const session = await auth();
-    
-    if (!session?.user) {
-      console.log('API Debug - No session or user');
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Check if user has admin role using the session's isAdmin flag
-    if (!session.user.isAdmin) {
-      return NextResponse.json(
-        { success: false, error: 'Insufficient permissions' },
-        { status: 403 }
-      );
+    // Check admin authentication
+    const authError = await checkAdminAuth();
+    if (authError) {
+      return authError;
     }
 
     const stats = await adminStatsRepository.getAllStats();

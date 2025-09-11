@@ -1,18 +1,13 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
 import { UserRepository } from '@/lib/repositories/user.repository';
+import { checkAdminAuth } from '@/lib/auth/admin-guard';
 
 export async function GET() {
   try {
-    // Check authentication
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Check admin permissions
-    if (!session.user.isAdmin) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    // Check admin authentication
+    const authError = await checkAdminAuth();
+    if (authError) {
+      return authError;
     }
 
     // Get user statistics

@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { checkAdminAuth } from '@/lib/auth/admin-guard';
 
 export async function GET(request: NextRequest) {
   try {
     console.log('API: Starting dashboard request');
     
-    const session = await auth();
-    if (!session?.user?.isAdmin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Check admin authentication
+    const authError = await checkAdminAuth();
+    if (authError) {
+      return authError;
     }
 
     const { searchParams } = new URL(request.url);
