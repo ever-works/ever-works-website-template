@@ -1,5 +1,4 @@
 import { trySyncRepository } from "@/lib/repository";
-import { getJobManager } from "@/lib/background-jobs";
 
 // Types
 export type SyncResult = { success: boolean; message: string; details?: string };
@@ -52,22 +51,12 @@ export async function startBackgroundSync(): Promise<SyncResult | null> {
 
   console.log("[SYNC_SERVICE] Starting automatic background sync");
   
-  // Delegate to BackgroundJobManager for scheduling a one-off job immediately
-  const manager = getJobManager();
-  manager.scheduleJob(
-    'repo-sync-once',
-    'Repository Sync (one-off)',
-    async () => {
-      if (syncInProgress) return;
-      syncInProgress = true;
-      try {
-        await performBackgroundSync();
-      } finally {
-        syncInProgress = false;
-      }
-    },
-    1
-  );
+  syncInProgress = true;
+  try {
+    await performBackgroundSync();
+  } finally {
+    syncInProgress = false;
+  }
   return null;
 }
 
