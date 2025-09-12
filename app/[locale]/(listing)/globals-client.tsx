@@ -7,10 +7,12 @@ import { Tag, Category, ItemData } from "@/lib/content";
 import { sortByNumericProperty, filterItems } from "@/lib/utils";
 import { HomeTwoLayout } from "@/components/home-two";
 import { ListingClient } from "@/components/shared-card/listing-client";
+import { FeaturedItemsSection } from "@/components/featured-items";
 import { useFilters } from "@/hooks/use-filters";
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { PER_PAGE, totalPages } from "@/lib/paginate";
+import { sortItemsWithFeatured, FeaturedItem } from "@/lib/utils/featured-items";
 
 type ListingProps = {
   total: number;
@@ -29,6 +31,7 @@ export default function GlobalsClient(props: ListingProps) {
   const sortedCategories = sortByNumericProperty(props.categories);
   const searchParams = useSearchParams();
   const [initialized, setInitialized] = useState(false);
+  const [featuredItems, setFeaturedItems] = useState<FeaturedItem[]>([]);
 
   // Get page from query param, default to 1
   const pageParam = searchParams.get("page");
@@ -36,14 +39,36 @@ export default function GlobalsClient(props: ListingProps) {
   const perPage = useLayoutTheme().itemsPerPage ?? 12;
   const start = (page - 1) * perPage;
 
+  // Fetch featured items
+  useEffect(() => {
+    const fetchFeaturedItems = async () => {
+      try {
+        const response = await fetch('/api/featured-items?limit=6');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            setFeaturedItems(data.data);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching featured items:', error);
+      }
+    };
+
+    fetchFeaturedItems();
+  }, []);
+
   // Filtering logic using shared utility
   const filteredItems = useMemo(() => {
-    return filterItems(props.items, {
+    const filtered = filterItems(props.items, {
       searchTerm,
       selectedTags,
       selectedCategories,
     });
-  }, [props.items, searchTerm, selectedTags, selectedCategories]);
+    
+    // Sort items with featured items first
+    return sortItemsWithFeatured(filtered, featuredItems);
+  }, [props.items, searchTerm, selectedTags, selectedCategories, featuredItems]);
 
   // Paginate filtered items
   const paginatedItems = useMemo(() => {
@@ -83,8 +108,9 @@ export default function GlobalsClient(props: ListingProps) {
     }
     // Default is popularity (no sorting needed)
 
-    return filtered;
-  }, [props.items, selectedCategories, searchTerm, selectedTags, sortBy]);
+    // Sort items with featured items first
+    return sortItemsWithFeatured(filtered, featuredItems);
+  }, [props.items, selectedCategories, searchTerm, selectedTags, sortBy, featuredItems]);
 
   // Calculate paginated items for Home 1
   const homeOnePaginatedItems = useMemo(() => {
@@ -123,6 +149,17 @@ export default function GlobalsClient(props: ListingProps) {
   if (layoutHome === LayoutHome.HOME_ONE) {
     return (
       <div className="pb-12">
+        {/* Featured Items Section - Only show on first page */}
+        {page === 1 && featuredItems.length > 0 && (
+          <FeaturedItemsSection 
+            className="mb-12"
+            title="Featured Items"
+            description="Discover our handpicked selection of top-rated tools and resources"
+            limit={6}
+            variant="hero"
+          />
+        )}
+        
         <div className="flex flex-col md:flex-row w-full gap-5">
           <div className="lg:sticky lg:top-4 lg:self-start">
             <Categories total={props.total} categories={sortedCategories} tags={sortedTags} />

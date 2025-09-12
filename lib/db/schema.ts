@@ -541,6 +541,34 @@ export const favorites = pgTable("favorites", {
 }));
 
 export type ClientProfile = typeof clientProfiles.$inferSelect;
+
+// ######################### Featured Items Schema #########################
+export const featuredItems = pgTable("featured_items", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  itemSlug: text("item_slug").notNull(),
+  itemName: text("item_name").notNull(),
+  itemIconUrl: text("item_icon_url"),
+  itemCategory: text("item_category"),
+  itemDescription: text("item_description"),
+  featuredOrder: integer("featured_order").notNull().default(0), // Order for display
+  featuredUntil: timestamp("featured_until"), // Optional expiration date
+  isActive: boolean("is_active").notNull().default(true),
+  featuredBy: text("featured_by").notNull(), // Admin user ID who featured it
+  featuredAt: timestamp("featured_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  itemSlugIndex: index("featured_items_item_slug_idx").on(table.itemSlug),
+  featuredOrderIndex: index("featured_items_featured_order_idx").on(table.featuredOrder),
+  isActiveIndex: index("featured_items_is_active_idx").on(table.isActive),
+  featuredAtIndex: index("featured_items_featured_at_idx").on(table.featuredAt),
+  featuredUntilIndex: index("featured_items_featured_until_idx").on(table.featuredUntil),
+}));
+
+export type FeaturedItem = typeof featuredItems.$inferSelect;
+export type NewFeaturedItem = typeof featuredItems.$inferInsert;
 export type NewClientProfile = typeof clientProfiles.$inferInsert;
 export type ClientProfileWithUser = ClientProfile & {
   user: typeof users.$inferSelect;

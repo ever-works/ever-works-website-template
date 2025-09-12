@@ -2,23 +2,32 @@
 
 import { ItemData, Tag, Category } from '@/lib/content';
 import Link from 'next/link';
+<<<<<<< HEAD
 import { Card, CardHeader, CardBody, cn, Badge } from '@heroui/react';
 import { FiStar, FiArrowUpRight, FiFolder } from 'react-icons/fi';
 import { useTranslations } from 'next-intl';
+=======
+import { Card, CardHeader, CardBody, cn } from '@heroui/react';
+import { FiFolder, FiArrowUpRight } from 'react-icons/fi';
+import Image from 'next/image';
+>>>>>>> d6595d1 (feat: implement comprehensive featured items management system)
 import { useFilters } from '@/components/filters/context/filter-context';
 import { usePathname } from 'next/navigation';
 import { PromoCodeComponent } from './promo-code';
 import { FavoriteButton } from './favorite-button';
 import { useSession } from 'next-auth/react';
+<<<<<<< HEAD
 import Image from 'next/image';
 import { shouldShowFallback, isProblematicUrl } from '@/lib/utils/image-domains';
+=======
+import { FeaturedBadge } from '@/components/featured-items';
+>>>>>>> d6595d1 (feat: implement comprehensive featured items management system)
 
 type ItemProps = ItemData & {
 	onNavigate?: () => void;
 };
 
 export default function Item(props: ItemProps) {
-	const t = useTranslations();
 	const pathname = usePathname();
 	const locale = pathname.split('/')[1] || '';
 	const { data: session } = useSession();
@@ -121,14 +130,11 @@ export default function Item(props: ItemProps) {
 
 								{props.featured && (
 									<div className="relative">
-										<Badge
-											color="primary"
-											variant="flat"
+										<FeaturedBadge 
+											variant="hero" 
+											size="sm"
 											className="px-3 py-2 text-xs font-semibold bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 border border-amber-200/50 dark:from-amber-900/30 dark:to-yellow-900/30 dark:text-amber-300 dark:border-amber-700/30 transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-md rounded-full"
-										>
-											<FiStar className="w-3 h-3 mr-1.5 animate-pulse" />
-											{t('common.FEATURED')}
-										</Badge>
+										/>
 										{/* Glow effect */}
 										<div className="absolute inset-0 bg-amber-400/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 									</div>

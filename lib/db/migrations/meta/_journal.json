@@ -15,6 +15,13 @@
       "when": 1757489200000,
       "tag": "0001_add_image_to_users",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757694521166,
+      "tag": "0002_silly_victor_mancha",
+      "breakpoints": true
     }
   ]
 }
