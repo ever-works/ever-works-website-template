@@ -1,4 +1,5 @@
-import { BackgroundJobManager, JobMetrics, JobStatus } from './types';
+import { BackgroundJobManager, JobMetrics, JobStatus, TriggerDevConfig } from './types';
+import { getTriggerDevConfig } from './config';
 
 type SchedulesApi = {
   task: (def: {
@@ -26,11 +27,22 @@ export class TriggerDevJobManager implements BackgroundJobManager {
     lastCleanup: new Date()
   };
   private jobFunctions: Map<string, () => void | Promise<void>> = new Map();
+  private config: TriggerDevConfig;
 
   private schedulesApi: SchedulesApi | null = null;
 
+  constructor(config?: TriggerDevConfig) {
+    this.config = config || getTriggerDevConfig();
+  }
+
   private async loadSchedulesApi(): Promise<SchedulesApi | null> {
     if (this.schedulesApi) return this.schedulesApi;
+    
+    if (!this.config.isFullyConfigured) {
+      console.warn('⚠️  Trigger.dev not fully configured, skipping SDK initialization');
+      return null;
+    }
+    
     try {
       const sdk = await import('@trigger.dev/sdk');
       const maybe = (sdk as unknown as { schedules?: SchedulesApi }).schedules;

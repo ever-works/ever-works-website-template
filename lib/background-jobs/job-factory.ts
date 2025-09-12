@@ -11,8 +11,8 @@ export function createJobManager(): BackgroundJobManager {
   const config = getTriggerDevConfig();
   
   if (shouldUseTriggerDev()) {
-    console.log('🚀 Using Trigger.dev for background jobs');
-    return new TriggerDevJobManager();
+    console.log(`🚀 Using Trigger.dev for background jobs (env: ${config.environment}, url: ${config.apiUrl})`);
+    return new TriggerDevJobManager(config);
   }
   
   if (config.isPartiallyConfigured) {
