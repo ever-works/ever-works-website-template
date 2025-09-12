@@ -1,6 +1,6 @@
 'use client';
 
-import { shouldShowFallback } from "@/lib/utils/image-domains";
+import { shouldShowFallback, isProblematicUrl } from "@/lib/utils/image-domains";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -40,8 +40,9 @@ const shouldShowFallbackIcon = shouldShowFallback(iconUrl || '');
             alt={`${name} icon`}
             width={100}
             height={100}
-            className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-md dark:drop-shadow-lg dark:filter-brightness-110"
+            className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-md dark:drop-shadow-lg dark:filter-brightness-110"                                             
             onError={() => setImageError(true)}
+            unoptimized={isProblematicUrl(iconUrl!)}
           />
         )}
       </div>

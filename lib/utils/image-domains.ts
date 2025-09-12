@@ -14,7 +14,7 @@ export const COMMON_IMAGE_DOMAINS = [
   'cdnjs.com',
   'unpkg.com',
   'cdn.jsdelivr.net',
-  'example-images.com', // ← Nouveau domaine ajouté
+  'example-images.com', 
 ];
 
 export const ICON_DOMAINS = [
@@ -146,5 +146,5 @@ export function isProblematicUrl(url: string) {
 // If no URL, URL is problematic, or image failed to load, show default icon
 export function shouldShowFallback(url: string) {
   const shouldShowFallback = !url || isProblematicUrl(url);
-  return shouldShowFallback
+  return shouldShowFallback;
 }

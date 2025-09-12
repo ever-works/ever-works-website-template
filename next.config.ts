@@ -25,8 +25,8 @@ const nextConfig: NextConfig = {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    // Disable optimization for problematic URLs
-    unoptimized: true,
+    // Keep optimization enabled for better performance
+    unoptimized: false,
   },
   async rewrites() {
     return [

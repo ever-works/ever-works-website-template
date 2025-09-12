@@ -11,7 +11,7 @@ import { PromoCodeComponent } from './promo-code';
 import { FavoriteButton } from './favorite-button';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { shouldShowFallback } from '@/lib/utils/image-domains';
+import { shouldShowFallback, isProblematicUrl } from '@/lib/utils/image-domains';
 
 type ItemProps = ItemData & {
 	onNavigate?: () => void;
@@ -75,6 +75,7 @@ export default function Item(props: ItemProps) {
 												className="w-6 h-6 object-contain transition-transform duration-500 group-hover:scale-110"
 												width={24}
 												height={24}
+												unoptimized={isProblematicUrl(props.icon_url!)}
 											/>
 										)}
 									</div>
