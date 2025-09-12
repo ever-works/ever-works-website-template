@@ -214,9 +214,9 @@ async function seedContent(ids: { adminProfileId: string; clientProfileId1: stri
   // Comments: only if table exists
   if (await tableExists('comments')) {
     await db.insert(comments).values([
-      { id: uuid(), content: 'Welcome to the platform!', userId: ids.adminUserId, itemId: 'item-1' },
-      { id: uuid(), content: 'Great product!', userId: ids.clientUserId1, itemId: 'item-2', rating: 5 },
-      { id: uuid(), content: 'Trying it out.', userId: ids.clientUserId2, itemId: 'item-3', rating: 4 }
+      { id: uuid(), content: 'Welcome to the platform!', userId: ids.adminProfileId, itemId: 'item-1' },
+      { id: uuid(), content: 'Great product!', userId: ids.clientProfileId1, itemId: 'item-2', rating: 5 },
+      { id: uuid(), content: 'Trying it out.', userId: ids.clientProfileId2, itemId: 'item-3', rating: 4 }
     ]);
   }
 

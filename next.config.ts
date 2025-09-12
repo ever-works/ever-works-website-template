@@ -45,6 +45,21 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "www.flaticon.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn-icons-png.flaticon.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn-icons.flaticon.com",
+        pathname: "/**",
+      },
     ],
   },
   async rewrites() {
