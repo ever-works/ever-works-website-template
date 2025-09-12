@@ -11,7 +11,7 @@ export interface JobStatus {
   name: string;
   status: JobStatusType;
   lastRun: Date | null;
-  nextRun: Date;
+  nextRun: Date | null;
   duration: number;
   error?: string;
 }
@@ -42,7 +42,7 @@ export interface BackgroundJobManager {
    * @param job Function to execute
    * @param interval Interval in milliseconds
    */
-  scheduleJob(id: string, name: string, job: () => Promise<void>, interval: number): void;
+  scheduleJob(id: string, name: string, job: () => void | Promise<void>, interval: number): void;
 
   /**
    * Schedule a job using cron expression
@@ -51,7 +51,7 @@ export interface BackgroundJobManager {
    * @param job Function to execute
    * @param cronExpression Cron expression string
    */
-  scheduleCronJob(id: string, name: string, job: () => Promise<void>, cronExpression: string): void;
+  scheduleCronJob(id: string, name: string, job: () => void | Promise<void>, cronExpression: string): void;
 
   /**
    * Manually trigger a job execution

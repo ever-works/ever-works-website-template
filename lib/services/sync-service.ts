@@ -7,7 +7,6 @@ export type SyncResult = { success: boolean; message: string; details?: string }
 // Background sync status tracking
 let lastSyncTime: Date | null = null;
 let syncInProgress = false;
-let syncPromise: Promise<SyncResult> | null = null;
 
 // Background sync function
 async function performBackgroundSync(): Promise<SyncResult> {
