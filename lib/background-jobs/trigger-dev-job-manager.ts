@@ -1,54 +1,161 @@
 import { BackgroundJobManager, JobMetrics, JobStatus } from './types';
-import { LocalJobManager } from './local-job-manager';
+
+type SchedulesApi = {
+  task: (def: {
+    id: string;
+    cron: string;
+    run: (payload: unknown) => Promise<void> | void;
+  }) => unknown;
+};
 
 /**
- * TriggerDevJobManager
+ * TriggerDevJobManager (SDK v4 ready)
  *
- * Production-oriented job manager designed to integrate with Trigger.dev.
- * For now, this implementation delegates to LocalJobManager to keep
- * environment setup optional. When Trigger.dev SDK is configured, replace the
- * internals with actual Trigger.dev task/schedule registrations.
+ * Registers schedules with @trigger.dev/sdk when enabled. It does not execute
+ * local timers to avoid duplicate runs in production. The actual execution is
+ * handled by the Trigger.dev worker.
  */
 export class TriggerDevJobManager implements BackgroundJobManager {
-  // Delegation to local until Trigger.dev SDK is wired
-  private readonly delegate: LocalJobManager;
+  private registeredTasks: Set<string> = new Set();
+  private jobStatuses: Map<string, JobStatus> = new Map();
+  private metrics: JobMetrics = {
+    totalExecutions: 0,
+    successfulJobs: 0,
+    failedJobs: 0,
+    averageJobDuration: 0,
+    lastCleanup: new Date()
+  };
+  private jobFunctions: Map<string, () => void | Promise<void>> = new Map();
 
-  constructor() {
-    this.delegate = new LocalJobManager();
+  private schedulesApi: SchedulesApi | null = null;
+
+  private async loadSchedulesApi(): Promise<SchedulesApi | null> {
+    if (this.schedulesApi) return this.schedulesApi;
+    try {
+      const sdk = await import('@trigger.dev/sdk');
+      const maybe = (sdk as unknown as { schedules?: SchedulesApi }).schedules;
+      this.schedulesApi = maybe ?? null;
+      return this.schedulesApi;
+    } catch {
+      return null;
+    }
+  }
+
+  private intervalToCron(intervalMs: number): string {
+    // Best-effort conversion: prefer minutes, then seconds
+    const minute = 60_000;
+    const second = 1_000;
+    if (intervalMs % minute === 0) {
+      const n = Math.max(1, Math.floor(intervalMs / minute));
+      return `*/${n} * * * *`;
+    }
+    if (intervalMs % second === 0) {
+      const n = Math.max(1, Math.floor(intervalMs / second));
+      // second-level cron (supported by Trigger.dev) */n * * * * *
+      return `*/${n} * * * * *`;
+    }
+    // Fallback: every minute
+    return '*/1 * * * *';
+  }
+
+  private async registerTask(id: string, cron: string, job: () => void | Promise<void>): Promise<void> {
+    if (this.registeredTasks.has(id)) return;
+    const schedules = await this.loadSchedulesApi();
+    if (!schedules) {
+      // SDK not available in this runtime; registration will be handled by the worker process.
+      return;
+    }
+    schedules.task({
+      id,
+      cron,
+      run: async () => {
+        // This run handler is for the worker; record minimal metrics locally
+        const status: JobStatus = this.jobStatuses.get(id) ?? {
+          id,
+          name: id,
+          status: 'scheduled',
+          lastRun: null,
+          nextRun: new Date(),
+          duration: 0
+        };
+        const start = Date.now();
+        status.status = 'running';
+        status.lastRun = new Date();
+        try {
+          await job();
+          status.status = 'completed';
+          status.duration = Date.now() - start;
+          this.metrics.successfulJobs += 1;
+          this.metrics.totalExecutions += 1;
+        } catch {
+          status.status = 'failed';
+          status.duration = Date.now() - start;
+          this.metrics.failedJobs += 1;
+          this.metrics.totalExecutions += 1;
+        } finally {
+          this.jobStatuses.set(id, status);
+        }
+      }
+    });
+    this.jobFunctions.set(id, job);
+    this.registeredTasks.add(id);
   }
 
   scheduleJob(id: string, name: string, job: () => void | Promise<void>, interval: number): void {
-    // TODO: Replace with Trigger.dev interval/cron schedule mapping
-    this.delegate.scheduleJob(id, name, job, interval);
+    const cron = this.intervalToCron(interval);
+    this.jobStatuses.set(id, {
+      id,
+      name,
+      status: 'scheduled',
+      lastRun: null,
+      nextRun: new Date(Date.now() + interval),
+      duration: 0
+    });
+    void this.registerTask(id, cron, job);
   }
 
   scheduleCronJob(id: string, name: string, job: () => void | Promise<void>, cronExpression: string): void {
-    // TODO: Replace with Trigger.dev cron schedule once SDK is configured
-    this.delegate.scheduleCronJob(id, name, job, cronExpression);
+    this.jobStatuses.set(id, {
+      id,
+      name,
+      status: 'scheduled',
+      lastRun: null,
+      nextRun: new Date(),
+      duration: 0
+    });
+    void this.registerTask(id, cronExpression, job);
   }
 
   async triggerJob(id: string): Promise<void> {
-    await this.delegate.triggerJob(id);
+    const fn = this.jobFunctions.get(id);
+    if (fn) {
+      await fn();
+    }
   }
 
   stopJob(id: string): void {
-    this.delegate.stopJob(id);
+    // No-op: Trigger.dev schedules are managed remotely. We only clear local status.
+    this.jobFunctions.delete(id);
+    this.jobStatuses.delete(id);
+    this.registeredTasks.delete(id);
   }
 
   stopAllJobs(): void {
-    this.delegate.stopAllJobs();
+    this.jobFunctions.clear();
+    this.jobStatuses.clear();
+    this.registeredTasks.clear();
   }
 
   getJobStatus(id: string): JobStatus | undefined {
-    return this.delegate.getJobStatus(id);
+    return this.jobStatuses.get(id);
   }
 
   getAllJobStatuses(): JobStatus[] {
-    return this.delegate.getAllJobStatuses();
+    return Array.from(this.jobStatuses.values());
   }
 
   getJobMetrics(): JobMetrics {
-    return this.delegate.getJobMetrics();
+    return { ...this.metrics };
   }
 }
 
