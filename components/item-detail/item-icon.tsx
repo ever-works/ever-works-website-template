@@ -1,6 +1,6 @@
 'use client';
 
-import { shouldShowFallback, isProblematicUrl } from "@/lib/utils/image-domains";
+import { shouldShowFallback } from "@/lib/utils/image-domains";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -12,8 +12,7 @@ interface ItemIconProps {
 export function ItemIcon({ iconUrl, name }: ItemIconProps) {
   const [imageError, setImageError] = useState(false);
 
-const shouldShowFallbackIcon = shouldShowFallback(iconUrl || '');
-
+  const shouldShowFallbackIcon = imageError || shouldShowFallback(iconUrl || '');
   return (
     <div className="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 relative">
       <div className="absolute inset-0 bg-gray-100/80 backdrop-blur-xl rounded-xl overflow-hidden flex items-center justify-center p-4 shadow-md border border-gray-200 group transition-all duration-300 hover:bg-gray-50 hover:border-indigo-100 dark:bg-gray-800/30 dark:border-gray-700/30 dark:hover:bg-gray-800/50 dark:hover:border-indigo-700/50 dark:shadow-lg dark:shadow-indigo-900/10 hover:scale-105">
@@ -42,7 +41,6 @@ const shouldShowFallbackIcon = shouldShowFallback(iconUrl || '');
             height={100}
             className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-md dark:drop-shadow-lg dark:filter-brightness-110"                                             
             onError={() => setImageError(true)}
-            unoptimized={isProblematicUrl(iconUrl!)}
           />
         )}
       </div>
