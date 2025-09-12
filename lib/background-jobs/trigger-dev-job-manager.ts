@@ -70,17 +70,6 @@ export class TriggerDevJobManager implements BackgroundJobManager {
     return '*/1 * * * *';
   }
 
-  /**
-   * Update average job duration
-   */
-  private updateAverageJobDuration(duration: number): void {
-    if (this.metrics.totalExecutions === 1) {
-      this.metrics.averageJobDuration = duration;
-    } else {
-      this.metrics.averageJobDuration = 
-        (this.metrics.averageJobDuration * (this.metrics.totalExecutions - 1) + duration) / this.metrics.totalExecutions;
-    }
-  }
 
   private async registerTask(id: string, cron: string, job: () => void | Promise<void>): Promise<void> {
     if (this.registeredTasks.has(id)) return;
@@ -111,13 +100,17 @@ export class TriggerDevJobManager implements BackgroundJobManager {
           status.duration = Date.now() - start;
           this.metrics.successfulJobs += 1;
           this.metrics.totalExecutions += 1;
-          this.updateAverageJobDuration(status.duration);
-        } catch {
+          const totalDur = this.metrics.averageJobDuration * (this.metrics.totalExecutions - 1) + status.duration;
+          this.metrics.averageJobDuration = totalDur / this.metrics.totalExecutions;
+        } catch (e) {
           status.status = 'failed';
           status.duration = Date.now() - start;
           this.metrics.failedJobs += 1;
           this.metrics.totalExecutions += 1;
-          this.updateAverageJobDuration(status.duration);
+          const totalDur = this.metrics.averageJobDuration * (this.metrics.totalExecutions - 1) + status.duration;
+          this.metrics.averageJobDuration = totalDur / this.metrics.totalExecutions;
+          // Optional: surface minimal error log
+          console.error(`[Job ${id}] failed:`, e);
         } finally {
           this.jobStatuses.set(id, status);
         }
