@@ -3,14 +3,15 @@
 import { ItemData, Tag, Category } from '@/lib/content';
 import Link from 'next/link';
 import { Card, CardHeader, CardBody, cn, Badge } from '@heroui/react';
-import { FiStar, FiFolder, FiArrowUpRight } from 'react-icons/fi';
+import { FiStar, FiArrowUpRight, FiFolder } from 'react-icons/fi';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import { useFilters } from '@/components/filters/context/filter-context';
 import { usePathname } from 'next/navigation';
 import { PromoCodeComponent } from './promo-code';
 import { FavoriteButton } from './favorite-button';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import { shouldShowFallback } from '@/lib/utils/image-domains';
 
 type ItemProps = ItemData & {
 	onNavigate?: () => void;
@@ -21,6 +22,8 @@ export default function Item(props: ItemProps) {
 	const pathname = usePathname();
 	const locale = pathname.split('/')[1] || '';
 	const { data: session } = useSession();
+
+	const shouldShowFallbackIcon = shouldShowFallback(props.icon_url || '');
 
 	const getTagName = (tag: string | Tag): string => {
 		if (typeof tag === 'string') return tag;
@@ -63,16 +66,16 @@ export default function Item(props: ItemProps) {
 							<div className="flex items-center gap-4">
 								<div className="relative flex-shrink-0">
 									<div className="w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-500 bg-gradient-to-br from-theme-primary-10 to-indigo-100 border border-theme-primary-500 group-hover:from-theme-primary-10 group-hover:to-indigo-200 dark:from-theme-primary-10 dark:to-indigo-900/30 dark:border-theme-primary-700/30 dark:group-hover:from-theme-primary-800/40 dark:group-hover:to-indigo-800/40 group-hover:scale-110 group-hover:rotate-3 shadow-sm group-hover:shadow-md">
-										{props.icon_url ? (
+										{shouldShowFallbackIcon ? (
+											<FiFolder className="w-6 h-6 text-theme-primary dark:text-theme-primary transition-transform duration-500 group-hover:scale-110" />
+										) : (
 											<Image
-												src={props.icon_url}
+												src={props.icon_url!}
 												alt={`${props.name} icon`}
 												className="w-6 h-6 object-contain transition-transform duration-500 group-hover:scale-110"
 												width={24}
 												height={24}
 											/>
-										) : (
-											<FiFolder className="w-6 h-6 text-theme-primary dark:text-theme-primary transition-transform duration-500 group-hover:scale-110" />
 										)}
 									</div>
 									{/* Pulse effect */}
