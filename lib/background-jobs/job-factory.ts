@@ -1,5 +1,6 @@
 import { BackgroundJobManager } from './types';
 import { LocalJobManager } from './local-job-manager';
+import { TriggerDevJobManager } from './trigger-dev-job-manager';
 import { getTriggerDevConfig, shouldUseTriggerDev } from './config';
 
 /**
@@ -11,9 +12,7 @@ export function createJobManager(): BackgroundJobManager {
   
   if (shouldUseTriggerDev()) {
     console.log('🚀 Using Trigger.dev for background jobs');
-    // TODO: Implement TriggerDevJobManager in Sub-ticket 3
-    console.log('⚠️  Trigger.dev is enabled but not yet implemented, falling back to local manager');
-    return new LocalJobManager();
+    return new TriggerDevJobManager();
   }
   
   if (config.isPartiallyConfigured) {
