@@ -50,7 +50,7 @@ export class AnalyticsScheduledReportsService {
   private repository: AdminAnalyticsOptimizedRepository;
   private reportTemplates: Map<string, ReportTemplate> = new Map();
   private scheduledReports: Map<string, ScheduledReport> = new Map();
-  private scheduledJobs: Map<string, ReturnType<typeof setTimeout>> = new Map();
+  private managedJobIds: Set<string> = new Set();
 
   constructor() {
     this.exportService = new AnalyticsExportService();
@@ -123,6 +123,22 @@ export class AnalyticsScheduledReportsService {
   }
 
   /**
+   * Get cron expression for report schedule
+   */
+  private getCronForSchedule(schedule: ReportSchedule): string {
+    switch (schedule) {
+      case REPORT_SCHEDULES.DAILY:
+        return '0 9 * * *';            // 09:00 daily
+      case REPORT_SCHEDULES.WEEKLY:
+        return '0 9 * * 1';            // 09:00 Monday
+      case REPORT_SCHEDULES.MONTHLY:
+        return '0 9 1 * *';            // 09:00 on day 1
+      case REPORT_SCHEDULES.QUARTERLY:
+        return '0 9 1 1,4,7,10 *';     // 09:00 first day of quarter
+    }
+  }
+
+  /**
    * Schedule a specific report
    */
   private scheduleReport(template: ReportTemplate): void {
@@ -134,22 +150,17 @@ export class AnalyticsScheduledReportsService {
     template.nextGeneration = nextGeneration;
     this.reportTemplates.set(template.id, template);
 
-    const delay = Math.max(1000, nextGeneration.getTime() - now.getTime()); // min 1s
-    // Delegate one-shot scheduling via BackgroundJobManager using interval
     const manager = getJobManager();
+    const jobId = `report-${template.id}`;
     const run = async () => {
       await this.generateScheduledReport(template);
-      // After completion, compute next run (manager continues scheduling per interval)
+      // Update UI-facing nextGeneration based on calendar rules
       template.nextGeneration = this.calculateNextGenerationTime(template.schedule, new Date());
       this.reportTemplates.set(template.id, template);
     };
-
-    manager.scheduleJob(
-      `report-${template.id}`,
-      `Report: ${template.name}`,
-      run,
-      delay
-    );
+    const cron = this.getCronForSchedule(template.schedule);
+    manager.scheduleCronJob(jobId, `Report: ${template.name}`, run, cron);
+    this.managedJobIds.add(jobId);
     console.log(`Scheduled report: ${template.name} (${template.schedule}) - Next: ${nextGeneration.toISOString()}`);
   }
 
@@ -413,11 +424,10 @@ export class AnalyticsScheduledReportsService {
    * Unschedule a report
    */
   private unscheduleReport(id: string): void {
-    const timeout = this.scheduledJobs.get(id);
-    if (timeout) {
-      clearTimeout(timeout);
-      this.scheduledJobs.delete(id);
-    }
+    const jobId = `report-${id}`;
+    const manager = getJobManager();
+    manager.stopJob(jobId);
+    this.managedJobIds.delete(jobId);
   }
 
   /**
@@ -447,8 +457,10 @@ export class AnalyticsScheduledReportsService {
    */
   stop(): void {
     const manager = getJobManager();
-    manager.stopAllJobs();
-    this.scheduledJobs.clear();
+    for (const jobId of this.managedJobIds) {
+      manager.stopJob(jobId);
+    }
+    this.managedJobIds.clear();
     console.log('All scheduled reports stopped');
   }
 
