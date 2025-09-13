@@ -102,8 +102,6 @@ export class ConfigManager {
   updateNestedKey(keyPath: string, value: any): boolean {
     const config = this.readConfig();
     const keys = keyPath.split('.');
-    const forbidden = new Set(['__proto__', 'constructor', 'prototype']);
-
     
     let current: any = config;
     for (let i = 0; i < keys.length - 1; i++) {
