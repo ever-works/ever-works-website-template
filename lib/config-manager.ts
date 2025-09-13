@@ -106,6 +106,13 @@ export class ConfigManager {
       if (forbidden.has(keys[i])) {
         return false;
       }
+      if (
+        keys[i] === 'constructor' &&
+        keys[i + 1] === 'prototype' &&
+        i === keys.length - 2
+      ) {
+        return false;
+      }
       if (!current[keys[i]]) {
         current[keys[i]] = {};
       }
@@ -114,6 +121,14 @@ export class ConfigManager {
     
     const lastKey = keys[keys.length - 1];
     if (forbidden.has(lastKey)) {
+      return false;
+    }
+    
+    if (
+      keys.length >= 2 &&
+      keys[keys.length - 2] === 'constructor' &&
+      keys[keys.length - 1] === 'prototype'
+    ) {
       return false;
     }
     current[lastKey] = value;
