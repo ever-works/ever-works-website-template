@@ -12,7 +12,8 @@ import { useFilters } from "@/hooks/use-filters";
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { PER_PAGE, totalPages } from "@/lib/paginate";
-import { sortItemsWithFeatured, FeaturedItem } from "@/lib/utils/featured-items";
+import { sortItemsWithFeatured } from "@/lib/utils/featured-items";
+import { useFeaturedItemsSection } from "@/hooks/use-feature-items-section";
 
 type ListingProps = {
   total: number;
@@ -31,7 +32,14 @@ export default function GlobalsClient(props: ListingProps) {
   const sortedCategories = sortByNumericProperty(props.categories);
   const searchParams = useSearchParams();
   const [initialized, setInitialized] = useState(false);
-  const [featuredItems, setFeaturedItems] = useState<FeaturedItem[]>([]);
+  
+  // Use the new hook for featured items
+  const { featuredItems } = useFeaturedItemsSection({
+    limit: 6,
+    enabled: true,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 10 * 60 * 1000, // 10 minutes
+  });
 
   // Get page from query param, default to 1
   const pageParam = searchParams.get("page");
@@ -39,24 +47,6 @@ export default function GlobalsClient(props: ListingProps) {
   const perPage = useLayoutTheme().itemsPerPage ?? 12;
   const start = (page - 1) * perPage;
 
-  // Fetch featured items
-  useEffect(() => {
-    const fetchFeaturedItems = async () => {
-      try {
-        const response = await fetch('/api/featured-items?limit=6');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            setFeaturedItems(data.data);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching featured items:', error);
-      }
-    };
-
-    fetchFeaturedItems();
-  }, []);
 
   // Filtering logic using shared utility
   const filteredItems = useMemo(() => {

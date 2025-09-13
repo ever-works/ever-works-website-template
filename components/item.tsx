@@ -2,26 +2,16 @@
 
 import { ItemData, Tag, Category } from '@/lib/content';
 import Link from 'next/link';
-<<<<<<< HEAD
-import { Card, CardHeader, CardBody, cn, Badge } from '@heroui/react';
-import { FiStar, FiArrowUpRight, FiFolder } from 'react-icons/fi';
-import { useTranslations } from 'next-intl';
-=======
 import { Card, CardHeader, CardBody, cn } from '@heroui/react';
-import { FiFolder, FiArrowUpRight } from 'react-icons/fi';
-import Image from 'next/image';
->>>>>>> d6595d1 (feat: implement comprehensive featured items management system)
+import { FiArrowUpRight, FiFolder } from 'react-icons/fi';
 import { useFilters } from '@/components/filters/context/filter-context';
 import { usePathname } from 'next/navigation';
 import { PromoCodeComponent } from './promo-code';
 import { FavoriteButton } from './favorite-button';
 import { useSession } from 'next-auth/react';
-<<<<<<< HEAD
 import Image from 'next/image';
 import { shouldShowFallback, isProblematicUrl } from '@/lib/utils/image-domains';
-=======
-import { FeaturedBadge } from '@/components/featured-items';
->>>>>>> d6595d1 (feat: implement comprehensive featured items management system)
+import { FeaturedBadge } from './featured-items';
 
 type ItemProps = ItemData & {
 	onNavigate?: () => void;

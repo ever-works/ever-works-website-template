@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -8,19 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Star, ExternalLink, Clock, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useFeaturedItemsSection, FeaturedItem } from '@/hooks/use-feature-items-section';
 
-interface FeaturedItem {
-  id: string;
-  itemSlug: string;
-  itemName: string;
-  itemIconUrl?: string;
-  itemCategory?: string;
-  itemDescription?: string;
-  featuredOrder: number;
-  featuredUntil?: string;
-  isActive: boolean;
-  featuredAt: string;
-}
+
 
 interface FeaturedItemsSectionProps {
   className?: string;
@@ -39,28 +28,12 @@ export function FeaturedItemsSection({
   showViewAll = true,
   variant = 'default'
 }: FeaturedItemsSectionProps) {
-  const [featuredItems, setFeaturedItems] = useState<FeaturedItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchFeaturedItems = async () => {
-      try {
-        const response = await fetch(`/api/featured-items?limit=${limit}`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            setFeaturedItems(data.data);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching featured items:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchFeaturedItems();
-  }, [limit]);
+  const { featuredItems, isLoading, isError, error } = useFeaturedItemsSection({
+    limit,
+    enabled: true,
+    staleTime: 5 * 60 * 1000, 
+    refetchInterval: 10 * 60 * 1000, 
+  });
 
   if (isLoading) {
     return (
@@ -80,6 +53,19 @@ export function FeaturedItemsSection({
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (isError) {
+    return (
+      <section className={cn("py-12", className)}>
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold mb-4">{title}</h2>
+            <p className="text-red-500">Failed to load featured items: {error}</p>
           </div>
         </div>
       </section>
