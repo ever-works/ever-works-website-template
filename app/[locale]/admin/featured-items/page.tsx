@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,273 +9,109 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
-    Modal,
-    ModalContent,
-    ModalHeader
+  Modal,
+  ModalContent,
+  ModalHeader
 } from "@heroui/react";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
-    Plus,
-    Edit,
-    Trash2,
-    Star,
-    Eye,
-    EyeOff,
-    ArrowUp,
-    ArrowDown,
-    Loader2,
-    Search,
-    Package
+  Plus,
+  Edit,
+  Trash2,
+  Star,
+  Eye,
+  EyeOff,
+  ArrowUp,
+  ArrowDown,
+  Loader2,
+  Search,
+  Package
 } from "lucide-react";
-import { toast } from "sonner";
 import { UniversalPagination } from "@/components/universal-pagination";
-import { ItemData } from "@/lib/types/item";
 import Image from "next/image";
-
-interface FeaturedItem {
-  id: string;
-  itemSlug: string;
-  itemName: string;
-  itemIconUrl?: string;
-  itemCategory?: string;
-  itemDescription?: string;
-  featuredOrder: number;
-  featuredUntil?: string;
-  isActive: boolean;
-  featuredBy: string;
-  featuredAt: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface FeaturedItemsResponse {
-  success: boolean;
-  data: FeaturedItem[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
-}
+import { useAdminFeaturedItems, FeaturedItem } from "@/hooks/use-admin-featured-items";
+import { useFeaturedItemForm } from "@/hooks/use-featured-item-form";
 
 export default function AdminFeaturedItemsPage() {
-  const [featuredItems, setFeaturedItems] = useState<FeaturedItem[]>([]);
-  const [allItems, setAllItems] = useState<ItemData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showActiveOnly, setShowActiveOnly] = useState(true);
-  
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<FeaturedItem | null>(null);
   
-  // Form state
-  const [formData, setFormData] = useState({
-    itemSlug: "",
-    itemName: "",
-    itemIconUrl: "",
-    itemCategory: "",
-    itemDescription: "",
-    featuredOrder: 0,
-    featuredUntil: "",
-    isActive: true,
+  // Use custom hooks
+  const {
+    featuredItems,
+    allItems,
+    filteredItems,
+    isLoading,
+    currentPage,
+    totalPages,
+    totalItems,
+    searchTerm,
+    showActiveOnly,
+    createFeaturedItem,
+    updateFeaturedItem,
+    deleteFeaturedItem,
+    updateOrder,
+    setSearchTerm,
+    setShowActiveOnly,
+    setCurrentPage,
+  } = useAdminFeaturedItems();
+
+  const {
+    formData,
+    isEditMode,
+    isSubmitting: isFormSubmitting,
+    handleInputChange,
+    handleItemSelect,
+    handleSubmit,
+    openCreateModal,
+    openEditModal,
+    closeModal,
+  } = useFeaturedItemForm({
+    allItems,
+    onSubmit: async (data) => {
+      if (isEditMode) {
+        const itemToUpdate = featuredItems.find(item => item.itemSlug === data.itemSlug);
+        if (itemToUpdate) {
+          return await updateFeaturedItem(itemToUpdate.id, data);
+        }
+        return false;
+      } else {
+        return await createFeaturedItem(data);
+      }
+    },
+    onCancel: () => {
+      closeModal();
+      setIsModalOpen(false);
+    },
   });
 
-  const fetchFeaturedItems = useCallback(async (page: number = 1) => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(
-        `/api/admin/featured-items?page=${page}&limit=10&active=${showActiveOnly}`
-      );
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch featured items');
-      }
-      
-      const data: FeaturedItemsResponse = await response.json();
-      
-      if (data.success) {
-        setFeaturedItems(data.data);
-        setCurrentPage(data.pagination.page);
-        setTotalPages(data.pagination.totalPages);
-        setTotalItems(data.pagination.total);
-      }
-    } catch (error) {
-      console.error('Error fetching featured items:', error);
-      toast.error('Failed to fetch featured items');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [showActiveOnly]);
-
-  const fetchAllItems = async () => {
-    try {
-      const response = await fetch('/api/admin/items?page=1&limit=1000');
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          setAllItems(data.items);
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching all items:', error);
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await fetchFeaturedItems();
-      await fetchAllItems();
-    };
-    fetchData();
-  }, [showActiveOnly, fetchFeaturedItems]);
-
+  // Handler functions
   const handleAddFeatured = () => {
-    setSelectedItem(null);
-    setFormData({
-      itemSlug: "",
-      itemName: "",
-      itemIconUrl: "",
-      itemCategory: "",
-      itemDescription: "",
-      featuredOrder: 0,
-      featuredUntil: "",
-      isActive: true,
-    });
-    setIsEditMode(false);
+    openCreateModal();
     setIsModalOpen(true);
   };
 
   const handleEditFeatured = (item: FeaturedItem) => {
-    setSelectedItem(item);
-    setFormData({
-      itemSlug: item.itemSlug,
-      itemName: item.itemName,
-      itemIconUrl: item.itemIconUrl || "",
-      itemCategory: item.itemCategory || "",
-      itemDescription: item.itemDescription || "",
-      featuredOrder: item.featuredOrder,
-      featuredUntil: item.featuredUntil ? new Date(item.featuredUntil).toISOString().slice(0, 16) : "",
-      isActive: item.isActive,
-    });
-    setIsEditMode(true);
+    openEditModal(item);
     setIsModalOpen(true);
-  };
-
-  const handleItemSelect = (itemSlug: string) => {
-    const item = allItems.find(i => i.slug === itemSlug);
-    if (item) {
-      setFormData(prev => ({
-        ...prev,
-        itemSlug: item.slug,
-        itemName: item.name,
-        itemIconUrl: item.icon_url || "",
-        itemCategory: Array.isArray(item.category) ? item.category[0] : item.category || "",
-        itemDescription: item.description,
-      }));
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      const url = isEditMode && selectedItem 
-        ? `/api/admin/featured-items/${selectedItem.id}`
-        : '/api/admin/featured-items';
-      
-      const method = isEditMode ? 'PUT' : 'POST';
-      
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        toast.success(
-          isEditMode 
-            ? 'Featured item updated successfully' 
-            : 'Item featured successfully'
-        );
-        setIsModalOpen(false);
-        fetchFeaturedItems(currentPage);
-      } else {
-        toast.error(data.error || 'Failed to save featured item');
-      }
-    } catch (error) {
-      console.error('Error saving featured item:', error);
-      toast.error('Failed to save featured item');
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const handleRemoveFeatured = async (id: string) => {
     if (!confirm('Are you sure you want to remove this item from featured?')) {
       return;
     }
-
-    try {
-      const response = await fetch(`/api/admin/featured-items/${id}`, {
-        method: 'DELETE',
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        toast.success('Item removed from featured');
-        fetchFeaturedItems(currentPage);
-      } else {
-        toast.error(data.error || 'Failed to remove featured item');
-      }
-    } catch (error) {
-      console.error('Error removing featured item:', error);
-      toast.error('Failed to remove featured item');
-    }
+    await deleteFeaturedItem(id);
   };
 
   const handleUpdateOrder = async (id: string, newOrder: number) => {
-    try {
-      const response = await fetch(`/api/admin/featured-items/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ featuredOrder: newOrder }),
-      });
-
-      if (response.ok) {
-        fetchFeaturedItems(currentPage);
-      }
-    } catch (error) {
-      console.error('Error updating order:', error);
-    }
+    await updateOrder(id, newOrder);
   };
-
-  const filteredItems = featuredItems.filter(item =>
-    item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.itemSlug.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -512,10 +348,7 @@ export default function AdminFeaturedItemsPage() {
                   id="featuredOrder"
                   type="number"
                   value={formData.featuredOrder}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    featuredOrder: parseInt(e.target.value) || 0
-                  }))}
+                  onChange={(e) => handleInputChange('featuredOrder', parseInt(e.target.value) || 0)}
                   min="0"
                 />
               </div>
@@ -527,10 +360,7 @@ export default function AdminFeaturedItemsPage() {
                 <Input
                   id="itemName"
                   value={formData.itemName}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    itemName: e.target.value
-                  }))}
+                  onChange={(e) => handleInputChange('itemName', e.target.value)}
                   required
                 />
               </div>
@@ -540,10 +370,7 @@ export default function AdminFeaturedItemsPage() {
                 <Input
                   id="itemCategory"
                   value={formData.itemCategory}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    itemCategory: e.target.value
-                  }))}
+                  onChange={(e) => handleInputChange('itemCategory', e.target.value)}
                 />
               </div>
             </div>
@@ -553,10 +380,7 @@ export default function AdminFeaturedItemsPage() {
               <Input
                 id="itemIconUrl"
                 value={formData.itemIconUrl}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  itemIconUrl: e.target.value
-                }))}
+                onChange={(e) => handleInputChange('itemIconUrl', e.target.value)}
               />
             </div>
 
@@ -565,10 +389,7 @@ export default function AdminFeaturedItemsPage() {
               <Textarea
                 id="itemDescription"
                 value={formData.itemDescription}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  itemDescription: e.target.value
-                }))}
+                onChange={(e) => handleInputChange('itemDescription', e.target.value)}
                 rows={3}
               />
             </div>
@@ -580,10 +401,7 @@ export default function AdminFeaturedItemsPage() {
                   id="featuredUntil"
                   type="datetime-local"
                   value={formData.featuredUntil}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    featuredUntil: e.target.value
-                  }))}
+                  onChange={(e) => handleInputChange('featuredUntil', e.target.value)}
                 />
               </div>
               
@@ -591,10 +409,7 @@ export default function AdminFeaturedItemsPage() {
                 <Switch
                   id="isActive"
                   checked={formData.isActive}
-                  onCheckedChange={(checked) => setFormData(prev => ({
-                    ...prev,
-                    isActive: checked
-                  }))}
+                  onCheckedChange={(checked) => handleInputChange('isActive', checked)}
                 />
                 <Label htmlFor="isActive">Active</Label>
               </div>
@@ -608,8 +423,8 @@ export default function AdminFeaturedItemsPage() {
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              <Button type="submit" disabled={isFormSubmitting}>
+                {isFormSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 {isEditMode ? 'Update' : 'Add'} Featured Item
               </Button>
             </div>

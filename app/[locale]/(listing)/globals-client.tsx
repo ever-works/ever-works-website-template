@@ -37,8 +37,6 @@ export default function GlobalsClient(props: ListingProps) {
   const { featuredItems } = useFeaturedItemsSection({
     limit: 6,
     enabled: true,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchInterval: 10 * 60 * 1000, // 10 minutes
   });
 
   // Get page from query param, default to 1

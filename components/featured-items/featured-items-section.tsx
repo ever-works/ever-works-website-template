@@ -31,9 +31,9 @@ export function FeaturedItemsSection({
   const { featuredItems, isLoading, isError, error } = useFeaturedItemsSection({
     limit,
     enabled: true,
-    staleTime: 5 * 60 * 1000, 
-    refetchInterval: 10 * 60 * 1000, 
   });
+
+  console.log('featuredItems',featuredItems);
 
   if (isLoading) {
     return (
