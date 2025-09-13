@@ -14,6 +14,7 @@ export interface AppConfig {
   [key: string]: any;
 }
 
+
 /**
  * Configuration manager for config.yml file
  * Provides type-safe methods to read and write configuration
@@ -25,6 +26,9 @@ export class ConfigManager {
     this.configPath = path.join(process.cwd(), '.content', 'config.yml');
   }
 
+  private isPrototypePollutingKey(key: string): boolean {
+    return key === '__proto__' || key === 'constructor' || key === 'prototype';
+  }
   /**
    * Read the current config file
    */
@@ -103,27 +107,26 @@ export class ConfigManager {
     
     let current: any = config;
     for (let i = 0; i < keys.length - 1; i++) {
-      if (forbidden.has(keys[i])) {
+      if (this.isPrototypePollutingKey(keys[i])) {
         return false;
       }
       if (
         keys[i] === 'constructor' &&
-        keys[i + 1] === 'prototype' &&
-        i === keys.length - 2
+        keys[i + 1] === 'prototype'
       ) {
         return false;
       }
-      if (!current[keys[i]]) {
+      if (!Object.prototype.hasOwnProperty.call(current, keys[i]) || typeof current[keys[i]] !== 'object' || current[keys[i]] === null) {
         current[keys[i]] = {};
       }
       current = current[keys[i]];
     }
     
     const lastKey = keys[keys.length - 1];
-    if (forbidden.has(lastKey)) {
+    if (this.isPrototypePollutingKey(lastKey)) {
       return false;
     }
-    
+
     if (
       keys.length >= 2 &&
       keys[keys.length - 2] === 'constructor' &&
