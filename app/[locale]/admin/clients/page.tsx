@@ -897,7 +897,7 @@ export default function ClientsPage() {
       )}
 
       {/* Client Form Modal */}
-      {isOpen && (
+      {isOpen && (formMode === 'create' || (formMode === 'edit' && selectedClient)) && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 p-4 overflow-y-auto">
           <div className="w-full max-w-4xl my-8 bg-white dark:bg-gray-900 rounded-xl shadow-xl max-h-[calc(100vh-4rem)] overflow-y-auto">
             <ClientForm

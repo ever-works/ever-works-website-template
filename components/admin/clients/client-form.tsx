@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Save, X } from "lucide-react";
-import type { 
-  CreateClientRequest, 
+import type {
+  CreateClientRequest,
   UpdateClientRequest
 } from "@/lib/types/client";
 import type { ClientProfileWithAuth } from "@/lib/db/queries";
@@ -19,29 +19,92 @@ interface ClientFormProps {
 }
 
 export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode }: ClientFormProps) {
+  
   // Extract long className strings into constants for better maintainability
   const containerClasses = "w-full";
   const headerClasses = "px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900";
   const formClasses = "p-6 space-y-6";
   const actionsClasses = "flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 -mx-6 -mb-6 px-6 pb-6";
 
-  const [formData, setFormData] = useState({
-    email: '',
-    displayName: client?.displayName || '',
-    username: client?.username || '',
-    bio: client?.bio || '',
-    jobTitle: client?.jobTitle || '',
-    company: client?.company || '',
-    industry: client?.industry || '',
-    phone: client?.phone || '',
-    website: client?.website || '',
-    location: client?.location || '',
-    accountType: client?.accountType || 'individual',
-    timezone: client?.timezone || 'UTC',
-    language: client?.language || 'en',
+  const [formData, setFormData] = useState(() => {
+    if (client && mode === 'edit') {
+      return {
+        email: client.email || '',
+        displayName: client.displayName || '',
+        username: client.username || '',
+        bio: client.bio || '',
+        jobTitle: client.jobTitle || '',
+        company: client.company || '',
+        industry: client.industry || '',
+        phone: client.phone || '',
+        website: client.website || '',
+        location: client.location || '',
+        accountType: client.accountType || 'individual',
+        timezone: client.timezone || 'UTC',
+        language: client.language || 'en',
+      };
+    } else {
+      return {
+        email: '',
+        displayName: '',
+        username: '',
+        bio: '',
+        jobTitle: '',
+        company: '',
+        industry: '',
+        phone: '',
+        website: '',
+        location: '',
+        accountType: 'individual' as const,
+        timezone: 'UTC',
+        language: 'en',
+      };
+    }
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Update form data when client prop changes
+  useEffect(() => {
+    if (client && mode === 'edit') {
+      const newFormData = {
+        email: client.email || '',
+        displayName: client.displayName || '',
+        username: client.username || '',
+        bio: client.bio || '',
+        jobTitle: client.jobTitle || '',
+        company: client.company || '',
+        industry: client.industry || '',
+        phone: client.phone || '',
+        website: client.website || '',
+        location: client.location || '',
+        accountType: client.accountType || 'individual',
+        timezone: client.timezone || 'UTC',
+        language: client.language || 'en',
+      };
+      setFormData(newFormData);
+    } else if (mode === 'create') {
+      // Reset form for create mode
+      const resetFormData = {
+        email: '',
+        displayName: '',
+        username: '',
+        bio: '',
+        jobTitle: '',
+        company: '',
+        industry: '',
+        phone: '',
+        website: '',
+        location: '',
+        accountType: 'individual' as const,
+        timezone: 'UTC',
+        language: 'en',
+      };
+      setFormData(resetFormData);
+    }
+    // Clear any existing errors when client changes
+    setErrors({});
+  }, [client, mode]);
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -159,8 +222,11 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
+    setFormData(prev => ({
+      ...prev,
+      [field]: field === 'accountType' ? value as 'individual' | 'business' | 'enterprise' : value
+    }));
+
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
