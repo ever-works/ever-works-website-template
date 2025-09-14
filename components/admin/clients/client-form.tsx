@@ -26,83 +26,30 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
   const formClasses = "p-6 space-y-6";
   const actionsClasses = "flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 -mx-6 -mb-6 px-6 pb-6";
 
-  const [formData, setFormData] = useState(() => {
-    if (client && mode === 'edit') {
-      return {
-        email: client.email || '',
-        displayName: client.displayName || '',
-        username: client.username || '',
-        bio: client.bio || '',
-        jobTitle: client.jobTitle || '',
-        company: client.company || '',
-        industry: client.industry || '',
-        phone: client.phone || '',
-        website: client.website || '',
-        location: client.location || '',
-        accountType: client.accountType || 'individual',
-        timezone: client.timezone || 'UTC',
-        language: client.language || 'en',
-      };
-    } else {
-      return {
-        email: '',
-        displayName: '',
-        username: '',
-        bio: '',
-        jobTitle: '',
-        company: '',
-        industry: '',
-        phone: '',
-        website: '',
-        location: '',
-        accountType: 'individual' as const,
-        timezone: 'UTC',
-        language: 'en',
-      };
-    }
+  // Helper function to construct form defaults based on client data and mode
+  const defaultsFor = (m: 'create' | 'edit', c?: ClientProfileWithAuth) => ({
+    email: m === 'edit' ? (c?.email ?? '') : '',
+    displayName: c?.displayName ?? '',
+    username: c?.username ?? '',
+    bio: c?.bio ?? '',
+    jobTitle: c?.jobTitle ?? '',
+    company: c?.company ?? '',
+    industry: c?.industry ?? '',
+    phone: c?.phone ?? '',
+    website: c?.website ?? '',
+    location: c?.location ?? '',
+    accountType: (c?.accountType ?? 'individual') as 'individual' | 'business' | 'enterprise',
+    timezone: c?.timezone ?? 'UTC',
+    language: c?.language ?? 'en',
   });
+
+  const [formData, setFormData] = useState(() => defaultsFor(mode, client));
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Update form data when client prop changes
   useEffect(() => {
-    if (client && mode === 'edit') {
-      const newFormData = {
-        email: client.email || '',
-        displayName: client.displayName || '',
-        username: client.username || '',
-        bio: client.bio || '',
-        jobTitle: client.jobTitle || '',
-        company: client.company || '',
-        industry: client.industry || '',
-        phone: client.phone || '',
-        website: client.website || '',
-        location: client.location || '',
-        accountType: client.accountType || 'individual',
-        timezone: client.timezone || 'UTC',
-        language: client.language || 'en',
-      };
-      setFormData(newFormData);
-    } else if (mode === 'create') {
-      // Reset form for create mode
-      const resetFormData = {
-        email: '',
-        displayName: '',
-        username: '',
-        bio: '',
-        jobTitle: '',
-        company: '',
-        industry: '',
-        phone: '',
-        website: '',
-        location: '',
-        accountType: 'individual' as const,
-        timezone: 'UTC',
-        language: 'en',
-      };
-      setFormData(resetFormData);
-    }
-    // Clear any existing errors when client changes
+    setFormData(defaultsFor(mode, client));
     setErrors({});
   }, [client, mode]);
 
