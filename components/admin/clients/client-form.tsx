@@ -168,11 +168,8 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
     }
   };
 
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: field === 'accountType' ? value as 'individual' | 'business' | 'enterprise' : value
-    }));
+  const handleInputChange = (field: keyof typeof formData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value as any }));
 
     // Clear error when user starts typing
     if (errors[field]) {
