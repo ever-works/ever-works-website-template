@@ -1,23 +1,23 @@
 import { useState, useCallback } from 'react';
 import { RoleData } from '@/lib/types/role';
 
-const API_BASE = '/api/admin/roles';
+const API_BASE = '/api/admin/roles/active';
 
-export function useRoles() {
+export function useActiveRoles() {
   const [roles, setRoles] = useState<RoleData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getRoles = useCallback(async () => {
+  const getActiveRoles = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetch(API_BASE);
       if (!response.ok) {
-        throw new Error('Failed to fetch roles');
+        throw new Error('Failed to fetch active roles');
       }
-      
+
       const data = await response.json();
       if (data.roles) {
         setRoles(data.roles);
@@ -26,9 +26,9 @@ export function useRoles() {
         throw new Error('Invalid response format');
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch roles';
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch active roles';
       setError(errorMessage);
-      console.error('Error fetching roles:', err);
+      console.error('Error fetching active roles:', err);
       return [];
     } finally {
       setLoading(false);
@@ -43,7 +43,7 @@ export function useRoles() {
     roles,
     loading,
     error,
-    getRoles,
+    getActiveRoles,
     clearError,
   };
-} 
+}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useUsers } from '@/hooks/use-users';
-import { useRoles } from '@/hooks/use-roles';
+import { useActiveRoles } from '@/hooks/use-active-roles';
 import { UserData, CreateUserRequest, UpdateUserRequest } from '@/lib/types/user';
 import { Button, Input } from '@heroui/react';
 import { toast } from 'sonner';
@@ -20,7 +20,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
   const selectClasses = "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white";
   
   const { createUser, updateUser, checkUsername, checkEmail } = useUsers();
-  const { roles, loading: rolesLoading, getRoles } = useRoles();
+  const { roles, loading: rolesLoading, getActiveRoles } = useActiveRoles();
   const [showPassword, setShowPassword] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
   const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
@@ -29,9 +29,9 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
 
   const isEditing = !!user;
 
-  // Load roles on component mount
+  // Load active roles on component mount
   useEffect(() => {
-    getRoles();
+    getActiveRoles();
   }, []);
 
   // Form state

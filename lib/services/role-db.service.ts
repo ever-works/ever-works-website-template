@@ -111,17 +111,13 @@ export class RoleDbService {
         query = query.where(eq(roles.status, status));
       }
 
-      // Skip count query for large limits (optimization for dropdown usage)
-      let total = 0;
-      if (limit <= 50) {
-        // Get total count with same filters only for paginated requests
-        let countQuery = db.select({ count: sql`count(*)` }).from(roles);
-        if (status) {
-          countQuery = countQuery.where(eq(roles.status, status));
-        }
-        const countResult = await countQuery;
-        total = Number(countResult[0].count);
+      // Get total count with same filters
+      let countQuery = db.select({ count: sql`count(*)` }).from(roles);
+      if (status) {
+        countQuery = countQuery.where(eq(roles.status, status));
       }
+      const countResult = await countQuery;
+      const total = Number(countResult[0].count);
 
       // Apply sorting and pagination
       const sortFieldMap = {
@@ -138,10 +134,10 @@ export class RoleDbService {
 
       return {
         roles: result.map(this.mapDbToRoleData),
-        total: limit > 50 ? result.length : total, // Return actual length for large limits
+        total,
         page,
         limit,
-        totalPages: limit > 50 ? 1 : Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limit),
       };
     } catch (error) {
       console.error('Error finding roles:', error);
