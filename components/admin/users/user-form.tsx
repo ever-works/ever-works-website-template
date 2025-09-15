@@ -32,7 +32,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
   // Load roles on component mount
   useEffect(() => {
     getRoles();
-  }, [getRoles]);
+  }, []);
 
   // Form state
   const [formData, setFormData] = useState({

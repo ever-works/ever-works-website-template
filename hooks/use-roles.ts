@@ -13,7 +13,7 @@ export function useRoles() {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(API_BASE);
+      const response = await fetch(`${API_BASE}?status=active&limit=100`);
       if (!response.ok) {
         throw new Error('Failed to fetch roles');
       }

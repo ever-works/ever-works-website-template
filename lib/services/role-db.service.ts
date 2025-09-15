@@ -103,22 +103,26 @@ export class RoleDbService {
   }> {
     try {
       const { page = 1, limit = 10, status, sortBy = 'name', sortOrder = 'asc' } = options;
-      
+
       let query = db.select().from(roles);
-      
+
       // Apply filters
       if (status) {
         query = query.where(eq(roles.status, status));
       }
-      
-      // Get total count with same filters
-      let countQuery = db.select({ count: sql`count(*)` }).from(roles);
-      if (status) {
-        countQuery = countQuery.where(eq(roles.status, status));
+
+      // Skip count query for large limits (optimization for dropdown usage)
+      let total = 0;
+      if (limit <= 50) {
+        // Get total count with same filters only for paginated requests
+        let countQuery = db.select({ count: sql`count(*)` }).from(roles);
+        if (status) {
+          countQuery = countQuery.where(eq(roles.status, status));
+        }
+        const countResult = await countQuery;
+        total = Number(countResult[0].count);
       }
-      const countResult = await countQuery;
-      const total = Number(countResult[0].count);
-      
+
       // Apply sorting and pagination
       const sortFieldMap = {
         name: roles.name,
@@ -131,13 +135,13 @@ export class RoleDbService {
         .orderBy(orderFn(sortField))
         .limit(limit)
         .offset((page - 1) * limit);
-      
+
       return {
         roles: result.map(this.mapDbToRoleData),
-        total,
+        total: limit > 50 ? result.length : total, // Return actual length for large limits
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
+        totalPages: limit > 50 ? 1 : Math.ceil(total / limit),
       };
     } catch (error) {
       console.error('Error finding roles:', error);
