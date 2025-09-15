@@ -1,25 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
 import { Plus, Edit, Trash2, Users, UserCheck, UserX, Search, ChevronDown } from "lucide-react";
 import UserForm from "@/components/admin/users/user-form";
-import { UserData, CreateUserRequest, UpdateUserRequest, UserWithCount } from "@/lib/types/user";
-import { toast } from "sonner";
-
-interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-}
-
-interface PaginatedResponse<T> extends ApiResponse<T> {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
+import { UserData, CreateUserRequest, UpdateUserRequest } from "@/lib/types/user";
+import { useAdminUsers } from "@/hooks/use-admin-users";
 
 // Helper function to generate consistent avatar colors based on user identifier
 function getAvatarColor(identifier: string): string {
@@ -50,160 +36,55 @@ function getAvatarColor(identifier: string): string {
 }
 
 export default function AdminUsersPage() {
-  const [users, setUsers] = useState<UserWithCount[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isFiltering, setIsFiltering] = useState(false);
+  // Use custom hook
+  const {
+    users,
+    stats,
+    isLoading,
+    isFiltering,
+    isSubmitting,
+    currentPage,
+    totalPages,
+    totalUsers,
+    searchTerm,
+    roleFilter,
+    statusFilter,
+    createUser,
+    updateUser,
+    deleteUser,
+    handlePageChange,
+    handleSearch,
+    handleRoleFilter,
+    handleStatusFilter,
+  } = useAdminUsers({
+    page: 1,
+    limit: 10,
+    search: '',
+    role: '',
+    status: 'active',
+  });
 
+  // Local state for form
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
-  
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalUsers, setTotalUsers] = useState(0);
-  const [limit] = useState(10);
-  
-  // Stats state
-  const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0 });
-  
-  // Filters state
-  const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('active');
-  
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // Fetch users
-  const fetchUsers = useCallback(async (page: number = currentPage) => {
-    try {
-      if (page === 1) {
-        setIsFiltering(true);
-      } else {
-        setIsLoading(true);
-      }
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: limit.toString(),
-        ...(searchTerm && { search: searchTerm }),
-        ...(roleFilter && { role: roleFilter }),
-        ...(statusFilter && { status: statusFilter }),
-      });
-      
-      const response = await fetch(`/api/admin/users?${params}`);
-      const data: PaginatedResponse<UserWithCount[]> = await response.json();
-      
-      if (data.success && data.data) {
-        setUsers(data.data);
-        setTotalUsers(data.total || 0);
-        setTotalPages(data.totalPages || 1);
-        setCurrentPage(data.page || 1);
-      } else {
-        toast.error(data.error || 'Failed to fetch users');
-      }
-    } catch (error) {
-      console.error('Failed to fetch users:', error);
-      toast.error('Failed to fetch users');
-    } finally {
-      setIsLoading(false);
-      setIsFiltering(false);
-    }
-  }, [currentPage, limit, searchTerm, roleFilter, statusFilter]);
-
-  // Fetch stats
-  const fetchStats = useCallback(async () => {
-    try {
-      const response = await fetch('/api/admin/users/stats');
-      const data: ApiResponse<{ total: number; active: number; inactive: number }> = await response.json();
-      if (data.success && data.data) {
-        setStats(data.data);
-      }
-    } catch (error) {
-      console.error('Failed to fetch stats:', error);
-    }
-  }, []);
-
-  // Create user
+  // Handler functions
   const handleCreate = async (data: CreateUserRequest) => {
-    try {
-      setIsSubmitting(true);
-      const response = await fetch('/api/admin/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      
-      const result: ApiResponse<{ user: UserData }> = await response.json();
-      
-      if (result.success) {
-        toast.success(result.message || 'User created successfully');
-        onClose();
-        fetchUsers();
-        fetchStats();
-      } else {
-        toast.error(result.error || 'Failed to create user');
-      }
-    } catch (error) {
-      console.error('Failed to create user:', error);
-      toast.error('Failed to create user');
-    } finally {
-      setIsSubmitting(false);
-    }
+    await createUser(data);
+    onClose();
   };
 
-  // Update user
   const handleUpdate = async (data: UpdateUserRequest & { id: string }) => {
-    try {
-      setIsSubmitting(true);
-      const response = await fetch(`/api/admin/users/${data.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      
-      const result: ApiResponse<{ user: UserData }> = await response.json();
-      
-      if (result.success) {
-        toast.success(result.message || 'User updated successfully');
-        onClose();
-        fetchUsers();
-        fetchStats();
-      } else {
-        toast.error(result.error || 'Failed to update user');
-      }
-    } catch (error) {
-      console.error('Failed to update user:', error);
-      toast.error('Failed to update user');
-    } finally {
-      setIsSubmitting(false);
-    }
+    await updateUser(data.id, data);
+    onClose();
   };
 
-  // Delete user
   const handleDelete = async (id: string) => {
-    // Show confirmation dialog
     if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       return;
     }
-
-    try {
-      const response = await fetch(`/api/admin/users/${id}`, {
-        method: 'DELETE',
-      });
-      
-      const result: ApiResponse = await response.json();
-      
-      if (result.success) {
-        toast.success(result.message || 'User deleted successfully');
-        fetchUsers();
-        fetchStats();
-      } else {
-        toast.error(result.error || 'Failed to delete user');
-      }
-    } catch (error) {
-      console.error('Failed to delete user:', error);
-      toast.error('Failed to delete user');
-    }
+    await deleteUser(id);
   };
 
   const openCreateForm = () => {
@@ -227,44 +108,6 @@ export default function AdminUsersPage() {
       }
     }
   };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    fetchUsers(page);
-  };
-
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
-  };
-
-  const handleRoleFilter = (value: string) => {
-    setRoleFilter(value);
-    setCurrentPage(1);
-    fetchUsers(1);
-  };
-
-  const handleStatusFilter = (value: string) => {
-    setStatusFilter(value);
-    setCurrentPage(1);
-    fetchUsers(1);
-  };
-
-  useEffect(() => {
-    fetchUsers();
-    fetchStats();
-  }, [fetchUsers, fetchStats]);
-
-  // Debounced search effect
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (searchTerm !== '') {
-        fetchUsers(1);
-      }
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm, fetchUsers]);
 
   if (isLoading) {
     return (
@@ -504,11 +347,9 @@ export default function AdminUsersPage() {
                 size="sm"
                 color="danger"
                 onPress={() => {
-                  setSearchTerm('');
-                  setRoleFilter('');
-                  setStatusFilter('active');
-                  setCurrentPage(1);
-                  fetchUsers(1);
+                  handleSearch('');
+                  handleRoleFilter('');
+                  handleStatusFilter('active');
                 }}
                 className="h-6 px-2 text-xs"
               >
@@ -569,21 +410,18 @@ export default function AdminUsersPage() {
                         <div className="flex-1">
                           <h4 className="font-medium text-gray-900 dark:text-white">{user.name}</h4>
                           <p className="text-sm text-gray-500 dark:text-gray-400">
-                            @{user.username} • {user.email}
+                            {user.email}
                           </p>
-                          {user.title && (
-                            <p className="text-xs text-gray-400 dark:text-gray-500">{user.title}</p>
-                          )}
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
                       <Chip
-                        color={user.status === 'active' ? 'success' : 'default'}
+                        color={user.isActive ? 'success' : 'default'}
                         variant="flat"
                         size="sm"
                       >
-                        {user.status === 'active' ? 'Active' : 'Inactive'}
+                        {user.isActive ? 'Active' : 'Inactive'}
                       </Chip>
                       <Chip
                         color="primary"
@@ -599,7 +437,7 @@ export default function AdminUsersPage() {
                           isIconOnly
                           size="sm"
                           variant="light"
-                          onPress={() => openEditForm(user)}
+                          onPress={() => openEditForm(user as unknown as UserData)}
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
