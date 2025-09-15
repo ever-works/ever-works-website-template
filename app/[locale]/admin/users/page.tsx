@@ -534,10 +534,6 @@ export default function AdminUsersPage() {
                 <div key={user.id} className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 flex-1">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">#{user.id}</span>
-                      </div>
                       <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm">
                           {user.name?.charAt(0) || 'U'}
