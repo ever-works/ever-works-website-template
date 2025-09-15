@@ -21,6 +21,34 @@ interface PaginatedResponse<T> extends ApiResponse<T> {
   totalPages: number;
 }
 
+// Helper function to generate consistent avatar colors based on user identifier
+function getAvatarColor(identifier: string): string {
+  const colors = [
+    'from-blue-500 to-blue-600',
+    'from-green-500 to-green-600',
+    'from-purple-500 to-purple-600',
+    'from-red-500 to-red-600',
+    'from-yellow-500 to-yellow-600',
+    'from-indigo-500 to-indigo-600',
+    'from-pink-500 to-pink-600',
+    'from-teal-500 to-teal-600',
+    'from-orange-500 to-orange-600',
+    'from-cyan-500 to-cyan-600',
+    'from-emerald-500 to-emerald-600',
+    'from-violet-500 to-violet-600'
+  ];
+
+  // Create a simple hash from the identifier
+  let hash = 0;
+  for (let i = 0; i < identifier.length; i++) {
+    hash = identifier.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  // Use absolute value and modulo to get consistent index
+  const colorIndex = Math.abs(hash) % colors.length;
+  return colors[colorIndex];
+}
+
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserWithCount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -535,7 +563,7 @@ export default function AdminUsersPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 flex-1">
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                        <div className={`w-10 h-10 bg-gradient-to-br ${getAvatarColor(user.name || user.email || user.id)} rounded-full flex items-center justify-center text-white font-semibold text-sm`}>
                           {(user.name?.charAt(0) || user.email?.charAt(0) || 'U').toUpperCase()}
                         </div>
                         <div className="flex-1">
