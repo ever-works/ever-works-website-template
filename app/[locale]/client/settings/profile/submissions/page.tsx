@@ -1,9 +1,10 @@
 import { Container } from "@/components/ui/container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FiFileText, FiArrowLeft, FiClock, FiCheck, FiX, FiPlus } from "react-icons/fi";
+import { FiFileText, FiArrowLeft, FiClock, FiCheck, FiX, FiPlus, FiBarChart } from "react-icons/fi";
 import { Link } from "@/i18n/navigation";
 import { SubmissionItem } from "@/components/submissions/submission-item";
 import { dummySubmissions } from "@/lib/dummy-data";
+import { EngagementChart } from "@/components/dashboard/engagement-chart";
 
 export default async function SubmissionsPage() {
   const stats = {
@@ -13,6 +14,16 @@ export default async function SubmissionsPage() {
     rejected: dummySubmissions.filter(s => s.status === "rejected").length,
     draft: dummySubmissions.filter(s => s.status === "draft").length,
   };
+
+  // Create chart data - show default data if no submissions
+  const chartData = stats.total > 0 ? [
+    { name: 'Approved', value: stats.approved, color: '#10B981' },
+    { name: 'Pending', value: stats.pending, color: '#F59E0B' },
+    { name: 'Rejected', value: stats.rejected, color: '#EF4444' },
+    { name: 'Draft', value: stats.draft, color: '#6B7280' },
+  ].filter(item => item.value > 0) : [
+    { name: 'Ready to Start', value: 1, color: '#6366F1' },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -89,6 +100,90 @@ export default async function SubmissionsPage() {
                   <div className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.rejected}</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Rejected</div>
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Submission Status Chart */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="hover:shadow-lg hover:shadow-theme-primary-500/10 border border-gray-200 dark:border-gray-800 transition-all duration-300 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                  <FiBarChart className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />
+                  {stats.total > 0 ? 'Submission Status Overview' : 'Get Started with Submissions'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <EngagementChart data={chartData} />
+                {stats.total === 0 && (
+                  <div className="mt-4 p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                    <h4 className="font-medium text-indigo-900 dark:text-indigo-100 mb-2">
+                      Start Your Journey
+                    </h4>
+                    <p className="text-sm text-indigo-700 dark:text-indigo-300 mb-3">
+                      Once you submit your first project, you&apos;ll see a detailed breakdown of your submission statuses here.
+                    </p>
+                    <Link
+                      href="/submit"
+                      className="inline-flex items-center gap-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
+                    >
+                      <FiPlus className="w-4 h-4" />
+                      Create your first submission
+                    </Link>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Submission Insights */}
+            <Card className="hover:shadow-lg hover:shadow-theme-primary-500/10 border border-gray-200 dark:border-gray-800 transition-all duration-300 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                  <FiFileText className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />
+                  Quick Insights
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {stats.total > 0 ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                      <span className="text-sm font-medium text-green-900 dark:text-green-100">Approval Rate</span>
+                      <span className="text-sm font-bold text-green-600 dark:text-green-400">
+                        {stats.total > 0 ? Math.round((stats.approved / stats.total) * 100) : 0}%
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                      <span className="text-sm font-medium text-blue-900 dark:text-blue-100">Total Submitted</span>
+                      <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{stats.total}</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                      <span className="text-sm font-medium text-yellow-900 dark:text-yellow-100">Under Review</span>
+                      <span className="text-sm font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4 text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-100 to-indigo-200 dark:from-indigo-900/40 dark:to-indigo-800/40 rounded-2xl mb-4">
+                      <FiFileText className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+                    </div>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                      Your Analytics Dashboard
+                    </h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                      Track your submission performance, approval rates, and community engagement metrics once you start submitting.
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div className="text-lg font-bold text-gray-400 dark:text-gray-500">--</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">Approval Rate</div>
+                      </div>
+                      <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div className="text-lg font-bold text-gray-400 dark:text-gray-500">--</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">Community Score</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
