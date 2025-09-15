@@ -323,9 +323,9 @@ export class AdminAnalyticsOptimizedRepository {
         )
         UNION ALL
         (
-          SELECT 
+          SELECT
             'vote' as activity_type,
-            "userId" as user_info,
+            userid as user_info,
             created_at as activity_time,
             CONCAT('New ', vote_type, ' vote') as description
           FROM votes
