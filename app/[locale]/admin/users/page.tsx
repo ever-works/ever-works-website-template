@@ -536,7 +536,7 @@ export default function AdminUsersPage() {
                     <div className="flex items-center space-x-4 flex-1">
                       <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                          {user.name?.charAt(0) || 'U'}
+                          {(user.name?.charAt(0) || user.email?.charAt(0) || 'U').toUpperCase()}
                         </div>
                         <div className="flex-1">
                           <h4 className="font-medium text-gray-900 dark:text-white">{user.name}</h4>
