@@ -86,7 +86,7 @@ export class UserDbService {
       };
       if (data.username !== undefined) profileUpdateData.username = data.username;
       if (data.name !== undefined) profileUpdateData.name = data.name;
-      if (data.title !== undefined) profileUpdateData.job_title = data.title;
+      if (data.title !== undefined) profileUpdateData.jobTitle = data.title;
       if (data.avatar !== undefined) profileUpdateData.avatar = data.avatar;
       if (data.status !== undefined) profileUpdateData.status = data.status;
       if (data.email !== undefined) profileUpdateData.email = data.email; // Keep email in sync
