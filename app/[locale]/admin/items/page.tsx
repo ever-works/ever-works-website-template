@@ -11,7 +11,7 @@ import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, Externa
 import { useAdminItems } from "@/hooks/use-admin-items";
 
 export default function AdminItemsPage() {
-  let PageSize = 10;
+  const PageSize = 10;
   // Use custom hook
   const {
     items,
