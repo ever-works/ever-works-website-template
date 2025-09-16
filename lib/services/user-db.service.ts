@@ -1,5 +1,5 @@
 import { db } from '@/lib/db/drizzle';
-import { users, clientProfiles, userRoles } from '@/lib/db/schema';
+import { users, clientProfiles, userRoles, roles } from '@/lib/db/schema';
 import { eq, desc, asc, and, sql, isNull, type SQL } from 'drizzle-orm';
 import { AuthUserData, CreateUserRequest, UpdateUserRequest, UserListOptions } from '@/lib/types/user';
 import { hash } from 'bcryptjs';
@@ -163,10 +163,12 @@ export class UserDbService {
         status: clientProfiles.status,
         // Role data
         roleId: userRoles.roleId,
+        roleName: roles.name,
       })
       .from(users)
       .leftJoin(clientProfiles, eq(users.id, clientProfiles.userId))
-      .leftJoin(userRoles, eq(users.id, userRoles.userId));
+      .leftJoin(userRoles, eq(users.id, userRoles.userId))
+      .leftJoin(roles, eq(userRoles.roleId, roles.id));
 
       const conditions: SQL[] = [];
       conditions.push(isNull(users.deletedAt));
@@ -188,7 +190,8 @@ export class UserDbService {
       let countQuery = db.select({ count: sql`count(*)` })
         .from(users)
         .leftJoin(clientProfiles, eq(users.id, clientProfiles.userId))
-        .leftJoin(userRoles, eq(users.id, userRoles.userId));
+        .leftJoin(userRoles, eq(users.id, userRoles.userId))
+        .leftJoin(roles, eq(userRoles.roleId, roles.id));
       if (conditions.length > 0) {
         countQuery = countQuery.where(and(...conditions));
       }
@@ -291,7 +294,7 @@ export class UserDbService {
       title: joinedData.title || '',
       avatar: joinedData.avatar || '',
       status: joinedData.status || 'active',
-      role: joinedData.roleId || '',
+      role: joinedData.roleName || 'No role',
       created_at: joinedData.createdAt.toISOString(),
       updated_at: joinedData.updatedAt.toISOString(),
       created_by: 'system', // TODO: Add proper created_by field

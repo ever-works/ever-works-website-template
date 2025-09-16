@@ -27,6 +27,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
   const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
   const [checkingUsername, setCheckingUsername] = useState(false);
   const [checkingEmail, setCheckingEmail] = useState(false);
+  const [isSubmittingForm, setIsSubmittingForm] = useState(false);
 
   // Track initial values to detect changes
   const initialEmail = user?.email || '';
@@ -117,6 +118,11 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Prevent multiple submissions
+    if (isSubmittingForm) {
+      return;
+    }
+
     // Validate required fields
     if (!formData.role) {
       toast.error('Please select a role');
@@ -145,6 +151,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
       }
     }
 
+    setIsSubmittingForm(true);
     try {
       if (isEditing) {
         const updateData: UpdateUserRequest = {
@@ -180,6 +187,8 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
     } catch (error) {
       console.error('Error saving user:', error);
       toast.error('Failed to save user');
+    } finally {
+      setIsSubmittingForm(false);
     }
   };
 
@@ -220,6 +229,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
               onChange={(e) => handleInputChange('avatar', e.target.value)}
               className="w-full"
               variant="bordered"
+              disabled={isSubmittingForm}
             />
           </div>
         </div>
@@ -228,10 +238,11 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-2">Full Name *</label>
-          <Input 
-            placeholder="John Doe" 
+          <Input
+            placeholder="John Doe"
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
+            disabled={isSubmittingForm}
             required
             variant="bordered"
           />
@@ -239,10 +250,11 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
 
         <div>
           <label className="block text-sm font-medium mb-2">Title</label>
-          <Input 
-            placeholder="Software Engineer" 
+          <Input
+            placeholder="Software Engineer"
             value={formData.title}
             onChange={(e) => handleInputChange('title', e.target.value)}
+            disabled={isSubmittingForm}
             variant="bordered"
           />
         </div>
@@ -253,11 +265,12 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
         <div>
           <label className="block text-sm font-medium mb-2">Username *</label>
           <div className="relative">
-            <Input 
-              placeholder="johndoe" 
+            <Input
+              placeholder="johndoe"
               value={formData.username}
               onChange={(e) => handleInputChange('username', e.target.value)}
               className={getUsernameStatus() === 'unavailable' ? 'border-red-500' : ''}
+              disabled={isSubmittingForm}
               required
               variant="bordered"
             />
@@ -276,12 +289,13 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
         <div>
           <label className="block text-sm font-medium mb-2">Email *</label>
           <div className="relative">
-            <Input 
-              type="email" 
-              placeholder="john@example.com" 
+            <Input
+              type="email"
+              placeholder="john@example.com"
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               className={getEmailStatus() === 'unavailable' ? 'border-red-500' : ''}
+              disabled={isSubmittingForm}
               required
               variant="bordered"
             />
@@ -310,6 +324,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
               onChange={(e) => handleInputChange('password', e.target.value)}
               required
               variant="bordered"
+              disabled={isSubmittingForm}
             />
             <Button
               type="button"
@@ -336,7 +351,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             value={formData.role}
             onChange={(e) => handleInputChange('role', e.target.value)}
             className={selectClasses}
-            disabled={rolesLoading}
+            disabled={rolesLoading || isSubmittingForm}
             required
           >
             {rolesLoading ? (
@@ -361,10 +376,11 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
         {isEditing && (
           <div>
             <label className="block text-sm font-medium mb-2">Status *</label>
-            <select 
-              value={formData.status} 
+            <select
+              value={formData.status}
               onChange={(e) => handleInputChange('status', e.target.value)}
               className={selectClasses}
+              disabled={isSubmittingForm}
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
@@ -379,7 +395,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
           <Button
             variant="bordered"
             onPress={onCancel}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isSubmittingForm}
             className="px-4 py-2"
           >
             Cancel
@@ -388,10 +404,10 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
         <Button
           type="submit"
           color="primary"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isSubmittingForm}
           className="px-4 py-2"
         >
-          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {(isSubmitting || isSubmittingForm) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isEditing ? 'Update User' : 'Create User'}
         </Button>
       </div>

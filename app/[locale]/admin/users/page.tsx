@@ -566,9 +566,7 @@ export default function AdminUsersPage() {
                         variant="flat"
                         size="sm"
                       >
-                        {typeof user.role === 'string'
-                          ? user.role.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
-                          : 'No Role'}
+                        {user.role || 'No role'}
                       </Chip>
                       <div className="flex space-x-1">
                         <Button
