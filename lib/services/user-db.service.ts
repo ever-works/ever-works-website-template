@@ -294,7 +294,8 @@ export class UserDbService {
       title: joinedData.title || '',
       avatar: joinedData.avatar || '',
       status: joinedData.status || 'active',
-      role: joinedData.roleName || 'No role',
+      role: joinedData.roleId || '',
+      roleName: joinedData.roleName || 'No role',
       created_at: joinedData.createdAt.toISOString(),
       updated_at: joinedData.updatedAt.toISOString(),
       created_by: 'system', // TODO: Add proper created_by field

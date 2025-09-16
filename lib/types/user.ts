@@ -7,6 +7,14 @@ export type UserStatus = 'active' | 'inactive';
 export interface AuthUserData {
   id: string;
   email: string;
+  username?: string;
+  name?: string;
+  title?: string;
+  avatar?: string;
+  role?: string;
+  roleName?: string;
+  status?: UserStatus;
+  created_by?: string;
   created_at: string;
   updated_at: string;
 }
@@ -20,6 +28,7 @@ export interface UserData {
   title?: string;
   avatar?: string;
   role: string;
+  roleName?: string;
   status: UserStatus;
   created_at: string;
   updated_at: string;

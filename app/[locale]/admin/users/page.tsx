@@ -566,7 +566,7 @@ export default function AdminUsersPage() {
                         variant="flat"
                         size="sm"
                       >
-                        {user.role || 'No role'}
+                        {user.roleName || 'No role'}
                       </Chip>
                       <div className="flex space-x-1">
                         <Button
