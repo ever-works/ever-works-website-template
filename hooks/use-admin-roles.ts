@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
+import { Permission } from '@/lib/db/schema';
 
 // Types
 export interface RoleData {
@@ -9,6 +10,7 @@ export interface RoleData {
   name: string;
   description: string;
   status: 'active' | 'inactive';
+  permissions?: Permission[];
   createdAt: Date;
   updatedAt: Date;
 }
