@@ -71,20 +71,22 @@ export default function AdminUsersPage() {
 
   // Handler functions
   const handleCreate = async (data: CreateUserRequest) => {
-    await createUser(data);
-    onClose();
+   const ok= await createUser(data);
+   if (ok)onClose();
+
   };
 
   const handleUpdate = async (data: UpdateUserRequest & { id: string }) => {
-    await updateUser(data.id, data);
-    onClose();
+    const ok= await updateUser(data.id, data);
+    if (ok) onClose();
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       return;
     }
-    await deleteUser(id);
+    const ok= await deleteUser(id);
+    if (ok) onClose();
   };
 
   const openCreateForm = () => {
