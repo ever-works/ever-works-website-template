@@ -28,6 +28,10 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
   const [checkingUsername, setCheckingUsername] = useState(false);
   const [checkingEmail, setCheckingEmail] = useState(false);
 
+  // Track initial values to detect changes
+  const initialEmail = user?.email || '';
+  const initialUsername = user?.username || '';
+
   const isEditing = !!user;
 
   // Load active roles on component mount
@@ -54,6 +58,12 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
   // Check username availability
   useEffect(() => {
     const checkUsernameAvailability = async () => {
+      // Skip check if username hasn't changed from initial value (for editing)
+      if (isEditing && formData.username === initialUsername) {
+        setUsernameAvailable(null);
+        return;
+      }
+
       if (!formData.username || formData.username.length < 3) {
         setUsernameAvailable(null);
         return;
@@ -72,11 +82,17 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
 
     const timeoutId = setTimeout(checkUsernameAvailability, 500);
     return () => clearTimeout(timeoutId);
-  }, [formData.username, user?.id, checkUsername]);
+  }, [formData.username, user?.id, checkUsername, isEditing, initialUsername]);
 
   // Check email availability
   useEffect(() => {
     const checkEmailAvailability = async () => {
+      // Skip check if email hasn't changed from initial value (for editing)
+      if (isEditing && formData.email === initialEmail) {
+        setEmailAvailable(null);
+        return;
+      }
+
       if (!formData.email || !formData.email.includes('@')) {
         setEmailAvailable(null);
         return;
@@ -95,7 +111,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
 
     const timeoutId = setTimeout(checkEmailAvailability, 500);
     return () => clearTimeout(timeoutId);
-  }, [formData.email, user?.id, checkEmail]);
+  }, [formData.email, user?.id, checkEmail, isEditing, initialEmail]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
