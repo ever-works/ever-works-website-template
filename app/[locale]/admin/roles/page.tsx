@@ -1,30 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Plus, Search, Edit, Trash2, Eye, EyeOff, Shield } from 'lucide-react';
 import { Button, Card, CardBody, Chip, useDisclosure, Input } from '@heroui/react';
 import { RoleForm } from '@/components/admin/roles/role-form';
 import { DeleteRoleDialog } from '@/components/admin/roles/delete-role-dialog';
 import { RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/lib/types/role';
-import { toast } from 'sonner';
-
-interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  roles?: T;
-  role?: RoleData;
-  error?: string;
-  message?: string;
-  total?: number;
-  page?: number;
-  limit?: number;
-  totalPages?: number;
-}
+import { useAdminRoles } from '@/hooks/use-admin-roles';
 
 export default function RolesPage() {
-  const [roles, setRoles] = useState<RoleData[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Use custom hook
+  const {
+    roles,
+    isLoading,
+    createRole,
+    updateRole,
+    deleteRole,
+    isSubmitting,
+  } = useAdminRoles();
 
+  // Local state for form and dialogs
   const [selectedRole, setSelectedRole] = useState<RoleData | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,105 +28,26 @@ export default function RolesPage() {
   
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  useEffect(() => {
-    fetchRoles();
-  }, []);
-
-  const fetchRoles = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/admin/roles');
-      if (!response.ok) {
-        throw new Error('Failed to fetch roles');
-      }
-      const data: ApiResponse<RoleData[]> = await response.json();
-      if (data.roles) {
-        setRoles(data.roles);
-      }
-    } catch (error) {
-      toast.error('Failed to fetch roles');
-      console.error('Error fetching roles:', error);
-    } finally {
-      setLoading(false);
-    }
+  // Handler functions
+  const handleCreateRole = async (data: CreateRoleRequest) => {
+    const ok = await createRole(data);
+    if (ok) onClose();
   };
 
-  const handleCreateRole = async (data: CreateRoleRequest | UpdateRoleRequest) => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/admin/roles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      const result: ApiResponse<RoleData> = await response.json();
-      
-      if (response.ok) {
-        toast.success('Role created successfully');
-        onClose();
-        fetchRoles();
-      } else {
-        toast.error(result.error || 'Failed to create role');
-      }
-    } catch (error) {
-      toast.error('Failed to create role');
-      console.error('Error creating role:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleUpdateRole = async (data: CreateRoleRequest | UpdateRoleRequest) => {
+  const handleUpdateRole = async (data: UpdateRoleRequest) => {
     if (!selectedRole) return;
-
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/admin/roles/${selectedRole.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      const result: ApiResponse<RoleData> = await response.json();
-      
-      if (response.ok) {
-        toast.success('Role updated successfully');
-        onClose();
-        fetchRoles();
-        setSelectedRole(null);
-      } else {
-        toast.error(result.error || 'Failed to update role');
-      }
-    } catch (error) {
-      toast.error('Failed to update role');
-      console.error('Error updating role:', error);
-    } finally {
-      setLoading(false);
+    const ok = await updateRole(selectedRole.id, data);
+    if (ok) {
+      onClose();
+      setSelectedRole(null);
     }
   };
 
   const handleDeleteRole = async (hardDelete: boolean = false) => {
     if (!selectedRole) return;
-
-    try {
-      const url = hardDelete 
-        ? `/api/admin/roles/${selectedRole.id}?hard=true`
-        : `/api/admin/roles/${selectedRole.id}`;
-      
-      const response = await fetch(url, { method: 'DELETE' });
-
-      if (response.ok) {
-        toast.success(hardDelete ? 'Role permanently deleted' : 'Role deleted');
-        fetchRoles();
-        setSelectedRole(null);
-      } else {
-        const result = await response.json();
-        toast.error(result.error || 'Failed to delete role');
-      }
-    } catch (error) {
-      toast.error('Failed to delete role');
-      console.error('Error deleting role:', error);
+    const ok = await deleteRole(selectedRole.id, hardDelete);
+    if (ok) {
+      setSelectedRole(null);
     }
   };
 
@@ -159,9 +75,9 @@ export default function RolesPage() {
 
   const handleFormSubmit = async (data: CreateRoleRequest | UpdateRoleRequest) => {
     if (formMode === 'create') {
-      await handleCreateRole(data);
+      await handleCreateRole(data as CreateRoleRequest);
     } else {
-      await handleUpdateRole(data);
+      await handleUpdateRole(data as UpdateRoleRequest);
     }
   };
 
@@ -177,7 +93,7 @@ export default function RolesPage() {
     return matchesSearch && matchesStatus;
   });
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -370,9 +286,6 @@ export default function RolesPage() {
                           <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
                             ID: {role.id}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {role.permissions.length} permissions
-                          </p>
                         </div>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 truncate">
                           {role.description}
@@ -387,7 +300,7 @@ export default function RolesPage() {
                       isIconOnly
                       size="sm"
                       variant="light"
-                      onPress={() => openEditForm(role)}
+                      onPress={() => openEditForm(role as any)}
                       className="text-gray-500 hover:text-theme-primary"
                     >
                       <Edit size={16} />
@@ -396,7 +309,7 @@ export default function RolesPage() {
                       isIconOnly
                       size="sm"
                       variant="light"
-                      onPress={() => openDeleteDialog(role)}
+                      onPress={() => openDeleteDialog(role as any)}
                       className="text-gray-500 hover:text-red-500"
                     >
                       <Trash2 size={16} />
@@ -418,6 +331,7 @@ export default function RolesPage() {
               onSubmit={handleFormSubmit}
               onCancel={onClose}
               mode={formMode}
+              isLoading={isSubmitting}
             />
           </div>
         </div>
