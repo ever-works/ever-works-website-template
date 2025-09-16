@@ -16,6 +16,8 @@ interface UserFormProps {
 }
 
 export default function UserForm({ user, onSuccess, isSubmitting = false, onCancel }: UserFormProps) {
+  console.log('UserForm rendered with user prop:', user);
+
   // Extract long className strings into constants for better maintainability
   const selectClasses = "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white";
   
@@ -50,6 +52,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
     status: user?.status || 'active',
     password: '',
   });
+
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -115,13 +118,35 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate required fields
     if (!formData.role) {
       toast.error('Please select a role');
       return;
     }
-    
+
+    // For editing, only check availability if values have changed
+    if (isEditing) {
+      if (formData.username !== initialUsername && usernameAvailable === false) {
+        toast.error('Username is already taken');
+        return;
+      }
+      if (formData.email !== initialEmail && emailAvailable === false) {
+        toast.error('Email is already taken');
+        return;
+      }
+    } else {
+      // For new users, check all availability
+      if (usernameAvailable === false) {
+        toast.error('Username is already taken');
+        return;
+      }
+      if (emailAvailable === false) {
+        toast.error('Email is already taken');
+        return;
+      }
+    }
+
     try {
       if (isEditing) {
         const updateData: UpdateUserRequest = {
@@ -136,7 +161,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
 
         const updatedUser = await updateUser(user.id, updateData);
         if (updatedUser) {
-          onSuccess(updateData);
+          onSuccess(updatedUser);
         }
       } else {
         const createData: CreateUserRequest = {
@@ -154,7 +179,8 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
           onSuccess(createData);
         }
       }
-    } catch {
+    } catch (error) {
+      console.error('Error saving user:', error);
       toast.error('Failed to save user');
     }
   };

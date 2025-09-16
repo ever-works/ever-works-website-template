@@ -94,6 +94,7 @@ export default function AdminUsersPage() {
       const data: PaginatedResponse<UserWithCount[]> = await response.json();
       
       if (data.success && data.data) {
+        console.log('fetchUsers received data:', data.data);
         setUsers(data.data);
         setTotalUsers(data.total || 0);
         setTotalPages(data.totalPages || 1);
@@ -151,33 +152,6 @@ export default function AdminUsersPage() {
     }
   };
 
-  // Update user
-  const handleUpdate = async (data: UpdateUserRequest & { id: string }) => {
-    try {
-      setIsSubmitting(true);
-      const response = await fetch(`/api/admin/users/${data.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      
-      const result: ApiResponse<{ user: UserData }> = await response.json();
-      
-      if (result.success) {
-        toast.success(result.message || 'User updated successfully');
-        onClose();
-        fetchUsers();
-        fetchStats();
-      } else {
-        toast.error(result.error || 'Failed to update user');
-      }
-    } catch (error) {
-      console.error('Failed to update user:', error);
-      toast.error('Failed to update user');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   // Delete user
   const handleDelete = async (id: string) => {
@@ -213,18 +187,22 @@ export default function AdminUsersPage() {
   };
 
   const openEditForm = (user: UserData) => {
+    console.log('openEditForm called with user:', user);
     setFormMode('edit');
     setSelectedUser(user);
     onOpen();
   };
 
-  const handleFormSubmit = async (data: CreateUserRequest | UpdateUserRequest) => {
+  const handleFormSubmit = async (data: CreateUserRequest | UpdateUserRequest | UserData) => {
     if (formMode === 'create') {
       await handleCreate(data as CreateUserRequest);
     } else {
-      if (selectedUser) {
-        await handleUpdate({ ...data, id: selectedUser.id } as UpdateUserRequest & { id: string });
-      }
+      // For edit mode, the UserForm already handles the update
+      // We just need to refresh the data and close the modal
+      toast.success('User updated successfully');
+      onClose();
+      fetchUsers();
+      fetchStats();
     }
   };
 

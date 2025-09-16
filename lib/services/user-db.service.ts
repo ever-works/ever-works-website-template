@@ -72,13 +72,41 @@ export class UserDbService {
 
   async updateUser(id: string, data: UpdateUserRequest): Promise<AuthUserData> {
     try {
-      const updateData: Record<string, unknown> = {};
-      if (data.email !== undefined) updateData.email = data.email;
+      const now = new Date();
 
+      // Prepare data for users table update
+      const userUpdateData: Record<string, unknown> = {
+        updatedAt: now,
+      };
+      if (data.email !== undefined) userUpdateData.email = data.email;
+
+      // Prepare data for client_profiles table update
+      const profileUpdateData: Record<string, unknown> = {
+        updated_at: now,
+      };
+      if (data.username !== undefined) profileUpdateData.username = data.username;
+      if (data.name !== undefined) profileUpdateData.name = data.name;
+      if (data.title !== undefined) profileUpdateData.job_title = data.title;
+      if (data.avatar !== undefined) profileUpdateData.avatar = data.avatar;
+      if (data.status !== undefined) profileUpdateData.status = data.status;
+      if (data.email !== undefined) profileUpdateData.email = data.email; // Keep email in sync
+
+      // Update users table
+      console.log('Updating users table with:', userUpdateData);
       const result = await db.update(users)
-        .set(updateData)
+        .set(userUpdateData)
         .where(eq(users.id, id))
         .returning();
+
+      // Update client_profiles table if we have profile data to update
+      if (Object.keys(profileUpdateData).length > 1) { // More than just updated_at
+        console.log('Updating client_profiles table with:', profileUpdateData);
+        const profileResult = await db.update(clientProfiles)
+          .set(profileUpdateData)
+          .where(eq(clientProfiles.userId, id))
+          .returning();
+        console.log('Client profile update result:', profileResult);
+      }
 
       if (result.length === 0) {
         throw new Error(`User with ID '${id}' not found`);
@@ -111,28 +139,49 @@ export class UserDbService {
   }> {
     try {
       const { page = 1, limit = 10, search, sortBy = 'email', sortOrder = 'asc' } = options as any;
-      
-      let query = db.select().from(users);
+
+      // Join users with client_profiles to get complete user data
+      let query = db.select({
+        id: users.id,
+        email: users.email,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+        // Profile data
+        username: clientProfiles.username,
+        name: clientProfiles.name,
+        title: clientProfiles.jobTitle,
+        avatar: clientProfiles.avatar,
+        status: clientProfiles.status,
+      })
+      .from(users)
+      .leftJoin(clientProfiles, eq(users.id, clientProfiles.userId));
+
       const conditions: SQL[] = [];
       conditions.push(isNull(users.deletedAt));
 
       if (search) {
-        // Filter by email only in minimized schema
-        conditions.push(sql`${users.email} ILIKE ${`%${search.replace(/\\/g, "\\\\").replace(/[%_]/g, "\\$&")}%`}`);
+        // Search in email, name, or username
+        conditions.push(sql`(
+          ${users.email} ILIKE ${`%${search.replace(/\\/g, "\\\\").replace(/[%_]/g, "\\$&")}%`} OR
+          ${clientProfiles.name} ILIKE ${`%${search.replace(/\\/g, "\\\\").replace(/[%_]/g, "\\$&")}%`} OR
+          ${clientProfiles.username} ILIKE ${`%${search.replace(/\\/g, "\\\\").replace(/[%_]/g, "\\$&")}%`}
+        )`);
       }
 
       if (conditions.length > 0) {
         query = query.where(and(...conditions));
       }
       
-      // Get total count with same filters
-      let countQuery = db.select({ count: sql`count(*)` }).from(users);
+      // Get total count with same filters (need to join for search to work)
+      let countQuery = db.select({ count: sql`count(*)` })
+        .from(users)
+        .leftJoin(clientProfiles, eq(users.id, clientProfiles.userId));
       if (conditions.length > 0) {
         countQuery = countQuery.where(and(...conditions));
       }
       const countResult = await countQuery;
       const total = Number(countResult[0].count);
-      
+
       // Apply sorting and pagination
       const sortFieldMap: Record<string, any> = {
         email: users.email,
@@ -146,7 +195,7 @@ export class UserDbService {
         .offset((page - 1) * limit);
       
       return {
-        users: result.map(this.mapDbToAuthUserData),
+        users: result.map(this.mapJoinedDataToAuthUserData),
         total,
         page,
         limit,
@@ -217,6 +266,22 @@ export class UserDbService {
       email: dbUser.email || '',
       created_at: dbUser.createdAt.toISOString(),
       updated_at: dbUser.updatedAt.toISOString(),
+    };
+  }
+
+  private mapJoinedDataToAuthUserData(joinedData: any): AuthUserData {
+    return {
+      id: joinedData.id,
+      email: joinedData.email || '',
+      username: joinedData.username || '',
+      name: joinedData.name || '',
+      title: joinedData.title || '',
+      avatar: joinedData.avatar || '',
+      status: joinedData.status || 'active',
+      role: '', // TODO: Add role from user_roles join
+      created_at: joinedData.createdAt.toISOString(),
+      updated_at: joinedData.updatedAt.toISOString(),
+      created_by: 'system', // TODO: Add proper created_by field
     };
   }
 } 
