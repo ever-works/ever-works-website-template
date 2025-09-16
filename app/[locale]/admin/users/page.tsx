@@ -94,7 +94,6 @@ export default function AdminUsersPage() {
       const data: PaginatedResponse<UserWithCount[]> = await response.json();
       
       if (data.success && data.data) {
-        console.log('fetchUsers received data:', data.data);
         setUsers(data.data);
         setTotalUsers(data.total || 0);
         setTotalPages(data.totalPages || 1);
@@ -187,7 +186,6 @@ export default function AdminUsersPage() {
   };
 
   const openEditForm = (user: UserData) => {
-    console.log('openEditForm called with user:', user);
     setFormMode('edit');
     setSelectedUser(user);
     onOpen();

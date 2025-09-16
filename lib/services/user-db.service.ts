@@ -1,5 +1,5 @@
 import { db } from '@/lib/db/drizzle';
-import { users, clientProfiles } from '@/lib/db/schema';
+import { users, clientProfiles, userRoles } from '@/lib/db/schema';
 import { eq, desc, asc, and, sql, isNull, type SQL } from 'drizzle-orm';
 import { AuthUserData, CreateUserRequest, UpdateUserRequest, UserListOptions } from '@/lib/types/user';
 import { hash } from 'bcryptjs';
@@ -92,7 +92,6 @@ export class UserDbService {
       if (data.email !== undefined) profileUpdateData.email = data.email; // Keep email in sync
 
       // Update users table
-      console.log('Updating users table with:', userUpdateData);
       const result = await db.update(users)
         .set(userUpdateData)
         .where(eq(users.id, id))
@@ -100,12 +99,22 @@ export class UserDbService {
 
       // Update client_profiles table if we have profile data to update
       if (Object.keys(profileUpdateData).length > 1) { // More than just updated_at
-        console.log('Updating client_profiles table with:', profileUpdateData);
-        const profileResult = await db.update(clientProfiles)
+        await db.update(clientProfiles)
           .set(profileUpdateData)
-          .where(eq(clientProfiles.userId, id))
-          .returning();
-        console.log('Client profile update result:', profileResult);
+          .where(eq(clientProfiles.userId, id));
+      }
+
+      // Update role if provided
+      if (data.role !== undefined) {
+        // Delete existing role assignments
+        await db.delete(userRoles).where(eq(userRoles.userId, id));
+        // Insert new role assignment
+        if (data.role) {
+          await db.insert(userRoles).values({
+            userId: id,
+            roleId: data.role,
+          });
+        }
       }
 
       if (result.length === 0) {
@@ -140,7 +149,7 @@ export class UserDbService {
     try {
       const { page = 1, limit = 10, search, sortBy = 'email', sortOrder = 'asc' } = options as any;
 
-      // Join users with client_profiles to get complete user data
+      // Join users with client_profiles and roles to get complete user data
       let query = db.select({
         id: users.id,
         email: users.email,
@@ -152,9 +161,12 @@ export class UserDbService {
         title: clientProfiles.jobTitle,
         avatar: clientProfiles.avatar,
         status: clientProfiles.status,
+        // Role data
+        roleId: userRoles.roleId,
       })
       .from(users)
-      .leftJoin(clientProfiles, eq(users.id, clientProfiles.userId));
+      .leftJoin(clientProfiles, eq(users.id, clientProfiles.userId))
+      .leftJoin(userRoles, eq(users.id, userRoles.userId));
 
       const conditions: SQL[] = [];
       conditions.push(isNull(users.deletedAt));
@@ -175,7 +187,8 @@ export class UserDbService {
       // Get total count with same filters (need to join for search to work)
       let countQuery = db.select({ count: sql`count(*)` })
         .from(users)
-        .leftJoin(clientProfiles, eq(users.id, clientProfiles.userId));
+        .leftJoin(clientProfiles, eq(users.id, clientProfiles.userId))
+        .leftJoin(userRoles, eq(users.id, userRoles.userId));
       if (conditions.length > 0) {
         countQuery = countQuery.where(and(...conditions));
       }
@@ -278,7 +291,7 @@ export class UserDbService {
       title: joinedData.title || '',
       avatar: joinedData.avatar || '',
       status: joinedData.status || 'active',
-      role: '', // TODO: Add role from user_roles join
+      role: joinedData.roleId || '',
       created_at: joinedData.createdAt.toISOString(),
       updated_at: joinedData.updatedAt.toISOString(),
       created_by: 'system', // TODO: Add proper created_by field
