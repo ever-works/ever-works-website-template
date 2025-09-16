@@ -11,6 +11,7 @@ import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, Externa
 import { useAdminItems } from "@/hooks/use-admin-items";
 
 export default function AdminItemsPage() {
+  let PageSize = 10;
   // Use custom hook
   const {
     items,
@@ -24,7 +25,7 @@ export default function AdminItemsPage() {
     updateItem,
     deleteItem,
     reviewItem,
-  } = useAdminItems({ page: 1, limit: 10 });
+  } = useAdminItems({ page: 1, limit: PageSize });
 
   // Local state for UI
   const [reviewingItems, setReviewingItems] = useState<Set<string>>(new Set());
