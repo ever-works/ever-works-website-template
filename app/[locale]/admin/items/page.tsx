@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,146 +8,47 @@ import { ItemForm } from "@/components/admin/items/item-form";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITEM_STATUS_COLORS } from "@/lib/types/item";
 import { UniversalPagination } from "@/components/universal-pagination";
 import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, ExternalLink, Loader2 } from "lucide-react";
-import { toast } from "sonner";
-
-interface ItemsResponse {
-  items: ItemData[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-  success: boolean;
-  message?: string;
-  error?: string;
-}
+import { useAdminItems } from "@/hooks/use-admin-items";
 
 export default function AdminItemsPage() {
-  const [items, setItems] = useState<ItemData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const PageSize = 10;
+  // Use custom hook
+  const {
+    items,
+    total: totalItems,
+    page: currentPage,
+    totalPages,
+    stats,
+    isLoading,
+    isSubmitting,
+    createItem,
+    updateItem,
+    deleteItem,
+    reviewItem,
+  } = useAdminItems({ page: 1, limit: PageSize });
+
+  // Local state for UI
   const [reviewingItems, setReviewingItems] = useState<Set<string>>(new Set());
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const [stats, setStats] = useState({
-    total: 0,
-    draft: 0,
-    pending: 0,
-    approved: 0,
-    rejected: 0,
-  });
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [selectedItem, setSelectedItem] = useState<ItemData | undefined>();
 
-  const fetchItems = async (page: number = 1) => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`/api/admin/items?page=${page}&limit=10`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch items');
-      }
-      
-      const data: ItemsResponse = await response.json();
-      setItems(data.items);
-      setCurrentPage(data.page);
-      setTotalPages(data.totalPages);
-      setTotalItems(data.total);
-    } catch (error) {
-      console.error('Error fetching items:', error);
-      toast.error('Failed to fetch items');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchStats = async () => {
-    try {
-      const response = await fetch('/api/admin/items/stats');
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch stats');
-      }
-      
-      const data = await response.json();
-      if (data.success) {
-        setStats(data.stats);
-      }
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchItems();
-    fetchStats();
-  }, []);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    fetchItems(page);
-  };
 
   const handleCreateItem = async (data: CreateItemRequest) => {
-    try {
-      setIsSubmitting(true);
-      const response = await fetch('/api/admin/items', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result: ItemsResponse = await response.json();
-
-      if (result.success) {
-        toast.success(result.message || 'Item created successfully');
-        setIsModalOpen(false);
-        fetchItems(currentPage);
-        fetchStats(); // Refresh stats after create
-      } else {
-        toast.error(result.error || 'Failed to create item');
-      }
-    } catch (error) {
-      console.error('Error creating item:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to create item');
-    } finally {
-      setIsSubmitting(false);
+    const success = await createItem(data as any);
+    if (success) {
+      setIsModalOpen(false);
     }
   };
 
   const handleUpdateItem = async (data: UpdateItemRequest) => {
     if (!selectedItem) return;
-
-    try {
-      setIsSubmitting(true);
-      const response = await fetch(`/api/admin/items/${selectedItem.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result: ItemsResponse = await response.json();
-
-      if (result.success) {
-        toast.success(result.message || 'Item updated successfully');
-        setIsModalOpen(false);
-        fetchItems(currentPage);
-        fetchStats(); // Refresh stats after update
-      } else {
-        toast.error(result.error || 'Failed to update item');
-      }
-    } catch (error) {
-      console.error('Error updating item:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to update item');
-    } finally {
-      setIsSubmitting(false);
+    
+    const success = await updateItem(selectedItem.id, data as any);
+    if (success) {
+      setIsModalOpen(false);
     }
   };
 
@@ -161,23 +62,7 @@ export default function AdminItemsPage() {
 
     try {
       setReviewingItems(prev => new Set(prev).add(itemId));
-      
-      const response = await fetch(`/api/admin/items/${itemId}`, {
-        method: 'DELETE',
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        toast.success('Item deleted successfully');
-        fetchItems(currentPage);
-        fetchStats(); // Refresh stats after delete
-      } else {
-        toast.error(result.error || 'Failed to delete item');
-      }
-    } catch (error) {
-      console.error('Error deleting item:', error);
-      toast.error('Failed to delete item');
+      await deleteItem(itemId);
     } finally {
       setReviewingItems(prev => {
         const newSet = new Set(prev);
@@ -193,27 +78,7 @@ export default function AdminItemsPage() {
     
     try {
       setReviewingItems(prev => new Set(prev).add(itemId));
-      
-      const response = await fetch(`/api/admin/items/${itemId}/review`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status, review_notes: notes }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        toast.success(`Item ${status} successfully`);
-        fetchItems(currentPage);
-        fetchStats(); // Refresh stats after review
-      } else {
-        toast.error(result.error || `Failed to ${status} item`);
-      }
-    } catch (error) {
-      console.error('Error reviewing item:', error);
-      toast.error(`Failed to ${status} item`);
+      await reviewItem(itemId, status, notes);
     } finally {
       setReviewingItems(prev => {
         const newSet = new Set(prev);
@@ -502,7 +367,7 @@ export default function AdminItemsPage() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center space-x-2 mb-2">
                               <h4 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
-                                {item.name}
+                                {item.name || 'Untitled'}
                               </h4>
                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors.bg} ${statusColors.text}`}>
                                 {getStatusIcon(item.status)}
@@ -543,7 +408,7 @@ export default function AdminItemsPage() {
                             <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
                               <span>ID: {item.id}</span>
                               <span>Slug: {item.slug}</span>
-                              <span>Updated: {new Date(item.updated_at).toLocaleDateString()}</span>
+                              <span>Updated: {new Date(item.updated_at || Date.now()).toLocaleDateString()}</span>
                             </div>
                           </div>
                         </div>
@@ -555,7 +420,7 @@ export default function AdminItemsPage() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => window.open(item.source_url, '_blank')}
+                          onClick={() => window.open(item.source_url || '#', '_blank')}
                           className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20"
                           title="View Source"
                         >
@@ -608,7 +473,7 @@ export default function AdminItemsPage() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => openEditModal(item)}
+                          onClick={() => openEditModal(item as any)}
                           disabled={reviewingItems.has(item.id)}
                           className={`h-8 w-8 p-0 transition-all duration-200 ${
                             reviewingItems.has(item.id)
@@ -678,7 +543,7 @@ export default function AdminItemsPage() {
           <UniversalPagination
             page={currentPage}
             totalPages={totalPages}
-            onPageChange={handlePageChange}
+            onPageChange={() => {}}
           />
         </div>
       )}

@@ -1,108 +1,39 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { Button, Card, CardBody, Chip } from "@heroui/react";
 import { Trash2, MessageSquare, Search } from "lucide-react";
 import { UniversalPagination } from "@/components/universal-pagination";
 import DeleteCommentDialog from "@/components/admin/comments/delete-comment-dialog";
-import { toast } from "sonner";
-
-interface AdminCommentUser {
-  id: string;
-  name: string | null;
-  email: string | null;
-  image: string | null;
-}
-
-interface AdminCommentItem {
-  id: string;
-  content: string;
-  rating: number | null;
-  userId: string;
-  itemId: string;
-  createdAt: string | null;
-  updatedAt: string | null;
-  user: AdminCommentUser;
-}
-
-interface ListResponse {
-  comments: AdminCommentItem[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
+import { useAdminComments, AdminCommentItem } from "@/hooks/use-admin-comments";
 
 export default function AdminCommentsPage() {
-  const [comments, setComments] = useState<AdminCommentItem[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isFiltering, setIsFiltering] = useState<boolean>(false);
-  const [isDeleting, setIsDeleting] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(1);
-  const [totalComments, setTotalComments] = useState<number>(0);
-  const [limit] = useState<number>(10);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  // Use custom hook
+  const {
+    comments,
+    isLoading,
+    isFiltering,
+    isDeleting,
+    currentPage,
+    totalPages,
+    totalComments,
+    searchTerm,
+    deleteComment,
+    handlePageChange,
+    handleSearch,
+  } = useAdminComments({
+    page: 1,
+    limit: 10,
+    search: '',
+  });
+
+  // Local state for delete dialog
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const [commentToDelete, setCommentToDelete] = useState<AdminCommentItem | null>(null);
 
-  const fetchComments = useCallback(async (page: number = currentPage, search: string = searchTerm) => {
-    try {
-      if (page === 1) {
-        setIsFiltering(true);
-      } else {
-        setIsLoading(true);
-      }
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: limit.toString(),
-        ...(search && { search }),
-      });
-      
-      const response = await fetch(`/api/admin/comments?${params}`);
-      const data: ListResponse = await response.json();
-      
-      if (data.comments) {
-        setComments(data.comments);
-        setTotalComments(data.total || 0);
-        setTotalPages(data.totalPages || 1);
-        setCurrentPage(data.page || 1);
-      } else {
-        toast.error('Failed to fetch comments');
-      }
-    } catch (error) {
-      console.error('Failed to fetch comments:', error);
-      toast.error('Failed to fetch comments');
-    } finally {
-      setIsLoading(false);
-      setIsFiltering(false);
-    }
-  }, [currentPage, limit, searchTerm]);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    fetchComments(page);
-  };
-
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
-  };
-
+  // Handler functions
   const handleDelete = async (id: string) => {
-    if (!id) return;
-    try {
-      setIsDeleting(id);
-      const res = await fetch(`/api/admin/comments/${id}`, { method: "DELETE" });
-      if (!res.ok && res.status !== 204) throw new Error("Delete failed");
-      toast.success("Comment deleted");
-      fetchComments(currentPage, searchTerm);
-    } catch (e) {
-      console.error("Failed to delete comment:", e);
-      toast.error("Failed to delete comment");
-    } finally {
-      setIsDeleting(null);
-    }
+    await deleteComment(id);
   };
 
   const openDeleteDialog = (comment: AdminCommentItem) => {
@@ -120,21 +51,6 @@ export default function AdminCommentsPage() {
     await handleDelete(commentToDelete.id);
     closeDeleteDialog();
   };
-
-  useEffect(() => {
-    fetchComments(currentPage, searchTerm);
-  }, [fetchComments, currentPage, searchTerm]);
-
-  // Debounced search effect
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (searchTerm !== '') {
-        fetchComments(1, searchTerm);
-      }
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm, fetchComments]);
 
   if (isLoading) {
     return (
@@ -268,9 +184,7 @@ export default function AdminCommentsPage() {
               size="sm"
               color="danger"
               onPress={() => {
-                setSearchTerm('');
-                setCurrentPage(1);
-                fetchComments(1);
+                handleSearch('');
               }}
               className="h-6 px-2 text-xs"
             >
@@ -377,13 +291,13 @@ export default function AdminCommentsPage() {
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-theme-primary rounded-full"></div>
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Showing {((currentPage - 1) * limit) + 1} to {Math.min(currentPage * limit, totalComments)} of {totalComments} comments
+                  Showing {((currentPage - 1) * 10) + 1} to {Math.min(currentPage * 10, totalComments)} of {totalComments} comments
                 </span>
               </div>
               <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-500">
                 <span>Page {currentPage} of {totalPages}</span>
                 <span>•</span>
-                <span>{limit} per page</span>
+                <span>{10} per page</span>
               </div>
             </div>
           </div>

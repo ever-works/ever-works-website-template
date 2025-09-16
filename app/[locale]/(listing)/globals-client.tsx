@@ -7,7 +7,6 @@ import { Tag, Category, ItemData } from "@/lib/content";
 import { sortByNumericProperty, filterItems } from "@/lib/utils";
 import { HomeTwoLayout } from "@/components/home-two";
 import { ListingClient } from "@/components/shared-card/listing-client";
-import { FeaturedItemsSection } from "@/components/featured-items";
 import { useFilters } from "@/hooks/use-filters";
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
@@ -138,7 +137,7 @@ export default function GlobalsClient(props: ListingProps) {
     return (
       <div className="pb-12">
         {/* Featured Items Section - Only show on first page */}
-        {page === 1 && featuredItems.length > 0 && (
+        {/* {page === 1 && featuredItems.length > 0 && (
           <FeaturedItemsSection 
             className="mb-12"
             title="Featured Items"
@@ -146,7 +145,7 @@ export default function GlobalsClient(props: ListingProps) {
             limit={6}
             variant="hero"
           />
-        )}
+        )} */}
         
         <div className="flex flex-col md:flex-row w-full gap-5">
           <div className="lg:sticky lg:top-4 lg:self-start">
