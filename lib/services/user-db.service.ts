@@ -1,7 +1,8 @@
 import { db } from '@/lib/db/drizzle';
 import { users, clientProfiles, userRoles, roles } from '@/lib/db/schema';
 import { eq, desc, asc, and, sql, isNull, type SQL } from 'drizzle-orm';
-import { AuthUserData, CreateUserRequest, UpdateUserRequest, UserListOptions } from '@/lib/types/user';
+import type { PgTransaction } from 'drizzle-orm/pg-core';
+import { AuthUserData, CreateUserRequest, UpdateUserRequest, UserListOptions, UserStatus } from '@/lib/types/user';
 import { hash } from 'bcryptjs';
 
 // Interface for joined query result structure
@@ -14,7 +15,7 @@ interface JoinedUserData {
   name: string | null;
   title: string | null;
   avatar: string | null;
-  status: string | null;
+  status: UserStatus | null;
   roleId: string | null;
   roleName: string | null;
 }
@@ -97,7 +98,7 @@ export class UserDbService {
 
       // Prepare data for client_profiles table update
       const profileUpdateData: Record<string, unknown> = {
-        updated_at: now,
+        updatedAt: now,
       };
       if (data.username !== undefined) profileUpdateData.username = data.username;
       if (data.name !== undefined) profileUpdateData.name = data.name;
@@ -106,35 +107,39 @@ export class UserDbService {
       if (data.status !== undefined) profileUpdateData.status = data.status;
       if (data.email !== undefined) profileUpdateData.email = data.email; // Keep email in sync
 
-      // Update users table
-      const result = await db.update(users)
-        .set(userUpdateData)
-        .where(eq(users.id, id))
-        .returning();
+      const result = await db.transaction(async (tx: PgTransaction<any, any, any>) => {
+        // Update users table
+        const updated = await tx.update(users)
+          .set(userUpdateData)
+          .where(eq(users.id, id))
+          .returning();
 
-      // Update client_profiles table if we have profile data to update
-      if (Object.keys(profileUpdateData).length > 1) { // More than just updated_at
-        await db.update(clientProfiles)
-          .set(profileUpdateData)
-          .where(eq(clientProfiles.userId, id));
-      }
-
-      // Update role if provided
-      if (data.role !== undefined) {
-        // Delete existing role assignments
-        await db.delete(userRoles).where(eq(userRoles.userId, id));
-        // Insert new role assignment
-        if (data.role) {
-          await db.insert(userRoles).values({
-            userId: id,
-            roleId: data.role,
-          });
+        if (updated.length === 0) {
+          throw new Error(`User with ID '${id}' not found`);
         }
-      }
 
-      if (result.length === 0) {
-        throw new Error(`User with ID '${id}' not found`);
-      }
+        // Update client_profiles table if we have profile data to update
+        if (Object.keys(profileUpdateData).length > 1) { // More than just updatedAt
+          await tx.update(clientProfiles)
+            .set(profileUpdateData)
+            .where(eq(clientProfiles.userId, id));
+        }
+
+        // Update role if provided
+        if (data.role !== undefined) {
+          // Delete existing role assignments
+          await tx.delete(userRoles).where(eq(userRoles.userId, id));
+          // Insert new role assignment
+          if (data.role) {
+            await tx.insert(userRoles).values({
+              userId: id,
+              roleId: data.role,
+            });
+          }
+        }
+
+        return updated;
+      });
 
       return this.mapDbToAuthUserData(result[0]);
     } catch (error) {
@@ -162,7 +167,7 @@ export class UserDbService {
     totalPages: number;
   }> {
     try {
-      const { page = 1, limit = 10, search, sortBy = 'email', sortOrder = 'asc' } = options as any;
+      const { page = 1, limit = 10, search, sortBy = 'email', sortOrder = 'asc', role, status } = options as any;
 
       // Join users with client_profiles and roles to get complete user data
       let query = db.select({
@@ -195,6 +200,14 @@ export class UserDbService {
           ${clientProfiles.name} ILIKE ${`%${search.replace(/\\/g, "\\\\").replace(/[%_]/g, "\\$&")}%`} OR
           ${clientProfiles.username} ILIKE ${`%${search.replace(/\\/g, "\\\\").replace(/[%_]/g, "\\$&")}%`}
         )`);
+      }
+
+      if (role) {
+        conditions.push(eq(userRoles.roleId, role));
+      }
+
+      if (status) {
+        conditions.push(eq(clientProfiles.status, status));
       }
 
       if (conditions.length > 0) {
