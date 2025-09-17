@@ -15,6 +15,7 @@ const logger = {
     console.log(`[ServerClient] ${message}`, context || '')
 };
 
+
 // Types for API responses
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -55,15 +56,25 @@ async function fetchWithTimeout(
   } = options;
 
   const attemptFetch = async (attempt: number): Promise<Response> => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-      controller.abort();
-    }, timeout);
+       const timeoutController = new AbortController();
+       const compositeSignal =
+         (AbortSignal as any)?.any && (fetchOptions as any)?.signal
+           ? (AbortSignal as any).any([timeoutController.signal, (fetchOptions as any).signal as AbortSignal])
+           : (() => {
+               const ext = (fetchOptions as any).signal as AbortSignal | undefined;
+               if (ext) {
+                 ext.addEventListener('abort', () => {
+                   (timeoutController as any).abort((ext as any).reason);
+                 }, { once: true });
+               }
+               return timeoutController.signal;
+             })();
+       const timeoutId = setTimeout(() => timeoutController.abort(), timeout);
 
     try {
       const response = await fetch(url, {
         ...fetchOptions,
-        signal: controller.signal,
+        signal: compositeSignal,
         headers: {
           ...DEFAULT_CONFIG.headers,
           ...fetchOptions.headers,
@@ -76,11 +87,14 @@ async function fetchWithTimeout(
       clearTimeout(timeoutId);
 
       // Handle AbortError specifically
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw new Error(`Request timeout after ${timeout}ms`);
+      if (error instanceof Error && (error.name === 'AbortError' || (error as any).code === 'ETIMEDOUT')) {
+        const err = new Error(`Request timeout after ${timeout}ms`, { cause: error as any });
+        (err as any).name = 'TimeoutError';
+        (err as any).code = 'ETIMEDOUT';
+        throw err;
       }
 
-      if (attempt < retries && !controller.signal.aborted) {
+      if (attempt < retries && !compositeSignal.aborted) {
         logger.warn(`Fetch attempt ${attempt + 1} failed, retrying in ${retryDelay}ms...`, { 
           url, 
           attempt: attempt + 1, 
