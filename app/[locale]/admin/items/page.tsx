@@ -12,11 +12,13 @@ import { useAdminItems } from "@/hooks/use-admin-items";
 
 export default function AdminItemsPage() {
   const PageSize = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  
   // Use custom hook
   const {
     items,
     total: totalItems,
-    page: currentPage,
+    page: serverPage,
     totalPages,
     stats,
     isLoading,
@@ -25,7 +27,7 @@ export default function AdminItemsPage() {
     updateItem,
     deleteItem,
     reviewItem,
-  } = useAdminItems({ page: 1, limit: PageSize });
+  } = useAdminItems({ page: currentPage, limit: PageSize });
 
   // Local state for UI
   const [reviewingItems, setReviewingItems] = useState<Set<string>>(new Set());
@@ -103,6 +105,10 @@ export default function AdminItemsPage() {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedItem(undefined);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const handleFormSubmit = (data: CreateItemRequest | UpdateItemRequest) => {
@@ -543,7 +549,7 @@ export default function AdminItemsPage() {
           <UniversalPagination
             page={currentPage}
             totalPages={totalPages}
-            onPageChange={() => {}}
+            onPageChange={handlePageChange}
           />
         </div>
       )}

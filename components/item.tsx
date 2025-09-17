@@ -123,7 +123,7 @@ export default function Item(props: ItemProps) {
 										<FeaturedBadge 
 											variant="hero" 
 											size="sm"
-											className="px-3 py-2 text-xs font-semibold bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 border border-amber-200/50 dark:from-amber-900/30 dark:to-yellow-900/30 dark:text-amber-300 dark:border-amber-700/30 transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-md rounded-full"
+											className="px-3 py-1 text-xs font-normal bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 border border-amber-200/50 dark:from-amber-900/30 dark:to-yellow-900/30 dark:text-amber-300 dark:border-amber-700/30 transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-md rounded-full"
 										/>
 										{/* Glow effect */}
 										<div className="absolute inset-0 bg-amber-400/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
