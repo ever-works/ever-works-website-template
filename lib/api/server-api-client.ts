@@ -19,7 +19,7 @@ export interface FetchOptions extends RequestInit {
 
 // Default configuration
 const DEFAULT_CONFIG = {
-  timeout: 10000, // 10 seconds
+  timeout: 30000, // 30 seconds
   retries: 3,
   retryDelay: 1000, // 1 second
   headers: {
@@ -60,6 +60,11 @@ async function fetchWithTimeout(
       return response;
     } catch (error) {
       clearTimeout(timeoutId);
+
+      // Handle AbortError specifically
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error(`Request timeout after ${timeout}ms`);
+      }
 
       if (attempt < retries && !controller.signal.aborted) {
         console.warn(`Fetch attempt ${attempt + 1} failed, retrying in ${retryDelay}ms...`);
