@@ -3,6 +3,18 @@
  * Provides a centralized way to handle API calls with proper error handling
  */
 
+// Logger utility
+const logger = {
+  info: (message: string, context?: Record<string, any>) =>
+    console.log(`[ServerClient] ${message}`, context || ''),
+  warn: (message: string, context?: Record<string, any>) =>
+    console.warn(`[ServerClient] ${message}`, context || ''),
+  error: (message: string, context?: Record<string, any>) =>
+    console.error(`[ServerClient] ${message}`, context || ''),
+  debug: (message: string, context?: Record<string, any>) =>
+    console.log(`[ServerClient] ${message}`, context || '')
+};
+
 // Types for API responses
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -69,7 +81,12 @@ async function fetchWithTimeout(
       }
 
       if (attempt < retries && !controller.signal.aborted) {
-        console.warn(`Fetch attempt ${attempt + 1} failed, retrying in ${retryDelay}ms...`);
+        logger.warn(`Fetch attempt ${attempt + 1} failed, retrying in ${retryDelay}ms...`, { 
+          url, 
+          attempt: attempt + 1, 
+          retries, 
+          error: error instanceof Error ? error.message : 'Unknown error' 
+        });
         await new Promise(resolve => setTimeout(resolve, retryDelay));
         return attemptFetch(attempt + 1);
       }
@@ -124,7 +141,11 @@ export class ServerClient {
         data,
       };
     } catch (error) {
-      console.error(`API request failed for ${url}:`, error);
+      logger.error(`API request failed for ${url}`, { 
+        url, 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined
+      });
 
       return {
         success: false,
