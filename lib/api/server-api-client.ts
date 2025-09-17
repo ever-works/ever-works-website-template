@@ -42,10 +42,12 @@ async function fetchWithTimeout(
     ...fetchOptions
   } = options;
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
-
   const attemptFetch = async (attempt: number): Promise<Response> => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, timeout);
+
     try {
       const response = await fetch(url, {
         ...fetchOptions,
