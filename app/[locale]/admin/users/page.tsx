@@ -61,7 +61,7 @@ export default function AdminUsersPage() {
     limit: 10,
     search: '',
     role: '',
-    status: 'active',
+    status: '',
   });
 
   // Local state for form
@@ -337,17 +337,17 @@ export default function AdminUsersPage() {
           </div>
 
           {/* Active Filters Count */}
-          {(searchTerm || roleFilter || statusFilter !== 'active') && (
+          {(searchTerm || roleFilter || statusFilter) && (
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-500 dark:text-gray-400">
                 {[
                   searchTerm && 'search',
                   roleFilter && 'role',
-                  statusFilter !== 'active' && 'status'
+                  statusFilter && 'status'
                 ].filter(Boolean).length} filter{[
                   searchTerm && 'search',
                   roleFilter && 'role',
-                  statusFilter !== 'active' && 'status'
+                  statusFilter && 'status'
                 ].filter(Boolean).length !== 1 ? 's' : ''} applied
               </span>
               <Button
@@ -372,7 +372,7 @@ export default function AdminUsersPage() {
           <div className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
             <span>
               Showing {users.length} of {totalUsers} users
-              {(searchTerm || roleFilter || statusFilter !== 'active') && (
+              {(searchTerm || roleFilter || statusFilter) && (
                 <span className="ml-1">
                   • filtered
                 </span>
@@ -425,11 +425,11 @@ export default function AdminUsersPage() {
                     </div>
                     <div className="flex items-center space-x-4">
                       <Chip
-                        color={user.isActive ? 'success' : 'default'}
+                        color={user.status === 'active' ? 'success' : 'default'}
                         variant="flat"
                         size="sm"
                       >
-                        {user.isActive ? 'Active' : 'Inactive'}
+                        {user.status === 'active' ? 'Active' : 'Inactive'}
                       </Chip>
                       <Chip
                         color="primary"
