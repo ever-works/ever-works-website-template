@@ -1,7 +1,8 @@
 "use client";
 import { Crown } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { memo, lazy, Suspense, useEffect, useRef } from "react";
+import { memo, lazy, Suspense, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { RefObject } from "react";
 import { Avatar } from "../header/avatar";
 import { cn } from "@/lib/utils";
@@ -137,6 +138,24 @@ function ProfileButton() {
   const { handleLogout } = useLogoutOverlay();
   const { user, profilePath, isAdmin, displayRole, onlineStatus, isLoading } = useUserUtils();
   const warnedRef = useRef(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  // Custom close handler that respects navigation state
+  const handleMenuClose = () => {
+    if (!isNavigating) {
+      closeMenu();
+    }
+  };
+
+  // Navigation state handler to be passed to menu
+  const handleNavigationStart = () => {
+    setIsNavigating(true);
+  };
+
+  const handleNavigationEnd = () => {
+    setIsNavigating(false);
+    closeMenu();
+  };
 
   // Add keyboard navigation support
   useEffect(() => {
@@ -192,9 +211,9 @@ function ProfileButton() {
 
       {/* Add backdrop for better UX when menu is open */}
       {isProfileMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-black/20 dark:bg-black/40"
-          onClick={closeMenu}
+          onClick={handleMenuClose}
           aria-hidden="true"
         />
       )}
@@ -208,12 +227,28 @@ function ProfileButton() {
             profilePath={profilePath}
             displayRole={displayRole}
             onlineStatus={onlineStatus}
-            onItemClick={closeMenu}
+            onItemClick={handleMenuClose}
+            onNavigationStart={handleNavigationStart}
+            onNavigationEnd={handleNavigationEnd}
+            isNavigating={isNavigating}
             onLogout={handleLogout}
             logoutText={t("settings.LOGOUT")}
             logoutDescription={t("settings.LOGOUT_DESC")}
           />
         </Suspense>
+      )}
+
+      {/* Full screen loading overlay with backdrop blur - render as portal */}
+      {isNavigating && typeof window !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999999] bg-black/50 backdrop-blur-sm flex items-center justify-center" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999999 }}>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-2xl">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600 dark:border-gray-400 mx-auto mb-4"></div>
+              <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -14,6 +14,9 @@ interface ProfileMenuProps {
   displayRole: RoleLabel;
   onlineStatus: PresenceStatus;
   onItemClick: () => void;
+  onNavigationStart?: () => void;
+  onNavigationEnd?: () => void;
+  isNavigating?: boolean;
   onLogout: () => void | Promise<void>;
   logoutText: string;
   logoutDescription?: string;
@@ -27,6 +30,9 @@ function ProfileMenu({
   displayRole,
   onlineStatus,
   onItemClick,
+  onNavigationStart,
+  onNavigationEnd,
+  isNavigating,
   onLogout,
   logoutText,
   logoutDescription,
@@ -59,6 +65,9 @@ function ProfileMenu({
         user={user}
         profilePath={profilePath}
         onItemClick={onItemClick}
+        onNavigationStart={onNavigationStart}
+        onNavigationEnd={onNavigationEnd}
+        isNavigating={isNavigating}
       />
 
       {/* Separator */}
