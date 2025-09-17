@@ -8,7 +8,7 @@ export function useActiveRoles() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getActiveRoles = useCallback(async () => {
+  const getActiveRoles = useCallback(async (signal?: AbortSignal) => {
     try {
       setLoading(true);
       setError(null);
@@ -18,6 +18,7 @@ export function useActiveRoles() {
         headers: {
           'Content-Type': 'application/json',
         },
+        signal,
       });
 
       if (!response.ok) {
@@ -25,6 +26,11 @@ export function useActiveRoles() {
       }
 
       const data = await response.json();
+
+      // Check if the request was aborted before updating state
+      if (signal?.aborted) {
+        return [];
+      }
 
       if (data.roles) {
         setRoles(data.roles);
@@ -34,6 +40,11 @@ export function useActiveRoles() {
         throw new Error('Invalid response format');
       }
     } catch (err) {
+      // Don't update state if the request was aborted
+      if (signal?.aborted) {
+        return [];
+      }
+
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch active roles';
       console.error('Error fetching active roles:', err);
       setError(errorMessage);

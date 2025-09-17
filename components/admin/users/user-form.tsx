@@ -35,9 +35,14 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
 
   const isEditing = !!user;
 
-  // Load active roles on component mount
+  // Load active roles on component mount with proper cleanup
   useEffect(() => {
-    getActiveRoles();
+    const abortController = new AbortController();
+    getActiveRoles(abortController.signal);
+
+    return () => {
+      abortController.abort();
+    };
   }, []); // Remove getActiveRoles from dependencies to prevent re-runs
 
   // Form state
