@@ -4,6 +4,21 @@ import { eq, desc, asc, and, sql, isNull, type SQL } from 'drizzle-orm';
 import { AuthUserData, CreateUserRequest, UpdateUserRequest, UserListOptions } from '@/lib/types/user';
 import { hash } from 'bcryptjs';
 
+// Interface for joined query result structure
+interface JoinedUserData {
+  id: string;
+  email: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  username: string | null;
+  name: string | null;
+  title: string | null;
+  avatar: string | null;
+  status: string | null;
+  roleId: string | null;
+  roleName: string | null;
+}
+
 export class UserDbService {
   async readUsers(): Promise<AuthUserData[]> {
     try {
@@ -285,17 +300,17 @@ export class UserDbService {
     };
   }
 
-  private mapJoinedDataToAuthUserData(joinedData: any): AuthUserData {
+  private mapJoinedDataToAuthUserData(joinedData: JoinedUserData): AuthUserData {
     return {
       id: joinedData.id,
-      email: joinedData.email || '',
-      username: joinedData.username || '',
-      name: joinedData.name || '',
-      title: joinedData.title || '',
-      avatar: joinedData.avatar || '',
-      status: joinedData.status || 'active',
-      role: joinedData.roleId || '',
-      roleName: joinedData.roleName || 'No role',
+      email: joinedData.email ?? '',
+      username: joinedData.username ?? '',
+      name: joinedData.name ?? '',
+      title: joinedData.title ?? '',
+      avatar: joinedData.avatar ?? '',
+      status: joinedData.status ?? 'active',
+      role: joinedData.roleId ?? '',
+      roleName: joinedData.roleName ?? 'No role',
       created_at: joinedData.createdAt.toISOString(),
       updated_at: joinedData.updatedAt.toISOString(),
       created_by: 'system', // TODO: Add proper created_by field
