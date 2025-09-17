@@ -32,9 +32,9 @@ export interface FetchOptions extends RequestInit {
 
 // Default configuration
 const DEFAULT_CONFIG = {
-  timeout: 30000, // 30 seconds
+  timeout: 30000,
   retries: 3,
-  retryDelay: 1000, // 1 second
+  retryDelay: 1000, 
   headers: {
     'Content-Type': 'application/json',
     'User-Agent': 'EverWorks-Server/1.0',
