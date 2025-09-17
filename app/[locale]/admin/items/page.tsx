@@ -109,6 +109,7 @@ export default function AdminItemsPage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleFormSubmit = (data: CreateItemRequest | UpdateItemRequest) => {
