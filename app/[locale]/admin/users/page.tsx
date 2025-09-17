@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
 import { Plus, Edit, Trash2, Users, UserCheck, UserX, Search, ChevronDown } from "lucide-react";
 import UserForm from "@/components/admin/users/user-form";
-import { UserData, CreateUserRequest, UpdateUserRequest } from "@/lib/types/user";
+import { UserData } from "@/lib/types/user";
 import { useAdminUsers } from "@/hooks/use-admin-users";
 
 // Helper function to generate consistent avatar colors based on user identifier
@@ -49,8 +49,6 @@ export default function AdminUsersPage() {
     searchTerm,
     roleFilter,
     statusFilter,
-    createUser,
-    updateUser,
     deleteUser,
     handlePageChange,
     handleSearch,
@@ -70,16 +68,6 @@ export default function AdminUsersPage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // Handler functions
-  const handleCreate = async (data: CreateUserRequest) => {
-   const ok= await createUser(data);
-   if (ok)onClose();
-
-  };
-
-  const handleUpdate = async (id: string, data: UpdateUserRequest) => {
-    const ok = await updateUser(id, data);
-    if (ok) onClose();
-  };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
@@ -101,21 +89,6 @@ export default function AdminUsersPage() {
     onOpen();
   };
 
-  const handleFormSubmit = async (
-    data: CreateUserRequest | (UpdateUserRequest & { id?: string }) | UserData
-  ) => {
-    if (formMode === 'create') {
-      await handleCreate(data as CreateUserRequest);
-    } else {
-      const maybe = data as Partial<UserData> & { id?: string };
-      if (!maybe.id) {
-        console.error('Edit submit missing id');
-        return;
-      }
-      const { id, ...updateData } = maybe;
-      await handleUpdate(id, updateData as UpdateUserRequest);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -325,11 +298,12 @@ export default function AdminUsersPage() {
 
           {/* Status Filter */}
           <div className="relative">
-            <select 
-              value={statusFilter} 
+            <select
+              value={statusFilter}
               onChange={(e) => handleStatusFilter(e.target.value)}
               className="appearance-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 pr-8 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 cursor-pointer"
             >
+              <option value="">All statuses</option>
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
@@ -357,7 +331,7 @@ export default function AdminUsersPage() {
                 onPress={() => {
                   handleSearch('');
                   handleRoleFilter('');
-                  handleStatusFilter('active');
+                  handleStatusFilter('');
                 }}
                 className="h-6 px-2 text-xs"
               >
@@ -523,7 +497,7 @@ export default function AdminUsersPage() {
             <div className="overflow-y-auto max-h-[calc(90vh-4rem)]">
               <UserForm
                 user={selectedUser || undefined}
-                onSuccess={handleFormSubmit}
+                onSuccess={() => onClose()}
                 isSubmitting={isSubmitting}
                 onCancel={onClose}
               />
