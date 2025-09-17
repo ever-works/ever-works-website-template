@@ -76,8 +76,8 @@ export default function AdminUsersPage() {
 
   };
 
-  const handleUpdate = async (data: UpdateUserRequest & { id: string }) => {
-    const ok= await updateUser(data.id, data);
+  const handleUpdate = async (id: string, data: UpdateUserRequest) => {
+    const ok = await updateUser(id, data);
     if (ok) onClose();
   };
 
@@ -101,11 +101,19 @@ export default function AdminUsersPage() {
     onOpen();
   };
 
-  const handleFormSubmit = async (data: CreateUserRequest | UpdateUserRequest | UserData) => {
+  const handleFormSubmit = async (
+    data: CreateUserRequest | (UpdateUserRequest & { id?: string }) | UserData
+  ) => {
     if (formMode === 'create') {
       await handleCreate(data as CreateUserRequest);
     } else {
-      await handleUpdate(data as UpdateUserRequest & { id: string });
+      const maybe = data as Partial<UserData> & { id?: string };
+      if (!maybe.id) {
+        console.error('Edit submit missing id');
+        return;
+      }
+      const { id, ...updateData } = maybe;
+      await handleUpdate(id, updateData as UpdateUserRequest);
     }
   };
 
