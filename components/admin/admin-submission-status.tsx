@@ -19,9 +19,9 @@ export function AdminSubmissionStatus({ data, isLoading }: AdminSubmissionStatus
   // Guard against empty data - show demo chart instead
   if (total === 0) {
     // Demo data for when no submissions exist
-    const demoData = [
-      { status: 'Ready', count: 1, color: '#6366F1', percentage: 100 }
-    ];
+    // const demoData = [
+    //   { status: 'Ready', count: 1, color: '#6366F1', percentage: 100 }
+    // ];
 
     return (
       <Card>
@@ -91,7 +91,7 @@ export function AdminSubmissionStatus({ data, isLoading }: AdminSubmissionStatus
                     Awaiting Your First Submissions
                   </h4>
                   <p className="text-sm text-indigo-700 dark:text-indigo-300 mb-3">
-                    Once users start submitting projects, you'll see a detailed breakdown of approval statuses, trends, and metrics here.
+                    Once users start submitting projects, you&apos;ll see a detailed breakdown of approval statuses, trends, and metrics here.
                   </p>
                   <div className="grid grid-cols-3 gap-3 text-center">
                     <div className="bg-white dark:bg-indigo-800/30 rounded-lg p-2">
