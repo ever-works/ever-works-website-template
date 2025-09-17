@@ -18,7 +18,6 @@ export default function AdminItemsPage() {
   const {
     items,
     total: totalItems,
-    page: serverPage,
     totalPages,
     stats,
     isLoading,
