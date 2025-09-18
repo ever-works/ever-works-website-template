@@ -1,7 +1,8 @@
 import { db } from '@/lib/db/drizzle';
 import { roles } from '@/lib/db/schema';
 import { eq, desc, asc, sql } from 'drizzle-orm';
-import { RoleData, CreateRoleRequest, UpdateRoleRequest, RoleStatus, RoleListOptions } from '@/lib/types/role';
+import { RoleStatus, RoleListOptions } from '@/lib/types/role';
+import { RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/hooks/use-admin-roles';
 import { Permission } from '@/lib/permissions/definitions';
 
 export class RoleDbService {
@@ -37,6 +38,7 @@ export class RoleDbService {
         name: data.name,
         description: data.description,
         status: data.status || 'active',
+        isAdmin: data.isAdmin || false,
         permissions: JSON.stringify(data.permissions),
         created_by: 'system',
       };
@@ -56,6 +58,7 @@ export class RoleDbService {
       if (data.name !== undefined) updateData.name = data.name;
       if (data.description !== undefined) updateData.description = data.description;
       if (data.status !== undefined) updateData.status = data.status;
+      if (data.isAdmin !== undefined) updateData.isAdmin = data.isAdmin;
       if (data.permissions !== undefined) updateData.permissions = JSON.stringify(data.permissions);
 
       const result = await db.update(roles)
@@ -161,6 +164,7 @@ export class RoleDbService {
       name: dbRole.name,
       description: dbRole.description || '',
       status: (dbRole.status as RoleStatus) || 'active',
+      isAdmin: dbRole.isAdmin || false,
       permissions: JSON.parse(dbRole.permissions) as Permission[],
       created_at: dbRole.createdAt.toISOString(),
       updated_at: dbRole.updatedAt.toISOString(),

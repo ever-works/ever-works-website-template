@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { RoleRepository } from '@/lib/repositories/role.repository';
-import { UpdateRoleRequest } from '@/lib/types/role';
-import { isValidPermission } from '@/lib/permissions/definitions';
+import { UpdateRoleRequest } from '@/hooks/use-admin-roles';
 
 const roleRepository = new RoleRepository();
 
@@ -59,7 +58,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     const { id } = await params;
     const body = await request.json();
-    const updateData: UpdateRoleRequest = { id, ...body };
+    const updateData: UpdateRoleRequest = body;
 
     // Check if role exists
     const existingRole = await roleRepository.findById(id);
@@ -96,26 +95,15 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       }
     }
 
-    // Validate permissions if provided
-    if (updateData.permissions !== undefined) {
-      if (!Array.isArray(updateData.permissions)) {
-        return NextResponse.json(
-          { error: 'Permissions must be an array' },
-          { status: 400 }
-        );
-      }
-
-      const invalidPermissions = updateData.permissions.filter(p => !isValidPermission(p));
-      if (invalidPermissions.length > 0) {
-        return NextResponse.json(
-          { error: `Invalid permissions: ${invalidPermissions.join(', ')}` },
-          { status: 400 }
-        );
-      }
-    }
+    // Prepare update data compatible with repository
+    const repositoryUpdateData = {
+      id,
+      ...updateData,
+      permissions: updateData.permissions || [], // Default empty array if not provided
+    };
 
     // Update the role
-    const updatedRole = await roleRepository.update(id, updateData);
+    const updatedRole = await roleRepository.update(id, repositoryUpdateData);
     
     return NextResponse.json(
       { role: updatedRole, message: 'Role updated successfully' }
