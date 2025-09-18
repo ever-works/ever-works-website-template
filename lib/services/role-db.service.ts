@@ -1,6 +1,6 @@
 import { db } from '@/lib/db/drizzle';
 import { roles } from '@/lib/db/schema';
-import { eq, desc, asc, sql } from 'drizzle-orm';
+import { eq, desc, asc, sql, isNull, and } from 'drizzle-orm';
 import { RoleStatus, RoleListOptions } from '@/lib/types/role';
 import { RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/hooks/use-admin-roles';
 import { Permission } from '@/lib/permissions/definitions';
@@ -8,7 +8,7 @@ import { Permission } from '@/lib/permissions/definitions';
 export class RoleDbService {
   async readRoles(): Promise<RoleData[]> {
     try {
-      const result = await db.select().from(roles);
+      const result = await db.select().from(roles).where(isNull(roles.deletedAt));
       return result.map(this.mapDbToRoleData);
     } catch (error) {
       console.error('Error reading roles from database:', error);
@@ -18,7 +18,7 @@ export class RoleDbService {
 
   async findById(id: string): Promise<RoleData | null> {
     try {
-      const result = await db.select().from(roles).where(eq(roles.id, id));
+      const result = await db.select().from(roles).where(and(eq(roles.id, id), isNull(roles.deletedAt)));
       return result.length > 0 ? this.mapDbToRoleData(result[0]) : null;
     } catch (error) {
       console.error('Error finding role by ID:', error);
@@ -80,7 +80,7 @@ export class RoleDbService {
   async deleteRole(id: string): Promise<void> {
     try {
       await db.update(roles)
-        .set({ status: 'inactive' })
+        .set({ deletedAt: new Date() })
         .where(eq(roles.id, id));
     } catch (error) {
       console.error('Error deleting role:', error);
@@ -109,16 +109,16 @@ export class RoleDbService {
 
       let query = db.select().from(roles);
 
-      // Apply filters
+      // Apply filters - always exclude deleted roles
+      const filters = [isNull(roles.deletedAt)];
       if (status) {
-        query = query.where(eq(roles.status, status));
+        filters.push(eq(roles.status, status));
       }
+      query = query.where(and(...filters));
 
       // Get total count with same filters
       let countQuery = db.select({ count: sql`count(*)` }).from(roles);
-      if (status) {
-        countQuery = countQuery.where(eq(roles.status, status));
-      }
+      countQuery = countQuery.where(and(...filters));
       const countResult = await countQuery;
       const total = Number(countResult[0].count);
 
@@ -150,7 +150,7 @@ export class RoleDbService {
 
   async exists(id: string): Promise<boolean> {
     try {
-      const result = await db.select().from(roles).where(eq(roles.id, id));
+      const result = await db.select().from(roles).where(and(eq(roles.id, id), isNull(roles.deletedAt)));
       return result.length > 0;
     } catch (error) {
       console.error('Error checking role existence:', error);

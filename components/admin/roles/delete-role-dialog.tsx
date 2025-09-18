@@ -48,7 +48,7 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
             <div className="w-8 h-8 bg-red-100 dark:bg-red-900/20 rounded-lg flex items-center justify-center">
               <AlertTriangle size={16} className="text-red-600 dark:text-red-400" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Deactivate Role</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Delete Role</h2>
           </div>
           {!isLoading && (
             <button
@@ -96,9 +96,9 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
             <div className="flex items-start space-x-2">
               <AlertTriangle size={16} className="text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
               <div className="text-sm text-yellow-800 dark:text-yellow-200">
-                <p className="font-medium">Deactivate Role</p>
+                <p className="font-medium">Delete Role</p>
                 <p className="mt-1">
-                  This role will be marked as inactive and cannot be assigned to new users. Users currently assigned to this role will retain their permissions until reassigned. The role can be reactivated later if needed.
+                  This role will be permanently removed from the system. Users currently assigned to this role will lose these permissions. This action cannot be undone.
                 </p>
               </div>
             </div>
@@ -120,13 +120,13 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
             isLoading={isLoading}
             startContent={!isLoading && <Trash2 size={16} />}
             className={clsx(
-              'bg-gradient-to-r from-orange-500 to-orange-600',
-              'hover:from-orange-600 hover:to-orange-700',
-              'shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/40',
+              'bg-gradient-to-r from-red-500 to-red-600',
+              'hover:from-red-600 hover:to-red-700',
+              'shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40',
               'transition-all duration-300 text-white font-medium'
             )}
           >
-            {isLoading ? 'Deactivating...' : 'Deactivate Role'}
+            {isLoading ? 'Deleting...' : 'Delete Role'}
           </Button>
         </div>
       </div>
