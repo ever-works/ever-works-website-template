@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Switch } from '@heroui/react';
 import { AlertTriangle, Trash2, Shield } from 'lucide-react';
-import { RoleData } from '@/lib/types/role';
+import { RoleData } from '@/hooks/use-admin-roles';
 
 interface DeleteRoleDialogProps {
   role: RoleData;
@@ -55,7 +55,7 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
                 </p>
                 <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500 dark:text-gray-400">
                   <span>ID: {role.id}</span>
-                  <span>{role.permissions.length} permissions</span>
+                  <span>{role.permissions?.length || 0} permissions</span>
                 </div>
               </div>
             </div>
