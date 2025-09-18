@@ -1,6 +1,5 @@
 import { memo, useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
 import {
   User,
   Settings,
@@ -13,7 +12,7 @@ import {
   Star,
   Activity,
   MessageSquare,
-  Loader2
+  type LucideIcon
 } from "lucide-react";
 import type { ExtendedUser } from "@/types/profile-button.types";
 
@@ -26,11 +25,10 @@ interface MenuItemsProps {
   isNavigating?: boolean;
 }
 
-function MenuItems({ user, profilePath, onItemClick, onNavigationStart, onNavigationEnd, isNavigating }: MenuItemsProps) {
+function MenuItems({ user, profilePath, onItemClick, onNavigationStart }: MenuItemsProps) {
   // Derive isAdmin from user prop
   const isAdmin = user.isAdmin === true;
   const t = useTranslations();
-  const router = useRouter();
 
   // Simplified navigation handler
   const handleNavigation = (href: string) => {
@@ -67,13 +65,13 @@ function MenuItems({ user, profilePath, onItemClick, onNavigationStart, onNaviga
     endIcon: EndIcon = Zap
   }: {
     href: string;
-    icon: any;
+    icon: LucideIcon;
     title: string;
     description: string;
     gradientFrom: string;
     gradientTo: string;
     iconColor: string;
-    endIcon?: any;
+    endIcon?: LucideIcon;
   }) => {
     return (
       <button
