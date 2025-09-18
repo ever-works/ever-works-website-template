@@ -10,6 +10,7 @@ export interface RoleData {
   name: string;
   description: string;
   status: 'active' | 'inactive';
+  isAdmin: boolean;
   permissions?: Permission[];
   createdAt: Date;
   updatedAt: Date;
@@ -19,12 +20,14 @@ export interface CreateRoleRequest {
   name: string;
   description: string;
   status?: 'active' | 'inactive';
+  isAdmin?: boolean;
 }
 
 export interface UpdateRoleRequest {
   name?: string;
   description?: string;
   status?: 'active' | 'inactive';
+  isAdmin?: boolean;
 }
 
 export interface RolesListResponse {

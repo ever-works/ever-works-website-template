@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Search, Edit, Trash2, Shield, ShieldCheck, ShieldX, ChevronDown } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Shield, ShieldCheck, ChevronDown } from 'lucide-react';
 import { Button, Card, CardBody, Chip, useDisclosure } from '@heroui/react';
 import { RoleForm } from '@/components/admin/roles/role-form';
 import { DeleteRoleDialog } from '@/components/admin/roles/delete-role-dialog';
@@ -90,16 +90,20 @@ export default function RolesPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [roleTypeFilter, setRoleTypeFilter] = useState<'all' | 'admin' | 'client'>('all');
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // Filter roles based on search and status
+  // Filter roles based on search, status, and role type
   const filteredRoles = roles.filter((role) => {
     const matchesSearch = role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          role.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || role.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesRoleType = roleTypeFilter === 'all' ||
+                           (roleTypeFilter === 'admin' && role.isAdmin) ||
+                           (roleTypeFilter === 'client' && !role.isAdmin);
+    return matchesSearch && matchesStatus && matchesRoleType;
   });
 
   // Calculate stats
@@ -107,6 +111,8 @@ export default function RolesPage() {
     total: roles.length,
     active: roles.filter(role => role.status === 'active').length,
     inactive: roles.filter(role => role.status === 'inactive').length,
+    admin: roles.filter(role => role.isAdmin).length,
+    client: roles.filter(role => !role.isAdmin).length,
   };
 
   // Handler functions
@@ -301,10 +307,10 @@ export default function RolesPage() {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Roles</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.active}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Admin Roles</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.admin}</p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
                 <ShieldCheck className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -315,11 +321,11 @@ export default function RolesPage() {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Inactive Roles</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.inactive}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Client Roles</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.client}</p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center shadow-lg">
-                <ShieldX className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Shield className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardBody>
@@ -356,16 +362,32 @@ export default function RolesPage() {
             <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
           </div>
 
+          {/* Role Type Filter */}
+          <div className="relative">
+            <select
+              value={roleTypeFilter}
+              onChange={(e) => setRoleTypeFilter(e.target.value as 'all' | 'admin' | 'client')}
+              className={filterSelectClass}
+            >
+              <option value="all">All Types</option>
+              <option value="admin">Admin Roles</option>
+              <option value="client">Client Roles</option>
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+          </div>
+
           {/* Active Filters Count */}
-          {(searchTerm || statusFilter !== 'all') && (
+          {(searchTerm || statusFilter !== 'all' || roleTypeFilter !== 'all') && (
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-500 dark:text-gray-400">
                 {[
                   searchTerm && 'search',
-                  statusFilter !== 'all' && 'status'
+                  statusFilter !== 'all' && 'status',
+                  roleTypeFilter !== 'all' && 'type'
                 ].filter(Boolean).length} filter{[
                   searchTerm && 'search',
-                  statusFilter !== 'all' && 'status'
+                  statusFilter !== 'all' && 'status',
+                  roleTypeFilter !== 'all' && 'type'
                 ].filter(Boolean).length !== 1 ? 's' : ''} applied
               </span>
               <Button
@@ -375,6 +397,7 @@ export default function RolesPage() {
                 onPress={() => {
                   setSearchTerm('');
                   setStatusFilter('all');
+                  setRoleTypeFilter('all');
                 }}
                 className="h-6 px-2 text-xs"
               >
@@ -388,7 +411,7 @@ export default function RolesPage() {
         <div className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
           <span>
             Showing {filteredRoles.length} of {stats.total} roles
-            {(searchTerm || statusFilter !== 'all') && (
+            {(searchTerm || statusFilter !== 'all' || roleTypeFilter !== 'all') && (
               <span className="ml-1">
                 • filtered
               </span>
@@ -440,6 +463,13 @@ export default function RolesPage() {
                         size="sm"
                       >
                         {role.status === 'active' ? 'Active' : 'Inactive'}
+                      </Chip>
+                      <Chip
+                        color={role.isAdmin ? 'warning' : 'primary'}
+                        variant="flat"
+                        size="sm"
+                      >
+                        {role.isAdmin ? 'Admin' : 'Client'}
                       </Chip>
                       <div className="flex space-x-1">
                         <Button

@@ -38,12 +38,14 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
     name: string;
     description: string;
     status: 'active' | 'inactive';
+    isAdmin: boolean;
   }
 
   const [formData, setFormData] = useState<FormData>({
     name: '',
     description: '',
     status: 'active',
+    isAdmin: false,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -54,11 +56,12 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
         name: role.name,
         description: role.description,
         status: role.status,
+        isAdmin: role.isAdmin,
       });
     }
   }, [role]);
 
-  const handleInputChange = (field: keyof FormData, value: string | 'active' | 'inactive') => {
+  const handleInputChange = (field: keyof FormData, value: string | 'active' | 'inactive' | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value,
@@ -176,6 +179,29 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
             {formData.status === 'active'
               ? 'This role is active and can be assigned to users'
               : 'This role is inactive and cannot be assigned to new users'
+            }
+          </p>
+        </div>
+
+        {/* Admin Role */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Role Type
+          </label>
+          <div className="flex items-center space-x-3">
+            <Switch
+              isSelected={formData.isAdmin}
+              onValueChange={(checked) => handleInputChange('isAdmin', checked)}
+              disabled={isLoading}
+            />
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              {formData.isAdmin ? 'Admin Role' : 'Client Role'}
+            </span>
+          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {formData.isAdmin
+              ? 'This is an administrative role with elevated permissions'
+              : 'This is a client role with standard user permissions'
             }
           </p>
         </div>
