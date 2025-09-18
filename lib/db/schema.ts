@@ -38,6 +38,7 @@ export const roles = pgTable("roles", {
   created_by: text("created_by").default("system"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  deletedAt: timestamp("deleted_at"),
 }, (table) => ({
   statusIndex: index("roles_status_idx").on(table.status),
   isAdminIndex: index("roles_is_admin_idx").on(table.isAdmin),
