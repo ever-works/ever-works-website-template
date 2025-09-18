@@ -453,6 +453,9 @@ export default function RolesPage() {
                           <p className="text-sm text-gray-500 dark:text-gray-400">
                             {role.description}
                           </p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                            {role.isAdmin ? 'Admin Role' : 'Client Role'}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -463,13 +466,6 @@ export default function RolesPage() {
                         size="sm"
                       >
                         {role.status === 'active' ? 'Active' : 'Inactive'}
-                      </Chip>
-                      <Chip
-                        color={role.isAdmin ? 'warning' : 'primary'}
-                        variant="flat"
-                        size="sm"
-                      >
-                        {role.isAdmin ? 'Admin' : 'Client'}
                       </Chip>
                       <div className="flex space-x-1">
                         <Button

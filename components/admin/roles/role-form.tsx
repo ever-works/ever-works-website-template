@@ -183,26 +183,28 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
           </p>
         </div>
 
-        {/* Admin Role */}
+        {/* Role Type */}
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label htmlFor="roleType" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Role Type
           </label>
-          <div className="flex items-center space-x-3">
-            <Switch
-              isSelected={formData.isAdmin}
-              onValueChange={(checked) => handleInputChange('isAdmin', checked)}
-              disabled={isLoading}
-            />
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              {formData.isAdmin ? 'Admin Role' : 'Client Role'}
-            </span>
-          </div>
+          <select
+            id="roleType"
+            value={formData.isAdmin ? 'admin' : 'client'}
+            onChange={(e) => handleInputChange('isAdmin', e.target.value === 'admin')}
+            disabled={isLoading}
+            className={clsx(
+              'w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg',
+              'bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
+              'focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary',
+              'transition-all duration-200'
+            )}
+          >
+            <option value="client">Client Role</option>
+            <option value="admin">Admin Role</option>
+          </select>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            {formData.isAdmin
-              ? 'This is an administrative role with elevated permissions'
-              : 'This is a client role with standard user permissions'
-            }
+            Admin roles have elevated permissions, client roles have standard access.
           </p>
         </div>
 
