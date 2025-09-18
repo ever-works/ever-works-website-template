@@ -14,9 +14,11 @@ function LogoutButton({ onLogout, logoutText, logoutDescription }: LogoutButtonP
     setIsLogging(true);
     try {
       await onLogout();
-    } finally {
-      // Keep loading state to prevent flash since page will redirect
-      // setIsLogging(false);
+      // Intentionally keep loading when a redirect occurs.
+      // If no redirect happens, the error handler will reset.
+    } catch (err) {
+      console.error('Logout failed:', err);
+      setIsLogging(false);
     }
   };
 
@@ -25,12 +27,14 @@ function LogoutButton({ onLogout, logoutText, logoutDescription }: LogoutButtonP
       type="button"
       onClick={handleLogout}
       disabled={isLogging}
+      aria-busy={isLogging}
+      aria-live="polite"
       className="group flex w-full items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 dark:hover:from-red-900/10 dark:hover:to-pink-900/10 transition-all duration-200 disabled:opacity-75"
       role="menuitem"
     >
       <div className="flex items-center justify-center w-10 h-10 mr-3 rounded-xl bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900/30 dark:to-pink-900/30 group-hover:from-red-200 group-hover:to-pink-200 dark:group-hover:from-red-900/40 dark:group-hover:to-pink-900/40 transition-all duration-200">
         {isLogging ? (
-          <Loader2 className="h-5 w-5 animate-spin text-red-600 dark:text-red-400" />
+          <Loader2 className="h-5 w-5 animate-spin text-red-600 dark:text-red-400" aria-label="Logging out" />
         ) : (
           <LogOut aria-hidden="true" className="h-5 w-5 text-red-600 dark:text-red-400" />
         )}
