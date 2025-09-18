@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Switch } from '@heroui/react';
+import { Button } from '@heroui/react';
 import { AlertTriangle, Trash2, Shield } from 'lucide-react';
 import { RoleData } from '@/hooks/use-admin-roles';
 import { clsx } from 'clsx';
@@ -15,12 +15,11 @@ interface DeleteRoleDialogProps {
 
 export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRoleDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [hardDelete, setHardDelete] = useState(false);
 
   const handleConfirm = async () => {
     setIsLoading(true);
     try {
-      await onConfirm(hardDelete);
+      await onConfirm(false); // Always soft delete
     } catch (error) {
       console.error('Error deleting role:', error);
     } finally {
@@ -49,7 +48,7 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
             <div className="w-8 h-8 bg-red-100 dark:bg-red-900/20 rounded-lg flex items-center justify-center">
               <AlertTriangle size={16} className="text-red-600 dark:text-red-400" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Delete Role</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Deactivate Role</h2>
           </div>
           {!isLoading && (
             <button
@@ -97,34 +96,11 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
             <div className="flex items-start space-x-2">
               <AlertTriangle size={16} className="text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
               <div className="text-sm text-yellow-800 dark:text-yellow-200">
-                <p className="font-medium">Warning</p>
+                <p className="font-medium">Deactivate Role</p>
                 <p className="mt-1">
-                  This action cannot be undone. Deleting this role will remove all associated permissions and may affect users assigned to this role.
+                  This role will be marked as inactive and cannot be assigned to new users. Users currently assigned to this role will retain their permissions until reassigned. The role can be reactivated later if needed.
                 </p>
               </div>
-            </div>
-          </div>
-
-          {/* Hard Delete Option */}
-          <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <h4 className="text-sm font-medium text-red-800 dark:text-red-200">
-                  Permanent Deletion
-                </h4>
-                <p className="text-xs text-red-600 dark:text-red-300 mt-1">
-                  {hardDelete
-                    ? 'Role will be permanently deleted from the database'
-                    : 'Role will be marked as inactive (can be restored later)'
-                  }
-                </p>
-              </div>
-              <Switch
-                isSelected={hardDelete}
-                onValueChange={setHardDelete}
-                disabled={isLoading}
-                size="sm"
-              />
             </div>
           </div>
         </div>
@@ -144,16 +120,13 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
             isLoading={isLoading}
             startContent={!isLoading && <Trash2 size={16} />}
             className={clsx(
-              'bg-gradient-to-r from-red-500 to-red-600',
-              'hover:from-red-600 hover:to-red-700',
-              'shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40',
+              'bg-gradient-to-r from-orange-500 to-orange-600',
+              'hover:from-orange-600 hover:to-orange-700',
+              'shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/40',
               'transition-all duration-300 text-white font-medium'
             )}
           >
-            {isLoading
-              ? `${hardDelete ? 'Permanently Deleting' : 'Deleting'}...`
-              : `${hardDelete ? 'Permanently Delete' : 'Delete'} Role`
-            }
+            {isLoading ? 'Deactivating...' : 'Deactivate Role'}
           </Button>
         </div>
       </div>
