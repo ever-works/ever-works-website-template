@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { RoleRepository } from '@/lib/repositories/role.repository';
-import { UpdateRoleRequest } from '@/lib/types/role';
-import { UpdateRoleRequest as HookUpdateRoleRequest } from '@/hooks/use-admin-roles';
+import type { UpdateRoleRequest } from '@/lib/types/role';
 
 const roleRepository = new RoleRepository();
 
@@ -59,7 +58,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     const { id } = await params;
     const body = await request.json();
-    const updateData: HookUpdateRoleRequest = body;
+    const updateData: Partial<UpdateRoleRequest> = body;
 
     // Check if role exists
     const existingRole = await roleRepository.findById(id);

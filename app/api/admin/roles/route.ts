@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { RoleRepository } from '@/lib/repositories/role.repository';
-import { CreateRoleRequest } from '@/hooks/use-admin-roles';
+import type { CreateRoleRequest } from '@/lib/types/role';
 import { RoleStatus } from '@/lib/types/role';
 
 const roleRepository = new RoleRepository();
