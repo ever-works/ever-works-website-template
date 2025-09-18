@@ -43,7 +43,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
     return () => {
       abortController.abort();
     };
-  }, []); // Remove getActiveRoles from dependencies to prevent re-runs
+  }, [getActiveRoles]);
 
   // Form state
   const [formData, setFormData] = useState({

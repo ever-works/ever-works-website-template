@@ -2,7 +2,7 @@ import { db } from '@/lib/db/drizzle';
 import { roles } from '@/lib/db/schema';
 import { eq, desc, asc, sql, isNull, and } from 'drizzle-orm';
 import { RoleStatus, RoleListOptions } from '@/lib/types/role';
-import { RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/hooks/use-admin-roles';
+import { RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/lib/types/role';
 import { Permission } from '@/lib/permissions/definitions';
 
 export class RoleDbService {

@@ -28,6 +28,7 @@ export interface UpdateRoleRequest {
   description?: string;
   status?: 'active' | 'inactive';
   isAdmin?: boolean;
+  permissions?: Permission[];
 }
 
 export interface RolesListResponse {

@@ -5,6 +5,7 @@ export interface RoleData {
   name: string;
   description: string;
   status: RoleStatus;
+  isAdmin: boolean;
   permissions: Permission[];
   created_at: string;
   updated_at: string;
@@ -16,6 +17,7 @@ export interface CreateRoleRequest {
   name: string;
   description: string;
   status: RoleStatus;
+  isAdmin?: boolean;
   permissions: Permission[];
 }
 

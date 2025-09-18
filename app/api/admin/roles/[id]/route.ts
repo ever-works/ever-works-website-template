@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { RoleRepository } from '@/lib/repositories/role.repository';
-import { UpdateRoleRequest } from '@/hooks/use-admin-roles';
+import { UpdateRoleRequest } from '@/lib/types/role';
+import { UpdateRoleRequest as HookUpdateRoleRequest } from '@/hooks/use-admin-roles';
 
 const roleRepository = new RoleRepository();
 
@@ -58,7 +59,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     const { id } = await params;
     const body = await request.json();
-    const updateData: UpdateRoleRequest = body;
+    const updateData: HookUpdateRoleRequest = body;
 
     // Check if role exists
     const existingRole = await roleRepository.findById(id);
@@ -95,14 +96,16 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       }
     }
 
-    // Prepare update data compatible with repository
-    const repositoryUpdateData = {
+    // Convert hook type to repository type (excluding permissions due to type mismatch)
+    const repositoryUpdateData: UpdateRoleRequest = {
       id,
-      ...updateData,
-      permissions: updateData.permissions || [], // Default empty array if not provided
+      ...(updateData.name !== undefined && { name: updateData.name }),
+      ...(updateData.description !== undefined && { description: updateData.description }),
+      ...(updateData.status !== undefined && { status: updateData.status }),
+      ...(updateData.isAdmin !== undefined && { isAdmin: updateData.isAdmin }),
     };
 
-    // Update the role
+    // Update the role using repository
     const updatedRole = await roleRepository.update(id, repositoryUpdateData);
     
     return NextResponse.json(
