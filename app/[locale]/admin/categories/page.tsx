@@ -30,7 +30,6 @@ export default function AdminCategoriesPage() {
     createCategory,
     updateCategory,
     deleteCategory,
-    refreshData,
   } = useAdminCategories({
     params: {
       page: currentPage,
