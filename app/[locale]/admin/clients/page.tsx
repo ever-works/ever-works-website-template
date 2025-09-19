@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { ClientForm } from "@/components/admin/clients/client-form";
 import { UniversalPagination } from "@/components/universal-pagination";
+import { LoadingSpinner, InlineLoading } from "@/components/ui/loading-spinner";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import type { ClientResponse, CreateClientRequest, UpdateClientRequest } from "@/lib/types/client";
 import type { ClientProfileWithAuth } from "@/lib/db/queries";
@@ -37,6 +38,27 @@ export default function ClientsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedClient, setSelectedClient] = useState<ClientProfileWithAuth | null>(null);
+
+  // Granular loading states
+  const [loadingStates, setLoadingStates] = useState({
+    initial: true,
+    searching: false,
+    filtering: false,
+    paginating: false,
+    submitting: false,
+    deleting: null as string | null,
+  });
+
+  // Helper functions for updating loading states
+  const updateLoadingState = useCallback((key: keyof typeof loadingStates, value: boolean | string | null) => {
+    setLoadingStates(prev => ({ ...prev, [key]: value }));
+  }, []);
+
+  const setSearchingLoading = useCallback((loading: boolean) => updateLoadingState('searching', loading), [updateLoadingState]);
+  const setFilteringLoading = useCallback((loading: boolean) => updateLoadingState('filtering', loading), [updateLoadingState]);
+  const setPaginatingLoading = useCallback((loading: boolean) => updateLoadingState('paginating', loading), [updateLoadingState]);
+  const setSubmittingLoading = useCallback((loading: boolean) => updateLoadingState('submitting', loading), [updateLoadingState]);
+  const setDeletingLoading = useCallback((clientId: string | null) => updateLoadingState('deleting', clientId), [updateLoadingState]);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [navigatingClientId, setNavigatingClientId] = useState<string | null>(null);
 
@@ -173,10 +195,19 @@ export default function ClientsPage() {
   }, [searchTerm]);
 
   // Optimized function to fetch both clients and stats in a single request
-  const fetchDashboardData = useCallback(async (page: number = currentPage) => {
+  const fetchDashboardData = useCallback(async (page: number = currentPage, isPagination = false) => {
     try {
       setIsLoading(true);
       setIsFiltering(true);
+
+      // Set appropriate granular loading state
+      if (isPagination) {
+        setPaginatingLoading(true);
+      } else if (debouncedSearchTerm) {
+        setSearchingLoading(true);
+      } else {
+        setFilteringLoading(true);
+      }
       const params = new URLSearchParams({
         page: String(page),
         limit: String(limit)
@@ -218,13 +249,20 @@ export default function ClientsPage() {
     } finally {
       setIsLoading(false);
       setIsFiltering(false);
+
+      // Clear all granular loading states
+      setPaginatingLoading(false);
+      setSearchingLoading(false);
+      setFilteringLoading(false);
+      updateLoadingState('initial', false);
     }
-  }, [debouncedSearchTerm, statusFilter, planFilter, accountTypeFilter, providerFilter, currentPage, limit, createdAfter, createdBefore, updatedAfter, updatedBefore]);
+  }, [debouncedSearchTerm, statusFilter, planFilter, accountTypeFilter, providerFilter, currentPage, limit, createdAfter, createdBefore, updatedAfter, updatedBefore, setPaginatingLoading, setSearchingLoading, setFilteringLoading, updateLoadingState]);
 
   // Create client
   const handleCreate = async (data: CreateClientRequest) => {
     try {
       setIsSubmitting(true);
+      setSubmittingLoading(true);
       const response = await fetch('/api/admin/clients', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -250,6 +288,7 @@ export default function ClientsPage() {
       toast.error('Failed to create client');
     } finally {
       setIsSubmitting(false);
+      setSubmittingLoading(false);
     }
   };
 
@@ -257,6 +296,7 @@ export default function ClientsPage() {
   const handleUpdate = async (data: UpdateClientRequest) => {
     try {
       setIsSubmitting(true);
+      setSubmittingLoading(true);
       const safeId = encodeURIComponent(data.id);
       const response = await fetch(`/api/admin/clients/${safeId}`, {
         method: 'PUT',
@@ -283,6 +323,7 @@ export default function ClientsPage() {
       toast.error('Failed to update client');
     } finally {
       setIsSubmitting(false);
+      setSubmittingLoading(false);
     }
   };
 
@@ -297,6 +338,7 @@ export default function ClientsPage() {
     if (!clientToDelete) return;
 
     try {
+      setDeletingLoading(clientToDelete);
       const safeId = encodeURIComponent(clientToDelete);
       const response = await fetch(`/api/admin/clients/${safeId}`, {
         method: 'DELETE',
@@ -320,6 +362,7 @@ export default function ClientsPage() {
       toast.error('Failed to delete client');
     } finally {
       setClientToDelete(null);
+      setDeletingLoading(null);
       onDeleteClose();
     }
   };
@@ -361,6 +404,7 @@ export default function ClientsPage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    fetchDashboardData(page, true); // true indicates this is pagination
   };
 
   const clearFilters = () => {
@@ -481,7 +525,7 @@ export default function ClientsPage() {
     }
   };
 
-  if (isLoading && clients.length === 0) {
+  if (loadingStates.initial && clients.length === 0) {
     return (
       <div className="p-6 max-w-7xl mx-auto">
         {/* Loading Header */}
@@ -642,9 +686,9 @@ export default function ClientsPage() {
             aria-label="Search clients"
             className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
-          {isFiltering && (
+          {(loadingStates.searching || loadingStates.filtering || isFiltering) && (
             <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-              <div className="w-4 h-4 border-2 border-theme-primary border-t-transparent rounded-full animate-spin"></div>
+              <LoadingSpinner size="sm" />
             </div>
           )}
         </div>
@@ -871,9 +915,11 @@ export default function ClientsPage() {
                           color="danger"
                           variant="light"
                           onPress={() => handleDeleteClick(client.id)}
-                          startContent={<Trash2 className="w-4 h-4" />}
+                          isLoading={loadingStates.deleting === client.id}
+                          isDisabled={loadingStates.deleting === client.id}
+                          startContent={loadingStates.deleting === client.id ? null : <Trash2 className="w-4 h-4" />}
                         >
-                          Delete
+                          {loadingStates.deleting === client.id ? 'Deleting...' : 'Delete'}
                         </Button>
                       </div>
                     </div>
@@ -887,12 +933,15 @@ export default function ClientsPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center mt-8">
+        <div className="flex flex-col items-center mt-8 space-y-4">
           <UniversalPagination
             page={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
           />
+          {loadingStates.paginating && (
+            <InlineLoading text="Loading page..." size="sm" />
+          )}
         </div>
       )}
 
@@ -904,7 +953,7 @@ export default function ClientsPage() {
               client={selectedClient || undefined}
               onSubmit={handleFormSubmit}
               onCancel={closeForm}
-              isLoading={isSubmitting}
+              isLoading={loadingStates.submitting || isSubmitting}
               mode={formMode}
             />
           </div>
