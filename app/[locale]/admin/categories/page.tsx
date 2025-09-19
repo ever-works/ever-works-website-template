@@ -1,147 +1,69 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
 import { Plus, Edit, Trash2, Eye, EyeOff, FolderTree } from "lucide-react";
 import { CategoryForm } from "@/components/admin/categories/category-form";
-import { CategoryData, CreateCategoryRequest, UpdateCategoryRequest, CategoryWithCount } from "@/lib/types/category";
+import { CategoryData, CreateCategoryRequest, UpdateCategoryRequest } from "@/lib/types/category";
 import { UniversalPagination } from "@/components/universal-pagination";
-import { toast } from "sonner";
-
-interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  categories?: T;
-  category?: CategoryData;
-  error?: string;
-  message?: string;
-  total?: number;
-  page?: number;
-  limit?: number;
-  totalPages?: number;
-}
+import { useAdminCategories } from "@/hooks/use-admin-categories";
 
 export default function AdminCategoriesPage() {
-  const [categories, setCategories] = useState<CategoryWithCount[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit] = useState(10);
+  
+  // Form state
   const [selectedCategory, setSelectedCategory] = useState<CategoryData | null>(null);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalCategories, setTotalCategories] = useState(0);
-  const [limit] = useState(10);
-  
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  // Use the custom hook
+  const {
+    categories,
+    total: totalCategories,
+    page,
+    totalPages,
+    isLoading,
+    isSubmitting,
+    createCategory,
+    updateCategory,
+    deleteCategory,
+    refreshData,
+  } = useAdminCategories({
+    params: {
+      page: currentPage,
+      limit,
+      includeInactive: true,
+      sortBy: 'name',
+      sortOrder: 'asc',
+    },
+  });
 
-  // Fetch categories
-  const fetchCategories = useCallback(async (page: number = currentPage) => {
-    try {
-      setIsLoading(true);
-      const params = new URLSearchParams({
-        includeInactive: 'true',
-        page: page.toString(),
-        limit: limit.toString(),
-      });
-      
-      const response = await fetch(`/api/admin/categories?${params}`);
-      const data: ApiResponse<CategoryWithCount[]> = await response.json();
-      
-      if (data.success && data.categories) {
-        setCategories(data.categories);
-        setTotalCategories(data.total || 0);
-        setTotalPages(data.totalPages || 1);
-        setCurrentPage(data.page || 1);
-      } else {
-        toast.error(data.error || 'Failed to fetch categories');
-      }
-    } catch (error) {
-      console.error('Failed to fetch categories:', error);
-      toast.error('Failed to fetch categories');
-    } finally {
-      setIsLoading(false);
+
+  // Handlers using the custom hook
+  const handleCreate = useCallback(async (data: CreateCategoryRequest) => {
+    const success = await createCategory(data);
+    if (success) {
+      onClose();
     }
-  }, [currentPage, limit]);
+  }, [createCategory, onClose]);
 
-  // Create category
-  const handleCreate = async (data: CreateCategoryRequest) => {
-    try {
-      setIsSubmitting(true);
-      const response = await fetch('/api/admin/categories', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      
-      const result: ApiResponse<CategoryData> = await response.json();
-      
-      if (result.success) {
-        toast.success(result.message || 'Category created successfully');
-        onClose();
-        fetchCategories();
-      } else {
-        toast.error(result.error || 'Failed to create category');
-      }
-    } catch (error) {
-      console.error('Failed to create category:', error);
-      toast.error('Failed to create category');
-    } finally {
-      setIsSubmitting(false);
+  const handleUpdate = useCallback(async (data: UpdateCategoryRequest) => {
+    const success = await updateCategory(data.id, data);
+    if (success) {
+      onClose();
     }
-  };
+  }, [updateCategory, onClose]);
 
-  // Update category
-  const handleUpdate = async (data: UpdateCategoryRequest) => {
-    try {
-      setIsSubmitting(true);
-      const response = await fetch(`/api/admin/categories/${data.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      
-      const result: ApiResponse<CategoryData> = await response.json();
-      
-      if (result.success) {
-        toast.success(result.message || 'Category updated successfully');
-        onClose();
-        fetchCategories();
-      } else {
-        toast.error(result.error || 'Failed to update category');
-      }
-    } catch (error) {
-      console.error('Failed to update category:', error);
-      toast.error('Failed to update category');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Delete category
-  const handleDelete = async (id: string, hard = false) => {
+  const handleDelete = useCallback(async (id: string, hard = false) => {
     if (!confirm(`Are you sure you want to ${hard ? 'permanently delete' : 'deactivate'} this category?`)) {
       return;
     }
-
-    try {
-      const url = hard ? `/api/admin/categories/${id}?hard=true` : `/api/admin/categories/${id}`;
-      const response = await fetch(url, { method: 'DELETE' });
-      const result: ApiResponse = await response.json();
-      
-      if (result.success) {
-        toast.success(result.message || 'Category deleted successfully');
-        fetchCategories();
-      } else {
-        toast.error(result.error || 'Failed to delete category');
-      }
-    } catch (error) {
-      console.error('Failed to delete category:', error);
-      toast.error('Failed to delete category');
-    }
-  };
+    
+    await deleteCategory(id, hard);
+  }, [deleteCategory]);
 
   // Open create form
   const openCreateForm = () => {
@@ -166,14 +88,9 @@ export default function AdminCategoriesPage() {
     }
   };
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
-    fetchCategories(page);
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+  }, []);
 
   if (isLoading) {
     return (
@@ -470,11 +387,11 @@ export default function AdminCategoriesPage() {
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-theme-primary rounded-full"></div>
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Showing {((currentPage - 1) * limit) + 1} to {Math.min(currentPage * limit, totalCategories)} of {totalCategories} categories
+                  Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, totalCategories)} of {totalCategories} categories
                 </span>
               </div>
               <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-500">
-                <span>Page {currentPage} of {totalPages}</span>
+                <span>Page {page} of {totalPages}</span>
                 <span>•</span>
                 <span>{limit} per page</span>
               </div>
@@ -484,7 +401,7 @@ export default function AdminCategoriesPage() {
           {/* Pagination Controls */}
           <div className="flex justify-center">
             <UniversalPagination
-              page={currentPage}
+              page={page}
               totalPages={totalPages}
               onPageChange={handlePageChange}
               className="shadow-lg"
