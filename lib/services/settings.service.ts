@@ -2,6 +2,14 @@ import { PricingPlanConfig } from "../content";
 import { defaultPricingConfig } from "../types";
 import { FileService } from "./file.service";
 
+// Logger utility
+const logger = {
+  warn: (message: string, context?: Record<string, any>) =>
+    console.warn(`[SettingsService] ${message}`, context || ''),
+  error: (message: string, context?: Record<string, any>) =>
+    console.error(`[SettingsService] ${message}`, context || ''),
+};
+
 interface SettingsTheme {
   type:'everworks' | 'corporate' | 'material' | 'funny';
   primary: string;
@@ -46,21 +54,6 @@ export class SettingsService {
 
   constructor() {
     this.settings = new FileService<Settings & { id: string }>('settings');
-    this.initializeSettings();
-  }
-
-  private async initializeSettings() {
-    const existingSettings = await this.settings.findById('settings');
-    if (!existingSettings) {
-      await this.settings.addItem({
-        id: 'settings',
-        theme: this.getSettingsTheme(),
-        pagination: this.getSettingsPagination(),
-        layoutHome: this.getSettingsLayoutHome(),
-        layoutKey: this.getSettingsLayoutKey(),
-        pricing: this.getSettingsPricingConfig(),
-      });
-    }
   }
 
   private getSettingsTheme(): SettingsTheme {
@@ -95,7 +88,20 @@ export class SettingsService {
   }
 
   async getSettings() {
-    return await this.settings.findById('settings');
+    const settings = await this.settings.findById('settings');
+    if (!settings) {
+      const defaultSettings = {
+        id: 'settings',
+        theme: this.getSettingsTheme(),
+        pagination: this.getSettingsPagination(),
+        layoutHome: this.getSettingsLayoutHome(),
+        layoutKey: this.getSettingsLayoutKey(),
+        pricing: this.getSettingsPricingConfig(),
+      };
+      await this.settings.addItem(defaultSettings);
+      return defaultSettings;
+    }
+    return settings;
   }
 
   async updateSettings(settings: Settings) {
@@ -121,11 +127,18 @@ export class SettingsService {
   async updateSettingsTheme(theme: SettingsTheme) {
     await this.settings.updateById('settings', { theme });
   }
-  
-  async addSettings(settings: Settings) {
-    await this.settings.addItem({ ...settings, id: 'settings' });
-  }
 
 }
 
-export const settingsService = new SettingsService();
+class SettingsServiceSingleton {
+  private static instance: SettingsService | null = null;
+
+  static getInstance(): SettingsService {
+    if (!SettingsServiceSingleton.instance) {
+      SettingsServiceSingleton.instance = new SettingsService();
+    }
+    return SettingsServiceSingleton.instance;
+  }
+}
+
+export const settingsService = SettingsServiceSingleton.getInstance();

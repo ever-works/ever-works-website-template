@@ -4,6 +4,14 @@ import * as fs from "fs";
 import * as path from "path";
 import { getContentPath, fsExists } from "@/lib/lib";
 
+// Logger utility
+const logger = {
+  warn: (message: string, context?: Record<string, any>) =>
+    console.warn(`[FileService] ${message}`, context || ''),
+  error: (message: string, context?: Record<string, any>) =>
+    console.error(`[FileService] ${message}`, context || ''),
+};
+
 /**
  * Generic interface for data that can be stored in YAML files
  */
@@ -483,7 +491,7 @@ export class FileService<T extends YamlData> {
         }
       }
     } catch (error) {
-      console.warn(`Failed to apply translations for language ${lang}:`, error);
+      logger.warn(`Failed to apply translations for language ${lang}:`, { error });
     }
 
     return data;
