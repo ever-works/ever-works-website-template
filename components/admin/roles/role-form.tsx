@@ -34,21 +34,21 @@ const actionsClasses = clsx(
 );
 
 export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: RoleFormProps) {
-  interface FormData {
+  interface RoleFormState {
     name: string;
     description: string;
     status: 'active' | 'inactive';
     isAdmin: boolean;
   }
 
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<RoleFormState>({
     name: '',
     description: '',
     status: 'active',
     isAdmin: false,
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof RoleFormState, string>>>({});
 
   useEffect(() => {
     if (role) {
@@ -61,7 +61,7 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
     }
   }, [role]);
 
-  const handleInputChange = (field: keyof FormData, value: string | 'active' | 'inactive' | boolean) => {
+  const handleInputChange = <K extends keyof RoleFormState>(field: K, value: RoleFormState[K]) => {
     setFormData(prev => ({
       ...prev,
       [field]: value,
@@ -162,11 +162,13 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
 
         {/* Role Status */}
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label htmlFor="roleStatus" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Status
           </label>
           <div className="flex items-center space-x-3">
             <Switch
+              id="roleStatus"
+              aria-describedby="roleStatusHelp"
               isSelected={formData.status === 'active'}
               onValueChange={(checked) => handleInputChange('status', checked ? 'active' : 'inactive')}
               disabled={isLoading}
@@ -175,7 +177,7 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
               {formData.status === 'active' ? 'Active' : 'Inactive'}
             </span>
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p id="roleStatusHelp" className="text-xs text-gray-500 dark:text-gray-400">
             {formData.status === 'active'
               ? 'This role is active and can be assigned to users'
               : 'This role is inactive and cannot be assigned to new users'
