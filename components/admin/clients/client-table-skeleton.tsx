@@ -1,4 +1,4 @@
-import { Skeleton, TableSkeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ClientTableSkeletonProps {
   rows?: number;
