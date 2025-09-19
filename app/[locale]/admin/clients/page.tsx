@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useDebounceSearch } from "@/hooks/use-debounced-search";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
 import { Modal, ModalContent } from "@/components/ui/modal";
 import { Select, SelectItem } from "@/components/ui/select";
@@ -133,11 +134,19 @@ export default function ClientsPage() {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const { isOpen: isFilterModalOpen, onOpen: onOpenFilterModal, onClose: onCloseFilterModal } = useDisclosure();
 
-  // Debounced search term
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
-
   // Track if this is the initial load
   const isInitialLoad = useRef(true);
+
+  // Debounced search hook
+  const { debouncedValue: debouncedSearchTerm, isSearching } = useDebounceSearch({
+    searchValue: searchTerm,
+    delay: 300,
+    onSearch: async () => {
+      if (!isInitialLoad.current) {
+        setCurrentPage(1);
+      }
+    },
+  });
 
   // Calculate active filter count
   const activeFilterCount = [
@@ -163,14 +172,6 @@ export default function ClientsPage() {
     setSelectedClient(null);
   }, [onClose, clearEditParam]);
 
-  // Debounce search term
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
   // Optimized function to fetch both clients and stats in a single request
   const fetchDashboardData = useCallback(async (page: number = currentPage) => {
@@ -380,7 +381,6 @@ export default function ClientsPage() {
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-    setCurrentPage(1);
   };
 
   // Initial fetch on component mount
@@ -445,13 +445,6 @@ export default function ClientsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter, planFilter, accountTypeFilter, providerFilter, createdAfter, createdBefore, updatedAfter, updatedBefore]);
 
-  // Fetch when debounced search term changes, including when cleared
-  useEffect(() => {
-    if (!isInitialLoad.current) {
-      fetchDashboardData(1);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchTerm]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -642,7 +635,7 @@ export default function ClientsPage() {
             aria-label="Search clients"
             className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
-          {isFiltering && (
+          {(isFiltering || isSearching) && (
             <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
               <div className="w-4 h-4 border-2 border-theme-primary border-t-transparent rounded-full animate-spin"></div>
             </div>
