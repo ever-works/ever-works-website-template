@@ -2,14 +2,6 @@ import { PricingPlanConfig } from "../content";
 import { defaultPricingConfig } from "../types";
 import { FileService } from "./file.service";
 
-// Logger utility
-const logger = {
-  warn: (message: string, context?: Record<string, any>) =>
-    console.warn(`[SettingsService] ${message}`, context || ''),
-  error: (message: string, context?: Record<string, any>) =>
-    console.error(`[SettingsService] ${message}`, context || ''),
-};
-
 interface SettingsTheme {
   type:'everworks' | 'corporate' | 'material' | 'funny';
   primary: string;
