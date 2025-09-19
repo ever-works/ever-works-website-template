@@ -28,8 +28,7 @@ export default function AdminTagsPage() {
     updateTag, 
     deleteTag, 
     isCreating, 
-    isUpdating, 
-    isDeleting 
+    isUpdating 
   } = useTagManagement();
 
   const handlePageChange = (page: number) => {
