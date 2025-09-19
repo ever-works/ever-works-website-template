@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
 import { Modal, ModalContent } from "@/components/ui/modal";
 import { Select, SelectItem } from "@/components/ui/select";
@@ -149,8 +149,8 @@ export default function ClientsPage() {
 
   // Debounced search term
 
-  // Track if this is the initial load
-  const isInitialLoad = useRef(true);
+  // Track if this is the initial load (no longer needed with React Query)
+  // const isInitialLoad = useRef(true);
 
   // Calculate active filter count
   const activeFilterCount = [
