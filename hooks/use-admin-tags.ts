@@ -16,13 +16,8 @@ export interface TagsResponse {
   error?: string;
 }
 
-export interface CreateTagData {
-  id: string;
-  name: string;
-  isActive: boolean;
-}
 
-export interface UpdateTagData extends CreateTagData {}
+export interface UpdateTagData extends TagData {}
 
 // Query keys
 export const tagsKeys = {
@@ -47,7 +42,7 @@ const tagsApi = {
   },
 
   // Create tag
-  createTag: async (data: CreateTagData): Promise<TagsResponse> => {
+  createTag: async (data: TagData): Promise<TagsResponse> => {
     const response = await serverClient.post<TagsResponse>('/api/admin/tags', data);
     
     if (!apiUtils.isSuccess(response)) {
@@ -155,7 +150,7 @@ export function useTagManagement() {
   const updateTagMutation = useUpdateTag();
   const deleteTagMutation = useDeleteTag();
 
-  const createTag = async (data: CreateTagData) => {
+  const createTag = async (data: TagData) => {
     return createTagMutation.mutateAsync(data);
   };
 
