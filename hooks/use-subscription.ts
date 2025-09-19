@@ -345,7 +345,10 @@ export function useSubscriptionManager() {
 
   // Optimistic update for subscription creation
   const createSubscriptionOptimistic = useMutation({
-    mutationFn: createSubscription.mutateAsync,
+    mutationFn: async (variables: CreateSubscriptionRequest) => {
+      const result = await createSubscription.mutateAsync(variables);
+      return result;
+    },
     onMutate: async (newSubscription) => {
       // Cancel any outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['user-subscription'] });
