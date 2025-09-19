@@ -4,12 +4,13 @@ import { toast } from 'sonner';
 
 interface MutationConfig<TData, TVariables extends RequestBody> extends Omit<
   UseMutationOptions<TData, ApiError, TVariables>,
-  'mutationFn'
+  'mutationFn' | 'onSuccess'
 > {
   endpoint: string;
   method: 'post' | 'put' | 'patch' | 'delete';
   successMessage?: string;
   invalidateQueries?: string[];
+  onSuccess?: (data: TData, variables: TVariables, context: unknown) => void | Promise<void>;
 }
 
 export function useMutationWithToast<TData, TVariables extends RequestBody = RequestBody>({
@@ -48,7 +49,7 @@ export function useMutationWithToast<TData, TVariables extends RequestBody = Req
       if (successMessage) {
         toast.success(successMessage);
       }
-      onSuccess?.(data, variables, context);
+      await onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       toast.error(error.message || 'An error occurred');
