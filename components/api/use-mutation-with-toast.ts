@@ -48,7 +48,7 @@ export function useMutationWithToast<TData, TVariables extends RequestBody = Req
       if (successMessage) {
         toast.success(successMessage);
       }
-      await onSuccess?.(data, variables, context);
+      onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       toast.error(error.message || 'An error occurred');
