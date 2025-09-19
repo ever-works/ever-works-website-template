@@ -72,7 +72,8 @@ export class FileService<T extends YamlData> {
    * Get the full file path
    */
   get filePath(): string {
-    return path.join(this.baseDir, `${this.fileName}${this.extension}`);
+    const safeName = path.basename(this.fileName);
+    return path.join(this.baseDir, `${safeName}${this.extension}`);
   }
 
   /**
@@ -80,7 +81,8 @@ export class FileService<T extends YamlData> {
    */
   private getBackupPath(timestamp?: string): string {
     const ts = timestamp || new Date().toISOString().replace(/[:.]/g, '-');
-    return path.join(this.backupDir, `${this.fileName}.backup.${ts}${this.extension}`);
+    const safeName = path.basename(this.fileName);
+    return path.join(this.backupDir, `${safeName}.backup.${ts}${this.extension}`);
   }
 
   /**
@@ -477,7 +479,8 @@ export class FileService<T extends YamlData> {
    */
   private async applyTranslations(data: T[], lang: string): Promise<T[]> {
     try {
-      const translationPath = path.join(this.baseDir, `${this.fileName}.${lang}${this.extension}`);
+      const safeName = path.basename(this.fileName);
+      const translationPath = path.join(this.baseDir, `${safeName}.${lang}${this.extension}`);
       
       if (await fsExists(translationPath)) {
         const content = await fs.promises.readFile(translationPath, 'utf8');
