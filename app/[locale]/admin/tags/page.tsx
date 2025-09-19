@@ -11,16 +11,6 @@ import { Plus, Edit, Trash2, Tag, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { useTags, useTagManagement } from "@/hooks/use-admin-tags";
 
-interface TagsResponse {
-  tags: TagData[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-  success: boolean;
-  message?: string;
-  error?: string;
-}
 
 export default function AdminTagsPage() {
   const [currentPage, setCurrentPage] = useState(1);
