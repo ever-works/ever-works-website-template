@@ -87,7 +87,7 @@ export class SettingsService {
     return LayoutHome.HOME_ONE;
   }
 
-  async getSettings() {
+  async getSettings(): Promise<Settings & { id: string }> {
     const settings = await this.settings.findById('settings');
     if (!settings) {
       const defaultSettings = {
@@ -104,28 +104,28 @@ export class SettingsService {
     return settings;
   }
 
-  async updateSettings(settings: Settings) {
-    await this.settings.updateById('settings', settings);
+  async updateSettings(settings: Settings): Promise<Settings & { id: string } | null> {
+    return await this.settings.updateById('settings', settings);
   }
 
-  async updateSettingsLayoutHome(layoutHome: LayoutHome) {
-    await this.settings.updateById('settings', { layoutHome });
+  async updateSettingsLayoutHome(layoutHome: LayoutHome): Promise<Settings & { id: string } | null> {
+    return await this.settings.updateById('settings', { layoutHome });
   }
 
-  async deleteSettings() {
-    await this.settings.deleteById('settings');
+  async deleteSettings(): Promise<boolean> {
+    return await this.settings.deleteById('settings');
   }
 
-  async updateSettingsPagination(pagination: SettingsPagination) {
-    await this.settings.updateById('settings', { pagination });
+  async updateSettingsPagination(pagination: SettingsPagination): Promise<Settings & { id: string } | null> {
+    return await this.settings.updateById('settings', { pagination });
   }
 
-  async updateSettingsLayoutKey(layoutKey: LayoutKey) {
-    await this.settings.updateById('settings', { layoutKey });
+  async updateSettingsLayoutKey(layoutKey: LayoutKey): Promise<Settings & { id: string } | null> {
+    return await this.settings.updateById('settings', { layoutKey });
   }
 
-  async updateSettingsTheme(theme: SettingsTheme) {
-    await this.settings.updateById('settings', { theme });
+  async updateSettingsTheme(theme: SettingsTheme): Promise<Settings & { id: string } | null> {
+    return await this.settings.updateById('settings', { theme });
   }
 
 }
