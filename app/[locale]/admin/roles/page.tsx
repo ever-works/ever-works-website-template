@@ -336,12 +336,13 @@ export default function RolesPage() {
       <div className="mb-6">
         {/* Search Bar */}
         <div className="relative mb-4">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search aria-hidden="true" focusable="false" className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search roles..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            aria-label="Search roles"
             className={searchInputClass}
           />
         </div>
@@ -353,13 +354,14 @@ export default function RolesPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
+              aria-label="Filter by status"
               className={filterSelectClass}
             >
               <option value="all">All Statuses</option>
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+            <ChevronDown aria-hidden="true" focusable="false" className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
           </div>
 
           {/* Role Type Filter */}
@@ -367,13 +369,14 @@ export default function RolesPage() {
             <select
               value={roleTypeFilter}
               onChange={(e) => setRoleTypeFilter(e.target.value as 'all' | 'admin' | 'client')}
+              aria-label="Filter by role type"
               className={filterSelectClass}
             >
               <option value="all">All Types</option>
               <option value="admin">Admin Roles</option>
               <option value="client">Client Roles</option>
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+            <ChevronDown aria-hidden="true" focusable="false" className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
           </div>
 
           {/* Active Filters Count */}
@@ -497,26 +500,34 @@ export default function RolesPage() {
 
       {/* Form Modal - Using Reliable CSS Modal */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="role-form-title">
           <div
             className="fixed inset-0 bg-black bg-opacity-60"
+            role="button"
+            tabIndex={0}
+            aria-label="Close modal"
             onClick={() => {
               if (!isSubmitting) {
                 onClose();
               }
             }}
+            onKeyDown={(e) => {
+              if (!isSubmitting && (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ')) onClose();
+            }}
           />
           <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              <h2 id="role-form-title" className="text-lg font-semibold text-gray-900 dark:text-white">
                 {formMode === 'create' ? 'Create New Role' : 'Edit Role'}
               </h2>
               {!isSubmitting && (
                 <button
+                  type="button"
+                  aria-label="Close"
                   onClick={onClose}
                   className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
                 >
-                  <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>

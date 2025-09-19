@@ -57,8 +57,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate ID from name if not provided
-    const id = roleData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    // Generate stable ID from name (normalize, strip diacritics, collapse/trim hyphens)
+    const id = roleData.name
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 64);
+
+    if (!id) {
+      return NextResponse.json({ error: 'Unable to derive a valid role ID from name' }, { status: 400 });
+    }
 
     // Validate name length
     if (roleData.name.length < 3 || roleData.name.length > 100) {
@@ -76,11 +87,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check for duplicate ID
-    const isDuplicate = await roleRepository.findById(id);
+    // Check for duplicate ID (including soft-deleted records)
+    const isDuplicate = await roleRepository.exists(id, { includeDeleted: true });
     if (isDuplicate) {
       return NextResponse.json(
-        { error: `Role with similar name already exists` },
+        { error: 'Role with similar name already exists' },
         { status: 409 }
       );
     }
@@ -106,9 +117,11 @@ export async function POST(request: NextRequest) {
     console.error('Error creating role:', error);
 
     if (error instanceof Error) {
-      if (error.message.includes('already exists')) {
+      if (error.message.includes('already exists') ||
+          error.message.includes('unique constraint') ||
+          error.message.includes('duplicate key')) {
         return NextResponse.json(
-          { error: error.message },
+          { error: 'Role with similar name already exists' },
           { status: 409 }
         );
       }

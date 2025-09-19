@@ -148,9 +148,14 @@ export class RoleDbService {
     }
   }
 
-  async exists(id: string): Promise<boolean> {
+  async exists(id: string, options: { includeDeleted?: boolean } = {}): Promise<boolean> {
     try {
-      const result = await db.select().from(roles).where(and(eq(roles.id, id), isNull(roles.deletedAt)));
+      const conditions = [eq(roles.id, id)];
+      if (!options.includeDeleted) {
+        conditions.push(isNull(roles.deletedAt));
+      }
+
+      const result = await db.select().from(roles).where(and(...conditions));
       return result.length > 0;
     } catch (error) {
       console.error('Error checking role existence:', error);
