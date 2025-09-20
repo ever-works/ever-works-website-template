@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,87 +9,40 @@ import { TagData } from "@/lib/types/tag";
 import { UniversalPagination } from "@/components/universal-pagination";
 import { Plus, Edit, Trash2, Tag, Eye } from "lucide-react";
 import { toast } from "sonner";
+import { useTags, useTagManagement } from "@/hooks/use-admin-tags";
 
-interface TagsResponse {
-  tags: TagData[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-  success: boolean;
-  message?: string;
-  error?: string;
-}
 
 export default function AdminTagsPage() {
-  const [tags, setTags] = useState<TagData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalTags, setTotalTags] = useState(0);
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [selectedTag, setSelectedTag] = useState<TagData | undefined>();
+  const [deletingTagId, setDeletingTagId] = useState<string | null>(null);
 
-  const fetchTags = async (page: number = 1) => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`/api/admin/tags?page=${page}&limit=10`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch tags');
-      }
-      
-      const data: TagsResponse = await response.json();
-      setTags(data.tags);
-      setCurrentPage(data.page);
-      setTotalPages(data.totalPages);
-      setTotalTags(data.total);
-    } catch (error) {
-      console.error('Error fetching tags:', error);
-      toast.error('Failed to fetch tags');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchTags();
-  }, []);
+  // Use React Query hooks
+  const { data: tagsData, isLoading, error } = useTags(currentPage, 10);
+  const { 
+    createTag, 
+    updateTag, 
+    deleteTag, 
+    isCreating, 
+    isUpdating 
+  } = useTagManagement();
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    fetchTags(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleCreateTag = async (data: { id: string; name: string; isActive: boolean }) => {
     try {
-      setIsSubmitting(true);
-      const response = await fetch('/api/admin/tags', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result: TagsResponse = await response.json();
-
-      if (result.success) {
-        toast.success(result.message || 'Tag created successfully');
-        setIsModalOpen(false);
-        fetchTags(currentPage);
-      } else {
-        toast.error(result.error || 'Failed to create tag');
-      }
+      await createTag(data);
+      toast.success('Tag created successfully');
+      setIsModalOpen(false);
     } catch (error) {
-      console.error('Error creating tag:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to create tag');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -97,29 +50,11 @@ export default function AdminTagsPage() {
     if (!selectedTag) return;
 
     try {
-      setIsSubmitting(true);
-      const response = await fetch(`/api/admin/tags/${selectedTag.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result: TagsResponse = await response.json();
-
-      if (result.success) {
-        toast.success(result.message || 'Tag updated successfully');
-        setIsModalOpen(false);
-        fetchTags(currentPage);
-      } else {
-        toast.error(result.error || 'Failed to update tag');
-      }
+      await updateTag(selectedTag.id, data);
+      toast.success('Tag updated successfully');
+      setIsModalOpen(false);
     } catch (error) {
-      console.error('Error updating tag:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to update tag');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -127,20 +62,13 @@ export default function AdminTagsPage() {
     if (!confirm('Are you sure you want to delete this tag?')) return;
 
     try {
-      const response = await fetch(`/api/admin/tags/${tagId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete tag');
-      }
-
+      setDeletingTagId(tagId);
+      await deleteTag(tagId);
       toast.success('Tag deleted successfully');
-      fetchTags(currentPage);
     } catch (error) {
-      console.error('Error deleting tag:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to delete tag');
+    } finally {
+      setDeletingTagId(null);
     }
   };
 
@@ -168,6 +96,24 @@ export default function AdminTagsPage() {
       handleUpdateTag(data);
     }
   };
+
+  if (error) {
+    return (
+      <div className="p-6 max-w-7xl mx-auto">
+        <div className="text-center py-12">
+          <div className="text-red-500 text-lg mb-4">
+            Error: {error.message}
+          </div>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -236,7 +182,7 @@ export default function AdminTagsPage() {
                   <span>Organize and manage your content tags</span>
                   <span className="hidden sm:inline">•</span>
                   <span className="text-sm px-2 py-1 bg-theme-primary/10 text-theme-primary rounded-full font-medium">
-                    {totalTags} total
+                    {tagsData?.total || 0} total
                   </span>
                 </p>
               </div>
@@ -264,7 +210,7 @@ export default function AdminTagsPage() {
                   Total Tags
                 </p>
                 <p className="text-3xl font-bold text-blue-700 dark:text-blue-300 group-hover:scale-105 transition-transform">
-                  {totalTags}
+                  {tagsData?.total || 0}
                 </p>
               </div>
               <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -282,7 +228,7 @@ export default function AdminTagsPage() {
                   Active Tags
                 </p>
                 <p className="text-3xl font-bold text-green-700 dark:text-green-300 group-hover:scale-105 transition-transform">
-                  {tags.filter(tag => tag.isActive).length}
+                  {tagsData?.tags?.filter(tag => tag.isActive).length}
                 </p>
               </div>
               <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -303,14 +249,14 @@ export default function AdminTagsPage() {
                 Tags
               </h3>
               <div className="text-sm text-gray-500 dark:text-gray-400">
-                {tags.length} of {totalTags} tags
+                {tagsData?.tags?.length || 0} of {tagsData?.total || 0} tags
               </div>
             </div>
           </div>
 
           {/* Enhanced Table Content */}
           <div className="divide-y divide-gray-100 dark:divide-gray-800">
-            {tags.map((tag) => (
+            {tagsData?.tags?.map((tag) => (
               <div 
                 key={tag.id} 
                 className="group hover:bg-gradient-to-r hover:from-theme-primary/5 hover:to-theme-accent/5 dark:hover:from-theme-primary/10 dark:hover:to-theme-accent/10 transition-all duration-200"
@@ -366,6 +312,7 @@ export default function AdminTagsPage() {
                           <Edit size={14} />
                         </Button>
                         <Button
+                          isLoading={deletingTagId === tag.id}
                           size="sm"
                           variant="ghost"
                           onPress={() => handleDeleteTag(tag.id)}
@@ -382,7 +329,7 @@ export default function AdminTagsPage() {
           </div>
 
           {/* Empty State */}
-          {tags.length === 0 && (
+          {tagsData?.tags?.length === 0 && (
             <div className="px-6 py-16 text-center">
               <div className="max-w-sm mx-auto">
                 <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-theme-primary/10 to-theme-accent/10 rounded-full flex items-center justify-center">
@@ -409,11 +356,11 @@ export default function AdminTagsPage() {
       </Card>
 
       {/* Pagination */}
-      {totalPages > 1 && (
+      {tagsData && tagsData.totalPages > 1 && (
         <div className="mt-8 flex justify-center">
           <UniversalPagination
             page={currentPage}
-            totalPages={totalPages}
+            totalPages={tagsData.totalPages}
             onPageChange={handlePageChange}
           />
         </div>
@@ -428,7 +375,7 @@ export default function AdminTagsPage() {
               mode={formMode}
               onSubmit={handleFormSubmit}
               onCancel={closeModal}
-              isLoading={isSubmitting}
+              isLoading={isCreating || isUpdating}
             />
           </div>
         </div>

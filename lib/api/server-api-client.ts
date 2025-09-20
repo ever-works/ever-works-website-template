@@ -3,6 +3,19 @@
  * Provides a centralized way to handle API calls with proper error handling
  */
 
+// Logger utility
+const logger = {
+  info: (message: string, context?: Record<string, any>) =>
+    console.log(`[ServerClient] ${message}`, context || ''),
+  warn: (message: string, context?: Record<string, any>) =>
+    console.warn(`[ServerClient] ${message}`, context || ''),
+  error: (message: string, context?: Record<string, any>) =>
+    console.error(`[ServerClient] ${message}`, context || ''),
+  debug: (message: string, context?: Record<string, any>) =>
+    console.log(`[ServerClient] ${message}`, context || '')
+};
+
+
 // Types for API responses
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -19,9 +32,9 @@ export interface FetchOptions extends RequestInit {
 
 // Default configuration
 const DEFAULT_CONFIG = {
-  timeout: 10000, // 10 seconds
+  timeout: 30000,
   retries: 3,
-  retryDelay: 1000, // 1 second
+  retryDelay: 1000, 
   headers: {
     'Content-Type': 'application/json',
     'User-Agent': 'EverWorks-Server/1.0',
@@ -42,14 +55,26 @@ async function fetchWithTimeout(
     ...fetchOptions
   } = options;
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
-
   const attemptFetch = async (attempt: number): Promise<Response> => {
+       const timeoutController = new AbortController();
+       const compositeSignal =
+         (AbortSignal as any)?.any && (fetchOptions as any)?.signal
+           ? (AbortSignal as any).any([timeoutController.signal, (fetchOptions as any).signal as AbortSignal])
+           : (() => {
+               const ext = (fetchOptions as any).signal as AbortSignal | undefined;
+               if (ext) {
+                 ext.addEventListener('abort', () => {
+                   (timeoutController as any).abort((ext as any).reason);
+                 }, { once: true });
+               }
+               return timeoutController.signal;
+             })();
+       const timeoutId = setTimeout(() => timeoutController.abort(), timeout);
+
     try {
       const response = await fetch(url, {
         ...fetchOptions,
-        signal: controller.signal,
+        signal: compositeSignal,
         headers: {
           ...DEFAULT_CONFIG.headers,
           ...fetchOptions.headers,
@@ -61,8 +86,21 @@ async function fetchWithTimeout(
     } catch (error) {
       clearTimeout(timeoutId);
 
-      if (attempt < retries && !controller.signal.aborted) {
-        console.warn(`Fetch attempt ${attempt + 1} failed, retrying in ${retryDelay}ms...`);
+      // Handle AbortError specifically
+      if (error instanceof Error && (error.name === 'AbortError' || (error as any).code === 'ETIMEDOUT')) {
+        const err = new Error(`Request timeout after ${timeout}ms`, { cause: error as any });
+        (err as any).name = 'TimeoutError';
+        (err as any).code = 'ETIMEDOUT';
+        throw err;
+      }
+
+      if (attempt < retries && !compositeSignal.aborted) {
+        logger.warn(`Fetch attempt ${attempt + 1} failed, retrying in ${retryDelay}ms...`, { 
+          url, 
+          attempt: attempt + 1, 
+          retries, 
+          error: error instanceof Error ? error.message : 'Unknown error' 
+        });
         await new Promise(resolve => setTimeout(resolve, retryDelay));
         return attemptFetch(attempt + 1);
       }
@@ -117,7 +155,11 @@ export class ServerClient {
         data,
       };
     } catch (error) {
-      console.error(`API request failed for ${url}:`, error);
+      logger.error(`API request failed for ${url}`, { 
+        url, 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined
+      });
 
       return {
         success: false,
