@@ -65,35 +65,6 @@ export default function ClientsPage() {
   const [updatedAfter, setUpdatedAfter] = useState<string>('');
   const [updatedBefore, setUpdatedBefore] = useState<string>('');
 
-  // Use the custom hook
-  const {
-    clients,
-    stats,
-    total: totalCount,
-    page,
-    totalPages,
-    isLoading,
-    isSubmitting,
-    createClient,
-    updateClient,
-    deleteClient,
-  } = useAdminClients({
-    params: {
-      page: currentPage,
-      limit,
-      search: searchTerm,
-      status: statusFilter as any,
-      plan: planFilter as any,
-      accountType: accountTypeFilter as any,
-      provider: providerFilter,
-      createdAfter,
-      createdBefore,
-      updatedAfter,
-      updatedBefore,
-      sortBy: 'createdAt',
-      sortOrder: 'desc',
-    },
-  });
 
   // Compute date range from preset selection
   const computeDateRange = useCallback((preset: typeof datePreset) => {
@@ -159,6 +130,36 @@ export default function ClientsPage() {
       if (!isInitialLoad.current) {
         setCurrentPage(1);
       }
+    },
+  });
+
+  // Use the custom hook
+  const {
+    clients,
+    stats,
+    total: totalCount,
+    page,
+    totalPages,
+    isLoading,
+    isSubmitting,
+    createClient,
+    updateClient,
+    deleteClient,
+  } = useAdminClients({
+    params: {
+      page: currentPage,
+      limit,
+      search: debouncedSearchTerm,
+      status: statusFilter as any,
+      plan: planFilter as any,
+      accountType: accountTypeFilter as any,
+      provider: providerFilter,
+      createdAfter,
+      createdBefore,
+      updatedAfter,
+      updatedBefore,
+      sortBy: 'createdAt',
+      sortOrder: 'desc',
     },
   });
 
