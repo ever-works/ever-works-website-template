@@ -121,13 +121,17 @@ export default function ClientsPage() {
 
   // Track if this is the initial load
   const isInitialLoad = useRef(true);
+  // Track the last search value applied to query to prevent stale-page fetches
+  const lastAppliedSearchRef = useRef<string>('');
 
   // Debounced search hook
   const { debouncedValue: debouncedSearchTerm, isSearching } = useDebounceSearch({
     searchValue: searchTerm,
     delay: 300,
-    onSearch: async () => {
-      if (!isInitialLoad.current) {
+    onSearch: (value: string) => {
+      // mark the value as applied; page reset happens only when necessary
+      lastAppliedSearchRef.current = value;
+      if (!isInitialLoad.current && currentPage !== 1) {
         setCurrentPage(1);
       }
     },
