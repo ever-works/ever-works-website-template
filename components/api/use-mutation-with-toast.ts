@@ -2,8 +2,8 @@ import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react
 import { apiClient, ApiError, RequestBody } from '@/lib/api/api-client';
 import { toast } from 'sonner';
 
-interface MutationConfig<TData, TVariables extends RequestBody> extends Omit<
-  UseMutationOptions<TData, ApiError, TVariables>,
+interface MutationConfig<TData, TVariables extends RequestBody, TContext = unknown> extends Omit<
+  UseMutationOptions<TData, ApiError, TVariables, TContext>,
   'mutationFn' | 'onSuccess' | 'onError'
 > {
   endpoint: string;
@@ -14,7 +14,7 @@ interface MutationConfig<TData, TVariables extends RequestBody> extends Omit<
   onError?: (error: ApiError, variables: TVariables) => void | Promise<void>;
 }
 
-export function useMutationWithToast<TData, TVariables extends RequestBody = RequestBody>({
+export function useMutationWithToast<TData, TVariables extends RequestBody = RequestBody, TContext = unknown>({
   endpoint,
   method,
   successMessage,
@@ -22,10 +22,10 @@ export function useMutationWithToast<TData, TVariables extends RequestBody = Req
   onSuccess,
   onError,
   ...options
-}: MutationConfig<TData, TVariables>) {
+}: MutationConfig<TData, TVariables, TContext>) {
   const queryClient = useQueryClient();
 
-  return useMutation<TData, ApiError, TVariables>({
+  return useMutation<TData, ApiError, TVariables, TContext>({
     mutationFn: async (variables) => {
       switch (method) {
         case 'post':
@@ -52,9 +52,9 @@ export function useMutationWithToast<TData, TVariables extends RequestBody = Req
       }
       await onSuccess?.(data, variables);
     },
-    onError: (error, variables) => {
+    onError: async (error, variables) => {
       toast.error(error.message || 'An error occurred');
-      onError?.(error, variables);
+      await onError?.(error, variables);
     },
     ...options,
   });
