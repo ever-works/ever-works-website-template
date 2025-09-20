@@ -80,6 +80,54 @@ export interface ClientListOptions {
   userId?: string;
 }
 
+// Dashboard response types
+export interface ClientDashboardResponse {
+  success: boolean;
+  data: {
+    clients: ClientProfileWithAuth[];
+    pagination: {
+      page: number;
+      totalPages: number;
+      total: number;
+      limit: number;
+    };
+    stats: ClientStats;
+  };
+  error?: string;
+}
+
+export interface ClientStats {
+  overview: {
+    total: number;
+    active: number;
+    inactive: number;
+    suspended: number;
+    trial: number;
+  };
+  byProvider: Record<string, number>;
+  byPlan: Record<string, number>;
+  byAccountType: Record<string, number>;
+  byStatus: Record<string, number>;
+  activity: {
+    newThisWeek: number;
+    newThisMonth: number;
+    activeThisWeek: number;
+    activeThisMonth: number;
+  };
+  growth: {
+    weeklyGrowth: number;
+    monthlyGrowth: number;
+  };
+}
+
+// Extended client list options for dashboard
+export interface ClientDashboardOptions extends ClientListOptions {
+  createdAfter?: string;
+  createdBefore?: string;
+  updatedAfter?: string;
+  updatedBefore?: string;
+}
+
 // Client validation constants
 export const CLIENT_VALIDATION = {
   DISPLAY_NAME_MIN_LENGTH: 2,
