@@ -436,14 +436,23 @@ export default function ClientsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, clients, isLoading]);
 
-  // Fetch when filters change (excluding search term which has its own debounced effect)
+  // Fetch when filters change
   useEffect(() => {
-    // Skip if this is the initial load
-    if (!isInitialLoad.current) {
-      fetchDashboardData(1);
-    }
+    if (isInitialLoad.current) return;
+    fetchDashboardData(currentPage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter, planFilter, accountTypeFilter, providerFilter, createdAfter, createdBefore, updatedAfter, updatedBefore]);
+  }, [
+    debouncedSearchTerm,
+    statusFilter,
+    planFilter,
+    accountTypeFilter,
+    providerFilter,
+    createdAfter,
+    createdBefore,
+    updatedAfter,
+    updatedBefore,
+    currentPage
+  ]);
 
 
   const getStatusColor = (status: string) => {
