@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function ClientFiltersSkeletonProps() {
+export function ClientFiltersSkeleton() {
   return (
     <div className="space-y-4">
       {/* Stats Cards Skeleton */}
@@ -73,8 +73,4 @@ export function ClientFiltersSkeletonProps() {
       </div>
     </div>
   );
-}
-
-export function ClientFiltersSkeleton() {
-  return <ClientFiltersSkeletonProps />;
 }
