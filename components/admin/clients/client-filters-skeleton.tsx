@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function ClientFiltersSkeleton() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" aria-hidden="true">
       {/* Stats Cards Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {Array.from({ length: 4 }).map((_, index) => (
@@ -35,19 +35,19 @@ export function ClientFiltersSkeleton() {
 
           {/* Filter Controls */}
           <div className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-48">
+            <div className="flex-1 min-w-[12rem]">
               <Skeleton className="h-4 w-16 mb-2" />
               <Skeleton className="h-10 w-full rounded-lg" />
             </div>
-            <div className="flex-1 min-w-48">
+            <div className="flex-1 min-w-[12rem]">
               <Skeleton className="h-4 w-12 mb-2" />
               <Skeleton className="h-10 w-full rounded-lg" />
             </div>
-            <div className="flex-1 min-w-48">
+            <div className="flex-1 min-w-[12rem]">
               <Skeleton className="h-4 w-20 mb-2" />
               <Skeleton className="h-10 w-full rounded-lg" />
             </div>
-            <div className="flex-1 min-w-48">
+            <div className="flex-1 min-w-[12rem]">
               <Skeleton className="h-4 w-16 mb-2" />
               <Skeleton className="h-10 w-full rounded-lg" />
             </div>
