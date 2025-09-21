@@ -14,6 +14,7 @@ import { LoadingSpinner, InlineLoading } from "@/components/ui/loading-spinner";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import type { ClientResponse, CreateClientRequest, UpdateClientRequest } from "@/lib/types/client";
 import type { ClientProfileWithAuth } from "@/lib/db/queries";
+import type { ClientsLoadingState, LoadingStateKey } from "@/types/loading";
 
 // Helper functions for provider stats
 function getTopProviderName(byProvider: Record<string, number>): string {
@@ -40,7 +41,7 @@ export default function ClientsPage() {
   const [selectedClient, setSelectedClient] = useState<ClientProfileWithAuth | null>(null);
 
   // Granular loading states
-  const [loadingStates, setLoadingStates] = useState({
+  const [loadingStates, setLoadingStates] = useState<ClientsLoadingState>({
     initial: true,
     searching: false,
     filtering: false,
@@ -50,7 +51,7 @@ export default function ClientsPage() {
   });
 
   // Helper functions for updating loading states
-  const updateLoadingState = useCallback((key: keyof typeof loadingStates, value: boolean | string | null) => {
+  const updateLoadingState = useCallback((key: LoadingStateKey | 'deleting', value: boolean | string | null) => {
     setLoadingStates(prev => ({ ...prev, [key]: value }));
   }, []);
 
@@ -196,6 +197,8 @@ export default function ClientsPage() {
 
   // Optimized function to fetch both clients and stats in a single request
   const fetchDashboardData = useCallback(async (page: number = currentPage, isPagination = false) => {
+    const requestId = Date.now();
+    (fetchDashboardData as any)._last = requestId;
     try {
       setIsLoading(true);
       setIsFiltering(true);
@@ -230,6 +233,7 @@ export default function ClientsPage() {
       }
 
       const data = await response.json();
+      if ((fetchDashboardData as any)._last !== requestId) return; // drop stale
 
       if (data.success) {
         // Update clients
