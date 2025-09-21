@@ -6,7 +6,7 @@ interface ClientTableSkeletonProps {
 
 export function ClientTableSkeleton({ rows = 10 }: ClientTableSkeletonProps) {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden" aria-hidden="true">
       {/* Table Header */}
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
         <div className="grid grid-cols-12 gap-4 items-center">
@@ -20,7 +20,7 @@ export function ClientTableSkeleton({ rows = 10 }: ClientTableSkeletonProps) {
             <Skeleton className="h-4 w-14" />
           </div>
           <div className="col-span-2">
-            <Skeleton className="h-4 w-18" />
+            <Skeleton className="h-4 w-[4.5rem]" />
           </div>
           <div className="col-span-2">
             <Skeleton className="h-4 w-16" />
