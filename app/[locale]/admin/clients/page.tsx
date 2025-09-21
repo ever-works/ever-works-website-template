@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
 import { Modal, ModalContent } from "@/components/ui/modal";
 import { Select, SelectItem } from "@/components/ui/select";
@@ -10,11 +10,12 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { ClientForm } from "@/components/admin/clients/client-form";
 import { UniversalPagination } from "@/components/universal-pagination";
-import { LoadingSpinner, InlineLoading } from "@/components/ui/loading-spinner";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
-import type { ClientResponse, CreateClientRequest, UpdateClientRequest } from "@/lib/types/client";
+import { useAdminClients } from "@/hooks/use-admin-clients";
+import type { CreateClientRequest, UpdateClientRequest } from "@/lib/types/client";
 import type { ClientProfileWithAuth } from "@/lib/db/queries";
-import type { ClientsLoadingState, LoadingStateKey } from "@/types/loading";
+import type { ClientsLoadingState } from "@/types/loading";
 
 // Helper functions for provider stats
 function getTopProviderName(byProvider: Record<string, number>): string {
@@ -35,9 +36,8 @@ export default function ClientsPage() {
   const router = useRouter();
   const params = useParams<{ locale: string }>();
   const searchParams = useSearchParams();
-  const [clients, setClients] = useState<ClientProfileWithAuth[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Form and navigation state
   const [selectedClient, setSelectedClient] = useState<ClientProfileWithAuth | null>(null);
 
   // Granular loading states
@@ -50,26 +50,16 @@ export default function ClientsPage() {
     deleting: null as string | null,
   });
 
-  // Helper functions for updating loading states
-  const updateLoadingState = useCallback((key: LoadingStateKey | 'deleting', value: boolean | string | null) => {
-    setLoadingStates(prev => ({ ...prev, [key]: value }));
+  // Helper function for updating deleting state (only one we still need)
+  const setDeletingLoading = useCallback((clientId: string | null) => {
+    setLoadingStates(prev => ({ ...prev, deleting: clientId }));
   }, []);
-
-  const setSearchingLoading = useCallback((loading: boolean) => updateLoadingState('searching', loading), [updateLoadingState]);
-  const setFilteringLoading = useCallback((loading: boolean) => updateLoadingState('filtering', loading), [updateLoadingState]);
-  const setPaginatingLoading = useCallback((loading: boolean) => updateLoadingState('paginating', loading), [updateLoadingState]);
-  const setSubmittingLoading = useCallback((loading: boolean) => updateLoadingState('submitting', loading), [updateLoadingState]);
-  const setDeletingLoading = useCallback((clientId: string | null) => updateLoadingState('deleting', clientId), [updateLoadingState]);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [navigatingClientId, setNavigatingClientId] = useState<string | null>(null);
-
-  // Delete confirmation state
   const [clientToDelete, setClientToDelete] = useState<string | null>(null);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const [limit] = useState(10);
 
   // Filter state
@@ -78,7 +68,6 @@ export default function ClientsPage() {
   const [planFilter, setPlanFilter] = useState<string>('');
   const [accountTypeFilter, setAccountTypeFilter] = useState<string>('');
   const [providerFilter, setProviderFilter] = useState<string>('');
-  const [isFiltering, setIsFiltering] = useState(false);
 
   // Date filters - improved UX
   const [datePreset, setDatePreset] = useState<'all' | 'last7' | 'last30' | 'last90' | 'thisMonth' | 'custom'>('all');
@@ -92,15 +81,34 @@ export default function ClientsPage() {
   const [updatedAfter, setUpdatedAfter] = useState<string>('');
   const [updatedBefore, setUpdatedBefore] = useState<string>('');
 
-  // Stats state
-  const [stats, setStats] = useState({
-    overview: { total: 0, active: 0, inactive: 0, suspended: 0, trial: 0 },
-    byProvider: { credentials: 0, google: 0, github: 0, facebook: 0, twitter: 0, linkedin: 0, other: 0 },
-    byPlan: { free: 0, standard: 0, premium: 0 },
-    byAccountType: { individual: 0, business: 0, enterprise: 0 },
-    byStatus: { active: 0, inactive: 0, suspended: 0, trial: 0 },
-    activity: { newThisWeek: 0, newThisMonth: 0, activeThisWeek: 0, activeThisMonth: 0 },
-    growth: { weeklyGrowth: 0, monthlyGrowth: 0 }
+  // Use the custom hook
+  const {
+    clients,
+    stats,
+    total: totalCount,
+    page,
+    totalPages,
+    isLoading,
+    isSubmitting,
+    createClient,
+    updateClient,
+    deleteClient,
+  } = useAdminClients({
+    params: {
+      page: currentPage,
+      limit,
+      search: searchTerm,
+      status: statusFilter as any,
+      plan: planFilter as any,
+      accountType: accountTypeFilter as any,
+      provider: providerFilter,
+      createdAfter,
+      createdBefore,
+      updatedAfter,
+      updatedBefore,
+      sortBy: 'createdAt',
+      sortOrder: 'desc',
+    },
   });
 
   // Compute date range from preset selection
@@ -157,10 +165,9 @@ export default function ClientsPage() {
   const { isOpen: isFilterModalOpen, onOpen: onOpenFilterModal, onClose: onCloseFilterModal } = useDisclosure();
 
   // Debounced search term
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
 
-  // Track if this is the initial load
-  const isInitialLoad = useRef(true);
+  // Track if this is the initial load (no longer needed with React Query)
+  // const isInitialLoad = useRef(true);
 
   // Calculate active filter count
   const activeFilterCount = [
@@ -186,151 +193,23 @@ export default function ClientsPage() {
     setSelectedClient(null);
   }, [onClose, clearEditParam]);
 
-  // Debounce search term
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 300);
+  // Debounce search term - handled by React Query automatically
 
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
-  // Optimized function to fetch both clients and stats in a single request
-  const fetchDashboardData = useCallback(async (page: number = currentPage, isPagination = false) => {
-    const requestId = Date.now();
-    (fetchDashboardData as any)._last = requestId;
-    try {
-      setIsLoading(true);
-      setIsFiltering(true);
-
-      // Set appropriate granular loading state
-      if (isPagination) {
-        setPaginatingLoading(true);
-      } else if (debouncedSearchTerm) {
-        setSearchingLoading(true);
-      } else {
-        setFilteringLoading(true);
-      }
-      const params = new URLSearchParams({
-        page: String(page),
-        limit: String(limit)
-      });
-      if (debouncedSearchTerm) params.append('search', debouncedSearchTerm);
-      if (statusFilter) params.append('status', statusFilter);
-      if (planFilter) params.append('plan', planFilter);
-      if (accountTypeFilter) params.append('accountType', accountTypeFilter);
-      if (providerFilter) params.append('provider', providerFilter);
-      if (createdAfter) params.append('createdAfter', createdAfter);
-      if (createdBefore) params.append('createdBefore', createdBefore);
-      if (updatedAfter) params.append('updatedAfter', updatedAfter);
-      if (updatedBefore) params.append('updatedBefore', updatedBefore);
-
-      const response = await fetch(`/api/admin/clients/dashboard?${params}`);
-
-      if (!response.ok) {
-        const message = await response.text().catch(() => '');
-        throw new Error(message || `Request failed (${response.status})`);
-      }
-
-      const data = await response.json();
-      if ((fetchDashboardData as any)._last !== requestId) return; // drop stale
-
-      if (data.success) {
-        // Update clients
-        setClients(data.data.clients);
-        setTotalPages(data.data.pagination.totalPages);
-        setCurrentPage(data.data.pagination.page);
-        setTotalCount(data.data.pagination.total);
-        
-        // Update stats
-        setStats(data.data.stats);
-      } else {
-        toast.error(data.error || 'Failed to fetch dashboard data');
-      }
-    } catch (error) {
-      console.error('Failed to fetch dashboard data:', error);
-      toast.error('Failed to fetch dashboard data');
-    } finally {
-      setIsLoading(false);
-      setIsFiltering(false);
-
-      // Clear all granular loading states
-      setPaginatingLoading(false);
-      setSearchingLoading(false);
-      setFilteringLoading(false);
-      updateLoadingState('initial', false);
+  // Handlers using the custom hook
+  const handleCreate = useCallback(async (data: CreateClientRequest) => {
+    const success = await createClient(data);
+    if (success) {
+      closeForm();
     }
-  }, [debouncedSearchTerm, statusFilter, planFilter, accountTypeFilter, providerFilter, currentPage, limit, createdAfter, createdBefore, updatedAfter, updatedBefore, setPaginatingLoading, setSearchingLoading, setFilteringLoading, updateLoadingState]);
+  }, [createClient, closeForm]);
 
-  // Create client
-  const handleCreate = async (data: CreateClientRequest) => {
-    try {
-      setIsSubmitting(true);
-      setSubmittingLoading(true);
-      const response = await fetch('/api/admin/clients', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const message = await response.text().catch(() => '');
-        throw new Error(message || `Request failed (${response.status})`);
-      }
-
-      const result: ClientResponse = await response.json();
-
-      if (result.success) {
-        toast.success('Client created successfully');
-        closeForm();
-        fetchDashboardData();
-      } else {
-        toast.error(result.error || 'Failed to create client');
-      }
-    } catch (error) {
-      console.error('Failed to create client:', error);
-      toast.error('Failed to create client');
-    } finally {
-      setIsSubmitting(false);
-      setSubmittingLoading(false);
+  const handleUpdate = useCallback(async (data: UpdateClientRequest) => {
+    const success = await updateClient(data.id, data);
+    if (success) {
+      closeForm();
     }
-  };
-
-  // Update client
-  const handleUpdate = async (data: UpdateClientRequest) => {
-    try {
-      setIsSubmitting(true);
-      setSubmittingLoading(true);
-      const safeId = encodeURIComponent(data.id);
-      const response = await fetch(`/api/admin/clients/${safeId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const message = await response.text().catch(() => '');
-        throw new Error(message || `Request failed (${response.status})`);
-      }
-
-      const result: ClientResponse = await response.json();
-
-      if (result.success) {
-        toast.success('Client updated successfully');
-        closeForm();
-        fetchDashboardData();
-      } else {
-        toast.error(result.error || 'Failed to update client');
-      }
-    } catch (error) {
-      console.error('Failed to update client:', error);
-      toast.error('Failed to update client');
-    } finally {
-      setIsSubmitting(false);
-      setSubmittingLoading(false);
-    }
-  };
-
+  }, [updateClient, closeForm]);
   // Show delete confirmation modal
   const handleDeleteClick = (compositeKey: string) => {
     setClientToDelete(compositeKey);
@@ -338,38 +217,16 @@ export default function ClientsPage() {
   };
 
   // Confirm delete action
-  const confirmDelete = async () => {
+  const confirmDelete = useCallback(async () => {
     if (!clientToDelete) return;
 
-    try {
-      setDeletingLoading(clientToDelete);
-      const safeId = encodeURIComponent(clientToDelete);
-      const response = await fetch(`/api/admin/clients/${safeId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        const message = await response.text().catch(() => '');
-        throw new Error(message || `Request failed (${response.status})`);
-      }
-
-      const result: ClientResponse = await response.json();
-
-      if (result.success) {
-        toast.success('Client deleted successfully');
-        fetchDashboardData();
-      } else {
-        toast.error(result.error || 'Failed to delete client');
-      }
-    } catch (error) {
-      console.error('Failed to delete client:', error);
-      toast.error('Failed to delete client');
-    } finally {
+    const success = await deleteClient(clientToDelete);
+    if (success) {
       setClientToDelete(null);
       setDeletingLoading(null);
       onDeleteClose();
     }
-  };
+  }, [clientToDelete, deleteClient, onDeleteClose, setDeletingLoading]);
 
   // Cancel delete action
   const cancelDelete = () => {
@@ -406,12 +263,11 @@ export default function ClientsPage() {
     }
   };
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
-    fetchDashboardData(page, true); // true indicates this is pagination
-  };
+  }, []);
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setSearchTerm('');
     setStatusFilter('');
     setPlanFilter('');
@@ -422,27 +278,12 @@ export default function ClientsPage() {
     setCustomDateTo('');
     setDateFilterType('created');
     setCurrentPage(1);
-    // Optional: short-circuit debounce for immediate fetch
-    fetchDashboardData(1);
-  };
+  }, []);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     setCurrentPage(1);
   };
-
-  // Initial fetch on component mount
-  useEffect(() => {
-    const loadInitialData = async () => {
-      try {
-        await fetchDashboardData();
-      } finally {
-        isInitialLoad.current = false; // Mark initial load as complete
-      }
-    };
-    loadInitialData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run on mount
 
   // Open edit modal when ?edit=<id> is present
   useEffect(() => {
@@ -457,25 +298,10 @@ export default function ClientsPage() {
         return;
       }
 
-      // If not found in existing clients and we're not loading, fetch individually
+      // If not found in existing clients and we're not loading, we could fetch individually
+      // but for now, we'll just show an error
       if (!isLoading) {
-        (async () => {
-          try {
-            const resp = await fetch(`/api/admin/clients/${encodeURIComponent(editId)}`);
-            if (!resp.ok) throw new Error('Failed to load client');
-            const data: ClientResponse = await resp.json();
-            if (data.success && (data as any).data) {
-              setSelectedClient((data as any).data as ClientProfileWithAuth);
-              setFormMode('edit');
-              onOpen();
-            } else {
-              toast.error('Client not found');
-            }
-          } catch (e) {
-            console.error(e);
-            toast.error('Failed to load client');
-          }
-        })();
+        toast.error('Client not found');
       }
     } else {
       if (isOpen) onClose();
@@ -483,23 +309,6 @@ export default function ClientsPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, clients, isLoading]);
-
-  // Fetch when filters change (excluding search term which has its own debounced effect)
-  useEffect(() => {
-    // Skip if this is the initial load
-    if (!isInitialLoad.current) {
-      fetchDashboardData(1);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter, planFilter, accountTypeFilter, providerFilter, createdAfter, createdBefore, updatedAfter, updatedBefore]);
-
-  // Fetch when debounced search term changes, including when cleared
-  useEffect(() => {
-    if (!isInitialLoad.current) {
-      fetchDashboardData(1);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchTerm]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -690,7 +499,7 @@ export default function ClientsPage() {
             aria-label="Search clients"
             className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
-          {(loadingStates.searching || loadingStates.filtering || isFiltering) && (
+          {isLoading && (
             <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
               <LoadingSpinner size="sm" />
             </div>
@@ -939,13 +748,10 @@ export default function ClientsPage() {
       {totalPages > 1 && (
         <div className="flex flex-col items-center mt-8 space-y-4">
           <UniversalPagination
-            page={currentPage}
+            page={page}
             totalPages={totalPages}
             onPageChange={handlePageChange}
           />
-          {loadingStates.paginating && (
-            <InlineLoading text="Loading page..." size="sm" />
-          )}
         </div>
       )}
 
@@ -957,7 +763,7 @@ export default function ClientsPage() {
               client={selectedClient || undefined}
               onSubmit={handleFormSubmit}
               onCancel={closeForm}
-              isLoading={loadingStates.submitting || isSubmitting}
+              isLoading={isSubmitting}
               mode={formMode}
             />
           </div>
