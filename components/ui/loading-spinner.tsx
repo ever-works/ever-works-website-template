@@ -33,27 +33,26 @@ export function LoadingSpinner({ size = "md", className, color = "primary", ...r
   );
 }
 
-export interface InlineLoadingProps extends HTMLAttributes<HTMLDivElement> {
+export interface InlineLoadingProps extends HTMLAttributes<HTMLOutputElement> {
   text?: string;
   size?: "sm" | "md";
 }
 
 export function InlineLoading({ text = "Loading...", size = "sm", className, ...rest }: InlineLoadingProps) {
   return (
-    <div
-      className={cn("flex items-center space-x-2", className)}
-      role="status"
+    <output
+      className={cn("flex items-center gap-2", className)}
       aria-live="polite"
       aria-busy="true"
       {...rest}
     >
       <LoadingSpinner size={size} color="gray" />
       <span className="text-sm text-gray-500 dark:text-gray-400">{text}</span>
-    </div>
+    </output>
   );
 }
 
-export interface ButtonLoadingProps extends HTMLAttributes<HTMLDivElement> {
+export interface ButtonLoadingProps extends HTMLAttributes<HTMLOutputElement> {
   isLoading: boolean;
   children: ReactNode;
   loadingText?: string;
@@ -75,15 +74,14 @@ export function ButtonLoading({
   }
 
   return (
-    <div
-      className={cn("flex items-center space-x-2", className)}
-      role="status"
+    <output
+      className={cn("flex items-center gap-2", className)}
       aria-live="polite"
       aria-busy="true"
       {...rest}
     >
       <LoadingSpinner size={size} color={spinnerColor} />
       {loadingText ? <span>{loadingText}</span> : <span className="sr-only">Loading...</span>}
-    </div>
+    </output>
   );
 }
