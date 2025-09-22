@@ -799,21 +799,23 @@ export async function createClientProfile(data: {
     finalUsername = await ensureUniqueUsername(finalUsername.toLowerCase());
   }
 
+  const insertData: NewClientProfile = {
+    userId: data.userId,
+    email: normalizedEmail,
+    name: data.name,
+    displayName: data.displayName || data.name,
+    username: finalUsername,
+    bio: data.bio || "Welcome! I'm a new user on this platform.",
+    jobTitle: data.jobTitle || "User",
+    company: data.company || "Unknown",
+    status: (data.status as "active" | "inactive" | "suspended" | "trial") || "active",
+    plan: (data.plan as "free" | "standard" | "premium") || "free",
+    accountType: (data.accountType as "individual" | "business" | "enterprise") || "individual",
+  };
+
   const [profile] = await db
     .insert(clientProfiles)
-    .values({
-      userId: data.userId,
-      email: normalizedEmail,
-      name: data.name,
-      displayName: data.displayName || data.name,
-      username: finalUsername,
-      bio: data.bio || "Welcome! I'm a new user on this platform.",
-      jobTitle: data.jobTitle || "User",
-      company: data.company || "Unknown",
-      status: data.status || "active",
-      plan: data.plan || "free",
-      accountType: data.accountType || "individual",
-    })
+    .values(insertData)
     .returning();
 
 	return profile;
@@ -1224,12 +1226,12 @@ export async function getClientProfileStats() {
 		.groupBy(clientProfiles.accountType);
 
 	const byPlan: Record<string, number> = {};
-	planStats.forEach((stat: { plan: string | null; count: number }) => {
+	planStats.forEach((stat) => {
 		byPlan[stat.plan || 'unknown'] = Number(stat.count);
 	});
 
 	const byAccountType: Record<string, number> = {};
-	accountTypeStats.forEach((stat: { accountType: string | null; count: number }) => {
+	accountTypeStats.forEach((stat) => {
 		byAccountType[stat.accountType || 'unknown'] = Number(stat.count);
 	});
 
@@ -1337,15 +1339,9 @@ export async function getPaymentAccountByUserId(userId: string): Promise<Payment
       providerId: paymentAccounts.providerId,
       customerId: paymentAccounts.customerId,
       accountId: paymentAccounts.accountId,
-      provider: {
-        id: paymentProviders.id,
-        name: paymentProviders.name,
-        isActive: paymentProviders.isActive,
-      },
-      user: {
-        id: users.id,
-        email: users.email,
-      },
+      createdAt: paymentAccounts.createdAt,
+      updatedAt: paymentAccounts.updatedAt,
+      lastUsed: paymentAccounts.lastUsed,
     })
     .from(paymentAccounts)
     .innerJoin(paymentProviders, eq(paymentAccounts.providerId, paymentProviders.id))

@@ -5,7 +5,7 @@
 
 import NextAuth from 'next-auth';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
-import { db } from '../db/drizzle';
+import { db, getDrizzleInstance } from '../db/drizzle';
 import { users, accounts, sessions, verificationTokens } from '../db/schema';
 import authConfig from '../../auth.config';
 export * from '../payment/config/payment-provider-manager';
@@ -23,7 +23,7 @@ const isDatabaseAvailable = !!process.env.DATABASE_URL && typeof db !== 'undefin
 
 // Only create the Drizzle adapter if we have a real database connection
 const drizzle = isDatabaseAvailable
-	? DrizzleAdapter(db, {
+	? DrizzleAdapter(getDrizzleInstance(), {
 			usersTable: users as any,
 			accountsTable: accounts as any,
 			sessionsTable: sessions as any,

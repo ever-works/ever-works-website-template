@@ -169,27 +169,7 @@ export class UserDbService {
     try {
       const { page = 1, limit = 10, search, sortBy = 'email', sortOrder = 'asc', role, status } = options as any;
 
-      // Join users with client_profiles and roles to get complete user data
-      let query = db.select({
-        id: users.id,
-        email: users.email,
-        createdAt: users.createdAt,
-        updatedAt: users.updatedAt,
-        // Profile data
-        username: clientProfiles.username,
-        name: clientProfiles.name,
-        title: clientProfiles.jobTitle,
-        avatar: clientProfiles.avatar,
-        status: clientProfiles.status,
-        // Role data
-        roleId: userRoles.roleId,
-        roleName: roles.name,
-      })
-      .from(users)
-      .leftJoin(clientProfiles, eq(users.id, clientProfiles.userId))
-      .leftJoin(userRoles, eq(users.id, userRoles.userId))
-      .leftJoin(roles, eq(userRoles.roleId, roles.id));
-
+      // Build conditions first
       const conditions: SQL[] = [];
       conditions.push(isNull(users.deletedAt));
 
@@ -210,19 +190,36 @@ export class UserDbService {
         conditions.push(eq(clientProfiles.status, status));
       }
 
-      if (conditions.length > 0) {
-        query = query.where(and(...conditions));
-      }
+      // Build query with all conditions
+      const baseQuery = db.select({
+        id: users.id,
+        email: users.email,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+        // Profile data
+        username: clientProfiles.username,
+        name: clientProfiles.name,
+        title: clientProfiles.jobTitle,
+        avatar: clientProfiles.avatar,
+        status: clientProfiles.status,
+        // Role data
+        roleId: userRoles.roleId,
+        roleName: roles.name,
+      })
+      .from(users)
+      .leftJoin(clientProfiles, eq(users.id, clientProfiles.userId))
+      .leftJoin(userRoles, eq(users.id, userRoles.userId))
+      .leftJoin(roles, eq(userRoles.roleId, roles.id))
+      .where(and(...conditions));
       
       // Get total count with same filters (need to join for search to work)
-      let countQuery = db.select({ count: sql`count(*)` })
+      const countQuery = db.select({ count: sql`count(*)` })
         .from(users)
         .leftJoin(clientProfiles, eq(users.id, clientProfiles.userId))
         .leftJoin(userRoles, eq(users.id, userRoles.userId))
-        .leftJoin(roles, eq(userRoles.roleId, roles.id));
-      if (conditions.length > 0) {
-        countQuery = countQuery.where(and(...conditions));
-      }
+        .leftJoin(roles, eq(userRoles.roleId, roles.id))
+        .where(and(...conditions));
+
       const countResult = await countQuery;
       const total = Number(countResult[0].count);
 
@@ -233,13 +230,13 @@ export class UserDbService {
       };
       const sortField = sortFieldMap[sortBy] || users.email;
       const orderFn = sortOrder === 'desc' ? desc : asc;
-      const result = await query
+      const result = await baseQuery
         .orderBy(orderFn(sortField))
         .limit(limit)
         .offset((page - 1) * limit);
       
       return {
-        users: result.map(this.mapJoinedDataToAuthUserData),
+        users: result.map((data) => this.mapJoinedDataToAuthUserData(data as any)),
         total,
         page,
         limit,
@@ -284,17 +281,16 @@ export class UserDbService {
    */
   async clientProfileUsernameExists(username: string, excludeId?: string): Promise<boolean> {
     try {
-      let query = db
-        .select({ id: clientProfiles.id })
-        .from(clientProfiles)
-        .where(eq(clientProfiles.username, username));
+      const conditions = [eq(clientProfiles.username, username)];
 
       if (excludeId) {
-        query = query.where(and(
-          eq(clientProfiles.username, username),
-          sql`${clientProfiles.id} != ${excludeId}`
-        ));
+        conditions.push(sql`${clientProfiles.id} != ${excludeId}`);
       }
+
+      const query = db
+        .select({ id: clientProfiles.id })
+        .from(clientProfiles)
+        .where(and(...conditions));
 
       const result = await query;
       return result.length > 0;

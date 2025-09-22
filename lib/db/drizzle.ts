@@ -51,3 +51,8 @@ export const db = new Proxy({} as ReturnType<typeof drizzle>, {
     return database[prop as keyof typeof database];
   }
 });
+
+// Export actual database instance for Auth.js adapter (needed for type compatibility)
+export function getDrizzleInstance(): ReturnType<typeof drizzle> {
+  return initializeDatabase();
+}
