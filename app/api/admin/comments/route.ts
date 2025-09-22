@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/drizzle";
 import { comments, clientProfiles } from "@/lib/db/schema";
-import { and, desc, eq, isNull, sql, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, isNull, sql, type SQL } from "drizzle-orm";
 
 export const runtime = "nodejs";
 
@@ -63,7 +63,7 @@ export async function GET(request: Request) {
     const whereClause = whereConditions.length > 1 ? and(...whereConditions) : whereConditions[0];
 
     const totalResult = await db
-      .select({ count: sql`count(*)` })
+      .select({ count: count() })
       .from(comments)
       .leftJoin(clientProfiles, eq(comments.userId, clientProfiles.id))
       .where(whereClause);
