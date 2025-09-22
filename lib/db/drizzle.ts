@@ -14,19 +14,19 @@ class DummyDb {
     return callback(this);
   }
 
-  select(fields?: unknown) {
+  select(_fields?: unknown) {
     return this.createDummyQuery();
   }
 
-  insert(table: unknown) {
+  insert(_table: unknown) {
     return this.createDummyQuery();
   }
 
-  update(table: unknown) {
+  update(_table: unknown) {
     return this.createDummyQuery();
   }
 
-  delete(table: unknown) {
+  delete(_table: unknown) {
     return this.createDummyQuery();
   }
 
