@@ -345,7 +345,15 @@ export function useSubscriptionManager() {
 
   // Optimistic update for subscription creation
   const createSubscriptionOptimistic = useMutation({
-    mutationFn: createSubscription.mutateAsync,
+    mutationFn: async (data: CreateSubscriptionRequest): Promise<SubscriptionData> => {
+      const response = await serverClient.post<SubscriptionData>('/api/stripe/subscription', data);
+
+      if (!apiUtils.isSuccess(response)) {
+        throw new Error(apiUtils.getErrorMessage(response) || 'Failed to create subscription');
+      }
+
+      return response.data;
+    },
     onMutate: async (newSubscription) => {
       // Cancel any outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['user-subscription'] });
