@@ -63,7 +63,7 @@ export async function GET(request: Request) {
     const whereClause = whereConditions.length > 1 ? and(...whereConditions) : whereConditions[0];
 
     // Get total count - we need to recreate the where clause for count query
-    let countWhereConditions: SQL[] = [isNull(comments.deletedAt)];
+    const countWhereConditions: SQL[] = [isNull(comments.deletedAt)];
     if (search) {
       const escaped = search.replace(/[%_\\]/g, '\\$&');
       // For count, we need to check if user exists via subquery instead of join
