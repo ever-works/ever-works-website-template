@@ -61,7 +61,9 @@ class DummyDb {
       },
       then: (onFulfilled: (value: never[]) => void) => {
         console.warn("Database operations are disabled: DATABASE_URL is not set");
-        return Promise.resolve([]).then(onFulfilled);
+        // For count queries, return an object with count property
+        const result = [{ count: 0 }] as never[];
+        return Promise.resolve(result).then(onFulfilled);
       }
     };
     return dummyQuery;
