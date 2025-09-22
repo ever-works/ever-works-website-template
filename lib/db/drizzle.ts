@@ -42,6 +42,9 @@ class DummyDb {
       limit: () => dummyQuery,
       offset: () => dummyQuery,
       orderBy: () => dummyQuery,
+      onConflictDoNothing: () => dummyQuery,
+      onConflictDoUpdate: () => dummyQuery,
+      onDuplicateKeyUpdate: () => dummyQuery,
       execute: async () => {
         console.warn("Database operations are disabled: DATABASE_URL is not set");
         return [];
