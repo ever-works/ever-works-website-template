@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/drizzle";
 import { comments, clientProfiles } from "@/lib/db/schema";
 import { and, count, desc, eq, isNull, sql, type SQL } from "drizzle-orm";
+import { checkDatabaseAvailability } from "@/lib/utils/database-check";
 
 export const runtime = "nodejs";
 
@@ -27,6 +28,10 @@ interface ListResponseComment {
 
 export async function GET(request: Request) {
   try {
+    // Check database availability first
+    const dbCheck = checkDatabaseAvailability();
+    if (dbCheck) return dbCheck;
+
     const session = await auth();
     if (!session?.user?.isAdmin) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -66,7 +71,7 @@ export async function GET(request: Request) {
       .select({ count: count() })
       .from(comments)
       .where(countWhereClause);
-    const total = Number((totalResult[0] as unknown as { count: number })?.count || 0);
+    const total = Number(totalResult[0]?.count || 0);
 
     const rows = await db
       .select({
