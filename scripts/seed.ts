@@ -40,7 +40,7 @@ async function main() {
     process.exit(1);
   }
 
-  const conn = postgres(databaseUrl, { max: 1 });
+  const conn = postgres(databaseUrl, { max: 5 });
   const db = drizzle(conn);
 
   try {
