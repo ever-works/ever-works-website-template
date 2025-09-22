@@ -8,6 +8,45 @@ class DummyDb {
     console.warn("Database operations are disabled: DATABASE_URL is not set");
     return [];
   }
+
+  async transaction(callback: (tx: DummyDb) => Promise<unknown>) {
+    console.warn("Database transactions are disabled: DATABASE_URL is not set");
+    return callback(this);
+  }
+
+  select() {
+    return this.createDummyQuery();
+  }
+
+  insert() {
+    return this.createDummyQuery();
+  }
+
+  update() {
+    return this.createDummyQuery();
+  }
+
+  delete() {
+    return this.createDummyQuery();
+  }
+
+  private createDummyQuery() {
+    const dummyQuery = {
+      from: () => dummyQuery,
+      where: () => dummyQuery,
+      values: () => dummyQuery,
+      set: () => dummyQuery,
+      returning: () => dummyQuery,
+      limit: () => dummyQuery,
+      offset: () => dummyQuery,
+      orderBy: () => dummyQuery,
+      execute: async () => {
+        console.warn("Database operations are disabled: DATABASE_URL is not set");
+        return [];
+      }
+    };
+    return dummyQuery;
+  }
 }
 
 const globalForDb = globalThis as unknown as {
