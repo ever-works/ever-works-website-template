@@ -58,6 +58,10 @@ class DummyDb {
       execute: async () => {
         console.warn("Database operations are disabled: DATABASE_URL is not set");
         return [];
+      },
+      then: (onFulfilled: (value: never[]) => void) => {
+        console.warn("Database operations are disabled: DATABASE_URL is not set");
+        return Promise.resolve([]).then(onFulfilled);
       }
     };
     return dummyQuery;
