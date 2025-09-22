@@ -9,7 +9,7 @@ class DummyDb {
     return [];
   }
 
-  async transaction(callback: (tx: DummyDb) => Promise<unknown>) {
+  async transaction<T>(callback: (tx: DummyDb) => Promise<T>): Promise<T> {
     console.warn("Database transactions are disabled: DATABASE_URL is not set");
     return callback(this);
   }
