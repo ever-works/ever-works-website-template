@@ -24,21 +24,6 @@ interface ListResponseComment {
   user: ListResponseUser;
 }
 
-interface CommentRow {
-  id: string;
-  content: string | null;
-  rating: number | null;
-  userId: string | null;
-  itemId: string | null;
-  createdAt: Date | null;
-  updatedAt: Date | null;
-  user: {
-    id: string | null;
-    name: string | null;
-    email: string | null;
-    image: string | null;
-  } | null;
-}
 
 export async function GET(request: Request) {
   try {
@@ -106,7 +91,7 @@ export async function GET(request: Request) {
       .limit(limit)
       .offset(offset);
 
-    const data = rows.map((r: any) => ({
+    const data: ListResponseComment[] = rows.map((r: any) => ({
       id: r.id,
       content: r.content ?? "",
       rating: r.rating ?? null,
