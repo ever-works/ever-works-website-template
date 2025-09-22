@@ -75,7 +75,7 @@ async function main() {
   const usersCount = await db
     .select({ count: sql<number>`count(*)` })
     .from(users);
-  const totalUsers = Number(usersCount[0]?.count ?? 0);
+  const totalUsers = Number((usersCount[0] as unknown as { count: number })?.count ?? 0);
 
   if (totalUsers === 0) {
     const now = new Date();

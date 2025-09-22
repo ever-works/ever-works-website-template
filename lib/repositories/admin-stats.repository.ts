@@ -64,14 +64,14 @@ export class AdminStatsRepository {
           .where(and(isNull(users.deletedAt), gte(users.createdAt, monthStartUtc))),
       ]);
 
-      const totalUsers = Number(totalUsersResult[0] as unknown as { count: number })?.count ?? 0);
+      const totalUsers = Number(totalUsersResult[0] as unknown as { count: number })?.count ?? 0;
 
       return {
         totalUsers,
         registeredUsers: totalUsers, // All registered users (no activity tracking yet)
-        newUsersToday: Number(newUsersTodayResult[0] as unknown as { count: number })?.count ?? 0),
-        newUsersThisWeek: Number(newUsersWeekResult[0] as unknown as { count: number })?.count ?? 0),
-        newUsersThisMonth: Number(newUsersMonthResult[0] as unknown as { count: number })?.count ?? 0),
+        newUsersToday: Number(newUsersTodayResult[0] as unknown as { count: number })?.count ?? 0,
+        newUsersThisWeek: Number(newUsersWeekResult[0] as unknown as { count: number })?.count ?? 0,
+        newUsersThisMonth: Number(newUsersMonthResult[0] as unknown as { count: number })?.count ?? 0,
       };
     } catch (error) {
       console.error('Error fetching user stats:', error);
@@ -104,8 +104,8 @@ export class AdminStatsRepository {
       // Note: Views are not tracked in the current schema, so we'll use 0 for now
       return {
         totalViews: 0,
-        totalVotes: Number(totalVotesResult[0] as unknown as { count: number })?.count ?? 0),
-        totalComments: Number(totalCommentsResult[0] as unknown as { count: number })?.count ?? 0),
+        totalVotes: Number(totalVotesResult[0] as unknown as { count: number })?.count ?? 0,
+        totalComments: Number(totalCommentsResult[0] as unknown as { count: number })?.count ?? 0,
       };
     } catch (error) {
       console.error('Error fetching activity stats:', error);
@@ -132,8 +132,8 @@ export class AdminStatsRepository {
       ]);
 
       return {
-        totalSubscribers: Number(totalSubscribersResult[0] as unknown as { count: number })?.count ?? 0),
-        recentSubscribers: Number(recentSubscribersResult[0] as unknown as { count: number })?.count ?? 0),
+        totalSubscribers: Number(totalSubscribersResult[0] as unknown as { count: number })?.count ?? 0,
+        recentSubscribers: Number(recentSubscribersResult[0] as unknown as { count: number })?.count ?? 0,
       };
     } catch (error) {
       console.error('Error fetching newsletter stats:', error);
