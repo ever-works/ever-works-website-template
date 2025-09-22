@@ -14,19 +14,23 @@ class DummyDb {
     return callback(this);
   }
 
-  select(_fields?: unknown) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  select(fields?: unknown) {
     return this.createDummyQuery();
   }
 
-  insert(_table: unknown) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  insert(table: unknown) {
     return this.createDummyQuery();
   }
 
-  update(_table: unknown) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  update(table: unknown) {
     return this.createDummyQuery();
   }
 
-  delete(_table: unknown) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  delete(table: unknown) {
     return this.createDummyQuery();
   }
 
