@@ -31,12 +31,14 @@ class DummyDb {
   }
 
   private createDummyQuery() {
+    const emptyResult = Promise.resolve([]);
+
     const dummyQuery = {
       from: () => dummyQuery,
       where: () => dummyQuery,
       values: () => dummyQuery,
       set: () => dummyQuery,
-      returning: () => dummyQuery,
+      returning: () => emptyResult,
       limit: () => dummyQuery,
       offset: () => dummyQuery,
       orderBy: () => dummyQuery,
