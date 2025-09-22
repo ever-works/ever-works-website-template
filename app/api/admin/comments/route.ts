@@ -106,7 +106,7 @@ export async function GET(request: Request) {
       .limit(limit)
       .offset(offset);
 
-    const data: ListResponseComment[] = rows.map((r: CommentRow) => ({
+    const data = rows.map((r: any) => ({
       id: r.id,
       content: r.content ?? "",
       rating: r.rating ?? null,
@@ -114,12 +114,19 @@ export async function GET(request: Request) {
       itemId: r.itemId ?? "",
       createdAt: r.createdAt ?? null,
       updatedAt: r.updatedAt ?? null,
-      user: {
-        id: r.user?.id ?? "",
-        name: r.user?.name ?? null,
-        email: r.user?.email ?? null,
-        image: r.user?.image ?? null,
-      },
+      user: r.user
+        ? {
+            id: r.user.id ?? "",
+            name: r.user.name ?? null,
+            email: r.user.email ?? null,
+            image: r.user.image ?? null,
+          }
+        : {
+            id: "",
+            name: "Unknown User",
+            email: "",
+            image: null,
+          },
     }));
 
     return NextResponse.json({
