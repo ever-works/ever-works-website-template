@@ -81,7 +81,7 @@ export async function GET(request: Request) {
       .select({ count: count() })
       .from(comments)
       .where(countWhereClause);
-    const total = Number((totalResult[0] as { count: number })?.count || 0);
+    const total = Number((totalResult[0] as unknown as { count: number })?.count || 0);
 
     const rows = await db
       .select({

@@ -899,7 +899,7 @@ export async function getClientProfiles(params: {
 		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
 		.where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id));
 
-	const total = Number(countResult[0]?.count || 0);
+	const total = Number((countResult[0] as unknown as { count: number })?.count || 0);
 
 	// Get profiles with authentication data and exclude admins (roles.is_admin = false)
 	const profiles = await db
@@ -1018,7 +1018,7 @@ export async function getEnhancedClientStats(): Promise<{
 		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
 		.where(isNull(roles.id));
 
-	const total = Number(totalResult[0]?.count || 0);
+	const total = Number((totalResult[0] as unknown as { count: number })?.count || 0);
 
 	// Initialize counters
 	const byStatus: Record<string, number> = { active: 0, inactive: 0, suspended: 0, trial: 0 };
@@ -1888,7 +1888,7 @@ export async function getAdminDashboardData(params: {
 		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
 		.where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id));
 
-	const total = Number(countResult[0]?.count || 0);
+	const total = Number((countResult[0] as unknown as { count: number })?.count || 0);
 
 	// Optimized profile query with selective field selection and proper ordering
 	const profiles = await db
@@ -2195,7 +2195,7 @@ export async function advancedClientSearch(params: {
 		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
 		.where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id));
 
-	const total = Number(countResult[0]?.count || 0);
+	const total = Number((countResult[0] as unknown as { count: number })?.count || 0);
 
 	// Build sort clause
 	let sortClause;
