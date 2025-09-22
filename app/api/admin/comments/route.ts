@@ -62,11 +62,25 @@ export async function GET(request: Request) {
     }
     const whereClause = whereConditions.length > 1 ? and(...whereConditions) : whereConditions[0];
 
+    // Get total count - we need to recreate the where clause for count query
+    let countWhereConditions: SQL[] = [isNull(comments.deletedAt)];
+    if (search) {
+      const escaped = search.replace(/[%_\\]/g, '\\$&');
+      // For count, we need to check if user exists via subquery instead of join
+      countWhereConditions.push(
+        sql`(${comments.content} ILIKE ${`%${escaped}%`} OR EXISTS (
+          SELECT 1 FROM ${clientProfiles}
+          WHERE ${clientProfiles.id} = ${comments.userId}
+          AND (${clientProfiles.name} ILIKE ${`%${escaped}%`} OR ${clientProfiles.email} ILIKE ${`%${escaped}%`})
+        ))`
+      );
+    }
+    const countWhereClause = countWhereConditions.length > 1 ? and(...countWhereConditions) : countWhereConditions[0];
+
     const totalResult = await db
       .select({ count: count() })
       .from(comments)
-      .leftJoin(clientProfiles, eq(comments.userId, clientProfiles.id))
-      .where(whereClause);
+      .where(countWhereClause);
     const total = Number(totalResult[0]?.count || 0);
 
     const rows = await db
