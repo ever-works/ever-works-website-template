@@ -16,28 +16,38 @@ const getPoolSize = (): number => {
   return process.env.NODE_ENV === 'production' ? 20 : 10;
 };
 
-// Only initialize the database if DATABASE_URL is available
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL environment variable is required");
+// Lazy database initialization
+function initializeDatabase(): ReturnType<typeof drizzle> {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL environment variable is required");
+  }
+
+  if (globalForDb.db) {
+    return globalForDb.db;
+  }
+
+  try {
+    const poolSize = getPoolSize();
+    const conn = globalForDb.conn ?? postgres(process.env.DATABASE_URL, {
+      max: poolSize,
+      idle_timeout: 20,
+      connect_timeout: 10,
+      prepare: false,
+    });
+    globalForDb.conn = conn;
+    globalForDb.db = drizzle(conn, { schema });
+    console.log(`Database connection established successfully with pool size: ${poolSize}`);
+    return globalForDb.db;
+  } catch (error) {
+    console.error("Failed to initialize database connection:", error);
+    throw error;
+  }
 }
 
-let db: ReturnType<typeof drizzle>;
-
-try {
-  const poolSize = getPoolSize();
-  const conn = globalForDb.conn ?? postgres(process.env.DATABASE_URL, {
-    max: poolSize,
-    idle_timeout: 20,
-    connect_timeout: 10,
-    prepare: false,
-  });
-  globalForDb.conn = conn;
-  db = globalForDb.db ?? drizzle(conn, { schema });
-  globalForDb.db = db;
-  console.log(`Database connection established successfully with pool size: ${poolSize}`);
-} catch (error) {
-  console.error("Failed to initialize database connection:", error);
-  throw error;
-}
-
-export { db };
+// Export a getter that initializes on first use
+export const db = new Proxy({} as ReturnType<typeof drizzle>, {
+  get(target, prop) {
+    const database = initializeDatabase();
+    return database[prop as keyof typeof database];
+  }
+});
