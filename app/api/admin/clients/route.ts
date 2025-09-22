@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
     // Create client profile with required email and name
     const clientData = {
       userId: user.id,
-      email: user.email,
+      email: user.email || email, // Fallback to original email if user.email is null
       name: profileName,
       displayName: raw.displayName,
       username: raw.username,
