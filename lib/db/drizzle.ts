@@ -14,19 +14,19 @@ class DummyDb {
     return callback(this);
   }
 
-  select() {
+  select(fields?: unknown) {
     return this.createDummyQuery();
   }
 
-  insert() {
+  insert(table: unknown) {
     return this.createDummyQuery();
   }
 
-  update() {
+  update(table: unknown) {
     return this.createDummyQuery();
   }
 
-  delete() {
+  delete(table: unknown) {
     return this.createDummyQuery();
   }
 
@@ -42,6 +42,12 @@ class DummyDb {
       limit: () => dummyQuery,
       offset: () => dummyQuery,
       orderBy: () => dummyQuery,
+      groupBy: () => dummyQuery,
+      having: () => dummyQuery,
+      leftJoin: () => dummyQuery,
+      rightJoin: () => dummyQuery,
+      innerJoin: () => dummyQuery,
+      fullJoin: () => dummyQuery,
       onConflictDoNothing: () => dummyQuery,
       onConflictDoUpdate: () => dummyQuery,
       onDuplicateKeyUpdate: () => dummyQuery,
