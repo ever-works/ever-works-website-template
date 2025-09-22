@@ -6,6 +6,7 @@ import {
   getUserByEmail
 } from '@/lib/db/queries';
 import { UserDbService } from '@/lib/services/user-db.service';
+import { AuthUserData } from '@/lib/types/user';
 import crypto from 'crypto';
 
 // Type definitions for request bodies
@@ -99,7 +100,7 @@ export async function POST(request: NextRequest) {
     const profileName = raw.displayName || email.split('@')[0];
 
     // Check if user exists, if not create one
-    let user = await getUserByEmail(email);
+    let user: Awaited<ReturnType<typeof getUserByEmail>> | AuthUserData = await getUserByEmail(email);
     
     if (!user) {
       try {
