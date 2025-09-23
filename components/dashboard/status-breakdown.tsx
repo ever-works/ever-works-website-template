@@ -6,6 +6,7 @@ interface StatusBreakdownData {
   status: 'Approved' | 'Pending' | 'Rejected';
   value: number;
   color: string;
+  [key: string]: any;
 }
 
 interface StatusBreakdownProps {
@@ -41,11 +42,11 @@ export function StatusBreakdown({ data, isLoading = false }: StatusBreakdownProp
       <ResponsiveContainer width="100%" height={250}>
         <PieChart>
           <Pie
-            data={data as any}
+            data={data}
             cx="50%"
             cy="50%"
             labelLine={false}
-            label={({ status, percent }: any) => `${status} ${((percent || 0) * 100).toFixed(0)}%`}
+            label={({ status, percent }: any) => `${status} ${((percent ?? 0) * 100).toFixed(0)}%`}
             outerRadius={80}
             fill="#8884d8"
             dataKey="value"
