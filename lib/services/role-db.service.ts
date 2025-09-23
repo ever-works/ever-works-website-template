@@ -1,13 +1,13 @@
 import { db } from '@/lib/db/drizzle';
 import { roles } from '@/lib/db/schema';
-import { eq, desc, asc, sql, and } from 'drizzle-orm';
+import { eq, desc, asc, sql, isNull, and } from 'drizzle-orm';
 import { RoleData, CreateRoleRequest, UpdateRoleRequest, RoleStatus, RoleListOptions } from '@/lib/types/role';
 import { Permission } from '@/lib/permissions/definitions';
 
 export class RoleDbService {
   async readRoles(): Promise<RoleData[]> {
     try {
-      const result = await db.select().from(roles);
+      const result = await db.select().from(roles).where(isNull(roles.deletedAt));
       return result.map(this.mapDbToRoleData);
     } catch (error) {
       console.error('Error reading roles from database:', error);
@@ -17,7 +17,7 @@ export class RoleDbService {
 
   async findById(id: string): Promise<RoleData | null> {
     try {
-      const result = await db.select().from(roles).where(eq(roles.id, id));
+      const result = await db.select().from(roles).where(and(eq(roles.id, id), isNull(roles.deletedAt)));
       return result.length > 0 ? this.mapDbToRoleData(result[0]) : null;
     } catch (error) {
       console.error('Error finding role by ID:', error);
@@ -37,6 +37,7 @@ export class RoleDbService {
         name: data.name,
         description: data.description,
         status: data.status || 'active',
+        isAdmin: data.isAdmin || false,
         permissions: JSON.stringify(data.permissions),
         created_by: 'system',
       };
@@ -56,6 +57,7 @@ export class RoleDbService {
       if (data.name !== undefined) updateData.name = data.name;
       if (data.description !== undefined) updateData.description = data.description;
       if (data.status !== undefined) updateData.status = data.status;
+      if (data.isAdmin !== undefined) updateData.isAdmin = data.isAdmin;
       if (data.permissions !== undefined) updateData.permissions = JSON.stringify(data.permissions);
 
       const result = await db.update(roles)
@@ -77,7 +79,7 @@ export class RoleDbService {
   async deleteRole(id: string): Promise<void> {
     try {
       await db.update(roles)
-        .set({ status: 'inactive' })
+        .set({ deletedAt: new Date() })
         .where(eq(roles.id, id));
     } catch (error) {
       console.error('Error deleting role:', error);
@@ -105,15 +107,16 @@ export class RoleDbService {
       const { page = 1, limit = 10, status, sortBy = 'name', sortOrder = 'asc' } = options;
 
       // Build the base query with conditional filters
-      const whereConditions = [];
+      const filters = [isNull(roles.deletedAt)]; // Always exclude deleted roles
       if (status) {
-        whereConditions.push(eq(roles.status, status));
+        filters.push(eq(roles.status, status));
       }
 
+      let query = db.select().from(roles);
+      query = query.where(and(...filters));
+
       // Get total count with same filters
-      const countQuery = whereConditions.length > 0
-        ? db.select({ count: sql`count(*)` }).from(roles).where(and(...whereConditions))
-        : db.select({ count: sql`count(*)` }).from(roles);
+      const countQuery = db.select({ count: sql`count(*)` }).from(roles).where(and(...filters));
       const countResult = await countQuery;
       const total = Number(countResult[0].count);
 
@@ -148,9 +151,14 @@ export class RoleDbService {
     }
   }
 
-  async exists(id: string): Promise<boolean> {
+  async exists(id: string, options: { includeDeleted?: boolean } = {}): Promise<boolean> {
     try {
-      const result = await db.select().from(roles).where(eq(roles.id, id));
+      const conditions = [eq(roles.id, id)];
+      if (!options.includeDeleted) {
+        conditions.push(isNull(roles.deletedAt));
+      }
+
+      const result = await db.select().from(roles).where(and(...conditions));
       return result.length > 0;
     } catch (error) {
       console.error('Error checking role existence:', error);
@@ -164,6 +172,7 @@ export class RoleDbService {
       name: dbRole.name,
       description: dbRole.description || '',
       status: (dbRole.status as RoleStatus) || 'active',
+      isAdmin: dbRole.isAdmin || false,
       permissions: JSON.parse(dbRole.permissions) as Permission[],
       created_at: dbRole.createdAt.toISOString(),
       updated_at: dbRole.updatedAt.toISOString(),

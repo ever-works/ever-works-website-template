@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Switch } from '@heroui/react';
+import { useState, useEffect } from 'react';
+import { Button } from '@heroui/react';
 import { AlertTriangle, Trash2, Shield } from 'lucide-react';
-import { RoleData } from '@/lib/types/role';
+import { RoleData } from '@/hooks/use-admin-roles';
+import { clsx } from 'clsx';
 
 interface DeleteRoleDialogProps {
   role: RoleData;
@@ -14,12 +15,11 @@ interface DeleteRoleDialogProps {
 
 export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRoleDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [hardDelete, setHardDelete] = useState(false);
 
   const handleConfirm = async () => {
     setIsLoading(true);
     try {
-      await onConfirm(hardDelete);
+      await onConfirm(false); // Always soft delete
     } catch (error) {
       console.error('Error deleting role:', error);
     } finally {
@@ -28,84 +28,136 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
   };
 
   const handleCancel = () => {
-    onCancel();
+    if (!isLoading) {
+      onCancel();
+    }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape' && !isLoading) {
+      handleCancel();
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = 'unset';
+      };
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
   return (
-    <Modal isOpen={isOpen} onClose={handleCancel} size="md">
-      <ModalContent>
-        <ModalHeader className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-red-100 dark:bg-red-900/20 rounded-lg flex items-center justify-center">
-            <AlertTriangle size={16} className="text-red-600 dark:text-red-400" />
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-role-title"
+      onKeyDown={handleKeyDown}
+    >
+      <div
+        className="fixed inset-0 bg-black bg-opacity-60"
+        onClick={handleCancel}
+        aria-hidden="true"
+      />
+      <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-md w-full mx-4">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-red-100 dark:bg-red-900/20 rounded-lg flex items-center justify-center">
+              <AlertTriangle size={16} className="text-red-600 dark:text-red-400" aria-hidden="true" focusable="false" />
+            </div>
+            <h2 id="delete-role-title" className="text-lg font-semibold text-gray-900 dark:text-white">Delete Role</h2>
           </div>
-          <span>Delete Role</span>
-        </ModalHeader>
-        <ModalBody>
-          <div className="space-y-4">
-            <div className="flex items-start space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-lg flex items-center justify-center">
-                <Shield size={20} className="text-white" />
+          {!isLoading && (
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+              aria-label="Close dialog"
+            >
+              <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+
+        {/* Body */}
+        <div className="p-6 space-y-4">
+          {/* Role Info */}
+          <div className="flex items-start space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-lg flex items-center justify-center">
+              <Shield size={20} className="text-white" aria-hidden="true" focusable="false" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-medium text-gray-900 dark:text-white">
+                {role.name}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                {role.description}
+              </p>
+              <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <span>ID: {role.id}</span>
+                <span>{role.permissions?.length || 0} permissions</span>
+                <span className={clsx(
+                  'px-2 py-1 rounded-full',
+                  role.isAdmin
+                    ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400'
+                    : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                )}>
+                  {role.isAdmin ? 'Admin Role' : 'Client Role'}
+                </span>
               </div>
-              <div className="flex-1">
-                <h3 className="font-medium text-gray-900 dark:text-white">
-                  {role.name}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {role.description}
+            </div>
+          </div>
+
+          {/* Warning */}
+          <div className="bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+            <div className="flex items-start space-x-2">
+              <AlertTriangle size={16} className="text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" aria-hidden="true" focusable="false" />
+              <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                <p className="font-medium">Delete Role</p>
+                <p className="mt-1">
+                  This role will be permanently removed from the system. Users currently assigned to this role will lose these permissions. This action cannot be undone.
                 </p>
-                <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500 dark:text-gray-400">
-                  <span>ID: {role.id}</span>
-                  <span>{role.permissions.length} permissions</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-              <div className="flex items-start space-x-2">
-                <AlertTriangle size={16} className="text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-yellow-800 dark:text-yellow-200">
-                  <p className="font-medium">Warning</p>
-                  <p className="mt-1">
-                    This action cannot be undone. Deleting this role will remove all associated permissions and may affect users assigned to this role.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  isSelected={hardDelete}
-                  onValueChange={setHardDelete}
-                  color="danger"
-                  size="sm"
-                />
-                <label className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
-                  Permanently delete (cannot be recovered)
-                </label>
               </div>
             </div>
           </div>
-        </ModalBody>
-        <ModalFooter>
+        </div>
+
+        {/* Footer */}
+        <div className="flex justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
           <Button
-            variant="light"
+            variant="bordered"
             onPress={handleCancel}
-            isDisabled={isLoading}
+            disabled={isLoading}
+            type="button"
+            aria-label="Cancel role deletion"
           >
             Cancel
           </Button>
           <Button
             color="danger"
-            variant="flat"
             onPress={handleConfirm}
             isLoading={isLoading}
-            startContent={<Trash2 size={16} />}
+            startContent={!isLoading && <Trash2 size={16} aria-hidden="true" focusable="false" />}
+            className={clsx(
+              'bg-gradient-to-r from-red-500 to-red-600',
+              'hover:from-red-600 hover:to-red-700',
+              'shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40',
+              'transition-all duration-300 text-white font-medium'
+            )}
+            type="button"
+            aria-label={isLoading ? 'Deleting role...' : 'Confirm role deletion'}
           >
-            {hardDelete ? 'Delete Permanently' : 'Delete Role'}
+            {isLoading ? 'Deleting...' : 'Delete Role'}
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </div>
+      </div>
+    </div>
   );
-} 
+}

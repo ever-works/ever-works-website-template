@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { RoleRepository } from '@/lib/repositories/role.repository';
-import { CreateRoleRequest, RoleStatus } from '@/lib/types/role';
-import { isValidPermission } from '@/lib/permissions/definitions';
+import type { CreateRoleRequest } from '@/lib/types/role';
+import { RoleStatus } from '@/lib/types/role';
 
 const roleRepository = new RoleRepository();
 
@@ -50,27 +50,25 @@ export async function POST(request: NextRequest) {
     const roleData: CreateRoleRequest = body;
 
     // Validate required fields
-    if (!roleData.id || !roleData.name || !roleData.description) {
+    if (!roleData.name || !roleData.description) {
       return NextResponse.json(
-        { error: 'Missing required fields: id, name, description' },
+        { error: 'Missing required fields: name, description' },
         { status: 400 }
       );
     }
 
-    // Validate ID format
-    if (!/^[a-z0-9-]+$/.test(roleData.id)) {
-      return NextResponse.json(
-        { error: 'Role ID can only contain lowercase letters, numbers, and hyphens' },
-        { status: 400 }
-      );
-    }
+    // Generate stable ID from name (normalize, strip diacritics, collapse/trim hyphens)
+    const id = roleData.name
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 64);
 
-    // Validate ID length
-    if (roleData.id.length < 3 || roleData.id.length > 50) {
-      return NextResponse.json(
-        { error: 'Role ID must be between 3 and 50 characters' },
-        { status: 400 }
-      );
+    if (!id) {
+      return NextResponse.json({ error: 'Unable to derive a valid role ID from name' }, { status: 400 });
     }
 
     // Validate name length
@@ -89,50 +87,46 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check for duplicate ID
-    const isDuplicate = await roleRepository.findById(roleData.id);
+    // Check for duplicate ID (including soft-deleted records)
+    const isDuplicate = await roleRepository.exists(id, { includeDeleted: true });
     if (isDuplicate) {
       return NextResponse.json(
-        { error: `Role with ID '${roleData.id}' already exists` },
+        { error: 'Role with similar name already exists' },
         { status: 409 }
       );
     }
 
-    // Validate permissions
-    if (!Array.isArray(roleData.permissions)) {
-      return NextResponse.json(
-        { error: 'Permissions must be an array' },
-        { status: 400 }
-      );
-    }
-
-    const invalidPermissions = roleData.permissions.filter(p => !isValidPermission(p));
-    if (invalidPermissions.length > 0) {
-      return NextResponse.json(
-        { error: `Invalid permissions: ${invalidPermissions.join(', ')}` },
-        { status: 400 }
-      );
-    }
+    // Create the role data with proper structure
+    const createData = {
+      id,
+      name: roleData.name,
+      description: roleData.description,
+      status: roleData.status || 'active',
+      isAdmin: roleData.isAdmin || false,
+      permissions: [], // Empty for now
+    };
 
     // Create the role
-    const newRole = await roleRepository.create(roleData);
-    
+    const newRole = await roleRepository.create(createData);
+
     return NextResponse.json(
       { role: newRole, message: 'Role created successfully' },
       { status: 201 }
     );
   } catch (error) {
     console.error('Error creating role:', error);
-    
+
     if (error instanceof Error) {
-      if (error.message.includes('already exists')) {
+      if (error.message.includes('already exists') ||
+          error.message.includes('unique constraint') ||
+          error.message.includes('duplicate key')) {
         return NextResponse.json(
-          { error: error.message },
+          { error: 'Role with similar name already exists' },
           { status: 409 }
         );
       }
     }
-    
+
     return NextResponse.json(
       { error: 'Failed to create role' },
       { status: 500 }

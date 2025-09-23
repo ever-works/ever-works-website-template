@@ -32,6 +32,10 @@ export class RoleRepository {
     return this.dbService.findById(id);
   }
 
+  async exists(id: string, options?: { includeDeleted?: boolean }): Promise<boolean> {
+    return this.dbService.exists(id, options);
+  }
+
   async create(data: CreateRoleRequest): Promise<RoleData> {
     return this.dbService.createRole(data);
   }

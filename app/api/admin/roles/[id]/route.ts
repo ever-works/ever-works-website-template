@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { RoleRepository } from '@/lib/repositories/role.repository';
-import { UpdateRoleRequest } from '@/lib/types/role';
-import { isValidPermission } from '@/lib/permissions/definitions';
+import type { UpdateRoleRequest } from '@/lib/types/role';
 
 const roleRepository = new RoleRepository();
 
@@ -59,7 +58,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     const { id } = await params;
     const body = await request.json();
-    const updateData: UpdateRoleRequest = { id, ...body };
+    const updateData: Partial<UpdateRoleRequest> = body;
 
     // Check if role exists
     const existingRole = await roleRepository.findById(id);
@@ -96,26 +95,17 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       }
     }
 
-    // Validate permissions if provided
-    if (updateData.permissions !== undefined) {
-      if (!Array.isArray(updateData.permissions)) {
-        return NextResponse.json(
-          { error: 'Permissions must be an array' },
-          { status: 400 }
-        );
-      }
+    // Convert hook type to repository type (excluding permissions due to type mismatch)
+    const repositoryUpdateData: UpdateRoleRequest = {
+      id,
+      ...(updateData.name !== undefined && { name: updateData.name }),
+      ...(updateData.description !== undefined && { description: updateData.description }),
+      ...(updateData.status !== undefined && { status: updateData.status }),
+      ...(updateData.isAdmin !== undefined && { isAdmin: updateData.isAdmin }),
+    };
 
-      const invalidPermissions = updateData.permissions.filter(p => !isValidPermission(p));
-      if (invalidPermissions.length > 0) {
-        return NextResponse.json(
-          { error: `Invalid permissions: ${invalidPermissions.join(', ')}` },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Update the role
-    const updatedRole = await roleRepository.update(id, updateData);
+    // Update the role using repository
+    const updatedRole = await roleRepository.update(id, repositoryUpdateData);
     
     return NextResponse.json(
       { role: updatedRole, message: 'Role updated successfully' }

@@ -18,10 +18,7 @@ export function AdminSubmissionStatus({ data, isLoading }: AdminSubmissionStatus
   
   // Guard against empty data - show demo chart instead
   if (total === 0) {
-    // Demo data for when no submissions exist
-    // const demoData = [
-    //   { status: 'Ready', count: 1, color: '#6366F1', percentage: 100 }
-    // ];
+    // Demo data for when no submissions exist - removed unused variable
 
     return (
       <Card>
