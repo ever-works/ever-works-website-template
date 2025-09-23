@@ -53,9 +53,9 @@ export function useMutationWithToast<TData, TVariables extends RequestBody = Req
 
       await onSuccess?.(data, variables, context);
     },
-    onError: (error, variables, context) => {
+    onError: async (error, variables, context) => {
       toast.error(error.message || 'An error occurred');
-      onError?.(error, variables, context);
+      await onError?.(error, variables, context);
     },
     ...options,
   });

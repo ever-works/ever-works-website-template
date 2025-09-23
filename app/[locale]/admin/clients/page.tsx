@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useDebounceSearch } from "@/hooks/use-debounced-search";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
 import { Modal, ModalContent } from "@/components/ui/modal";
 import { Select, SelectItem } from "@/components/ui/select";
@@ -81,35 +82,6 @@ export default function ClientsPage() {
   const [updatedAfter, setUpdatedAfter] = useState<string>('');
   const [updatedBefore, setUpdatedBefore] = useState<string>('');
 
-  // Use the custom hook
-  const {
-    clients,
-    stats,
-    total: totalCount,
-    page,
-    totalPages,
-    isLoading,
-    isSubmitting,
-    createClient,
-    updateClient,
-    deleteClient,
-  } = useAdminClients({
-    params: {
-      page: currentPage,
-      limit,
-      search: searchTerm,
-      status: statusFilter as any,
-      plan: planFilter as any,
-      accountType: accountTypeFilter as any,
-      provider: providerFilter,
-      createdAfter,
-      createdBefore,
-      updatedAfter,
-      updatedBefore,
-      sortBy: 'createdAt',
-      sortOrder: 'desc',
-    },
-  });
 
   // Compute date range from preset selection
   const computeDateRange = useCallback((preset: typeof datePreset) => {
@@ -164,10 +136,53 @@ export default function ClientsPage() {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const { isOpen: isFilterModalOpen, onOpen: onOpenFilterModal, onClose: onCloseFilterModal } = useDisclosure();
 
-  // Debounced search term
+  // Track if this is the initial load
+  const isInitialLoad = useRef(true);
+  // Track the last search value applied to query to prevent stale-page fetches
+  const lastAppliedSearchRef = useRef<string>('');
 
-  // Track if this is the initial load (no longer needed with React Query)
-  // const isInitialLoad = useRef(true);
+  // Debounced search hook
+  const { debouncedValue: debouncedSearchTerm, isSearching } = useDebounceSearch({
+    searchValue: searchTerm,
+    delay: 300,
+    onSearch: (value: string) => {
+      // mark the value as applied; page reset happens only when necessary
+      lastAppliedSearchRef.current = value;
+      if (!isInitialLoad.current && currentPage !== 1) {
+        setCurrentPage(1);
+      }
+    },
+  });
+
+  // Use the custom hook
+  const {
+    clients,
+    stats,
+    total: totalCount,
+    page,
+    totalPages,
+    isLoading,
+    isSubmitting,
+    createClient,
+    updateClient,
+    deleteClient,
+  } = useAdminClients({
+    params: {
+      page: currentPage,
+      limit,
+      search: debouncedSearchTerm,
+      status: statusFilter as any,
+      plan: planFilter as any,
+      accountType: accountTypeFilter as any,
+      provider: providerFilter,
+      createdAfter,
+      createdBefore,
+      updatedAfter,
+      updatedBefore,
+      sortBy: 'createdAt',
+      sortOrder: 'desc',
+    },
+  });
 
   // Calculate active filter count
   const activeFilterCount = [
@@ -193,9 +208,12 @@ export default function ClientsPage() {
     setSelectedClient(null);
   }, [onClose, clearEditParam]);
 
+<<<<<<< HEAD
+=======
   // Debounce search term - handled by React Query automatically
 
 
+>>>>>>> 9387135678ac1a0d0374ee5801cf33eccfa0a926
   // Handlers using the custom hook
   const handleCreate = useCallback(async (data: CreateClientRequest) => {
     const success = await createClient(data);
@@ -282,7 +300,6 @@ export default function ClientsPage() {
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-    setCurrentPage(1);
   };
 
   // Open edit modal when ?edit=<id> is present
@@ -309,6 +326,11 @@ export default function ClientsPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, clients, isLoading]);
+
+  // Reset initial load flag after first render
+  useEffect(() => {
+    isInitialLoad.current = false;
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -499,7 +521,7 @@ export default function ClientsPage() {
             aria-label="Search clients"
             className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
-          {isLoading && (
+          {isSearching && (
             <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
               <LoadingSpinner size="sm" />
             </div>
