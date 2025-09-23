@@ -29,7 +29,7 @@ class SessionCache {
    * Generate cache key from session token or user ID
    */
   private generateKey(identifier: string): string {
-    return crypto.createHash('sha256').update(identifier).digest('hex').substring(0, 16);
+    return crypto.createHash('sha256').update(identifier).digest('hex').substring(0, 32);
   }
 
   /**
