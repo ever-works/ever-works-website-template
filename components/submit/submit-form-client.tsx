@@ -30,10 +30,14 @@ export function SubmitFormClient({ initialData, locale }: SubmitFormClientProps)
   };
 
   return (
-    <DetailsForm
+<>
+  <DetailsForm
       onSubmit={handleFormSubmit}
       onBack={handleBack}
       listingProps={initialData}
     />
+
+
+</>
   );
 }

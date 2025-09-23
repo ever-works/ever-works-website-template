@@ -10,7 +10,8 @@ import {
 	Type,
 	FileText,
 	Eye,
-	Star, Sparkles,
+	Star,
+	Sparkles,
 	MoreHorizontal,
 	ChevronUp
 } from 'lucide-react';
@@ -18,9 +19,15 @@ import { cn, getVideoEmbedUrl } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import InputLink from './input-link';
 import { useDetailForm } from '@/hooks/use-detail-form';
+import { useEditorFieldSync } from '@/hooks/use-editor-sync';
 import { Container } from '../ui/container';
 import { PricingSection } from '../pricing/pricing-section';
 import { Category, ItemData, Tag as TagType } from '@/lib/content';
+import { useEditor } from '@/hooks/use-editor';
+import { ToolbarContent } from '../editor/toolbar-content';
+import { Toolbar } from '../tiptap-ui-primitive/toolbar';
+import { useEditorToolbar } from '../editor/use-editor-toolbar';
+import { EditorContent } from '../editor/editor-content';
 
 interface ProductLink {
 	id: string;
@@ -85,6 +92,8 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 	const t = useTranslations();
 	const [showAllTags, setShowAllTags] = useState(false);
 	const [tagsToShow] = useState(18);
+	const editor = useEditor();
+	const { toolbarRef } = useEditorToolbar(editor!);
 
 	const {
 		currentStep,
@@ -110,6 +119,11 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 		setAnimatingLinkId,
 		setFocusedField
 	} = useDetailForm(initialData, onSubmit);
+
+	useEditorFieldSync(editor, formData, 'introduction', setFormData, {
+		fieldName: 'introduction',
+		enableLogging: true
+	});
 
 	const isLastStep = currentStep === STEPS.length;
 	const canProceed = validateStep(currentStep) || isLastStep;
@@ -228,9 +242,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 						{currentStep === 1 && (
 							<div className="relative group animate-fade-in-up">
 								<div className="absolute inset-0 bg-theme-primary-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-								<div 
-									className="relative  py-8"
-								>
+								<div className="relative  py-8">
 									<div className="flex items-center gap-3 mb-8">
 										<div className="w-12 h-12 rounded-2xl bg-theme-primary-500 flex items-center justify-center">
 											<Type className="w-6 h-6 text-white" />
@@ -278,10 +290,9 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 													className={cn(
 														'w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 hover:border-gray-300 dark:hover:border-gray-500 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400',
 														focusedField === 'name' &&
-															'scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20',
+															'scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20'
 													)}
 												/>
-											
 											</div>
 										</div>
 										<div className="space-y-3">
@@ -364,7 +375,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 													className={cn(
 														'w-full h-14 px-6 pr-14 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 hover:border-gray-300 dark:hover:border-gray-500 appearance-none cursor-pointer outline-none text-gray-900 dark:text-white',
 														focusedField === 'category' &&
-															'scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20',
+															'scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20'
 													)}
 												>
 													<option value="" disabled className="text-gray-500">
@@ -487,7 +498,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 													className={cn(
 														'w-full px-6 py-4 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 hover:border-gray-300 dark:hover:border-gray-500 resize-none outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400',
 														focusedField === 'description' &&
-															'scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20',
+															'scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20'
 													)}
 												/>
 												<div className="absolute bottom-4 right-6 text-xs text-gray-500 dark:text-gray-400">
@@ -503,7 +514,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 												{t('directory.DETAILS_FORM.DETAILED_INTRODUCTION')}
 											</label>
 											<div className="relative">
-												<textarea
+												{/* <textarea
 													id="introduction"
 													name="introduction"
 													value={formData.introduction}
@@ -519,8 +530,31 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 														focusedField === 'introduction' &&
 															'scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20',
 													)}
-												/>
+												/>*/}
+												{editor && (
+													<EditorContent
+														style={{
+															className: cn(
+																'w-full px-6 py-4 text-lg bg-gray-50/80 dark:bg-gray-900/50 border-2 border-gray-200/60 dark:border-gray-600/50 rounded-2xl transition-all duration-300 focus:ring-4 focus:ring-theme-primary-500/20 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 hover:border-gray-300 dark:hover:border-gray-500 resize-none outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400',
+																focusedField === 'introduction' &&
+																	'scale-[1.02] shadow-xl ring-4 ring-theme-primary-500/20'
+															)
+														}}
+														toolbar={
+															<Toolbar
+																className="bg-gray-50/80 dark:bg-gray-900/50"
+																ref={toolbarRef}
+															>
+																<ToolbarContent editor={editor} />
+															</Toolbar>
+														}
+														editor={editor}
+														role="presentation"
+														placeholder="Write your introduction here..."
+													/>
+												)}
 											</div>
+
 											<p className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-2">
 												<FileText className="w-3 h-3" />
 												{t('directory.DETAILS_FORM.MARKDOWN_SUPPORT')}

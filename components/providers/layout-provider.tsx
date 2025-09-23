@@ -2,7 +2,12 @@
 
 import { PropsWithChildren } from 'react';
 import { LayoutThemeProvider } from '@/components/context';
+import { EditorContextProvider } from './editor-provider';
 
 export function LayoutProvider({ children }: PropsWithChildren) {
-  return <LayoutThemeProvider>{children}</LayoutThemeProvider>;
-} 
+	return (
+		<LayoutThemeProvider>
+			<EditorContextProvider>{children}</EditorContextProvider>
+		</LayoutThemeProvider>
+	);
+}
