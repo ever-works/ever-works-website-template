@@ -3,8 +3,8 @@ import { apiClient, ApiError, RequestBody } from '@/lib/api/api-client';
 import { toast } from 'sonner';
 
 interface MutationConfig<TData, TVariables extends RequestBody> extends Omit<
-  UseMutationOptions<TData, ApiError, TVariables>,
-  'mutationFn' | 'onSuccess' | 'onError'
+  UseMutationOptions<TData, ApiError, TVariables, unknown>,
+  'mutationFn'
 > {
   endpoint: string;
   method: 'post' | 'put' | 'patch' | 'delete';
@@ -25,7 +25,7 @@ export function useMutationWithToast<TData, TVariables extends RequestBody = Req
 }: MutationConfig<TData, TVariables>) {
   const queryClient = useQueryClient();
 
-  return useMutation<TData, ApiError, TVariables>({
+  return useMutation<TData, ApiError, TVariables, unknown>({
     mutationFn: async (variables) => {
       switch (method) {
         case 'post':
@@ -50,6 +50,7 @@ export function useMutationWithToast<TData, TVariables extends RequestBody = Req
       if (successMessage) {
         toast.success(successMessage);
       }
+
       await onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {

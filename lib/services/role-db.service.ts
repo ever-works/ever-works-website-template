@@ -1,6 +1,6 @@
 import { db } from '@/lib/db/drizzle';
 import { roles } from '@/lib/db/schema';
-import { eq, desc, asc, sql } from 'drizzle-orm';
+import { eq, desc, asc, sql, and } from 'drizzle-orm';
 import { RoleData, CreateRoleRequest, UpdateRoleRequest, RoleStatus, RoleListOptions } from '@/lib/types/role';
 import { Permission } from '@/lib/permissions/definitions';
 
@@ -104,18 +104,16 @@ export class RoleDbService {
     try {
       const { page = 1, limit = 10, status, sortBy = 'name', sortOrder = 'asc' } = options;
 
-      let query = db.select().from(roles);
-
-      // Apply filters
+      // Build the base query with conditional filters
+      const whereConditions = [];
       if (status) {
-        query = query.where(eq(roles.status, status));
+        whereConditions.push(eq(roles.status, status));
       }
 
       // Get total count with same filters
-      let countQuery = db.select({ count: sql`count(*)` }).from(roles);
-      if (status) {
-        countQuery = countQuery.where(eq(roles.status, status));
-      }
+      const countQuery = whereConditions.length > 0
+        ? db.select({ count: sql`count(*)` }).from(roles).where(and(...whereConditions))
+        : db.select({ count: sql`count(*)` }).from(roles);
       const countResult = await countQuery;
       const total = Number(countResult[0].count);
 
@@ -127,7 +125,12 @@ export class RoleDbService {
       };
       const sortField = sortFieldMap[sortBy] || roles.name;
       const orderFn = sortOrder === 'desc' ? desc : asc;
-      const result = await query
+
+      const mainQuery = whereConditions.length > 0
+        ? db.select().from(roles).where(and(...whereConditions))
+        : db.select().from(roles);
+
+      const result = await mainQuery
         .orderBy(orderFn(sortField))
         .limit(limit)
         .offset((page - 1) * limit);
