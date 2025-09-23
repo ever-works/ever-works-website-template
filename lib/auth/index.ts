@@ -5,9 +5,10 @@
 
 import NextAuth from 'next-auth';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
-import { db } from '../db/drizzle';
+import { db, getDrizzleInstance } from '../db/drizzle';
 import { users, accounts, sessions, verificationTokens } from '../db/schema';
 import authConfig from '../../auth.config';
+import { invalidateSessionCache } from './cached-session';
 export * from '../payment/config/payment-provider-manager';
 
 // Define proper interface for user objects with admin/client properties
@@ -19,11 +20,11 @@ interface ExtendedUser {
 }
 
 // Check if DATABASE_URL is set and database is properly initialized
-const isDatabaseAvailable = !!process.env.DATABASE_URL && typeof db !== 'undefined' && db.isRealConnection();
+const isDatabaseAvailable = !!process.env.DATABASE_URL && typeof db !== 'undefined';
 
 // Only create the Drizzle adapter if we have a real database connection
 const drizzle = isDatabaseAvailable
-	? DrizzleAdapter(db, {
+	? DrizzleAdapter(getDrizzleInstance(), {
 			usersTable: users as any,
 			accountsTable: accounts as any,
 			sessionsTable: sessions as any,
@@ -140,6 +141,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
           session.user.isAdmin = token.isAdmin;
         }
       }
+
       // Debug (dev only): trace session payload without PII
       if (process.env.NODE_ENV === 'development') {
         try {
@@ -149,7 +151,39 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
           });
         } catch {}
       }
+
       return session;
+    },
+  },
+  events: {
+    signOut: async (event) => {
+      // Invalidate cached session on sign-out
+      const token = 'token' in event ? event.token : undefined;
+      if (token?.userId && typeof token.userId === 'string') {
+        try {
+          invalidateSessionCache(undefined, token.userId);
+
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[SessionCache] Invalidated cache on sign-out for user:', token.userId);
+          }
+        } catch (error) {
+          console.error('[SessionCache] Error invalidating cache on sign-out:', error);
+        }
+      }
+    },
+    updateUser: async ({ user }) => {
+      // Invalidate cached session when user data is updated
+      if (user?.id) {
+        try {
+          invalidateSessionCache(undefined, user.id);
+
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[SessionCache] Invalidated cache on user update for user:', user.id);
+          }
+        } catch (error) {
+          console.error('[SessionCache] Error invalidating cache on user update:', error);
+        }
+      }
     },
   },
   pages: {

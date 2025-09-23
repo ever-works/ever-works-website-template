@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db/drizzle";
 import { comments } from "@/lib/db/schema";
-import { and, avg, count, isNull } from "drizzle-orm";
-import { eq } from "drizzle-orm";
+import { and, avg, count, isNull, eq } from "drizzle-orm";
+import { checkDatabaseAvailability } from "@/lib/utils/database-check";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ itemId: string }> }
 ) {
   try {
+    // Check database availability first
+    const dbCheck = checkDatabaseAvailability();
+    if (dbCheck) return dbCheck;
     const result = await db
       .select({
         averageRating: avg(comments.rating).as("averageRating"),

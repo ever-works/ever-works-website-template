@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
 
       const emailData = {
         email: user.email || session.user.email!,
-        userName: user.name || session.user.name || undefined,
+        userName: session.user.name || undefined,
         clientIP,
         userAgent
       };

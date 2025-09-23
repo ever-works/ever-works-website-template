@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/drizzle";
 import { comments, clientProfiles } from "@/lib/db/schema";
-import { and, desc, eq, isNull, sql, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, isNull, sql, type SQL } from "drizzle-orm";
+import { checkDatabaseAvailability } from "@/lib/utils/database-check";
 
 export const runtime = "nodejs";
 
@@ -24,24 +25,13 @@ interface ListResponseComment {
   user: ListResponseUser;
 }
 
-interface CommentRow {
-  id: string;
-  content: string | null;
-  rating: number | null;
-  userId: string | null;
-  itemId: string | null;
-  createdAt: Date | null;
-  updatedAt: Date | null;
-  user: {
-    id: string | null;
-    name: string | null;
-    email: string | null;
-    image: string | null;
-  } | null;
-}
 
 export async function GET(request: Request) {
   try {
+    // Check database availability first
+    const dbCheck = checkDatabaseAvailability();
+    if (dbCheck) return dbCheck;
+
     const session = await auth();
     if (!session?.user?.isAdmin) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -62,11 +52,25 @@ export async function GET(request: Request) {
     }
     const whereClause = whereConditions.length > 1 ? and(...whereConditions) : whereConditions[0];
 
+    // Get total count - we need to recreate the where clause for count query
+    const countWhereConditions: SQL[] = [isNull(comments.deletedAt)];
+    if (search) {
+      const escaped = search.replace(/[%_\\]/g, '\\$&');
+      // For count, we need to check if user exists via subquery instead of join
+      countWhereConditions.push(
+        sql`(${comments.content} ILIKE ${`%${escaped}%`} OR EXISTS (
+          SELECT 1 FROM ${clientProfiles}
+          WHERE ${clientProfiles.id} = ${comments.userId}
+          AND (${clientProfiles.name} ILIKE ${`%${escaped}%`} OR ${clientProfiles.email} ILIKE ${`%${escaped}%`})
+        ))`
+      );
+    }
+    const countWhereClause = countWhereConditions.length > 1 ? and(...countWhereConditions) : countWhereConditions[0];
+
     const totalResult = await db
-      .select({ count: sql`count(*)` })
+      .select({ count: count() })
       .from(comments)
-      .leftJoin(clientProfiles, eq(comments.userId, clientProfiles.id))
-      .where(whereClause);
+      .where(countWhereClause);
     const total = Number(totalResult[0]?.count || 0);
 
     const rows = await db
@@ -92,7 +96,7 @@ export async function GET(request: Request) {
       .limit(limit)
       .offset(offset);
 
-    const data: ListResponseComment[] = rows.map((r: CommentRow) => ({
+    const data: ListResponseComment[] = rows.map((r: any) => ({
       id: r.id,
       content: r.content ?? "",
       rating: r.rating ?? null,
@@ -100,12 +104,19 @@ export async function GET(request: Request) {
       itemId: r.itemId ?? "",
       createdAt: r.createdAt ?? null,
       updatedAt: r.updatedAt ?? null,
-      user: {
-        id: r.user?.id ?? "",
-        name: r.user?.name ?? null,
-        email: r.user?.email ?? null,
-        image: r.user?.image ?? null,
-      },
+      user: r.user
+        ? {
+            id: r.user.id ?? "",
+            name: r.user.name ?? null,
+            email: r.user.email ?? null,
+            image: r.user.image ?? null,
+          }
+        : {
+            id: "",
+            name: "Unknown User",
+            email: "",
+            image: null,
+          },
     }));
 
     return NextResponse.json({

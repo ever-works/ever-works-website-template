@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthConfig } from "@/lib/auth/config";
 import { updateSession as supabaseUpdate } from "@/lib/auth/supabase/middleware";
 import { getToken } from 'next-auth/jwt';
+import { getCachedApiSession } from "@/lib/auth/cached-session";
 
 const intl = createIntlMiddleware(routing);
 
@@ -36,8 +37,21 @@ function resolveLocalePrefix(pathname: string): { prefix: string; hasLocale: boo
 
 async function nextAuthGuard(req: NextRequest, baseRes: NextResponse): Promise<NextResponse> {
   try {
+    // Try cached session first for performance
+    const cachedSession = await getCachedApiSession(req);
+    if (cachedSession?.user?.isAdmin === true) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[Middleware] Admin access granted via cached session');
+      }
+      return baseRes;
+    }
+
+    // Fallback to token-based auth if no cached session
     const token = await getToken({ req, secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET });
     if (token?.isAdmin === true) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[Middleware] Admin access granted via token (cache miss)');
+      }
       return baseRes;
     }
   } catch (error) {
@@ -46,7 +60,12 @@ async function nextAuthGuard(req: NextRequest, baseRes: NextResponse): Promise<N
       error instanceof Error ? { name: error.name, message: error.message } : undefined
     );
   }
+
   // Redirect non-admins or on error
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Middleware] Access denied - redirecting to admin signin');
+  }
+
   const url = req.nextUrl.clone();
   const { prefix: rootLocalePrefix } = resolveLocalePrefix(req.nextUrl.pathname);
   url.pathname = `${rootLocalePrefix}${ADMIN_SIGNIN}`;

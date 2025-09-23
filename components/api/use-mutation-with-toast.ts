@@ -2,19 +2,19 @@ import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react
 import { apiClient, ApiError, RequestBody } from '@/lib/api/api-client';
 import { toast } from 'sonner';
 
-interface MutationConfig<TData, TVariables extends RequestBody, TContext = unknown> extends Omit<
-  UseMutationOptions<TData, ApiError, TVariables, TContext>,
-  'mutationFn' | 'onSuccess' | 'onError'
+interface MutationConfig<TData, TVariables extends RequestBody> extends Omit<
+  UseMutationOptions<TData, ApiError, TVariables, unknown>,
+  'mutationFn'
 > {
   endpoint: string;
   method: 'post' | 'put' | 'patch' | 'delete';
   successMessage?: string;
   invalidateQueries?: string[];
-  onSuccess?: (data: TData, variables: TVariables) => void | Promise<void>;
-  onError?: (error: ApiError, variables: TVariables) => void | Promise<void>;
+  onSuccess?: (data: TData, variables: TVariables, context: unknown) => void | Promise<void>;
+  onError?: (error: ApiError, variables: TVariables, context: unknown) => void;
 }
 
-export function useMutationWithToast<TData, TVariables extends RequestBody = RequestBody, TContext = unknown>({
+export function useMutationWithToast<TData, TVariables extends RequestBody = RequestBody>({
   endpoint,
   method,
   successMessage,
@@ -22,10 +22,10 @@ export function useMutationWithToast<TData, TVariables extends RequestBody = Req
   onSuccess,
   onError,
   ...options
-}: MutationConfig<TData, TVariables, TContext>) {
+}: MutationConfig<TData, TVariables>) {
   const queryClient = useQueryClient();
 
-  return useMutation<TData, ApiError, TVariables, TContext>({
+  return useMutation<TData, ApiError, TVariables, unknown>({
     mutationFn: async (variables) => {
       switch (method) {
         case 'post':
@@ -40,7 +40,7 @@ export function useMutationWithToast<TData, TVariables extends RequestBody = Req
           throw new Error(`Unsupported method: ${method}`);
       }
     },
-    onSuccess: async (data, variables) => {
+    onSuccess: async (data, variables, context) => {
       await Promise.all(
         invalidateQueries.map((queryKey) =>
           queryClient.invalidateQueries({ queryKey: [queryKey] })
@@ -50,11 +50,12 @@ export function useMutationWithToast<TData, TVariables extends RequestBody = Req
       if (successMessage) {
         toast.success(successMessage);
       }
-      await onSuccess?.(data, variables);
+
+      await onSuccess?.(data, variables, context);
     },
-    onError: async (error, variables) => {
+    onError: async (error, variables, context) => {
       toast.error(error.message || 'An error occurred');
-      await onError?.(error, variables);
+      await onError?.(error, variables, context);
     },
     ...options,
   });
