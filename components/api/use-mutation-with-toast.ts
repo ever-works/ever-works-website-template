@@ -38,7 +38,7 @@ export function useMutationWithToast<TData, TVariables extends RequestBody = Req
           throw new Error(`Unsupported method: ${method}`);
       }
     },
-    onSuccess: async (data, variables, context, mutationContext) => {
+    onSuccess: async (data, variables, context, mutation) => {
       await Promise.all(
         invalidateQueries.map((queryKey) =>
           queryClient.invalidateQueries({ queryKey: [queryKey] })
@@ -48,13 +48,12 @@ export function useMutationWithToast<TData, TVariables extends RequestBody = Req
       if (successMessage) {
         toast.success(successMessage);
       }
-      if (onSuccess) {
-        await onSuccess(data, variables, context, mutationContext);
-      }
+
+      await onSuccess?.(data, variables, context, mutation);
     },
-    onError: (error, variables, context, mutationContext) => {
+    onError: (error, variables, context, mutation) => {
       toast.error(error.message || 'An error occurred');
-      onError?.(error, variables, context, mutationContext);
+      onError?.(error, variables, context, mutation);
     },
     ...options,
   });

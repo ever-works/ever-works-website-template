@@ -23,6 +23,7 @@ import {
   type NewUserRole,
   VoteType
 } from '@/lib/db/schema';
+import * as schema from '@/lib/db/schema';
 import { sql } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 
@@ -40,8 +41,13 @@ async function main() {
     process.exit(1);
   }
 
-  const conn = postgres(databaseUrl, { max: 5 });
-  const db = drizzle(conn);
+  const conn = postgres(databaseUrl, {
+    max: 1,
+    idle_timeout: 20,
+    connect_timeout: 10,
+    prepare: false,
+  });
+  const db = drizzle(conn, { schema });
 
   try {
     // Seed roles (admin, user)

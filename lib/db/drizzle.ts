@@ -11,7 +11,7 @@ const getPoolSize = (): number => {
   const envPoolSize = process.env.DB_POOL_SIZE;
   if (envPoolSize) {
     const parsed = parseInt(envPoolSize, 10);
-    return isNaN(parsed) ? 20 : parsed;
+    return isNaN(parsed) ? 20 : Math.max(1, Math.min(parsed, 50)); // Clamp between 1-50
   }
   return process.env.NODE_ENV === 'production' ? 20 : 10;
 };
@@ -28,15 +28,24 @@ function initializeDatabase(): ReturnType<typeof drizzle> {
 
   try {
     const poolSize = getPoolSize();
-    const conn = globalForDb.conn ?? postgres(process.env.DATABASE_URL, {
-      max: poolSize,
-      idle_timeout: 20,
-      connect_timeout: 10,
-      prepare: false,
-    });
+    const reusing = Boolean(globalForDb.conn);
+    const conn = reusing
+      ? globalForDb.conn!
+      : postgres(process.env.DATABASE_URL, {
+          max: poolSize,
+          idle_timeout: 20,
+          connect_timeout: 10,
+          prepare: false,
+        });
     globalForDb.conn = conn;
     globalForDb.db = drizzle(conn, { schema });
-    console.log(`Database connection established successfully with pool size: ${poolSize}`);
+
+    console.log(
+      reusing
+        ? 'Reusing existing database connection; pool size is unchanged from the initial value (restart to apply DB_POOL_SIZE changes).'
+        : `Database connection established successfully with pool size: ${poolSize}`
+    );
+
     return globalForDb.db;
   } catch (error) {
     console.error("Failed to initialize database connection:", error);
