@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useDebounceSearch } from "@/hooks/use-debounced-search";
 import { Button, Card, CardBody, Chip, useDisclosure } from "@heroui/react";
 import { Modal, ModalContent } from "@/components/ui/modal";
 import { Select, SelectItem } from "@/components/ui/select";
@@ -10,10 +11,12 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { ClientForm } from "@/components/admin/clients/client-form";
 import { UniversalPagination } from "@/components/universal-pagination";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useAdminClients } from "@/hooks/use-admin-clients";
 import type { CreateClientRequest, UpdateClientRequest } from "@/lib/types/client";
 import type { ClientProfileWithAuth } from "@/lib/db/queries";
+import type { ClientsLoadingState } from "@/types/loading";
 
 // Helper functions for provider stats
 function getTopProviderName(byProvider: Record<string, number>): string {
@@ -37,6 +40,21 @@ export default function ClientsPage() {
   
   // Form and navigation state
   const [selectedClient, setSelectedClient] = useState<ClientProfileWithAuth | null>(null);
+
+  // Granular loading states
+  const [loadingStates, setLoadingStates] = useState<ClientsLoadingState>({
+    initial: true,
+    searching: false,
+    filtering: false,
+    paginating: false,
+    submitting: false,
+    deleting: null as string | null,
+  });
+
+  // Helper function for updating deleting state (only one we still need)
+  const setDeletingLoading = useCallback((clientId: string | null) => {
+    setLoadingStates(prev => ({ ...prev, deleting: clientId }));
+  }, []);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [navigatingClientId, setNavigatingClientId] = useState<string | null>(null);
   const [clientToDelete, setClientToDelete] = useState<string | null>(null);
@@ -64,35 +82,6 @@ export default function ClientsPage() {
   const [updatedAfter, setUpdatedAfter] = useState<string>('');
   const [updatedBefore, setUpdatedBefore] = useState<string>('');
 
-  // Use the custom hook
-  const {
-    clients,
-    stats,
-    total: totalCount,
-    page,
-    totalPages,
-    isLoading,
-    isSubmitting,
-    createClient,
-    updateClient,
-    deleteClient,
-  } = useAdminClients({
-    params: {
-      page: currentPage,
-      limit,
-      search: searchTerm,
-      status: statusFilter as any,
-      plan: planFilter as any,
-      accountType: accountTypeFilter as any,
-      provider: providerFilter,
-      createdAfter,
-      createdBefore,
-      updatedAfter,
-      updatedBefore,
-      sortBy: 'createdAt',
-      sortOrder: 'desc',
-    },
-  });
 
   // Compute date range from preset selection
   const computeDateRange = useCallback((preset: typeof datePreset) => {
@@ -147,10 +136,53 @@ export default function ClientsPage() {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const { isOpen: isFilterModalOpen, onOpen: onOpenFilterModal, onClose: onCloseFilterModal } = useDisclosure();
 
-  // Debounced search term
+  // Track if this is the initial load
+  const isInitialLoad = useRef(true);
+  // Track the last search value applied to query to prevent stale-page fetches
+  const lastAppliedSearchRef = useRef<string>('');
 
-  // Track if this is the initial load (no longer needed with React Query)
-  // const isInitialLoad = useRef(true);
+  // Debounced search hook
+  const { debouncedValue: debouncedSearchTerm, isSearching } = useDebounceSearch({
+    searchValue: searchTerm,
+    delay: 300,
+    onSearch: (value: string) => {
+      // mark the value as applied; page reset happens only when necessary
+      lastAppliedSearchRef.current = value;
+      if (!isInitialLoad.current && currentPage !== 1) {
+        setCurrentPage(1);
+      }
+    },
+  });
+
+  // Use the custom hook
+  const {
+    clients,
+    stats,
+    total: totalCount,
+    page,
+    totalPages,
+    isLoading,
+    isSubmitting,
+    createClient,
+    updateClient,
+    deleteClient,
+  } = useAdminClients({
+    params: {
+      page: currentPage,
+      limit,
+      search: debouncedSearchTerm,
+      status: statusFilter as any,
+      plan: planFilter as any,
+      accountType: accountTypeFilter as any,
+      provider: providerFilter,
+      createdAfter,
+      createdBefore,
+      updatedAfter,
+      updatedBefore,
+      sortBy: 'createdAt',
+      sortOrder: 'desc',
+    },
+  });
 
   // Calculate active filter count
   const activeFilterCount = [
@@ -176,8 +208,12 @@ export default function ClientsPage() {
     setSelectedClient(null);
   }, [onClose, clearEditParam]);
 
+<<<<<<< HEAD
+=======
   // Debounce search term - handled by React Query automatically
 
+
+>>>>>>> 9387135678ac1a0d0374ee5801cf33eccfa0a926
   // Handlers using the custom hook
   const handleCreate = useCallback(async (data: CreateClientRequest) => {
     const success = await createClient(data);
@@ -192,7 +228,6 @@ export default function ClientsPage() {
       closeForm();
     }
   }, [updateClient, closeForm]);
-
   // Show delete confirmation modal
   const handleDeleteClick = (compositeKey: string) => {
     setClientToDelete(compositeKey);
@@ -206,9 +241,10 @@ export default function ClientsPage() {
     const success = await deleteClient(clientToDelete);
     if (success) {
       setClientToDelete(null);
+      setDeletingLoading(null);
       onDeleteClose();
     }
-  }, [clientToDelete, deleteClient, onDeleteClose]);
+  }, [clientToDelete, deleteClient, onDeleteClose, setDeletingLoading]);
 
   // Cancel delete action
   const cancelDelete = () => {
@@ -264,7 +300,6 @@ export default function ClientsPage() {
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-    setCurrentPage(1);
   };
 
   // Open edit modal when ?edit=<id> is present
@@ -291,6 +326,11 @@ export default function ClientsPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, clients, isLoading]);
+
+  // Reset initial load flag after first render
+  useEffect(() => {
+    isInitialLoad.current = false;
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -320,7 +360,7 @@ export default function ClientsPage() {
     }
   };
 
-  if (isLoading && clients.length === 0) {
+  if (loadingStates.initial && clients.length === 0) {
     return (
       <div className="p-6 max-w-7xl mx-auto">
         {/* Loading Header */}
@@ -481,9 +521,9 @@ export default function ClientsPage() {
             aria-label="Search clients"
             className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
-          {isLoading && (
+          {isSearching && (
             <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-              <div className="w-4 h-4 border-2 border-theme-primary border-t-transparent rounded-full animate-spin"></div>
+              <LoadingSpinner size="sm" />
             </div>
           )}
         </div>
@@ -710,9 +750,11 @@ export default function ClientsPage() {
                           color="danger"
                           variant="light"
                           onPress={() => handleDeleteClick(client.id)}
-                          startContent={<Trash2 className="w-4 h-4" />}
+                          isLoading={loadingStates.deleting === client.id}
+                          isDisabled={loadingStates.deleting === client.id}
+                          startContent={loadingStates.deleting === client.id ? null : <Trash2 className="w-4 h-4" />}
                         >
-                          Delete
+                          {loadingStates.deleting === client.id ? 'Deleting...' : 'Delete'}
                         </Button>
                       </div>
                     </div>
@@ -726,7 +768,7 @@ export default function ClientsPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center mt-8">
+        <div className="flex flex-col items-center mt-8 space-y-4">
           <UniversalPagination
             page={page}
             totalPages={totalPages}

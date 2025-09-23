@@ -3,13 +3,15 @@ import { apiClient, ApiError, RequestBody } from '@/lib/api/api-client';
 import { toast } from 'sonner';
 
 interface MutationConfig<TData, TVariables extends RequestBody> extends Omit<
-  UseMutationOptions<TData, ApiError, TVariables>,
+  UseMutationOptions<TData, ApiError, TVariables, unknown>,
   'mutationFn'
 > {
   endpoint: string;
   method: 'post' | 'put' | 'patch' | 'delete';
   successMessage?: string;
   invalidateQueries?: string[];
+  onSuccess?: (data: TData, variables: TVariables, context: unknown) => void | Promise<void>;
+  onError?: (error: ApiError, variables: TVariables, context: unknown) => void;
 }
 
 export function useMutationWithToast<TData, TVariables extends RequestBody = RequestBody>({
@@ -23,7 +25,7 @@ export function useMutationWithToast<TData, TVariables extends RequestBody = Req
 }: MutationConfig<TData, TVariables>) {
   const queryClient = useQueryClient();
 
-  return useMutation<TData, ApiError, TVariables>({
+  return useMutation<TData, ApiError, TVariables, unknown>({
     mutationFn: async (variables) => {
       switch (method) {
         case 'post':
@@ -48,11 +50,12 @@ export function useMutationWithToast<TData, TVariables extends RequestBody = Req
       if (successMessage) {
         toast.success(successMessage);
       }
-      onSuccess?.(data, variables, context, {} as any);
+
+      await onSuccess?.(data, variables, context);
     },
-    onError: (error, variables, context) => {
+    onError: async (error, variables, context) => {
       toast.error(error.message || 'An error occurred');
-      onError?.(error, variables, context, {} as any);
+      await onError?.(error, variables, context);
     },
     ...options,
   });

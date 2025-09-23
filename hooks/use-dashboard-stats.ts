@@ -23,6 +23,7 @@ interface StatusBreakdownData {
   status: 'Approved' | 'Pending' | 'Rejected';
   value: number;
   color: string;
+  [key: string]: string | number;
 }
 
 interface TopItem {

@@ -341,10 +341,15 @@ export function useSubscriptionById(subscriptionId: string) {
 export function useSubscriptionManager() {
   const queryClient = useQueryClient();
   
-  const { createSubscription, updateSubscription, cancelSubscription } = useSubscription();
+  const { updateSubscription, cancelSubscription } = useSubscription();
 
   // Optimistic update for subscription creation
-  const createSubscriptionOptimistic = useMutation({
+  const createSubscriptionOptimistic = useMutation<
+    SubscriptionData,
+    Error,
+    CreateSubscriptionRequest,
+    { previousSubscription: any }
+  >({
     mutationFn: async (data: CreateSubscriptionRequest): Promise<SubscriptionData> => {
       const response = await serverClient.post<SubscriptionData>('/api/stripe/subscription', data);
 
@@ -354,13 +359,13 @@ export function useSubscriptionManager() {
 
       return response.data;
     },
-    onMutate: async (newSubscription) => {
+    onMutate: async () => {
       // Cancel any outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['user-subscription'] });
-      
+
       // Snapshot the previous value
       const previousSubscription = queryClient.getQueryData(['user-subscription']);
-      
+
       // Optimistically update to the new value
       queryClient.setQueryData(['user-subscription'], {
         id: 'temp-id',
@@ -370,10 +375,10 @@ export function useSubscriptionManager() {
         cancelAtPeriodEnd: false,
         metadata: { userId: 'temp-user' }
       });
-      
+
       return { previousSubscription };
     },
-    onError: (err, newSubscription, context) => {
+    onError: (_, __, context) => {
       // If the mutation fails, use the context returned from onMutate to roll back
       if (context?.previousSubscription) {
         queryClient.setQueryData(['user-subscription'], context.previousSubscription);

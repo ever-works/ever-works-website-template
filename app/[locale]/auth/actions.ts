@@ -154,7 +154,7 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
     const normalizedEmail = email.toLowerCase().trim();
 
     // Wrap in transaction to ensure atomicity
-    const result = await db.transaction(async (tx: typeof db) => {
+    const result = await db.transaction(async (tx) => {
       // 1) Create user record
       const userId = crypto.randomUUID();
       const [user] = await tx.insert(users).values({

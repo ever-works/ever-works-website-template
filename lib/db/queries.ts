@@ -799,21 +799,23 @@ export async function createClientProfile(data: {
     finalUsername = await ensureUniqueUsername(finalUsername.toLowerCase());
   }
 
+  const insertData: NewClientProfile = {
+    userId: data.userId,
+    email: normalizedEmail,
+    name: data.name,
+    displayName: data.displayName || data.name,
+    username: finalUsername,
+    bio: data.bio || "Welcome! I'm a new user on this platform.",
+    jobTitle: data.jobTitle || "User",
+    company: data.company || "Unknown",
+    status: (data.status as "active" | "inactive" | "suspended" | "trial") || "active",
+    plan: (data.plan as "free" | "standard" | "premium") || "free",
+    accountType: (data.accountType as "individual" | "business" | "enterprise") || "individual",
+  };
+
   const [profile] = await db
     .insert(clientProfiles)
-    .values({
-      userId: data.userId,
-      email: normalizedEmail,
-      name: data.name,
-      displayName: data.displayName || data.name,
-      username: finalUsername,
-      bio: data.bio || "Welcome! I'm a new user on this platform.",
-      jobTitle: data.jobTitle || "User",
-      company: data.company || "Unknown",
-      status: data.status || "active",
-      plan: data.plan || "free",
-      accountType: data.accountType || "individual",
-    })
+    .values(insertData)
     .returning();
 
 	return profile;
@@ -899,7 +901,7 @@ export async function getClientProfiles(params: {
 		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
 		.where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id));
 
-	const total = Number(countResult[0]?.count || 0);
+	const total = Number((countResult[0] as unknown as { count: number })?.count || 0);
 
 	// Get profiles with authentication data and exclude admins (roles.is_admin = false)
 	const profiles = await db
@@ -1018,7 +1020,7 @@ export async function getEnhancedClientStats(): Promise<{
 		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
 		.where(isNull(roles.id));
 
-	const total = Number(totalResult[0]?.count || 0);
+	const total = Number((totalResult[0] as unknown as { count: number })?.count || 0);
 
 	// Initialize counters
 	const byStatus: Record<string, number> = { active: 0, inactive: 0, suspended: 0, trial: 0 };
@@ -1224,12 +1226,12 @@ export async function getClientProfileStats() {
 		.groupBy(clientProfiles.accountType);
 
 	const byPlan: Record<string, number> = {};
-	planStats.forEach((stat: { plan: string | null; count: number }) => {
+	planStats.forEach((stat) => {
 		byPlan[stat.plan || 'unknown'] = Number(stat.count);
 	});
 
 	const byAccountType: Record<string, number> = {};
-	accountTypeStats.forEach((stat: { accountType: string | null; count: number }) => {
+	accountTypeStats.forEach((stat) => {
 		byAccountType[stat.accountType || 'unknown'] = Number(stat.count);
 	});
 
@@ -1337,15 +1339,9 @@ export async function getPaymentAccountByUserId(userId: string): Promise<Payment
       providerId: paymentAccounts.providerId,
       customerId: paymentAccounts.customerId,
       accountId: paymentAccounts.accountId,
-      provider: {
-        id: paymentProviders.id,
-        name: paymentProviders.name,
-        isActive: paymentProviders.isActive,
-      },
-      user: {
-        id: users.id,
-        email: users.email,
-      },
+      createdAt: paymentAccounts.createdAt,
+      updatedAt: paymentAccounts.updatedAt,
+      lastUsed: paymentAccounts.lastUsed,
     })
     .from(paymentAccounts)
     .innerJoin(paymentProviders, eq(paymentAccounts.providerId, paymentProviders.id))
@@ -1888,7 +1884,7 @@ export async function getAdminDashboardData(params: {
 		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
 		.where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id));
 
-	const total = Number(countResult[0]?.count || 0);
+	const total = Number((countResult[0] as unknown as { count: number })?.count || 0);
 
 	// Optimized profile query with selective field selection and proper ordering
 	const profiles = await db
@@ -2195,7 +2191,7 @@ export async function advancedClientSearch(params: {
 		.leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
 		.where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id));
 
-	const total = Number(countResult[0]?.count || 0);
+	const total = Number((countResult[0] as unknown as { count: number })?.count || 0);
 
 	// Build sort clause
 	let sortClause;
