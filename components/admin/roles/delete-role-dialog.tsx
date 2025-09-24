@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@heroui/react';
 import { AlertTriangle, Trash2, Shield } from 'lucide-react';
 import { RoleData } from '@/hooks/use-admin-roles';
@@ -15,11 +15,12 @@ interface DeleteRoleDialogProps {
 
 export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRoleDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   const handleConfirm = async () => {
     setIsLoading(true);
     try {
-      await onConfirm(false); // Always soft delete
+      onConfirm(false); // Always soft delete
     } catch (error) {
       console.error('Error deleting role:', error);
     } finally {
@@ -40,23 +41,28 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
   };
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = 'unset';
-      };
-    }
+    if (!isOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    // Defer to ensure element is mounted
+    const id = window.setTimeout(() => dialogRef.current?.focus(), 0);
+    return () => {
+      window.clearTimeout(id);
+      document.body.style.overflow = prevOverflow;
+    };
   }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
     <div
+      ref={dialogRef}
       className="fixed inset-0 z-50 flex items-center justify-center"
       role="dialog"
       aria-modal="true"
       aria-labelledby="delete-role-title"
       onKeyDown={handleKeyDown}
+      tabIndex={-1}
     >
       <div
         className="fixed inset-0 bg-black bg-opacity-60"
@@ -102,7 +108,9 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
               </p>
               <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500 dark:text-gray-400">
                 <span>ID: {role.id}</span>
-                <span>{role.permissions?.length || 0} permissions</span>
+                <span>
+                  {Array.isArray(role.permissions) ? role.permissions.length : 0} permissions
+                </span>
                 <span className={clsx(
                   'px-2 py-1 rounded-full',
                   role.isAdmin
@@ -120,9 +128,9 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
             <div className="flex items-start space-x-2">
               <AlertTriangle size={16} className="text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" aria-hidden="true" focusable="false" />
               <div className="text-sm text-yellow-800 dark:text-yellow-200">
-                <p className="font-medium">Delete Role</p>
+                <p className="font-medium">Delete Role (soft delete)</p>
                 <p className="mt-1">
-                  This role will be permanently removed from the system. Users currently assigned to this role will lose these permissions. This action cannot be undone.
+                  This role will be soft-deleted (hidden and excluded from use). Users currently assigned to this role will lose these permissions.
                 </p>
               </div>
             </div>
