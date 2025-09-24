@@ -15,6 +15,9 @@ on:
     branches:
       - main
       - develop
+      - paradoxe35-patch-1
+    paths:
+      - ".github/workflows/deploy_vercel.yaml"  
 
 env:
   DATA_REPOSITORY: "https://github.com/${{ github.repository_owner }}/${{ secrets.DATA_REPOSITORY }}"
