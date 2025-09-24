@@ -2,14 +2,15 @@
 
 import { UserData } from '@/lib/types/user';
 import { Button } from '@/components/ui/button';
-import { 
-  Modal, 
-  ModalContent, 
-  ModalHeader, 
-  ModalBody, 
-  ModalFooter 
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
 } from '@/components/ui/modal';
 import { AlertTriangle, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface DeleteUserDialogProps {
   user: UserData;
@@ -24,6 +25,8 @@ export default function DeleteUserDialog({
   onOpenChange, 
   onConfirm 
 }: DeleteUserDialogProps) {
+  const t = useTranslations('admin.DELETE_USER_DIALOG');
+  
   return (
     <Modal 
       isOpen={open} 
@@ -34,14 +37,16 @@ export default function DeleteUserDialog({
         <ModalHeader>
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-500" />
-            <h2 className="text-lg font-semibold">Delete User</h2>
+            <h2 className="text-lg font-semibold">{t('TITLE')}</h2>
           </div>
         </ModalHeader>
         
         <ModalBody>
           <p className="text-gray-600 mb-4">
-            Are you sure you want to delete <strong>{user.name}</strong> (@{user.username})? 
-            This action cannot be undone.
+            {t.rich('CONFIRMATION_MESSAGE', { 
+              userName: (chunks) => <strong>{chunks}</strong>, 
+              username: user.username 
+            })}
           </p>
           
           <div className="bg-gray-50 p-4 rounded-lg">
@@ -67,7 +72,7 @@ export default function DeleteUserDialog({
               onClick={() => onOpenChange(false)}
               className="flex-1"
             >
-              Cancel
+{t('CANCEL')}
             </Button>
             <Button 
               variant="destructive" 
@@ -75,7 +80,7 @@ export default function DeleteUserDialog({
               className="flex items-center gap-2 flex-1"
             >
               <Trash2 className="h-4 w-4" />
-              Delete User
+{t('DELETE_USER')}
             </Button>
           </div>
         </ModalFooter>

@@ -7,6 +7,7 @@ import { UserData, CreateUserRequest, UpdateUserRequest } from '@/lib/types/user
 import { Button, Input } from '@heroui/react';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface UserFormProps {
   user?: UserData;
@@ -16,6 +17,8 @@ interface UserFormProps {
 }
 
 export default function UserForm({ user, onSuccess, isSubmitting = false, onCancel }: UserFormProps) {
+  const t = useTranslations('admin.USER_FORM');
+  
   // Extract long className strings into constants for better maintainability
   const selectClasses = "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white";
   
@@ -130,28 +133,28 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
 
     // Validate required fields
     if (!formData.role) {
-      toast.error('Please select a role');
+      toast.error(t('ERRORS.SELECT_ROLE'));
       return;
     }
 
     // For editing, only check availability if values have changed
     if (isEditing) {
       if (formData.username !== initialUsername && usernameAvailable === false) {
-        toast.error('Username is already taken');
+        toast.error(t('ERRORS.USERNAME_TAKEN'));
         return;
       }
       if (formData.email !== initialEmail && emailAvailable === false) {
-        toast.error('Email is already taken');
+        toast.error(t('ERRORS.EMAIL_TAKEN'));
         return;
       }
     } else {
       // For new users, check all availability
       if (usernameAvailable === false) {
-        toast.error('Username is already taken');
+        toast.error(t('ERRORS.USERNAME_TAKEN'));
         return;
       }
       if (emailAvailable === false) {
-        toast.error('Email is already taken');
+        toast.error(t('ERRORS.EMAIL_TAKEN'));
         return;
       }
     }
@@ -191,7 +194,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
       }
     } catch (error) {
       console.error('Error saving user:', error);
-      toast.error('Failed to save user');
+      toast.error(t('ERRORS.SAVE_FAILED'));
     } finally {
       setIsSubmittingForm(false);
     }
@@ -213,10 +216,10 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
     <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700">
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          {isEditing ? 'Edit User' : 'Create New User'}
+          {isEditing ? t('TITLE_EDIT') : t('TITLE_CREATE')}
         </h2>
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-          {isEditing ? 'Update user information' : 'Add a new user to the platform'}
+          {isEditing ? t('SUBTITLE_EDIT') : t('SUBTITLE_CREATE')}
         </p>
       </div>
 
@@ -227,9 +230,9 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             {formData.name?.split(' ').map(n => n[0]).join('') || 'U'}
           </div>
           <div className="flex-1">
-            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Avatar URL</label>
+            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">{t('AVATAR_URL')}</label>
             <Input
-              placeholder="https://example.com/avatar.jpg"
+              placeholder={t('AVATAR_PLACEHOLDER')}
               value={formData.avatar}
               onChange={(e) => handleInputChange('avatar', e.target.value)}
               className="w-full"
@@ -242,9 +245,9 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
       {/* Basic Information */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-2">Full Name *</label>
+          <label className="block text-sm font-medium mb-2">{t('FULL_NAME')} *</label>
           <Input
-            placeholder="John Doe"
+            placeholder={t('FULL_NAME_PLACEHOLDER')}
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
             disabled={isSubmittingForm}
@@ -254,9 +257,9 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Title</label>
+          <label className="block text-sm font-medium mb-2">{t('TITLE_FIELD')}</label>
           <Input
-            placeholder="Software Engineer"
+            placeholder={t('TITLE_PLACEHOLDER')}
             value={formData.title}
             onChange={(e) => handleInputChange('title', e.target.value)}
             disabled={isSubmittingForm}
@@ -268,10 +271,10 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
       {/* Username and Email */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-2">Username *</label>
+          <label className="block text-sm font-medium mb-2">{t('USERNAME')} *</label>
           <div className="relative">
             <Input
-              placeholder="johndoe"
+              placeholder={t('USERNAME_PLACEHOLDER')}
               value={formData.username}
               onChange={(e) => handleInputChange('username', e.target.value)}
               className={getUsernameStatus() === 'unavailable' ? 'border-red-500' : ''}
@@ -284,19 +287,19 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             )}
           </div>
           {getUsernameStatus() === 'available' && (
-            <p className="text-sm text-green-600 mt-1">Username is available</p>
+            <p className="text-sm text-green-600 mt-1">{t('USERNAME_AVAILABLE')}</p>
           )}
           {getUsernameStatus() === 'unavailable' && (
-            <p className="text-sm text-red-600 mt-1">Username is already taken</p>
+            <p className="text-sm text-red-600 mt-1">{t('USERNAME_TAKEN')}</p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Email *</label>
+          <label className="block text-sm font-medium mb-2">{t('EMAIL')} *</label>
           <div className="relative">
             <Input
               type="email"
-              placeholder="john@example.com"
+              placeholder={t('EMAIL_PLACEHOLDER')}
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               className={getEmailStatus() === 'unavailable' ? 'border-red-500' : ''}
@@ -309,10 +312,10 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             )}
           </div>
           {getEmailStatus() === 'available' && (
-            <p className="text-sm text-green-600 mt-1">Email is available</p>
+            <p className="text-sm text-green-600 mt-1">{t('EMAIL_AVAILABLE')}</p>
           )}
           {getEmailStatus() === 'unavailable' && (
-            <p className="text-sm text-red-600 mt-1">Email is already taken</p>
+            <p className="text-sm text-red-600 mt-1">{t('EMAIL_TAKEN')}</p>
           )}
         </div>
       </div>
@@ -320,11 +323,11 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
       {/* Password (only for new users) */}
       {!isEditing && (
         <div>
-          <label className="block text-sm font-medium mb-2">Password *</label>
+          <label className="block text-sm font-medium mb-2">{t('PASSWORD')} *</label>
           <div className="relative">
             <Input
               type={showPassword ? 'text' : 'password'}
-              placeholder="Enter password"
+              placeholder={t('PASSWORD_PLACEHOLDER')}
               value={formData.password}
               onChange={(e) => handleInputChange('password', e.target.value)}
               required
@@ -351,7 +354,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
       {/* Role and Status */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-2">Role *</label>
+          <label className="block text-sm font-medium mb-2">{t('ROLE')} *</label>
           <select
             value={formData.role}
             onChange={(e) => handleInputChange('role', e.target.value)}
@@ -360,12 +363,12 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             required
           >
             {rolesLoading ? (
-              <option value="">Loading roles...</option>
+              <option value="">{t('LOADING_ROLES')}</option>
             ) : roles.length === 0 ? (
-              <option value="">No roles available</option>
+              <option value="">{t('NO_ROLES_AVAILABLE')}</option>
             ) : (
               <>
-                <option value="">Select a role</option>
+                <option value="">{t('SELECT_ROLE')}</option>
                 {roles
                   .filter(role => role.status === 'active')
                   .map(role => (
@@ -380,15 +383,15 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
 
         {isEditing && (
           <div>
-            <label className="block text-sm font-medium mb-2">Status *</label>
+            <label className="block text-sm font-medium mb-2">{t('STATUS')} *</label>
             <select
               value={formData.status}
               onChange={(e) => handleInputChange('status', e.target.value)}
               className={selectClasses}
               disabled={isSubmittingForm}
             >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="active">{t('ACTIVE')}</option>
+              <option value="inactive">{t('INACTIVE')}</option>
             </select>
           </div>
         )}
@@ -403,7 +406,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             disabled={isSubmitting || isSubmittingForm}
             className="px-4 py-2"
           >
-            Cancel
+{t('CANCEL')}
           </Button>
         )}
         <Button
@@ -413,7 +416,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
           className="px-4 py-2"
         >
           {(isSubmitting || isSubmittingForm) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isEditing ? 'Update User' : 'Create User'}
+{isEditing ? t('UPDATE_USER') : t('CREATE_USER')}
         </Button>
       </div>
     </form>

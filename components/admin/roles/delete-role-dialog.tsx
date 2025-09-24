@@ -5,6 +5,7 @@ import { Button } from '@heroui/react';
 import { AlertTriangle, Trash2, Shield } from 'lucide-react';
 import { RoleData } from '@/hooks/use-admin-roles';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 
 interface DeleteRoleDialogProps {
   role: RoleData;
@@ -14,6 +15,7 @@ interface DeleteRoleDialogProps {
 }
 
 export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRoleDialogProps) {
+  const t = useTranslations('admin.DELETE_ROLE_DIALOG');
   const [isLoading, setIsLoading] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -76,14 +78,14 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
             <div className="w-8 h-8 bg-red-100 dark:bg-red-900/20 rounded-lg flex items-center justify-center">
               <AlertTriangle size={16} className="text-red-600 dark:text-red-400" aria-hidden="true" focusable="false" />
             </div>
-            <h2 id="delete-role-title" className="text-lg font-semibold text-gray-900 dark:text-white">Delete Role</h2>
+            <h2 id="delete-role-title" className="text-lg font-semibold text-gray-900 dark:text-white">{t('TITLE')}</h2>
           </div>
           {!isLoading && (
             <button
               type="button"
               onClick={handleCancel}
               className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
-              aria-label="Close dialog"
+              aria-label={t('CLOSE_DIALOG')}
             >
               <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -109,7 +111,7 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
               <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500 dark:text-gray-400">
                 <span>ID: {role.id}</span>
                 <span>
-                  {Array.isArray(role.permissions) ? role.permissions.length : 0} permissions
+                  {Array.isArray(role.permissions) ? role.permissions.length : 0} {t('PERMISSIONS')}
                 </span>
                 <span className={clsx(
                   'px-2 py-1 rounded-full',
@@ -117,7 +119,7 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
                     ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400'
                     : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
                 )}>
-                  {role.isAdmin ? 'Admin Role' : 'Client Role'}
+                  {role.isAdmin ? t('ADMIN_ROLE') : t('CLIENT_ROLE')}
                 </span>
               </div>
             </div>
@@ -128,9 +130,9 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
             <div className="flex items-start space-x-2">
               <AlertTriangle size={16} className="text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" aria-hidden="true" focusable="false" />
               <div className="text-sm text-yellow-800 dark:text-yellow-200">
-                <p className="font-medium">Delete Role (soft delete)</p>
+                <p className="font-medium">{t('WARNING_TITLE')}</p>
                 <p className="mt-1">
-                  This role will be soft-deleted (hidden and excluded from use). Users currently assigned to this role will lose these permissions.
+                  {t('WARNING_MESSAGE')}
                 </p>
               </div>
             </div>
@@ -144,9 +146,9 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
             onPress={handleCancel}
             disabled={isLoading}
             type="button"
-            aria-label="Cancel role deletion"
+            aria-label={t('CANCEL_ROLE_DELETION')}
           >
-            Cancel
+            {t('CANCEL')}
           </Button>
           <Button
             color="danger"
@@ -160,9 +162,9 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
               'transition-all duration-300 text-white font-medium'
             )}
             type="button"
-            aria-label={isLoading ? 'Deleting role...' : 'Confirm role deletion'}
+            aria-label={isLoading ? t('DELETING_ROLE') : t('CONFIRM_ROLE_DELETION')}
           >
-            {isLoading ? 'Deleting...' : 'Delete Role'}
+            {isLoading ? t('DELETING') : t('DELETE_ROLE')}
           </Button>
         </div>
       </div>

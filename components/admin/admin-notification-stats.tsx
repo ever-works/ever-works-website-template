@@ -4,12 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bell, MessageSquare, UserPlus } from "lucide-react";
 import { useAdminNotifications } from "@/hooks/use-admin-notifications";
+import { useTranslations } from "next-intl";
 
 // Removed unused notificationTypeIcons and notificationTypeLabels
 // These were defined but never used in the component
 
 export function AdminNotificationStats() {
   const { stats, isLoading } = useAdminNotifications();
+  const t = useTranslations('admin.NOTIFICATION_STATS');
 
   if (isLoading) {
     return (
@@ -33,13 +35,13 @@ export function AdminNotificationStats() {
       {/* Total Notifications */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('TOTAL')}</CardTitle>
           <Bell className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.total}</div>
           <p className="text-xs text-muted-foreground">
-            All notifications
+            {t('ALL_NOTIFICATIONS')}
           </p>
         </CardContent>
       </Card>
@@ -47,7 +49,7 @@ export function AdminNotificationStats() {
       {/* Unread Notifications */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Unread</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('UNREAD')}</CardTitle>
           <Badge variant="destructive" className="h-4 w-4 rounded-full p-0 flex items-center justify-center">
             {stats.unread}
           </Badge>
@@ -55,7 +57,7 @@ export function AdminNotificationStats() {
         <CardContent>
           <div className="text-2xl font-bold">{stats.unread}</div>
           <p className="text-xs text-muted-foreground">
-            Require attention
+            {t('REQUIRE_ATTENTION')}
           </p>
         </CardContent>
       </Card>
@@ -63,13 +65,13 @@ export function AdminNotificationStats() {
       {/* Item Submissions */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Submissions</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('SUBMISSIONS')}</CardTitle>
           <Bell className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.byType.item_submission || 0}</div>
           <p className="text-xs text-muted-foreground">
-            Pending review
+            {t('PENDING_REVIEW')}
           </p>
         </CardContent>
       </Card>
@@ -77,13 +79,13 @@ export function AdminNotificationStats() {
       {/* Comments Reported */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Reported</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('REPORTED')}</CardTitle>
           <MessageSquare className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.byType.comment_reported || 0}</div>
           <p className="text-xs text-muted-foreground">
-            Comments flagged
+            {t('COMMENTS_FLAGGED')}
           </p>
         </CardContent>
       </Card>
@@ -91,13 +93,13 @@ export function AdminNotificationStats() {
       {/* New Users */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">New Users</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('NEW_USERS')}</CardTitle>
           <UserPlus className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.byType.user_registered || 0}</div>
           <p className="text-xs text-muted-foreground">
-            Recently registered
+            {t('RECENTLY_REGISTERED')}
           </p>
         </CardContent>
       </Card>

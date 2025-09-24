@@ -2,14 +2,15 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { 
-  Modal, 
-  ModalContent, 
-  ModalHeader, 
-  ModalBody, 
-  ModalFooter 
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
 } from '@/components/ui/modal';
 import { AlertTriangle, Trash2, MessageSquare, X, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 // Extracted className constants for better maintainability
 const CLASSES = {
@@ -79,6 +80,7 @@ export default function DeleteCommentDialog({
   onOpenChange, 
   onConfirm 
 }: DeleteCommentDialogProps) {
+  const t = useTranslations('admin.DELETE_COMMENT_DIALOG');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleConfirm = async () => {
@@ -106,8 +108,8 @@ export default function DeleteCommentDialog({
                 <AlertTriangle className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h2 className={CLASSES.headerText}>Delete Comment</h2>
-                <p className={CLASSES.headerSubtext}>This action cannot be undone</p>
+                <h2 className={CLASSES.headerText}>{t('TITLE')}</h2>
+                <p className={CLASSES.headerSubtext}>{t('SUBTITLE')}</p>
               </div>
             </div>
             <Button
@@ -128,9 +130,9 @@ export default function DeleteCommentDialog({
               <div className={CLASSES.warningContent}>
                 <AlertTriangle className={CLASSES.warningIcon} />
                 <div>
-                  <p className={CLASSES.warningTitle}>Warning</p>
+                  <p className={CLASSES.warningTitle}>{t('WARNING_TITLE')}</p>
                   <p className={CLASSES.warningText}>
-                    Are you sure you want to delete this comment? This action cannot be undone and will permanently remove the comment from the system.
+                    {t('WARNING_MESSAGE')}
                   </p>
                 </div>
               </div>
@@ -145,7 +147,7 @@ export default function DeleteCommentDialog({
                 <div className={CLASSES.commentContent}>
                   <div className={CLASSES.userInfo}>
                     <p className={CLASSES.userName}>
-                      {comment.user.name || comment.user.email || "Unknown User"}
+                      {comment.user.name || comment.user.email || t('UNKNOWN_USER')}
                     </p>
                     {comment.rating !== null && (
                       <div className={CLASSES.ratingBadge}>
@@ -154,7 +156,7 @@ export default function DeleteCommentDialog({
                     )}
                   </div>
                   <p className={CLASSES.commentDate}>
-                    {comment.createdAt ? new Date(comment.createdAt).toLocaleString() : 'Unknown date'}
+                    {comment.createdAt ? new Date(comment.createdAt).toLocaleString() : t('UNKNOWN_DATE')}
                   </p>
                   <div className={CLASSES.commentText}>
                     <p className={CLASSES.commentBody}>
@@ -164,7 +166,7 @@ export default function DeleteCommentDialog({
                   <div className={CLASSES.commentMeta}>
                     <span className={CLASSES.metaItem}>
                       <MessageSquare className="h-3 w-3" />
-                      Item ID: {comment.itemId}
+{t('ITEM_ID')}: {comment.itemId}
                     </span>
                   </div>
                 </div>
@@ -181,7 +183,7 @@ export default function DeleteCommentDialog({
               disabled={isLoading}
               className={CLASSES.cancelButton}
             >
-              Cancel
+{t('CANCEL')}
             </Button>
             <Button 
               variant="destructive"
@@ -192,12 +194,12 @@ export default function DeleteCommentDialog({
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Deleting...
+{t('DELETING')}
                 </>
               ) : (
                 <>
                   <Trash2 className="h-4 w-4 mr-2" />
-                  Delete Comment
+{t('DELETE_COMMENT')}
                 </>
               )}
             </Button>

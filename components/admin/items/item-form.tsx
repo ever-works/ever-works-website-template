@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_VALIDATION, ITEM_STATUSES } from "@/lib/types/item";
 import { Button } from "@/components/ui/button";
 import { Check, X, Loader2 } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 interface ItemFormProps {
   item?: ItemData;
@@ -14,6 +15,8 @@ interface ItemFormProps {
 }
 
 export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: ItemFormProps) {
+  const t = useTranslations('admin.ITEM_FORM');
+  
   const [formData, setFormData] = useState({
     id: item?.id || '',
     name: item?.name || '',
@@ -51,50 +54,62 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
 
     // Validate ID
     if (!formData.id.trim()) {
-      newErrors.id = 'Item ID is required';
+      newErrors.id = t('ERRORS.ID_REQUIRED');
     } else if (formData.id.length < ITEM_VALIDATION.NAME_MIN_LENGTH || formData.id.length > ITEM_VALIDATION.NAME_MAX_LENGTH) {
-      newErrors.id = `Item ID must be between ${ITEM_VALIDATION.NAME_MIN_LENGTH} and ${ITEM_VALIDATION.NAME_MAX_LENGTH} characters`;
+      newErrors.id = t('ERRORS.ID_LENGTH', { 
+        min: ITEM_VALIDATION.NAME_MIN_LENGTH, 
+        max: ITEM_VALIDATION.NAME_MAX_LENGTH 
+      });
     } else if (!/^[a-z0-9-]+$/.test(formData.id)) {
-      newErrors.id = 'Item ID must contain only lowercase letters, numbers, and hyphens';
+      newErrors.id = t('ERRORS.ID_FORMAT');
     }
 
     // Validate name
     if (!formData.name.trim()) {
-      newErrors.name = 'Item name is required';
+      newErrors.name = t('ERRORS.NAME_REQUIRED');
     } else if (formData.name.length < ITEM_VALIDATION.NAME_MIN_LENGTH || formData.name.length > ITEM_VALIDATION.NAME_MAX_LENGTH) {
-      newErrors.name = `Item name must be between ${ITEM_VALIDATION.NAME_MIN_LENGTH} and ${ITEM_VALIDATION.NAME_MAX_LENGTH} characters`;
+      newErrors.name = t('ERRORS.NAME_LENGTH', { 
+        min: ITEM_VALIDATION.NAME_MIN_LENGTH, 
+        max: ITEM_VALIDATION.NAME_MAX_LENGTH 
+      });
     }
 
     // Validate slug
     if (!formData.slug.trim()) {
-      newErrors.slug = 'Item slug is required';
+      newErrors.slug = t('ERRORS.SLUG_REQUIRED');
     } else if (formData.slug.length < ITEM_VALIDATION.SLUG_MIN_LENGTH || formData.slug.length > ITEM_VALIDATION.SLUG_MAX_LENGTH) {
-      newErrors.slug = `Item slug must be between ${ITEM_VALIDATION.SLUG_MIN_LENGTH} and ${ITEM_VALIDATION.SLUG_MAX_LENGTH} characters`;
+      newErrors.slug = t('ERRORS.SLUG_LENGTH', { 
+        min: ITEM_VALIDATION.SLUG_MIN_LENGTH, 
+        max: ITEM_VALIDATION.SLUG_MAX_LENGTH 
+      });
     } else if (!/^[a-z0-9-]+$/.test(formData.slug)) {
-      newErrors.slug = 'Item slug must contain only lowercase letters, numbers, and hyphens';
+      newErrors.slug = t('ERRORS.SLUG_FORMAT');
     }
 
     // Validate description
     if (!formData.description.trim()) {
-      newErrors.description = 'Item description is required';
+      newErrors.description = t('ERRORS.DESCRIPTION_REQUIRED');
     } else if (formData.description.length < ITEM_VALIDATION.DESCRIPTION_MIN_LENGTH || formData.description.length > ITEM_VALIDATION.DESCRIPTION_MAX_LENGTH) {
-      newErrors.description = `Item description must be between ${ITEM_VALIDATION.DESCRIPTION_MIN_LENGTH} and ${ITEM_VALIDATION.DESCRIPTION_MAX_LENGTH} characters`;
+      newErrors.description = t('ERRORS.DESCRIPTION_LENGTH', { 
+        min: ITEM_VALIDATION.DESCRIPTION_MIN_LENGTH, 
+        max: ITEM_VALIDATION.DESCRIPTION_MAX_LENGTH 
+      });
     }
 
     // Validate source URL
     if (!formData.source_url.trim()) {
-      newErrors.source_url = 'Source URL is required';
+      newErrors.source_url = t('ERRORS.SOURCE_URL_REQUIRED');
     } else {
       try {
         new URL(formData.source_url);
       } catch {
-        newErrors.source_url = 'Please enter a valid URL';
+        newErrors.source_url = t('ERRORS.SOURCE_URL_INVALID');
       }
     }
 
     // Validate category
     if (!formData.category || (Array.isArray(formData.category) && formData.category.length === 0)) {
-      newErrors.category = 'At least one category is required';
+      newErrors.category = t('ERRORS.CATEGORY_REQUIRED');
     }
 
     setErrors(newErrors);
@@ -157,10 +172,10 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
       {/* Header */}
       <div className="bg-gradient-to-r from-theme-primary to-theme-accent px-6 py-4">
         <h2 className="text-xl font-bold text-white">
-          {mode === 'create' ? 'Create New Item' : 'Edit Item'}
+          {mode === 'create' ? t('TITLE_CREATE') : t('TITLE_EDIT')}
         </h2>
         <p className="text-white/80 text-sm mt-1">
-          {mode === 'create' ? 'Add a new item to the collection' : 'Update item information'}
+          {mode === 'create' ? t('SUBTITLE_CREATE') : t('SUBTITLE_EDIT')}
         </p>
       </div>
 
@@ -169,12 +184,12 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
         {/* ID Field */}
         <div className="space-y-2">
           <label htmlFor="item-id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Item ID <span className="text-red-500">*</span>
+            {t('ITEM_ID')} <span className="text-red-500">*</span>
           </label>
           <input
             id="item-id"
             type="text"
-            placeholder="Enter unique item ID (e.g., awesome-time-tracking-tool)"
+            placeholder={t('ITEM_ID_PLACEHOLDER')}
             value={formData.id}
             onChange={(e) => handleInputChange('id', e.target.value)}
             disabled={mode === 'edit'}
@@ -188,19 +203,19 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             <p className="text-sm text-red-600 dark:text-red-400">{errors.id}</p>
           )}
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Unique identifier for the item (cannot be changed after creation)
+            {t('ID_HELP')}
           </p>
         </div>
 
         {/* Name Field */}
         <div className="space-y-2">
           <label htmlFor="item-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Item Name <span className="text-red-500">*</span>
+            {t('ITEM_NAME')} <span className="text-red-500">*</span>
           </label>
           <input
             id="item-name"
             type="text"
-            placeholder="Enter item name (e.g., Awesome Time Tracking Tool)"
+            placeholder={t('ITEM_NAME_PLACEHOLDER')}
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
             className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
@@ -212,21 +227,21 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
           {errors.name && (
             <p className="text-sm text-red-600 dark:text-red-400">{errors.name}</p>
           )}
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Display name for the item
+          <p className='text-xs text-gray-500 dark:text-gray-400'>
+            {t('NAME_HELP')}
           </p>
         </div>
 
         {/* Slug Field */}
         <div className="space-y-2">
           <label htmlFor="item-slug" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Item Slug <span className="text-red-500">*</span>
+            {t('ITEM_SLUG')} <span className="text-red-500">*</span>
           </label>
           <div className="flex space-x-2">
             <input
               id="item-slug"
               type="text"
-              placeholder="Enter URL slug (e.g., awesome-time-tracking-tool)"
+              placeholder={t('ITEM_SLUG_PLACEHOLDER')}
               value={formData.slug}
               onChange={(e) => handleInputChange('slug', e.target.value)}
               className={`flex-1 px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
@@ -241,26 +256,26 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
               onClick={generateSlug}
               className="px-3 py-2 text-sm"
             >
-              Generate
+{t('GENERATE')}
             </Button>
           </div>
           {errors.slug && (
             <p className="text-sm text-red-600 dark:text-red-400">{errors.slug}</p>
           )}
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            URL-friendly identifier for the item
+          <p className='text-xs text-gray-500 dark:text-gray-400'>
+            {t('SLUG_HELP')}
           </p>
         </div>
 
         {/* Description Field */}
         <div className="space-y-2">
           <label htmlFor="item-description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Description <span className="text-red-500">*</span>
+            {t('DESCRIPTION')} <span className="text-red-500">*</span>
           </label>
           <textarea
             id="item-description"
             rows={4}
-            placeholder="Enter detailed description of the item..."
+            placeholder={t('DESCRIPTION_PLACEHOLDER')}
             value={formData.description}
             onChange={(e) => handleInputChange('description', e.target.value)}
             className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none ${
@@ -272,20 +287,20 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
           {errors.description && (
             <p className="text-sm text-red-600 dark:text-red-400">{errors.description}</p>
           )}
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Detailed description of the item ({formData.description.length}/{ITEM_VALIDATION.DESCRIPTION_MAX_LENGTH})
+          <p className='text-xs text-gray-500 dark:text-gray-400'>
+            {t('DESCRIPTION_HELP', { current: formData.description.length, max: ITEM_VALIDATION.DESCRIPTION_MAX_LENGTH })}
           </p>
         </div>
 
         {/* Source URL Field */}
         <div className="space-y-2">
           <label htmlFor="item-source-url" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Source URL <span className="text-red-500">*</span>
+            {t('SOURCE_URL')} <span className="text-red-500">*</span>
           </label>
           <input
             id="item-source-url"
             type="url"
-            placeholder="https://github.com/example/awesome-tool"
+            placeholder={t('SOURCE_URL_PLACEHOLDER')}
             value={formData.source_url}
             onChange={(e) => handleInputChange('source_url', e.target.value)}
             className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
@@ -297,20 +312,20 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
           {errors.source_url && (
             <p className="text-sm text-red-600 dark:text-red-400">{errors.source_url}</p>
           )}
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Link to the item&apos;s source or homepage
+          <p className='text-xs text-gray-500 dark:text-gray-400'>
+            {t('SOURCE_URL_HELP')}
           </p>
         </div>
 
         {/* Category Field */}
         <div className="space-y-2">
           <label htmlFor="item-category" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Categories <span className="text-red-500">*</span>
+            {t('CATEGORIES')} <span className="text-red-500">*</span>
           </label>
           <input
             id="item-category"
             type="text"
-            placeholder="Enter categories separated by commas (e.g., productivity, time-tracking, cli)"
+            placeholder={t('CATEGORIES_PLACEHOLDER')}
             value={(formData.category as string[]).join(', ')}
             onChange={(e) => handleCategoryChange(e.target.value)}
             className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
@@ -322,51 +337,51 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
           {errors.category && (
             <p className="text-sm text-red-600 dark:text-red-400">{errors.category}</p>
           )}
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Categories for organizing the item
+          <p className='text-xs text-gray-500 dark:text-gray-400'>
+            {t('CATEGORIES_HELP')}
           </p>
         </div>
 
         {/* Tags Field */}
         <div className="space-y-2">
           <label htmlFor="item-tags" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Tags
+            {t('TAGS')}
           </label>
           <input
             id="item-tags"
             type="text"
-            placeholder="Enter tags separated by commas (e.g., open-source, free, cross-platform)"
+            placeholder={t('TAGS_PLACEHOLDER')}
             value={formData.tags.join(', ')}
             onChange={(e) => handleTagsChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           />
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Tags for better searchability and organization
+          <p className='text-xs text-gray-500 dark:text-gray-400'>
+            {t('TAGS_HELP')}
           </p>
         </div>
 
         {/* Icon URL Field */}
         <div className="space-y-2">
           <label htmlFor="item-icon-url" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Icon URL
+            {t('ICON_URL')}
           </label>
           <input
             id="item-icon-url"
             type="url"
-            placeholder="https://example.com/icon.png"
+            placeholder={t('ICON_URL_PLACEHOLDER')}
             value={formData.icon_url}
             onChange={(e) => handleInputChange('icon_url', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           />
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Optional icon URL for the item
+          <p className='text-xs text-gray-500 dark:text-gray-400'>
+            {t('ICON_URL_HELP')}
           </p>
         </div>
 
         {/* Featured Toggle */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Featured Item
+            {t('FEATURED_ITEM')}
           </label>
           <div className="flex items-center space-x-3">
             <button
@@ -385,18 +400,18 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
               />
             </button>
             <span className="text-sm text-gray-700 dark:text-gray-300">
-              {formData.featured ? 'Featured' : 'Not Featured'}
+              {formData.featured ? t('FEATURED') : t('NOT_FEATURED')}
             </span>
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Featured items appear prominently on the site
+          <p className='text-xs text-gray-500 dark:text-gray-400'>
+            {t('FEATURED_HELP')}
           </p>
         </div>
 
         {/* Status Field */}
         <div className="space-y-2">
           <label htmlFor="item-status" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Status
+            {t('STATUS')}
           </label>
           <select
             id="item-status"
@@ -404,13 +419,13 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             onChange={(e) => handleInputChange('status', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           >
-            <option value={ITEM_STATUSES.DRAFT}>Draft</option>
-            <option value={ITEM_STATUSES.PENDING}>Pending Review</option>
-            <option value={ITEM_STATUSES.APPROVED}>Approved</option>
-            <option value={ITEM_STATUSES.REJECTED}>Rejected</option>
+            <option value={ITEM_STATUSES.DRAFT}>{t('STATUS_OPTIONS.DRAFT')}</option>
+            <option value={ITEM_STATUSES.PENDING}>{t('STATUS_OPTIONS.PENDING')}</option>
+            <option value={ITEM_STATUSES.APPROVED}>{t('STATUS_OPTIONS.APPROVED')}</option>
+            <option value={ITEM_STATUSES.REJECTED}>{t('STATUS_OPTIONS.REJECTED')}</option>
           </select>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Current status of the item
+          <p className='text-xs text-gray-500 dark:text-gray-400'>
+            {t('STATUS_HELP')}
           </p>
         </div>
 
@@ -423,7 +438,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             className="px-4 py-2"
           >
             <X className="w-4 h-4 mr-2" />
-            Cancel
+{t('CANCEL')}
           </Button>
           <Button
             type="submit"
@@ -435,7 +450,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             ) : (
               <Check className="w-4 h-4 mr-2" />
             )}
-            {mode === 'create' ? 'Create Item' : 'Update Item'}
+{mode === 'create' ? t('CREATE_ITEM') : t('UPDATE_ITEM')}
           </Button>
         </div>
       </form>

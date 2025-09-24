@@ -9,8 +9,10 @@ import { ItemData, CreateItemRequest, UpdateItemRequest, ITEM_STATUS_LABELS, ITE
 import { UniversalPagination } from "@/components/universal-pagination";
 import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, ExternalLink, Loader2 } from "lucide-react";
 import { useAdminItems } from "@/hooks/use-admin-items";
+import { useTranslations } from 'next-intl';
 
 export default function AdminItemsPage() {
+  const t = useTranslations('admin.ADMIN_ITEMS_PAGE');
   const PageSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
   
@@ -57,7 +59,7 @@ export default function AdminItemsPage() {
     // Prevent multiple clicks
     if (reviewingItems.has(itemId)) return;
     
-    if (!confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
+    if (!confirm(t('CONFIRM_DELETE_ITEM'))) {
       return;
     }
 
@@ -237,13 +239,13 @@ export default function AdminItemsPage() {
               </div>
               <div>
                 <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                  Item Management
+                  {t('TITLE')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center space-x-2">
-                  <span>Manage and review content items</span>
+                  <span>{t('SUBTITLE')}</span>
                   <span className="hidden sm:inline">•</span>
                   <span className="text-sm px-2 py-1 bg-theme-primary/10 text-theme-primary rounded-full font-medium">
-                    {totalItems} total
+                    {totalItems} {t('TOTAL_ITEMS')}
                   </span>
                 </p>
               </div>
@@ -255,7 +257,7 @@ export default function AdminItemsPage() {
               startContent={<Plus size={18} />}
               className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
             >
-              Add Item
+              {t('ADD_ITEM')}
             </Button>
           </div>
         </div>
@@ -268,7 +270,7 @@ export default function AdminItemsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-1">
-                  Total Items
+                  {t('TOTAL_ITEMS_STAT')}
                 </p>
                 <p className="text-3xl font-bold text-blue-700 dark:text-blue-300 group-hover:scale-105 transition-transform">
                   {stats.total}
@@ -286,7 +288,7 @@ export default function AdminItemsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-yellow-600 dark:text-yellow-400 mb-1">
-                  Pending Review
+                  {t('PENDING_REVIEW')}
                 </p>
                 <p className="text-3xl font-bold text-yellow-700 dark:text-yellow-300 group-hover:scale-105 transition-transform">
                   {stats.pending}
@@ -304,7 +306,7 @@ export default function AdminItemsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-1">
-                  Approved
+                  {t('APPROVED')}
                 </p>
                 <p className="text-3xl font-bold text-green-700 dark:text-green-300 group-hover:scale-105 transition-transform">
                   {stats.approved}
@@ -322,7 +324,7 @@ export default function AdminItemsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-red-600 dark:text-red-400 mb-1">
-                  Rejected
+                  {t('REJECTED')}
                 </p>
                 <p className="text-3xl font-bold text-red-700 dark:text-red-300 group-hover:scale-105 transition-transform">
                   {stats.rejected}
@@ -342,7 +344,7 @@ export default function AdminItemsPage() {
           {/* Table Header */}
           <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Items ({totalItems})
+              {t('ITEMS_TABLE_TITLE', { count: totalItems })}
             </h3>
           </div>
 
@@ -373,7 +375,7 @@ export default function AdminItemsPage() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center space-x-2 mb-2">
                               <h4 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
-                                {item.name || 'Untitled'}
+                                {item.name || t('UNTITLED')}
                               </h4>
                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors.bg} ${statusColors.text}`}>
                                 {getStatusIcon(item.status)}
@@ -405,16 +407,16 @@ export default function AdminItemsPage() {
                               ))}
                               {item.tags.length > 3 && (
                                 <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-                                  +{item.tags.length - 3} more
+                                  {t('MORE_TAGS', { count: item.tags.length - 3 })}
                                 </span>
                               )}
                             </div>
                             
                             {/* Meta Info */}
                             <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
-                              <span>ID: {item.id}</span>
-                              <span>Slug: {item.slug}</span>
-                              <span>Updated: {new Date(item.updated_at || Date.now()).toLocaleDateString()}</span>
+                              <span>{t('ID_LABEL')} {item.id}</span>
+                              <span>{t('SLUG_LABEL')} {item.slug}</span>
+                              <span>{t('UPDATED_LABEL')} {new Date(item.updated_at || Date.now()).toLocaleDateString()}</span>
                             </div>
                           </div>
                         </div>
@@ -428,7 +430,7 @@ export default function AdminItemsPage() {
                           variant="ghost"
                           onClick={() => window.open(item.source_url || '#', '_blank')}
                           className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20"
-                          title="View Source"
+                          title={t('VIEW_SOURCE')}
                         >
                           <ExternalLink size={14} />
                         </Button>
@@ -446,7 +448,7 @@ export default function AdminItemsPage() {
                                   ? 'opacity-50 cursor-not-allowed'
                                   : 'hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-900/20'
                               }`}
-                              title={reviewingItems.has(item.id) ? 'Approving...' : 'Approve'}
+                              title={reviewingItems.has(item.id) ? t('APPROVING') : t('APPROVE')}
                             >
                               {reviewingItems.has(item.id) ? (
                                 <Loader2 size={14} className="animate-spin" />
@@ -464,7 +466,7 @@ export default function AdminItemsPage() {
                                   ? 'opacity-50 cursor-not-allowed'
                                   : 'hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20'
                               }`}
-                              title={reviewingItems.has(item.id) ? 'Rejecting...' : 'Reject'}
+                              title={reviewingItems.has(item.id) ? t('REJECTING') : t('REJECT')}
                             >
                               {reviewingItems.has(item.id) ? (
                                 <Loader2 size={14} className="animate-spin" />
@@ -486,7 +488,7 @@ export default function AdminItemsPage() {
                               ? 'opacity-50 cursor-not-allowed'
                               : 'hover:bg-theme-primary/10 hover:text-theme-primary'
                           }`}
-                          title="Edit"
+                          title={t('EDIT')}
                         >
                           <Edit size={14} />
                         </Button>
@@ -500,7 +502,7 @@ export default function AdminItemsPage() {
                               ? 'opacity-50 cursor-not-allowed'
                               : 'hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20'
                           }`}
-                          title={reviewingItems.has(item.id) ? 'Deleting...' : 'Delete'}
+                          title={reviewingItems.has(item.id) ? t('DELETING') : t('DELETE')}
                         >
                           {reviewingItems.has(item.id) ? (
                             <Loader2 size={14} className="animate-spin" />
@@ -524,10 +526,10 @@ export default function AdminItemsPage() {
                   <Package className="w-8 h-8 text-theme-primary opacity-60" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  No items found
+                  {t('NO_ITEMS_FOUND')}
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-                  Create your first item to start building your collection.
+                  {t('NO_ITEMS_DESCRIPTION')}
                 </p>
                 <Button
                   color="primary"
@@ -535,7 +537,7 @@ export default function AdminItemsPage() {
                   startContent={<Plus size={16} />}
                   className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90"
                 >
-                  Create Item
+                  {t('CREATE_ITEM')}
                 </Button>
               </div>
             </div>

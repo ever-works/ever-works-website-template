@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Activity, Zap, Clock, TrendingUp, RefreshCw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 // Constants for className strings
 const PERFORMANCE_CONTAINER_STYLES = "space-y-4";
@@ -35,6 +36,8 @@ interface CacheStatus {
 }
 
 export function AdminPerformanceMonitor() {
+  const t = useTranslations('admin.PERFORMANCE_MONITOR');
+  
   const [metrics, setMetrics] = useState<PerformanceMetrics>({
     cacheHitRate: 0,
     totalQueries: 0,
@@ -106,13 +109,13 @@ export function AdminPerformanceMonitor() {
   const getCacheStatusText = (status: 'hit' | 'miss' | 'error') => {
     switch (status) {
       case 'hit':
-        return 'Cached';
+        return t('CACHED');
       case 'miss':
-        return 'Fresh';
+        return t('FRESH');
       case 'error':
-        return 'Error';
+        return t('ERROR');
       default:
-        return 'Unknown';
+        return t('UNKNOWN');
     }
   };
 
@@ -134,9 +137,9 @@ export function AdminPerformanceMonitor() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Performance Monitor</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('TITLE')}</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Real-time analytics performance metrics
+            {t('SUBTITLE')}
           </p>
         </div>
         <Button
@@ -147,7 +150,7 @@ export function AdminPerformanceMonitor() {
           className="flex items-center space-x-2"
         >
           <RefreshCw className={`h-4 w-4${isLoading ? ' animate-spin' : ''}`} />
-          <span>Refresh</span>
+          <span>{t('REFRESH')}</span>
         </Button>
       </div>
 
@@ -156,7 +159,7 @@ export function AdminPerformanceMonitor() {
         <Card className={METRIC_CARD_STYLES}>
           <div className={METRIC_HEADER_STYLES}>
             <div>
-              <p className={METRIC_LABEL_STYLES}>Cache Hit Rate</p>
+              <p className={METRIC_LABEL_STYLES}>{t('CACHE_HIT_RATE')}</p>
               <p className={METRIC_VALUE_STYLES}>
                 {(metrics.cacheHitRate * 100).toFixed(1)}%
               </p>
@@ -164,50 +167,50 @@ export function AdminPerformanceMonitor() {
             <Activity className={METRIC_ICON_STYLES} />
           </div>
           <p className={METRIC_SUBTEXT_STYLES}>
-            {metrics.cachedQueries} of {metrics.totalQueries} queries cached
+            {t('QUERIES_CACHED', { cachedQueries: metrics.cachedQueries, totalQueries: metrics.totalQueries })}
           </p>
         </Card>
 
         <Card className={METRIC_CARD_STYLES}>
           <div className={METRIC_HEADER_STYLES}>
             <div>
-              <p className={METRIC_LABEL_STYLES}>Total Queries</p>
+              <p className={METRIC_LABEL_STYLES}>{t('TOTAL_QUERIES')}</p>
               <p className={METRIC_VALUE_STYLES}>{metrics.totalQueries}</p>
             </div>
             <Zap className={METRIC_ICON_STYLES} />
           </div>
           <p className={METRIC_SUBTEXT_STYLES}>
-            Queries executed in current session
+            {t('QUERIES_EXECUTED')}
           </p>
         </Card>
 
         <Card className={METRIC_CARD_STYLES}>
           <div className={METRIC_HEADER_STYLES}>
             <div>
-              <p className={METRIC_LABEL_STYLES}>Avg Query Time</p>
+              <p className={METRIC_LABEL_STYLES}>{t('AVG_QUERY_TIME')}</p>
               <p className={METRIC_VALUE_STYLES}>{metrics.averageQueryTime}ms</p>
             </div>
             <Clock className={METRIC_ICON_STYLES} />
           </div>
           <p className={METRIC_SUBTEXT_STYLES}>
-            Average response time
+            {t('AVERAGE_RESPONSE_TIME')}
           </p>
         </Card>
 
         <Card className={METRIC_CARD_STYLES}>
           <div className={METRIC_HEADER_STYLES}>
             <div>
-              <p className={METRIC_LABEL_STYLES}>Performance</p>
+              <p className={METRIC_LABEL_STYLES}>{t('PERFORMANCE')}</p>
               <p className={METRIC_VALUE_STYLES}>
-                {metrics.averageQueryTime < 30 ? 'Excellent' : 
-                 metrics.averageQueryTime < 50 ? 'Good' : 
-                 metrics.averageQueryTime < 100 ? 'Fair' : 'Poor'}
+                {metrics.averageQueryTime < 30 ? t('EXCELLENT') : 
+                 metrics.averageQueryTime < 50 ? t('GOOD') : 
+                 metrics.averageQueryTime < 100 ? t('FAIR') : t('POOR')}
               </p>
             </div>
             <TrendingUp className={METRIC_ICON_STYLES} />
           </div>
           <p className={METRIC_SUBTEXT_STYLES}>
-            Based on response times
+            {t('BASED_ON_RESPONSE_TIMES')}
           </p>
         </Card>
       </div>
@@ -215,13 +218,13 @@ export function AdminPerformanceMonitor() {
       {/* Cache Status */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Cache Status</CardTitle>
+          <CardTitle className="text-lg">{t('CACHE_STATUS')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className={`${CACHE_STATUS_STYLES} ${getCacheStatusStyles(cacheStatus.userGrowth)}`}>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">User Growth</span>
+                <span className="text-sm font-medium">{t('USER_GROWTH')}</span>
                 <span className={`text-xs font-medium ${getCacheStatusColor(cacheStatus.userGrowth)}`}>
                   {getCacheStatusText(cacheStatus.userGrowth)}
                 </span>
@@ -230,7 +233,7 @@ export function AdminPerformanceMonitor() {
 
             <div className={`${CACHE_STATUS_STYLES} ${getCacheStatusStyles(cacheStatus.activityTrends)}`}>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Activity Trends</span>
+                <span className="text-sm font-medium">{t('ACTIVITY_TRENDS')}</span>
                 <span className={`text-xs font-medium ${getCacheStatusColor(cacheStatus.activityTrends)}`}>
                   {getCacheStatusText(cacheStatus.activityTrends)}
                 </span>
@@ -239,7 +242,7 @@ export function AdminPerformanceMonitor() {
 
             <div className={`${CACHE_STATUS_STYLES} ${getCacheStatusStyles(cacheStatus.topItems)}`}>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Top Items</span>
+                <span className="text-sm font-medium">{t('TOP_ITEMS')}</span>
                 <span className={`text-xs font-medium ${getCacheStatusColor(cacheStatus.topItems)}`}>
                   {getCacheStatusText(cacheStatus.topItems)}
                 </span>
@@ -248,7 +251,7 @@ export function AdminPerformanceMonitor() {
 
             <div className={`${CACHE_STATUS_STYLES} ${getCacheStatusStyles(cacheStatus.recentActivity)}`}>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Recent Activity</span>
+                <span className="text-sm font-medium">{t('RECENT_ACTIVITY')}</span>
                 <span className={`text-xs font-medium ${getCacheStatusColor(cacheStatus.recentActivity)}`}>
                   {getCacheStatusText(cacheStatus.recentActivity)}
                 </span>
@@ -261,7 +264,7 @@ export function AdminPerformanceMonitor() {
       {/* Last Updated */}
       <div className="text-center">
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          Last updated: {new Date(metrics.lastUpdated).toLocaleTimeString()}
+          {t('LAST_UPDATED', { time: new Date(metrics.lastUpdated).toLocaleTimeString() })}
         </p>
       </div>
     </div>

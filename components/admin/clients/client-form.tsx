@@ -9,6 +9,7 @@ import type {
 } from "@/lib/types/client";
 import type { ClientProfileWithAuth } from "@/lib/db/queries";
 import { CLIENT_VALIDATION } from "@/lib/types/client";
+import { useTranslations } from 'next-intl';
 
 interface ClientFormProps {
   client?: ClientProfileWithAuth;
@@ -19,6 +20,7 @@ interface ClientFormProps {
 }
 
 export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode }: ClientFormProps) {
+  const t = useTranslations('admin.CLIENT_FORM');
   
   // Extract long className strings into constants for better maintainability
   const containerClasses = "w-full";
@@ -59,59 +61,59 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
     // Required fields for create mode
     if (mode === 'create') {
       if (!formData.email.trim()) {
-        newErrors.email = 'Email is required';
+        newErrors.email = t('ERRORS.EMAIL_REQUIRED');
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        newErrors.email = 'Please enter a valid email address';
+        newErrors.email = t('ERRORS.EMAIL_INVALID');
       }
     }
 
     // Display name validation
     if (formData.displayName && formData.displayName.trim().length < CLIENT_VALIDATION.DISPLAY_NAME_MIN_LENGTH) {
-      newErrors.displayName = `Display name must be at least ${CLIENT_VALIDATION.DISPLAY_NAME_MIN_LENGTH} characters`;
+      newErrors.displayName = t('ERRORS.DISPLAY_NAME_MIN_LENGTH', { min: CLIENT_VALIDATION.DISPLAY_NAME_MIN_LENGTH });
     } else if (formData.displayName && formData.displayName.trim().length > CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH) {
-      newErrors.displayName = `Display name must be no more than ${CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH} characters`;
+      newErrors.displayName = t('ERRORS.DISPLAY_NAME_MAX_LENGTH', { max: CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH });
     }
 
     // Username validation
     if (formData.username && formData.username.trim().length < CLIENT_VALIDATION.USERNAME_MIN_LENGTH) {
-      newErrors.username = `Username must be at least ${CLIENT_VALIDATION.USERNAME_MIN_LENGTH} characters`;
+      newErrors.username = t('ERRORS.USERNAME_MIN_LENGTH', { min: CLIENT_VALIDATION.USERNAME_MIN_LENGTH });
     } else if (formData.username && formData.username.trim().length > CLIENT_VALIDATION.USERNAME_MAX_LENGTH) {
-      newErrors.username = `Username must be no more than ${CLIENT_VALIDATION.USERNAME_MAX_LENGTH} characters`;
+      newErrors.username = t('ERRORS.USERNAME_MAX_LENGTH', { max: CLIENT_VALIDATION.USERNAME_MAX_LENGTH });
     }
 
     // Bio validation
     if (formData.bio && formData.bio.trim().length > CLIENT_VALIDATION.BIO_MAX_LENGTH) {
-      newErrors.bio = `Bio must be no more than ${CLIENT_VALIDATION.BIO_MAX_LENGTH} characters`;
+      newErrors.bio = t('ERRORS.BIO_MAX_LENGTH', { max: CLIENT_VALIDATION.BIO_MAX_LENGTH });
     }
 
     // Job title validation
     if (formData.jobTitle && formData.jobTitle.trim().length > CLIENT_VALIDATION.JOB_TITLE_MAX_LENGTH) {
-      newErrors.jobTitle = `Job title must be no more than ${CLIENT_VALIDATION.JOB_TITLE_MAX_LENGTH} characters`;
+      newErrors.jobTitle = t('ERRORS.JOB_TITLE_MAX_LENGTH', { max: CLIENT_VALIDATION.JOB_TITLE_MAX_LENGTH });
     }
 
     // Company validation
     if (formData.company && formData.company.trim().length > CLIENT_VALIDATION.COMPANY_MAX_LENGTH) {
-      newErrors.company = `Company must be no more than ${CLIENT_VALIDATION.COMPANY_MAX_LENGTH} characters`;
+      newErrors.company = t('ERRORS.COMPANY_MAX_LENGTH', { max: CLIENT_VALIDATION.COMPANY_MAX_LENGTH });
     }
 
     // Industry validation
     if (formData.industry && formData.industry.trim().length > CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH) {
-      newErrors.industry = `Industry must be no more than ${CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH} characters`;
+      newErrors.industry = t('ERRORS.INDUSTRY_MAX_LENGTH', { max: CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH });
     }
 
     // Phone validation
     if (formData.phone && formData.phone.trim().length > CLIENT_VALIDATION.PHONE_MAX_LENGTH) {
-      newErrors.phone = `Phone must be no more than ${CLIENT_VALIDATION.PHONE_MAX_LENGTH} characters`;
+      newErrors.phone = t('ERRORS.PHONE_MAX_LENGTH', { max: CLIENT_VALIDATION.PHONE_MAX_LENGTH });
     }
 
     // Website validation
     if (formData.website && formData.website.trim().length > CLIENT_VALIDATION.WEBSITE_MAX_LENGTH) {
-      newErrors.website = `Website must be no more than ${CLIENT_VALIDATION.WEBSITE_MAX_LENGTH} characters`;
+      newErrors.website = t('ERRORS.WEBSITE_MAX_LENGTH', { max: CLIENT_VALIDATION.WEBSITE_MAX_LENGTH });
     }
 
     // Location validation
     if (formData.location && formData.location.trim().length > CLIENT_VALIDATION.LOCATION_MAX_LENGTH) {
-      newErrors.location = `Location must be no more than ${CLIENT_VALIDATION.LOCATION_MAX_LENGTH} characters`;
+      newErrors.location = t('ERRORS.LOCATION_MAX_LENGTH', { max: CLIENT_VALIDATION.LOCATION_MAX_LENGTH });
     }
 
 
@@ -183,10 +185,10 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {mode === 'create' ? 'Create New Client' : 'Edit Client'}
+              {mode === 'create' ? t('TITLE_CREATE') : t('TITLE_EDIT')}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              {mode === 'create' ? 'Add a new client to the system' : 'Update client information'}
+              {mode === 'create' ? t('SUBTITLE_CREATE') : t('SUBTITLE_EDIT')}
             </p>
           </div>
           <button
@@ -205,12 +207,12 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
         {mode === 'create' && (
           <div className="space-y-2">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Email <span className="text-red-500">*</span>
+              {t('EMAIL')} <span className="text-red-500">*</span>
             </label>
             <input
               id="email"
               type="email"
-              placeholder="Enter user email"
+              placeholder={t('EMAIL_PLACEHOLDER')}
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
@@ -223,7 +225,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
               <p className="text-sm text-red-600 dark:text-red-400">{errors.email}</p>
             )}
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              The email of the registered user to create a client profile for
+              {t('EMAIL_HELP')}
             </p>
           </div>
         )}
@@ -231,12 +233,12 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
         {/* Display Name Field */}
         <div className="space-y-2">
           <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Display Name
+            {t('DISPLAY_NAME')}
           </label>
           <input
             id="displayName"
             type="text"
-            placeholder="Enter display name"
+            placeholder={t('DISPLAY_NAME_PLACEHOLDER')}
             value={formData.displayName}
             onChange={(e) => handleInputChange('displayName', e.target.value)}
             maxLength={CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH}
@@ -250,19 +252,19 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
             <p className="text-sm text-red-600 dark:text-red-400">{errors.displayName}</p>
           )}
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {formData.displayName.length}/{CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH} characters
+            {t('CHARACTERS_COUNT', { current: formData.displayName.length, max: CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH })}
           </div>
         </div>
 
         {/* Username Field */}
         <div className="space-y-2">
           <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Username
+            {t('USERNAME')}
           </label>
           <input
             id="username"
             type="text"
-            placeholder="Enter username"
+            placeholder={t('USERNAME_PLACEHOLDER')}
             value={formData.username}
             onChange={(e) => handleInputChange('username', e.target.value)}
             maxLength={CLIENT_VALIDATION.USERNAME_MAX_LENGTH}
@@ -276,18 +278,18 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
             <p className="text-sm text-red-600 dark:text-red-400">{errors.username}</p>
           )}
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {formData.username.length}/{CLIENT_VALIDATION.USERNAME_MAX_LENGTH} characters
+            {t('CHARACTERS_COUNT', { current: formData.username.length, max: CLIENT_VALIDATION.USERNAME_MAX_LENGTH })}
           </div>
         </div>
 
         {/* Bio Field */}
         <div className="space-y-2">
           <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Bio
+            {t('BIO')}
           </label>
           <textarea
             id="bio"
-            placeholder="Enter bio"
+            placeholder={t('BIO_PLACEHOLDER')}
             value={formData.bio}
             onChange={(e) => handleInputChange('bio', e.target.value)}
             maxLength={CLIENT_VALIDATION.BIO_MAX_LENGTH}
@@ -302,19 +304,19 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
             <p className="text-sm text-red-600 dark:text-red-400">{errors.bio}</p>
           )}
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {formData.bio.length}/{CLIENT_VALIDATION.BIO_MAX_LENGTH} characters
+            {t('CHARACTERS_COUNT', { current: formData.bio.length, max: CLIENT_VALIDATION.BIO_MAX_LENGTH })}
           </div>
         </div>
 
         {/* Job Title Field */}
         <div className="space-y-2">
           <label htmlFor="jobTitle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Job Title
+            {t('JOB_TITLE')}
           </label>
           <input
             id="jobTitle"
             type="text"
-            placeholder="Enter job title"
+            placeholder={t('JOB_TITLE_PLACEHOLDER')}
             value={formData.jobTitle}
             onChange={(e) => handleInputChange('jobTitle', e.target.value)}
             maxLength={CLIENT_VALIDATION.JOB_TITLE_MAX_LENGTH}
@@ -332,12 +334,12 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
         {/* Company Field */}
         <div className="space-y-2">
           <label htmlFor="company" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Company
+            {t('COMPANY')}
           </label>
           <input
             id="company"
             type="text"
-            placeholder="Enter company"
+            placeholder={t('COMPANY_PLACEHOLDER')}
             value={formData.company}
             onChange={(e) => handleInputChange('company', e.target.value)}
             maxLength={CLIENT_VALIDATION.COMPANY_MAX_LENGTH}
@@ -351,19 +353,19 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
             <p className="text-sm text-red-600 dark:text-red-400">{errors.company}</p>
           )}
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {formData.company.length}/{CLIENT_VALIDATION.COMPANY_MAX_LENGTH} characters
+            {t('CHARACTERS_COUNT', { current: formData.company.length, max: CLIENT_VALIDATION.COMPANY_MAX_LENGTH })}
           </div>
         </div>
 
         {/* Industry Field */}
         <div className="space-y-2">
           <label htmlFor="industry" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Industry
+            {t('INDUSTRY')}
           </label>
           <input
             id="industry"
             type="text"
-            placeholder="Enter industry"
+            placeholder={t('INDUSTRY_PLACEHOLDER')}
             value={formData.industry}
             onChange={(e) => handleInputChange('industry', e.target.value)}
             maxLength={CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH}
@@ -377,7 +379,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
             <p className="text-sm text-red-600 dark:text-red-400">{errors.industry}</p>
           )}
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {formData.industry.length}/{CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH} characters
+            {t('CHARACTERS_COUNT', { current: formData.industry.length, max: CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH })}
           </div>
         </div>
 
@@ -385,12 +387,12 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Phone
+              {t('PHONE')}
             </label>
             <input
               id="phone"
               type="tel"
-              placeholder="Enter phone number"
+              placeholder={t('PHONE_PLACEHOLDER')}
               value={formData.phone}
               onChange={(e) => handleInputChange('phone', e.target.value)}
               maxLength={CLIENT_VALIDATION.PHONE_MAX_LENGTH}
@@ -407,12 +409,12 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
           
           <div className="space-y-2">
             <label htmlFor="website" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Website
+              {t('WEBSITE')}
             </label>
             <input
               id="website"
               type="url"
-              placeholder="Enter website URL"
+              placeholder={t('WEBSITE_PLACEHOLDER')}
               value={formData.website}
               onChange={(e) => handleInputChange('website', e.target.value)}
               maxLength={CLIENT_VALIDATION.WEBSITE_MAX_LENGTH}
@@ -431,12 +433,12 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
         {/* Location Field */}
         <div className="space-y-2">
           <label htmlFor="location" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Location
+            {t('LOCATION')}
           </label>
           <input
             id="location"
             type="text"
-            placeholder="Enter location"
+            placeholder={t('LOCATION_PLACEHOLDER')}
             value={formData.location}
             onChange={(e) => handleInputChange('location', e.target.value)}
             maxLength={CLIENT_VALIDATION.LOCATION_MAX_LENGTH}
@@ -450,14 +452,14 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
             <p className="text-sm text-red-600 dark:text-red-400">{errors.location}</p>
           )}
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {formData.location.length}/{CLIENT_VALIDATION.LOCATION_MAX_LENGTH} characters
+            {t('CHARACTERS_COUNT', { current: formData.location.length, max: CLIENT_VALIDATION.LOCATION_MAX_LENGTH })}
           </div>
         </div>
 
         {/* Account Type Field */}
         <div className="space-y-2">
           <label htmlFor="accountType" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Account Type
+            {t('ACCOUNT_TYPE')}
           </label>
           <select
             id="accountType"
@@ -465,16 +467,16 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
             onChange={(e) => handleInputChange('accountType', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="individual">Individual</option>
-            <option value="business">Business</option>
-            <option value="enterprise">Enterprise</option>
+            <option value="individual">{t('ACCOUNT_TYPE_OPTIONS.INDIVIDUAL')}</option>
+            <option value="business">{t('ACCOUNT_TYPE_OPTIONS.BUSINESS')}</option>
+            <option value="enterprise">{t('ACCOUNT_TYPE_OPTIONS.ENTERPRISE')}</option>
           </select>
         </div>
 
         {/* Timezone Field */}
         <div className="space-y-2">
           <label htmlFor="timezone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Timezone
+            {t('TIMEZONE')}
           </label>
           <select
             id="timezone"
@@ -482,17 +484,17 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
             onChange={(e) => handleInputChange('timezone', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="UTC">UTC</option>
-            <option value="America/New_York">America/New_York</option>
-            <option value="Europe/London">Europe/London</option>
-            <option value="Asia/Tokyo">Asia/Tokyo</option>
+            <option value="UTC">{t('TIMEZONE_OPTIONS.UTC')}</option>
+            <option value="America/New_York">{t('TIMEZONE_OPTIONS.AMERICA_NEW_YORK')}</option>
+            <option value="Europe/London">{t('TIMEZONE_OPTIONS.EUROPE_LONDON')}</option>
+            <option value="Asia/Tokyo">{t('TIMEZONE_OPTIONS.ASIA_TOKYO')}</option>
           </select>
         </div>
 
         {/* Language Field */}
         <div className="space-y-2">
           <label htmlFor="language" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Language
+            {t('LANGUAGE')}
           </label>
           <select
             id="language"
@@ -500,10 +502,10 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
             onChange={(e) => handleInputChange('language', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="en">English</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="de">German</option>
+            <option value="en">{t('LANGUAGE_OPTIONS.EN')}</option>
+            <option value="es">{t('LANGUAGE_OPTIONS.ES')}</option>
+            <option value="fr">{t('LANGUAGE_OPTIONS.FR')}</option>
+            <option value="de">{t('LANGUAGE_OPTIONS.DE')}</option>
           </select>
         </div>
 
@@ -519,7 +521,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
             className="flex items-center gap-2"
           >
             <X className="w-4 h-4" />
-            Cancel
+            {t('CANCEL')}
           </Button>
           <Button
             type="submit"
@@ -527,7 +529,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
             className="flex items-center gap-2"
           >
             <Save className="w-4 h-4" />
-            {mode === 'create' ? 'Create Client' : 'Update Client'}
+            {mode === 'create' ? t('CREATE_CLIENT') : t('UPDATE_CLIENT')}
           </Button>
         </div>
       </form>

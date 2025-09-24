@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdminStats } from "@/hooks/use-admin-stats";
 import { Trophy, Eye, ThumbsUp } from "lucide-react";
 import { AdminTableSkeleton } from "./admin-loading-skeleton";
+import { useTranslations } from "next-intl";
 
 
 interface AdminTopItemsProps {
@@ -10,6 +11,8 @@ interface AdminTopItemsProps {
 }
 
 export function AdminTopItems({ data, isLoading }: AdminTopItemsProps) {
+  const t = useTranslations('admin.TOP_ITEMS');
+  
   const getRankingBadgeClass = (index: number): string => {
     const baseClass = "flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold";
     
@@ -35,7 +38,7 @@ export function AdminTopItems({ data, isLoading }: AdminTopItemsProps) {
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Trophy className="h-5 w-5 text-yellow-600" />
-          <span>Top Performing Items</span>
+          <span>{t('TITLE')}</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -43,7 +46,7 @@ export function AdminTopItems({ data, isLoading }: AdminTopItemsProps) {
           {data.length === 0 ? (
             <div className="text-center py-8 text-gray-500 dark:text-gray-400">
               <Trophy className="h-12 w-12 mx-auto mb-2 opacity-50" />
-              <p>No items found</p>
+              <p>{t('NO_ITEMS_FOUND')}</p>
             </div>
           ) : (
             data.map((item, index) => (
@@ -84,7 +87,7 @@ export function AdminTopItems({ data, isLoading }: AdminTopItemsProps) {
         {data.length > 0 && (
           <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
             <button className="text-sm text-theme-primary hover:text-theme-primary/80 font-medium transition-colors">
-              View all items →
+              {t('VIEW_ALL_ITEMS')}
             </button>
           </div>
         )}

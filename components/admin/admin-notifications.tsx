@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
+import { useTranslations } from "next-intl";
 
 interface Notification {
   id: string;
@@ -27,6 +28,7 @@ interface AdminNotificationsProps {
 export function AdminNotifications({ className }: AdminNotificationsProps) {
   const { data: session } = useSession();
   const router = useRouter();
+  const t = useTranslations('admin.NOTIFICATIONS');
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -137,17 +139,17 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
   const getNotificationTypeLabel = (type: string) => {
     switch (type) {
       case "item_submission":
-        return "New Submission";
+        return t('NOTIFICATION_TYPES.NEW_SUBMISSION');
       case "comment_reported":
-        return "Reported Comment";
+        return t('NOTIFICATION_TYPES.REPORTED_COMMENT');
       case "user_registered":
-        return "New User";
+        return t('NOTIFICATION_TYPES.NEW_USER');
       case "payment_failed":
-        return "Payment Issue";
+        return t('NOTIFICATION_TYPES.PAYMENT_ISSUE');
       case "system_alert":
-        return "System Alert";
+        return t('NOTIFICATION_TYPES.SYSTEM_ALERT');
       default:
-        return "Notification";
+        return t('NOTIFICATION_TYPES.NOTIFICATION');
     }
   };
 
@@ -251,10 +253,10 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
             <CardHeader className="pb-3 border-b">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <CardTitle className="text-lg font-semibold">Notifications</CardTitle>
+                  <CardTitle className="text-lg font-semibold">{t('TITLE')}</CardTitle>
                   {unreadCount > 0 && (
                     <Badge variant="secondary" className="px-2 py-0.5 text-xs">
-                      {unreadCount} new
+                      {unreadCount} {t('NEW')}
                     </Badge>
                   )}
                 </div>
@@ -276,7 +278,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                       onClick={markAllAsRead}
                       className="text-xs h-8 px-3"
                     >
-                      Mark all read
+                      {t('MARK_ALL_READ')}
                     </Button>
                   )}
                   <Button
@@ -297,14 +299,14 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                 {isLoading ? (
                   <div className="flex flex-col items-center justify-center py-12 px-4">
                     <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground mb-3" />
-                    <p className="text-sm text-muted-foreground">Loading notifications...</p>
+                    <p className="text-sm text-muted-foreground">{t('LOADING')}</p>
                   </div>
                 ) : notifications.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12 px-4">
                     <Bell className="h-12 w-12 text-muted-foreground/50 mb-4" />
-                    <h3 className="font-medium text-sm text-foreground mb-1">No notifications</h3>
+                    <h3 className="font-medium text-sm text-foreground mb-1">{t('NO_NOTIFICATIONS')}</h3>
                     <p className="text-xs text-muted-foreground text-center">
-                      You&apos;re all caught up! New notifications will appear here.
+                      {t('ALL_CAUGHT_UP')}
                     </p>
                   </div>
                 ) : (
@@ -354,7 +356,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                                       variant="default" 
                                       className="text-xs px-1.5 py-0 h-4 font-normal"
                                     >
-                                      NEW
+                                      {t('NEW_BADGE')}
                                     </Badge>
                                   )}
                                 </div>
@@ -407,7 +409,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                                   }}
                                 >
                                   <ExternalLink className="h-3 w-3 mr-1" />
-                                  View Details
+                                  {t('VIEW_DETAILS')}
                                 </Button>
                               )}
                             </div>
@@ -432,7 +434,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                         router.push("/admin/notifications");
                       }}
                     >
-                      View All Notifications
+                      {t('VIEW_ALL_NOTIFICATIONS')}
                     </Button>
                   </div>
                 </>

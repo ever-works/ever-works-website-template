@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { TagData, TAG_VALIDATION } from "@/lib/types/tag";
+import { useTranslations } from 'next-intl';
 
 interface TagFormProps {
   tag?: TagData;
@@ -13,6 +14,8 @@ interface TagFormProps {
 }
 
 export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: TagFormProps) {
+  const t = useTranslations('admin.TAG_FORM');
+  
   // Extract long className strings into constants for better maintainability
   const baseInputClasses = "w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
   const errorInputClasses = "border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700";
@@ -42,18 +45,24 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
 
     // Validate ID
     if (!formData.id.trim()) {
-      newErrors.id = 'Tag ID is required';
+      newErrors.id = t('ERRORS.ID_REQUIRED');
     } else if (formData.id.length < TAG_VALIDATION.NAME_MIN_LENGTH || formData.id.length > TAG_VALIDATION.NAME_MAX_LENGTH) {
-      newErrors.id = `Tag ID must be between ${TAG_VALIDATION.NAME_MIN_LENGTH} and ${TAG_VALIDATION.NAME_MAX_LENGTH} characters`;
+      newErrors.id = t('ERRORS.ID_LENGTH', { 
+        min: TAG_VALIDATION.NAME_MIN_LENGTH, 
+        max: TAG_VALIDATION.NAME_MAX_LENGTH 
+      });
     } else if (!/^[a-z0-9-]+$/.test(formData.id)) {
-      newErrors.id = 'Tag ID must contain only lowercase letters, numbers, and hyphens';
+      newErrors.id = t('ERRORS.ID_FORMAT');
     }
 
     // Validate name
     if (!formData.name.trim()) {
-      newErrors.name = 'Tag name is required';
+      newErrors.name = t('ERRORS.NAME_REQUIRED');
     } else if (formData.name.length < TAG_VALIDATION.NAME_MIN_LENGTH || formData.name.length > TAG_VALIDATION.NAME_MAX_LENGTH) {
-      newErrors.name = `Tag name must be between ${TAG_VALIDATION.NAME_MIN_LENGTH} and ${TAG_VALIDATION.NAME_MAX_LENGTH} characters`;
+      newErrors.name = t('ERRORS.NAME_LENGTH', { 
+        min: TAG_VALIDATION.NAME_MIN_LENGTH, 
+        max: TAG_VALIDATION.NAME_MAX_LENGTH 
+      });
     }
 
     setErrors(newErrors);
@@ -90,10 +99,10 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4 rounded-t-lg">
         <h2 className="text-xl font-bold text-white">
-          {mode === 'create' ? 'Create New Tag' : 'Edit Tag'}
+          {mode === 'create' ? t('TITLE_CREATE') : t('TITLE_EDIT')}
         </h2>
         <p className="text-blue-100 text-sm mt-1">
-          {mode === 'create' ? 'Add a new tag to your collection' : 'Update tag information'}
+          {mode === 'create' ? t('SUBTITLE_CREATE') : t('SUBTITLE_EDIT')}
         </p>
       </div>
 
@@ -102,12 +111,12 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
         {/* ID Field */}
         <div className="space-y-2">
           <label htmlFor="tag-id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Tag ID <span className="text-red-500">*</span>
+            {t('TAG_ID')} <span className="text-red-500">*</span>
           </label>
           <input
             id="tag-id"
             type="text"
-            placeholder="Enter tag ID (e.g., time-tracking-cli-tools)"
+            placeholder={t('TAG_ID_PLACEHOLDER')}
             value={formData.id}
             onChange={(e) => handleInputChange('id', e.target.value)}
             disabled={mode === 'edit'}
@@ -121,19 +130,19 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
             <p className="text-sm text-red-600 dark:text-red-400">{errors.id}</p>
           )}
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            {mode === 'edit' ? "ID cannot be changed after creation" : "Use lowercase with hyphens (e.g., my-tag)"}
+            {mode === 'edit' ? t('ID_CANNOT_BE_CHANGED') : t('ID_FORMAT_HINT')}
           </p>
         </div>
 
         {/* Name Field */}
         <div className="space-y-2">
           <label htmlFor="tag-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Tag Name <span className="text-red-500">*</span>
+            {t('TAG_NAME')} <span className="text-red-500">*</span>
           </label>
           <input
             id="tag-name"
             type="text"
-            placeholder="Enter tag name (e.g., Time Tracking CLI Tools)"
+            placeholder={t('TAG_NAME_PLACEHOLDER')}
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
             className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
@@ -146,14 +155,14 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
             <p className="text-sm text-red-600 dark:text-red-400">{errors.name}</p>
           )}
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Display name for the tag
+            {t('NAME_DISPLAY_HINT')}
           </p>
         </div>
 
         {/* Active/Inactive Toggle */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Status
+            {t('STATUS')}
           </label>
           <div className="flex items-center space-x-3">
             <button
@@ -172,13 +181,13 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
               />
             </button>
             <span className="text-sm text-gray-700 dark:text-gray-300">
-              {formData.isActive ? 'Active' : 'Inactive'}
+              {formData.isActive ? t('ACTIVE') : t('INACTIVE')}
             </span>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400">
             {formData.isActive 
-              ? 'This tag will be visible and usable' 
-              : 'This tag will be hidden and unusable'
+              ? t('ACTIVE_DESCRIPTION')
+              : t('INACTIVE_DESCRIPTION')
             }
           </p>
         </div>
@@ -192,7 +201,7 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
             isDisabled={isLoading}
             className="px-6"
           >
-            Cancel
+{t('CANCEL')}
           </Button>
           <Button
             type="submit"
@@ -200,7 +209,7 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
             isLoading={isLoading}
             className="px-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
           >
-            {mode === 'create' ? 'Create Tag' : 'Update Tag'}
+{mode === 'create' ? t('CREATE_TAG') : t('UPDATE_TAG')}
           </Button>
         </div>
       </form>

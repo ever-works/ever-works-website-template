@@ -6,6 +6,7 @@ import { Save, X } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import type { RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/hooks/use-admin-roles';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 
 interface RoleFormProps {
   role?: RoleData;
@@ -34,6 +35,8 @@ const actionsClasses = clsx(
 );
 
 export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: RoleFormProps) {
+  const t = useTranslations('admin.ROLE_FORM');
+  
   interface RoleFormState {
     name: string;
     description: string;
@@ -81,17 +84,17 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Role name is required';
+      newErrors.name = t('ERRORS.NAME_REQUIRED');
     } else if (formData.name.length < 3) {
-      newErrors.name = 'Role name must be at least 3 characters';
+      newErrors.name = t('ERRORS.NAME_MIN_LENGTH');
     } else if (formData.name.length > 100) {
-      newErrors.name = 'Role name must be at most 100 characters';
+      newErrors.name = t('ERRORS.NAME_MAX_LENGTH');
     }
 
     if (!formData.description.trim()) {
-      newErrors.description = 'Role description is required';
+      newErrors.description = t('ERRORS.DESCRIPTION_REQUIRED');
     } else if (formData.description.length > 500) {
-      newErrors.description = 'Role description must be at most 500 characters';
+      newErrors.description = t('ERRORS.DESCRIPTION_MAX_LENGTH');
     }
 
     setErrors(newErrors);
@@ -112,12 +115,12 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
     <div className={containerClasses}>
       <div className={headerClasses}>
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          {mode === 'create' ? 'Create New Role' : 'Edit Role'}
+          {mode === 'create' ? t('TITLE_CREATE') : t('TITLE_EDIT')}
         </h2>
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
           {mode === 'create'
-            ? 'Create a new role with the appropriate access level'
-            : 'Update the role information and access level'
+            ? t('SUBTITLE_CREATE')
+            : t('SUBTITLE_EDIT')
           }
         </p>
       </div>
@@ -126,11 +129,11 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
         {/* Role Name */}
         <div className="space-y-2">
           <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Role Name *
+            {t('ROLE_NAME')} *
           </label>
           <Input
             id="name"
-            placeholder="Enter role name (e.g., Admin, Manager, User)"
+            placeholder={t('ROLE_NAME_PLACEHOLDER')}
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
             isInvalid={!!errors.name}
@@ -142,11 +145,11 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
         {/* Role Description */}
         <div className="space-y-2">
           <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Description *
+            {t('DESCRIPTION')} *
           </label>
           <Textarea
             id="description"
-            placeholder="Describe the role's purpose and responsibilities..."
+            placeholder={t('DESCRIPTION_PLACEHOLDER')}
             value={formData.description}
             onChange={(e) => handleInputChange('description', e.target.value)}
             className={clsx(
@@ -163,7 +166,7 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
         {/* Role Status */}
         <div className="space-y-2">
           <label htmlFor="roleStatus" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Status
+            {t('STATUS')}
           </label>
           <div className="flex items-center space-x-3">
             <Switch
@@ -174,13 +177,13 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
               disabled={isLoading}
             />
             <span className="text-sm text-gray-600 dark:text-gray-400">
-              {formData.status === 'active' ? 'Active' : 'Inactive'}
+              {formData.status === 'active' ? t('ACTIVE') : t('INACTIVE')}
             </span>
           </div>
           <p id="roleStatusHelp" className="text-xs text-gray-500 dark:text-gray-400">
             {formData.status === 'active'
-              ? 'This role is active and can be assigned to users'
-              : 'This role is inactive and cannot be assigned to new users'
+              ? t('ACTIVE_DESCRIPTION')
+              : t('INACTIVE_DESCRIPTION')
             }
           </p>
         </div>
@@ -188,7 +191,7 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
         {/* Role Type */}
         <div className="space-y-2">
           <label htmlFor="roleType" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Role Type
+            {t('ROLE_TYPE')}
           </label>
           <select
             id="roleType"
@@ -202,11 +205,11 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
               'transition-all duration-200'
             )}
           >
-            <option value="client">Client Role</option>
-            <option value="admin">Admin Role</option>
+            <option value="client">{t('CLIENT_ROLE')}</option>
+            <option value="admin">{t('ADMIN_ROLE')}</option>
           </select>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Admin roles have elevated permissions, client roles have standard access.
+            {t('ROLE_TYPE_DESCRIPTION')}
           </p>
         </div>
 
@@ -219,7 +222,7 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
             disabled={isLoading}
             startContent={<X size={16} />}
           >
-            Cancel
+{t('CANCEL')}
           </Button>
           <Button
             type="submit"
@@ -233,9 +236,9 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
               'transition-all duration-300 text-white font-medium'
             )}
           >
-            {isLoading
-              ? `${mode === 'create' ? 'Creating' : 'Updating'}...`
-              : `${mode === 'create' ? 'Create' : 'Update'} Role`
+{isLoading
+              ? (mode === 'create' ? t('CREATING') : t('UPDATING'))
+              : (mode === 'create' ? t('CREATE_ROLE') : t('UPDATE_ROLE'))
             }
           </Button>
         </div>

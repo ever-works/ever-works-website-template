@@ -1,5 +1,6 @@
 import { LayoutDashboard } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface AdminWelcomeSectionProps {
   adminName: string;
@@ -12,11 +13,20 @@ export interface AdminWelcomeGradientProps {
 }
 
 export function AdminWelcomeSection({ adminName }: AdminWelcomeSectionProps) {
+  const t = useTranslations('admin');
+  
   return (
     <div className="space-y-2">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('DASHBOARD_TITLE')}</h1>
       <p className="text-base text-gray-600 dark:text-gray-300">
-        Welcome, <span className="font-semibold text-theme-primary">{adminName}</span>! Use the tools below to manage the platform.
+        {t('WELCOME_MESSAGE', { adminName }).split(adminName).map((part, index, array) => (
+          <span key={index}>
+            {part}
+            {index < array.length - 1 && (
+              <span className="font-semibold text-theme-primary">{adminName}</span>
+            )}
+          </span>
+        ))}
       </p>
     </div>
   );

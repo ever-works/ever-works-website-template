@@ -1,5 +1,6 @@
 import { forwardRef, HTMLAttributes, ButtonHTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 // Design system constants for accessibility
 const SKIP_LINK_STYLES = "sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded focus:shadow-lg";
@@ -163,6 +164,7 @@ export const AdminAccessibleButton = forwardRef<HTMLButtonElement, AdminAccessib
     children, 
     ...props 
   }, ref) => {
+    const t = useTranslations('admin.ACCESSIBILITY');
     const baseStyles = cn(
       "inline-flex items-center justify-center rounded-md font-medium transition-colors",
       FOCUS_RING_STYLES,
@@ -187,13 +189,13 @@ export const AdminAccessibleButton = forwardRef<HTMLButtonElement, AdminAccessib
         type={type}
         disabled={disabled || loading}
         aria-disabled={disabled || loading}
-        aria-describedby={loading ? "loading-status" : undefined}
+        aria-describedby={loading ? t('LOADING_STATUS') : undefined}
         className={cn(baseStyles, variantStyles[variant], sizeStyles[size], className)}
         {...props}
       >
         {loading && (
           <>
-            <span className="sr-only" id="loading-status">Loading...</span>
+            <span className="sr-only" id={t('LOADING_STATUS')}>{t('LOADING')}</span>
             <svg 
               className="animate-spin -ml-1 mr-2 h-4 w-4" 
               xmlns="http://www.w3.org/2000/svg" 

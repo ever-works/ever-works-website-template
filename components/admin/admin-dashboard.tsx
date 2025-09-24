@@ -13,17 +13,18 @@ import { AdminFeaturesGrid } from './admin-features-grid';
 import { AdminPerformanceMonitor } from './admin-performance-monitor';
 import { AdminDataExport } from './admin-data-export';
 import {
-  AdminSkipLink,
-  AdminLandmark,
-  AdminHeading,
-  AdminStatusAnnouncer,
-  AdminAccessibleButton
+	AdminSkipLink,
+	AdminLandmark,
+	AdminHeading,
+	AdminStatusAnnouncer,
+	AdminAccessibleButton
 } from './admin-accessibility';
 import { AdminResponsiveGrid } from './admin-responsive';
 import { AdminPullToRefresh } from './admin-touch-interactions';
 import { AdminWelcomeGradient } from './admin-welcome-section';
 import { AdminNotifications } from './admin-notifications';
 import { Button } from '../ui/button';
+import { useTranslations } from 'next-intl';
 
 // Design system constants
 const ERROR_BOX_STYLES =
@@ -32,6 +33,7 @@ const ERROR_CONTENT_STYLES = 'flex flex-col sm:flex-row sm:items-center sm:justi
 const ADMIN_TOOLS_TITLE_STYLES = 'mb-6';
 
 export function AdminDashboard() {
+	const t = useTranslations('admin.DASHBOARD');
 	const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'performance' | 'reports' | 'tools'>(
 		'overview'
 	);
@@ -41,13 +43,13 @@ export function AdminDashboard() {
 	const [srMessage, setSrMessage] = useState('');
 	useEffect(() => {
 		if (isFetching) {
-			setSrMessage('Refreshing dashboard data…');
+			setSrMessage(t('REFRESHING_DASHBOARD_DATA'));
 		} else if (isError) {
-			setSrMessage('Error loading dashboard data. Please try refreshing.');
+			setSrMessage(t('ERROR_LOADING_DASHBOARD_DATA'));
 		} else if (stats) {
-			setSrMessage('Dashboard data loaded successfully.');
+			setSrMessage(t('DASHBOARD_DATA_LOADED_SUCCESSFULLY'));
 		}
-	}, [isFetching, isError, stats]);
+	}, [isFetching, isError, stats, t]);
 
 	// Show loading state while fetching data
 	if (isLoading) {
@@ -55,7 +57,7 @@ export function AdminDashboard() {
 			<div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
 				<div className="text-center">
 					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-					<p className="text-gray-600 dark:text-gray-400">Loading dashboard data...</p>
+					<p className="text-gray-600 dark:text-gray-400">{t('LOADING_DASHBOARD_DATA')}</p>
 				</div>
 			</div>
 		);
@@ -72,15 +74,15 @@ export function AdminDashboard() {
 	return (
 		<>
 			{/* Skip navigation for keyboard users */}
-			<AdminSkipLink href="#main-content">Skip to main content</AdminSkipLink>
-			<AdminSkipLink href="#dashboard-stats">Skip to statistics</AdminSkipLink>
-			<AdminSkipLink href="#dashboard-charts">Skip to charts</AdminSkipLink>
-			<AdminSkipLink href="#admin-tools">Skip to admin tools</AdminSkipLink>
+			<AdminSkipLink href="#main-content">{t('SKIP_TO_MAIN_CONTENT')}</AdminSkipLink>
+			<AdminSkipLink href="#dashboard-stats">{t('SKIP_TO_STATISTICS')}</AdminSkipLink>
+			<AdminSkipLink href="#dashboard-charts">{t('SKIP_TO_CHARTS')}</AdminSkipLink>
+			<AdminSkipLink href="#admin-tools">{t('SKIP_TO_ADMIN_TOOLS')}</AdminSkipLink>
       <div className="space-y-8">
       {/* Welcome Section */}
       <AdminWelcomeGradient
-        title="Admin Dashboard"
-        subtitle="Overview, analytics and admin tools"
+        title={t('TITLE')}
+        subtitle={t('SUBTITLE')}
         rightActions={(
           <div className="flex items-center gap-3">
             <AdminNotifications />
@@ -92,7 +94,7 @@ export function AdminDashboard() {
               className="flex items-center space-x-2"
             >
               <RefreshCw className={refreshIconClass} />
-              <span>Refresh</span>
+              <span>{t('REFRESH')}</span>
             </Button>
           </div>
         )}
@@ -105,13 +107,13 @@ export function AdminDashboard() {
 
 				{/* Tabs */}
 				<div className="mb-6">
-					<div role="tablist" aria-label="Dashboard sections" className="flex flex-wrap gap-2">
+					<div role="tablist" aria-label={t('ARIA_LABELS.DASHBOARD_SECTIONS')} className="flex flex-wrap gap-2">
 						{[
-							{ key: 'overview', label: 'Overview' },
-							{ key: 'analytics', label: 'Analytics' },
-							{ key: 'performance', label: 'Performance' },
-							{ key: 'reports', label: 'Reports' },
-							{ key: 'tools', label: 'Tools' }
+							{ key: 'overview', label: t('TABS.OVERVIEW') },
+							{ key: 'analytics', label: t('TABS.ANALYTICS') },
+							{ key: 'performance', label: t('TABS.PERFORMANCE') },
+							{ key: 'reports', label: t('TABS.REPORTS') },
+							{ key: 'tools', label: t('TABS.TOOLS') }
 						].map((tab) => (
 							<button
                                 type="button"
@@ -136,23 +138,23 @@ export function AdminDashboard() {
 				{isError && (
 					<AdminLandmark
 						as="section"
-						label="Error notification"
+						label={t('ARIA_LABELS.ERROR_NOTIFICATION')}
 						role="alert"
 						aria-live="assertive"
 						className={ERROR_BOX_STYLES}
 					>
 						<div className={ERROR_CONTENT_STYLES}>
 							<p className="text-sm">
-								{error instanceof Error ? error.message : 'Failed to load admin statistics.'}
+								{error instanceof Error ? error.message : t('FAILED_TO_LOAD_ADMIN_STATISTICS')}
 							</p>
 							<AdminAccessibleButton
 								variant="secondary"
 								size="sm"
 								onClick={() => refetch()}
 								disabled={isFetching}
-								aria-label="Retry loading dashboard data"
+								aria-label={t('RETRY_LOADING_DASHBOARD_DATA')}
 							>
-								Retry
+								{t('RETRY')}
 							</AdminAccessibleButton>
 						</div>
 					</AdminLandmark>
@@ -162,19 +164,19 @@ export function AdminDashboard() {
 					<AdminPullToRefresh onRefresh={handleRefresh}>
 						{/* Overview Tab */}
 						{activeTab === 'overview' && (
-							<section id="section-overview" aria-label="Overview" className="space-y-8">
-								<AdminLandmark as="section" label="Dashboard Statistics" id="dashboard-stats">
+							<section id="section-overview" aria-label={t('ARIA_LABELS.OVERVIEW')} className="space-y-8">
+								<AdminLandmark as="section" label={t('SECTIONS.DASHBOARD_STATISTICS')} id="dashboard-stats">
 									<AdminHeading level={2} visualLevel={3} className="mb-4 md:mb-6">
-										Dashboard Statistics
+										{t('SECTIONS.DASHBOARD_STATISTICS')}
 									</AdminHeading>
 									<AdminErrorBoundary>
 										<AdminStatsOverview stats={stats} isLoading={false} />
 									</AdminErrorBoundary>
 								</AdminLandmark>
 
-								<AdminLandmark as="section" label="Submission Status">
+								<AdminLandmark as="section" label={t('SECTIONS.SUBMISSIONS_STATUS')}>
 									<AdminHeading level={2} visualLevel={3} className="mb-4 md:mb-6">
-										Submissions Status
+										{t('SECTIONS.SUBMISSIONS_STATUS')}
 									</AdminHeading>
 									<AdminErrorBoundary>
 										<AdminSubmissionStatus
@@ -188,10 +190,10 @@ export function AdminDashboard() {
 
 						{/* Analytics Tab */}
 						{activeTab === 'analytics' && (
-							<section id="section-analytics" aria-label="Analytics" className="space-y-8">
-								<AdminLandmark as="section" label="Charts and Analytics" id="dashboard-charts">
+							<section id="section-analytics" aria-label={t('ARIA_LABELS.ANALYTICS')} className="space-y-8">
+								<AdminLandmark as="section" label={t('SECTIONS.ANALYTICS_OVERVIEW')} id="dashboard-charts">
 									<AdminHeading level={2} visualLevel={3} className="mb-4 md:mb-6">
-										Analytics Overview
+										{t('SECTIONS.ANALYTICS_OVERVIEW')}
 									</AdminHeading>
 									<AdminResponsiveGrid cols={2} gap="lg">
 										<AdminErrorBoundary>
@@ -206,9 +208,9 @@ export function AdminDashboard() {
 									</AdminResponsiveGrid>
 								</AdminLandmark>
 
-								<AdminLandmark as="section" label="Recent Activity">
+								<AdminLandmark as="section" label={t('SECTIONS.RECENT_ACTIVITY')}>
 									<AdminHeading level={2} visualLevel={3} className="mb-4 md:mb-6">
-										Recent Activity
+										{t('SECTIONS.RECENT_ACTIVITY')}
 									</AdminHeading>
 									<AdminErrorBoundary>
 										<AdminRecentActivity data={stats?.recentActivity || []} isLoading={false} />
@@ -219,10 +221,10 @@ export function AdminDashboard() {
 
 						{/* Performance Tab */}
 						{activeTab === 'performance' && (
-							<section id="section-performance" aria-label="Performance" className="space-y-8">
-								<AdminLandmark as="section" label="Performance Monitor" id="performance-monitor">
+							<section id="section-performance" aria-label={t('ARIA_LABELS.PERFORMANCE')} className="space-y-8">
+								<AdminLandmark as="section" label={t('SECTIONS.PERFORMANCE')} id="performance-monitor">
 									<AdminHeading level={2} visualLevel={3} className="mb-4 md:mb-6">
-										Performance
+										{t('SECTIONS.PERFORMANCE')}
 									</AdminHeading>
 									<AdminErrorBoundary>
 										<AdminPerformanceMonitor />
@@ -233,10 +235,10 @@ export function AdminDashboard() {
 
 						{/* Reports Tab */}
 						{activeTab === 'reports' && (
-							<section id="section-reports" aria-label="Reports" className="space-y-8">
-								<AdminLandmark as="section" label="Data Export and Reports" id="data-export">
+							<section id="section-reports" aria-label={t('ARIA_LABELS.REPORTS')} className="space-y-8">
+								<AdminLandmark as="section" label={t('SECTIONS.DATA_EXPORT_REPORTS')} id="data-export">
 									<AdminHeading level={2} visualLevel={3} className="mb-4 md:mb-6">
-										Data Export & Reports
+										{t('SECTIONS.DATA_EXPORT_REPORTS')}
 									</AdminHeading>
 									<AdminErrorBoundary>
 										<AdminDataExport />
@@ -247,10 +249,10 @@ export function AdminDashboard() {
 
 						{/* Tools Tab */}
 						{activeTab === 'tools' && (
-							<section id="section-tools" aria-label="Tools" className="space-y-8">
-								<AdminLandmark as="section" label="Admin Tools" id="admin-tools">
+							<section id="section-tools" aria-label={t('ARIA_LABELS.TOOLS')} className="space-y-8">
+								<AdminLandmark as="section" label={t('SECTIONS.ADMIN_TOOLS')} id="admin-tools">
 									<AdminHeading level={2} visualLevel={3} className={ADMIN_TOOLS_TITLE_STYLES}>
-										Admin Tools
+										{t('SECTIONS.ADMIN_TOOLS')}
 									</AdminHeading>
 									<AdminFeaturesGrid />
 								</AdminLandmark>

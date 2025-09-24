@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Download, FileText, Calendar, Clock, Settings, RefreshCw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 // Removed dummy data service; scheduled reports will be backed by DB seeding
 
 // Constants for className strings
@@ -36,6 +37,7 @@ interface ExportOption {
 
 
 export function AdminDataExport() {
+  const t = useTranslations('admin.DATA_EXPORT');
   const [isExporting, setIsExporting] = useState(false);
   const [exportProgress, setExportProgress] = useState(0);
   const [selectedFormat, setSelectedFormat] = useState<'csv' | 'json'>('csv');
@@ -47,40 +49,40 @@ export function AdminDataExport() {
   const exportOptions: ExportOption[] = [
     {
       id: 'user-growth',
-      name: 'User Growth Trends',
-      description: 'Export user registration and growth data',
+      name: t('EXPORT_OPTIONS_DATA.USER_GROWTH_TRENDS.NAME'),
+      description: t('EXPORT_OPTIONS_DATA.USER_GROWTH_TRENDS.DESCRIPTION'),
       formats: ['csv', 'json'],
       icon: <Download className="h-4 w-4" />,
       action: () => handleExport('user-growth')
     },
     {
       id: 'activity-trends',
-      name: 'Activity Trends',
-      description: 'Export platform activity and engagement metrics',
+      name: t('EXPORT_OPTIONS_DATA.ACTIVITY_TRENDS.NAME'),
+      description: t('EXPORT_OPTIONS_DATA.ACTIVITY_TRENDS.DESCRIPTION'),
       formats: ['csv', 'json'],
       icon: <FileText className="h-4 w-4" />,
       action: () => handleExport('activity-trends')
     },
     {
       id: 'top-items',
-      name: 'Top Performing Items',
-      description: 'Export ranking and performance data',
+      name: t('EXPORT_OPTIONS_DATA.TOP_PERFORMING_ITEMS.NAME'),
+      description: t('EXPORT_OPTIONS_DATA.TOP_PERFORMING_ITEMS.DESCRIPTION'),
       formats: ['csv', 'json'],
       icon: <FileText className="h-4 w-4" />,
       action: () => handleExport('top-items')
     },
     {
       id: 'recent-activity',
-      name: 'Recent Activity Feed',
-      description: 'Export recent user activities and events',
+      name: t('EXPORT_OPTIONS_DATA.RECENT_ACTIVITY_FEED.NAME'),
+      description: t('EXPORT_OPTIONS_DATA.RECENT_ACTIVITY_FEED.DESCRIPTION'),
       formats: ['csv', 'json'],
       icon: <FileText className="h-4 w-4" />,
       action: () => handleExport('recent-activity')
     },
     {
       id: 'comprehensive',
-      name: 'Comprehensive Report',
-      description: 'Export all analytics data in one report',
+      name: t('EXPORT_OPTIONS_DATA.COMPREHENSIVE_REPORT.NAME'),
+      description: t('EXPORT_OPTIONS_DATA.COMPREHENSIVE_REPORT.DESCRIPTION'),
       formats: ['csv', 'json'],
       icon: <FileText className="h-4 w-4" />,
       action: () => handleExport('comprehensive')
@@ -133,13 +135,13 @@ export function AdminDataExport() {
   const getStatusText = (status: string) => {
     switch (status) {
       case 'generated':
-        return 'Generated';
+        return t('GENERATED');
       case 'failed':
-        return 'Failed';
+        return t('FAILED');
       case 'pending':
-        return 'Pending';
+        return t('PENDING');
       default:
-        return 'Unknown';
+        return t('UNKNOWN');
     }
   };
 
@@ -148,9 +150,9 @@ export function AdminDataExport() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Data Export & Reports</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('TITLE')}</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Export analytics data and manage scheduled reports
+            {t('SUBTITLE')}
           </p>
         </div>
         <Button
@@ -160,7 +162,7 @@ export function AdminDataExport() {
           className="flex items-center space-x-2"
         >
           <RefreshCw className="h-4 w-4" />
-          <span>Refresh</span>
+          <span>{t('REFRESH')}</span>
         </Button>
       </div>
 
@@ -169,14 +171,14 @@ export function AdminDataExport() {
         <CardHeader>
           <CardTitle className={EXPORT_HEADER_STYLES}>
             <Download className={EXPORT_ICON_STYLES} />
-            <span>Export Options</span>
+            <span>{t('EXPORT_OPTIONS')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className={EXPORT_OPTIONS_STYLES}>
             {/* Format Selection */}
             <div className="flex items-center space-x-4">
-              <label className="text-sm font-medium">Export Format:</label>
+              <label className="text-sm font-medium">{t('EXPORT_FORMAT')}</label>
               <div className="flex space-x-2">
                 {(['csv', 'json'] as const).map((format) => (
                   <Button
@@ -202,7 +204,7 @@ export function AdminDataExport() {
                 className="rounded border-gray-300"
               />
               <label htmlFor="include-metadata" className="text-sm">
-                Include metadata and export information
+                {t('INCLUDE_METADATA')}
               </label>
             </div>
           </div>
@@ -211,7 +213,7 @@ export function AdminDataExport() {
           {isExporting && (
             <div className="mt-4">
               <div className="flex items-center justify-between text-sm mb-2">
-                <span>Exporting...</span>
+                <span>{t('EXPORTING')}</span>
                 <span>{exportProgress}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
@@ -232,7 +234,7 @@ export function AdminDataExport() {
           <CardHeader>
             <CardTitle className={EXPORT_HEADER_STYLES}>
               <Download className={EXPORT_ICON_STYLES} />
-              <span>Manual Export</span>
+              <span>{t('MANUAL_EXPORT')}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -255,7 +257,7 @@ export function AdminDataExport() {
                       className={EXPORT_BUTTON_STYLES}
                     >
                       <Download className="h-4 w-4 mr-2" />
-                      Export {selectedFormat.toUpperCase()}
+                      {t('EXPORT')} {selectedFormat.toUpperCase()}
                     </Button>
                   </div>
                 </div>
@@ -269,7 +271,7 @@ export function AdminDataExport() {
           <CardHeader>
             <CardTitle className={EXPORT_HEADER_STYLES}>
               <Calendar className={EXPORT_ICON_STYLES} />
-              <span>Scheduled Reports</span>
+              <span>{t('SCHEDULED_REPORTS')}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -290,18 +292,18 @@ export function AdminDataExport() {
                       </div>
                       <div className="flex items-center space-x-2">
                         <FileText className="h-3 w-3" />
-                        <span>Format: {report.format}</span>
+                        <span>{t('FORMAT')} {report.format}</span>
                       </div>
                       {report.lastGenerated && (
                         <div className="flex items-center space-x-2">
                           <Calendar className="h-3 w-3" />
-                          <span>Last: {report.lastGenerated}</span>
+                          <span>{t('LAST')} {report.lastGenerated}</span>
                         </div>
                       )}
                       {report.nextGeneration && (
                         <div className="flex items-center space-x-2">
                           <Clock className="h-3 w-3" />
-                          <span>Next: {report.nextGeneration}</span>
+                          <span>{t('NEXT')} {report.nextGeneration}</span>
                         </div>
                       )}
                     </div>
@@ -326,26 +328,26 @@ export function AdminDataExport() {
         <CardHeader>
           <CardTitle className={EXPORT_HEADER_STYLES}>
             <Settings className={EXPORT_ICON_STYLES} />
-            <span>Report Management</span>
+            <span>{t('REPORT_MANAGEMENT')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4">
             <Button variant="outline">
               <Calendar className="h-4 w-4 mr-2" />
-              Create New Template
+              {t('CREATE_NEW_TEMPLATE')}
             </Button>
             <Button variant="outline">
               <Settings className="h-4 w-4 mr-2" />
-              Manage Templates
+              {t('MANAGE_TEMPLATES')}
             </Button>
             <Button variant="outline">
               <Clock className="h-4 w-4 mr-2" />
-              View History
+              {t('VIEW_HISTORY')}
             </Button>
             <Button variant="outline">
               <FileText className="h-4 w-4 mr-2" />
-              Export Settings
+              {t('EXPORT_SETTINGS')}
             </Button>
           </div>
         </CardContent>

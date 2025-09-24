@@ -2,6 +2,7 @@ import { Component, ReactNode, type ErrorInfo } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslations } from 'next-intl';
 
 // Design system constants
 const ERROR_CARD_STYLES = "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950";
@@ -88,18 +89,20 @@ export function AdminErrorFallback({
   error?: Error; 
   retry: () => void; 
 }) {
+  const t = useTranslations('admin.ERROR_BOUNDARY');
+  
   return (
     <Card className={ERROR_CARD_STYLES}>
       <CardHeader>
         <CardTitle className={ERROR_TITLE_STYLES}>
           <AlertTriangle className="h-5 w-5" />
-          <span>Failed to load data</span>
+          <span>{t('FAILED_TO_LOAD_DATA')}</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <p className={ERROR_TEXT_STYLES}>
-            {error?.message || 'Unable to load the requested information.'}
+            {error?.message || t('UNABLE_TO_LOAD')}
           </p>
           <div className="flex items-center space-x-2">
             <Button
@@ -109,11 +112,61 @@ export function AdminErrorFallback({
               className={ERROR_BUTTON_STYLES}
             >
               <RefreshCw className="h-4 w-4 mr-2" />
-              Retry
+              {t('RETRY')}
             </Button>
           </div>
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+// Wrapper component that provides translations to the class component
+export function AdminErrorBoundaryWithTranslations({ 
+  children, 
+  fallback, 
+  onError 
+}: Props) {
+  const t = useTranslations('admin.ERROR_BOUNDARY');
+  
+  const translatedFallback = (error: Error, retry: () => void) => {
+    if (fallback) {
+      return fallback(error, retry);
+    }
+    
+    return (
+      <Card className={ERROR_CARD_STYLES}>
+        <CardHeader>
+          <CardTitle className={ERROR_TITLE_STYLES}>
+            <AlertTriangle className="h-5 w-5" />
+            <span>{t('SOMETHING_WENT_WRONG')}</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <p className={ERROR_TEXT_STYLES}>
+              {error?.message || t('UNEXPECTED_ERROR')}
+            </p>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={retry}
+                className={ERROR_BUTTON_STYLES}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                {t('TRY_AGAIN')}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+  
+  return (
+    <AdminErrorBoundary fallback={translatedFallback} onError={onError}>
+      {children}
+    </AdminErrorBoundary>
   );
 }
