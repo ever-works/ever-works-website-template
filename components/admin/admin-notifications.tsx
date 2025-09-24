@@ -1,39 +1,44 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Bell, X, Check, ExternalLink, RefreshCw, AlertCircle, UserPlus, CreditCard, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
+import { useAdminNotifications } from "@/hooks/use-admin-notifications";
 import { useTranslations } from "next-intl";
-
-interface Notification {
-  id: string;
-  type: string;
-  title: string;
-  message: string;
-  data?: string;
-  isRead: boolean;
-  createdAt: string;
-}
 
 interface AdminNotificationsProps {
   className?: string;
 }
 
 export function AdminNotifications({ className }: AdminNotificationsProps) {
-  const { data: session } = useSession();
   const router = useRouter();
   const t = useTranslations('admin.NOTIFICATIONS');
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Use the useAdminNotifications hook
+  const {
+    notifications,
+    stats,
+    isLoading,
+    isFetching,
+    isMarkingAsRead,
+    isMarkingAllAsRead,
+    fetchNotifications,
+    markAsRead,
+    markAllAsRead,
+    handleNotificationClick,
+    getNotificationLink,
+  } = useAdminNotifications();
+  
+  // Extract unread count from stats
+  const unreadCount = stats.unread;
+  
 
   // Close dropdown when clicking outside or pressing Escape
   useEffect(() => {
@@ -59,63 +64,6 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
     }
   }, [isOpen]);
 
-  // Fetch notifications
-  const fetchNotifications = useCallback(async () => {
-    if (!session?.user?.id) return;
-    
-    setIsLoading(true);
-    try {
-      const response = await fetch(`/api/admin/notifications`);
-      if (response.ok) {
-        const data = await response.json();
-        setNotifications(data.notifications || []);
-        setUnreadCount(data.unreadCount || 0);
-      }
-    } catch (error) {
-      console.error("Failed to fetch notifications:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [session?.user?.id]);
-
-  const markAsRead = async (notificationId: string) => {
-    try {
-      const response = await fetch(`/api/admin/notifications/${notificationId}/read`, {
-        method: "PATCH",
-      });
-      
-      if (response.ok) {
-        setNotifications(prev => 
-          prev.map(notif => 
-            notif.id === notificationId 
-              ? { ...notif, isRead: true }
-              : notif
-          )
-        );
-        setUnreadCount(prev => Math.max(0, prev - 1));
-      }
-    } catch (error) {
-      console.error("Failed to mark notification as read:", error);
-    }
-  };
-
-  // Mark all notifications as read
-  const markAllAsRead = async () => {
-    try {
-      const response = await fetch("/api/admin/notifications/mark-all-read", {
-        method: "PATCH",
-      });
-      
-      if (response.ok) {
-        setNotifications(prev => 
-          prev.map(notif => ({ ...notif, isRead: true }))
-        );
-        setUnreadCount(0);
-      }
-    } catch (error) {
-      console.error("Failed to mark all notifications as read:", error);
-    }
-  };
 
   // Get notification icon based on type (no unused iconProps)
   const getNotificationIcon = (type: string) => {
@@ -170,47 +118,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
     }
   };
 
-  // Get notification link
-  const getNotificationLink = (notification: Notification) => {
-    if (!notification.data) return null;
-    
-    try {
-      const data = JSON.parse(notification.data);
-      switch (notification.type) {
-        case "item_submission":
-          return `/admin/items/${data.itemId}`;
-        case "comment_reported":
-          return `/admin/comments/${data.commentId}`;
-        case "user_registered":
-          return `/admin/users/${data.userId}`;
-        default:
-          return null;
-      }
-    } catch {
-      return null;
-    }
-  };
 
-  // Handle notification click
-  const handleNotificationClick = (notification: Notification) => {
-    const link = getNotificationLink(notification);
-    if (link) {
-      window.open(link, "_blank");
-    }
-    
-    if (!notification.isRead) {
-      markAsRead(notification.id);
-    }
-  };
-
-  useEffect(() => {
-    fetchNotifications();
-    
-    // Set up polling for new notifications every 30 seconds
-    const interval = setInterval(fetchNotifications, 30000);
-    
-    return () => clearInterval(interval);
-  }, [session?.user?.id, fetchNotifications]);
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
@@ -264,21 +172,22 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={fetchNotifications}
+                    onClick={() => fetchNotifications()}
                     className="h-8 w-8 p-0"
-                    disabled={isLoading}
+                    disabled={isLoading || isFetching}
                     aria-label="Refresh notifications"
                   >
-                    <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+                    <RefreshCw className={`h-4 w-4 ${(isLoading || isFetching) ? "animate-spin" : ""}`} />
                   </Button>
                   {unreadCount > 0 && (
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={markAllAsRead}
+                      onClick={() => markAllAsRead()}
                       className="text-xs h-8 px-3"
+                      disabled={isMarkingAllAsRead}
                     >
-                      {t('MARK_ALL_READ')}
+                      {isMarkingAllAsRead ?t( "LOADING") : t( "MARK_ALL_READ")}
                     </Button>
                   )}
                   <Button
@@ -379,6 +288,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                                       e.stopPropagation();
                                       markAsRead(notification.id);
                                     }}
+                                    disabled={isMarkingAsRead}
                                   >
                                     <Check className="h-3 w-3" />
                                   </Button>

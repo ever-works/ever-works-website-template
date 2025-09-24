@@ -102,6 +102,7 @@ export function useAdminNotifications() {
   const {
     data: notificationData,
     isLoading,
+    isFetching,
     error,
     refetch: fetchNotifications,
   } = useQuery({
@@ -281,6 +282,7 @@ export function useAdminNotifications() {
     
     // Loading states
     isLoading,
+    isFetching,
     isMarkingAsRead,
     isMarkingAllAsRead,
     isCreating,
