@@ -4,7 +4,7 @@ import { useDebounceValue } from './use-debounced-value';
 interface UseDebounceSearchProps {
   searchValue: string;
   delay?: number;
-  onSearch: (value: string) => void;
+  onSearch: (value: string) => void | Promise<void>;
 }
 
 interface UseDebounceSearchReturn {
