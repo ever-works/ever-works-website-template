@@ -138,16 +138,12 @@ export default function ClientsPage() {
 
   // Track if this is the initial load
   const isInitialLoad = useRef(true);
-  // Track the last search value applied to query to prevent stale-page fetches
-  const lastAppliedSearchRef = useRef<string>('');
 
   // Debounced search hook
   const { debouncedValue: debouncedSearchTerm, isSearching } = useDebounceSearch({
     searchValue: searchTerm,
     delay: 300,
-    onSearch: (value: string) => {
-      // mark the value as applied; page reset happens only when necessary
-      lastAppliedSearchRef.current = value;
+    onSearch: () => {
       if (!isInitialLoad.current && currentPage !== 1) {
         setCurrentPage(1);
       }
@@ -184,6 +180,13 @@ export default function ClientsPage() {
     },
   });
 
+  // Mark initial load complete when first query resolves
+  useEffect(() => {
+    if (!isLoading && loadingStates.initial) {
+      setLoadingStates(prev => ({ ...prev, initial: false }));
+    }
+  }, [isLoading, loadingStates.initial]);
+
   // Calculate active filter count
   const activeFilterCount = [
     searchTerm,
@@ -208,12 +211,8 @@ export default function ClientsPage() {
     setSelectedClient(null);
   }, [onClose, clearEditParam]);
 
-<<<<<<< HEAD
-=======
   // Debounce search term - handled by React Query automatically
 
-
->>>>>>> 9387135678ac1a0d0374ee5801cf33eccfa0a926
   // Handlers using the custom hook
   const handleCreate = useCallback(async (data: CreateClientRequest) => {
     const success = await createClient(data);
@@ -237,12 +236,15 @@ export default function ClientsPage() {
   // Confirm delete action
   const confirmDelete = useCallback(async () => {
     if (!clientToDelete) return;
-
-    const success = await deleteClient(clientToDelete);
-    if (success) {
-      setClientToDelete(null);
+    setDeletingLoading(clientToDelete);
+    try {
+      const success = await deleteClient(clientToDelete);
+      if (success) {
+        setClientToDelete(null);
+        onDeleteClose();
+      }
+    } finally {
       setDeletingLoading(null);
-      onDeleteClose();
     }
   }, [clientToDelete, deleteClient, onDeleteClose, setDeletingLoading]);
 
