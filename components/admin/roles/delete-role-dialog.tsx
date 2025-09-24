@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@heroui/react';
 import { AlertTriangle, Trash2, Shield } from 'lucide-react';
 import { RoleData } from '@/hooks/use-admin-roles';
-import { clsx } from 'clsx';
+import clsx from 'clsx';
 
 interface DeleteRoleDialogProps {
   role: RoleData;

@@ -6,7 +6,7 @@ import { Button, Card, CardBody, Chip, useDisclosure } from '@heroui/react';
 import { RoleForm } from '@/components/admin/roles/role-form';
 import { DeleteRoleDialog } from '@/components/admin/roles/delete-role-dialog';
 import { useAdminRoles, RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/hooks/use-admin-roles';
-import { clsx } from 'clsx';
+import clsx from 'clsx';
 
 // CSS classes constants
 const headerContainerClass = clsx(

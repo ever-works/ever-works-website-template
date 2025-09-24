@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import { Button, Input, Switch } from '@heroui/react';
 import { Save, X } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
-import { RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/hooks/use-admin-roles';
-import { clsx } from 'clsx';
+import type { RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/hooks/use-admin-roles';
+import clsx from 'clsx';
 
 interface RoleFormProps {
   role?: RoleData;
@@ -116,8 +116,8 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
         </h2>
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
           {mode === 'create'
-            ? 'Create a new role with specific permissions and access levels'
-            : 'Update the role information and permissions'
+            ? 'Create a new role with the appropriate access level'
+            : 'Update the role information and access level'
           }
         </p>
       </div>
