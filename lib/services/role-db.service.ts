@@ -127,11 +127,9 @@ export class RoleDbService {
       const sortField = sortFieldMap[sortBy] || roles.name;
       const orderFn = sortOrder === 'desc' ? desc : asc;
 
-      const mainQuery = filters.length > 0
-        ? db.select().from(roles).where(and(...filters))
-        : db.select().from(roles);
+      const query = db.select().from(roles).where(and(...filters));
 
-      const result = await mainQuery
+      const result = await query
         .orderBy(orderFn(sortField))
         .limit(limit)
         .offset((page - 1) * limit);
