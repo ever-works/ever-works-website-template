@@ -1,6 +1,6 @@
 import { db } from '@/lib/db/drizzle';
 import { roles } from '@/lib/db/schema';
-import { eq, desc, asc, sql, isNull, and } from 'drizzle-orm';
+import { eq, desc, asc, sql, isNull, and, SQL } from 'drizzle-orm';
 import { RoleData, CreateRoleRequest, UpdateRoleRequest, RoleStatus, RoleListOptions } from '@/lib/types/role';
 import { Permission } from '@/lib/permissions/definitions';
 
@@ -107,18 +107,16 @@ export class RoleDbService {
       const { page = 1, limit = 10, status, sortBy = 'name', sortOrder = 'asc' } = options;
 
       // Build the base query with conditional filters
-      const filters = [isNull(roles.deletedAt)]; // Always exclude deleted roles
+      const filters: SQL[] = [isNull(roles.deletedAt)]; // Always exclude deleted roles
       if (status) {
         filters.push(eq(roles.status, status));
       }
 
-      let query = db.select().from(roles);
-      query = query.where(and(...filters));
 
       // Get total count with same filters
-      const countQuery = db.select({ count: sql`count(*)` }).from(roles).where(and(...filters));
+      const countQuery = db.select({ count: sql<number>`count(*)` }).from(roles).where(and(...filters));
       const countResult = await countQuery;
-      const total = Number(countResult[0].count);
+      const total = countResult[0]?.count ?? 0;
 
       // Apply sorting and pagination
       const sortFieldMap = {
@@ -129,8 +127,8 @@ export class RoleDbService {
       const sortField = sortFieldMap[sortBy] || roles.name;
       const orderFn = sortOrder === 'desc' ? desc : asc;
 
-      const mainQuery = whereConditions.length > 0
-        ? db.select().from(roles).where(and(...whereConditions))
+      const mainQuery = filters.length > 0
+        ? db.select().from(roles).where(and(...filters))
         : db.select().from(roles);
 
       const result = await mainQuery
@@ -153,7 +151,7 @@ export class RoleDbService {
 
   async exists(id: string, options: { includeDeleted?: boolean } = {}): Promise<boolean> {
     try {
-      const conditions = [eq(roles.id, id)];
+      const conditions: SQL[] = [eq(roles.id, id)];
       if (!options.includeDeleted) {
         conditions.push(isNull(roles.deletedAt));
       }
