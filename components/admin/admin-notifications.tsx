@@ -29,6 +29,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
     isFetching,
     isMarkingAsRead,
     isMarkingAllAsRead,
+    error,
     fetchNotifications,
     markAsRead,
     markAllAsRead,
@@ -36,8 +37,8 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
     getNotificationLink,
   } = useAdminNotifications();
   
-  // Extract unread count from stats
-  const unreadCount = stats.unread;
+  // Extract unread count from stats with fallback
+  const unreadCount = stats?.unread ?? 0;
   
 
   // Close dropdown when clicking outside or pressing Escape
@@ -132,7 +133,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
             ? "bg-primary/10 text-primary hover:bg-primary/20" 
             : "hover:bg-muted/50"
         }`}
-        aria-label="Notifications"
+        aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
         aria-haspopup="menu"
         aria-expanded={isOpen}
         aria-controls="admin-notifications-dropdown"
@@ -205,7 +206,24 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
             
             <CardContent className="p-0">
               <div className="max-h-[400px] overflow-y-auto">
-                {isLoading ? (
+                {error ? (
+                  <div className="flex flex-col items-center justify-center py-12 px-4">
+                    <AlertCircle className="h-8 w-8 text-destructive mb-3" />
+                    <h3 className="font-medium text-sm text-foreground mb-1">Error loading notifications</h3>
+                    <p className="text-xs text-muted-foreground text-center mb-3">
+                      {error}
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => fetchNotifications()}
+                      className="text-xs"
+                    >
+                      <RefreshCw className="h-3 w-3 mr-1" />
+                      Try Again
+                    </Button>
+                  </div>
+                ) : isLoading ? (
                   <div className="flex flex-col items-center justify-center py-12 px-4">
                     <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground mb-3" />
                     <p className="text-sm text-muted-foreground">{t('LOADING')}</p>

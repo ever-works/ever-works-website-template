@@ -181,9 +181,9 @@ export function useAdminNotifications() {
     },
   });
 
-  // Computed values
-  const notifications = notificationData?.notifications || [];
-  const unreadCount = notificationData?.unreadCount || 0;
+  // Computed values with fallbacks
+  const notifications = notificationData?.notifications ?? [];
+  const unreadCount = notificationData?.unreadCount ?? 0;
   
   // Calculate stats from notifications
   const stats: NotificationStats = {
