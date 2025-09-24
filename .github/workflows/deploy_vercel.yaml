@@ -15,8 +15,6 @@ on:
     branches:
       - main
       - develop
-    paths:  
-      - ".github/workflows/deploy_vercel.yaml"  
 
 env:
   DATA_REPOSITORY: "https://github.com/${{ github.repository_owner }}/${{ secrets.DATA_REPOSITORY }}"
