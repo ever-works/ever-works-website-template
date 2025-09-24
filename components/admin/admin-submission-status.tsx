@@ -18,7 +18,7 @@ export function AdminSubmissionStatus({ data, isLoading }: AdminSubmissionStatus
   
   // Guard against empty data - show demo chart instead
   if (total === 0) {
-    // Demo data for when no submissions exist - removed unused variable
+    // Show demo chart when no submissions exist
 
     return (
       <Card>
