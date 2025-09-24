@@ -5,7 +5,7 @@
 
 import NextAuth from 'next-auth';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
-import { getDrizzleInstance } from '../db/drizzle';
+import { db, getDrizzleInstance } from '../db/drizzle';
 import { users, accounts, sessions, verificationTokens } from '../db/schema';
 import authConfig from '../../auth.config';
 import { invalidateSessionCache } from './cached-session';
@@ -20,7 +20,7 @@ interface ExtendedUser {
 }
 
 // Check if DATABASE_URL is set and database is properly initialized
-const isDatabaseAvailable = !!process.env.DATABASE_URL;
+const isDatabaseAvailable = !!process.env.DATABASE_URL && typeof db !== 'undefined';
 
 // Only create the Drizzle adapter if we have a real database connection
 const drizzle = isDatabaseAvailable
