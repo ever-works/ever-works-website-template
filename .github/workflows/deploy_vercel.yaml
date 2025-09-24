@@ -11,12 +11,18 @@ on:
       environment:
         required: true
         type: string
+  push:
+    branches:
+      - main
+      - develop
+
 env:
   DATA_REPOSITORY: "https://github.com/${{ github.repository_owner }}/${{ secrets.DATA_REPOSITORY }}"
 
 jobs:
   Deploy-Vercel:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' }}
     steps:
       - name: Target environment
         run: echo "Target ${{ inputs.environment }}"
