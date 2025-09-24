@@ -40,11 +40,13 @@ function initializeDatabase(): ReturnType<typeof drizzle> {
     globalForDb.conn = conn;
     globalForDb.db = drizzle(conn, { schema });
 
-    console.log(
-      reusing
-        ? 'Reusing existing database connection; pool size is unchanged from the initial value (restart to apply DB_POOL_SIZE changes).'
-        : `Database connection established successfully with pool size: ${poolSize}`
-    );
+    if (process.env.NODE_ENV === 'development') {
+      console.log(
+        reusing
+          ? 'Reusing existing database connection; pool size is unchanged from the initial value (restart to apply DB_POOL_SIZE changes).'
+          : `Database connection established successfully with pool size: ${poolSize}`
+      );
+    }
 
     return globalForDb.db;
   } catch (error) {
