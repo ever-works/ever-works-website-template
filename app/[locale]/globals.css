@@ -4,6 +4,50 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  /* Custom input component using Tailwind utilities */
+  .custom-input {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm transition-all duration-300 ease-in-out outline-none;
+  }
+  
+  .custom-input:hover {
+    @apply border-gray-500;
+  }
+  
+  .custom-input:focus {
+    @apply border-blue-500 shadow-[0_0_0_2px_rgba(59,130,246,0.2)] bg-white;
+  }
+  
+  .custom-input:disabled {
+    @apply bg-gray-50 text-gray-500 cursor-not-allowed;
+  }
+  
+  .custom-input.error {
+    @apply border-red-500;
+  }
+  
+  .custom-input.error:focus {
+    @apply border-red-500 shadow-[0_0_0_2px_rgba(239,68,68,0.2)];
+  }
+  
+  /* Dark mode styles using Tailwind dark: prefix */
+  .dark .custom-input {
+    @apply bg-gray-800 text-white border-gray-600;
+  }
+  
+  .dark .custom-input:hover {
+    @apply border-gray-500;
+  }
+  
+  .dark .custom-input:focus {
+    @apply bg-gray-800 text-white;
+  }
+  
+  .dark .custom-input:disabled {
+    @apply bg-gray-700 text-gray-400;
+  }
+}
+
 @layer utilities {
   .animate-fade-in {
     animation: fadeIn 0.6s ease-out;
@@ -1175,4 +1219,21 @@ select option:active {
 /* Disabled state for upload button */
 button[disabled] .tiptap-button-text {
   opacity: 0.6;
+}
+
+.dark [data-slot="input"]:focus,
+.dark [data-slot="input"]:focus-within {
+  border-color: var(--theme-primary) !important;
+}
+
+.dark [data-slot="input"]:focus-visible {
+  border-color: var(--theme-primary) !important;
+}
+
+.dark [data-slot="input-wrapper"]:focus-within {
+  border-color: var(--theme-primary) !important;
+}
+
+.dark [data-slot="input-wrapper"]:focus-visible {
+  border-color: var(--theme-primary) !important;
 }

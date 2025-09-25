@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useCreateUser, useUpdateUser, useCheckUsername, useCheckEmail } from '@/hooks/use-users';
 import { useActiveRoles } from '@/hooks/use-active-roles';
 import { UserData, CreateUserRequest, UpdateUserRequest } from '@/lib/types/user';
-import { Button } from '@heroui/react';
+import { Button, Input } from '@heroui/react';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -19,61 +19,10 @@ interface UserFormProps {
 export default function UserForm({ user, onSuccess, isSubmitting = false, onCancel }: UserFormProps) {
   const t = useTranslations('admin.USER_FORM');
   
-  // Custom CSS for native input elements
-  const customStyles = `
-    .custom-input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      background-color: white;
-      color: #111827;
-      font-size: 14px;
-      transition: all 0.3s ease-in-out;
-      outline: none;
-    }
-    .custom-input:hover {
-      border-color: #6b7280;
-    }
-    .custom-input:focus {
-      border-color: var(--heroui-primary, #3b82f6);
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-      background-color: white;
-    }
-    .custom-input:disabled {
-      background-color: #f9fafb;
-      color: #6b7280;
-      cursor: not-allowed;
-    }
-    .custom-input.error {
-      border-color: #ef4444;
-    }
-    .custom-input.error:focus {
-      border-color: #ef4444;
-      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
-    }
-    .dark .custom-input {
-      background-color: #1f2937;
-      color: white;
-      border-color: #4b5563;
-    }
-    .dark .custom-input:hover {
-      border-color: #6b7280;
-    }
-    .dark .custom-input:focus {
-      background-color: #1f2937;
-      color: white;
-    }
-    .dark .custom-input:disabled {
-      background-color: #374151;
-      color: #9ca3af;
-    }
-  `;
-  
   // Extract long className strings into constants for better maintainability
   const selectClasses = "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-theme-primary transition-all duration-300 ease-in-out hover:border-gray-500 active:border-theme-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white";
   
-  // Helper function to get input className
+  // Helper function to get input className using Tailwind classes
   const getInputClassName = (hasError: boolean = false) => {
     return `custom-input ${hasError ? 'error' : ''}`;
   };
@@ -282,7 +231,6 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: customStyles }} />
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700">
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -301,13 +249,13 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
           </div>
           <div className="flex-1">
             <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">{t('AVATAR_URL')}</label>
-            <input
+            <Input
               type="text"
               placeholder={t('AVATAR_PLACEHOLDER')}
               value={formData.avatar}
               onChange={(e) => handleInputChange('avatar', e.target.value)}
-              className={getInputClassName()}
               disabled={isSubmittingForm}
+              variant='bordered'
             />
           </div>
         </div>
@@ -316,26 +264,26 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-2">{t('FULL_NAME')} *</label>
-          <input
+          <Input
             type="text"
             placeholder={t('FULL_NAME_PLACEHOLDER')}
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
-            className={getInputClassName()}
             disabled={isSubmittingForm}
             required
+            variant='bordered'
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-2">{t('TITLE_FIELD')}</label>
-          <input
+          <Input
             type="text"
             placeholder={t('TITLE_PLACEHOLDER')}
             value={formData.title}
             onChange={(e) => handleInputChange('title', e.target.value)}
-            className={getInputClassName()}
             disabled={isSubmittingForm}
+            variant='bordered'
           />
         </div>
       </div>
@@ -345,14 +293,14 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
         <div>
           <label className="block text-sm font-medium mb-2">{t('USERNAME')} *</label>
           <div className="relative">
-            <input
+            <Input
               type="text"
               placeholder={t('USERNAME_PLACEHOLDER')}
               value={formData.username}
               onChange={(e) => handleInputChange('username', e.target.value)}
-              className={getInputClassName(getUsernameStatus() === 'unavailable')}
               disabled={isSubmittingForm}
               required
+              variant='bordered'
             />
             {checkingUsername && (
               <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-muted-foreground" />
@@ -369,14 +317,14 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
         <div>
           <label className="block text-sm font-medium mb-2">{t('EMAIL')} *</label>
           <div className="relative">
-            <input
+            <Input
               type="email"
               placeholder={t('EMAIL_PLACEHOLDER')}
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
-              className={getInputClassName(getEmailStatus() === 'unavailable')}
               disabled={isSubmittingForm}
               required
+              variant='bordered'
             />
             {checkingEmail && (
               <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-muted-foreground" />
@@ -395,30 +343,30 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
       {!isEditing && (
         <div>
           <label className="block text-sm font-medium mb-2">{t('PASSWORD')} *</label>
-          <div className="relative">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder={t('PASSWORD_PLACEHOLDER')}
-              value={formData.password}
-              onChange={(e) => handleInputChange('password', e.target.value)}
-              className={getInputClassName()}
-              required
-              disabled={isSubmittingForm}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
+          <Input
+            type={showPassword ? 'text' : 'password'}
+            placeholder={t('PASSWORD_PLACEHOLDER')}
+            value={formData.password}
+            onChange={(e) => handleInputChange('password', e.target.value)}
+            required
+            disabled={isSubmittingForm}
+            variant='bordered'
+            endContent={
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="min-w-0 w-8 h-8 p-0 bg-transparent hover:bg-transparent border-none shadow-none"
+                onPress={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </Button>
+            }
+          />
         </div>
       )}
 
