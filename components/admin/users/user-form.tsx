@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useCreateUser, useUpdateUser, useCheckUsername, useCheckEmail } from '@/hooks/use-users';
 import { useActiveRoles } from '@/hooks/use-active-roles';
 import { UserData, CreateUserRequest, UpdateUserRequest } from '@/lib/types/user';
-import { Button, Input } from '@heroui/react';
+import { Button, Input, Select, SelectItem } from '@heroui/react';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -19,8 +19,6 @@ interface UserFormProps {
 export default function UserForm({ user, onSuccess, isSubmitting = false, onCancel }: UserFormProps) {
   const t = useTranslations('admin.USER_FORM');
   
-  // Extract long className strings into constants for better maintainability
-  const selectClasses = "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-theme-primary transition-all duration-300 ease-in-out hover:border-gray-500 active:border-theme-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white";
   
   // Helper function to get input className using Tailwind classes
   const getInputClassName = (hasError: boolean = false) => {
@@ -374,44 +372,47 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-2">{t('ROLE')} *</label>
-          <select
-            value={formData.role}
-            onChange={(e) => handleInputChange('role', e.target.value)}
-            className={selectClasses}
+          <Select
+            selectedKeys={formData.role ? [formData.role] : []}
+            onSelectionChange={(keys) => {
+              const selectedKey = Array.from(keys)[0] as string;
+              handleInputChange('role', selectedKey || '');
+            }}
+            placeholder={rolesLoading ? t('LOADING_ROLES') : t('SELECT_ROLE')}
             disabled={rolesLoading || isSubmittingForm}
-            required
+            isRequired
+            variant="bordered"
           >
-            {rolesLoading ? (
-              <option value="">{t('LOADING_ROLES')}</option>
-            ) : roles.length === 0 ? (
-              <option value="">{t('NO_ROLES_AVAILABLE')}</option>
-            ) : (
-              <>
-                <option value="">{t('SELECT_ROLE')}</option>
-                {roles
-                  .filter(role => role.status === 'active')
-                  .map(role => (
-                    <option key={role.id} value={role.id}>
-                      {role.name}
-                    </option>
-                  ))}
-              </>
-            )}
-          </select>
+            {roles
+              .filter(role => role.status === 'active')
+              .map(role => (
+                <SelectItem key={role.id}>
+                  {role.name}
+                </SelectItem>
+              ))}
+          </Select>
         </div>
 
         {isEditing && (
           <div>
             <label className="block text-sm font-medium mb-2">{t('STATUS')} *</label>
-            <select
-              value={formData.status}
-              onChange={(e) => handleInputChange('status', e.target.value)}
-              className={selectClasses}
-              disabled={isSubmittingForm || isCreatingUser || isUpdatingUser}
+            <Select
+              selectedKeys={[formData.status]}
+              onSelectionChange={(keys) => {
+                const selectedKey = Array.from(keys)[0] as string;
+                handleInputChange('status', selectedKey);
+              }}
+              placeholder={t('SELECT_ROLE')}
+              disabled={isSubmittingForm}
+              variant="bordered"
             >
-              <option value="active">{t('ACTIVE')}</option>
-              <option value="inactive">{t('INACTIVE')}</option>
-            </select>
+              <SelectItem key="active">
+                {t('ACTIVE')}
+              </SelectItem>
+              <SelectItem key="inactive">
+                {t('INACTIVE')}
+              </SelectItem>
+            </Select>
           </div>
         )}
       </div>
