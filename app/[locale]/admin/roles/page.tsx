@@ -183,10 +183,25 @@ export default function RolesPage() {
 
   const handlePermissionsSave = async (roleId: string, permissions: Permission[]): Promise<boolean> => {
     try {
-      // For now, we'll use the existing updateRole function
-      // This will be replaced with the proper permissions API in Step 6
-      const success = await updateRole(roleId, { permissions } as UpdateRoleRequest);
-      return success;
+      // Use the dedicated permissions API
+      const response = await fetch(`/api/admin/roles/${roleId}/permissions`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ permissions }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to update permissions');
+      }
+
+      // Refresh the roles list to show updated permissions
+      refreshData();
+
+      return true;
     } catch (error) {
       console.error('Failed to update permissions:', error);
       return false;
