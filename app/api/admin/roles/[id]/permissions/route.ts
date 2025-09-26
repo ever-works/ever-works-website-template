@@ -7,7 +7,7 @@ const roleService = new RoleDbService();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin permissions
@@ -16,7 +16,7 @@ export async function GET(
       return authError;
     }
 
-    const roleId = params.id;
+    const { id: roleId } = await params;
     if (!roleId) {
       return NextResponse.json(
         { success: false, error: 'Role ID is required' },
@@ -52,7 +52,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin permissions
@@ -61,7 +61,7 @@ export async function PUT(
       return authError;
     }
 
-    const roleId = params.id;
+    const { id: roleId } = await params;
     if (!roleId) {
       return NextResponse.json(
         { success: false, error: 'Role ID is required' },
