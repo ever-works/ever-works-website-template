@@ -19,15 +19,12 @@ import { cn, getVideoEmbedUrl } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import InputLink from './input-link';
 import { useDetailForm } from '@/hooks/use-detail-form';
-import { useEditorFieldSync } from '@/hooks/use-editor-sync';
+import { useEditorFieldSync } from '@/lib/editor/hooks/use-editor-sync';
 import { Container } from '../ui/container';
 import { PricingSection } from '../pricing/pricing-section';
 import { Category, ItemData, Tag as TagType } from '@/lib/content';
-import { useEditor } from '@/hooks/use-editor';
-import { ToolbarContent } from '../editor/toolbar-content';
-import { Toolbar } from '../tiptap-ui-primitive/toolbar';
-import { useEditorToolbar } from '../editor/use-editor-toolbar';
-import { EditorContent } from '../editor/editor-content';
+import { useEditor } from '@/lib/editor/hooks/use-editor';
+import { EditorContent, Toolbar, ToolbarContent, useEditorToolbar } from '@/lib/editor';
 
 interface ProductLink {
 	id: string;

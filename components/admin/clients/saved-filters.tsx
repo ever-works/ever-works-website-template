@@ -75,19 +75,19 @@ import { useTranslations } from 'next-intl';
       setFilterDescription('');
       onClose();
       toast.success(t('SUCCESS.FILTER_SAVED'));
-    }, [filterName, filterDescription, currentFilters, onSaveFilter, onClose]);
+    }, [filterName, filterDescription, currentFilters, onSaveFilter, onClose, t]);
 
     const handleApplyFilter = useCallback((filter: SavedFilter) => {
       onApplyFilter(filter.filters);
       toast.success(t('SUCCESS.FILTER_APPLIED', { name: filter.name }));
-    }, [onApplyFilter]);
+    }, [onApplyFilter, t]);
 
     const handleDeleteFilter = useCallback((id: string, name: string) => {
       if (confirm(t('CONFIRM_DELETE', { name }))) {
         onDeleteFilter(id);
         toast.success(t('SUCCESS.FILTER_DELETED'));
       }
-    }, [onDeleteFilter]);
+    }, [onDeleteFilter, t]);
 
     return (
       <>
