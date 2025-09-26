@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { isAdminUser } from '@/lib/auth/admin-guard';
+import { checkAdminAuth } from '@/lib/auth/admin-guard';
 import { RoleDbService } from '@/lib/services/role-db.service';
 import { Permission, isValidPermission } from '@/lib/permissions/definitions';
 
@@ -11,12 +11,9 @@ export async function GET(
 ) {
   try {
     // Check admin permissions
-    const { success, error } = await isAdminUser();
-    if (!success) {
-      return NextResponse.json(
-        { success: false, error: error || 'Unauthorized' },
-        { status: 401 }
-      );
+    const authError = await checkAdminAuth();
+    if (authError) {
+      return authError;
     }
 
     const roleId = params.id;
@@ -59,12 +56,9 @@ export async function PUT(
 ) {
   try {
     // Check admin permissions
-    const { success, error } = await isAdminUser();
-    if (!success) {
-      return NextResponse.json(
-        { success: false, error: error || 'Unauthorized' },
-        { status: 401 }
-      );
+    const authError = await checkAdminAuth();
+    if (authError) {
+      return authError;
     }
 
     const roleId = params.id;
