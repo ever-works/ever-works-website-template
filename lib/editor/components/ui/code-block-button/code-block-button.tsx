@@ -6,7 +6,7 @@ import * as React from "react"
 import { useTiptapEditor } from "@/lib/editor/hooks/use-tiptap-editor"
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/lib/tiptap-utils"
+import { parseShortcutKeys } from "@/lib/editor/utils"
 
 // --- Tiptap UI ---
 import type { UseCodeBlockConfig } from "@/lib/editor/components/ui/code-block-button"

@@ -10,7 +10,7 @@ import {
 } from "@/lib/editor/components/primitive/tooltip"
 
 // --- Lib ---
-import { cn, parseShortcutKeys } from "@/lib/tiptap-utils"
+import { cn, parseShortcutKeys } from "@/lib/editor/utils"
 
 import "./button-colors.scss"
 import "./button-group.scss"

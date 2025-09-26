@@ -13,7 +13,7 @@ import {
   isNodeInSchema,
   isNodeTypeSelected,
   isValidPosition,
-} from "@/lib/tiptap-utils"
+} from "@/lib/editor/utils"
 
 // --- Icons ---
 import { HeadingOneIcon } from "@/lib/editor/components/icons/heading-one-icon"

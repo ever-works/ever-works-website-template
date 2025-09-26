@@ -7,7 +7,7 @@ import type { Editor } from "@tiptap/react"
 import { useTiptapEditor } from "@/lib/editor/hooks/use-tiptap-editor"
 
 // --- Lib ---
-import { isMarkInSchema, isNodeTypeSelected } from "@/lib/tiptap-utils"
+import { isMarkInSchema, isNodeTypeSelected } from "@/lib/editor/utils"
 
 // --- Icons ---
 import { BoldIcon } from "@/lib/editor/components/icons/bold-icon"

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
-import { cn } from "@/lib/tiptap-utils"
+import { cn } from "@/lib/editor/utils"
 import "./popover.scss"
 
 function Popover({

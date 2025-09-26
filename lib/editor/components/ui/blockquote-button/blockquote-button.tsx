@@ -13,7 +13,7 @@ import {
 import { useTiptapEditor } from "@/lib/editor/hooks/use-tiptap-editor"
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/lib/tiptap-utils"
+import { parseShortcutKeys } from "@/lib/editor/utils"
 
 // --- UI Primitives ---
 import type { ButtonProps } from "@/lib/editor/components/primitive/button"

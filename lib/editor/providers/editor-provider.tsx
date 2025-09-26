@@ -13,7 +13,7 @@ import {
 	Selection
 } from '@/lib/editor';
 import { Image } from '@tiptap/extension-image';
-import { cn, handleImageUpload, MAX_FILE_SIZE } from '@/lib/tiptap-utils';
+import { cn, handleImageUpload, MAX_FILE_SIZE } from '@/lib/editor/utils';
 import { ImageUploadNode } from '../components/node/image-upload-node';
 
 export const EditorContext = createContext<Editor | null>(null);

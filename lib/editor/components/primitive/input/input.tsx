@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { cn } from "@/lib/tiptap-utils"
+import { cn } from "@/lib/editor/utils"
 import "./input.scss"
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {

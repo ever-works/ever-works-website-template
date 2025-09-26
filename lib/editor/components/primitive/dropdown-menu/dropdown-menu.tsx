@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
-import { cn } from "@/lib/tiptap-utils"
+import { cn } from "@/lib/editor/utils"
 import "./dropdown-menu.scss"
 
 function DropdownMenu({

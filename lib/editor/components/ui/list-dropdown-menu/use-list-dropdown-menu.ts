@@ -12,7 +12,7 @@ import { ListOrderedIcon } from "@/lib/editor/components/icons/list-ordered-icon
 import { ListTodoIcon } from "@/lib/editor/components/icons/list-todo-icon"
 
 // --- Lib ---
-import { isNodeInSchema } from "@/lib/tiptap-utils"
+import { isNodeInSchema } from "@/lib/editor/utils"
 
 // --- Tiptap UI ---
 import {

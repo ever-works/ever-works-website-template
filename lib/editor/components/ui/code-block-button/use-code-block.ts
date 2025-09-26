@@ -13,7 +13,7 @@ import {
   isNodeInSchema,
   isNodeTypeSelected,
   isValidPosition,
-} from "@/lib/tiptap-utils"
+} from "@/lib/editor/utils"
 
 // --- Icons ---
 import { CodeBlockIcon } from "@/lib/editor/components/icons/code-block-icon"

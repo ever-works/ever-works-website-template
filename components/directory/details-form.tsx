@@ -540,8 +540,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 														toolbar={
 															<Toolbar
 																className="bg-gray-50/80 dark:bg-gray-900/50"
-																ref={toolbarRef}
-															>
+																ref={toolbarRef}>
 																<ToolbarContent editor={editor} />
 															</Toolbar>
 														}

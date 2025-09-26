@@ -10,7 +10,7 @@ import { useTiptapEditor } from "@/lib/editor/hooks/use-tiptap-editor"
 import { LinkIcon } from "@/lib/editor/components/icons/link-icon"
 
 // --- Lib ---
-import { isMarkInSchema, sanitizeUrl } from "@/lib/tiptap-utils"
+import { isMarkInSchema, sanitizeUrl } from "@/lib/editor/utils"
 
 /**
  * Configuration for the link popover functionality

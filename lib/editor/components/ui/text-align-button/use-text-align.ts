@@ -11,7 +11,7 @@ import { useTiptapEditor } from "@/lib/editor/hooks/use-tiptap-editor"
 import {
   isExtensionAvailable,
   isNodeTypeSelected,
-} from "@/lib/tiptap-utils"
+} from "@/lib/editor/utils"
 
 // --- Icons ---
 import { AlignCenterIcon } from "@/lib/editor/components/icons/align-center-icon"

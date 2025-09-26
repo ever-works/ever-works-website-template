@@ -9,7 +9,7 @@ import { useTiptapEditor } from "@/lib/editor/hooks/use-tiptap-editor"
 import { useIsMobile } from "@/hooks/use-mobile"
 
 // --- Lib ---
-import { isMarkInSchema, isNodeTypeSelected } from "@/lib/tiptap-utils"
+import { isMarkInSchema, isNodeTypeSelected } from "@/lib/editor/utils"
 
 // --- Icons ---
 import { HighlighterIcon } from "@/lib/editor/components/icons/highlighter-icon"

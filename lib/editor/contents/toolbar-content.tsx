@@ -32,14 +32,14 @@ export const ToolbarContent = React.memo(({ editor }: { editor: Editor | null })
 				{editor && (
 					<>
 						<HeadingDropdownMenu
-							className="key-selector"
+							className=""
 							key={editor?.state.selection.from}
 							levels={[1, 2, 3, 4]}
 							portal={true}
 							editor={editor}
 						/>
 						<ListDropdownMenu
-							className="key-selector"
+							className=""
 							key={editor.state.selection.from}
 							types={['bulletList', 'orderedList', 'taskList']}
 							portal={true}

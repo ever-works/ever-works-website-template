@@ -12,7 +12,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import {
   isExtensionAvailable,
   isNodeTypeSelected,
-} from "@/lib/tiptap-utils"
+} from "@/lib/editor/utils"
 
 // --- Icons ---
 import { ImagePlusIcon } from "@/lib/editor/components/icons/image-plus-icon"
