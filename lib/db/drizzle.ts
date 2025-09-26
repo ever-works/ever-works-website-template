@@ -34,8 +34,9 @@ function initializeDatabase(): ReturnType<typeof drizzle> {
       : postgres(process.env.DATABASE_URL, {
           max: poolSize,
           idle_timeout: 20,
-          connect_timeout: 10,
+          connect_timeout: 30, // Increased from 10 to 30 seconds
           prepare: false,
+          onnotice: process.env.NODE_ENV === 'development' ? console.log : undefined,
         });
     globalForDb.conn = conn;
     globalForDb.db = drizzle(conn, { schema });

@@ -143,7 +143,18 @@ export class RoleDbService {
       };
     } catch (error) {
       console.error('Error finding roles:', error);
-      throw new Error('Failed to retrieve roles');
+
+      // Provide more specific error messages for debugging
+      if (error && typeof error === 'object' && 'code' in error) {
+        const dbError = error as { code: string; message?: string };
+        if (dbError.code === 'CONNECT_TIMEOUT') {
+          throw new Error('Database connection timeout - please check your database connection');
+        } else if (dbError.code === 'ECONNREFUSED') {
+          throw new Error('Database connection refused - please ensure PostgreSQL is running');
+        }
+      }
+
+      throw new Error(`Failed to retrieve roles: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
