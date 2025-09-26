@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Search, Edit, Trash2, Shield, ShieldCheck, ChevronDown } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Shield, ShieldCheck, ChevronDown, Settings } from 'lucide-react';
 import { Button, Card, CardBody, Chip, useDisclosure } from '@heroui/react';
 import { RoleForm } from '@/components/admin/roles/role-form';
 import { DeleteRoleDialog } from '@/components/admin/roles/delete-role-dialog';
+import { RolePermissionsModal } from '@/components/admin/permissions/role-permissions-modal';
 import { useAdminRoles, RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/hooks/use-admin-roles';
+import { Permission } from '@/lib/permissions/definitions';
 import clsx from 'clsx';
 
 // CSS classes constants
@@ -88,6 +90,7 @@ export default function RolesPage() {
   // Local state for form and dialogs
   const [selectedRole, setSelectedRole] = useState<RoleData | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [roleTypeFilter, setRoleTypeFilter] = useState<'all' | 'admin' | 'client'>('all');
@@ -160,11 +163,33 @@ export default function RolesPage() {
     setIsDeleteDialogOpen(true);
   };
 
+  const openPermissionsModal = (role: RoleData) => {
+    setSelectedRole(role);
+    setIsPermissionsModalOpen(true);
+  };
+
+  const closePermissionsModal = () => {
+    setIsPermissionsModalOpen(false);
+    setSelectedRole(null);
+  };
+
   const handleFormSubmit = async (data: CreateRoleRequest | UpdateRoleRequest) => {
     if (formMode === 'create') {
       await handleCreateRole(data as CreateRoleRequest);
     } else {
       await handleUpdateRole(data as UpdateRoleRequest);
+    }
+  };
+
+  const handlePermissionsSave = async (roleId: string, permissions: Permission[]): Promise<boolean> => {
+    try {
+      // For now, we'll use the existing updateRole function
+      // This will be replaced with the proper permissions API in Step 6
+      const success = await updateRole(roleId, { permissions } as UpdateRoleRequest);
+      return success;
+    } catch (error) {
+      console.error('Failed to update permissions:', error);
+      return false;
     }
   };
 
@@ -475,7 +500,17 @@ export default function RolesPage() {
                           isIconOnly
                           size="sm"
                           variant="light"
+                          onPress={() => openPermissionsModal(role)}
+                          title="Manage Permissions"
+                        >
+                          <Settings className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
                           onPress={() => openEditForm(role)}
+                          title="Edit Role"
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
@@ -485,6 +520,7 @@ export default function RolesPage() {
                           variant="light"
                           color="danger"
                           onPress={() => openDeleteDialog(role)}
+                          title="Delete Role"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -553,6 +589,17 @@ export default function RolesPage() {
           onConfirm={handleDeleteRole}
           onCancel={handleDeleteCancel}
           isOpen={isDeleteDialogOpen}
+        />
+      )}
+
+      {/* Permissions Modal */}
+      {selectedRole && (
+        <RolePermissionsModal
+          role={selectedRole}
+          isOpen={isPermissionsModalOpen}
+          onClose={closePermissionsModal}
+          onSave={handlePermissionsSave}
+          isLoading={isSubmitting}
         />
       )}
     </div>
