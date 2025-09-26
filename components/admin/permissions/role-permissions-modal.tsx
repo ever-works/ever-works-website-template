@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Button, Input } from '@heroui/react';
 import { Save, X, Search, Shield, AlertCircle } from 'lucide-react';
 import clsx from 'clsx';
-import { useTranslations } from 'next-intl';
+// import { useTranslations } from 'next-intl';
 import { RoleData } from '@/hooks/use-admin-roles';
 import { Permission } from '@/lib/permissions/definitions';
 import { PERMISSION_GROUPS } from '@/lib/permissions/groups';
@@ -27,7 +27,8 @@ interface RolePermissionsModalProps {
 }
 
 const modalOverlayClasses = clsx(
-  'fixed inset-0 z-50 flex items-center justify-center'
+  'fixed inset-0 z-[9999] flex items-center justify-center',
+  'p-4 overflow-y-auto'
 );
 
 const modalBackdropClasses = clsx(
@@ -36,7 +37,9 @@ const modalBackdropClasses = clsx(
 
 const modalContainerClasses = clsx(
   'relative bg-white dark:bg-gray-900 rounded-lg shadow-xl',
-  'max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden'
+  'w-full max-w-4xl my-8 mx-auto',
+  'max-h-[calc(100vh-4rem)] overflow-hidden',
+  'flex flex-col'
 );
 
 const modalHeaderClasses = clsx(
@@ -50,7 +53,7 @@ const modalTitleClasses = clsx(
 );
 
 const modalBodyClasses = clsx(
-  'overflow-y-auto max-h-[calc(90vh-8rem)]'
+  'flex-1 overflow-y-auto min-h-0'
 );
 
 const searchSectionClasses = clsx(
@@ -83,7 +86,21 @@ export function RolePermissionsModal({
   onSave,
   isLoading = false
 }: RolePermissionsModalProps) {
-  const t = useTranslations('admin.ROLE_PERMISSIONS');
+  // const t = useTranslations('admin.ROLE_PERMISSIONS');
+
+  // Temporary static text - replace with translations later
+  const translations = {
+    TITLE: (roleName: string) => `Manage Permissions - ${roleName}`,
+    SUBTITLE: 'Configure role permissions and access levels',
+    SEARCH_PLACEHOLDER: 'Search permissions...',
+    CHANGES_SUMMARY: (added: number, removed: number) =>
+      `${added} permissions added, ${removed} permissions removed`,
+    NO_CHANGES: 'No changes made',
+    CANCEL: 'Cancel',
+    SAVE_PERMISSIONS: 'Save Permissions',
+    SAVING: 'Saving...',
+    CLOSE: 'Close',
+  };
 
   // State management
   const [permissionState, setPermissionState] = useState<PermissionState>({});
@@ -204,10 +221,10 @@ export function RolePermissionsModal({
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {t('TITLE', { roleName: role.name })}
+                {translations.TITLE(role.name)}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t('SUBTITLE')}
+                {translations.SUBTITLE}
               </p>
             </div>
           </div>
@@ -217,7 +234,7 @@ export function RolePermissionsModal({
               type="button"
               onClick={handleClose}
               className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
-              aria-label={t('CLOSE')}
+              aria-label={translations.CLOSE}
             >
               <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             </button>
@@ -229,7 +246,7 @@ export function RolePermissionsModal({
           {/* Search Section */}
           <div className={searchSectionClasses}>
             <Input
-              placeholder={t('SEARCH_PLACEHOLDER')}
+              placeholder={translations.SEARCH_PLACEHOLDER}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               startContent={<Search className="w-4 h-4 text-gray-400" />}
@@ -266,14 +283,11 @@ export function RolePermissionsModal({
               <div className="flex items-center space-x-2">
                 <AlertCircle className="w-4 h-4 text-amber-500" />
                 <span>
-                  {t('CHANGES_SUMMARY', {
-                    added: changes.added.length,
-                    removed: changes.removed.length
-                  })}
+                  {translations.CHANGES_SUMMARY(changes.added.length, changes.removed.length)}
                 </span>
               </div>
             ) : (
-              <span>{t('NO_CHANGES')}</span>
+              <span>{translations.NO_CHANGES}</span>
             )}
           </div>
 
@@ -284,7 +298,7 @@ export function RolePermissionsModal({
               disabled={isSubmitting}
               startContent={<X size={16} />}
             >
-              {t('CANCEL')}
+              {translations.CANCEL}
             </Button>
 
             <Button
@@ -300,7 +314,7 @@ export function RolePermissionsModal({
                 'transition-all duration-300 text-white font-medium'
               )}
             >
-              {isSubmitting ? t('SAVING') : t('SAVE_PERMISSIONS')}
+              {isSubmitting ? translations.SAVING : translations.SAVE_PERMISSIONS}
             </Button>
           </div>
         </div>

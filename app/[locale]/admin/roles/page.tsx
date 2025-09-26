@@ -85,6 +85,7 @@ export default function RolesPage() {
     updateRole,
     deleteRole,
     isSubmitting,
+    refreshData,
   } = useAdminRoles();
 
   // Local state for form and dialogs
