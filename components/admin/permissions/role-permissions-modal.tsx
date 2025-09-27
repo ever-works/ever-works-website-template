@@ -144,8 +144,8 @@ export function RolePermissionsModal({
   // Calculate button state inline to avoid render cycles
   const isButtonDisabled = useMemo(() => {
     const selectedPermissions = getSelectedPermissions(permissionState);
-    return arePermissionsEqual(rolePermissions || [], selectedPermissions) || isLoadingPermissions;
-  }, [permissionState, rolePermissions, isLoadingPermissions]);
+    return arePermissionsEqual(rolePermissions || [], selectedPermissions) || (isOpen && isLoadingPermissions);
+  }, [permissionState, rolePermissions, isLoadingPermissions, isOpen]);
 
   // Handle permission changes
   const handlePermissionChange = (permission: Permission, isSelected: boolean) => {
@@ -333,9 +333,9 @@ export function RolePermissionsModal({
             <Button
               color="primary"
               onPress={handleSave}
-              isLoading={isSubmitting || isLoadingPermissions}
+              isLoading={isSubmitting || (isOpen && isLoadingPermissions)}
               disabled={isButtonDisabled}
-              startContent={!isSubmitting && !isLoadingPermissions && <Save size={16} />}
+              startContent={!isSubmitting && !(isOpen && isLoadingPermissions) && <Save size={16} />}
               className={clsx(
                 'bg-gradient-to-r from-theme-primary to-theme-accent',
                 'hover:from-theme-primary/90 hover:to-theme-accent/90',
