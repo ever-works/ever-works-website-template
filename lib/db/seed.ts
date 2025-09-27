@@ -124,8 +124,8 @@ async function seedCoreRBAC() {
   const roleClientId = uuid();
 
   await db.insert(roles).values([
-    { id: roleAdminId, name: 'admin', description: 'Administrator', isAdmin: true, permissions: '[]' },
-    { id: roleClientId, name: 'client', description: 'Client user', isAdmin: false, permissions: '[]' }
+    { id: roleAdminId, name: 'admin', description: 'Administrator', isAdmin: true },
+    { id: roleClientId, name: 'client', description: 'Client user', isAdmin: false }
   ]);
 
   // Role-Permissions
