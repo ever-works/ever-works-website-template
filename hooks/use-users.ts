@@ -9,6 +9,12 @@ import {
   UserListResponse
 } from '@/lib/types/user';
 
+// Logger utility
+const logger = {
+  error: (message: string, error?: Error) =>
+    console.error(`[UserHooks] ${message}`, error || ''),
+};
+
 // API base URL
 const API_BASE = '/api/admin/users';
 
@@ -172,7 +178,7 @@ export function useCreateUser() {
       queryClient.invalidateQueries({ queryKey: userQueryKeys.stats() });
     },
     onError: (error) => {
-      console.error('Failed to create user:', error);
+      logger.error('Failed to create user:', error as Error);
     },
   });
 }
@@ -191,7 +197,7 @@ export function useUpdateUser() {
       queryClient.invalidateQueries({ queryKey: userQueryKeys.stats() });
     },
     onError: (error) => {
-      console.error('Failed to update user:', error);
+      logger.error('Failed to update user:', error as Error);
     },
   });
 }
@@ -209,7 +215,7 @@ export function useDeleteUser() {
       queryClient.invalidateQueries({ queryKey: userQueryKeys.stats() });
     },
     onError: (error) => {
-      console.error('Failed to delete user:', error);
+      logger.error('Failed to delete user:', error as Error);
     },
   });
 }
@@ -219,7 +225,7 @@ export function useCheckUsername() {
     mutationFn: ({ username, excludeId }: { username: string; excludeId?: string }) =>
       userApi.checkUsername(username, excludeId),
     onError: (error) => {
-      console.error('Failed to check username availability:', error);
+      logger.error('Failed to check username availability:', error as Error);
     },
   });
 }
@@ -229,7 +235,7 @@ export function useCheckEmail() {
     mutationFn: ({ email, excludeId }: { email: string; excludeId?: string }) =>
       userApi.checkEmail(email, excludeId),
     onError: (error) => {
-      console.error('Failed to check email availability:', error);
+      logger.error('Failed to check email availability:', error as Error);
     },
   });
 }

@@ -26,6 +26,10 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
   const updateUserMutation = useUpdateUser();
   const checkUsernameMutation = useCheckUsername();
   const checkEmailMutation = useCheckEmail();
+
+  // Get loading states from mutations
+  const isCreatingUser = createUserMutation.isPending;
+  const isUpdatingUser = updateUserMutation.isPending;
   const { roles, loading: rolesLoading, getActiveRoles } = useActiveRoles();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -245,7 +249,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
               onChange={(e) => handleInputChange('avatar', e.target.value)}
               className="w-full"
               variant="bordered"
-              disabled={isSubmittingForm}
+              disabled={isSubmittingForm || isCreatingUser || isUpdatingUser}
             />
           </div>
         </div>
@@ -258,7 +262,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             placeholder={t('FULL_NAME_PLACEHOLDER')}
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
-            disabled={isSubmittingForm}
+            disabled={isSubmittingForm || isCreatingUser || isUpdatingUser}
             required
             variant="bordered"
           />
@@ -270,7 +274,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
             placeholder={t('TITLE_PLACEHOLDER')}
             value={formData.title}
             onChange={(e) => handleInputChange('title', e.target.value)}
-            disabled={isSubmittingForm}
+            disabled={isSubmittingForm || isCreatingUser || isUpdatingUser}
             variant="bordered"
           />
         </div>
@@ -286,7 +290,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
               value={formData.username}
               onChange={(e) => handleInputChange('username', e.target.value)}
               className={getUsernameStatus() === 'unavailable' ? 'border-red-500' : ''}
-              disabled={isSubmittingForm}
+              disabled={isSubmittingForm || isCreatingUser || isUpdatingUser}
               required
               variant="bordered"
             />
@@ -311,7 +315,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               className={getEmailStatus() === 'unavailable' ? 'border-red-500' : ''}
-              disabled={isSubmittingForm}
+              disabled={isSubmittingForm || isCreatingUser || isUpdatingUser}
               required
               variant="bordered"
             />
@@ -340,7 +344,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
               onChange={(e) => handleInputChange('password', e.target.value)}
               required
               variant="bordered"
-              disabled={isSubmittingForm}
+              disabled={isSubmittingForm || isCreatingUser || isUpdatingUser}
             />
             <Button
               type="button"
@@ -396,7 +400,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
               value={formData.status}
               onChange={(e) => handleInputChange('status', e.target.value)}
               className={selectClasses}
-              disabled={isSubmittingForm}
+              disabled={isSubmittingForm || isCreatingUser || isUpdatingUser}
             >
               <option value="active">{t('ACTIVE')}</option>
               <option value="inactive">{t('INACTIVE')}</option>
@@ -411,7 +415,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
           <Button
             variant="bordered"
             onPress={onCancel}
-            disabled={isSubmitting || isSubmittingForm}
+            disabled={isSubmitting || isSubmittingForm || isCreatingUser || isUpdatingUser}
             className="px-4 py-2"
           >
 {t('CANCEL')}
@@ -420,10 +424,10 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
         <Button
           type="submit"
           color="primary"
-          disabled={isSubmitting || isSubmittingForm}
+          disabled={isSubmitting || isSubmittingForm || isCreatingUser || isUpdatingUser}
           className="px-4 py-2"
         >
-          {(isSubmitting || isSubmittingForm) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {(isSubmitting || isSubmittingForm || isCreatingUser || isUpdatingUser) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
 {isEditing ? t('UPDATE_USER') : t('CREATE_USER')}
         </Button>
       </div>
