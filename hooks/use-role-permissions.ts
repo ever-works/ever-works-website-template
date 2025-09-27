@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { apiClient } from '@/lib/api/api-client';
+import { apiClient, type RequestBody } from '@/lib/api/api-client';
 import { Permission } from '@/lib/permissions/definitions';
 
 interface RolePermissionsResponse {
@@ -43,7 +43,7 @@ const updateRolePermissions = async (
 ): Promise<UpdatePermissionsResponse> => {
   const response = await apiClient.put<UpdatePermissionsResponse>(
     `/api/admin/roles/${roleId}/permissions`,
-    data
+    data as unknown as RequestBody
   );
   return response;
 };

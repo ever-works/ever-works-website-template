@@ -13,9 +13,9 @@ import {
   getSelectedPermissions,
   calculatePermissionChanges,
   arePermissionsEqual,
-  filterPermissions,
   PermissionState
 } from '@/lib/permissions/utils';
+import { useRolePermissions } from '@/hooks/use-role-permissions';
 import { PermissionGroupComponent } from './permission-group';
 
 interface RolePermissionsModalProps {
@@ -83,10 +83,14 @@ export function RolePermissionsModal({
   role,
   isOpen,
   onClose,
-  onSave,
-  isLoading = false
+  onSave
 }: RolePermissionsModalProps) {
-  // const t = useTranslations('admin.ROLE_PERMISSIONS');
+  // Use the role permissions hook to get the latest permission data
+  const {
+    permissions: rolePermissions,
+    isLoading: isLoadingPermissions,
+    updatePermissions
+  } = useRolePermissions(role.id);
 
   // Temporary static text - replace with translations later
   const translations = {
@@ -108,12 +112,12 @@ export function RolePermissionsModal({
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(['content', 'users', 'system']));
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Initialize permission state when role changes
+  // Initialize permission state when role permissions change
   useEffect(() => {
-    if (role?.permissions) {
-      setPermissionState(createPermissionState(role.permissions));
+    if (rolePermissions && rolePermissions.length >= 0) {
+      setPermissionState(createPermissionState(rolePermissions));
     }
-  }, [role]);
+  }, [rolePermissions]);
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -130,12 +134,12 @@ export function RolePermissionsModal({
   );
 
   const changes = useMemo(() =>
-    calculatePermissionChanges(role?.permissions || [], currentPermissions),
-    [role?.permissions, currentPermissions]
+    calculatePermissionChanges(rolePermissions || [], currentPermissions),
+    [rolePermissions, currentPermissions]
   );
 
   const hasChanges = changes.added.length > 0 || changes.removed.length > 0;
-  const isUnchanged = arePermissionsEqual(role?.permissions || [], currentPermissions);
+  const isUnchanged = arePermissionsEqual(rolePermissions || [], currentPermissions);
 
   // Handle permission changes
   const handlePermissionChange = (permission: Permission, isSelected: boolean) => {
@@ -164,8 +168,10 @@ export function RolePermissionsModal({
 
     setIsSubmitting(true);
     try {
-      const success = await onSave(role.id, currentPermissions);
+      const success = await updatePermissions(currentPermissions);
       if (success) {
+        // Also call the external onSave if provided (for parent component updates)
+        await onSave(role.id, currentPermissions);
         onClose();
       }
     } finally {
@@ -304,9 +310,9 @@ export function RolePermissionsModal({
             <Button
               color="primary"
               onPress={handleSave}
-              isLoading={isSubmitting}
-              disabled={isUnchanged}
-              startContent={!isSubmitting && <Save size={16} />}
+              isLoading={isSubmitting || isLoadingPermissions}
+              disabled={isUnchanged || isLoadingPermissions}
+              startContent={!isSubmitting && !isLoadingPermissions && <Save size={16} />}
               className={clsx(
                 'bg-gradient-to-r from-theme-primary to-theme-accent',
                 'hover:from-theme-primary/90 hover:to-theme-accent/90',

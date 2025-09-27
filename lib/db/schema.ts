@@ -34,7 +34,6 @@ export const roles = pgTable("roles", {
   description: text("description"),
   isAdmin: boolean("is_admin").notNull().default(false),
   status: text("status", { enum: ["active", "inactive"] }).default("active"),
-  permissions: text("permissions").notNull(), // JSON string
   created_by: text("created_by").default("system"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),

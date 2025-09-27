@@ -59,7 +59,6 @@ async function main() {
         name: 'admin',
         description: 'Administrator role',
         status: 'active',
-        permissions: JSON.stringify(['*']),
         isAdmin: true,
         created_by: 'system'
       },
@@ -68,7 +67,6 @@ async function main() {
         name: 'user',
         description: 'Standard user role',
         status: 'active',
-        permissions: JSON.stringify(['read']),
         isAdmin: false,
         created_by: 'system'
       }

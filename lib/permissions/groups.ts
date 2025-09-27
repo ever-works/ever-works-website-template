@@ -1,4 +1,4 @@
-import { PERMISSIONS, Permission, getPermissionsForResource } from './definitions';
+import { Permission, getPermissionsForResource } from './definitions';
 
 // Permission group definitions for UI organization
 export interface PermissionGroup {

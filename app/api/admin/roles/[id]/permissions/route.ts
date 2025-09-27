@@ -117,6 +117,7 @@ export async function PUT(
 
     // Update role permissions
     const updatedRole = await roleService.updateRole(roleId, {
+      id: roleId,
       permissions: permissions as Permission[]
     });
 
