@@ -125,7 +125,7 @@ export function useAdminItems(params: ItemsListParams = {}) {
     queryFn: () => fetchItems(params),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
-    refetchInterval: 30 * 1000, // 30 seconds
+    refetchInterval: 5 * 60 * 1000, // 5 minutes - reduced from 30 seconds
     retry: 3,
   });
 

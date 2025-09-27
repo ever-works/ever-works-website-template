@@ -63,7 +63,7 @@ export function useFeaturedItems() {
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
-    refetchInterval: 60 * 1000, // Refetch every minute
+    refetchInterval: 10 * 60 * 1000, // 10 minutes - reduced from 1 minute
     retry: 3,
   });
 

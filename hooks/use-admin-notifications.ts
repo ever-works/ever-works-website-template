@@ -109,10 +109,10 @@ export function useAdminNotifications() {
     queryKey: NOTIFICATION_KEYS.lists(),
     queryFn: notificationApi.fetchNotifications,
     enabled: !!session?.user?.id,
-    refetchInterval: 30000, 
-    refetchIntervalInBackground: true,
-    staleTime: 10000, 
-    gcTime: 5 * 60 * 1000,
+    refetchInterval: 5 * 60 * 1000, // 5 minutes instead of 30 seconds
+    refetchIntervalInBackground: false, // Don't poll in background
+    staleTime: 2 * 60 * 1000, // 2 minutes instead of 10 seconds
+    gcTime: 10 * 60 * 1000, // Increased garbage collection time
   });
 
   const markAsReadMutation = useMutation({

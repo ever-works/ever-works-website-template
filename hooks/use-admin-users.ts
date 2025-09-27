@@ -232,7 +232,7 @@ export function useAdminUsers(options: UseAdminUsersOptions = {}): UseAdminUsers
     }),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
-    refetchInterval: 30 * 1000, // Refetch every 30 seconds
+    refetchInterval: 5 * 60 * 1000, // 5 minutes - reduced from 30 seconds
     retry: 3,
   });
 
@@ -244,7 +244,7 @@ export function useAdminUsers(options: UseAdminUsersOptions = {}): UseAdminUsers
     queryFn: fetchUsersStats,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
-    refetchInterval: 60 * 1000, // Refetch every minute
+    refetchInterval: 5 * 60 * 1000, // 5 minutes - reduced from 1 minute
     retry: 3,
   });
 

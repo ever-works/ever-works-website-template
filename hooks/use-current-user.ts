@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { User } from 'next-auth';
 
 export const CURRENT_USER_QUERY_KEY = ['auth-session'] as const;
-const STALE_TIME = 5 * 60 * 1000;
+const STALE_TIME = 10 * 60 * 1000; // Increased from 5min to 10min for session data
 const GC_TIME = 30 * 60 * 1000;
 
 interface UseCurrentUserError {
@@ -59,6 +59,8 @@ export function useCurrentUser() {
 		},
 		staleTime: STALE_TIME,
 		gcTime: GC_TIME,
+		refetchOnWindowFocus: false, // Don't refetch on window focus for session data
+		refetchOnMount: false, // Don't refetch if cache is fresh
 		retry: (failureCount, error) => {
 			// Don't retry authentication errors
 			if (error.status === 401 || error.status === 403) {
@@ -70,8 +72,8 @@ export function useCurrentUser() {
 				return false;
 			}
 
-			// Retry network errors and server errors up to 3 times
-			return failureCount < 3;
+			// Retry network errors and server errors up to 2 times (reduced from 3)
+			return failureCount < 2;
 		}
 	});
 
