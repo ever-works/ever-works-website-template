@@ -41,6 +41,7 @@ import {
   paymentAccounts,
   paymentProviders
 } from './schema';
+import { getAllPermissions } from '../permissions/definitions';
 import { sql } from 'drizzle-orm';
 
 // Global database connection - will be initialized after environment loading
@@ -108,16 +109,18 @@ async function seedCoreRBAC() {
     console.log('Skipping RBAC seed (permissions/roles tables missing)');
     return { roleAdminId: '', roleClientId: '' };
   }
-  // Permissions
-  const permManageUsersId = uuid();
-  const permViewAnalyticsId = uuid();
-  const permManageContentId = uuid();
 
-  await db.insert(permissions).values([
-    { id: permManageUsersId, key: 'manage_users', description: 'Create, update, delete users' },
-    { id: permViewAnalyticsId, key: 'view_analytics', description: 'View analytics dashboards' },
-    { id: permManageContentId, key: 'manage_content', description: 'Manage site content' }
-  ]);
+  // Get all available permissions from definitions
+  const allPermissions = getAllPermissions();
+
+  // Create permission records with UUIDs
+  const permissionRecords = allPermissions.map(permission => ({
+    id: uuid(),
+    key: permission,
+    description: permission.replace(':', ' ').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()
+  }));
+
+  await db.insert(permissions).values(permissionRecords);
 
   // Roles
   const roleAdminId = uuid();
@@ -128,13 +131,14 @@ async function seedCoreRBAC() {
     { id: roleClientId, name: 'client', description: 'Client user', isAdmin: false }
   ]);
 
-  // Role-Permissions
+  // Role-Permissions: Give admin role ALL permissions
   if (hasRolePermissions) {
-    await db.insert(rolePermissions).values([
-      { roleId: roleAdminId, permissionId: permManageUsersId },
-      { roleId: roleAdminId, permissionId: permViewAnalyticsId },
-      { roleId: roleAdminId, permissionId: permManageContentId }
-    ]);
+    const adminRolePermissions = permissionRecords.map(perm => ({
+      roleId: roleAdminId,
+      permissionId: perm.id
+    }));
+
+    await db.insert(rolePermissions).values(adminRolePermissions);
   }
 
   return { roleAdminId, roleClientId };

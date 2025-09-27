@@ -91,7 +91,7 @@ export function RolePermissionsModal({
     permissions: rolePermissions,
     isLoading: isLoadingPermissions,
     updatePermissions
-  } = useRolePermissions(isOpen ? role.id : '');
+  } = useRolePermissions(role?.id || '', isOpen && !!role?.id);
 
   // Temporary static text - replace with translations later
   const translations = {

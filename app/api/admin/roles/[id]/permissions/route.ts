@@ -34,12 +34,14 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      permissions: role.permissions || [],
-      role: {
-        id: role.id,
-        name: role.name,
-        description: role.description,
-      },
+      data: {
+        permissions: role.permissions || [],
+        role: {
+          id: role.id,
+          name: role.name,
+          description: role.description,
+        },
+      }
     });
   } catch (error) {
     console.error('Error fetching role permissions:', error);
@@ -123,13 +125,15 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      message: 'Permissions updated successfully',
-      role: {
-        id: updatedRole.id,
-        name: updatedRole.name,
-        description: updatedRole.description,
-        permissions: updatedRole.permissions,
-      },
+      data: {
+        message: 'Permissions updated successfully',
+        role: {
+          id: updatedRole.id,
+          name: updatedRole.name,
+          description: updatedRole.description,
+          permissions: updatedRole.permissions,
+        },
+      }
     });
   } catch (error) {
     console.error('Error updating role permissions:', error);

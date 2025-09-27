@@ -143,13 +143,26 @@ export class RoleDbService {
       if (data.status !== undefined) updateData.status = data.status;
       if (data.isAdmin !== undefined) updateData.isAdmin = data.isAdmin;
 
-      const result = await db.update(roles)
-        .set(updateData)
-        .where(eq(roles.id, id))
-        .returning();
+      let roleRecord;
 
-      if (result.length === 0) {
-        throw new Error(`Role with ID '${id}' not found`);
+      // Only update the roles table if there are actual role fields to update
+      if (Object.keys(updateData).length > 0) {
+        const result = await db.update(roles)
+          .set(updateData)
+          .where(eq(roles.id, id))
+          .returning();
+
+        if (result.length === 0) {
+          throw new Error(`Role with ID '${id}' not found`);
+        }
+        roleRecord = result[0];
+      } else {
+        // If no role fields to update, just get the existing role
+        const existingRoles = await db.select().from(roles).where(eq(roles.id, id));
+        if (existingRoles.length === 0) {
+          throw new Error(`Role with ID '${id}' not found`);
+        }
+        roleRecord = existingRoles[0];
       }
 
       // Update permissions if provided
@@ -159,7 +172,7 @@ export class RoleDbService {
 
       // Get updated permissions to return complete role data
       const updatedPermissions = await this.getRolePermissions(id);
-      return this.mapDbToRoleData(result[0], updatedPermissions);
+      return this.mapDbToRoleData(roleRecord, updatedPermissions);
     } catch (error) {
       console.error('Error updating role:', error);
       throw error;
