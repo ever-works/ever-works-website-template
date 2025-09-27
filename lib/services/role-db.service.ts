@@ -1,6 +1,6 @@
 import { db } from '@/lib/db/drizzle';
 import { roles, permissions, rolePermissions } from '@/lib/db/schema';
-import { eq, desc, asc, sql, isNull, and, SQL } from 'drizzle-orm';
+import { eq, desc, asc, sql, isNull, and, SQL, inArray } from 'drizzle-orm';
 import { RoleData, CreateRoleRequest, UpdateRoleRequest, RoleStatus, RoleListOptions } from '@/lib/types/role';
 import { Permission } from '@/lib/permissions/definitions';
 
@@ -24,25 +24,26 @@ export class RoleDbService {
     if (roleIds && roleIds.length > 0) {
       roleQuery = db.select().from(roles).where(and(
         isNull(roles.deletedAt),
-        sql`${roles.id} = ANY(${roleIds})`
+        inArray(roles.id, roleIds)
       ));
     }
 
     const rolesResult = await roleQuery;
 
     // Get permissions for all roles in a single query
-    const rolePermissionsResult = await db
-      .select({
-        roleId: rolePermissions.roleId,
-        permissionKey: permissions.key
-      })
-      .from(rolePermissions)
-      .innerJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
-      .where(
-        roleIds && roleIds.length > 0
-          ? sql`${rolePermissions.roleId} = ANY(${roleIds})`
-          : undefined
-      );
+    const allRoleIds = roleIds && roleIds.length > 0 ? roleIds : rolesResult.map(r => r.id);
+    let rolePermissionsResult: { roleId: string; permissionKey: string }[] = [];
+
+    if (allRoleIds.length > 0) {
+      rolePermissionsResult = await db
+        .select({
+          roleId: rolePermissions.roleId,
+          permissionKey: permissions.key
+        })
+        .from(rolePermissions)
+        .innerJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
+        .where(inArray(rolePermissions.roleId, allRoleIds));
+    }
 
     // Group permissions by role
     const permissionsByRole = rolePermissionsResult.reduce((acc, rp) => {
@@ -68,7 +69,7 @@ export class RoleDbService {
       const permissionRecords = await db
         .select({ id: permissions.id, key: permissions.key })
         .from(permissions)
-        .where(sql`${permissions.key} = ANY(${newPermissions})`);
+        .where(inArray(permissions.key, newPermissions));
 
       // Create role-permission associations
       const rolePermissionData = permissionRecords.map(perm => ({
@@ -225,14 +226,18 @@ export class RoleDbService {
 
       // Get permissions for the returned roles
       const roleIds = result.map(role => role.id);
-      const rolePermissionsResult = await db
-        .select({
-          roleId: rolePermissions.roleId,
-          permissionKey: permissions.key
-        })
-        .from(rolePermissions)
-        .innerJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
-        .where(sql`${rolePermissions.roleId} = ANY(${roleIds})`);
+      let rolePermissionsResult: { roleId: string; permissionKey: string }[] = [];
+
+      if (roleIds.length > 0) {
+        rolePermissionsResult = await db
+          .select({
+            roleId: rolePermissions.roleId,
+            permissionKey: permissions.key
+          })
+          .from(rolePermissions)
+          .innerJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
+          .where(inArray(rolePermissions.roleId, roleIds));
+      }
 
       // Group permissions by role
       const permissionsByRole = rolePermissionsResult.reduce((acc, rp) => {

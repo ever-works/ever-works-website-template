@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Button, Input } from '@heroui/react';
 import { Save, X, Search, Shield, AlertCircle } from 'lucide-react';
 import clsx from 'clsx';
@@ -86,11 +86,12 @@ export function RolePermissionsModal({
   onSave
 }: RolePermissionsModalProps) {
   // Use the role permissions hook to get the latest permission data
+  // Only fetch when modal is open to prevent unnecessary queries
   const {
     permissions: rolePermissions,
     isLoading: isLoadingPermissions,
     updatePermissions
-  } = useRolePermissions(role.id);
+  } = useRolePermissions(isOpen ? role.id : '');
 
   // Temporary static text - replace with translations later
   const translations = {
@@ -112,34 +113,39 @@ export function RolePermissionsModal({
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(['content', 'users', 'system']));
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Initialize permission state when role permissions change
+  // Track last processed permissions to avoid infinite re-renders
+  const lastProcessedPermissions = useRef<Permission[]>([]);
+
+  // Initialize permission state when role permissions actually change and modal is open
   useEffect(() => {
-    if (rolePermissions && rolePermissions.length >= 0) {
-      setPermissionState(createPermissionState(rolePermissions));
+    if (isOpen && rolePermissions) {
+      // Compare arrays by content, not reference
+      const permissionsChanged =
+        lastProcessedPermissions.current.length !== rolePermissions.length ||
+        !arePermissionsEqual(lastProcessedPermissions.current, rolePermissions);
+
+      if (permissionsChanged) {
+        lastProcessedPermissions.current = [...rolePermissions];
+        setPermissionState(createPermissionState(rolePermissions));
+      }
     }
-  }, [rolePermissions]);
+  }, [rolePermissions, isOpen]);
 
   // Reset state when modal opens/closes
   useEffect(() => {
     if (isOpen) {
       setSearchTerm('');
       setExpandedGroups(new Set(['content', 'users', 'system']));
+      // Reset permissions tracking when modal reopens
+      lastProcessedPermissions.current = [];
     }
   }, [isOpen]);
 
-  // Calculate current permissions and changes
-  const currentPermissions = useMemo(() =>
-    getSelectedPermissions(permissionState),
-    [permissionState]
-  );
-
-  const changes = useMemo(() =>
-    calculatePermissionChanges(rolePermissions || [], currentPermissions),
-    [rolePermissions, currentPermissions]
-  );
-
-  const hasChanges = changes.added.length > 0 || changes.removed.length > 0;
-  const isUnchanged = arePermissionsEqual(rolePermissions || [], currentPermissions);
+  // Calculate button state inline to avoid render cycles
+  const isButtonDisabled = useMemo(() => {
+    const selectedPermissions = getSelectedPermissions(permissionState);
+    return arePermissionsEqual(rolePermissions || [], selectedPermissions) || isLoadingPermissions;
+  }, [permissionState, rolePermissions, isLoadingPermissions]);
 
   // Handle permission changes
   const handlePermissionChange = (permission: Permission, isSelected: boolean) => {
@@ -163,48 +169,59 @@ export function RolePermissionsModal({
   };
 
   // Handle save
-  const handleSave = async () => {
-    if (!role || isUnchanged || isSubmitting) return;
+  const handleSave = useCallback(async () => {
+    if (!role || isSubmitting) return;
+
+    const selectedPermissions = getSelectedPermissions(permissionState);
+    const unchanged = arePermissionsEqual(rolePermissions || [], selectedPermissions);
+
+    if (unchanged) return;
 
     setIsSubmitting(true);
     try {
-      const success = await updatePermissions(currentPermissions);
+      const success = await updatePermissions(selectedPermissions);
       if (success) {
         // Also call the external onSave if provided (for parent component updates)
-        await onSave(role.id, currentPermissions);
+        await onSave(role.id, selectedPermissions);
         onClose();
       }
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [role, isSubmitting, permissionState, rolePermissions, updatePermissions, onSave, onClose]);
 
   // Handle close with confirmation if there are unsaved changes
-  const handleClose = () => {
-    if (hasChanges && !isSubmitting) {
+  const handleClose = useCallback(() => {
+    if (isSubmitting) return;
+
+    const selectedPermissions = getSelectedPermissions(permissionState);
+    const unchanged = arePermissionsEqual(rolePermissions || [], selectedPermissions);
+    const hasUnsavedChanges = !unchanged;
+
+    if (hasUnsavedChanges) {
       const confirmClose = window.confirm(
         'You have unsaved changes. Are you sure you want to close?'
       );
       if (!confirmClose) return;
     }
     onClose();
-  };
+  }, [isSubmitting, permissionState, rolePermissions, onClose]);
 
   // Handle keyboard shortcuts
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isOpen) return;
+    if (!isOpen) return;
 
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !isSubmitting) {
         handleClose();
-      } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && hasChanges && !isUnchanged) {
+      } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
         handleSave();
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, isSubmitting, hasChanges, isUnchanged]);
+  }, [isOpen, handleClose, handleSave, isSubmitting]);
 
   if (!isOpen || !role) return null;
 
@@ -285,16 +302,22 @@ export function RolePermissionsModal({
         {/* Footer */}
         <div className={modalFooterClasses}>
           <div className={changesSummaryClasses}>
-            {hasChanges ? (
-              <div className="flex items-center space-x-2">
-                <AlertCircle className="w-4 h-4 text-amber-500" />
-                <span>
-                  {translations.CHANGES_SUMMARY(changes.added.length, changes.removed.length)}
-                </span>
-              </div>
-            ) : (
-              <span>{translations.NO_CHANGES}</span>
-            )}
+            {(() => {
+              const selectedPermissions = getSelectedPermissions(permissionState);
+              const changes = calculatePermissionChanges(rolePermissions || [], selectedPermissions);
+              const hasChanges = changes.added.length > 0 || changes.removed.length > 0;
+
+              return hasChanges ? (
+                <div className="flex items-center space-x-2">
+                  <AlertCircle className="w-4 h-4 text-amber-500" />
+                  <span>
+                    {translations.CHANGES_SUMMARY(changes.added.length, changes.removed.length)}
+                  </span>
+                </div>
+              ) : (
+                <span>{translations.NO_CHANGES}</span>
+              );
+            })()}
           </div>
 
           <div className={actionButtonsClasses}>
@@ -311,7 +334,7 @@ export function RolePermissionsModal({
               color="primary"
               onPress={handleSave}
               isLoading={isSubmitting || isLoadingPermissions}
-              disabled={isUnchanged || isLoadingPermissions}
+              disabled={isButtonDisabled}
               startContent={!isSubmitting && !isLoadingPermissions && <Save size={16} />}
               className={clsx(
                 'bg-gradient-to-r from-theme-primary to-theme-accent',
