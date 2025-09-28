@@ -35,7 +35,7 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      item,
+      data: item,
     });
 
   } catch (error) {
@@ -79,7 +79,7 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      item,
+      data: item,
       message: "Item updated successfully",
     });
 

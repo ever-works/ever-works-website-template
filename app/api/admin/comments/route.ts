@@ -34,7 +34,7 @@ export async function GET(request: Request) {
 
     const session = await auth();
     if (!session?.user?.isAdmin) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -120,15 +120,20 @@ export async function GET(request: Request) {
     }));
 
     return NextResponse.json({
-      comments: data,
-      total,
-      page,
-      limit,
-      totalPages: Math.max(1, Math.ceil(total / limit)),
+      success: true,
+      data: {
+        comments: data,
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages: Math.max(1, Math.ceil(total / limit)),
+        }
+      }
     });
   } catch (error) {
     console.error("Failed to list comments:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Internal Server Error" }, { status: 500 });
   }
 }
 

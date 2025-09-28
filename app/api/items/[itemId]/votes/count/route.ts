@@ -8,11 +8,14 @@ export async function GET(
   try {
     const { itemId } = await context.params;
     const count = await getVoteCountForItem(itemId);
-    return NextResponse.json({ count });
+    return NextResponse.json({
+      success: true,
+      count
+    });
   } catch (error) {
     console.error('Error fetching vote count:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch vote count' },
+      { success: false, error: 'Failed to fetch vote count' },
       { status: 500 }
     );
   }

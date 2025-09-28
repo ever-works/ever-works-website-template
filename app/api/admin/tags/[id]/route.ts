@@ -11,7 +11,7 @@ export async function GET(
     // Check admin authentication
     const session = await auth();
     if (!session?.user?.isAdmin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -19,16 +19,16 @@ export async function GET(
     
     if (!tag) {
       return NextResponse.json(
-        { error: 'Tag not found' },
+        { success: false, error: 'Tag not found' },
         { status: 404 }
       );
     }
     
-    return NextResponse.json({ success: true, tag });
+    return NextResponse.json({ success: true, data: tag });
   } catch (error) {
     console.error('Error fetching tag:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch tag' },
+      { success: false, error: 'Failed to fetch tag' },
       { status: 500 }
     );
   }
@@ -42,7 +42,7 @@ export async function PUT(
     // Check admin authentication
     const session = await auth();
     if (!session?.user?.isAdmin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -63,33 +63,33 @@ export async function PUT(
 
     const tag = await tagRepository.update(id, updateData);
     
-    return NextResponse.json({ success: true, tag });
+    return NextResponse.json({ success: true, data: tag, message: 'Tag updated successfully' });
   } catch (error) {
     console.error('Error updating tag:', error);
     
     if (error instanceof Error) {
       if (error.message.includes('not found')) {
         return NextResponse.json(
-          { error: error.message },
+          { success: false, error: error.message },
           { status: 404 }
         );
       }
       if (error.message.includes('already exists')) {
         return NextResponse.json(
-          { error: error.message },
+          { success: false, error: error.message },
           { status: 409 }
         );
       }
       if (error.message.includes('required') || error.message.includes('must be')) {
         return NextResponse.json(
-          { error: error.message },
+          { success: false, error: error.message },
           { status: 400 }
         );
       }
     }
     
     return NextResponse.json(
-      { error: 'Failed to update tag' },
+      { success: false, error: 'Failed to update tag' },
       { status: 500 }
     );
   }
@@ -103,25 +103,25 @@ export async function DELETE(
     // Check admin authentication
     const session = await auth();
     if (!session?.user?.isAdmin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
     await tagRepository.delete(id);
     
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, message: 'Tag deleted successfully' });
   } catch (error) {
     console.error('Error deleting tag:', error);
     
     if (error instanceof Error && error.message.includes('not found')) {
       return NextResponse.json(
-        { error: error.message },
+        { success: false, error: error.message },
         { status: 404 }
       );
     }
     
     return NextResponse.json(
-      { error: 'Failed to delete tag' },
+      { success: false, error: 'Failed to delete tag' },
       { status: 500 }
     );
   }

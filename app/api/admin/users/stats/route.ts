@@ -21,7 +21,7 @@ export async function GET() {
   } catch (error) {
     console.error('Error in GET /api/admin/users/stats:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { success: false, error: 'Internal server error' },
       { status: 500 }
     );
   }

@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const session = await auth();
     if (!session?.user?.isAdmin) {
       return NextResponse.json(
-        { error: "Unauthorized. Admin access required." },
+        { success: false, error: "Unauthorized. Admin access required." },
         { status: 401 }
       );
     }
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session?.user?.isAdmin) {
       return NextResponse.json(
-        { error: "Unauthorized. Admin access required." },
+        { success: false, error: "Unauthorized. Admin access required." },
         { status: 401 }
       );
     }

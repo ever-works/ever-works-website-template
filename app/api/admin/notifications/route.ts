@@ -2,18 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { db } from '@/lib/db/drizzle';
 import { notifications } from '@/lib/db/schema';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, count } from 'drizzle-orm';
 import { auth } from '@/lib/auth';
 
 export async function GET() {
 	try {
 		const session = await auth();
 		if (!session?.user?.id) {
-			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+			return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 		}
 		const isAdmin = session.user.isAdmin;
 		if (!isAdmin) {
-			return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+			return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
 		}
 
 		// Get notifications for the admin user
@@ -24,18 +24,21 @@ export async function GET() {
 			.orderBy(desc(notifications.createdAt))
 			.limit(50);
 
-		const unreadCount = await db
-			.select({ count: notifications.id })
+		const unreadCountResult = await db
+			.select({ count: count() })
 			.from(notifications)
 			.where(and(eq(notifications.userId, session.user.id), eq(notifications.isRead, false)));
 
 		return NextResponse.json({
-			notifications: userNotifications,
-			unreadCount: unreadCount.length
+			success: true,
+			data: {
+				notifications: userNotifications,
+				unreadCount: unreadCountResult[0]?.count || 0
+			}
 		});
 	} catch (error) {
 		console.error('Error fetching notifications:', error);
-		return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+		return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
 	}
 }
 
@@ -43,13 +46,13 @@ export async function POST(request: NextRequest) {
 	try {
 		const session = await auth();
 		if (!session?.user?.id) {
-			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+			return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 		}
 		const body = await request.json();
 		const { type, title, message, data, userId } = body;
 
 		if (!type || !title || !message || !userId) {
-			return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+			return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 });
 		}
 		const newNotification = await db
 			.insert(notifications)
@@ -68,6 +71,6 @@ export async function POST(request: NextRequest) {
 		});
 	} catch (error) {
 		console.error('Error creating notification:', error);
-		return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+		return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
 	}
 }

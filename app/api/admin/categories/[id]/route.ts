@@ -19,7 +19,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const session = await auth();
     if (!session?.user?.isAdmin) {
       return NextResponse.json(
-        { error: "Unauthorized. Admin access required." },
+        { success: false, error: "Unauthorized. Admin access required." },
         { status: 401 }
       );
     }
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({
       success: true,
-      category,
+      data: category,
     });
 
   } catch (error) {
@@ -63,7 +63,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const session = await auth();
     if (!session?.user?.isAdmin) {
       return NextResponse.json(
-        { error: "Unauthorized. Admin access required." },
+        { success: false, error: "Unauthorized. Admin access required." },
         { status: 401 }
       );
     }
@@ -82,7 +82,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({
       success: true,
-      category: updatedCategory,
+      data: updatedCategory,
       message: "Category updated successfully",
     });
 
@@ -132,7 +132,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const session = await auth();
     if (!session?.user?.isAdmin) {
       return NextResponse.json(
-        { error: "Unauthorized. Admin access required." },
+        { success: false, error: "Unauthorized. Admin access required." },
         { status: 401 }
       );
     }

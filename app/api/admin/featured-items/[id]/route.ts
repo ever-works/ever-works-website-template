@@ -13,7 +13,7 @@ export async function GET(
     const session = await auth();
     
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -25,7 +25,7 @@ export async function GET(
 
     if (featuredItem.length === 0) {
       return NextResponse.json(
-        { error: 'Featured item not found' },
+        { success: false, error: 'Featured item not found' },
         { status: 404 }
       );
     }
@@ -37,7 +37,7 @@ export async function GET(
   } catch (error) {
     console.error('Error fetching featured item:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch featured item' },
+      { success: false, error: 'Failed to fetch featured item' },
       { status: 500 }
     );
   }
@@ -52,7 +52,7 @@ export async function PUT(
     const session = await auth();
     
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -85,7 +85,7 @@ export async function PUT(
 
     if (updatedItem.length === 0) {
       return NextResponse.json(
-        { error: 'Featured item not found' },
+        { success: false, error: 'Featured item not found' },
         { status: 404 }
       );
     }
@@ -98,7 +98,7 @@ export async function PUT(
   } catch (error) {
     console.error('Error updating featured item:', error);
     return NextResponse.json(
-      { error: 'Failed to update featured item' },
+      { success: false, error: 'Failed to update featured item' },
       { status: 500 }
     );
   }
@@ -113,7 +113,7 @@ export async function DELETE(
     const session = await auth();
     
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -129,7 +129,7 @@ export async function DELETE(
 
     if (updatedItem.length === 0) {
       return NextResponse.json(
-        { error: 'Featured item not found' },
+        { success: false, error: 'Featured item not found' },
         { status: 404 }
       );
     }
@@ -141,7 +141,7 @@ export async function DELETE(
   } catch (error) {
     console.error('Error removing featured item:', error);
     return NextResponse.json(
-      { error: 'Failed to remove featured item' },
+      { success: false, error: 'Failed to remove featured item' },
       { status: 500 }
     );
   }

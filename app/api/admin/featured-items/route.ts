@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/drizzle';
 import { featuredItems } from '@/lib/db/schema';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, desc, and, count } from 'drizzle-orm';
 
 // GET /api/admin/featured-items - Get all featured items
 export async function GET(request: NextRequest) {
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     const session = await auth();
     
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -37,11 +37,11 @@ export async function GET(request: NextRequest) {
 
     // Get total count
     const totalResult = await db
-      .select({ count: featuredItems.id })
+      .select({ count: count() })
       .from(featuredItems)
       .where(conditions.length > 0 ? and(...conditions) : undefined);
 
-    const total = totalResult.length;
+    const total = totalResult[0]?.count || 0;
     const totalPages = Math.ceil(total / limit);
 
     return NextResponse.json({
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error fetching featured items:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch featured items' },
+      { success: false, error: 'Failed to fetch featured items' },
       { status: 500 }
     );
   }
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
 
     if (!itemSlug || !itemName) {
       return NextResponse.json(
-        { error: 'Item slug and name are required' },
+        { success: false, error: 'Item slug and name are required' },
         { status: 400 }
       );
     }
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
 
     if (existingFeatured.length > 0) {
       return NextResponse.json(
-        { error: 'Item is already featured' },
+        { success: false, error: 'Item is already featured' },
         { status: 400 }
       );
     }
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating featured item:', error);
     return NextResponse.json(
-      { error: 'Failed to create featured item' },
+      { success: false, error: 'Failed to create featured item' },
       { status: 500 }
     );
   }
