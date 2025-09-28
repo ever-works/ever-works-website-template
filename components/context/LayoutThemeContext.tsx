@@ -54,12 +54,6 @@ interface LayoutThemeContextType {
   isInitialized: boolean;
 }
 
-// Error handling types
-interface StorageError {
-  key: string;
-  error: Error;
-  fallbackValue: any;
-}
 
 // Theme configurations with readonly properties
 export const THEME_CONFIGS: Record<ThemeKey, ThemeConfig> = {
@@ -348,7 +342,7 @@ export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
     } finally {
       setIsInitialized(true);
     }
-  }, []); // Empty dependency array to run only once on mount
+  }, [layoutManager, themeManager, layoutHomeManager, paginationTypeManager, itemsPerPageManager]);
 
   const contextValue = useMemo(() => ({
     ...layoutManager,
