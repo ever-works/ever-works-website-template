@@ -22,7 +22,7 @@ interface RolePermissionsModalProps {
   role: RoleData;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (roleId: string, permissions: Permission[]) => Promise<boolean>;
+  onSave: () => void;
   isLoading?: boolean;
 }
 
@@ -181,8 +181,8 @@ export function RolePermissionsModal({
     try {
       const success = await updatePermissions(selectedPermissions);
       if (success) {
-        // Also call the external onSave if provided (for parent component updates)
-        await onSave(role.id, selectedPermissions);
+        // Notify parent component for any additional updates (like refreshing data)
+        onSave();
         onClose();
       }
     } finally {

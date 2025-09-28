@@ -7,7 +7,6 @@ import { RoleForm } from '@/components/admin/roles/role-form';
 import { DeleteRoleDialog } from '@/components/admin/roles/delete-role-dialog';
 import { RolePermissionsModal } from '@/components/admin/permissions/role-permissions-modal';
 import { useAdminRoles, RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/hooks/use-admin-roles';
-import { Permission } from '@/lib/permissions/definitions';
 import clsx from 'clsx';
 
 // CSS classes constants
@@ -182,31 +181,9 @@ export default function RolesPage() {
     }
   };
 
-  const handlePermissionsSave = async (roleId: string, permissions: Permission[]): Promise<boolean> => {
-    try {
-      // Use the dedicated permissions API
-      const response = await fetch(`/api/admin/roles/${roleId}/permissions`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ permissions }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Failed to update permissions');
-      }
-
-      // Refresh the roles list to show updated permissions
-      refreshData();
-
-      return true;
-    } catch (error) {
-      console.error('Failed to update permissions:', error);
-      return false;
-    }
+  const handlePermissionsSave = () => {
+    // Refresh the roles list to show updated permissions
+    refreshData();
   };
 
   if (isLoading) {
