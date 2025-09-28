@@ -1,11 +1,11 @@
 "use client";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
 import { LayoutKey, layoutComponents } from "@/components/layouts";
 import { applyThemeWithPalettes } from "@/lib/theme-color-manager";
 
 // Constants
 const DEFAULT_LAYOUT: LayoutKey = "classic";
-const DEFAULT_THEME = "everworks";
+const DEFAULT_THEME = "everworks" as const;
 export enum LayoutHome {
   HOME_ONE = 'Home_One',
   HOME_TWO = 'Home_Two',
@@ -15,6 +15,9 @@ export type PaginationType = "standard" | "infinite";
 const DEFAULT_LAYOUT_HOME: LayoutHome = LayoutHome.HOME_ONE;
 const DEFAULT_PAGINATION_TYPE: PaginationType = "standard";
 const DEFAULT_ITEMS_PER_PAGE = 12;
+const MIN_ITEMS_PER_PAGE = 1;
+const MAX_ITEMS_PER_PAGE = 100;
+
 const STORAGE_KEYS = {
   LAYOUT: "layoutKey",
   THEME: "themeKey",
@@ -36,7 +39,6 @@ export interface ThemeConfig {
 
 export type ThemeKey = "everworks" | "corporate" | "material" | "funny";
 
-
 interface LayoutThemeContextType {
   layoutKey: LayoutKey;
   setLayoutKey: (key: LayoutKey) => void;
@@ -49,6 +51,14 @@ interface LayoutThemeContextType {
   setPaginationType: (type: PaginationType) => void;
   itemsPerPage: number;
   setItemsPerPage: (itemsPerPage: number) => void;
+  isInitialized: boolean;
+}
+
+// Error handling types
+interface StorageError {
+  key: string;
+  error: Error;
+  fallbackValue: any;
 }
 
 // Theme configurations with readonly properties
@@ -102,6 +112,50 @@ const CSS_VARIABLES = {
   "--theme-text-secondary": "textSecondary",
 } as const;
 
+// Utility functions for localStorage with error handling
+const safeLocalStorage = {
+  getItem: (key: string): string | null => {
+    try {
+      if (typeof window === "undefined") return null;
+      return localStorage.getItem(key);
+    } catch (error) {
+      console.warn(`Failed to get localStorage item "${key}":`, error);
+      return null;
+    }
+  },
+  setItem: (key: string, value: string): boolean => {
+    try {
+      if (typeof window === "undefined") return false;
+      localStorage.setItem(key, value);
+      return true;
+    } catch (error) {
+      console.warn(`Failed to set localStorage item "${key}":`, error);
+      return false;
+    }
+  },
+};
+
+// Validation functions
+const isValidLayoutKey = (key: string): key is LayoutKey => {
+  return Object.keys(layoutComponents).includes(key);
+};
+
+const isValidThemeKey = (key: string): key is ThemeKey => {
+  return key in THEME_CONFIGS;
+};
+
+const isValidLayoutHome = (key: string): key is LayoutHome => {
+  return Object.values(LayoutHome).includes(key as LayoutHome);
+};
+
+const isValidPaginationType = (key: string): key is PaginationType => {
+  return key === "standard" || key === "infinite";
+};
+
+const isValidItemsPerPage = (value: number): boolean => {
+  return Number.isInteger(value) && value >= MIN_ITEMS_PER_PAGE && value <= MAX_ITEMS_PER_PAGE;
+};
+
 // Context
 const LayoutThemeContext = createContext<LayoutThemeContextType | undefined>(undefined);
 
@@ -109,7 +163,7 @@ const LayoutThemeContext = createContext<LayoutThemeContextType | undefined>(und
 const useThemeManager = () => {
   const [themeKey, setThemeKeyState] = useState<ThemeKey>(DEFAULT_THEME);
 
-  const applyThemeVariables = React.useCallback((theme: ThemeConfig) => {
+  const applyThemeVariables = useCallback((theme: ThemeConfig) => {
     if (typeof window === "undefined") return;
 
     const root = document.documentElement;
@@ -118,44 +172,62 @@ const useThemeManager = () => {
     });
   }, []);
 
-  const setThemeKey = React.useCallback((key: ThemeKey) => {
+  const setThemeKey = useCallback((key: ThemeKey) => {
+    if (!isValidThemeKey(key)) {
+      console.warn(`Invalid theme key: ${key}`);
+      return;
+    }
+    
     setThemeKeyState(key);
+    safeLocalStorage.setItem(STORAGE_KEYS.THEME, key);
+    
+    // Apply theme with full color palettes
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEYS.THEME, key);
-      // Apply theme with full color palettes
-      applyThemeWithPalettes(key);
+      try {
+        applyThemeWithPalettes(key);
+      } catch (error) {
+        console.warn(`Failed to apply theme palettes for "${key}":`, error);
+      }
     }
   }, []);
 
- 
-
   // Apply theme variables when theme changes
-  React.useEffect(() => {
+  useEffect(() => {
     const theme = THEME_CONFIGS[themeKey];
     if (theme) {
       applyThemeVariables(theme);
       // Also apply the full color palettes
       if (typeof window !== "undefined") {
-        applyThemeWithPalettes(themeKey);
+        try {
+          applyThemeWithPalettes(themeKey);
+        } catch (error) {
+          console.warn(`Failed to apply theme palettes for "${themeKey}":`, error);
+        }
       }
     }
   }, [themeKey, applyThemeVariables]);
 
+  const currentTheme = useMemo(() => THEME_CONFIGS[themeKey], [themeKey]);
+
   return {
     themeKey,
     setThemeKey,
-    currentTheme: THEME_CONFIGS[themeKey],
+    currentTheme,
   };
 };
 
 // Custom hook for layout home management
 const useLayoutHomeManager = () => {
   const [layoutHome, setLayoutHomeState] = useState<LayoutHome>(DEFAULT_LAYOUT_HOME);
-  const setLayoutHome = React.useCallback((key: LayoutHome) => {
-    setLayoutHomeState(key);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEYS.LAYOUT_HOME, key);
+  
+  const setLayoutHome = useCallback((key: LayoutHome) => {
+    if (!isValidLayoutHome(key)) {
+      console.warn(`Invalid layout home key: ${key}`);
+      return;
     }
+    
+    setLayoutHomeState(key);
+    safeLocalStorage.setItem(STORAGE_KEYS.LAYOUT_HOME, key);
   }, []);
 
   return {
@@ -167,11 +239,15 @@ const useLayoutHomeManager = () => {
 // Custom hook for pagination type management
 const usePaginationTypeManager = () => {
   const [paginationType, setPaginationTypeState] = useState<PaginationType>(DEFAULT_PAGINATION_TYPE);
-  const setPaginationType = React.useCallback((type: PaginationType) => {
-    setPaginationTypeState(type);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEYS.PAGINATION_TYPE, type);
+  
+  const setPaginationType = useCallback((type: PaginationType) => {
+    if (!isValidPaginationType(type)) {
+      console.warn(`Invalid pagination type: ${type}`);
+      return;
     }
+    
+    setPaginationTypeState(type);
+    safeLocalStorage.setItem(STORAGE_KEYS.PAGINATION_TYPE, type);
   }, []);
 
   return {
@@ -183,11 +259,15 @@ const usePaginationTypeManager = () => {
 // Custom hook for items per page management
 const useItemsPerPageManager = () => {
   const [itemsPerPage, setItemsPerPageState] = useState<number>(DEFAULT_ITEMS_PER_PAGE);
-  const setItemsPerPage = React.useCallback((itemsPerPage: number) => {
-    setItemsPerPageState(itemsPerPage);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEYS.ITEMS_PER_PAGE, itemsPerPage.toString());
+  
+  const setItemsPerPage = useCallback((value: number) => {
+    if (!isValidItemsPerPage(value)) {
+      console.warn(`Invalid items per page value: ${value}. Must be between ${MIN_ITEMS_PER_PAGE} and ${MAX_ITEMS_PER_PAGE}`);
+      return;
     }
+    
+    setItemsPerPageState(value);
+    safeLocalStorage.setItem(STORAGE_KEYS.ITEMS_PER_PAGE, value.toString());
   }, []);
 
   return {
@@ -200,11 +280,14 @@ const useItemsPerPageManager = () => {
 const useLayoutManager = () => {
   const [layoutKey, setLayoutKeyState] = useState<LayoutKey>(DEFAULT_LAYOUT);
 
-  const setLayoutKey = React.useCallback((key: LayoutKey) => {
-    setLayoutKeyState(key);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEYS.LAYOUT, key);
+  const setLayoutKey = useCallback((key: LayoutKey) => {
+    if (!isValidLayoutKey(key)) {
+      console.warn(`Invalid layout key: ${key}`);
+      return;
     }
+    
+    setLayoutKeyState(key);
+    safeLocalStorage.setItem(STORAGE_KEYS.LAYOUT, key);
   }, []);
 
   return {
@@ -220,52 +303,68 @@ export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const layoutHomeManager = useLayoutHomeManager();
   const paginationTypeManager = usePaginationTypeManager();
   const itemsPerPageManager = useItemsPerPageManager();
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize from localStorage
+  // Initialize from localStorage with error handling
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const savedLayout = localStorage.getItem(STORAGE_KEYS.LAYOUT) as LayoutKey;
-    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) as ThemeKey;
-    const savedLayoutHome = localStorage.getItem(STORAGE_KEYS.LAYOUT_HOME) as LayoutHome;
-    const savedPaginationType = localStorage.getItem(STORAGE_KEYS.PAGINATION_TYPE) as PaginationType;
-    const savedItemsPerPage = localStorage.getItem(STORAGE_KEYS.ITEMS_PER_PAGE);
+    try {
+      const savedLayout = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT);
+      const savedTheme = safeLocalStorage.getItem(STORAGE_KEYS.THEME);
+      const savedLayoutHome = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT_HOME);
+      const savedPaginationType = safeLocalStorage.getItem(STORAGE_KEYS.PAGINATION_TYPE);
+      const savedItemsPerPage = safeLocalStorage.getItem(STORAGE_KEYS.ITEMS_PER_PAGE);
 
-    if (
-      savedLayout &&
-      Object.keys(layoutComponents).includes(savedLayout) &&
-      savedLayout !== layoutManager.layoutKey
-    ) {
-      layoutManager.setLayoutKey(savedLayout);
-    }
-
-    if (savedTheme && savedTheme !== themeManager.themeKey) {
-      themeManager.setThemeKey(savedTheme);
-    }
-
-    if (savedLayoutHome && savedLayoutHome !== layoutHomeManager.layoutHome) {
-      layoutHomeManager.setLayoutHome(savedLayoutHome);
-    }
-
-    if (savedPaginationType && savedPaginationType !== paginationTypeManager.paginationType) {
-      paginationTypeManager.setPaginationType(savedPaginationType);
-    }
-
-    if (savedItemsPerPage) {
-      const itemsPerPage = parseInt(savedItemsPerPage, 10);
-      if (!isNaN(itemsPerPage) && itemsPerPage !== itemsPerPageManager.itemsPerPage) {
-        itemsPerPageManager.setItemsPerPage(itemsPerPage);
+      // Validate and apply saved layout
+      if (savedLayout && isValidLayoutKey(savedLayout) && savedLayout !== layoutManager.layoutKey) {
+        layoutManager.setLayoutKey(savedLayout);
       }
-    }
-  }, [layoutManager, themeManager, layoutHomeManager, paginationTypeManager, itemsPerPageManager]);
 
-  const contextValue = {
+      // Validate and apply saved theme
+      if (savedTheme && isValidThemeKey(savedTheme) && savedTheme !== themeManager.themeKey) {
+        themeManager.setThemeKey(savedTheme);
+      }
+
+      // Validate and apply saved layout home
+      if (savedLayoutHome && isValidLayoutHome(savedLayoutHome) && savedLayoutHome !== layoutHomeManager.layoutHome) {
+        layoutHomeManager.setLayoutHome(savedLayoutHome);
+      }
+
+      // Validate and apply saved pagination type
+      if (savedPaginationType && isValidPaginationType(savedPaginationType) && savedPaginationType !== paginationTypeManager.paginationType) {
+        paginationTypeManager.setPaginationType(savedPaginationType);
+      }
+
+      // Validate and apply saved items per page
+      if (savedItemsPerPage) {
+        const itemsPerPage = parseInt(savedItemsPerPage, 10);
+        if (isValidItemsPerPage(itemsPerPage) && itemsPerPage !== itemsPerPageManager.itemsPerPage) {
+          itemsPerPageManager.setItemsPerPage(itemsPerPage);
+        }
+      }
+    } catch (error) {
+      console.warn("Failed to initialize from localStorage:", error);
+    } finally {
+      setIsInitialized(true);
+    }
+  }, []); // Empty dependency array to run only once on mount
+
+  const contextValue = useMemo(() => ({
     ...layoutManager,
     ...themeManager,
     ...layoutHomeManager,
     ...paginationTypeManager,
     ...itemsPerPageManager,
-  };
+    isInitialized,
+  }), [
+    layoutManager,
+    themeManager,
+    layoutHomeManager,
+    paginationTypeManager,
+    itemsPerPageManager,
+    isInitialized,
+  ]);
 
   return (
     <LayoutThemeContext.Provider value={contextValue}>
@@ -289,6 +388,10 @@ export const useLayoutTheme = (): LayoutThemeContextType => {
 
 // Utility functions
 export const getThemeConfig = (themeKey: ThemeKey): ThemeConfig => {
+  if (!isValidThemeKey(themeKey)) {
+    console.warn(`Invalid theme key: ${themeKey}. Returning default theme.`);
+    return THEME_CONFIGS[DEFAULT_THEME];
+  }
   return THEME_CONFIGS[themeKey];
 };
 
@@ -297,4 +400,31 @@ export const getAllThemes = (): Array<{ key: ThemeKey; config: ThemeConfig }> =>
     key: key as ThemeKey,
     config,
   }));
+};
+
+// Additional utility functions for better developer experience
+export const resetToDefaults = (): void => {
+  if (typeof window === "undefined") return;
+  
+  try {
+    safeLocalStorage.setItem(STORAGE_KEYS.LAYOUT, DEFAULT_LAYOUT);
+    safeLocalStorage.setItem(STORAGE_KEYS.THEME, DEFAULT_THEME);
+    safeLocalStorage.setItem(STORAGE_KEYS.LAYOUT_HOME, DEFAULT_LAYOUT_HOME);
+    safeLocalStorage.setItem(STORAGE_KEYS.PAGINATION_TYPE, DEFAULT_PAGINATION_TYPE);
+    safeLocalStorage.setItem(STORAGE_KEYS.ITEMS_PER_PAGE, DEFAULT_ITEMS_PER_PAGE.toString());
+  } catch (error) {
+    console.warn("Failed to reset to defaults:", error);
+  }
+};
+
+export const clearStorage = (): void => {
+  if (typeof window === "undefined") return;
+  
+  try {
+    Object.values(STORAGE_KEYS).forEach(key => {
+      localStorage.removeItem(key);
+    });
+  } catch (error) {
+    console.warn("Failed to clear storage:", error);
+  }
 };
