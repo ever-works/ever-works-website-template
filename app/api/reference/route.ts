@@ -2,7 +2,7 @@
 import { ApiReference } from '@scalar/nextjs-api-reference'
 
 const config = {
-  url: '/openapi-clean.json',
+  url: '/openapi.json',
   theme: 'purple' as const,
   showSidebar: true,
 }

@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
     const result = await roleRepository.findAllPaginated(options);
     
     return NextResponse.json({
+      success: true,
       roles: result.roles,
       total: result.total,
       page: result.page,
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error fetching roles:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch roles' },
+      { success: false, error: 'Failed to fetch roles' },
       { status: 500 }
     );
   }
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!roleData.name || !roleData.description) {
       return NextResponse.json(
-        { error: 'Missing required fields: name, description' },
+        { success: false, error: 'Missing required fields: name, description' },
         { status: 400 }
       );
     }
@@ -67,13 +68,13 @@ export async function POST(request: NextRequest) {
       .slice(0, 64);
 
     if (!id) {
-      return NextResponse.json({ error: 'Unable to derive a valid role ID from name' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Unable to derive a valid role ID from name' }, { status: 400 });
     }
 
     // Validate name length
     if (roleData.name.length < 3 || roleData.name.length > 100) {
       return NextResponse.json(
-        { error: 'Role name must be between 3 and 100 characters' },
+        { success: false, error: 'Role name must be between 3 and 100 characters' },
         { status: 400 }
       );
     }
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
     // Validate description length
     if (roleData.description.length > 500) {
       return NextResponse.json(
-        { error: 'Role description must be at most 500 characters' },
+        { success: false, error: 'Role description must be at most 500 characters' },
         { status: 400 }
       );
     }
@@ -90,7 +91,7 @@ export async function POST(request: NextRequest) {
     const isDuplicate = await roleRepository.exists(id, { includeDeleted: true });
     if (isDuplicate) {
       return NextResponse.json(
-        { error: 'Role with similar name already exists' },
+        { success: false, error: 'Role with similar name already exists' },
         { status: 409 }
       );
     }
@@ -109,7 +110,7 @@ export async function POST(request: NextRequest) {
     const newRole = await roleRepository.create(createData);
 
     return NextResponse.json(
-      { role: newRole, message: 'Role created successfully' },
+      { success: true, role: newRole, message: 'Role created successfully' },
       { status: 201 }
     );
   } catch (error) {
@@ -120,14 +121,14 @@ export async function POST(request: NextRequest) {
           error.message.includes('unique constraint') ||
           error.message.includes('duplicate key')) {
         return NextResponse.json(
-          { error: 'Role with similar name already exists' },
+          { success: false, error: 'Role with similar name already exists' },
           { status: 409 }
         );
       }
     }
 
     return NextResponse.json(
-      { error: 'Failed to create role' },
+      { success: false, error: 'Failed to create role' },
       { status: 500 }
     );
   }

@@ -78,7 +78,7 @@
       "get": {
         "tags": ["Authentication"],
         "summary": "Get current authenticated user",
-        "description": "Returns the current authenticated user's information including profile data",
+        "description": "Returns the current authenticated user's session information (id, name, email, image, provider, isAdmin) or null if no active session exists. This endpoint does not require authentication and can be called by anyone to check session status.",
         "responses": {
           "200": {
             "description": "Current user information or null if not authenticated",
@@ -98,10 +98,10 @@
                   "authenticated": {
                     "summary": "Authenticated user",
                     "value": {
-                      "id": "user_123",
+                      "id": "user_2a3b4c5d",
                       "name": "John Doe",
-                      "email": "john@example.com",
-                      "image": "https://example.com/avatar.jpg",
+                      "email": "john.doe@example.com",
+                      "image": "https://lh3.googleusercontent.com/a/example",
                       "provider": "google",
                       "isAdmin": false
                     }
@@ -113,6 +113,9 @@
                 }
               }
             }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
           }
         }
       }
@@ -121,7 +124,7 @@
       "get": {
         "tags": ["Favorites"],
         "summary": "Get user's favorites",
-        "description": "Returns a list of the current user's favorite items",
+        "description": "Returns a list of the current user's favorite items, ordered by creation date (newest first). Each favorite includes item metadata (slug, name, icon, category) and timestamps.",
         "security": [
           {
             "sessionAuth": []
@@ -139,13 +142,14 @@
                   "success": true,
                   "favorites": [
                     {
-                      "id": "fav_123",
-                      "userId": "user_123",
-                      "itemSlug": "awesome-tool",
-                      "itemName": "Awesome Tool",
-                      "itemIconUrl": "https://example.com/icon.png",
+                      "id": "fav_2a3b4c5d",
+                      "userId": "user_2a3b4c5d",
+                      "itemSlug": "awesome-productivity-tool",
+                      "itemName": "Awesome Productivity Tool",
+                      "itemIconUrl": "https://cdn.example.com/icons/productivity-tool.png",
                       "itemCategory": "productivity",
-                      "createdAt": "2024-01-15T10:30:00Z"
+                      "createdAt": "2024-01-15T10:30:00.123Z",
+                      "updatedAt": "2024-01-15T10:30:00.123Z"
                     }
                   ]
                 }
@@ -196,20 +200,46 @@
                 "example": {
                   "success": true,
                   "favorite": {
-                    "id": "fav_123",
-                    "userId": "user_123",
-                    "itemSlug": "awesome-tool",
-                    "itemName": "Awesome Tool",
-                    "itemIconUrl": "https://example.com/icon.png",
+                    "id": "fav_2a3b4c5d",
+                    "userId": "user_2a3b4c5d",
+                    "itemSlug": "awesome-productivity-tool",
+                    "itemName": "Awesome Productivity Tool",
+                    "itemIconUrl": "https://cdn.example.com/icons/productivity-tool.png",
                     "itemCategory": "productivity",
-                    "createdAt": "2024-01-15T10:30:00Z"
+                    "createdAt": "2024-01-15T10:30:00.123Z",
+                    "updatedAt": "2024-01-15T10:30:00.123Z"
                   }
                 }
               }
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Validation error - invalid request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "validation_error": {
+                    "summary": "Zod validation failed",
+                    "value": {
+                      "success": false,
+                      "error": "Invalid request data",
+                      "details": "Required at \"itemSlug\""
+                    }
+                  },
+                  "missing_field": {
+                    "summary": "Required field missing",
+                    "value": {
+                      "success": false,
+                      "error": "Invalid request data",
+                      "details": "String must contain at least 1 character(s) at \"itemName\""
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
@@ -238,7 +268,7 @@
       "delete": {
         "tags": ["Favorites"],
         "summary": "Remove item from favorites",
-        "description": "Removes an item from the user's favorites list",
+        "description": "Removes an item from the current user's favorites list. First verifies that the favorite exists and belongs to the authenticated user before deletion. Returns 404 if the favorite doesn't exist or doesn't belong to the user.",
         "security": [
           {
             "sessionAuth": []
@@ -252,7 +282,8 @@
             "description": "The slug identifier of the item to remove from favorites",
             "schema": {
               "type": "string",
-              "example": "awesome-tool"
+              "minLength": 1,
+              "example": "awesome-productivity-tool"
             }
           }
         ],
@@ -298,7 +329,7 @@
       "get": {
         "tags": ["Featured Items"],
         "summary": "Get featured items",
-        "description": "Returns a list of active featured items for public display",
+        "description": "Returns a list of active featured items for public display, ordered by featuredOrder (desc) then featuredAt (desc). By default excludes expired items (where featuredUntil < now), but includes items with no expiration date (featuredUntil=null), unless includeExpired=true. No authentication required.",
         "parameters": [
           {
             "name": "limit",
@@ -333,15 +364,19 @@
                   "success": true,
                   "data": [
                     {
-                      "id": "item_123",
-                      "itemSlug": "awesome-tool",
-                      "itemName": "Awesome Tool",
-                      "itemIconUrl": "https://example.com/icon.png",
+                      "id": "feat_2a3b4c5d",
+                      "itemSlug": "awesome-productivity-tool",
+                      "itemName": "Awesome Productivity Tool",
+                      "itemIconUrl": "https://cdn.example.com/icons/productivity-tool.png",
                       "itemCategory": "productivity",
-                      "featuredOrder": 1,
-                      "featuredAt": "2024-01-15T10:30:00Z",
-                      "featuredUntil": "2024-02-15T10:30:00Z",
-                      "isActive": true
+                      "itemDescription": "A powerful tool to boost your productivity and streamline workflows.",
+                      "featuredOrder": 10,
+                      "featuredUntil": "2024-03-15T10:30:00.123Z",
+                      "isActive": true,
+                      "featuredBy": "admin_1a2b3c4d",
+                      "featuredAt": "2024-01-15T10:30:00.123Z",
+                      "createdAt": "2024-01-15T10:30:00.123Z",
+                      "updatedAt": "2024-01-15T10:30:00.123Z"
                     }
                   ],
                   "count": 1
@@ -359,7 +394,7 @@
       "post": {
         "tags": ["Utilities"],
         "summary": "Verify reCAPTCHA token",
-        "description": "Verifies a reCAPTCHA token with Google's API",
+        "description": "Verifies a reCAPTCHA token with Google's reCAPTCHA API. Returns verification result with score (for v3), action, hostname, and timestamp. In development mode without RECAPTCHA_SECRET_KEY, always returns success=true. No authentication required.",
         "requestBody": {
           "required": true,
           "content": {
@@ -368,7 +403,7 @@
                 "$ref": "#/components/schemas/RecaptchaRequest"
               },
               "example": {
-                "token": "03AGdBq25..."
+                "token": "03AGdBq25SiZhbYhlXfzuVqWIMnOHGOxvSz1HiMUcE..."
               }
             }
           }
@@ -383,20 +418,31 @@
                 },
                 "examples": {
                   "success": {
-                    "summary": "Successful verification",
+                    "summary": "Successful verification (reCAPTCHA v3)",
                     "value": {
                       "success": true,
                       "score": 0.9,
-                      "action": "submit",
-                      "hostname": "localhost",
-                      "challenge_ts": "2024-01-15T10:30:00Z"
+                      "action": "submit_form",
+                      "hostname": "example.com",
+                      "challenge_ts": "2024-01-15T10:30:00.123Z",
+                      "error_codes": null
                     }
                   },
                   "failure": {
                     "summary": "Failed verification",
                     "value": {
                       "success": false,
-                      "error_codes": ["invalid-input-response"]
+                      "score": null,
+                      "action": null,
+                      "hostname": "example.com",
+                      "challenge_ts": "2024-01-15T10:30:00.123Z",
+                      "error_codes": ["invalid-input-response", "timeout-or-duplicate"]
+                    }
+                  },
+                  "development": {
+                    "summary": "Development mode (no secret key)",
+                    "value": {
+                      "success": true
                     }
                   }
                 }
@@ -404,10 +450,51 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Bad request - missing or invalid reCAPTCHA token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "ReCAPTCHA token is required"
+                }
+              }
+            }
           },
           "500": {
-            "$ref": "#/components/responses/ServerError"
+            "description": "Server error - reCAPTCHA not configured or API request failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "not_configured": {
+                    "summary": "reCAPTCHA not configured",
+                    "value": {
+                      "success": false,
+                      "error": "ReCAPTCHA not configured"
+                    }
+                  },
+                  "api_failed": {
+                    "summary": "Google API request failed",
+                    "value": {
+                      "success": false,
+                      "error": "Failed to verify ReCAPTCHA"
+                    }
+                  },
+                  "verification_failed": {
+                    "summary": "General verification failure",
+                    "value": {
+                      "success": false,
+                      "error": "Verification failed"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -416,7 +503,7 @@
       "get": {
         "tags": ["Version"],
         "summary": "Get version information",
-        "description": "Returns version information including git commit details and repository sync status",
+        "description": "Returns version information including git commit details (hash, date, message, author), repository info, current branch, and last sync timestamp. Attempts to sync repository before reading data. Includes cache headers (ETag, Last-Modified) for optimal performance. No authentication required.",
         "responses": {
           "200": {
             "description": "Version information",
@@ -426,12 +513,12 @@
                   "$ref": "#/components/schemas/VersionInfo"
                 },
                 "example": {
-                  "commit": "abc1234",
-                  "date": "2024-01-15T10:30:00Z",
-                  "message": "feat: add new feature",
-                  "author": "John Doe",
-                  "repository": "https://github.com/user/repo",
-                  "lastSync": "2024-01-15T10:35:00Z",
+                  "commit": "a1b2c3d",
+                  "date": "2024-01-15T10:30:00.123Z",
+                  "message": "✨ feat: add version API with comprehensive error handling",
+                  "author": "John Developer",
+                  "repository": "https://github.com/ever-co/ever-works-website-template",
+                  "lastSync": "2024-01-15T10:35:15.456Z",
                   "branch": "main"
                 }
               }
@@ -444,17 +531,67 @@
                 "schema": {
                   "$ref": "#/components/schemas/VersionErrorResponse"
                 },
-                "example": {
-                  "error": "Data repository not found",
-                  "code": "REPOSITORY_NOT_FOUND",
-                  "timestamp": "2024-01-15T10:30:00Z",
-                  "details": "Git directory not found at: /path/to/repo"
+                "examples": {
+                  "repository_not_found": {
+                    "summary": "Git repository not found",
+                    "value": {
+                      "error": "Data repository not found",
+                      "code": "REPOSITORY_NOT_FOUND",
+                      "timestamp": "2024-01-15T10:30:00.123Z",
+                      "details": "Git directory not found at: /path/to/repo"
+                    }
+                  },
+                  "no_commits": {
+                    "summary": "Repository exists but has no commits",
+                    "value": {
+                      "error": "No commits found in repository",
+                      "code": "NO_COMMITS",
+                      "timestamp": "2024-01-15T10:30:00.123Z",
+                      "details": "Repository exists but contains no commits"
+                    }
+                  }
                 }
               }
             }
           },
           "500": {
-            "$ref": "#/components/responses/ServerError"
+            "description": "Server error - git error, validation error, or internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionErrorResponse"
+                },
+                "examples": {
+                  "git_error": {
+                    "summary": "Git operation failed",
+                    "value": {
+                      "error": "Failed to retrieve commit information",
+                      "code": "GIT_ERROR",
+                      "timestamp": "2024-01-15T10:30:00.123Z",
+                      "details": "fatal: not a git repository"
+                    }
+                  },
+                  "validation_error": {
+                    "summary": "Invalid commit data",
+                    "value": {
+                      "error": "Invalid commit data",
+                      "code": "VALIDATION_ERROR",
+                      "timestamp": "2024-01-15T10:30:00.123Z",
+                      "details": "Commit is missing required fields"
+                    }
+                  },
+                  "internal_error": {
+                    "summary": "Unexpected server error",
+                    "value": {
+                      "error": "Internal server error",
+                      "code": "INTERNAL_ERROR",
+                      "timestamp": "2024-01-15T10:30:00.123Z",
+                      "details": "Unknown error occurred"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -463,7 +600,7 @@
       "get": {
         "tags": ["Admin - Categories"],
         "summary": "List categories (Admin)",
-        "description": "Returns a paginated list of categories with optional filtering. Requires admin privileges.",
+        "description": "Returns a paginated list of categories with optional filtering and sorting. Categories are loaded from Git repository. Supports sorting by name or id, with ascending/descending order. The includeInactive parameter is kept for backward compatibility but currently has no effect (all categories are considered active). Requires admin privileges.",
         "security": [
           {
             "sessionAuth": []
@@ -533,13 +670,16 @@
                   "success": true,
                   "categories": [
                     {
-                      "id": "productivity",
-                      "name": "Productivity",
-                      "isActive": true,
-                      "createdAt": "2024-01-15T10:30:00Z"
+                      "id": "productivity-tools",
+                      "name": "Productivity Tools"
+                    },
+                    {
+                      "id": "development",
+                      "name": "Development",
+                      "count": 15
                     }
                   ],
-                  "total": 1,
+                  "total": 2,
                   "page": 1,
                   "limit": 10,
                   "totalPages": 1
@@ -569,7 +709,7 @@
       "post": {
         "tags": ["Admin - Categories"],
         "summary": "Create category (Admin)",
-        "description": "Creates a new category. Requires admin privileges.",
+        "description": "Creates a new category in the Git repository. Both id and name are required. Validates name length (2-50 chars) and id length (3-50 chars). Checks for duplicate names and IDs. Commits changes to Git repository. Requires admin privileges.",
         "security": [
           {
             "sessionAuth": []
@@ -583,8 +723,8 @@
                 "$ref": "#/components/schemas/CreateCategoryRequest"
               },
               "example": {
-                "id": "productivity",
-                "name": "Productivity"
+                "id": "productivity-tools",
+                "name": "Productivity Tools"
               }
             }
           }
@@ -600,10 +740,8 @@
                 "example": {
                   "success": true,
                   "category": {
-                    "id": "productivity",
-                    "name": "Productivity",
-                    "isActive": true,
-                    "createdAt": "2024-01-15T10:30:00Z"
+                    "id": "productivity-tools",
+                    "name": "Productivity Tools"
                   },
                   "message": "Category created successfully"
                 }
@@ -611,7 +749,44 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Bad request - validation error or missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missing_name": {
+                    "summary": "Category name is required",
+                    "value": {
+                      "success": false,
+                      "error": "Category name is required"
+                    }
+                  },
+                  "name_too_short": {
+                    "summary": "Name too short",
+                    "value": {
+                      "success": false,
+                      "error": "Category name must be at least 2 characters long"
+                    }
+                  },
+                  "name_too_long": {
+                    "summary": "Name too long",
+                    "value": {
+                      "success": false,
+                      "error": "Category name must be no more than 50 characters long"
+                    }
+                  },
+                  "id_too_short": {
+                    "summary": "ID too short",
+                    "value": {
+                      "success": false,
+                      "error": "Category ID must be at least 3 characters long"
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized - Admin access required",
@@ -634,9 +809,21 @@
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
-                "example": {
-                  "success": false,
-                  "error": "Category with this ID already exists"
+                "examples": {
+                  "duplicate_id": {
+                    "summary": "Duplicate category ID",
+                    "value": {
+                      "success": false,
+                      "error": "Category with ID \"productivity-tools\" already exists"
+                    }
+                  },
+                  "duplicate_name": {
+                    "summary": "Duplicate category name",
+                    "value": {
+                      "success": false,
+                      "error": "Category with name \"Productivity Tools\" already exists"
+                    }
+                  }
                 }
               }
             }
@@ -748,24 +935,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CommentWithUser"
-                  }
+                  "$ref": "#/components/schemas/CommentsResponse"
                 },
-                "example": [
-                  {
-                    "id": "comment_123",
-                    "content": "Great tool! Very useful.",
-                    "rating": 5,
-                    "createdAt": "2024-01-15T10:30:00Z",
-                    "user": {
-                      "id": "user_123",
-                      "name": "John Doe",
-                      "email": "john@example.com"
+                "example": {
+                  "success": true,
+                  "comments": [
+                    {
+                      "id": "comment_123",
+                      "content": "Great tool! Very useful.",
+                      "rating": 5,
+                      "userId": "user_123",
+                      "itemId": "awesome-productivity-tool",
+                      "createdAt": "2024-01-15T10:30:00.123Z",
+                      "updatedAt": "2024-01-15T10:30:00.123Z",
+                      "user": {
+                        "id": "user_123",
+                        "name": "John Doe",
+                        "email": "john@example.com"
+                      }
                     }
-                  }
-                ]
+                  ]
+                }
               }
             }
           },
@@ -814,7 +1004,24 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CommentWithUser"
+                  "$ref": "#/components/schemas/CreateCommentResponse"
+                },
+                "example": {
+                  "success": true,
+                  "comment": {
+                    "id": "comment_456",
+                    "content": "This is an excellent tool! Highly recommended.",
+                    "rating": 5,
+                    "userId": "user_123",
+                    "itemId": "awesome-productivity-tool",
+                    "createdAt": "2024-01-15T10:30:00.123Z",
+                    "updatedAt": "2024-01-15T10:30:00.123Z",
+                    "user": {
+                      "id": "user_123",
+                      "name": "John Doe",
+                      "email": "john@example.com"
+                    }
+                  }
                 }
               }
             }
@@ -896,6 +1103,7 @@
                   "with_user_vote": {
                     "summary": "User has voted",
                     "value": {
+                      "success": true,
                       "count": 42,
                       "userVote": "up"
                     }
@@ -903,6 +1111,7 @@
                   "no_user_vote": {
                     "summary": "User hasn't voted",
                     "value": {
+                      "success": true,
                       "count": 42,
                       "userVote": null
                     }
@@ -958,8 +1167,23 @@
                   "$ref": "#/components/schemas/VoteResponse"
                 },
                 "example": {
+                  "success": true,
                   "count": 43,
                   "userVote": "up"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid vote type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Invalid vote type. Must be 'up' or 'down'"
                 }
               }
             }
@@ -1015,6 +1239,7 @@
                   "$ref": "#/components/schemas/VoteResponse"
                 },
                 "example": {
+                  "success": true,
                   "count": 42,
                   "userVote": null
                 }
@@ -1120,6 +1345,15 @@
               "enum": ["asc", "desc"],
               "default": "desc"
             }
+          },
+          {
+            "name": "includeInactive",
+            "in": "query",
+            "description": "Whether to include inactive users",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           }
         ],
         "responses": {
@@ -1132,24 +1366,26 @@
                 },
                 "example": {
                   "success": true,
-                  "users": [
+                  "data": [
                     {
-                      "id": "user_123",
+                      "id": "user_2a3b4c5d",
+                      "email": "john.doe@example.com",
                       "username": "johndoe",
-                      "email": "john@example.com",
                       "name": "John Doe",
-                      "role": "user",
+                      "title": "Senior Developer",
+                      "avatar": "https://cdn.example.com/avatars/johndoe.jpg",
+                      "role": "admin",
+                      "roleName": "Administrator",
                       "status": "active",
-                      "created_at": "2024-01-15T10:30:00Z",
-                      "updated_at": "2024-01-15T10:30:00Z"
+                      "created_by": "admin_1a2b3c4d",
+                      "created_at": "2024-01-15T10:30:00.123Z",
+                      "updated_at": "2024-01-15T10:30:00.123Z"
                     }
                   ],
-                  "pagination": {
-                    "page": 1,
-                    "limit": 10,
-                    "total": 1,
-                    "totalPages": 1
-                  }
+                  "total": 1,
+                  "page": 1,
+                  "limit": 10,
+                  "totalPages": 1
                 }
               }
             }
@@ -1174,6 +1410,159 @@
                     "value": {
                       "success": false,
                       "error": "Invalid sortBy parameter"
+                    }
+                  },
+                  "invalid_sort_order": {
+                    "summary": "Invalid sortOrder parameter",
+                    "value": {
+                      "success": false,
+                      "error": "Invalid sortOrder parameter"
+                    }
+                  },
+                  "search_too_long": {
+                    "summary": "Search parameter too long",
+                    "value": {
+                      "success": false,
+                      "error": "Search parameter too long"
+                    }
+                  },
+                  "role_too_long": {
+                    "summary": "Role parameter too long",
+                    "value": {
+                      "success": false,
+                      "error": "Role parameter too long"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Forbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Admin - Users"],
+        "summary": "Create user (Admin)",
+        "description": "Creates a new user account with comprehensive validation. Validates email format, username format (3-30 chars, alphanumeric + dash/underscore), name length (2-100 chars), password strength (min 8 chars), and role existence. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserRequest"
+              },
+              "example": {
+                "username": "johndoe",
+                "email": "john.doe@example.com",
+                "name": "John Doe",
+                "title": "Senior Developer",
+                "avatar": "https://cdn.example.com/avatars/johndoe.jpg",
+                "role": "admin",
+                "password": "SecurePass123!"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUserResponse"
+                },
+                "example": {
+                  "success": true,
+                  "user": {
+                    "id": "user_2a3b4c5d",
+                    "email": "john.doe@example.com",
+                    "username": "johndoe",
+                    "name": "John Doe",
+                    "title": "Senior Developer",
+                    "avatar": "https://cdn.example.com/avatars/johndoe.jpg",
+                    "role": "admin",
+                    "roleName": "Administrator",
+                    "status": "active",
+                    "created_by": "admin_1a2b3c4d",
+                    "created_at": "2024-01-15T10:30:00.123Z",
+                    "updated_at": "2024-01-15T10:30:00.123Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error - invalid or missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missing_fields": {
+                    "summary": "Missing required fields",
+                    "value": {
+                      "success": false,
+                      "error": "Missing required fields: username, email, name, password, and role are required"
+                    }
+                  },
+                  "invalid_email": {
+                    "summary": "Invalid email format",
+                    "value": {
+                      "success": false,
+                      "error": "Invalid email format"
+                    }
+                  },
+                  "invalid_username": {
+                    "summary": "Invalid username format",
+                    "value": {
+                      "success": false,
+                      "error": "Username must be 3-30 characters and contain only letters, numbers, dashes, and underscores"
+                    }
+                  },
+                  "invalid_name": {
+                    "summary": "Invalid name length",
+                    "value": {
+                      "success": false,
+                      "error": "Name must be between 2 and 100 characters"
+                    }
+                  },
+                  "weak_password": {
+                    "summary": "Password too weak",
+                    "value": {
+                      "success": false,
+                      "error": "Password must be at least 8 characters long"
+                    }
+                  },
+                  "invalid_role": {
+                    "summary": "Role does not exist",
+                    "value": {
+                      "success": false,
+                      "error": "Invalid role"
                     }
                   }
                 }
@@ -1207,7 +1596,7 @@
       "get": {
         "tags": ["Admin - Items"],
         "summary": "List items (Admin)",
-        "description": "Returns a paginated list of items with filtering options. Requires admin privileges.",
+        "description": "Returns a paginated list of items with filtering options. Items are loaded from Git repository. Supports filtering by status (draft/pending/approved/rejected), category, and tag. Status validation ensures only valid values are accepted. Requires admin privileges.",
         "security": [
           {
             "sessionAuth": []
@@ -1236,17 +1625,17 @@
             }
           },
           {
-            "name": "search",
+            "name": "category",
             "in": "query",
-            "description": "Search term for item name or description",
+            "description": "Filter by category",
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "category",
+            "name": "tag",
             "in": "query",
-            "description": "Filter by category",
+            "description": "Filter by tag",
             "schema": {
               "type": "string"
             }
@@ -1257,7 +1646,7 @@
             "description": "Filter by item status",
             "schema": {
               "type": "string",
-              "enum": ["active", "inactive", "pending", "rejected"]
+              "enum": ["draft", "pending", "approved", "rejected"]
             }
           }
         ],
@@ -1291,6 +1680,328 @@
           },
           "500": {
             "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Admin - Items"],
+        "summary": "Create item (Admin)",
+        "description": "Creates a new item in the Git repository. Validates required fields (id, name, slug, description, source_url), checks for duplicate ID and slug, validates slug format (lowercase, hyphens only), and validates URL format. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateItemRequest"
+              },
+              "example": {
+                "id": "awesome-productivity-tool",
+                "name": "Awesome Productivity Tool",
+                "slug": "awesome-productivity-tool",
+                "description": "A comprehensive productivity tool that helps teams collaborate effectively and manage their tasks efficiently.",
+                "source_url": "https://github.com/awesome/productivity-tool",
+                "category": ["productivity", "collaboration"],
+                "tags": ["productivity", "collaboration", "task-management"],
+                "featured": true,
+                "icon_url": "https://cdn.example.com/icons/productivity-tool.png",
+                "status": "draft"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateItemResponse"
+                },
+                "example": {
+                  "success": true,
+                  "item": {
+                    "id": "awesome-productivity-tool",
+                    "name": "Awesome Productivity Tool",
+                    "slug": "awesome-productivity-tool",
+                    "description": "A comprehensive productivity tool that helps teams collaborate effectively and manage their tasks efficiently.",
+                    "source_url": "https://github.com/awesome/productivity-tool",
+                    "category": ["productivity", "collaboration"],
+                    "tags": ["productivity", "collaboration", "task-management"],
+                    "featured": true,
+                    "icon_url": "https://cdn.example.com/icons/productivity-tool.png",
+                    "updated_at": "2024-01-15T10:30:00.123Z",
+                    "status": "draft",
+                    "submitted_by": null,
+                    "submitted_at": null,
+                    "reviewed_by": null,
+                    "reviewed_at": null,
+                    "review_notes": null
+                  },
+                  "message": "Item created successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error - invalid or missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Item ID, name, slug, description, and source URL are required"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "409": {
+            "description": "Conflict - duplicate ID or slug",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "duplicate_id": {
+                    "summary": "Duplicate item ID",
+                    "value": {
+                      "success": false,
+                      "error": "Item with ID 'awesome-productivity-tool' already exists"
+                    }
+                  },
+                  "duplicate_slug": {
+                    "summary": "Duplicate item slug",
+                    "value": {
+                      "success": false,
+                      "error": "Item with slug 'awesome-productivity-tool' already exists"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/admin/roles": {
+      "get": {
+        "tags": ["Admin - Roles"],
+        "summary": "List roles (Admin)",
+        "description": "Returns a paginated list of roles. Roles are loaded from Git repository. Supports pagination with page and limit parameters. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Roles retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RolesResponse"
+                },
+                "example": {
+                  "success": true,
+                  "roles": [
+                    {
+                      "id": "admin",
+                      "name": "Administrator",
+                      "description": "Full system access with all administrative privileges",
+                      "status": "active",
+                      "isAdmin": true,
+                      "permissions": []
+                    },
+                    {
+                      "id": "user",
+                      "name": "User",
+                      "description": "Standard user with basic access permissions",
+                      "status": "active",
+                      "isAdmin": false,
+                      "permissions": []
+                    }
+                  ],
+                  "total": 2,
+                  "page": 1,
+                  "limit": 10,
+                  "totalPages": 1
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Failed to fetch roles"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Admin - Roles"],
+        "summary": "Create role (Admin)",
+        "description": "Creates a new role in the Git repository. Validates required fields (name, description), generates stable ID from name, validates name length (3-100 chars) and description length (max 500 chars), and checks for duplicate names. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRoleRequest"
+              },
+              "example": {
+                "name": "Content Manager",
+                "description": "Manages content creation and publication with moderate administrative privileges",
+                "status": "active",
+                "isAdmin": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Role created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateRoleResponse"
+                },
+                "example": {
+                  "success": true,
+                  "role": {
+                    "id": "content-manager",
+                    "name": "Content Manager",
+                    "description": "Manages content creation and publication with moderate administrative privileges",
+                    "status": "active",
+                    "isAdmin": false,
+                    "permissions": []
+                  },
+                  "message": "Role created successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error - invalid or missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missing_fields": {
+                    "summary": "Missing required fields",
+                    "value": {
+                      "success": false,
+                      "error": "Missing required fields: name, description"
+                    }
+                  },
+                  "invalid_name_length": {
+                    "summary": "Invalid name length",
+                    "value": {
+                      "success": false,
+                      "error": "Role name must be between 3 and 100 characters"
+                    }
+                  },
+                  "invalid_description_length": {
+                    "summary": "Description too long",
+                    "value": {
+                      "success": false,
+                      "error": "Role description must be at most 500 characters"
+                    }
+                  },
+                  "invalid_id": {
+                    "summary": "Unable to generate valid ID",
+                    "value": {
+                      "success": false,
+                      "error": "Unable to derive a valid role ID from name"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "409": {
+            "description": "Conflict - role with similar name already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Role with similar name already exists"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Failed to create role"
+                }
+              }
+            }
           }
         }
       }
@@ -1418,7 +2129,7 @@
       "post": {
         "tags": ["Authentication"],
         "summary": "Change user password",
-        "description": "Changes the current user's password. Requires authentication and current password verification. Rate limited to 5 attempts per 15 minutes.",
+        "description": "Changes the current user's password. Requires authentication and current password verification. Rate limited to 5 attempts per 15 minutes per IP address. Not available for OAuth-only accounts (users without password). Sends confirmation email after successful change.",
         "security": [
           {
             "sessionAuth": []
@@ -1455,19 +2166,29 @@
             }
           },
           "400": {
-            "description": "Validation error or incorrect current password",
+            "description": "Validation error, incorrect current password, or invalid request",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/ErrorResponseWithDetails"
                 },
                 "examples": {
                   "validation_error": {
                     "summary": "Password validation failed",
                     "value": {
                       "success": false,
-                      "error": "Password must be at least 8 characters",
-                      "details": "Validation failed"
+                      "error": "Invalid input data",
+                      "details": [
+                        {
+                          "code": "too_small",
+                          "minimum": 8,
+                          "type": "string",
+                          "inclusive": true,
+                          "exact": false,
+                          "message": "Password must be at least 8 characters",
+                          "path": ["newPassword"]
+                        }
+                      ]
                     }
                   },
                   "incorrect_password": {
@@ -1483,6 +2204,20 @@
                       "success": false,
                       "error": "Passwords don't match"
                     }
+                  },
+                  "oauth_user": {
+                    "summary": "OAuth user without password",
+                    "value": {
+                      "success": false,
+                      "error": "Password change not available for OAuth accounts. Please contact support."
+                    }
+                  },
+                  "same_password": {
+                    "summary": "New password same as current",
+                    "value": {
+                      "success": false,
+                      "error": "New password must be different from current password"
+                    }
                   }
                 }
               }
@@ -1490,6 +2225,20 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "User not found in database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "User not found"
+                }
+              }
+            }
           },
           "429": {
             "description": "Rate limit exceeded",
@@ -1763,9 +2512,14 @@
             "type": "string",
             "format": "date-time",
             "description": "When the favorite was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the favorite was last updated"
           }
         },
-        "required": ["id", "userId", "itemSlug", "itemName", "createdAt"]
+        "required": ["id", "userId", "itemSlug", "itemName", "createdAt", "updatedAt"]
       },
       "FeaturedItem": {
         "type": "object",
@@ -1793,27 +2547,46 @@
             "nullable": true,
             "description": "Category of the featured item"
           },
+          "itemDescription": {
+            "type": "string",
+            "nullable": true,
+            "description": "Description of the featured item"
+          },
           "featuredOrder": {
             "type": "integer",
-            "description": "Display order for featured items"
+            "description": "Display order for featured items (higher numbers first)"
+          },
+          "featuredUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the featured status expires (null means no expiration)"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the featured item is currently active"
+          },
+          "featuredBy": {
+            "type": "string",
+            "description": "ID of the admin user who featured this item"
           },
           "featuredAt": {
             "type": "string",
             "format": "date-time",
             "description": "When the item was featured"
           },
-          "featuredUntil": {
+          "createdAt": {
             "type": "string",
             "format": "date-time",
-            "nullable": true,
-            "description": "When the featured status expires"
+            "description": "When the featured item record was created"
           },
-          "isActive": {
-            "type": "boolean",
-            "description": "Whether the featured item is active"
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the featured item record was last updated"
           }
         },
-        "required": ["id", "itemSlug", "itemName", "featuredOrder", "featuredAt", "isActive"]
+        "required": ["id", "itemSlug", "itemName", "featuredOrder", "isActive", "featuredBy", "featuredAt", "createdAt", "updatedAt"]
       },
       "AddFavoriteRequest": {
         "type": "object",
@@ -1921,6 +2694,40 @@
         },
         "required": ["success", "error"]
       },
+      "ErrorResponseWithDetails": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "Error code"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Detailed error message"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Field path where error occurred"
+                }
+              }
+            },
+            "description": "Detailed validation errors (when applicable)"
+          }
+        },
+        "required": ["error"]
+      },
       "RecaptchaRequest": {
         "type": "object",
         "properties": {
@@ -2001,7 +2808,7 @@
             "description": "Current branch name"
           }
         },
-        "required": ["commit", "date", "message", "author", "repository", "lastSync"]
+        "required": ["commit", "date", "message", "author", "repository", "lastSync", "branch"]
       },
       "VersionErrorResponse": {
         "type": "object",
@@ -2038,37 +2845,34 @@
             "type": "string",
             "description": "Category name"
           },
-          "isActive": {
+          "count": {
+            "type": "integer",
+            "description": "Number of items in this category (optional, only in some contexts)"
+          },
+          "isInactive": {
             "type": "boolean",
-            "description": "Whether the category is active"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "When the category was created"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "When the category was last updated"
+            "description": "Whether the category is inactive (optional, only in some contexts)"
           }
         },
-        "required": ["id", "name", "isActive", "createdAt"]
+        "required": ["id", "name"]
       },
       "CreateCategoryRequest": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "description": "Category identifier (optional, will be generated if not provided)"
+            "minLength": 3,
+            "maxLength": 50,
+            "description": "Category identifier (required, must be 3-50 characters)"
           },
           "name": {
             "type": "string",
-            "minLength": 1,
-            "description": "Category name"
+            "minLength": 2,
+            "maxLength": 50,
+            "description": "Category name (required, must be 2-50 characters)"
           }
         },
-        "required": ["name"]
+        "required": ["id", "name"]
       },
       "CategoriesResponse": {
         "type": "object",
@@ -2291,6 +3095,36 @@
         },
         "required": ["content", "rating"]
       },
+      "CommentsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommentWithUser"
+            },
+            "description": "Array of comments with user information"
+          }
+        },
+        "required": ["success", "comments"]
+      },
+      "CreateCommentResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "comment": {
+            "$ref": "#/components/schemas/CommentWithUser"
+          }
+        },
+        "required": ["success", "comment"]
+      },
       "VoteRequest": {
         "type": "object",
         "properties": {
@@ -2305,6 +3139,10 @@
       "VoteResponse": {
         "type": "object",
         "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
           "count": {
             "type": "integer",
             "description": "Total vote count for the item (upvotes - downvotes)"
@@ -2316,7 +3154,7 @@
             "description": "Current user's vote status: 'up', 'down', or null if not voted"
           }
         },
-        "required": ["count", "userVote"]
+        "required": ["success", "count", "userVote"]
       },
       "User": {
         "type": "object",
@@ -2325,27 +3163,52 @@
             "type": "string",
             "description": "Unique user identifier"
           },
-          "username": {
-            "type": "string",
-            "description": "User's username"
-          },
           "email": {
             "type": "string",
             "format": "email",
             "description": "User's email address"
           },
+          "username": {
+            "type": "string",
+            "nullable": true,
+            "description": "User's username (optional)"
+          },
           "name": {
             "type": "string",
-            "description": "User's display name"
+            "nullable": true,
+            "description": "User's display name (optional)"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true,
+            "description": "User's job title (optional)"
+          },
+          "avatar": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "User's avatar URL (optional)"
           },
           "role": {
             "type": "string",
-            "description": "User's role"
+            "nullable": true,
+            "description": "User's role ID (optional)"
+          },
+          "roleName": {
+            "type": "string",
+            "nullable": true,
+            "description": "User's role display name (optional)"
           },
           "status": {
             "type": "string",
             "enum": ["active", "inactive"],
-            "description": "User's account status"
+            "nullable": true,
+            "description": "User's account status (optional)"
+          },
+          "created_by": {
+            "type": "string",
+            "nullable": true,
+            "description": "ID of user who created this account (optional)"
           },
           "created_at": {
             "type": "string",
@@ -2358,7 +3221,7 @@
             "description": "When the user was last updated"
           }
         },
-        "required": ["id", "username", "email", "name", "role", "status", "created_at", "updated_at"]
+        "required": ["id", "email", "created_at", "updated_at"]
       },
       "UsersResponse": {
         "type": "object",
@@ -2367,36 +3230,90 @@
             "type": "boolean",
             "example": true
           },
-          "users": {
+          "data": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/User"
-            }
-          },
-          "pagination": {
-            "type": "object",
-            "properties": {
-              "page": {
-                "type": "integer",
-                "description": "Current page number"
-              },
-              "limit": {
-                "type": "integer",
-                "description": "Items per page"
-              },
-              "total": {
-                "type": "integer",
-                "description": "Total number of users"
-              },
-              "totalPages": {
-                "type": "integer",
-                "description": "Total number of pages"
-              }
             },
-            "required": ["page", "limit", "total", "totalPages"]
+            "description": "Array of user objects"
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of users"
+          },
+          "page": {
+            "type": "integer",
+            "description": "Current page number"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Items per page"
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "Total number of pages"
           }
         },
-        "required": ["success", "users", "pagination"]
+        "required": ["success", "data", "total", "page", "limit", "totalPages"]
+      },
+      "CreateUserRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 30,
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "description": "Username (3-30 characters, alphanumeric + dash/underscore)"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 255,
+            "description": "User's email address"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100,
+            "description": "User's display name (2-100 characters)"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "User's job title (optional, max 100 characters)"
+          },
+          "avatar": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 500,
+            "description": "User's avatar URL (optional, max 500 characters)"
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1,
+            "description": "User's role ID (must exist in system)"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "description": "User's password (minimum 8 characters)"
+          }
+        },
+        "required": ["username", "email", "name", "role", "password"]
+      },
+      "CreateUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": ["success", "user"]
       },
       "Item": {
         "type": "object",
@@ -2423,8 +3340,18 @@
             "description": "URL to the item's source"
           },
           "category": {
-            "type": "string",
-            "description": "Item category"
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "description": "Item category (can be string or array of strings)"
           },
           "tags": {
             "type": "array",
@@ -2433,28 +3360,55 @@
             },
             "description": "Item tags"
           },
+          "featured": {
+            "type": "boolean",
+            "description": "Whether the item is featured (optional)"
+          },
           "icon_url": {
             "type": "string",
             "format": "uri",
             "nullable": true,
-            "description": "URL to the item's icon"
+            "description": "URL to the item's icon (optional)"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the item was last updated"
           },
           "status": {
             "type": "string",
-            "enum": ["active", "inactive", "pending", "rejected"],
+            "enum": ["draft", "pending", "approved", "rejected"],
             "description": "Item status"
           },
-          "featured": {
-            "type": "boolean",
-            "description": "Whether the item is featured"
+          "submitted_by": {
+            "type": "string",
+            "nullable": true,
+            "description": "ID of user who submitted the item (optional)"
           },
-          "created_at": {
+          "submitted_at": {
             "type": "string",
             "format": "date-time",
-            "description": "When the item was created"
+            "nullable": true,
+            "description": "When the item was submitted (optional)"
+          },
+          "reviewed_by": {
+            "type": "string",
+            "nullable": true,
+            "description": "ID of user who reviewed the item (optional)"
+          },
+          "reviewed_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the item was reviewed (optional)"
+          },
+          "review_notes": {
+            "type": "string",
+            "nullable": true,
+            "description": "Review notes (optional)"
           }
         },
-        "required": ["id", "name", "slug", "description", "source_url", "status", "created_at"]
+        "required": ["id", "name", "slug", "description", "source_url", "category", "tags", "updated_at", "status"]
       },
       "ItemsResponse": {
         "type": "object",
@@ -2467,28 +3421,225 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Item"
-            }
-          },
-          "pagination": {
-            "type": "object",
-            "properties": {
-              "page": {
-                "type": "integer"
-              },
-              "limit": {
-                "type": "integer"
-              },
-              "total": {
-                "type": "integer"
-              },
-              "totalPages": {
-                "type": "integer"
-              }
             },
-            "required": ["page", "limit", "total", "totalPages"]
+            "description": "Array of item objects"
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of items"
+          },
+          "page": {
+            "type": "integer",
+            "description": "Current page number"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Items per page"
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "Total number of pages"
           }
         },
-        "required": ["success", "items", "pagination"]
+        "required": ["success", "items", "total", "page", "limit", "totalPages"]
+      },
+      "CreateItemRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "description": "Unique item identifier (required, 3-50 characters)"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "description": "Item name (required, 3-100 characters)"
+          },
+          "slug": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "pattern": "^[a-z0-9-]+$",
+            "description": "URL-friendly identifier (required, lowercase letters, numbers, hyphens only)"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 500,
+            "description": "Item description (required, 10-500 characters)"
+          },
+          "source_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to the item's source (required, valid URL format)"
+          },
+          "category": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "description": "Item category (optional, can be string or array of strings)"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Item tags (optional, array of strings)"
+          },
+          "featured": {
+            "type": "boolean",
+            "description": "Whether the item is featured (optional, defaults to false)"
+          },
+          "icon_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to the item's icon (optional)"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "pending", "approved", "rejected"],
+            "description": "Item status (optional, defaults to 'draft')"
+          }
+        },
+        "required": ["id", "name", "slug", "description", "source_url"]
+      },
+      "CreateItemResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "item": {
+            "$ref": "#/components/schemas/Item"
+          },
+          "message": {
+            "type": "string",
+            "description": "Success message"
+          }
+        },
+        "required": ["success", "item", "message"]
+      },
+      "Role": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique role identifier (auto-generated from name)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Role display name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Role description"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive"],
+            "description": "Role status"
+          },
+          "isAdmin": {
+            "type": "boolean",
+            "description": "Whether this role has admin privileges"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of permission strings (currently empty)"
+          }
+        },
+        "required": ["id", "name", "description", "status", "isAdmin", "permissions"]
+      },
+      "RolesResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Role"
+            },
+            "description": "Array of role objects"
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of roles"
+          },
+          "page": {
+            "type": "integer",
+            "description": "Current page number"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Items per page"
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "Total number of pages"
+          }
+        },
+        "required": ["success", "roles", "total", "page", "limit", "totalPages"]
+      },
+      "CreateRoleRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "description": "Role name (required, 3-100 characters)"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Role description (required, max 500 characters)"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive"],
+            "description": "Role status (optional, defaults to 'active')"
+          },
+          "isAdmin": {
+            "type": "boolean",
+            "description": "Whether this role has admin privileges (optional, defaults to false)"
+          }
+        },
+        "required": ["name", "description"]
+      },
+      "CreateRoleResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          },
+          "message": {
+            "type": "string",
+            "description": "Success message"
+          }
+        },
+        "required": ["success", "role", "message"]
       },
       "CheckoutRequest": {
         "type": "object",
@@ -2626,17 +3777,20 @@
           "currentPassword": {
             "type": "string",
             "minLength": 1,
-            "description": "User's current password"
+            "description": "User's current password (required, non-empty)"
           },
           "newPassword": {
             "type": "string",
             "minLength": 8,
-            "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$",
-            "description": "New password (min 8 chars, must contain uppercase, lowercase, number, and special character)"
+            "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$",
+            "description": "New password (min 8 chars, must contain: uppercase letter, lowercase letter, number, and special character)",
+            "example": "MyNewPass123!"
           },
           "confirmPassword": {
             "type": "string",
-            "description": "Confirmation of new password (must match newPassword)"
+            "minLength": 8,
+            "description": "Confirmation of new password (must exactly match newPassword)",
+            "example": "MyNewPass123!"
           }
         },
         "required": ["currentPassword", "newPassword", "confirmPassword"]

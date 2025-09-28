@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
       console.log("Rate limit exceeded for IP:", clientIP);
       return NextResponse.json(
         {
+          success: false,
           error: "Too many password change attempts. Please try again later.",
           retryAfter: rateLimitResult.retryAfter
         },
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: "Unauthorized. Please sign in." },
+        { success: false, error: "Unauthorized. Please sign in." },
         { status: 401 }
       );
     }
@@ -74,6 +75,7 @@ export async function POST(request: NextRequest) {
     if (!validationResult.success) {
       return NextResponse.json(
         {
+          success: false,
           error: "Invalid input data",
           details: validationResult.error.issues
         },
@@ -92,7 +94,7 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { error: "User not found" },
+        { success: false, error: "User not found" },
         { status: 404 }
       );
     }
@@ -100,8 +102,9 @@ export async function POST(request: NextRequest) {
     // Check if user has a password (OAuth users might not have one)
     if (!user.passwordHash) {
       return NextResponse.json(
-        { 
-          error: "Password change not available for OAuth accounts. Please contact support." 
+        {
+          success: false,
+          error: "Password change not available for OAuth accounts. Please contact support."
         },
         { status: 400 }
       );
@@ -111,7 +114,7 @@ export async function POST(request: NextRequest) {
     const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.passwordHash);
     if (!isCurrentPasswordValid) {
       return NextResponse.json(
-        { error: "Current password is incorrect" },
+        { success: false, error: "Current password is incorrect" },
         { status: 400 }
       );
     }
@@ -120,7 +123,7 @@ export async function POST(request: NextRequest) {
     const isSamePassword = await bcrypt.compare(newPassword, user.passwordHash);
     if (isSamePassword) {
       return NextResponse.json(
-        { error: "New password must be different from current password" },
+        { success: false, error: "New password must be different from current password" },
         { status: 400 }
       );
     }
@@ -184,8 +187,9 @@ export async function POST(request: NextRequest) {
     console.error("Password change error:", error);
     
     return NextResponse.json(
-      { 
-        error: "Internal server error. Please try again later." 
+      {
+        success: false,
+        error: "Internal server error. Please try again later."
       },
       { status: 500 }
     );

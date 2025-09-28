@@ -9,11 +9,14 @@ export async function GET(
   try {
    const itemComments = await getCommentsByItemId((await params).itemId);
 
-    return NextResponse.json(itemComments);
+    return NextResponse.json({
+      success: true,
+      comments: itemComments
+    });
   } catch (error) {
     console.error("Failed to fetch comments:", error);
     return NextResponse.json(
-      { error: "Failed to fetch comments" },
+      { success: false, error: "Failed to fetch comments" },
       { status: 500 }
     );
   }
@@ -27,7 +30,7 @@ export async function POST(
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(
-        { error: "Authentication required" },
+        { success: false, error: "Authentication required" },
         { status: 401 }
       );
     }
@@ -35,14 +38,14 @@ export async function POST(
     const { content, rating } = await request.json();
     if (!content?.trim()) {
       return NextResponse.json(
-        { error: "Content is required" },
+        { success: false, error: "Content is required" },
         { status: 400 }
       );
     }
 
     if (typeof rating !== "number" || rating < 1 || rating > 5) {
       return NextResponse.json(
-        { error: "Rating must be between 1 and 5" },
+        { success: false, error: "Rating must be between 1 and 5" },
         { status: 400 }
       );
     }
@@ -50,7 +53,7 @@ export async function POST(
     const clientProfile = await getClientProfileByUserId(session.user.id!);
     if (!clientProfile) {
       return NextResponse.json(
-        { error: "Client profile not found" },
+        { success: false, error: "Client profile not found" },
         { status: 404 }
       );
     }
@@ -65,11 +68,14 @@ export async function POST(
     const itemComments = await getCommentsByItemId((await params).itemId);
     const commentWithUser = itemComments.find((c) => c.id === comment.id);
 
-    return NextResponse.json(commentWithUser);
+    return NextResponse.json({
+      success: true,
+      comment: commentWithUser
+    });
   } catch (error) {
     console.error("Failed to create comment:", error);
     return NextResponse.json(
-      { error: "Failed to create comment" },
+      { success: false, error: "Failed to create comment" },
       { status: 500 }
     );
   }

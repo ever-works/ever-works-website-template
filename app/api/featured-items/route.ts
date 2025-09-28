@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db/drizzle';
 import { featuredItems } from '@/lib/db/schema';
-import { eq, desc, and, gte } from 'drizzle-orm';
+import { eq, desc, and, gte, or, isNull } from 'drizzle-orm';
 
 // GET /api/featured-items - Get active featured items for public display
 export async function GET(request: NextRequest) {
@@ -15,10 +15,15 @@ export async function GET(request: NextRequest) {
     
     // If not including expired, filter out items past their featured_until date
     if (!includeExpired) {
-      conditions.push(
-        // Either no expiration date or expiration date is in the future
-        gte(featuredItems.featuredUntil, new Date())
+      const currentDate = new Date();
+      const expirationCondition = or(
+        isNull(featuredItems.featuredUntil),
+        gte(featuredItems.featuredUntil, currentDate)
       );
+
+      if (expirationCondition) {
+        conditions.push(expirationCondition);
+      }
     }
 
     // Get featured items
@@ -37,7 +42,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error fetching featured items:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch featured items' },
+      { success: false, error: 'Failed to fetch featured items' },
       { status: 500 }
     );
   }
