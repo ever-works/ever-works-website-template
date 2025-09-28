@@ -11,16 +11,10 @@ export function createQueryClientInstance(): QueryClient {
 				refetchOnWindowFocus: false, // Prevent excessive refetching
 				refetchOnMount: false, // Don't refetch if data is fresh
 				refetchOnReconnect: true, // Refetch on network reconnect
-				retry: (failureCount, error) => {
-					// Don't retry on client errors (4xx)
-					if (error instanceof Error && error.message.includes('4')) {
-						return false;
-					}
-					// Don't retry on authentication errors
-					if (error instanceof Error && error.message.includes('401')) {
-						return false;
-					}
-					return failureCount < 2; // Reduced from default 3 to 2
+				retry: (failureCount) => {
+					// Simple retry logic - retry network/server errors up to 2 times
+					// Removed flawed string matching logic that caused false positives
+					return failureCount < 2;
 				},
 				retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
 			},
