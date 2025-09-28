@@ -344,21 +344,36 @@ export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   }, [layoutManager, themeManager, layoutHomeManager, paginationTypeManager, itemsPerPageManager]);
 
-  const contextValue = useMemo(() => ({
-    ...layoutManager,
-    ...themeManager,
-    ...layoutHomeManager,
-    ...paginationTypeManager,
-    ...itemsPerPageManager,
-    isInitialized,
-  }), [
-    layoutManager,
-    themeManager,
-    layoutHomeManager,
-    paginationTypeManager,
-    itemsPerPageManager,
-    isInitialized,
-  ]);
+  const contextValue = useMemo(
+      () => ({
+        layoutKey: layoutManager.layoutKey,
+        setLayoutKey: layoutManager.setLayoutKey,
+        themeKey: themeManager.themeKey,
+        setThemeKey: themeManager.setThemeKey,
+        currentTheme: themeManager.currentTheme,
+        layoutHome: layoutHomeManager.layoutHome,
+        setLayoutHome: layoutHomeManager.setLayoutHome,
+        paginationType: paginationTypeManager.paginationType,
+        setPaginationType: paginationTypeManager.setPaginationType,
+        itemsPerPage: itemsPerPageManager.itemsPerPage,
+        setItemsPerPage: itemsPerPageManager.setItemsPerPage,
+        isInitialized,
+      }),
+      [
+        layoutManager.layoutKey,
+        layoutManager.setLayoutKey,
+        themeManager.themeKey,
+        themeManager.setThemeKey,
+        themeManager.currentTheme,
+        layoutHomeManager.layoutHome,
+        layoutHomeManager.setLayoutHome,
+        paginationTypeManager.paginationType,
+        paginationTypeManager.setPaginationType,
+        itemsPerPageManager.itemsPerPage,
+        itemsPerPageManager.setItemsPerPage,
+        isInitialized,
+      ]
+    );
 
   return (
     <LayoutThemeContext.Provider value={contextValue}>
