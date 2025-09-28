@@ -98,6 +98,11 @@ const NAVIGATION_CONFIG: Array<{
     translationKey: "SUBMIT",
     translationNamespace: "common",
   },
+  {
+    key: "docs",
+    href: "/docs",
+    staticLabel: "API Docs",
+  },
 ];
 
 const STYLES = {

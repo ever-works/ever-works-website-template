@@ -1,0 +1,2801 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Ever Works Website Template API",
+    "description": "REST API documentation for the Ever Works website template. This template provides a complete foundation for building modern web applications with authentication, user management, favorites, and content management features.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Ever Works Team",
+      "url": "https://ever.works"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Development server"
+    },
+    {
+      "url": "https://your-domain.com",
+      "description": "Production server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "User authentication and session management"
+    },
+    {
+      "name": "Favorites",
+      "description": "User favorites management"
+    },
+    {
+      "name": "Featured Items",
+      "description": "Featured content management"
+    },
+    {
+      "name": "Utilities",
+      "description": "Utility endpoints"
+    },
+    {
+      "name": "Admin - Categories",
+      "description": "Admin endpoints for category management"
+    },
+    {
+      "name": "Version",
+      "description": "Version and repository information"
+    },
+    {
+      "name": "Payments - Stripe",
+      "description": "Stripe payment method management"
+    },
+    {
+      "name": "Payments - LemonSqueezy",
+      "description": "LemonSqueezy payment processing"
+    },
+    {
+      "name": "Items & Content",
+      "description": "Item management, comments, and voting"
+    },
+    {
+      "name": "Admin - Users",
+      "description": "Admin endpoints for user management"
+    },
+    {
+      "name": "Admin - Items",
+      "description": "Admin endpoints for item management"
+    },
+    {
+      "name": "Admin - Comments",
+      "description": "Admin endpoints for comment management"
+    },
+    {
+      "name": "User Management",
+      "description": "User profile and subscription management"
+    }
+  ],
+  "paths": {
+    "/api/current-user": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Get current authenticated user",
+        "description": "Returns the current authenticated user's information including profile data",
+        "responses": {
+          "200": {
+            "description": "Current user information or null if not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/SafeUser"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "examples": {
+                  "authenticated": {
+                    "summary": "Authenticated user",
+                    "value": {
+                      "id": "user_123",
+                      "name": "John Doe",
+                      "email": "john@example.com",
+                      "image": "https://example.com/avatar.jpg",
+                      "provider": "google",
+                      "isAdmin": false
+                    }
+                  },
+                  "unauthenticated": {
+                    "summary": "Unauthenticated user",
+                    "value": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/favorites": {
+      "get": {
+        "tags": ["Favorites"],
+        "summary": "Get user's favorites",
+        "description": "Returns a list of the current user's favorite items",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user favorites",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FavoritesResponse"
+                },
+                "example": {
+                  "success": true,
+                  "favorites": [
+                    {
+                      "id": "fav_123",
+                      "userId": "user_123",
+                      "itemSlug": "awesome-tool",
+                      "itemName": "Awesome Tool",
+                      "itemIconUrl": "https://example.com/icon.png",
+                      "itemCategory": "productivity",
+                      "createdAt": "2024-01-15T10:30:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Favorites"],
+        "summary": "Add item to favorites",
+        "description": "Adds a new item to the user's favorites list",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddFavoriteRequest"
+              },
+              "example": {
+                "itemSlug": "awesome-tool",
+                "itemName": "Awesome Tool",
+                "itemIconUrl": "https://example.com/icon.png",
+                "itemCategory": "productivity"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Favorite added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddFavoriteResponse"
+                },
+                "example": {
+                  "success": true,
+                  "favorite": {
+                    "id": "fav_123",
+                    "userId": "user_123",
+                    "itemSlug": "awesome-tool",
+                    "itemName": "Awesome Tool",
+                    "itemIconUrl": "https://example.com/icon.png",
+                    "itemCategory": "productivity",
+                    "createdAt": "2024-01-15T10:30:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "409": {
+            "description": "Item already in favorites",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Item is already in favorites"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/favorites/{itemSlug}": {
+      "delete": {
+        "tags": ["Favorites"],
+        "summary": "Remove item from favorites",
+        "description": "Removes an item from the user's favorites list",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "itemSlug",
+            "in": "path",
+            "required": true,
+            "description": "The slug identifier of the item to remove from favorites",
+            "schema": {
+              "type": "string",
+              "example": "awesome-tool"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Favorite removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Favorite removed successfully"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Favorite not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Favorite not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/featured-items": {
+      "get": {
+        "tags": ["Featured Items"],
+        "summary": "Get featured items",
+        "description": "Returns a list of active featured items for public display",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of items to return",
+            "schema": {
+              "type": "integer",
+              "default": 6,
+              "minimum": 1,
+              "maximum": 50
+            }
+          },
+          {
+            "name": "includeExpired",
+            "in": "query",
+            "description": "Whether to include expired featured items",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of featured items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeaturedItemsResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "id": "item_123",
+                      "itemSlug": "awesome-tool",
+                      "itemName": "Awesome Tool",
+                      "itemIconUrl": "https://example.com/icon.png",
+                      "itemCategory": "productivity",
+                      "featuredOrder": 1,
+                      "featuredAt": "2024-01-15T10:30:00Z",
+                      "featuredUntil": "2024-02-15T10:30:00Z",
+                      "isActive": true
+                    }
+                  ],
+                  "count": 1
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/verify-recaptcha": {
+      "post": {
+        "tags": ["Utilities"],
+        "summary": "Verify reCAPTCHA token",
+        "description": "Verifies a reCAPTCHA token with Google's API",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecaptchaRequest"
+              },
+              "example": {
+                "token": "03AGdBq25..."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "reCAPTCHA verification result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecaptchaResponse"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Successful verification",
+                    "value": {
+                      "success": true,
+                      "score": 0.9,
+                      "action": "submit",
+                      "hostname": "localhost",
+                      "challenge_ts": "2024-01-15T10:30:00Z"
+                    }
+                  },
+                  "failure": {
+                    "summary": "Failed verification",
+                    "value": {
+                      "success": false,
+                      "error_codes": ["invalid-input-response"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/version": {
+      "get": {
+        "tags": ["Version"],
+        "summary": "Get version information",
+        "description": "Returns version information including git commit details and repository sync status",
+        "responses": {
+          "200": {
+            "description": "Version information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionInfo"
+                },
+                "example": {
+                  "commit": "abc1234",
+                  "date": "2024-01-15T10:30:00Z",
+                  "message": "feat: add new feature",
+                  "author": "John Doe",
+                  "repository": "https://github.com/user/repo",
+                  "lastSync": "2024-01-15T10:35:00Z",
+                  "branch": "main"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Repository not found or no commits",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionErrorResponse"
+                },
+                "example": {
+                  "error": "Data repository not found",
+                  "code": "REPOSITORY_NOT_FOUND",
+                  "timestamp": "2024-01-15T10:30:00Z",
+                  "details": "Git directory not found at: /path/to/repo"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/admin/categories": {
+      "get": {
+        "tags": ["Admin - Categories"],
+        "summary": "List categories (Admin)",
+        "description": "Returns a paginated list of categories with optional filtering. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "includeInactive",
+            "in": "query",
+            "description": "Whether to include inactive categories",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "type": "string",
+              "enum": ["name", "id"],
+              "default": "name"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "description": "Sort order",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "asc"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoriesResponse"
+                },
+                "example": {
+                  "success": true,
+                  "categories": [
+                    {
+                      "id": "productivity",
+                      "name": "Productivity",
+                      "isActive": true,
+                      "createdAt": "2024-01-15T10:30:00Z"
+                    }
+                  ],
+                  "total": 1,
+                  "page": 1,
+                  "limit": 10,
+                  "totalPages": 1
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Unauthorized. Admin access required."
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Admin - Categories"],
+        "summary": "Create category (Admin)",
+        "description": "Creates a new category. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryRequest"
+              },
+              "example": {
+                "id": "productivity",
+                "name": "Productivity"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Category created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCategoryResponse"
+                },
+                "example": {
+                  "success": true,
+                  "category": {
+                    "id": "productivity",
+                    "name": "Productivity",
+                    "isActive": true,
+                    "createdAt": "2024-01-15T10:30:00Z"
+                  },
+                  "message": "Category created successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Unauthorized. Admin access required."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Category already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Category with this ID already exists"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/stripe/payment-methods/list": {
+      "get": {
+        "tags": ["Payments - Stripe"],
+        "summary": "List payment methods",
+        "description": "Returns a list of the current user's saved payment methods from Stripe",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of payment methods",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentMethodsResponse"
+                },
+                "examples": {
+                  "with_methods": {
+                    "summary": "User with payment methods",
+                    "value": {
+                      "success": true,
+                      "data": [
+                        {
+                          "id": "pm_1234567890",
+                          "type": "card",
+                          "card": {
+                            "brand": "visa",
+                            "last4": "4242",
+                            "funding": "credit",
+                            "country": "US"
+                          },
+                          "billing_details": {
+                            "name": "John Doe",
+                            "email": "john@example.com"
+                          },
+                          "created": 1640995200,
+                          "is_default": true
+                        }
+                      ],
+                      "message": "Payment methods retrieved successfully"
+                    }
+                  },
+                  "no_methods": {
+                    "summary": "User with no payment methods",
+                    "value": {
+                      "success": true,
+                      "data": [],
+                      "message": "No payment methods found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Customer not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Customer not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/items/{itemId}/comments": {
+      "get": {
+        "tags": ["Items & Content"],
+        "summary": "Get item comments",
+        "description": "Returns all comments for a specific item",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the item",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of comments for the item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CommentWithUser"
+                  }
+                },
+                "example": [
+                  {
+                    "id": "comment_123",
+                    "content": "Great tool! Very useful.",
+                    "rating": 5,
+                    "createdAt": "2024-01-15T10:30:00Z",
+                    "user": {
+                      "id": "user_123",
+                      "name": "John Doe",
+                      "email": "john@example.com"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Items & Content"],
+        "summary": "Create item comment",
+        "description": "Creates a new comment and rating for an item. Requires authentication.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the item",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommentRequest"
+              },
+              "example": {
+                "content": "This is an excellent tool! Highly recommended.",
+                "rating": 5
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comment created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentWithUser"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missing_content": {
+                    "summary": "Missing content",
+                    "value": {
+                      "success": false,
+                      "error": "Content is required"
+                    }
+                  },
+                  "invalid_rating": {
+                    "summary": "Invalid rating",
+                    "value": {
+                      "success": false,
+                      "error": "Rating must be between 1 and 5"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Client profile not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Client profile not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/items/{itemId}/votes": {
+      "get": {
+        "tags": ["Items & Content"],
+        "summary": "Get item votes",
+        "description": "Returns vote count and current user's vote status for an item",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the item",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vote information for the item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoteResponse"
+                },
+                "examples": {
+                  "with_user_vote": {
+                    "summary": "User has voted",
+                    "value": {
+                      "count": 42,
+                      "userVote": "up"
+                    }
+                  },
+                  "no_user_vote": {
+                    "summary": "User hasn't voted",
+                    "value": {
+                      "count": 42,
+                      "userVote": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Items & Content"],
+        "summary": "Vote on item",
+        "description": "Creates or updates a vote for an item. Replaces any existing vote by the user.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the item",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoteRequest"
+              },
+              "example": {
+                "type": "up"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vote recorded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoteResponse"
+                },
+                "example": {
+                  "count": 43,
+                  "userVote": "up"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Client profile not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Client profile not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Items & Content"],
+        "summary": "Remove vote from item",
+        "description": "Removes the current user's vote from an item",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the item",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vote removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoteResponse"
+                },
+                "example": {
+                  "count": 42,
+                  "userVote": null
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Client profile not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Client profile not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/admin/users": {
+      "get": {
+        "tags": ["Admin - Users"],
+        "summary": "List users (Admin)",
+        "description": "Returns a paginated list of users with filtering and sorting options. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term for name, username, or email",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "description": "Filter by user role",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by user status",
+            "schema": {
+              "type": "string",
+              "enum": ["active", "inactive"]
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "type": "string",
+              "enum": ["name", "username", "email", "role", "created_at"],
+              "default": "created_at"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "description": "Sort order",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "desc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsersResponse"
+                },
+                "example": {
+                  "success": true,
+                  "users": [
+                    {
+                      "id": "user_123",
+                      "username": "johndoe",
+                      "email": "john@example.com",
+                      "name": "John Doe",
+                      "role": "user",
+                      "status": "active",
+                      "created_at": "2024-01-15T10:30:00Z",
+                      "updated_at": "2024-01-15T10:30:00Z"
+                    }
+                  ],
+                  "pagination": {
+                    "page": 1,
+                    "limit": 10,
+                    "total": 1,
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalid_status": {
+                    "summary": "Invalid status parameter",
+                    "value": {
+                      "success": false,
+                      "error": "Invalid status parameter"
+                    }
+                  },
+                  "invalid_sort": {
+                    "summary": "Invalid sortBy parameter",
+                    "value": {
+                      "success": false,
+                      "error": "Invalid sortBy parameter"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Forbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/admin/items": {
+      "get": {
+        "tags": ["Admin - Items"],
+        "summary": "List items (Admin)",
+        "description": "Returns a paginated list of items with filtering options. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term for item name or description",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "Filter by category",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by item status",
+            "schema": {
+              "type": "string",
+              "enum": ["active", "inactive", "pending", "rejected"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Unauthorized. Admin access required."
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/stripe/checkout": {
+      "post": {
+        "tags": ["Payments - Stripe"],
+        "summary": "Create checkout session",
+        "description": "Creates a Stripe checkout session for payment processing",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutRequest"
+              },
+              "example": {
+                "priceId": "price_1234567890",
+                "mode": "subscription",
+                "trialPeriodDays": 7,
+                "billingInterval": "month",
+                "successUrl": "https://example.com/success",
+                "cancelUrl": "https://example.com/cancel",
+                "metadata": {
+                  "plan": "standard"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Checkout session created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutResponse"
+                },
+                "example": {
+                  "success": true,
+                  "sessionId": "cs_1234567890",
+                  "url": "https://checkout.stripe.com/pay/cs_1234567890"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to create customer or invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Failed to create customer",
+                  "message": "Unable to create Stripe customer"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/stripe/subscriptions": {
+      "get": {
+        "tags": ["Payments - Stripe"],
+        "summary": "List user subscriptions",
+        "description": "Returns all subscriptions for the current user",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user subscriptions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionsResponse"
+                },
+                "example": {
+                  "success": true,
+                  "subscriptions": [
+                    {
+                      "id": "sub_1234567890",
+                      "status": "active",
+                      "current_period_start": 1640995200,
+                      "current_period_end": 1643673600,
+                      "plan": {
+                        "id": "price_1234567890",
+                        "nickname": "Standard Plan",
+                        "amount": 1900,
+                        "currency": "usd",
+                        "interval": "month"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/auth/change-password": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Change user password",
+        "description": "Changes the current user's password. Requires authentication and current password verification. Rate limited to 5 attempts per 15 minutes.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              },
+              "example": {
+                "currentPassword": "oldPassword123!",
+                "newPassword": "newPassword456@",
+                "confirmPassword": "newPassword456@"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password changed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Password changed successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or incorrect current password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "validation_error": {
+                    "summary": "Password validation failed",
+                    "value": {
+                      "success": false,
+                      "error": "Password must be at least 8 characters",
+                      "details": "Validation failed"
+                    }
+                  },
+                  "incorrect_password": {
+                    "summary": "Current password incorrect",
+                    "value": {
+                      "success": false,
+                      "error": "Current password is incorrect"
+                    }
+                  },
+                  "password_mismatch": {
+                    "summary": "Passwords don't match",
+                    "value": {
+                      "success": false,
+                      "error": "Passwords don't match"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Too many password change attempts. Please try again later.",
+                  "retryAfter": 900
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/lemonsqueezy/checkout": {
+      "post": {
+        "tags": ["Payments - LemonSqueezy"],
+        "summary": "Create LemonSqueezy checkout",
+        "description": "Creates a LemonSqueezy checkout session for payment processing",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LemonSqueezyCheckoutRequest"
+              },
+              "example": {
+                "variantId": "123456",
+                "customPrice": 1900,
+                "metadata": {
+                  "plan": "standard",
+                  "userId": "user_123"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Checkout URL created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LemonSqueezyCheckoutResponse"
+                },
+                "example": {
+                  "success": true,
+                  "checkoutUrl": "https://checkout.lemonsqueezy.com/checkout/custom/abc123"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "validation_error": {
+                    "summary": "Invalid request body",
+                    "value": {
+                      "success": false,
+                      "error": "VALIDATION_ERROR",
+                      "message": "variantId is required"
+                    }
+                  },
+                  "invalid_json": {
+                    "summary": "Invalid JSON",
+                    "value": {
+                      "success": false,
+                      "error": "VALIDATION_ERROR",
+                      "message": "Invalid JSON in request body"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/lemonsqueezy/list": {
+      "get": {
+        "tags": ["Payments - LemonSqueezy"],
+        "summary": "List LemonSqueezy subscriptions",
+        "description": "Returns a list of LemonSqueezy subscriptions with filtering options",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by subscription status",
+            "schema": {
+              "type": "string",
+              "enum": ["active", "cancelled", "expired", "on_trial", "paused", "past_due", "unpaid"]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items to return",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "customerEmail",
+            "in": "query",
+            "description": "Filter by customer email",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of LemonSqueezy subscriptions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LemonSqueezySubscriptionsResponse"
+                },
+                "example": {
+                  "success": true,
+                  "subscriptions": [
+                    {
+                      "id": "123456",
+                      "status": "active",
+                      "customer_email": "user@example.com",
+                      "product_name": "Standard Plan",
+                      "variant_name": "Monthly",
+                      "created_at": "2024-01-15T10:30:00Z",
+                      "renews_at": "2024-02-15T10:30:00Z"
+                    }
+                  ],
+                  "meta": {
+                    "page": 1,
+                    "per_page": 50,
+                    "total": 1
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "sessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "next-auth.session-token",
+        "description": "Session-based authentication using NextAuth.js"
+      }
+    },
+    "schemas": {
+      "SafeUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique user identifier"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "User's display name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "nullable": true,
+            "description": "User's email address"
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "URL to user's profile image"
+          },
+          "provider": {
+            "type": "string",
+            "nullable": true,
+            "description": "Authentication provider used"
+          },
+          "isAdmin": {
+            "type": "boolean",
+            "description": "Whether the user has admin privileges"
+          }
+        },
+        "required": ["id", "isAdmin"]
+      },
+      "Favorite": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique favorite identifier"
+          },
+          "userId": {
+            "type": "string",
+            "description": "ID of the user who favorited the item"
+          },
+          "itemSlug": {
+            "type": "string",
+            "description": "Slug identifier of the favorited item"
+          },
+          "itemName": {
+            "type": "string",
+            "description": "Name of the favorited item"
+          },
+          "itemIconUrl": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "URL to the item's icon"
+          },
+          "itemCategory": {
+            "type": "string",
+            "nullable": true,
+            "description": "Category of the favorited item"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the favorite was created"
+          }
+        },
+        "required": ["id", "userId", "itemSlug", "itemName", "createdAt"]
+      },
+      "FeaturedItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique featured item identifier"
+          },
+          "itemSlug": {
+            "type": "string",
+            "description": "Slug identifier of the featured item"
+          },
+          "itemName": {
+            "type": "string",
+            "description": "Name of the featured item"
+          },
+          "itemIconUrl": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "URL to the item's icon"
+          },
+          "itemCategory": {
+            "type": "string",
+            "nullable": true,
+            "description": "Category of the featured item"
+          },
+          "featuredOrder": {
+            "type": "integer",
+            "description": "Display order for featured items"
+          },
+          "featuredAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the item was featured"
+          },
+          "featuredUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the featured status expires"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the featured item is active"
+          }
+        },
+        "required": ["id", "itemSlug", "itemName", "featuredOrder", "featuredAt", "isActive"]
+      },
+      "AddFavoriteRequest": {
+        "type": "object",
+        "properties": {
+          "itemSlug": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Slug identifier of the item to favorite"
+          },
+          "itemName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Name of the item to favorite"
+          },
+          "itemIconUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to the item's icon"
+          },
+          "itemCategory": {
+            "type": "string",
+            "description": "Category of the item to favorite"
+          }
+        },
+        "required": ["itemSlug", "itemName"]
+      },
+      "FavoritesResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "favorites": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Favorite"
+            }
+          }
+        },
+        "required": ["success", "favorites"]
+      },
+      "AddFavoriteResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "favorite": {
+            "$ref": "#/components/schemas/Favorite"
+          }
+        },
+        "required": ["success", "favorite"]
+      },
+      "FeaturedItemsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeaturedItem"
+            }
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of items returned"
+          }
+        },
+        "required": ["success", "data", "count"]
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "description": "Success message"
+          }
+        },
+        "required": ["success"]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "details": {
+            "type": "string",
+            "description": "Additional error details"
+          }
+        },
+        "required": ["success", "error"]
+      },
+      "RecaptchaRequest": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "reCAPTCHA token from the client"
+          }
+        },
+        "required": ["token"]
+      },
+      "RecaptchaResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the reCAPTCHA verification was successful"
+          },
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Score for reCAPTCHA v3 (0.0 to 1.0)"
+          },
+          "action": {
+            "type": "string",
+            "description": "Action name for reCAPTCHA v3"
+          },
+          "hostname": {
+            "type": "string",
+            "description": "Hostname of the site where the reCAPTCHA was solved"
+          },
+          "challenge_ts": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of the challenge"
+          },
+          "error_codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Error codes if verification failed"
+          }
+        },
+        "required": ["success"]
+      },
+      "VersionInfo": {
+        "type": "object",
+        "properties": {
+          "commit": {
+            "type": "string",
+            "description": "Short commit hash"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Commit date"
+          },
+          "message": {
+            "type": "string",
+            "description": "Commit message"
+          },
+          "author": {
+            "type": "string",
+            "description": "Commit author"
+          },
+          "repository": {
+            "type": "string",
+            "description": "Repository URL or identifier"
+          },
+          "lastSync": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last synchronization timestamp"
+          },
+          "branch": {
+            "type": "string",
+            "description": "Current branch name"
+          }
+        },
+        "required": ["commit", "date", "message", "author", "repository", "lastSync"]
+      },
+      "VersionErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "code": {
+            "type": "string",
+            "enum": ["REPOSITORY_NOT_FOUND", "NO_COMMITS", "SYNC_FAILED", "GIT_ERROR", "INTERNAL_ERROR", "VALIDATION_ERROR"],
+            "description": "Error code"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Error timestamp"
+          },
+          "details": {
+            "type": "string",
+            "description": "Additional error details"
+          }
+        },
+        "required": ["error", "code", "timestamp"]
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique category identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Category name"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the category is active"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the category was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the category was last updated"
+          }
+        },
+        "required": ["id", "name", "isActive", "createdAt"]
+      },
+      "CreateCategoryRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Category identifier (optional, will be generated if not provided)"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Category name"
+          }
+        },
+        "required": ["name"]
+      },
+      "CategoriesResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of categories"
+          },
+          "page": {
+            "type": "integer",
+            "description": "Current page number"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Number of items per page"
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "Total number of pages"
+          }
+        },
+        "required": ["success", "categories", "total", "page", "limit", "totalPages"]
+      },
+      "CreateCategoryResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "message": {
+            "type": "string",
+            "description": "Success message"
+          }
+        },
+        "required": ["success", "category"]
+      },
+      "PaymentMethod": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stripe payment method ID"
+          },
+          "type": {
+            "type": "string",
+            "description": "Payment method type (e.g., 'card')"
+          },
+          "card": {
+            "type": "object",
+            "properties": {
+              "brand": {
+                "type": "string",
+                "description": "Card brand (visa, mastercard, etc.)"
+              },
+              "last4": {
+                "type": "string",
+                "description": "Last 4 digits of the card"
+              },
+              "funding": {
+                "type": "string",
+                "description": "Card funding type (credit, debit, etc.)"
+              },
+              "country": {
+                "type": "string",
+                "description": "Country code where the card was issued"
+              }
+            }
+          },
+          "billing_details": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true,
+                "description": "Cardholder name"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "nullable": true,
+                "description": "Cardholder email"
+              }
+            }
+          },
+          "created": {
+            "type": "integer",
+            "description": "Unix timestamp when the payment method was created"
+          },
+          "is_default": {
+            "type": "boolean",
+            "description": "Whether this is the default payment method"
+          }
+        },
+        "required": ["id", "type", "created"]
+      },
+      "PaymentMethodsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentMethod"
+            }
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message"
+          }
+        },
+        "required": ["success", "data"]
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique comment identifier"
+          },
+          "content": {
+            "type": "string",
+            "description": "Comment content"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "description": "Rating given with the comment (1-5 stars)"
+          },
+          "userId": {
+            "type": "string",
+            "description": "ID of the user who created the comment"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "ID of the item being commented on"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the comment was created"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the comment was last updated"
+          }
+        },
+        "required": ["id", "content", "rating", "userId", "itemId", "createdAt"]
+      },
+      "CommentWithUser": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Comment"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "User ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "User display name"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User email"
+                  },
+                  "avatar": {
+                    "type": "string",
+                    "format": "uri",
+                    "nullable": true,
+                    "description": "User avatar URL"
+                  }
+                },
+                "required": ["id", "name", "email"]
+              }
+            },
+            "required": ["user"]
+          }
+        ]
+      },
+      "CreateCommentRequest": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Comment content (required, non-empty)"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "description": "Rating for the item (1-5 stars)"
+          }
+        },
+        "required": ["content", "rating"]
+      },
+      "VoteRequest": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["up", "down"],
+            "description": "Vote type: 'up' for upvote, 'down' for downvote"
+          }
+        },
+        "required": ["type"]
+      },
+      "VoteResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "description": "Total vote count for the item (upvotes - downvotes)"
+          },
+          "userVote": {
+            "type": "string",
+            "enum": ["up", "down"],
+            "nullable": true,
+            "description": "Current user's vote status: 'up', 'down', or null if not voted"
+          }
+        },
+        "required": ["count", "userVote"]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique user identifier"
+          },
+          "username": {
+            "type": "string",
+            "description": "User's username"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email address"
+          },
+          "name": {
+            "type": "string",
+            "description": "User's display name"
+          },
+          "role": {
+            "type": "string",
+            "description": "User's role"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive"],
+            "description": "User's account status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the user was created"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the user was last updated"
+          }
+        },
+        "required": ["id", "username", "email", "name", "role", "status", "created_at", "updated_at"]
+      },
+      "UsersResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer",
+                "description": "Current page number"
+              },
+              "limit": {
+                "type": "integer",
+                "description": "Items per page"
+              },
+              "total": {
+                "type": "integer",
+                "description": "Total number of users"
+              },
+              "totalPages": {
+                "type": "integer",
+                "description": "Total number of pages"
+              }
+            },
+            "required": ["page", "limit", "total", "totalPages"]
+          }
+        },
+        "required": ["success", "users", "pagination"]
+      },
+      "Item": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique item identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Item name"
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL-friendly item identifier"
+          },
+          "description": {
+            "type": "string",
+            "description": "Item description"
+          },
+          "source_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to the item's source"
+          },
+          "category": {
+            "type": "string",
+            "description": "Item category"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Item tags"
+          },
+          "icon_url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "URL to the item's icon"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive", "pending", "rejected"],
+            "description": "Item status"
+          },
+          "featured": {
+            "type": "boolean",
+            "description": "Whether the item is featured"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the item was created"
+          }
+        },
+        "required": ["id", "name", "slug", "description", "source_url", "status", "created_at"]
+      },
+      "ItemsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Item"
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer"
+              },
+              "limit": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "integer"
+              },
+              "totalPages": {
+                "type": "integer"
+              }
+            },
+            "required": ["page", "limit", "total", "totalPages"]
+          }
+        },
+        "required": ["success", "items", "pagination"]
+      },
+      "CheckoutRequest": {
+        "type": "object",
+        "properties": {
+          "priceId": {
+            "type": "string",
+            "description": "Stripe price ID"
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["payment", "subscription", "setup"],
+            "default": "subscription",
+            "description": "Checkout mode"
+          },
+          "trialPeriodDays": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "description": "Trial period in days for subscriptions"
+          },
+          "billingInterval": {
+            "type": "string",
+            "enum": ["month", "year"],
+            "default": "month",
+            "description": "Billing interval for subscriptions"
+          },
+          "successUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to redirect after successful payment"
+          },
+          "cancelUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to redirect after cancelled payment"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Additional metadata for the checkout session"
+          }
+        },
+        "required": ["priceId"]
+      },
+      "CheckoutResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Stripe checkout session ID"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Checkout session URL"
+          }
+        },
+        "required": ["success", "sessionId", "url"]
+      },
+      "Subscription": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stripe subscription ID"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "canceled", "incomplete", "incomplete_expired", "past_due", "trialing", "unpaid"],
+            "description": "Subscription status"
+          },
+          "current_period_start": {
+            "type": "integer",
+            "description": "Unix timestamp of current period start"
+          },
+          "current_period_end": {
+            "type": "integer",
+            "description": "Unix timestamp of current period end"
+          },
+          "plan": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Stripe price ID"
+              },
+              "nickname": {
+                "type": "string",
+                "description": "Plan display name"
+              },
+              "amount": {
+                "type": "integer",
+                "description": "Plan amount in cents"
+              },
+              "currency": {
+                "type": "string",
+                "description": "Plan currency"
+              },
+              "interval": {
+                "type": "string",
+                "enum": ["month", "year"],
+                "description": "Billing interval"
+              }
+            },
+            "required": ["id", "amount", "currency", "interval"]
+          }
+        },
+        "required": ["id", "status", "current_period_start", "current_period_end", "plan"]
+      },
+      "SubscriptionsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "subscriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Subscription"
+            }
+          }
+        },
+        "required": ["success", "subscriptions"]
+      },
+      "ChangePasswordRequest": {
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": "string",
+            "minLength": 1,
+            "description": "User's current password"
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 8,
+            "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$",
+            "description": "New password (min 8 chars, must contain uppercase, lowercase, number, and special character)"
+          },
+          "confirmPassword": {
+            "type": "string",
+            "description": "Confirmation of new password (must match newPassword)"
+          }
+        },
+        "required": ["currentPassword", "newPassword", "confirmPassword"]
+      },
+      "LemonSqueezyCheckoutRequest": {
+        "type": "object",
+        "properties": {
+          "variantId": {
+            "type": "string",
+            "description": "LemonSqueezy variant ID for the product"
+          },
+          "customPrice": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Custom price in cents (optional)"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Additional metadata for the checkout"
+          }
+        },
+        "required": ["variantId"]
+      },
+      "LemonSqueezyCheckoutResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "checkoutUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "LemonSqueezy checkout URL"
+          }
+        },
+        "required": ["success", "checkoutUrl"]
+      },
+      "LemonSqueezySubscription": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "LemonSqueezy subscription ID"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "cancelled", "expired", "on_trial", "paused", "past_due", "unpaid"],
+            "description": "Subscription status"
+          },
+          "customer_email": {
+            "type": "string",
+            "format": "email",
+            "description": "Customer email address"
+          },
+          "product_name": {
+            "type": "string",
+            "description": "Product name"
+          },
+          "variant_name": {
+            "type": "string",
+            "description": "Variant name (e.g., Monthly, Yearly)"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the subscription was created"
+          },
+          "renews_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the subscription renews (null if cancelled)"
+          }
+        },
+        "required": ["id", "status", "customer_email", "product_name", "variant_name", "created_at"]
+      },
+      "LemonSqueezySubscriptionsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "subscriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LemonSqueezySubscription"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer",
+                "description": "Current page number"
+              },
+              "per_page": {
+                "type": "integer",
+                "description": "Items per page"
+              },
+              "total": {
+                "type": "integer",
+                "description": "Total number of subscriptions"
+              }
+            },
+            "required": ["page", "per_page", "total"]
+          }
+        },
+        "required": ["success", "subscriptions", "meta"]
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request - invalid input data",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "success": false,
+              "error": "Invalid request data",
+              "details": "itemSlug is required"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized - authentication required",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "success": false,
+              "error": "Unauthorized"
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "success": false,
+              "error": "Internal server error"
+            }
+          }
+        }
+      }
+    }
+  }
+}
