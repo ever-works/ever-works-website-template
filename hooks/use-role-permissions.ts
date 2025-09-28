@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { apiClient, type RequestBody, type ApiError } from '@/lib/api/api-client';
 import { Permission } from '@/lib/permissions/definitions';
 
-interface RolePermissionsResponse {
+interface RolePermissionsPayload {
   permissions: Permission[];
   role: {
     id: string;
@@ -12,7 +12,7 @@ interface RolePermissionsResponse {
   };
 }
 
-interface UpdatePermissionsResponse {
+interface UpdatePermissionsPayload {
   message: string;
   role: {
     id: string;
@@ -27,9 +27,9 @@ interface UpdatePermissionsRequest {
 }
 
 // Fetch role permissions
-const fetchRolePermissions = async (roleId: string): Promise<RolePermissionsResponse> => {
+const fetchRolePermissions = async (roleId: string): Promise<RolePermissionsPayload> => {
   try {
-    const response = await apiClient.get<RolePermissionsResponse>(`/api/admin/roles/${roleId}/permissions`);
+    const response = await apiClient.get<RolePermissionsPayload>(`/api/admin/roles/${roleId}/permissions`);
     return response;
   } catch (error) {
     console.error('Error fetching role permissions for roleId:', roleId, 'Error:', error);
@@ -41,8 +41,8 @@ const fetchRolePermissions = async (roleId: string): Promise<RolePermissionsResp
 const updateRolePermissions = async (
   roleId: string,
   data: UpdatePermissionsRequest
-): Promise<UpdatePermissionsResponse> => {
-  const response = await apiClient.put<UpdatePermissionsResponse>(
+): Promise<UpdatePermissionsPayload> => {
+  const response = await apiClient.put<UpdatePermissionsPayload>(
     `/api/admin/roles/${roleId}/permissions`,
     data as unknown as RequestBody
   );
