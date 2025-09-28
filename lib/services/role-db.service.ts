@@ -60,27 +60,29 @@ export class RoleDbService {
 
   // Helper method to update role permissions
   private async updateRolePermissions(roleId: string, newPermissions: Permission[]): Promise<void> {
-    // Remove existing permissions for this role
-    await db.delete(rolePermissions).where(eq(rolePermissions.roleId, roleId));
+    await db.transaction(async (tx) => {
+      await tx.delete(rolePermissions).where(eq(rolePermissions.roleId, roleId));
 
-    // Add new permissions if any
-    if (newPermissions.length > 0) {
-      // Get permission IDs for the given permission keys
-      const permissionRecords = await db
+      if (newPermissions.length === 0) {
+        return;
+      }
+
+      const permissionRecords = await tx
         .select({ id: permissions.id, key: permissions.key })
         .from(permissions)
         .where(inArray(permissions.key, newPermissions));
 
-      // Create role-permission associations
-      const rolePermissionData = permissionRecords.map(perm => ({
-        roleId,
-        permissionId: perm.id,
-      }));
-
-      if (rolePermissionData.length > 0) {
-        await db.insert(rolePermissions).values(rolePermissionData);
+      if (permissionRecords.length === 0) {
+        return;
       }
-    }
+
+      await tx.insert(rolePermissions).values(
+        permissionRecords.map((perm) => ({
+          roleId,
+          permissionId: perm.id,
+        })),
+      );
+    });
   }
 
   async readRoles(): Promise<RoleData[]> {
@@ -127,7 +129,8 @@ export class RoleDbService {
         await this.updateRolePermissions(newRole.id, data.permissions);
       }
 
-      return this.mapDbToRoleData(newRole, data.permissions || []);
+      const createdPermissions = await this.getRolePermissions(newRole.id);
+      return this.mapDbToRoleData(newRole, createdPermissions);
     } catch (error) {
       console.error('Error creating role:', error);
       throw error;
