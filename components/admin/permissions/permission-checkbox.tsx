@@ -55,6 +55,7 @@ export function PermissionCheckbox({
 
   const permissionName = formatPermissionName(permission);
   const permissionDescription = formatPermissionDescription(permission);
+  const checkboxId = `permission-${permission.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
 
   return (
     <div
@@ -66,17 +67,18 @@ export function PermissionCheckbox({
       onMouseLeave={() => setIsHovered(false)}
     >
       <Checkbox
+        id={checkboxId}
         isSelected={isSelected}
         onValueChange={handleChange}
         isDisabled={disabled}
         color="primary"
         size="sm"
-        aria-describedby={showDescription ? `${permission}-description` : undefined}
+        aria-describedby={showDescription ? `${checkboxId}-description` : undefined}
       />
 
       <label
+        htmlFor={checkboxId}
         className={checkboxLabelClasses}
-        onClick={() => !disabled && handleChange(!isSelected)}
       >
         <div className={permissionNameClasses}>
           {permissionName}
@@ -84,7 +86,7 @@ export function PermissionCheckbox({
 
         {showDescription && (
           <div
-            id={`${permission}-description`}
+            id={`${checkboxId}-description`}
             className={permissionDescriptionClasses}
           >
             {permissionDescription}
