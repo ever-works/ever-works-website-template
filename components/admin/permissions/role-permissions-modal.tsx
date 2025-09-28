@@ -138,8 +138,9 @@ export function RolePermissionsModal({
       setExpandedGroups(new Set(['content', 'users', 'system']));
       // Reset permissions tracking when modal reopens
       lastProcessedPermissions.current = [];
+      setPermissionState(createPermissionState(role?.permissions?.map(p => p.key as Permission) ?? []));
     }
-  }, [isOpen]);
+  }, [isOpen, role]);
 
   // Calculate button state inline to avoid render cycles
   const isButtonDisabled = useMemo(() => {
