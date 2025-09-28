@@ -195,6 +195,11 @@ export function RolePermissionsModal({
   const handleClose = useCallback(() => {
     if (isSubmitting) return;
 
+    if (isLoadingPermissions) {
+      onClose();
+      return;
+    }
+
     const selectedPermissions = getSelectedPermissions(permissionState);
     const unchanged = arePermissionsEqual(rolePermissions || [], selectedPermissions);
     const hasUnsavedChanges = !unchanged;
@@ -206,7 +211,7 @@ export function RolePermissionsModal({
       if (!confirmClose) return;
     }
     onClose();
-  }, [isSubmitting, permissionState, rolePermissions, onClose]);
+  }, [isSubmitting, isLoadingPermissions, permissionState, rolePermissions, onClose]);
 
   // Handle keyboard shortcuts
   useEffect(() => {
