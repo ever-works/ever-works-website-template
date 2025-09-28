@@ -61,9 +61,8 @@ export class RoleDbService {
   // Helper method to update role permissions
   private async updateRolePermissions(roleId: string, newPermissions: Permission[]): Promise<void> {
     await db.transaction(async (tx) => {
-      await tx.delete(rolePermissions).where(eq(rolePermissions.roleId, roleId));
-
       if (newPermissions.length === 0) {
+        await tx.delete(rolePermissions).where(eq(rolePermissions.roleId, roleId));
         return;
       }
 
@@ -72,12 +71,18 @@ export class RoleDbService {
         .from(permissions)
         .where(inArray(permissions.key, newPermissions));
 
-      if (permissionRecords.length === 0) {
-        return;
+      const missingKeys = newPermissions.filter(
+        key => !permissionRecords.some(record => record.key === key),
+      );
+
+      if (missingKeys.length > 0) {
+        throw new Error(`Unknown permission keys: ${missingKeys.join(', ')}`);
       }
 
+      await tx.delete(rolePermissions).where(eq(rolePermissions.roleId, roleId));
+
       await tx.insert(rolePermissions).values(
-        permissionRecords.map((perm) => ({
+        permissionRecords.map(perm => ({
           roleId,
           permissionId: perm.id,
         })),
