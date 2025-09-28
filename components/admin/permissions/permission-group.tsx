@@ -143,6 +143,7 @@ export function PermissionGroupComponent({
       <div className={groupHeaderClasses}>
         <div className={groupTitleClasses}>
           <button
+            type="button"
             onClick={onToggleExpanded}
             className={toggleButtonClasses}
             aria-expanded={isExpanded}
