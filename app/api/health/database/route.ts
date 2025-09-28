@@ -20,7 +20,7 @@ export async function GET() {
       {
         status: 'unhealthy',
         database: 'disconnected',
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: 'Database connection check failed',
         timestamp: new Date().toISOString()
       },
       { status: 500 }
