@@ -48,3 +48,6 @@ next-env.d.ts
 .content
 analyze/
 .claude
+
+#Ignore vscode AI rules
+.github/instructions/codacy.instructions.md
