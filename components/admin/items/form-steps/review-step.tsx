@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { StepContainer } from '@/components/ui/multi-step-form';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectItem } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -128,24 +128,21 @@ export function ReviewStep({
                 {t('FIELDS.STATUS.LABEL')} <span className="text-red-500">*</span>
               </Label>
               <Select
-                value={data.status}
-                onValueChange={(value) => handleFieldChange('status', value)}
+                selectedKeys={data.status ? [data.status] : []}
+                onSelectionChange={(keys) => handleFieldChange('status', keys[0])}
+                placeholder={t('FIELDS.STATUS.PLACEHOLDER')}
+                className={errors.status ? 'border-red-500' : ''}
               >
-                <SelectTrigger className={errors.status ? 'border-red-500' : ''}>
-                  <SelectValue placeholder={t('FIELDS.STATUS.PLACEHOLDER')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {STATUS_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      <div className="flex items-center justify-between w-full">
-                        <span>{option.label}</span>
-                        <Badge variant={getStatusBadgeVariant(option.value)} className="ml-2">
-                          {option.value}
-                        </Badge>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                {STATUS_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    <div className="flex items-center justify-between w-full">
+                      <span>{option.label}</span>
+                      <Badge variant={getStatusBadgeVariant(option.value)} className="ml-2">
+                        {option.value}
+                      </Badge>
+                    </div>
+                  </SelectItem>
+                ))}
               </Select>
               {errors.status && (
                 <p className="text-sm text-red-600">{errors.status}</p>

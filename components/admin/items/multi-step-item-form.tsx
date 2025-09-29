@@ -76,8 +76,8 @@ export function MultiStepItemForm({
       source_url: item?.source_url || ''
     },
     classification: {
-      category: item?.category || [],
-      tags: item?.tags || []
+      category: Array.isArray(item?.category) ? item.category : [],
+      tags: Array.isArray(item?.tags) ? item.tags : []
     },
     review: {
       featured: item?.featured || false,
@@ -165,7 +165,7 @@ export function MultiStepItemForm({
       ...formData.mediaLinks,
       ...formData.classification,
       ...formData.review
-    };
+    } as CreateItemRequest | UpdateItemRequest;
 
     onSubmit(combinedData);
   }
@@ -185,8 +185,8 @@ export function MultiStepItemForm({
           source_url: item.source_url
         },
         classification: {
-          category: item.category,
-          tags: item.tags
+          category: Array.isArray(item.category) ? item.category : [],
+          tags: Array.isArray(item.tags) ? item.tags : []
         },
         review: {
           featured: item.featured || false,
