@@ -1143,6 +1143,35 @@
         "SOURCE_URL_REQUIRED": "La URL de origen es requerida",
         "SOURCE_URL_INVALID": "Por favor ingrese una URL válida",
         "CATEGORY_REQUIRED": "Al menos una categoría es requerida"
+      },
+      "STEPS": {
+        "BASIC_INFO": {
+          "TITLE": "Basic Information",
+          "DESCRIPTION": "Enter the core details about the item"
+        },
+        "CLASSIFICATION": {
+          "TITLE": "Classification",
+          "DESCRIPTION": "Organize the item with categories and tags",
+          "TIPS_TITLE": "Tips for Classification",
+          "TIP_1": "Use descriptive categories that match your directory structure",
+          "TIP_2": "Add relevant tags to improve searchability",
+          "TIP_3": "Keep categories broad and tags specific"
+        },
+        "MEDIA_LINKS": {
+          "TITLE": "Media & Links",
+          "DESCRIPTION": "Add source URL and visual elements",
+          "TIPS_TITLE": "Media Guidelines",
+          "TIP_1": "Ensure URLs are valid and accessible",
+          "TIP_2": "Use high-quality icons (min 256x256px recommended)",
+          "TIP_3": "Icons should be in PNG or SVG format for best quality"
+        },
+        "REVIEW": {
+          "TITLE": "Review & Submit",
+          "DESCRIPTION": "Review all details before submission",
+          "SUMMARY_TITLE": "Summary",
+          "SETTINGS_TITLE": "Settings",
+          "NOT_SET": "Not set"
+        }
       }
     },
     "DELETE_COMMENT_DIALOG": {
