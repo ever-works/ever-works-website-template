@@ -14,15 +14,9 @@ importers:
       '@auth/supabase-adapter':
         specifier: ^1.9.0
         version: 1.9.1(@supabase/supabase-js@2.49.10)
-<<<<<<< HEAD
       '@floating-ui/react':
         specifier: ^0.27.16
         version: 0.27.16(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-=======
-      '@heroui/input':
-        specifier: ^2.4.27
-        version: 2.4.27(@heroui/system@2.4.22(@heroui/theme@2.4.22(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.8.3))))(framer-motion@12.16.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@heroui/theme@2.4.22(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.8.3))))(@types/react@19.1.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
->>>>>>> 78f8f0f (fix: improve input focus styling and password field UX)
       '@heroui/navbar':
         specifier: ^2.2.22
         version: 2.2.22(@heroui/system@2.4.22(@heroui/theme@2.4.22(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.8.3))))(framer-motion@12.16.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@heroui/theme@2.4.22(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.8.3))))(framer-motion@12.16.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
