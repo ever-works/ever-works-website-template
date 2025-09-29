@@ -6,7 +6,7 @@ import { CheckoutSessionParams } from '@/lib/payment/types/payment-types';
  * @swagger
  * /api/stripe/checkout:
  *   post:
- *     tags: ["Stripe - Checkout"]
+ *     tags: ["Stripe - Core"]
  *     summary: "Create Stripe checkout session"
  *     description: "Creates a new Stripe checkout session for the authenticated user. Supports both one-time payments and subscription modes with comprehensive configuration including trial periods, billing intervals, and custom metadata. Automatically creates or retrieves Stripe customer."
  *     security:
@@ -268,7 +268,7 @@ export async function POST(request: NextRequest) {
  * @swagger
  * /api/stripe/checkout:
  *   get:
- *     tags: ["Stripe - Checkout"]
+ *     tags: ["Stripe - Core"]
  *     summary: "Retrieve checkout session"
  *     description: "Retrieves a Stripe checkout session by session ID with expanded line items and subscription data. Used to verify payment status and get session details after checkout completion."
  *     security:

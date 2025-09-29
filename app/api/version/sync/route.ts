@@ -5,7 +5,7 @@ import { startBackgroundSync, getSyncStatus } from "@/lib/services/sync-service"
  * @swagger
  * /api/version/sync:
  *   post:
- *     tags: ["System - Repository Sync"]
+ *     tags: ["System"]
  *     summary: "Trigger manual repository synchronization"
  *     description: "Manually triggers a background synchronization of the Git repository. Prevents concurrent sync operations and provides detailed status information including duration and success metrics."
  *     requestBody:
@@ -116,7 +116,7 @@ import { startBackgroundSync, getSyncStatus } from "@/lib/services/sync-service"
  *                   example: "Git fetch failed: network timeout"
  *               required: ["success", "error", "timestamp", "duration"]
  *   get:
- *     tags: ["System - Repository Sync"]
+ *     tags: ["System"]
  *     summary: "Get repository synchronization status"
  *     description: "Retrieves current synchronization status including progress indicators, last sync time, and system uptime information."
  *     responses:

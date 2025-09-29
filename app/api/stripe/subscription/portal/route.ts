@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
  * @swagger
  * /api/stripe/subscription/portal:
  *   post:
- *     tags: ["Stripe - Subscription Management"]
+ *     tags: ["Stripe - Subscriptions"]
  *     summary: "Create billing portal session"
  *     description: "Creates a Stripe billing portal session for the authenticated user to manage their subscription, payment methods, and billing history. Automatically redirects back to the billing settings page after completion."
  *     security:

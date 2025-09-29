@@ -11,7 +11,7 @@ import { paymentEmailService } from '@/lib/payment/services/payment-email.servic
  * @swagger
  * /api/stripe/subscription/{subscriptionId}/update:
  *   post:
- *     tags: ["Stripe - Subscription Management"]
+ *     tags: ["Stripe - Subscriptions"]
  *     summary: "Update subscription plan"
  *     description: "Updates a subscription to a new plan with comprehensive validation, ownership verification, database synchronization, and automatic email notifications. Includes plan validation and subscription status checks."
  *     security:

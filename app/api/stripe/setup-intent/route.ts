@@ -5,7 +5,7 @@ import { auth, getOrCreateStripeProvider } from '@/lib/auth';
  * @swagger
  * /api/stripe/setup-intent:
  *   post:
- *     tags: ["Stripe - Setup Intent"]
+ *     tags: ["Stripe - Core"]
  *     summary: "Create setup intent"
  *     description: "Creates a new Stripe setup intent for the authenticated user to save payment methods for future use. Automatically creates or retrieves the Stripe customer and prepares for payment method attachment without immediate charge."
  *     security:

@@ -11,7 +11,7 @@ const reactivateSubscriptionSchema = z.object({
  * @swagger
  * /api/lemonsqueezy/reactivate:
  *   post:
- *     tags: ["LemonSqueezy - Subscriptions"]
+ *     tags: ["LemonSqueezy - Core"]
  *     summary: "Reactivate subscription"
  *     description: "Reactivates a previously cancelled LemonSqueezy subscription for the authenticated user. Sets cancelAtPeriodEnd to false and adds reactivation metadata. Requires user authentication and valid subscription ID."
  *     security:

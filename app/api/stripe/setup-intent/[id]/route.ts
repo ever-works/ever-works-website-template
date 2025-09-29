@@ -6,7 +6,7 @@ import Stripe from 'stripe';
  * @swagger
  * /api/stripe/setup-intent/{id}:
  *   get:
- *     tags: ["Stripe - Setup Intent"]
+ *     tags: ["Stripe - Core"]
  *     summary: "Retrieve setup intent by ID"
  *     description: "Retrieves a specific Stripe setup intent by ID for the authenticated user. Includes security verification to ensure the setup intent belongs to the current user's customer. Returns complete setup intent details including status and payment method information."
  *     security:

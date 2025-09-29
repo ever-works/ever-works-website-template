@@ -5,7 +5,7 @@ import { auth, initializeStripeProvider } from '@/lib/auth';
  * @swagger
  * /api/user/payments:
  *   get:
- *     tags: ["User - Payment History"]
+ *     tags: ["User"]
  *     summary: "Get user payment history"
  *     description: "Retrieves comprehensive payment history for the authenticated user from Stripe, including invoices, subscription details, and billing information. Returns detailed payment records with plan information and invoice links."
  *     security:

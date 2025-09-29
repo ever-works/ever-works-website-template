@@ -7,7 +7,7 @@ import { paymentEmailService } from '@/lib/payment/services/payment-email.servic
  * @swagger
  * /api/stripe/subscription/{subscriptionId}/reactivate:
  *   post:
- *     tags: ["Stripe - Subscription Management"]
+ *     tags: ["Stripe - Subscriptions"]
  *     summary: "Reactivate cancelled subscription"
  *     description: "Reactivates a subscription that was scheduled for cancellation at period end. Includes ownership verification, database synchronization, and automatic email notifications. Only works for subscriptions with cancelAtPeriodEnd=true."
  *     security:

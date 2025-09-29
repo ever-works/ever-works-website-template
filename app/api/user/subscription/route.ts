@@ -5,7 +5,7 @@ import { auth, initializeStripeProvider } from '@/lib/auth';
  * @swagger
  * /api/user/subscription:
  *   get:
- *     tags: ["User - Subscription Status"]
+ *     tags: ["User"]
  *     summary: "Get user subscription status"
  *     description: "Retrieves comprehensive subscription information for the authenticated user from Stripe, including current active subscription details and complete subscription history. Provides detailed billing and plan information."
  *     security:

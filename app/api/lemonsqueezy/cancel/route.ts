@@ -12,7 +12,7 @@ const cancelSubscriptionSchema = z.object({
  * @swagger
  * /api/lemonsqueezy/cancel:
  *   post:
- *     tags: ["LemonSqueezy - Subscriptions"]
+ *     tags: ["LemonSqueezy - Core"]
  *     summary: "Cancel subscription"
  *     description: "Cancels a LemonSqueezy subscription for the authenticated user. Supports immediate cancellation or cancellation at the end of the current billing period. Requires user authentication and valid subscription ID."
  *     security:

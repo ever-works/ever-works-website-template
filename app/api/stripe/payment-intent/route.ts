@@ -5,7 +5,7 @@ import { auth, getOrCreateStripeProvider } from '@/lib/auth';
  * @swagger
  * /api/stripe/payment-intent:
  *   post:
- *     tags: ["Stripe - Payment Intent"]
+ *     tags: ["Stripe - Core"]
  *     summary: "Create payment intent"
  *     description: "Creates a new Stripe payment intent for the authenticated user. Automatically creates or retrieves the Stripe customer and associates the payment with user metadata. Used for direct payment processing without checkout sessions."
  *     security:
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
  * @swagger
  * /api/stripe/payment-intent:
  *   get:
- *     tags: ["Stripe - Payment Intent"]
+ *     tags: ["Stripe - Core"]
  *     summary: "Verify payment intent"
  *     description: "Verifies a Stripe payment intent by ID and returns the payment verification status. Used to confirm payment completion and retrieve payment details after processing."
  *     security:

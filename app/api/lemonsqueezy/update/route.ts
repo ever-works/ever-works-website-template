@@ -18,7 +18,7 @@ export type UpdateSubscriptionRequest = z.infer<typeof updateSubscriptionSchema>
  * @swagger
  * /api/lemonsqueezy/update:
  *   post:
- *     tags: ["LemonSqueezy - Subscriptions"]
+ *     tags: ["LemonSqueezy - Core"]
  *     summary: "Update subscription"
  *     description: "Updates a LemonSqueezy subscription with new parameters such as status, cancellation settings, price, or metadata. Includes development mode support and comprehensive error handling with request tracking."
  *     security:

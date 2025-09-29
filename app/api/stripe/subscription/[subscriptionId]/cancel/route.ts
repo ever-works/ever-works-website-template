@@ -7,7 +7,7 @@ import { updateSubscriptionBySubscriptionId } from '@/lib/db/queries';
  * @swagger
  * /api/stripe/subscription/{subscriptionId}/cancel:
  *   post:
- *     tags: ["Stripe - Subscription Management"]
+ *     tags: ["Stripe - Subscriptions"]
  *     summary: "Cancel subscription by ID"
  *     description: "Cancels a specific subscription with comprehensive database synchronization and automatic email notifications. Supports both immediate and end-of-period cancellation with detailed response metadata."
  *     security:

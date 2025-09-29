@@ -21,7 +21,7 @@ const queryParamsSchema = z.object({
  * @swagger
  * /api/lemonsqueezy/list:
  *   get:
- *     tags: ["LemonSqueezy - Checkouts"]
+ *     tags: ["LemonSqueezy - Core"]
  *     summary: "List user checkouts"
  *     description: "Returns a paginated list of LemonSqueezy checkouts for the authenticated user. Supports filtering by status, date range, and other parameters. Includes comprehensive pagination metadata and request tracking. Users can only view their own checkouts unless they have admin privileges."
  *     security:
@@ -444,7 +444,7 @@ export async function GET(request: NextRequest) {
  * @swagger
  * /api/lemonsqueezy/list:
  *   post:
- *     tags: ["LemonSqueezy - Checkouts"]
+ *     tags: ["LemonSqueezy - Core"]
  *     summary: "List checkouts with advanced filtering"
  *     description: "Returns a paginated list of LemonSqueezy checkouts using POST method for complex filtering. Supports the same parameters as GET but via request body. Includes admin access control for viewing other users' checkouts."
  *     security:

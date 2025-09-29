@@ -10,7 +10,7 @@ import { trySyncRepository } from "@/lib/repository";
  * @swagger
  * /api/version:
  *   get:
- *     tags: ["System - Version Info"]
+ *     tags: ["System"]
  *     summary: "Get application version information"
  *     description: "Retrieves comprehensive version information from the Git repository, including latest commit details, author information, and synchronization status. Automatically syncs repository before retrieving information."
  *     responses:

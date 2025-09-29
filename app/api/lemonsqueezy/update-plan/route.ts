@@ -16,7 +16,7 @@ const updatePlanSchema = z.object({
  * @swagger
  * /api/lemonsqueezy/update-plan:
  *   post:
- *     tags: ["LemonSqueezy - Subscriptions"]
+ *     tags: ["LemonSqueezy - Core"]
  *     summary: "Update subscription plan"
  *     description: "Updates a LemonSqueezy subscription to a different plan/variant. Supports proration options, immediate invoicing, and billing anchor customization. Includes comprehensive metadata tracking for plan changes."
  *     security:

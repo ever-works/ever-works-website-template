@@ -5,7 +5,7 @@ import { auth, getOrCreateStripeProvider } from '@/lib/auth';
  * @swagger
  * /api/stripe/subscription:
  *   post:
- *     tags: ["Stripe - Subscription Management"]
+ *     tags: ["Stripe - Subscriptions"]
  *     summary: "Create subscription"
  *     description: "Creates a new Stripe subscription for the authenticated user with specified price and payment method. Automatically creates or retrieves Stripe customer and includes comprehensive metadata tracking."
  *     security:
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
  * @swagger
  * /api/stripe/subscription:
  *   put:
- *     tags: ["Stripe - Subscription Management"]
+ *     tags: ["Stripe - Subscriptions"]
  *     summary: "Update subscription"
  *     description: "Updates an existing Stripe subscription with new price or cancellation settings. Includes comprehensive metadata tracking and validation."
  *     security:
@@ -272,7 +272,7 @@ export async function PUT(request: NextRequest) {
  * @swagger
  * /api/stripe/subscription:
  *   delete:
- *     tags: ["Stripe - Subscription Management"]
+ *     tags: ["Stripe - Subscriptions"]
  *     summary: "Cancel subscription"
  *     description: "Cancels a Stripe subscription either immediately or at the end of the current billing period. Provides flexible cancellation options."
  *     security:

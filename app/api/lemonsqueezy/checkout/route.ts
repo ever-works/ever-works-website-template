@@ -12,7 +12,7 @@ import { auth, getOrCreateLemonsqueezyProvider, PaymentProviderManager } from '@
  * @swagger
  * /api/lemonsqueezy/checkout:
  *   post:
- *     tags: ["LemonSqueezy - Checkout"]
+ *     tags: ["LemonSqueezy - Core"]
  *     summary: "Create checkout session"
  *     description: "Creates a new LemonSqueezy checkout session for the authenticated user. Validates the request data, creates a custom checkout with user metadata, and returns the checkout URL. Requires user authentication and handles various error scenarios including configuration and validation errors."
  *     security:
@@ -277,7 +277,7 @@ export async function POST(request: NextRequest) {
  * @swagger
  * /api/lemonsqueezy/checkout:
  *   get:
- *     tags: ["LemonSqueezy - Checkout"]
+ *     tags: ["LemonSqueezy - Core"]
  *     summary: "Create checkout session via query parameters"
  *     description: "Creates a new LemonSqueezy checkout session using query parameters instead of request body. Useful for direct links and simple integrations. Validates query parameters and creates a custom checkout session."
  *     parameters:
