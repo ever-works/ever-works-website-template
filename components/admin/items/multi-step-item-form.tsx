@@ -200,72 +200,84 @@ export function MultiStepItemForm({
   const canGoPrevious = !isFirstStep && !isLoading;
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
-      {/* Step Indicator */}
-      <StepIndicator
-        steps={FORM_STEPS}
-        currentStep={currentStep}
-        completedSteps={completedSteps}
-        onStepClick={handleStepClick}
-        className="mb-8"
-      />
-
-      {/* Form Content */}
-      <div className="min-h-[500px]">
-        {currentStep === 1 && (
-          <BasicInfoStep
-            data={formData.basicInfo}
-            onChange={updateBasicInfo}
-            onValidationChange={(isValid) => handleStepValidation(1, isValid)}
-            mode={mode}
-          />
-        )}
-
-        {currentStep === 2 && (
-          <MediaLinksStep
-            data={formData.mediaLinks}
-            onChange={updateMediaLinks}
-            onValidationChange={(isValid) => handleStepValidation(2, isValid)}
-          />
-        )}
-
-        {currentStep === 3 && (
-          <ClassificationStep
-            data={formData.classification}
-            onChange={updateClassification}
-            onValidationChange={(isValid) => handleStepValidation(3, isValid)}
-          />
-        )}
-
-        {currentStep === 4 && (
-          <ReviewStep
-            data={formData.review}
-            onChange={updateReview}
-            onValidationChange={(isValid) => handleStepValidation(4, isValid)}
-            basicInfo={formData.basicInfo}
-            mediaLinks={formData.mediaLinks}
-            classification={formData.classification}
-          />
-        )}
+    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-theme-primary to-theme-accent px-6 py-4">
+        <h2 className="text-xl font-bold text-white">
+          {mode === 'create' ? t('TITLE_CREATE') : t('TITLE_EDIT')}
+        </h2>
+        <p className="text-white/80 text-sm mt-1">
+          {mode === 'create' ? t('SUBTITLE_CREATE') : t('SUBTITLE_EDIT')}
+        </p>
       </div>
 
-      {/* Navigation */}
-      <StepNavigation
-        currentStep={currentStep}
-        totalSteps={FORM_STEPS.length}
-        isFirstStep={isFirstStep}
-        isLastStep={isLastStep}
-        canGoNext={canGoNext}
-        canGoPrevious={canGoPrevious}
-        isSubmitting={isLoading}
-        onNext={handleNext}
-        onPrevious={handlePrevious}
-        onCancel={onCancel}
-        nextLabel={t('NAVIGATION.NEXT')}
-        previousLabel={t('NAVIGATION.PREVIOUS')}
-        submitLabel={mode === 'create' ? t('NAVIGATION.CREATE') : t('NAVIGATION.UPDATE')}
-        cancelLabel={t('NAVIGATION.CANCEL')}
-      />
+      <div className="p-6 space-y-8">
+        {/* Step Indicator */}
+        <StepIndicator
+          steps={FORM_STEPS}
+          currentStep={currentStep}
+          completedSteps={completedSteps}
+          onStepClick={handleStepClick}
+          className="mb-8"
+        />
+
+        {/* Form Content */}
+        <div className="min-h-[500px]">
+          {currentStep === 1 && (
+            <BasicInfoStep
+              data={formData.basicInfo}
+              onChange={updateBasicInfo}
+              onValidationChange={(isValid) => handleStepValidation(1, isValid)}
+              mode={mode}
+            />
+          )}
+
+          {currentStep === 2 && (
+            <MediaLinksStep
+              data={formData.mediaLinks}
+              onChange={updateMediaLinks}
+              onValidationChange={(isValid) => handleStepValidation(2, isValid)}
+            />
+          )}
+
+          {currentStep === 3 && (
+            <ClassificationStep
+              data={formData.classification}
+              onChange={updateClassification}
+              onValidationChange={(isValid) => handleStepValidation(3, isValid)}
+            />
+          )}
+
+          {currentStep === 4 && (
+            <ReviewStep
+              data={formData.review}
+              onChange={updateReview}
+              onValidationChange={(isValid) => handleStepValidation(4, isValid)}
+              basicInfo={formData.basicInfo}
+              mediaLinks={formData.mediaLinks}
+              classification={formData.classification}
+            />
+          )}
+        </div>
+
+        {/* Navigation */}
+        <StepNavigation
+          currentStep={currentStep}
+          totalSteps={FORM_STEPS.length}
+          isFirstStep={isFirstStep}
+          isLastStep={isLastStep}
+          canGoNext={canGoNext}
+          canGoPrevious={canGoPrevious}
+          isSubmitting={isLoading}
+          onNext={handleNext}
+          onPrevious={handlePrevious}
+          onCancel={onCancel}
+          nextLabel={t('NAVIGATION.NEXT')}
+          previousLabel={t('NAVIGATION.PREVIOUS')}
+          submitLabel={mode === 'create' ? t('NAVIGATION.CREATE') : t('NAVIGATION.UPDATE')}
+          cancelLabel={t('NAVIGATION.CANCEL')}
+        />
+      </div>
     </div>
   );
 }

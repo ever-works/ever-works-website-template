@@ -30,6 +30,7 @@ export function BasicInfoStep({
 }: BasicInfoStepProps) {
   const t = useTranslations('admin.ITEM_FORM');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
 
   // Auto-generate slug from name
   const generateSlug = (name: string): string => {
@@ -123,7 +124,10 @@ export function BasicInfoStep({
 
     onChange(newData);
 
-    // Validate field
+    // Mark field as touched
+    setTouchedFields(prev => new Set(prev).add(field));
+
+    // Validate field only if touched
     const error = validateField(field, value);
     const newErrors = { ...errors };
 
@@ -135,6 +139,7 @@ export function BasicInfoStep({
 
     // If we changed the name and auto-generated slug, validate slug too
     if (field === 'name' && mode === 'create') {
+      setTouchedFields(prev => new Set(prev).add('slug'));
       const slugError = validateField('slug', newData.slug);
       if (slugError) {
         newErrors.slug = slugError;
@@ -146,12 +151,26 @@ export function BasicInfoStep({
     setErrors(newErrors);
   };
 
-  // Validate on data change and report validity
+  const handleBlur = (field: keyof BasicInfoData) => {
+    setTouchedFields(prev => new Set(prev).add(field));
+  };
+
+  // Validate on data change and report validity (but only show errors for touched fields)
   useEffect(() => {
     const allErrors = validateAllFields();
-    setErrors(allErrors);
+
+    // Only show errors for touched fields
+    const visibleErrors: Record<string, string> = {};
+    Object.keys(allErrors).forEach(field => {
+      if (touchedFields.has(field)) {
+        visibleErrors[field] = allErrors[field];
+      }
+    });
+
+    setErrors(visibleErrors);
+    // Report overall validity regardless of touched state
     onValidationChange(Object.keys(allErrors).length === 0);
-  }, [data, onValidationChange]);
+  }, [data, touchedFields, onValidationChange]);
 
   return (
     <StepContainer
@@ -164,14 +183,19 @@ export function BasicInfoStep({
           <Label htmlFor="id" className="text-sm font-medium">
             {t('FIELDS.ID.LABEL')} <span className="text-red-500">*</span>
           </Label>
-          <Input
+          <input
             id="id"
             type="text"
             value={data.id}
             onChange={(e) => handleFieldChange('id', e.target.value)}
+            onBlur={() => handleBlur('id')}
             placeholder={t('FIELDS.ID.PLACEHOLDER')}
             disabled={mode === 'edit'}
-            className={errors.id ? 'border-red-500' : ''}
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.id
+                ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+            } ${mode === 'edit' ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed' : ''}`}
           />
           {errors.id && (
             <p className="text-sm text-red-600">{errors.id}</p>
@@ -184,13 +208,18 @@ export function BasicInfoStep({
           <Label htmlFor="name" className="text-sm font-medium">
             {t('FIELDS.NAME.LABEL')} <span className="text-red-500">*</span>
           </Label>
-          <Input
+          <input
             id="name"
             type="text"
             value={data.name}
             onChange={(e) => handleFieldChange('name', e.target.value)}
+            onBlur={() => handleBlur('name')}
             placeholder={t('FIELDS.NAME.PLACEHOLDER')}
-            className={errors.name ? 'border-red-500' : ''}
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.name
+                ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+            }`}
           />
           {errors.name && (
             <p className="text-sm text-red-600">{errors.name}</p>
@@ -202,13 +231,18 @@ export function BasicInfoStep({
           <Label htmlFor="slug" className="text-sm font-medium">
             {t('FIELDS.SLUG.LABEL')} <span className="text-red-500">*</span>
           </Label>
-          <Input
+          <input
             id="slug"
             type="text"
             value={data.slug}
             onChange={(e) => handleFieldChange('slug', e.target.value)}
+            onBlur={() => handleBlur('slug')}
             placeholder={t('FIELDS.SLUG.PLACEHOLDER')}
-            className={errors.slug ? 'border-red-500' : ''}
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.slug
+                ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
+                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+            }`}
           />
           {errors.slug && (
             <p className="text-sm text-red-600">{errors.slug}</p>
@@ -222,13 +256,18 @@ export function BasicInfoStep({
         <Label htmlFor="description" className="text-sm font-medium">
           {t('FIELDS.DESCRIPTION.LABEL')} <span className="text-red-500">*</span>
         </Label>
-        <Textarea
+        <textarea
           id="description"
           value={data.description}
           onChange={(e) => handleFieldChange('description', e.target.value)}
+          onBlur={() => handleBlur('description')}
           placeholder={t('FIELDS.DESCRIPTION.PLACEHOLDER')}
           rows={4}
-          className={errors.description ? 'border-red-500' : ''}
+          className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+            errors.description
+              ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
+              : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+          }`}
         />
         {errors.description && (
           <p className="text-sm text-red-600">{errors.description}</p>

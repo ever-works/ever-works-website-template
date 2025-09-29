@@ -55,6 +55,7 @@ export function ReviewStep({
 }: ReviewStepProps) {
   const t = useTranslations('admin.ITEM_FORM');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
 
   const validateData = (): Record<string, string> => {
     const newErrors: Record<string, string> = {};
@@ -66,17 +67,31 @@ export function ReviewStep({
     return newErrors;
   };
 
+  const handleBlur = (field: string) => {
+    setTouchedFields(prev => new Set(prev).add(field));
+  };
+
   const handleFieldChange = (field: keyof ReviewData, value: boolean | string) => {
     const newData = { ...data, [field]: value };
     onChange(newData);
+    setTouchedFields(prev => new Set(prev).add(field));
   };
 
   // Validate on data change
   useEffect(() => {
     const allErrors = validateData();
-    setErrors(allErrors);
+
+    // Only show errors for touched fields
+    const visibleErrors: Record<string, string> = {};
+    Object.keys(allErrors).forEach(field => {
+      if (touchedFields.has(field)) {
+        visibleErrors[field] = allErrors[field];
+      }
+    });
+
+    setErrors(visibleErrors);
     onValidationChange(Object.keys(allErrors).length === 0);
-  }, [data, onValidationChange]);
+  }, [data, touchedFields, onValidationChange]);
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {

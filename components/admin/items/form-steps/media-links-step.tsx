@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { StepContainer } from '@/components/ui/multi-step-form';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, Upload, Image as ImageIcon } from 'lucide-react';
@@ -29,6 +28,7 @@ export function MediaLinksStep({
   const t = useTranslations('admin.ITEM_FORM');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [previewImage, setPreviewImage] = useState<string>('');
+  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
 
   const validateField = (field: keyof MediaLinksData, value: string): string => {
     if (!value.trim()) {
@@ -61,24 +61,18 @@ export function MediaLinksStep({
     return newErrors;
   };
 
+  const handleBlur = (field: string) => {
+    setTouchedFields(prev => new Set(prev).add(field));
+  };
+
   const handleFieldChange = (field: keyof MediaLinksData, value: string) => {
     const newData = { ...data, [field]: value };
     onChange(newData);
-
-    // Validate field
-    const error = validateField(field, value);
-    const newErrors = { ...errors };
-
-    if (error) {
-      newErrors[field] = error;
-    } else {
-      delete newErrors[field];
-    }
-
-    setErrors(newErrors);
+    setTouchedFields(prev => new Set(prev).add(field));
 
     // Update preview image for icon_url
     if (field === 'icon_url') {
+      const error = validateField(field, value);
       if (value && !error && URL_PATTERN.test(value)) {
         setPreviewImage(value);
       } else {
@@ -107,9 +101,18 @@ export function MediaLinksStep({
   // Validate on data change and report validity
   useEffect(() => {
     const allErrors = validateAllFields();
-    setErrors(allErrors);
+
+    // Only show errors for touched fields
+    const visibleErrors: Record<string, string> = {};
+    Object.keys(allErrors).forEach(field => {
+      if (touchedFields.has(field)) {
+        visibleErrors[field] = allErrors[field];
+      }
+    });
+
+    setErrors(visibleErrors);
     onValidationChange(Object.keys(allErrors).length === 0);
-  }, [data, onValidationChange]);
+  }, [data, touchedFields, onValidationChange]);
 
   // Set initial preview image
   useEffect(() => {
@@ -134,13 +137,18 @@ export function MediaLinksStep({
           <div className="flex items-start gap-4">
             {/* URL Input */}
             <div className="flex-1 space-y-2">
-              <Input
+              <input
                 id="icon_url"
                 type="url"
                 value={data.icon_url}
                 onChange={(e) => handleFieldChange('icon_url', e.target.value)}
+                onBlur={() => handleBlur('icon_url')}
                 placeholder={t('FIELDS.ICON_URL.PLACEHOLDER')}
-                className={errors.icon_url ? 'border-red-500' : ''}
+                className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                  errors.icon_url
+                    ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
+                    : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+                }`}
               />
               {errors.icon_url && (
                 <p className="text-sm text-red-600">{errors.icon_url}</p>
@@ -184,13 +192,18 @@ export function MediaLinksStep({
           </Label>
 
           <div className="relative">
-            <Input
+            <input
               id="source_url"
               type="url"
               value={data.source_url}
               onChange={(e) => handleFieldChange('source_url', e.target.value)}
+              onBlur={() => handleBlur('source_url')}
               placeholder={t('FIELDS.SOURCE_URL.PLACEHOLDER')}
-              className={`pr-10 ${errors.source_url ? 'border-red-500' : ''}`}
+              className={`w-full px-3 py-2 pr-10 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                errors.source_url
+                  ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
+                  : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+              }`}
             />
             <ExternalLink className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           </div>

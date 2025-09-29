@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { StepContainer } from '@/components/ui/multi-step-form';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -49,6 +48,7 @@ export function ClassificationStep({
   const [newCategory, setNewCategory] = useState('');
   const [newTag, setNewTag] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
 
   const validateData = (): Record<string, string> => {
     const newErrors: Record<string, string> = {};
@@ -64,6 +64,10 @@ export function ClassificationStep({
     return newErrors;
   };
 
+  const handleBlur = (field: string) => {
+    setTouchedFields(prev => new Set(prev).add(field));
+  };
+
   // Add category
   const addCategory = (categoryToAdd: string) => {
     const trimmedCategory = categoryToAdd.trim();
@@ -74,6 +78,7 @@ export function ClassificationStep({
       };
       onChange(newData);
       setNewCategory('');
+      setTouchedFields(prev => new Set(prev).add('category'));
     }
   };
 
@@ -84,6 +89,7 @@ export function ClassificationStep({
       category: data.category.filter(cat => cat !== categoryToRemove)
     };
     onChange(newData);
+    setTouchedFields(prev => new Set(prev).add('category'));
   };
 
   // Add tag
@@ -96,6 +102,7 @@ export function ClassificationStep({
       };
       onChange(newData);
       setNewTag('');
+      setTouchedFields(prev => new Set(prev).add('tags'));
     }
   };
 
@@ -106,6 +113,7 @@ export function ClassificationStep({
       tags: data.tags.filter(tag => tag !== tagToRemove)
     };
     onChange(newData);
+    setTouchedFields(prev => new Set(prev).add('tags'));
   };
 
   // Handle Enter key
@@ -127,9 +135,18 @@ export function ClassificationStep({
   // Validate on data change
   useEffect(() => {
     const allErrors = validateData();
-    setErrors(allErrors);
+
+    // Only show errors for touched fields
+    const visibleErrors: Record<string, string> = {};
+    Object.keys(allErrors).forEach(field => {
+      if (touchedFields.has(field)) {
+        visibleErrors[field] = allErrors[field];
+      }
+    });
+
+    setErrors(visibleErrors);
     onValidationChange(Object.keys(allErrors).length === 0);
-  }, [data, onValidationChange]);
+  }, [data, touchedFields, onValidationChange]);
 
   return (
     <StepContainer
@@ -149,12 +166,18 @@ export function ClassificationStep({
 
           {/* Category Input */}
           <div className="flex gap-2">
-            <Input
+            <input
+              type="text"
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
               onKeyDown={(e) => handleKeyDown(e, 'category', newCategory)}
+              onBlur={() => handleBlur('category')}
               placeholder={t('FIELDS.CATEGORY.PLACEHOLDER')}
-              className="flex-1"
+              className={`flex-1 px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                errors.category
+                  ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
+                  : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+              }`}
             />
             <Button
               type="button"
@@ -223,12 +246,18 @@ export function ClassificationStep({
 
           {/* Tag Input */}
           <div className="flex gap-2">
-            <Input
+            <input
+              type="text"
               value={newTag}
               onChange={(e) => setNewTag(e.target.value)}
               onKeyDown={(e) => handleKeyDown(e, 'tag', newTag)}
+              onBlur={() => handleBlur('tags')}
               placeholder={t('FIELDS.TAGS.PLACEHOLDER')}
-              className="flex-1"
+              className={`flex-1 px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                errors.tags
+                  ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
+                  : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+              }`}
             />
             <Button
               type="button"
