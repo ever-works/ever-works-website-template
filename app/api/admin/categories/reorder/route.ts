@@ -41,6 +41,9 @@ import { auth } from "@/lib/auth";
  *                   type: string
  *                   example: "Categories reordered successfully"
  *               required: ["success", "message"]
+ *             example:
+ *               success: true
+ *               message: "Categories reordered successfully"
  *       400:
  *         description: "Bad request - Invalid input"
  *         content:

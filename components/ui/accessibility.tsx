@@ -3,7 +3,7 @@
 import React from 'react';
 import { cn } from '@heroui/react';
 
-// Composant pour les lecteurs d'écran uniquement
+// Component for screen readers only
 interface ScreenReaderOnlyProps {
   children: React.ReactNode;
   className?: string;
@@ -46,7 +46,7 @@ export function SkipLink({ href, children, className }: SkipLinkProps) {
   );
 }
 
-// Composant pour les annonces aux lecteurs d'écran
+// Component for screen reader announcements
 interface LiveRegionProps {
   children: React.ReactNode;
   politeness?: 'polite' | 'assertive' | 'off';

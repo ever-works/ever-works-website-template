@@ -34,6 +34,29 @@ import { createCategoryGitService } from "@/lib/services/category-git.service";
  *                   type: string
  *                   example: "Git repository status retrieved successfully"
  *               required: ["success", "status", "categories", "message"]
+ *             example:
+ *               success: true
+ *               status:
+ *                 repository: "ever-co/awesome-time-tracking-data"
+ *                 branch: "main"
+ *                 lastCommit: "abc123def456"
+ *                 lastCommitDate: "2024-01-20T10:30:00.000Z"
+ *                 lastCommitMessage: "Update categories data"
+ *                 isUpToDate: true
+ *               categories:
+ *                 - id: "productivity"
+ *                   name: "Productivity"
+ *                   isActive: true
+ *                   itemCount: 15
+ *                   createdAt: "2024-01-15T10:30:00.000Z"
+ *                   updatedAt: "2024-01-15T10:30:00.000Z"
+ *                 - id: "design"
+ *                   name: "Design"
+ *                   isActive: true
+ *                   itemCount: 8
+ *                   createdAt: "2024-01-16T11:20:00.000Z"
+ *                   updatedAt: "2024-01-16T11:20:00.000Z"
+ *               message: "Git repository status retrieved successfully"
  *       401:
  *         description: "Unauthorized - Admin access required"
  *         content:
@@ -183,6 +206,16 @@ export async function GET() {
  *                   type: string
  *                   example: "Category created and committed to Git repository"
  *               required: ["success", "category", "message"]
+ *             example:
+ *               success: true
+ *               category:
+ *                 id: "productivity"
+ *                 name: "Productivity"
+ *                 isActive: true
+ *                 itemCount: 0
+ *                 createdAt: "2024-01-20T15:30:00.000Z"
+ *                 updatedAt: "2024-01-20T15:30:00.000Z"
+ *               message: "Category created and committed to Git repository"
  *       400:
  *         description: "Bad request - Missing required fields"
  *         content:

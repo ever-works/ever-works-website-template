@@ -37,6 +37,24 @@ import {
  *                 data:
  *                   $ref: "#/components/schemas/ClientProfile"
  *               required: ["success", "data"]
+ *             example:
+ *               success: true
+ *               data:
+ *                 id: "client_123abc"
+ *                 displayName: "John Doe"
+ *                 username: "johndoe"
+ *                 email: "john.doe@example.com"
+ *                 bio: "Senior Developer with 10+ years experience"
+ *                 jobTitle: "Lead Developer"
+ *                 company: "Tech Corp Inc"
+ *                 status: "active"
+ *                 plan: "premium"
+ *                 accountType: "business"
+ *                 profileImage: "https://cdn.example.com/avatars/johndoe.jpg"
+ *                 joinedAt: "2024-01-15T10:30:00.000Z"
+ *                 lastActiveAt: "2024-01-20T14:45:00.000Z"
+ *                 createdAt: "2024-01-15T10:30:00.000Z"
+ *                 updatedAt: "2024-01-20T14:45:00.000Z"
  *       401:
  *         description: "Unauthorized - Admin access required"
  *         content:
@@ -181,6 +199,25 @@ export async function GET(
  *                   type: string
  *                   example: "Client updated successfully"
  *               required: ["success", "data", "message"]
+ *             example:
+ *               success: true
+ *               data:
+ *                 id: "client_123abc"
+ *                 displayName: "John Doe Updated"
+ *                 username: "johndoe_updated"
+ *                 email: "john.doe@example.com"
+ *                 bio: "Senior Developer at Tech Corp"
+ *                 jobTitle: "Lead Developer"
+ *                 company: "Tech Corp Inc"
+ *                 status: "active"
+ *                 plan: "premium"
+ *                 accountType: "business"
+ *                 profileImage: "https://cdn.example.com/avatars/johndoe.jpg"
+ *                 joinedAt: "2024-01-15T10:30:00.000Z"
+ *                 lastActiveAt: "2024-01-20T16:30:00.000Z"
+ *                 createdAt: "2024-01-15T10:30:00.000Z"
+ *                 updatedAt: "2024-01-20T16:30:00.000Z"
+ *               message: "Client updated successfully"
  *       401:
  *         description: "Unauthorized - Admin access required"
  *         content:
@@ -283,6 +320,9 @@ export async function PUT(
  *                   type: string
  *                   example: "Client deleted successfully"
  *               required: ["success", "message"]
+ *             example:
+ *               success: true
+ *               message: "Client deleted successfully"
  *       401:
  *         description: "Unauthorized - Admin access required"
  *         content:

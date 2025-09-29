@@ -1,60 +1,60 @@
-# 🚀 Système de Documentation API Automatisée
+# 🚀 Automated API Documentation System
 
-## Vue d'ensemble
+## Overview
 
-Ce système automatise la génération de documentation OpenAPI pour Next.js 15 avec App Router, tout en préservant le fichier `public/openapi.json` existant.
+This system automates OpenAPI documentation generation for Next.js 15 with App Router, while preserving the existing `public/openapi.json` file.
 
 ## 🏗️ Architecture
 
-### Approche Hybride
-- ✅ **Préserve** le fichier `public/openapi.json` existant (travail manuel conservé)
-- ✅ **Ajoute** des annotations `@swagger` dans le code des routes
-- ✅ **Merge** automatiquement les deux sources sans conflit
-- ✅ **Génère** un fichier OpenAPI complet et cohérent
+### Hybrid Approach
+- ✅ **Preserves** the existing `public/openapi.json` file (manual work retained)
+- ✅ **Adds** `@swagger` annotations in route code
+- ✅ **Merges** both sources automatically without conflicts
+- ✅ **Generates** a complete and consistent OpenAPI file
 
-### Fichiers du système
+### System Files
 ```
 scripts/
-├── generate-openapi.ts     # Script principal de génération
-├── tsconfig.json          # Configuration TypeScript pour scripts
-└── install-swagger-deps.sh # Installation des dépendances
+├── generate-openapi.ts     # Main generation script
+├── tsconfig.json          # TypeScript configuration for scripts
+└── install-swagger-deps.sh # Dependencies installation
 
 lib/swagger/
-└── annotations.ts         # Utilitaires pour annotations standardisées
+└── annotations.ts         # Utilities for standardized annotations
 
 templates/
-└── route-template.ts      # Template pour nouvelles routes
+└── route-template.ts      # Template for new routes
 
 docs/
-└── SWAGGER_AUTOMATION.md  # Cette documentation
+└── SWAGGER_AUTOMATION.md  # This documentation
 ```
 
 ## 📦 Installation
 
-### 1. Installer les dépendances
+### 1. Install dependencies
 ```bash
-# Exécuter le script d'installation
+# Run the installation script
 ./scripts/install-swagger-deps.sh
 
-# Ou manuellement avec yarn
+# Or manually with yarn
 yarn add -D swagger-jsdoc @types/swagger-jsdoc tsx nodemon
 ```
 
-### 2. Scripts disponibles
+### 2. Available scripts
 ```bash
-# Générer la documentation une fois
+# Generate documentation once
 yarn generate-docs
 
-# Watcher pour développement (régénère automatiquement)
+# Watcher for development (regenerates automatically)
 yarn docs:watch
 
-# Développement avec génération automatique
+# Development with automatic generation
 yarn dev
 ```
 
-## 🔧 Utilisation
+## 🔧 Usage
 
-### 1. Ajouter des annotations à une route
+### 1. Add annotations to a route
 
 ```typescript
 // app/api/example/route.ts
@@ -88,12 +88,12 @@ export async function GET() {
 }
 ```
 
-### 2. Utiliser les utilitaires
+### 2. Use utilities
 
 ```typescript
 import { createAdminRouteAnnotation, CommonAnnotations } from '@/lib/swagger/annotations';
 
-// Utiliser les réponses communes
+// Use common responses
 const responses = {
   200: { description: "Success", content: { ... } },
   401: CommonAnnotations.responses.unauthorized,
@@ -101,105 +101,105 @@ const responses = {
 };
 ```
 
-### 3. Template pour nouvelles routes
+### 3. Template for new routes
 
-Copiez `templates/route-template.ts` comme base pour vos nouvelles routes.
+Copy `templates/route-template.ts` as a base for your new routes.
 
-## 🔄 Workflow de développement
+## 🔄 Development workflow
 
-### Développement quotidien
-1. **Créer une nouvelle route** : Copier le template
-2. **Ajouter les annotations** : Documenter directement dans le code
-3. **Tester** : `yarn docs:watch` régénère automatiquement
-4. **Vérifier** : Consulter `/api/reference` pour voir la doc
+### Daily development
+1. **Create a new route**: Copy the template
+2. **Add annotations**: Document directly in the code
+3. **Test**: `yarn docs:watch` regenerates automatically
+4. **Verify**: Check `/api/reference` to see the documentation
 
-### Avant commit
-1. **Générer** : `yarn generate-docs`
-2. **Vérifier** : S'assurer que la documentation est correcte
-3. **Commit** : Inclure les changements dans `public/openapi.json`
+### Before commit
+1. **Generate**: `yarn generate-docs`
+2. **Verify**: Ensure documentation is correct
+3. **Commit**: Include changes in `public/openapi.json`
 
-## 🛡️ Sécurité et Préservation
+## 🛡️ Security and Preservation
 
-### Backup automatique
-- Le script crée automatiquement `public/openapi.backup.json`
-- En cas d'erreur, le backup est restauré automatiquement
+### Automatic backup
+- The script automatically creates `public/openapi.backup.json`
+- In case of error, the backup is automatically restored
 
-### Stratégie de merge
-- **Priorité** : Existant > Généré (préserve le travail manuel)
-- **Paths** : Merge sans conflit (existant prioritaire)
-- **Schemas** : Combine les deux sources
-- **Tags** : Évite les doublons
+### Merge strategy
+- **Priority**: Existing > Generated (preserves manual work)
+- **Paths**: Merge without conflicts (existing takes priority)
+- **Schemas**: Combines both sources
+- **Tags**: Avoids duplicates
 
-### Gestion des conflits
+### Conflict management
 ```typescript
-// Si une route existe dans les deux sources :
-// 1. La version manuelle (openapi.json) est conservée
-// 2. La version générée est ignorée
-// 3. Un warning est affiché dans la console
+// If a route exists in both sources:
+// 1. The manual version (openapi.json) is preserved
+// 2. The generated version is ignored
+// 3. A warning is displayed in the console
 ```
 
-## 📝 Bonnes pratiques
+## 📝 Best practices
 
-### Annotations standardisées
-- Utiliser les tags cohérents : `["Admin - Users"]`, `["Items"]`, etc.
-- Suivre la structure de réponse : `{ success: boolean, ... }`
-- Inclure des exemples réalistes
-- Documenter tous les cas d'erreur
+### Standardized annotations
+- Use consistent tags: `["Admin - Users"]`, `["Items"]`, etc.
+- Follow response structure: `{ success: boolean, ... }`
+- Include realistic examples
+- Document all error cases
 
-### Structure des réponses
+### Response structure
 ```typescript
-// ✅ Bon
+// ✅ Good
 {
   success: true,
   data: { ... },
   message?: string
 }
 
-// ✅ Bon (erreur)
+// ✅ Good (error)
 {
   success: false,
   error: "Error message"
 }
 ```
 
-### Tags recommandés
+### Recommended tags
 - `Admin - Users`, `Admin - Roles`, `Admin - Categories`
 - `Items`, `Comments`, `Votes`
 - `Auth`, `User Profile`
 - `Payments - Stripe`, `Payments - LemonSqueezy`
 
-## 🚨 Dépannage
+## 🚨 Troubleshooting
 
-### Erreur de génération
+### Generation error
 ```bash
-# Vérifier les dépendances
+# Check dependencies
 yarn list swagger-jsdoc tsx nodemon
 
-# Restaurer le backup
+# Restore backup
 cp public/openapi.backup.json public/openapi.json
 
-# Régénérer
+# Regenerate
 yarn generate-docs
 ```
 
-### Annotations non détectées
-- Vérifier la syntaxe `@swagger`
-- S'assurer que le fichier est dans `app/api/**/route.ts`
-- Redémarrer le watcher : `yarn docs:watch`
+### Annotations not detected
+- Check `@swagger` syntax
+- Ensure file is in `app/api/**/route.ts`
+- Restart watcher: `yarn docs:watch`
 
-### Conflits de merge
-- Vérifier les logs de génération
-- Les routes manuelles ont priorité
-- Utiliser des noms de routes uniques
+### Merge conflicts
+- Check generation logs
+- Manual routes take priority
+- Use unique route names
 
-## 🎯 Prochaines étapes
+## 🎯 Next steps
 
-1. **Migration progressive** : Ajouter des annotations aux 66 routes restantes
-2. **Validation automatique** : Vérifier la cohérence code/doc
-3. **CI/CD Integration** : Générer automatiquement en production
-4. **Type Safety** : Générer les types TypeScript depuis OpenAPI
+1. **Progressive migration**: Add annotations to the remaining 66 routes
+2. **Automatic validation**: Verify code/doc consistency
+3. **CI/CD Integration**: Generate automatically in production
+4. **Type Safety**: Generate TypeScript types from OpenAPI
 
-## 📚 Ressources
+## 📚 Resources
 
 - [Swagger JSDoc](https://github.com/Surnet/swagger-jsdoc)
 - [OpenAPI 3.0 Specification](https://swagger.io/specification/)

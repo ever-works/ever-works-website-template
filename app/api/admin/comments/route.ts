@@ -25,7 +25,198 @@ interface ListResponseComment {
   user: ListResponseUser;
 }
 
-
+/**
+ * @swagger
+ * /api/admin/comments:
+ *   get:
+ *     tags: ["Admin - Comments"]
+ *     summary: "Get paginated comments list"
+ *     description: "Returns a paginated list of comments with user information and search functionality. Supports filtering by comment content, user name, or user email. Requires admin privileges."
+ *     security:
+ *       - sessionAuth: []
+ *     parameters:
+ *       - name: "page"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: "Page number for pagination"
+ *         example: 1
+ *       - name: "limit"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 10
+ *         description: "Number of comments per page"
+ *         example: 10
+ *       - name: "search"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: "Search term for comment content, user name, or user email"
+ *         example: "great product"
+ *     responses:
+ *       200:
+ *         description: "Comments list retrieved successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     comments:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             description: "Comment ID"
+ *                             example: "comment_123abc"
+ *                           content:
+ *                             type: string
+ *                             description: "Comment content"
+ *                             example: "This is a great product! Highly recommended."
+ *                           rating:
+ *                             type: integer
+ *                             nullable: true
+ *                             minimum: 1
+ *                             maximum: 5
+ *                             description: "Rating given with the comment"
+ *                             example: 5
+ *                           userId:
+ *                             type: string
+ *                             description: "ID of the user who wrote the comment"
+ *                             example: "user_456def"
+ *                           itemId:
+ *                             type: string
+ *                             description: "ID of the item being commented on"
+ *                             example: "item_789ghi"
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                             nullable: true
+ *                             description: "Comment creation timestamp"
+ *                             example: "2024-01-20T10:30:00.000Z"
+ *                           updatedAt:
+ *                             type: string
+ *                             format: date-time
+ *                             nullable: true
+ *                             description: "Comment last update timestamp"
+ *                             example: "2024-01-20T14:45:00.000Z"
+ *                           user:
+ *                             type: object
+ *                             properties:
+ *                               id:
+ *                                 type: string
+ *                                 description: "User ID"
+ *                                 example: "user_456def"
+ *                               name:
+ *                                 type: string
+ *                                 nullable: true
+ *                                 description: "User display name"
+ *                                 example: "John Doe"
+ *                               email:
+ *                                 type: string
+ *                                 nullable: true
+ *                                 description: "User email address"
+ *                                 example: "john.doe@example.com"
+ *                               image:
+ *                                 type: string
+ *                                 nullable: true
+ *                                 description: "User avatar image URL"
+ *                                 example: "https://example.com/avatar.jpg"
+ *                     pagination:
+ *                       type: object
+ *                       properties:
+ *                         total:
+ *                           type: integer
+ *                           description: "Total number of comments"
+ *                           example: 156
+ *                         page:
+ *                           type: integer
+ *                           description: "Current page number"
+ *                           example: 1
+ *                         limit:
+ *                           type: integer
+ *                           description: "Number of comments per page"
+ *                           example: 10
+ *                         totalPages:
+ *                           type: integer
+ *                           description: "Total number of pages"
+ *                           example: 16
+ *               required: ["success", "data"]
+ *             example:
+ *               success: true
+ *               data:
+ *                 comments:
+ *                   - id: "comment_123abc"
+ *                     content: "This is a great product! Highly recommended."
+ *                     rating: 5
+ *                     userId: "user_456def"
+ *                     itemId: "item_789ghi"
+ *                     createdAt: "2024-01-20T10:30:00.000Z"
+ *                     updatedAt: "2024-01-20T10:30:00.000Z"
+ *                     user:
+ *                       id: "user_456def"
+ *                       name: "John Doe"
+ *                       email: "john.doe@example.com"
+ *                       image: "https://example.com/avatar.jpg"
+ *                   - id: "comment_234bcd"
+ *                     content: "Good quality, fast delivery."
+ *                     rating: 4
+ *                     userId: "user_567efg"
+ *                     itemId: "item_890jkl"
+ *                     createdAt: "2024-01-19T15:20:00.000Z"
+ *                     updatedAt: "2024-01-19T15:20:00.000Z"
+ *                     user:
+ *                       id: "user_567efg"
+ *                       name: "Jane Smith"
+ *                       email: "jane.smith@example.com"
+ *                       image: null
+ *                 pagination:
+ *                   total: 156
+ *                   page: 1
+ *                   limit: 10
+ *                   totalPages: 16
+ *       403:
+ *         description: "Forbidden - Admin access required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Forbidden"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ */
 export async function GET(request: Request) {
   try {
     // Check database availability first

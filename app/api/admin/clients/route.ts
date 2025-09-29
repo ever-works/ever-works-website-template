@@ -135,6 +135,39 @@ interface CreateClientRequest {
  *                       example: 10
  *                   required: ["page", "totalPages", "total", "limit"]
  *               required: ["success", "data", "meta"]
+ *             example:
+ *               success: true
+ *               data:
+ *                 clients:
+ *                   - id: "client_123abc"
+ *                     displayName: "John Doe"
+ *                     username: "johndoe"
+ *                     email: "john.doe@example.com"
+ *                     bio: "Senior Developer with 10+ years experience"
+ *                     jobTitle: "Lead Developer"
+ *                     company: "Tech Corp Inc"
+ *                     status: "active"
+ *                     plan: "premium"
+ *                     accountType: "business"
+ *                     joinedAt: "2024-01-15T10:30:00.000Z"
+ *                     lastActiveAt: "2024-01-20T14:45:00.000Z"
+ *                   - id: "client_456def"
+ *                     displayName: "Jane Smith"
+ *                     username: "janesmith"
+ *                     email: "jane.smith@example.com"
+ *                     bio: "Product Manager at StartupCo"
+ *                     jobTitle: "Product Manager"
+ *                     company: "StartupCo"
+ *                     status: "active"
+ *                     plan: "standard"
+ *                     accountType: "individual"
+ *                     joinedAt: "2024-01-16T09:15:00.000Z"
+ *                     lastActiveAt: "2024-01-20T16:20:00.000Z"
+ *               meta:
+ *                 page: 1
+ *                 totalPages: 5
+ *                 total: 47
+ *                 limit: 10
  *       401:
  *         description: "Unauthorized - Admin access required"
  *         content:
@@ -280,6 +313,25 @@ export async function GET(request: NextRequest) {
  *                   type: string
  *                   example: "Client created successfully"
  *               required: ["success", "data", "message"]
+ *             example:
+ *               success: true
+ *               data:
+ *                 id: "client_789ghi"
+ *                 displayName: "John Doe"
+ *                 username: "johndoe"
+ *                 email: "john.doe@example.com"
+ *                 bio: "Senior Developer at Tech Corp"
+ *                 jobTitle: "Senior Developer"
+ *                 company: "Tech Corp"
+ *                 status: "active"
+ *                 plan: "premium"
+ *                 accountType: "business"
+ *                 profileImage: null
+ *                 joinedAt: "2024-01-20T16:45:00.000Z"
+ *                 lastActiveAt: "2024-01-20T16:45:00.000Z"
+ *                 createdAt: "2024-01-20T16:45:00.000Z"
+ *                 updatedAt: "2024-01-20T16:45:00.000Z"
+ *               message: "Client created successfully"
  *       400:
  *         description: "Bad request - Invalid input or user creation failed"
  *         content:

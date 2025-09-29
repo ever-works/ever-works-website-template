@@ -2,6 +2,245 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { advancedClientSearch } from '@/lib/db/queries';
 
+/**
+ * @swagger
+ * /api/admin/clients/advanced-search:
+ *   get:
+ *     tags: ["Admin - Clients"]
+ *     summary: "Advanced client search"
+ *     description: "Performs advanced search on client profiles with multiple filters, sorting options, and date ranges. Supports field-specific searches, numeric filters, and boolean filters. Requires admin privileges."
+ *     security:
+ *       - sessionAuth: []
+ *     parameters:
+ *       - name: "page"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: "Page number for pagination"
+ *         example: 1
+ *       - name: "limit"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 10
+ *         description: "Number of clients per page"
+ *         example: 20
+ *       - name: "search"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: "General search term for name, email, or username"
+ *         example: "john"
+ *       - name: "status"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["active", "inactive", "suspended", "trial"]
+ *         description: "Filter by client status"
+ *         example: "active"
+ *       - name: "plan"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["free", "standard", "premium"]
+ *         description: "Filter by subscription plan"
+ *         example: "premium"
+ *       - name: "accountType"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["individual", "business", "enterprise"]
+ *         description: "Filter by account type"
+ *         example: "business"
+ *       - name: "provider"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: "Filter by authentication provider"
+ *         example: "google"
+ *       - name: "sortBy"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["createdAt", "updatedAt", "name", "email", "company", "totalSubmissions"]
+ *         description: "Field to sort by"
+ *         example: "createdAt"
+ *       - name: "sortOrder"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["asc", "desc"]
+ *           default: "desc"
+ *         description: "Sort order"
+ *         example: "desc"
+ *       - name: "createdAfter"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: "Filter clients created after this date"
+ *         example: "2024-01-01T00:00:00.000Z"
+ *       - name: "createdBefore"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: "Filter clients created before this date"
+ *         example: "2024-12-31T23:59:59.000Z"
+ *       - name: "emailDomain"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: "Filter by email domain"
+ *         example: "example.com"
+ *       - name: "companySearch"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: "Search in company names"
+ *         example: "Tech Corp"
+ *       - name: "minSubmissions"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 0
+ *         description: "Minimum number of submissions"
+ *         example: 5
+ *       - name: "maxSubmissions"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 0
+ *         description: "Maximum number of submissions"
+ *         example: 100
+ *       - name: "emailVerified"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["true", "false"]
+ *         description: "Filter by email verification status"
+ *         example: "true"
+ *       - name: "twoFactorEnabled"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["true", "false"]
+ *         description: "Filter by two-factor authentication status"
+ *         example: "true"
+ *     responses:
+ *       200:
+ *         description: "Advanced search completed successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     clients:
+ *                       type: array
+ *                       items:
+ *                         $ref: "#/components/schemas/ClientProfile"
+ *                     pagination:
+ *                       type: object
+ *                       properties:
+ *                         page:
+ *                           type: integer
+ *                           example: 1
+ *                         limit:
+ *                           type: integer
+ *                           example: 20
+ *                         total:
+ *                           type: integer
+ *                           example: 15
+ *                         totalPages:
+ *                           type: integer
+ *                           example: 1
+ *                     searchMetadata:
+ *                       type: object
+ *                       properties:
+ *                         appliedFilters:
+ *                           type: object
+ *                           description: "Summary of applied search filters"
+ *                         searchTime:
+ *                           type: number
+ *                           description: "Search execution time in milliseconds"
+ *                           example: 45.2
+ *               required: ["success", "data"]
+ *             example:
+ *               success: true
+ *               data:
+ *                 clients:
+ *                   - id: "client_123abc"
+ *                     displayName: "John Doe"
+ *                     username: "johndoe"
+ *                     email: "john.doe@example.com"
+ *                     company: "Tech Corp Inc"
+ *                     status: "active"
+ *                     plan: "premium"
+ *                     accountType: "business"
+ *                     totalSubmissions: 25
+ *                     emailVerified: true
+ *                     twoFactorEnabled: true
+ *                     createdAt: "2024-01-15T10:30:00.000Z"
+ *                     lastActiveAt: "2024-01-20T14:45:00.000Z"
+ *                 pagination:
+ *                   page: 1
+ *                   limit: 20
+ *                   total: 15
+ *                   totalPages: 1
+ *                 searchMetadata:
+ *                   appliedFilters:
+ *                     status: "active"
+ *                     plan: "premium"
+ *                     emailVerified: true
+ *                   searchTime: 45.2
+ *       401:
+ *         description: "Unauthorized - Admin access required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to perform advanced search"
+ */
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();

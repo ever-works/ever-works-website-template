@@ -1,11 +1,11 @@
 /**
- * Utilitaires pour les annotations Swagger dans Next.js 15 App Router
- * 
- * Ce fichier contient des helpers pour standardiser les annotations
- * et éviter la duplication de code dans les routes.
+ * Utilities for Swagger annotations in Next.js 15 App Router
+ *
+ * This file contains helpers to standardize annotations
+ * and avoid code duplication in routes.
  */
 
-// Types pour les annotations standardisées
+// Types for standardized annotations
 export interface SwaggerRouteConfig {
   tags: string[];
   summary: string;
@@ -62,7 +62,7 @@ export interface SwaggerResponse {
 }
 
 /**
- * Génère une annotation Swagger standardisée pour une route
+ * Generates a standardized Swagger annotation for a route
  */
 export function createSwaggerAnnotation(
   path: string,
@@ -122,10 +122,10 @@ export function createSwaggerAnnotation(
 }
 
 /**
- * Annotations communes pour éviter la duplication
+ * Common annotations to avoid duplication
  */
 export const CommonAnnotations = {
-  // Réponses d'erreur standard
+  // Standard error responses
   responses: {
     unauthorized: {
       description: 'Authentication required',
@@ -165,7 +165,7 @@ export const CommonAnnotations = {
     }
   },
 
-  // Paramètres de pagination standard
+  // Standard pagination parameters
   paginationParameters: [
     {
       name: 'page',
@@ -183,12 +183,12 @@ export const CommonAnnotations = {
     }
   ],
 
-  // Sécurité admin standard
+  // Standard admin security
   adminSecurity: [{ sessionAuth: [] }]
 };
 
 /**
- * Helper pour créer rapidement une route admin standard
+ * Helper to quickly create a standard admin route
  */
 export function createAdminRouteAnnotation(
   path: string,
