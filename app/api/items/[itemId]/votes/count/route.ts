@@ -1,6 +1,67 @@
 import { getVoteCountForItem } from '@/lib/db/queries';
 import { NextResponse } from 'next/server';
 
+/**
+ * @swagger
+ * /api/items/{itemId}/votes/count:
+ *   get:
+ *     tags: ["Item Votes"]
+ *     summary: "Get item vote count"
+ *     description: "Returns the total vote count for a specific item. The count represents the net score (upvotes - downvotes). This is a public endpoint that doesn't require authentication and is optimized for quick vote count retrieval."
+ *     parameters:
+ *       - name: "itemId"
+ *         in: "path"
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: "Item ID to get vote count for"
+ *         example: "item_123abc"
+ *     responses:
+ *       200:
+ *         description: "Vote count retrieved successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 count:
+ *                   type: integer
+ *                   description: "Net vote count (upvotes - downvotes)"
+ *                   example: 15
+ *               required: ["success", "count"]
+ *             examples:
+ *               positive_score:
+ *                 summary: "Item with positive score"
+ *                 value:
+ *                   success: true
+ *                   count: 15
+ *               negative_score:
+ *                 summary: "Item with negative score"
+ *                 value:
+ *                   success: true
+ *                   count: -3
+ *               zero_score:
+ *                 summary: "Item with no votes or equal votes"
+ *                 value:
+ *                   success: true
+ *                   count: 0
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to fetch vote count"
+ */
 export async function GET(
   request: Request,
   context: { params: Promise<{ itemId: string }> }

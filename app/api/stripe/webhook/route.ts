@@ -27,6 +27,144 @@ function createEmailData(baseData: any, emailConfig: Awaited<ReturnType<typeof g
 	};
 }
 
+/**
+ * @swagger
+ * /api/stripe/webhook:
+ *   post:
+ *     tags: ["Stripe - Webhooks"]
+ *     summary: "Handle Stripe webhooks"
+ *     description: "Processes incoming Stripe webhook events including subscription lifecycle, payment events, and billing portal updates. Automatically handles email notifications, subscription management, and database updates. Requires valid Stripe signature for security."
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             description: "Stripe webhook event payload"
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: "Stripe event ID"
+ *                 example: "evt_1234567890abcdef"
+ *               type:
+ *                 type: string
+ *                 description: "Webhook event type"
+ *                 enum: [
+ *                   "customer.subscription.created",
+ *                   "customer.subscription.updated",
+ *                   "customer.subscription.deleted",
+ *                   "invoice.payment_succeeded",
+ *                   "invoice.payment_failed",
+ *                   "payment_intent.succeeded",
+ *                   "payment_intent.payment_failed",
+ *                   "customer.subscription.trial_will_end",
+ *                   "billing_portal.session.updated"
+ *                 ]
+ *                 example: "customer.subscription.created"
+ *               data:
+ *                 type: object
+ *                 description: "Event data object"
+ *                 properties:
+ *                   object:
+ *                     type: object
+ *                     description: "The Stripe object (subscription, payment_intent, etc.)"
+ *               created:
+ *                 type: integer
+ *                 description: "Unix timestamp of event creation"
+ *                 example: 1640995200
+ *               livemode:
+ *                 type: boolean
+ *                 description: "Whether event is from live mode"
+ *                 example: false
+ *             required: ["id", "type", "data", "created", "livemode"]
+ *     parameters:
+ *       - name: "stripe-signature"
+ *         in: "header"
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: "Stripe webhook signature for verification"
+ *         example: "t=1640995200,v1=abc123def456..."
+ *     responses:
+ *       200:
+ *         description: "Webhook processed successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 received:
+ *                   type: boolean
+ *                   example: true
+ *               required: ["received"]
+ *             example:
+ *               received: true
+ *       400:
+ *         description: "Bad request - Invalid signature or webhook processing failed"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     no_signature: "No signature provided"
+ *                     not_processed: "Webhook not processed"
+ *                     processing_failed: "Webhook processing failed"
+ *             examples:
+ *               no_signature:
+ *                 summary: "Missing signature"
+ *                 value:
+ *                   error: "No signature provided"
+ *               not_processed:
+ *                 summary: "Webhook not processed"
+ *                 value:
+ *                   error: "Webhook not processed"
+ *               processing_failed:
+ *                 summary: "Processing failed"
+ *                 value:
+ *                   error: "Webhook processing failed"
+ *     x-webhook-events:
+ *       description: "Supported webhook events and their actions"
+ *       events:
+ *         customer.subscription.created:
+ *           description: "Creates subscription record and sends welcome email"
+ *           actions: ["database_update", "email_notification"]
+ *         customer.subscription.updated:
+ *           description: "Updates subscription record and sends update email"
+ *           actions: ["database_update", "email_notification"]
+ *         customer.subscription.deleted:
+ *           description: "Marks subscription as cancelled and sends cancellation email"
+ *           actions: ["database_update", "email_notification"]
+ *         invoice.payment_succeeded:
+ *           description: "Records successful payment and sends receipt email"
+ *           actions: ["database_update", "email_notification"]
+ *         invoice.payment_failed:
+ *           description: "Records failed payment and sends retry email"
+ *           actions: ["database_update", "email_notification"]
+ *         payment_intent.succeeded:
+ *           description: "Records successful one-time payment and sends confirmation"
+ *           actions: ["database_update", "email_notification"]
+ *         payment_intent.payment_failed:
+ *           description: "Records failed payment and sends failure notification"
+ *           actions: ["database_update", "email_notification"]
+ *         customer.subscription.trial_will_end:
+ *           description: "Sends trial ending notification email"
+ *           actions: ["email_notification"]
+ *         billing_portal.session.updated:
+ *           description: "Logs billing portal session updates"
+ *           actions: ["logging"]
+ *     x-email-notifications:
+ *       description: "Email notifications sent for different events"
+ *       templates:
+ *         welcome: "Sent when subscription is created"
+ *         update: "Sent when subscription is updated"
+ *         cancellation: "Sent when subscription is cancelled"
+ *         payment_success: "Sent when payment succeeds"
+ *         payment_failed: "Sent when payment fails"
+ *         trial_ending: "Sent when trial is about to end"
+ */
 export async function POST(request: NextRequest) {
 	try {
 		const body = await request.text();

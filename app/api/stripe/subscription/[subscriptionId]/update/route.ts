@@ -7,6 +7,168 @@ import { PaymentPlan } from '@/lib/constants';
 import { getSubscriptionByProviderSubscriptionId } from '@/lib/db/queries';
 import { paymentEmailService } from '@/lib/payment/services/payment-email.service';
 
+/**
+ * @swagger
+ * /api/stripe/subscription/{subscriptionId}/update:
+ *   post:
+ *     tags: ["Stripe - Subscription Management"]
+ *     summary: "Update subscription plan"
+ *     description: "Updates a subscription to a new plan with comprehensive validation, ownership verification, database synchronization, and automatic email notifications. Includes plan validation and subscription status checks."
+ *     security:
+ *       - sessionAuth: []
+ *     parameters:
+ *       - name: "subscriptionId"
+ *         in: "path"
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: "Stripe subscription ID to update"
+ *         example: "sub_1234567890abcdef"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newPlanId:
+ *                 type: string
+ *                 description: "New plan ID (must be valid PaymentPlan)"
+ *                 example: "pro"
+ *               newPriceId:
+ *                 type: string
+ *                 description: "New Stripe price ID"
+ *                 example: "price_0987654321fedcba"
+ *             required: ["newPlanId", "newPriceId"]
+ *     responses:
+ *       200:
+ *         description: "Subscription plan updated successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: "Stripe subscription ID"
+ *                       example: "sub_1234567890abcdef"
+ *                     status:
+ *                       type: string
+ *                       enum: ["active", "trialing", "past_due"]
+ *                       example: "active"
+ *                     customer:
+ *                       type: string
+ *                       description: "Stripe customer ID"
+ *                       example: "cus_1234567890abcdef"
+ *                     current_period_start:
+ *                       type: integer
+ *                       description: "Unix timestamp of current period start"
+ *                       example: 1640995200
+ *                     current_period_end:
+ *                       type: integer
+ *                       description: "Unix timestamp of current period end"
+ *                       example: 1643673600
+ *                     items:
+ *                       type: object
+ *                       description: "Subscription items with new price"
+ *                       properties:
+ *                         data:
+ *                           type: array
+ *                           items:
+ *                             type: object
+ *                             properties:
+ *                               price:
+ *                                 type: object
+ *                                 properties:
+ *                                   id:
+ *                                     type: string
+ *                                     example: "price_0987654321fedcba"
+ *                   required: ["id", "status", "customer", "current_period_start", "current_period_end"]
+ *                 message:
+ *                   type: string
+ *                   example: "Plan updated to pro successfully"
+ *               required: ["success", "data", "message"]
+ *             example:
+ *               success: true
+ *               data:
+ *                 id: "sub_1234567890abcdef"
+ *                 status: "active"
+ *                 customer: "cus_1234567890abcdef"
+ *                 current_period_start: 1640995200
+ *                 current_period_end: 1643673600
+ *                 items:
+ *                   data:
+ *                     - price:
+ *                         id: "price_0987654321fedcba"
+ *               message: "Plan updated to pro successfully"
+ *       400:
+ *         description: "Bad request - Invalid plan ID or subscription not active"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     invalid_plan: "Invalid plan ID"
+ *                     not_active: "Subscription is not active"
+ *             examples:
+ *               invalid_plan:
+ *                 summary: "Invalid plan ID"
+ *                 value:
+ *                   error: "Invalid plan ID"
+ *               not_active:
+ *                 summary: "Subscription not active"
+ *                 value:
+ *                   error: "Subscription is not active"
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       404:
+ *         description: "Not found - Subscription not found or access denied"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Subscription not found or access denied"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to update subscription"
+ *     x-email-notification:
+ *       description: "Automatic email notification sent to customer"
+ *       template: "subscription_plan_changed"
+ *       data:
+ *         - customerName: "Customer display name"
+ *         - customerEmail: "Customer email address"
+ *         - oldPlanName: "Previous plan name"
+ *         - newPlanName: "New plan name"
+ *         - subscriptionId: "Stripe subscription ID"
+ *         - manageSubscriptionUrl: "URL to manage subscription"
+ */
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ subscriptionId: string }> }

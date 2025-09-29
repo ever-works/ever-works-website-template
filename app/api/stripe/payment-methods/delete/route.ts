@@ -3,7 +3,171 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { z } from 'zod';
 
-
+/**
+ * @swagger
+ * /api/stripe/payment-methods/delete:
+ *   delete:
+ *     tags: ["Stripe - Payment Methods"]
+ *     summary: "Delete payment method"
+ *     description: "Safely deletes a payment method with comprehensive ownership validation, automatic default payment method reassignment, and subscription impact analysis. Handles edge cases like default method deletion and provides detailed response metadata."
+ *     security:
+ *       - sessionAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               paymentMethodId:
+ *                 type: string
+ *                 minLength: 1
+ *                 description: "Stripe payment method ID to delete"
+ *                 example: "pm_1234567890abcdef"
+ *             required: ["paymentMethodId"]
+ *     responses:
+ *       200:
+ *         description: "Payment method deleted successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Payment method deleted successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     was_default:
+ *                       type: boolean
+ *                       description: "Whether the deleted payment method was the default"
+ *                       example: true
+ *                     affected_subscriptions:
+ *                       type: integer
+ *                       description: "Number of active subscriptions that were using this payment method"
+ *                       example: 2
+ *                     new_default_payment_method:
+ *                       type: string
+ *                       nullable: true
+ *                       description: "ID of the new default payment method (if reassigned)"
+ *                       example: "pm_0987654321fedcba"
+ *                   required: ["was_default", "affected_subscriptions", "new_default_payment_method"]
+ *               required: ["success", "message", "data"]
+ *             examples:
+ *               default_method_deleted:
+ *                 summary: "Default payment method deleted with reassignment"
+ *                 value:
+ *                   success: true
+ *                   message: "Payment method deleted successfully"
+ *                   data:
+ *                     was_default: true
+ *                     affected_subscriptions: 1
+ *                     new_default_payment_method: "pm_0987654321fedcba"
+ *               regular_method_deleted:
+ *                 summary: "Regular payment method deleted"
+ *                 value:
+ *                   success: true
+ *                   message: "Payment method deleted successfully"
+ *                   data:
+ *                     was_default: false
+ *                     affected_subscriptions: 0
+ *                     new_default_payment_method: null
+ *               last_method_deleted:
+ *                 summary: "Last payment method deleted"
+ *                 value:
+ *                   success: true
+ *                   message: "Payment method deleted successfully"
+ *                   data:
+ *                     was_default: true
+ *                     affected_subscriptions: 0
+ *                     new_default_payment_method: null
+ *       400:
+ *         description: "Bad request - Invalid request data or payment method issues"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     validation: "Invalid request data"
+ *                     no_customer: "Payment method not associated with a customer"
+ *                     stripe_error: "Stripe error: Invalid payment method ID"
+ *                 details:
+ *                   type: array
+ *                   description: "Validation error details (if applicable)"
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       path:
+ *                         type: string
+ *                         example: "paymentMethodId"
+ *                       message:
+ *                         type: string
+ *                         example: "Payment method ID is required"
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Authentication required"
+ *       403:
+ *         description: "Forbidden - Payment method does not belong to user"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Access denied: payment method does not belong to user"
+ *       404:
+ *         description: "Not found - Payment method or customer not found"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     payment_method: "Stripe error: No such payment method"
+ *                     customer: "Customer not found"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to delete payment method"
+ */
 
 // ============================================================================
 // VALIDATION SCHEMAS

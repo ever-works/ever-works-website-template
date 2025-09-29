@@ -7,7 +7,6 @@ import {
   saveUserStripeCustomerId
 } from '@/lib/stripe-helpers';
 
-
 // Validation schema for creating payment method
 const createPaymentMethodSchema = z.object({
   setup_intent_id: z.string().min(1, 'Setup intent ID is required'),
@@ -15,6 +14,163 @@ const createPaymentMethodSchema = z.object({
   metadata: z.record(z.string(), z.string()).optional(),
 });
 
+/**
+ * @swagger
+ * /api/stripe/payment-methods/create:
+ *   post:
+ *     tags: ["Stripe - Payment Methods"]
+ *     summary: "Create payment method from setup intent"
+ *     description: "Creates and attaches a payment method to the authenticated user's customer from a completed setup intent. Automatically creates Stripe customer if needed, handles payment method attachment, and optionally sets as default payment method."
+ *     security:
+ *       - sessionAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               setup_intent_id:
+ *                 type: string
+ *                 minLength: 1
+ *                 description: "Stripe setup intent ID (must be succeeded)"
+ *                 example: "seti_1234567890abcdef"
+ *               set_as_default:
+ *                 type: boolean
+ *                 default: false
+ *                 description: "Whether to set this payment method as default"
+ *                 example: true
+ *               metadata:
+ *                 type: object
+ *                 description: "Additional metadata for the payment method"
+ *                 additionalProperties:
+ *                   type: string
+ *                 example:
+ *                   nickname: "Primary Card"
+ *                   source: "mobile_app"
+ *             required: ["setup_intent_id"]
+ *     responses:
+ *       200:
+ *         description: "Payment method created successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: "Payment method ID"
+ *                       example: "pm_1234567890abcdef"
+ *                     type:
+ *                       type: string
+ *                       description: "Payment method type"
+ *                       example: "card"
+ *                     card:
+ *                       type: object
+ *                       nullable: true
+ *                       description: "Card details (if type is card)"
+ *                       properties:
+ *                         brand:
+ *                           type: string
+ *                           example: "visa"
+ *                         last4:
+ *                           type: string
+ *                           example: "4242"
+ *                         exp_month:
+ *                           type: integer
+ *                           example: 12
+ *                         exp_year:
+ *                           type: integer
+ *                           example: 2025
+ *                         funding:
+ *                           type: string
+ *                           enum: ["credit", "debit", "prepaid", "unknown"]
+ *                           example: "credit"
+ *                     created:
+ *                       type: integer
+ *                       description: "Unix timestamp of creation"
+ *                       example: 1640995200
+ *                     metadata:
+ *                       type: object
+ *                       description: "Payment method metadata"
+ *                       additionalProperties:
+ *                         type: string
+ *                       example:
+ *                         userId: "user_123abc"
+ *                         nickname: "Primary Card"
+ *                 message:
+ *                   type: string
+ *                   example: "Payment method created successfully"
+ *               required: ["success", "data", "message"]
+ *             example:
+ *               success: true
+ *               data:
+ *                 id: "pm_1234567890abcdef"
+ *                 type: "card"
+ *                 card:
+ *                   brand: "visa"
+ *                   last4: "4242"
+ *                   exp_month: 12
+ *                   exp_year: 2025
+ *                   funding: "credit"
+ *                 created: 1640995200
+ *                 metadata:
+ *                   userId: "user_123abc"
+ *                   nickname: "Primary Card"
+ *               message: "Payment method created successfully"
+ *       400:
+ *         description: "Bad request - Invalid setup intent or validation error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     validation: "Invalid request data"
+ *                     setup_intent_failed: "Setup intent has not succeeded"
+ *                     no_payment_method: "No payment method found in setup intent"
+ *                     stripe_error: "Invalid setup intent ID"
+ *                 details:
+ *                   type: object
+ *                   description: "Validation error details (if applicable)"
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to create payment method"
+ */
 // POST - Create/Attach a payment method from setup intent
 export async function POST(request: NextRequest) {
   try {

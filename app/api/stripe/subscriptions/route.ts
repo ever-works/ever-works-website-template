@@ -7,6 +7,168 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { subscriptionService } from '@/lib/services/subscription.service';
 
+/**
+ * @swagger
+ * /api/stripe/subscriptions:
+ *   get:
+ *     tags: ["Stripe - Subscriptions"]
+ *     summary: "Get user subscriptions"
+ *     description: "Retrieves subscriptions for the authenticated user with optional filtering for active subscriptions only or including subscription history. Returns comprehensive subscription data with plan information and usage limits."
+ *     security:
+ *       - sessionAuth: []
+ *     parameters:
+ *       - name: "active"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: boolean
+ *         description: "Return only active subscription"
+ *         example: true
+ *       - name: "history"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: boolean
+ *         description: "Include subscription history"
+ *         example: false
+ *     responses:
+ *       200:
+ *         description: "Subscriptions retrieved successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - title: "Active subscription only"
+ *                   type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       nullable: true
+ *                       description: "Active subscription data"
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                           example: "sub_1234567890abcdef"
+ *                         userId:
+ *                           type: string
+ *                           example: "user_123abc"
+ *                         planId:
+ *                           type: string
+ *                           example: "pro_plan"
+ *                         status:
+ *                           type: string
+ *                           enum: ["active", "canceled", "incomplete", "incomplete_expired", "past_due", "trialing", "unpaid"]
+ *                           example: "active"
+ *                         currentPeriodStart:
+ *                           type: string
+ *                           format: date-time
+ *                           example: "2024-01-01T00:00:00.000Z"
+ *                         currentPeriodEnd:
+ *                           type: string
+ *                           format: date-time
+ *                           example: "2024-02-01T00:00:00.000Z"
+ *                     plan:
+ *                       type: string
+ *                       nullable: true
+ *                       description: "Plan display name"
+ *                       example: "Pro Plan"
+ *                     limits:
+ *                       type: object
+ *                       nullable: true
+ *                       description: "Plan usage limits"
+ *                       properties:
+ *                         projects:
+ *                           type: integer
+ *                           example: 10
+ *                         storage:
+ *                           type: string
+ *                           example: "100GB"
+ *                         users:
+ *                           type: integer
+ *                           example: 5
+ *                   required: ["data", "plan", "limits"]
+ *                 - title: "All subscriptions"
+ *                   type: object
+ *                   properties:
+ *                     data:
+ *                       type: array
+ *                       description: "All user subscriptions"
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "sub_1234567890abcdef"
+ *                           userId:
+ *                             type: string
+ *                             example: "user_123abc"
+ *                           planId:
+ *                             type: string
+ *                             example: "pro_plan"
+ *                           status:
+ *                             type: string
+ *                             example: "active"
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2024-01-01T00:00:00.000Z"
+ *                     history:
+ *                       type: array
+ *                       nullable: true
+ *                       description: "Subscription history (if requested)"
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "hist_123"
+ *                           action:
+ *                             type: string
+ *                             example: "created"
+ *                           timestamp:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2024-01-01T00:00:00.000Z"
+ *                     meta:
+ *                       type: object
+ *                       description: "Subscription metadata"
+ *                       properties:
+ *                         total:
+ *                           type: integer
+ *                           description: "Total number of subscriptions"
+ *                           example: 2
+ *                         hasActive:
+ *                           type: boolean
+ *                           description: "Whether user has active subscription"
+ *                           example: true
+ *                         currentPlan:
+ *                           type: string
+ *                           nullable: true
+ *                           description: "Current plan name"
+ *                           example: "pro_plan"
+ *                       required: ["total", "hasActive", "currentPlan"]
+ *                   required: ["data", "meta"]
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
 // GET /api/subscriptions - Get user's subscriptions
 export async function GET(request: NextRequest) {
   try {
@@ -57,6 +219,167 @@ export async function GET(request: NextRequest) {
   }
 }
 
+/**
+ * @swagger
+ * /api/stripe/subscriptions:
+ *   post:
+ *     tags: ["Stripe - Subscriptions"]
+ *     summary: "Create subscription"
+ *     description: "Creates a new subscription record for the authenticated user. Validates required fields and ensures user doesn't already have an active subscription. Links subscription to payment provider and includes comprehensive metadata tracking."
+ *     security:
+ *       - sessionAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               planId:
+ *                 type: string
+ *                 description: "Plan identifier"
+ *                 example: "pro_plan"
+ *               paymentProvider:
+ *                 type: string
+ *                 enum: ["stripe", "lemonsqueezy"]
+ *                 description: "Payment provider name"
+ *                 example: "stripe"
+ *               subscriptionId:
+ *                 type: string
+ *                 description: "Provider subscription ID"
+ *                 example: "sub_1234567890abcdef"
+ *               priceId:
+ *                 type: string
+ *                 description: "Provider price ID"
+ *                 example: "price_1234567890abcdef"
+ *               customerId:
+ *                 type: string
+ *                 description: "Provider customer ID"
+ *                 example: "cus_1234567890abcdef"
+ *               currency:
+ *                 type: string
+ *                 default: "usd"
+ *                 description: "Subscription currency"
+ *                 example: "usd"
+ *               amount:
+ *                 type: integer
+ *                 description: "Subscription amount in cents"
+ *                 example: 2999
+ *               interval:
+ *                 type: string
+ *                 enum: ["day", "week", "month", "year"]
+ *                 description: "Billing interval"
+ *                 example: "month"
+ *               intervalCount:
+ *                 type: integer
+ *                 minimum: 1
+ *                 default: 1
+ *                 description: "Interval count"
+ *                 example: 1
+ *               startDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: "Subscription start date"
+ *                 example: "2024-01-01T00:00:00.000Z"
+ *               endDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: "Subscription end date"
+ *                 example: "2024-02-01T00:00:00.000Z"
+ *               trialStart:
+ *                 type: string
+ *                 format: date-time
+ *                 description: "Trial start date"
+ *                 example: "2024-01-01T00:00:00.000Z"
+ *               trialEnd:
+ *                 type: string
+ *                 format: date-time
+ *                 description: "Trial end date"
+ *                 example: "2024-01-15T00:00:00.000Z"
+ *               metadata:
+ *                 type: object
+ *                 description: "Additional subscription metadata"
+ *                 additionalProperties: true
+ *             required: ["planId", "paymentProvider", "subscriptionId"]
+ *     responses:
+ *       201:
+ *         description: "Subscription created successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   description: "Created subscription data"
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "sub_internal_123"
+ *                     userId:
+ *                       type: string
+ *                       example: "user_123abc"
+ *                     planId:
+ *                       type: string
+ *                       example: "pro_plan"
+ *                     paymentProvider:
+ *                       type: string
+ *                       example: "stripe"
+ *                     subscriptionId:
+ *                       type: string
+ *                       example: "sub_1234567890abcdef"
+ *                     status:
+ *                       type: string
+ *                       example: "active"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2024-01-01T00:00:00.000Z"
+ *                 message:
+ *                   type: string
+ *                   example: "Subscription created successfully"
+ *               required: ["data", "message"]
+ *       400:
+ *         description: "Bad request - Missing required fields"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Missing required fields: planId, paymentProvider, subscriptionId"
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       409:
+ *         description: "Conflict - User already has active subscription"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "User already has an active subscription"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
 // POST /api/subscriptions - Create a new subscription
 export async function POST(request: NextRequest) {
   try {

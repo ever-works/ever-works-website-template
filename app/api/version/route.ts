@@ -6,6 +6,135 @@ import { getContentPath } from "@/lib/lib";
 import { fsExists } from "@/lib/lib";
 import { trySyncRepository } from "@/lib/repository";
 
+/**
+ * @swagger
+ * /api/version:
+ *   get:
+ *     tags: ["System - Version Info"]
+ *     summary: "Get application version information"
+ *     description: "Retrieves comprehensive version information from the Git repository, including latest commit details, author information, and synchronization status. Automatically syncs repository before retrieving information."
+ *     responses:
+ *       200:
+ *         description: "Version information retrieved successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 commit:
+ *                   type: string
+ *                   description: "Short commit hash (7 characters)"
+ *                   example: "a1b2c3d"
+ *                 date:
+ *                   type: string
+ *                   format: date-time
+ *                   description: "Commit date in ISO format"
+ *                   example: "2024-01-15T10:30:00.000Z"
+ *                 message:
+ *                   type: string
+ *                   description: "Commit message"
+ *                   example: "✨ Add new feature for user management"
+ *                 author:
+ *                   type: string
+ *                   description: "Commit author name"
+ *                   example: "John Doe"
+ *                 repository:
+ *                   type: string
+ *                   description: "Repository URL or identifier"
+ *                   example: "https://github.com/user/repo.git"
+ *                 lastSync:
+ *                   type: string
+ *                   format: date-time
+ *                   description: "Last synchronization timestamp"
+ *                   example: "2024-01-15T10:35:00.000Z"
+ *                 branch:
+ *                   type: string
+ *                   description: "Current Git branch"
+ *                   example: "main"
+ *               required: ["commit", "date", "message", "author", "repository", "lastSync"]
+ *         headers:
+ *           Cache-Control:
+ *             description: "Caching policy"
+ *             schema:
+ *               type: string
+ *               example: "public, max-age=60, stale-while-revalidate=300"
+ *           ETag:
+ *             description: "Entity tag for caching"
+ *             schema:
+ *               type: string
+ *               example: '"a1b2c3d-1705312200000"'
+ *           Last-Modified:
+ *             description: "Last modification date"
+ *             schema:
+ *               type: string
+ *               example: "Mon, 15 Jan 2024 10:30:00 GMT"
+ *       404:
+ *         description: "Repository or commits not found"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     repo_not_found: "Data repository not found"
+ *                     no_commits: "No commits found in repository"
+ *                 code:
+ *                   type: string
+ *                   enum: ["REPOSITORY_NOT_FOUND", "NO_COMMITS"]
+ *                   example: "REPOSITORY_NOT_FOUND"
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2024-01-15T10:35:00.000Z"
+ *                 details:
+ *                   type: string
+ *                   description: "Additional error details"
+ *                   example: "Git directory not found at: /path/to/content/.git"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     git_error: "Failed to retrieve commit information"
+ *                     validation_error: "Invalid commit data"
+ *                     internal_error: "Internal server error"
+ *                 code:
+ *                   type: string
+ *                   enum: ["GIT_ERROR", "VALIDATION_ERROR", "INTERNAL_ERROR"]
+ *                   example: "GIT_ERROR"
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2024-01-15T10:35:00.000Z"
+ *                 details:
+ *                   type: string
+ *                   description: "Additional error details"
+ *                   example: "Commit is missing required fields"
+ *     x-caching:
+ *       description: "Caching behavior"
+ *       client: "1 minute with stale-while-revalidate for 5 minutes"
+ *       etag: "Based on commit hash and timestamp"
+ *       headers: "Includes Last-Modified header"
+ *     x-performance:
+ *       description: "Performance considerations"
+ *       sync: "Automatic repository sync before version retrieval"
+ *       logging: "Request duration logging"
+ *       timeout: "Graceful handling of sync timeouts"
+ *     x-environment:
+ *       description: "Environment variables"
+ *       required:
+ *         - "DATA_REPOSITORY: Git repository URL or path"
+ *       optional:
+ *         - "Content path configuration"
+ */
+
 // Types
 export interface VersionInfo {
   commit: string;

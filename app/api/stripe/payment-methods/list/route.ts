@@ -3,6 +3,212 @@ import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 import Stripe from 'stripe';
 import { getUserStripeCustomerId } from '@/lib/stripe-helpers';
 
+/**
+ * @swagger
+ * /api/stripe/payment-methods/list:
+ *   get:
+ *     tags: ["Stripe - Payment Methods"]
+ *     summary: "List user payment methods"
+ *     description: "Retrieves all payment methods for the authenticated user. Returns formatted payment method data sorted by default status and creation date. Includes comprehensive metadata and card details."
+ *     security:
+ *       - sessionAuth: []
+ *     responses:
+ *       200:
+ *         description: "Payment methods retrieved successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   description: "Array of payment methods (sorted by default status, then creation date)"
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         description: "Payment method ID"
+ *                         example: "pm_1234567890abcdef"
+ *                       type:
+ *                         type: string
+ *                         description: "Payment method type"
+ *                         example: "card"
+ *                       card:
+ *                         type: object
+ *                         nullable: true
+ *                         description: "Card details (if type is card)"
+ *                         properties:
+ *                           brand:
+ *                             type: string
+ *                             example: "visa"
+ *                           last4:
+ *                             type: string
+ *                             example: "4242"
+ *                           funding:
+ *                             type: string
+ *                             enum: ["credit", "debit", "prepaid", "unknown"]
+ *                             example: "credit"
+ *                           country:
+ *                             type: string
+ *                             example: "US"
+ *                       billing_details:
+ *                         type: object
+ *                         description: "Billing details"
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                             nullable: true
+ *                             example: "John Doe"
+ *                           email:
+ *                             type: string
+ *                             nullable: true
+ *                             example: "john@example.com"
+ *                           phone:
+ *                             type: string
+ *                             nullable: true
+ *                             example: "+1234567890"
+ *                           address:
+ *                             type: object
+ *                             nullable: true
+ *                             properties:
+ *                               line1:
+ *                                 type: string
+ *                                 nullable: true
+ *                                 example: "123 Main St"
+ *                               city:
+ *                                 type: string
+ *                                 nullable: true
+ *                                 example: "New York"
+ *                               state:
+ *                                 type: string
+ *                                 nullable: true
+ *                                 example: "NY"
+ *                               postal_code:
+ *                                 type: string
+ *                                 nullable: true
+ *                                 example: "10001"
+ *                               country:
+ *                                 type: string
+ *                                 nullable: true
+ *                                 example: "US"
+ *                       created:
+ *                         type: integer
+ *                         description: "Unix timestamp of creation"
+ *                         example: 1640995200
+ *                       metadata:
+ *                         type: object
+ *                         description: "Payment method metadata"
+ *                         additionalProperties:
+ *                           type: string
+ *                       is_default:
+ *                         type: boolean
+ *                         description: "Whether this is the default payment method"
+ *                         example: true
+ *                     required: ["id", "type", "created", "is_default"]
+ *                 meta:
+ *                   type: object
+ *                   description: "Response metadata"
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                       description: "Total number of payment methods"
+ *                       example: 3
+ *                     default_payment_method:
+ *                       type: string
+ *                       nullable: true
+ *                       description: "Default payment method ID"
+ *                       example: "pm_1234567890abcdef"
+ *                     customer_id:
+ *                       type: string
+ *                       description: "Stripe customer ID"
+ *                       example: "cus_1234567890abcdef"
+ *                   required: ["total", "customer_id"]
+ *               required: ["success", "data", "meta"]
+ *             examples:
+ *               with_payment_methods:
+ *                 summary: "User with payment methods"
+ *                 value:
+ *                   success: true
+ *                   data:
+ *                     - id: "pm_1234567890abcdef"
+ *                       type: "card"
+ *                       card:
+ *                         brand: "visa"
+ *                         last4: "4242"
+ *                         funding: "credit"
+ *                         country: "US"
+ *                       billing_details:
+ *                         name: "John Doe"
+ *                         email: "john@example.com"
+ *                       created: 1640995200
+ *                       metadata: {}
+ *                       is_default: true
+ *                     - id: "pm_0987654321fedcba"
+ *                       type: "card"
+ *                       card:
+ *                         brand: "mastercard"
+ *                         last4: "1234"
+ *                         funding: "credit"
+ *                         country: "US"
+ *                       billing_details:
+ *                         name: "John Doe"
+ *                       created: 1640908800
+ *                       metadata: {}
+ *                       is_default: false
+ *                   meta:
+ *                     total: 2
+ *                     default_payment_method: "pm_1234567890abcdef"
+ *                     customer_id: "cus_1234567890abcdef"
+ *               no_payment_methods:
+ *                 summary: "User with no payment methods"
+ *                 value:
+ *                   success: true
+ *                   data: []
+ *                   message: "No payment methods found"
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       404:
+ *         description: "Customer not found"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Customer not found"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to list payment methods"
+ */
 // GET - List all payment methods for the current user
 export async function GET() {
 	try {

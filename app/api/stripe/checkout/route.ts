@@ -2,6 +2,144 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth, getOrCreateStripeProvider } from '@/lib/auth';
 import { CheckoutSessionParams } from '@/lib/payment/types/payment-types';
 
+/**
+ * @swagger
+ * /api/stripe/checkout:
+ *   post:
+ *     tags: ["Stripe - Checkout"]
+ *     summary: "Create Stripe checkout session"
+ *     description: "Creates a new Stripe checkout session for the authenticated user. Supports both one-time payments and subscription modes with comprehensive configuration including trial periods, billing intervals, and custom metadata. Automatically creates or retrieves Stripe customer."
+ *     security:
+ *       - sessionAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               priceId:
+ *                 type: string
+ *                 description: "Stripe price ID for the product/service"
+ *                 example: "price_1234567890abcdef"
+ *               mode:
+ *                 type: string
+ *                 enum: ["one_time", "subscription"]
+ *                 default: "one_time"
+ *                 description: "Checkout mode"
+ *                 example: "subscription"
+ *               trialPeriodDays:
+ *                 type: integer
+ *                 minimum: 0
+ *                 default: 0
+ *                 description: "Trial period in days (subscription mode only)"
+ *                 example: 14
+ *               billingInterval:
+ *                 type: string
+ *                 enum: ["month", "year"]
+ *                 default: "month"
+ *                 description: "Billing interval for subscriptions"
+ *                 example: "month"
+ *               successUrl:
+ *                 type: string
+ *                 format: uri
+ *                 description: "URL to redirect after successful payment"
+ *                 example: "https://example.com/success"
+ *               cancelUrl:
+ *                 type: string
+ *                 format: uri
+ *                 description: "URL to redirect after cancelled payment"
+ *                 example: "https://example.com/cancel"
+ *               metadata:
+ *                 type: object
+ *                 description: "Additional metadata for the checkout session"
+ *                 properties:
+ *                   planId:
+ *                     type: string
+ *                     example: "pro_plan"
+ *                   planName:
+ *                     type: string
+ *                     example: "Pro Plan"
+ *                 additionalProperties:
+ *                   type: string
+ *             required: ["priceId", "successUrl", "cancelUrl"]
+ *     responses:
+ *       200:
+ *         description: "Checkout session created successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: "Stripe checkout session ID"
+ *                       example: "cs_test_1234567890abcdef"
+ *                     url:
+ *                       type: string
+ *                       format: uri
+ *                       description: "Stripe checkout URL"
+ *                       example: "https://checkout.stripe.com/pay/cs_test_1234567890abcdef"
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: "Checkout session created successfully"
+ *               required: ["data", "status", "message"]
+ *             example:
+ *               data:
+ *                 id: "cs_test_1234567890abcdef"
+ *                 url: "https://checkout.stripe.com/pay/cs_test_1234567890abcdef"
+ *               status: 200
+ *               message: "Checkout session created successfully"
+ *       400:
+ *         description: "Bad request - Failed to create customer or invalid parameters"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to create customer"
+ *                 message:
+ *                   type: string
+ *                   example: "Unable to create Stripe customer"
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *                 message:
+ *                   type: string
+ *                   example: "Authentication required"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to create checkout session"
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to create checkout session"
+ *                 details:
+ *                   type: string
+ *                   description: "Error stack trace (development only)"
+ *                   example: "Error: Invalid price ID..."
+ */
 export async function POST(request: NextRequest) {
 	try {
 		const session = await auth();
@@ -126,6 +264,111 @@ export async function POST(request: NextRequest) {
 	}
 }
 
+/**
+ * @swagger
+ * /api/stripe/checkout:
+ *   get:
+ *     tags: ["Stripe - Checkout"]
+ *     summary: "Retrieve checkout session"
+ *     description: "Retrieves a Stripe checkout session by session ID with expanded line items and subscription data. Used to verify payment status and get session details after checkout completion."
+ *     security:
+ *       - sessionAuth: []
+ *     parameters:
+ *       - name: "session_id"
+ *         in: "query"
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: "Stripe checkout session ID"
+ *         example: "cs_test_1234567890abcdef"
+ *     responses:
+ *       200:
+ *         description: "Checkout session retrieved successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 session:
+ *                   type: object
+ *                   description: "Complete Stripe checkout session object"
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "cs_test_1234567890abcdef"
+ *                     status:
+ *                       type: string
+ *                       enum: ["open", "complete", "expired"]
+ *                       example: "complete"
+ *                     payment_status:
+ *                       type: string
+ *                       enum: ["paid", "unpaid", "no_payment_required"]
+ *                       example: "paid"
+ *                     amount_total:
+ *                       type: integer
+ *                       example: 2999
+ *                     currency:
+ *                       type: string
+ *                       example: "usd"
+ *                     customer:
+ *                       type: string
+ *                       example: "cus_1234567890abcdef"
+ *                     subscription:
+ *                       type: string
+ *                       nullable: true
+ *                       example: "sub_1234567890abcdef"
+ *                     line_items:
+ *                       type: object
+ *                       description: "Expanded line items"
+ *                 status:
+ *                   type: string
+ *                   description: "Session status"
+ *                   example: "complete"
+ *                 customer:
+ *                   type: string
+ *                   description: "Stripe customer ID"
+ *                   example: "cus_1234567890abcdef"
+ *                 subscription:
+ *                   type: string
+ *                   nullable: true
+ *                   description: "Stripe subscription ID (if applicable)"
+ *                   example: "sub_1234567890abcdef"
+ *               required: ["session", "status", "customer"]
+ *       400:
+ *         description: "Bad request - Session ID is required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Session ID is required"
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to retrieve checkout session"
+ *                 details:
+ *                   type: string
+ *                   description: "Error stack trace (development only)"
+ *                   example: "Error: No such checkout session..."
+ */
 export async function GET(request: NextRequest) {
 	try {
 		const session = await auth();

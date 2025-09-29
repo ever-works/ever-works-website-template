@@ -8,7 +8,154 @@ import {
 } from '@/lib/payment/config/types';
 import { auth, getOrCreateLemonsqueezyProvider, PaymentProviderManager } from '@/lib/auth';
 
-
+/**
+ * @swagger
+ * /api/lemonsqueezy/checkout:
+ *   post:
+ *     tags: ["LemonSqueezy - Checkout"]
+ *     summary: "Create checkout session"
+ *     description: "Creates a new LemonSqueezy checkout session for the authenticated user. Validates the request data, creates a custom checkout with user metadata, and returns the checkout URL. Requires user authentication and handles various error scenarios including configuration and validation errors."
+ *     security:
+ *       - sessionAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               variantId:
+ *                 type: string
+ *                 description: "LemonSqueezy product variant ID"
+ *                 example: "123456"
+ *               customPrice:
+ *                 type: number
+ *                 minimum: 0
+ *                 description: "Custom price in cents (optional)"
+ *                 example: 2999
+ *               metadata:
+ *                 type: object
+ *                 description: "Additional metadata for the checkout"
+ *                 additionalProperties:
+ *                   type: string
+ *                 example:
+ *                   plan: "pro"
+ *                   source: "website"
+ *             required: ["variantId"]
+ *     responses:
+ *       200:
+ *         description: "Checkout session created successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     checkoutUrl:
+ *                       type: string
+ *                       format: uri
+ *                       description: "LemonSqueezy checkout URL"
+ *                       example: "https://checkout.lemonsqueezy.com/checkout/custom/abc123"
+ *                     email:
+ *                       type: string
+ *                       format: email
+ *                       description: "User email"
+ *                       example: "user@example.com"
+ *                     customPrice:
+ *                       type: number
+ *                       description: "Custom price in cents"
+ *                       example: 2999
+ *                     variantId:
+ *                       type: string
+ *                       description: "Product variant ID"
+ *                       example: "123456"
+ *                     metadata:
+ *                       type: object
+ *                       description: "Checkout metadata including user info"
+ *                       properties:
+ *                         userId:
+ *                           type: string
+ *                           example: "user_123abc"
+ *                         email:
+ *                           type: string
+ *                           example: "user@example.com"
+ *                         name:
+ *                           type: string
+ *                           example: "John Doe"
+ *                       additionalProperties:
+ *                         type: string
+ *                 message:
+ *                   type: string
+ *                   example: "Checkout session created successfully"
+ *               required: ["success", "data", "message"]
+ *             example:
+ *               success: true
+ *               data:
+ *                 checkoutUrl: "https://checkout.lemonsqueezy.com/checkout/custom/abc123"
+ *                 email: "user@example.com"
+ *                 customPrice: 2999
+ *                 variantId: "123456"
+ *                 metadata:
+ *                   userId: "user_123abc"
+ *                   email: "user@example.com"
+ *                   name: "John Doe"
+ *                   plan: "pro"
+ *                   source: "website"
+ *               message: "Checkout session created successfully"
+ *       400:
+ *         description: "Bad request - Validation error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   enum: ["VALIDATION_ERROR"]
+ *                   example: "VALIDATION_ERROR"
+ *                 message:
+ *                   type: string
+ *                   examples:
+ *                     invalid_json: "Invalid JSON in request body"
+ *                     validation_failed: "variantId is required"
+ *                     invalid_price: "Custom price must be a positive number"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   enum: ["INTERNAL_ERROR", "CONFIGURATION_ERROR"]
+ *                   example: "INTERNAL_ERROR"
+ *                 message:
+ *                   type: string
+ *                   examples:
+ *                     unauthorized: "Unauthorized"
+ *                     config_error: "Checkout service unavailable"
+ *                     internal_error: "Failed to create checkout session"
+ *       503:
+ *         description: "Service unavailable - LemonSqueezy service error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   enum: ["PAYMENT_SERVICE_ERROR"]
+ *                   example: "PAYMENT_SERVICE_ERROR"
+ *                 message:
+ *                   type: string
+ *                   example: "Unable to create checkout session"
+ */
 export async function POST(request: NextRequest) {
     try {
         const session = await auth()
@@ -126,6 +273,128 @@ export async function POST(request: NextRequest) {
     }
 }
 
+/**
+ * @swagger
+ * /api/lemonsqueezy/checkout:
+ *   get:
+ *     tags: ["LemonSqueezy - Checkout"]
+ *     summary: "Create checkout session via query parameters"
+ *     description: "Creates a new LemonSqueezy checkout session using query parameters instead of request body. Useful for direct links and simple integrations. Validates query parameters and creates a custom checkout session."
+ *     parameters:
+ *       - name: "variantId"
+ *         in: "query"
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: "LemonSqueezy product variant ID"
+ *         example: "123456"
+ *       - name: "email"
+ *         in: "query"
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: email
+ *         description: "Customer email address"
+ *         example: "user@example.com"
+ *       - name: "customPrice"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: number
+ *           minimum: 0
+ *         description: "Custom price in cents"
+ *         example: 2999
+ *       - name: "metadata"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: "JSON string of additional metadata"
+ *         example: '{"plan":"pro","source":"website"}'
+ *     responses:
+ *       200:
+ *         description: "Checkout session created successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     checkoutUrl:
+ *                       type: string
+ *                       format: uri
+ *                       description: "LemonSqueezy checkout URL"
+ *                       example: "https://checkout.lemonsqueezy.com/checkout/custom/abc123"
+ *                     email:
+ *                       type: string
+ *                       format: email
+ *                       description: "Customer email"
+ *                       example: "user@example.com"
+ *                     customPrice:
+ *                       type: number
+ *                       description: "Custom price in cents"
+ *                       example: 2999
+ *                     variantId:
+ *                       type: string
+ *                       description: "Product variant ID"
+ *                       example: "123456"
+ *                     metadata:
+ *                       type: object
+ *                       description: "Checkout metadata"
+ *                       additionalProperties:
+ *                         type: string
+ *                 message:
+ *                   type: string
+ *                   example: "Checkout session created successfully"
+ *               required: ["success", "data", "message"]
+ *       400:
+ *         description: "Bad request - Invalid query parameters"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   enum: ["VALIDATION_ERROR"]
+ *                   example: "VALIDATION_ERROR"
+ *                 message:
+ *                   type: string
+ *                   example: "variantId is required, email must be valid"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   enum: ["INTERNAL_ERROR", "CONFIGURATION_ERROR"]
+ *                   example: "INTERNAL_ERROR"
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to create checkout session"
+ *       503:
+ *         description: "Service unavailable - LemonSqueezy service error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   enum: ["PAYMENT_SERVICE_ERROR"]
+ *                   example: "PAYMENT_SERVICE_ERROR"
+ *                 message:
+ *                   type: string
+ *                   example: "Unable to create checkout session"
+ */
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);

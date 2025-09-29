@@ -3,6 +3,355 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { z } from 'zod';
 
+/**
+ * @swagger
+ * /api/stripe/payment-methods/update:
+ *   put:
+ *     tags: ["Stripe - Payment Methods"]
+ *     summary: "Update payment method"
+ *     description: "Updates a payment method's billing details, metadata, and optionally sets it as the default payment method. Includes comprehensive ownership validation and detailed error handling."
+ *     security:
+ *       - sessionAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               payment_method_id:
+ *                 type: string
+ *                 minLength: 1
+ *                 description: "Stripe payment method ID to update"
+ *                 example: "pm_1234567890abcdef"
+ *               metadata:
+ *                 type: object
+ *                 description: "Additional metadata for the payment method"
+ *                 additionalProperties:
+ *                   type: string
+ *                 example:
+ *                   nickname: "Primary Card"
+ *                   category: "business"
+ *               billing_details:
+ *                 type: object
+ *                 description: "Billing details to update"
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                     minLength: 1
+ *                     description: "Cardholder name"
+ *                     example: "John Doe"
+ *                   email:
+ *                     type: string
+ *                     format: email
+ *                     description: "Billing email address"
+ *                     example: "john@example.com"
+ *                   phone:
+ *                     type: string
+ *                     description: "Phone number"
+ *                     example: "+1234567890"
+ *                   address:
+ *                     type: object
+ *                     description: "Billing address"
+ *                     properties:
+ *                       line1:
+ *                         type: string
+ *                         description: "Address line 1"
+ *                         example: "123 Main St"
+ *                       line2:
+ *                         type: string
+ *                         description: "Address line 2"
+ *                         example: "Apt 4B"
+ *                       city:
+ *                         type: string
+ *                         description: "City"
+ *                         example: "New York"
+ *                       state:
+ *                         type: string
+ *                         description: "State/Province"
+ *                         example: "NY"
+ *                       postal_code:
+ *                         type: string
+ *                         description: "Postal/ZIP code"
+ *                         example: "10001"
+ *                       country:
+ *                         type: string
+ *                         minLength: 2
+ *                         maxLength: 2
+ *                         description: "2-letter country code"
+ *                         example: "US"
+ *               set_as_default:
+ *                 type: boolean
+ *                 description: "Whether to set this payment method as default"
+ *                 example: true
+ *             required: ["payment_method_id"]
+ *     responses:
+ *       200:
+ *         description: "Payment method updated successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: "Payment method ID"
+ *                       example: "pm_1234567890abcdef"
+ *                     type:
+ *                       type: string
+ *                       description: "Payment method type"
+ *                       example: "card"
+ *                     card:
+ *                       type: object
+ *                       nullable: true
+ *                       description: "Card details (if type is card)"
+ *                       properties:
+ *                         brand:
+ *                           type: string
+ *                           example: "visa"
+ *                         last4:
+ *                           type: string
+ *                           example: "4242"
+ *                         funding:
+ *                           type: string
+ *                           enum: ["credit", "debit", "prepaid", "unknown"]
+ *                           example: "credit"
+ *                     billing_details:
+ *                       type: object
+ *                       description: "Updated billing details"
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                           nullable: true
+ *                           example: "John Doe"
+ *                         email:
+ *                           type: string
+ *                           nullable: true
+ *                           example: "john@example.com"
+ *                         phone:
+ *                           type: string
+ *                           nullable: true
+ *                           example: "+1234567890"
+ *                         address:
+ *                           type: object
+ *                           nullable: true
+ *                           properties:
+ *                             line1:
+ *                               type: string
+ *                               nullable: true
+ *                               example: "123 Main St"
+ *                             city:
+ *                               type: string
+ *                               nullable: true
+ *                               example: "New York"
+ *                             state:
+ *                               type: string
+ *                               nullable: true
+ *                               example: "NY"
+ *                             postal_code:
+ *                               type: string
+ *                               nullable: true
+ *                               example: "10001"
+ *                             country:
+ *                               type: string
+ *                               nullable: true
+ *                               example: "US"
+ *                     created:
+ *                       type: integer
+ *                       description: "Unix timestamp of creation"
+ *                       example: 1640995200
+ *                     metadata:
+ *                       type: object
+ *                       description: "Payment method metadata"
+ *                       additionalProperties:
+ *                         type: string
+ *                     is_default:
+ *                       type: boolean
+ *                       description: "Whether this is the default payment method"
+ *                       example: true
+ *                   required: ["id", "type", "created"]
+ *                 message:
+ *                   type: string
+ *                   example: "Payment method updated successfully"
+ *               required: ["success", "data", "message"]
+ *       400:
+ *         description: "Bad request - Invalid request data or Stripe error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     validation: "Invalid request data"
+ *                     no_customer: "Payment method not associated with a customer"
+ *                     stripe_error: "Stripe error: Invalid payment method ID"
+ *                 details:
+ *                   type: array
+ *                   description: "Validation error details (if applicable)"
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       path:
+ *                         type: string
+ *                         example: "billing_details.email"
+ *                       message:
+ *                         type: string
+ *                         example: "Invalid email format"
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Authentication required"
+ *       403:
+ *         description: "Forbidden - Payment method does not belong to user"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Access denied: payment method does not belong to user"
+ *       404:
+ *         description: "Not found - Payment method or customer not found"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     payment_method: "Stripe error: No such payment method"
+ *                     customer: "Customer not found"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to update payment method"
+ *   patch:
+ *     tags: ["Stripe - Payment Methods"]
+ *     summary: "Set payment method as default"
+ *     description: "Sets the specified payment method as the default for the customer. Simpler endpoint focused only on default status change."
+ *     security:
+ *       - sessionAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               payment_method_id:
+ *                 type: string
+ *                 minLength: 1
+ *                 description: "Stripe payment method ID to set as default"
+ *                 example: "pm_1234567890abcdef"
+ *             required: ["payment_method_id"]
+ *     responses:
+ *       200:
+ *         description: "Payment method set as default successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Payment method set as default successfully"
+ *               required: ["success", "message"]
+ *       400:
+ *         description: "Bad request - Invalid request data or Stripe error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     validation: "Invalid request data"
+ *                     stripe_error: "Stripe error: Invalid payment method ID"
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Authentication required"
+ *       403:
+ *         description: "Forbidden - Payment method does not belong to user"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Access denied: payment method does not belong to user"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to set default payment method"
+ */
+
 // ============================================================================
 // VALIDATION SCHEMAS
 // ============================================================================
