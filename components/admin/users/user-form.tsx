@@ -19,12 +19,6 @@ interface UserFormProps {
 export default function UserForm({ user, onSuccess, isSubmitting = false, onCancel }: UserFormProps) {
   const t = useTranslations('admin.USER_FORM');
   
-  
-  // Helper function to get input className using Tailwind classes
-  const getInputClassName = (hasError: boolean = false) => {
-    return `custom-input ${hasError ? 'error' : ''}`;
-  };
-  
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
   const checkUsernameMutation = useCheckUsername();
