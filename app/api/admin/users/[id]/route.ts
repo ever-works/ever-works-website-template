@@ -5,6 +5,104 @@ import { RoleRepository } from '@/lib/repositories/role.repository';
 import { UpdateUserRequest, isValidUserStatus } from '@/lib/types/user';
 import { isValidEmail } from '@/lib/utils/email-validation';
 
+/**
+ * @swagger
+ * /api/admin/users/{id}:
+ *   get:
+ *     tags: ["Admin - Users"]
+ *     summary: "Get user by ID"
+ *     description: "Retrieves a specific user by their ID with complete profile information including role, status, and metadata. Used for user detail views and editing forms in admin interfaces. Requires admin privileges."
+ *     security:
+ *       - sessionAuth: []
+ *     parameters:
+ *       - name: "id"
+ *         in: "path"
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: "User ID"
+ *         example: "user_123abc"
+ *     responses:
+ *       200:
+ *         description: "User retrieved successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: "#/components/schemas/User"
+ *               required: ["success", "data"]
+ *             example:
+ *               success: true
+ *               data:
+ *                 id: "user_123abc"
+ *                 username: "johndoe"
+ *                 email: "john.doe@example.com"
+ *                 name: "John Doe"
+ *                 title: "Senior Developer"
+ *                 avatar: "https://example.com/avatars/john.jpg"
+ *                 role: "admin"
+ *                 status: "active"
+ *                 created_at: "2024-01-20T10:30:00.000Z"
+ *                 updated_at: "2024-01-20T14:45:00.000Z"
+ *                 last_login: "2024-01-20T16:20:00.000Z"
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       403:
+ *         description: "Forbidden - Admin access required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Forbidden"
+ *       404:
+ *         description: "User not found"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "User not found"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -41,6 +139,166 @@ export async function GET(
   }
 }
 
+/**
+ * @swagger
+ * /api/admin/users/{id}:
+ *   put:
+ *     tags: ["Admin - Users"]
+ *     summary: "Update user"
+ *     description: "Updates a specific user's properties with comprehensive validation. All fields are optional and only provided fields will be updated. Includes email format validation, username format validation, role verification, and status validation. Requires admin privileges."
+ *     security:
+ *       - sessionAuth: []
+ *     parameters:
+ *       - name: "id"
+ *         in: "path"
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: "User ID to update"
+ *         example: "user_123abc"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 minLength: 3
+ *                 maxLength: 50
+ *                 description: "Username"
+ *                 example: "johndoe_updated"
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: "Email address"
+ *                 example: "john.updated@example.com"
+ *               name:
+ *                 type: string
+ *                 minLength: 2
+ *                 maxLength: 100
+ *                 description: "Full name"
+ *                 example: "John Updated Doe"
+ *               title:
+ *                 type: string
+ *                 maxLength: 100
+ *                 description: "Job title or position"
+ *                 example: "Lead Developer"
+ *               avatar:
+ *                 type: string
+ *                 maxLength: 500
+ *                 format: uri
+ *                 description: "Avatar image URL"
+ *                 example: "https://example.com/avatars/john_new.jpg"
+ *               role:
+ *                 type: string
+ *                 description: "User role (must exist in system)"
+ *                 example: "moderator"
+ *               status:
+ *                 type: string
+ *                 enum: ["active", "inactive"]
+ *                 description: "User status"
+ *                 example: "active"
+ *     responses:
+ *       200:
+ *         description: "User updated successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: "#/components/schemas/User"
+ *               required: ["success", "data"]
+ *             example:
+ *               success: true
+ *               data:
+ *                 id: "user_123abc"
+ *                 username: "johndoe_updated"
+ *                 email: "john.updated@example.com"
+ *                 name: "John Updated Doe"
+ *                 title: "Lead Developer"
+ *                 avatar: "https://example.com/avatars/john_new.jpg"
+ *                 role: "moderator"
+ *                 status: "active"
+ *                 created_at: "2024-01-20T10:30:00.000Z"
+ *                 updated_at: "2024-01-20T16:45:00.000Z"
+ *                 last_login: "2024-01-20T16:20:00.000Z"
+ *       400:
+ *         description: "Bad request - Invalid input or validation errors"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     invalid_email: "Invalid email format"
+ *                     invalid_username: "Username must be between 3 and 50 characters"
+ *                     invalid_name: "Name must be between 2 and 100 characters"
+ *                     invalid_role: "Invalid role"
+ *                     invalid_status: "Invalid status. Must be \"active\" or \"inactive\""
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       403:
+ *         description: "Forbidden - Admin access required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Forbidden"
+ *       404:
+ *         description: "User not found"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "User not found"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -173,6 +431,108 @@ export async function PUT(
   }
 }
 
+/**
+ * @swagger
+ * /api/admin/users/{id}:
+ *   delete:
+ *     tags: ["Admin - Users"]
+ *     summary: "Delete user"
+ *     description: "Permanently deletes a specific user from the system. This action cannot be undone and will remove all user data including profile, activity history, and associated content. Includes protection against self-deletion to prevent admin lockout. Requires admin privileges."
+ *     security:
+ *       - sessionAuth: []
+ *     parameters:
+ *       - name: "id"
+ *         in: "path"
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: "User ID to delete"
+ *         example: "user_456def"
+ *     responses:
+ *       200:
+ *         description: "User deleted successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   description: "Success message"
+ *                   example: "User deleted successfully"
+ *               required: ["success", "message"]
+ *             example:
+ *               success: true
+ *               message: "User deleted successfully"
+ *       400:
+ *         description: "Bad request - Cannot delete own account"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Cannot delete your own account"
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       403:
+ *         description: "Forbidden - Admin access required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Forbidden"
+ *       404:
+ *         description: "User not found"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "User not found"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

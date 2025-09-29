@@ -5,6 +5,202 @@ import { RoleRepository } from '@/lib/repositories/role.repository';
 import { CreateUserRequest, UserListOptions } from '@/lib/types/user';
 import { isValidEmail } from '@/lib/utils/email-validation';
 
+/**
+ * @swagger
+ * /api/admin/users:
+ *   get:
+ *     tags: ["Admin - Users"]
+ *     summary: "Get paginated users list"
+ *     description: "Returns a paginated list of users with advanced filtering, searching, and sorting capabilities. Supports comprehensive user management for admin interfaces including search by name/email/username, role filtering, status filtering, and flexible sorting options. Requires admin privileges."
+ *     security:
+ *       - sessionAuth: []
+ *     parameters:
+ *       - name: "page"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: "Page number for pagination"
+ *         example: 1
+ *       - name: "limit"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 10
+ *         description: "Number of users per page"
+ *         example: 10
+ *       - name: "search"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           maxLength: 100
+ *         description: "Search term for name, email, or username"
+ *         example: "john"
+ *       - name: "role"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           maxLength: 50
+ *         description: "Filter by user role"
+ *         example: "admin"
+ *       - name: "status"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["active", "inactive"]
+ *         description: "Filter by user status"
+ *         example: "active"
+ *       - name: "sortBy"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["name", "username", "email", "role", "created_at"]
+ *           default: "name"
+ *         description: "Field to sort by"
+ *         example: "created_at"
+ *       - name: "sortOrder"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["asc", "desc"]
+ *           default: "asc"
+ *         description: "Sort order"
+ *         example: "desc"
+ *       - name: "includeInactive"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *         description: "Whether to include inactive users"
+ *         example: true
+ *     responses:
+ *       200:
+ *         description: "Users list retrieved successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: "#/components/schemas/User"
+ *                 total:
+ *                   type: integer
+ *                   description: "Total number of users"
+ *                   example: 156
+ *                 page:
+ *                   type: integer
+ *                   description: "Current page number"
+ *                   example: 1
+ *                 limit:
+ *                   type: integer
+ *                   description: "Number of users per page"
+ *                   example: 10
+ *                 totalPages:
+ *                   type: integer
+ *                   description: "Total number of pages"
+ *                   example: 16
+ *               required: ["success", "data", "total", "page", "limit", "totalPages"]
+ *             example:
+ *               success: true
+ *               data:
+ *                 - id: "user_123abc"
+ *                   username: "johndoe"
+ *                   email: "john.doe@example.com"
+ *                   name: "John Doe"
+ *                   title: "Senior Developer"
+ *                   avatar: "https://example.com/avatars/john.jpg"
+ *                   role: "admin"
+ *                   status: "active"
+ *                   created_at: "2024-01-20T10:30:00.000Z"
+ *                   updated_at: "2024-01-20T14:45:00.000Z"
+ *                   last_login: "2024-01-20T16:20:00.000Z"
+ *                 - id: "user_456def"
+ *                   username: "janesmith"
+ *                   email: "jane.smith@example.com"
+ *                   name: "Jane Smith"
+ *                   title: "Product Manager"
+ *                   avatar: "https://example.com/avatars/jane.jpg"
+ *                   role: "moderator"
+ *                   status: "active"
+ *                   created_at: "2024-01-19T15:20:00.000Z"
+ *                   updated_at: "2024-01-19T15:20:00.000Z"
+ *                   last_login: "2024-01-20T09:15:00.000Z"
+ *               total: 156
+ *               page: 1
+ *               limit: 10
+ *               totalPages: 16
+ *       400:
+ *         description: "Bad request - Invalid parameters"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     invalid_status: "Invalid status parameter"
+ *                     invalid_sort: "Invalid sortBy parameter"
+ *                     search_too_long: "Search parameter too long"
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       403:
+ *         description: "Forbidden - Admin access required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Forbidden"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
 export async function GET(request: NextRequest) {
   try {
     // Check authentication
@@ -94,6 +290,148 @@ export async function GET(request: NextRequest) {
   }
 }
 
+/**
+ * @swagger
+ * /api/admin/users:
+ *   post:
+ *     tags: ["Admin - Users"]
+ *     summary: "Create new user"
+ *     description: "Creates a new user with comprehensive validation including email format, username format, password strength, and role verification. Supports optional fields like title and avatar. Requires admin privileges."
+ *     security:
+ *       - sessionAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 pattern: "^[a-zA-Z0-9_-]{3,30}$"
+ *                 description: "Unique username (3-30 chars, alphanumeric, dash, underscore)"
+ *                 example: "johndoe"
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: "Valid email address"
+ *                 example: "john.doe@example.com"
+ *               name:
+ *                 type: string
+ *                 minLength: 2
+ *                 maxLength: 100
+ *                 description: "Full name"
+ *                 example: "John Doe"
+ *               password:
+ *                 type: string
+ *                 minLength: 8
+ *                 description: "Password (minimum 8 characters)"
+ *                 example: "SecurePass123!"
+ *               role:
+ *                 type: string
+ *                 description: "User role (must exist in system)"
+ *                 example: "admin"
+ *               title:
+ *                 type: string
+ *                 maxLength: 100
+ *                 description: "Job title or position"
+ *                 example: "Senior Developer"
+ *               avatar:
+ *                 type: string
+ *                 maxLength: 500
+ *                 format: uri
+ *                 description: "Avatar image URL"
+ *                 example: "https://example.com/avatars/john.jpg"
+ *             required: ["username", "email", "name", "password", "role"]
+ *     responses:
+ *       201:
+ *         description: "User created successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: "#/components/schemas/User"
+ *               required: ["success", "data"]
+ *             example:
+ *               success: true
+ *               data:
+ *                 id: "user_123abc"
+ *                 username: "johndoe"
+ *                 email: "john.doe@example.com"
+ *                 name: "John Doe"
+ *                 title: "Senior Developer"
+ *                 avatar: "https://example.com/avatars/john.jpg"
+ *                 role: "admin"
+ *                 status: "active"
+ *                 created_at: "2024-01-20T10:30:00.000Z"
+ *                 updated_at: "2024-01-20T10:30:00.000Z"
+ *                 last_login: null
+ *       400:
+ *         description: "Bad request - Invalid input or validation errors"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     missing_fields: "Missing required fields: username, email, name, password, and role are required"
+ *                     invalid_email: "Invalid email format"
+ *                     invalid_username: "Username must be 3-30 characters and contain only letters, numbers, dashes, and underscores"
+ *                     invalid_name: "Name must be between 2 and 100 characters"
+ *                     weak_password: "Password must be at least 8 characters long"
+ *                     invalid_role: "Invalid role"
+ *                     duplicate_email: "Email already exists"
+ *                     duplicate_username: "Username already exists"
+ *       401:
+ *         description: "Unauthorized - Authentication required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       403:
+ *         description: "Forbidden - Admin access required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Forbidden"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
