@@ -22422,6 +22422,10 @@
       }
     }
   },
-  "components": {},
+  "components": {
+    "schemas": {},
+    "responses": {},
+    "securitySchemes": {}
+  },
   "tags": []
 }
