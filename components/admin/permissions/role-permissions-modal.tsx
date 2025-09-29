@@ -309,6 +309,9 @@ export function RolePermissionsModal({
         <div className={modalFooterClasses}>
           <div className={changesSummaryClasses}>
             {(() => {
+              if (isOpen && isLoadingPermissions) {
+                return <span>Loading permissions…</span>;
+              }
               const selectedPermissions = getSelectedPermissions(permissionState);
               const changes = calculatePermissionChanges(rolePermissions || [], selectedPermissions);
               const hasChanges = changes.added.length > 0 || changes.removed.length > 0;
