@@ -116,26 +116,47 @@ export class RoleDbService {
         throw new Error(`Role with ID '${data.id}' already exists`);
       }
 
-      const roleData = {
-        id: data.id,
-        name: data.name,
-        description: data.description,
-        status: data.status || 'active',
-        isAdmin: data.isAdmin || false,
-        created_by: 'system',
-      };
+      return await db.transaction(async (tx) => {
+        const roleData = {
+          id: data.id,
+          name: data.name,
+          description: data.description,
+          status: data.status || 'active',
+          isAdmin: data.isAdmin || false,
+          created_by: 'system',
+        };
 
-      // Insert role
-      const result = await db.insert(roles).values(roleData).returning();
-      const newRole = result[0];
+        // Insert role
+        const result = await tx.insert(roles).values(roleData).returning();
+        const newRole = result[0];
 
-      // Insert permissions if provided
-      if (data.permissions && data.permissions.length > 0) {
-        await this.updateRolePermissions(newRole.id, data.permissions);
-      }
+        // Insert permissions if provided - using atomic transaction
+        if (data.permissions && data.permissions.length > 0) {
+          const permissionRecords = await tx
+            .select({ id: permissions.id, key: permissions.key })
+            .from(permissions)
+            .where(inArray(permissions.key, data.permissions));
 
-      const createdPermissions = await this.getRolePermissions(newRole.id);
-      return this.mapDbToRoleData(newRole, createdPermissions);
+          const missingKeys = data.permissions.filter(
+            key => !permissionRecords.some(record => record.key === key),
+          );
+
+          if (missingKeys.length > 0) {
+            throw new Error(`Unknown permission keys: ${missingKeys.join(', ')}`);
+          }
+
+          await tx.insert(rolePermissions).values(
+            permissionRecords.map(perm => ({
+              roleId: newRole.id,
+              permissionId: perm.id,
+            })),
+          );
+        }
+
+        // Return role data with permissions
+        const createdPermissions = data.permissions || [];
+        return this.mapDbToRoleData(newRole, createdPermissions);
+      });
     } catch (error) {
       console.error('Error creating role:', error);
       throw error;
@@ -155,6 +176,9 @@ export class RoleDbService {
 
       // Only update the roles table if there are actual role fields to update
       if (Object.keys(updateData).length > 0) {
+        // Add updatedAt timestamp when role fields are being modified
+        updateData.updatedAt = new Date();
+
         const result = await db.update(roles)
           .set(updateData)
           .where(eq(roles.id, id))
