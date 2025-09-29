@@ -179,32 +179,32 @@ export function ReviewStep({
           <CardContent className="space-y-6">
             {/* Basic Information */}
             <div className="space-y-3">
-              <h4 className="font-medium flex items-center text-gray-900">
+              <h4 className="font-medium flex items-center text-gray-900 dark:text-gray-100">
                 <FileText className="w-4 h-4 mr-2" />
                 {t('STEPS.BASIC_INFO.TITLE')}
               </h4>
-              <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-2">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <span className="text-xs font-medium text-gray-600">ID:</span>
-                    <p className="text-sm font-mono bg-white px-2 py-1 rounded border">
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">ID:</span>
+                    <p className="text-sm font-mono bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-2 py-1 rounded border border-gray-200 dark:border-gray-600">
                       {basicInfo.id || t('STEPS.REVIEW.NOT_SET')}
                     </p>
                   </div>
                   <div>
-                    <span className="text-xs font-medium text-gray-600">Name:</span>
-                    <p className="text-sm">{basicInfo.name || t('STEPS.REVIEW.NOT_SET')}</p>
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Name:</span>
+                    <p className="text-sm text-gray-900 dark:text-gray-100">{basicInfo.name || t('STEPS.REVIEW.NOT_SET')}</p>
                   </div>
                   <div>
-                    <span className="text-xs font-medium text-gray-600">Slug:</span>
-                    <p className="text-sm font-mono bg-white px-2 py-1 rounded border">
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Slug:</span>
+                    <p className="text-sm font-mono bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-2 py-1 rounded border border-gray-200 dark:border-gray-600">
                       {basicInfo.slug || t('STEPS.REVIEW.NOT_SET')}
                     </p>
                   </div>
                 </div>
                 <div>
-                  <span className="text-xs font-medium text-gray-600">Description:</span>
-                  <p className="text-sm mt-1 p-3 bg-white rounded border max-h-20 overflow-y-auto">
+                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Description:</span>
+                  <p className="text-sm text-gray-900 dark:text-gray-100 mt-1 p-3 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 max-h-20 overflow-y-auto">
                     {basicInfo.description || t('STEPS.REVIEW.NOT_SET')}
                   </p>
                 </div>
@@ -215,13 +215,13 @@ export function ReviewStep({
 
             {/* Media & Links */}
             <div className="space-y-3">
-              <h4 className="font-medium flex items-center text-gray-900">
+              <h4 className="font-medium flex items-center text-gray-900 dark:text-gray-100">
                 <LinkIcon className="w-4 h-4 mr-2" />
                 {t('STEPS.MEDIA_LINKS.TITLE')}
               </h4>
-              <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-3">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 border rounded-lg bg-white flex items-center justify-center">
+                  <div className="w-12 h-12 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 flex items-center justify-center">
                     {mediaLinks.icon_url ? (
                       <img
                         src={mediaLinks.icon_url}
@@ -235,15 +235,15 @@ export function ReviewStep({
                   <div className="flex-1">
                     <div className="grid grid-cols-1 gap-2">
                       <div>
-                        <span className="text-xs font-medium text-gray-600">Icon URL:</span>
-                        <p className="text-sm truncate">
+                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Icon URL:</span>
+                        <p className="text-sm text-gray-900 dark:text-gray-100 truncate">
                           {mediaLinks.icon_url || t('STEPS.REVIEW.NOT_SET')}
                         </p>
                       </div>
                       <div>
-                        <span className="text-xs font-medium text-gray-600">Source URL:</span>
+                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Source URL:</span>
                         <div className="flex items-center gap-2">
-                          <p className="text-sm truncate flex-1">
+                          <p className="text-sm text-gray-900 dark:text-gray-100 truncate flex-1">
                             {mediaLinks.source_url || t('STEPS.REVIEW.NOT_SET')}
                           </p>
                           {mediaLinks.source_url && (
@@ -261,15 +261,15 @@ export function ReviewStep({
 
             {/* Classification */}
             <div className="space-y-3">
-              <h4 className="font-medium flex items-center text-gray-900">
+              <h4 className="font-medium flex items-center text-gray-900 dark:text-gray-100">
                 <Hash className="w-4 h-4 mr-2" />
                 {t('STEPS.CLASSIFICATION.TITLE')}
               </h4>
-              <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-4">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <Folder className="w-4 h-4 text-gray-600" />
-                    <span className="text-xs font-medium text-gray-600">Categories:</span>
+                    <Folder className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Categories:</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {classification.category.length > 0 ? (
@@ -279,14 +279,14 @@ export function ReviewStep({
                         </Badge>
                       ))
                     ) : (
-                      <span className="text-sm text-gray-500">{t('STEPS.REVIEW.NOT_SET')}</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">{t('STEPS.REVIEW.NOT_SET')}</span>
                     )}
                   </div>
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <Hash className="w-4 h-4 text-gray-600" />
-                    <span className="text-xs font-medium text-gray-600">Tags:</span>
+                    <Hash className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Tags:</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {classification.tags.length > 0 ? (
@@ -296,7 +296,7 @@ export function ReviewStep({
                         </Badge>
                       ))
                     ) : (
-                      <span className="text-sm text-gray-500">{t('STEPS.REVIEW.NOT_SET')}</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">{t('STEPS.REVIEW.NOT_SET')}</span>
                     )}
                   </div>
                 </div>
