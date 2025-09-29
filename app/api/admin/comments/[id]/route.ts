@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { deleteComment, getCommentById, updateComment } from "@/lib/db/queries";
 import { db } from "@/lib/db/drizzle";
 import { comments, clientProfiles } from "@/lib/db/schema";
-import { eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 export const runtime = "nodejs";
 

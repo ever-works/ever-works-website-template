@@ -24,7 +24,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      stats,
+      data: stats,
     });
 
   } catch (error) {

@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
     const newRole = await roleRepository.create(createData);
 
     return NextResponse.json(
-      { success: true, role: newRole, message: 'Role created successfully' },
+      { success: true, data: newRole, message: 'Role created successfully' },
       { status: 201 }
     );
   } catch (error) {

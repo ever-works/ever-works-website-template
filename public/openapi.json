@@ -1610,6 +1610,205 @@
         }
       }
     },
+    "/api/items/{itemId}/comments": {
+      "get": {
+        "tags": ["Items - Comments"],
+        "summary": "Get item comments",
+        "description": "Returns all comments for a specific item with user information. Comments are ordered by creation date (newest first) and include user profile data. This is a public endpoint.",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier of the item",
+            "example": "awesome-productivity-tool"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comments retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentsResponse"
+                },
+                "example": {
+                  "success": true,
+                  "comments": [
+                    {
+                      "id": "comment-123",
+                      "content": "This tool has completely transformed my productivity workflow!",
+                      "rating": 5,
+                      "userId": "user-456",
+                      "itemId": "awesome-productivity-tool",
+                      "createdAt": "2024-01-15T10:30:00Z",
+                      "updatedAt": "2024-01-15T10:30:00Z",
+                      "user": {
+                        "id": "user-456",
+                        "name": "John Doe",
+                        "email": "john@example.com",
+                        "image": "https://example.com/avatar.jpg"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Failed to fetch comments"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Items - Comments"],
+        "summary": "Create item comment",
+        "description": "Creates a new comment for an item with content and rating. Requires authentication and valid client profile. Content must not be empty and rating must be between 1-5.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier of the item",
+            "example": "awesome-productivity-tool"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommentRequest"
+              },
+              "example": {
+                "content": "This tool has completely transformed my productivity workflow!",
+                "rating": 5
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comment created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCommentResponse"
+                },
+                "example": {
+                  "success": true,
+                  "comment": {
+                    "id": "comment-123",
+                    "content": "This tool has completely transformed my productivity workflow!",
+                    "rating": 5,
+                    "userId": "user-456",
+                    "itemId": "awesome-productivity-tool",
+                    "createdAt": "2024-01-15T10:30:00Z",
+                    "updatedAt": "2024-01-15T10:30:00Z",
+                    "user": {
+                      "id": "user-456",
+                      "name": "John Doe",
+                      "email": "john@example.com",
+                      "image": "https://example.com/avatar.jpg"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "empty_content": {
+                    "summary": "Empty content",
+                    "value": {
+                      "success": false,
+                      "error": "Content is required"
+                    }
+                  },
+                  "invalid_rating": {
+                    "summary": "Invalid rating",
+                    "value": {
+                      "success": false,
+                      "error": "Rating must be between 1 and 5"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Authentication required"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Client profile not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Client profile not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Failed to create comment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/featured-items": {
       "get": {
         "tags": ["Admin - Featured Items"],
@@ -2164,7 +2363,7 @@
                 },
                 "example": {
                   "success": true,
-                  "stats": {
+                  "data": {
                     "total": 567,
                     "draft": 23,
                     "pending": 45,
@@ -2423,7 +2622,7 @@
                 },
                 "example": {
                   "success": true,
-                  "user": {
+                  "data": {
                     "id": "user_2a3b4c5d",
                     "email": "john.doe@example.com",
                     "username": "johndoe",
@@ -2508,6 +2707,326 @@
                 "example": {
                   "success": false,
                   "error": "Forbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/admin/users/{id}": {
+      "get": {
+        "tags": ["Admin - Users"],
+        "summary": "Get user by ID (Admin)",
+        "description": "Returns a specific user by their ID. Data is loaded from database. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier of the user",
+            "example": "user_2a3b4c5d"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": "user_2a3b4c5d",
+                    "email": "john.doe@example.com",
+                    "username": "johndoe",
+                    "name": "John Doe",
+                    "title": "Senior Developer",
+                    "avatar": "https://cdn.example.com/avatars/johndoe.jpg",
+                    "role": "admin",
+                    "roleName": "Administrator",
+                    "status": "active",
+                    "created_by": "admin_1a2b3c4d",
+                    "created_at": "2024-01-15T10:30:00.123Z",
+                    "updated_at": "2024-01-15T10:30:00.123Z"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "User not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Admin - Users"],
+        "summary": "Update user (Admin)",
+        "description": "Updates a user's properties. All fields are optional and can be updated individually. Validates email format, username format (3-50 chars), name length (2-100 chars), title length (max 100 chars), avatar URL length (max 500 chars), role existence, and status values. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier of the user",
+            "example": "user_2a3b4c5d"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequest"
+              },
+              "example": {
+                "name": "John Smith",
+                "title": "Lead Developer",
+                "status": "active"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUserResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": "user_2a3b4c5d",
+                    "email": "john.doe@example.com",
+                    "username": "johndoe",
+                    "name": "John Smith",
+                    "title": "Lead Developer",
+                    "avatar": "https://cdn.example.com/avatars/johndoe.jpg",
+                    "role": "admin",
+                    "roleName": "Administrator",
+                    "status": "active",
+                    "created_by": "admin_1a2b3c4d",
+                    "created_at": "2024-01-15T10:30:00.123Z",
+                    "updated_at": "2024-01-16T14:20:00.123Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalid_email": {
+                    "summary": "Invalid email format",
+                    "value": {
+                      "success": false,
+                      "error": "Invalid email format"
+                    }
+                  },
+                  "invalid_username": {
+                    "summary": "Invalid username length",
+                    "value": {
+                      "success": false,
+                      "error": "Username must be between 3 and 50 characters"
+                    }
+                  },
+                  "invalid_name": {
+                    "summary": "Invalid name length",
+                    "value": {
+                      "success": false,
+                      "error": "Name must be between 2 and 100 characters"
+                    }
+                  },
+                  "invalid_role": {
+                    "summary": "Role does not exist",
+                    "value": {
+                      "success": false,
+                      "error": "Invalid role"
+                    }
+                  },
+                  "invalid_status": {
+                    "summary": "Invalid status value",
+                    "value": {
+                      "success": false,
+                      "error": "Invalid status. Must be \"active\" or \"inactive\""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "User not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Admin - Users"],
+        "summary": "Delete user (Admin)",
+        "description": "Deletes a user from the database. This is a permanent deletion that removes the user completely. Prevents self-deletion for security. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier of the user",
+            "example": "user_2a3b4c5d"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteUserResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "User deleted successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - cannot delete own account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Cannot delete your own account"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "User not found"
                 }
               }
             }
@@ -3367,6 +3886,165 @@
         }
       }
     },
+    "/api/admin/items/{id}/review": {
+      "post": {
+        "tags": ["Admin - Items"],
+        "summary": "Review item (Admin)",
+        "description": "Reviews an item by approving or rejecting it. Updates the item's status, adds review notes, and sets review metadata (reviewed_by, reviewed_at). The review process is part of the item approval workflow. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier of the item to review",
+            "example": "awesome-productivity-tool"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewItemRequest"
+              },
+              "examples": {
+                "approve": {
+                  "summary": "Approve item",
+                  "value": {
+                    "status": "approved",
+                    "review_notes": "Great tool, meets all requirements. Approved for listing."
+                  }
+                },
+                "reject": {
+                  "summary": "Reject item",
+                  "value": {
+                    "status": "rejected",
+                    "review_notes": "Missing required documentation. Please add proper README and usage examples."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item reviewed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewItemResponse"
+                },
+                "examples": {
+                  "approved": {
+                    "summary": "Item approved",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "id": "awesome-productivity-tool",
+                        "name": "Awesome Productivity Tool",
+                        "slug": "awesome-productivity-tool",
+                        "description": "A comprehensive productivity tool that helps teams collaborate effectively and manage their tasks efficiently.",
+                        "source_url": "https://github.com/awesome/productivity-tool",
+                        "category": ["productivity", "collaboration"],
+                        "tags": ["productivity", "collaboration", "task-management"],
+                        "featured": true,
+                        "icon_url": "https://cdn.example.com/icons/productivity-tool.png",
+                        "updated_at": "2024-01-16T16:30:00.123Z",
+                        "status": "approved",
+                        "submitted_by": "user_123",
+                        "submitted_at": "2024-01-10T08:15:00.123Z",
+                        "reviewed_by": "admin",
+                        "reviewed_at": "2024-01-16T16:30:00.123Z",
+                        "review_notes": "Great tool, meets all requirements. Approved for listing."
+                      },
+                      "message": "Item approved successfully"
+                    }
+                  },
+                  "rejected": {
+                    "summary": "Item rejected",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "id": "awesome-productivity-tool",
+                        "name": "Awesome Productivity Tool",
+                        "slug": "awesome-productivity-tool",
+                        "description": "A comprehensive productivity tool that helps teams collaborate effectively and manage their tasks efficiently.",
+                        "source_url": "https://github.com/awesome/productivity-tool",
+                        "category": ["productivity", "collaboration"],
+                        "tags": ["productivity", "collaboration", "task-management"],
+                        "featured": false,
+                        "icon_url": "https://cdn.example.com/icons/productivity-tool.png",
+                        "updated_at": "2024-01-16T16:30:00.123Z",
+                        "status": "rejected",
+                        "submitted_by": "user_123",
+                        "submitted_at": "2024-01-10T08:15:00.123Z",
+                        "reviewed_by": "admin",
+                        "reviewed_at": "2024-01-16T16:30:00.123Z",
+                        "review_notes": "Missing required documentation. Please add proper README and usage examples."
+                      },
+                      "message": "Item rejected successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid review status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Review status must be either 'approved' or 'rejected'"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Unauthorized. Admin access required."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Item with ID 'awesome-productivity-tool' not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
     "/api/admin/comments": {
       "get": {
         "tags": ["Admin - Comments"],
@@ -3750,11 +4428,276 @@
         }
       }
     },
+    "/api/admin/comments/{id}": {
+      "get": {
+        "tags": ["Admin - Comments"],
+        "summary": "Get comment by ID (Admin)",
+        "description": "Returns a specific comment by its ID with user information. Data is loaded from database with left join to client profiles. Handles soft-deleted comments and unknown users gracefully. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier of the comment",
+            "example": "comment_123abc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comment retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCommentResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": "comment_123abc",
+                    "content": "This is an excellent tool! Really helps with productivity and team collaboration.",
+                    "rating": 5,
+                    "userId": "user_456def",
+                    "itemId": "awesome-productivity-tool",
+                    "createdAt": "2024-01-15T10:30:00.123Z",
+                    "updatedAt": "2024-01-15T10:30:00.123Z",
+                    "user": {
+                      "id": "user_456def",
+                      "name": "John Doe",
+                      "email": "john.doe@example.com",
+                      "image": "https://cdn.example.com/avatars/johndoe.jpg"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Comment not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Admin - Comments"],
+        "summary": "Update comment (Admin)",
+        "description": "Updates a comment's content. Validates that content is not empty, checks if comment exists and is not soft-deleted, then updates the content and returns the updated comment with user information. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier of the comment",
+            "example": "comment_123abc"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCommentRequest"
+              },
+              "example": {
+                "content": "This is an updated comment with more detailed feedback about the tool's features and usability."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comment updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateCommentResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": "comment_123abc",
+                    "content": "This is an updated comment with more detailed feedback about the tool's features and usability.",
+                    "rating": 5,
+                    "userId": "user_456def",
+                    "itemId": "awesome-productivity-tool",
+                    "createdAt": "2024-01-15T10:30:00.123Z",
+                    "updatedAt": "2024-01-16T14:20:00.123Z",
+                    "user": {
+                      "id": "user_456def",
+                      "name": "John Doe",
+                      "email": "john.doe@example.com",
+                      "image": "https://cdn.example.com/avatars/johndoe.jpg"
+                    }
+                  },
+                  "message": "Comment updated successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - content is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Content is required"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comment not found or deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Comment not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Admin - Comments"],
+        "summary": "Delete comment (Admin)",
+        "description": "Soft-deletes a comment by setting the deletedAt timestamp. Checks if comment exists and is not already deleted before performing the soft deletion. This preserves data integrity while hiding the comment from public view. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier of the comment",
+            "example": "comment_123abc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comment deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteCommentResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Comment deleted successfully"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comment not found or already deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Comment not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
     "/api/admin/roles": {
       "get": {
         "tags": ["Admin - Roles"],
         "summary": "List roles (Admin)",
-        "description": "Returns a paginated list of roles. Roles are loaded from Git repository. Supports pagination with page and limit parameters. Requires admin privileges.",
+        "description": "Returns a paginated list of roles with filtering and sorting options. Roles are loaded from database via repository pattern. Supports pagination, status filtering, and sorting by multiple fields. Requires admin privileges.",
         "security": [
           {
             "sessionAuth": []
@@ -3781,6 +4724,38 @@
               "maximum": 100,
               "default": 10
             }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter roles by status",
+            "schema": {
+              "type": "string",
+              "enum": ["active", "inactive"]
+            },
+            "example": "active"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "type": "string",
+              "enum": ["name", "id", "created_at"],
+              "default": "name"
+            },
+            "example": "name"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "description": "Sort order",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "asc"
+            },
+            "example": "asc"
           }
         ],
         "responses": {
@@ -3873,7 +4848,7 @@
                 },
                 "example": {
                   "success": true,
-                  "role": {
+                  "data": {
                     "id": "content-manager",
                     "name": "Content Manager",
                     "description": "Manages content creation and publication with moderate administrative privileges",
@@ -4632,6 +5607,342 @@
           },
           "500": {
             "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/api/admin/roles/{id}": {
+      "get": {
+        "tags": ["Admin - Roles"],
+        "summary": "Get role by ID (Admin)",
+        "description": "Returns a specific role by its ID. Data is loaded from database via repository pattern. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier of the role",
+            "example": "admin"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Role retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetRoleResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": "admin",
+                    "name": "Administrator",
+                    "description": "Full system access with all administrative privileges",
+                    "status": "active",
+                    "isAdmin": true,
+                    "permissions": []
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Role not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Role not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Failed to fetch role"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Admin - Roles"],
+        "summary": "Update role (Admin)",
+        "description": "Updates a role's properties. All fields are optional and can be updated individually. Validates name length (3-100 chars) and description length (max 500 chars). Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier of the role",
+            "example": "admin"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRoleRequest"
+              },
+              "example": {
+                "name": "Super Administrator",
+                "description": "Enhanced administrative privileges with full system control",
+                "status": "active"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Role updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateRoleResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": "admin",
+                    "name": "Super Administrator",
+                    "description": "Enhanced administrative privileges with full system control",
+                    "status": "active",
+                    "isAdmin": true,
+                    "permissions": []
+                  },
+                  "message": "Role updated successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "empty_name": {
+                    "summary": "Empty role name",
+                    "value": {
+                      "success": false,
+                      "error": "Role name cannot be empty"
+                    }
+                  },
+                  "invalid_name_length": {
+                    "summary": "Invalid name length",
+                    "value": {
+                      "success": false,
+                      "error": "Role name must be between 3 and 100 characters"
+                    }
+                  },
+                  "invalid_description_length": {
+                    "summary": "Description too long",
+                    "value": {
+                      "success": false,
+                      "error": "Role description must be at most 500 characters"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Role not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Role not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Failed to update role"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Admin - Roles"],
+        "summary": "Delete role (Admin)",
+        "description": "Deletes a role from the database. Supports both soft delete (default, marks as inactive) and hard delete (permanent removal) via query parameter. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier of the role",
+            "example": "content-manager"
+          },
+          {
+            "name": "hard",
+            "in": "query",
+            "description": "Whether to permanently delete the role (hard delete) or mark as inactive (soft delete)",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "example": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Role deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteRoleResponse"
+                },
+                "examples": {
+                  "soft_delete": {
+                    "summary": "Soft delete (default)",
+                    "value": {
+                      "success": true,
+                      "message": "Role deleted (marked as inactive)"
+                    }
+                  },
+                  "hard_delete": {
+                    "summary": "Hard delete (permanent)",
+                    "value": {
+                      "success": true,
+                      "message": "Role permanently deleted"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Role not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Role not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "error": "Failed to delete role"
+                }
+              }
+            }
           }
         }
       }
@@ -6064,11 +7375,11 @@
             "type": "boolean",
             "example": true
           },
-          "stats": {
+          "data": {
             "$ref": "#/components/schemas/ItemStats"
           }
         },
-        "required": ["success", "stats"]
+        "required": ["success", "data"]
       },
       "ItemStats": {
         "type": "object",
@@ -7016,11 +8327,51 @@
             "type": "boolean",
             "example": true
           },
-          "user": {
+          "data": {
             "$ref": "#/components/schemas/User"
           }
         },
-        "required": ["success", "user"]
+        "required": ["success", "data"]
+      },
+      "GetUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": ["success", "data"]
+      },
+      "UpdateUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": ["success", "data"]
+      },
+      "DeleteUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "User deleted successfully"
+          }
+        },
+        "required": ["success", "message"]
       },
       "Item": {
         "type": "object",
@@ -7354,6 +8705,162 @@
         },
         "required": ["success", "message"]
       },
+      "GetCommentResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/CommentWithUser"
+          }
+        },
+        "required": ["success", "data"]
+      },
+      "UpdateCommentRequest": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Updated comment content (required, non-empty)",
+            "example": "This is an updated comment with more detailed feedback about the tool's features and usability."
+          }
+        },
+        "required": ["content"]
+      },
+      "UpdateCommentResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/CommentWithUser"
+          },
+          "message": {
+            "type": "string",
+            "example": "Comment updated successfully"
+          }
+        },
+        "required": ["success", "data", "message"]
+      },
+      "DeleteCommentResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Comment deleted successfully"
+          }
+        },
+        "required": ["success", "message"]
+      },
+      "CommentWithUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique comment identifier"
+          },
+          "content": {
+            "type": "string",
+            "description": "Comment content"
+          },
+          "rating": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 1,
+            "maximum": 5,
+            "description": "Comment rating (1-5 stars, optional)"
+          },
+          "userId": {
+            "type": "string",
+            "description": "ID of the user who created the comment"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "ID of the item being commented on"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Comment creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Comment last update timestamp"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "User ID"
+              },
+              "name": {
+                "type": "string",
+                "nullable": true,
+                "description": "User display name"
+              },
+              "email": {
+                "type": "string",
+                "nullable": true,
+                "description": "User email address"
+              },
+              "image": {
+                "type": "string",
+                "nullable": true,
+                "description": "User avatar image URL"
+              }
+            },
+            "required": ["id"],
+            "description": "User information associated with the comment"
+          }
+        },
+        "required": ["id", "content", "userId", "itemId", "createdAt", "user"]
+      },
+      "ReviewItemRequest": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["approved", "rejected"],
+            "description": "Review decision - approve or reject the item"
+          },
+          "review_notes": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional notes explaining the review decision",
+            "example": "Great tool, meets all requirements. Approved for listing."
+          }
+        },
+        "required": ["status"]
+      },
+      "ReviewItemResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Item"
+          },
+          "message": {
+            "type": "string",
+            "example": "Item approved successfully"
+          }
+        },
+        "required": ["success", "data", "message"]
+      },
       "Role": {
         "type": "object",
         "properties": {
@@ -7454,7 +8961,7 @@
             "type": "boolean",
             "example": true
           },
-          "role": {
+          "data": {
             "$ref": "#/components/schemas/Role"
           },
           "message": {
@@ -7462,7 +8969,187 @@
             "description": "Success message"
           }
         },
-        "required": ["success", "role", "message"]
+        "required": ["success", "data", "message"]
+      },
+      "GetRoleResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Role"
+          }
+        },
+        "required": ["success", "data"]
+      },
+      "UpdateRoleRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "description": "Updated role name (optional, 3-100 characters)"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Updated role description (optional, max 500 characters)"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive"],
+            "description": "Updated role status (optional)"
+          },
+          "isAdmin": {
+            "type": "boolean",
+            "description": "Updated admin privileges (optional)"
+          }
+        }
+      },
+      "UpdateRoleResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Role"
+          },
+          "message": {
+            "type": "string",
+            "example": "Role updated successfully"
+          }
+        },
+        "required": ["success", "data", "message"]
+      },
+      "DeleteRoleResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Role deleted (marked as inactive)"
+          }
+        },
+        "required": ["success", "message"]
+      },
+      "CommentsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommentWithUser"
+            },
+            "description": "Array of comments with user information"
+          }
+        },
+        "required": ["success", "comments"]
+      },
+      "CreateCommentRequest": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Comment content (required, cannot be empty)"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "description": "Rating for the item (required, 1-5 scale)"
+          }
+        },
+        "required": ["content", "rating"]
+      },
+      "CreateCommentResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "comment": {
+            "$ref": "#/components/schemas/CommentWithUser"
+          }
+        },
+        "required": ["success", "comment"]
+      },
+      "CommentWithUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique comment identifier"
+          },
+          "content": {
+            "type": "string",
+            "description": "Comment content"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "description": "Rating given to the item (1-5 scale)"
+          },
+          "userId": {
+            "type": "string",
+            "description": "ID of the user who created the comment"
+          },
+          "itemId": {
+            "type": "string",
+            "description": "ID of the item being commented on"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Comment creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Comment last update timestamp"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "User ID"
+              },
+              "name": {
+                "type": "string",
+                "nullable": true,
+                "description": "User display name"
+              },
+              "email": {
+                "type": "string",
+                "nullable": true,
+                "description": "User email address"
+              },
+              "image": {
+                "type": "string",
+                "nullable": true,
+                "description": "User avatar image URL"
+              }
+            },
+            "required": ["id"],
+            "description": "User information for the comment author"
+          }
+        },
+        "required": ["id", "content", "rating", "userId", "itemId", "createdAt", "updatedAt", "user"]
       },
       "CheckoutRequest": {
         "type": "object",

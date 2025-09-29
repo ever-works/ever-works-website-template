@@ -3,5 +3,6 @@
         "messages"
     ],
     "i18n-ally.keystyle": "nested",
-    "deepscan.enable": true
+    "deepscan.enable": true,
+    "postman.settings.dotenv-detection-notification-visibility": false
 }

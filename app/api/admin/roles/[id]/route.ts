@@ -14,30 +14,30 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     // Check authentication
     const session = await auth();
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check admin permissions
     if (!session.user.isAdmin) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
     const { id } = await params;
-    
+
     const role = await roleRepository.findById(id);
-    
+
     if (!role) {
       return NextResponse.json(
-        { error: 'Role not found' },
+        { success: false, error: 'Role not found' },
         { status: 404 }
       );
     }
-    
-    return NextResponse.json({ role });
+
+    return NextResponse.json({ success: true, data: role });
   } catch (error) {
     console.error('Error fetching role:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch role' },
+      { success: false, error: 'Failed to fetch role' },
       { status: 500 }
     );
   }
@@ -48,12 +48,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     // Check authentication
     const session = await auth();
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check admin permissions
     if (!session.user.isAdmin) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
     const { id } = await params;
@@ -64,7 +64,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const existingRole = await roleRepository.findById(id);
     if (!existingRole) {
       return NextResponse.json(
-        { error: 'Role not found' },
+        { success: false, error: 'Role not found' },
         { status: 404 }
       );
     }
@@ -73,13 +73,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (updateData.name !== undefined) {
       if (!updateData.name.trim()) {
         return NextResponse.json(
-          { error: 'Role name cannot be empty' },
+          { success: false, error: 'Role name cannot be empty' },
           { status: 400 }
         );
       }
       if (updateData.name.length < 3 || updateData.name.length > 100) {
         return NextResponse.json(
-          { error: 'Role name must be between 3 and 100 characters' },
+          { success: false, error: 'Role name must be between 3 and 100 characters' },
           { status: 400 }
         );
       }
@@ -89,7 +89,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (updateData.description !== undefined) {
       if (updateData.description.length > 500) {
         return NextResponse.json(
-          { error: 'Role description must be at most 500 characters' },
+          { success: false, error: 'Role description must be at most 500 characters' },
           { status: 400 }
         );
       }
@@ -106,14 +106,14 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     // Update the role using repository
     const updatedRole = await roleRepository.update(id, repositoryUpdateData);
-    
+
     return NextResponse.json(
-      { role: updatedRole, message: 'Role updated successfully' }
+      { success: true, data: updatedRole, message: 'Role updated successfully' }
     );
   } catch (error) {
     console.error('Error updating role:', error);
     return NextResponse.json(
-      { error: 'Failed to update role' },
+      { success: false, error: 'Failed to update role' },
       { status: 500 }
     );
   }
@@ -124,12 +124,12 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     // Check authentication
     const session = await auth();
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check admin permissions
     if (!session.user.isAdmin) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
     const { id } = await params;
@@ -140,7 +140,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const existingRole = await roleRepository.findById(id);
     if (!existingRole) {
       return NextResponse.json(
-        { error: 'Role not found' },
+        { success: false, error: 'Role not found' },
         { status: 404 }
       );
     }
@@ -148,18 +148,18 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     if (hardDelete) {
       await roleRepository.hardDelete(id);
       return NextResponse.json(
-        { message: 'Role permanently deleted' }
+        { success: true, message: 'Role permanently deleted' }
       );
     } else {
       await roleRepository.delete(id);
       return NextResponse.json(
-        { message: 'Role deleted (marked as inactive)' }
+        { success: true, message: 'Role deleted (marked as inactive)' }
       );
     }
   } catch (error) {
     console.error('Error deleting role:', error);
     return NextResponse.json(
-      { error: 'Failed to delete role' },
+      { success: false, error: 'Failed to delete role' },
       { status: 500 }
     );
   }

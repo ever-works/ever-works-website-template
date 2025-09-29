@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
     const userRepository = new UserRepository();
     const newUser = await userRepository.create(userData);
 
-    return NextResponse.json({ success: true, user: newUser }, { status: 201 });
+    return NextResponse.json({ success: true, data: newUser }, { status: 201 });
   } catch (error) {
     console.error('Error in POST /api/admin/users:', error);
     
