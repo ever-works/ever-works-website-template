@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { 
-  createClientProfile, 
-  getClientProfiles, 
+import {
+  createClientProfile,
+  getClientProfiles,
   getUserByEmail
 } from '@/lib/db/queries';
 import { UserDbService } from '@/lib/services/user-db.service';
@@ -33,8 +33,129 @@ interface CreateClientRequest {
   totalSubmissions?: number;
 }
 
-
-
+/**
+ * @swagger
+ * /api/admin/clients:
+ *   get:
+ *     tags: ["Admin - Clients"]
+ *     summary: "List client profiles"
+ *     description: "Returns a paginated list of client profiles with filtering options. Supports search by name/email, status filtering, plan filtering, and account type filtering. Requires admin privileges."
+ *     security:
+ *       - sessionAuth: []
+ *     parameters:
+ *       - name: "page"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: "Page number for pagination"
+ *         example: 1
+ *       - name: "limit"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 10
+ *         description: "Number of clients per page"
+ *         example: 10
+ *       - name: "search"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: "Search term for client name or email"
+ *         example: "john"
+ *       - name: "status"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["active", "inactive", "suspended", "trial"]
+ *         description: "Filter by client status"
+ *         example: "active"
+ *       - name: "plan"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["free", "standard", "premium"]
+ *         description: "Filter by subscription plan"
+ *         example: "premium"
+ *       - name: "accountType"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ["individual", "business", "enterprise"]
+ *         description: "Filter by account type"
+ *         example: "business"
+ *       - name: "provider"
+ *         in: "query"
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: "Filter by authentication provider"
+ *         example: "google"
+ *     responses:
+ *       200:
+ *         description: "Client profiles retrieved successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     clients:
+ *                       type: array
+ *                       items:
+ *                         $ref: "#/components/schemas/ClientProfile"
+ *                 meta:
+ *                   type: object
+ *                   properties:
+ *                     page:
+ *                       type: integer
+ *                       example: 1
+ *                     totalPages:
+ *                       type: integer
+ *                       example: 5
+ *                     total:
+ *                       type: integer
+ *                       example: 47
+ *                     limit:
+ *                       type: integer
+ *                       example: 10
+ *                   required: ["page", "totalPages", "total", "limit"]
+ *               required: ["success", "data", "meta"]
+ *       401:
+ *         description: "Unauthorized - Admin access required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to fetch clients"
+ */
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
@@ -82,6 +203,117 @@ export async function GET(request: NextRequest) {
   }
 }
 
+/**
+ * @swagger
+ * /api/admin/clients:
+ *   post:
+ *     tags: ["Admin - Clients"]
+ *     summary: "Create client profile"
+ *     description: "Creates a new client profile. If the user doesn't exist, creates a new user account with a temporary password. Requires admin privileges."
+ *     security:
+ *       - sessionAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: "Client email address (required)"
+ *                 example: "john.doe@example.com"
+ *               displayName:
+ *                 type: string
+ *                 description: "Display name for the client"
+ *                 example: "John Doe"
+ *               username:
+ *                 type: string
+ *                 description: "Unique username"
+ *                 example: "johndoe"
+ *               bio:
+ *                 type: string
+ *                 description: "Client biography"
+ *                 example: "Senior Developer at Tech Corp"
+ *               jobTitle:
+ *                 type: string
+ *                 description: "Job title"
+ *                 example: "Senior Developer"
+ *               company:
+ *                 type: string
+ *                 description: "Company name"
+ *                 example: "Tech Corp"
+ *               status:
+ *                 type: string
+ *                 enum: ["active", "inactive", "suspended", "trial"]
+ *                 default: "active"
+ *                 description: "Client account status"
+ *                 example: "active"
+ *               plan:
+ *                 type: string
+ *                 enum: ["free", "standard", "premium"]
+ *                 default: "free"
+ *                 description: "Subscription plan"
+ *                 example: "premium"
+ *               accountType:
+ *                 type: string
+ *                 enum: ["individual", "business", "enterprise"]
+ *                 default: "individual"
+ *                 description: "Account type"
+ *                 example: "business"
+ *             required: ["email"]
+ *     responses:
+ *       200:
+ *         description: "Client created successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: "#/components/schemas/ClientProfile"
+ *                 message:
+ *                   type: string
+ *                   example: "Client created successfully"
+ *               required: ["success", "data", "message"]
+ *       400:
+ *         description: "Bad request - Invalid input or user creation failed"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     missing_email: "Email is required"
+ *                     user_creation_failed: "Failed to create user: [error details]"
+ *                     invalid_user: "Failed to create or find user for client"
+ *       401:
+ *         description: "Unauthorized - Admin access required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to create client"
+ */
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();

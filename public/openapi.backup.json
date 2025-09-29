@@ -392,373 +392,6 @@
         }
       }
     },
-    "/api/admin/clients/{clientId}": {
-      "get": {
-        "tags": [
-          "Admin - Clients"
-        ],
-        "summary": "Get client profile by ID",
-        "description": "Retrieves a specific client profile by ID. Requires admin privileges.",
-        "security": [
-          {
-            "sessionAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "clientId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Unique client identifier",
-            "example": "client_123abc"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Client profile retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/ClientProfile"
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - Admin access required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Client not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "Client not found"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "Failed to fetch client"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Admin - Clients"
-        ],
-        "summary": "Update client profile",
-        "description": "Updates a specific client profile by ID. Supports partial updates. Requires admin privileges.",
-        "security": [
-          {
-            "sessionAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "clientId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Unique client identifier",
-            "example": "client_123abc"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "displayName": {
-                    "type": "string",
-                    "description": "Display name for the client",
-                    "example": "John Doe Updated"
-                  },
-                  "username": {
-                    "type": "string",
-                    "description": "Unique username",
-                    "example": "johndoe_updated"
-                  },
-                  "bio": {
-                    "type": "string",
-                    "description": "Client biography",
-                    "example": "Senior Developer at Tech Corp"
-                  },
-                  "jobTitle": {
-                    "type": "string",
-                    "description": "Job title",
-                    "example": "Lead Developer"
-                  },
-                  "company": {
-                    "type": "string",
-                    "description": "Company name",
-                    "example": "Tech Corp Inc"
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "active",
-                      "inactive",
-                      "suspended",
-                      "trial"
-                    ],
-                    "description": "Client account status",
-                    "example": "active"
-                  },
-                  "plan": {
-                    "type": "string",
-                    "enum": [
-                      "free",
-                      "standard",
-                      "premium"
-                    ],
-                    "description": "Subscription plan",
-                    "example": "premium"
-                  },
-                  "accountType": {
-                    "type": "string",
-                    "enum": [
-                      "individual",
-                      "business",
-                      "enterprise"
-                    ],
-                    "description": "Account type",
-                    "example": "business"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Client updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/ClientProfile"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Client updated successfully"
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "data",
-                    "message"
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - Admin access required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Client not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "Client not found"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "Failed to update client"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Admin - Clients"
-        ],
-        "summary": "Delete client profile",
-        "description": "Permanently deletes a client profile by ID. This action cannot be undone. Requires admin privileges.",
-        "security": [
-          {
-            "sessionAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "clientId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Unique client identifier",
-            "example": "client_123abc"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Client deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Client deleted successfully"
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "message"
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - Admin access required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Client not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "Client not found"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "Failed to delete client"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/admin/clients": {
       "get": {
         "tags": [
@@ -1129,194 +762,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/admin/featured-items": {
-      "get": {
-        "tags": [
-          "Admin - Featured Items"
-        ],
-        "summary": "List featured items (Admin)",
-        "description": "Returns a paginated list of featured items with filtering options. Requires admin privileges.",
-        "security": [
-          {
-            "sessionAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Page number for pagination",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "default": 1
-            },
-            "example": 1
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Number of items per page",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 10
-            },
-            "example": 10
-          },
-          {
-            "name": "active",
-            "in": "query",
-            "description": "Filter by active status",
-            "schema": {
-              "type": "boolean"
-            },
-            "example": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Featured items retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AdminFeaturedItemsResponse"
-                },
-                "example": {
-                  "success": true,
-                  "data": [
-                    {
-                      "id": "featured_123",
-                      "itemSlug": "awesome-productivity-tool",
-                      "itemName": "Awesome Productivity Tool",
-                      "itemIconUrl": "https://cdn.example.com/icons/productivity-tool.png",
-                      "itemCategory": "Productivity",
-                      "itemDescription": "A powerful tool to boost your productivity",
-                      "featuredOrder": 10,
-                      "featuredUntil": "2024-12-31T23:59:59.000Z",
-                      "isActive": true,
-                      "featuredBy": "admin_456",
-                      "featuredAt": "2024-01-15T10:30:00.000Z",
-                      "createdAt": "2024-01-15T10:30:00.000Z",
-                      "updatedAt": "2024-01-15T10:30:00.000Z"
-                    }
-                  ],
-                  "pagination": {
-                    "page": 1,
-                    "limit": 10,
-                    "total": 25,
-                    "totalPages": 3,
-                    "hasNext": true,
-                    "hasPrev": false
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "500": {
-            "$ref": "#/components/responses/ServerError"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Admin - Featured Items"
-        ],
-        "summary": "Create featured item (Admin)",
-        "description": "Creates a new featured item. Requires admin privileges. Checks for duplicate active featured items.",
-        "security": [
-          {
-            "sessionAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateFeaturedItemRequest"
-              },
-              "example": {
-                "itemSlug": "awesome-productivity-tool",
-                "itemName": "Awesome Productivity Tool",
-                "itemIconUrl": "https://cdn.example.com/icons/productivity-tool.png",
-                "itemCategory": "Productivity",
-                "itemDescription": "A powerful tool to boost your productivity",
-                "featuredOrder": 10,
-                "featuredUntil": "2024-12-31T23:59:59.000Z"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Featured item created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateFeaturedItemResponse"
-                },
-                "example": {
-                  "success": true,
-                  "data": {
-                    "id": "featured_789",
-                    "itemSlug": "awesome-productivity-tool",
-                    "itemName": "Awesome Productivity Tool",
-                    "itemIconUrl": "https://cdn.example.com/icons/productivity-tool.png",
-                    "itemCategory": "Productivity",
-                    "itemDescription": "A powerful tool to boost your productivity",
-                    "featuredOrder": 10,
-                    "featuredUntil": "2024-12-31T23:59:59.000Z",
-                    "isActive": true,
-                    "featuredBy": "admin_456",
-                    "featuredAt": "2024-01-15T10:30:00.000Z",
-                    "createdAt": "2024-01-15T10:30:00.000Z",
-                    "updatedAt": "2024-01-15T10:30:00.000Z"
-                  },
-                  "message": "Item featured successfully"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request - validation error or duplicate",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "examples": {
-                  "missing_fields": {
-                    "summary": "Missing required fields",
-                    "value": {
-                      "success": false,
-                      "error": "Item slug and name are required"
-                    }
-                  },
-                  "already_featured": {
-                    "summary": "Item already featured",
-                    "value": {
-                      "success": false,
-                      "error": "Item is already featured"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "500": {
-            "$ref": "#/components/responses/ServerError"
           }
         }
       }
@@ -2937,6 +2382,194 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/admin/featured-items": {
+      "get": {
+        "tags": [
+          "Admin - Featured Items"
+        ],
+        "summary": "List featured items (Admin)",
+        "description": "Returns a paginated list of featured items with filtering options. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "example": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            },
+            "example": 10
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "description": "Filter by active status",
+            "schema": {
+              "type": "boolean"
+            },
+            "example": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Featured items retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminFeaturedItemsResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "id": "featured_123",
+                      "itemSlug": "awesome-productivity-tool",
+                      "itemName": "Awesome Productivity Tool",
+                      "itemIconUrl": "https://cdn.example.com/icons/productivity-tool.png",
+                      "itemCategory": "Productivity",
+                      "itemDescription": "A powerful tool to boost your productivity",
+                      "featuredOrder": 10,
+                      "featuredUntil": "2024-12-31T23:59:59.000Z",
+                      "isActive": true,
+                      "featuredBy": "admin_456",
+                      "featuredAt": "2024-01-15T10:30:00.000Z",
+                      "createdAt": "2024-01-15T10:30:00.000Z",
+                      "updatedAt": "2024-01-15T10:30:00.000Z"
+                    }
+                  ],
+                  "pagination": {
+                    "page": 1,
+                    "limit": 10,
+                    "total": 25,
+                    "totalPages": 3,
+                    "hasNext": true,
+                    "hasPrev": false
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Admin - Featured Items"
+        ],
+        "summary": "Create featured item (Admin)",
+        "description": "Creates a new featured item. Requires admin privileges. Checks for duplicate active featured items.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFeaturedItemRequest"
+              },
+              "example": {
+                "itemSlug": "awesome-productivity-tool",
+                "itemName": "Awesome Productivity Tool",
+                "itemIconUrl": "https://cdn.example.com/icons/productivity-tool.png",
+                "itemCategory": "Productivity",
+                "itemDescription": "A powerful tool to boost your productivity",
+                "featuredOrder": 10,
+                "featuredUntil": "2024-12-31T23:59:59.000Z"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Featured item created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateFeaturedItemResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": "featured_789",
+                    "itemSlug": "awesome-productivity-tool",
+                    "itemName": "Awesome Productivity Tool",
+                    "itemIconUrl": "https://cdn.example.com/icons/productivity-tool.png",
+                    "itemCategory": "Productivity",
+                    "itemDescription": "A powerful tool to boost your productivity",
+                    "featuredOrder": 10,
+                    "featuredUntil": "2024-12-31T23:59:59.000Z",
+                    "isActive": true,
+                    "featuredBy": "admin_456",
+                    "featuredAt": "2024-01-15T10:30:00.000Z",
+                    "createdAt": "2024-01-15T10:30:00.000Z",
+                    "updatedAt": "2024-01-15T10:30:00.000Z"
+                  },
+                  "message": "Item featured successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error or duplicate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missing_fields": {
+                    "summary": "Missing required fields",
+                    "value": {
+                      "success": false,
+                      "error": "Item slug and name are required"
+                    }
+                  },
+                  "already_featured": {
+                    "summary": "Item already featured",
+                    "value": {
+                      "success": false,
+                      "error": "Item is already featured"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
           }
         }
       }

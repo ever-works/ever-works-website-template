@@ -3,8 +3,64 @@ import { auth } from "@/lib/auth";
 import { createCategoryGitService } from "@/lib/services/category-git.service";
 
 /**
- * GET /api/admin/categories/git
- * Get Git repository status and categories
+ * @swagger
+ * /api/admin/categories/git:
+ *   get:
+ *     tags: ["Admin - Categories"]
+ *     summary: "Get Git repository status and categories"
+ *     description: "Returns Git repository status and categories from the configured GitHub repository. Requires admin privileges and proper GitHub configuration."
+ *     security:
+ *       - sessionAuth: []
+ *     responses:
+ *       200:
+ *         description: "Git repository status retrieved successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 status:
+ *                   type: object
+ *                   description: "Git repository status information"
+ *                 categories:
+ *                   type: array
+ *                   items:
+ *                     $ref: "#/components/schemas/Category"
+ *                   description: "List of categories from Git repository"
+ *                 message:
+ *                   type: string
+ *                   example: "Git repository status retrieved successfully"
+ *               required: ["success", "status", "categories", "message"]
+ *       401:
+ *         description: "Unauthorized - Admin access required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized. Admin access required."
+ *       500:
+ *         description: "Server error - Configuration or Git issues"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     config_missing: "DATA_REPOSITORY not configured. Please set DATA_REPOSITORY environment variable."
+ *                     invalid_format: "Invalid DATA_REPOSITORY format. Expected: https://github.com/owner/repo"
+ *                     token_missing: "GitHub token not configured. Please set GITHUB_TOKEN environment variable."
+ *                     git_error: "Failed to get Git repository status"
  */
 export async function GET() {
   try {
@@ -86,8 +142,100 @@ export async function GET() {
 }
 
 /**
- * POST /api/admin/categories/git
- * Create a new category via Git
+ * @swagger
+ * /api/admin/categories/git:
+ *   post:
+ *     tags: ["Admin - Categories"]
+ *     summary: "Create category via Git"
+ *     description: "Creates a new category and commits it to the configured GitHub repository. Requires admin privileges and proper GitHub configuration."
+ *     security:
+ *       - sessionAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: "Unique category identifier"
+ *                 example: "productivity"
+ *               name:
+ *                 type: string
+ *                 description: "Category display name"
+ *                 example: "Productivity"
+ *             required: ["id", "name"]
+ *     responses:
+ *       200:
+ *         description: "Category created and committed successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 category:
+ *                   $ref: "#/components/schemas/Category"
+ *                 message:
+ *                   type: string
+ *                   example: "Category created and committed to Git repository"
+ *               required: ["success", "category", "message"]
+ *       400:
+ *         description: "Bad request - Missing required fields"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Category ID and name are required"
+ *       401:
+ *         description: "Unauthorized - Admin access required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized. Admin access required."
+ *       409:
+ *         description: "Conflict - Category already exists"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Category already exists"
+ *       500:
+ *         description: "Server error - Configuration or Git issues"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   examples:
+ *                     config_missing: "DATA_REPOSITORY not configured. Please set DATA_REPOSITORY environment variable."
+ *                     invalid_format: "Invalid DATA_REPOSITORY format. Expected: https://github.com/owner/repo"
+ *                     token_missing: "GitHub token not configured. Please set GH_TOKEN environment variable."
+ *                     git_error: "Failed to create category via Git"
  */
 export async function POST(request: NextRequest) {
   try {
