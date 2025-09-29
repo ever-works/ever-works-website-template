@@ -1,14 +1,98 @@
 import { db } from '@/lib/db/drizzle';
-import { roles } from '@/lib/db/schema';
-import { eq, desc, asc, sql, isNull, and, SQL } from 'drizzle-orm';
+import { roles, permissions, rolePermissions } from '@/lib/db/schema';
+import { eq, desc, asc, sql, isNull, and, SQL, inArray } from 'drizzle-orm';
 import { RoleData, CreateRoleRequest, UpdateRoleRequest, RoleStatus, RoleListOptions } from '@/lib/types/role';
 import { Permission } from '@/lib/permissions/definitions';
 
 export class RoleDbService {
+  // Helper method to get permissions for a role
+  private async getRolePermissions(roleId: string): Promise<Permission[]> {
+    const rolePerms = await db
+      .select({ permissionKey: permissions.key })
+      .from(rolePermissions)
+      .innerJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
+      .where(eq(rolePermissions.roleId, roleId));
+
+    return rolePerms.map(rp => rp.permissionKey as Permission);
+  }
+
+  // Helper method to get roles with their permissions
+  private async getRolesWithPermissions(roleIds?: string[]): Promise<RoleData[]> {
+    // Get roles
+    let roleQuery = db.select().from(roles).where(isNull(roles.deletedAt));
+
+    if (roleIds && roleIds.length > 0) {
+      roleQuery = db.select().from(roles).where(and(
+        isNull(roles.deletedAt),
+        inArray(roles.id, roleIds)
+      ));
+    }
+
+    const rolesResult = await roleQuery;
+
+    // Get permissions for all roles in a single query
+    const allRoleIds = roleIds && roleIds.length > 0 ? roleIds : rolesResult.map(r => r.id);
+    let rolePermissionsResult: { roleId: string; permissionKey: string }[] = [];
+
+    if (allRoleIds.length > 0) {
+      rolePermissionsResult = await db
+        .select({
+          roleId: rolePermissions.roleId,
+          permissionKey: permissions.key
+        })
+        .from(rolePermissions)
+        .innerJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
+        .where(inArray(rolePermissions.roleId, allRoleIds));
+    }
+
+    // Group permissions by role
+    const permissionsByRole = rolePermissionsResult.reduce((acc, rp) => {
+      if (!acc[rp.roleId]) {
+        acc[rp.roleId] = [];
+      }
+      acc[rp.roleId].push(rp.permissionKey as Permission);
+      return acc;
+    }, {} as Record<string, Permission[]>);
+
+    // Map roles with their permissions
+    return rolesResult.map(role => this.mapDbToRoleData(role, permissionsByRole[role.id] || []));
+  }
+
+  // Helper method to update role permissions
+  private async updateRolePermissions(roleId: string, newPermissions: Permission[]): Promise<void> {
+    await db.transaction(async (tx) => {
+      if (newPermissions.length === 0) {
+        await tx.delete(rolePermissions).where(eq(rolePermissions.roleId, roleId));
+        return;
+      }
+
+      const permissionRecords = await tx
+        .select({ id: permissions.id, key: permissions.key })
+        .from(permissions)
+        .where(inArray(permissions.key, newPermissions));
+
+      const missingKeys = newPermissions.filter(
+        key => !permissionRecords.some(record => record.key === key),
+      );
+
+      if (missingKeys.length > 0) {
+        throw new Error(`Unknown permission keys: ${missingKeys.join(', ')}`);
+      }
+
+      await tx.delete(rolePermissions).where(eq(rolePermissions.roleId, roleId));
+
+      await tx.insert(rolePermissions).values(
+        permissionRecords.map(perm => ({
+          roleId,
+          permissionId: perm.id,
+        })),
+      );
+    });
+  }
+
   async readRoles(): Promise<RoleData[]> {
     try {
-      const result = await db.select().from(roles).where(isNull(roles.deletedAt));
-      return result.map(this.mapDbToRoleData);
+      return await this.getRolesWithPermissions();
     } catch (error) {
       console.error('Error reading roles from database:', error);
       throw new Error('Failed to retrieve roles');
@@ -17,8 +101,8 @@ export class RoleDbService {
 
   async findById(id: string): Promise<RoleData | null> {
     try {
-      const result = await db.select().from(roles).where(and(eq(roles.id, id), isNull(roles.deletedAt)));
-      return result.length > 0 ? this.mapDbToRoleData(result[0]) : null;
+      const rolesWithPermissions = await this.getRolesWithPermissions([id]);
+      return rolesWithPermissions.length > 0 ? rolesWithPermissions[0] : null;
     } catch (error) {
       console.error('Error finding role by ID:', error);
       throw new Error('Failed to retrieve role');
@@ -32,18 +116,47 @@ export class RoleDbService {
         throw new Error(`Role with ID '${data.id}' already exists`);
       }
 
-      const roleData = {
-        id: data.id,
-        name: data.name,
-        description: data.description,
-        status: data.status || 'active',
-        isAdmin: data.isAdmin || false,
-        permissions: JSON.stringify(data.permissions),
-        created_by: 'system',
-      };
+      return await db.transaction(async (tx) => {
+        const roleData = {
+          id: data.id,
+          name: data.name,
+          description: data.description,
+          status: data.status || 'active',
+          isAdmin: data.isAdmin || false,
+          created_by: 'system',
+        };
 
-      const result = await db.insert(roles).values(roleData).returning();
-      return this.mapDbToRoleData(result[0]);
+        // Insert role
+        const result = await tx.insert(roles).values(roleData).returning();
+        const newRole = result[0];
+
+        // Insert permissions if provided - using atomic transaction
+        if (data.permissions && data.permissions.length > 0) {
+          const permissionRecords = await tx
+            .select({ id: permissions.id, key: permissions.key })
+            .from(permissions)
+            .where(inArray(permissions.key, data.permissions));
+
+          const missingKeys = data.permissions.filter(
+            key => !permissionRecords.some(record => record.key === key),
+          );
+
+          if (missingKeys.length > 0) {
+            throw new Error(`Unknown permission keys: ${missingKeys.join(', ')}`);
+          }
+
+          await tx.insert(rolePermissions).values(
+            permissionRecords.map(perm => ({
+              roleId: newRole.id,
+              permissionId: perm.id,
+            })),
+          );
+        }
+
+        // Return role data with permissions
+        const createdPermissions = data.permissions || [];
+        return this.mapDbToRoleData(newRole, createdPermissions);
+      });
     } catch (error) {
       console.error('Error creating role:', error);
       throw error;
@@ -53,23 +166,45 @@ export class RoleDbService {
   async updateRole(id: string, data: UpdateRoleRequest): Promise<RoleData> {
     try {
       const updateData: Record<string, unknown> = {};
-      
+
       if (data.name !== undefined) updateData.name = data.name;
       if (data.description !== undefined) updateData.description = data.description;
       if (data.status !== undefined) updateData.status = data.status;
       if (data.isAdmin !== undefined) updateData.isAdmin = data.isAdmin;
-      if (data.permissions !== undefined) updateData.permissions = JSON.stringify(data.permissions);
 
-      const result = await db.update(roles)
-        .set(updateData)
-        .where(eq(roles.id, id))
-        .returning();
+      let roleRecord;
 
-      if (result.length === 0) {
-        throw new Error(`Role with ID '${id}' not found`);
+      // Only update the roles table if there are actual role fields to update
+      if (Object.keys(updateData).length > 0) {
+        // Add updatedAt timestamp when role fields are being modified
+        updateData.updatedAt = new Date();
+
+        const result = await db.update(roles)
+          .set(updateData)
+          .where(eq(roles.id, id))
+          .returning();
+
+        if (result.length === 0) {
+          throw new Error(`Role with ID '${id}' not found`);
+        }
+        roleRecord = result[0];
+      } else {
+        // If no role fields to update, just get the existing role
+        const existingRoles = await db.select().from(roles).where(eq(roles.id, id));
+        if (existingRoles.length === 0) {
+          throw new Error(`Role with ID '${id}' not found`);
+        }
+        roleRecord = existingRoles[0];
       }
 
-      return this.mapDbToRoleData(result[0]);
+      // Update permissions if provided
+      if (data.permissions !== undefined) {
+        await this.updateRolePermissions(id, data.permissions);
+      }
+
+      // Get updated permissions to return complete role data
+      const updatedPermissions = await this.getRolePermissions(id);
+      return this.mapDbToRoleData(roleRecord, updatedPermissions);
     } catch (error) {
       console.error('Error updating role:', error);
       throw error;
@@ -112,7 +247,6 @@ export class RoleDbService {
         filters.push(eq(roles.status, status));
       }
 
-
       // Get total count with same filters
       const countQuery = db.select({ count: sql<number>`count(*)` }).from(roles).where(and(...filters));
       const countResult = await countQuery;
@@ -134,8 +268,32 @@ export class RoleDbService {
         .limit(limit)
         .offset((page - 1) * limit);
 
+      // Get permissions for the returned roles
+      const roleIds = result.map(role => role.id);
+      let rolePermissionsResult: { roleId: string; permissionKey: string }[] = [];
+
+      if (roleIds.length > 0) {
+        rolePermissionsResult = await db
+          .select({
+            roleId: rolePermissions.roleId,
+            permissionKey: permissions.key
+          })
+          .from(rolePermissions)
+          .innerJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
+          .where(inArray(rolePermissions.roleId, roleIds));
+      }
+
+      // Group permissions by role
+      const permissionsByRole = rolePermissionsResult.reduce((acc, rp) => {
+        if (!acc[rp.roleId]) {
+          acc[rp.roleId] = [];
+        }
+        acc[rp.roleId].push(rp.permissionKey as Permission);
+        return acc;
+      }, {} as Record<string, Permission[]>);
+
       return {
-        roles: result.map(this.mapDbToRoleData),
+        roles: result.map(role => this.mapDbToRoleData(role, permissionsByRole[role.id] || [])),
         total,
         page,
         limit,
@@ -143,7 +301,18 @@ export class RoleDbService {
       };
     } catch (error) {
       console.error('Error finding roles:', error);
-      throw new Error('Failed to retrieve roles');
+
+      // Provide more specific error messages for debugging
+      if (error && typeof error === 'object' && 'code' in error) {
+        const dbError = error as { code: string; message?: string };
+        if (dbError.code === 'CONNECT_TIMEOUT') {
+          throw new Error('Database connection timeout - please check your database connection');
+        } else if (dbError.code === 'ECONNREFUSED') {
+          throw new Error('Database connection refused - please ensure PostgreSQL is running');
+        }
+      }
+
+      throw new Error(`Failed to retrieve roles: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -162,14 +331,14 @@ export class RoleDbService {
     }
   }
 
-  private mapDbToRoleData(dbRole: typeof roles.$inferSelect): RoleData {
+  private mapDbToRoleData(dbRole: typeof roles.$inferSelect, rolePermissions: Permission[] = []): RoleData {
     return {
       id: dbRole.id,
       name: dbRole.name,
       description: dbRole.description || '',
       status: (dbRole.status as RoleStatus) || 'active',
       isAdmin: dbRole.isAdmin || false,
-      permissions: JSON.parse(dbRole.permissions) as Permission[],
+      permissions: rolePermissions,
       created_at: dbRole.createdAt.toISOString(),
       updated_at: dbRole.updatedAt.toISOString(),
       created_by: dbRole.created_by || 'system',

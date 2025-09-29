@@ -11,6 +11,8 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import {
   users,
   roles,
+  permissions,
+  rolePermissions,
   userRoles,
   clientProfiles,
   activityLogs,
@@ -26,6 +28,7 @@ import {
 import * as schema from '@/lib/db/schema';
 import { sql } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
+import { getAllPermissions } from '@/lib/permissions/definitions';
 
 async function main() {
   // Load env explicitly; prefer .env.local if present
@@ -59,7 +62,6 @@ async function main() {
         name: 'admin',
         description: 'Administrator role',
         status: 'active',
-        permissions: JSON.stringify(['*']),
         isAdmin: true,
         created_by: 'system'
       },
@@ -68,13 +70,38 @@ async function main() {
         name: 'user',
         description: 'Standard user role',
         status: 'active',
-        permissions: JSON.stringify(['read']),
         isAdmin: false,
         created_by: 'system'
       }
     ];
     await db.insert(roles).values(roleRows);
     console.log('Seeded roles');
+  }
+
+  // Seed permissions
+  const existingPermissions = await db.select().from(permissions).limit(1);
+  if (existingPermissions.length === 0) {
+    const allPermissions = getAllPermissions();
+    const permissionRows = allPermissions.map(permission => ({
+      id: randomUUID(),
+      key: permission,
+      description: permission.replace(':', ' ').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()
+    }));
+
+    await db.insert(permissions).values(permissionRows);
+    console.log(`Seeded ${permissionRows.length} permissions`);
+
+    // Create role-permission associations for admin role
+    const adminRole = await db.select().from(roles).where(sql`${roles.id} = 'role-admin'`).limit(1);
+    if (adminRole.length > 0) {
+      const adminRolePermissions = permissionRows.map(perm => ({
+        roleId: 'role-admin',
+        permissionId: perm.id
+      }));
+
+      await db.insert(rolePermissions).values(adminRolePermissions);
+      console.log(`Assigned all permissions to admin role`);
+    }
   }
 
   // Seed users
