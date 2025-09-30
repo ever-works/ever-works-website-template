@@ -1143,99 +1143,99 @@
         "SOURCE_URL_REQUIRED": "源URL是必需的",
         "SOURCE_URL_INVALID": "请输入有效的URL",
         "CATEGORY_REQUIRED": "至少需要一个分类",
-        "ICON_URL_INVALID": "Please enter a valid icon URL",
-        "ICON_URL_LOAD_FAILED": "Failed to load icon from URL",
-        "TAGS_REQUIRED": "At least one tag is required",
-        "STATUS_REQUIRED": "Status is required"
+        "ICON_URL_INVALID": "请输入有效的图标URL",
+        "ICON_URL_LOAD_FAILED": "无法从URL加载图标",
+        "TAGS_REQUIRED": "至少需要一个标签",
+        "STATUS_REQUIRED": "状态是必需的"
       },
       "STEPS": {
         "BASIC_INFO": {
-          "TITLE": "Basic Information",
-          "DESCRIPTION": "Enter the core details about the item"
+          "TITLE": "基本信息",
+          "DESCRIPTION": "输入项目的核心详细信息"
         },
         "CLASSIFICATION": {
-          "TITLE": "Classification",
-          "DESCRIPTION": "Organize the item with categories and tags",
-          "TIPS_TITLE": "Tips for Classification",
-          "TIP_1": "Use descriptive categories that match your directory structure",
-          "TIP_2": "Add relevant tags to improve searchability",
-          "TIP_3": "Keep categories broad and tags specific"
+          "TITLE": "分类",
+          "DESCRIPTION": "使用分类和标签组织项目",
+          "TIPS_TITLE": "分类提示",
+          "TIP_1": "使用与您的目录结构匹配的描述性分类",
+          "TIP_2": "添加相关标签以提高可搜索性",
+          "TIP_3": "保持分类宽泛，标签具体"
         },
         "MEDIA_LINKS": {
-          "TITLE": "Media & Links",
-          "DESCRIPTION": "Add source URL and visual elements",
-          "TIPS_TITLE": "Media Guidelines",
-          "TIP_1": "Ensure URLs are valid and accessible",
-          "TIP_2": "Use high-quality icons (min 256x256px recommended)",
-          "TIP_3": "Icons should be in PNG or SVG format for best quality"
+          "TITLE": "媒体和链接",
+          "DESCRIPTION": "添加源URL和视觉元素",
+          "TIPS_TITLE": "媒体指南",
+          "TIP_1": "确保URL有效且可访问",
+          "TIP_2": "使用高质量图标（建议至少256x256像素）",
+          "TIP_3": "图标应为PNG或SVG格式以获得最佳质量"
         },
         "REVIEW": {
-          "TITLE": "Review & Submit",
-          "DESCRIPTION": "Review all details before submission",
-          "SUMMARY_TITLE": "Summary",
-          "SETTINGS_TITLE": "Settings",
-          "NOT_SET": "Not set"
+          "TITLE": "审核和提交",
+          "DESCRIPTION": "提交前审核所有详细信息",
+          "SUMMARY_TITLE": "摘要",
+          "SETTINGS_TITLE": "设置",
+          "NOT_SET": "未设置"
         }
       },
       "FIELDS": {
         "ID": {
-          "LABEL": "Item ID",
-          "PLACEHOLDER": "Enter unique item ID (e.g., awesome-time-tracking-tool)",
-          "HELP": "Unique identifier for the item (cannot be changed after creation)"
+          "LABEL": "项目ID",
+          "PLACEHOLDER": "输入唯一项目ID（例如：awesome-time-tracking-tool）",
+          "HELP": "项目的唯一标识符（创建后无法更改）"
         },
         "NAME": {
-          "LABEL": "Item Name",
-          "PLACEHOLDER": "Enter item name (e.g., Awesome Time Tracking Tool)"
+          "LABEL": "项目名称",
+          "PLACEHOLDER": "输入项目名称（例如：Awesome Time Tracking Tool）"
         },
         "SLUG": {
-          "LABEL": "Item Slug",
-          "PLACEHOLDER": "Enter URL slug (e.g., awesome-time-tracking-tool)",
-          "HELP": "URL-friendly identifier for the item"
+          "LABEL": "项目别名",
+          "PLACEHOLDER": "输入URL别名（例如：awesome-time-tracking-tool）",
+          "HELP": "项目的URL友好标识符"
         },
         "DESCRIPTION": {
-          "LABEL": "Description",
-          "PLACEHOLDER": "Enter detailed description of the item...",
-          "HELP": "Detailed description of the item ({current}/{max})"
+          "LABEL": "描述",
+          "PLACEHOLDER": "输入项目的详细描述...",
+          "HELP": "项目的详细描述（{current}/{max}）"
         },
         "CATEGORY": {
-          "LABEL": "Categories",
-          "PLACEHOLDER": "Enter categories separated by commas",
-          "HELP": "Categories for organizing the item",
-          "SUGGESTED": "Suggested categories"
+          "LABEL": "分类",
+          "PLACEHOLDER": "输入用逗号分隔的分类",
+          "HELP": "用于组织项目的分类",
+          "SUGGESTED": "建议的分类"
         },
         "TAGS": {
-          "LABEL": "Tags",
-          "PLACEHOLDER": "Enter tags separated by commas",
-          "HELP": "Tags for better searchability and organization",
-          "SUGGESTED": "Suggested tags"
+          "LABEL": "标签",
+          "PLACEHOLDER": "输入用逗号分隔的标签",
+          "HELP": "用于更好搜索和组织的标签",
+          "SUGGESTED": "建议的标签"
         },
         "ICON_URL": {
-          "LABEL": "Icon URL",
+          "LABEL": "图标URL",
           "PLACEHOLDER": "https://example.com/icon.png",
-          "HELP": "Optional icon URL for the item",
-          "UPLOAD_BUTTON": "Upload Icon"
+          "HELP": "项目的可选图标URL",
+          "UPLOAD_BUTTON": "上传图标"
         },
         "SOURCE_URL": {
-          "LABEL": "Source URL",
+          "LABEL": "源URL",
           "PLACEHOLDER": "https://github.com/example/awesome-tool",
-          "HELP": "Link to the item's source or homepage",
-          "PREVIEW_BUTTON": "Preview URL"
+          "HELP": "指向项目源或主页的链接",
+          "PREVIEW_BUTTON": "预览URL"
         },
         "FEATURED": {
-          "LABEL": "Featured Item",
-          "HELP": "Featured items appear prominently on the site"
+          "LABEL": "推荐项目",
+          "HELP": "推荐项目在网站上突出显示"
         },
         "STATUS": {
-          "LABEL": "Status",
-          "PLACEHOLDER": "Select status"
+          "LABEL": "状态",
+          "PLACEHOLDER": "选择状态"
         }
       },
       "NAVIGATION": {
-        "NEXT": "Next",
-        "PREVIOUS": "Previous",
-        "CREATE": "Create Item",
-        "UPDATE": "Update Item",
-        "CANCEL": "Cancel",
+        "NEXT": "下一步",
+        "PREVIOUS": "上一步",
+        "CREATE": "创建项目",
+        "UPDATE": "更新项目",
+        "CANCEL": "取消",
         "STEP_COUNTER": "第 {current} 步，共 {total} 步"
       }
     },
