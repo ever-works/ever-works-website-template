@@ -118,9 +118,10 @@ export function MediaLinksStep({
   useEffect(() => {
     if (data.icon_url && URL_PATTERN.test(data.icon_url)) {
       setPreviewImage(data.icon_url);
+    } else {
+      setPreviewImage('');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [data.icon_url]);
 
   return (
     <StepContainer
