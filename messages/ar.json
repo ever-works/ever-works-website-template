@@ -1090,99 +1090,99 @@
         "SOURCE_URL_REQUIRED": "رابط المصدر مطلوب",
         "SOURCE_URL_INVALID": "يرجى إدخال رابط صحيح",
         "CATEGORY_REQUIRED": "فئة واحدة على الأقل مطلوبة",
-        "ICON_URL_INVALID": "Please enter a valid icon URL",
-        "ICON_URL_LOAD_FAILED": "Failed to load icon from URL",
-        "TAGS_REQUIRED": "At least one tag is required",
-        "STATUS_REQUIRED": "Status is required"
+        "ICON_URL_INVALID": "يرجى إدخال رابط أيقونة صحيح",
+        "ICON_URL_LOAD_FAILED": "فشل تحميل الأيقونة من الرابط",
+        "TAGS_REQUIRED": "وسم واحد على الأقل مطلوب",
+        "STATUS_REQUIRED": "الحالة مطلوبة"
       },
       "STEPS": {
         "BASIC_INFO": {
-          "TITLE": "Basic Information",
-          "DESCRIPTION": "Enter the core details about the item"
+          "TITLE": "المعلومات الأساسية",
+          "DESCRIPTION": "أدخل التفاصيل الأساسية حول العنصر"
         },
         "CLASSIFICATION": {
-          "TITLE": "Classification",
-          "DESCRIPTION": "Organize the item with categories and tags",
-          "TIPS_TITLE": "Tips for Classification",
-          "TIP_1": "Use descriptive categories that match your directory structure",
-          "TIP_2": "Add relevant tags to improve searchability",
-          "TIP_3": "Keep categories broad and tags specific"
+          "TITLE": "التصنيف",
+          "DESCRIPTION": "قم بتنظيم العنصر مع الفئات والوسوم",
+          "TIPS_TITLE": "نصائح للتصنيف",
+          "TIP_1": "استخدم فئات وصفية تتطابق مع بنية الدليل الخاص بك",
+          "TIP_2": "أضف وسوم ذات صلة لتحسين قابلية البحث",
+          "TIP_3": "اجعل الفئات عامة والوسوم محددة"
         },
         "MEDIA_LINKS": {
-          "TITLE": "Media & Links",
-          "DESCRIPTION": "Add source URL and visual elements",
-          "TIPS_TITLE": "Media Guidelines",
-          "TIP_1": "Ensure URLs are valid and accessible",
-          "TIP_2": "Use high-quality icons (min 256x256px recommended)",
-          "TIP_3": "Icons should be in PNG or SVG format for best quality"
+          "TITLE": "الوسائط والروابط",
+          "DESCRIPTION": "أضف رابط المصدر والعناصر المرئية",
+          "TIPS_TITLE": "إرشادات الوسائط",
+          "TIP_1": "تأكد من أن الروابط صالحة ويمكن الوصول إليها",
+          "TIP_2": "استخدم أيقونات عالية الجودة (يُنصح بحد أدنى 256×256 بكسل)",
+          "TIP_3": "يجب أن تكون الأيقونات بتنسيق PNG أو SVG للحصول على أفضل جودة"
         },
         "REVIEW": {
-          "TITLE": "Review & Submit",
-          "DESCRIPTION": "Review all details before submission",
-          "SUMMARY_TITLE": "Summary",
-          "SETTINGS_TITLE": "Settings",
-          "NOT_SET": "Not set"
+          "TITLE": "المراجعة والإرسال",
+          "DESCRIPTION": "راجع جميع التفاصيل قبل الإرسال",
+          "SUMMARY_TITLE": "الملخص",
+          "SETTINGS_TITLE": "الإعدادات",
+          "NOT_SET": "غير محدد"
         }
       },
       "FIELDS": {
         "ID": {
-          "LABEL": "Item ID",
-          "PLACEHOLDER": "Enter unique item ID (e.g., awesome-time-tracking-tool)",
-          "HELP": "Unique identifier for the item (cannot be changed after creation)"
+          "LABEL": "معرّف العنصر",
+          "PLACEHOLDER": "أدخل معرّف فريد للعنصر (مثال: awesome-time-tracking-tool)",
+          "HELP": "معرّف فريد للعنصر (لا يمكن تغييره بعد الإنشاء)"
         },
         "NAME": {
-          "LABEL": "Item Name",
-          "PLACEHOLDER": "Enter item name (e.g., Awesome Time Tracking Tool)"
+          "LABEL": "اسم العنصر",
+          "PLACEHOLDER": "أدخل اسم العنصر (مثال: Awesome Time Tracking Tool)"
         },
         "SLUG": {
-          "LABEL": "Item Slug",
-          "PLACEHOLDER": "Enter URL slug (e.g., awesome-time-tracking-tool)",
-          "HELP": "URL-friendly identifier for the item"
+          "LABEL": "اسم العنصر المختصر",
+          "PLACEHOLDER": "أدخل الاسم المختصر للرابط (مثال: awesome-time-tracking-tool)",
+          "HELP": "معرّف صديق للرابط للعنصر"
         },
         "DESCRIPTION": {
-          "LABEL": "Description",
-          "PLACEHOLDER": "Enter detailed description of the item...",
-          "HELP": "Detailed description of the item ({current}/{max})"
+          "LABEL": "الوصف",
+          "PLACEHOLDER": "أدخل وصفًا تفصيليًا للعنصر...",
+          "HELP": "وصف تفصيلي للعنصر ({current}/{max})"
         },
         "CATEGORY": {
-          "LABEL": "Categories",
-          "PLACEHOLDER": "Enter categories separated by commas",
-          "HELP": "Categories for organizing the item",
-          "SUGGESTED": "Suggested categories"
+          "LABEL": "الفئات",
+          "PLACEHOLDER": "أدخل الفئات مفصولة بفواصل",
+          "HELP": "فئات لتنظيم العنصر",
+          "SUGGESTED": "الفئات المقترحة"
         },
         "TAGS": {
-          "LABEL": "Tags",
-          "PLACEHOLDER": "Enter tags separated by commas",
-          "HELP": "Tags for better searchability and organization",
-          "SUGGESTED": "Suggested tags"
+          "LABEL": "الوسوم",
+          "PLACEHOLDER": "أدخل الوسوم مفصولة بفواصل",
+          "HELP": "وسوم لتحسين قابلية البحث والتنظيم",
+          "SUGGESTED": "الوسوم المقترحة"
         },
         "ICON_URL": {
-          "LABEL": "Icon URL",
+          "LABEL": "رابط الأيقونة",
           "PLACEHOLDER": "https://example.com/icon.png",
-          "HELP": "Optional icon URL for the item",
-          "UPLOAD_BUTTON": "Upload Icon"
+          "HELP": "رابط اختياري للأيقونة الخاصة بالعنصر",
+          "UPLOAD_BUTTON": "رفع أيقونة"
         },
         "SOURCE_URL": {
-          "LABEL": "Source URL",
+          "LABEL": "رابط المصدر",
           "PLACEHOLDER": "https://github.com/example/awesome-tool",
-          "HELP": "Link to the item's source or homepage",
-          "PREVIEW_BUTTON": "Preview URL"
+          "HELP": "رابط إلى مصدر العنصر أو صفحته الرئيسية",
+          "PREVIEW_BUTTON": "معاينة الرابط"
         },
         "FEATURED": {
-          "LABEL": "Featured Item",
-          "HELP": "Featured items appear prominently on the site"
+          "LABEL": "عنصر مميز",
+          "HELP": "العناصر المميزة تظهر بشكل بارز على الموقع"
         },
         "STATUS": {
-          "LABEL": "Status",
-          "PLACEHOLDER": "Select status"
+          "LABEL": "الحالة",
+          "PLACEHOLDER": "اختر الحالة"
         }
       },
       "NAVIGATION": {
-        "NEXT": "Next",
-        "PREVIOUS": "Previous",
-        "CREATE": "Create Item",
-        "UPDATE": "Update Item",
-        "CANCEL": "Cancel",
+        "NEXT": "التالي",
+        "PREVIOUS": "السابق",
+        "CREATE": "إنشاء عنصر",
+        "UPDATE": "تحديث عنصر",
+        "CANCEL": "إلغاء",
         "STEP_COUNTER": "الخطوة {current} من {total}"
       }
     },
