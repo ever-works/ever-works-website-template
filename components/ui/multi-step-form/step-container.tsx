@@ -22,9 +22,9 @@ export function StepContainer({
     <div className={cn("space-y-6", className)}>
       {/* Step Header */}
       <div className="space-y-2">
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
         {description && (
-          <p className="text-sm text-gray-600">{description}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
         )}
       </div>
 

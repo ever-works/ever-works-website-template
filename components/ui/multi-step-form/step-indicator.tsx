@@ -28,7 +28,7 @@ export function StepIndicator({
     <div className={cn("w-full", className)}>
       {/* Progress Bar */}
       <div className="relative mb-8">
-        <div className="absolute top-5 left-0 w-full h-0.5 bg-gray-200">
+        <div className="absolute top-5 left-0 w-full h-0.5 bg-gray-200 dark:bg-gray-700">
           <div
             className="h-full bg-blue-600 transition-all duration-300 ease-in-out"
             style={{
@@ -60,8 +60,8 @@ export function StepIndicator({
                     "w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-medium transition-all duration-200",
                     {
                       "bg-blue-600 border-blue-600 text-white": isCompleted,
-                      "bg-white border-blue-600 text-blue-600": isCurrent && !isCompleted,
-                      "bg-white border-gray-300 text-gray-400": !isCurrent && !isCompleted,
+                      "bg-white dark:bg-gray-800 border-blue-600 text-blue-600": isCurrent && !isCompleted,
+                      "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500": !isCurrent && !isCompleted,
                       "group-hover:border-blue-500 group-hover:text-blue-500": isClickable && !isCompleted && !isCurrent
                     }
                   )}
@@ -80,7 +80,7 @@ export function StepIndicator({
                       "text-sm font-medium transition-colors duration-200",
                       {
                         "text-blue-600": isCurrent || isCompleted,
-                        "text-gray-900": !isCurrent && !isCompleted,
+                        "text-gray-900 dark:text-gray-100": !isCurrent && !isCompleted,
                         "group-hover:text-blue-600": isClickable
                       }
                     )}
@@ -93,7 +93,7 @@ export function StepIndicator({
                         "text-xs mt-1 transition-colors duration-200",
                         {
                           "text-blue-500": isCurrent || isCompleted,
-                          "text-gray-500": !isCurrent && !isCompleted,
+                          "text-gray-500 dark:text-gray-400": !isCurrent && !isCompleted,
                           "group-hover:text-blue-500": isClickable
                         }
                       )}
