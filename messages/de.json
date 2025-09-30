@@ -696,8 +696,6 @@
     "REFRESH": "Aktualisieren",
     "SEARCH_AND_FILTERS": "Suche und Filter",
     "TOTAL_RESULTS": "Gesamtergebnisse",
-    "WELCOME_TITLE": "Willkommen bei Ever Works!",
-    "FREE_PLAN_MESSAGE": "Sie befinden sich derzeit im kostenlosen Plan. Upgraden Sie, um Premium-Funktionen freizuschalten und mit dem Aufbau Ihres Erfolgs zu beginnen.",
     "UPGRADE_NOW": "Jetzt upgraden",
     "CURRENT_SUBSCRIPTION": "Aktuelles Abonnement",
     "SUBSCRIPTION_EMPTY_STATE": "Kein aktives Abonnement gefunden",
@@ -1163,99 +1161,99 @@
         "SOURCE_URL_REQUIRED": "Quell-URL ist erforderlich",
         "SOURCE_URL_INVALID": "Bitte geben Sie eine gültige URL ein",
         "CATEGORY_REQUIRED": "Mindestens eine Kategorie ist erforderlich",
-        "ICON_URL_INVALID": "Please enter a valid icon URL",
-        "ICON_URL_LOAD_FAILED": "Failed to load icon from URL",
-        "TAGS_REQUIRED": "At least one tag is required",
-        "STATUS_REQUIRED": "Status is required"
+        "ICON_URL_INVALID": "Bitte geben Sie eine gültige Symbol-URL ein",
+        "ICON_URL_LOAD_FAILED": "Symbol konnte nicht von URL geladen werden",
+        "TAGS_REQUIRED": "Mindestens ein Tag ist erforderlich",
+        "STATUS_REQUIRED": "Status ist erforderlich"
       },
       "STEPS": {
         "BASIC_INFO": {
-          "TITLE": "Basic Information",
-          "DESCRIPTION": "Enter the core details about the item"
+          "TITLE": "Grundinformationen",
+          "DESCRIPTION": "Geben Sie die wichtigsten Details zum Element ein"
         },
         "CLASSIFICATION": {
-          "TITLE": "Classification",
-          "DESCRIPTION": "Organize the item with categories and tags",
-          "TIPS_TITLE": "Tips for Classification",
-          "TIP_1": "Use descriptive categories that match your directory structure",
-          "TIP_2": "Add relevant tags to improve searchability",
-          "TIP_3": "Keep categories broad and tags specific"
+          "TITLE": "Klassifizierung",
+          "DESCRIPTION": "Organisieren Sie das Element mit Kategorien und Tags",
+          "TIPS_TITLE": "Tipps zur Klassifizierung",
+          "TIP_1": "Verwenden Sie aussagekräftige Kategorien, die zu Ihrer Verzeichnisstruktur passen",
+          "TIP_2": "Fügen Sie relevante Tags hinzu, um die Durchsuchbarkeit zu verbessern",
+          "TIP_3": "Halten Sie Kategorien allgemein und Tags spezifisch"
         },
         "MEDIA_LINKS": {
-          "TITLE": "Media & Links",
-          "DESCRIPTION": "Add source URL and visual elements",
-          "TIPS_TITLE": "Media Guidelines",
-          "TIP_1": "Ensure URLs are valid and accessible",
-          "TIP_2": "Use high-quality icons (min 256x256px recommended)",
-          "TIP_3": "Icons should be in PNG or SVG format for best quality"
+          "TITLE": "Medien & Links",
+          "DESCRIPTION": "Fügen Sie Quell-URL und visuelle Elemente hinzu",
+          "TIPS_TITLE": "Medienrichtlinien",
+          "TIP_1": "Stellen Sie sicher, dass URLs gültig und zugänglich sind",
+          "TIP_2": "Verwenden Sie hochwertige Symbole (mindestens 256x256px empfohlen)",
+          "TIP_3": "Symbole sollten im PNG- oder SVG-Format für beste Qualität sein"
         },
         "REVIEW": {
-          "TITLE": "Review & Submit",
-          "DESCRIPTION": "Review all details before submission",
-          "SUMMARY_TITLE": "Summary",
-          "SETTINGS_TITLE": "Settings",
-          "NOT_SET": "Not set"
+          "TITLE": "Überprüfen & Absenden",
+          "DESCRIPTION": "Überprüfen Sie alle Details vor dem Absenden",
+          "SUMMARY_TITLE": "Zusammenfassung",
+          "SETTINGS_TITLE": "Einstellungen",
+          "NOT_SET": "Nicht festgelegt"
         }
       },
       "FIELDS": {
         "ID": {
-          "LABEL": "Item ID",
-          "PLACEHOLDER": "Enter unique item ID (e.g., awesome-time-tracking-tool)",
-          "HELP": "Unique identifier for the item (cannot be changed after creation)"
+          "LABEL": "Element-ID",
+          "PLACEHOLDER": "Eindeutige Element-ID eingeben (z.B., awesome-time-tracking-tool)",
+          "HELP": "Eindeutiger Identifikator für das Element (kann nach der Erstellung nicht geändert werden)"
         },
         "NAME": {
-          "LABEL": "Item Name",
-          "PLACEHOLDER": "Enter item name (e.g., Awesome Time Tracking Tool)"
+          "LABEL": "Elementname",
+          "PLACEHOLDER": "Elementnamen eingeben (z.B., Awesome Time Tracking Tool)"
         },
         "SLUG": {
-          "LABEL": "Item Slug",
-          "PLACEHOLDER": "Enter URL slug (e.g., awesome-time-tracking-tool)",
-          "HELP": "URL-friendly identifier for the item"
+          "LABEL": "Element-Slug",
+          "PLACEHOLDER": "URL-Slug eingeben (z.B., awesome-time-tracking-tool)",
+          "HELP": "URL-freundlicher Identifikator für das Element"
         },
         "DESCRIPTION": {
-          "LABEL": "Description",
-          "PLACEHOLDER": "Enter detailed description of the item...",
-          "HELP": "Detailed description of the item ({current}/{max})"
+          "LABEL": "Beschreibung",
+          "PLACEHOLDER": "Detaillierte Beschreibung des Elements eingeben...",
+          "HELP": "Detaillierte Beschreibung des Elements ({current}/{max})"
         },
         "CATEGORY": {
-          "LABEL": "Categories",
-          "PLACEHOLDER": "Enter categories separated by commas",
-          "HELP": "Categories for organizing the item",
-          "SUGGESTED": "Suggested categories"
+          "LABEL": "Kategorien",
+          "PLACEHOLDER": "Kategorien durch Kommas getrennt eingeben",
+          "HELP": "Kategorien zur Organisation des Elements",
+          "SUGGESTED": "Vorgeschlagene Kategorien"
         },
         "TAGS": {
           "LABEL": "Tags",
-          "PLACEHOLDER": "Enter tags separated by commas",
-          "HELP": "Tags for better searchability and organization",
-          "SUGGESTED": "Suggested tags"
+          "PLACEHOLDER": "Tags durch Kommas getrennt eingeben",
+          "HELP": "Tags für bessere Durchsuchbarkeit und Organisation",
+          "SUGGESTED": "Vorgeschlagene Tags"
         },
         "ICON_URL": {
-          "LABEL": "Icon URL",
-          "PLACEHOLDER": "https://example.com/icon.png",
-          "HELP": "Optional icon URL for the item",
-          "UPLOAD_BUTTON": "Upload Icon"
+          "LABEL": "Symbol-URL",
+          "PLACEHOLDER": "https://beispiel.com/symbol.png",
+          "HELP": "Optionale Symbol-URL für das Element",
+          "UPLOAD_BUTTON": "Symbol hochladen"
         },
         "SOURCE_URL": {
-          "LABEL": "Source URL",
-          "PLACEHOLDER": "https://github.com/example/awesome-tool",
-          "HELP": "Link to the item's source or homepage",
-          "PREVIEW_BUTTON": "Preview URL"
+          "LABEL": "Quell-URL",
+          "PLACEHOLDER": "https://github.com/beispiel/awesome-tool",
+          "HELP": "Link zur Quelle oder Homepage des Elements",
+          "PREVIEW_BUTTON": "URL-Vorschau"
         },
         "FEATURED": {
-          "LABEL": "Featured Item",
-          "HELP": "Featured items appear prominently on the site"
+          "LABEL": "Hervorgehobenes Element",
+          "HELP": "Hervorgehobene Elemente werden prominent auf der Website angezeigt"
         },
         "STATUS": {
           "LABEL": "Status",
-          "PLACEHOLDER": "Select status"
+          "PLACEHOLDER": "Status auswählen"
         }
       },
       "NAVIGATION": {
-        "NEXT": "Next",
-        "PREVIOUS": "Previous",
-        "CREATE": "Create Item",
-        "UPDATE": "Update Item",
-        "CANCEL": "Cancel",
+        "NEXT": "Weiter",
+        "PREVIOUS": "Zurück",
+        "CREATE": "Element erstellen",
+        "UPDATE": "Element aktualisieren",
+        "CANCEL": "Abbrechen",
         "STEP_COUNTER": "Schritt {current} von {total}"
       }
     },
