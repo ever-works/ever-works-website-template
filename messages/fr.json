@@ -1401,99 +1401,99 @@
         "SOURCE_URL_REQUIRED": "L'URL source est requise",
         "SOURCE_URL_INVALID": "Veuillez entrer une URL valide",
         "CATEGORY_REQUIRED": "Au moins une catégorie est requise",
-        "ICON_URL_INVALID": "Please enter a valid icon URL",
-        "ICON_URL_LOAD_FAILED": "Failed to load icon from URL",
-        "TAGS_REQUIRED": "At least one tag is required",
-        "STATUS_REQUIRED": "Status is required"
+        "ICON_URL_INVALID": "Veuillez entrer une URL d'icône valide",
+        "ICON_URL_LOAD_FAILED": "Échec du chargement de l'icône depuis l'URL",
+        "TAGS_REQUIRED": "Au moins une étiquette est requise",
+        "STATUS_REQUIRED": "Le statut est requis"
       },
       "STEPS": {
         "BASIC_INFO": {
-          "TITLE": "Basic Information",
-          "DESCRIPTION": "Enter the core details about the item"
+          "TITLE": "Informations de Base",
+          "DESCRIPTION": "Entrez les détails essentiels de l'élément"
         },
         "CLASSIFICATION": {
           "TITLE": "Classification",
-          "DESCRIPTION": "Organize the item with categories and tags",
-          "TIPS_TITLE": "Tips for Classification",
-          "TIP_1": "Use descriptive categories that match your directory structure",
-          "TIP_2": "Add relevant tags to improve searchability",
-          "TIP_3": "Keep categories broad and tags specific"
+          "DESCRIPTION": "Organisez l'élément avec des catégories et des étiquettes",
+          "TIPS_TITLE": "Conseils pour la Classification",
+          "TIP_1": "Utilisez des catégories descriptives qui correspondent à votre structure de répertoire",
+          "TIP_2": "Ajoutez des étiquettes pertinentes pour améliorer la recherche",
+          "TIP_3": "Gardez les catégories larges et les étiquettes spécifiques"
         },
         "MEDIA_LINKS": {
-          "TITLE": "Media & Links",
-          "DESCRIPTION": "Add source URL and visual elements",
-          "TIPS_TITLE": "Media Guidelines",
-          "TIP_1": "Ensure URLs are valid and accessible",
-          "TIP_2": "Use high-quality icons (min 256x256px recommended)",
-          "TIP_3": "Icons should be in PNG or SVG format for best quality"
+          "TITLE": "Médias et Liens",
+          "DESCRIPTION": "Ajoutez l'URL source et les éléments visuels",
+          "TIPS_TITLE": "Directives Médias",
+          "TIP_1": "Assurez-vous que les URL sont valides et accessibles",
+          "TIP_2": "Utilisez des icônes de haute qualité (minimum 256x256px recommandé)",
+          "TIP_3": "Les icônes doivent être au format PNG ou SVG pour une meilleure qualité"
         },
         "REVIEW": {
-          "TITLE": "Review & Submit",
-          "DESCRIPTION": "Review all details before submission",
-          "SUMMARY_TITLE": "Summary",
-          "SETTINGS_TITLE": "Settings",
-          "NOT_SET": "Not set"
+          "TITLE": "Révision et Soumission",
+          "DESCRIPTION": "Vérifiez tous les détails avant la soumission",
+          "SUMMARY_TITLE": "Résumé",
+          "SETTINGS_TITLE": "Paramètres",
+          "NOT_SET": "Non défini"
         }
       },
       "FIELDS": {
         "ID": {
-          "LABEL": "Item ID",
-          "PLACEHOLDER": "Enter unique item ID (e.g., awesome-time-tracking-tool)",
-          "HELP": "Unique identifier for the item (cannot be changed after creation)"
+          "LABEL": "ID de l'Élément",
+          "PLACEHOLDER": "Entrez un ID unique (ex: awesome-time-tracking-tool)",
+          "HELP": "Identifiant unique pour l'élément (ne peut pas être modifié après création)"
         },
         "NAME": {
-          "LABEL": "Item Name",
-          "PLACEHOLDER": "Enter item name (e.g., Awesome Time Tracking Tool)"
+          "LABEL": "Nom de l'Élément",
+          "PLACEHOLDER": "Entrez le nom de l'élément (ex: Awesome Time Tracking Tool)"
         },
         "SLUG": {
-          "LABEL": "Item Slug",
-          "PLACEHOLDER": "Enter URL slug (e.g., awesome-time-tracking-tool)",
-          "HELP": "URL-friendly identifier for the item"
+          "LABEL": "Slug de l'Élément",
+          "PLACEHOLDER": "Entrez le slug URL (ex: awesome-time-tracking-tool)",
+          "HELP": "Identifiant convivial pour l'URL de l'élément"
         },
         "DESCRIPTION": {
           "LABEL": "Description",
-          "PLACEHOLDER": "Enter detailed description of the item...",
-          "HELP": "Detailed description of the item ({current}/{max})"
+          "PLACEHOLDER": "Entrez une description détaillée de l'élément...",
+          "HELP": "Description détaillée de l'élément ({current}/{max})"
         },
         "CATEGORY": {
-          "LABEL": "Categories",
-          "PLACEHOLDER": "Enter categories separated by commas",
-          "HELP": "Categories for organizing the item",
-          "SUGGESTED": "Suggested categories"
+          "LABEL": "Catégories",
+          "PLACEHOLDER": "Entrez les catégories séparées par des virgules",
+          "HELP": "Catégories pour organiser l'élément",
+          "SUGGESTED": "Catégories suggérées"
         },
         "TAGS": {
-          "LABEL": "Tags",
-          "PLACEHOLDER": "Enter tags separated by commas",
-          "HELP": "Tags for better searchability and organization",
-          "SUGGESTED": "Suggested tags"
+          "LABEL": "Étiquettes",
+          "PLACEHOLDER": "Entrez les étiquettes séparées par des virgules",
+          "HELP": "Étiquettes pour une meilleure recherche et organisation",
+          "SUGGESTED": "Étiquettes suggérées"
         },
         "ICON_URL": {
-          "LABEL": "Icon URL",
-          "PLACEHOLDER": "https://example.com/icon.png",
-          "HELP": "Optional icon URL for the item",
-          "UPLOAD_BUTTON": "Upload Icon"
+          "LABEL": "URL de l'Icône",
+          "PLACEHOLDER": "https://exemple.com/icone.png",
+          "HELP": "URL d'icône optionnelle pour l'élément",
+          "UPLOAD_BUTTON": "Télécharger l'Icône"
         },
         "SOURCE_URL": {
-          "LABEL": "Source URL",
-          "PLACEHOLDER": "https://github.com/example/awesome-tool",
-          "HELP": "Link to the item's source or homepage",
-          "PREVIEW_BUTTON": "Preview URL"
+          "LABEL": "URL Source",
+          "PLACEHOLDER": "https://github.com/exemple/awesome-tool",
+          "HELP": "Lien vers la source ou la page d'accueil de l'élément",
+          "PREVIEW_BUTTON": "Aperçu de l'URL"
         },
         "FEATURED": {
-          "LABEL": "Featured Item",
-          "HELP": "Featured items appear prominently on the site"
+          "LABEL": "Élément en Vedette",
+          "HELP": "Les éléments en vedette apparaissent de manière proéminente sur le site"
         },
         "STATUS": {
-          "LABEL": "Status",
-          "PLACEHOLDER": "Select status"
+          "LABEL": "Statut",
+          "PLACEHOLDER": "Sélectionner le statut"
         }
       },
       "NAVIGATION": {
-        "NEXT": "Next",
-        "PREVIOUS": "Previous",
-        "CREATE": "Create Item",
-        "UPDATE": "Update Item",
-        "CANCEL": "Cancel",
+        "NEXT": "Suivant",
+        "PREVIOUS": "Précédent",
+        "CREATE": "Créer l'Élément",
+        "UPDATE": "Mettre à Jour l'Élément",
+        "CANCEL": "Annuler",
         "STEP_COUNTER": "Étape {current} sur {total}"
       }
     },
