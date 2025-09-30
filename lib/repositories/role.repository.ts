@@ -31,6 +31,9 @@ export class RoleRepository {
   async findById(id: string): Promise<RoleData | null> {
     return this.dbService.findById(id);
   }
+  async findByName(name: string): Promise<RoleData | null> {
+    return this.dbService.findBy('name',name);
+  }
 
   async exists(id: string, options?: { includeDeleted?: boolean }): Promise<boolean> {
     return this.dbService.exists(id, options);

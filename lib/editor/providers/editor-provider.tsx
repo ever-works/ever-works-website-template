@@ -21,7 +21,7 @@ export const EditorContext = createContext<Editor | null>(null);
 export function EditorContextProvider({ children }: { children: React.ReactNode }) {
 	const extensions = useMemo(
 		() => [
-			StarterKit.configure({
+			StarterKit?.configure({
 				horizontalRule: false,
 				link: {
 					openOnClick: false,
@@ -29,8 +29,8 @@ export function EditorContextProvider({ children }: { children: React.ReactNode 
 				}
 			}),
 			HorizontalRule,
-			TextAlign.configure({ types: ['heading', 'paragraph'] }),
-			ImageUploadNode.configure({
+			TextAlign?.configure({ types: ['heading', 'paragraph'] }),
+			ImageUploadNode?.configure({
 				accept: 'image/*',
 				maxSize: MAX_FILE_SIZE,
 				limit: 3,
@@ -38,8 +38,8 @@ export function EditorContextProvider({ children }: { children: React.ReactNode 
 				onError: (error) => console.error('Upload failed:', error)
 			}),
 			TaskList,
-			TaskItem.configure({ nested: true }),
-			Highlight.configure({ multicolor: true }),
+			TaskItem?.configure({ nested: true }),
+			Highlight?.configure({ multicolor: true }),
 			Image,
 			Typography,
 			Superscript,

@@ -57,6 +57,34 @@ export class RoleDbService {
     // Map roles with their permissions
     return rolesResult.map(role => this.mapDbToRoleData(role, permissionsByRole[role.id] || []));
   }
+  public async findBy(key: keyof typeof roles.$inferSelect, value: string): Promise<RoleData | null> {
+    // Create a mapping of valid column keys to their corresponding column objects
+    const columnMap = {
+      id: roles.id,
+      name: roles.name,
+      description: roles.description,
+      isAdmin: roles.isAdmin,
+      status: roles.status,
+      created_by: roles.created_by,
+      createdAt: roles.createdAt,
+      updatedAt: roles.updatedAt,
+      deletedAt: roles.deletedAt,
+    } as const;
+
+    // Get the column object for the specified key
+    const column = columnMap[key];
+    if (!column) {
+      throw new Error(`Invalid column key: ${String(key)}`);
+    }
+
+    const rolesResult = await db.select().from(roles).where(eq(column, value));
+    if (rolesResult.length === 0) {
+      return null;
+    }
+    const role = rolesResult[0];
+    const permissions = await this.getRolePermissions(role.id);
+    return this.mapDbToRoleData(role, permissions);
+  }
 
   // Helper method to update role permissions
   private async updateRolePermissions(roleId: string, newPermissions: Permission[]): Promise<void> {
