@@ -273,9 +273,11 @@ export function BasicInfoStep({
           <p className="text-sm text-red-600">{errors.description}</p>
         )}
         <div className="flex justify-between text-xs text-gray-500">
-          <span>{t('FIELDS.DESCRIPTION.HELP')}</span>
           <span>
-            {data.description.length}/{ITEM_VALIDATION.DESCRIPTION_MAX_LENGTH}
+            {t('FIELDS.DESCRIPTION.HELP', {
+              current: data.description.length,
+              max: ITEM_VALIDATION.DESCRIPTION_MAX_LENGTH
+            })}
           </span>
         </div>
       </div>
