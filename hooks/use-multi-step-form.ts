@@ -2,14 +2,6 @@
 
 import { useState, useCallback } from 'react';
 
-export interface MultiStepFormStep {
-  id: string;
-  title: string;
-  description: string;
-  isCompleted: boolean;
-  isValid: boolean;
-}
-
 export interface UseMultiStepFormOptions {
   totalSteps: number;
   initialStep?: number;
