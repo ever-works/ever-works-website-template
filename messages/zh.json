@@ -489,6 +489,8 @@
     "NEED_HELP_DESC": "找不到您要找的内容？我们在这里为您提供帮助！",
     "DOCUMENTATION": "文档",
     "DOCUMENTATION_DESC": "完整的文档和API参考",
+    "DOCS_PAGE_TITLE": "API文档",
+    "DOCS_PAGE_DESCRIPTION": "Ever Works网站模板的交互式API文档",
     "VIEW_DOCUMENTATION": "查看文档 →",
     "COMMUNITY": "社区",
     "COMMUNITY_DESC": "加入我们的Discord社区获得支持",
@@ -744,6 +746,11 @@
       "BACKEND": "后端",
       "TOOLS_FRAMEWORKS": "工具和框架",
       "OTHER": "其他"
+    }
+  },
+  "page": {
+    "documentation": {
+      "DOCS_PAGE_DESCRIPTION": "探索和测试Ever Works网站模板API。这个交互式文档让您了解并试用所有可用的端点。"
     }
   },
   "admin": {

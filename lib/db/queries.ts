@@ -397,15 +397,26 @@ export async function getItemsSortedByVotes(limit: number = 10, offset: number =
 	return itemsWithVotes;
 }
 
+/**
+ * Get the net vote score for an item (upvotes - downvotes)
+ * @param itemId - The item ID to get the vote score for
+ * @returns Net vote score (positive = more upvotes, negative = more downvotes, 0 = equal or no votes)
+ */
 export async function getVoteCountForItem(itemId: string): Promise<number> {
 	const [result] = await db
 		.select({
-			count: sql<number>`count(*)`.as('count')
+			netScore: sql<number>`
+				SUM(CASE
+					WHEN vote_type = 'upvote' THEN 1
+					WHEN vote_type = 'downvote' THEN -1
+					ELSE 0
+				END)
+			`.as('netScore')
 		})
 		.from(votes)
 		.where(eq(votes.itemId, itemId));
 
-	return Number(result?.count || 0);
+	return Number(result?.netScore || 0);
 }
 
 // export async function getActivityLogs() {}

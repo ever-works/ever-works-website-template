@@ -59,13 +59,13 @@ type RouteParams ={ params: Promise<{ itemId: string }> };
  *                 summary: "Authenticated user who downvoted"
  *                 value:
  *                   success: true
- *                   count: 8
+ *                   count: -3
  *                   userVote: "down"
  *               authenticated_no_vote:
  *                 summary: "Authenticated user with no vote"
  *                 value:
  *                   success: true
- *                   count: 12
+ *                   count: 0
  *                   userVote: null
  *               unauthenticated:
  *                 summary: "Unauthenticated user"

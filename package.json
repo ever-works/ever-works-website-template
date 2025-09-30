@@ -22,7 +22,7 @@
 		"dev": "node scripts/check-env.js --quick && yarn generate-docs && next dev",
 		"predev": "node scripts/clone.cjs",
 		"generate-docs": "tsx scripts/generate-openapi.ts",
-		"docs:watch": "nodemon --watch 'app/api/**/*.ts' --exec 'npm run generate-docs'",
+		"docs:watch": "nodemon --watch 'app/api/**/*.ts' --exec 'yarn generate-docs'",
 		"dev:check": "node scripts/check-env.js && next dev",
 		"build": "node scripts/check-env.js && yarn generate-docs && next build",
 		"build:ci": "node scripts/check-env-ci.js --silent && next build",

@@ -509,6 +509,8 @@
     "NEED_HELP_DESC": "Sie finden nicht, wonach Sie suchen? Wir sind hier, um zu helfen!",
     "DOCUMENTATION": "Dokumentation",
     "DOCUMENTATION_DESC": "Umfassende Dokumentation und API-Referenz",
+    "DOCS_PAGE_TITLE": "API-Dokumentation",
+    "DOCS_PAGE_DESCRIPTION": "Interaktive API-Dokumentation für die Ever Works Website-Vorlage",
     "VIEW_DOCUMENTATION": "Dokumentation anzeigen →",
     "COMMUNITY": "Community",
     "COMMUNITY_DESC": "Treten Sie unserer Discord-Community für Support bei",
@@ -764,6 +766,11 @@
       "BACKEND": "Backend",
       "TOOLS_FRAMEWORKS": "Tools & Frameworks",
       "OTHER": "Sonstiges"
+    }
+  },
+  "page": {
+    "documentation": {
+      "DOCS_PAGE_DESCRIPTION": "Erkunden und testen Sie die APIs der Ever Works Website-Vorlage. Diese interaktive Dokumentation ermöglicht es Ihnen, alle verfügbaren Endpunkte zu verstehen und auszuprobieren."
     }
   },
   "admin": {

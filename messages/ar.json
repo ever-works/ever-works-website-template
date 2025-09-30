@@ -436,6 +436,8 @@
     "NEED_HELP_DESC": "لا تجد ما تبحث عنه؟ نحن هنا للمساعدة!",
     "DOCUMENTATION": "التوثيق",
     "DOCUMENTATION_DESC": "وثائق شاملة ومرجع API",
+    "DOCS_PAGE_TITLE": "توثيق API",
+    "DOCS_PAGE_DESCRIPTION": "توثيق API تفاعلي لقالب موقع Ever Works",
     "VIEW_DOCUMENTATION": "عرض التوثيق ←",
     "COMMUNITY": "المجتمع",
     "COMMUNITY_DESC": "انضم إلى مجتمع Discord للحصول على الدعم",
@@ -691,6 +693,11 @@
       "BACKEND": "الخلفية",
       "TOOLS_FRAMEWORKS": "الأدوات والإطارات",
       "OTHER": "أخرى"
+    }
+  },
+  "page": {
+    "documentation": {
+      "DOCS_PAGE_DESCRIPTION": "استكشف واختبر واجهات برمجة التطبيقات لقالب موقع Ever Works. تتيح لك هذه الوثائق التفاعلية فهم وتجربة جميع النقاط النهائية المتاحة."
     }
   },
   "admin": {

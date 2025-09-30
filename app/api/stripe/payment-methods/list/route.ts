@@ -127,7 +127,11 @@ import { getUserStripeCustomerId } from '@/lib/stripe-helpers';
  *                       description: "Stripe customer ID"
  *                       example: "cus_1234567890abcdef"
  *                   required: ["total", "customer_id"]
- *               required: ["success", "data", "meta"]
+ *                 message:
+ *                   type: string
+ *                   description: "Optional message when no payment methods are found"
+ *                   example: "No payment methods found"
+ *               required: ["success", "data"]
  *             examples:
  *               with_payment_methods:
  *                 summary: "User with payment methods"

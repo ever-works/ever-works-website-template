@@ -679,6 +679,8 @@
     "USAGE_GUIDE_SUBTITLE": "Master your directory platform with comprehensive tutorials and best practices",
     "DOCUMENTATION": "Documentation",
     "DOCUMENTATION_DESC": "Comprehensive guides and API reference for building directories",
+    "DOCS_PAGE_TITLE": "API Documentation",
+    "DOCS_PAGE_DESCRIPTION": "Interactive API documentation for the Ever Works website template",
     "COMMUNITY": "Community",
     "COMMUNITY_DESC": "Join our Discord community for support and discussions",
     "EMAIL_SUPPORT": "Email Support",
@@ -1103,6 +1105,11 @@
       "BACKEND": "Backend",
       "TOOLS_FRAMEWORKS": "Tools & Frameworks",
       "OTHER": "Other"
+    }
+  },
+  "page": {
+    "documentation": {
+      "DOCS_PAGE_DESCRIPTION": "Explore and test the Ever Works website template APIs. This interactive documentation allows you to understand and try out all available endpoints."
     }
   },
   "admin": {
