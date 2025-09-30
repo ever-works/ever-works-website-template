@@ -62,7 +62,8 @@ import { auth, initializeStripeProvider } from '@/lib/auth';
  *                     example: "stripe"
  *                   subscriptionId:
  *                     type: string
- *                     description: "Associated subscription ID"
+ *                     nullable: true
+ *                     description: "Associated subscription ID (empty string if no subscription)"
  *                     example: "sub_1234567890abcdef"
  *                   description:
  *                     type: string
@@ -156,9 +157,7 @@ import { auth, initializeStripeProvider } from '@/lib/auth';
  *               properties:
  *                 error:
  *                   type: string
- *                   examples:
- *                     stripe_error: "Failed to fetch payment data from Stripe"
- *                     general_error: "Failed to fetch payment data"
+ *                   example: "Failed to fetch payment data"
  *     x-data-sources:
  *       description: "Data sources and processing"
  *       sources:

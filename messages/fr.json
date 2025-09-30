@@ -1008,7 +1008,9 @@
   },
   "page": {
     "documentation": {
-      "DOCS_PAGE_DESCRIPTION": "Explorez et testez les API du modèle de site web Ever Works. Cette documentation interactive vous permet de comprendre et d'essayer tous les endpoints disponibles."
+      "DOCS_PAGE_DESCRIPTION": "Explorez et testez les API du modèle de site web Ever Works. Cette documentation interactive vous permet de comprendre et d'essayer tous les endpoints disponibles.",
+      "DOCS_PAGE_FOOTER_LINE_1": "Cette documentation est générée automatiquement à partir de notre spécification OpenAPI.",
+      "DOCS_PAGE_FOOTER_LINE_2": "Pour toute question ou support, veuillez contacter l'équipe Ever Works."
     }
   },
   "admin": {

@@ -301,7 +301,7 @@ export async function GET(
  *   delete:
  *     tags: ["Stripe - Payment Methods"]
  *     summary: "Delete payment method by ID"
- *     description: "Deletes a specific payment method by ID for the authenticated user. Includes security verification and automatic default payment method reassignment if the deleted method was the default. Handles subscription impact analysis."
+ *     description: "Deletes a specific payment method by ID for the authenticated user. Includes security verification and automatic default payment method reassignment if the deleted method was the default."
  *     security:
  *       - sessionAuth: []
  *     parameters:

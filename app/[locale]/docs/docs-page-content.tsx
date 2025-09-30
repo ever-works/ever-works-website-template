@@ -3,18 +3,17 @@
 import { useTranslations } from 'next-intl';
 
 export function DocsPageContent() {
-  const t = useTranslations('page.documentation');
-  const tHelp = useTranslations('help');
+  const t = useTranslations();
 
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            {tHelp('DOCS_PAGE_TITLE')}
+            {t('help.DOCS_PAGE_TITLE')}
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            {t('DOCS_PAGE_DESCRIPTION')}
+            {t('page.documentation.DOCS_PAGE_DESCRIPTION')}
           </p>
         </div>
         
@@ -29,9 +28,9 @@ export function DocsPageContent() {
         
         <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
           <p>
-            This documentation is automatically generated from our OpenAPI specification.
+            {t('page.documentation.DOCS_PAGE_FOOTER_LINE_1')}
             <br />
-            For questions or support, please contact the Ever Works team.
+            {t('page.documentation.DOCS_PAGE_FOOTER_LINE_2')}
           </p>
         </div>
       </div>

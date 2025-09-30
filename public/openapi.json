@@ -6755,7 +6755,7 @@
           "Admin - Items"
         ],
         "summary": "Get item statistics",
-        "description": "Returns comprehensive statistics about items including counts by status, categories, tags, featured items, and other metrics for admin dashboard and analytics. Requires admin privileges.",
+        "description": "Returns basic statistics about items including total count and counts by status (draft, pending, approved, rejected). Requires admin privileges.",
         "security": [
           {
             "sessionAuth": []
@@ -6776,88 +6776,39 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "totalItems": {
+                        "total": {
                           "type": "integer",
                           "description": "Total number of items",
                           "example": 1247
                         },
-                        "statusCounts": {
-                          "type": "object",
-                          "properties": {
-                            "draft": {
-                              "type": "integer",
-                              "description": "Number of draft items",
-                              "example": 45
-                            },
-                            "pending": {
-                              "type": "integer",
-                              "description": "Number of pending items",
-                              "example": 23
-                            },
-                            "approved": {
-                              "type": "integer",
-                              "description": "Number of approved items",
-                              "example": 1156
-                            },
-                            "rejected": {
-                              "type": "integer",
-                              "description": "Number of rejected items",
-                              "example": 23
-                            }
-                          }
-                        },
-                        "featuredItems": {
+                        "draft": {
                           "type": "integer",
-                          "description": "Number of featured items",
-                          "example": 89
+                          "description": "Number of draft items",
+                          "example": 45
                         },
-                        "categoryCounts": {
-                          "type": "object",
-                          "description": "Items count by category",
-                          "additionalProperties": {
-                            "type": "integer"
-                          },
-                          "example": {
-                            "productivity": 234,
-                            "design": 156,
-                            "development": 189,
-                            "business": 145
-                          }
-                        },
-                        "tagCounts": {
-                          "type": "object",
-                          "description": "Items count by tag",
-                          "additionalProperties": {
-                            "type": "integer"
-                          },
-                          "example": {
-                            "saas": 345,
-                            "free": 234,
-                            "paid": 567,
-                            "collaboration": 123
-                          }
-                        },
-                        "recentItems": {
+                        "pending": {
                           "type": "integer",
-                          "description": "Items created in the last 30 days",
-                          "example": 67
+                          "description": "Number of pending items",
+                          "example": 23
                         },
-                        "averageRating": {
-                          "type": "number",
-                          "description": "Average rating across all items",
-                          "example": 4.2
-                        },
-                        "totalViews": {
+                        "approved": {
                           "type": "integer",
-                          "description": "Total views across all items",
-                          "example": 45678
+                          "description": "Number of approved items",
+                          "example": 1156
                         },
-                        "totalVotes": {
+                        "rejected": {
                           "type": "integer",
-                          "description": "Total votes across all items",
-                          "example": 3456
+                          "description": "Number of rejected items",
+                          "example": 23
                         }
-                      }
+                      },
+                      "required": [
+                        "total",
+                        "draft",
+                        "pending",
+                        "approved",
+                        "rejected"
+                      ]
                     }
                   },
                   "required": [
@@ -6868,30 +6819,11 @@
                 "example": {
                   "success": true,
                   "data": {
-                    "totalItems": 1247,
-                    "statusCounts": {
-                      "draft": 45,
-                      "pending": 23,
-                      "approved": 1156,
-                      "rejected": 23
-                    },
-                    "featuredItems": 89,
-                    "categoryCounts": {
-                      "productivity": 234,
-                      "design": 156,
-                      "development": 189,
-                      "business": 145
-                    },
-                    "tagCounts": {
-                      "saas": 345,
-                      "free": 234,
-                      "paid": 567,
-                      "collaboration": 123
-                    },
-                    "recentItems": 67,
-                    "averageRating": 4.2,
-                    "totalViews": 45678,
-                    "totalVotes": 3456
+                    "total": 1247,
+                    "draft": 45,
+                    "pending": 23,
+                    "approved": 1156,
+                    "rejected": 23
                   }
                 }
               }
@@ -13300,7 +13232,7 @@
                     "summary": "Authenticated user who downvoted",
                     "value": {
                       "success": true,
-                      "count": 8,
+                      "count": -3,
                       "userVote": "down"
                     }
                   },
@@ -13308,7 +13240,7 @@
                     "summary": "Authenticated user with no vote",
                     "value": {
                       "success": true,
-                      "count": 12,
+                      "count": 0,
                       "userVote": null
                     }
                   },
@@ -17371,7 +17303,7 @@
           "Stripe - Payment Methods"
         ],
         "summary": "Delete payment method by ID",
-        "description": "Deletes a specific payment method by ID for the authenticated user. Includes security verification and automatic default payment method reassignment if the deleted method was the default. Handles subscription impact analysis.",
+        "description": "Deletes a specific payment method by ID for the authenticated user. Includes security verification and automatic default payment method reassignment if the deleted method was the default.",
         "security": [
           {
             "sessionAuth": []
@@ -18196,12 +18128,16 @@
                         "total",
                         "customer_id"
                       ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Optional message when no payment methods are found",
+                      "example": "No payment methods found"
                     }
                   },
                   "required": [
                     "success",
-                    "data",
-                    "meta"
+                    "data"
                   ]
                 },
                 "examples": {
@@ -18982,10 +18918,7 @@
                     },
                     "error": {
                       "type": "string",
-                      "examples": {
-                        "missing_id": "Setup intent ID is required",
-                        "stripe_error": "Invalid setup intent ID"
-                      }
+                      "example": "Setup intent ID is required"
                     }
                   }
                 }
@@ -19045,10 +18978,7 @@
                     },
                     "error": {
                       "type": "string",
-                      "examples": {
-                        "setup_intent": "Setup intent not found",
-                        "customer": "Customer not found"
-                      }
+                      "example": "Setup intent not found"
                     }
                   }
                 }
@@ -21264,7 +21194,8 @@
                       },
                       "subscriptionId": {
                         "type": "string",
-                        "description": "Associated subscription ID",
+                        "nullable": true,
+                        "description": "Associated subscription ID (empty string if no subscription)",
                         "example": "sub_1234567890abcdef"
                       },
                       "description": {
@@ -21395,10 +21326,7 @@
                   "properties": {
                     "error": {
                       "type": "string",
-                      "examples": {
-                        "stripe_error": "Failed to fetch payment data from Stripe",
-                        "general_error": "Failed to fetch payment data"
-                      }
+                      "example": "Failed to fetch payment data"
                     }
                   }
                 }
@@ -21929,11 +21857,30 @@
                     },
                     "error": {
                       "type": "string",
-                      "examples": {
-                        "not_configured": "ReCAPTCHA not configured",
-                        "verification_failed": "Failed to verify ReCAPTCHA",
-                        "general_error": "Verification failed"
-                      }
+                      "example": "Verification failed"
+                    }
+                  }
+                },
+                "examples": {
+                  "not_configured": {
+                    "summary": "Missing secret key",
+                    "value": {
+                      "success": false,
+                      "error": "ReCAPTCHA not configured"
+                    }
+                  },
+                  "verification_failed": {
+                    "summary": "Upstream verification failure",
+                    "value": {
+                      "success": false,
+                      "error": "Failed to verify ReCAPTCHA"
+                    }
+                  },
+                  "general_error": {
+                    "summary": "Unexpected runtime error",
+                    "value": {
+                      "success": false,
+                      "error": "Verification failed"
                     }
                   }
                 }

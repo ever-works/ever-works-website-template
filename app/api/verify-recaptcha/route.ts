@@ -106,10 +106,23 @@ import { externalClient, apiUtils } from "@/lib/api/server-api-client";
  *                   example: false
  *                 error:
  *                   type: string
- *                   examples:
- *                     not_configured: "ReCAPTCHA not configured"
- *                     verification_failed: "Failed to verify ReCAPTCHA"
- *                     general_error: "Verification failed"
+ *                   example: "Verification failed"
+ *             examples:
+ *               not_configured:
+ *                 summary: "Missing secret key"
+ *                 value:
+ *                   success: false
+ *                   error: "ReCAPTCHA not configured"
+ *               verification_failed:
+ *                 summary: "Upstream verification failure"
+ *                 value:
+ *                   success: false
+ *                   error: "Failed to verify ReCAPTCHA"
+ *               general_error:
+ *                 summary: "Unexpected runtime error"
+ *                 value:
+ *                   success: false
+ *                   error: "Verification failed"
  *     x-development-mode:
  *       description: "Development mode behavior"
  *       behavior: "When RECAPTCHA_SECRET_KEY is not configured in development, returns success: true without verification"

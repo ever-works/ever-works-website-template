@@ -92,9 +92,7 @@ import Stripe from 'stripe';
  *                   example: false
  *                 error:
  *                   type: string
- *                   examples:
- *                     missing_id: "Setup intent ID is required"
- *                     stripe_error: "Invalid setup intent ID"
+ *                   example: "Setup intent ID is required"
  *       401:
  *         description: "Unauthorized - Authentication required"
  *         content:
@@ -133,9 +131,7 @@ import Stripe from 'stripe';
  *                   example: false
  *                 error:
  *                   type: string
- *                   examples:
- *                     setup_intent: "Setup intent not found"
- *                     customer: "Customer not found"
+ *                   example: "Setup intent not found"
  *       500:
  *         description: "Internal server error"
  *         content:
