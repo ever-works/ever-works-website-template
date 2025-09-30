@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useMultiStepForm } from '@/hooks/use-multi-step-form';
 import { StepIndicator, StepNavigation } from '@/components/ui/multi-step-form';
 import {
@@ -31,29 +31,6 @@ interface FormData {
   review: ReviewData;
 }
 
-const FORM_STEPS = [
-  {
-    id: 'basic-info',
-    title: 'Basic Info',
-    description: 'Core details'
-  },
-  {
-    id: 'media-links',
-    title: 'Media & Links',
-    description: 'Resources'
-  },
-  {
-    id: 'classification',
-    title: 'Classification',
-    description: 'Categories & Tags'
-  },
-  {
-    id: 'review',
-    title: 'Review & Submit',
-    description: 'Final check'
-  }
-];
-
 export function MultiStepItemForm({
   item,
   mode,
@@ -62,6 +39,30 @@ export function MultiStepItemForm({
   isLoading = false
 }: MultiStepItemFormProps) {
   const t = useTranslations('admin.ITEM_FORM');
+
+  // Define steps with i18n support
+  const FORM_STEPS = useMemo(() => [
+    {
+      id: 'basic-info',
+      title: t('STEPS.BASIC_INFO.TITLE'),
+      description: t('STEPS.BASIC_INFO.DESCRIPTION')
+    },
+    {
+      id: 'media-links',
+      title: t('STEPS.MEDIA_LINKS.TITLE'),
+      description: t('STEPS.MEDIA_LINKS.DESCRIPTION')
+    },
+    {
+      id: 'classification',
+      title: t('STEPS.CLASSIFICATION.TITLE'),
+      description: t('STEPS.CLASSIFICATION.DESCRIPTION')
+    },
+    {
+      id: 'review',
+      title: t('STEPS.REVIEW.TITLE'),
+      description: t('STEPS.REVIEW.DESCRIPTION')
+    }
+  ], [t]);
 
   // Initialize form data
   const [formData, setFormData] = useState<FormData>({
@@ -151,8 +152,8 @@ export function MultiStepItemForm({
   };
 
   const handleStepClick = (step: number) => {
-    // Allow navigation to completed steps or the next immediate step
-    const canNavigate = completedSteps.has(step) || step === currentStep + 1;
+    // Only allow navigation to completed steps to maintain validation integrity
+    const canNavigate = completedSteps.has(step);
     if (canNavigate) {
       goToStep(step);
     }
