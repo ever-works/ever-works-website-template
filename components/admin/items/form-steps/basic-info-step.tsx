@@ -40,7 +40,7 @@ export function BasicInfoStep({
       .replace(/-+/g, '-');
   };
 
-  const validateField = (field: keyof BasicInfoData, value: string): string => {
+  const validateField = useCallback((field: keyof BasicInfoData, value: string): string => {
     switch (field) {
       case 'id':
         if (!value.trim()) {
@@ -97,7 +97,7 @@ export function BasicInfoStep({
         break;
     }
     return '';
-  };
+  }, [t]);
 
   const validateAllFields = useCallback((): Record<string, string> => {
     const newErrors: Record<string, string> = {};
@@ -110,7 +110,7 @@ export function BasicInfoStep({
     });
 
     return newErrors;
-  }, [data]);
+  }, [data, validateField]);
 
   const handleFieldChange = (field: keyof BasicInfoData, value: string) => {
     const newData = { ...data, [field]: value };
