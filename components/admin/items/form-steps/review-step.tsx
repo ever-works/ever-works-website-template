@@ -221,7 +221,7 @@ export function ReviewStep({
                     {mediaLinks.icon_url ? (
                       <img
                         src={mediaLinks.icon_url}
-                        alt="Icon"
+                        alt={`${basicInfo.name || 'Item'} icon`}
                         className="w-8 h-8 object-contain rounded"
                       />
                     ) : (
