@@ -158,7 +158,7 @@ export function MediaLinksStep({
             </div>
 
             {/* Icon Preview */}
-            <div className="w-16 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
+            <div className="w-16 h-16 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center bg-gray-50 dark:bg-gray-800">
               {previewImage ? (
                 <img
                   src={previewImage}
