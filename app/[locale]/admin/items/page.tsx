@@ -558,15 +558,17 @@ export default function AdminItemsPage() {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <MultiStepItemForm
-              item={selectedItem}
-              mode={formMode}
-              onSubmit={handleFormSubmit}
-              onCancel={closeModal}
-              isLoading={isSubmitting}
-            />
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4">
+            <div className="max-w-4xl w-full">
+              <MultiStepItemForm
+                item={selectedItem}
+                mode={formMode}
+                onSubmit={handleFormSubmit}
+                onCancel={closeModal}
+                isLoading={isSubmitting}
+              />
+            </div>
           </div>
         </div>
       )}
