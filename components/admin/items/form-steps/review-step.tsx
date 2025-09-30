@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { StepContainer } from '@/components/ui/multi-step-form';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -57,7 +57,7 @@ export function ReviewStep({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
 
-  const validateData = (): Record<string, string> => {
+  const validateData = useCallback((): Record<string, string> => {
     const newErrors: Record<string, string> = {};
 
     if (!data.status) {
@@ -65,11 +65,7 @@ export function ReviewStep({
     }
 
     return newErrors;
-  };
-
-  const handleBlur = (field: string) => {
-    setTouchedFields(prev => new Set(prev).add(field));
-  };
+  }, [data, t]);
 
   const handleFieldChange = (field: keyof ReviewData, value: boolean | string) => {
     const newData = { ...data, [field]: value };
@@ -91,7 +87,7 @@ export function ReviewStep({
 
     setErrors(visibleErrors);
     onValidationChange(Object.keys(allErrors).length === 0);
-  }, [data, touchedFields, onValidationChange]);
+  }, [data, touchedFields, onValidationChange, validateData]);
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {

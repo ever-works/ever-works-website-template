@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { StepContainer } from '@/components/ui/multi-step-form';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { ITEM_VALIDATION } from '@/lib/types/item';
 import { useTranslations } from 'next-intl';
 
@@ -101,7 +99,7 @@ export function BasicInfoStep({
     return '';
   };
 
-  const validateAllFields = (): Record<string, string> => {
+  const validateAllFields = useCallback((): Record<string, string> => {
     const newErrors: Record<string, string> = {};
 
     (Object.keys(data) as Array<keyof BasicInfoData>).forEach(field => {
@@ -112,7 +110,7 @@ export function BasicInfoStep({
     });
 
     return newErrors;
-  };
+  }, [data]);
 
   const handleFieldChange = (field: keyof BasicInfoData, value: string) => {
     const newData = { ...data, [field]: value };
@@ -170,7 +168,7 @@ export function BasicInfoStep({
     setErrors(visibleErrors);
     // Report overall validity regardless of touched state
     onValidationChange(Object.keys(allErrors).length === 0);
-  }, [data, touchedFields, onValidationChange]);
+  }, [data, touchedFields, onValidationChange, validateAllFields]);
 
   return (
     <StepContainer

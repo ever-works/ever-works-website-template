@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { StepContainer } from '@/components/ui/multi-step-form';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -50,7 +50,7 @@ export function ClassificationStep({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
 
-  const validateData = (): Record<string, string> => {
+  const validateData = useCallback((): Record<string, string> => {
     const newErrors: Record<string, string> = {};
 
     if (data.category.length === 0) {
@@ -62,7 +62,7 @@ export function ClassificationStep({
     }
 
     return newErrors;
-  };
+  }, [data, t]);
 
   const handleBlur = (field: string) => {
     setTouchedFields(prev => new Set(prev).add(field));
@@ -146,7 +146,7 @@ export function ClassificationStep({
 
     setErrors(visibleErrors);
     onValidationChange(Object.keys(allErrors).length === 0);
-  }, [data, touchedFields, onValidationChange]);
+  }, [data, touchedFields, onValidationChange, validateData]);
 
   return (
     <StepContainer

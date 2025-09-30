@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { StepContainer } from '@/components/ui/multi-step-form';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -48,7 +48,7 @@ export function MediaLinksStep({
     return '';
   };
 
-  const validateAllFields = (): Record<string, string> => {
+  const validateAllFields = useCallback((): Record<string, string> => {
     const newErrors: Record<string, string> = {};
 
     (Object.keys(data) as Array<keyof MediaLinksData>).forEach(field => {
@@ -59,7 +59,7 @@ export function MediaLinksStep({
     });
 
     return newErrors;
-  };
+  }, [data]);
 
   const handleBlur = (field: string) => {
     setTouchedFields(prev => new Set(prev).add(field));
@@ -112,13 +112,14 @@ export function MediaLinksStep({
 
     setErrors(visibleErrors);
     onValidationChange(Object.keys(allErrors).length === 0);
-  }, [data, touchedFields, onValidationChange]);
+  }, [data, touchedFields, onValidationChange, validateAllFields]);
 
   // Set initial preview image
   useEffect(() => {
     if (data.icon_url && URL_PATTERN.test(data.icon_url)) {
       setPreviewImage(data.icon_url);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
