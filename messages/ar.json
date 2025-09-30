@@ -1182,7 +1182,8 @@
         "PREVIOUS": "Previous",
         "CREATE": "Create Item",
         "UPDATE": "Update Item",
-        "CANCEL": "Cancel"
+        "CANCEL": "Cancel",
+        "STEP_COUNTER": "الخطوة {current} من {total}"
       }
     },
     "DELETE_COMMENT_DIALOG": {

@@ -1235,7 +1235,8 @@
         "PREVIOUS": "Previous",
         "CREATE": "Create Item",
         "UPDATE": "Update Item",
-        "CANCEL": "Cancel"
+        "CANCEL": "Cancel",
+        "STEP_COUNTER": "Paso {current} de {total}"
       }
     },
     "DELETE_COMMENT_DIALOG": {

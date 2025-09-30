@@ -1235,7 +1235,8 @@
         "PREVIOUS": "Previous",
         "CREATE": "Create Item",
         "UPDATE": "Update Item",
-        "CANCEL": "Cancel"
+        "CANCEL": "Cancel",
+        "STEP_COUNTER": "第 {current} 步，共 {total} 步"
       }
     },
     "DELETE_COMMENT_DIALOG": {

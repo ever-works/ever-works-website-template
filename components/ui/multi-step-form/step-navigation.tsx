@@ -19,6 +19,7 @@ interface StepNavigationProps {
   previousLabel?: string;
   submitLabel?: string;
   cancelLabel?: string;
+  stepCounterLabel?: string;
   className?: string;
 }
 
@@ -37,6 +38,7 @@ export function StepNavigation({
   previousLabel = "Previous",
   submitLabel = "Submit",
   cancelLabel = "Cancel",
+  stepCounterLabel,
   className
 }: StepNavigationProps) {
   const BUTTON_CLASSES = "min-w-24";
@@ -64,7 +66,7 @@ export function StepNavigation({
             variant="ghost"
             onClick={onCancel}
             disabled={isSubmitting}
-            className="text-gray-600 hover:text-gray-900"
+            className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
           >
             {cancelLabel}
           </Button>
@@ -72,8 +74,8 @@ export function StepNavigation({
       </div>
 
       {/* Center - Step Counter */}
-      <div className="text-sm text-gray-600 font-medium">
-        Step {currentStep} of {totalSteps}
+      <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+        {stepCounterLabel || `Step ${currentStep} of ${totalSteps}`}
       </div>
 
       {/* Right Side - Next/Submit Button */}

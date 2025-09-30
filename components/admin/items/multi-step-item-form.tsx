@@ -276,6 +276,7 @@ export function MultiStepItemForm({
           previousLabel={t('NAVIGATION.PREVIOUS')}
           submitLabel={mode === 'create' ? t('NAVIGATION.CREATE') : t('NAVIGATION.UPDATE')}
           cancelLabel={t('NAVIGATION.CANCEL')}
+          stepCounterLabel={t('NAVIGATION.STEP_COUNTER', { current: currentStep, total: FORM_STEPS.length })}
         />
       </div>
     </div>
