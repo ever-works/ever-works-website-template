@@ -230,11 +230,11 @@ export function MediaLinksStep({
         </div>
 
         {/* Tips Section */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-blue-900 mb-2">
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
             {t('STEPS.MEDIA_LINKS.TIPS_TITLE')}
           </h4>
-          <ul className="text-sm text-blue-800 space-y-1">
+          <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
             <li>• {t('STEPS.MEDIA_LINKS.TIP_1')}</li>
             <li>• {t('STEPS.MEDIA_LINKS.TIP_2')}</li>
             <li>• {t('STEPS.MEDIA_LINKS.TIP_3')}</li>

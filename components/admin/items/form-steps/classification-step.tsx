@@ -210,7 +210,7 @@ export function ClassificationStep({
 
           {/* Suggested Categories */}
           <div>
-            <p className="text-xs text-gray-600 mb-2">{t('FIELDS.CATEGORY.SUGGESTED')}:</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">{t('FIELDS.CATEGORY.SUGGESTED')}:</p>
             <div className="flex flex-wrap gap-2">
               {SUGGESTED_CATEGORIES
                 .filter(cat => !data.category.includes(cat))
@@ -290,7 +290,7 @@ export function ClassificationStep({
 
           {/* Suggested Tags */}
           <div>
-            <p className="text-xs text-gray-600 mb-2">{t('FIELDS.TAGS.SUGGESTED')}:</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">{t('FIELDS.TAGS.SUGGESTED')}:</p>
             <div className="flex flex-wrap gap-2">
               {SUGGESTED_TAGS
                 .filter(tag => !data.tags.includes(tag))
@@ -316,11 +316,11 @@ export function ClassificationStep({
         </div>
 
         {/* Tips Section */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-yellow-900 mb-2">
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-yellow-900 dark:text-yellow-100 mb-2">
             {t('STEPS.CLASSIFICATION.TIPS_TITLE')}
           </h4>
-          <ul className="text-sm text-yellow-800 space-y-1">
+          <ul className="text-sm text-yellow-800 dark:text-yellow-200 space-y-1">
             <li>• {t('STEPS.CLASSIFICATION.TIP_1')}</li>
             <li>• {t('STEPS.CLASSIFICATION.TIP_2')}</li>
             <li>• {t('STEPS.CLASSIFICATION.TIP_3')}</li>
