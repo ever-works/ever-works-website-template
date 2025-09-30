@@ -52,7 +52,17 @@ export function StepIndicator({
                   "flex flex-col items-center group",
                   isClickable && "cursor-pointer"
                 )}
+                role={isClickable ? "button" : undefined}
+                tabIndex={isClickable ? 0 : undefined}
+                aria-label={isClickable ? `Go to ${step.title}` : undefined}
+                aria-current={isCurrent ? "step" : undefined}
                 onClick={() => isClickable && onStepClick(stepNumber)}
+                onKeyDown={(e) => {
+                  if (isClickable && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    onStepClick(stepNumber);
+                  }
+                }}
               >
                 {/* Circle */}
                 <div
