@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown, Layout, Sparkles } from "lucide-react";
-import { useMemo, useCallback, useState, useEffect, useRef } from "react";
+import { useMemo, useCallback, useState, useEffect, useRef, useId } from "react";
 import {
   LayoutHome,
   useLayoutTheme,
@@ -100,6 +100,7 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
   const t = useTranslations("common");
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const panelId = useId();
 
   // Determine if we're in dark mode
   const isDark =
@@ -109,23 +110,29 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
   // Create layout map based on theme
   const layoutMap = useMemo(() => getLayoutMap(isDark, t), [isDark, t]);
 
-  // Handle click outside to close popover
+  // Handle outside click and Escape key to close popover
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handlePointerDownOutside = (event: PointerEvent) => {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+
     if (isOpen) {
-      // Small delay to prevent immediate closure on button clicks inside popover
+      // Defer to next tick to avoid closing from the opening event
       const timeoutId = setTimeout(() => {
-        document.addEventListener('click', handleClickOutside);
+        document.addEventListener('pointerdown', handlePointerDownOutside, { capture: true });
+        document.addEventListener('keydown', handleKeyDown);
       }, 0);
 
       return () => {
         clearTimeout(timeoutId);
-        document.removeEventListener('click', handleClickOutside);
+        document.removeEventListener('pointerdown', handlePointerDownOutside, { capture: true } as any);
+        document.removeEventListener('keydown', handleKeyDown);
       };
     }
   }, [isOpen]);
@@ -274,6 +281,7 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
         className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/95 dark:to-gray-800/95 dark:text-white rounded-md hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-800/95 dark:hover:to-gray-700/95 transition-all duration-300 border border-gray-200 dark:border-gray-700/50 hover:border-gray-300 dark:hover:border-gray-600/70 group overflow-hidden shadow-sm hover:shadow"
         aria-label={`Current layout: ${currentLayout.name}`}
         aria-expanded={isOpen}
+        aria-controls={isOpen ? panelId : undefined}
       >
         <div className="relative z-10 flex items-center gap-1.5">
           <Layout className="h-3.5 w-3.5 text-theme-primary-500 dark:text-theme-primary-400" />
@@ -283,7 +291,10 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 p-6 w-[500px] max-h-[80vh] overflow-y-auto bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-2xl z-50">
+        <div
+          id={panelId}
+          className="absolute right-0 mt-2 p-6 w-[500px] max-h-[80vh] overflow-y-auto bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-2xl z-50"
+        >
           <div className="space-y-5">
             <div className="flex items-center gap-4 pb-4 border-b border-gray-200/50 dark:border-gray-700/50">
               <div className="relative">

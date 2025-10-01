@@ -2,7 +2,7 @@
 
 import { ChevronDown, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useId } from "react";
 
 interface ThemeTogglerProps {
   compact?: boolean;
@@ -13,27 +13,35 @@ export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const panelId = useId();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Handle click outside to close popover
+  // Handle outside click and Escape key to close popover
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handlePointerDownOutside = (event: PointerEvent) => {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+
     if (isOpen) {
+      // Defer to next tick to avoid closing from the opening event
       const timeoutId = setTimeout(() => {
-        document.addEventListener('click', handleClickOutside);
+        document.addEventListener('pointerdown', handlePointerDownOutside, { capture: true });
+        document.addEventListener('keydown', handleKeyDown);
       }, 0);
 
       return () => {
         clearTimeout(timeoutId);
-        document.removeEventListener('click', handleClickOutside);
+        document.removeEventListener('pointerdown', handlePointerDownOutside, { capture: true } as any);
+        document.removeEventListener('keydown', handleKeyDown);
       };
     }
   }, [isOpen]);
@@ -79,6 +87,7 @@ export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
         className="relative flex items-center gap-1.5 px-3 py-1.5 text-sm bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-900/95 dark:to-gray-800/95 backdrop-blur-sm text-gray-800 dark:text-white rounded-lg hover:from-gray-200 hover:to-gray-300 dark:hover:from-gray-800/95 dark:hover:to-gray-700/95 transition-all duration-300 border border-gray-100 dark:border-gray-700/50 hover:border-gray-400 dark:hover:border-gray-600/70 group overflow-hidden"
         aria-label={`Current theme: ${theme || "loading"}`}
         aria-expanded={isOpen}
+        aria-controls={isOpen ? panelId : undefined}
       >
         <div
           className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
@@ -99,7 +108,10 @@ export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 p-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200 dark:border-gray-700/50 rounded-xl shadow-xl z-50">
+        <div
+          id={panelId}
+          className="absolute right-0 mt-2 p-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200 dark:border-gray-700/50 rounded-xl shadow-xl z-50"
+        >
           <div className="flex flex-col gap-1">
             <button
               type="button"

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useId } from "react";
 import { ChevronDown, Palette } from "lucide-react";
 import { useTheme, ThemeInfo } from "@/hooks/use-theme";
 import { ThemeKey } from "@/components/context/LayoutThemeContext";
@@ -150,27 +150,35 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const panelId = useId();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Handle click outside to close popover
+  // Handle outside click and Escape key to close popover
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handlePointerDownOutside = (event: PointerEvent) => {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+
     if (isOpen) {
+      // Defer to next tick to avoid closing from the opening event
       const timeoutId = setTimeout(() => {
-        document.addEventListener('click', handleClickOutside);
+        document.addEventListener('pointerdown', handlePointerDownOutside, { capture: true });
+        document.addEventListener('keydown', handleKeyDown);
       }, 0);
 
       return () => {
         clearTimeout(timeoutId);
-        document.removeEventListener('click', handleClickOutside);
+        document.removeEventListener('pointerdown', handlePointerDownOutside, { capture: true } as any);
+        document.removeEventListener('keydown', handleKeyDown);
       };
     }
   }, [isOpen]);
@@ -221,8 +229,8 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
         aria-label={`Current theme: ${currentThemeInfo.label}`}
-        aria-haspopup="dialog"
         aria-expanded={isOpen}
+        aria-controls={isOpen ? panelId : undefined}
       >
         <ColorIndicators colors={currentThemeInfo.colors} />
         <Palette className="h-4 w-4" aria-hidden="true" />
@@ -231,7 +239,10 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 p-3 w-80 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+        <div
+          id={panelId}
+          className="absolute right-0 mt-2 p-3 w-80 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50"
+        >
           <div className="space-y-3">
             <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
               Choose Visual Theme
