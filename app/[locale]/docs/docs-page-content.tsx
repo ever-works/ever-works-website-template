@@ -7,7 +7,7 @@ export function DocsPageContent() {
 
   return (
     <div className="min-h-screen">
-      <div className="w-full w-full max-w-7xl mx-auto flex flex-col items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="w-full pt-12 max-w-7xl mx-auto flex flex-col items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="mb-8 w-full text-center flex-1">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             {t('help.DOCS_PAGE_TITLE')}
