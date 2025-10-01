@@ -90,10 +90,8 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
   const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(null);
   const loginModal = useLoginModal();
   
-  // Ref pour suivre le plan actuellement en cours de traitement
   const currentProcessingPlanRef = useRef<string | null>(null);
 
-	// Extract plan configurations
 	const { FREE, STANDARD, PREMIUM } = config.pricing?.plans ?? {};
 	const paymentHook = config.pricing?.provider === PaymentProvider.LEMONSQUEEZY ? lemonsqueezyHook : stripeHook;
 	const { isLoading, isError, isSuccess, error } = paymentHook;
@@ -192,7 +190,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 				cancelCurrentProcess();
 			}
 
-			// Mettre à jour l'état du plan en cours
+			// Update the current processing plan state
 			currentProcessingPlanRef.current = plan.id;
 			setProcessingPlan(plan.id);
 
@@ -225,7 +223,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 				console.error('Checkout error:', checkoutError);
 				toast.error('Failed to create checkout session. Please try again.');
 			} finally {
-				// Ne réinitialiser que si c'est toujours le même plan en cours
+				// Only reset if it's still the same plan being processed
 				if (currentProcessingPlanRef.current === plan.id) {
 					currentProcessingPlanRef.current = null;
 					setProcessingPlan(null);
