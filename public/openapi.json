@@ -22459,19 +22459,32 @@
           },
           "accountType": {
             "type": "string",
-            "enum": ["individual", "business", "enterprise"],
+            "enum": [
+              "individual",
+              "business",
+              "enterprise"
+            ],
             "description": "Type of account",
             "example": "business"
           },
           "status": {
             "type": "string",
-            "enum": ["active", "inactive", "suspended", "trial"],
+            "enum": [
+              "active",
+              "inactive",
+              "suspended",
+              "trial"
+            ],
             "description": "Account status",
             "example": "active"
           },
           "plan": {
             "type": "string",
-            "enum": ["free", "standard", "premium"],
+            "enum": [
+              "free",
+              "standard",
+              "premium"
+            ],
             "description": "Subscription plan",
             "example": "premium"
           },

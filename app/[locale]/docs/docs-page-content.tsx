@@ -7,8 +7,8 @@ export function DocsPageContent() {
 
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8 text-center">
+      <div className="w-full w-full max-w-7xl mx-auto flex flex-col items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="mb-8 w-full text-center flex-1">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             {t('help.DOCS_PAGE_TITLE')}
           </h1>
@@ -17,7 +17,7 @@ export function DocsPageContent() {
           </p>
         </div>
         
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-white w-full flex-1 dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
           <iframe
             src="/api/reference"
             className="w-full h-screen border-0"

@@ -1103,7 +1103,7 @@
     "@react-types/textfield" "3.12.5"
     input-otp "1.4.1"
 
-"@heroui/input@2.4.27":
+"@heroui/input@2.4.27", "@heroui/input@^2.4.27":
   version "2.4.27"
   resolved "https://registry.yarnpkg.com/@heroui/input/-/input-2.4.27.tgz#d77948d3d656d9aafe0dda96ab51695990d856cd"
   integrity sha512-sLGw7r+BXyB1MllKNKmn0xLvSW0a1l+3gXefnUCXGSvI3bwrLvk3hUgbkVSJRnxSChU41yXaYDRcHL39t7yzuQ==
@@ -1493,7 +1493,7 @@
     "@react-types/shared" "3.32.0"
     clsx "^1.2.1"
 
-"@heroui/system@2.4.22", "@heroui/system@^2.4.20":
+"@heroui/system@2.4.22", "@heroui/system@^2.4.22":
   version "2.4.22"
   resolved "https://registry.yarnpkg.com/@heroui/system/-/system-2.4.22.tgz#54d626550a49ec1acb9feb7bbd62b47c0192cdcf"
   integrity sha512-+RVuAxjS2QWyLdYTPxv0IfMjhsxa1GKRSwvpii13bOGEQclwwfaNL2MvBbTt1Mzu/LHaX7kyj0THbZnlOplZOA==
@@ -1540,7 +1540,7 @@
     "@react-types/shared" "3.32.0"
     scroll-into-view-if-needed "3.0.10"
 
-"@heroui/theme@2.4.22", "@heroui/theme@^2.4.20":
+"@heroui/theme@2.4.22", "@heroui/theme@^2.4.22":
   version "2.4.22"
   resolved "https://registry.yarnpkg.com/@heroui/theme/-/theme-2.4.22.tgz#78177548fc9110d8cb92aec8f3f2e941f68688f7"
   integrity sha512-naKFQBfp7YwhKGmh7rKCC5EBjV7kdozX21fyGHucDYa6GeFfIKVqXILgZ94HZlfp+LGJfV6U+BuKIflevf0Y+w==

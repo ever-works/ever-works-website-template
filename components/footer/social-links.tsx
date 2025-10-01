@@ -73,7 +73,7 @@ export const footerNavigation = (t: any) => {
     resources: [
       { label: t("footer.BLOG"), href: "https://blog.ever.works", isExternal: true },
       { label: t("common.SUBMIT"), href: "/submit?step=details&plan=free" },
-      { label: "API Documentation", href: "/docs" },
+      { label: t('help.DOCS_PAGE_TITLE'), href: "/docs" },
     ],
   };
 };
