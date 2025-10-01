@@ -13,7 +13,6 @@ on:
         type: string
 env:
   DATA_REPOSITORY: "https://github.com/${{ github.repository_owner }}/${{ secrets.DATA_REPOSITORY }}"
-  NODE_OPTIONS: "--max-old-space-size=4096"
 
 jobs:
   Deploy-Vercel:
@@ -22,7 +21,6 @@ jobs:
       - name: Target environment
         run: echo "Target ${{ inputs.environment }}"
       - uses: actions/checkout@v2
-
       - name: Detect package manager
         id: detect-pm
         run: |
@@ -36,13 +34,11 @@ jobs:
             echo "manager=npm" >> $GITHUB_OUTPUT
             echo "global-cmd=npm install --global" >> $GITHUB_OUTPUT
           fi
-
       - name: Setup pnpm
         if: steps.detect-pm.outputs.manager == 'pnpm'
         uses: pnpm/action-setup@v4
         with:
           version: 9
-
       - name: Install Vercel CLI
         run: ${{ steps.detect-pm.outputs.global-cmd }} vercel@latest
       - name: Link Vercel project
@@ -55,7 +51,34 @@ jobs:
         continue-on-error: true
       - name: Pull settings
         run: vercel pull --yes  --environment=${{ inputs.environment }} --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Build Project Artifacts
-        run: vercel build --target=${{ inputs.environment }} --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Deploy Project Artifacts to Vercel
-        run: vercel deploy --prebuilt --target=${{ inputs.environment }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Target environment
+        run: echo "Target ${{ inputs.environment }}"
+      
+      - name: Trigger Vercel Deployment via API
+        run: |
+          RESPONSE=$(curl -X POST "https://api.vercel.com/v13/deployments" \
+            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name": "${{ github.event.repository.name }}",
+              "gitSource": {
+                "type": "github",
+                "ref": "${{ github.ref_name }}",
+                "repoId": "${{ github.repository_id }}"
+              },
+              "target": "${{ inputs.environment == 'production' && 'production' || 'preview' }}",
+              "projectSettings": {
+                "buildCommand": null,
+                "framework": null
+              }
+            }')
+          
+          # Extract deployment URL
+          DEPLOYMENT_URL=$(echo $RESPONSE | jq -r '.url // empty')
+          if [ -n "$DEPLOYMENT_URL" ]; then
+            echo "Deployment URL: https://$DEPLOYMENT_URL"
+          fi
+
+      - name: Deployment Triggered
+        run: echo "Vercel deployment triggered for ${{ inputs.environment }} environment"
