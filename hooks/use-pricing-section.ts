@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { PaymentFlow, PaymentInterval, PaymentPlan, PaymentProvider } from '@/lib/constants';
@@ -33,6 +33,7 @@ export interface UsePricingSectionActions {
 	handleFlowSelect: (flow: PaymentFlow) => Promise<void>;
 	handleSelectPlan: (plan: PaymentPlan) => void;
 	handleCheckout: (plan: PricingConfig) => Promise<void>;
+	cancelCurrentProcess: () => void;
 	calculatePrice: (plan: PricingConfig) => number;
 	getSavingsText: (plan: PricingConfig) => string | null;
 }
@@ -88,11 +89,27 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
   const [processingPlan, setProcessingPlan] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(null);
   const loginModal = useLoginModal();
+  
+  // Ref pour suivre le plan actuellement en cours de traitement
+  const currentProcessingPlanRef = useRef<string | null>(null);
 
 	// Extract plan configurations
 	const { FREE, STANDARD, PREMIUM } = config.pricing?.plans ?? {};
 	const paymentHook = config.pricing?.provider === PaymentProvider.LEMONSQUEEZY ? lemonsqueezyHook : stripeHook;
 	const { isLoading, isError, isSuccess, error } = paymentHook;
+	const resetPaymentHook = 'reset' in paymentHook ? paymentHook.reset : () => {};
+
+	/**
+	 * Cancel current processing and reset state
+	 */
+	const cancelCurrentProcess = useCallback(() => {
+		if (currentProcessingPlanRef.current) {
+			console.log(`Cancelling current process for ${currentProcessingPlanRef.current}`);
+			resetPaymentHook();
+			currentProcessingPlanRef.current = null;
+			setProcessingPlan(null);
+		}
+	}, [resetPaymentHook]);
 
 	/**
 	 * Handle flow change
@@ -168,17 +185,23 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
       return;
     }
 
-			if (processingPlan) {
-				toast.warning('Please wait, processing your previous request...');
-				return;
+			// Si un autre plan est en cours de traitement, on l'annule d'abord
+			if (currentProcessingPlanRef.current && currentProcessingPlanRef.current !== plan.id) {
+				console.log(`Cancelling previous process for ${currentProcessingPlanRef.current}, starting new process for ${plan.id}`);
+				toast.info(`Switching to ${plan.name} plan...`);
+				cancelCurrentProcess();
 			}
 
+			// Mettre à jour l'état du plan en cours
+			currentProcessingPlanRef.current = plan.id;
 			setProcessingPlan(plan.id);
 
 			try {
 				if (config.pricing?.provider === PaymentProvider.LEMONSQUEEZY) {
 					if(!plan.lemonVariantId) {
 						toast.error('No variant ID found for plan');
+						currentProcessingPlanRef.current = null;
+						setProcessingPlan(null);
 						return;
 					}
 					await lemonsqueezyHook.handleSubmitWithParams({
@@ -202,13 +225,17 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 				console.error('Checkout error:', checkoutError);
 				toast.error('Failed to create checkout session. Please try again.');
 			} finally {
-				setProcessingPlan(null);
+				// Ne réinitialiser que si c'est toujours le même plan en cours
+				if (currentProcessingPlanRef.current === plan.id) {
+					currentProcessingPlanRef.current = null;
+					setProcessingPlan(null);
+				}
 			}
 		},
 		[
 			user,
 			router,
-			processingPlan,
+			cancelCurrentProcess,
 			lemonsqueezyHook.handleSubmitWithParams,
 			stripeHook.createCheckoutSession,
 			billingInterval
@@ -262,6 +289,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 		handleFlowSelect,
 		handleSelectPlan,
 		handleCheckout,
+		cancelCurrentProcess,
 		calculatePrice,
 		getSavingsText,
 
