@@ -2,6 +2,7 @@ import { db } from '@/lib/db/drizzle';
 import { users, comments, votes, newsletterSubscriptions } from '@/lib/db/schema';
 import { eq, count, and, gte, isNull } from 'drizzle-orm';
 import { ItemRepository } from '@/lib/repositories/item.repository';
+import { postHogApiService } from '@/lib/services/posthog-api.service';
 
 export interface UserStats {
   totalUsers: number;
@@ -96,14 +97,14 @@ export class AdminStatsRepository {
 
   async getActivityStats(): Promise<ActivityStats> {
     try {
-      const [totalVotesResult, totalCommentsResult] = await Promise.all([
+      const [totalVotesResult, totalCommentsResult, totalViews] = await Promise.all([
         db.select({ count: count() }).from(votes),
         db.select({ count: count() }).from(comments).where(isNull(comments.deletedAt)),
+        postHogApiService.isConfigured() ? postHogApiService.getTotalPageViews() : Promise.resolve(0),
       ]);
 
-      // Note: Views are not tracked in the current schema, so we'll use 0 for now
       return {
-        totalViews: 0,
+        totalViews,
         totalVotes: Number((totalVotesResult[0] as unknown as { count: number })?.count ?? 0),
         totalComments: Number((totalCommentsResult[0] as unknown as { count: number })?.count ?? 0),
       };

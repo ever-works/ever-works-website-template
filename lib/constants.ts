@@ -40,6 +40,10 @@ export const POSTHOG_AUTO_CAPTURE = getNextPublicEnv('POSTHOG_AUTO_CAPTURE', 'fa
 export const POSTHOG_SAMPLE_RATE = process.env.NODE_ENV === 'production' ? 0.1 : 1.0;
 export const POSTHOG_SESSION_RECORDING_SAMPLE_RATE = process.env.NODE_ENV === 'production' ? 0.1 : 1.0;
 
+// PostHog API (for server-side analytics data fetching)
+export const POSTHOG_PERSONAL_API_KEY = process.env.POSTHOG_PERSONAL_API_KEY;
+export const POSTHOG_PROJECT_ID = process.env.POSTHOG_PROJECT_ID;
+
 // ============================================
 // ERROR TRACKING - SENTRY
 // ============================================
