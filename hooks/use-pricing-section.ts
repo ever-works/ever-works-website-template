@@ -23,7 +23,6 @@ export interface UsePricingSectionState {
 	selectedPlan: PaymentPlan | null;
 	selectedFlow: PaymentFlow;
 	isButton: boolean;
-	isSubmitting: boolean;
 }
 
 export interface UsePricingSectionActions {
@@ -88,7 +87,6 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
   const [billingInterval, setBillingInterval] = useState<PaymentInterval>(PaymentInterval.MONTHLY);
   const [processingPlan, setProcessingPlan] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const loginModal = useLoginModal();
 
 	// Extract plan configurations
@@ -170,12 +168,11 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
       return;
     }
 
-			if (processingPlan || isSubmitting) {
+			if (processingPlan) {
 				toast.warning('Please wait, processing your previous request...');
 				return;
 			}
 
-			setIsSubmitting(true);
 			setProcessingPlan(plan.id);
 
 			try {
@@ -206,14 +203,12 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 				toast.error('Failed to create checkout session. Please try again.');
 			} finally {
 				setProcessingPlan(null);
-				setIsSubmitting(false);
 			}
 		},
 		[
 			user,
 			router,
 			processingPlan,
-			isSubmitting,
 			lemonsqueezyHook.handleSubmitWithParams,
 			stripeHook.createCheckoutSession,
 			billingInterval
@@ -258,7 +253,6 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 		selectedPlan,
 		selectedFlow,
 		isButton,
-		isSubmitting,
 
 		// Actions
 		setShowSelector,

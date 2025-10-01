@@ -28,7 +28,6 @@ interface PlanCardProps {
   readonly isButton?: boolean;
   readonly onClick?: () => void;
   readonly isLoading?: boolean;
-  readonly disabled?: boolean;
   readonly className?: string;
 }
 
@@ -98,7 +97,6 @@ export function PlanCard({
   children,
   isButton = true,
   isLoading = false,
-  disabled = false,
   onClick,
   className,
 }: PlanCardProps) {
@@ -122,8 +120,8 @@ export function PlanCard({
     "disabled:opacity-50 disabled:cursor-not-allowed",
     "font-semibold tracking-wide",
     getButtonStyles(title, isPopular),
-    (isLoading || disabled) && "animate-pulse"
-  ), [title, isPopular, isLoading, disabled]);
+    isLoading && "animate-pulse"
+  ), [title, isPopular, isLoading]);
 
 
 
@@ -203,11 +201,11 @@ export function PlanCard({
       <footer className="flex-shrink-0 mt-auto px-6 pb-6">
         <Button
           size="default"
-          disabled={isLoading || disabled}
+          disabled={isLoading}
           className={buttonStyles}
           onClick={isButton ? handleAction : onClick}
         >
-          {(isLoading || disabled) ? (
+          {isLoading ? (
             <div className="flex items-center justify-center gap-2">
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               <span className="text-sm">Processing...</span>

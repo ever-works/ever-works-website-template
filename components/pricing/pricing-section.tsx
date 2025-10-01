@@ -37,7 +37,6 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 		selectedPlan,
 		selectedFlow,
 		isButton,
-		isSubmitting,
 		handleFlowChange,
 		handleFlowSelect,
 		handleSelectPlan,
@@ -170,7 +169,6 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							}
 							actionHref="/submit"
 							isLoading={processingPlan === FREE?.id && isLoading}
-							disabled={isSubmitting}
 							isButton={isButton}
 							onClick={() => handleCheckout(FREE as PricingConfig)}
 						>
@@ -216,7 +214,6 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							actionVariant="default"
 							actionHref="/submit"
 							isLoading={processingPlan === STANDARD?.id && isLoading}
-							disabled={isSubmitting}
 							isButton={isButton}
 							onClick={() => handleCheckout(STANDARD as PricingConfig)}
 						>
@@ -262,7 +259,6 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							actionHref="/submit"
 							isButton={isButton}
 							isLoading={processingPlan === PREMIUM?.id && isLoading}
-							disabled={isSubmitting}
 							onClick={() => handleCheckout(PREMIUM as PricingConfig)}
 						>
 							{getSavingsText(PREMIUM as PricingConfig) && (
@@ -296,9 +292,8 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 
 						<Button
 							size="lg"
-							disabled={isSubmitting}
 							onClick={() => router.push('/submit')}
-							className="h-14 px-12 rounded-xl font-semibold bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 hover:from-theme-primary-600 hover:via-purple-600 hover:to-theme-primary-700 text-white transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:-translate-y-0"
+							className="h-14 px-12 rounded-xl font-semibold bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 hover:from-theme-primary-600 hover:via-purple-600 hover:to-theme-primary-700 text-white transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
 						>
 							<div className="flex items-center gap-3">
 								<span className="text-lg">{t('CONTINUE_TO_NEXT_STEP')}</span>
