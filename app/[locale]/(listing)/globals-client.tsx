@@ -134,9 +134,6 @@ export default function GlobalsClient(props: ListingProps) {
   if (!initialized) return null;
 
   if (layoutHome === LayoutHome.HOME_ONE) {
-    console.log('🎯 Rendering HOME_ONE - paginationType:', paginationType);
-    console.log('🎯 Will show pagination?', paginationType === "standard" && totalPagesCount > 1);
-
     return (
       <div className="pb-12">
         {/* Featured Items Section - Only show on first page */}
