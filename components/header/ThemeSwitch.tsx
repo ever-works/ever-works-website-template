@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown, Palette } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { useTheme, ThemeInfo } from "@/hooks/use-theme";
 import { ThemeKey } from "@/components/context/LayoutThemeContext";
 
@@ -148,11 +147,39 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
   const { currentThemeInfo, availableThemes, changeTheme, isThemeActive } =
     useTheme();
 
-  const [mounted, setMounted] = React.useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Handle click outside to close popover
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('click', handleClickOutside);
+      }, 0);
+
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener('click', handleClickOutside);
+      };
+    }
+  }, [isOpen]);
+
+  // Handle theme selection
+  const handleThemeSelect = React.useCallback((themeKey: ThemeKey) => {
+    changeTheme(themeKey);
+    setIsOpen(false);
+  }, [changeTheme]);
 
   // Prevent hydration mismatch
   if (!mounted) {
@@ -170,7 +197,7 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
           key={themeInfo.key}
           themeInfo={themeInfo}
           isActive={isThemeActive(themeInfo.key)}
-          onSelect={changeTheme}
+          onSelect={handleThemeSelect}
         />
       ))}
     </div>
@@ -188,31 +215,31 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
   }
 
   return (
-    <div className={className}>
-      <Popover placement="bottom-end" offset={4}>
-        <PopoverTrigger>
-          <button
-            type="button"
-            className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
-            aria-label={`Current theme: ${currentThemeInfo.label}`}
-            aria-haspopup="dialog"
-          >
-            <ColorIndicators colors={currentThemeInfo.colors} />
-            <Palette className="h-4 w-4" aria-hidden="true" />
-            <span className="font-semibold">{currentThemeInfo.label}</span>
-            <ChevronDown className="h-3 w-3 opacity-60" aria-hidden="true" />
-          </button>
-        </PopoverTrigger>
+    <div className={`relative ${className}`} ref={popoverRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
+        aria-label={`Current theme: ${currentThemeInfo.label}`}
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
+      >
+        <ColorIndicators colors={currentThemeInfo.colors} />
+        <Palette className="h-4 w-4" aria-hidden="true" />
+        <span className="font-semibold">{currentThemeInfo.label}</span>
+        <ChevronDown className={`h-3 w-3 opacity-60 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+      </button>
 
-        <PopoverContent className="p-3 w-80 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
+      {isOpen && (
+        <div className="absolute right-0 mt-2 p-3 w-80 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
           <div className="space-y-3">
             <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
               Choose Visual Theme
             </div>
             {themeContent}
           </div>
-        </PopoverContent>
-      </Popover>
+        </div>
+      )}
     </div>
   );
 };
