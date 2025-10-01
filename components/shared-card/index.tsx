@@ -503,6 +503,7 @@ export function SharedCard(props: ExtendedCardProps & { filteredCount?: number; 
 
   const config = { ...DEFAULT_CONFIG, ...rawConfig };
   const { layoutKey, setLayoutKey, paginationType } = useLayoutTheme();
+  console.log('🎴 Card component render - paginationType:', paginationType);
   const { searchTerm, selectedTags, sortBy, selectedTag } = useFilters();
   const t = useTranslations("listing");
   const commonT = useTranslations("common");

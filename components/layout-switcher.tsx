@@ -1,8 +1,7 @@
 "use client";
 
 import { ChevronDown, Layout, Sparkles } from "lucide-react";
-import { useMemo, useCallback } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
+import { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import {
   LayoutHome,
   useLayoutTheme,
@@ -99,6 +98,8 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
   const { layoutHome, setLayoutHome } = useLayoutTheme();
   const { theme, resolvedTheme } = useTheme();
   const t = useTranslations("common");
+  const [isOpen, setIsOpen] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
 
   // Determine if we're in dark mode
   const isDark =
@@ -107,6 +108,27 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
 
   // Create layout map based on theme
   const layoutMap = useMemo(() => getLayoutMap(isDark, t), [isDark, t]);
+
+  // Handle click outside to close popover
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      // Small delay to prevent immediate closure on button clicks inside popover
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('click', handleClickOutside);
+      }, 0);
+
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener('click', handleClickOutside);
+      };
+    }
+  }, [isOpen]);
 
   // Memoize current layout data
   const currentLayout = useMemo(() => {
@@ -134,12 +156,13 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
     (layout: LayoutHome) => {
       if (layout === layoutHome) return;
       setLayoutHome(layout);
+      setIsOpen(false); // Close popover after selection
     },
     [layoutHome, setLayoutHome]
   );
 
   const layoutContent = (
-    <div className="space-y-4">
+    <div className="flex flex-col space-y-4">
       {availableLayouts.map(
         ({ key, name, description, icon, preview, isActive }) => {
           return (
@@ -245,44 +268,44 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
   }
 
   return (
-    <div className="mx-1">
-      <Popover placement="bottom-end" offset={8}>
-        <PopoverTrigger>
-        <button
-          className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/95 dark:to-gray-800/95 dark:text-white rounded-md hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-800/95 dark:hover:to-gray-700/95 transition-all duration-300 border border-gray-200 dark:border-gray-700/50 hover:border-gray-300 dark:hover:border-gray-600/70 group overflow-hidden shadow-sm hover:shadow"
-          aria-label={`Current layout: ${currentLayout.name}`}
-        >
-          <div className="relative z-10 flex items-center gap-1.5">
-            <Layout className="h-3.5 w-3.5 text-theme-primary-500 dark:text-theme-primary-400" />
-            <span className="font-medium">{t("LAYOUT")}</span>
-            <ChevronDown className="h-3 w-3 text-gray-500 dark:text-gray-400 transition-all duration-300 group-hover:rotate-180" />
-          </div>
-        </button>
-      </PopoverTrigger>
-
-      <PopoverContent className="p-6 w-[420px] bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-2xl">
-        <div className="space-y-5">
-          <div className="flex items-center gap-4 pb-4 border-b border-gray-200/50 dark:border-gray-700/50">
-            <div className="relative">
-              <div className="p-3 bg-gradient-to-br from-theme-primary-500 to-theme-primary-600 rounded-2xl shadow-lg shadow-theme-primary-500/25">
-                <Layout className="h-6 w-6 text-white" />
-              </div>
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse"></div>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                {t("LAYOUT_SELECTION")}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                {t("CHOOSE_PREFERRED_DESIGN")}
-              </p>
-            </div>
-          </div>
-          <SelectPaginationType   />
-          {layoutContent}
+    <div className="mx-1 relative" ref={popoverRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/95 dark:to-gray-800/95 dark:text-white rounded-md hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-800/95 dark:hover:to-gray-700/95 transition-all duration-300 border border-gray-200 dark:border-gray-700/50 hover:border-gray-300 dark:hover:border-gray-600/70 group overflow-hidden shadow-sm hover:shadow"
+        aria-label={`Current layout: ${currentLayout.name}`}
+        aria-expanded={isOpen}
+      >
+        <div className="relative z-10 flex items-center gap-1.5">
+          <Layout className="h-3.5 w-3.5 text-theme-primary-500 dark:text-theme-primary-400" />
+          <span className="font-medium">{t("LAYOUT")}</span>
+          <ChevronDown className={`h-3 w-3 text-gray-500 dark:text-gray-400 transition-all duration-300 ${isOpen ? 'rotate-180' : ''}`} />
         </div>
-      </PopoverContent>
-      </Popover>
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 p-6 w-[500px] max-h-[80vh] overflow-y-auto bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 rounded-2xl shadow-2xl z-50">
+          <div className="space-y-5">
+            <div className="flex items-center gap-4 pb-4 border-b border-gray-200/50 dark:border-gray-700/50">
+              <div className="relative">
+                <div className="p-3 bg-gradient-to-br from-theme-primary-500 to-theme-primary-600 rounded-2xl shadow-lg shadow-theme-primary-500/25">
+                  <Layout className="h-6 w-6 text-white" />
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse"></div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                  {t("LAYOUT_SELECTION")}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                  {t("CHOOSE_PREFERRED_DESIGN")}
+                </p>
+              </div>
+            </div>
+            <SelectPaginationType />
+            {layoutContent}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

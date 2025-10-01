@@ -134,11 +134,14 @@ export default function GlobalsClient(props: ListingProps) {
   if (!initialized) return null;
 
   if (layoutHome === LayoutHome.HOME_ONE) {
+    console.log('🎯 Rendering HOME_ONE - paginationType:', paginationType);
+    console.log('🎯 Will show pagination?', paginationType === "standard" && totalPagesCount > 1);
+
     return (
       <div className="pb-12">
         {/* Featured Items Section - Only show on first page */}
         {/* {page === 1 && featuredItems.length > 0 && (
-          <FeaturedItemsSection 
+          <FeaturedItemsSection
             className="mb-12"
             title="Featured Items"
             description="Discover our handpicked selection of top-rated tools and resources"
@@ -146,14 +149,14 @@ export default function GlobalsClient(props: ListingProps) {
             variant="hero"
           />
         )} */}
-        
+
         <div className="flex flex-col md:flex-row w-full gap-5">
           <div className="lg:sticky lg:top-4 lg:self-start">
             <Categories total={props.total} categories={sortedCategories} tags={sortedTags} />
           </div>
           <div className="w-full flex-1">
             <Tags tags={sortedTags} enableSticky={true} maxVisibleTags={5} allItems={props.items} />
-            <ListingClient 
+            <ListingClient
               {...props}
               items={paginationType === "infinite" ? filteredAndSortedItems : homeOnePaginatedItems}
               filteredCount={filteredAndSortedItems.length}

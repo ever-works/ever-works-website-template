@@ -77,6 +77,7 @@ const SelectPaginationType: React.FC<SelectPaginationTypeProps> = ({
           return (
             <button
               key={option.id}
+              type="button"
               onClick={() => handlePaginationChange(option.id as typeof paginationType)}
               disabled={disabled}
               className={cn(

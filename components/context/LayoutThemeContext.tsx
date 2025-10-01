@@ -233,13 +233,13 @@ const useLayoutHomeManager = () => {
 // Custom hook for pagination type management
 const usePaginationTypeManager = () => {
   const [paginationType, setPaginationTypeState] = useState<PaginationType>(DEFAULT_PAGINATION_TYPE);
-  
+
   const setPaginationType = useCallback((type: PaginationType) => {
     if (!isValidPaginationType(type)) {
       console.warn(`Invalid pagination type: ${type}`);
       return;
     }
-    
+
     setPaginationTypeState(type);
     safeLocalStorage.setItem(STORAGE_KEYS.PAGINATION_TYPE, type);
   }, []);
