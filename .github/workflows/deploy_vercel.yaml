@@ -5,11 +5,7 @@ on:
       environment:
         description: "Vercel Environment to deploy to (e.g., production, staging, preview)"
         required: true
-        type: choice
-        options:
-          - production
-          - staging
-          - preview
+        type: string
 
   workflow_call:
     inputs:
