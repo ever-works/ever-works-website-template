@@ -13,6 +13,14 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: vercel-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   DATA_REPOSITORY: "https://github.com/${{ github.repository_owner }}/${{ secrets.DATA_REPOSITORY }}"
 
@@ -23,7 +31,7 @@ jobs:
       - name: Target environment
         run: echo "Target ${{ inputs.environment }}"
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Detect package manager
         id: detect-pm
@@ -72,7 +80,8 @@ jobs:
               "gitSource": {
                 "type": "github",
                 "ref": "${{ github.ref_name }}",
-                "repoId": "${{ github.repository_id }}"
+                "repoId": "${{ github.repository_id }}",
+                "sha": "${{ github.sha }}"
               },
               "target": "${{ inputs.environment }}"
             }')
