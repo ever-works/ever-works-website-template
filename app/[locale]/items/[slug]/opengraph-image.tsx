@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
-import { fetchItem } from '@/lib/content';
 
-export const runtime = 'edge';
+// Remove Edge Runtime to allow Node.js modules
+// OG images will be generated at build time or on-demand in Node.js runtime
 export const alt = 'Ever Works Item';
 export const size = {
 	width: 1200,
@@ -10,10 +10,12 @@ export const size = {
 export const contentType = 'image/png';
 
 export default async function Image({ params }: { params: { slug: string; locale: string } }) {
-	const { slug, locale } = params;
+	const { slug } = params;
 
 	try {
-		const item = await fetchItem(slug, { lang: locale });
+		// Dynamically import to avoid bundling fs in edge runtime
+		const { fetchItem } = await import('@/lib/content');
+		const item = await fetchItem(slug, { lang: params.locale });
 
 		if (!item) {
 			// Fallback for items not found

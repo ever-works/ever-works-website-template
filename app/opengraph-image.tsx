@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-export const runtime = 'edge';
+// Remove Edge Runtime for consistency with dynamic OG images
 export const alt = 'Ever Works - Professional Services';
 export const size = {
 	width: 1200,
