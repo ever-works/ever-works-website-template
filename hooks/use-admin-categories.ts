@@ -3,12 +3,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
 import {
-    CategoryData,
-    CategoryWithCount,
-    CreateCategoryRequest,
-    UpdateCategoryRequest,
-    CategoryListResponse,
-    CategoryListOptions
+  CategoryData,
+  CategoryWithCount,
+  CreateCategoryRequest,
+  UpdateCategoryRequest,
+  CategoryListResponse,
+  CategoryListOptions
 } from '@/lib/types/category';
 
 // Query keys factory
@@ -34,6 +34,15 @@ const fetchCategories = async (params: CategoryListOptions = {}): Promise<Catego
     throw new Error(apiUtils.getErrorMessage(response));
   }
   
+  return response.data;
+};
+
+const fetchCategoriesAll = async (): Promise<CategoryListResponse> => {
+  const response = await serverClient.get<CategoryListResponse>('/api/admin/categories/all');
+  
+  if (!apiUtils.isSuccess(response)) {
+    throw new Error(apiUtils.getErrorMessage(response));
+  }
   return response.data;
 };
 
@@ -98,6 +107,7 @@ export interface UseAdminCategoriesReturn {
   createCategory: (data: CreateCategoryRequest) => Promise<boolean>;
   updateCategory: (id: string, data: UpdateCategoryRequest) => Promise<boolean>;
   deleteCategory: (id: string, hard?: boolean) => Promise<boolean>;
+  categoriesAll: () => Promise<CategoryListResponse | null>;
   
   // Utility
   refetch: () => void;
@@ -160,6 +170,15 @@ export function useAdminCategories(options: UseAdminCategoriesOptions = {}): Use
     },
   });
 
+  // Categories all mutation
+  const categoriesAllMutation = useMutation({
+    mutationFn: fetchCategoriesAll,
+    onSuccess: () => {
+      toast.success('Categories fetched successfully');
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.categories });
+    },
+  });
+
   // Action handlers
   const handleCreateCategory = useCallback(async (data: CreateCategoryRequest): Promise<boolean> => {
     try {
@@ -188,6 +207,15 @@ export function useAdminCategories(options: UseAdminCategoriesOptions = {}): Use
     }
   }, [deleteCategoryMutation]);
 
+  const handleCategoriesAll = useCallback(async (): Promise<CategoryListResponse | null> => {
+    try {
+      const result = await categoriesAllMutation.mutateAsync();
+      return result;
+    } catch {
+      return null;
+    }
+  }, [categoriesAllMutation]);
+
   const refreshData = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.categories });
   }, [queryClient]);
@@ -208,6 +236,7 @@ export function useAdminCategories(options: UseAdminCategoriesOptions = {}): Use
     createCategory: handleCreateCategory,
     updateCategory: handleUpdateCategory,
     deleteCategory: handleDeleteCategory,
+    categoriesAll: handleCategoriesAll,
     
     // Utility
     refetch,
