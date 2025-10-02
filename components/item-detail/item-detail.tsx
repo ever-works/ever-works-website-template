@@ -15,6 +15,8 @@ import { FavoriteButton } from '../favorite-button';
 import type { ItemData } from '@/lib/content';
 import { SimilarItemsSection } from './similar-items-section';
 import { useTranslations } from 'next-intl';
+import { generateProductSchema } from '@/lib/seo/schema';
+import { useParams } from 'next/navigation';
 
 export interface ItemDetailProps {
 	meta: {
@@ -37,10 +39,30 @@ export interface ItemDetailProps {
 
 export function ItemDetail({ meta, content, categoryName, noContentMessage }: ItemDetailProps) {
 	const t = useTranslations();
+	const params = useParams();
+	const locale = params.locale as string;
 	const tagNames = Array.isArray(meta.tags) ? meta.tags.map((tag) => (typeof tag === 'string' ? tag : tag.name)) : [];
+
+	// Generate Product schema for SEO
+	const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works';
+	const productSchema = generateProductSchema({
+		name: meta.name,
+		description: meta.description,
+		image: meta.icon_url,
+		url: `${baseUrl}/${locale}/items/${meta.slug}`,
+		category: categoryName,
+		sourceUrl: meta.source_url,
+		brandName: 'Ever Works'
+	});
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800 text-gray-800 dark:text-white relative overflow-hidden">
+			{/* Product Schema JSON-LD */}
+			<script
+				type="application/ld+json"
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+			/>
+
 			<div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)]"></div>
 			<div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.1),transparent_50%)]"></div>
 

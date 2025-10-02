@@ -5,9 +5,95 @@ import { getTranslations } from "next-intl/server";
 import { ItemDetail } from "@/components/item-detail";
 import { Container } from "@/components/ui/container";
 import { Suspense } from "react";
+import { Metadata } from "next";
 
 // Disable static generation to prevent MDX compilation errors during build
 export const dynamic = 'force-dynamic';
+
+/**
+ * Generate metadata for item detail pages
+ * Includes: title, description, Open Graph, Twitter Cards, canonical URL
+ */
+export async function generateMetadata({
+	params
+}: {
+	params: Promise<{ slug: string; locale: string }>;
+}): Promise<Metadata> {
+	const { slug, locale } = await params;
+	const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works';
+
+	try {
+		const item = await fetchItem(slug, { lang: locale });
+
+		if (!item) {
+			return {
+				title: 'Item Not Found | Ever Works',
+				description: "The item you're looking for doesn't exist.",
+				robots: {
+					index: false,
+					follow: false
+				}
+			};
+		}
+
+		const { meta } = item;
+
+		// Extract keywords from tags
+		const keywords = Array.isArray(meta.tags)
+			? meta.tags.map((tag) => (typeof tag === 'string' ? tag : tag.name))
+			: [];
+
+		// Truncate description to 160 characters for meta description
+		const metaDescription = meta.description
+			? meta.description.length > 160
+				? `${meta.description.slice(0, 157)}...`
+				: meta.description
+			: `Discover ${meta.name} on Ever Works`;
+
+		// Use item icon or fallback to logo
+		const imageUrl = meta.icon_url || `${baseUrl}/logo-ever-works.svg`;
+
+		return {
+			title: `${meta.name} | Ever Works`,
+			description: metaDescription,
+			keywords,
+			openGraph: {
+				title: meta.name,
+				description: meta.description || metaDescription,
+				images: [
+					{
+						url: imageUrl,
+						width: 1200,
+						height: 630,
+						alt: meta.name
+					}
+				],
+				type: 'website',
+				siteName: 'Ever Works',
+				url: `${baseUrl}/${locale}/items/${slug}`
+			},
+			twitter: {
+				card: 'summary_large_image',
+				title: meta.name,
+				description: metaDescription,
+				images: [imageUrl]
+			},
+			alternates: {
+				canonical: `${baseUrl}/${locale}/items/${slug}`
+			}
+		};
+	} catch (error) {
+		console.error(`Failed to generate metadata for item ${slug}:`, error);
+		return {
+			title: 'Error | Ever Works',
+			description: 'An error occurred while loading this page.',
+			robots: {
+				index: false,
+				follow: false
+			}
+		};
+	}
+}
 
 // Remove generateStaticParams to prevent build-time MDX compilation
 // export async function generateStaticParams() {
