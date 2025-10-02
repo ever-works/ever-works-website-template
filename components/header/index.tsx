@@ -101,18 +101,27 @@ const NAVIGATION_CONFIG: Array<{
 ];
 
 const STYLES = {
-  navbar: "bg-white/75 dark:bg-gray-900/75 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50",
-  container: "flex items-center justify-between px-4 sm:px-6 lg:px-8",
-  navContent: "hidden sm:flex gap-6 lg:gap-8",
-  navbarMenuToggle: "sm:hidden",
+  navbar: "bg-white/75 dark:bg-gray-900/75 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 sticky top-0 z-50",
+  container: "flex items-center justify-between w-full min-h-[60px] sm:min-h-[64px] md:min-h-[68px] lg:min-h-[72px]",
+  navContent: "hidden lg:flex gap-4 xl:gap-6 2xl:gap-8",
+  navbarMenuToggle: "lg:hidden transition-transform duration-200 hover:scale-105",
+  brand: "flex items-center group transition-transform duration-200 hover:scale-105",
+  brandIcon: "relative font-bold mr-2 sm:mr-3 md:mr-4 lg:mr-5",
+  brandIconSvg: "w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11 transition-all duration-300 group-hover:scale-110",
+  brandText: "font-bold text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl transition-colors duration-200 group-hover:text-theme-primary",
+  linkBase: "transition-all duration-200 font-medium whitespace-nowrap text-sm lg:text-base xl:text-lg",
+  linkActive: "text-theme-primary border-b-2 border-theme-primary pb-1 font-semibold",
+  linkInactive: "text-gray-700 dark:text-gray-300 hover:text-theme-primary hover:scale-105",
+  rightSection: "flex items-center gap-1 sm:gap-2 md:gap-3 lg:gap-4 xl:gap-5",
+  mobileMenu: "mt-6 flex flex-col gap-2 px-4 pb-6",
   mobileMenuItem: "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200",
-  brand: "flex items-center group",
-  brandIcon: "relative font-bold mr-2 sm:mr-4",
-  brandIconSvg: "w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 transition-transform duration-300 group-hover:scale-110",
-  brandText: "font-bold text-base sm:text-lg md:text-xl",
-  linkBase: "transition-colors font-medium",
-  linkActive: "text-theme-primary border-b-2 border-theme-primary pb-1",
-  linkInactive: "text-gray-700 dark:text-gray-300 hover:text-theme-primary",
+  mobileLink: "block w-full text-sm sm:text-base md:text-lg py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200",
+  mobileControls: "py-4 flex flex-col gap-4 border-t border-gray-200/50 dark:border-gray-700/50 mt-4",
+  mobileOnly: "lg:hidden",
+  desktopOnly: "hidden lg:block",
+  tabletUp: "hidden md:block",
+  mobileDown: "lg:hidden",
+  largeUp: "hidden xl:block",
 };
 
 export default function Header() {
@@ -203,13 +212,20 @@ export default function Header() {
 
   const renderRightSection = useCallback(
     () => (
-      <NavbarContent justify="end">
-        <NavbarItem className="hidden sm:flex">
+      <NavbarContent justify="end" className={STYLES.rightSection}>
+        {/* NavigationControls - visible seulement sur desktop large */}
+        <NavbarItem className={STYLES.largeUp}>
           <NavigationControls />
         </NavbarItem>
+        
+        {/* ProfileButton - toujours visible mais avec tailles adaptatives */}
         <NavbarItem>
-          <ProfileButton/>
+          <div className="scale-90 sm:scale-95 md:scale-100 lg:scale-105 xl:scale-110 transition-transform duration-200">
+            <ProfileButton/>
+          </div>
         </NavbarItem>
+        
+        {/* Menu Toggle - visible seulement sur mobile et tablette */}
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className={STYLES.navbarMenuToggle}
@@ -237,11 +253,12 @@ export default function Header() {
       </Container>
 
       <NavbarMenu>
-        <div className="mt-6 flex flex-col gap-2">
+        <div className={STYLES.mobileMenu}>
+          {/* Navigation Items - visibles sur mobile et tablette */}
           {navigationItems.map((item) => (
             <NavbarMenuItem key={item.key} className={STYLES.mobileMenuItem}>
               <Link
-                className={`${getLinkClasses(item.href)} block w-full text-lg`}
+                className={`${getLinkClasses(item.href)} ${STYLES.mobileLink}`}
                 href={item.href}
                 onClick={() => setIsMenuOpen(false)}
                 {...(isActiveLink(item.href) && { "aria-current": "page" })}
@@ -250,11 +267,22 @@ export default function Header() {
               </Link>
             </NavbarMenuItem>
           ))}
-          <div className="py-4">
-            <LayoutSwitcher inline />
-          </div>
-          <div className="py-4 flex justify-center">
-            <NavigationControls />
+          
+          {/* Mobile Controls - section séparée pour les contrôles */}
+          <div className={STYLES.mobileControls}>
+            {/* LayoutSwitcher - visible sur tous les écrans dans le menu mobile */}
+            <div className="py-2 flex justify-center">
+              <div className="scale-90 sm:scale-95 md:scale-100 transition-transform duration-200">
+                <LayoutSwitcher inline />
+              </div>
+            </div>
+            
+            {/* NavigationControls - visible seulement sur mobile et tablette dans le menu */}
+            <div className={`py-2 flex justify-center ${STYLES.mobileOnly}`}>
+              <div className="scale-90 sm:scale-95 md:scale-100 transition-transform duration-200">
+                <NavigationControls />
+              </div>
+            </div>
           </div>
         </div>
       </NavbarMenu>
