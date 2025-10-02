@@ -365,6 +365,21 @@ export function useTagMutations(): UseTagMutationsReturn {
   };
 }
 
+// Hook for tags all (dedicated hook for /api/admin/tags/all)
+export interface UseTagsAllOptions {
+  locale?: string;
+  enabled?: boolean;
+}
+
+export interface UseTagsAllReturn {
+  tags: TagWithCount[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+}
+
+
+
 // Legacy hooks for backward compatibility
 export const useTags = useAdminTags;
 export const useCreateTag = () => useTagMutations().createTag;

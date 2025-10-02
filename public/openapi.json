@@ -22504,13 +22504,14 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
+            "name": "locale",
+            "in": "query",
+            "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "en"
             },
-            "description": "Locale",
+            "description": "Locale for fetching tags",
             "example": "en"
           }
         ],
