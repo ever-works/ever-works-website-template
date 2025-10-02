@@ -1,10 +1,7 @@
-import { requireAdmin } from "@/lib/auth/guards";
 import AdminLayoutClient from "./layout-client";
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  // Server-side admin check - redirects if not admin
-  // Note: /admin/auth/* pages have their own layout and bypass this check
-  await requireAdmin();
-
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  // Auth check handled by AdminLayoutClient (client-side)
+  // Client-side guard already handles /admin/auth/* exclusion
   return <AdminLayoutClient>{children}</AdminLayoutClient>;
 }
