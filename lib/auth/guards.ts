@@ -31,7 +31,7 @@ export async function requireAuth() {
  * Requires user to be authenticated AND have admin role
  *
  * @returns Session object if user is admin
- * @throws Redirect to /auth/signin if unauthenticated
+ * @throws Redirect to /admin/auth/signin if unauthenticated
  * @throws Redirect to /unauthorized if not admin
  *
  * @example
@@ -46,7 +46,7 @@ export async function requireAdmin() {
   const session = await auth();
 
   if (!session?.user) {
-    redirect('/auth/signin');
+    redirect('/admin/auth/signin');
   }
 
   if (!session.user.isAdmin) {
