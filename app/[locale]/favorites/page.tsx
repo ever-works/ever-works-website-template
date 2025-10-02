@@ -3,6 +3,7 @@ import { Container } from '@/components/ui/container';
 import { FavoritesClient } from '@/components/favorites/favorites-client';
 import { getTranslations } from 'next-intl/server';
 import { fetchItems } from '@/lib/content';
+import { requireAuth } from '@/lib/auth/guards';
 
 
 export default async function FavoritesPage({
@@ -10,6 +11,9 @@ export default async function FavoritesPage({
   }: {
     params: Promise<{locale: string }>;
   }) {
+    // Require authentication
+    await requireAuth();
+
     const t = await getTranslations('common');
     const { locale } = await params;
     const { items, categories, total, tags } = await fetchItems({

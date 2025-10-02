@@ -1,81 +1,9 @@
-"use client";
+import { requireAdmin } from "@/lib/auth/guards";
+import AdminLayoutClient from "./layout-client";
 
-import { useSession } from "next-auth/react";
-import { useRouter, usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
-import { SessionProvider } from "next-auth/react";
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  // Server-side admin check - redirects if not admin
+  await requireAdmin();
 
-function AdminAuthGuard({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const pathname = usePathname();
-  const hasRedirectedRef = useRef(false);
-
-  // Check if we're on an auth page (signin, signup, etc.)
-  const isAuthPage = pathname?.includes('/admin/auth/');
-
-  useEffect(() => {
-    if (status === "loading" || hasRedirectedRef.current || isAuthPage) return;
-
-    if (!session) {
-      console.log("No session, redirecting to signin");
-      hasRedirectedRef.current = true;
-      // Not authenticated, redirect to admin signin
-      router.replace("/admin/auth/signin");
-      return;
-    }
-
-    // Check if user is admin
-    if (!session.user?.isAdmin) {
-      console.log("User not admin, redirecting to dashboard");
-      hasRedirectedRef.current = true;
-      // Not admin, redirect to dashboard
-      router.replace("/dashboard");
-      return;
-    }
-
-    console.log("User authenticated and is admin");
-  }, [session, status, router, isAuthPage]);
-
-  // Show loading while checking auth
-  // if (status === "loading") {
-  //   return (
-  //     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-  //       <div className="text-center">
-  //         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-  //         <p className="text-gray-600 dark:text-gray-400">Loading admin panel...</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
-  // Show loading while redirecting (but not on auth pages)
-  if (!isAuthPage && (!session || !session.user?.isAdmin)) {
-    return (
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Redirecting...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // User is authenticated and is admin
-  return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <header className="p-4 bg-gray-800 text-white font-bold text-xl">Admin Panel</header>
-      <main className="p-8">{children}</main>
-    </div>
-  );
+  return <AdminLayoutClient>{children}</AdminLayoutClient>;
 }
-
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <SessionProvider>
-      <AdminAuthGuard>
-        {children}
-      </AdminAuthGuard>
-    </SessionProvider>
-  );
-} 
