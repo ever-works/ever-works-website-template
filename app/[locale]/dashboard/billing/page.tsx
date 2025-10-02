@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { PageContainer } from "@/components/ui/container";
 import { BillingSection } from "@/components/dashboard";
 import { requireAuth } from "@/lib/auth/guards";
@@ -7,7 +7,7 @@ export default async function DashboardBillingPage() {
   // Require authentication
   await requireAuth();
 
-  const t = useTranslations();
+  const t = await getTranslations();
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
     <PageContainer className="py-12">
