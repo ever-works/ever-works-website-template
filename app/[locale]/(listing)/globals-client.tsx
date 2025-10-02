@@ -99,7 +99,7 @@ export default function GlobalsClient(props: ListingProps) {
 			selectedTags
 		});
 
-		// Sort items
+		// Sort items based on selected sort option
 		if (sortBy === 'name-asc') {
 			filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
 		} else if (sortBy === 'name-desc') {
@@ -166,18 +166,23 @@ export default function GlobalsClient(props: ListingProps) {
         )} */}
 
 				<div className={LAYOUT_STYLES.contentWrapper}>
+					{/* Sidebar - Categories */}
 					<div className={`${LAYOUT_STYLES.sidebar} ${LAYOUT_STYLES.sidebarMobile}`}>
 						<Categories total={props.total} categories={sortedCategories} tags={sortedTags} />
 					</div>
 
+					{/* Main Content */}
 					<div className={LAYOUT_STYLES.mainContent}>
+						{/* Tags Section - Mobile version */}
 						<div className={` lg:sticky lg:top-4 mb-4 sm:mb-6 md:mb-8 ${LAYOUT_STYLES.mobileOnly}`}>
 							<Tags tags={sortedTags} enableSticky={false} maxVisibleTags={3} allItems={props.items} />
 						</div>
+						{/* Tags Section - Desktop version */}
 						<div className={`lg:sticky lg:top-4 mb-4 sm:mb-6 md:mb-8 ${LAYOUT_STYLES.desktopOnly}`}>
 							<Tags tags={sortedTags} enableSticky={true} maxVisibleTags={5} allItems={props.items} />
 						</div>
 
+						{/* Listing Content */}
 						<div className="mb-6 sm:mb-8 md:mb-10">
 							<ListingClient
 								{...props}
@@ -187,7 +192,7 @@ export default function GlobalsClient(props: ListingProps) {
 							/>
 						</div>
 
-						{/* Pagination - visible seulement si nécessaire */}
+						{/* Pagination - Only show if needed */}
 						{paginationType === 'standard' && totalPagesCount > 1 && (
 							<div className={LAYOUT_STYLES.pagination}>
 								<Paginate

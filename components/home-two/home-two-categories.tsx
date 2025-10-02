@@ -263,7 +263,7 @@ export function HomeTwoCategories({
 
   return (
     <div className="space-y-3 sm:space-y-5">
-      {/* Mobile Select Dropdown - Amélioré */}
+      {/* Mobile Select Dropdown - Enhanced */}
       <div className="md:hidden w-full px-1">
         <div className="relative">
           <select
@@ -289,7 +289,7 @@ export function HomeTwoCategories({
         </div>
       </div>
 
-      {/* Desktop Categories - Amélioré */}
+      {/* Desktop Categories - Enhanced */}
       <div className="hidden md:block">
         <div className="flex flex-col gap-4">
           <div

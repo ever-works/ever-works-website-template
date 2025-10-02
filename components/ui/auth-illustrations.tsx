@@ -12,7 +12,7 @@ export function LoginIllustration({ className }: { className?: string }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Arrière-plan avec dégradé */}
+        {/* Background with gradient */}
         <defs>
           <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="var(--theme-primary-100)" />
@@ -24,20 +24,20 @@ export function LoginIllustration({ className }: { className?: string }) {
           </linearGradient>
         </defs>
         
-        {/* Formes d'arrière-plan */}
+        {/* Background shapes */}
         <circle cx="320" cy="80" r="60" fill="var(--theme-primary-100)" opacity="0.3" />
         <circle cx="80" cy="220" r="40" fill="var(--theme-accent-100)" opacity="0.4" />
         
-        {/* Écran d'ordinateur */}
+        {/* Computer screen */}
         <rect x="100" y="80" width="200" height="140" rx="8" fill="url(#cardGradient)" stroke="var(--theme-primary-300)" strokeWidth="2" />
         <rect x="110" y="90" width="180" height="100" rx="4" fill="var(--theme-primary-50)" />
         
-        {/* Interface de connexion */}
+        {/* Login interface */}
         <rect x="120" y="110" width="160" height="8" rx="4" fill="var(--theme-primary-200)" />
         <rect x="120" y="130" width="120" height="8" rx="4" fill="var(--theme-primary-200)" />
         <rect x="120" y="150" width="80" height="20" rx="10" fill="var(--theme-primary)" />
         
-        {/* Icône de sécurité */}
+        {/* Security icon */}
         <circle cx="200" cy="50" r="20" fill="var(--theme-primary)" opacity="0.1" />
         <path
           d="M190 45 L200 40 L210 45 L210 55 C210 60 205 65 200 65 C195 65 190 60 190 55 Z"
@@ -133,7 +133,7 @@ export function SignupIllustration({ className }: { className?: string }) {
   );
 }
 
-// Composant de fond animé
+// Animated background component
 export function AnimatedBackground({ className }: { className?: string }) {
   return (
     <div className={cn('absolute inset-0 overflow-hidden pointer-events-none', className)}>
@@ -144,7 +144,7 @@ export function AnimatedBackground({ className }: { className?: string }) {
   );
 }
 
-// Icône de sécurité animée
+// Animated security icon
 export function SecurityIcon({ className }: { className?: string }) {
   return (
     <div className={cn('relative', className)}>
@@ -180,7 +180,7 @@ export function SecurityIcon({ className }: { className?: string }) {
   );
 }
 
-// Icône de communauté
+// Community icon
 export function CommunityIcon({ className }: { className?: string }) {
   return (
     <div className={cn('relative', className)}>
@@ -219,17 +219,17 @@ export function CommunityIcon({ className }: { className?: string }) {
   );
 }
 
-// Composant de décoration avec des formes géométriques
+// Decorative component with geometric shapes
 export function GeometricDecoration({ className }: { className?: string }) {
   return (
     <div className={cn('absolute inset-0 overflow-hidden pointer-events-none', className)}>
-      {/* Cercles décoratifs */}
+      {/* Decorative circles */}
       <div className="absolute top-10 left-10 w-4 h-4 bg-theme-primary/20 rounded-full animate-bounce" style={{ animationDelay: '0s' }} />
       <div className="absolute top-20 right-20 w-3 h-3 bg-theme-accent/30 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }} />
       <div className="absolute bottom-20 left-20 w-5 h-5 bg-theme-secondary/20 rounded-full animate-bounce" style={{ animationDelay: '1s' }} />
       <div className="absolute bottom-10 right-10 w-2 h-2 bg-theme-primary/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }} />
       
-      {/* Lignes décoratives */}
+      {/* Decorative lines */}
       <div className="absolute top-1/4 left-0 w-20 h-px bg-gradient-to-r from-transparent via-theme-primary/30 to-transparent" />
       <div className="absolute bottom-1/4 right-0 w-20 h-px bg-gradient-to-l from-transparent via-theme-accent/30 to-transparent" />
     </div>

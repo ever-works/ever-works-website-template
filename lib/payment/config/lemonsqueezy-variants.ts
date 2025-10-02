@@ -92,6 +92,6 @@ export function getPlanByProductId(productId: string | number): PlanType | null 
   return null;
 }
 
-// Alias pour la compatibilité (deprecated)
+// Alias for compatibility (deprecated)
 export const LEMONSQUEEZY_VARIANTS = LEMONSQUEEZY_PRODUCTS;
 export const getVariantId = getProductId;

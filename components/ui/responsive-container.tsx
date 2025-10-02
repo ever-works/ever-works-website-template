@@ -50,7 +50,7 @@ export function ResponsiveContainer({
   );
 }
 
-// Hook pour détecter la taille d'écran
+// Hook to detect screen size
 export function useScreenSize() {
   const [screenSize, setScreenSize] = React.useState<'mobile' | 'tablet' | 'desktop'>('desktop');
 
@@ -74,7 +74,7 @@ export function useScreenSize() {
   return screenSize;
 }
 
-// Composant pour masquer/afficher selon la taille d'écran
+// Component to show/hide based on screen size
 interface ResponsiveShowProps {
   children: React.ReactNode;
   on?: ('mobile' | 'tablet' | 'desktop')[];
@@ -91,7 +91,7 @@ export function ResponsiveShow({ children, on = ['desktop'], className }: Respon
   return <div className={className}>{children}</div>;
 }
 
-// Composant pour masquer selon la taille d'écran
+// Component to hide based on screen size
 interface ResponsiveHideProps {
   children: React.ReactNode;
   on?: ('mobile' | 'tablet' | 'desktop')[];
@@ -108,7 +108,7 @@ export function ResponsiveHide({ children, on = ['mobile'], className }: Respons
   return <div className={className}>{children}</div>;
 }
 
-// Composant de grille responsive
+// Responsive grid component
 interface ResponsiveGridProps {
   children: React.ReactNode;
   cols?: {
@@ -156,7 +156,7 @@ export function ResponsiveGrid({
   );
 }
 
-// Composant pour les breakpoints personnalisés
+// Component for custom breakpoints
 interface BreakpointProps {
   children: React.ReactNode;
   at: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
@@ -185,7 +185,7 @@ export function Breakpoint({ children, at, direction = 'up', className }: Breakp
   );
 }
 
-// Composant pour les espacements responsifs
+// Component for responsive spacing
 interface ResponsiveSpacingProps {
   children: React.ReactNode;
   spacing?: {

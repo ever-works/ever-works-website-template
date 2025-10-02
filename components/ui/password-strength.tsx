@@ -89,7 +89,7 @@ export function PasswordStrength({ password, className }: PasswordStrengthProps)
         </div>
       </div>
 
-      {/* Liste des critères */}
+      {/* Criteria list */}
       <div className="space-y-2">
         {criteria.map((criterion, index) => (
           <div

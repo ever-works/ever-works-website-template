@@ -213,19 +213,16 @@ export default function Header() {
   const renderRightSection = useCallback(
     () => (
       <NavbarContent justify="end" className={STYLES.rightSection}>
-        {/* NavigationControls - visible seulement sur desktop large */}
         <NavbarItem className={STYLES.largeUp}>
           <NavigationControls />
         </NavbarItem>
         
-        {/* ProfileButton - toujours visible mais avec tailles adaptatives */}
         <NavbarItem>
           <div className="scale-90 sm:scale-95 md:scale-100 lg:scale-105 xl:scale-110 transition-transform duration-200">
             <ProfileButton/>
           </div>
         </NavbarItem>
         
-        {/* Menu Toggle - visible seulement sur mobile et tablette */}
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className={STYLES.navbarMenuToggle}
@@ -254,7 +251,6 @@ export default function Header() {
 
       <NavbarMenu>
         <div className={STYLES.mobileMenu}>
-          {/* Navigation Items - visibles sur mobile et tablette */}
           {navigationItems.map((item) => (
             <NavbarMenuItem key={item.key} className={STYLES.mobileMenuItem}>
               <Link
@@ -268,16 +264,13 @@ export default function Header() {
             </NavbarMenuItem>
           ))}
           
-          {/* Mobile Controls - section séparée pour les contrôles */}
           <div className={STYLES.mobileControls}>
-            {/* LayoutSwitcher - visible sur tous les écrans dans le menu mobile */}
             <div className="py-2 flex justify-center">
               <div className="scale-90 sm:scale-95 md:scale-100 transition-transform duration-200">
                 <LayoutSwitcher inline />
               </div>
             </div>
             
-            {/* NavigationControls - visible seulement sur mobile et tablette dans le menu */}
             <div className={`py-2 flex justify-center ${STYLES.mobileOnly}`}>
               <div className="scale-90 sm:scale-95 md:scale-100 transition-transform duration-200">
                 <NavigationControls />

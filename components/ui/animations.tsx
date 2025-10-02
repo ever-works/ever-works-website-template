@@ -19,14 +19,14 @@ interface AnimationProps {
   onAnimationComplete?: () => void;
 }
 
-// Mapping des durées
+// Duration mapping
 const durationMap: Record<AnimationDuration, string> = {
   fast: 'duration-200',
   normal: 'duration-300',
   slow: 'duration-500',
 };
 
-// Mapping des easings
+// Easing mapping
 const easingMap: Record<AnimationEasing, string> = {
   ease: 'ease',
   'ease-in': 'ease-in',
@@ -35,7 +35,7 @@ const easingMap: Record<AnimationEasing, string> = {
   bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
 };
 
-// Mapping des animations
+// Animation mapping
 const animationMap: Record<AnimationType, { initial: string; animate: string }> = {
   fadeIn: {
     initial: 'opacity-0',
@@ -85,7 +85,7 @@ export function AnimatedContainer({
       const timer = setTimeout(() => {
         setIsVisible(true);
         if (onAnimationComplete) {
-          setTimeout(onAnimationComplete, 300); // Délai approximatif pour l'animation
+          setTimeout(onAnimationComplete, 300); // Approximate delay for animation
         }
       }, delay);
       return () => clearTimeout(timer);
@@ -113,7 +113,7 @@ export function AnimatedContainer({
   );
 }
 
-// Composant pour les animations en cascade (stagger)
+// Component for staggered animations
 interface StaggerContainerProps {
   children: React.ReactNode;
   staggerDelay?: number;
@@ -175,7 +175,7 @@ export function useScrollAnimation(threshold = 0.1) {
   return { isVisible, ref: setElementRef };
 }
 
-// Composant pour les animations au scroll
+// Component for scroll animations
 interface ScrollAnimationProps extends AnimationProps {
   threshold?: number;
 }
@@ -261,7 +261,7 @@ export function PageTransition({ children, isVisible, className }: PageTransitio
   );
 }
 
-// Composant pour les animations de chargement
+// Component for loading animations
 export function LoadingAnimation({ className }: { className?: string }) {
   return (
     <div className={cn('flex items-center justify-center', className)}>
@@ -274,7 +274,7 @@ export function LoadingAnimation({ className }: { className?: string }) {
   );
 }
 
-// Composant pour les animations de succès
+// Component for success animations
 export function SuccessAnimation({ className }: { className?: string }) {
   return (
     <div className={cn('flex items-center justify-center', className)}>

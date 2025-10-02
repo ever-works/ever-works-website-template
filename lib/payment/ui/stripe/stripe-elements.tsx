@@ -208,7 +208,7 @@ export function StripePaymentForm({
       {/* Formulaire de paiement */}
       <form id="payment-form" onSubmit={handleSubmit} className="w-full">
         <div className="space-y-6">
-          {/* Conteneur du Payment Element avec styles améliorés */}
+          {/* Payment Element container with enhanced styles */}
           <div className="relative">
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-20 animate-pulse"></div>
             <div className="relative p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg">
@@ -255,7 +255,7 @@ export function StripePaymentForm({
             </div>
           )}
 
-          {/* Message de succès */}
+          {/* Success message */}
           {isProcessed && (
             <div className="relative">
               <div className="absolute -inset-1 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg blur opacity-20"></div>
@@ -277,7 +277,7 @@ export function StripePaymentForm({
             </div>
           )}
 
-          {/* Bouton de paiement amélioré */}
+          {/* Enhanced payment button */}
           <div className="relative">
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
             <Button

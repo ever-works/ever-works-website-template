@@ -3,7 +3,7 @@ import { StripeProvider } from './providers/stripe-provider';
 import { LemonSqueezyProvider, LemonSqueezyConfig } from './providers/lemonsqueezy-provider';
 // import { SolidgateProvider } from './providers/solidgate-provider';
 
-// Type des providers supportés
+// Supported provider types
 export type SupportedProvider = 'stripe' | 'solidgate' | 'lemonsqueezy';
 
 /**

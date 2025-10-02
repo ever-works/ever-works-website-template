@@ -289,7 +289,7 @@ export function useDetailForm(initialData: Partial<FormData>, onSubmit: (data: F
       }
     }, [currentStep]);
   
-    // Calcul du progrès global
+    // Global progress calculation
     const { progressPercentage, completedRequiredFields, requiredFieldsCount } =
       useMemo(() => {
         const required = 4; // name, mainLink, category, description
