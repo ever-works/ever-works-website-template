@@ -9,7 +9,7 @@ import { TagData } from "@/lib/types/tag";
 import { UniversalPagination } from "@/components/universal-pagination";
 import { Plus, Edit, Trash2, Tag, Eye } from "lucide-react";
 import { toast } from "sonner";
-import { useTags, useTagManagement } from "@/hooks/use-admin-tags";
+import { useAdminTags } from "@/hooks/use-admin-tags";
 
 
 export default function AdminTagsPage() {
@@ -21,15 +21,24 @@ export default function AdminTagsPage() {
   const [selectedTag, setSelectedTag] = useState<TagData | undefined>();
   const [deletingTagId, setDeletingTagId] = useState<string | null>(null);
 
-  // Use React Query hooks
-  const { data: tagsData, isLoading, error } = useTags(currentPage, 10);
+  // Use the new comprehensive admin tags hook
   const { 
-    createTag, 
-    updateTag, 
-    deleteTag, 
-    isCreating, 
-    isUpdating 
-  } = useTagManagement();
+    tags,
+    total,
+    page,
+    totalPages,
+    limit,
+    isLoading,
+    isSubmitting,
+    createTag,
+    updateTag,
+    deleteTag,
+    tagsAll,
+    refetch
+  } = useAdminTags({
+    params: { page: currentPage, limit: 10 },
+    enabled: true
+  });
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -182,7 +191,7 @@ export default function AdminTagsPage() {
                   <span>Organize and manage your content tags</span>
                   <span className="hidden sm:inline">•</span>
                   <span className="text-sm px-2 py-1 bg-theme-primary/10 text-theme-primary rounded-full font-medium">
-                    {tagsData?.total || 0} total
+                    {total || 0} total
                   </span>
                 </p>
               </div>
@@ -210,7 +219,7 @@ export default function AdminTagsPage() {
                   Total Tags
                 </p>
                 <p className="text-3xl font-bold text-blue-700 dark:text-blue-300 group-hover:scale-105 transition-transform">
-                  {tagsData?.total || 0}
+                  {total || 0}
                 </p>
               </div>
               <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -228,7 +237,7 @@ export default function AdminTagsPage() {
                   Active Tags
                 </p>
                 <p className="text-3xl font-bold text-green-700 dark:text-green-300 group-hover:scale-105 transition-transform">
-                  {tagsData?.tags?.filter(tag => tag.isActive).length}
+                  {tags?.filter(tag => tag.isActive).length || 0}
                 </p>
               </div>
               <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -249,14 +258,14 @@ export default function AdminTagsPage() {
                 Tags
               </h3>
               <div className="text-sm text-gray-500 dark:text-gray-400">
-                {tagsData?.tags?.length || 0} of {tagsData?.total || 0} tags
+                {tags?.length || 0} of {total || 0} tags
               </div>
             </div>
           </div>
 
           {/* Enhanced Table Content */}
           <div className="divide-y divide-gray-100 dark:divide-gray-800">
-            {tagsData?.tags?.map((tag) => (
+            {tags?.map((tag) => (
               <div 
                 key={tag.id} 
                 className="group hover:bg-gradient-to-r hover:from-theme-primary/5 hover:to-theme-accent/5 dark:hover:from-theme-primary/10 dark:hover:to-theme-accent/10 transition-all duration-200"
@@ -329,7 +338,7 @@ export default function AdminTagsPage() {
           </div>
 
           {/* Empty State */}
-          {tagsData?.tags?.length === 0 && (
+          {tags?.length === 0 && (
             <div className="px-6 py-16 text-center">
               <div className="max-w-sm mx-auto">
                 <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-theme-primary/10 to-theme-accent/10 rounded-full flex items-center justify-center">
@@ -356,11 +365,11 @@ export default function AdminTagsPage() {
       </Card>
 
       {/* Pagination */}
-      {tagsData && tagsData.totalPages > 1 && (
+      {totalPages && totalPages > 1 && (
         <div className="mt-8 flex justify-center">
           <UniversalPagination
             page={currentPage}
-            totalPages={tagsData.totalPages}
+            totalPages={totalPages}
             onPageChange={handlePageChange}
           />
         </div>
@@ -375,7 +384,7 @@ export default function AdminTagsPage() {
               mode={formMode}
               onSubmit={handleFormSubmit}
               onCancel={closeModal}
-              isLoading={isCreating || isUpdating}
+              isLoading={isSubmitting}
             />
           </div>
         </div>

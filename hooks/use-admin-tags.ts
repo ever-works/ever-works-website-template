@@ -1,176 +1,371 @@
+import { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { TagData } from '@/lib/types/tag';
-import { apiUtils, serverClient } from '@/lib/api/server-api-client';
+import { toast } from 'sonner';
+import { serverClient, apiUtils } from '@/lib/api/server-api-client';
+import {
+  TagData,
+  TagWithCount,
+  CreateTagRequest,
+  UpdateTagRequest,
+  TagListResponse,
+  TagListOptions
+} from '@/lib/types/tag';
 
-// Create server client instance
-
-// Types
-export interface TagsResponse {
-  tags: TagData[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-  success: boolean;
-  message?: string;
-  error?: string;
-}
-
-
-export interface UpdateTagData extends TagData {}
-
-// Query keys
-export const tagsKeys = {
-  all: ['tags'] as const,
-  lists: () => [...tagsKeys.all, 'list'] as const,
-  list: (page: number, limit: number) => [...tagsKeys.lists(), { page, limit }] as const,
-  details: () => [...tagsKeys.all, 'detail'] as const,
-  detail: (id: string) => [...tagsKeys.details(), id] as const,
-};
+// Query keys factory
+const QUERY_KEYS = {
+  tags: ['admin', 'tags'] as const,
+  tagsAll: () => [...QUERY_KEYS.tags, 'all'] as const,
+  tagsList: (params: TagListOptions) => [...QUERY_KEYS.tags, 'list', params] as const,
+  tag: (id: string) => [...QUERY_KEYS.tags, 'detail', id] as const,
+} as const;
 
 // API functions
-const tagsApi = {
-  // Get tags with pagination
-  getTags: async (page: number = 1, limit: number = 10): Promise<TagsResponse> => {
-    const response = await serverClient.get<TagsResponse>(`/api/admin/tags?page=${page}&limit=${limit}`);
-    
-    if (!apiUtils.isSuccess(response)) {
-      throw new Error(response.error || 'Failed to fetch tags');
-    }
-    
-    return response.data;
-  },
+const fetchTags = async (params: TagListOptions = {}): Promise<TagListResponse> => {
+  const searchParams = new URLSearchParams();
+  
+  if (params.includeInactive) searchParams.set('includeInactive', 'true');
+  if (params.page) searchParams.set('page', params.page.toString());
+  if (params.limit) searchParams.set('limit', params.limit.toString());
+  if (params.sortBy) searchParams.set('sortBy', params.sortBy);
+  if (params.sortOrder) searchParams.set('sortOrder', params.sortOrder);
 
-  // Create tag
-  createTag: async (data: TagData): Promise<TagsResponse> => {
-    const response = await serverClient.post<TagsResponse>('/api/admin/tags', data);
-    
-    if (!apiUtils.isSuccess(response)) {
-      throw new Error(response.error || 'Failed to create tag');
-    }
-    
-    return response.data;
-  },
-
-  // Update tag
-  updateTag: async (id: string, data: UpdateTagData): Promise<TagsResponse> => {
-    const response = await serverClient.put<TagsResponse>(`/api/admin/tags/${id}`, data);
-    
-    if (!apiUtils.isSuccess(response)) {
-      throw new Error(response.error || 'Failed to update tag');
-    }
-    
-    return response.data;
-  },
-
-  // Delete tag
-  deleteTag: async (id: string): Promise<{ success: boolean; message?: string }> => {
-    const response = await serverClient.delete<{ success: boolean; message?: string }>(`/api/admin/tags/${id}`);
-    
-    if (!apiUtils.isSuccess(response)) {
-      throw new Error(response.error || 'Failed to delete tag');
-    }
-    
-    return response.data;
-  },
+  const response = await serverClient.get<TagListResponse>(`/api/admin/tags?${searchParams.toString()}`);
+  
+  if (!apiUtils.isSuccess(response)) {
+    throw new Error(apiUtils.getErrorMessage(response));
+  }
+  
+  return response.data;
 };
 
-// Custom hooks
-export function useTags(page: number = 1, limit: number = 10) {
-  return useQuery({
-    queryKey: tagsKeys.list(page, limit),
-    queryFn: () => tagsApi.getTags(page, limit),
+const fetchTag = async (id: string): Promise<TagData> => {
+  const response = await serverClient.get<{ success: boolean; tag: TagData }>(`/api/admin/tags/${id}`);
+  
+  if (!apiUtils.isSuccess(response)) {
+    throw new Error(apiUtils.getErrorMessage(response));
+  }
+  
+  return response.data.tag;
+};
+
+const fetchTagsAll = async (): Promise<TagListResponse> => {
+  const response = await serverClient.get<TagListResponse>('/api/admin/tags/all');
+  
+  if (!apiUtils.isSuccess(response)) {
+    throw new Error(apiUtils.getErrorMessage(response));
+  }
+  return response.data;
+};
+
+const createTag = async (data: CreateTagRequest): Promise<TagData> => {
+  const response = await serverClient.post<{ success: boolean; tag: TagData }>('/api/admin/tags', data);
+  
+  if (!apiUtils.isSuccess(response)) {
+    throw new Error(apiUtils.getErrorMessage(response));
+  }
+  
+  return response.data.tag;
+};
+
+const updateTag = async (id: string, data: UpdateTagRequest): Promise<TagData> => {
+  const response = await serverClient.put<{ success: boolean; tag: TagData }>(`/api/admin/tags/${id}`, data);
+  
+  if (!apiUtils.isSuccess(response)) {
+    throw new Error(apiUtils.getErrorMessage(response));
+  }
+  
+  return response.data.tag;
+};
+
+const deleteTag = async (id: string, hard = false): Promise<void> => {
+  const url = hard ? `/api/admin/tags/${id}?hard=true` : `/api/admin/tags/${id}`;
+  const response = await serverClient.delete(url);
+  
+  if (!apiUtils.isSuccess(response)) {
+    throw new Error(apiUtils.getErrorMessage(response));
+  }
+};
+
+// Hook interface
+export interface UseAdminTagsOptions {
+  params?: TagListOptions;
+  enabled?: boolean;
+}
+
+export interface UseAdminTagsReturn {
+  // Data
+  tags: TagWithCount[];
+  total: number;
+  page: number;
+  totalPages: number;
+  limit: number;
+  
+  // Loading states
+  isLoading: boolean;
+  isSubmitting: boolean;
+  
+  // Actions
+  createTag: (data: CreateTagRequest) => Promise<boolean>;
+  updateTag: (id: string, data: UpdateTagRequest) => Promise<boolean>;
+  deleteTag: (id: string, hard?: boolean) => Promise<boolean>;
+  tagsAll: () => Promise<TagListResponse | null>;
+  // Utility
+  refetch: () => void;
+  refreshData: () => void;
+}
+
+// Main hook
+export function useAdminTags(options: UseAdminTagsOptions = {}): UseAdminTagsReturn {
+  const { params = {}, enabled = true } = options;
+  const queryClient = useQueryClient();
+
+  // Fetch tags list
+  const {
+    data: tagsData,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: QUERY_KEYS.tagsList(params),
+    queryFn: () => fetchTags(params),
+    enabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
+    retry: 3,
   });
-}
 
-export function useCreateTag() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: tagsApi.createTag,
+  // Create tag mutation
+  const createTagMutation = useMutation({
+    mutationFn: createTag,
     onSuccess: (data) => {
-      // Invalidate and refetch tags lists
-      queryClient.invalidateQueries({ queryKey: tagsKeys.lists() });
-      
-      // Optionally add the new tag to the cache
-      if (data.tags && data.tags.length > 0) {
-        queryClient.setQueryData(tagsKeys.detail(data.tags[0].id), data.tags[0]);
-      }
+      toast.success('Tag created successfully');
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.tags });
     },
     onError: (error) => {
-      console.error('Error creating tag:', error);
+      toast.error(error.message || 'Failed to create tag');
     },
   });
-}
 
-export function useUpdateTag() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateTagData }) => 
-      tagsApi.updateTag(id, data),
-    onSuccess: (data, variables) => {
-      // Invalidate and refetch tags lists
-      queryClient.invalidateQueries({ queryKey: tagsKeys.lists() });
-      
-      // Update the specific tag in cache
-      if (data.tags && data.tags.length > 0) {
-        queryClient.setQueryData(tagsKeys.detail(variables.id), data.tags[0]);
-      }
+  // Update tag mutation
+  const updateTagMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateTagRequest }) => updateTag(id, data),
+    onSuccess: (data) => {
+      toast.success('Tag updated successfully');
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.tags });
     },
     onError: (error) => {
-      console.error('Error updating tag:', error);
+      toast.error(error.message || 'Failed to update tag');
     },
   });
-}
 
-export function useDeleteTag() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: tagsApi.deleteTag,
-    onSuccess: (_, tagId) => {
-      // Invalidate and refetch tags lists
-      queryClient.invalidateQueries({ queryKey: tagsKeys.lists() });
-      
-      // Remove the tag from cache
-      queryClient.removeQueries({ queryKey: tagsKeys.detail(tagId) });
+  // Delete tag mutation
+  const deleteTagMutation = useMutation({
+    mutationFn: ({ id, hard }: { id: string; hard?: boolean }) => deleteTag(id, hard),
+    onSuccess: () => {
+      toast.success('Tag deleted successfully');
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.tags });
     },
     onError: (error) => {
-      console.error('Error deleting tag:', error);
+      toast.error(error.message || 'Failed to delete tag');
     },
   });
-}
 
-// Utility hook for tag management
-export function useTagManagement() {
-  const createTagMutation = useCreateTag();
-  const updateTagMutation = useUpdateTag();
-  const deleteTagMutation = useDeleteTag();
+  // Tags all mutation
+  const tagsAllMutation = useMutation({
+    mutationFn: fetchTagsAll,
+    onSuccess: () => {
+      toast.success('Tags fetched successfully');
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.tagsAll() });
+    },
+  });
 
-  const createTag = async (data: TagData) => {
-    return createTagMutation.mutateAsync(data);
-  };
+  // Action handlers
+  const handleCreateTag = useCallback(async (data: CreateTagRequest): Promise<boolean> => {
+    try {
+      await createTagMutation.mutateAsync(data);
+      return true;
+    } catch {
+      return false;
+    }
+  }, [createTagMutation]);
 
-  const updateTag = async (id: string, data: UpdateTagData) => {
-    return updateTagMutation.mutateAsync({ id, data });
-  };
+  const handleUpdateTag = useCallback(async (id: string, data: UpdateTagRequest): Promise<boolean> => {
+    try {
+      await updateTagMutation.mutateAsync({ id, data });
+      return true;
+    } catch {
+      return false;
+    }
+  }, [updateTagMutation]);
 
-  const deleteTag = async (id: string) => {
-    return deleteTagMutation.mutateAsync(id);
-  };
+  const handleDeleteTag = useCallback(async (id: string, hard = false): Promise<boolean> => {
+    try {
+      await deleteTagMutation.mutateAsync({ id, hard });
+      return true;
+    } catch {
+      return false;
+    }
+  }, [deleteTagMutation]);
+
+  const handleTagsAll = useCallback(async (): Promise<TagListResponse | null> => {
+    try {
+      const result = await tagsAllMutation.mutateAsync();
+      return result;
+    } catch {
+      return null;
+    }
+  }, [tagsAllMutation]);
+
+
+  const refreshData = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.tags });
+  }, [queryClient]);
 
   return {
-    createTag,
-    updateTag,
-    deleteTag,
-    isCreating: createTagMutation.isPending,
-    isUpdating: updateTagMutation.isPending,
-    isDeleting: deleteTagMutation.isPending,
-    createError: createTagMutation.error,
-    updateError: updateTagMutation.error,
-    deleteError: deleteTagMutation.error,
+    // Data
+    tags: tagsData?.tags || [],
+    total: tagsData?.total || 0,
+    page: tagsData?.page || 1,
+    totalPages: tagsData?.totalPages || 1,
+    limit: tagsData?.limit || 10,
+    
+    // Loading states
+    isLoading,
+    isSubmitting: createTagMutation.isPending || updateTagMutation.isPending || deleteTagMutation.isPending,
+    
+    // Actions
+    createTag: handleCreateTag,
+    updateTag: handleUpdateTag,
+    deleteTag: handleDeleteTag,
+    tagsAll: handleTagsAll,
+    
+    // Utility
+    refetch,
+    refreshData,
   };
 }
+
+// Hook for single tag
+export interface UseTagOptions {
+  id: string;
+  enabled?: boolean;
+}
+
+export interface UseTagReturn {
+  tag: TagData | null;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+}
+
+export function useTag({ id, enabled = true }: UseTagOptions): UseTagReturn {
+  const {
+    data: tag,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: QUERY_KEYS.tag(id),
+    queryFn: () => fetchTag(id),
+    enabled: enabled && !!id,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    retry: 3,
+  });
+
+  return {
+    tag: tag || null,
+    isLoading,
+    error: error as Error | null,
+    refetch,
+  };
+}
+
+// Hook for tag mutations only
+export interface UseTagMutationsReturn {
+  createTag: (data: CreateTagRequest) => Promise<boolean>;
+  updateTag: (id: string, data: UpdateTagRequest) => Promise<boolean>;
+  deleteTag: (id: string, hard?: boolean) => Promise<boolean>;
+  isSubmitting: boolean;
+}
+
+export function useTagMutations(): UseTagMutationsReturn {
+  const queryClient = useQueryClient();
+
+  // Create tag mutation
+  const createTagMutation = useMutation({
+    mutationFn: createTag,
+    onSuccess: () => {
+      toast.success('Tag created successfully');
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.tags });
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to create tag');
+    },
+  });
+
+  // Update tag mutation
+  const updateTagMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateTagRequest }) => updateTag(id, data),
+    onSuccess: () => {
+      toast.success('Tag updated successfully');
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.tags });
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to update tag');
+    },
+  });
+
+  // Delete tag mutation
+  const deleteTagMutation = useMutation({
+    mutationFn: ({ id, hard }: { id: string; hard?: boolean }) => deleteTag(id, hard),
+    onSuccess: () => {
+      toast.success('Tag deleted successfully');
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.tags });
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to delete tag');
+    },
+  });
+
+  const handleCreateTag = useCallback(async (data: CreateTagRequest): Promise<boolean> => {
+    try {
+      await createTagMutation.mutateAsync(data);
+      return true;
+    } catch {
+      return false;
+    }
+  }, [createTagMutation]);
+
+  const handleUpdateTag = useCallback(async (id: string, data: UpdateTagRequest): Promise<boolean> => {
+    try {
+      await updateTagMutation.mutateAsync({ id, data });
+      return true;
+    } catch {
+      return false;
+    }
+  }, [updateTagMutation]);
+
+  const handleDeleteTag = useCallback(async (id: string, hard = false): Promise<boolean> => {
+    try {
+      await deleteTagMutation.mutateAsync({ id, hard });
+      return true;
+    } catch {
+      return false;
+    }
+  }, [deleteTagMutation]);
+
+  return {
+    createTag: handleCreateTag,
+    updateTag: handleUpdateTag,
+    deleteTag: handleDeleteTag,
+    isSubmitting: createTagMutation.isPending || updateTagMutation.isPending || deleteTagMutation.isPending,
+  };
+}
+
+// Legacy hooks for backward compatibility
+export const useTags = useAdminTags;
+export const useCreateTag = () => useTagMutations().createTag;
+export const useUpdateTag = () => useTagMutations().updateTag;
+export const useDeleteTag = () => useTagMutations().deleteTag;
+export const useTagManagement = useTagMutations;
