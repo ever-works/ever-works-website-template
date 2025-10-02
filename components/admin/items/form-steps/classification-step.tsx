@@ -15,6 +15,8 @@ export interface ClassificationData {
 
 interface ClassificationStepProps {
   data: ClassificationData;
+  suggestedCategories?: string[];
+  suggestedTags?: string[];
   onChange: (data: ClassificationData) => void;
   onValidationChange: (isValid: boolean) => void;
 }
@@ -32,6 +34,7 @@ const SUGGESTED_CATEGORIES = [
   'Business'
 ];
 
+
 const SUGGESTED_TAGS = [
   'javascript', 'react', 'vue', 'angular', 'nodejs',
   'python', 'ai', 'machine-learning', 'mobile', 'ios',
@@ -42,7 +45,9 @@ const SUGGESTED_TAGS = [
 export function ClassificationStep({
   data,
   onChange,
-  onValidationChange
+  onValidationChange,
+  suggestedCategories = SUGGESTED_CATEGORIES,
+  suggestedTags = SUGGESTED_TAGS
 }: ClassificationStepProps) {
   const t = useTranslations('admin.ITEM_FORM');
   const [newCategory, setNewCategory] = useState('');
@@ -212,7 +217,7 @@ export function ClassificationStep({
           <div>
             <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">{t('FIELDS.CATEGORY.SUGGESTED')}:</p>
             <div className="flex flex-wrap gap-2">
-              {SUGGESTED_CATEGORIES
+              {suggestedCategories
                 .filter(cat => !data.category.includes(cat))
                 .map((category) => (
                 <Button
@@ -292,7 +297,7 @@ export function ClassificationStep({
           <div>
             <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">{t('FIELDS.TAGS.SUGGESTED')}:</p>
             <div className="flex flex-wrap gap-2">
-              {SUGGESTED_TAGS
+              {suggestedTags
                 .filter(tag => !data.tags.includes(tag))
                 .slice(0, 15) // Limit to prevent UI overflow
                 .map((tag) => (
