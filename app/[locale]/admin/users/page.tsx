@@ -37,7 +37,7 @@ function getAvatarColor(identifier: string): string {
 }
 
 export default function AdminUsersPage() {
-const PageSize=10;
+  const PAGE_SIZE = 10;
 
   // Translations
   const t = useTranslations('admin.ADMIN_USERS_PAGE');
@@ -62,7 +62,7 @@ const PageSize=10;
     handleStatusFilter,
   } = useAdminUsers({
     page: 1,
-    limit: PageSize,
+    limit: PAGE_SIZE,
     search: '',
     role: '',
     status: '',
