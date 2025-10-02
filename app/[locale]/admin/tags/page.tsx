@@ -30,6 +30,7 @@ export default function AdminTagsPage() {
     limit,
     isLoading,
     isSubmitting,
+    error,
     createTag,
     updateTag,
     deleteTag,

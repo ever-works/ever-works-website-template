@@ -89,8 +89,11 @@ export async function GET(request: NextRequest) {
 		if (!session?.user?.isAdmin) {
 			return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 		}
-		const body = await request.json();
-		const { locale = 'en' } = body;
+		
+		// Get locale from query parameters instead of body
+		const { searchParams } = new URL(request.url);
+		const locale = searchParams.get('locale') || 'en';
+		
 		const { categories } = await fetchItems({ lang: locale });
 		return NextResponse.json({ success: true, data: categories });
 	} catch (error) {

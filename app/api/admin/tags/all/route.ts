@@ -12,12 +12,13 @@ import { NextRequest, NextResponse } from "next/server";
  *     security:
  *       - sessionAuth: []
  *     parameters:
- *       - name: "id"
- *         in: "path"
- *         required: true
+ *       - name: "locale"
+ *         in: "query"
+ *         required: false
  *         schema:
  *           type: string
- *         description: "Locale"
+ *           default: "en"
+ *         description: "Locale for fetching tags"
  *         example: "en"
  *     responses:
  *       200:
@@ -88,11 +89,14 @@ export async function GET(request: NextRequest) {
 		if (!session?.user?.isAdmin) {
 			return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 		}
-		const body = await request.json();
-		const { locale = 'en' } = body
+		
+		const { searchParams } = new URL(request.url);
+		const locale = searchParams.get('locale') || 'en';
+		
 		if (locale && typeof locale !== 'string') {
 			return NextResponse.json({ success: false, error: 'Invalid locale parameter' }, { status: 400 });
 		}
+		
 		const { tags } = await fetchItems({ lang: locale });
 		return NextResponse.json({
 			success: true,

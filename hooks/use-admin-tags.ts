@@ -103,6 +103,7 @@ export interface UseAdminTagsReturn {
   // Loading states
   isLoading: boolean;
   isSubmitting: boolean;
+  error: Error | null;
   
   // Actions
   createTag: (data: CreateTagRequest) => Promise<boolean>;
@@ -232,6 +233,7 @@ export function useAdminTags(options: UseAdminTagsOptions = {}): UseAdminTagsRet
     // Loading states
     isLoading,
     isSubmitting: createTagMutation.isPending || updateTagMutation.isPending || deleteTagMutation.isPending,
+    error: error as Error | null,
     
     // Actions
     createTag: handleCreateTag,
