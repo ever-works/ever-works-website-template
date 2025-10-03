@@ -44,9 +44,10 @@ export async function generateMetadata({
 			: [];
 
 		// Truncate description to 160 characters for meta description
+		const MAX_DESCRIPTION_LENGTH = 160;
 		const metaDescription = meta.description
-			? meta.description.length > 160
-				? `${meta.description.slice(0, 157)}...`
+			? meta.description.length > MAX_DESCRIPTION_LENGTH
+				? `${meta.description.slice(0, MAX_DESCRIPTION_LENGTH - 3)}...`
 				: meta.description
 			: `Discover ${meta.name} on Ever Works`;
 

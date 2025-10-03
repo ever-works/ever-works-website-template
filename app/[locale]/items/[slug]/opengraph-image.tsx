@@ -1,7 +1,8 @@
 import { ImageResponse } from 'next/og';
 
-// Remove Edge Runtime to allow Node.js modules
-// OG images will be generated at build time or on-demand in Node.js runtime
+// Explicitly set Node.js runtime to allow Node.js modules (fs, path)
+// Edge runtime does not support Node.js APIs required by fetchItem()
+export const runtime = 'nodejs';
 export const alt = 'Ever Works Item';
 export const size = {
 	width: 1200,
