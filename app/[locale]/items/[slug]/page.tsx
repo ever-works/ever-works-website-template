@@ -82,7 +82,7 @@ export async function generateMetadata({
 				card: 'summary_large_image',
 				title: meta.name,
 				description: metaDescription,
-				images: [ogImageUrl]
+				images: [ogImageUrl, fallbackImageUrl]
 			},
 			alternates: {
 				canonical: `${baseUrl}/${locale}/items/${slug}`
