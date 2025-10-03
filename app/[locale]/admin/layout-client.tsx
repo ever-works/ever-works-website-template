@@ -12,6 +12,7 @@ function AdminAuthGuard({ children }: { children: React.ReactNode }) {
   const hasRedirectedRef = useRef(false);
 
   // Check if we're on an auth page (signin, signup, etc.)
+  // Using includes with trailing slash prevents false positives like /admin/authenticate
   const isAuthPage = pathname?.includes('/admin/auth/');
 
   useEffect(() => {
