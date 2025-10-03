@@ -51,8 +51,9 @@ export async function generateMetadata({
 				: meta.description
 			: `Discover ${meta.name} on Ever Works`;
 
-		// Use item icon or fallback to logo
-		const imageUrl = meta.icon_url || `${baseUrl}/logo-ever-works.svg`;
+		// Use dynamic OG image endpoint, with fallback to icon or logo
+		const ogImageUrl = new URL(`/${locale}/items/${slug}/opengraph-image`, baseUrl).toString();
+		const fallbackImageUrl = new URL(meta.icon_url ?? '/logo-ever-works.svg', baseUrl).toString();
 
 		return {
 			title: `${meta.name} | Ever Works`,
@@ -63,10 +64,14 @@ export async function generateMetadata({
 				description: meta.description || metaDescription,
 				images: [
 					{
-						url: imageUrl,
+						url: ogImageUrl,
 						width: 1200,
 						height: 630,
 						alt: meta.name
+					},
+					{
+						url: fallbackImageUrl,
+						alt: `${meta.name} icon`
 					}
 				],
 				type: 'website',
@@ -77,7 +82,7 @@ export async function generateMetadata({
 				card: 'summary_large_image',
 				title: meta.name,
 				description: metaDescription,
-				images: [imageUrl]
+				images: [ogImageUrl]
 			},
 			alternates: {
 				canonical: `${baseUrl}/${locale}/items/${slug}`
