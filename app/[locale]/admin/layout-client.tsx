@@ -28,10 +28,10 @@ function AdminAuthGuard({ children }: { children: React.ReactNode }) {
 
     // Check if user is admin
     if (!session.user?.isAdmin) {
-      console.log("User not admin, redirecting to dashboard");
+      console.log("User not admin, redirecting to unauthorized");
       hasRedirectedRef.current = true;
-      // Not admin, redirect to dashboard
-      router.replace("/dashboard");
+      // Not admin, redirect to unauthorized (mirrors server-side requireAdmin)
+      router.replace("/unauthorized");
       return;
     }
 
