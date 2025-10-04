@@ -16,6 +16,11 @@ export interface TagsResponse {
   error?: string;
 }
 
+export interface SingleTagResponse {
+  tag: TagData;
+  success: boolean;
+  message?: string;
+}
 
 export interface UpdateTagData extends TagData {}
 
@@ -42,40 +47,31 @@ const tagsApi = {
   },
 
   // Create tag
-  createTag: async (data: TagData): Promise<TagsResponse> => {
+  createTag: async (data: TagData): Promise<SingleTagResponse> => {
     const response = await serverClient.post<{ success: boolean; tag: TagData }>('/api/admin/tags', data);
-    
+
     if (!apiUtils.isSuccess(response)) {
       throw new Error(response.error || 'Failed to create tag');
     }
-    
-    // Convert single tag to TagsResponse format
+
     return {
-      tags: [response.data.tag],
-      total: 1,
-      page: 1,
-      limit: 1,
-      totalPages: 1,
+      tag: response.data.tag,
       success: true
     };
   },
 
   // Update tag
-  updateTag: async (id: string, data: UpdateTagData): Promise<TagsResponse> => {
+  updateTag: async (id: string, data: UpdateTagData): Promise<SingleTagResponse> => {
     const response = await serverClient.put<{ success: boolean; data: TagData; message: string }>(`/api/admin/tags/${id}`, data);
     
     if (!apiUtils.isSuccess(response)) {
       throw new Error(response.error || 'Failed to update tag');
     }
     
-    // Convert single tag to TagsResponse format
     return {
-      tags: [response.data.data],
-      total: 1,
-      page: 1,
-      limit: 1,
-      totalPages: 1,
-      success: true
+      tag: response.data.data,
+      success: true,
+      message: response.data.message
     };
   },
 
@@ -110,10 +106,8 @@ export function useCreateTag() {
       // Invalidate and refetch tags lists
       queryClient.invalidateQueries({ queryKey: tagsKeys.lists() });
       
-      // Optionally add the new tag to the cache
-      if (data.tags && data.tags.length > 0) {
-        queryClient.setQueryData(tagsKeys.detail(data.tags[0].id), data.tags[0]);
-      }
+      // Add the new tag to the cache
+      queryClient.setQueryData(tagsKeys.detail(data.tag.id), data.tag);
     },
     onError: (error) => {
       console.error('Error creating tag:', error);
@@ -132,9 +126,7 @@ export function useUpdateTag() {
       queryClient.invalidateQueries({ queryKey: tagsKeys.lists() });
       
       // Update the specific tag in cache
-      if (data.tags && data.tags.length > 0) {
-        queryClient.setQueryData(tagsKeys.detail(variables.id), data.tags[0]);
-      }
+      queryClient.setQueryData(tagsKeys.detail(variables.id), data.tag);
     },
     onError: (error) => {
       console.error('Error updating tag:', error);
