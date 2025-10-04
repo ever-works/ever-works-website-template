@@ -63,13 +63,13 @@ const fetchItems = async (params: ItemsListParams = {}): Promise<ItemsListRespon
 };
 
 const fetchItemStats = async (): Promise<ItemStatsResponse> => {
-  const response = await serverClient.get<{ success: boolean; stats: ItemStatsResponse }>('/api/admin/items/stats');
+  const response = await serverClient.get<{ success: boolean; data: ItemStatsResponse }>('/api/admin/items/stats');
   
   if (!apiUtils.isSuccess(response)) {
     throw new Error(apiUtils.getErrorMessage(response));
   }
   
-  return response.data.stats;
+  return response.data.data;
 };
 
 const createItem = async (data: CreateItemRequest): Promise<ItemsListResponse> => {

@@ -27,20 +27,19 @@ interface ListingCategoriesProps {
 
 export default function ListingCategories(props: ListingCategoriesProps) {
   const { layoutHome = LayoutHome.HOME_ONE, paginationType } = useLayoutTheme();
-  const t = useTranslations("listing");
-  const tCommon = useTranslations("common");
+  const t = useTranslations();
 
   return (
     <>
       <CategoriesQuerySync />
     <Hero
-      badgeText={t("CATEGORIES")}
+      badgeText={t("listing.CATEGORIES")}
       title={
         <span className="bg-gradient-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent">
-          {t("CATEGORIES", { defaultValue: "Open Source Software Categories" })}
+          {t("listing.CATEGORIES", { defaultValue: "Open Source Software Categories" })}
         </span>
       }
-      description={tCommon("CATEGORIES_DESCRIPTION", { 
+      description={t("common.CATEGORIES_DESCRIPTION", { 
         defaultValue: "Browse top categories to find your best Open Source software options." 
       })}
       className="min-h-screen text-center"
@@ -78,7 +77,7 @@ function HomeOneLayout({
 }: {
   categories: Category[];
 }) {
-  const t = useTranslations("listing");
+  const t = useTranslations();
 
   return (
     <>
@@ -99,7 +98,8 @@ function HomeOneLayout({
               >
                 <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
               </svg>
-              Home
+              {t("common.HOME")}
+           
             </Link>
           </li>
           <li>
@@ -120,7 +120,7 @@ function HomeOneLayout({
                 />
               </svg>
               <span className="ml-1 text-sm font-medium text-gray-800 dark:text-white/50 md:ml-2 transition-colors duration-300">
-                {t("CATEGORIES")}
+                {t("listing.CATEGORIES")}
               </span>
             </div>
           </li>
