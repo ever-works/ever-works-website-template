@@ -23,6 +23,7 @@ export function DocsPageContent() {
             className="w-full h-screen border-0"
             title="API Reference"
             style={{ minHeight: '800px' }}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           />
         </div>
         

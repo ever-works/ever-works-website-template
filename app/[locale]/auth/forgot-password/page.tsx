@@ -14,12 +14,13 @@ import { Button } from "@heroui/react";
 import { ActionState } from "@/lib/auth/middleware";
 import { forgotPassword } from "../actions";
 import { Link } from "@/i18n/navigation";
-import { cn, maskEmail } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
 export default function ForgotPasswordPage() {
   const config = useConfig();
   const t = useTranslations("common");
+  const tForgot = useTranslations("admin.FORGOT_PASSWORD_PAGE");
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
     forgotPassword,
     {}
@@ -179,9 +180,7 @@ export default function ForgotPasswordPage() {
                 </h2>
 
                 <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
-                  Don&apos;t worry, it happens to the best of us. Enter your email
-                  address and we&apos;ll send you a secure link to reset your
-                  password.
+                  {tForgot("SUBTITLE")}
                 </p>
               </div>
 
@@ -255,14 +254,10 @@ export default function ForgotPasswordPage() {
                     </div>
                     <div className="flex-1">
                       <h4 className="text-lg font-semibold text-green-200 mb-2">
-                        {t("RECOVERY_EMAIL_SENT")}
+                        {tForgot("SUCCESS_TITLE")}
                       </h4>
                       <p className="text-sm text-green-300 mb-3">
-                        Check your inbox at{" "}
-                        <span className="font-semibold bg-green-900/40 px-2 py-1 rounded">
-                          {maskEmail(state.email)}
-                        </span>{" "}
-                        for instructions to reset your password.
+                        {tForgot("SUCCESS_MESSAGE")}
                       </p>
                     </div>
                   </div>
@@ -271,22 +266,22 @@ export default function ForgotPasswordPage() {
                   <div className="p-4 bg-gray-800/50 rounded-xl border border-gray-700/50 backdrop-blur-sm">
                     <h5 className="font-semibold text-white mb-3 flex items-center gap-2">
                       <AlertCircle className="w-4 h-4 text-gray-400" />
-                      {t("DIDNT_RECEIVE_EMAIL")}
+                      {tForgot("DIDNT_RECEIVE_EMAIL")}
                     </h5>
                     <ul className="space-y-2 text-sm text-gray-300">
                       <li className="flex items-center space-x-2">
                         <div className="w-1.5 h-1.5 bg-theme-primary rounded-full"></div>
-                        <span>Check your spam or junk folder</span>
+                        <span>{tForgot("CHECK_SPAM_FOLDER")}</span>
                       </li>
                       <li className="flex items-center space-x-2">
                         <div className="w-1.5 h-1.5 bg-theme-primary rounded-full"></div>
                         <span>
-                          Make sure you entered the correct email address
+                          {tForgot("INVALID_EMAIL")}
                         </span>
                       </li>
                       <li className="flex items-center space-x-2">
                         <div className="w-1.5 h-1.5 bg-theme-primary rounded-full"></div>
-                        <span>Wait a few minutes for the email to arrive</span>
+                        <span>{tForgot("SUCCESS_NOTE")}</span>
                       </li>
                     </ul>
                   </div>
@@ -311,7 +306,7 @@ export default function ForgotPasswordPage() {
                         "shadow-sm hover:shadow-md focus:shadow-lg",
                         "disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                       )}
-                      placeholder={t("ENTER_EMAIL_ADDRESS")}
+                      placeholder={tForgot("EMAIL_PLACEHOLDER")}
                       required
                       autoComplete="email"
                       aria-describedby="email-error"
@@ -331,7 +326,7 @@ export default function ForgotPasswordPage() {
                       </div>
                     }
                   >
-                    {pending ? "Sending..." : t("SEND_RECOVERY_EMAIL")}
+                    {pending ? tForgot("SENDING") : tForgot("SEND_RESET_LINK")}
                   </Button>
 
                   {/* Back to login */}
@@ -341,7 +336,7 @@ export default function ForgotPasswordPage() {
                       className="inline-flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-theme-primary transition-colors duration-200"
                     >
                       <ArrowLeft className="h-4 w-4" />
-                      {t("BACK_TO_LOGIN")}
+                      {tForgot("BACK_TO_LOGIN")}
                     </Link>
                   </div>
                 </form>

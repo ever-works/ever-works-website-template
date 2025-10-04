@@ -17,6 +17,7 @@ import {
 export function AuthForm({ form, showSocialLogin = true, onSuccess, clientMode = false }: { form: "login" | "signup", showSocialLogin?: boolean, onSuccess?: () => void, clientMode?: boolean }) {
   const config = useConfig();
   const t = useTranslations("common");
+  const tAuth = useTranslations("admin.AUTH_FORM");
   const isLogin = form === "login";
 
   return (
@@ -60,10 +61,10 @@ export function AuthForm({ form, showSocialLogin = true, onSuccess, clientMode =
                     {showSocialLogin === false ? (
                       <>
                         <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
-                          Welcome to the Admin Dashboard
+                          {tAuth('ADMIN_WELCOME_TITLE')}
                         </h2>
                         <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
-                          Please sign in with your admin credentials to access the management section. Only authorized administrators are allowed beyond this point.
+                          {tAuth('ADMIN_WELCOME_DESCRIPTION')}
                         </p>
                       </>
                     ) : (
@@ -101,10 +102,10 @@ export function AuthForm({ form, showSocialLogin = true, onSuccess, clientMode =
                         </div>
                         <div>
                           <span className="font-semibold text-gray-900 dark:text-white block">
-                            {t("USER_MANAGEMENT")}
+                            {tAuth("USER_MANAGEMENT")}
                           </span>
                           <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {t("USER_MANAGEMENT_DESC")}
+                            {tAuth("USER_MANAGEMENT_DESC")}
                           </span>
                         </div>
                       </div>
@@ -114,10 +115,10 @@ export function AuthForm({ form, showSocialLogin = true, onSuccess, clientMode =
                         </div>
                         <div>
                           <span className="font-semibold text-gray-900 dark:text-white block">
-                            {t("CONTENT_MODERATION")}
+                            {tAuth("CONTENT_MODERATION")}
                           </span>
                           <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {t("CONTENT_MODERATION_DESC")}
+                            {tAuth("CONTENT_MODERATION_DESC")}
                           </span>
                         </div>
                       </div>
@@ -127,10 +128,10 @@ export function AuthForm({ form, showSocialLogin = true, onSuccess, clientMode =
                         </div>
                         <div>
                           <span className="font-semibold text-gray-900 dark:text-white block">
-                            {t("ANALYTICS_DASHBOARD")}
+                            {tAuth("ANALYTICS_DASHBOARD")}
                           </span>
                           <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {t("ANALYTICS_DASHBOARD_DESC")}
+                            {tAuth("ANALYTICS_DASHBOARD_DESC")}
                           </span>
                         </div>
                       </div>

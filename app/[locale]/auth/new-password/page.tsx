@@ -7,11 +7,13 @@ import { useConfig } from "../../config";
 import { Button, cn } from "@heroui/react";
 import { Link } from "@/i18n/navigation";
 import { newPasswordAction, verifyPasswordTokenAction } from "../actions";
+import { useTranslations } from "next-intl";
 
 export default function NewPasswordPage() {
   const config = useConfig();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const t = useTranslations("admin.NEW_PASSWORD_PAGE");
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -28,27 +30,27 @@ export default function NewPasswordPage() {
     return [
       {
         id: "length",
-        label: "At least 8 characters",
+        label: t("AT_LEAST_8_CHARS"),
         test: (pwd: string) => pwd.length >= 8,
       },
       {
         id: "lowercase",
-        label: "Lowercase letter",
+        label: t("LOWERCASE_LETTER"),
         test: (pwd: string) => /[a-z]/.test(pwd),
       },
       {
         id: "uppercase",
-        label: "Uppercase letter",
+        label: t("UPPERCASE_LETTER"),
         test: (pwd: string) => /[A-Z]/.test(pwd),
       },
-      { id: "number", label: "Number", test: (pwd: string) => /\d/.test(pwd) },
+      { id: "number", label: t("NUMBER"), test: (pwd: string) => /\d/.test(pwd) },
       {
         id: "special",
-        label: "Special character",
+        label: t("SPECIAL_CHARACTER"),
         test: (pwd: string) => /[!@#$%^&*~(){}[\]|;:'",<>.?]/.test(pwd),
       },
     ];
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (password) {
@@ -66,7 +68,7 @@ export default function NewPasswordPage() {
 
     const verifyToken = async () => {
       if (!token) {
-        setError("Missing reset token");
+        setError(t("MISSING_RESET_TOKEN"));
         setIsTokenValid(false);
         setIsLoading(false);
         return;
@@ -90,7 +92,7 @@ export default function NewPasswordPage() {
         if (mounted) {
           setIsTokenValid(false);
           setIsLoading(false);
-          setError("An error occurred while verifying the reset token");
+          setError(t("ERROR_VERIFYING_TOKEN"));
         }
       }
     };
@@ -106,12 +108,12 @@ export default function NewPasswordPage() {
     e.preventDefault();
 
     if (passwordStrength < 60) {
-      setError("Please choose a stronger password");
+      setError(t("CHOOSE_STRONGER_PASSWORD"));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError(t("PASSWORDS_DO_NOT_MATCH"));
       return;
     }
 
@@ -135,7 +137,7 @@ export default function NewPasswordPage() {
       setIsLoading(false);
     } catch (error) {
       console.error(error);
-      setError("Failed to set new password. Please try again.");
+      setError(t("FAILED_SET_PASSWORD"));
       setIsLoading(false);
     }
   };
@@ -206,14 +208,14 @@ export default function NewPasswordPage() {
 
             {/* Main heading */}
             <h1 className="text-4xl font-bold text-white mb-2 leading-tight">
-              Secure your
+              {t("SECURE_ACCOUNT_ACCESS")}
             </h1>
             <h2 className="text-4xl font-bold mb-6 leading-tight">
-              <span className="text-blue-400">account access</span>
+              <span className="text-blue-400">{t("ACCOUNT_ACCESS")}</span>
             </h2>
 
             <p className="text-gray-300 text-lg leading-relaxed mb-8 max-w-md">
-              Create a strong password to protect your account and ensure secure access to our professional platform.
+              {t("DESCRIPTION")}
             </p>
           </div>
 
@@ -225,8 +227,8 @@ export default function NewPasswordPage() {
                 <Lock className="w-6 h-6 text-blue-400" />
               </div>
               <div>
-                <div className="text-white font-semibold text-lg mb-1">Strong Password Protection</div>
-                <div className="text-gray-400 text-sm">Advanced encryption for your security</div>
+                <div className="text-white font-semibold text-lg mb-1">{t("STRONG_PASSWORD_PROTECTION")}</div>
+                <div className="text-gray-400 text-sm">{t("ADVANCED_ENCRYPTION")}</div>
               </div>
             </div>
 
@@ -236,8 +238,8 @@ export default function NewPasswordPage() {
                 <Shield className="w-6 h-6 text-green-400" />
               </div>
               <div>
-                <div className="text-white font-semibold text-lg mb-1">Account Security</div>
-                <div className="text-gray-400 text-sm">Multi-layer protection system</div>
+                <div className="text-white font-semibold text-lg mb-1">{t("ACCOUNT_SECURITY")}</div>
+                <div className="text-gray-400 text-sm">{t("MULTI_LAYER_PROTECTION")}</div>
               </div>
             </div>
 
@@ -247,8 +249,8 @@ export default function NewPasswordPage() {
                 <KeyRound className="w-6 h-6 text-purple-400" />
               </div>
               <div>
-                <div className="text-white font-semibold text-lg mb-1">Secure Access</div>
-                <div className="text-gray-400 text-sm">Protected login experience</div>
+                <div className="text-white font-semibold text-lg mb-1">{t("SECURE_ACCESS")}</div>
+                <div className="text-gray-400 text-sm">{t("PROTECTED_LOGIN")}</div>
               </div>
             </div>
           </div>
@@ -256,7 +258,7 @@ export default function NewPasswordPage() {
           {/* SSL Badge */}
           <div className="mt-8 flex items-center text-gray-400 text-sm">
             <Shield className="w-4 h-4 mr-2" />
-            Secured by SSL
+            {t("SECURED_BY_SSL")}
           </div>
         </div>
 
@@ -266,7 +268,7 @@ export default function NewPasswordPage() {
             {isLoading && !success ? (
               <div className="flex flex-col items-center justify-center h-full">
                 <div className="w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-6"></div>
-                <p className="text-gray-400 text-lg">Processing...</p>
+                <p className="text-gray-400 text-lg">{t("PROCESSING")}</p>
               </div>
             ) : !isTokenValid && !success ? (
               <div className="space-y-6 text-center">
@@ -277,16 +279,16 @@ export default function NewPasswordPage() {
 
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold text-white">
-                    Verification Failed
+                    {t("VERIFICATION_FAILED")}
                   </h3>
                   <p className="text-gray-400 text-base">
-                    This password reset link has expired or is invalid
+                    {t("LINK_EXPIRED")}
                   </p>
                 </div>
 
                 <div className="p-4 bg-red-900/20 border border-red-700/50 rounded-xl backdrop-blur-sm">
                   <p className="text-red-300 text-sm">
-                    {error || "The reset token is no longer valid. Please request a new password reset link."}
+                    {error || t("TOKEN_INVALID")}
                   </p>
                 </div>
 
@@ -298,7 +300,7 @@ export default function NewPasswordPage() {
                     radius="lg"
                     className="w-full h-14 font-semibold bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
                   >
-                    Request New Reset Link
+{t("REQUEST_NEW_RESET_LINK")}
                   </Button>
 
                   <div className="text-center">
@@ -307,7 +309,7 @@ export default function NewPasswordPage() {
                       className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-blue-400 transition-colors duration-200"
                     >
                       <ArrowLeft className="h-4 w-4" />
-                      Return to Login
+{t("RETURN_TO_LOGIN")}
                     </Link>
                   </div>
                 </div>
@@ -321,16 +323,16 @@ export default function NewPasswordPage() {
 
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold text-white">
-                    Password Updated!
+                    {t("PASSWORD_UPDATED")}
                   </h3>
                   <p className="text-gray-400 text-base">
-                    Your password has been successfully updated. You can now log in with your new password.
+                    {t("PASSWORD_SUCCESS_MESSAGE")}
                   </p>
                 </div>
 
                 <div className="p-4 bg-green-900/20 border border-green-700/50 rounded-xl backdrop-blur-sm">
                   <p className="text-green-300 text-sm">
-                    Your account is now secure with your new password. Please keep it safe and don&apos;t share it with anyone.
+                    {t("ACCOUNT_SECURE_MESSAGE")}
                   </p>
                 </div>
 
@@ -341,7 +343,7 @@ export default function NewPasswordPage() {
                   radius="lg"
                   className="w-full h-14 font-semibold bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
                 >
-                  Go to Login →
+{t("GO_TO_LOGIN")}
                 </Button>
               </div>
             ) : (
@@ -358,10 +360,10 @@ export default function NewPasswordPage() {
                   </div>
 
                   <h1 className="text-3xl font-bold text-white mb-3">
-                    Set New Password
+                    {t("TITLE")}
                   </h1>
                   <p className="text-gray-400 text-base">
-                    Create a strong password that you don&apos;t use for other websites
+                    {t("SUBTITLE")}
                   </p>
                 </div>
 
@@ -369,7 +371,7 @@ export default function NewPasswordPage() {
                   {/* New Password field */}
                   <div className="space-y-2">
                     <label className="text-white text-sm font-medium flex items-center gap-1">
-                      New Password
+                      {t("NEW_PASSWORD_LABEL")}
                       <span className="text-red-400">*</span>
                     </label>
                     <div className="relative">
@@ -378,7 +380,7 @@ export default function NewPasswordPage() {
                         type={showPassword ? "text" : "password"}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter new password"
+                        placeholder={t("ENTER_NEW_PASSWORD")}
                         name="newPassword"
                         required
                         className="w-full h-14 bg-gray-800/50 border border-gray-600/50 rounded-xl pl-12 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:bg-gray-800/70 transition-all duration-200"
@@ -400,7 +402,7 @@ export default function NewPasswordPage() {
                     {password && (
                       <div className="mt-3 space-y-3">
                         <div className="flex justify-between text-xs">
-                          <span className="text-gray-300">Password strength</span>
+                          <span className="text-gray-300">{t("PASSWORD_STRENGTH")}</span>
                           <span
                             className={
                               passwordStrength >= 80
@@ -413,12 +415,12 @@ export default function NewPasswordPage() {
                             }
                           >
                             {passwordStrength >= 80
-                              ? "Strong"
+                              ? t("STRONG")
                               : passwordStrength >= 60
-                              ? "Good"
+                              ? t("GOOD")
                               : passwordStrength >= 40
-                              ? "Fair"
-                              : "Weak"}
+                              ? t("FAIR")
+                              : t("WEAK")}
                           </span>
                         </div>
 
@@ -474,7 +476,7 @@ export default function NewPasswordPage() {
                   {/* Confirm Password field */}
                   <div className="space-y-2">
                     <label className="text-white text-sm font-medium flex items-center gap-1">
-                      Confirm Password
+                      {t("CONFIRM_PASSWORD_LABEL")}
                       <span className="text-red-400">*</span>
                     </label>
                     <div className="relative">
@@ -483,14 +485,14 @@ export default function NewPasswordPage() {
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="Confirm new password"
+                        placeholder={t("CONFIRM_NEW_PASSWORD")}
                         name="confirmPassword"
                         required
                         className="w-full h-14 bg-gray-800/50 border border-gray-600/50 rounded-xl pl-12 pr-4 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:bg-gray-800/70 transition-all duration-200"
                       />
                     </div>
                     {confirmPassword && password !== confirmPassword && (
-                      <p className="text-red-400 text-sm mt-1">Passwords do not match</p>
+                      <p className="text-red-400 text-sm mt-1">{t("PASSWORDS_DO_NOT_MATCH")}</p>
                     )}
                   </div>
 
@@ -510,7 +512,7 @@ export default function NewPasswordPage() {
                     className="w-full h-14 font-semibold bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
                     disabled={passwordStrength < 60 || password !== confirmPassword}
                   >
-                    {isLoading ? "Setting Password..." : "Set New Password →"}
+                    {isLoading ? t("SETTING_PASSWORD") : t("SET_NEW_PASSWORD")}
                   </Button>
 
                   {/* Back to login */}
@@ -520,7 +522,7 @@ export default function NewPasswordPage() {
                       className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-blue-400 transition-colors duration-200"
                     >
                       <ArrowLeft className="h-4 w-4" />
-                      Back to Login
+{t("BACK_TO_LOGIN")}
                     </Link>
                   </div>
                 </form>

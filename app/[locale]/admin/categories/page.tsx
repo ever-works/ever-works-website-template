@@ -7,8 +7,11 @@ import { CategoryForm } from "@/components/admin/categories/category-form";
 import { CategoryData, CreateCategoryRequest, UpdateCategoryRequest } from "@/lib/types/category";
 import { UniversalPagination } from "@/components/universal-pagination";
 import { useAdminCategories } from "@/hooks/use-admin-categories";
+import { useTranslations } from "next-intl";
 
 export default function AdminCategoriesPage() {
+  const t = useTranslations('admin.ADMIN_CATEGORIES_PAGE');
+  
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(10);
@@ -57,12 +60,13 @@ export default function AdminCategoriesPage() {
   }, [updateCategory, onClose]);
 
   const handleDelete = useCallback(async (id: string, hard = false) => {
-    if (!confirm(`Are you sure you want to ${hard ? 'permanently delete' : 'deactivate'} this category?`)) {
+    const action = hard ? t('PERMANENTLY_DELETE') : t('DEACTIVATE');
+    if (!confirm(t('DELETE_CONFIRMATION', { action }))) {
       return;
     }
     
     await deleteCategory(id, hard);
-  }, [deleteCategory]);
+  }, [deleteCategory, t]);
 
   // Open create form
   const openCreateForm = () => {
@@ -172,7 +176,7 @@ export default function AdminCategoriesPage() {
         <div className="mt-8 text-center">
           <div className="inline-flex items-center space-x-2 text-gray-500 dark:text-gray-400">
             <div className="w-4 h-4 border-2 border-theme-primary border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-sm font-medium">Loading categories...</span>
+            <span className="text-sm font-medium">{t('LOADING_CATEGORIES')}</span>
           </div>
         </div>
       </div>
@@ -191,13 +195,13 @@ export default function AdminCategoriesPage() {
               </div>
               <div>
                 <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                  Category Management
+                  {t('TITLE')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center space-x-2">
-                  <span>Organize and manage your content categories</span>
+                  <span>{t('SUBTITLE')}</span>
                   <span className="hidden sm:inline">•</span>
                   <span className="text-sm px-2 py-1 bg-theme-primary/10 text-theme-primary rounded-full font-medium">
-                    {totalCategories} total
+                    {totalCategories} {t('TOTAL')}
                   </span>
                 </p>
               </div>
@@ -209,7 +213,7 @@ export default function AdminCategoriesPage() {
               startContent={<Plus size={18} />}
               className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
                           >
-                Add Category
+{t('ADD_CATEGORY')}
               </Button>
               
 
@@ -224,7 +228,7 @@ export default function AdminCategoriesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-1">
-                  Total Categories
+                  {t('TOTAL_CATEGORIES')}
                 </p>
                 <p className="text-3xl font-bold text-blue-700 dark:text-blue-300 group-hover:scale-105 transition-transform">
                   {totalCategories}
@@ -242,7 +246,7 @@ export default function AdminCategoriesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-1">
-                  Active Categories
+                  {t('ACTIVE_CATEGORIES')}
                 </p>
                 <p className="text-3xl font-bold text-green-700 dark:text-green-300 group-hover:scale-105 transition-transform">
                   {categories.filter(category => !category.isInactive).length}
@@ -263,10 +267,10 @@ export default function AdminCategoriesPage() {
           <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Categories
+                {t('CATEGORIES_TITLE')}
               </h3>
               <div className="text-sm text-gray-500 dark:text-gray-400">
-                {categories.length} of {totalCategories} categories
+                {categories.length} of {totalCategories} {t('CATEGORIES_COUNT')}
               </div>
             </div>
           </div>
@@ -298,7 +302,7 @@ export default function AdminCategoriesPage() {
                           </div>
                           <div className="flex items-center space-x-4 mt-1">
                             <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
-                              ID: {category.id}
+                              {t('ID_LABEL')} {category.id}
                             </p>
                           </div>
                         </div>
@@ -320,7 +324,7 @@ export default function AdminCategoriesPage() {
                           }
                           className="transition-all duration-200 group-hover:shadow-md"
                         >
-                          {category.isInactive ? "Inactive" : "Active"}
+                          {category.isInactive ? t('INACTIVE') : t('ACTIVE')}
                         </Chip>
                       </div>
 
@@ -358,10 +362,10 @@ export default function AdminCategoriesPage() {
                   <FolderTree className="w-8 h-8 text-theme-primary opacity-60" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  No categories found
+                  {t('NO_CATEGORIES_FOUND')}
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-                  Create your first category to start organizing your content.
+                  {t('NO_CATEGORIES_DESCRIPTION')}
                 </p>
                 <Button
                   color="primary"
@@ -369,7 +373,7 @@ export default function AdminCategoriesPage() {
                   startContent={<Plus size={16} />}
                   className="shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300"
                 >
-                  Create First Category
+{t('CREATE_FIRST_CATEGORY')}
                 </Button>
               </div>
             </div>
@@ -386,13 +390,17 @@ export default function AdminCategoriesPage() {
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-theme-primary rounded-full"></div>
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, totalCategories)} of {totalCategories} categories
+                  {t('SHOWING_RANGE', { 
+                    start: ((page - 1) * limit) + 1, 
+                    end: Math.min(page * limit, totalCategories), 
+                    total: totalCategories 
+                  })}
                 </span>
               </div>
               <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-500">
-                <span>Page {page} of {totalPages}</span>
+                <span>{t('PAGE_OF', { current: page, total: totalPages })}</span>
                 <span>•</span>
-                <span>{limit} per page</span>
+                <span>{limit} {t('PER_PAGE')}</span>
               </div>
             </div>
           </div>
@@ -424,7 +432,7 @@ export default function AdminCategoriesPage() {
           <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {formMode === 'create' ? 'Create Category' : 'Edit Category'}
+                {formMode === 'create' ? t('CREATE_CATEGORY') : t('EDIT_CATEGORY')}
               </h2>
               {!isSubmitting && (
                 <button

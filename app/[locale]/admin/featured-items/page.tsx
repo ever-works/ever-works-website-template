@@ -37,8 +37,11 @@ import { UniversalPagination } from "@/components/universal-pagination";
 import Image from "next/image";
 import { useAdminFeaturedItems, FeaturedItem } from "@/hooks/use-admin-featured-items";
 import { useFeaturedItemForm } from "@/hooks/use-featured-item-form";
+import { useTranslations } from "next-intl";
 
 export default function AdminFeaturedItemsPage() {
+  const t = useTranslations('admin.ADMIN_FEATURED_ITEMS_PAGE');
+  
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   
@@ -103,7 +106,7 @@ export default function AdminFeaturedItemsPage() {
   };
 
   const handleRemoveFeatured = async (id: string) => {
-    if (!confirm('Are you sure you want to remove this item from featured?')) {
+    if (!confirm(t('REMOVE_CONFIRMATION'))) {
       return;
     }
     await deleteFeaturedItem(id);
@@ -117,14 +120,14 @@ export default function AdminFeaturedItemsPage() {
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Featured Items Management</h1>
+          <h1 className="text-3xl font-bold">{t('TITLE')}</h1>
           <p className="text-muted-foreground">
-            Manage which items appear as featured on the homepage
+            {t('SUBTITLE')}
           </p>
         </div>
         <Button onClick={handleAddFeatured} className="flex items-center gap-2">
           <Plus className="w-4 h-4" />
-          Add Featured Item
+          {t('ADD_FEATURED_ITEM')}
         </Button>
       </div>
 
@@ -134,7 +137,7 @@ export default function AdminFeaturedItemsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Total Featured</p>
+                <p className="text-sm text-muted-foreground">{t('TOTAL_FEATURED_STAT')}</p>
                 <p className="text-2xl font-bold">{totalItems}</p>
               </div>
               <Star className="w-8 h-8 text-yellow-500" />
@@ -145,7 +148,7 @@ export default function AdminFeaturedItemsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Active</p>
+                <p className="text-sm text-muted-foreground">{t('ACTIVE_STAT')}</p>
                 <p className="text-2xl font-bold">
                   {featuredItems.filter(item => item.isActive).length}
                 </p>
@@ -158,7 +161,7 @@ export default function AdminFeaturedItemsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Inactive</p>
+                <p className="text-sm text-muted-foreground">{t('INACTIVE_STAT')}</p>
                 <p className="text-2xl font-bold">
                   {featuredItems.filter(item => !item.isActive).length}
                 </p>
@@ -171,7 +174,7 @@ export default function AdminFeaturedItemsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Available Items</p>
+                <p className="text-sm text-muted-foreground">{t('AVAILABLE_ITEMS_STAT')}</p>
                 <p className="text-2xl font-bold">{allItems.length}</p>
               </div>
               <Package className="w-8 h-8 text-blue-500" />
@@ -188,7 +191,7 @@ export default function AdminFeaturedItemsPage() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
-                  placeholder="Search featured items..."
+                  placeholder={t('SEARCH_PLACEHOLDER')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -201,7 +204,7 @@ export default function AdminFeaturedItemsPage() {
                 checked={showActiveOnly}
                 onCheckedChange={setShowActiveOnly}
               />
-              <Label htmlFor="active-only">Active only</Label>
+              <Label htmlFor="active-only">{t('ACTIVE_ONLY')}</Label>
             </div>
           </div>
         </CardContent>
@@ -210,7 +213,7 @@ export default function AdminFeaturedItemsPage() {
       {/* Featured Items List */}
       <Card>
         <CardHeader>
-          <CardTitle>Featured Items</CardTitle>
+          <CardTitle>{t('FEATURED_ITEMS_TITLE')}</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -219,7 +222,7 @@ export default function AdminFeaturedItemsPage() {
             </div>
           ) : filteredItems.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No featured items found
+              {t('NO_FEATURED_ITEMS_FOUND')}
             </div>
           ) : (
             <div className="space-y-4">
@@ -260,11 +263,11 @@ export default function AdminFeaturedItemsPage() {
                     <div>
                       <h3 className="font-semibold">{item.itemName}</h3>
                       <p className="text-sm text-muted-foreground">
-                        {item.itemSlug} • Order: {item.featuredOrder}
+                        {item.itemSlug} • {t('ORDER_LABEL')} {item.featuredOrder}
                       </p>
                       {item.featuredUntil && (
                         <p className="text-xs text-muted-foreground">
-                          Featured until: {new Date(item.featuredUntil).toLocaleDateString()}
+                          {t('FEATURED_UNTIL_LABEL')} {new Date(item.featuredUntil).toLocaleDateString()}
                         </p>
                       )}
                     </div>
@@ -272,7 +275,7 @@ export default function AdminFeaturedItemsPage() {
                   
                   <div className="flex items-center space-x-2">
                     <Badge variant={item.isActive ? "default" : "secondary"}>
-                      {item.isActive ? "Active" : "Inactive"}
+                      {item.isActive ? t('ACTIVE') : t('INACTIVE')}
                     </Badge>
                     <Button
                       variant="ghost"
@@ -310,14 +313,14 @@ export default function AdminFeaturedItemsPage() {
         <ModalContent className="max-w-2xl">
           <ModalHeader>
             <h2 className="text-xl font-semibold">
-              {isEditMode ? 'Edit Featured Item' : 'Add Featured Item'}
+              {isEditMode ? t('EDIT_FEATURED_ITEM') : t('ADD_FEATURED_ITEM_TITLE')}
             </h2>
           </ModalHeader>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="itemSlug">Select Item</Label>
+                <Label htmlFor="itemSlug">{t('SELECT_ITEM_LABEL')}</Label>
                 <Select 
                   selectedKeys={formData.itemSlug ? [formData.itemSlug] : []}
                   onSelectionChange={(keys) => {
@@ -329,7 +332,7 @@ export default function AdminFeaturedItemsPage() {
                 >
                   <SelectTrigger>
                     <SelectValue>
-                      {formData.itemSlug ? allItems.find(item => item.slug === formData.itemSlug)?.name : "Choose an item to feature"}
+                      {formData.itemSlug ? allItems.find(item => item.slug === formData.itemSlug)?.name : t('CHOOSE_ITEM_PLACEHOLDER')}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
@@ -343,7 +346,7 @@ export default function AdminFeaturedItemsPage() {
               </div>
               
               <div>
-                <Label htmlFor="featuredOrder">Display Order</Label>
+                <Label htmlFor="featuredOrder">{t('DISPLAY_ORDER_LABEL')}</Label>
                 <Input
                   id="featuredOrder"
                   type="number"
@@ -356,7 +359,7 @@ export default function AdminFeaturedItemsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="itemName">Item Name</Label>
+                <Label htmlFor="itemName">{t('ITEM_NAME_LABEL')}</Label>
                 <Input
                   id="itemName"
                   value={formData.itemName}
@@ -366,7 +369,7 @@ export default function AdminFeaturedItemsPage() {
               </div>
               
               <div>
-                <Label htmlFor="itemCategory">Category</Label>
+                <Label htmlFor="itemCategory">{t('CATEGORY_LABEL')}</Label>
                 <Input
                   id="itemCategory"
                   value={formData.itemCategory}
@@ -376,7 +379,7 @@ export default function AdminFeaturedItemsPage() {
             </div>
 
             <div>
-              <Label htmlFor="itemIconUrl">Icon URL</Label>
+              <Label htmlFor="itemIconUrl">{t('ICON_URL_LABEL')}</Label>
               <Input
                 id="itemIconUrl"
                 value={formData.itemIconUrl}
@@ -385,7 +388,7 @@ export default function AdminFeaturedItemsPage() {
             </div>
 
             <div>
-              <Label htmlFor="itemDescription">Description</Label>
+              <Label htmlFor="itemDescription">{t('DESCRIPTION_LABEL')}</Label>
               <Textarea
                 id="itemDescription"
                 value={formData.itemDescription}
@@ -396,7 +399,7 @@ export default function AdminFeaturedItemsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="featuredUntil">Featured Until (Optional)</Label>
+                <Label htmlFor="featuredUntil">{t('FEATURED_UNTIL_OPTIONAL')}</Label>
                 <Input
                   id="featuredUntil"
                   type="datetime-local"
@@ -411,7 +414,7 @@ export default function AdminFeaturedItemsPage() {
                   checked={formData.isActive}
                   onCheckedChange={(checked) => handleInputChange('isActive', checked)}
                 />
-                <Label htmlFor="isActive">Active</Label>
+                <Label htmlFor="isActive">{t('ACTIVE_LABEL')}</Label>
               </div>
             </div>
 
@@ -421,11 +424,11 @@ export default function AdminFeaturedItemsPage() {
                 variant="outline"
                 onClick={() => setIsModalOpen(false)}
               >
-                Cancel
+                {t('CANCEL')}
               </Button>
               <Button type="submit" disabled={isFormSubmitting}>
                 {isFormSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                {isEditMode ? 'Update' : 'Add'} Featured Item
+                {isEditMode ? t('UPDATE') : t('ADD')} {t('FEATURED_ITEM')}
               </Button>
             </div>
           </form>

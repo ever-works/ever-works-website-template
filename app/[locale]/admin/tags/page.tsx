@@ -10,9 +10,11 @@ import { UniversalPagination } from "@/components/universal-pagination";
 import { Plus, Edit, Trash2, Tag, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { useTags, useTagManagement } from "@/hooks/use-admin-tags";
+import { useTranslations } from "next-intl";
 
 
 export default function AdminTagsPage() {
+  const t = useTranslations("admin.ADMIN_TAGS_PAGE");
   const [currentPage, setCurrentPage] = useState(1);
   
   // Modal state
@@ -39,10 +41,10 @@ export default function AdminTagsPage() {
   const handleCreateTag = async (data: { id: string; name: string; isActive: boolean }) => {
     try {
       await createTag(data);
-      toast.success('Tag created successfully');
+      toast.success(t('TAG_CREATED_SUCCESS'));
       setIsModalOpen(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to create tag');
+      toast.error(error instanceof Error ? error.message : t('TAG_CREATE_ERROR'));
     }
   };
 
@@ -51,22 +53,22 @@ export default function AdminTagsPage() {
 
     try {
       await updateTag(selectedTag.id, data);
-      toast.success('Tag updated successfully');
+      toast.success(t('TAG_UPDATED_SUCCESS'));
       setIsModalOpen(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to update tag');
+      toast.error(error instanceof Error ? error.message : t('TAG_UPDATE_ERROR'));
     }
   };
 
   const handleDeleteTag = async (tagId: string) => {
-    if (!confirm('Are you sure you want to delete this tag?')) return;
+    if (!confirm(t('DELETE_CONFIRMATION'))) return;
 
     try {
       setDeletingTagId(tagId);
       await deleteTag(tagId);
-      toast.success('Tag deleted successfully');
+      toast.success(t('TAG_DELETED_SUCCESS'));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to delete tag');
+      toast.error(error instanceof Error ? error.message : t('TAG_DELETE_ERROR'));
     } finally {
       setDeletingTagId(null);
     }
@@ -102,13 +104,13 @@ export default function AdminTagsPage() {
       <div className="p-6 max-w-7xl mx-auto">
         <div className="text-center py-12">
           <div className="text-red-500 text-lg mb-4">
-            Error: {error.message}
+            {t('ERROR_MESSAGE', { errorMessage: error.message })}
           </div>
           <button 
             onClick={() => window.location.reload()} 
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Retry
+            {t('RETRY')}
           </button>
         </div>
       </div>
@@ -176,13 +178,13 @@ export default function AdminTagsPage() {
               </div>
               <div>
                 <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                  Tag Management
+                  {t('TITLE')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center space-x-2">
-                  <span>Organize and manage your content tags</span>
+                  <span>{t('SUBTITLE')}</span>
                   <span className="hidden sm:inline">•</span>
                   <span className="text-sm px-2 py-1 bg-theme-primary/10 text-theme-primary rounded-full font-medium">
-                    {tagsData?.total || 0} total
+                    {tagsData?.total || 0} {t('TOTAL_TAGS')}
                   </span>
                 </p>
               </div>
@@ -194,7 +196,7 @@ export default function AdminTagsPage() {
               startContent={<Plus size={18} />}
               className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
             >
-              Add Tag
+              {t('ADD_TAG')}
             </Button>
           </div>
         </div>
@@ -207,7 +209,7 @@ export default function AdminTagsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-1">
-                  Total Tags
+                  {t('TOTAL_TAGS_STAT')}
                 </p>
                 <p className="text-3xl font-bold text-blue-700 dark:text-blue-300 group-hover:scale-105 transition-transform">
                   {tagsData?.total || 0}
@@ -225,7 +227,7 @@ export default function AdminTagsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-1">
-                  Active Tags
+                  {t('ACTIVE_TAGS_STAT')}
                 </p>
                 <p className="text-3xl font-bold text-green-700 dark:text-green-300 group-hover:scale-105 transition-transform">
                   {tagsData?.tags?.filter(tag => tag.isActive).length}
@@ -246,10 +248,10 @@ export default function AdminTagsPage() {
           <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Tags
+                {t('TAGS_TABLE_TITLE')}
               </h3>
               <div className="text-sm text-gray-500 dark:text-gray-400">
-                {tagsData?.tags?.length || 0} of {tagsData?.total || 0} tags
+                {t('TAGS_TOTAL_COUNT', { total: tagsData?.total || 0 })}
               </div>
             </div>
           </div>
@@ -297,7 +299,7 @@ export default function AdminTagsPage() {
                             ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' 
                             : 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
                         }`}>
-                          {tag.isActive ? 'Active' : 'Inactive'}
+                          {tag.isActive ? t('ACTIVE') : t('INACTIVE')}
                         </span>
                       </div>
 
@@ -336,10 +338,10 @@ export default function AdminTagsPage() {
                   <Tag className="w-8 h-8 text-theme-primary opacity-60" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  No tags found
+                  {t('NO_TAGS_FOUND')}
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-                  Create your first tag to start organizing your content.
+                  {t('NO_TAGS_DESCRIPTION')}
                 </p>
                 <Button
                   color="primary"
@@ -347,7 +349,7 @@ export default function AdminTagsPage() {
                   startContent={<Plus size={16} />}
                   className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90"
                 >
-                  Create Tag
+                  {t('CREATE_TAG')}
                 </Button>
               </div>
             </div>

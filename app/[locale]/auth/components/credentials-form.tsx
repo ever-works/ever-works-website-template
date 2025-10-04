@@ -23,6 +23,7 @@ export function CredentialsForm({
 }: PropsWithChildren<{ type: "login" | "signup", hideSwitchButton?: boolean, onSuccess?: () => void, clientMode?: boolean }>) {
   const isLogin = type === "login";
   const t = useTranslations("auth");
+  const tCred = useTranslations("admin.CREDENTIALS_FORM");
   const locale = useLocale();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
@@ -76,7 +77,7 @@ export function CredentialsForm({
   const handleFormAction = async (formData: FormData) => {
     if (isRecaptchaRequired) {
       if (!captchaToken) {
-        setCaptchaError('Please complete the captcha.');
+        setCaptchaError(tCred('PLEASE_COMPLETE_CAPTCHA'));
         return;
       }
       try {
@@ -85,7 +86,7 @@ export function CredentialsForm({
 
         const isValid = await verifyToken(captchaToken);
         if (!isValid) {
-          setCaptchaError('ReCAPTCHA verification failed. Please try again.');
+          setCaptchaError(tCred('RECAPTCHA_VERIFICATION_FAILED'));
           return;
         }
 
@@ -93,7 +94,7 @@ export function CredentialsForm({
 
       } catch (error: unknown) {
         console.error('ReCAPTCHA verification error:', error);
-        setCaptchaError('ReCAPTCHA verification failed. Please try again.');
+        setCaptchaError(tCred('RECAPTCHA_VERIFICATION_FAILED'));
         return;
       }
     }
@@ -165,8 +166,8 @@ export function CredentialsForm({
           </h1>
         <p className="text-gray-600 dark:text-gray-400 text-sm">
             {isLogin
-            ? "Welcome back! Please sign in to your account"
-            : "Create your account to get started"}
+            ? tCred("WELCOME_BACK_MESSAGE")
+            : tCred("CREATE_ACCOUNT_MESSAGE")}
         </p>
       </div>
 
@@ -256,7 +257,7 @@ export function CredentialsForm({
             type="button"
             className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-theme-primary transition-colors z-10"
             onClick={() => setShowPassword((v) => !v)}
-            aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            aria-label={showPassword ? tCred("HIDE_PASSWORD") : tCred("SHOW_PASSWORD")}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -270,20 +271,20 @@ export function CredentialsForm({
               </div>
               <div className="flex-1">
                 <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                  Security Requirements
+                  {tCred("SECURITY_REQUIREMENTS")}
                 </h4>
                 <ul className="space-y-1 text-xs text-gray-600 dark:text-gray-300">
                   <li className="flex items-center space-x-2">
                     <div className="w-1.5 h-1.5 bg-theme-primary rounded-full"></div>
-                    <span>At least 8 characters</span>
+                    <span>{tCred("AT_LEAST_8_CHARS")}</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <div className="w-1.5 h-1.5 bg-theme-primary rounded-full"></div>
-                    <span>One uppercase and lowercase letter</span>
+                    <span>{tCred("UPPERCASE_LOWERCASE")}</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <div className="w-1.5 h-1.5 bg-theme-primary rounded-full"></div>
-                    <span>One number and special character</span>
+                    <span>{tCred("NUMBER_SPECIAL_CHAR")}</span>
                   </li>
                 </ul>
               </div>
@@ -304,7 +305,7 @@ export function CredentialsForm({
           </div>
           <div className="flex-1">
             <h4 className="text-sm font-semibold text-red-800 dark:text-red-200 mb-1">
-              Connection Error
+              {tCred("CONNECTION_ERROR")}
             </h4>
             <p className="text-sm text-red-700 dark:text-red-300">
               {state?.error || clientError}
@@ -325,10 +326,10 @@ export function CredentialsForm({
           </div>
           <div className="flex-1">
             <h4 className="text-sm font-semibold text-green-800 dark:text-green-200 mb-1">
-              {isLogin ? "Login Successful!" : "Account Created Successfully!"}
+              {isLogin ? tCred("LOGIN_SUCCESSFUL") : tCred("ACCOUNT_CREATED_SUCCESSFULLY")}
             </h4>
             <p className="text-sm text-green-700 dark:text-green-300">
-              {isLogin ? "Redirecting..." : "You can now sign in."}
+              {isLogin ? tCred("REDIRECTING") : tCred("YOU_CAN_NOW_SIGN_IN")}
             </p>
           </div>
         </div>
@@ -346,10 +347,10 @@ export function CredentialsForm({
           </div>
           <div className="flex-1">
             <h4 className="text-sm font-semibold text-green-800 dark:text-green-200 mb-1">
-              Admin Login Successful!
+              {tCred("ADMIN_LOGIN_SUCCESSFUL")}
             </h4>
             <p className="text-sm text-green-700 dark:text-green-300">
-              Redirecting to admin dashboard...
+              {tCred("REDIRECTING_TO_ADMIN")}
             </p>
           </div>
         </div>
@@ -381,11 +382,11 @@ export function CredentialsForm({
                     }}
                     onError={(error) => {
                       console.error('ReCAPTCHA error:', error);
-                      setCaptchaError('Failed to load security verification. Please refresh the page.');
+                      setCaptchaError(tCred('FAILED_TO_LOAD_VERIFICATION'));
                     }}
                     onExpired={() => {
                       setCaptchaToken(null);
-                      setCaptchaError('Security verification expired. Please complete it again.');
+                      setCaptchaError(tCred('VERIFICATION_EXPIRED'));
                     }}
                     theme="light"
                     size="normal"
@@ -405,14 +406,14 @@ export function CredentialsForm({
           {/* Simple loading indicator */}
           {isVerifying && (
             <div className="mt-2 text-sm text-blue-600 dark:text-blue-400">
-              Verifying...
+              {tCred("VERIFYING")}
             </div>
           )}
 
           {/* Simple blocking message */}
           {isRecaptchaBlocking && (
             <div className="mt-2 text-sm text-amber-600 dark:text-amber-400">
-              Please complete the security verification
+              {tCred("PLEASE_COMPLETE_VERIFICATION")}
             </div>
           )}
         </div>
@@ -432,20 +433,20 @@ export function CredentialsForm({
         aria-disabled={(pending && !state.success) || clientPending || clientSuccess || isPending || isVerifying || isRecaptchaBlocking}
       >
         {(pending && !state.success) || clientPending ? (
-          <span>{isLogin ? "Signing in..." : "Creating account..."}</span>
+          <span>{isLogin ? tCred("SIGNING_IN") : tCred("CREATING_ACCOUNT")}</span>
         ) : clientSuccess ? (
             <span className="flex items-center justify-center gap-2">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
-              <span>Redirecting...</span>
+              <span>{tCred("REDIRECTING")}</span>
             </span>
           ) : state.success && !clientMode ? (
             <span className="flex items-center justify-center gap-2">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
-              <span>{isLogin ? "Signed in!" : "Account created!"}</span>
+              <span>{isLogin ? tCred("SIGNED_IN") : tCred("ACCOUNT_CREATED")}</span>
             </span>
           ) : (
           <span className="flex items-center justify-center gap-2">
@@ -464,7 +465,7 @@ export function CredentialsForm({
       {auth.credentials && !hideSwitchButton && (
         <div className="text-center mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
           <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
-            {isLogin ? "New to our platform?" : "Already have an account?"}
+            {isLogin ? tCred("NEW_TO_PLATFORM") : tCred("ALREADY_HAVE_ACCOUNT")}
           </p>
           <Button
             as={Link}
@@ -478,14 +479,14 @@ export function CredentialsForm({
           >
             {isLogin ? (
               <span className="flex items-center gap-2">
-                <span>Create account</span>
+                <span>{tCred("CREATE_ACCOUNT_BUTTON")}</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                 </svg>
               </span>
             ) : (
               <span className="flex items-center gap-2">
-                <span>Sign in</span>
+                <span>{tCred("SIGN_IN_BUTTON")}</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                 </svg>

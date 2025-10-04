@@ -13,6 +13,7 @@ import { useInfiniteLoading } from "@/hooks/use-infinite-loading";
 export default function TagsGridClient({ tags }: { tags: Tag[] }) {
   const t = useTranslations("listing");
   const tCommon = useTranslations("common");
+  const tGrid = useTranslations("admin.TAGS_GRID_CLIENT");
   const { paginationType, itemsPerPage } = useLayoutTheme();
   const [page, setPage] = useState(1);
 
@@ -51,7 +52,7 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
       <Hero badgeText={t("TAGS")} title={t("TAGS")} description={tCommon("TAGS_DESCRIPTION")}>
         <div className="text-center py-12">
           <p className="text-gray-500 dark:text-gray-400">
-            No tags found.
+            {tGrid("NO_TAGS_FOUND")}
           </p>
         </div>
       </Hero>
@@ -93,13 +94,13 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
               {error ? (
                 <div className="text-center py-4">
                   <p className="text-sm text-red-600 dark:text-red-400 mb-2">
-                    Failed to load more tags
+                    {tGrid("FAILED_TO_LOAD_MORE_TAGS")}
                   </p>
                   <button 
                     onClick={() => loadMore()} 
                     className="text-sm text-theme-primary-500 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 transition-colors focus:outline-none focus:ring-2 focus:ring-theme-primary-500 rounded px-2 py-1"
                   >
-                    {t("RETRY", { defaultValue: "Retry" })}
+                    {tGrid("RETRY")}
                   </button>
                 </div>
               ) : (
@@ -107,7 +108,7 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
                   {isLoading && (
                     <>
                       <Loader2 className="h-5 w-5 animate-spin" />
-                      <span className="text-sm font-medium">Loading...</span>
+                      <span className="text-sm font-medium">{tGrid("LOADING")}</span>
                     </>
                   )}
                 </div>
@@ -116,7 +117,7 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
           )}
           {!hasMore && !error && (
             <div className="text-center py-4">
-              <p className="text-sm text-gray-500 dark:text-gray-400">You&apos;ve reached the end</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{tGrid("REACHED_THE_END")}</p>
             </div>
           )}
         </div>

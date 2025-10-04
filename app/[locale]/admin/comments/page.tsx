@@ -6,8 +6,11 @@ import { Trash2, MessageSquare, Search } from "lucide-react";
 import { UniversalPagination } from "@/components/universal-pagination";
 import DeleteCommentDialog from "@/components/admin/comments/delete-comment-dialog";
 import { useAdminComments, AdminCommentItem } from "@/hooks/use-admin-comments";
+import { useTranslations } from "next-intl";
 
 export default function AdminCommentsPage() {
+  const t = useTranslations('admin.ADMIN_COMMENTS_PAGE');
+  
   // Use custom hook
   const {
     comments,
@@ -116,7 +119,7 @@ export default function AdminCommentsPage() {
         <div className="mt-8 text-center">
           <div className="inline-flex items-center space-x-2 text-gray-500 dark:text-gray-400">
             <div className="w-4 h-4 border-2 border-theme-primary border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-sm font-medium">Loading comments...</span>
+            <span className="text-sm font-medium">{t('LOADING_COMMENTS')}</span>
           </div>
         </div>
       </div>
@@ -135,13 +138,13 @@ export default function AdminCommentsPage() {
               </div>
               <div>
                 <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                  Comment Management
+                  {t('TITLE')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center space-x-2">
-                  <span>Review and manage user comments</span>
+                  <span>{t('SUBTITLE')}</span>
                   <span className="hidden sm:inline">•</span>
                   <span className="text-sm px-2 py-1 bg-theme-primary/10 text-theme-primary rounded-full font-medium">
-                    {totalComments} total
+                    {totalComments} {t('TOTAL_COMMENTS')}
                   </span>
                 </p>
               </div>
@@ -159,10 +162,10 @@ export default function AdminCommentsPage() {
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search comments by content, author name or email..."
+            placeholder={t('SEARCH_PLACEHOLDER')}
             value={searchTerm}
             onChange={(e) => handleSearch(e.target.value)}
-            aria-label="Search comments"
+            aria-label={t('SEARCH_PLACEHOLDER')}
             role="searchbox"
             className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
@@ -177,7 +180,7 @@ export default function AdminCommentsPage() {
         {searchTerm && (
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              1 filter applied
+              {t('FILTER_APPLIED')}
             </span>
             <Button
               variant="light"
@@ -188,7 +191,7 @@ export default function AdminCommentsPage() {
               }}
               className="h-6 px-2 text-xs"
             >
-              Clear all
+              {t('CLEAR_ALL')}
             </Button>
           </div>
         )}
@@ -197,10 +200,10 @@ export default function AdminCommentsPage() {
         {!isLoading && (
           <div className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
             <span>
-              Showing {comments.length} of {totalComments} comments
+              {t('SHOWING_COMMENTS', { count: comments.length, total: totalComments })}
               {searchTerm && (
                 <span className="ml-1">
-                  • filtered
+                  {t('FILTERED')}
                 </span>
               )}
             </span>
@@ -213,9 +216,9 @@ export default function AdminCommentsPage() {
         <CardBody className="p-0">
           <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Comments</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('COMMENTS_TITLE')}</h3>
               <div className="text-sm text-gray-500 dark:text-gray-400">
-                {totalComments} total
+                {totalComments} {t('COMMENTS_TOTAL_COUNT')}
               </div>
             </div>
           </div>
@@ -224,9 +227,9 @@ export default function AdminCommentsPage() {
             {comments.length === 0 ? (
               <div className="px-6 py-12 text-center">
                 <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No comments found</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('NO_COMMENTS_FOUND')}</h3>
                 <p className="text-gray-500 dark:text-gray-400">
-                  {searchTerm ? "Try adjusting your search terms" : "Comments will appear here"}
+                  {searchTerm ? t('NO_COMMENTS_SEARCH_DESCRIPTION') : t('NO_COMMENTS_DESCRIPTION')}
                 </p>
               </div>
             ) : (
@@ -241,16 +244,16 @@ export default function AdminCommentsPage() {
                           </div>
                           <div>
                             <p className="font-medium text-gray-900 dark:text-white">
-                              {comment.user.name || comment.user.email || "Unknown User"}
+                              {comment.user.name || comment.user.email || t('UNKNOWN_USER')}
                             </p>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                              {comment.createdAt ? new Date(comment.createdAt).toLocaleString() : 'Unknown date'}
+                              {comment.createdAt ? new Date(comment.createdAt).toLocaleString() : t('UNKNOWN_DATE')}
                             </p>
                           </div>
                         </div>
                         {comment.rating !== null && (
                           <Chip size="sm" variant="flat" color="warning" className="ml-2">
-                            {comment.rating} / 5
+                            {comment.rating}{t('RATING_LABEL')}
                           </Chip>
                         )}
                       </div>
@@ -258,7 +261,7 @@ export default function AdminCommentsPage() {
                         {comment.content}
                       </p>
                       <div className="text-xs text-gray-400">
-                        Item ID: {comment.itemId}
+                        {t('ITEM_ID_LABEL')} {comment.itemId}
                       </div>
                     </div>
                     <div className="ml-4 flex-shrink-0">
@@ -271,7 +274,7 @@ export default function AdminCommentsPage() {
                         startContent={<Trash2 className="h-4 w-4" />}
                         className="bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/30"
                       >
-                        Delete
+                        {t('DELETE')}
                       </Button>
                     </div>
                   </div>
@@ -291,13 +294,17 @@ export default function AdminCommentsPage() {
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-theme-primary rounded-full"></div>
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Showing {((currentPage - 1) * 10) + 1} to {Math.min(currentPage * 10, totalComments)} of {totalComments} comments
+                  {t('SHOWING_RANGE', { 
+                    start: ((currentPage - 1) * 10) + 1, 
+                    end: Math.min(currentPage * 10, totalComments), 
+                    total: totalComments 
+                  })}
                 </span>
               </div>
               <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-500">
-                <span>Page {currentPage} of {totalPages}</span>
+                <span>{t('PAGE_OF', { current: currentPage, total: totalPages })}</span>
                 <span>•</span>
-                <span>{10} per page</span>
+                <span>{10} {t('PER_PAGE')}</span>
               </div>
             </div>
           </div>

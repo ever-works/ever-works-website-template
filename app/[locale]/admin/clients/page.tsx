@@ -17,6 +17,7 @@ import { useAdminClients } from "@/hooks/use-admin-clients";
 import type { CreateClientRequest, UpdateClientRequest } from "@/lib/types/client";
 import type { ClientProfileWithAuth } from "@/lib/db/queries";
 import type { ClientsLoadingState } from "@/types/loading";
+import { useTranslations } from "next-intl";
 
 // Helper functions for provider stats
 function getTopProviderName(byProvider: Record<string, number>): string {
@@ -34,6 +35,8 @@ function getTopProviderCount(byProvider: Record<string, number>): number {
 }
 
 export default function ClientsPage() {
+  const t = useTranslations('admin.ADMIN_CLIENTS_PAGE');
+  
   const router = useRouter();
   const params = useParams<{ locale: string }>();
   const searchParams = useSearchParams();
@@ -320,7 +323,7 @@ export default function ClientsPage() {
       // If not found in existing clients and we're not loading, we could fetch individually
       // but for now, we'll just show an error
       if (!isLoading) {
-        toast.error('Client not found');
+        toast.error(t('CLIENT_NOT_FOUND'));
       }
     } else {
       if (isOpen) onClose();
@@ -412,9 +415,9 @@ export default function ClientsPage() {
                 <Building2 aria-hidden="true" className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Client Management</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('TITLE')}</h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1">
-                  Manage your clients and their information
+                  {t('SUBTITLE')}
                 </p>
               </div>
             </div>
@@ -425,7 +428,7 @@ export default function ClientsPage() {
               startContent={<Plus size={18} />}
               className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
             >
-              Add Client
+{t('ADD_CLIENT')}
             </Button>
           </div>
         </div>
@@ -438,10 +441,10 @@ export default function ClientsPage() {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Clients</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('TOTAL_CLIENTS')}</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.overview.total}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  +{stats.activity.newThisWeek} this week
+                  +{stats.activity.newThisWeek} {t('THIS_WEEK')}
                 </p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -456,10 +459,10 @@ export default function ClientsPage() {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Clients</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('ACTIVE_CLIENTS')}</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.overview.active}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {stats.overview.total > 0 ? Math.round((stats.overview.active / stats.overview.total) * 100) : 0}% of total
+                  {stats.overview.total > 0 ? Math.round((stats.overview.active / stats.overview.total) * 100) : 0}{t('OF_TOTAL')}
                 </p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -474,12 +477,12 @@ export default function ClientsPage() {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Top Provider</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('TOP_PROVIDER')}</p>
                 <p className="text-lg font-bold text-gray-900 dark:text-white">
                   {getTopProviderName(stats.byProvider)}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {getTopProviderCount(stats.byProvider)} users
+                  {getTopProviderCount(stats.byProvider)} {t('USERS')}
                 </p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -494,12 +497,12 @@ export default function ClientsPage() {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Monthly Growth</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('MONTHLY_GROWTH')}</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   +{stats.growth.monthlyGrowth}%
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {stats.activity.newThisMonth} new clients
+                  {stats.activity.newThisMonth} {t('NEW_CLIENTS')}
                 </p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -517,10 +520,10 @@ export default function ClientsPage() {
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search clients..."
+            placeholder={t('SEARCH_PLACEHOLDER')}
             value={searchTerm}
             onChange={(e) => handleSearch(e.target.value)}
-            aria-label="Search clients"
+            aria-label={t('SEARCH_PLACEHOLDER')}
             className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
           {isSearching && (
@@ -539,7 +542,7 @@ export default function ClientsPage() {
             startContent={<Filter className="w-4 h-4" />}
             onPress={onOpenFilterModal}
           >
-            Filters
+{t('FILTERS')}
             {activeFilterCount > 0 && (
               <Chip size="sm" variant="flat" color="primary" className="ml-2">
                 {activeFilterCount}
@@ -554,7 +557,7 @@ export default function ClientsPage() {
               color="danger"
               onPress={clearFilters}
             >
-              Clear all
+{t('CLEAR_ALL')}
             </Button>
           )}
         </div>
@@ -564,27 +567,27 @@ export default function ClientsPage() {
           <div className="flex flex-wrap gap-2 mb-4">
             {searchTerm && (
               <Chip variant="flat" color="primary" onClose={() => setSearchTerm('')}>
-                Search: &ldquo;{searchTerm}&rdquo;
+{t('SEARCH')} &ldquo;{searchTerm}&rdquo;
               </Chip>
             )}
             {statusFilter && (
               <Chip variant="flat" color="secondary" onClose={() => setStatusFilter('')}>
-                Status: {statusFilter}
+{t('STATUS_FILTER')} {statusFilter}
               </Chip>
             )}
             {planFilter && (
               <Chip variant="flat" color="success" onClose={() => setPlanFilter('')}>
-                Plan: {planFilter}
+{t('PLAN_FILTER')} {planFilter}
               </Chip>
             )}
             {accountTypeFilter && (
               <Chip variant="flat" color="warning" onClose={() => setAccountTypeFilter('')}>
-                Type: {accountTypeFilter}
+{t('TYPE_FILTER')} {accountTypeFilter}
               </Chip>
             )}
             {providerFilter && (
               <Chip variant="flat" color="default" onClose={() => setProviderFilter('')}>
-                Provider: {providerFilter}
+{t('PROVIDER_FILTER')} {providerFilter}
               </Chip>
             )}
             {datePreset !== 'all' && (
@@ -605,10 +608,10 @@ export default function ClientsPage() {
               >
                 <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
                 <span className="truncate">
-                  {datePreset === 'last7' && 'Last 7 days'}
-                  {datePreset === 'last30' && 'Last 30 days'}
-                  {datePreset === 'last90' && 'Last 90 days'}
-                  {datePreset === 'thisMonth' && 'This month'}
+                  {datePreset === 'last7' && t('LAST_7_DAYS_SHORT')}
+                  {datePreset === 'last30' && t('LAST_30_DAYS_SHORT')}
+                  {datePreset === 'last90' && t('LAST_90_DAYS_SHORT')}
+                  {datePreset === 'thisMonth' && t('THIS_MONTH_SHORT')}
                   {datePreset === 'custom' && `${customDateFrom || '...'} to ${customDateTo || '...'}`}
                   <span className="text-xs opacity-75 ml-1">({dateFilterType})</span>
                 </span>
@@ -623,9 +626,9 @@ export default function ClientsPage() {
         <CardBody className="p-0">
           <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Clients</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('CLIENTS_TITLE')}</h3>
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                {totalCount} clients total
+                {totalCount} {t('CLIENTS_TOTAL_COUNT')}
               </span>
             </div>
           </div>
@@ -633,16 +636,16 @@ export default function ClientsPage() {
           {clients.length === 0 ? (
             <div className="px-6 py-12 text-center">
               <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No clients found</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('NO_CLIENTS_FOUND')}</h3>
               <p className="text-gray-500 dark:text-gray-400 mb-4">
                 {searchTerm || statusFilter || planFilter || accountTypeFilter || providerFilter || datePreset !== 'all'
-                  ? 'Try adjusting your filters or search terms.'
-                  : 'Get started by adding your first client.'
+                  ? t('NO_CLIENTS_FILTER_DESCRIPTION')
+                  : t('NO_CLIENTS_DESCRIPTION')
                 }
               </p>
               {!searchTerm && !statusFilter && !planFilter && !accountTypeFilter && !providerFilter && datePreset === 'all' && (
                 <Button color="primary" onPress={openCreateForm}>
-                  Add First Client
+{t('ADD_FIRST_CLIENT')}
                 </Button>
               )}
             </div>
@@ -683,7 +686,7 @@ export default function ClientsPage() {
                         </div>
                         <div className="flex-1 min-w-0 pr-4">
                           <h4 className="font-medium text-gray-900 dark:text-white hover:text-theme-primary transition-colors">
-                            {client.displayName || client.name || 'Unnamed Client'}
+                            {client.displayName || client.name || t('UNNAMED_CLIENT')}
                           </h4>
                           <p className="text-sm text-gray-500 dark:text-gray-400">
                             {client.username ? `@${client.username}` : ''} {client.username && client.email ? '•' : ''} {client.email || ''}
@@ -736,7 +739,7 @@ export default function ClientsPage() {
                             )
                           }
                         >
-                          {navigatingClientId === client.id ? 'Loading...' : 'View'}
+                          {navigatingClientId === client.id ? t('LOADING') : t('VIEW')}
                         </Button>
                         <Button
                           size="sm"
@@ -745,7 +748,7 @@ export default function ClientsPage() {
                           onPress={() => openEditForm(client)}
                           startContent={<Edit className="w-4 h-4" />}
                         >
-                          Edit
+{t('EDIT')}
                         </Button>
                         <Button
                           size="sm"
@@ -756,7 +759,7 @@ export default function ClientsPage() {
                           isDisabled={loadingStates.deleting === client.id}
                           startContent={loadingStates.deleting === client.id ? null : <Trash2 className="w-4 h-4" />}
                         >
-                          {loadingStates.deleting === client.id ? 'Deleting...' : 'Delete'}
+                          {loadingStates.deleting === client.id ? t('DELETING') : t('DELETE')}
                         </Button>
                       </div>
                     </div>
@@ -803,10 +806,10 @@ export default function ClientsPage() {
                 <Trash2 className="h-6 w-6 text-red-600 dark:text-red-400" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                Delete Client
+                {t('DELETE_CLIENT')}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-                Are you sure you want to delete this client? This action cannot be undone.
+                {t('DELETE_CONFIRMATION')}
               </p>
               <div className="flex justify-center space-x-3">
                 <Button
@@ -814,13 +817,13 @@ export default function ClientsPage() {
                   variant="bordered"
                   onPress={cancelDelete}
                 >
-                  Cancel
+                  {t('CANCEL')}
                 </Button>
                 <Button
                   color="danger"
                   onPress={confirmDelete}
                 >
-                  Delete
+                  {t('DELETE')}
                 </Button>
               </div>
             </div>
@@ -848,8 +851,8 @@ export default function ClientsPage() {
                   <Filter className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Filter Clients</h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Refine your client search with advanced filters</p>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('FILTER_CLIENTS')}</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('FILTER_SUBTITLE')}</p>
                 </div>
               </div>
             </div>
@@ -861,14 +864,14 @@ export default function ClientsPage() {
                 <div className="space-y-4 relative z-20">
                   <div className="flex items-center space-x-2">
                     <div className="w-1 h-6 bg-gradient-to-b from-theme-primary to-theme-accent rounded-full"></div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Basic Filters</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('BASIC_FILTERS')}</h3>
                   </div>
                   <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200/50 dark:border-gray-700/50 shadow-sm">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-2">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Status</span>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('STATUS')}</span>
                         <Select
-                          placeholder="All Statuses"
+                          placeholder={t('ALL_STATUSES')}
                           selectedKeys={statusFilter ? [statusFilter] : []}
                           onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string || '')}
                           className="w-full"
@@ -876,18 +879,18 @@ export default function ClientsPage() {
                             trigger: "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
                           }}
                         >
-                          <SelectItem key="" value="">All Statuses</SelectItem>
-                          <SelectItem key="active" value="active">Active</SelectItem>
-                          <SelectItem key="inactive" value="inactive">Inactive</SelectItem>
-                          <SelectItem key="suspended" value="suspended">Suspended</SelectItem>
-                          <SelectItem key="trial" value="trial">Trial</SelectItem>
+                          <SelectItem key="" value="">{t('ALL_STATUSES')}</SelectItem>
+                          <SelectItem key="active" value="active">{t('ACTIVE')}</SelectItem>
+                          <SelectItem key="inactive" value="inactive">{t('INACTIVE')}</SelectItem>
+                          <SelectItem key="suspended" value="suspended">{t('SUSPENDED')}</SelectItem>
+                          <SelectItem key="trial" value="trial">{t('TRIAL')}</SelectItem>
                         </Select>
                       </div>
 
                       <div className="space-y-2">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Plan</span>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('PLAN')}</span>
                         <Select
-                          placeholder="All Plans"
+                          placeholder={t('ALL_PLANS')}
                           selectedKeys={planFilter ? [planFilter] : []}
                           onSelectionChange={(keys) => setPlanFilter(Array.from(keys)[0] as string || '')}
                           className="w-full"
@@ -895,16 +898,16 @@ export default function ClientsPage() {
                             trigger: "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
                           }}
                         >
-                          <SelectItem key="free" value="free">Free</SelectItem>
-                          <SelectItem key="standard" value="standard">Standard</SelectItem>
-                          <SelectItem key="premium" value="premium">Premium</SelectItem>
+                          <SelectItem key="free" value="free">{t('FREE')}</SelectItem>
+                          <SelectItem key="standard" value="standard">{t('STANDARD')}</SelectItem>
+                          <SelectItem key="premium" value="premium">{t('PREMIUM')}</SelectItem>
                         </Select>
                       </div>
 
                       <div className="space-y-2">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Account Type</span>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('ACCOUNT_TYPE')}</span>
                         <Select
-                          placeholder="All Types"
+                          placeholder={t('ALL_TYPES')}
                           selectedKeys={accountTypeFilter ? [accountTypeFilter] : []}
                           onSelectionChange={(keys) => setAccountTypeFilter(Array.from(keys)[0] as string || '')}
                           className="w-full"
@@ -912,16 +915,16 @@ export default function ClientsPage() {
                             trigger: "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
                           }}
                         >
-                          <SelectItem key="individual" value="individual">Individual</SelectItem>
-                          <SelectItem key="business" value="business">Business</SelectItem>
-                          <SelectItem key="enterprise" value="enterprise">Enterprise</SelectItem>
+                          <SelectItem key="individual" value="individual">{t('INDIVIDUAL')}</SelectItem>
+                          <SelectItem key="business" value="business">{t('BUSINESS')}</SelectItem>
+                          <SelectItem key="enterprise" value="enterprise">{t('ENTERPRISE')}</SelectItem>
                         </Select>
                       </div>
 
                       <div className="space-y-2 relative z-30">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Provider</span>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('PROVIDER')}</span>
                         <Select
-                          placeholder="All Providers"
+                          placeholder={t('ALL_PROVIDERS')}
                           selectedKeys={providerFilter ? [providerFilter] : []}
                           onSelectionChange={(keys) => setProviderFilter(Array.from(keys)[0] as string || '')}
                           className="w-full"
@@ -931,12 +934,12 @@ export default function ClientsPage() {
                             listbox: "z-40",
                           }}
                         >
-                          <SelectItem key="credentials" value="credentials">Email/Password</SelectItem>
-                          <SelectItem key="google" value="google">Google</SelectItem>
-                          <SelectItem key="github" value="github">GitHub</SelectItem>
-                          <SelectItem key="facebook" value="facebook">Facebook</SelectItem>
-                          <SelectItem key="twitter" value="twitter">Twitter</SelectItem>
-                          <SelectItem key="linkedin" value="linkedin">LinkedIn</SelectItem>
+                          <SelectItem key="credentials" value="credentials">{t('EMAIL_PASSWORD')}</SelectItem>
+                          <SelectItem key="google" value="google">{t('GOOGLE')}</SelectItem>
+                          <SelectItem key="github" value="github">{t('GITHUB')}</SelectItem>
+                          <SelectItem key="facebook" value="facebook">{t('FACEBOOK')}</SelectItem>
+                          <SelectItem key="twitter" value="twitter">{t('TWITTER')}</SelectItem>
+                          <SelectItem key="linkedin" value="linkedin">{t('LINKEDIN')}</SelectItem>
                         </Select>
                       </div>
                     </div>
@@ -947,9 +950,9 @@ export default function ClientsPage() {
                 <div className="space-y-4 relative z-10">
                   <div className="flex items-center space-x-2">
                     <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-600 rounded-full"></div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Date Range</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('DATE_RANGE')}</h3>
                     <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full">
-                      Quick & Easy
+                      {t('QUICK_EASY')}
                     </div>
                   </div>
                   <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200/50 dark:border-gray-700/50 shadow-sm relative z-10">
@@ -957,7 +960,7 @@ export default function ClientsPage() {
                     {/* Apply To Toggle */}
                     <div className="mb-6">
                       <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3 block">
-                        Apply date filter to:
+                        {t('APPLY_DATE_FILTER_TO')}
                       </span>
                       <div className="flex gap-3">
                         <button
@@ -972,7 +975,7 @@ export default function ClientsPage() {
                           )}
                         >
                           <Calendar className="w-4 h-4 inline mr-2" />
-                          Created Date
+                          {t('CREATED_DATE')}
                         </button>
                         <button
                           type="button"
@@ -986,7 +989,7 @@ export default function ClientsPage() {
                           )}
                         >
                           <Calendar className="w-4 h-4 inline mr-2" />
-                          Updated Date
+                          {t('UPDATED_DATE')}
                         </button>
                       </div>
                     </div>
@@ -994,16 +997,16 @@ export default function ClientsPage() {
                     {/* Quick Presets */}
                     <div className="mb-6">
                       <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3 block">
-                        Quick filters:
+                        {t('QUICK_FILTERS')}
                       </span>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {[
-                          { value: 'all', label: 'All Time', icon: '∞' },
-                          { value: 'last7', label: 'Last 7 Days', icon: '7d' },
-                          { value: 'last30', label: 'Last 30 Days', icon: '30d' },
-                          { value: 'last90', label: 'Last 90 Days', icon: '90d' },
-                          { value: 'thisMonth', label: 'This Month', icon: '📅' },
-                          { value: 'custom', label: 'Custom Range', icon: '⚙️' },
+                          { value: 'all', label: t('ALL_TIME'), icon: '∞' },
+                          { value: 'last7', label: t('LAST_7_DAYS'), icon: '7d' },
+                          { value: 'last30', label: t('LAST_30_DAYS'), icon: '30d' },
+                          { value: 'last90', label: t('LAST_90_DAYS'), icon: '90d' },
+                          { value: 'thisMonth', label: t('THIS_MONTH'), icon: '📅' },
+                          { value: 'custom', label: t('CUSTOM_RANGE'), icon: '⚙️' },
                         ].map((preset) => (
                           <button
                             type="button"
@@ -1042,11 +1045,11 @@ export default function ClientsPage() {
                       <div className="space-y-4 p-4 bg-gradient-to-r from-blue-50/50 to-cyan-50/50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-200/50 dark:border-blue-700/50">
                         <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-300 flex items-center gap-2">
                           <Calendar className="w-4 h-4" />
-                          Custom Date Range
+                          {t('CUSTOM_DATE_RANGE')}
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <label htmlFor="custom-from" className="text-sm font-medium text-gray-700 dark:text-gray-300">From Date</label>
+                            <label htmlFor="custom-from" className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('FROM_DATE')}</label>
                             <div className="relative group">
                               <Input
                                 id="custom-from"
@@ -1071,7 +1074,7 @@ export default function ClientsPage() {
                             </div>
                           </div>
                           <div className="space-y-2">
-                            <label htmlFor="custom-to" className="text-sm font-medium text-gray-700 dark:text-gray-300">To Date</label>
+                            <label htmlFor="custom-to" className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('TO_DATE')}</label>
                             <div className="relative group">
                               <Input
                                 id="custom-to"
@@ -1111,7 +1114,7 @@ export default function ClientsPage() {
                   onPress={clearFilters}
                   className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 border-red-200 dark:border-red-800"
                 >
-                  Clear All
+                  {t('CLEAR_ALL')}
                 </Button>
                 <div className="flex space-x-3">
                   <Button 
@@ -1119,14 +1122,14 @@ export default function ClientsPage() {
                     onPress={onCloseFilterModal}
                     className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                   >
-                    Cancel
+                    {t('CANCEL')}
                   </Button>
                   <Button 
                     color="primary" 
                     onPress={onCloseFilterModal}
                     className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
                   >
-                    Apply Filters
+                    {t('APPLY_FILTERS')}
                   </Button>
                 </div>
               </div>

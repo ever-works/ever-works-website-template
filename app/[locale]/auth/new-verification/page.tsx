@@ -7,11 +7,13 @@ import { useConfig } from "../../config";
 import { Button } from "@heroui/react";
 import { verifyEmailAction } from "../actions";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 export default function EmailVerificationPage() {
   const config = useConfig();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const t = useTranslations("admin.EMAIL_VERIFICATION_PAGE");
 
   const [verificationState, setVerificationState] = useState<
     "loading" | "success" | "error"
@@ -23,7 +25,7 @@ export default function EmailVerificationPage() {
     const verifyEmail = async () => {
       if (!token) {
         setVerificationState("error");
-        setError("Missing verification token");
+        setError(t("MISSING_VERIFICATION_TOKEN"));
         return;
       }
       try {
@@ -40,7 +42,7 @@ export default function EmailVerificationPage() {
         console.error(error);
         if (mounted) {
           setVerificationState("error");
-          setError("An error occurred during verification");
+          setError(t("ERROR_DURING_VERIFICATION"));
         }
       }
     };
@@ -65,11 +67,10 @@ export default function EmailVerificationPage() {
                 </span>
               </div>
 
-              <h2 className="text-2xl font-bold mb-3">Email Verification</h2>
+              <h2 className="text-2xl font-bold mb-3">{t("TITLE")}</h2>
 
               <p className="text-gray-300 mb-6">
-                Verifying your email helps us secure your account and keep you
-                informed about important updates.
+                {t("SUBTITLE")}
               </p>
 
               {/* Directory Feature */}
@@ -79,7 +80,7 @@ export default function EmailVerificationPage() {
                     <MailCheck className="h-4 w-4 text-blue-400" />
                   </div>
                   <span className="text-sm text-gray-300">
-                    Get access to all features once verified
+                    {t("GET_ACCESS_FEATURES")}
                   </span>
                 </div>
               </div>
@@ -96,10 +97,10 @@ export default function EmailVerificationPage() {
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold mb-2">
-                      Verifying Your Email
+                      {t("VERIFYING_EMAIL")}
                     </h3>
                     <p className="text-gray-500">
-                      Please wait while we verify your email address...
+                      {t("PLEASE_WAIT")}
                     </p>
                   </div>
                 </>
@@ -112,14 +113,13 @@ export default function EmailVerificationPage() {
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold mb-2">
-                      Email Verified!
+                      {t("EMAIL_VERIFIED")}
                     </h3>
                     <p className="text-gray-500 mb-6">
-                      Your email has been successfully verified. You now have
-                      full access to all features.
+                      {t("VERIFICATION_SUCCESS_MESSAGE")}
                     </p>
                     <Link href="/auth/signin">
-                      <Button className="w-full">Continue to Login</Button>
+                      <Button className="w-full">{t("CONTINUE_TO_LOGIN")}</Button>
                     </Link>
                   </div>
                 </>
@@ -132,15 +132,15 @@ export default function EmailVerificationPage() {
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold mb-2">
-                      Verification Failed
+                      {t("VERIFICATION_FAILED")}
                     </h3>
 
                     <div className="p-4 bg-red-50 text-red-700 rounded-md text-sm mb-6">
-                      {error || "There was a problem verifying your email."}
+                      {error || t("VERIFICATION_ERROR_MESSAGE")}
                     </div>
                     <Link href="/auth/signin">
                       <Button variant="bordered" className="w-full mb-3">
-                        Return to Login
+                        {t("RETURN_TO_LOGIN")}
                       </Button>
                     </Link>
                   </div>

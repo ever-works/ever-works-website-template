@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button, Input } from "@heroui/react";
 import { Save, X } from "lucide-react";
 import { CategoryData, CreateCategoryRequest, UpdateCategoryRequest, CATEGORY_VALIDATION } from "@/lib/types/category";
+import { useTranslations } from "next-intl";
 
 interface CategoryFormProps {
   category?: CategoryData;
@@ -14,6 +15,8 @@ interface CategoryFormProps {
 }
 
 export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, mode }: CategoryFormProps) {
+  const t = useTranslations("admin.CATEGORY_FORM");
+  
   // Extract long className strings into constants for better maintainability
   const containerClasses = "bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700";
   const headerClasses = "px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900";
@@ -32,22 +35,22 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
 
     // ID validation
     if (!formData.id.trim()) {
-      newErrors.id = 'Category ID is required';
+      newErrors.id = t('ID_REQUIRED');
     } else if (!/^[a-z0-9-]+$/.test(formData.id.trim())) {
-      newErrors.id = 'ID must contain only lowercase letters, numbers, and hyphens';
+      newErrors.id = t('ID_INVALID_FORMAT');
     } else if (formData.id.trim().length < 3) {
-      newErrors.id = 'ID must be at least 3 characters';
+      newErrors.id = t('ID_TOO_SHORT');
     } else if (formData.id.trim().length > 50) {
-      newErrors.id = 'ID must be no more than 50 characters';
+      newErrors.id = t('ID_TOO_LONG');
     }
 
     // Name validation
     if (!formData.name.trim()) {
-      newErrors.name = 'Category name is required';
+      newErrors.name = t('NAME_REQUIRED');
     } else if (formData.name.trim().length < CATEGORY_VALIDATION.NAME_MIN_LENGTH) {
-      newErrors.name = `Name must be at least ${CATEGORY_VALIDATION.NAME_MIN_LENGTH} characters`;
+      newErrors.name = t('NAME_TOO_SHORT', { min: CATEGORY_VALIDATION.NAME_MIN_LENGTH });
     } else if (formData.name.trim().length > CATEGORY_VALIDATION.NAME_MAX_LENGTH) {
-      newErrors.name = `Name must be no more than ${CATEGORY_VALIDATION.NAME_MAX_LENGTH} characters`;
+      newErrors.name = t('NAME_TOO_LONG', { max: CATEGORY_VALIDATION.NAME_MAX_LENGTH });
     }
 
     setErrors(newErrors);
@@ -85,10 +88,10 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
     <div className={containerClasses}>
       <div className={headerClasses}>
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          {mode === 'create' ? 'Create New Category' : 'Edit Category'}
+          {mode === 'create' ? t('CREATE_TITLE') : t('EDIT_TITLE')}
         </h2>
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-          {mode === 'create' ? 'Add a new category to organize your content' : 'Update category information'}
+          {mode === 'create' ? t('CREATE_DESCRIPTION') : t('EDIT_DESCRIPTION')}
         </p>
       </div>
 
@@ -96,8 +99,8 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
         {/* ID Field */}
         <div>
           <Input
-            label="Category ID"
-            placeholder="Enter category ID (e.g., time-tracking-cli-tools)"
+            label={t('CATEGORY_ID_LABEL')}
+            placeholder={t('CATEGORY_ID_PLACEHOLDER')}
             value={formData.id}
             onChange={(e) => handleInputChange('id', e.target.value)}
             errorMessage={errors.id}
@@ -105,15 +108,15 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
             isRequired
             isDisabled={mode === 'edit'} // ID cannot be changed when editing
             className="w-full"
-            description={mode === 'edit' ? "ID cannot be changed after creation" : "Use lowercase with hyphens (e.g., my-category)"}
+            description={mode === 'edit' ? t('CATEGORY_ID_EDIT_DESCRIPTION') : t('CATEGORY_ID_DESCRIPTION')}
           />
         </div>
 
         {/* Name Field */}
         <div>
           <Input
-            label="Category Name"
-            placeholder="Enter category name"
+            label={t('CATEGORY_NAME_LABEL')}
+            placeholder={t('CATEGORY_NAME_PLACEHOLDER')}
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
             errorMessage={errors.name}
@@ -121,10 +124,10 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
             isRequired
             maxLength={CATEGORY_VALIDATION.NAME_MAX_LENGTH}
             className="w-full"
-            description="Display name for the category"
+            description={t('CATEGORY_NAME_DESCRIPTION')}
           />
           <div className="text-xs text-gray-500 mt-1">
-            {formData.name.length}/{CATEGORY_VALIDATION.NAME_MAX_LENGTH} characters
+            {formData.name.length}/{CATEGORY_VALIDATION.NAME_MAX_LENGTH} {t('CHARACTERS_COUNT')}
           </div>
         </div>
 
@@ -138,7 +141,7 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
             startContent={<X size={16} />}
             className="px-6 py-2 font-medium"
           >
-            Cancel
+            {t('CANCEL_BUTTON')}
           </Button>
           <Button
             type="submit"
@@ -147,7 +150,7 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false, 
             startContent={!isLoading && <Save size={16} />}
             className="px-6 py-2 font-medium bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg"
           >
-            {mode === 'create' ? 'Create Category' : 'Update Category'}
+            {mode === 'create' ? t('CREATE_BUTTON') : t('UPDATE_BUTTON')}
           </Button>
         </div>
       </form>

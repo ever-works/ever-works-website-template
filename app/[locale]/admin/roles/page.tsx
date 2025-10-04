@@ -7,6 +7,7 @@ import { RoleForm } from '@/components/admin/roles/role-form';
 import { DeleteRoleDialog } from '@/components/admin/roles/delete-role-dialog';
 import { RolePermissionsModal } from '@/components/admin/permissions/role-permissions-modal';
 import { useAdminRoles, RoleData, CreateRoleRequest, UpdateRoleRequest } from '@/hooks/use-admin-roles';
+import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
 
 // CSS classes constants
@@ -76,6 +77,8 @@ function getAvatarColor(identifier: string): string {
 }
 
 export default function RolesPage() {
+  const t = useTranslations('admin.ADMIN_ROLES_PAGE');
+  
   // Use custom hook
   const {
     roles,
@@ -262,7 +265,7 @@ export default function RolesPage() {
         <div className="mt-8 text-center">
           <div className="inline-flex items-center space-x-2 text-gray-500 dark:text-gray-400">
             <div className="w-4 h-4 border-2 border-theme-primary border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-sm font-medium">Loading roles...</span>
+            <span className="text-sm font-medium">{t('LOADING_ROLES')}</span>
           </div>
         </div>
       </div>
@@ -281,13 +284,13 @@ export default function RolesPage() {
               </div>
               <div>
                 <h1 className={headerTitleClass}>
-                  Role Management
+                  {t('TITLE')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center space-x-2">
-                  <span>Manage user roles and permissions</span>
+                  <span>{t('SUBTITLE')}</span>
                   <span className="hidden sm:inline">•</span>
                   <span className="text-sm px-2 py-1 bg-theme-primary/10 text-theme-primary rounded-full font-medium">
-                    {stats.total} total
+                    {stats.total} {t('TOTAL_ROLES')}
                   </span>
                 </p>
               </div>
@@ -299,7 +302,7 @@ export default function RolesPage() {
               startContent={<Plus size={18} />}
               className={addButtonClass}
             >
-              Add Role
+              {t('ADD_ROLE')}
             </Button>
           </div>
         </div>
@@ -311,7 +314,7 @@ export default function RolesPage() {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Roles</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('TOTAL_ROLES_STAT')}</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -325,7 +328,7 @@ export default function RolesPage() {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Admin Roles</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('ADMIN_ROLES_STAT')}</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.admin}</p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -339,7 +342,7 @@ export default function RolesPage() {
           <CardBody className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Client Roles</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('CLIENT_ROLES_STAT')}</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.client}</p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -357,10 +360,10 @@ export default function RolesPage() {
           <Search aria-hidden="true" focusable="false" className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search roles..."
+            placeholder={t('SEARCH_PLACEHOLDER')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            aria-label="Search roles"
+            aria-label={t('SEARCH_PLACEHOLDER')}
             className={searchInputClass}
           />
         </div>
@@ -372,12 +375,12 @@ export default function RolesPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
-              aria-label="Filter by status"
+              aria-label={t('ALL_STATUSES')}
               className={filterSelectClass}
             >
-              <option value="all">All Statuses</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="all">{t('ALL_STATUSES')}</option>
+              <option value="active">{t('ACTIVE')}</option>
+              <option value="inactive">{t('INACTIVE')}</option>
             </select>
             <ChevronDown aria-hidden="true" focusable="false" className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
           </div>
@@ -387,12 +390,12 @@ export default function RolesPage() {
             <select
               value={roleTypeFilter}
               onChange={(e) => setRoleTypeFilter(e.target.value as 'all' | 'admin' | 'client')}
-              aria-label="Filter by role type"
+              aria-label={t('ALL_TYPES')}
               className={filterSelectClass}
             >
-              <option value="all">All Types</option>
-              <option value="admin">Admin Roles</option>
-              <option value="client">Client Roles</option>
+              <option value="all">{t('ALL_TYPES')}</option>
+              <option value="admin">{t('ADMIN_ROLES')}</option>
+              <option value="client">{t('CLIENT_ROLES')}</option>
             </select>
             <ChevronDown aria-hidden="true" focusable="false" className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
           </div>
@@ -401,15 +404,13 @@ export default function RolesPage() {
           {(searchTerm || statusFilter !== 'all' || roleTypeFilter !== 'all') && (
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                {[
-                  searchTerm && 'search',
-                  statusFilter !== 'all' && 'status',
-                  roleTypeFilter !== 'all' && 'type'
-                ].filter(Boolean).length} filter{[
-                  searchTerm && 'search',
-                  statusFilter !== 'all' && 'status',
-                  roleTypeFilter !== 'all' && 'type'
-                ].filter(Boolean).length !== 1 ? 's' : ''} applied
+                {t('FILTERS_APPLIED', { 
+                  plural: [
+                    searchTerm && 'search',
+                    statusFilter !== 'all' && 'status',
+                    roleTypeFilter !== 'all' && 'type'
+                  ].filter(Boolean).length !== 1 ? 's' : ''
+                })}
               </span>
               <Button
                 variant="light"
@@ -422,7 +423,7 @@ export default function RolesPage() {
                 }}
                 className="h-6 px-2 text-xs"
               >
-                Clear all
+                {t('CLEAR_ALL')}
               </Button>
             </div>
           )}
@@ -431,10 +432,10 @@ export default function RolesPage() {
         {/* Results Summary */}
         <div className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
           <span>
-            Showing {filteredRoles.length} of {stats.total} roles
+            {t('SHOWING_ROLES', { count: filteredRoles.length, total: stats.total })}
             {(searchTerm || statusFilter !== 'all' || roleTypeFilter !== 'all') && (
               <span className="ml-1">
-                • filtered
+                {t('FILTERED')}
               </span>
             )}
           </span>
@@ -446,9 +447,9 @@ export default function RolesPage() {
         <CardBody className="p-0">
           <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Roles</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('ROLES_TABLE_TITLE')}</h3>
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                {stats.total} roles total
+                {stats.total} {t('ROLES_TOTAL_COUNT')}
               </span>
             </div>
           </div>
@@ -456,8 +457,8 @@ export default function RolesPage() {
           {filteredRoles.length === 0 ? (
             <div className="px-6 py-12 text-center">
               <Shield className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No roles found</h3>
-              <p className="text-gray-500 dark:text-gray-400">Try adjusting your filters or create a new role.</p>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('NO_ROLES_FOUND')}</h3>
+              <p className="text-gray-500 dark:text-gray-400">{t('NO_ROLES_DESCRIPTION')}</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -475,7 +476,7 @@ export default function RolesPage() {
                             {role.description}
                           </p>
                           <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                            {role.isAdmin ? 'Admin Role' : 'Client Role'}
+                            {role.isAdmin ? t('ADMIN_ROLE') : t('CLIENT_ROLE')}
                           </p>
                         </div>
                       </div>
@@ -486,7 +487,7 @@ export default function RolesPage() {
                         variant="flat"
                         size="sm"
                       >
-                        {role.status === 'active' ? 'Active' : 'Inactive'}
+                        {role.status === 'active' ? t('ACTIVE') : t('INACTIVE')}
                       </Chip>
                       <div className="flex space-x-1">
                         <Button
@@ -494,7 +495,7 @@ export default function RolesPage() {
                           size="sm"
                           variant="light"
                           onPress={() => openPermissionsModal(role)}
-                          title="Manage Permissions"
+                          title={t('MANAGE_PERMISSIONS')}
                         >
                           <Settings className="w-4 h-4" />
                         </Button>
@@ -503,7 +504,7 @@ export default function RolesPage() {
                           size="sm"
                           variant="light"
                           onPress={() => openEditForm(role)}
-                          title="Edit Role"
+                          title={t('EDIT_ROLE_TITLE')}
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
@@ -513,7 +514,7 @@ export default function RolesPage() {
                           variant="light"
                           color="danger"
                           onPress={() => openDeleteDialog(role)}
-                          title="Delete Role"
+                          title={t('DELETE_ROLE_TITLE')}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -547,7 +548,7 @@ export default function RolesPage() {
           <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <h2 id="role-form-title" className="text-lg font-semibold text-gray-900 dark:text-white">
-                {formMode === 'create' ? 'Create New Role' : 'Edit Role'}
+                {formMode === 'create' ? t('CREATE_ROLE') : t('EDIT_ROLE')}
               </h2>
               {!isSubmitting && (
                 <button
