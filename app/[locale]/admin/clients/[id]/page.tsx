@@ -1,11 +1,8 @@
-"use client";
-
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getClientProfileById, getLastLoginActivity } from "@/lib/db/queries";
 import { type ClientProfile } from "@/lib/db/schema";
 import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
 import { Button, Card, CardBody, Chip } from "@heroui/react";
 import {
   ArrowLeft,
@@ -24,66 +21,33 @@ import {
   ExternalLink,
   Edit
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { getTranslations } from "next-intl/server";
 
 type Params = { id: string; locale?: string };
 
-export default function ClientDetailPage({
+export default async function ClientDetailPage({
   params,
 }: {
   params: Promise<Params>;
 }) {
-  const t = useTranslations('admin.ADMIN_CLIENT_DETAIL_PAGE');
-  const [profile, setProfile] = useState<ClientProfile | null>(null);
-  const [lastLogin, setLastLogin] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [locale, setLocale] = useState("en");
+  const t = await getTranslations('admin.ADMIN_CLIENT_DETAIL_PAGE');
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const resolvedParams = await params;
-        const { id, locale: paramLocale } = resolvedParams;
-        const currentLocale = paramLocale || "en";
-        setLocale(currentLocale);
+  const { id, locale: paramLocale } = await params;
 
-        const session = await auth();
-        if (!session?.user?.isAdmin) {
-          redirect(`/${currentLocale}/auth/signin`);
-        }
-
-        const clientProfile: ClientProfile | null = await getClientProfileById(id);
-        if (!clientProfile) {
-          notFound();
-        }
-
-        setProfile(clientProfile);
-        const loginActivity = await getLastLoginActivity(clientProfile.userId);
-        setLastLogin(loginActivity);
-      } catch (error) {
-        console.error("Error loading client data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, [params]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-theme-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading client details...</p>
-        </div>
-      </div>
-    );
+  const session = await auth();
+  if (!session?.user?.isAdmin) {
+    const locale = paramLocale || "en";
+    redirect(`/${locale}/auth/signin`);
   }
 
+  const profile: ClientProfile | null = await getClientProfileById(id);
   if (!profile) {
     notFound();
   }
+
+  const lastLogin = await getLastLoginActivity(profile.userId);
+
+  const locale = paramLocale || "en";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -126,7 +90,7 @@ export default function ClientDetailPage({
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
                     <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                      {profile.displayName || profile.username || t('UNNAMED_CLIENT')}
+                      {profile.displayName || profile.username || 'Unnamed Client'}
                     </h1>
                     {profile.company && (
                       <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium">
@@ -161,7 +125,7 @@ export default function ClientDetailPage({
                     </div>
                     <div className="flex items-center space-x-2">
                       <Clock aria-hidden="true" className="w-4 h-4" />
-                      <span>{t('LAST_LOGIN')} {lastLogin ? toDateTime(lastLogin.timestamp, locale) : t('NEVER')}</span>
+                      <span>{t('LAST_LOGIN')} {lastLogin ? toDateTime(lastLogin.timestamp, locale) : 'Never'}</span>
                     </div>
                   </div>
                 </div>
@@ -190,22 +154,22 @@ export default function ClientDetailPage({
                     <ModernField
                       icon={<User aria-hidden="true" className="w-4 h-4 text-blue-500" />}
                       label={t('DISPLAY_NAME')}
-                      value={profile.displayName || t('NOT_PROVIDED')}
+                      value={profile.displayName || "Not provided"}
                     />
                     <ModernField
                       icon={<User aria-hidden="true" className="w-4 h-4 text-green-500" />}
                       label={t('USERNAME')}
-                      value={profile.username ? `@${profile.username}` : t('NOT_SET')}
+                      value={profile.username ? `@${profile.username}` : "Not set"}
                     />
                     <ModernField
                       icon={<Building2 aria-hidden="true" className="w-4 h-4 text-purple-500" />}
                       label={t('COMPANY')}
-                      value={profile.company || t('NOT_PROVIDED')}
+                      value={profile.company || "Not provided"}
                     />
                     <ModernField
                       icon={<Building2 aria-hidden="true" className="w-4 h-4 text-orange-500" />}
                       label={t('JOB_TITLE')}
-                      value={profile.jobTitle || t('NOT_PROVIDED')}
+                      value={profile.jobTitle || "Not provided"}
                     />
                     <ModernField
                       icon={<Shield aria-hidden="true" className="w-4 h-4 text-indigo-500" />}
@@ -249,23 +213,23 @@ export default function ClientDetailPage({
                     <ModernField
                       icon={<Phone aria-hidden="true" className="w-4 h-4 text-green-500" />}
                       label={t('PHONE')}
-                      value={profile.phone || t('NOT_PROVIDED')}
+                      value={profile.phone || "Not provided"}
                     />
                     <ModernField
                       icon={<Globe aria-hidden="true" className="w-4 h-4 text-blue-500" />}
                       label={t('WEBSITE')}
-                      value={profile.website || t('NOT_PROVIDED')}
+                      value={profile.website || "Not provided"}
                       isLink={!!profile.website}
                     />
                     <ModernField
                       icon={<MapPin aria-hidden="true" className="w-4 h-4 text-red-500" />}
-                      label={t('LOCATION')}
-                      value={profile.location || t('NOT_PROVIDED')}
+                        label={t('LOCATION')}
+                      value={profile.location || "Not provided"}
                     />
                     <ModernField
                       icon={<Building2 aria-hidden="true" className="w-4 h-4 text-purple-500" />}
                       label={t('INDUSTRY')}
-                      value={profile.industry || t('NOT_SPECIFIED')}
+                      value={profile.industry || "Not specified"}
                     />
                     <ModernField
                       icon={<Languages aria-hidden="true" className="w-4 h-4 text-orange-500" />}
@@ -306,7 +270,7 @@ export default function ClientDetailPage({
                       variant="flat"
                       className="shadow-sm"
                     >
-                      {profile.emailVerified ? t('VERIFIED') : t('UNVERIFIED')}
+                      {profile.emailVerified ? 'Verified' : 'Unverified'}
                     </Chip>
                   </div>
                   <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
@@ -329,7 +293,7 @@ export default function ClientDetailPage({
                         <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                           {profile.totalSubmissions || 0}
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">{t('SUBMISSIONS_COUNT')}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">{t('SUBMISSIONS')}</div>
                       </div>
                     </div>
                   </div>
@@ -353,7 +317,7 @@ export default function ClientDetailPage({
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t('NO_BILLING_SETUP')}</h3>
                     <p className="text-gray-500 dark:text-gray-400 mb-4 text-sm">
-                      {t('BILLING_DESCRIPTION')}
+                      Payment and subscription details will appear here once configured.
                     </p>
                     <Button
                       color="primary"
