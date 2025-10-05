@@ -6,6 +6,7 @@ import { ItemDetail } from "@/components/item-detail";
 import { Container } from "@/components/ui/container";
 import { Suspense } from "react";
 import { Metadata } from "next";
+import { siteConfig } from "@/lib/config";
 
 // Disable static generation to prevent MDX compilation errors during build
 export const dynamic = 'force-dynamic';
@@ -20,14 +21,13 @@ export async function generateMetadata({
 	params: Promise<{ slug: string; locale: string }>;
 }): Promise<Metadata> {
 	const { slug, locale } = await params;
-	const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works';
 
 	try {
 		const item = await fetchItem(slug, { lang: locale });
 
 		if (!item) {
 			return {
-				title: 'Item Not Found | Ever Works',
+				title: `Item Not Found | ${siteConfig.name}`,
 				description: "The item you're looking for doesn't exist.",
 				robots: {
 					index: false,
@@ -49,14 +49,14 @@ export async function generateMetadata({
 			? meta.description.length > MAX_DESCRIPTION_LENGTH
 				? `${meta.description.slice(0, MAX_DESCRIPTION_LENGTH - 3)}...`
 				: meta.description
-			: `Discover ${meta.name} on Ever Works`;
+			: `Discover ${meta.name} on ${siteConfig.name}`;
 
 		// Use dynamic OG image endpoint, with fallback to icon or logo
-		const ogImageUrl = new URL(`/${locale}/items/${slug}/opengraph-image`, baseUrl).toString();
-		const fallbackImageUrl = new URL(meta.icon_url ?? '/logo-ever-works.svg', baseUrl).toString();
+		const ogImageUrl = new URL(`/${locale}/items/${slug}/opengraph-image`, siteConfig.url).toString();
+		const fallbackImageUrl = new URL(meta.icon_url ?? siteConfig.logo, siteConfig.url).toString();
 
 		return {
-			title: `${meta.name} | Ever Works`,
+			title: `${meta.name} | ${siteConfig.name}`,
 			description: metaDescription,
 			keywords,
 			openGraph: {
@@ -75,8 +75,8 @@ export async function generateMetadata({
 					}
 				],
 				type: 'website',
-				siteName: 'Ever Works',
-				url: `${baseUrl}/${locale}/items/${slug}`
+				siteName: siteConfig.name,
+				url: `${siteConfig.url}/${locale}/items/${slug}`
 			},
 			twitter: {
 				card: 'summary_large_image',
@@ -85,13 +85,13 @@ export async function generateMetadata({
 				images: [ogImageUrl, fallbackImageUrl]
 			},
 			alternates: {
-				canonical: `${baseUrl}/${locale}/items/${slug}`
+				canonical: `${siteConfig.url}/${locale}/items/${slug}`
 			}
 		};
 	} catch (error) {
 		console.error(`Failed to generate metadata for item ${slug}:`, error);
 		return {
-			title: 'Error | Ever Works',
+			title: `Error | ${siteConfig.name}`,
 			description: 'An error occurred while loading this page.',
 			robots: {
 				index: false,

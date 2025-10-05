@@ -1,9 +1,10 @@
 import { ImageResponse } from 'next/og';
+import { siteConfig } from '@/lib/config';
 
 // Explicitly set Node.js runtime to allow Node.js modules (fs, path)
 // Edge runtime does not support Node.js APIs required by fetchItem()
 export const runtime = 'nodejs';
-export const alt = 'Ever Works Item';
+export const alt = `${siteConfig.name} Item`;
 export const size = {
 	width: 1200,
 	height: 630
@@ -12,6 +13,7 @@ export const contentType = 'image/png';
 
 export default async function Image({ params }: { params: { slug: string; locale: string } }) {
 	const { slug } = params;
+	const gradient = `linear-gradient(135deg, ${siteConfig.ogImage.gradientStart} 0%, ${siteConfig.ogImage.gradientEnd} 100%)`;
 
 	try {
 		// Dynamically import to avoid bundling fs in edge runtime
@@ -24,7 +26,7 @@ export default async function Image({ params }: { params: { slug: string; locale
 				(
 					<div
 						style={{
-							background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+							background: gradient,
 							width: '100%',
 							height: '100%',
 							display: 'flex',
@@ -43,7 +45,7 @@ export default async function Image({ params }: { params: { slug: string; locale
 								textAlign: 'center'
 							}}
 						>
-							Ever Works
+							{siteConfig.name}
 						</div>
 						<div
 							style={{
@@ -53,7 +55,7 @@ export default async function Image({ params }: { params: { slug: string; locale
 								textAlign: 'center'
 							}}
 						>
-							Professional Services
+							{siteConfig.tagline}
 						</div>
 					</div>
 				),
@@ -74,7 +76,7 @@ export default async function Image({ params }: { params: { slug: string; locale
 			(
 				<div
 					style={{
-						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+						background: gradient,
 						width: '100%',
 						height: '100%',
 						display: 'flex',
@@ -104,7 +106,7 @@ export default async function Image({ params }: { params: { slug: string; locale
 								borderRadius: '8px'
 							}}
 						>
-							Ever Works
+							{siteConfig.name}
 						</div>
 					</div>
 
@@ -151,7 +153,7 @@ export default async function Image({ params }: { params: { slug: string; locale
 			(
 				<div
 					style={{
-						background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+						background: gradient,
 						width: '100%',
 						height: '100%',
 						display: 'flex',
@@ -170,7 +172,7 @@ export default async function Image({ params }: { params: { slug: string; locale
 							textAlign: 'center'
 						}}
 					>
-						Ever Works
+						{siteConfig.name}
 					</div>
 				</div>
 			),

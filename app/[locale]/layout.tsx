@@ -17,12 +17,12 @@ import { ConditionalLayout } from '@/components/layout/conditional-layout';
 
 // Base metadata that will be enhanced with dynamic locale
 export const metadata: Metadata = {
-	title: 'Ever Works | Professional Services',
-	description: 'Ever Works - Professional services and solutions for your business',
-	keywords: ['Ever Works', 'Professional Services', 'Business Solutions'],
+	title: 'Ever Works | The Open-Source, AI-Powered Directory Builder',
+	description: 'Ever Works - The Open-Source, AI-Powered Directory Builder for creators, business owners, and developers',
+	keywords: ['Ever Works', 'Directory Builder', 'Open Source', 'AI-Powered', 'Directory Template'],
 	openGraph: {
-		title: 'Ever Works | Professional Services',
-		description: 'Ever Works - Professional services and solutions for your business',
+		title: 'Ever Works | The Open-Source, AI-Powered Directory Builder',
+		description: 'Ever Works - The Open-Source, AI-Powered Directory Builder for creators, business owners, and developers',
 		type: 'website',
 		siteName: 'Ever Works'
 	}

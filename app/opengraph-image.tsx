@@ -1,8 +1,9 @@
 import { ImageResponse } from 'next/og';
+import { siteConfig } from '@/lib/config';
 
 // Explicitly set Node.js runtime for consistency with dynamic OG images
 export const runtime = 'nodejs';
-export const alt = 'Ever Works - Professional Services';
+export const alt = `${siteConfig.name} - ${siteConfig.tagline}`;
 export const size = {
 	width: 1200,
 	height: 630
@@ -10,11 +11,13 @@ export const size = {
 export const contentType = 'image/png';
 
 export default async function Image() {
+	const gradient = `linear-gradient(135deg, ${siteConfig.ogImage.gradientStart} 0%, ${siteConfig.ogImage.gradientEnd} 100%)`;
+
 	return new ImageResponse(
 		(
 			<div
 				style={{
-					background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+					background: gradient,
 					width: '100%',
 					height: '100%',
 					display: 'flex',
@@ -36,7 +39,7 @@ export default async function Image() {
 						letterSpacing: '-2px'
 					}}
 				>
-					Ever Works
+					{siteConfig.name}
 				</div>
 
 				{/* Tagline */}
@@ -50,7 +53,7 @@ export default async function Image() {
 						fontWeight: 500
 					}}
 				>
-					Professional Services & Solutions
+					{siteConfig.tagline}
 				</div>
 
 				{/* Decorative element */}

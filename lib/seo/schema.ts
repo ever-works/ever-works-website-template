@@ -3,6 +3,8 @@
  * Generates JSON-LD schemas for various content types
  */
 
+import { siteConfig } from '@/lib/config';
+
 export interface ProductSchemaInput {
 	name: string;
 	description: string;
@@ -57,15 +59,13 @@ export function generateProductSchema(input: ProductSchemaInput) {
  * Generate Organization schema for brand identity
  */
 export function generateOrganizationSchema() {
-	const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works';
-
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'Organization',
-		name: 'Ever Works',
-		url: baseUrl,
-		logo: `${baseUrl}/logo-ever-works.svg`,
-		description: 'Professional services and solutions for your business'
+		name: siteConfig.brandName,
+		url: siteConfig.url,
+		logo: `${siteConfig.url}${siteConfig.logo}`,
+		description: siteConfig.description
 	};
 }
 
@@ -73,18 +73,16 @@ export function generateOrganizationSchema() {
  * Generate WebSite schema with search action
  */
 export function generateWebSiteSchema(locale: string) {
-	const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works';
-
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'WebSite',
-		name: 'Ever Works',
-		url: `${baseUrl}/${locale}`,
+		name: siteConfig.name,
+		url: `${siteConfig.url}/${locale}`,
 		potentialAction: {
 			'@type': 'SearchAction',
 			target: {
 				'@type': 'EntryPoint',
-				urlTemplate: `${baseUrl}/${locale}/search?q={search_term_string}`
+				urlTemplate: `${siteConfig.url}/${locale}/search?q={search_term_string}`
 			},
 			'query-input': 'required name=search_term_string'
 		}

@@ -17,6 +17,7 @@ import { SimilarItemsSection } from './similar-items-section';
 import { useTranslations } from 'next-intl';
 import { generateProductSchema } from '@/lib/seo/schema';
 import { useParams } from 'next/navigation';
+import { siteConfig } from '@/lib/config';
 
 export interface ItemDetailProps {
 	meta: {
@@ -44,15 +45,14 @@ export function ItemDetail({ meta, content, categoryName, noContentMessage }: It
 	const tagNames = Array.isArray(meta.tags) ? meta.tags.map((tag) => (typeof tag === 'string' ? tag : tag.name)) : [];
 
 	// Generate Product schema for SEO
-	const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works';
 	const productSchema = generateProductSchema({
 		name: meta.name,
 		description: meta.description,
 		image: meta.icon_url,
-		url: `${baseUrl}/${locale}/items/${meta.slug}`,
+		url: `${siteConfig.url}/${locale}/items/${meta.slug}`,
 		category: categoryName,
 		sourceUrl: meta.source_url,
-		brandName: 'Ever Works'
+		brandName: siteConfig.brandName
 	});
 
 	return (
