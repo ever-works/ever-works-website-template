@@ -1,8 +1,8 @@
 import { ImageResponse } from 'next/og';
 import { siteConfig } from '@/lib/config';
+import { fetchItem } from '@/lib/content';
 
-// Explicitly set Node.js runtime to allow Node.js modules (fs, path)
-// Edge runtime does not support Node.js APIs required by fetchItem()
+// Use Node.js runtime for file system access
 export const runtime = 'nodejs';
 export const alt = `${siteConfig.name} Item`;
 export const size = {
@@ -16,8 +16,6 @@ export default async function Image({ params }: { params: { slug: string; locale
 	const gradient = `linear-gradient(135deg, ${siteConfig.ogImage.gradientStart} 0%, ${siteConfig.ogImage.gradientEnd} 100%)`;
 
 	try {
-		// Dynamically import to avoid bundling fs in edge runtime
-		const { fetchItem } = await import('@/lib/content');
 		const item = await fetchItem(slug, { lang: params.locale });
 
 		if (!item) {
