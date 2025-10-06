@@ -29,7 +29,7 @@ export const tagsKeys = {
   all: ['tags'] as const,
   lists: () => [...tagsKeys.all, 'list'] as const,
   list: (page: number, limit: number) => [...tagsKeys.lists(), { page, limit }] as const,
-  allTags: (locale?: string) => [...tagsKeys.all, 'all', { locale }] as const,
+  allTags: () => [...tagsKeys.all, 'all'] as const,
   details: () => [...tagsKeys.all, 'detail'] as const,
   detail: (id: string) => [...tagsKeys.details(), id] as const,
 };
@@ -48,8 +48,8 @@ const tagsApi = {
   },
 
   // Get all tags without pagination
-  getAllTags: async (locale: string = 'en'): Promise<TagData[]> => {
-    const response = await serverClient.get<{ success: boolean; data: TagData[] }>(`/api/admin/tags/all?locale=${locale}`);
+  getAllTags: async (): Promise<TagData[]> => {
+    const response = await serverClient.get<{ success: boolean; data: TagData[] }>('/api/admin/tags/all');
     
     if (!apiUtils.isSuccess(response)) {
       throw new Error(response.error || 'Failed to fetch all tags');
@@ -109,10 +109,10 @@ export function useTags(page: number = 1, limit: number = 10) {
   });
 }
 
-export function useAllTags(locale: string = 'en') {
+export function useAllTags() {
   return useQuery({
-    queryKey: tagsKeys.allTags(locale),
-    queryFn: () => tagsApi.getAllTags(locale),
+    queryKey: tagsKeys.allTags(),
+    queryFn: () => tagsApi.getAllTags(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
@@ -204,9 +204,9 @@ export function useTagManagement() {
   };
 }
 
-// Hook for getting all tags with locale support
-export function useAllTagsWithLocale(locale: string = 'en') {
-  const { data: allTags, isLoading, error, refetch } = useAllTags(locale);
+// Hook for getting all tags with formatted response
+export function useAllTagsFormatted() {
+  const { data: allTags, isLoading, error, refetch } = useAllTags();
   
   return {
     allTags: allTags || [],
