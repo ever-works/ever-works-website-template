@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './[locale]/globals.css';
 import { LayoutProvider, ThemeProvider } from '@/components/providers';
+import { siteConfig } from '@/lib/config';
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -14,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: '404 - Page Not Found | Ever Works',
+	title: `404 - Page Not Found | ${siteConfig.name}`,
 	description: "The page you're looking for doesn't exist.",
 	robots: 'noindex'
 };
