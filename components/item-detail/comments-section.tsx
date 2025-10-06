@@ -176,7 +176,6 @@ interface CommentsSectionProps {
 export function CommentsSection({ itemId }: CommentsSectionProps) {
 	const { comments, isLoading, createComment, isCreating, deleteComment, isDeleting } = useComments(itemId);
 	const { user } = useCurrentUser();
-
 	const handleSubmit = useCallback(
 		async (content: string, rating: number) => {
 			try {
@@ -210,7 +209,7 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 
 			<div className="space-y-6">
 				<h2 className="text-xl font-semibold text-theme-primary-900 dark:text-theme-primary-100">
-					Comments ({comments.length})
+					Comments ({comments.length} {user?.email})
 				</h2>
 
 				<AnimatePresence mode="popLayout">

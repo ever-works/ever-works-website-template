@@ -17,11 +17,11 @@ export function useComments(itemId: string) {
   const { data: comments = [], isLoading } = useQuery<CommentWithUser[]>({
     queryKey: ["comments", itemId],
     queryFn: async () => {
-      const response = await serverClient.get<CommentWithUser[]>(`/api/items/${itemId}/comments`);
+      const response = await serverClient.get<{ success: boolean; comments: CommentWithUser[] }>(`/api/items/${itemId}/comments`);
       if (!apiUtils.isSuccess(response)) {
         throw new Error(apiUtils.getErrorMessage(response));
       }
-      return response.data;
+      return response.data.comments;
     },
   });
 
