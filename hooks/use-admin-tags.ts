@@ -29,6 +29,7 @@ export const tagsKeys = {
   all: ['tags'] as const,
   lists: () => [...tagsKeys.all, 'list'] as const,
   list: (page: number, limit: number) => [...tagsKeys.lists(), { page, limit }] as const,
+  allTags: (locale?: string) => [...tagsKeys.all, 'all', { locale }] as const,
   details: () => [...tagsKeys.all, 'detail'] as const,
   detail: (id: string) => [...tagsKeys.details(), id] as const,
 };
@@ -41,6 +42,17 @@ const tagsApi = {
     
     if (!apiUtils.isSuccess(response)) {
       throw new Error(response.error || 'Failed to fetch tags');
+    }
+    
+    return response.data.data;
+  },
+
+  // Get all tags without pagination
+  getAllTags: async (locale: string = 'en'): Promise<TagData[]> => {
+    const response = await serverClient.get<{ success: boolean; data: TagData[] }>(`/api/admin/tags/all?locale=${locale}`);
+    
+    if (!apiUtils.isSuccess(response)) {
+      throw new Error(response.error || 'Failed to fetch all tags');
     }
     
     return response.data.data;
@@ -92,6 +104,15 @@ export function useTags(page: number = 1, limit: number = 10) {
   return useQuery({
     queryKey: tagsKeys.list(page, limit),
     queryFn: () => tagsApi.getTags(page, limit),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  });
+}
+
+export function useAllTags(locale: string = 'en') {
+  return useQuery({
+    queryKey: tagsKeys.allTags(locale),
+    queryFn: () => tagsApi.getAllTags(locale),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
@@ -180,5 +201,17 @@ export function useTagManagement() {
     createError: createTagMutation.error,
     updateError: updateTagMutation.error,
     deleteError: deleteTagMutation.error,
+  };
+}
+
+// Hook for getting all tags with locale support
+export function useAllTagsWithLocale(locale: string = 'en') {
+  const { data: allTags, isLoading, error, refetch } = useAllTags(locale);
+  
+  return {
+    allTags: allTags || [],
+    isLoading,
+    error,
+    refetch,
   };
 }
