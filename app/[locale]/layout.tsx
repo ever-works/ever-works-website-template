@@ -14,19 +14,24 @@ import { LoginModalProvider } from '@/components/auth/login-modal-provider';
 import { Suspense } from 'react';
 import Script from 'next/script';
 import { ConditionalLayout } from '@/components/layout/conditional-layout';
+import { siteConfig } from '@/lib/config';
 
-// Base metadata that will be enhanced with dynamic locale
-export const metadata: Metadata = {
-	title: 'Ever Works | The Open-Source, AI-Powered Directory Builder',
-	description: 'Ever Works - The Open-Source, AI-Powered Directory Builder for creators, business owners, and developers',
-	keywords: ['Ever Works', 'Directory Builder', 'Open Source', 'AI-Powered', 'Directory Template'],
-	openGraph: {
-		title: 'Ever Works | The Open-Source, AI-Powered Directory Builder',
-		description: 'Ever Works - The Open-Source, AI-Powered Directory Builder for creators, business owners, and developers',
-		type: 'website',
-		siteName: 'Ever Works'
-	}
-};
+/**
+ * Generate metadata dynamically using siteConfig
+ */
+export async function generateMetadata(): Promise<Metadata> {
+	return {
+		title: `${siteConfig.name} | ${siteConfig.tagline}`,
+		description: siteConfig.description,
+		keywords: siteConfig.keywords,
+		openGraph: {
+			title: `${siteConfig.name} | ${siteConfig.tagline}`,
+			description: siteConfig.description,
+			type: 'website',
+			siteName: siteConfig.name
+		}
+	};
+}
 
 export default async function RootLayout({
 	children,

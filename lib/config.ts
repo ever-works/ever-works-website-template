@@ -51,6 +51,14 @@ export const siteConfig = {
 		'Discover and explore professional services and solutions on Ever Works',
 
 	/**
+	 * SEO keywords (comma-separated string that will be split into array)
+	 * @example "AI Tools, Directory, Open Source"
+	 */
+	keywords: process.env.NEXT_PUBLIC_SITE_KEYWORDS
+		? process.env.NEXT_PUBLIC_SITE_KEYWORDS.split(',').map((k) => k.trim())
+		: ['Ever Works', 'Directory Builder', 'Open Source', 'AI-Powered', 'Directory Template'],
+
+	/**
 	 * OG image theme colors (for dynamic image generation)
 	 * Uses CSS gradient format
 	 */
