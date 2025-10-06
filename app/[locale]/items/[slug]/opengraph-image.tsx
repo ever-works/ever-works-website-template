@@ -11,12 +11,12 @@ export const size = {
 };
 export const contentType = 'image/png';
 
-export default async function Image({ params }: { params: { slug: string; locale: string } }) {
-	const { slug } = params;
+export default async function Image({ params }: { params: Promise<{ slug: string; locale: string }> }) {
+	const { slug, locale } = await params;
 	const gradient = `linear-gradient(135deg, ${siteConfig.ogImage.gradientStart} 0%, ${siteConfig.ogImage.gradientEnd} 100%)`;
 
 	try {
-		const item = await fetchItem(slug, { lang: params.locale });
+		const item = await fetchItem(slug, { lang: locale });
 
 		if (!item) {
 			// Fallback for items not found
@@ -144,7 +144,7 @@ export default async function Image({ params }: { params: { slug: string; locale
 			}
 		);
 	} catch (error) {
-		console.error('Error generating OG image:', error);
+		console.error(`Error generating OG image for slug "${slug}":`, error);
 
 		// Fallback error image
 		return new ImageResponse(
