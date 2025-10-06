@@ -3,18 +3,19 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
 import {
-    CategoryData,
-    CategoryWithCount,
-    CreateCategoryRequest,
-    UpdateCategoryRequest,
-    CategoryListResponse,
-    CategoryListOptions
+	CategoryData,
+	CategoryWithCount,
+	CreateCategoryRequest,
+	UpdateCategoryRequest,
+	CategoryListResponse,
+	CategoryListOptions
 } from '@/lib/types/category';
 
 // Query keys factory
 const QUERY_KEYS = {
   categories: ['admin', 'categories'] as const,
   categoriesList: (params: CategoryListOptions) => [...QUERY_KEYS.categories, 'list', params] as const,
+  allCategories: () => [...QUERY_KEYS.categories, 'all'] as const,
   category: (id: string) => [...QUERY_KEYS.categories, 'detail', id] as const,
 } as const;
 
@@ -74,6 +75,16 @@ const deleteCategory = async (id: string, hard = false): Promise<void> => {
   if (!apiUtils.isSuccess(response)) {
     throw new Error(apiUtils.getErrorMessage(response));
   }
+};
+
+const fetchAllCategories = async (): Promise<CategoryData[]> => {
+  const response = await serverClient.get<{ success: boolean; data: CategoryData[] }>('/api/admin/categories/all');
+  
+  if (!apiUtils.isSuccess(response)) {
+    throw new Error(apiUtils.getErrorMessage(response));
+  }
+  
+  return response.data.data;
 };
 
 // Hook interface
@@ -330,5 +341,27 @@ export function useCategoryMutations(): UseCategoryMutationsReturn {
     updateCategory: handleUpdateCategory,
     deleteCategory: handleDeleteCategory,
     isSubmitting: createCategoryMutation.isPending || updateCategoryMutation.isPending || deleteCategoryMutation.isPending,
+  };
+}
+
+// Hook for getting all categories without pagination
+export function useAllCategories() {
+  return useQuery({
+    queryKey: QUERY_KEYS.allCategories(),
+    queryFn: () => fetchAllCategories(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  });
+}
+
+// Hook for getting all categories with formatted response
+export function useAllCategoriesFormatted() {
+  const { data: allCategories, isLoading, error, refetch } = useAllCategories();
+  
+  return {
+    allCategories: allCategories || [],
+    isLoading,
+    error,
+    refetch,
   };
 }
