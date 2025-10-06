@@ -65,6 +65,28 @@ export const siteConfig = {
 	ogImage: {
 		gradientStart: process.env.NEXT_PUBLIC_OG_GRADIENT_START || '#667eea',
 		gradientEnd: process.env.NEXT_PUBLIC_OG_GRADIENT_END || '#764ba2'
+	},
+
+	/**
+	 * Social media links for footer
+	 * Set to empty string to hide specific social links
+	 */
+	social: {
+		github: process.env.NEXT_PUBLIC_SOCIAL_GITHUB || 'https://github.com/ever-works',
+		x: process.env.NEXT_PUBLIC_SOCIAL_X || 'https://x.com/everplatform',
+		linkedin: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN || 'https://www.linkedin.com/company/everhq',
+		facebook: process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK || 'https://www.facebook.com/everplatform',
+		blog: process.env.NEXT_PUBLIC_SOCIAL_BLOG || 'https://blog.ever.works',
+		email: process.env.NEXT_PUBLIC_SOCIAL_EMAIL || 'ever@ever.works'
+	},
+
+	/**
+	 * Attribution link configuration ("Built with" in footer)
+	 * Set url to empty string to disable attribution link
+	 */
+	attribution: {
+		url: process.env.NEXT_PUBLIC_ATTRIBUTION_URL || 'https://ever.works',
+		name: process.env.NEXT_PUBLIC_ATTRIBUTION_NAME || 'Ever Works'
 	}
 } as const;
 

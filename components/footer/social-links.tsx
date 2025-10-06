@@ -1,10 +1,11 @@
 import { FiBookOpen, FiFacebook, FiLinkedin, FiMail } from "react-icons/fi";
 import { IconGithub, IconX } from "../icons/Icons";
+import { siteConfig } from "@/lib/config";
 
 export const socialLinks = [
   {
     icon: IconGithub,
-    href: "https://github.com/ever-works",
+    href: siteConfig.social.github,
     label: "GitHub",
     target: "_blank",
     rel: "noopener noreferrer",
@@ -12,7 +13,7 @@ export const socialLinks = [
   },
   {
     icon: IconX,
-    href: "https://x.com/everplatform",
+    href: siteConfig.social.x,
     label: "X",
     target: "_blank",
     rel: "noopener noreferrer",
@@ -20,7 +21,7 @@ export const socialLinks = [
   },
   {
     icon: FiLinkedin,
-    href: "https://www.linkedin.com/company/everhq",
+    href: siteConfig.social.linkedin,
     label: "LinkedIn",
     target: "_blank",
     rel: "noopener noreferrer",
@@ -28,7 +29,7 @@ export const socialLinks = [
   },
   {
     icon: FiFacebook,
-    href: "https://www.facebook.com/everplatform",
+    href: siteConfig.social.facebook,
     label: "Facebook",
     target: "_blank",
     rel: "noopener noreferrer",
@@ -36,7 +37,7 @@ export const socialLinks = [
   },
   {
     icon: FiBookOpen,
-    href: "https://blog.ever.works",
+    href: siteConfig.social.blog,
     label: "Blog",
     target: "_blank",
     rel: "noopener noreferrer",
@@ -44,11 +45,11 @@ export const socialLinks = [
   },
   {
     icon: FiMail,
-    href: "mailto:ever@ever.works",
+    href: `mailto:${siteConfig.social.email}`,
     label: "Email",
     isMailto: true,
   },
-];
+].filter(link => link.href && link.href !== '');
 
 export const footerNavigation = (t: any) => {
   return {
@@ -71,7 +72,7 @@ export const footerNavigation = (t: any) => {
       },
     ],
     resources: [
-      { label: t("footer.BLOG"), href: "https://blog.ever.works", isExternal: true },
+      { label: t("footer.BLOG"), href: siteConfig.social.blog, isExternal: true },
       { label: t("common.SUBMIT"), href: "/submit?step=details&plan=free" },
       { label: t('help.DOCS_PAGE_TITLE'), href: "/docs" },
     ],
