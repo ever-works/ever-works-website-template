@@ -3,9 +3,11 @@
 import Link from 'next/link';
 import { ShieldAlert, ArrowLeft, Home } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export default function UnauthorizedPage() {
   const router = useRouter();
+  const t = useTranslations('unauthorized');
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 px-4">
@@ -22,12 +24,12 @@ export default function UnauthorizedPage() {
 
         {/* Title */}
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
-          Access Denied
+          {t('ACCESS_DENIED')}
         </h1>
 
         {/* Message */}
         <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-          You don&apos;t have permission to access this page. Please contact your administrator if you believe this is an error.
+          {t('NO_PERMISSION_MESSAGE')}
         </p>
 
         {/* Actions */}
@@ -37,7 +39,7 @@ export default function UnauthorizedPage() {
             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-theme-primary-500 hover:bg-theme-primary-600 text-white font-medium rounded-lg transition-colors duration-200"
           >
             <Home className="w-5 h-5" />
-            Go to Homepage
+            {t('GO_TO_HOMEPAGE')}
           </Link>
 
           <button
@@ -45,13 +47,13 @@ export default function UnauthorizedPage() {
             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium rounded-lg transition-colors duration-200"
           >
             <ArrowLeft className="w-5 h-5" />
-            Go Back
+            {t('GO_BACK')}
           </button>
         </div>
 
         {/* Help Text */}
         <p className="mt-8 text-sm text-gray-500 dark:text-gray-500">
-          Error Code: 403 - Forbidden
+          {t('ERROR_CODE')}
         </p>
       </div>
     </div>

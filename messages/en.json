@@ -2276,6 +2276,13 @@
       "LOADING": "Loading...",
       "REACHED_THE_END": "You've reached the end"
     }
+  },
+  "unauthorized": {
+    "ACCESS_DENIED": "Access Denied",
+    "NO_PERMISSION_MESSAGE": "You don't have permission to access this page. Please contact your administrator if you believe this is an error.",
+    "GO_TO_HOMEPAGE": "Go to Homepage",
+    "GO_BACK": "Go Back",
+    "ERROR_CODE": "Error Code: 403 - Forbidden"
   }
 }
 

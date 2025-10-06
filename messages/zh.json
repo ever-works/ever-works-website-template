@@ -1915,5 +1915,12 @@
       "LOADING": "加载中...",
       "REACHED_THE_END": "您已到达末尾"
     }
+  },
+  "unauthorized": {
+    "ACCESS_DENIED": "访问被拒绝",
+    "NO_PERMISSION_MESSAGE": "您没有权限访问此页面。如果您认为这是一个错误，请联系您的管理员。",
+    "GO_TO_HOMEPAGE": "前往首页",
+    "GO_BACK": "返回",
+    "ERROR_CODE": "错误代码：403 - 禁止访问"
   }
 }

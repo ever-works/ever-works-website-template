@@ -1933,5 +1933,12 @@
       "LOADING": "Wird geladen...",
       "REACHED_THE_END": "Sie haben das Ende erreicht"
     }
+  },
+  "unauthorized": {
+    "ACCESS_DENIED": "Zugriff verweigert",
+    "NO_PERMISSION_MESSAGE": "Sie haben keine Berechtigung, auf diese Seite zuzugreifen. Bitte wenden Sie sich an Ihren Administrator, wenn Sie glauben, dass dies ein Fehler ist.",
+    "GO_TO_HOMEPAGE": "Zur Startseite",
+    "GO_BACK": "Zurück",
+    "ERROR_CODE": "Fehlercode: 403 - Verboten"
   }
 }

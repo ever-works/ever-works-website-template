@@ -2175,5 +2175,12 @@
       "LOADING": "Chargement...",
       "REACHED_THE_END": "Vous avez atteint la fin"
     }
+  },
+  "unauthorized": {
+    "ACCESS_DENIED": "Accès Refusé",
+    "NO_PERMISSION_MESSAGE": "Vous n'avez pas l'autorisation d'accéder à cette page. Veuillez contacter votre administrateur si vous pensez que c'est une erreur.",
+    "GO_TO_HOMEPAGE": "Aller à la Page d'Accueil",
+    "GO_BACK": "Retour",
+    "ERROR_CODE": "Code d'Erreur : 403 - Interdit"
   }
 }

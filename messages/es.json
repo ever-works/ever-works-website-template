@@ -1917,5 +1917,12 @@
       "LOADING": "Cargando...",
       "REACHED_THE_END": "Has llegado al final"
     }
+  },
+  "unauthorized": {
+    "ACCESS_DENIED": "Acceso Denegado",
+    "NO_PERMISSION_MESSAGE": "No tienes permisos para acceder a esta página. Por favor, contacta a tu administrador si crees que esto es un error.",
+    "GO_TO_HOMEPAGE": "Ir a la Página Principal",
+    "GO_BACK": "Volver",
+    "ERROR_CODE": "Código de Error: 403 - Prohibido"
   }
 }
