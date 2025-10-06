@@ -24,10 +24,12 @@ export interface AdminCommentItem {
 
 export interface CommentsListResponse {
   comments: AdminCommentItem[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
 export interface CommentsListParams {
@@ -53,13 +55,14 @@ const fetchComments = async (params: CommentsListParams): Promise<CommentsListRe
     ...(params.search && { search: params.search }),
   });
   
-  const response = await serverClient.get<CommentsListResponse>(`/api/admin/comments?${queryString}`);
+  const response = await serverClient.get<{ success: boolean; data: CommentsListResponse }>(`/api/admin/comments?${queryString}`);
   
   if (!apiUtils.isSuccess(response)) {
     throw new Error(apiUtils.getErrorMessage(response));
   }
   
-  return response.data;
+  // Extract the data from the API response structure
+  return response.data.data;
 };
 
 const deleteComment = async (id: string): Promise<void> => {
@@ -162,8 +165,8 @@ export function useAdminComments(options: UseAdminCommentsOptions = {}): UseAdmi
   // Derived data
   const comments = commentsData?.comments || [];
   const isFiltering = isLoading && currentPage === 1;
-  const totalPages = commentsData?.totalPages || 1;
-  const totalComments = commentsData?.total || 0;
+  const totalPages = commentsData?.pagination?.totalPages || 1;
+  const totalComments = commentsData?.pagination?.total || 0;
 
   // Wrapper function for delete
   const handleDeleteComment = useCallback(async (id: string): Promise<boolean> => {
