@@ -1,5 +1,6 @@
+import { and, eq, desc } from 'drizzle-orm';
 import { db } from '../drizzle';
-import { activityLogs, type NewActivityLog, type ActivityType } from '../schema';
+import { activityLogs, ActivityType, type NewActivityLog, type ActivityLog } from '../schema';
 
 /**
  * Log an activity to the activity logs table
@@ -19,4 +20,20 @@ export async function logActivity(
   };
 
   await db.insert(activityLogs).values(newActivity);
+}
+
+/**
+ * Get the last login activity for a client
+ * @param clientId - Client ID
+ * @returns Last login activity or null if not found
+ */
+export async function getLastLoginActivity(clientId: string): Promise<ActivityLog | null> {
+  const [lastLogin] = await db
+    .select()
+    .from(activityLogs)
+    .where(and(eq(activityLogs.clientId, clientId), eq(activityLogs.action, ActivityType.SIGN_IN)))
+    .orderBy(desc(activityLogs.timestamp))
+    .limit(1);
+
+  return lastLogin || null;
 }
