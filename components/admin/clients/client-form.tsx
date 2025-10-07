@@ -10,7 +10,7 @@ import type {
 import type { ClientProfileWithAuth } from "@/lib/db/queries";
 import { CLIENT_VALIDATION } from "@/lib/types/client";
 import { useTranslations } from 'next-intl';
-import { clsx } from 'clsx';
+import clsx from 'clsx';
 import {
   BasicInfoStep,
   ProfileStep,
@@ -68,62 +68,62 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
     setErrors({});
   }, [client, mode]);
 
-  // Validate specific step
-  const validateStep = (step: FormStep): boolean => {
-    const newErrors: Record<string, string> = {};
+  // Helper function to collect errors for a specific step without setting state
+  const collectStepErrors = (step: FormStep): Record<string, string> => {
+    const stepErrors: Record<string, string> = {};
 
     switch (step) {
       case 1: // Basic Information
         if (mode === 'create') {
           if (!formData.email.trim()) {
-            newErrors.email = t('ERRORS.EMAIL_REQUIRED');
+            stepErrors.email = t('ERRORS.EMAIL_REQUIRED');
           } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = t('ERRORS.EMAIL_INVALID');
+            stepErrors.email = t('ERRORS.EMAIL_INVALID');
           }
         }
 
         if (formData.displayName && formData.displayName.trim().length < CLIENT_VALIDATION.DISPLAY_NAME_MIN_LENGTH) {
-          newErrors.displayName = t('ERRORS.DISPLAY_NAME_MIN_LENGTH', { min: CLIENT_VALIDATION.DISPLAY_NAME_MIN_LENGTH });
+          stepErrors.displayName = t('ERRORS.DISPLAY_NAME_MIN_LENGTH', { min: CLIENT_VALIDATION.DISPLAY_NAME_MIN_LENGTH });
         } else if (formData.displayName && formData.displayName.trim().length > CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH) {
-          newErrors.displayName = t('ERRORS.DISPLAY_NAME_MAX_LENGTH', { max: CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH });
+          stepErrors.displayName = t('ERRORS.DISPLAY_NAME_MAX_LENGTH', { max: CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH });
         }
 
         if (formData.username && formData.username.trim().length < CLIENT_VALIDATION.USERNAME_MIN_LENGTH) {
-          newErrors.username = t('ERRORS.USERNAME_MIN_LENGTH', { min: CLIENT_VALIDATION.USERNAME_MIN_LENGTH });
+          stepErrors.username = t('ERRORS.USERNAME_MIN_LENGTH', { min: CLIENT_VALIDATION.USERNAME_MIN_LENGTH });
         } else if (formData.username && formData.username.trim().length > CLIENT_VALIDATION.USERNAME_MAX_LENGTH) {
-          newErrors.username = t('ERRORS.USERNAME_MAX_LENGTH', { max: CLIENT_VALIDATION.USERNAME_MAX_LENGTH });
+          stepErrors.username = t('ERRORS.USERNAME_MAX_LENGTH', { max: CLIENT_VALIDATION.USERNAME_MAX_LENGTH });
         }
         break;
 
       case 2: // Profile Details
         if (formData.bio && formData.bio.trim().length > CLIENT_VALIDATION.BIO_MAX_LENGTH) {
-          newErrors.bio = t('ERRORS.BIO_MAX_LENGTH', { max: CLIENT_VALIDATION.BIO_MAX_LENGTH });
+          stepErrors.bio = t('ERRORS.BIO_MAX_LENGTH', { max: CLIENT_VALIDATION.BIO_MAX_LENGTH });
         }
 
         if (formData.jobTitle && formData.jobTitle.trim().length > CLIENT_VALIDATION.JOB_TITLE_MAX_LENGTH) {
-          newErrors.jobTitle = t('ERRORS.JOB_TITLE_MAX_LENGTH', { max: CLIENT_VALIDATION.JOB_TITLE_MAX_LENGTH });
+          stepErrors.jobTitle = t('ERRORS.JOB_TITLE_MAX_LENGTH', { max: CLIENT_VALIDATION.JOB_TITLE_MAX_LENGTH });
         }
 
         if (formData.company && formData.company.trim().length > CLIENT_VALIDATION.COMPANY_MAX_LENGTH) {
-          newErrors.company = t('ERRORS.COMPANY_MAX_LENGTH', { max: CLIENT_VALIDATION.COMPANY_MAX_LENGTH });
+          stepErrors.company = t('ERRORS.COMPANY_MAX_LENGTH', { max: CLIENT_VALIDATION.COMPANY_MAX_LENGTH });
         }
 
         if (formData.industry && formData.industry.trim().length > CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH) {
-          newErrors.industry = t('ERRORS.INDUSTRY_MAX_LENGTH', { max: CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH });
+          stepErrors.industry = t('ERRORS.INDUSTRY_MAX_LENGTH', { max: CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH });
         }
         break;
 
       case 3: // Contact & Location
         if (formData.phone && formData.phone.trim().length > CLIENT_VALIDATION.PHONE_MAX_LENGTH) {
-          newErrors.phone = t('ERRORS.PHONE_MAX_LENGTH', { max: CLIENT_VALIDATION.PHONE_MAX_LENGTH });
+          stepErrors.phone = t('ERRORS.PHONE_MAX_LENGTH', { max: CLIENT_VALIDATION.PHONE_MAX_LENGTH });
         }
 
         if (formData.website && formData.website.trim().length > CLIENT_VALIDATION.WEBSITE_MAX_LENGTH) {
-          newErrors.website = t('ERRORS.WEBSITE_MAX_LENGTH', { max: CLIENT_VALIDATION.WEBSITE_MAX_LENGTH });
+          stepErrors.website = t('ERRORS.WEBSITE_MAX_LENGTH', { max: CLIENT_VALIDATION.WEBSITE_MAX_LENGTH });
         }
 
         if (formData.location && formData.location.trim().length > CLIENT_VALIDATION.LOCATION_MAX_LENGTH) {
-          newErrors.location = t('ERRORS.LOCATION_MAX_LENGTH', { max: CLIENT_VALIDATION.LOCATION_MAX_LENGTH });
+          stepErrors.location = t('ERRORS.LOCATION_MAX_LENGTH', { max: CLIENT_VALIDATION.LOCATION_MAX_LENGTH });
         }
         break;
 
@@ -132,18 +132,41 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
         break;
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return stepErrors;
   };
 
-  // Validate entire form
+  // Validate specific step
+  const validateStep = (step: FormStep): boolean => {
+    const stepErrors = collectStepErrors(step);
+    setErrors(stepErrors);
+    return Object.keys(stepErrors).length === 0;
+  };
+
+  // Validate entire form (aggregates errors from all steps)
   const validateForm = (): boolean => {
     let isValid = true;
+    const aggregatedErrors: Record<string, string> = {};
+    let firstInvalidStep: FormStep | null = null;
+
     for (let step = 1; step <= totalSteps; step++) {
-      if (!validateStep(step as FormStep)) {
+      const currentStepErrors = collectStepErrors(step as FormStep);
+
+      if (Object.keys(currentStepErrors).length > 0) {
         isValid = false;
+        if (!firstInvalidStep) {
+          firstInvalidStep = step as FormStep;
+        }
       }
+
+      Object.assign(aggregatedErrors, currentStepErrors);
     }
+
+    setErrors(aggregatedErrors);
+
+    if (firstInvalidStep) {
+      setCurrentStep(firstInvalidStep);
+    }
+
     return isValid;
   };
 
