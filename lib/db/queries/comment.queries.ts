@@ -1,6 +1,7 @@
 import { and, eq, isNull, desc } from 'drizzle-orm';
 import { db } from '../drizzle';
 import { comments, clientProfiles, type NewComment } from '../schema';
+import type { CommentWithUser } from './types';
 
 /**
  * Create a new comment
@@ -16,7 +17,7 @@ export async function createComment(data: NewComment) {
  * @param itemId - Item ID
  * @returns Array of comments with user details
  */
-export async function getCommentsByItemId(itemId: string): Promise<unknown[]> {
+export async function getCommentsByItemId(itemId: string): Promise<CommentWithUser[]> {
   return db
     .select({
       id: comments.id,
