@@ -18,17 +18,14 @@ export async function getUserByEmail(email: string) {
     const usersList = await db.select().from(users).where(eq(users.email, email)).limit(1);
 
     if (usersList.length === 0) {
-      throw new Error('User not found');
+      console.warn(`User validation failed: No user found with email ${email}`);
+      return null;
     }
 
     return usersList[0];
   } catch (error) {
-    if (error instanceof Error && error.message === 'User not found') {
-      console.warn(`User validation failed: No user found with email ${email}`);
-    } else {
-      console.error('Database error in getUserByEmail:', error);
-    }
-    // Return null instead of throwing an error to allow the auth flow to continue
+    // Only catch actual database errors
+    console.error('Database error in getUserByEmail:', error);
     return null;
   }
 }
@@ -48,16 +45,14 @@ export async function getUserById(id: string) {
     const usersList = await db.select().from(users).where(eq(users.id, id)).limit(1);
 
     if (usersList.length === 0) {
-      throw new Error('User not found');
+      console.warn(`User validation failed: No user found with id ${id}`);
+      return null;
     }
 
     return usersList[0];
   } catch (error) {
-    if (error instanceof Error && error.message === 'User not found') {
-      console.warn(`User validation failed: No user found with id ${id}`);
-    } else {
-      console.error('Database error in getUserById:', error);
-    }
+    // Only catch actual database errors
+    console.error('Database error in getUserById:', error);
     return null;
   }
 }
