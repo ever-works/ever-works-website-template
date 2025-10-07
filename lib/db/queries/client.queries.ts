@@ -6,11 +6,12 @@ import {
   userRoles,
   roles,
   type ClientProfile,
-  type NewClientProfile
+  type NewClientProfile,
+  type NewUser
 } from '../schema';
 import type { ClientStatus, ClientPlan, ClientAccountType, ClientProfileWithAuth, ClientAccount } from './types';
 import { extractUsernameFromEmail, ensureUniqueUsername } from './utils';
-import { getUserByEmail, insertNewUser, type NewUser } from './user.queries';
+import { getUserByEmail, insertNewUser } from './user.queries';
 import { comparePasswords } from '@/lib/auth/credentials';
 
 // ===================== Client User Creation =====================
