@@ -63,6 +63,40 @@ export async function getSubscriptionByProviderSubscriptionId(
 }
 
 /**
+ * Get subscription by user ID and subscription ID
+ * @param userId - User ID
+ * @param subscriptionId - Provider's subscription ID
+ * @returns Subscription or null if not found
+ */
+export async function getSubscriptionByUserIdAndSubscriptionId(
+  userId: string,
+  subscriptionId: string
+): Promise<Subscription | null> {
+  const [subscription] = await db
+    .select()
+    .from(subscriptions)
+    .where(and(eq(subscriptions.userId, userId), eq(subscriptions.subscriptionId, subscriptionId)));
+
+  return subscription || null;
+}
+
+/**
+ * Update subscription by subscription ID
+ * @param updateData - Partial subscription data including subscriptionId
+ * @returns Updated subscription or null if not found
+ */
+export async function updateSubscriptionBySubscriptionId(
+  updateData: Partial<NewSubscription>
+): Promise<Subscription | null> {
+  const result = await db
+    .update(subscriptions)
+    .set({ ...updateData, updatedAt: new Date() })
+    .where(eq(subscriptions.subscriptionId, updateData.subscriptionId!));
+
+  return result[0] || null;
+}
+
+/**
  * Create a new subscription
  * @param data - Subscription data
  * @returns Created subscription

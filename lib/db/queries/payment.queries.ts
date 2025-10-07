@@ -294,3 +294,103 @@ export async function getOrCreatePaymentAccount(
 ): Promise<PaymentAccount> {
   return ensurePaymentAccount(providerName, userId, customerId, accountId);
 }
+
+/**
+ * Setup user payment account with enhanced error handling and update logic
+ * @param providerName - Name of the provider
+ * @param userId - User ID
+ * @param customerId - Customer ID at the provider
+ * @param accountId - Account ID at the provider (optional)
+ * @returns Payment account with complete data
+ */
+export async function setupUserPaymentAccount(
+  providerName: string,
+  userId: string,
+  customerId: string,
+  accountId?: string
+): Promise<PaymentAccount> {
+  try {
+    let provider = await getPaymentProviderByName(providerName);
+    if (!provider) {
+      const newProviderData: NewPaymentProvider = {
+        name: providerName,
+        isActive: true
+      };
+
+      provider = await createPaymentProvider(newProviderData);
+      console.log(`✅ Provider ${providerName} created with ID: ${provider.id}`);
+    } else {
+      console.log(`✅ Provider ${providerName} found with ID: ${provider.id}`);
+    }
+
+    // Check if payment account already exists for this user and provider
+    const existingAccount = await getUserPaymentAccountByProvider(userId, providerName);
+
+    if (existingAccount) {
+      console.log(`✅ Payment account already exists for user ${userId} and provider ${providerName}`);
+      // Update the existing account with new customerId if different
+      if (existingAccount.customerId !== customerId) {
+        console.log(`🔄 Updating customer ID from ${existingAccount.customerId} to ${customerId}`);
+        // Update the payment account directly in the database
+        await db
+          .update(paymentAccounts)
+          .set({
+            customerId,
+            accountId: accountId || existingAccount.accountId,
+            lastUsed: new Date(),
+            updatedAt: new Date()
+          })
+          .where(eq(paymentAccounts.id, existingAccount.id));
+
+        return (await getUserPaymentAccountByProvider(userId, providerName)) as PaymentAccount;
+      }
+      // Update last used timestamp
+      await updatePaymentAccountLastUsed(existingAccount.id);
+      return existingAccount;
+    }
+
+    // Create new payment account
+    const newPaymentAccountData: NewPaymentAccount = {
+      userId,
+      providerId: provider.id,
+      customerId,
+      accountId: accountId || null
+    };
+
+    console.log(`🆕 Creating new payment account for user ${userId} and provider ${providerName}`);
+    const createdAccount = await createPaymentAccount(newPaymentAccountData);
+    return createdAccount;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const fullError = `Unable to configure PaymentAccount for ${providerName} - ${errorMessage}`;
+
+    console.error(`💥 Error details:`, {
+      providerName,
+      userId,
+      customerId,
+      accountId,
+      error: errorMessage,
+      stack: error instanceof Error ? error.stack : undefined
+    });
+
+    throw new Error(fullError);
+  }
+}
+
+/**
+ * Create or get payment account
+ * Alias for setupUserPaymentAccount
+ * @param providerName - Name of the provider
+ * @param userId - User ID
+ * @param customerId - Customer ID at the provider
+ * @param accountId - Account ID at the provider (optional)
+ * @returns Payment account with complete data
+ */
+export async function createOrGetPaymentAccount(
+  providerName: string,
+  userId: string,
+  customerId: string,
+  accountId?: string
+): Promise<PaymentAccount> {
+  return setupUserPaymentAccount(providerName, userId, customerId, accountId);
+}
