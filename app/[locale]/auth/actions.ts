@@ -208,7 +208,7 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
     }
 
     // Log activity using the client profile ID
-    		await logActivity(ActivityType.SIGN_UP, clientProfile.id);
+    		await logActivity(ActivityType.SIGN_UP, clientProfile.id, 'client');
 
     // // Send welcome email for account creation
     // try {
@@ -280,7 +280,7 @@ export const updatePassword = validatedActionWithUser(
 
     await Promise.all([
       updateUserPassword(newPasswordHash, dbUser.id),
-      		logActivity(ActivityType.UPDATE_PASSWORD, dbUser.id),
+      		logActivity(ActivityType.UPDATE_PASSWORD, dbUser.id, 'user'),
     ]);
 
     return { success: "Password updated successfully." };
@@ -309,7 +309,7 @@ export const deleteAccount = validatedActionWithUser(
       return { error: "Incorrect password. Account deletion failed." };
     }
 
-    		await logActivity(ActivityType.DELETE_ACCOUNT, dbUser.id);
+    		await logActivity(ActivityType.DELETE_ACCOUNT, dbUser.id, 'user');
 
     await softDeleteUser(dbUser.id);
     const authService = authServiceFactory(provider);
@@ -340,7 +340,7 @@ export const updateAccount = validatedActionWithUser(
     await Promise.all([
       updateUser({ email }, dbUser.id),
       updateClientProfileName(dbUser.id, name),
-      		logActivity(ActivityType.UPDATE_ACCOUNT, dbUser.id),
+      		logActivity(ActivityType.UPDATE_ACCOUNT, dbUser.id, 'user'),
     ]);
 
     return { success: "Account updated successfully." };
@@ -400,7 +400,7 @@ export const verifyEmailAction = async (token: string) => {
     deleteVerificationToken(existingToken.token),
   ]);
 
-  		logActivity(ActivityType.VERIFY_EMAIL, existingUser.id);
+  		logActivity(ActivityType.VERIFY_EMAIL, existingUser.id, 'user');
 
   return { success: true };
 };
@@ -450,7 +450,7 @@ export const newPasswordAction = validatedAction(
       deletePasswordResetToken(data.token),
     ]);
 
-    		logActivity(ActivityType.UPDATE_PASSWORD, result.userId);
+    		logActivity(ActivityType.UPDATE_PASSWORD, result.userId, 'user');
 
     return { success: true };
   }

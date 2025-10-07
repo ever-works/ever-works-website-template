@@ -47,8 +47,8 @@ export const credentialsProvider = Credentials({
         const isPasswordValid = await comparePasswords(password, foundUser.passwordHash);
 
         if (isPasswordValid) {
-          void logActivity(ActivityType.SIGN_IN, foundUser.id).catch(() => {});
-          
+          void logActivity(ActivityType.SIGN_IN, foundUser.id, 'user').catch(() => {});
+
           return {
             ...foundUser,
             isClient: false,
@@ -75,7 +75,7 @@ export const credentialsProvider = Credentials({
             isClient: true,
             isAdmin: false,
           };
-          void logActivity(ActivityType.SIGN_IN, clientProfile.id).catch(() => {});
+          void logActivity(ActivityType.SIGN_IN, clientProfile.id, 'client').catch(() => {});
           return clientUser;
         }
       }
