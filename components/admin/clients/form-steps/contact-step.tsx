@@ -1,83 +1,53 @@
 import { useTranslations } from 'next-intl';
-import { clsx } from 'clsx';
 import { CLIENT_VALIDATION } from '@/lib/types/client';
 import type { StepProps } from './types';
-import { inputBaseClasses, inputErrorClasses, inputNormalClasses } from './types';
+import { FormField } from './form-field';
+import { STYLE_CLASSES } from './constants';
 
 export function ContactStep({ formData, errors, onInputChange }: StepProps) {
   const t = useTranslations('admin.CLIENT_FORM');
 
   return (
-    <div className="space-y-6">
-      {/* Contact Information */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            {t('PHONE')}
-          </label>
-          <input
-            id="phone"
-            type="tel"
-            placeholder={t('PHONE_PLACEHOLDER')}
-            value={formData.phone}
-            onChange={(e) => onInputChange('phone', e.target.value)}
-            maxLength={CLIENT_VALIDATION.PHONE_MAX_LENGTH}
-            className={clsx(
-              inputBaseClasses,
-              errors.phone ? inputErrorClasses : inputNormalClasses
-            )}
-          />
-          {errors.phone && (
-            <p className="text-sm text-red-600 dark:text-red-400">{errors.phone}</p>
-          )}
-        </div>
+    <div className={STYLE_CLASSES.stepContainer}>
+      {/* Contact Information Grid */}
+      <div className={STYLE_CLASSES.gridTwoCol}>
+        {/* Phone Field */}
+        <FormField
+          id="phone"
+          type="tel"
+          label={t('PHONE')}
+          value={formData.phone}
+          onChange={(value) => onInputChange('phone', value)}
+          error={errors.phone}
+          placeholder={t('PHONE_PLACEHOLDER')}
+          maxLength={CLIENT_VALIDATION.PHONE_MAX_LENGTH}
+        />
 
-        <div className="space-y-2">
-          <label htmlFor="website" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            {t('WEBSITE')}
-          </label>
-          <input
-            id="website"
-            type="url"
-            placeholder={t('WEBSITE_PLACEHOLDER')}
-            value={formData.website}
-            onChange={(e) => onInputChange('website', e.target.value)}
-            maxLength={CLIENT_VALIDATION.WEBSITE_MAX_LENGTH}
-            className={clsx(
-              inputBaseClasses,
-              errors.website ? inputErrorClasses : inputNormalClasses
-            )}
-          />
-          {errors.website && (
-            <p className="text-sm text-red-600 dark:text-red-400">{errors.website}</p>
-          )}
-        </div>
+        {/* Website Field */}
+        <FormField
+          id="website"
+          type="url"
+          label={t('WEBSITE')}
+          value={formData.website}
+          onChange={(value) => onInputChange('website', value)}
+          error={errors.website}
+          placeholder={t('WEBSITE_PLACEHOLDER')}
+          maxLength={CLIENT_VALIDATION.WEBSITE_MAX_LENGTH}
+        />
       </div>
 
       {/* Location Field */}
-      <div className="space-y-2">
-        <label htmlFor="location" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          {t('LOCATION')}
-        </label>
-        <input
-          id="location"
-          type="text"
-          placeholder={t('LOCATION_PLACEHOLDER')}
-          value={formData.location}
-          onChange={(e) => onInputChange('location', e.target.value)}
-          maxLength={CLIENT_VALIDATION.LOCATION_MAX_LENGTH}
-          className={clsx(
-            inputBaseClasses,
-            errors.location ? inputErrorClasses : inputNormalClasses
-          )}
-        />
-        {errors.location && (
-          <p className="text-sm text-red-600 dark:text-red-400">{errors.location}</p>
-        )}
-        <div className="text-xs text-gray-500 dark:text-gray-400">
-          {t('CHARACTERS_COUNT', { current: formData.location.length, max: CLIENT_VALIDATION.LOCATION_MAX_LENGTH })}
-        </div>
-      </div>
+      <FormField
+        id="location"
+        type="text"
+        label={t('LOCATION')}
+        value={formData.location}
+        onChange={(value) => onInputChange('location', value)}
+        error={errors.location}
+        placeholder={t('LOCATION_PLACEHOLDER')}
+        maxLength={CLIENT_VALIDATION.LOCATION_MAX_LENGTH}
+        showCharCount
+      />
     </div>
   );
 }
