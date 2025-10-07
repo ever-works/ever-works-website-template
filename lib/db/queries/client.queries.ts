@@ -8,7 +8,7 @@ import {
   type ClientProfile,
   type NewClientProfile
 } from '../schema';
-import type { ClientStatus, ClientPlan, ClientAccountType, ClientProfileWithAuth } from './types';
+import type { ClientStatus, ClientPlan, ClientAccountType, ClientProfileWithAuth, ClientAccount } from './types';
 import { extractUsernameFromEmail, ensureUniqueUsername } from './utils';
 import { getUserByEmail, insertNewUser, type NewUser } from './user.queries';
 import { comparePasswords } from '@/lib/auth/credentials';
@@ -545,7 +545,7 @@ export async function getEnhancedClientStats(): Promise<{
  * @param email - Client email
  * @returns Account or null if not found
  */
-export async function getClientAccountByEmail(email: string): Promise<unknown> {
+export async function getClientAccountByEmail(email: string): Promise<ClientAccount | null> {
   try {
     const normalizedEmail = email.toLowerCase().trim();
 
