@@ -109,11 +109,12 @@ export async function deactivatePaymentProvider(id: string): Promise<OldPaymentP
 // ===================== Payment Account Queries =====================
 
 /**
- * Get payment account by user ID
+ * Get payment account by user ID and provider ID
  * @param userId - User ID
+ * @param providerId - Payment provider ID
  * @returns Payment account with active provider or null if not found
  */
-export async function getPaymentAccountByUserId(userId: string): Promise<PaymentAccount | null> {
+export async function getPaymentAccountByUserId(userId: string, providerId: string): Promise<PaymentAccount | null> {
   const result = await db
     .select({
       id: paymentAccounts.id,
@@ -128,7 +129,11 @@ export async function getPaymentAccountByUserId(userId: string): Promise<Payment
     .from(paymentAccounts)
     .innerJoin(paymentProviders, eq(paymentAccounts.providerId, paymentProviders.id))
     .innerJoin(users, eq(paymentAccounts.userId, users.id))
-    .where(and(eq(paymentAccounts.userId, userId), eq(paymentProviders.isActive, true)))
+    .where(and(
+      eq(paymentAccounts.userId, userId),
+      eq(paymentAccounts.providerId, providerId),
+      eq(paymentProviders.isActive, true)
+    ))
     .limit(1);
 
   return result[0] || null;
@@ -195,14 +200,10 @@ export async function getUserPaymentAccountByProvider(
       return null; // Provider does not exist
     }
 
-    // Get the PaymentAccount
-    const paymentAccount = await getPaymentAccountByUserId(userId);
+    // Get the PaymentAccount for this user and provider
+    const paymentAccount = await getPaymentAccountByUserId(userId, provider.id);
 
-    if (paymentAccount && paymentAccount.providerId === provider.id) {
-      return paymentAccount;
-    }
-
-    return null;
+    return paymentAccount;
   } catch (error) {
     console.error(`Error checking PaymentAccount:`, error);
     return null;
@@ -245,9 +246,9 @@ export async function ensurePaymentAccount(
     }
 
     // 2. Check if PaymentAccount already exists for this user and provider
-    const paymentAccount = await getPaymentAccountByUserId(userId);
+    const paymentAccount = await getPaymentAccountByUserId(userId, provider.id);
 
-    if (paymentAccount && paymentAccount.providerId === provider.id) {
+    if (paymentAccount) {
       console.log(`Existing PaymentAccount found for user ${userId} and provider ${providerName}`);
 
       // Update lastUsed and return existing account
