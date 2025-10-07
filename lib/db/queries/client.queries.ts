@@ -6,45 +6,11 @@ import {
   userRoles,
   roles,
   type ClientProfile,
-  type NewClientProfile,
-  type NewUser
+  type NewClientProfile
 } from '../schema';
 import type { ClientStatus, ClientPlan, ClientAccountType, ClientProfileWithAuth, ClientAccount } from './types';
 import { extractUsernameFromEmail, ensureUniqueUsername } from './utils';
-import { getUserByEmail, insertNewUser } from './user.queries';
 import { comparePasswords } from '@/lib/auth/credentials';
-
-// ===================== Client User Creation =====================
-
-/**
- * Create a new client user (creates user record but marks as client)
- * @param name - Client name
- * @param email - Client email
- * @returns Created user or null if error/exists
- */
-export async function createClientUser(name: string, email: string): Promise<unknown> {
-  try {
-    // Normalize and validate email, ensure uniqueness
-    const normalizedEmail = email.toLowerCase().trim();
-    const existingUser = await getUserByEmail(normalizedEmail);
-    if (existingUser) {
-      console.error(`User already exists with email: ${normalizedEmail}`);
-      return null;
-    }
-
-    // Create user record for client (without password hash)
-    const newUser: NewUser = {
-      email: normalizedEmail
-      // No passwordHash - clients store passwords in accounts table
-    };
-
-    const [createdUser] = await insertNewUser(newUser);
-    return createdUser || null;
-  } catch (error) {
-    console.error('Error creating client user:', error);
-    return null;
-  }
-}
 
 // ===================== Client Profile CRUD =====================
 
@@ -560,69 +526,6 @@ export async function getClientAccountByEmail(email: string): Promise<ClientAcco
     return account || null;
   } catch (error) {
     console.error('Error getting client account by email:', error);
-    return null;
-  }
-}
-
-/**
- * Create account record for client with password
- * @param userId - User ID (optional, will be resolved from email if not provided)
- * @param email - Client email
- * @param passwordHash - Hashed password (optional)
- * @returns Created account or null if error
- */
-export async function createClientAccount(
-  userId: string | undefined,
-  email: string,
-  passwordHash?: string | null
-): Promise<unknown> {
-  try {
-    const normalizedEmail = email.toLowerCase().trim();
-
-    // Resolve client profile ID when userId isn't provided
-    let resolvedUserId = userId;
-    if (!resolvedUserId) {
-      const profile = await getClientProfileByEmail(normalizedEmail);
-      if (!profile) {
-        console.error(`No client profile found for email: ${normalizedEmail}`);
-        return null;
-      }
-      resolvedUserId = profile.id;
-    }
-
-    // Check if credentials account already exists for this email
-    const [existing] = await db
-      .select()
-      .from(accounts)
-      .where(and(eq(accounts.provider, 'credentials'), eq(accounts.email, normalizedEmail)))
-      .limit(1);
-
-    if (existing) {
-      return existing;
-    }
-
-    // Create account record for client
-    const newAccount = {
-      userId: resolvedUserId, // Must reference client_profiles.id
-      type: 'email' as const,
-      provider: 'credentials',
-      providerAccountId: crypto.randomUUID(), // Opaque stable identifier per provider
-      email: normalizedEmail,
-      passwordHash: passwordHash || null,
-      refresh_token: null,
-      access_token: null,
-      expires_at: null,
-      token_type: null,
-      scope: null,
-      id_token: null,
-      session_state: null
-    };
-
-    const [account] = await db.insert(accounts).values(newAccount).returning();
-
-    return account || null;
-  } catch (error) {
-    console.error('Error creating client account:', error);
     return null;
   }
 }
