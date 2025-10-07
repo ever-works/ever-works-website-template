@@ -604,7 +604,7 @@ export async function createClientAccount(
     // Create account record for client
     const newAccount = {
       userId: resolvedUserId, // Must reference client_profiles.id
-      type: 'credentials' as const,
+      type: 'email' as const,
       provider: 'credentials',
       providerAccountId: crypto.randomUUID(), // Opaque stable identifier per provider
       email: normalizedEmail,
