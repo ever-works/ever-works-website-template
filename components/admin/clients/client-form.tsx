@@ -243,13 +243,13 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
   const getStepLabel = (step: FormStep): string => {
     switch (step) {
       case 1:
-        return 'Basic Info';
+        return t('STEPS.BASIC_INFO');
       case 2:
-        return 'Profile';
+        return t('STEPS.PROFILE');
       case 3:
-        return 'Contact';
+        return t('STEPS.CONTACT');
       case 4:
-        return 'Preferences';
+        return t('STEPS.PREFERENCES');
       default:
         return '';
     }

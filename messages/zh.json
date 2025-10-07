@@ -1374,6 +1374,12 @@
       "CREATE_CLIENT": "创建客户",
       "UPDATE_CLIENT": "更新客户",
       "CHARACTERS_COUNT": "{current}/{max} 字符",
+      "STEPS": {
+        "BASIC_INFO": "基本信息",
+        "PROFILE": "个人资料",
+        "CONTACT": "联系方式",
+        "PREFERENCES": "偏好设置"
+      },
       "ACCOUNT_TYPE_OPTIONS": {
         "INDIVIDUAL": "个人",
         "BUSINESS": "商业",

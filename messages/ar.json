@@ -1321,6 +1321,12 @@
       "CREATE_CLIENT": "إنشاء العميل",
       "UPDATE_CLIENT": "تحديث العميل",
       "CHARACTERS_COUNT": "{current}/{max} حرف",
+      "STEPS": {
+        "BASIC_INFO": "المعلومات الأساسية",
+        "PROFILE": "الملف الشخصي",
+        "CONTACT": "جهة الاتصال",
+        "PREFERENCES": "التفضيلات"
+      },
       "ACCOUNT_TYPE_OPTIONS": {
         "INDIVIDUAL": "فردي",
         "BUSINESS": "أعمال",

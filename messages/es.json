@@ -1376,6 +1376,12 @@
       "CREATE_CLIENT": "Crear Cliente",
       "UPDATE_CLIENT": "Actualizar Cliente",
       "CHARACTERS_COUNT": "{current}/{max} caracteres",
+      "STEPS": {
+        "BASIC_INFO": "Información Básica",
+        "PROFILE": "Perfil",
+        "CONTACT": "Contacto",
+        "PREFERENCES": "Preferencias"
+      },
       "ACCOUNT_TYPE_OPTIONS": {
         "INDIVIDUAL": "Individual",
         "BUSINESS": "Empresarial",
