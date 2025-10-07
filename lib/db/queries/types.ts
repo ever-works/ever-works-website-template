@@ -1,4 +1,4 @@
-import type { ClientProfile } from "../schema";
+import type { ClientProfile, Account } from "../schema";
 
 // Enhanced client profile type with authentication data
 export type ClientProfileWithAuth = ClientProfile & {
@@ -28,19 +28,5 @@ export type CommentWithUser = {
   };
 };
 
-// Account type for client authentication
-export type ClientAccount = {
-  userId: string;
-  type: string;
-  provider: string;
-  providerAccountId: string;
-  email: string | null;
-  passwordHash: string | null;
-  refresh_token: string | null;
-  access_token: string | null;
-  expires_at: number | null;
-  token_type: string | null;
-  scope: string | null;
-  id_token: string | null;
-  session_state: string | null;
-};
+// Account type for client authentication (derived from schema)
+export type ClientAccount = Account;
