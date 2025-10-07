@@ -11,6 +11,13 @@ import type { ClientProfileWithAuth } from "@/lib/db/queries";
 import { CLIENT_VALIDATION } from "@/lib/types/client";
 import { useTranslations } from 'next-intl';
 import { clsx } from 'clsx';
+import {
+  BasicInfoStep,
+  ProfileStep,
+  ContactStep,
+  PreferencesStep,
+  type FormData
+} from './form-steps';
 
 interface ClientFormProps {
   client?: ClientProfileWithAuth;
@@ -34,12 +41,9 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
   const headerClasses = "bg-gradient-to-r from-theme-primary to-theme-accent px-6 py-4";
   const formClasses = "p-6 space-y-6";
   const actionsClasses = "flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-700";
-  const inputBaseClasses = "w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
-  const inputErrorClasses = "border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700";
-  const inputNormalClasses = "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white";
 
   // Helper function to construct form defaults based on client data and mode
-  const defaultsFor = (m: 'create' | 'edit', c?: ClientProfileWithAuth) => ({
+  const defaultsFor = (m: 'create' | 'edit', c?: ClientProfileWithAuth): FormData => ({
     email: m === 'edit' ? (c?.email ?? '') : '',
     displayName: c?.displayName ?? '',
     username: c?.username ?? '',
@@ -55,8 +59,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
     language: c?.language ?? 'en',
   });
 
-  const [formData, setFormData] = useState(() => defaultsFor(mode, client));
-
+  const [formData, setFormData] = useState<FormData>(() => defaultsFor(mode, client));
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Update form data when client prop changes
@@ -158,7 +161,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -204,8 +207,8 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
     }
   };
 
-  const handleInputChange = (field: keyof typeof formData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value as any }));
+  const onInputChange = (field: keyof FormData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
 
     // Clear error when user starts typing
     if (errors[field]) {
@@ -226,6 +229,24 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
         return 'Preferences';
       default:
         return '';
+    }
+  };
+
+  // Render current step
+  const renderStep = () => {
+    const stepProps = { formData, errors, onInputChange, mode };
+
+    switch (currentStep) {
+      case 1:
+        return <BasicInfoStep {...stepProps} />;
+      case 2:
+        return <ProfileStep {...stepProps} />;
+      case 3:
+        return <ContactStep {...stepProps} />;
+      case 4:
+        return <PreferencesStep {...stepProps} />;
+      default:
+        return null;
     }
   };
 
@@ -288,324 +309,8 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
       </div>
 
       <form onSubmit={handleSubmit} className={formClasses}>
-        {/* Step 1: Basic Information */}
-        {currentStep === 1 && (
-          <div className="space-y-6">
-            {/* Email Field (only for create mode) */}
-            {mode === 'create' && (
-              <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('EMAIL')} <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder={t('EMAIL_PLACEHOLDER')}
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  className={clsx(
-                    inputBaseClasses,
-                    errors.email ? inputErrorClasses : inputNormalClasses
-                  )}
-                />
-                {errors.email && (
-                  <p className="text-sm text-red-600 dark:text-red-400">{errors.email}</p>
-                )}
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {t('EMAIL_HELP')}
-                </p>
-              </div>
-            )}
-
-            {/* Display Name Field */}
-            <div className="space-y-2">
-              <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('DISPLAY_NAME')}
-              </label>
-              <input
-                id="displayName"
-                type="text"
-                placeholder={t('DISPLAY_NAME_PLACEHOLDER')}
-                value={formData.displayName}
-                onChange={(e) => handleInputChange('displayName', e.target.value)}
-                maxLength={CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH}
-                className={clsx(
-                  inputBaseClasses,
-                  errors.displayName ? inputErrorClasses : inputNormalClasses
-                )}
-              />
-              {errors.displayName && (
-                <p className="text-sm text-red-600 dark:text-red-400">{errors.displayName}</p>
-              )}
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                {t('CHARACTERS_COUNT', { current: formData.displayName.length, max: CLIENT_VALIDATION.DISPLAY_NAME_MAX_LENGTH })}
-              </div>
-            </div>
-
-            {/* Username Field */}
-            <div className="space-y-2">
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('USERNAME')}
-              </label>
-              <input
-                id="username"
-                type="text"
-                placeholder={t('USERNAME_PLACEHOLDER')}
-                value={formData.username}
-                onChange={(e) => handleInputChange('username', e.target.value)}
-                maxLength={CLIENT_VALIDATION.USERNAME_MAX_LENGTH}
-                className={clsx(
-                  inputBaseClasses,
-                  errors.username ? inputErrorClasses : inputNormalClasses
-                )}
-              />
-              {errors.username && (
-                <p className="text-sm text-red-600 dark:text-red-400">{errors.username}</p>
-              )}
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                {t('CHARACTERS_COUNT', { current: formData.username.length, max: CLIENT_VALIDATION.USERNAME_MAX_LENGTH })}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Step 2: Profile Details */}
-        {currentStep === 2 && (
-          <div className="space-y-6">
-            {/* Bio Field */}
-            <div className="space-y-2">
-              <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('BIO')}
-              </label>
-              <textarea
-                id="bio"
-                placeholder={t('BIO_PLACEHOLDER')}
-                value={formData.bio}
-                onChange={(e) => handleInputChange('bio', e.target.value)}
-                maxLength={CLIENT_VALIDATION.BIO_MAX_LENGTH}
-                rows={4}
-                className={clsx(
-                  inputBaseClasses,
-                  "resize-none",
-                  errors.bio ? inputErrorClasses : inputNormalClasses
-                )}
-              />
-              {errors.bio && (
-                <p className="text-sm text-red-600 dark:text-red-400">{errors.bio}</p>
-              )}
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                {t('CHARACTERS_COUNT', { current: formData.bio.length, max: CLIENT_VALIDATION.BIO_MAX_LENGTH })}
-              </div>
-            </div>
-
-            {/* Job Title Field */}
-            <div className="space-y-2">
-              <label htmlFor="jobTitle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('JOB_TITLE')}
-              </label>
-              <input
-                id="jobTitle"
-                type="text"
-                placeholder={t('JOB_TITLE_PLACEHOLDER')}
-                value={formData.jobTitle}
-                onChange={(e) => handleInputChange('jobTitle', e.target.value)}
-                maxLength={CLIENT_VALIDATION.JOB_TITLE_MAX_LENGTH}
-                className={clsx(
-                  inputBaseClasses,
-                  errors.jobTitle ? inputErrorClasses : inputNormalClasses
-                )}
-              />
-              {errors.jobTitle && (
-                <p className="text-sm text-red-600 dark:text-red-400">{errors.jobTitle}</p>
-              )}
-            </div>
-
-            {/* Company Field */}
-            <div className="space-y-2">
-              <label htmlFor="company" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('COMPANY')}
-              </label>
-              <input
-                id="company"
-                type="text"
-                placeholder={t('COMPANY_PLACEHOLDER')}
-                value={formData.company}
-                onChange={(e) => handleInputChange('company', e.target.value)}
-                maxLength={CLIENT_VALIDATION.COMPANY_MAX_LENGTH}
-                className={clsx(
-                  inputBaseClasses,
-                  errors.company ? inputErrorClasses : inputNormalClasses
-                )}
-              />
-              {errors.company && (
-                <p className="text-sm text-red-600 dark:text-red-400">{errors.company}</p>
-              )}
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                {t('CHARACTERS_COUNT', { current: formData.company.length, max: CLIENT_VALIDATION.COMPANY_MAX_LENGTH })}
-              </div>
-            </div>
-
-            {/* Industry Field */}
-            <div className="space-y-2">
-              <label htmlFor="industry" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('INDUSTRY')}
-              </label>
-              <input
-                id="industry"
-                type="text"
-                placeholder={t('INDUSTRY_PLACEHOLDER')}
-                value={formData.industry}
-                onChange={(e) => handleInputChange('industry', e.target.value)}
-                maxLength={CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH}
-                className={clsx(
-                  inputBaseClasses,
-                  errors.industry ? inputErrorClasses : inputNormalClasses
-                )}
-              />
-              {errors.industry && (
-                <p className="text-sm text-red-600 dark:text-red-400">{errors.industry}</p>
-              )}
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                {t('CHARACTERS_COUNT', { current: formData.industry.length, max: CLIENT_VALIDATION.INDUSTRY_MAX_LENGTH })}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Step 3: Contact & Location */}
-        {currentStep === 3 && (
-          <div className="space-y-6">
-            {/* Contact Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('PHONE')}
-                </label>
-                <input
-                  id="phone"
-                  type="tel"
-                  placeholder={t('PHONE_PLACEHOLDER')}
-                  value={formData.phone}
-                  onChange={(e) => handleInputChange('phone', e.target.value)}
-                  maxLength={CLIENT_VALIDATION.PHONE_MAX_LENGTH}
-                  className={clsx(
-                    inputBaseClasses,
-                    errors.phone ? inputErrorClasses : inputNormalClasses
-                  )}
-                />
-                {errors.phone && (
-                  <p className="text-sm text-red-600 dark:text-red-400">{errors.phone}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="website" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('WEBSITE')}
-                </label>
-                <input
-                  id="website"
-                  type="url"
-                  placeholder={t('WEBSITE_PLACEHOLDER')}
-                  value={formData.website}
-                  onChange={(e) => handleInputChange('website', e.target.value)}
-                  maxLength={CLIENT_VALIDATION.WEBSITE_MAX_LENGTH}
-                  className={clsx(
-                    inputBaseClasses,
-                    errors.website ? inputErrorClasses : inputNormalClasses
-                  )}
-                />
-                {errors.website && (
-                  <p className="text-sm text-red-600 dark:text-red-400">{errors.website}</p>
-                )}
-              </div>
-            </div>
-
-            {/* Location Field */}
-            <div className="space-y-2">
-              <label htmlFor="location" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('LOCATION')}
-              </label>
-              <input
-                id="location"
-                type="text"
-                placeholder={t('LOCATION_PLACEHOLDER')}
-                value={formData.location}
-                onChange={(e) => handleInputChange('location', e.target.value)}
-                maxLength={CLIENT_VALIDATION.LOCATION_MAX_LENGTH}
-                className={clsx(
-                  inputBaseClasses,
-                  errors.location ? inputErrorClasses : inputNormalClasses
-                )}
-              />
-              {errors.location && (
-                <p className="text-sm text-red-600 dark:text-red-400">{errors.location}</p>
-              )}
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                {t('CHARACTERS_COUNT', { current: formData.location.length, max: CLIENT_VALIDATION.LOCATION_MAX_LENGTH })}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Step 4: Preferences */}
-        {currentStep === 4 && (
-          <div className="space-y-6">
-            {/* Account Type Field */}
-            <div className="space-y-2">
-              <label htmlFor="accountType" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('ACCOUNT_TYPE')}
-              </label>
-              <select
-                id="accountType"
-                value={formData.accountType}
-                onChange={(e) => handleInputChange('accountType', e.target.value)}
-                className={clsx(inputBaseClasses, inputNormalClasses)}
-              >
-                <option value="individual">{t('ACCOUNT_TYPE_OPTIONS.INDIVIDUAL')}</option>
-                <option value="business">{t('ACCOUNT_TYPE_OPTIONS.BUSINESS')}</option>
-                <option value="enterprise">{t('ACCOUNT_TYPE_OPTIONS.ENTERPRISE')}</option>
-              </select>
-            </div>
-
-            {/* Timezone Field */}
-            <div className="space-y-2">
-              <label htmlFor="timezone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('TIMEZONE')}
-              </label>
-              <select
-                id="timezone"
-                value={formData.timezone}
-                onChange={(e) => handleInputChange('timezone', e.target.value)}
-                className={clsx(inputBaseClasses, inputNormalClasses)}
-              >
-                <option value="UTC">{t('TIMEZONE_OPTIONS.UTC')}</option>
-                <option value="America/New_York">{t('TIMEZONE_OPTIONS.AMERICA_NEW_YORK')}</option>
-                <option value="Europe/London">{t('TIMEZONE_OPTIONS.EUROPE_LONDON')}</option>
-                <option value="Asia/Tokyo">{t('TIMEZONE_OPTIONS.ASIA_TOKYO')}</option>
-              </select>
-            </div>
-
-            {/* Language Field */}
-            <div className="space-y-2">
-              <label htmlFor="language" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('LANGUAGE')}
-              </label>
-              <select
-                id="language"
-                value={formData.language}
-                onChange={(e) => handleInputChange('language', e.target.value)}
-                className={clsx(inputBaseClasses, inputNormalClasses)}
-              >
-                <option value="en">{t('LANGUAGE_OPTIONS.EN')}</option>
-                <option value="es">{t('LANGUAGE_OPTIONS.ES')}</option>
-                <option value="fr">{t('LANGUAGE_OPTIONS.FR')}</option>
-                <option value="de">{t('LANGUAGE_OPTIONS.DE')}</option>
-              </select>
-            </div>
-          </div>
-        )}
-
-
+        {/* Render Current Step */}
+        {renderStep()}
 
         {/* Form Actions */}
         <div className={actionsClasses}>
@@ -663,4 +368,4 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
       </form>
     </div>
   );
-} 
+}
