@@ -10,7 +10,7 @@ interface ClientFormModalProps {
 	mode: 'create' | 'edit';
 	selectedClient: ClientProfileWithAuth | null;
 	isSubmitting: boolean;
-	onSubmit: (data: CreateClientRequest | UpdateClientRequest) => void;
+	onSubmit: (data: CreateClientRequest | UpdateClientRequest) => Promise<void>;
 	onClose: () => void;
 }
 
