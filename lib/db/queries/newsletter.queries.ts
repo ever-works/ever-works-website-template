@@ -7,6 +7,15 @@ import {
 } from '../schema';
 
 /**
+ * Normalize email for consistent lookups
+ * @param email - Email to normalize
+ * @returns Normalized email (lowercase and trimmed)
+ */
+function normalizeEmail(email: string): string {
+  return email.toLowerCase().trim();
+}
+
+/**
  * Create a new newsletter subscription
  * @param email - Subscriber email
  * @param source - Source of subscription (default: 'footer')
@@ -18,7 +27,7 @@ export async function createNewsletterSubscription(
 ): Promise<NewsletterSubscription | null> {
   try {
     const newSubscription: NewNewsletterSubscription = {
-      email: email.toLowerCase().trim(),
+      email: normalizeEmail(email),
       source
     };
 
@@ -44,7 +53,7 @@ export async function getNewsletterSubscriptionByEmail(email: string) {
     const subscriptions = await db
       .select()
       .from(newsletterSubscriptions)
-      .where(eq(newsletterSubscriptions.email, email.toLowerCase().trim()))
+      .where(eq(newsletterSubscriptions.email, normalizeEmail(email)))
       .limit(1);
 
     return subscriptions[0] || null;
@@ -68,7 +77,7 @@ export async function updateNewsletterSubscription(
     const result = await db
       .update(newsletterSubscriptions)
       .set(updates)
-      .where(eq(newsletterSubscriptions.email, email.toLowerCase().trim()))
+      .where(eq(newsletterSubscriptions.email, normalizeEmail(email)))
       .returning();
 
     return result[0] || null;
@@ -91,7 +100,7 @@ export async function unsubscribeFromNewsletter(email: string) {
         isActive: false,
         unsubscribedAt: new Date()
       })
-      .where(eq(newsletterSubscriptions.email, email.toLowerCase().trim()))
+      .where(eq(newsletterSubscriptions.email, normalizeEmail(email)))
       .returning();
 
     return result[0] || null;
@@ -114,7 +123,7 @@ export async function resubscribeToNewsletter(email: string) {
         isActive: true,
         unsubscribedAt: null
       })
-      .where(eq(newsletterSubscriptions.email, email.toLowerCase().trim()))
+      .where(eq(newsletterSubscriptions.email, normalizeEmail(email)))
       .returning();
 
     return result[0] || null;
