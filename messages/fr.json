@@ -94,6 +94,8 @@
     "MANAGE_TAGS_DESC": "Gérer les tags",
     "MANAGE_ITEMS_DESC": "Gérer les éléments",
     "MANAGE_COMMENTS_DESC": "Gérer les commentaires",
+    "SURVEYS": "Sondages",
+    "MANAGE_SURVEYS_DESC": "Gérer les sondages de feedback",
     "MANAGE_USER_ROLES_DESC": "Gérer les rôles des utilisateurs",
     "FAVORITES": "Favoris",
     "FAVORITES_DESCRIPTION": "Vos éléments et outils sauvegardés. Accédez-y rapidement depuis ici.",

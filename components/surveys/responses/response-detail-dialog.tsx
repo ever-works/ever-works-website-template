@@ -1,0 +1,83 @@
+'use client';
+
+import React, { useState } from 'react';
+import type { Survey, SurveyResponse } from '@/lib/db/schema';
+import { Modal } from '@/components/ui/modal';
+import { SurveyFormNoSSR } from '../forms/survey-form-no-ssr';
+import { formatDateTime } from '@/utils/date';
+
+interface ResponseDetailDialogProps {
+    survey: Survey;
+    response: SurveyResponse;
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+export function ResponseDetailDialog({
+    survey,
+    response,
+    isOpen,
+    onClose
+}: ResponseDetailDialogProps) {
+    const [showAllOnOnePage, setShowAllOnOnePage] = useState(false);
+
+    // Create a read-only version of the survey JSON
+    const readOnlySurveyJson = {
+        ...(typeof survey.surveyJson === 'object' ? survey.surveyJson : {}),
+        mode: 'display', // Set to display mode (read-only)
+        showCompletedPage: false,
+        questionsOnPageMode: showAllOnOnePage ? 'singlePage' : 'standard' // Toggle view mode
+    };
+
+    return (
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            size="2xl"
+            className="max-w-4xl max-h-[90vh] flex flex-col"
+            title={`${survey.title} - Response Details`}
+            subtitle={
+                <div className="flex items-start justify-between w-full">
+                    <div className="flex-1">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Response ID: {response.id}
+                        </p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Submitted: {formatDateTime(response.completedAt)}
+                        </p>
+                        {response.userId && (
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                User: {response.userId}
+                            </p>
+                        )}
+                    </div>
+                    <div className="flex items-center gap-2 ml-4">
+                        <input
+                            type="checkbox"
+                            id="show-all-toggle"
+                            checked={showAllOnOnePage}
+                            onChange={(e) => setShowAllOnOnePage(e.target.checked)}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        />
+                        <label
+                            htmlFor="show-all-toggle"
+                            className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer whitespace-nowrap"
+                        >
+                            Show all questions on one page
+                        </label>
+                    </div>
+                </div>
+            }
+        >
+            <SurveyFormNoSSR
+                surveyJson={readOnlySurveyJson}
+                data={response.data}
+                onComplete={() => {
+                    // Read-only mode - no action needed
+                }}
+                className="survey-response-detail"
+            />
+        </Modal>
+    );
+}
+

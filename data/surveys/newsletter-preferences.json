@@ -1,0 +1,58 @@
+{
+	"id": "survey_newsletter",
+	"slug": "newsletter-preferences",
+	"title": "Newsletter Preferences",
+	"description": "Customize your email preferences",
+	"type": "global",
+	"status": "published",
+	"createdAt": "2025-02-01T00:00:00.000Z",
+	"updatedAt": "2025-02-01T00:00:00.000Z",
+	"publishedAt": "2025-02-01T00:00:00.000Z",
+	"surveyJson": {
+		"title": "Newsletter Preferences",
+		"description": "Let us know what content you'd like to receive",
+		"pages": [
+			{
+				"name": "page1",
+				"elements": [
+					{
+						"type": "checkbox",
+						"name": "content_types",
+						"title": "What type of content interests you?",
+						"isRequired": true,
+						"choices": [
+							"New listings",
+							"Industry news",
+							"Tips & tutorials",
+							"Special offers",
+							"Event announcements",
+							"Product updates"
+						]
+					},
+					{
+						"type": "radiogroup",
+						"name": "frequency",
+						"title": "How often would you like to hear from us?",
+						"isRequired": true,
+						"choices": [
+							"Daily digest",
+							"Weekly roundup",
+							"Bi-weekly",
+							"Monthly",
+							"Only important updates"
+						]
+					},
+					{
+						"type": "boolean",
+						"name": "partner_offers",
+						"title": "Would you like to receive offers from our partners?",
+						"isRequired": false
+					}
+				]
+			}
+		],
+		"completedHtml": "<h3>Preferences Saved!</h3><p>Your newsletter preferences have been updated.</p>",
+		"showQuestionNumbers": "off"
+	}
+}
+

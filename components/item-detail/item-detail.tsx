@@ -13,6 +13,7 @@ import { PromoCodeComponent } from '../promo-code/promo-code';
 import { FavoriteButton } from '../favorite-button';
 import type { ItemData } from '@/lib/content';
 import { SimilarItemsSection } from './similar-items-section';
+import { UserSurveySection } from '@/components/surveys/user-survey-section';
 import { useTranslations } from 'next-intl';
 import { generateProductSchema } from '@/lib/seo/schema';
 import { useParams } from 'next/navigation';
@@ -179,6 +180,14 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 								</div>
 							</div>
 						</div>
+
+						{/* Surveys Section */}
+						{(meta) && (
+							<UserSurveySection
+								item={meta}
+							/>
+						)}
+
 					</div>
 
 					{/* Right column */}
@@ -431,6 +440,7 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 								)}
 							</div>
 						</div>
+						
 						{meta.allItems && meta.allItems.length > 0 && (
 							<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
 								<div className="mt-8">

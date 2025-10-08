@@ -29,6 +29,9 @@ export * from './payment.queries';
 // Subscription queries
 export * from './subscription.queries';
 
+// Survey queries
+export * from './survey.queries';
+
 // User queries
 export * from './user.queries';
 
