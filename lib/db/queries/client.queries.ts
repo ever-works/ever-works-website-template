@@ -8,6 +8,7 @@ import {
   type ClientProfile,
   type NewClientProfile
 } from '../schema';
+import type { AdapterAccountType } from 'next-auth/adapters';
 import type { ClientStatus, ClientPlan, ClientAccountType, ClientProfileWithAuth, ClientAccount } from './types';
 import { extractUsernameFromEmail, ensureUniqueUsername } from './utils';
 import { comparePasswords } from '@/lib/auth/credentials';
@@ -506,6 +507,40 @@ export async function getEnhancedClientStats(): Promise<{
 }
 
 // ===================== Client Account Management =====================
+
+/**
+ * Create a client account record in the accounts table
+ * @param userId - User ID (references users.id)
+ * @param email - Client email
+ * @param passwordHash - Hashed password
+ * @returns Created account or null if failed
+ */
+export async function createClientAccount(
+  userId: string,
+  email: string,
+  passwordHash: string
+): Promise<ClientAccount | null> {
+  try {
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const [account] = await db
+      .insert(accounts)
+      .values({
+        userId,
+        type: 'credentials' as AdapterAccountType,
+        provider: 'credentials',
+        providerAccountId: normalizedEmail,
+        email: normalizedEmail,
+        passwordHash
+      })
+      .returning();
+
+    return (account as ClientAccount) || null;
+  } catch (error) {
+    console.error('Error creating client account:', error);
+    return null;
+  }
+}
 
 /**
  * Get client account by email (credentials provider only)
