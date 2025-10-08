@@ -103,7 +103,7 @@ export async function getClientProfileByEmail(email: string): Promise<ClientProf
   const account = await getClientAccountByEmail(email);
   if (!account) return null;
 
-  const [profile] = await db.select().from(clientProfiles).where(eq(clientProfiles.id, account.userId)).limit(1);
+  const [profile] = await db.select().from(clientProfiles).where(eq(clientProfiles.userId, account.userId)).limit(1);
 
   return profile || null;
 }
@@ -195,11 +195,10 @@ export async function getClientProfiles(params: {
 
   const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
-  // Get total count with join and exclude admins (roles.is_admin = false OR NULL)
+  // Get total count and exclude admins (roles.is_admin = false OR NULL)
   const countResult = await db
     .select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
     .from(clientProfiles)
-    .leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
     .leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
     .leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
     .where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id));
@@ -236,11 +235,15 @@ export async function getClientProfiles(params: {
       tags: clientProfiles.tags,
       createdAt: clientProfiles.createdAt,
       updatedAt: clientProfiles.updatedAt,
-      // Account fields
-      accountProvider: sql<string>`coalesce(${accounts.provider}, 'unknown')`
+      // Account fields - use subquery to avoid duplicate rows from multiple accounts
+      accountProvider: sql<string>`coalesce(
+        (SELECT provider FROM ${accounts}
+         WHERE ${accounts.userId} = ${clientProfiles.userId}
+         LIMIT 1),
+        'unknown'
+      )`
     })
     .from(clientProfiles)
-    .leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
     .leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
     .leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
     .where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id))
@@ -572,7 +575,7 @@ export async function getClientAccountByEmail(email: string): Promise<ClientAcco
  */
 export async function hasClientAccess(userId: string): Promise<boolean> {
   try {
-    // Check if account exists for the user (userId references client_profiles.id)
+    // Check if account exists for the user (accounts.userId references users.id)
     const [account] = await db.select().from(accounts).where(eq(accounts.userId, userId)).limit(1);
 
     return !!account;
@@ -732,11 +735,10 @@ export async function getAdminDashboardData(params: {
 
   const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
-  // Optimized count query with join
+  // Optimized count query
   const countResult = await db
     .select({ count: sql<number>`count(distinct ${clientProfiles.id})` })
     .from(clientProfiles)
-    .leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
     .leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
     .leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
     .where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id));
@@ -773,11 +775,15 @@ export async function getAdminDashboardData(params: {
       tags: clientProfiles.tags,
       createdAt: clientProfiles.createdAt,
       updatedAt: clientProfiles.updatedAt,
-      // Account fields
-      accountProvider: sql<string>`coalesce(${accounts.provider}, 'unknown')`
+      // Account fields - use subquery to avoid duplicate rows from multiple accounts
+      accountProvider: sql<string>`coalesce(
+        (SELECT provider FROM ${accounts}
+         WHERE ${accounts.userId} = ${clientProfiles.userId}
+         LIMIT 1),
+        'unknown'
+      )`
     })
     .from(clientProfiles)
-    .leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
     .leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
     .leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
     .where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id))
@@ -1106,10 +1112,14 @@ export async function advancedClientSearch(params: {
       tags: clientProfiles.tags,
       createdAt: clientProfiles.createdAt,
       updatedAt: clientProfiles.updatedAt,
-      accountProvider: sql<string>`coalesce(${accounts.provider}, 'unknown')`
+      accountProvider: sql<string>`coalesce(
+        (SELECT provider FROM ${accounts}
+         WHERE ${accounts.userId} = ${clientProfiles.userId}
+         LIMIT 1),
+        'unknown'
+      )`
     })
     .from(clientProfiles)
-    .leftJoin(accounts, eq(clientProfiles.userId, accounts.userId))
     .leftJoin(userRoles, eq(userRoles.userId, clientProfiles.userId))
     .leftJoin(roles, and(eq(userRoles.roleId, roles.id), eq(roles.isAdmin, true)))
     .where(whereClause ? and(whereClause, isNull(roles.id)) : isNull(roles.id))
