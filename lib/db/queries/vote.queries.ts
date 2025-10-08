@@ -8,7 +8,8 @@ import { votes, type InsertVote } from '../schema';
  * @returns Created vote
  */
 export async function createVote(vote: InsertVote) {
-  return db.insert(votes).values(vote).returning();
+  const [createdVote] = await db.insert(votes).values(vote).returning();
+  return createdVote;
 }
 
 /**
@@ -73,5 +74,5 @@ export async function getVoteCountForItem(itemId: string): Promise<number> {
     .from(votes)
     .where(eq(votes.itemId, itemId));
 
-  return Number(result?.netScore || 0);
+  return Number(result?.netScore ?? 0);
 }
