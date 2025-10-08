@@ -91,7 +91,8 @@ export async function updateSubscriptionBySubscriptionId(
   const result = await db
     .update(subscriptions)
     .set({ ...updateData, updatedAt: new Date() })
-    .where(eq(subscriptions.subscriptionId, updateData.subscriptionId!));
+    .where(eq(subscriptions.subscriptionId, updateData.subscriptionId!))
+    .returning();
 
   return result[0] || null;
 }
