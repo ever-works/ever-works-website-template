@@ -1,13 +1,13 @@
 import { eq, sql } from 'drizzle-orm';
 import { db } from '../drizzle';
-import { users, clientProfiles, type NewUser } from '../schema';
+import { users, clientProfiles, type NewUser, type User } from '../schema';
 
 /**
  * Get user by email address
  * @param email - User email
  * @returns User object or null if not found
  */
-export async function getUserByEmail(email: string) {
+export async function getUserByEmail(email: string): Promise<User | null> {
   // Check if DATABASE_URL is set
   if (!process.env.DATABASE_URL) {
     console.warn('DATABASE_URL is not set. User validation is disabled.');
@@ -35,7 +35,7 @@ export async function getUserByEmail(email: string) {
  * @param id - User ID
  * @returns User object or null if not found
  */
-export async function getUserById(id: string) {
+export async function getUserById(id: string): Promise<User | null> {
   if (!process.env.DATABASE_URL) {
     console.warn('DATABASE_URL is not set. User validation is disabled.');
     return null;
@@ -62,7 +62,7 @@ export async function getUserById(id: string) {
  * @param user - New user data
  * @returns Created user
  */
-export async function insertNewUser(user: NewUser) {
+export async function insertNewUser(user: NewUser): Promise<User[]> {
   return db.insert(users).values(user).returning();
 }
 
