@@ -190,7 +190,14 @@ export async function getClientProfiles(params: {
   }
 
   if (provider) {
-    whereConditions.push(eq(accounts.provider, provider));
+    whereConditions.push(
+      sql`exists (
+        select 1
+        from ${accounts}
+        where ${accounts.userId} = ${clientProfiles.userId}
+          and ${accounts.provider} = ${provider}
+      )`
+    );
   }
 
   const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
@@ -713,7 +720,14 @@ export async function getAdminDashboardData(params: {
   }
 
   if (provider) {
-    whereConditions.push(eq(accounts.provider, provider));
+    whereConditions.push(
+      sql`exists (
+        select 1
+        from ${accounts}
+        where ${accounts.userId} = ${clientProfiles.userId}
+          and ${accounts.provider} = ${provider}
+      )`
+    );
   }
 
   // Date range filters
@@ -937,7 +951,14 @@ export async function advancedClientSearch(params: {
 
   // Provider filter
   if (provider) {
-    whereConditions.push(eq(accounts.provider, provider));
+    whereConditions.push(
+      sql`exists (
+        select 1
+        from ${accounts}
+        where ${accounts.userId} = ${clientProfiles.userId}
+          and ${accounts.provider} = ${provider}
+      )`
+    );
     appliedFilters.push(`Provider: ${provider}`);
   }
 
