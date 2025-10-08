@@ -3,6 +3,11 @@ import { db } from '../drizzle';
 import { clientProfiles } from '../schema';
 
 /**
+ * Maximum attempts to generate a unique username before throwing an error
+ */
+const MAX_USERNAME_GENERATION_ATTEMPTS = 1000;
+
+/**
  * Safely extract username from email address
  * Handles edge cases like empty strings, malformed emails, etc.
  */
@@ -55,8 +60,8 @@ export async function ensureUniqueUsername(baseUsername: string): Promise<string
     username = `${baseUsername}${counter}`;
     counter++;
 
-    // Safety check to prevent infinite loops (max 1000 attempts)
-    if (counter > 1000) {
+    // Safety check to prevent infinite loops
+    if (counter > MAX_USERNAME_GENERATION_ATTEMPTS) {
       throw new Error(`Unable to generate unique username for: ${baseUsername}`);
     }
   }
