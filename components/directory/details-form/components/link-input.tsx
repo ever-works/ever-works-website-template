@@ -46,14 +46,14 @@ export function LinkInput({
 
 				{/* Links Container */}
 				<div className="space-y-4">
-					{formData.links.map((link, index) => {
+					{formData.links.map((link) => {
 						const IconComponent = getIconComponent();
 						const isAnimating = animatingLinkId === link.id;
 						const isMain = link.type === 'main';
 
 						return (
 							<div
-								key={index}
+								key={link.id}
 								className={cn(
 									'group relative overflow-hidden rounded-2xl border-2',
 									isMain
