@@ -198,7 +198,7 @@ export function ResultsHeader({
   searchTerm: string;
   selectedTags: string[];
   isInfinite?: boolean;
-  sortBy: string;
+  sortBy: SortOption;
   start: number;
   filteredCount: number;
   t: ReturnType<typeof useTranslations>;
