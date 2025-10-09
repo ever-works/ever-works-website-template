@@ -34,7 +34,7 @@ interface BasicInfoStepProps {
 	categories?: Category[];
 	tags?: TagType[];
 	editor: Editor | null;
-	t: (key: string) => string;
+	t: (key: string, values?: Record<string, unknown>) => string;
 	addLink: () => void;
 	removeLink: (id: string) => void;
 }

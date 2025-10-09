@@ -14,7 +14,7 @@ interface InputLinkProps {
 	completedFields: Set<string>;
 	handleLinkChange: (id: string, field: 'label' | 'url', value: string) => void;
 	getIconComponent: () => React.ComponentType<{ className?: string }>;
-	t: (key: string) => string;
+	t: (key: string, values?: Record<string, unknown>) => string;
 	addLink: () => void;
 	removeLink: (id: string) => void;
 }

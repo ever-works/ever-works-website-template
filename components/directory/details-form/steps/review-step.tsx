@@ -6,7 +6,7 @@ import { STEP_CARD_CLASSES } from '../validation/form-validators';
 
 interface ReviewStepProps {
 	formData: FormData;
-	t: (key: string) => string;
+	t: (key: string, values?: Record<string, unknown>) => string;
 }
 
 export function ReviewStep({ formData, t }: ReviewStepProps) {
