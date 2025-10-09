@@ -230,6 +230,13 @@ export function ResultsHeader({
   }, [searchTerm, selectedTags, t]);
 
   const pageSize = config.perPage || PER_PAGE;
+  const hasResults = filteredCount > 0;
+  const startDisplay = hasResults ? start + 1 : 0;
+  const endDisplay = hasResults
+    ? isInfinite
+      ? filteredCount
+      : Math.min(start + pageSize, filteredCount)
+    : 0;
 
   return (
     <div className={clsx("flex items-center justify-between", className)}>
@@ -239,12 +246,10 @@ export function ResultsHeader({
       {config.showStats && (
         <div className={headerStatsClasses}>
           <span>
-            {t("SHOWING")} {start + 1}-
-            {isInfinite
-              ? filteredCount
-              : Math.min(start + pageSize, filteredCount)
-            }
-            {config.enableSorting && sortBy !== SORT_OPTIONS.POPULARITY && (
+            {t("SHOWING")} {hasResults ? `${startDisplay}-${endDisplay}` : 0}
+            {config.enableSorting &&
+              hasResults &&
+              sortBy !== SORT_OPTIONS.POPULARITY && (
               <span className={sortLabelClasses}>
                 {t("SORTED_BY")} {getSortLabel(sortBy)}
               </span>
