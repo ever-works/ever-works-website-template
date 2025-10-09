@@ -65,6 +65,7 @@ export function InfiniteScrollPagination({
                 {error.message}
               </p>
               <button
+                type="button"
                 onClick={onRetry}
                 className="text-sm text-theme-primary-500 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 transition-colors"
               >
