@@ -59,7 +59,7 @@ export function BasicInfoStep({
 }: BasicInfoStepProps) {
 	const [showAllTags, setShowAllTags] = useState(false);
 	const [tagsToShow] = useState(DEFAULT_TAGS_TO_SHOW);
-	const { toolbarRef } = useEditorToolbar(editor!);
+	const { toolbarRef } = useEditorToolbar(editor ?? ({} as Editor));
 
 	return (
 		<div className={STEP_CARD_CLASSES.wrapper}>
@@ -252,11 +252,14 @@ export function BasicInfoStep({
 									</span>
 								</div>
 								<div className={TAG_CLASSES.selectedSummary.tags}>
-									{formData.tags.map((tag) => (
-										<span key={tag} className={TAG_CLASSES.selectedSummary.tag}>
-											{tag}
-										</span>
-									))}
+									{formData.tags.map((tagId) => {
+										const tag = tags?.find((t) => t.id === tagId);
+										return (
+											<span key={tagId} className={TAG_CLASSES.selectedSummary.tag}>
+												{tag?.name || tagId}
+											</span>
+										);
+									})}
 								</div>
 							</div>
 						)}
@@ -298,12 +301,10 @@ export function BasicInfoStep({
 						<div className="relative">
 							{editor && (
 								<EditorContent
-									style={{
-										className: cn(
-											FORM_FIELD_CLASSES.textarea.base,
-											focusedField === 'introduction' && FORM_FIELD_CLASSES.textarea.focused
-										)
-									}}
+									className={cn(
+										FORM_FIELD_CLASSES.textarea.base,
+										focusedField === 'introduction' && FORM_FIELD_CLASSES.textarea.focused
+									)}
 									toolbar={
 										<Toolbar className="bg-gray-50/80 dark:bg-gray-900/50" ref={toolbarRef}>
 											<ToolbarContent editor={editor} />
