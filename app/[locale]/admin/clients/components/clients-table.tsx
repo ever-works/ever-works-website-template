@@ -1,6 +1,7 @@
 import { Card, CardBody, Chip, Button } from '@heroui/react';
 import { Building2, Eye, Edit, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import type { KeyboardEvent } from 'react';
 import type { ClientProfileWithAuth } from '@/lib/db/queries';
 import { getStatusColor, getPlanColor, getAccountTypeColor } from '../utils/client-helpers';
 
@@ -103,7 +104,7 @@ interface ClientRowProps {
 function ClientRow({ client, isNavigating, isDeleting, onView, onEdit, onDelete }: ClientRowProps) {
 	const t = useTranslations('admin.ADMIN_CLIENTS_PAGE');
 
-	const handleKeyDown = (e: React.KeyboardEvent) => {
+	const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
 		if (isNavigating) return;
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
