@@ -1,23 +1,26 @@
 "use client";
 
-import { useMemo, useCallback, useContext, useState, useEffect } from "react";
+import { useContext, useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { Search, Filter } from "lucide-react";
-
-import Item from "@/components/item";
-import { PER_PAGE } from "@/lib/paginate";
+import { useInView } from "react-intersection-observer";
 import { layoutComponents, LayoutKey } from "@/components/layouts";
-import { Category, ItemData, Tag } from "@/lib/content";
+import type { Category, ItemData, Tag } from "@/lib/content";
 import { useLayoutTheme } from "@/components/context";
 import { FilterContext } from "@/components/filters/context/filter-context";
-import { SortOption, TagId } from "@/components/filters/types";
-import UniversalPagination from "@/components/universal-pagination";
+import type { SortOption, TagId } from "@/components/filters/types";
 import { useInfiniteLoading } from "@/hooks/use-infinite-loading";
-import { Loader2 } from "lucide-react";
-import { useInView } from "react-intersection-observer";
-import ViewToggle from "../view-toggle";
+import { PER_PAGE } from "@/lib/paginate";
+import { SORT_OPTIONS } from "./utils/sort-utils";
+import { useItemFiltering } from "./hooks/use-item-filtering";
+import { useItemSorting } from "./hooks/use-item-sorting";
+import { usePaginationLogic, useFilterChangeDetection } from "./hooks/use-pagination-logic";
+import { SharedCardHeader, EmptyState } from "./shared-card-header";
+import { SharedCardGrid } from "./shared-card-grid";
+import { SharedCardPagination } from "./shared-card-pagination";
 
-interface BaseCardProps {
+// ===================== Types =====================
+
+export interface BaseCardProps {
   total: number;
   start: number;
   page: number;
@@ -27,7 +30,7 @@ interface BaseCardProps {
   items: ItemData[];
 }
 
-interface CardConfigOptions {
+export interface CardConfigOptions {
   showStats?: boolean;
   showViewToggle?: boolean;
   showFilters?: boolean;
@@ -43,13 +46,15 @@ interface CardConfigOptions {
   defaultLayout?: LayoutKey;
 }
 
-interface ExtendedCardProps extends BaseCardProps {
+export interface ExtendedCardProps extends BaseCardProps {
   config?: CardConfigOptions;
   className?: string;
   onItemClick?: (item: ItemData) => void;
   renderCustomItem?: (item: ItemData, index: number) => React.ReactNode;
   renderCustomEmpty?: () => React.ReactNode;
   headerActions?: React.ReactNode;
+  filteredCount?: number;
+  totalCount?: number;
 }
 
 interface FilterState {
@@ -63,20 +68,7 @@ interface FilterState {
   setSelectedTag: (tag: TagId | null) => void;
 }
 
-interface ProcessedItems {
-  filtered: ItemData[];
-  paginated: ItemData[];
-  hasActiveFilters: boolean;
-}
-
-// Constants
-const SORT_OPTIONS = {
-  POPULARITY: "popularity",
-  NAME_ASC: "name-asc",
-  NAME_DESC: "name-desc",
-  DATE_DESC: "date-desc",
-  DATE_ASC: "date-asc",
-} as const;
+// ===================== Constants =====================
 
 const DEFAULT_CONFIG: CardConfigOptions = {
   showStats: true,
@@ -92,14 +84,11 @@ const DEFAULT_CONFIG: CardConfigOptions = {
   defaultLayout: "classic",
 };
 
-// Utility functions
-const getTagId = (tag: string | Tag): string =>
-  typeof tag === "string" ? tag : tag.id;
+// ===================== Custom Hooks =====================
 
-const getTagName = (tagId: string, tags: Tag[]): string | null =>
-  tags.find((tag) => tag.id === tagId)?.name || null;
-
-// Custom hooks
+/**
+ * Hook to access filter context
+ */
 function useFilters(): FilterState {
   const context = useContext(FilterContext);
 
@@ -110,372 +99,39 @@ function useFilters(): FilterState {
   return context;
 }
 
-function useItemFiltering(
-  items: ItemData[],
-  searchTerm: string,
-  selectedTags: TagId[],
-  selectedTag: TagId | null,
-  config: CardConfigOptions
-): ItemData[] {
-  const enableSearch = config.enableSearch ?? true;
-  const enableTagFilter = config.enableTagFilter ?? true;
-
-  return useMemo(() => {
-    let filtered = items;
-
-    if (enableSearch && searchTerm.trim()) {
-      const searchLower = searchTerm.toLowerCase().trim();
-      filtered = filtered.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchLower) ||
-          item.description?.toLowerCase().includes(searchLower)
-      );
-    }
-
-    if (enableTagFilter && selectedTags.length > 0) {
-      filtered = filtered.filter((item) => {
-        if (!item.tags?.length) return false;
-        return selectedTags.some((selectedTagId) =>
-          item.tags.some((itemTag) => getTagId(itemTag) === selectedTagId)
-        );
-      });
-    }
-
-    // Filter by selectedTag (single tag from context)
-    if (enableTagFilter && selectedTag) {
-      filtered = filtered.filter((item) => {
-        if (!item.tags?.length) return false;
-        return item.tags.some((itemTag) => getTagId(itemTag) === selectedTag);
-      });
-    }
-
-    return filtered;
-  }, [items, searchTerm, selectedTags, selectedTag, enableSearch, enableTagFilter]);
-}
-
-function useItemSorting(
-  items: ItemData[],
-  sortBy: SortOption,
-  config: CardConfigOptions
-): ItemData[] {
-  const enableSorting = config.enableSorting ?? true;
-
-  return useMemo(() => {
-    if (!enableSorting) return items;
-
-    const sorted = [...items].sort((a, b) => {
-      switch (sortBy) {
-        case SORT_OPTIONS.NAME_ASC:
-          return a.name.localeCompare(b.name);
-        case SORT_OPTIONS.NAME_DESC:
-          return b.name.localeCompare(a.name);
-        case SORT_OPTIONS.DATE_DESC:
-          return b.updatedAt.getTime() - a.updatedAt.getTime();
-        case SORT_OPTIONS.DATE_ASC:
-          return a.updatedAt.getTime() - b.updatedAt.getTime();
-        case SORT_OPTIONS.POPULARITY:
-        default:
-          if (a.featured && !b.featured) return -1;
-          if (!a.featured && b.featured) return 1;
-          return b.updatedAt.getTime() - a.updatedAt.getTime();
-      }
-    });
-
-    return sorted;
-  }, [items, sortBy, enableSorting]);
-}
-
-function useProcessedItems(
-  items: ItemData[],
+/**
+ * Hook to check if any filters are active
+ */
+function useHasActiveFilters(
   searchTerm: string,
   selectedTags: TagId[],
   selectedTag: TagId | null,
   sortBy: SortOption,
-  start: number,
-  config: CardConfigOptions
-): ProcessedItems {
-  const filteredItems = useItemFiltering(
-    items,
-    searchTerm,
-    selectedTags,
-    selectedTag,
-    config
-  );
-  const sortedItems = useItemSorting(filteredItems, sortBy, config);
-
-  const showPagination = config.showPagination ?? true;
-  const perPage = config.perPage || PER_PAGE;
-
-  const paginatedItems = useMemo(() => {
-    if (!showPagination) return sortedItems;
-    return sortedItems.slice(start, start + perPage);
-  }, [sortedItems, start, showPagination, perPage]);
-
-  const enableSearch = config.enableSearch ?? true;
-  const enableTagFilter = config.enableTagFilter ?? true;
-  const enableSorting = config.enableSorting ?? true;
-
-  const hasActiveFilters = useMemo(() => {
+  enableSearch: boolean,
+  enableTagFilter: boolean,
+  enableSorting: boolean
+): boolean {
+  return useMemo(() => {
     const hasSearch = enableSearch && searchTerm.trim() !== "";
     const hasTags = enableTagFilter && selectedTags.length > 0;
     const hasSelectedTag = enableTagFilter && Boolean(selectedTag);
     const hasSort = enableSorting && sortBy !== SORT_OPTIONS.POPULARITY;
     return hasSearch || hasTags || hasSelectedTag || hasSort;
   }, [searchTerm, selectedTags, selectedTag, sortBy, enableSearch, enableTagFilter, enableSorting]);
-
-  return {
-    filtered: sortedItems,
-    paginated: paginatedItems,
-    hasActiveFilters,
-  };
 }
 
-export function FilterStats({
-  filteredCount,
-  totalCount,
-  searchTerm,
-  selectedTags,
-  hasActiveFilters,
-  t,
-  className = "",
-}: {
-  filteredCount: number;
-  totalCount: number;
-  searchTerm: string;
-  selectedTags: string[];
-  hasActiveFilters: boolean;
-  t: ReturnType<typeof useTranslations>;
-  className?: string;
-}) {
-  return (
-    <div className={`flex items-center gap-4 ${className}`}>
-      <div className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-        {hasActiveFilters
-          ? t("FILTER_STATUS_MATCH_ALL", { filtered: filteredCount, total: totalCount })
-          : t("FILTER_STATUS", { filtered: filteredCount, total: totalCount })}
-      </div>
-
-      {(searchTerm || selectedTags.length > 0) && (
-        <div className="flex items-center gap-2 text-xs">
-          <Filter className="w-3 h-3 text-theme-primary-500 dark:text-theme-primary-400" />
-          <span className="text-theme-primary-500 dark:text-theme-primary-400 font-medium">
-            {searchTerm && t("SEARCH")}
-            {searchTerm && selectedTags.length > 0 && " + "}
-            {selectedTags.length > 0 &&
-              `${selectedTags.length} ${
-                selectedTags.length > 1 ? t("TAG_PLURAL") : t("TAG")
-              }`}
-          </span>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export function ActiveFiltersDisplay({
-  searchTerm,
-  selectedTags,
-  tags,
-  t,
-  className = "",
-}: {
-  searchTerm: string;
-  selectedTags: string[];
-  tags: Tag[];
-  t: ReturnType<typeof useTranslations>;
-  className?: string;
-}) {
-  if (!searchTerm && selectedTags.length === 0) return null;
-
-  return (
-    <div className={`flex flex-col items-center gap-2 mt-4 ${className}`}>
-      <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
-        {t("ACTIVE_FILTERS")}
-      </p>
-      <div className="flex flex-wrap gap-2 justify-center">
-        {searchTerm && (
-          <span className="px-2 py-1 bg-theme-primary-10 dark:bg-theme-primary-900/30 text-white  rounded text-xs">
-            {t("SEARCH_COLON")} &quot;{searchTerm}&quot;
-          </span>
-        )}
-        {selectedTags.map((tagId: string) => {
-          const tagName = getTagName(tagId, tags);
-          return tagName ? (
-            <span
-              key={tagId}
-              className="px-2 py-1 bg-theme-primary-100 dark:bg-theme-primary-900/30 text-white rounded text-xs"
-            >
-              {t("TAG_COLON")} {tagName}
-            </span>
-          ) : null;
-        })}
-      </div>
-    </div>
-  );
-}
-
-export function EmptyState({
-  searchTerm,
-  selectedTags,
-  selectedTag,
-  tags,
-  t,
-  customMessage,
-  customDescription,
-  className = "",
-}: {
-  searchTerm: string;
-  selectedTags: string[];
-  selectedTag: string | null;
-  tags: Tag[];
-  t: ReturnType<typeof useTranslations>;
-  customMessage?: string;
-  customDescription?: string;
-  className?: string;
-}) {
-  const hasFilters = searchTerm || selectedTags.length > 0 || selectedTag;
-
-  return (
-    <div className={`text-center py-8 sm:py-10 ${className}`}>
-      <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center transition-colors duration-300">
-        <Search className="w-8 h-8 text-gray-400 dark:text-gray-500" />
-      </div>
-      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2 transition-colors duration-300">
-        {customMessage || t("NO_ITEMS_FOUND")}
-      </h3>
-      <p className="text-gray-600 dark:text-gray-400 mb-4 transition-colors duration-300">
-        {customDescription ||
-          (hasFilters ? t("TRY_ADJUSTING_FILTERS") : t("NO_ITEMS_IN_CATEGORY"))}
-      </p>
-      <ActiveFiltersDisplay
-        searchTerm={searchTerm}
-        selectedTags={selectedTags}
-        tags={tags}
-        t={t}
-      />
-    </div>
-  );
-}
-
-export function ResultsHeader({
-  searchTerm,
-  selectedTags,
-  isInfinite = false,
-  sortBy,
-  start,
-  filteredCount,
-  t,
-  config,
-  className = "",
-}: {
-  searchTerm: string;
-  selectedTags: string[];
-  isInfinite?: boolean;
-  sortBy: string;
-  start: number;
-  filteredCount: number;
-  t: ReturnType<typeof useTranslations>;
-  config: CardConfigOptions;
-  className?: string;
-}) {
-  const getSortLabel = useCallback(
-    (sortKey: string): string => {
-      switch (sortKey) {
-        case SORT_OPTIONS.NAME_ASC:
-          return t("NAME_A_Z");
-        case SORT_OPTIONS.NAME_DESC:
-          return t("NAME_Z_A");
-        case SORT_OPTIONS.DATE_DESC:
-          return t("NEWEST");
-        case SORT_OPTIONS.DATE_ASC:
-          return t("OLDEST");
-        default:
-          return t("POPULARITY");
-      }
-    },
-    [t]
-  );
-
-  const getHeaderTitle = useCallback((): string => {
-    if (searchTerm) return t("SEARCH_RESULTS");
-    if (selectedTags.length > 0) return t("TAGGED_ITEMS");
-    return t("FEATURED_ITEMS");
-  }, [searchTerm, selectedTags, t]);
-
-  const pageSize = config.perPage || PER_PAGE;
-
-  return (
-    <div className={`flex items-center justify-between ${className}`}>
-      <h2 className="text-xl font-semibold text-gray-900 dark:text-white transition-colors duration-300">
-        {getHeaderTitle()}
-      </h2>
-      {config.showStats && (
-        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-          <span>
-            {t("SHOWING")} {start + 1}-
-            {isInfinite
-              ? filteredCount
-              : Math.min(start + pageSize, filteredCount)
-            }
-            {config.enableSorting && sortBy !== SORT_OPTIONS.POPULARITY && (
-              <span className="ml-2 text-theme-primary-500 dark:text-theme-primary-400">
-                {t("SORTED_BY")} {getSortLabel(sortBy)}
-              </span>
-            )}
-          </span>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export function ItemsList({
-  items,
-  LayoutComponent,
-  onItemClick,
-  renderCustomItem,
-  animationDelay = 100,
-  className = "space-y-4",
-}: {
-  items: ItemData[];
-  LayoutComponent: React.ComponentType<{ children: React.ReactNode }>;
-  onItemClick?: (item: ItemData) => void;
-  renderCustomItem?: (item: ItemData, index: number) => React.ReactNode;
-  animationDelay?: number;
-  className?: string;
-}) {
-  return (
-    <div className={className}>
-      <LayoutComponent>
-        {items.map((item, index) => (
-          <div
-            key={item.slug}
-            className="group animate-fadeInUp h-full"
-            style={{
-              animationDelay: `${index * animationDelay}ms`,
-              animationFillMode: "both",
-            }}
-          >
-            {renderCustomItem ? (
-              renderCustomItem(item, index)
-            ) : (
-              <Item {...item} onNavigate={() => onItemClick?.(item)} />
-            )}
-          </div>
-        ))}
-      </LayoutComponent>
-    </div>
-  );
-}
+// ===================== Main Component =====================
 
 /**
  * SharedCard - Reusable card component for displaying lists of items
  *
- * This component can be used throughout the application to display:
- * - Product lists
- * - Search results
- * - Item grids
- * - Content sections
+ * This component orchestrates filtering, sorting, pagination, and display of items.
+ * It follows SOLID principles:
+ * - Single Responsibility: Each sub-component handles one concern
+ * - Open/Closed: Extensible through config and render props
+ * - Liskov Substitution: Can be used anywhere a card list is needed
+ * - Interface Segregation: Minimal required props, optional config
+ * - Dependency Inversion: Depends on abstractions (config, render props)
  *
  * @example
  * // Basic usage
@@ -489,7 +145,7 @@ export function ItemsList({
  *   renderCustomItem={(item) => <CustomItem {...item} />}
  * />
  */
-export function SharedCard(props: ExtendedCardProps & { filteredCount?: number; totalCount?: number }) {
+export function SharedCard(props: ExtendedCardProps) {
   const {
     items,
     config: rawConfig,
@@ -501,37 +157,61 @@ export function SharedCard(props: ExtendedCardProps & { filteredCount?: number; 
     page,
   } = props;
 
-  const config = { ...DEFAULT_CONFIG, ...rawConfig };
+  // Merge config with defaults
+  const config = useMemo(() => ({ ...DEFAULT_CONFIG, ...rawConfig }), [rawConfig]);
+
+  // Get theme and filter state
   const { layoutKey, setLayoutKey, paginationType } = useLayoutTheme();
   const { searchTerm, selectedTags, sortBy, selectedTag } = useFilters();
   const t = useTranslations("listing");
-  const commonT = useTranslations("common");
-  const [currentPage, setCurrentPage] = useState(1);
 
+  // Get layout component
   const LayoutComponent = layoutComponents[layoutKey];
 
-  // Reset to page 1 when filters change
-  const filterKey = useMemo(() => 
-    `${searchTerm}-${selectedTags.join(',')}-${selectedTag || ''}-${sortBy}`,
-    [searchTerm, selectedTags, selectedTag, sortBy]
-  );
-
-  const { filtered, paginated, hasActiveFilters } = useProcessedItems(
+  // Filter items
+  const filteredItems = useItemFiltering(
     items,
     searchTerm,
     selectedTags,
     selectedTag,
-    sortBy,
-    paginationType === "infinite" ? 0 : (currentPage - 1) * (config.perPage || PER_PAGE),
-    config
+    {
+      enableSearch: config.enableSearch ?? true,
+      enableTagFilter: config.enableTagFilter ?? true,
+    }
   );
 
-  const { displayedItems, hasMore, isLoading, error, loadMore } =
-    useInfiniteLoading({
-      items: filtered,
-      initialPage: page,
-      perPage: config.perPage,
-    });
+  // Sort filtered items
+  const sortedItems = useItemSorting(filteredItems, sortBy, {
+    enableSorting: config.enableSorting ?? true,
+  });
+
+  // Handle pagination
+  const {
+    paginatedItems,
+    currentPage,
+    totalPages,
+    handlePageChange,
+    resetToFirstPage,
+  } = usePaginationLogic(sortedItems, {
+    perPage: config.perPage,
+    showPagination: config.showPagination ?? true,
+  });
+
+  // Reset pagination when filters change
+  useFilterChangeDetection(
+    searchTerm,
+    selectedTags,
+    selectedTag,
+    sortBy,
+    resetToFirstPage
+  );
+
+  // Handle infinite scroll
+  const { displayedItems, hasMore, isLoading, error, loadMore } = useInfiniteLoading({
+    items: sortedItems,
+    initialPage: page,
+    perPage: config.perPage,
+  });
 
   const { ref: loadMoreRef } = useInView({
     onChange: (inView) => {
@@ -549,29 +229,32 @@ export function SharedCard(props: ExtendedCardProps & { filteredCount?: number; 
     rootMargin: "100px",
   });
 
+  // Check if filters are active
+  const hasActiveFilters = useHasActiveFilters(
+    searchTerm,
+    selectedTags,
+    selectedTag,
+    sortBy,
+    config.enableSearch ?? true,
+    config.enableTagFilter ?? true,
+    config.enableSorting ?? true
+  );
+
+  // Calculate counts
+  const filteredCount = props.filteredCount ?? sortedItems.length;
+  const totalCount = props.totalCount ?? props.total;
+
+  // Handle view change
   const handleViewChange = useCallback(
     (newView: LayoutKey) => setLayoutKey(newView),
     [setLayoutKey]
   );
 
-  // Calculate pagination info for standard pagination
-  const perPage = config.perPage || PER_PAGE;
-  const totalPages = Math.ceil(filtered.length / perPage);
+  // Determine items to display
+  const itemsToDisplay = paginationType === "infinite" ? displayedItems : paginatedItems;
 
-  const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page);
-  }, []);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filterKey]);
-
-  // Use filteredCount/totalCount from props if provided, else fallback to filtered.length/props.total
-  const filteredCount = props.filteredCount ?? filtered.length;
-  const totalCount = props.totalCount ?? props.total;
-
-  const showEmptyState =
-    config.showEmptyState && (filtered.length === 0 || paginated.length === 0);
+  // Show empty state if no items
+  const showEmptyState = config.showEmptyState && sortedItems.length === 0;
 
   if (showEmptyState) {
     if (renderCustomEmpty) {
@@ -593,118 +276,69 @@ export function SharedCard(props: ExtendedCardProps & { filteredCount?: number; 
 
   return (
     <div className={`w-full space-y-6 ${className}`}>
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="flex items-center gap-4">
-          {config.showStats && (
-            <FilterStats
-              filteredCount={filteredCount}
-              totalCount={totalCount}
-              searchTerm={searchTerm}
-              selectedTags={selectedTags}
-              hasActiveFilters={hasActiveFilters}
-              t={t}
-            />
-          )}
-        </div>
-
-        <div className="flex items-center gap-4">
-          {headerActions}
-          {config.showViewToggle && (
-            <ViewToggle
-              activeView={layoutKey}
-              onViewChange={handleViewChange}
-            />
-          )}
-        </div>
-      </div>
+      <SharedCardHeader
+        searchTerm={searchTerm}
+        selectedTags={selectedTags}
+        selectedTag={selectedTag}
+        sortBy={sortBy}
+        filteredCount={filteredCount}
+        totalCount={totalCount}
+        isInfinite={paginationType === "infinite"}
+        start={paginationType === "infinite" ? 0 : (currentPage - 1) * (config.perPage || PER_PAGE)}
+        hasActiveFilters={hasActiveFilters}
+        config={config}
+        tags={props.tags}
+        headerActions={headerActions}
+        layoutKey={layoutKey}
+        onViewChange={handleViewChange}
+      />
 
       <div className="space-y-4">
-        {config.showFilters && (
-          <ResultsHeader
-            searchTerm={searchTerm}
-            selectedTags={selectedTags}
-            isInfinite={paginationType === "infinite"}
-            sortBy={sortBy}
-            start={paginationType === "infinite" ? 0 : (currentPage - 1) * perPage}
-            filteredCount={filtered.length}
-            t={t}
-            config={config}
-            className="mb-6"
-          />
-        )}
-
-        <ItemsList
-          items={paginationType === "infinite" ? displayedItems : paginated}
+        <SharedCardGrid
+          items={itemsToDisplay}
           LayoutComponent={LayoutComponent}
           onItemClick={onItemClick}
           renderCustomItem={renderCustomItem}
           animationDelay={config.animationDelay}
         />
-        
-        {/* Standard Pagination */}
-        {config.showPagination && paginationType === "standard" && totalPages > 1 && (
-          <UniversalPagination
-            page={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-            className="" // add more spacing if needed
+
+        {config.showPagination && (
+          <SharedCardPagination
+            paginationType={paginationType}
+            standardPaginationProps={
+              paginationType === "standard"
+                ? {
+                    currentPage,
+                    totalPages,
+                    onPageChange: handlePageChange,
+                  }
+                : undefined
+            }
+            infiniteScrollProps={
+              paginationType === "infinite"
+                ? {
+                    loadMoreRef,
+                    hasMore,
+                    isLoading,
+                    error,
+                    onRetry: loadMore,
+                  }
+                : undefined
+            }
           />
-        )}
-
-        {/* Infinite Scroll */}
-        {paginationType === "infinite" && (
-          <div className="flex flex-col items-center gap-6 mt-16 mb-12">
-            {hasMore && (
-              <div
-                ref={loadMoreRef}
-                className="w-full flex items-center justify-center py-8"
-              >
-                {error ? (
-                  <div className="text-center py-4">
-                    <p className="text-sm text-red-600 dark:text-red-400 mb-2">
-                      {error.message}
-                    </p>
-                    <button
-                      onClick={() => loadMore()}
-                      className="text-sm text-theme-primary-500 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 transition-colors"
-                    >
-                      {commonT("RETRY")}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 text-theme-primary-500 dark:text-theme-primary-400">
-                    {isLoading && (
-                      <>
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                        <span className="text-sm font-medium">
-                          {commonT("LOADING")}
-                        </span>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {!hasMore && !error && (
-              <div className="text-center py-4">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {commonT("END_OF_CONTENT")}
-                </p>
-              </div>
-            )}
-          </div>
         )}
       </div>
     </div>
   );
 }
 
+// ===================== Exports =====================
+
 // Alias for compatibility
 export const Card = SharedCard;
 
+// Preset configurations
 export const CardPresets = {
-  // Configuration for a complete listing page
   fullListing: {
     showStats: true,
     showViewToggle: true,
@@ -715,6 +349,7 @@ export const CardPresets = {
     enableTagFilter: true,
     enableSorting: true,
   } as CardConfigOptions,
+
   showViewToggle: {
     showStats: true,
     showViewToggle: false,
@@ -726,7 +361,6 @@ export const CardPresets = {
     enableSorting: true,
   } as CardConfigOptions,
 
-  // Configuration for a simple section
   simple: {
     showStats: false,
     showViewToggle: false,
@@ -738,7 +372,6 @@ export const CardPresets = {
     enableSorting: false,
   } as CardConfigOptions,
 
-  // Configuration for a product grid
   productGrid: {
     showStats: true,
     showViewToggle: true,
@@ -751,7 +384,6 @@ export const CardPresets = {
     defaultLayout: "grid" as LayoutKey,
   } as CardConfigOptions,
 
-  // Configuration for search results
   searchResults: {
     showStats: true,
     showViewToggle: false,
@@ -766,12 +398,11 @@ export const CardPresets = {
 };
 
 // Simplified component for quick use cases
-export function SimpleCard(
-  props: BaseCardProps & { preset?: keyof typeof CardPresets }
-) {
+export function SimpleCard(props: BaseCardProps & { preset?: keyof typeof CardPresets }) {
   const config = props.preset ? CardPresets[props.preset] : CardPresets.simple;
   return <Card {...props} config={config} />;
 }
 
-// Export types for reuse
-export type { ExtendedCardProps, CardConfigOptions, BaseCardProps };
+// Re-export utilities and constants
+export { SORT_OPTIONS } from "./utils/sort-utils";
+export { getTagId, getTagName } from "./utils/filter-utils";
