@@ -125,12 +125,7 @@ export function BasicInfoStep({
 								name="video_url"
 								type="url"
 								value={formData.video_url || ''}
-								onChange={(e) =>
-									setFormData((prev) => ({
-										...prev,
-										video_url: e.target.value
-									}))
-								}
+								onChange={handleInputChange}
 								placeholder="https://www.youtube.com/watch?v=..."
 								className={cn(
 									FORM_FIELD_CLASSES.videoInput.base,
@@ -225,7 +220,7 @@ export function BasicInfoStep({
 									className={TAG_CLASSES.showMore}
 								>
 									<MoreHorizontal className="w-4 h-4" />
-									{`Show ${tags.length - tagsToShow} more`}
+									{t('common.SHOW_MORE', { count: tags.length - tagsToShow })}
 								</button>
 							)}
 
