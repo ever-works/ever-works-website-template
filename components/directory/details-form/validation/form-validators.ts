@@ -212,22 +212,6 @@ export function validateStep(step: number, data: FormData): boolean {
 	}
 }
 
-export function isValidVideoUrl(url: string): boolean {
-	try {
-		const parsedUrl = new URL(url);
-		const allowedHosts = [
-			'youtube.com',
-			'www.youtube.com',
-			'youtu.be',
-			'vimeo.com',
-			'www.vimeo.com'
-		];
-		return allowedHosts.includes(parsedUrl.hostname);
-	} catch {
-		return false;
-	}
-}
-
 export const ALLOWED_VIDEO_HOSTS = [
 	'youtube.com',
 	'www.youtube.com',
@@ -235,6 +219,15 @@ export const ALLOWED_VIDEO_HOSTS = [
 	'vimeo.com',
 	'www.vimeo.com'
 ] as const;
+
+export function isValidVideoUrl(url: string): boolean {
+	try {
+		const parsedUrl = new URL(url);
+		return ALLOWED_VIDEO_HOSTS.includes(parsedUrl.hostname as typeof ALLOWED_VIDEO_HOSTS[number]);
+	} catch {
+		return false;
+	}
+}
 
 export const MAX_DESCRIPTION_LENGTH = 150;
 export const DEFAULT_TAGS_TO_SHOW = 18;
