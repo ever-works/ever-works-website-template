@@ -160,7 +160,6 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 							onPrevious={prevStep}
 							onNext={nextStep}
 							onBack={onBack}
-							onSubmit={handleSubmit}
 						/>
 					</form>
 				</div>

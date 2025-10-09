@@ -13,7 +13,6 @@ interface FormNavigationProps {
 	onPrevious: () => void;
 	onNext: () => void;
 	onBack: () => void;
-	onSubmit: (e: React.FormEvent) => void;
 }
 
 export function FormNavigation({
@@ -23,8 +22,7 @@ export function FormNavigation({
 	requiredFieldsCount,
 	onPrevious,
 	onNext,
-	onBack,
-	onSubmit
+	onBack
 }: FormNavigationProps) {
 	const isLastStep = currentStep === STEP_DEFINITIONS.length;
 
@@ -80,7 +78,6 @@ export function FormNavigation({
 				) : (
 					<Button
 						type="submit"
-						onClick={onSubmit}
 						disabled={completedRequiredFields < requiredFieldsCount}
 						className={cn(
 							completedRequiredFields < requiredFieldsCount
