@@ -36,9 +36,9 @@ export function LinkInput({
 			{/* Product Links */}
 			<div className="space-y-6">
 				<div className="flex items-center justify-between">
-					<label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+					<span className="block text-sm font-bold text-gray-700 dark:text-gray-300">
 						{t('directory.DETAILS_FORM.PRODUCT_LINK')} *
-					</label>
+					</span>
 					<div className="text-xs text-gray-500 dark:text-gray-400">
 						{formData.links.length} {t('directory.DETAILS_FORM.LINKS_ADDED')}
 					</div>
@@ -89,7 +89,7 @@ export function LinkInput({
 														? t('directory.DETAILS_FORM.MAIN_WEBSITE_LABEL')
 														: t('directory.DETAILS_FORM.LINK_LABEL_PLACEHOLDER')
 												}
-												className="w-full h-10 px-3 text-sm font-medium bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 focus:ring-2 focus:ring-theme-primary-20 transition-all duration-200"
+												className="w-full h-10 px-3 text-sm font-medium bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-theme-primary-500 dark:focus:border-theme-primary-400 focus:ring-2 focus:ring-theme-primary-500/20 transition-all duration-200"
 											/>
 										</div>
 
@@ -97,6 +97,7 @@ export function LinkInput({
 											<button
 												type="button"
 												onClick={() => removeLink(link.id)}
+												aria-label={t('directory.DETAILS_FORM.REMOVE_LINK')}
 												className="flex-shrink-0 w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 transition-all duration-200 opacity-0 group-hover:opacity-100 flex items-center justify-center"
 											>
 												<X className="w-4 h-4" />
@@ -122,10 +123,10 @@ export function LinkInput({
 											className={cn(
 												'w-full h-12 px-4 pr-12 text-base bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl transition-all duration-300 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400',
 												focusedField === `link-${link.id}` &&
-													'border-theme-primary-500 dark:border-theme-primary-400 ring-4 ring-theme-primary-20 scale-[1.01]',
+													'border-theme-primary-500 dark:border-theme-primary-400 ring-4 ring-theme-primary-500/20 scale-[1.01]',
 												completedFields.has('mainLink') &&
 													'border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-900/20',
-												'focus:border-theme-primary-500 dark:focus:border-theme-primary-400 focus:ring-4 focus:ring-theme-primary-20'
+												'focus:border-theme-primary-500 dark:focus:border-theme-primary-400 focus:ring-4 focus:ring-theme-primary-500/20'
 											)}
 										/>
 
@@ -157,7 +158,7 @@ export function LinkInput({
 					<button
 						type="button"
 						onClick={addLink}
-						className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-theme-primary-600 hover:text-theme-primary-700 transition-colors rounded-lg border border-dashed border-theme-primary-300 hover:bg-theme-primary-20 capitalize dark:hover:text-white"
+						className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-theme-primary-600 hover:text-theme-primary-700 transition-colors rounded-lg border border-dashed border-theme-primary-300 hover:bg-theme-primary-500/20 capitalize dark:hover:text-white"
 					>
 						<Plus className="w-4 h-4" />
 						{t('directory.DETAILS_FORM.ADD_MORE_LINKS')}
