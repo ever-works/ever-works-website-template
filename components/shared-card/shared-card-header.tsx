@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Filter, Search } from "lucide-react";
 import { clsx } from "clsx";
@@ -261,6 +261,7 @@ export function ResultsHeader({
  */
 export function SharedCardHeader(props: SharedCardHeaderProps) {
   const { config, headerActions, layoutKey, onViewChange } = props;
+  const t = useTranslations("listing");
 
   return (
     <>
@@ -273,7 +274,7 @@ export function SharedCardHeader(props: SharedCardHeaderProps) {
               searchTerm={props.searchTerm}
               selectedTags={props.selectedTags}
               hasActiveFilters={props.hasActiveFilters}
-              t={useTranslations("listing")}
+              t={t}
             />
           )}
         </div>
@@ -297,7 +298,7 @@ export function SharedCardHeader(props: SharedCardHeaderProps) {
           sortBy={props.sortBy}
           start={props.start}
           filteredCount={props.filteredCount}
-          t={useTranslations("listing")}
+          t={t}
           config={config}
           className="mb-6"
         />
