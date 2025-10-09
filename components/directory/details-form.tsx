@@ -134,7 +134,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 								categories={listingProps?.categories}
 								tags={listingProps?.tags}
 								editor={editor}
-								t={t}
+								t={t as (key: string, values?: Record<string, unknown>) => string}
 								addLink={addLink}
 								removeLink={removeLink}
 							/>
@@ -144,7 +144,12 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 						{currentStep === 2 && <PaymentStep />}
 
 						{/* Step 3: Review */}
-						{currentStep === 3 && <ReviewStep formData={formData} t={t} />}
+						{currentStep === 3 && (
+							<ReviewStep
+								formData={formData}
+								t={t as (key: string, values?: Record<string, unknown>) => string}
+							/>
+						)}
 
 						{/* Navigation Buttons */}
 						<FormNavigation
