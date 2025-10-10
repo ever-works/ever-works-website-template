@@ -59,7 +59,7 @@ export function BasicInfoStep({
 }: BasicInfoStepProps) {
 	const [showAllTags, setShowAllTags] = useState(false);
 	const [tagsToShow] = useState(DEFAULT_TAGS_TO_SHOW);
-	const { toolbarRef } = useEditorToolbar(editor ?? ({} as Editor));
+	const { toolbarRef } = useEditorToolbar(editor);
 
 	return (
 		<div className={STEP_CARD_CLASSES.wrapper}>

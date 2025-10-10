@@ -4,7 +4,7 @@ import { useWindowSize } from "@/lib/editor/hooks/use-window-size";
 import { Editor } from "@tiptap/react";
 import { useRef, useState } from "react";
 
-export const useEditorToolbar = ( editor: Editor ) => {
+export const useEditorToolbar = ( editor: Editor | null ) => {
     const toolbarRef = useRef<HTMLDivElement>(null)
     const isMobile = useIsMobile()
     const { height } = useWindowSize()
