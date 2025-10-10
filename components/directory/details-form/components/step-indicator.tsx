@@ -25,7 +25,7 @@ export function StepIndicator({ currentStep, onStepClick }: StepIndicatorProps) 
 	return (
 		<div className={STEP_INDICATOR_CLASSES.wrapper}>
 			{steps.map((step, index) => {
-				const IconComponent = step.icon;
+				const IconComponent = step.icon || Type;
 				const isActive = currentStep === step.id;
 				const isCompleted = currentStep > step.id;
 				const isAccessible = currentStep >= step.id;
