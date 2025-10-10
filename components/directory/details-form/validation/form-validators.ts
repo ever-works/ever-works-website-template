@@ -35,7 +35,7 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
 		id: 1,
 		title: 'Basic Information',
 		description: 'Basic Information Description',
-		fields: ['name', 'mainLink'],
+		fields: ['name', 'link'],
 		color: 'from-theme-primary-500 to-purple-500'
 	},
 	{
