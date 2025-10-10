@@ -20,9 +20,7 @@ import {
 
 interface BasicInfoStepProps {
 	formData: FormData;
-	setFormData: React.Dispatch<React.SetStateAction<FormData>>;
 	animatingLinkId: string | null;
-	setAnimatingLinkId: (id: string | null) => void;
 	focusedField: string | null;
 	setFocusedField: (field: string | null) => void;
 	completedFields: Set<string>;
@@ -40,9 +38,7 @@ interface BasicInfoStepProps {
 
 export function BasicInfoStep({
 	formData,
-	setFormData,
 	animatingLinkId,
-	setAnimatingLinkId,
 	focusedField,
 	setFocusedField,
 	completedFields,
@@ -77,9 +73,7 @@ export function BasicInfoStep({
 				<div className="grid gap-8">
 					<LinkInput
 						formData={formData}
-						setFormData={setFormData}
 						animatingLinkId={animatingLinkId}
-						setAnimatingLinkId={setAnimatingLinkId}
 						focusedField={focusedField}
 						setFocusedField={setFocusedField}
 						completedFields={completedFields}

@@ -58,7 +58,6 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 		validateStep,
 		setCurrentStep,
 		setFormData,
-		setAnimatingLinkId,
 		setFocusedField
 	} = useDetailForm(initialData, onSubmit);
 
@@ -125,9 +124,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 						{currentStep === 1 && (
 							<BasicInfoStep
 								formData={formData}
-								setFormData={setFormData}
 								animatingLinkId={animatingLinkId}
-								setAnimatingLinkId={setAnimatingLinkId}
 								focusedField={focusedField}
 								setFocusedField={setFocusedField}
 								completedFields={completedFields}

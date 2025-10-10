@@ -6,9 +6,7 @@ import type { FormData } from '../validation/form-validators';
 
 interface InputLinkProps {
 	formData: FormData;
-	setFormData: React.Dispatch<React.SetStateAction<FormData>>;
 	animatingLinkId: string | null;
-	setAnimatingLinkId: (id: string | null) => void;
 	focusedField: string | null;
 	setFocusedField: (field: string | null) => void;
 	completedFields: Set<string>;
