@@ -70,6 +70,10 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 	const isLastStep = currentStep === STEP_DEFINITIONS.length;
 	const canProceed = validateStep(currentStep) || isLastStep;
 
+	const handlePlanSelect = (planId: string) => {
+		setFormData((prev) => ({ ...prev, selectedPlan: planId }));
+	};
+
 	return (
 		<div className="relative min-h-screen overflow-hidden">
 			{/* Enhanced Background Effects */}
@@ -141,7 +145,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 						)}
 
 						{/* Step 2: Payment */}
-						{currentStep === 2 && <PaymentStep />}
+						{currentStep === 2 && <PaymentStep onSelectPlan={handlePlanSelect} />}
 
 						{/* Step 3: Review */}
 						{currentStep === 3 && (

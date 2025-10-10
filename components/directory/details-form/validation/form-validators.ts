@@ -17,6 +17,7 @@ export interface FormData {
 	description: string;
 	introduction: string;
 	video_url?: string;
+	selectedPlan?: string;
 	[key: string]: unknown;
 }
 
@@ -191,8 +192,8 @@ export function validateBasicInfo(data: FormData): boolean {
 	return !!(data.name && data.link);
 }
 
-export function validatePayment(): boolean {
-	return true;
+export function validatePayment(data: FormData): boolean {
+	return !!data.selectedPlan;
 }
 
 export function validateReview(): boolean {
@@ -204,7 +205,7 @@ export function validateStep(step: number, data: FormData): boolean {
 		case 1:
 			return validateBasicInfo(data);
 		case 2:
-			return validatePayment();
+			return validatePayment(data);
 		case 3:
 			return validateReview();
 		default:

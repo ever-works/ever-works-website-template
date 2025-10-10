@@ -2,6 +2,10 @@
 
 import { PricingSection } from '@/components/pricing/pricing-section';
 
-export function PaymentStep() {
-	return <PricingSection isReview={true} />;
+interface PaymentStepProps {
+	onSelectPlan?: (planId: string) => void;
+}
+
+export function PaymentStep({ onSelectPlan }: PaymentStepProps) {
+	return <PricingSection isReview={true} onSelectPlan={onSelectPlan} />;
 }
