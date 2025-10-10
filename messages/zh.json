@@ -323,7 +323,9 @@
       "GO_BACK": "返回",
       "CONTINUE_NEXT_STEP": "继续下一步",
       "PRIMARY_BADGE": "主要",
-      "LINKS_ADDED": "已添加链接"
+      "LINKS_ADDED": "已添加链接",
+      "REMOVE_LINK": "删除链接",
+      "REVIEW_AND_SUBMIT": "审核并提交"
     },
     "PAYMENT": {
       "TITLE": "完成您的订单",

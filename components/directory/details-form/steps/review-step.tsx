@@ -18,7 +18,9 @@ export function ReviewStep({ formData, t }: ReviewStepProps) {
 					<div className={STEP_CARD_CLASSES.reviewCard.header.icon}>
 						<Eye className={STEP_CARD_CLASSES.reviewCard.header.iconInner} />
 					</div>
-					<h3 className={STEP_CARD_CLASSES.reviewCard.header.title}>Review & Submit</h3>
+					<h3 className={STEP_CARD_CLASSES.reviewCard.header.title}>
+						{t('directory.DETAILS_FORM.REVIEW_AND_SUBMIT')}
+					</h3>
 				</div>
 
 				<div className="space-y-6">

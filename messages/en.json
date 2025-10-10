@@ -407,7 +407,9 @@
       "GO_BACK": "Go Back",
       "CONTINUE_NEXT_STEP": "Continue to Next Step",
       "PRIMARY_BADGE": "Primary",
-      "LINKS_ADDED": "links added"
+      "LINKS_ADDED": "links added",
+      "REMOVE_LINK": "Remove link",
+      "REVIEW_AND_SUBMIT": "Review & Submit"
     },
     "PAYMENT": {
       "TITLE": "Complete Your Order",

@@ -270,7 +270,9 @@
       "GO_BACK": "رجوع",
       "CONTINUE_NEXT_STEP": "متابعة للخطوة التالية",
       "PRIMARY_BADGE": "أساسي",
-      "LINKS_ADDED": "تمت إضافة روابط"
+      "LINKS_ADDED": "تمت إضافة روابط",
+      "REMOVE_LINK": "إزالة الرابط",
+      "REVIEW_AND_SUBMIT": "مراجعة وإرسال"
     },
     "PAYMENT": {
       "TITLE": "إتمام طلبك",

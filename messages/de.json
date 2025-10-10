@@ -343,7 +343,9 @@
       "GO_BACK": "Zurück",
       "CONTINUE_NEXT_STEP": "Weiter zum nächsten Schritt",
       "PRIMARY_BADGE": "Primär",
-      "LINKS_ADDED": "Links hinzugefügt"
+      "LINKS_ADDED": "Links hinzugefügt",
+      "REMOVE_LINK": "Link entfernen",
+      "REVIEW_AND_SUBMIT": "Überprüfen & Absenden"
     },
     "PAYMENT": {
       "TITLE": "Bestellung abschließen",

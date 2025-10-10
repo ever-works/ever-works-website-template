@@ -367,7 +367,9 @@
       "GO_BACK": "Retour",
       "CONTINUE_NEXT_STEP": "Continuer à l'étape suivante",
       "PRIMARY_BADGE": "Principal",
-      "LINKS_ADDED": "liens ajoutés"
+      "LINKS_ADDED": "liens ajoutés",
+      "REMOVE_LINK": "Supprimer le lien",
+      "REVIEW_AND_SUBMIT": "Réviser et Soumettre"
     },
     "PAYMENT": {
       "TITLE": "Finalisez votre commande",

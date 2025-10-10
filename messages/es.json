@@ -323,7 +323,9 @@
       "GO_BACK": "Volver",
       "CONTINUE_NEXT_STEP": "Continuar al siguiente paso",
       "PRIMARY_BADGE": "Principal",
-      "LINKS_ADDED": "enlaces agregados"
+      "LINKS_ADDED": "enlaces agregados",
+      "REMOVE_LINK": "Eliminar enlace",
+      "REVIEW_AND_SUBMIT": "Revisar y Enviar"
     },
     "PAYMENT": {
       "TITLE": "Completa tu pedido",
