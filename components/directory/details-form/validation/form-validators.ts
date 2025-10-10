@@ -25,7 +25,7 @@ export interface StepDefinition {
 	id: number;
 	title: string;
 	description: string;
-	icon: LucideIcon;
+	icon?: LucideIcon;
 	fields: string[];
 	color: string;
 }
@@ -35,7 +35,6 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
 		id: 1,
 		title: 'Basic Information',
 		description: 'Basic Information Description',
-		icon: null as unknown as LucideIcon, // Will be set by component
 		fields: ['name', 'mainLink'],
 		color: 'from-theme-primary-500 to-purple-500'
 	},
@@ -43,15 +42,13 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
 		id: 2,
 		title: 'Payment',
 		description: 'Payment Description',
-		icon: null as unknown as LucideIcon,
-		fields: ['Payment'],
+		fields: ['selectedPlan'],
 		color: 'from-purple-500 to-pink-500'
 	},
 	{
 		id: 3,
 		title: 'Review',
 		description: 'Review Description',
-		icon: null as unknown as LucideIcon,
 		fields: [],
 		color: 'from-orange-500 to-red-500'
 	}
@@ -119,7 +116,7 @@ export const FORM_FIELD_CLASSES = {
 	},
 	videoInput: {
 		base: 'w-full h-12 px-4 pr-12 text-base bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl transition-all duration-300 outline-none text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400',
-		focus: 'focus:border-theme-primary-500 dark:focus:border-theme-primary-400 focus:ring-4 focus:ring-theme-primary-20'
+		focus: 'focus:border-theme-primary-500 dark:focus:border-theme-primary-400 focus:ring-4 focus:ring-theme-primary-500/20'
 	}
 };
 
@@ -189,7 +186,7 @@ export const VIDEO_PREVIEW_CLASSES = {
 };
 
 export function validateBasicInfo(data: FormData): boolean {
-	return !!(data.name && data.link);
+	return Boolean(data.name?.trim() && data.link?.trim());
 }
 
 export function validatePayment(data: FormData): boolean {
