@@ -106,7 +106,8 @@ export function useComments(itemId: string) {
   const { data: commentRating = 0, isLoading: isLoadingRating } = useQuery({
     queryKey: ["commentRating", itemId],
     queryFn: async () => {
-      const response = await serverClient.get(`/api/items/${itemId}/comments/rating`);
+      const encodedItemId = encodeURIComponent(itemId);
+      const response = await serverClient.get(`/api/items/${encodedItemId}/comments/rating`);
       if (!apiUtils.isSuccess(response)) {
         throw new Error(apiUtils.getErrorMessage(response));
       }
