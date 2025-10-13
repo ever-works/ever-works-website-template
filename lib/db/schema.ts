@@ -582,3 +582,24 @@ export type NewFavorite = typeof favorites.$inferInsert;
 export type FavoriteWithUser = Favorite & {
   user: typeof users.$inferSelect;
 };
+
+// ######################### Companies Schema #########################
+export const companies = pgTable("companies", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  website: text("website"),
+  domain: text("domain"),
+  slug: text("slug"),
+  status: text("status", { enum: ["active", "inactive"] }).notNull().default("active"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  nameIndex: index("companies_name_idx").on(table.name),
+  statusIndex: index("companies_status_idx").on(table.status),
+}));
+
+// ######################### Companies Types #########################
+export type Company = typeof companies.$inferSelect;
+export type NewCompany = typeof companies.$inferInsert;
