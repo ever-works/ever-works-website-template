@@ -239,23 +239,83 @@ export async function getCompaniesStats(): Promise<{
 // ===================== Item-Company Association =====================
 
 /**
- * Assign company to item
+ * Link item to company (idempotent - duplicate link is no-op)
+ * @param itemSlug - Item slug (normalized to lowercase)
+ * @param companyId - Company ID
+ * @returns Created or existing association with success indicator
+ * @throws Error with friendly message if company doesn't exist
+ */
+export async function linkItemToCompany(
+  itemSlug: string,
+  companyId: string
+): Promise<{ association: ItemCompany; created: boolean }> {
+  const normalizedSlug = itemSlug.toLowerCase().trim();
+
+  try {
+    // Check if company exists
+    const company = await getCompanyById(companyId);
+    if (!company) {
+      throw new Error(`Company with ID "${companyId}" does not exist.`);
+    }
+
+    // Check if association already exists (idempotent check)
+    const existing = await db
+      .select()
+      .from(itemsCompanies)
+      .where(eq(itemsCompanies.itemSlug, normalizedSlug))
+      .limit(1);
+
+    if (existing.length > 0) {
+      // Already linked, return existing (idempotent - no-op)
+      return { association: existing[0], created: false };
+    }
+
+    // Create new association
+    const [association] = await db
+      .insert(itemsCompanies)
+      .values({
+        itemSlug: normalizedSlug,
+        companyId
+      })
+      .returning();
+
+    return { association, created: true };
+  } catch (error) {
+    // Handle unique constraint violation with friendly message
+    if (error instanceof Error) {
+      if (error.message.includes('unique constraint') || error.message.includes('duplicate key')) {
+        // This shouldn't happen due to our check above, but handle it gracefully
+        const existing = await db
+          .select()
+          .from(itemsCompanies)
+          .where(eq(itemsCompanies.itemSlug, normalizedSlug))
+          .limit(1);
+
+        if (existing.length > 0) {
+          return { association: existing[0], created: false };
+        }
+
+        throw new Error(`Item "${normalizedSlug}" is already linked to another company. Each item can only belong to one company.`);
+      }
+
+      if (error.message.includes('foreign key constraint') || error.message.includes('does not exist')) {
+        throw new Error(`Company with ID "${companyId}" does not exist.`);
+      }
+    }
+
+    throw error;
+  }
+}
+
+/**
+ * Assign company to item (alias for linkItemToCompany for backward compatibility)
  * @param itemSlug - Item slug (normalized to lowercase)
  * @param companyId - Company ID
  * @returns Created association
  */
 export async function assignCompanyToItem(itemSlug: string, companyId: string): Promise<ItemCompany> {
-  const normalizedSlug = itemSlug.toLowerCase().trim();
-
-  const [association] = await db
-    .insert(itemsCompanies)
-    .values({
-      itemSlug: normalizedSlug,
-      companyId
-    })
-    .returning();
-
-  return association;
+  const result = await linkItemToCompany(itemSlug, companyId);
+  return result.association;
 }
 
 /**
@@ -280,27 +340,48 @@ export async function updateItemCompany(
 }
 
 /**
- * Remove company from item
+ * Unlink item from company (idempotent - unlink of non-existent mapping is no-op)
+ * @param itemSlug - Item slug (normalized to lowercase)
+ * @returns Success indicator (always true, idempotent)
+ */
+export async function unlinkItemFromCompany(itemSlug: string): Promise<{ success: boolean; deleted: boolean }> {
+  const normalizedSlug = itemSlug.toLowerCase().trim();
+
+  try {
+    const [association] = await db
+      .delete(itemsCompanies)
+      .where(eq(itemsCompanies.itemSlug, normalizedSlug))
+      .returning();
+
+    return {
+      success: true,
+      deleted: !!association
+    };
+  } catch (error) {
+    // Even if error occurs, return success (idempotent - unlink of non-existent is no-op)
+    return {
+      success: true,
+      deleted: false
+    };
+  }
+}
+
+/**
+ * Remove company from item (alias for unlinkItemFromCompany for backward compatibility)
  * @param itemSlug - Item slug (normalized to lowercase)
  * @returns True if deleted, false otherwise
  */
 export async function removeCompanyFromItem(itemSlug: string): Promise<boolean> {
-  const normalizedSlug = itemSlug.toLowerCase().trim();
-
-  const [association] = await db
-    .delete(itemsCompanies)
-    .where(eq(itemsCompanies.itemSlug, normalizedSlug))
-    .returning();
-
-  return !!association;
+  const result = await unlinkItemFromCompany(itemSlug);
+  return result.deleted;
 }
 
 /**
- * Get company for an item
+ * Get company by item slug
  * @param itemSlug - Item slug (normalized to lowercase)
  * @returns Company or null if not associated
  */
-export async function getCompanyForItem(itemSlug: string): Promise<Company | null> {
+export async function getCompanyByItemSlug(itemSlug: string): Promise<Company | null> {
   const normalizedSlug = itemSlug.toLowerCase().trim();
 
   const [result] = await db
@@ -323,12 +404,21 @@ export async function getCompanyForItem(itemSlug: string): Promise<Company | nul
 }
 
 /**
- * Get all items for a company
+ * Get company for an item (alias for getCompanyByItemSlug for backward compatibility)
+ * @param itemSlug - Item slug (normalized to lowercase)
+ * @returns Company or null if not associated
+ */
+export async function getCompanyForItem(itemSlug: string): Promise<Company | null> {
+  return getCompanyByItemSlug(itemSlug);
+}
+
+/**
+ * List items by company with pagination
  * @param companyId - Company ID
  * @param params - Pagination parameters
  * @returns List of item slugs associated with the company
  */
-export async function getItemsForCompany(
+export async function listItemsByCompany(
   companyId: string,
   params?: { page?: number; limit?: number }
 ): Promise<{
@@ -365,6 +455,25 @@ export async function getItemsForCompany(
     totalPages: Math.ceil(total / limit),
     limit
   };
+}
+
+/**
+ * Get all items for a company (alias for listItemsByCompany for backward compatibility)
+ * @param companyId - Company ID
+ * @param params - Pagination parameters
+ * @returns List of item slugs associated with the company
+ */
+export async function getItemsForCompany(
+  companyId: string,
+  params?: { page?: number; limit?: number }
+): Promise<{
+  items: ItemCompany[];
+  total: number;
+  page: number;
+  totalPages: number;
+  limit: number;
+}> {
+  return listItemsByCompany(companyId, params);
 }
 
 /**
