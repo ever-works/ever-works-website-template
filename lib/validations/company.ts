@@ -39,3 +39,35 @@ export const updateCompanySchema = z.object({
 
 export type CreateCompanyInput = z.infer<typeof createCompanySchema>;
 export type UpdateCompanyInput = z.infer<typeof updateCompanySchema>;
+
+// ######################### Item-Company Association Schemas #########################
+
+export const assignCompanyToItemSchema = z.object({
+  itemSlug: z
+    .string()
+    .min(1, "Item slug is required")
+    .max(255)
+    .transform((val) => val.toLowerCase().trim()),
+  companyId: z.string().uuid("Invalid company ID format"),
+});
+
+export const updateItemCompanySchema = z.object({
+  itemSlug: z
+    .string()
+    .min(1, "Item slug is required")
+    .max(255)
+    .transform((val) => val.toLowerCase().trim()),
+  companyId: z.string().uuid("Invalid company ID format"),
+});
+
+export const removeCompanyFromItemSchema = z.object({
+  itemSlug: z
+    .string()
+    .min(1, "Item slug is required")
+    .max(255)
+    .transform((val) => val.toLowerCase().trim()),
+});
+
+export type AssignCompanyToItemInput = z.infer<typeof assignCompanyToItemSchema>;
+export type UpdateItemCompanyInput = z.infer<typeof updateItemCompanySchema>;
+export type RemoveCompanyFromItemInput = z.infer<typeof removeCompanyFromItemSchema>;

@@ -603,3 +603,19 @@ export const companies = pgTable("companies", {
 // ######################### Companies Types #########################
 export type Company = typeof companies.$inferSelect;
 export type NewCompany = typeof companies.$inferInsert;
+
+// ######################### Items Companies Schema #########################
+export const itemsCompanies = pgTable("items_companies", {
+  itemSlug: text("item_slug").notNull().unique(),
+  companyId: text("company_id")
+    .notNull()
+    .references(() => companies.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  companyIdIndex: index("items_companies_company_id_idx").on(table.companyId),
+}));
+
+// ######################### Items Companies Types #########################
+export type ItemCompany = typeof itemsCompanies.$inferSelect;
+export type NewItemCompany = typeof itemsCompanies.$inferInsert;
