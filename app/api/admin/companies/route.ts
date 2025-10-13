@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { listCompanies } from '@/lib/db/queries';
+import { listCompanies, createCompany, getCompanyByDomain, getCompanyBySlug } from '@/lib/db/queries';
+import { createCompanySchema } from '@/lib/validations/company';
+import { ZodError } from 'zod';
 
 /**
  * @swagger
@@ -161,5 +163,220 @@ export async function GET(request: NextRequest) {
 	} catch (error) {
 		console.error('Error fetching companies:', error);
 		return NextResponse.json({ error: 'Failed to fetch companies' }, { status: 500 });
+	}
+}
+
+/**
+ * @swagger
+ * /api/admin/companies:
+ *   post:
+ *     tags: ["Admin - Companies"]
+ *     summary: "Create company"
+ *     description: "Creates a new company with validation and conflict handling. Domain and slug are normalized to lowercase. Requires admin privileges."
+ *     security:
+ *       - sessionAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: "Company name (required)"
+ *                 example: "Acme Corporation"
+ *                 minLength: 1
+ *                 maxLength: 255
+ *               website:
+ *                 type: string
+ *                 format: uri
+ *                 description: "Company website URL (optional)"
+ *                 example: "https://acme.com"
+ *               domain:
+ *                 type: string
+ *                 description: "Company domain (optional, normalized to lowercase)"
+ *                 example: "acme.com"
+ *                 maxLength: 255
+ *               slug:
+ *                 type: string
+ *                 description: "URL-friendly identifier (optional, normalized to lowercase)"
+ *                 example: "acme-corporation"
+ *                 pattern: "^[a-z0-9-]+$"
+ *                 maxLength: 255
+ *               status:
+ *                 type: string
+ *                 enum: ["active", "inactive"]
+ *                 default: "active"
+ *                 description: "Company status (optional)"
+ *                 example: "active"
+ *             required: ["name"]
+ *           example:
+ *             name: "Acme Corporation"
+ *             website: "https://acme.com"
+ *             domain: "acme.com"
+ *             slug: "acme-corporation"
+ *             status: "active"
+ *     responses:
+ *       201:
+ *         description: "Company created successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: "#/components/schemas/Company"
+ *               required: ["success", "data"]
+ *             example:
+ *               success: true
+ *               data:
+ *                 id: "550e8400-e29b-41d4-a716-446655440000"
+ *                 name: "Acme Corporation"
+ *                 website: "https://acme.com"
+ *                 domain: "acme.com"
+ *                 slug: "acme-corporation"
+ *                 status: "active"
+ *                 createdAt: "2024-01-20T16:45:00.000Z"
+ *                 updatedAt: "2024-01-20T16:45:00.000Z"
+ *       400:
+ *         description: "Bad request - Validation error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Validation error"
+ *                 details:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       field:
+ *                         type: string
+ *                       message:
+ *                         type: string
+ *             example:
+ *               error: "Validation error"
+ *               details:
+ *                 - field: "name"
+ *                   message: "Company name is required"
+ *       401:
+ *         description: "Unauthorized - Admin access required"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       409:
+ *         description: "Conflict - Domain or slug already exists"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Company with this domain already exists"
+ *             examples:
+ *               domain_conflict:
+ *                 value:
+ *                   error: "Company with domain 'acme.com' already exists"
+ *               slug_conflict:
+ *                 value:
+ *                   error: "Company with slug 'acme-corporation' already exists"
+ *       500:
+ *         description: "Internal server error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to create company"
+ */
+export async function POST(request: NextRequest) {
+	try {
+		const session = await auth();
+
+		if (!session?.user?.isAdmin) {
+			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+		}
+
+		const body = await request.json();
+
+		// Validate request body
+		let validatedData;
+		try {
+			validatedData = createCompanySchema.parse(body);
+		} catch (error) {
+			if (error instanceof ZodError) {
+				const details = error.errors.map((err) => ({
+					field: err.path.join('.'),
+					message: err.message
+				}));
+				return NextResponse.json({ error: 'Validation error', details }, { status: 400 });
+			}
+			throw error;
+		}
+
+		// Check for domain uniqueness if domain is provided
+		if (validatedData.domain) {
+			const existingByDomain = await getCompanyByDomain(validatedData.domain);
+			if (existingByDomain) {
+				return NextResponse.json(
+					{ error: `Company with domain '${validatedData.domain}' already exists` },
+					{ status: 409 }
+				);
+			}
+		}
+
+		// Check for slug uniqueness if slug is provided
+		if (validatedData.slug) {
+			const existingBySlug = await getCompanyBySlug(validatedData.slug);
+			if (existingBySlug) {
+				return NextResponse.json(
+					{ error: `Company with slug '${validatedData.slug}' already exists` },
+					{ status: 409 }
+				);
+			}
+		}
+
+		// Create company
+		const company = await createCompany(validatedData);
+
+		return NextResponse.json(
+			{
+				success: true,
+				data: company
+			},
+			{ status: 201 }
+		);
+	} catch (error) {
+		console.error('Error creating company:', error);
+
+		// Handle database unique constraint violations
+		if (error instanceof Error) {
+			if (error.message.includes('unique constraint') || error.message.includes('duplicate key')) {
+				if (error.message.toLowerCase().includes('domain')) {
+					return NextResponse.json({ error: 'Company with this domain already exists' }, { status: 409 });
+				}
+				if (error.message.toLowerCase().includes('slug')) {
+					return NextResponse.json({ error: 'Company with this slug already exists' }, { status: 409 });
+				}
+				return NextResponse.json({ error: 'Company with this information already exists' }, { status: 409 });
+			}
+		}
+
+		return NextResponse.json({ error: 'Failed to create company' }, { status: 500 });
 	}
 }
