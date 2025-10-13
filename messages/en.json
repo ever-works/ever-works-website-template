@@ -2101,6 +2101,19 @@
       "BILLING_DESCRIPTION": "Payment and subscription details will appear here once configured.",
       "SET_UP_BILLING": "Set up billing"
     },
+    "ADMIN_COMPANIES_PAGE": {
+      "TITLE": "Company Management",
+      "SUBTITLE": "Manage companies and their information",
+      "ADD_COMPANY": "Add Company",
+      "TOTAL_COMPANIES": "Total Companies",
+      "ACTIVE_COMPANIES": "Active Companies",
+      "COMPANIES_TITLE": "Companies",
+      "COMPANIES_TOTAL_COUNT": "companies total",
+      "NO_COMPANIES_FOUND": "No companies found",
+      "NO_COMPANIES_DESCRIPTION": "Get started by adding your first company.",
+      "ADD_FIRST_COMPANY": "Add First Company",
+      "COMING_SOON": "Company management features coming soon..."
+    },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Category Management",
       "SUBTITLE": "Organize and manage your content categories",
