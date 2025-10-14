@@ -15,7 +15,7 @@ import { ZodError } from 'zod';
  * GET /api/items/[slug]/company
  * Get the company assigned to an item
  */
-export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
 	try {
 		const session = await auth();
 
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
 
-		const { slug } = params;
+		const { slug } = await params;
 		const normalizedSlug = slug.toLowerCase().trim();
 
 		const company = await getCompanyForItem(normalizedSlug);
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
  * POST /api/items/[slug]/company
  * Assign a company to an item (idempotent)
  */
-export async function POST(request: NextRequest, { params }: { params: { slug: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
 	try {
 		const session = await auth();
 
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest, { params }: { params: { slug: s
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
 
-		const { slug } = params;
+		const { slug } = await params;
 		const body = await request.json();
 
 		// Validate request body
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest, { params }: { params: { slug: s
  * DELETE /api/items/[slug]/company
  * Remove company assignment from an item (idempotent)
  */
-export async function DELETE(request: NextRequest, { params }: { params: { slug: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
 	try {
 		const session = await auth();
 
@@ -115,7 +115,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { slug:
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
 
-		const { slug } = params;
+		const { slug } = await params;
 
 		// Validate request
 		let validatedData;
