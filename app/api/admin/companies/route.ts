@@ -320,7 +320,7 @@ export async function POST(request: NextRequest) {
 			validatedData = createCompanySchema.parse(body);
 		} catch (error) {
 			if (error instanceof ZodError) {
-				const details = error.errors.map((err) => ({
+				const details = error.issues.map((err) => ({
 					field: err.path.join('.'),
 					message: err.message
 				}));
