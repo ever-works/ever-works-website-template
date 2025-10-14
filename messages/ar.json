@@ -56,6 +56,9 @@
     "COMMENTS": "التعليقات",
     "ROLES": "الأدوار",
     "MANAGE_CLIENTS": "إدارة العملاء",
+    "MANAGE_CLIENTS_DESC": "عرض وإدارة ملفات العملاء",
+    "MANAGE_COMPANIES": "إدارة الشركات",
+    "MANAGE_COMPANIES_DESC": "عرض وإدارة معلومات الشركات",
     "DASHBOARD": "لوحة التحكم",
     "USE_CODE": "استخدم الكود",
     "EXPIRED": "منتهي الصلاحية",
@@ -1711,6 +1714,19 @@
       "DELETE_CONFIRMATION": "هل أنت متأكد من أنك تريد {action} هذه الفئة؟",
       "PERMANENTLY_DELETE": "حذف نهائياً",
       "DEACTIVATE": "إلغاء تفعيل"
+    },
+    "ADMIN_COMPANIES_PAGE": {
+      "TITLE": "إدارة الشركات",
+      "SUBTITLE": "إدارة الشركات ومعلوماتها",
+      "ADD_COMPANY": "إضافة شركة",
+      "TOTAL_COMPANIES": "إجمالي الشركات",
+      "ACTIVE_COMPANIES": "الشركات النشطة",
+      "COMPANIES_TITLE": "الشركات",
+      "COMPANIES_TOTAL_COUNT": "إجمالي الشركات",
+      "NO_COMPANIES_FOUND": "لم يتم العثور على شركات",
+      "NO_COMPANIES_DESCRIPTION": "ابدأ بإضافة شركتك الأولى.",
+      "ADD_FIRST_COMPANY": "إضافة أول شركة",
+      "COMING_SOON": "ميزات إدارة الشركات قادمة قريباً..."
     },
     "AUTH_FORM": {
       "ADMIN_WELCOME_TITLE": "مرحباً بك في لوحة تحكم الإدارة",

@@ -64,6 +64,9 @@
     "COMMENTS": "Kommentare",
     "ROLES": "Rollen",
     "MANAGE_CLIENTS": "Kunden verwalten",
+    "MANAGE_CLIENTS_DESC": "Kundenprofile anzeigen und verwalten",
+    "MANAGE_COMPANIES": "Unternehmen verwalten",
+    "MANAGE_COMPANIES_DESC": "Unternehmensinformationen anzeigen und verwalten",
     "FAVORITES": "Favoriten",
     "FAVORITES_DESCRIPTION": "Ihre gespeicherten Elemente und Tools. Greifen Sie schnell darauf zu.",
     "SIGN_IN_TO_VIEW_FAVORITES": "Melden Sie sich an, um Ihre Favoriten zu sehen",
@@ -1757,6 +1760,19 @@
       "NO_BILLING_SETUP": "Keine Abrechnung eingerichtet",
       "BILLING_DESCRIPTION": "Zahlungs- und Abonnementdetails werden hier angezeigt, sobald sie konfiguriert sind.",
       "SET_UP_BILLING": "Abrechnung einrichten"
+    },
+    "ADMIN_COMPANIES_PAGE": {
+      "TITLE": "Unternehmensverwaltung",
+      "SUBTITLE": "Unternehmen und ihre Informationen verwalten",
+      "ADD_COMPANY": "Unternehmen hinzufügen",
+      "TOTAL_COMPANIES": "Unternehmen insgesamt",
+      "ACTIVE_COMPANIES": "Aktive Unternehmen",
+      "COMPANIES_TITLE": "Unternehmen",
+      "COMPANIES_TOTAL_COUNT": "Unternehmen insgesamt",
+      "NO_COMPANIES_FOUND": "Keine Unternehmen gefunden",
+      "NO_COMPANIES_DESCRIPTION": "Beginnen Sie, indem Sie Ihr erstes Unternehmen hinzufügen.",
+      "ADD_FIRST_COMPANY": "Erstes Unternehmen hinzufügen",
+      "COMING_SOON": "Funktionen zur Unternehmensverwaltung kommen bald..."
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Kategorieverwaltung",

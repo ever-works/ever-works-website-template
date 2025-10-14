@@ -56,6 +56,9 @@
     "COMMENTS": "评论",
     "ROLES": "角色",
     "MANAGE_CLIENTS": "管理客户",
+    "MANAGE_CLIENTS_DESC": "查看和管理客户档案",
+    "MANAGE_COMPANIES": "管理公司",
+    "MANAGE_COMPANIES_DESC": "查看和管理公司信息",
     "DASHBOARD": "仪表板",
     "USE_CODE": "使用代码",
     "EXPIRED": "已过期",
@@ -1739,6 +1742,19 @@
       "NO_BILLING_SETUP": "未设置计费",
       "BILLING_DESCRIPTION": "配置后，付款和订阅详情将在此处显示。",
       "SET_UP_BILLING": "设置计费"
+    },
+    "ADMIN_COMPANIES_PAGE": {
+      "TITLE": "公司管理",
+      "SUBTITLE": "管理公司及其信息",
+      "ADD_COMPANY": "添加公司",
+      "TOTAL_COMPANIES": "公司总数",
+      "ACTIVE_COMPANIES": "活跃公司",
+      "COMPANIES_TITLE": "公司",
+      "COMPANIES_TOTAL_COUNT": "公司总数",
+      "NO_COMPANIES_FOUND": "未找到公司",
+      "NO_COMPANIES_DESCRIPTION": "开始添加您的第一家公司。",
+      "ADD_FIRST_COMPANY": "添加第一家公司",
+      "COMING_SOON": "公司管理功能即将推出..."
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "分类管理",

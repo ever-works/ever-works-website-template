@@ -112,6 +112,8 @@
     "ROLES": "Roles",
     "MANAGE_CLIENTS": "Manage Clients",
     "MANAGE_CLIENTS_DESC": "View and manage client profiles",
+    "MANAGE_COMPANIES": "Manage Companies",
+    "MANAGE_COMPANIES_DESC": "View and manage company information",
     "YOUR_PROFILE": "Your Profile",
     "YOUR_PROFILE_DESC": "View and edit your profile",
     "MANAGE_CATEGORIES_DESC": "Manage categories",

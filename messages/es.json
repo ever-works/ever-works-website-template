@@ -56,6 +56,8 @@
     "ROLES": "Roles",
     "MANAGE_CLIENTS": "Gestionar Clientes",
     "MANAGE_CLIENTS_DESC": "Ver y gestionar perfiles de clientes",
+    "MANAGE_COMPANIES": "Gestionar Empresas",
+    "MANAGE_COMPANIES_DESC": "Ver y gestionar información de empresas",
     "YOUR_PROFILE": "Tu perfil",
     "YOUR_PROFILE_DESC": "Ver y editar tu perfil",
     "MANAGE_CATEGORIES_DESC": "Gestionar categorías",
@@ -1741,6 +1743,19 @@
       "NO_BILLING_SETUP": "Sin configuración de facturación",
       "BILLING_DESCRIPTION": "Los detalles de pago y suscripción aparecerán aquí una vez configurados.",
       "SET_UP_BILLING": "Configurar facturación"
+    },
+    "ADMIN_COMPANIES_PAGE": {
+      "TITLE": "Gestión de Empresas",
+      "SUBTITLE": "Gestionar empresas y su información",
+      "ADD_COMPANY": "Agregar Empresa",
+      "TOTAL_COMPANIES": "Empresas Totales",
+      "ACTIVE_COMPANIES": "Empresas Activas",
+      "COMPANIES_TITLE": "Empresas",
+      "COMPANIES_TOTAL_COUNT": "empresas totales",
+      "NO_COMPANIES_FOUND": "No se encontraron empresas",
+      "NO_COMPANIES_DESCRIPTION": "Comienza agregando tu primera empresa.",
+      "ADD_FIRST_COMPANY": "Agregar Primera Empresa",
+      "COMING_SOON": "Las funciones de gestión de empresas llegarán pronto..."
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Gestión de Categorías",
