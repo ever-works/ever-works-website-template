@@ -281,7 +281,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 			validatedData = updateCompanySchema.parse({ id, ...body });
 		} catch (error) {
 			if (error instanceof ZodError) {
-				const details = error.errors.map((err) => ({
+				const details = error.issues.map((err) => ({
 					field: err.path.join('.'),
 					message: err.message
 				}));
