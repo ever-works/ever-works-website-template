@@ -287,7 +287,7 @@ export function DeleteConfirmationModal({
 					<h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('DELETE_COMPANY')}</h3>
 					<p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t('DELETE_CONFIRMATION')}</p>
 					{companyName && (
-						<p className="text-sm font-medium text-gray-900 dark:text-white mb-6">"{companyName}"</p>
+						<p className="text-sm font-medium text-gray-900 dark:text-white mb-6">&ldquo;{companyName}&rdquo;</p>
 					)}
 					<div className="flex justify-center space-x-3 mt-6">
 						<Button color="default" variant="bordered" onPress={onCancel} isDisabled={isDeleting}>

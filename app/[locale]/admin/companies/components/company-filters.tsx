@@ -25,7 +25,7 @@ export function CompanyFilters({
 	activeFilterCount,
 	isSearching,
 }: CompanyFiltersProps) {
-	const t = useTranslations('admin.ADMIN_COMPANIES_PAGE');
+	// const t = useTranslations('admin.ADMIN_COMPANIES_PAGE');
 
 	const statuses = [
 		{ key: 'all', label: 'All Status' },

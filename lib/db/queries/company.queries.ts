@@ -5,8 +5,7 @@ import {
   itemsCompanies,
   type Company,
   type NewCompany,
-  type ItemCompany,
-  type NewItemCompany
+  type ItemCompany
 } from '../schema';
 
 // ===================== Company CRUD =====================
@@ -99,9 +98,9 @@ export async function updateCompany(
   };
 
   // Remove undefined values
-  const updateData = Object.fromEntries(
-    Object.entries(normalizedData).filter(([_, value]) => value !== undefined)
-  );
+	const updateData = Object.fromEntries(
+		Object.entries(normalizedData).filter(([, value]) => value !== undefined)
+	);
 
   const [company] = await db
     .update(companies)
@@ -357,13 +356,13 @@ export async function unlinkItemFromCompany(itemSlug: string): Promise<{ success
       success: true,
       deleted: !!association
     };
-  } catch (error) {
-    // Even if error occurs, return success (idempotent - unlink of non-existent is no-op)
-    return {
-      success: true,
-      deleted: false
-    };
-  }
+	} catch {
+		// Even if error occurs, return success (idempotent - unlink of non-existent is no-op)
+		return {
+			success: true,
+			deleted: false
+		};
+	}
 }
 
 /**

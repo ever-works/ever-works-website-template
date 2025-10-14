@@ -313,7 +313,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 		}
 
 		// Remove id from update data
-		const { id: _, ...updateData } = validatedData;
+		const { id: _idToRemove, ...updateData } = validatedData;
 
 		// Update company
 		const company = await updateCompany(id, updateData);
