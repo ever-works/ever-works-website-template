@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { useDebounceSearch } from '@/hooks/use-debounced-search';
 import { useAdminCompanies, type Company } from '@/hooks/use-admin-companies';
 import { UniversalPagination } from '@/components/universal-pagination';
-import type { CreateCompanyInput } from '@/lib/validations/company';
+import type { CreateCompanyInput, UpdateCompanyInput } from '@/lib/validations/company';
 
 // Components
 import { PageHeader } from './components/page-header';
@@ -12,7 +12,7 @@ import { CompanyStats } from './components/company-stats';
 import { CompanyFilters } from './components/company-filters';
 import { CompaniesTable } from './components/companies-table';
 import { LoadingSkeleton } from './components/loading-skeleton';
-import { CompanyModal } from './components/company-modal';
+import { CompanyModal, DeleteConfirmationModal } from './components/company-modal';
 
 /**
  * Companies Page Component
@@ -24,8 +24,11 @@ export default function CompaniesPage() {
 	const [limit] = useState(10);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [statusFilter, setStatusFilter] = useState('');
-	const [companyToDelete, setCompanyToDelete] = useState<string | null>(null);
+	const [companyToDelete, setCompanyToDelete] = useState<Company | null>(null);
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
 
 	// Debounced search
 	const { debouncedValue: debouncedSearchTerm, isSearching } = useDebounceSearch({
@@ -39,17 +42,27 @@ export default function CompaniesPage() {
 	});
 
 	// Data fetching hook
-	const { companies, stats, total, page, totalPages, isLoading, isSubmitting, createCompany, deleteCompany } =
-		useAdminCompanies({
-			params: {
-				page: currentPage,
-				limit,
-				search: debouncedSearchTerm,
-				status: statusFilter as 'active' | 'inactive' | undefined,
-				sortBy: 'createdAt',
-				sortOrder: 'desc',
-			},
-		});
+	const {
+		companies,
+		stats,
+		total,
+		page,
+		totalPages,
+		isLoading,
+		isSubmitting,
+		createCompany,
+		updateCompany,
+		deleteCompany,
+	} = useAdminCompanies({
+		params: {
+			page: currentPage,
+			limit,
+			search: debouncedSearchTerm,
+			status: statusFilter as 'active' | 'inactive' | undefined,
+			sortBy: 'createdAt',
+			sortOrder: 'desc',
+		},
+	});
 
 	// Calculate active filters
 	const activeFilterCount = [searchTerm, statusFilter].filter(Boolean).length;
@@ -61,8 +74,8 @@ export default function CompaniesPage() {
 	}, []);
 
 	const handleCreateCompany = useCallback(
-		async (data: CreateCompanyInput) => {
-			const success = await createCompany(data);
+		async (data: CreateCompanyInput | UpdateCompanyInput) => {
+			const success = await createCompany(data as CreateCompanyInput);
 			if (success) {
 				setIsCreateModalOpen(false);
 				// Reset to page 1 to see the new company
@@ -72,25 +85,56 @@ export default function CompaniesPage() {
 		[createCompany]
 	);
 
-	const handleCloseModal = useCallback(() => {
+	const handleCloseCreateModal = useCallback(() => {
 		setIsCreateModalOpen(false);
 	}, []);
 
 	const handleEditCompany = useCallback((company: Company) => {
-		// TODO: Implement edit company modal
-		console.log('Edit company:', company);
+		setSelectedCompany(company);
+		setIsEditModalOpen(true);
 	}, []);
 
-	const handleDeleteCompany = useCallback(
-		async (companyId: string) => {
-			setCompanyToDelete(companyId);
-			const success = await deleteCompany(companyId);
+	const handleUpdateCompany = useCallback(
+		async (data: CreateCompanyInput | UpdateCompanyInput) => {
+			const updateData = data as UpdateCompanyInput;
+			const success = await updateCompany(updateData.id, updateData);
 			if (success) {
-				setCompanyToDelete(null);
+				setIsEditModalOpen(false);
+				setSelectedCompany(null);
 			}
 		},
-		[deleteCompany]
+		[updateCompany]
 	);
+
+	const handleCloseEditModal = useCallback(() => {
+		setIsEditModalOpen(false);
+		setSelectedCompany(null);
+	}, []);
+
+	const handleDeleteClick = useCallback(
+		(companyId: string) => {
+			const company = companies.find((c) => c.id === companyId);
+			if (company) {
+				setCompanyToDelete(company);
+				setIsDeleteModalOpen(true);
+			}
+		},
+		[companies]
+	);
+
+	const handleConfirmDelete = useCallback(async () => {
+		if (!companyToDelete) return;
+		const success = await deleteCompany(companyToDelete.id);
+		if (success) {
+			setIsDeleteModalOpen(false);
+			setCompanyToDelete(null);
+		}
+	}, [companyToDelete, deleteCompany]);
+
+	const handleCancelDelete = useCallback(() => {
+		setIsDeleteModalOpen(false);
+		setCompanyToDelete(null);
+	}, []);
 
 	const handleClearFilters = useCallback(() => {
 		setSearchTerm('');
@@ -131,9 +175,9 @@ export default function CompaniesPage() {
 				companies={companies}
 				totalCount={total}
 				isLoading={isLoading}
-				deletingCompanyId={companyToDelete}
+				deletingCompanyId={companyToDelete?.id || null}
 				onEdit={handleEditCompany}
-				onDelete={handleDeleteCompany}
+				onDelete={handleDeleteClick}
 				onCreateFirst={handleAddCompany}
 				hasActiveFilters={hasActiveFilters}
 			/>
@@ -148,9 +192,29 @@ export default function CompaniesPage() {
 			{/* Create Company Modal */}
 			<CompanyModal
 				isOpen={isCreateModalOpen}
+				mode="create"
 				isSubmitting={isSubmitting}
 				onSubmit={handleCreateCompany}
-				onClose={handleCloseModal}
+				onClose={handleCloseCreateModal}
+			/>
+
+			{/* Edit Company Modal */}
+			<CompanyModal
+				isOpen={isEditModalOpen}
+				mode="edit"
+				company={selectedCompany}
+				isSubmitting={isSubmitting}
+				onSubmit={handleUpdateCompany}
+				onClose={handleCloseEditModal}
+			/>
+
+			{/* Delete Confirmation Modal */}
+			<DeleteConfirmationModal
+				isOpen={isDeleteModalOpen}
+				companyName={companyToDelete?.name}
+				isDeleting={isSubmitting}
+				onConfirm={handleConfirmDelete}
+				onCancel={handleCancelDelete}
 			/>
 		</div>
 	);

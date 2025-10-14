@@ -1775,7 +1775,12 @@
       "STATUS_ACTIVE": "活跃",
       "STATUS_INACTIVE": "非活跃",
       "CANCEL": "取消",
-      "CREATE_COMPANY": "创建公司"
+      "CREATE_COMPANY": "创建公司",
+      "EDIT_COMPANY": "编辑公司",
+      "EDIT_COMPANY_SUBTITLE": "更新公司信息",
+      "UPDATE_COMPANY": "更新公司",
+      "DELETE_COMPANY": "删除公司",
+      "DELETE_CONFIRMATION": "您确定要删除这家公司吗？此操作无法撤消。"
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "分类管理",

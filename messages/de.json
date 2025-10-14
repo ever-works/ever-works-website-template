@@ -1793,7 +1793,12 @@
       "STATUS_ACTIVE": "Aktiv",
       "STATUS_INACTIVE": "Inaktiv",
       "CANCEL": "Abbrechen",
-      "CREATE_COMPANY": "Unternehmen erstellen"
+      "CREATE_COMPANY": "Unternehmen erstellen",
+      "EDIT_COMPANY": "Unternehmen bearbeiten",
+      "EDIT_COMPANY_SUBTITLE": "Unternehmensinformationen aktualisieren",
+      "UPDATE_COMPANY": "Unternehmen aktualisieren",
+      "DELETE_COMPANY": "Unternehmen löschen",
+      "DELETE_CONFIRMATION": "Sind Sie sicher, dass Sie dieses Unternehmen löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Kategorieverwaltung",

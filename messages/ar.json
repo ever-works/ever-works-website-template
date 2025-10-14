@@ -1747,7 +1747,12 @@
       "STATUS_ACTIVE": "نشط",
       "STATUS_INACTIVE": "غير نشط",
       "CANCEL": "إلغاء",
-      "CREATE_COMPANY": "إنشاء شركة"
+      "CREATE_COMPANY": "إنشاء شركة",
+      "EDIT_COMPANY": "تعديل الشركة",
+      "EDIT_COMPANY_SUBTITLE": "تحديث معلومات الشركة",
+      "UPDATE_COMPANY": "تحديث الشركة",
+      "DELETE_COMPANY": "حذف الشركة",
+      "DELETE_CONFIRMATION": "هل أنت متأكد من أنك تريد حذف هذه الشركة؟ لا يمكن التراجع عن هذا الإجراء."
     },
     "AUTH_FORM": {
       "ADMIN_WELCOME_TITLE": "مرحباً بك في لوحة تحكم الإدارة",

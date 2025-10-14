@@ -1,12 +1,14 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button, Input, Select, SelectItem } from '@heroui/react';
-import { X, Building2, Globe, Link as LinkIcon, Hash } from 'lucide-react';
+import { X, Building2, Globe, Link as LinkIcon, Hash, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import type { CreateCompanyInput } from '@/lib/validations/company';
+import type { CreateCompanyInput, UpdateCompanyInput } from '@/lib/validations/company';
+import type { Company } from '@/hooks/use-admin-companies';
 
 // Define form schema for validation (before transformation)
 const companyFormSchema = z.object({
@@ -21,16 +23,18 @@ type CompanyFormData = z.infer<typeof companyFormSchema>;
 
 interface CompanyModalProps {
 	isOpen: boolean;
+	mode: 'create' | 'edit';
+	company?: Company | null;
 	isSubmitting: boolean;
-	onSubmit: (data: CreateCompanyInput) => Promise<void>;
+	onSubmit: (data: CreateCompanyInput | UpdateCompanyInput) => Promise<void>;
 	onClose: () => void;
 }
 
 /**
  * Company Modal Component
- * Handles company creation with react-hook-form and zod validation
+ * Handles company creation and editing with react-hook-form and zod validation
  */
-export function CompanyModal({ isOpen, isSubmitting, onSubmit, onClose }: CompanyModalProps) {
+export function CompanyModal({ isOpen, mode, company, isSubmitting, onSubmit, onClose }: CompanyModalProps) {
 	const t = useTranslations('admin.ADMIN_COMPANIES_PAGE');
 
 	const {
@@ -53,16 +57,49 @@ export function CompanyModal({ isOpen, isSubmitting, onSubmit, onClose }: Compan
 
 	const statusValue = watch('status');
 
+	// Prefill form when editing
+	useEffect(() => {
+		if (mode === 'edit' && company) {
+			reset({
+				name: company.name,
+				website: company.website || '',
+				domain: company.domain || '',
+				slug: company.slug || '',
+				status: company.status,
+			});
+		} else if (mode === 'create') {
+			reset({
+				name: '',
+				website: '',
+				domain: '',
+				slug: '',
+				status: 'active',
+			});
+		}
+	}, [mode, company, reset]);
+
 	const handleFormSubmit = async (data: CompanyFormData) => {
 		// Transform empty strings to undefined for optional fields
-		const submitData: CreateCompanyInput = {
-			name: data.name,
-			website: data.website || undefined,
-			domain: data.domain || undefined,
-			slug: data.slug || undefined,
-			status: data.status,
-		};
-		await onSubmit(submitData);
+		if (mode === 'create') {
+			const submitData: CreateCompanyInput = {
+				name: data.name,
+				website: data.website || undefined,
+				domain: data.domain || undefined,
+				slug: data.slug || undefined,
+				status: data.status,
+			};
+			await onSubmit(submitData);
+		} else {
+			const submitData: UpdateCompanyInput = {
+				id: company!.id,
+				name: data.name,
+				website: data.website || undefined,
+				domain: data.domain || undefined,
+				slug: data.slug || undefined,
+				status: data.status,
+			};
+			await onSubmit(submitData);
+		}
 		reset();
 	};
 
@@ -83,8 +120,12 @@ export function CompanyModal({ isOpen, isSubmitting, onSubmit, onClose }: Compan
 							<Building2 className="w-6 h-6 text-white" />
 						</div>
 						<div>
-							<h2 className="text-xl font-bold text-white">{t('ADD_COMPANY')}</h2>
-							<p className="text-white/80 text-sm">{t('ADD_COMPANY_SUBTITLE')}</p>
+							<h2 className="text-xl font-bold text-white">
+								{mode === 'create' ? t('ADD_COMPANY') : t('EDIT_COMPANY')}
+							</h2>
+							<p className="text-white/80 text-sm">
+								{mode === 'create' ? t('ADD_COMPANY_SUBTITLE') : t('EDIT_COMPANY_SUBTITLE')}
+							</p>
 						</div>
 					</div>
 					<Button
@@ -204,10 +245,59 @@ export function CompanyModal({ isOpen, isSubmitting, onSubmit, onClose }: Compan
 							isLoading={isSubmitting}
 							isDisabled={isSubmitting}
 						>
-							{t('CREATE_COMPANY')}
+							{mode === 'create' ? t('CREATE_COMPANY') : t('UPDATE_COMPANY')}
 						</Button>
 					</div>
 				</form>
+			</div>
+		</div>
+	);
+}
+
+interface DeleteConfirmationModalProps {
+	isOpen: boolean;
+	companyName?: string;
+	isDeleting: boolean;
+	onConfirm: () => void;
+	onCancel: () => void;
+}
+
+/**
+ * Delete Confirmation Modal Component
+ * Handles company deletion confirmation
+ */
+export function DeleteConfirmationModal({
+	isOpen,
+	companyName,
+	isDeleting,
+	onConfirm,
+	onCancel,
+}: DeleteConfirmationModalProps) {
+	const t = useTranslations('admin.ADMIN_COMPANIES_PAGE');
+
+	if (!isOpen) return null;
+
+	return (
+		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+			<div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-xl shadow-xl p-6">
+				<div className="text-center">
+					<div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900 mb-4">
+						<Trash2 className="h-6 w-6 text-red-600 dark:text-red-400" />
+					</div>
+					<h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('DELETE_COMPANY')}</h3>
+					<p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t('DELETE_CONFIRMATION')}</p>
+					{companyName && (
+						<p className="text-sm font-medium text-gray-900 dark:text-white mb-6">"{companyName}"</p>
+					)}
+					<div className="flex justify-center space-x-3 mt-6">
+						<Button color="default" variant="bordered" onPress={onCancel} isDisabled={isDeleting}>
+							{t('CANCEL')}
+						</Button>
+						<Button color="danger" onPress={onConfirm} isLoading={isDeleting} isDisabled={isDeleting}>
+							{t('DELETE')}
+						</Button>
+					</div>
+				</div>
 			</div>
 		</div>
 	);

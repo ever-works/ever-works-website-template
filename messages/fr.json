@@ -2034,7 +2034,12 @@
       "STATUS_ACTIVE": "Actif",
       "STATUS_INACTIVE": "Inactif",
       "CANCEL": "Annuler",
-      "CREATE_COMPANY": "Créer l'Entreprise"
+      "CREATE_COMPANY": "Créer l'Entreprise",
+      "EDIT_COMPANY": "Modifier l'Entreprise",
+      "EDIT_COMPANY_SUBTITLE": "Mettre à jour les informations de l'entreprise",
+      "UPDATE_COMPANY": "Mettre à Jour l'Entreprise",
+      "DELETE_COMPANY": "Supprimer l'Entreprise",
+      "DELETE_CONFIRMATION": "Êtes-vous sûr de vouloir supprimer cette entreprise ? Cette action ne peut pas être annulée."
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Gestion des Catégories",
