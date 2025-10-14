@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { useDebounceSearch } from '@/hooks/use-debounced-search';
 import { useAdminCompanies, type Company } from '@/hooks/use-admin-companies';
 import { UniversalPagination } from '@/components/universal-pagination';
+import type { CreateCompanyInput } from '@/lib/validations/company';
 
 // Components
 import { PageHeader } from './components/page-header';
@@ -11,6 +12,7 @@ import { CompanyStats } from './components/company-stats';
 import { CompanyFilters } from './components/company-filters';
 import { CompaniesTable } from './components/companies-table';
 import { LoadingSkeleton } from './components/loading-skeleton';
+import { CompanyModal } from './components/company-modal';
 
 /**
  * Companies Page Component
@@ -23,6 +25,7 @@ export default function CompaniesPage() {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [statusFilter, setStatusFilter] = useState('');
 	const [companyToDelete, setCompanyToDelete] = useState<string | null>(null);
+	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
 	// Debounced search
 	const { debouncedValue: debouncedSearchTerm, isSearching } = useDebounceSearch({
@@ -36,16 +39,17 @@ export default function CompaniesPage() {
 	});
 
 	// Data fetching hook
-	const { companies, stats, total, page, totalPages, isLoading, deleteCompany } = useAdminCompanies({
-		params: {
-			page: currentPage,
-			limit,
-			search: debouncedSearchTerm,
-			status: statusFilter as 'active' | 'inactive' | undefined,
-			sortBy: 'createdAt',
-			sortOrder: 'desc',
-		},
-	});
+	const { companies, stats, total, page, totalPages, isLoading, isSubmitting, createCompany, deleteCompany } =
+		useAdminCompanies({
+			params: {
+				page: currentPage,
+				limit,
+				search: debouncedSearchTerm,
+				status: statusFilter as 'active' | 'inactive' | undefined,
+				sortBy: 'createdAt',
+				sortOrder: 'desc',
+			},
+		});
 
 	// Calculate active filters
 	const activeFilterCount = [searchTerm, statusFilter].filter(Boolean).length;
@@ -53,8 +57,23 @@ export default function CompaniesPage() {
 
 	// Handlers
 	const handleAddCompany = useCallback(() => {
-		// TODO: Implement add company modal
-		console.log('Add company clicked');
+		setIsCreateModalOpen(true);
+	}, []);
+
+	const handleCreateCompany = useCallback(
+		async (data: CreateCompanyInput) => {
+			const success = await createCompany(data);
+			if (success) {
+				setIsCreateModalOpen(false);
+				// Reset to page 1 to see the new company
+				setCurrentPage(1);
+			}
+		},
+		[createCompany]
+	);
+
+	const handleCloseModal = useCallback(() => {
+		setIsCreateModalOpen(false);
 	}, []);
 
 	const handleEditCompany = useCallback((company: Company) => {
@@ -125,6 +144,14 @@ export default function CompaniesPage() {
 					<UniversalPagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
 				</div>
 			)}
+
+			{/* Create Company Modal */}
+			<CompanyModal
+				isOpen={isCreateModalOpen}
+				isSubmitting={isSubmitting}
+				onSubmit={handleCreateCompany}
+				onClose={handleCloseModal}
+			/>
 		</div>
 	);
 }
