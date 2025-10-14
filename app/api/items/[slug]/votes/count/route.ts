@@ -3,19 +3,19 @@ import { NextResponse } from 'next/server';
 
 /**
  * @swagger
- * /api/items/{itemId}/votes/count:
+ * /api/items/{slug}/votes/count:
  *   get:
  *     tags: ["Item Votes"]
  *     summary: "Get item vote count"
  *     description: "Returns the total vote count for a specific item. The count represents the net score (upvotes - downvotes). This is a public endpoint that doesn't require authentication and is optimized for quick vote count retrieval."
  *     parameters:
- *       - name: "itemId"
+ *       - name: "slug"
  *         in: "path"
  *         required: true
  *         schema:
  *           type: string
- *         description: "Item ID to get vote count for"
- *         example: "item_123abc"
+ *         description: "Item slug to get vote count for"
+ *         example: "awesome-productivity-tool"
  *     responses:
  *       200:
  *         description: "Vote count retrieved successfully"
@@ -64,11 +64,11 @@ import { NextResponse } from 'next/server';
  */
 export async function GET(
   request: Request,
-  context: { params: Promise<{ itemId: string }> }
+  context: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { itemId } = await context.params;
-    const count = await getVoteCountForItem(itemId);
+    const { slug } = await context.params;
+    const count = await getVoteCountForItem(slug);
     return NextResponse.json({
       success: true,
       count

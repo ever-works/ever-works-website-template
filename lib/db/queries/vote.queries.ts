@@ -1,24 +1,31 @@
 import { and, eq, sql } from 'drizzle-orm';
 import { db } from '../drizzle';
 import { votes, type InsertVote } from '../schema';
+import { getItemIdFromSlug } from './item.queries';
 
 /**
  * Create a new vote
- * @param vote - Vote data
+ * @param vote - Vote data with itemId as slug
  * @returns Created vote
  */
 export async function createVote(vote: InsertVote) {
-  const [createdVote] = await db.insert(votes).values(vote).returning();
+  // Ensure itemId is properly normalized (it should be a slug)
+  const normalizedVote = {
+    ...vote,
+    itemId: getItemIdFromSlug(vote.itemId)
+  };
+  const [createdVote] = await db.insert(votes).values(normalizedVote).returning();
   return createdVote;
 }
 
 /**
- * Get vote by user ID and item ID
+ * Get vote by user ID and item slug
  * @param userId - User ID
- * @param itemId - Item ID
+ * @param itemSlug - Item slug
  * @returns Vote array (empty if not found)
  */
-export async function getVoteByUserIdAndItemId(userId: string, itemId: string) {
+export async function getVoteByUserIdAndItemId(userId: string, itemSlug: string) {
+  const itemId = getItemIdFromSlug(itemSlug);
   return db
     .select()
     .from(votes)
@@ -57,10 +64,11 @@ export async function getItemsSortedByVotes(limit: number = 10, offset: number =
 
 /**
  * Get the net vote score for an item (upvotes - downvotes)
- * @param itemId - The item ID to get the vote score for
+ * @param itemSlug - The item slug to get the vote score for
  * @returns Net vote score (positive = more upvotes, negative = more downvotes, 0 = equal or no votes)
  */
-export async function getVoteCountForItem(itemId: string): Promise<number> {
+export async function getVoteCountForItem(itemSlug: string): Promise<number> {
+  const itemId = getItemIdFromSlug(itemSlug);
   const [result] = await db
     .select({
       netScore: sql<number>`
