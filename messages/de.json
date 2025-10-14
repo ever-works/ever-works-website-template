@@ -1772,7 +1772,10 @@
       "NO_COMPANIES_FOUND": "Keine Unternehmen gefunden",
       "NO_COMPANIES_DESCRIPTION": "Beginnen Sie, indem Sie Ihr erstes Unternehmen hinzufügen.",
       "ADD_FIRST_COMPANY": "Erstes Unternehmen hinzufügen",
-      "COMING_SOON": "Funktionen zur Unternehmensverwaltung kommen bald..."
+      "COMING_SOON": "Funktionen zur Unternehmensverwaltung kommen bald...",
+      "EDIT": "Bearbeiten",
+      "DELETE": "Löschen",
+      "DELETING": "Wird gelöscht..."
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Kategorieverwaltung",

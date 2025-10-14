@@ -2114,7 +2114,10 @@
       "NO_COMPANIES_FOUND": "No companies found",
       "NO_COMPANIES_DESCRIPTION": "Get started by adding your first company.",
       "ADD_FIRST_COMPANY": "Add First Company",
-      "COMING_SOON": "Company management features coming soon..."
+      "COMING_SOON": "Company management features coming soon...",
+      "EDIT": "Edit",
+      "DELETE": "Delete",
+      "DELETING": "Deleting..."
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Category Management",

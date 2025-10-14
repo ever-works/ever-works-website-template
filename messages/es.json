@@ -1755,7 +1755,10 @@
       "NO_COMPANIES_FOUND": "No se encontraron empresas",
       "NO_COMPANIES_DESCRIPTION": "Comienza agregando tu primera empresa.",
       "ADD_FIRST_COMPANY": "Agregar Primera Empresa",
-      "COMING_SOON": "Las funciones de gestión de empresas llegarán pronto..."
+      "COMING_SOON": "Las funciones de gestión de empresas llegarán pronto...",
+      "EDIT": "Editar",
+      "DELETE": "Eliminar",
+      "DELETING": "Eliminando..."
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Gestión de Categorías",

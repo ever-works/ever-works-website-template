@@ -1726,7 +1726,10 @@
       "NO_COMPANIES_FOUND": "لم يتم العثور على شركات",
       "NO_COMPANIES_DESCRIPTION": "ابدأ بإضافة شركتك الأولى.",
       "ADD_FIRST_COMPANY": "إضافة أول شركة",
-      "COMING_SOON": "ميزات إدارة الشركات قادمة قريباً..."
+      "COMING_SOON": "ميزات إدارة الشركات قادمة قريباً...",
+      "EDIT": "تعديل",
+      "DELETE": "حذف",
+      "DELETING": "جاري الحذف..."
     },
     "AUTH_FORM": {
       "ADMIN_WELCOME_TITLE": "مرحباً بك في لوحة تحكم الإدارة",

@@ -1754,7 +1754,10 @@
       "NO_COMPANIES_FOUND": "未找到公司",
       "NO_COMPANIES_DESCRIPTION": "开始添加您的第一家公司。",
       "ADD_FIRST_COMPANY": "添加第一家公司",
-      "COMING_SOON": "公司管理功能即将推出..."
+      "COMING_SOON": "公司管理功能即将推出...",
+      "EDIT": "编辑",
+      "DELETE": "删除",
+      "DELETING": "删除中..."
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "分类管理",

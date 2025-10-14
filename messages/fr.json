@@ -2013,7 +2013,10 @@
       "NO_COMPANIES_FOUND": "Aucune entreprise trouvée",
       "NO_COMPANIES_DESCRIPTION": "Commencez par ajouter votre première entreprise.",
       "ADD_FIRST_COMPANY": "Ajouter la Première Entreprise",
-      "COMING_SOON": "Les fonctionnalités de gestion des entreprises arrivent bientôt..."
+      "COMING_SOON": "Les fonctionnalités de gestion des entreprises arrivent bientôt...",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "DELETING": "Suppression..."
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Gestion des Catégories",
