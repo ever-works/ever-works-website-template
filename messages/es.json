@@ -1783,6 +1783,17 @@
       "DELETE_COMPANY": "Eliminar Empresa",
       "DELETE_CONFIRMATION": "¿Está seguro de que desea eliminar esta empresa? Esta acción no se puede deshacer."
     },
+    "ITEM_COMPANY": {
+      "TITLE": "Asignación de Empresa",
+      "ASSIGNED": "Asignado",
+      "NO_COMPANY": "No hay empresa asignada",
+      "REMOVE": "Eliminar",
+      "SEARCH_PLACEHOLDER": "Buscar empresas...",
+      "NO_RESULTS": "No se encontraron empresas",
+      "NO_COMPANIES": "No hay empresas disponibles",
+      "HELPER_TEXT": "Busque y asigne una empresa a este elemento. Solo se muestran empresas activas.",
+      "DOMAIN": "Dominio"
+    },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Gestión de Categorías",
       "SUBTITLE": "Organiza y gestiona las categorías de tu contenido",

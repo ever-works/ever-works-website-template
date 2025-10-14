@@ -1800,6 +1800,17 @@
       "DELETE_COMPANY": "Unternehmen löschen",
       "DELETE_CONFIRMATION": "Sind Sie sicher, dass Sie dieses Unternehmen löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
     },
+    "ITEM_COMPANY": {
+      "TITLE": "Unternehmenszuweisung",
+      "ASSIGNED": "Zugewiesen",
+      "NO_COMPANY": "Kein Unternehmen zugewiesen",
+      "REMOVE": "Entfernen",
+      "SEARCH_PLACEHOLDER": "Unternehmen suchen...",
+      "NO_RESULTS": "Keine Unternehmen gefunden",
+      "NO_COMPANIES": "Keine Unternehmen verfügbar",
+      "HELPER_TEXT": "Suchen und weisen Sie diesem Element ein Unternehmen zu. Es werden nur aktive Unternehmen angezeigt.",
+      "DOMAIN": "Domain"
+    },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Kategorieverwaltung",
       "SUBTITLE": "Organisieren und verwalten Sie Ihre Inhaltskategorien",

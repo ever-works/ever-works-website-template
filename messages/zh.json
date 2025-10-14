@@ -1782,6 +1782,17 @@
       "DELETE_COMPANY": "删除公司",
       "DELETE_CONFIRMATION": "您确定要删除这家公司吗？此操作无法撤消。"
     },
+    "ITEM_COMPANY": {
+      "TITLE": "公司分配",
+      "ASSIGNED": "已分配",
+      "NO_COMPANY": "未分配公司",
+      "REMOVE": "删除",
+      "SEARCH_PLACEHOLDER": "搜索公司...",
+      "NO_RESULTS": "未找到公司",
+      "NO_COMPANIES": "没有可用公司",
+      "HELPER_TEXT": "搜索并为此项目分配公司。仅显示活跃公司。",
+      "DOMAIN": "域名"
+    },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "分类管理",
       "SUBTITLE": "组织和管理您的内容分类",

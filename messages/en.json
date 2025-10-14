@@ -2142,6 +2142,17 @@
       "DELETE_COMPANY": "Delete Company",
       "DELETE_CONFIRMATION": "Are you sure you want to delete this company? This action cannot be undone."
     },
+    "ITEM_COMPANY": {
+      "TITLE": "Company Assignment",
+      "ASSIGNED": "Assigned",
+      "NO_COMPANY": "No company assigned",
+      "REMOVE": "Remove",
+      "SEARCH_PLACEHOLDER": "Search companies...",
+      "NO_RESULTS": "No companies found",
+      "NO_COMPANIES": "No companies available",
+      "HELPER_TEXT": "Search and assign a company to this item. Only active companies are shown.",
+      "DOMAIN": "Domain"
+    },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Category Management",
       "SUBTITLE": "Organize and manage your content categories",

@@ -2041,6 +2041,17 @@
       "DELETE_COMPANY": "Supprimer l'Entreprise",
       "DELETE_CONFIRMATION": "Êtes-vous sûr de vouloir supprimer cette entreprise ? Cette action ne peut pas être annulée."
     },
+    "ITEM_COMPANY": {
+      "TITLE": "Attribution d'Entreprise",
+      "ASSIGNED": "Attribué",
+      "NO_COMPANY": "Aucune entreprise attribuée",
+      "REMOVE": "Retirer",
+      "SEARCH_PLACEHOLDER": "Rechercher des entreprises...",
+      "NO_RESULTS": "Aucune entreprise trouvée",
+      "NO_COMPANIES": "Aucune entreprise disponible",
+      "HELPER_TEXT": "Recherchez et attribuez une entreprise à cet élément. Seules les entreprises actives sont affichées.",
+      "DOMAIN": "Domaine"
+    },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Gestion des Catégories",
       "SUBTITLE": "Organisez et gérez vos catégories de contenu",

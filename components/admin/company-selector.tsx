@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { Button, Card, CardBody, Input, Chip } from '@heroui/react';
 import { Building2, Search, X, Check, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useDebounceValue } from '@/hooks/use-debounced-value';
 import { useAdminCompanies } from '@/hooks/use-admin-companies';
 import type { Company } from '@/hooks/use-admin-companies';
@@ -41,6 +42,7 @@ export function CompanySelector({
 	className = '',
 	disabled = false,
 }: CompanySelectorProps) {
+	const t = useTranslations('admin.ITEM_COMPANY');
 	const [searchTerm, setSearchTerm] = useState('');
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -89,7 +91,7 @@ export function CompanySelector({
 						<div className="flex items-center justify-between">
 							<div className="flex items-center space-x-2">
 								<Building2 className="w-5 h-5 text-gray-400" />
-								<span className="font-medium text-gray-900 dark:text-white">Company Assignment</span>
+								<span className="font-medium text-gray-900 dark:text-white">{t('TITLE')}</span>
 							</div>
 							{selectedCompany && (
 								<Button
@@ -101,7 +103,7 @@ export function CompanySelector({
 									isLoading={isRemoving}
 									startContent={!isRemoving ? <X className="w-4 h-4" /> : undefined}
 								>
-									Remove
+									{t('REMOVE')}
 								</Button>
 							)}
 						</div>
@@ -118,7 +120,7 @@ export function CompanySelector({
 										<div className="flex items-center space-x-2 mb-2">
 											<p className="font-medium text-gray-900 dark:text-white">{selectedCompany.name}</p>
 											<Chip size="sm" color="success" variant="flat">
-												Assigned
+												{t('ASSIGNED')}
 											</Chip>
 										</div>
 										{selectedCompany.website && (
@@ -133,7 +135,7 @@ export function CompanySelector({
 										)}
 										{selectedCompany.domain && (
 											<p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-												Domain: {selectedCompany.domain}
+												{t('DOMAIN')}: {selectedCompany.domain}
 											</p>
 										)}
 									</div>
@@ -141,14 +143,14 @@ export function CompanySelector({
 							</div>
 						) : (
 							<div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-								<p className="text-sm text-gray-600 dark:text-gray-400 text-center">No company assigned</p>
+								<p className="text-sm text-gray-600 dark:text-gray-400 text-center">{t('NO_COMPANY')}</p>
 							</div>
 						)}
 
 						{/* Search & Selection */}
 						<div className="space-y-2">
 							<Input
-								placeholder="Search companies..."
+								placeholder={t('SEARCH_PLACEHOLDER')}
 								value={searchTerm}
 								onValueChange={setSearchTerm}
 								onFocus={() => setIsDropdownOpen(true)}
@@ -173,7 +175,7 @@ export function CompanySelector({
 									<CardBody className="p-0">
 										{availableCompanies.length === 0 ? (
 											<div className="p-4 text-center text-sm text-gray-600 dark:text-gray-400">
-												{searchTerm ? 'No companies found' : 'No companies available'}
+												{searchTerm ? t('NO_RESULTS') : t('NO_COMPANIES')}
 											</div>
 										) : (
 											<div className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -210,9 +212,7 @@ export function CompanySelector({
 						</div>
 
 						{/* Helper Text */}
-						<p className="text-xs text-gray-500 dark:text-gray-400">
-							Search and assign a company to this item. Only active companies are shown.
-						</p>
+						<p className="text-xs text-gray-500 dark:text-gray-400">{t('HELPER_TEXT')}</p>
 					</div>
 				</CardBody>
 			</Card>
