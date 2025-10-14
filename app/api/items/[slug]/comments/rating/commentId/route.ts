@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCommentById, updateCommentRating } from "@/lib/db/queries";
 
-export async function PATCH(request: Request, { params }: { params: Promise<{ itemId: string; commentId: string }> }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ slug: string; commentId: string }> }) {
     try {
         const { commentId } = await params;
         const { rating } = await request.json();
@@ -14,7 +14,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ it
     }
 }   
 
-export async function GET(request: Request, { params }: { params: Promise<{ itemId: string; commentId: string }> }) {
+export async function GET(request: Request, { params }: { params: Promise<{ slug: string; commentId: string }> }) {
     const { commentId } = await params;
     const comment = await getCommentById(commentId);
     return NextResponse.json(comment);

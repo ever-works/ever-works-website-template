@@ -7,7 +7,7 @@ import { eq, and, isNull } from "drizzle-orm";
 
 /**
  * @swagger
- * /api/items/{itemId}/comments/{commentId}:
+ * /api/items/{slug}/comments/{commentId}:
  *   delete:
  *     tags: ["Item Comments"]
  *     summary: "Delete comment"
@@ -15,13 +15,13 @@ import { eq, and, isNull } from "drizzle-orm";
  *     security:
  *       - sessionAuth: []
  *     parameters:
- *       - name: "itemId"
+ *       - name: "slug"
  *         in: "path"
  *         required: true
  *         schema:
  *           type: string
- *         description: "Item ID that the comment belongs to"
- *         example: "item_123abc"
+ *         description: "Item slug that the comment belongs to"
+ *         example: "awesome-productivity-tool"
  *       - name: "commentId"
  *         in: "path"
  *         required: true
@@ -58,7 +58,7 @@ import { eq, and, isNull } from "drizzle-orm";
  */
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ itemId: string; commentId: string }> }
+  { params }: { params: Promise<{ slug: string; commentId: string }> }
 ) {
   const session = await auth();
   if (!session?.user?.id) {
