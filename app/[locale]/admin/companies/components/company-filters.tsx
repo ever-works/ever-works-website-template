@@ -1,6 +1,5 @@
 import { Input, Select, SelectItem, Button, Card, CardBody } from '@heroui/react';
 import { Search, Filter, X } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 
 interface CompanyFiltersProps {
 	searchTerm: string;
