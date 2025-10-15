@@ -41,7 +41,7 @@ const LAYOUT_STYLES = {
 };
 
 export default function GlobalsClient(props: ListingProps) {
-	const { layoutHome = LayoutHome.HOME_ONE, paginationType } = useLayoutTheme();
+	const { layoutHome = LayoutHome.HOME_ONE, paginationType, isInitialized } = useLayoutTheme();
 	const { selectedCategories, searchTerm, selectedTags, sortBy, setSelectedTags, setSelectedCategories } =
 		useFilters();
 	const sortedTags = sortByNumericProperty(props.tags);
@@ -147,6 +147,18 @@ export default function GlobalsClient(props: ListingProps) {
 			setSelectedCategories(categoriesParam.split(','));
 		}
 	}, [searchParams, setSelectedTags, setSelectedCategories]);
+
+	// Show loading state until context is initialized to prevent layout flash
+	if (!isInitialized) {
+		return (
+			<div className="min-h-screen flex items-center justify-center">
+				<div className="text-center space-y-3">
+					<div className="w-8 h-8 border-2 border-theme-primary/30 border-t-theme-primary rounded-full animate-spin mx-auto" />
+					<p className="text-sm text-gray-600 dark:text-gray-400">Loading...</p>
+				</div>
+			</div>
+		);
+	}
 
 	if (layoutHome === LayoutHome.HOME_ONE) {
 		return (
