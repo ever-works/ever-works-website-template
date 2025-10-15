@@ -94,7 +94,7 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 						How to get your Survey ID:
 					</p>
 					<ol className="text-xs text-blue-800 dark:text-blue-200 space-y-1 list-decimal list-inside">
-						<li>Go to <a href="https://surveyjs.io/service" target="_blank" rel="noopener noreferrer" className="underline font-medium">SurveyJS Service</a></li>
+						<li>Go to <a href="https://surveyjs.io/service/mysurveys" target="_blank" rel="noopener noreferrer" className="underline font-medium">SurveyJS Service</a></li>
 						<li>Sign in and find your survey</li>
 						<li>Copy the Survey ID from your survey dashboard</li>
 						<li>Paste it here to import the survey definition</li>
