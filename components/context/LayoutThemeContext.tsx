@@ -155,16 +155,16 @@ const LayoutThemeContext = createContext<LayoutThemeContextType | undefined>(und
 
 // Custom hook for theme management
 const useThemeManager = () => {
-  // Initialize with localStorage value synchronously if available (SSR-safe)
-  const [themeKey, setThemeKeyState] = useState<ThemeKey>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = safeLocalStorage.getItem(STORAGE_KEYS.THEME);
-      if (saved && isValidThemeKey(saved)) {
-        return saved;
-      }
+  // Always initialize with default to prevent hydration mismatch
+  const [themeKey, setThemeKeyState] = useState<ThemeKey>(DEFAULT_THEME);
+
+  // Hydrate from localStorage after mount
+  useEffect(() => {
+    const saved = safeLocalStorage.getItem(STORAGE_KEYS.THEME);
+    if (saved && isValidThemeKey(saved)) {
+      setThemeKeyState(saved);
     }
-    return DEFAULT_THEME;
-  });
+  }, []);
 
   const applyThemeVariables = useCallback((theme: ThemeConfig) => {
     if (typeof window === "undefined") return;
@@ -221,16 +221,16 @@ const useThemeManager = () => {
 
 // Custom hook for layout home management
 const useLayoutHomeManager = () => {
-  // Initialize with localStorage value synchronously if available (SSR-safe)
-  const [layoutHome, setLayoutHomeState] = useState<LayoutHome>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT_HOME);
-      if (saved && isValidLayoutHome(saved)) {
-        return saved;
-      }
+  // Always initialize with default to prevent hydration mismatch
+  const [layoutHome, setLayoutHomeState] = useState<LayoutHome>(DEFAULT_LAYOUT_HOME);
+
+  // Hydrate from localStorage after mount
+  useEffect(() => {
+    const saved = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT_HOME);
+    if (saved && isValidLayoutHome(saved)) {
+      setLayoutHomeState(saved);
     }
-    return DEFAULT_LAYOUT_HOME;
-  });
+  }, []);
   
   const setLayoutHome = useCallback((key: LayoutHome) => {
     if (!isValidLayoutHome(key)) {
@@ -250,16 +250,16 @@ const useLayoutHomeManager = () => {
 
 // Custom hook for pagination type management
 const usePaginationTypeManager = () => {
-  // Initialize with localStorage value synchronously if available (SSR-safe)
-  const [paginationType, setPaginationTypeState] = useState<PaginationType>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = safeLocalStorage.getItem(STORAGE_KEYS.PAGINATION_TYPE);
-      if (saved && isValidPaginationType(saved)) {
-        return saved;
-      }
+  // Always initialize with default to prevent hydration mismatch
+  const [paginationType, setPaginationTypeState] = useState<PaginationType>(DEFAULT_PAGINATION_TYPE);
+
+  // Hydrate from localStorage after mount
+  useEffect(() => {
+    const saved = safeLocalStorage.getItem(STORAGE_KEYS.PAGINATION_TYPE);
+    if (saved && isValidPaginationType(saved)) {
+      setPaginationTypeState(saved);
     }
-    return DEFAULT_PAGINATION_TYPE;
-  });
+  }, []);
 
   const setPaginationType = useCallback((type: PaginationType) => {
     if (!isValidPaginationType(type)) {
@@ -279,19 +279,19 @@ const usePaginationTypeManager = () => {
 
 // Custom hook for items per page management
 const useItemsPerPageManager = () => {
-  // Initialize with localStorage value synchronously if available (SSR-safe)
-  const [itemsPerPage, setItemsPerPageState] = useState<number>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = safeLocalStorage.getItem(STORAGE_KEYS.ITEMS_PER_PAGE);
-      if (saved) {
-        const parsed = parseInt(saved, 10);
-        if (isValidItemsPerPage(parsed)) {
-          return parsed;
-        }
+  // Always initialize with default to prevent hydration mismatch
+  const [itemsPerPage, setItemsPerPageState] = useState<number>(DEFAULT_ITEMS_PER_PAGE);
+
+  // Hydrate from localStorage after mount
+  useEffect(() => {
+    const saved = safeLocalStorage.getItem(STORAGE_KEYS.ITEMS_PER_PAGE);
+    if (saved) {
+      const parsed = parseInt(saved, 10);
+      if (isValidItemsPerPage(parsed)) {
+        setItemsPerPageState(parsed);
       }
     }
-    return DEFAULT_ITEMS_PER_PAGE;
-  });
+  }, []);
   
   const setItemsPerPage = useCallback((value: number) => {
     if (!isValidItemsPerPage(value)) {
@@ -311,16 +311,16 @@ const useItemsPerPageManager = () => {
 
 // Custom hook for layout management
 const useLayoutManager = () => {
-  // Initialize with localStorage value synchronously if available (SSR-safe)
-  const [layoutKey, setLayoutKeyState] = useState<LayoutKey>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT);
-      if (saved && isValidLayoutKey(saved)) {
-        return saved;
-      }
+  // Always initialize with default to prevent hydration mismatch
+  const [layoutKey, setLayoutKeyState] = useState<LayoutKey>(DEFAULT_LAYOUT);
+
+  // Hydrate from localStorage after mount
+  useEffect(() => {
+    const saved = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT);
+    if (saved && isValidLayoutKey(saved)) {
+      setLayoutKeyState(saved);
     }
-    return DEFAULT_LAYOUT;
-  });
+  }, []);
 
   const setLayoutKey = useCallback((key: LayoutKey) => {
     if (!isValidLayoutKey(key)) {
@@ -347,7 +347,7 @@ export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const itemsPerPageManager = useItemsPerPageManager();
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Mark as initialized immediately since we now read localStorage synchronously in useState
+  // Mark as initialized after mount to indicate localStorage has been hydrated
   useEffect(() => {
     setIsInitialized(true);
   }, []);
