@@ -112,6 +112,27 @@ const roleRepository = new RoleRepository();
  *               page: 1
  *               limit: 10
  *               totalPages: 3
+ *       400:
+ *         description: "Bad request - Invalid pagination parameters"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *             examples:
+ *               invalid_page:
+ *                 value:
+ *                   success: false
+ *                   error: "Invalid page parameter. Must be a positive integer."
+ *               invalid_limit:
+ *                 value:
+ *                   success: false
+ *                   error: "Invalid limit parameter. Must be between 1 and 100."
  *       500:
  *         description: "Internal server error"
  *         content:
@@ -129,10 +150,31 @@ const roleRepository = new RoleRepository();
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
+    // Parse and validate pagination parameters
+    const pageParam = searchParams.get('page');
+    const limitParam = searchParams.get('limit');
+
+    const page = pageParam ? parseInt(pageParam, 10) : 1;
+    const limit = limitParam ? parseInt(limitParam, 10) : 10;
+
+    // Validate page parameter
+    if (isNaN(page) || page < 1) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid page parameter. Must be a positive integer.' },
+        { status: 400 }
+      );
+    }
+
+    // Validate limit parameter
+    if (isNaN(limit) || limit < 1 || limit > 100) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid limit parameter. Must be between 1 and 100.' },
+        { status: 400 }
+      );
+    }
+
     // Parse query parameters
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
     const statusParam = searchParams.get('status');
     const status: RoleStatus | undefined = statusParam === 'active' || statusParam === 'inactive' ? statusParam as RoleStatus : undefined;
     const sortBy = searchParams.get('sortBy') as 'name' | 'id' | 'created_at' | null;
@@ -140,8 +182,8 @@ export async function GET(request: NextRequest) {
 
     // Validate parameters
     const options = {
-      page: Math.max(1, page),
-      limit: Math.min(100, Math.max(1, limit)),
+      page,
+      limit,
       status,
       sortBy: sortBy || 'name',
       sortOrder: sortOrder || 'asc',

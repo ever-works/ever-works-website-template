@@ -93,6 +93,27 @@ import { CreateTagRequest } from '@/lib/types/tag';
  *                 page: 1
  *                 limit: 10
  *                 totalPages: 5
+ *       400:
+ *         description: "Bad request - Invalid pagination parameters"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *             examples:
+ *               invalid_page:
+ *                 value:
+ *                   success: false
+ *                   error: "Invalid page parameter. Must be a positive integer."
+ *               invalid_limit:
+ *                 value:
+ *                   success: false
+ *                   error: "Invalid limit parameter. Must be between 1 and 100."
  *       401:
  *         description: "Unauthorized - Admin access required"
  *         content:
@@ -128,9 +149,30 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const { searchParams} = new URL(request.url);
+
+    // Parse and validate pagination parameters
+    const pageParam = searchParams.get('page');
+    const limitParam = searchParams.get('limit');
+
+    const page = pageParam ? parseInt(pageParam, 10) : 1;
+    const limit = limitParam ? parseInt(limitParam, 10) : 10;
+
+    // Validate page parameter
+    if (isNaN(page) || page < 1) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid page parameter. Must be a positive integer.' },
+        { status: 400 }
+      );
+    }
+
+    // Validate limit parameter
+    if (isNaN(limit) || limit < 1 || limit > 100) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid limit parameter. Must be between 1 and 100.' },
+        { status: 400 }
+      );
+    }
 
     const result = await tagRepository.findAllPaginated(page, limit);
     

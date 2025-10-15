@@ -108,6 +108,22 @@ import { ZodError } from 'zod';
  *                 totalPages: 5
  *                 total: 47
  *                 limit: 10
+ *       400:
+ *         description: "Bad request - Invalid pagination parameters"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *             examples:
+ *               invalid_page:
+ *                 value:
+ *                   error: "Invalid page parameter. Must be a positive integer."
+ *               invalid_limit:
+ *                 value:
+ *                   error: "Invalid limit parameter. Must be between 1 and 100."
  *       401:
  *         description: "Unauthorized - Admin access required"
  *         content:
@@ -138,8 +154,30 @@ export async function GET(request: NextRequest) {
 		}
 
 		const { searchParams } = new URL(request.url);
-		const page = parseInt(searchParams.get('page') || '1');
-		const limit = parseInt(searchParams.get('limit') || '10');
+
+		// Parse and validate pagination parameters
+		const pageParam = searchParams.get('page');
+		const limitParam = searchParams.get('limit');
+
+		const page = pageParam ? parseInt(pageParam, 10) : 1;
+		const limit = limitParam ? parseInt(limitParam, 10) : 10;
+
+		// Validate page parameter
+		if (isNaN(page) || page < 1) {
+			return NextResponse.json(
+				{ error: 'Invalid page parameter. Must be a positive integer.' },
+				{ status: 400 }
+			);
+		}
+
+		// Validate limit parameter
+		if (isNaN(limit) || limit < 1 || limit > 100) {
+			return NextResponse.json(
+				{ error: 'Invalid limit parameter. Must be between 1 and 100.' },
+				{ status: 400 }
+			);
+		}
+
 		const q = searchParams.get('q') || undefined;
 		const status = searchParams.get('status') as 'active' | 'inactive' | undefined;
 

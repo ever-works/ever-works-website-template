@@ -158,6 +158,8 @@ import { isValidEmail } from '@/lib/utils/email-validation';
  *                 error:
  *                   type: string
  *                   examples:
+ *                     invalid_page: "Invalid page parameter. Must be a positive integer."
+ *                     invalid_limit: "Invalid limit parameter. Must be between 1 and 100."
  *                     invalid_status: "Invalid status parameter"
  *                     invalid_sort: "Invalid sortBy parameter"
  *                     search_too_long: "Search parameter too long"
@@ -216,11 +218,30 @@ export async function GET(request: NextRequest) {
 
     // Parse query parameters
     const { searchParams } = new URL(request.url);
-    
-    // Validate and constrain numeric parameters
-    const page = Math.max(1, parseInt(searchParams.get('page') || '1') || 1);
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '10') || 10));
-    
+
+    // Parse and validate pagination parameters
+    const pageParam = searchParams.get('page');
+    const limitParam = searchParams.get('limit');
+
+    const page = pageParam ? parseInt(pageParam, 10) : 1;
+    const limit = limitParam ? parseInt(limitParam, 10) : 10;
+
+    // Validate page parameter
+    if (isNaN(page) || page < 1) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid page parameter. Must be a positive integer.' },
+        { status: 400 }
+      );
+    }
+
+    // Validate limit parameter
+    if (isNaN(limit) || limit < 1 || limit > 100) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid limit parameter. Must be between 1 and 100.' },
+        { status: 400 }
+      );
+    }
+
     const search = searchParams.get('search') || undefined;
     const role = searchParams.get('role') || undefined;
     const status = searchParams.get('status') as 'active' | 'inactive' | undefined;
