@@ -76,4 +76,90 @@ function CardSkeleton({ className }: CardSkeletonProps) {
   );
 }
 
-export { Skeleton, TableSkeleton, CardSkeleton }
+// Skeleton for grid layout of items
+function GridSkeleton({
+  count = 6,
+  className,
+}: {
+  count?: number;
+  className?: string;
+}) {
+  return (
+    <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4", className)}>
+      {Array.from({ length: count }).map((_, i) => (
+        <CardSkeleton key={i} />
+      ))}
+    </div>
+  );
+}
+
+// Skeleton for item detail page
+function ItemDetailSkeleton({ className }: { className?: string }) {
+  return (
+    <div className={cn("space-y-6 p-6", className)}>
+      {/* Breadcrumb */}
+      <div className="flex gap-2">
+        <Skeleton className="h-4 w-16" />
+        <Skeleton className="h-4 w-4" />
+        <Skeleton className="h-4 w-24" />
+      </div>
+
+      {/* Header with image and title */}
+      <div className="flex gap-6">
+        <Skeleton className="h-24 w-24 rounded-lg" />
+        <div className="flex-1 space-y-3">
+          <Skeleton className="h-8 w-2/3" />
+          <Skeleton className="h-4 w-1/2" />
+          <div className="flex gap-2">
+            <Skeleton className="h-6 w-20" />
+            <Skeleton className="h-6 w-20" />
+            <Skeleton className="h-6 w-20" />
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="space-y-3">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-4/5" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-5/6" />
+      </div>
+
+      {/* Tags */}
+      <div className="flex gap-2 flex-wrap">
+        <Skeleton className="h-8 w-16" />
+        <Skeleton className="h-8 w-20" />
+        <Skeleton className="h-8 w-24" />
+        <Skeleton className="h-8 w-18" />
+      </div>
+    </div>
+  );
+}
+
+// Skeleton for listing page content
+function ListingSkeleton({ className }: { className?: string }) {
+  return (
+    <div className={cn("space-y-6", className)}>
+      {/* Header with search and filters */}
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+        <Skeleton className="h-10 w-full md:w-96" />
+        <div className="flex gap-2">
+          <Skeleton className="h-10 w-32" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="flex gap-2 items-center">
+        <Skeleton className="h-4 w-48" />
+      </div>
+
+      {/* Grid of items */}
+      <GridSkeleton count={6} />
+    </div>
+  );
+}
+
+export { Skeleton, TableSkeleton, CardSkeleton, GridSkeleton, ItemDetailSkeleton, ListingSkeleton }

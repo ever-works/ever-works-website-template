@@ -147,7 +147,30 @@ export default function GlobalsClient(props: ListingProps) {
 		setInitialized(true);
 	}, [searchParams, setSelectedTags, setSelectedCategories]);
 
-	if (!initialized) return null;
+	// Show skeleton while initializing to prevent layout shift
+	if (!initialized) {
+		return (
+			<div className={LAYOUT_STYLES.mainContainer}>
+				<div className={LAYOUT_STYLES.contentWrapper}>
+					<div className={`${LAYOUT_STYLES.sidebar} ${LAYOUT_STYLES.sidebarMobile}`}>
+						<div className="h-96 w-64" /> {/* Placeholder for sidebar */}
+					</div>
+					<div className={LAYOUT_STYLES.mainContent}>
+						<div className="space-y-6">
+							{/* Tags skeleton */}
+							<div className="h-16" />
+							{/* Listing skeleton */}
+							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+								{Array.from({ length: 6 }).map((_, i) => (
+									<div key={i} className="h-64 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse" />
+								))}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	if (layoutHome === LayoutHome.HOME_ONE) {
 		return (

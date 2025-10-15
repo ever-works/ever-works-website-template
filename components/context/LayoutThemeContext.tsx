@@ -299,9 +299,12 @@ export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const itemsPerPageManager = useItemsPerPageManager();
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize from localStorage with error handling
+  // Initialize from localStorage with error handling - optimized to run synchronously
   useEffect(() => {
     if (typeof window === "undefined") return;
+
+    // Mark as initialized immediately to prevent layout shift
+    setIsInitialized(true);
 
     try {
       const savedLayout = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT);
@@ -310,37 +313,38 @@ export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
       const savedPaginationType = safeLocalStorage.getItem(STORAGE_KEYS.PAGINATION_TYPE);
       const savedItemsPerPage = safeLocalStorage.getItem(STORAGE_KEYS.ITEMS_PER_PAGE);
 
-      // Validate and apply saved layout
-      if (savedLayout && isValidLayoutKey(savedLayout) && savedLayout !== layoutManager.layoutKey) {
-        layoutManager.setLayoutKey(savedLayout);
-      }
-
-      // Validate and apply saved theme
-      if (savedTheme && isValidThemeKey(savedTheme) && savedTheme !== themeManager.themeKey) {
-        themeManager.setThemeKey(savedTheme);
-      }
-
-      // Validate and apply saved layout home
-      if (savedLayoutHome && isValidLayoutHome(savedLayoutHome) && savedLayoutHome !== layoutHomeManager.layoutHome) {
-        layoutHomeManager.setLayoutHome(savedLayoutHome);
-      }
-
-      // Validate and apply saved pagination type
-      if (savedPaginationType && isValidPaginationType(savedPaginationType) && savedPaginationType !== paginationTypeManager.paginationType) {
-        paginationTypeManager.setPaginationType(savedPaginationType);
-      }
-
-      // Validate and apply saved items per page
-      if (savedItemsPerPage) {
-        const itemsPerPage = parseInt(savedItemsPerPage, 10);
-        if (isValidItemsPerPage(itemsPerPage) && itemsPerPage !== itemsPerPageManager.itemsPerPage) {
-          itemsPerPageManager.setItemsPerPage(itemsPerPage);
+      // Batch state updates using requestAnimationFrame to prevent multiple re-renders
+      requestAnimationFrame(() => {
+        // Validate and apply saved layout
+        if (savedLayout && isValidLayoutKey(savedLayout) && savedLayout !== layoutManager.layoutKey) {
+          layoutManager.setLayoutKey(savedLayout);
         }
-      }
+
+        // Validate and apply saved theme
+        if (savedTheme && isValidThemeKey(savedTheme) && savedTheme !== themeManager.themeKey) {
+          themeManager.setThemeKey(savedTheme);
+        }
+
+        // Validate and apply saved layout home
+        if (savedLayoutHome && isValidLayoutHome(savedLayoutHome) && savedLayoutHome !== layoutHomeManager.layoutHome) {
+          layoutHomeManager.setLayoutHome(savedLayoutHome);
+        }
+
+        // Validate and apply saved pagination type
+        if (savedPaginationType && isValidPaginationType(savedPaginationType) && savedPaginationType !== paginationTypeManager.paginationType) {
+          paginationTypeManager.setPaginationType(savedPaginationType);
+        }
+
+        // Validate and apply saved items per page
+        if (savedItemsPerPage) {
+          const itemsPerPage = parseInt(savedItemsPerPage, 10);
+          if (isValidItemsPerPage(itemsPerPage) && itemsPerPage !== itemsPerPageManager.itemsPerPage) {
+            itemsPerPageManager.setItemsPerPage(itemsPerPage);
+          }
+        }
+      });
     } catch (error) {
       console.warn("Failed to initialize from localStorage:", error);
-    } finally {
-      setIsInitialized(true);
     }
   }, [layoutManager, themeManager, layoutHomeManager, paginationTypeManager, itemsPerPageManager]);
 
