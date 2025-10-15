@@ -3,9 +3,9 @@ import { Search, Filter, X } from 'lucide-react';
 
 interface CompanyFiltersProps {
 	searchTerm: string;
-	statusFilter: string;
+	statusFilter: '' | 'active' | 'inactive';
 	onSearchChange: (value: string) => void;
-	onStatusChange: (value: string) => void;
+	onStatusChange: (value: '' | 'active' | 'inactive') => void;
 	onClearFilters: () => void;
 	activeFilterCount: number;
 	isSearching: boolean;
@@ -85,7 +85,11 @@ export function CompanyFilters({
 							selectedKeys={statusFilter ? [statusFilter] : []}
 							onSelectionChange={(keys) => {
 								const value = Array.from(keys)[0] as string;
-								onStatusChange(value === 'all' ? '' : value);
+								if (value === 'all') {
+									onStatusChange('');
+								} else if (value === 'active' || value === 'inactive') {
+									onStatusChange(value);
+								}
 							}}
 							classNames={{
 								trigger: 'h-12',

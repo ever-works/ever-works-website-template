@@ -23,7 +23,7 @@ export default function CompaniesPage() {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [limit] = useState(10);
 	const [searchTerm, setSearchTerm] = useState('');
-	const [statusFilter, setStatusFilter] = useState('');
+	const [statusFilter, setStatusFilter] = useState<'' | 'active' | 'inactive'>('');
 	const [companyToDelete, setCompanyToDelete] = useState<Company | null>(null);
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -58,7 +58,7 @@ export default function CompaniesPage() {
 			page: currentPage,
 			limit,
 			search: debouncedSearchTerm,
-			status: statusFilter as 'active' | 'inactive' | undefined,
+			status: statusFilter || undefined,
 			sortBy: 'createdAt',
 			sortOrder: 'desc',
 		},
