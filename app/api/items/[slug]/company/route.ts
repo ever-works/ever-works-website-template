@@ -135,11 +135,11 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 		}
 
 		// Unlink item from company (idempotent)
-		const deleted = await unlinkItemFromCompany(validatedData.itemSlug);
+		const result = await unlinkItemFromCompany(validatedData.itemSlug);
 
 		return NextResponse.json({
 			success: true,
-			deleted,
+			deleted: result.deleted,
 		});
 	} catch (error) {
 		console.error('Error removing company from item:', error);

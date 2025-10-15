@@ -1042,6 +1042,39 @@
               }
             }
           },
+          "400": {
+            "description": "Bad request - Invalid pagination parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalid_page": {
+                    "value": {
+                      "success": false,
+                      "error": "Invalid page parameter. Must be a positive integer."
+                    }
+                  },
+                  "invalid_limit": {
+                    "value": {
+                      "success": false,
+                      "error": "Invalid limit parameter. Must be between 1 and 100."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized - Admin access required",
             "content": {
@@ -3077,6 +3110,33 @@
                     "totalPages": 5,
                     "total": 47,
                     "limit": 10
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid pagination parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalid_page": {
+                    "value": {
+                      "error": "Invalid page parameter. Must be a positive integer."
+                    }
+                  },
+                  "invalid_limit": {
+                    "value": {
+                      "error": "Invalid limit parameter. Must be between 1 and 100."
+                    }
                   }
                 }
               }
@@ -5415,6 +5475,39 @@
               }
             }
           },
+          "400": {
+            "description": "Bad request - Invalid pagination parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalid_page": {
+                    "value": {
+                      "success": false,
+                      "error": "Invalid page parameter. Must be a positive integer."
+                    }
+                  },
+                  "invalid_limit": {
+                    "value": {
+                      "success": false,
+                      "error": "Invalid limit parameter. Must be between 1 and 100."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized - Authentication required",
             "content": {
@@ -6459,6 +6552,39 @@
                   "page": 1,
                   "limit": 10,
                   "totalPages": 16
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid pagination parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalid_page": {
+                    "value": {
+                      "success": false,
+                      "error": "Invalid page parameter. Must be a positive integer."
+                    }
+                  },
+                  "invalid_limit": {
+                    "value": {
+                      "success": false,
+                      "error": "Invalid limit parameter. Must be between 1 and 100."
+                    }
+                  }
                 }
               }
             }
@@ -8350,6 +8476,39 @@
               }
             }
           },
+          "400": {
+            "description": "Bad request - Invalid pagination parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalid_page": {
+                    "value": {
+                      "success": false,
+                      "error": "Invalid page parameter. Must be a positive integer."
+                    }
+                  },
+                  "invalid_limit": {
+                    "value": {
+                      "success": false,
+                      "error": "Invalid limit parameter. Must be between 1 and 100."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -9218,6 +9377,39 @@
                     "page": 1,
                     "limit": 10,
                     "totalPages": 5
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid pagination parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalid_page": {
+                    "value": {
+                      "success": false,
+                      "error": "Invalid page parameter. Must be a positive integer."
+                    }
+                  },
+                  "invalid_limit": {
+                    "value": {
+                      "success": false,
+                      "error": "Invalid limit parameter. Must be between 1 and 100."
+                    }
                   }
                 }
               }
@@ -10475,6 +10667,8 @@
                     "error": {
                       "type": "string",
                       "examples": {
+                        "invalid_page": "Invalid page parameter. Must be a positive integer.",
+                        "invalid_limit": "Invalid limit parameter. Must be between 1 and 100.",
                         "invalid_status": "Invalid status parameter",
                         "invalid_sort": "Invalid sortBy parameter",
                         "search_too_long": "Search parameter too long"
@@ -22764,6 +22958,33 @@
                     "totalPages": 5,
                     "total": 47,
                     "limit": 10
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid pagination parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalid_page": {
+                    "value": {
+                      "error": "Invalid page parameter. Must be a positive integer."
+                    }
+                  },
+                  "invalid_limit": {
+                    "value": {
+                      "error": "Invalid limit parameter. Must be between 1 and 100."
+                    }
                   }
                 }
               }
