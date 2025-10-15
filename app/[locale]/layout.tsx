@@ -15,11 +15,17 @@ import { Suspense } from 'react';
 import Script from 'next/script';
 import { ConditionalLayout } from '@/components/layout/conditional-layout';
 import { siteConfig } from '@/lib/config';
+import { FontLoader } from '@/components/fonts/font-loader';
 
 /**
  * Generate metadata dynamically using siteConfig
  */
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+	params
+}: {
+	params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+	const { locale } = await params;
 	return {
 		title: `${siteConfig.name} | ${siteConfig.tagline}`,
 		description: siteConfig.description,
@@ -29,6 +35,9 @@ export async function generateMetadata(): Promise<Metadata> {
 			description: siteConfig.description,
 			type: 'website',
 			siteName: siteConfig.name
+		},
+		languageAlternates: {
+			canonical: `/${locale}`
 		}
 	};
 }
@@ -54,22 +63,21 @@ export default async function RootLayout({
 
 	// Determine if the current locale is RTL
 	return (
-		<html lang={locale} suppressHydrationWarning>
-			<body className={`antialiased dark:bg-dark--theme-950`}>
-				<Script src="https://assets.lemonsqueezy.com/lemon.js" strategy="beforeInteractive" />
-				<PHProvider>
-					<Suspense fallback={null}>
-						<PostHogPageView />
-					</Suspense>
-					<NextIntlClientProvider messages={messages}>
-						<Toaster position="bottom-right" richColors />
-						<Providers config={config}>
-							<LoginModalProvider />
-							<ConditionalLayout>{children}</ConditionalLayout>
-						</Providers>
-					</NextIntlClientProvider>
-				</PHProvider>
-			</body>
-		</html>
+		<>
+			<FontLoader />
+			<Script src="https://assets.lemonsqueezy.com/lemon.js" strategy="beforeInteractive" />
+			<PHProvider>
+				<Suspense fallback={null}>
+					<PostHogPageView />
+				</Suspense>
+				<NextIntlClientProvider messages={messages}>
+					<Toaster position="bottom-right" richColors />
+					<Providers config={config}>
+						<LoginModalProvider />
+						<ConditionalLayout>{children}</ConditionalLayout>
+					</Providers>
+				</NextIntlClientProvider>
+			</PHProvider>
+		</>
 	);
 }
