@@ -71,7 +71,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(buttonVariants({ variant, size }), additionalClassNames, className)}
         ref={ref}
         variant={heroVariant}
-        size={heroSize}
+        size={heroSize as any}
         {...props}
       />
     )
