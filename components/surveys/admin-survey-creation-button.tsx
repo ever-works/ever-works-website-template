@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Plus, FileText } from 'lucide-react';
-import { CreateSurveyModal } from './create-survey-modal';
 import { useTranslations } from 'next-intl';
 
 interface AdminSurveyCreationButtonProps {
@@ -12,6 +12,7 @@ interface AdminSurveyCreationButtonProps {
   variant?: 'default' | 'outline' | 'ghost';
   size?: 'sm' | 'default' | 'lg';
   className?: string;
+  showLabel?: boolean;
 }
 
 export function AdminSurveyCreationButton({ 
@@ -19,38 +20,26 @@ export function AdminSurveyCreationButton({
   itemName, 
   variant = 'outline',
   size = 'sm',
-  className = ''
+  className = '',
+  showLabel = false
 }: AdminSurveyCreationButtonProps) {
   const t = useTranslations();
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleCreateSurvey = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
+  // Build URL with query parameters if itemId is provided
+  const createSurveyUrl = itemId 
+    ? `/admin/surveys/create?itemId=${itemId}`
+    : '/admin/surveys/create';
 
   return (
-    <>
+    <Link href={createSurveyUrl} title={t('common.CREATE_SURVEY')}>
       <Button
-        onClick={handleCreateSurvey}
         variant={variant}
         size={size}
-        className={`flex items-center gap-2 ${className}`}
+        className={`flex items-center justify-center ${showLabel ? 'gap-2' : ''} ${className}`}
       >
-        <Plus className="w-4 h-4" />
         <FileText className="w-4 h-4" />
-        {itemId ? t('common.CREATE_ITEM_SURVEY') : t('common.CREATE_SURVEY')}
+        {showLabel && t('common.CREATE_SURVEY')}
       </Button>
-
-      <CreateSurveyModal
-        isOpen={isModalOpen}
-        onClose={handleModalClose}
-        defaultItemId={itemId}
-        defaultItemName={itemName}
-      />
-    </>
+    </Link>
   );
 }

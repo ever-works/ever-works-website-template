@@ -262,6 +262,7 @@ export default function AdminItemsPage() {
                 {t('ADD_ITEM')}
               </Button>
               <AdminSurveyCreationButton 
+                showLabel
                 variant="default"
                 size="lg"
                 className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/40 transition-all duration-300 text-white font-medium"
@@ -491,7 +492,7 @@ export default function AdminItemsPage() {
                           itemName={item.name}
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0 transition-all duration-200 hover:bg-yellow-500/10 hover:text-yellow-600"
+                          className="w-8 p-0 hover:bg-yellow-500/10 hover:text-yellow-600"
                         />
 
                         {/* Edit and Delete */}

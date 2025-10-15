@@ -5,7 +5,6 @@ import { Model } from 'survey-core';
 import { Survey } from 'survey-react-ui';
 import 'survey-core/survey-core.min.css';
 import './survey-form-theme.css';
-import { SurveyTypeEnum, SurveyStatusEnum } from '@/lib/constants';
 
 export interface SurveyFormProps {
 	surveyJson: any;
@@ -14,15 +13,6 @@ export interface SurveyFormProps {
 	onCurrentPageChanged?: (sender: Model, options: any) => void;
 	className?: string;
 	data?: any;
-}
-
-export interface SurveyFormData {
-	title: string;
-	description?: string;
-	type: SurveyTypeEnum;
-	itemId?: string;
-	status: SurveyStatusEnum;
-	surveyJson: any;
 }
 
 type SurveyFormRef = {

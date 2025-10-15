@@ -8,12 +8,14 @@ import type { Survey } from '@/lib/db/schema';
 import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { SurveyTypeEnum } from '@/lib/constants';
 
 interface CreateEditSurveyClientProps {
 	survey?: Survey;
+	defaultItemId?: string;
 }
 
-export function CreateEditSurveyClient({ survey }: CreateEditSurveyClientProps) {
+export function CreateEditSurveyClient({ survey, defaultItemId }: CreateEditSurveyClientProps) {
 	const router = useRouter();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -65,6 +67,8 @@ export function CreateEditSurveyClient({ survey }: CreateEditSurveyClientProps) 
 				onSubmit={handleSubmit}
 				onCancel={handleCancel}
 				isLoading={isSubmitting}
+				defaultType={defaultItemId ? SurveyTypeEnum.ITEM : undefined}
+				defaultItemId={defaultItemId}
 			/>
 		</div>
 		</div>

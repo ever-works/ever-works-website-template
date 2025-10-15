@@ -211,28 +211,6 @@ export class SurveyService {
   }
 
   /**
-   * Get survey analytics
-   */
-  async getAnalytics(surveyId: string, filters?: {
-    itemId?: string;
-    startDate?: string;
-    endDate?: string;
-  }) {
-    const survey = await queries.getSurveyById(surveyId);
-    if (!survey) {
-      throw new Error('Survey not found');
-    }
-
-    const analytics = await queries.getSurveyAnalytics(surveyId, filters);
-
-    return {
-      surveyId,
-      surveySlug: survey.slug,
-      ...analytics
-    };
-  }
-
-  /**
    * Generate URL-friendly slug from title
    */
   private generateSlug(title: string): string {
