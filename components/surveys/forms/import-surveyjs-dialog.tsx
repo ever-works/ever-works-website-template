@@ -39,7 +39,7 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 			const data = await response.json();
 			onImport(data);
 			toast.success(t('SURVEY_IMPORTED_SUCCESSFULLY'));
-			handleClose();
+			handleClose(true);
 		} catch (error) {
 			logger.error('Error importing survey', error);
 			toast.error(error instanceof Error ? error.message : t('FAILED_TO_IMPORT_SURVEY'));
@@ -48,11 +48,12 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 		}
 	};
 
-	const handleClose = () => {
-		if (!isImporting) {
-			setSurveyJsId('');
-			onClose();
+	const handleClose = (force = false) => {
+		if (isImporting && !force) {
+			return;
 		}
+		setSurveyJsId('');
+		onClose();
 	};
 
 	const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -65,7 +66,7 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 	return (
 		<Modal
 			isOpen={isOpen}
-			onClose={handleClose}
+			onClose={() => handleClose()}
 			size="md"
 			isDismissable={!isImporting}
 			title={t('IMPORT_SURVEYJS_TITLE')}
@@ -103,7 +104,7 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 
 			<ModalFooter className="flex items-center justify-end gap-3">
 				<Button
-					onClick={handleClose}
+					onClick={() => handleClose()}
 					variant="outline"
 					disabled={isImporting}
 				>

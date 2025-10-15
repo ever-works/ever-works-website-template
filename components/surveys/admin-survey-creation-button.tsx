@@ -14,8 +14,8 @@ interface AdminSurveyCreationButtonProps {
   showLabel?: boolean;
 }
 
-export function AdminSurveyCreationButton({ 
-  itemId, 
+export function AdminSurveyCreationButton({
+  itemId,
   variant = 'outline',
   size = 'sm',
   className = '',
@@ -24,8 +24,8 @@ export function AdminSurveyCreationButton({
   const t = useTranslations();
 
   // Build URL with query parameters if itemId is provided
-  const createSurveyUrl = itemId 
-    ? `/admin/surveys/create?itemId=${itemId}`
+  const createSurveyUrl = itemId
+    ? `/admin/surveys/create?itemId=${encodeURIComponent(itemId)}`
     : '/admin/surveys/create';
 
   return (

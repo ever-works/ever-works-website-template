@@ -73,11 +73,12 @@ export function ItemSelector({
 		try {
 			setIsLoading(true);
 			const response = await fetch('/api/admin/items?limit=100&status=approved');
-			const data = await response.json();
-
+			
 			if (!response.ok) {
 				throw new Error(`Failed to fetch items: ${response.status} ${response.statusText}`);
 			}
+
+			const data = await response.json();
 
 			if (data.success && data.items) {
 				setItems(data.items);

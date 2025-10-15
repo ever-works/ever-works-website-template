@@ -35,12 +35,10 @@ const logger = Logger.create('SurveyDetailAPI');
  *         description: "Internal server error"
  */
 export async function GET(
-    request: NextRequest,
     { params }: { params: { surveyId: string } }
 ) {
     try {
         const { surveyId } = params;
-        const { searchParams } = new URL(request.url);
 
         // Try to get by ID first, then by slug
         let survey = await surveyService.getOne(surveyId);
@@ -125,7 +123,7 @@ export async function GET(
  */
 export async function PUT(
     request: NextRequest,
-    { params }: { params: Promise<{ surveyId: string }> }
+    { params }: { params: { surveyId: string } }
 ) {
     try {
         const session = await auth();
@@ -153,7 +151,7 @@ export async function PUT(
             );
         }
 
-        const updatedSurvey = await surveyService.update(survey.slug, body);
+        const updatedSurvey = await surveyService.update(survey.id, body);
 
         return NextResponse.json({
             success: true,
@@ -208,7 +206,7 @@ export async function PUT(
  */
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: Promise<{ surveyId: string }> }
+    { params }: { params: { surveyId: string } }
 ) {
     try {
         const session = await auth();
@@ -220,7 +218,7 @@ export async function DELETE(
             );
         }
 
-        const { surveyId } = await params;
+        const { surveyId } = params;
 
         // Get survey to find its slug
         let survey = await surveyService.getOne(surveyId);
@@ -235,7 +233,7 @@ export async function DELETE(
             );
         }
 
-        await surveyService.delete(survey.slug);
+        await surveyService.delete(survey.id);
 
         return NextResponse.json({
             success: true,

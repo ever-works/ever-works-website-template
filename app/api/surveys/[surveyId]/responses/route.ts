@@ -121,7 +121,7 @@ const logger = Logger.create('SurveyResponsesAPI');
  */
 export async function GET(
     request: NextRequest,
-    { params }: { params: Promise<{ surveyId: string }> }
+    { params }: { params: { surveyId: string } }
 ) {
     try {
         const session = await auth();
@@ -133,12 +133,12 @@ export async function GET(
             );
         }
 
-        const { surveyId } = await params;
+        const { surveyId } = params;
         const { searchParams } = new URL(request.url);
 
         const toInt = (v: string | null) =>
             v && /^\d+$/.test(v) ? parseInt(v, 10) : undefined;
-       
+
         const filters: ResponseFilters = {
             itemId: searchParams.get('itemId') || undefined,
             userId: searchParams.get('userId') || undefined,
@@ -188,10 +188,6 @@ export async function GET(
  *             type: object
  *             properties:
  *               surveyId:
- *                 type: string
- *               userId:
- *                 type: string
- *               itemId:
  *                 type: string
  *               data:
  *                 type: object
@@ -247,25 +243,49 @@ export async function GET(
  */
 export async function POST(
     request: NextRequest,
-    { params }: { params: Promise<{ surveyId: string }> }
+    { params }: { params: { surveyId: string }}
 ) {
     try {
-        const { surveyId } = await params;
+        const { surveyId } =  params;
+
         const body = await request.json();
+
+        if (!body || typeof body.data !== 'object' || body.data == null) {
+            return NextResponse.json(
+                { success: false, error: 'Invalid request body: "data" is required' },
+                { status: 400 }
+            );
+        }
+
+        const survey = await surveyService.getOne(surveyId);
+
+        if (!survey) {
+            return NextResponse.json(
+                { success: false, error: 'Survey not found' },
+                { status: 404 }
+            );
+        }
 
         // Get user session if available
         const session = await auth();
+        
 
         // Get IP address and user agent from request
-        const ipAddress = request.headers.get('x-forwarded-for') ||
+        const forwardedFor = request.headers.get('x-forwarded-for') || '';
+        const ipAddress =
+            (forwardedFor.split(',')[0]?.trim()) ||
             request.headers.get('x-real-ip') ||
             'unknown';
+
         const userAgent = request.headers.get('user-agent') || 'unknown';
+
+     
+
 
         const responseData: SubmitResponseData = {
             surveyId,
-            userId: session?.user?.id || body.userId,
-            itemId: body.itemId,
+            userId: session?.user?.id,
+            itemId: survey.itemId as string,
             data: body.data,
             ipAddress,
             userAgent
@@ -279,14 +299,6 @@ export async function POST(
             message: 'Response submitted successfully'
         }, { status: 201 });
     } catch (error) {
-        logger.error('Error submitting response', error);
-
-        if (error instanceof Error && error.message.includes('not accepting responses')) {
-            return NextResponse.json(
-                { success: false, error: error.message },
-                { status: 400 }
-            );
-        }
 
         return NextResponse.json(
             {

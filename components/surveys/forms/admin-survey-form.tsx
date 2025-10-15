@@ -189,11 +189,11 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 						value={formData.type}
 						onChange={(e) => {
 							const newType = e.target.value as SurveyTypeEnum;
-							setFormData({
-								...formData,
+							setFormData(prev => ({
+								...prev,
 								type: newType,
-								itemId: newType === SurveyTypeEnum.GLOBAL ? '' : formData.itemId
-							});
+								itemId: newType === SurveyTypeEnum.GLOBAL ? '' : prev.itemId
+							}));
 						}}
 						className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 						disabled={isLoading || mode === 'edit'}

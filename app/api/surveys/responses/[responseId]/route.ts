@@ -71,7 +71,7 @@ const logger = Logger.create('SurveyResponseDetailAPI');
  */
 export async function GET(
     request: NextRequest,
-    { params }: { params: Promise<{ responseId: string }> }
+    { params }: { params: { responseId: string } }
 ) {
     try {
         const session = await auth();
@@ -83,7 +83,7 @@ export async function GET(
             );
         }
 
-        const { responseId } = await params;
+        const { responseId } = params;
         const response = await surveyService.getResponseById(responseId);
 
         if (!response) {

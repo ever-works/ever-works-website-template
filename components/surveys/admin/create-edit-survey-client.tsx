@@ -37,7 +37,7 @@ export function CreateEditSurveyClient({ survey, defaultItemId }: CreateEditSurv
 			toast.success(mode === 'edit' ? t('SURVEY_UPDATED_SUCCESSFULLY') : t('SURVEY_CREATED_SUCCESSFULLY'));
 			router.push('/admin/surveys');
 		} catch (error) {
-			logger.error('Error updating survey', error);
+			logger.error(`Error ${mode === 'edit' ? 'updating' : 'creating'} survey`, error);
 			toast.error(error instanceof Error ? error.message : (mode === 'edit' ? t('FAILED_TO_UPDATE_SURVEY') : t('FAILED_TO_CREATE_SURVEY')));
 		} finally {
 			setIsSubmitting(false);

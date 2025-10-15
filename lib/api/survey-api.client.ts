@@ -7,31 +7,16 @@ import type { Survey, SurveyResponse } from '@/lib/db/schema';
 import { SurveyTypeEnum, SurveyStatusEnum } from '@/lib/constants';
 import { apiClient } from './api-client';
 
+import type {
+    CreateSurveyData,
+    UpdateSurveyData,
+    SurveyFilters,
+    SubmitResponseData,
+    ResponseFilters,
+} from '@/lib/services/survey.service';
+
 // ==================== TYPES ====================
 
-export interface CreateSurveyData {
-    title: string;
-    description?: string;
-    type: SurveyTypeEnum;
-    itemId?: string;
-    status?: SurveyStatusEnum;
-    surveyJson: any;
-}
-
-export interface UpdateSurveyData {
-    title?: string;
-    description?: string;
-    status?: SurveyStatusEnum;
-    surveyJson?: any;
-}
-
-export interface SurveyFilters {
-    type?: SurveyTypeEnum;
-    itemId?: string;
-    status?: SurveyStatusEnum;
-    page?: number;
-    limit?: number;
-}
 
 export interface GetManyResponse {
     surveys: (Survey & { responseCount: number; isCompletedByUser?: boolean })[];
@@ -40,21 +25,6 @@ export interface GetManyResponse {
     page: number;
 }
 
-export interface SubmitResponseData {
-    surveyId: string;
-    userId?: string;
-    itemId?: string;
-    data: any;
-}
-
-export interface ResponseFilters {
-    itemId?: string;
-    userId?: string;
-    startDate?: string;
-    endDate?: string;
-    page?: number;
-    limit?: number;
-}
 
 export interface GetResponsesResponse {
     responses: SurveyResponse[];
