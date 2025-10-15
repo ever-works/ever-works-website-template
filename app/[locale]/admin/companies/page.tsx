@@ -7,12 +7,12 @@ import { UniversalPagination } from '@/components/universal-pagination';
 import type { CreateCompanyInput, UpdateCompanyInput } from '@/lib/validations/company';
 
 // Components
-import { PageHeader } from './components/page-header';
-import { CompanyStats } from './components/company-stats';
-import { CompanyFilters } from './components/company-filters';
-import { CompaniesTable } from './components/companies-table';
-import { LoadingSkeleton } from './components/loading-skeleton';
-import { CompanyModal, DeleteConfirmationModal } from './components/company-modal';
+import { PageHeader } from '@/components/admin/companies/page-header';
+import { CompanyStats } from '@/components/admin/companies/company-stats';
+import { CompanyFilters } from '@/components/admin/companies/company-filters';
+import { CompaniesTable } from '@/components/admin/companies/companies-table';
+import { LoadingSkeleton } from '@/components/admin/companies/loading-skeleton';
+import { CompanyModal, DeleteConfirmationModal } from '@/components/admin/companies/company-modal';
 
 /**
  * Companies Page Component

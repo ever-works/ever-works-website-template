@@ -1,6 +1,6 @@
 'use client';
 
-import { CompanySelector } from '@/components/admin/company-selector';
+import { CompanySelector } from '@/components/admin/companies/company-selector';
 import { useItemCompany } from '@/hooks/use-item-company';
 
 export interface ItemCompanyManagerProps {
