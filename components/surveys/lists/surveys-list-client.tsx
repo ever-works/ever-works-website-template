@@ -147,6 +147,7 @@ export function SurveysListClient({
 											</Link>
 										)}
 										<button
+											type="button"
 											onClick={() => handleCopyLink(survey)}
 											className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
 											title="Copy Public Link"

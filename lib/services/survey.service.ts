@@ -13,8 +13,8 @@
  * - getOne() - Get survey by ID
  * - getBySlug() - Get survey by slug
  * - getMany() - Get surveys with filters
- * - update() - Update survey
- * - delete() - Delete survey
+ * - update() - Update survey by ID
+ * - delete() - Delete survey by ID
  * 
  * Survey-Specific Methods:
  * - submitResponse() - Submit survey response
@@ -37,6 +37,7 @@ export interface CreateSurveyData {
 
 export interface UpdateSurveyData {
   title?: string;
+  slug?: string;
   description?: string;
   status?: 'draft' | 'published' | 'closed';
   surveyJson?: any;
@@ -75,11 +76,11 @@ export class SurveyService {
   async create(data: CreateSurveyData): Promise<Survey> {
     // Generate slug from title
     const slug = this.generateSlug(data.title);
-    
+
     // Check if slug exists
     const existingSurvey = await queries.getSurveyBySlug(slug);
     const finalSlug = existingSurvey ? await this.ensureUniqueSlug(slug) : slug;
-    
+
     const newSurvey: NewSurvey = {
       slug: finalSlug,
       title: data.title,
@@ -97,8 +98,8 @@ export class SurveyService {
   /**
    * Get survey by slug
    */
-  async getBySlug(slug: string, itemId?: string): Promise<Survey | null> {
-    return await queries.getSurveyBySlug(slug, itemId);
+  async getBySlug(slug: string): Promise<Survey | null> {
+    return await queries.getSurveyBySlug(slug);
   }
 
   /**
@@ -131,10 +132,15 @@ export class SurveyService {
   /**
    * Update survey
    */
-  async update(slug: string, data: UpdateSurveyData): Promise<Survey> {
-    const survey = await queries.getSurveyBySlug(slug);
+  async update(id: string, data: UpdateSurveyData): Promise<Survey> {
+    const survey = await queries.getSurveyById(id);
+
     if (!survey) {
       throw new Error('Survey not found');
+    }
+
+    if (data.slug) {
+      data.slug = await this.ensureUniqueSlug(data.slug, id);
     }
 
     const updateData: Partial<Survey> = {
@@ -149,14 +155,14 @@ export class SurveyService {
       updateData.closedAt = new Date();
     }
 
-    return await queries.updateSurvey(slug, updateData);
+    return await queries.updateSurvey(id, updateData);
   }
 
   /**
    * Delete survey
    */
-  async delete(slug: string): Promise<void> {
-    const survey = await queries.getSurveyBySlug(slug);
+  async delete(id: string): Promise<void> {
+    const survey = await queries.getSurveyById(id);
     if (!survey) {
       throw new Error('Survey not found');
     }
@@ -167,7 +173,7 @@ export class SurveyService {
       throw new Error(`Cannot delete survey with ${responseCount} responses`);
     }
 
-    await queries.deleteSurvey(slug);
+    await queries.deleteSurvey(id);
   }
 
   /**
@@ -212,26 +218,45 @@ export class SurveyService {
 
   /**
    * Generate URL-friendly slug from title
+   * Handles Unicode characters, diacritics, and special characters
+   * Examples:
+   * - "Café Survey" → "cafe-survey"
+   * - "Niño's Test" → "ninos-test"
+   * - "中文调查" → "zhong-wen-diao-cha" (if normalized) or falls back to safe handling
    */
   private generateSlug(title: string): string {
     return title
+      // Normalize Unicode to NFD (Canonical Decomposition)
+      // This separates base characters from combining diacritical marks
+      .normalize('NFD')
+      // Remove combining diacritical marks (U+0300 to U+036F)
+      .replace(/[\u0300-\u036f]/g, '')
+      // Convert to lowercase
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
+      // Replace spaces and underscores with hyphens
+      .replace(/[\s_]+/g, '-')
+      // Remove any character that is not alphanumeric or hyphen
+      .replace(/[^a-z0-9-]+/g, '-')
+      // Collapse multiple consecutive hyphens into a single hyphen
+      .replace(/-+/g, '-')
+      // Remove leading and trailing hyphens
+      .replace(/^-+|-+$/g, '')
+      // If the result is empty (e.g., all non-Latin characters), use a fallback
+      || 'survey';
   }
 
   /**
    * Ensure slug is unique by appending a number
    */
-  private async ensureUniqueSlug(baseSlug: string): Promise<string> {
+  private async ensureUniqueSlug(baseSlug: string, ignoreId?: string): Promise<string> {
     let counter = 2;
     let slug = `${baseSlug}-${counter}`;
-    
-    while (await queries.getSurveyBySlug(slug)) {
+
+    while (await queries.getSurveyBySlug(slug, ignoreId)) {
       counter++;
       slug = `${baseSlug}-${counter}`;
     }
-    
+
     return slug;
   }
 }

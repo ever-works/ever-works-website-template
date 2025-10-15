@@ -6,6 +6,9 @@ import { surveyApiClient } from '@/lib/api/survey-api.client';
 import type { Survey } from '@/lib/db/schema';
 import { toast } from 'sonner';
 import { SurveyFormNoSSR } from './survey-form-no-ssr';
+import { Logger } from '@/lib/logger';
+
+const logger = Logger.create('SurveyFormWrapper');
 
 interface SurveyFormWrapperProps {
 	survey: Survey;
@@ -51,7 +54,7 @@ export function SurveyFormWrapper({
 				onCompleted();
 			}
 		} catch (error) {
-			console.error('Error saving survey response:', error);
+			logger.error('Error saving survey response', error);
 			toast.error('Failed to save survey response. Please try again.');
 			setIsSubmitting(false);
 		}

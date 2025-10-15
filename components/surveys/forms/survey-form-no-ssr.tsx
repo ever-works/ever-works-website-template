@@ -1,6 +1,6 @@
 'use client';
 
-import React, {  } from 'react';
+import React from 'react';
 import 'survey-core/survey-core.min.css';
 import { SurveyFormProps } from './survey-form';
 import dynamic from 'next/dynamic';

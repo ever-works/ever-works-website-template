@@ -1,18 +1,24 @@
+import { cache } from 'react';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { surveyService } from '@/lib/services/survey.service';
 import { SurveyResponsesClient } from '@/components/surveys/responses/survey-responses-client';
 
 interface AdminSurveyResponsesPageProps {
-	params: Promise<{
+	params: {
 		locale: string;
 		slug: string;
-	}>;
+	};
 }
 
+// Cached fetch to prevent duplicate queries
+const getSurvey = cache(async (slug: string) => {
+	return surveyService.getBySlug(slug);
+});
+
 export async function generateMetadata({ params }: AdminSurveyResponsesPageProps): Promise<Metadata> {
-	const { slug } = await params;
-	const survey = await surveyService.getBySlug(slug);
+	const { slug } = params;
+	const survey = await getSurvey(slug);
 
 	if (!survey) {
 		return {
@@ -27,8 +33,8 @@ export async function generateMetadata({ params }: AdminSurveyResponsesPageProps
 }
 
 export default async function AdminSurveyResponsesPage({ params }: AdminSurveyResponsesPageProps) {
-	const { slug } = await params;
-	const survey = await surveyService.getBySlug(slug);
+	const { slug } = params;
+	const survey = await getSurvey(slug);
 
 	if (!survey) {
 		notFound();

@@ -3,14 +3,14 @@ import { notFound } from 'next/navigation';
 import { CreateEditSurveyClient } from '@/components/surveys/admin/create-edit-survey-client';
 
 interface EditSurveyPageProps {
-	params: Promise<{
+	params: {
 		locale: string;
 		slug: string;
-	}>;
+	};
 }
 
 export default async function EditSurveyPage({ params }: EditSurveyPageProps) {
-	const { slug } = await params;
+	const { slug } =  params;
 
 	// Fetch survey data on the server
 	const survey = await surveyService.getBySlug(slug);

@@ -4,7 +4,6 @@ import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'rea
 import { Model } from 'survey-core';
 import { Survey } from 'survey-react-ui';
 import 'survey-core/survey-core.min.css';
-import './survey-form-theme.css';
 
 export interface SurveyFormProps {
 	surveyJson: any;
@@ -120,7 +119,7 @@ export const SurveyForm = forwardRef<SurveyFormRef, SurveyFormProps>(({
 
 	return (
 		<>
-			<div className={`survey-container ${className}`}>
+			<div className={className}>
 				<Survey model={surveyModel} />
 			</div>
 		</>

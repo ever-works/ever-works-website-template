@@ -14,6 +14,9 @@ import { formatDateTime } from '@/utils/date';
 import { SurveyStatusEnum } from '@/lib/constants';
 import { ItemDetailProps } from '../item-detail';
 import { SurveyDialog } from './survey-dialog';
+import { Logger } from '@/lib/logger';
+
+const logger = Logger.create('UserSurveySection');
 
 interface UserSurveySectionProps {
   item: ItemDetailProps['meta'];
@@ -42,7 +45,7 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
       });
       setSurveys(result.surveys);
     } catch (err) {
-      console.error('Error loading surveys:', err);
+      logger.error('Error loading surveys', err);
       setError('Error loading surveys');
     } finally {
       setLoading(false);
@@ -183,7 +186,7 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
                         <CheckCircle className="w-4 h-4 mr-2" />
                         Retake Survey
                       </Button>
-                      <Link href={`/items/${item.slug}/surveys/${survey.slug}`} target="_blank">
+                      <Link href={`/items/${item.slug}/surveys/${survey.slug}`} target="_blank" rel="noopener noreferrer">
                         <Button variant="outline" className="gap-2">
                           <ExternalLink className="w-4 h-4" />
                           Open in New Tab
@@ -199,7 +202,7 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
                         <FileText className="w-4 h-4 mr-2" />
                         {t('common.TAKE_SURVEY')}
                       </Button>
-                      <Link href={`/items/${item.slug}/surveys/${survey.slug}`} target="_blank">
+                      <Link href={`/items/${item.slug}/surveys/${survey.slug}`} target="_blank" rel="noopener noreferrer">
                         <Button variant="outline" className="gap-2">
                           <ExternalLink className="w-4 h-4" />
                           Open in New Tab

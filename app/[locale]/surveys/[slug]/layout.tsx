@@ -2,17 +2,22 @@ import { Metadata } from 'next';
 import { surveyService } from '@/lib/services/survey.service';
 import { Container } from '@/components/ui/container';
 import { notFound } from 'next/navigation';
+import { cache } from 'react';
 
 interface SurveyLayoutProps {
-	params: Promise<{
+	params: {
 		locale: string;
 		slug: string;
-	}>;
+	};
 }
 
+const getSurvey = cache(async (slug: string) => {
+	return surveyService.getBySlug(slug);
+});
+
 export async function generateMetadata({ params }: SurveyLayoutProps): Promise<Metadata> {
-	const { slug } = await params;
-	const survey = await surveyService.getBySlug(slug);
+	const { slug } = params;
+	const survey = await getSurvey(slug);
 
 	if (!survey) {
 		return {
@@ -26,10 +31,10 @@ export async function generateMetadata({ params }: SurveyLayoutProps): Promise<M
 	};
 }
 
-export default async function SurveyLayout({ children, params }: { children: React.ReactNode, params: Promise<{ slug: string }> }) {
+export default async function SurveyLayout({ children, params }: { children: React.ReactNode, params: { slug: string } }) {
 
-	const { slug } = await params;
-	const survey = await surveyService.getBySlug(slug);
+	const { slug } = params;
+	const survey = await getSurvey(slug);
 
 	if (!survey) {
 		return notFound();

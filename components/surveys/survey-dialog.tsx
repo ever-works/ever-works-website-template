@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Modal } from '@/components/ui/modal';
 import type { Survey } from '@/lib/db/schema';
 import { SurveyFormWrapper } from './forms/survey-form-wrapper';
@@ -25,16 +25,33 @@ export function SurveyDialog({
     onCompleted
 }: SurveyDialogProps) {
 
+    const timerRef = useRef<number | undefined>(undefined);
 
     const handleCompleted = () => {
         // Close the dialog after a short delay
-        setTimeout(() => {
+        timerRef.current = window.setTimeout(() => {
             onClose();
             if (onCompleted) {
                 onCompleted();
             }
         }, 1500);
     };
+
+    const handleClose = () => {
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+            timerRef.current = undefined;
+        }
+        onClose();
+    };
+
+    useEffect(() => {
+        return () => {
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
+            }
+        };
+    }, []);
 
     if (!survey) return null;
 
@@ -45,7 +62,7 @@ export function SurveyDialog({
             isOpen={open}
             backdrop="blur"
             isDismissable={true}
-            onClose={onClose}
+            onClose={handleClose}
             size="2xl"
         >
             <div className="p-4">

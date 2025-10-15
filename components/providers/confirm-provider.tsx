@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -21,33 +21,33 @@ const ConfirmContext = createContext<ConfirmContextValue | undefined>(undefined)
 export function ConfirmProvider({ children }: { children: React.ReactNode }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [options, setOptions] = useState<ConfirmOptions | null>(null);
-	const [resolver, setResolver] = useState<((value: boolean) => void) | null>(null);
+	const resolverRef = useRef<((value: boolean) => void) | null>(null);
 
 	const confirm = useCallback((options: ConfirmOptions): Promise<boolean> => {
 		return new Promise((resolve) => {
 			setOptions(options);
 			setIsOpen(true);
-			setResolver(() => resolve);
+			resolverRef.current = resolve;
 		});
 	}, []);
 
 	const handleConfirm = useCallback(() => {
-		if (resolver) {
-			resolver(true);
+		if (resolverRef.current) {
+			resolverRef.current(true);
 		}
 		setIsOpen(false);
 		setOptions(null);
-		setResolver(null);
-	}, [resolver]);
+		resolverRef.current = null;
+	}, []);
 
 	const handleCancel = useCallback(() => {
-		if (resolver) {
-			resolver(false);
+		if (resolverRef.current) {
+			resolverRef.current(false);
 		}
 		setIsOpen(false);
 		setOptions(null);
-		setResolver(null);
-	}, [resolver]);
+		resolverRef.current = null;
+	}, []);
 
 	const getVariantStyles = () => {
 		switch (options?.variant) {
@@ -96,6 +96,7 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
 								</p>
 							</div>
 							<button
+								type="button"
 								onClick={handleCancel}
 								className="flex-shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
 							>

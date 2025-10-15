@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { surveyService } from '@/lib/services/survey.service';
 import type { CreateSurveyData, SurveyFilters } from '@/lib/services/survey.service';
+import { Logger } from '@/lib/logger';
+
+const logger = Logger.create('SurveyAPI');
 
 /**
  * @swagger
@@ -79,13 +82,13 @@ export async function GET(request: NextRequest) {
     try {
         const session = await auth();
         const { searchParams } = new URL(request.url);
-        
+
         const filters: SurveyFilters = {
             type: searchParams.get('type') as 'global' | 'item' | undefined,
             itemId: searchParams.get('itemId') || undefined,
             status: searchParams.get('status') as 'draft' | 'published' | 'closed' | undefined,
-            page: searchParams.get('page') ? parseInt(searchParams.get('page')!) : undefined,
-            limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined,
+            page: searchParams.get('page') ? Math.max(1, parseInt(searchParams.get('page')!) || 1) : undefined,
+            limit: searchParams.get('limit') ? Math.min(100, Math.max(1, parseInt(searchParams.get('limit')!) || 10)) : undefined,
         };
 
         const result = await surveyService.getMany(filters, session?.user?.id);
@@ -100,11 +103,11 @@ export async function GET(request: NextRequest) {
             }
         });
     } catch (error) {
-        console.error('Error fetching surveys:', error);
+        logger.error('Error fetching surveys', error);
         return NextResponse.json(
-            { 
-                success: false, 
-                error: error instanceof Error ? error.message : 'Failed to fetch surveys' 
+            {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to fetch surveys'
             },
             { status: 500 }
         );
@@ -153,7 +156,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const session = await auth();
-        
+
         if (!session?.user?.isAdmin) {
             return NextResponse.json(
                 { success: false, error: 'Unauthorized' },
@@ -169,11 +172,11 @@ export async function POST(request: NextRequest) {
             data: survey
         }, { status: 201 });
     } catch (error) {
-        console.error('Error creating survey:', error);
+        logger.error('Error creating survey', error);
         return NextResponse.json(
-            { 
-                success: false, 
-                error: error instanceof Error ? error.message : 'Failed to create survey' 
+            {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to create survey'
             },
             { status: 500 }
         );

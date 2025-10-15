@@ -110,6 +110,7 @@ export function Modal({
               )}
               {!hideCloseButton && (
                 <button
+                  type="button"
                   onClick={() => {
                     onClose();
                     onOpenChange?.(false);

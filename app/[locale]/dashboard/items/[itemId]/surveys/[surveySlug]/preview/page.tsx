@@ -4,15 +4,15 @@ import { surveyService } from '@/lib/services/survey.service';
 import { SurveyPreviewClient } from '@/components/surveys/preview/preview-client';
 
 interface DashboardSurveyPreviewPageProps {
-	params: Promise<{
+	params: {
 		locale: string;
 		itemId: string;
 		surveySlug: string;
-	}>;
+	};
 }
 
 export async function generateMetadata({ params }: DashboardSurveyPreviewPageProps): Promise<Metadata> {
-	const { surveySlug } = await params;
+	const { surveySlug } =  params;
 	const survey = await surveyService.getBySlug(surveySlug);
 
 	if (!survey) {
@@ -28,8 +28,8 @@ export async function generateMetadata({ params }: DashboardSurveyPreviewPagePro
 }
 
 export default async function DashboardSurveyPreviewPage({ params }: DashboardSurveyPreviewPageProps) {
-	const { surveySlug, itemId } = await params;
-	const survey = await surveyService.getBySlug(surveySlug, itemId);
+	const { surveySlug, itemId } =  params;
+	const survey = await surveyService.getBySlug(surveySlug);
 
 	if (!survey) {
 		notFound();

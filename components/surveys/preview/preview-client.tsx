@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { SurveyFormNoSSR } from '../forms/survey-form-no-ssr';
 import { Survey } from '@/lib/db/schema';
+import { Logger } from '@/lib/logger';
+
+const logger = Logger.create('SurveyPreviewClient');
 
 
 interface SurveyPreviewClientProps {
@@ -46,7 +49,7 @@ export function SurveyPreviewClient({ survey, backLink }: SurveyPreviewClientPro
 				<SurveyFormNoSSR
 					surveyJson={survey.surveyJson}
 					onComplete={(sender) => {
-						console.log('Preview mode - response not saved:', sender.data);
+						logger.debug('Preview mode - response not saved', sender.data);
 					}}
 					className="survey-preview"
 				/>

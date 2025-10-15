@@ -116,17 +116,17 @@ export class SurveyApiClient {
     }
 
     /**
-     * Update survey by ID or slug
+     * Update survey by ID
      */
-    async update(slugOrId: string, data: UpdateSurveyData): Promise<Survey> {
-        return this.client.put<Survey>(`${this.baseUrl}/${slugOrId}`, data as any);
+    async update(id: string, data: UpdateSurveyData): Promise<Survey> {
+        return this.client.put<Survey>(`${this.baseUrl}/${id}`, data as any);
     }
 
     /**
-     * Delete survey by ID or slug
+     * Delete survey by ID
      */
-    async delete(slugOrId: string): Promise<void> {
-        await this.client.delete<void>(`${this.baseUrl}/${slugOrId}`);
+    async delete(id: string): Promise<void> {
+        await this.client.delete<void>(`${this.baseUrl}/${id}`);
     }
 
     // ==================== SURVEY RESPONSES ====================

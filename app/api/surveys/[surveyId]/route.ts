@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { surveyService } from '@/lib/services/survey.service';
 import type { UpdateSurveyData } from '@/lib/services/survey.service';
+import { Logger } from '@/lib/logger';
+
+const logger = Logger.create('SurveyDetailAPI');
 
 /**
  * @swagger
@@ -43,7 +46,7 @@ export async function GET(
         // Try to get by ID first, then by slug
         let survey = await surveyService.getOne(surveyId);
         if (!survey) {
-            survey = await surveyService.getBySlug(surveyId, itemId);
+            survey = await surveyService.getBySlug(surveyId);
         }
 
         if (!survey) {
@@ -58,7 +61,7 @@ export async function GET(
             data: survey
         });
     } catch (error) {
-        console.error('Error fetching survey:', error);
+        logger.error('Error fetching survey', error);
         return NextResponse.json(
             { 
                 success: false, 
@@ -74,8 +77,8 @@ export async function GET(
  * /api/surveys/{surveyId}:
  *   put:
  *     tags: ["Surveys"]
- *     summary: "Update survey"
- *     description: "Update a survey by ID or slug (admin only)"
+ *     summary: "Update survey by ID"
+ *     description: "Update a survey by ID (admin only)"
  *     security:
  *       - sessionAuth: []
  *     parameters:
@@ -149,7 +152,7 @@ export async function PUT(
             message: 'Survey updated successfully'
         });
     } catch (error) {
-        console.error('Error updating survey:', error);
+        logger.error('Error updating survey', error);
         
         if (error instanceof Error && error.message === 'Survey not found') {
             return NextResponse.json(
@@ -173,8 +176,8 @@ export async function PUT(
  * /api/surveys/{surveyId}:
  *   delete:
  *     tags: ["Surveys"]
- *     summary: "Delete survey"
- *     description: "Delete a survey by ID or slug (admin only)"
+ *     summary: "Delete survey by ID"
+ *     description: "Delete a survey by ID (admin only)"
  *     security:
  *       - sessionAuth: []
  *     parameters:
@@ -231,7 +234,7 @@ export async function DELETE(
             message: 'Survey deleted successfully'
         });
     } catch (error) {
-        console.error('Error deleting survey:', error);
+        logger.error('Error deleting survey', error);
         
         if (error instanceof Error && error.message === 'Survey not found') {
             return NextResponse.json(

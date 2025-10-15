@@ -5,6 +5,9 @@ import { Modal, ModalBody, ModalFooter } from '@/components/ui/modal';
 import { Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { Logger } from '@/lib/logger';
+
+const logger = Logger.create('ImportSurveyJsDialog');
 
 interface ImportSurveyJsDialogProps {
 	isOpen: boolean;
@@ -36,7 +39,7 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 			toast.success('Survey imported successfully!');
 			handleClose();
 		} catch (error) {
-			console.error('Error importing survey:', error);
+			logger.error('Error importing survey', error);
 			toast.error(error instanceof Error ? error.message : 'Failed to import survey from SurveyJS');
 		} finally {
 			setIsImporting(false);
@@ -68,10 +71,11 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 		>
 			<ModalBody className="space-y-4">
 				<div>
-					<label className="block text-sm font-medium mb-2">
+					<label className="block text-sm font-medium mb-2" htmlFor="survey-js-id">
 						Survey ID <span className="text-red-500">*</span>
 					</label>
 					<input
+						id="survey-js-id"
 						type="text"
 						value={surveyJsId}
 						onChange={(e) => setSurveyJsId(e.target.value)}

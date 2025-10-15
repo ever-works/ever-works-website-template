@@ -10,6 +10,9 @@ import { ArrowLeft, Download, Filter } from 'lucide-react';
 import { ResponseDetailDialog } from './response-detail-dialog';
 import { formatDateTime } from '@/utils/date';
 import { Button } from '@/components/ui/button';
+import { Logger } from '@/lib/logger';
+
+const logger = Logger.create('SurveyResponsesClient');
 
 
 
@@ -47,12 +50,12 @@ export function SurveyResponsesClient({
 			const data = await surveyApiClient.getResponses(survey.id, filters);
 			if (data) {
 				setResponses(data.responses || []);
-				setTotal(data.total || 0);
-			}
-		} catch (error) {
-			console.error('Error loading responses:', error);
-			toast.error('Failed to load responses');
-		} finally {
+			setTotal(data.total || 0);
+		}
+	} catch (error) {
+		logger.error('Error loading responses', error);
+		toast.error('Failed to load responses');
+	} finally {
 			setLoading(false);
 		}
 	};

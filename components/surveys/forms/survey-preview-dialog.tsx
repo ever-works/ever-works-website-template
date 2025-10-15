@@ -4,9 +4,10 @@ import React from 'react';
 import { Modal } from '@/components/ui/modal';
 import { SurveyFormNoSSR } from './survey-form-no-ssr';
 import { AlertCircle } from 'lucide-react';
+import type { Model } from 'survey-core';
 
 interface SurveyPreviewDialogProps {
-	surveyJson: any;
+	surveyJson: Model | object;
 	title?: string;
 	isOpen: boolean;
 	onClose: () => void;

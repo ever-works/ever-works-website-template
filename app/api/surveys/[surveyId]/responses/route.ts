@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { surveyService } from '@/lib/services/survey.service';
 import type { SubmitResponseData, ResponseFilters } from '@/lib/services/survey.service';
+import { Logger } from '@/lib/logger';
+
+const logger = Logger.create('SurveyResponsesAPI');
 
 /**
  * @swagger
@@ -71,7 +74,7 @@ export async function GET(
 ) {
     try {
         const session = await auth();
-        
+
         if (!session?.user?.isAdmin) {
             return NextResponse.json(
                 { success: false, error: 'Unauthorized' },
@@ -81,14 +84,17 @@ export async function GET(
 
         const { surveyId } = await params;
         const { searchParams } = new URL(request.url);
-        
+
+        const toInt = (v: string | null) =>
+            v && /^\d+$/.test(v) ? parseInt(v, 10) : undefined;
+       
         const filters: ResponseFilters = {
             itemId: searchParams.get('itemId') || undefined,
             userId: searchParams.get('userId') || undefined,
             startDate: searchParams.get('startDate') || undefined,
             endDate: searchParams.get('endDate') || undefined,
-            page: searchParams.get('page') ? parseInt(searchParams.get('page')!) : undefined,
-            limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined,
+            page: toInt(searchParams.get('page')),
+            limit: toInt(searchParams.get('limit')),
         };
 
         const responses = await surveyService.getResponses(surveyId, filters);
@@ -98,11 +104,11 @@ export async function GET(
             data: responses
         });
     } catch (error) {
-        console.error('Error fetching responses:', error);
+        logger.error('Error fetching responses', error);
         return NextResponse.json(
-            { 
-                success: false, 
-                error: error instanceof Error ? error.message : 'Failed to fetch responses' 
+            {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to fetch responses'
             },
             { status: 500 }
         );
@@ -140,7 +146,7 @@ export async function GET(
  *                 type: object
  *             required: ["surveyId", "data"]
  *     responses:
- *       200:
+ *       201:
  *         description: "Response submitted successfully"
  *       400:
  *         description: "Bad request"
@@ -154,16 +160,16 @@ export async function POST(
     try {
         const { surveyId } = await params;
         const body = await request.json();
-        
+
         // Get user session if available
         const session = await auth();
-        
+
         // Get IP address and user agent from request
-        const ipAddress = request.headers.get('x-forwarded-for') || 
-                         request.headers.get('x-real-ip') || 
-                         'unknown';
+        const ipAddress = request.headers.get('x-forwarded-for') ||
+            request.headers.get('x-real-ip') ||
+            'unknown';
         const userAgent = request.headers.get('user-agent') || 'unknown';
-        
+
         const responseData: SubmitResponseData = {
             surveyId,
             userId: session?.user?.id || body.userId,
@@ -181,19 +187,19 @@ export async function POST(
             message: 'Response submitted successfully'
         }, { status: 201 });
     } catch (error) {
-        console.error('Error submitting response:', error);
-        
+        logger.error('Error submitting response', error);
+
         if (error instanceof Error && error.message.includes('not accepting responses')) {
             return NextResponse.json(
                 { success: false, error: error.message },
                 { status: 400 }
             );
         }
-        
+
         return NextResponse.json(
-            { 
-                success: false, 
-                error: error instanceof Error ? error.message : 'Failed to submit response' 
+            {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to submit response'
             },
             { status: 500 }
         );

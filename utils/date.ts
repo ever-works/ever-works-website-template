@@ -7,7 +7,7 @@ export function formatDate(date: Date) {
 }
 
 export function formatDateTime(date: Date) {
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Date(date).toLocaleString('en-US', {
         month: 'long',
         day: 'numeric',
         year: 'numeric',

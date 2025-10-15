@@ -72,7 +72,7 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 	const handleJsonChange = (value: string) => {
 		setJsonInput(value);
 		setJsonError('');
-		
+
 		try {
 			const parsed = JSON.parse(value);
 			setFormData(prev => ({ ...prev, surveyJson: parsed }));
@@ -121,12 +121,12 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		
+
 		if (!formData.title.trim()) {
 			toast.error('Title is required');
 			return;
 		}
-		
+
 		if (jsonError) {
 			toast.error('Please fix JSON errors before submitting');
 			return;
@@ -136,7 +136,7 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 			toast.error('Item ID is required for item surveys');
 			return;
 		}
-		
+
 		await onSubmit(formData);
 	};
 
@@ -184,10 +184,10 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 						value={formData.type}
 						onChange={(e) => {
 							const newType = e.target.value as SurveyTypeEnum;
-							setFormData({ 
-								...formData, 
+							setFormData({
+								...formData,
 								type: newType,
-								itemId: newType === SurveyTypeEnum.GLOBAL ? '' : formData.itemId 
+								itemId: newType === SurveyTypeEnum.GLOBAL ? '' : formData.itemId
 							});
 						}}
 						className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -237,11 +237,11 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 			{/* Survey JSON */}
 			<div>
 				<div className="flex items-center justify-between mb-2">
-					<label className="block text-sm font-medium">
+					<label htmlFor="survey-json" className="block text-sm font-medium">
 						Survey Definition (JSON) <span className="text-red-500">*</span>
 					</label>
 				</div>
-			
+
 				<div className="flex items-center gap-2 mb-2">
 					<Button
 						type="button"
@@ -282,45 +282,47 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 				</div>
 
 				<textarea
+					id="survey-json"
 					value={jsonInput}
 					onChange={(e) => handleJsonChange(e.target.value)}
-					className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm ${
-						jsonError ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-					}`}
+					className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm ${jsonError ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+						}`}
 					rows={12}
 					placeholder='{"title": "My Survey", "pages": [...]}'
 					disabled={isLoading}
 					required
+					aria-invalid={!!jsonError}
+					aria-describedby={jsonError ? 'survey-json-error' : undefined}
 				/>
 				{jsonError && (
-					<p className="mt-1 text-sm text-red-500">{jsonError}</p>
+					<p id="survey-json-error" className="mt-1 text-sm text-red-500">{jsonError}</p>
 				)}
 
-                <div className="mb-3 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg space-y-2">
-                    <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                        How to create your survey JSON:
-                    </p>
-                    <div className="space-y-3">
-                        <div>
-                            <p className="text-xs font-medium text-blue-800 dark:text-blue-200 mb-1">Option 1: Import from SurveyJS (Recommended)</p>
-                            <ol className="text-xs text-blue-800 dark:text-blue-200 space-y-1 list-decimal list-inside ml-2">
-                                <li>Click &quot;Import from SurveyJS&quot; button above</li>
-                                <li>Enter your SurveyJS survey ID</li>
-                            </ol>
-                        </div>
-                        <div>
-                            <p className="text-xs font-medium text-blue-800 dark:text-blue-200 mb-1">Option 2: Manual Copy/Paste</p>
-                            <ol className="text-xs text-blue-800 dark:text-blue-200 space-y-1 list-decimal list-inside ml-2">
-                                <li>
-                                    Visit <a href="https://surveyjs.io/create-free-survey" target="_blank" rel="noopener noreferrer" className="underline font-medium">SurveyJS Creator</a>
-                                </li>
-                                <li>Design your survey using the drag-and-drop interface</li>
-                                <li>Click the &quot;JSON Editor&quot; tab at the top</li>
-                                <li>Copy the entire JSON and paste it here</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
+				<div className="mb-3 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg space-y-2">
+					<p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+						How to create your survey JSON:
+					</p>
+					<div className="space-y-3">
+						<div>
+							<p className="text-xs font-medium text-blue-800 dark:text-blue-200 mb-1">Option 1: Import from SurveyJS (Recommended)</p>
+							<ol className="text-xs text-blue-800 dark:text-blue-200 space-y-1 list-decimal list-inside ml-2">
+								<li>Click &quot;Import from SurveyJS&quot; button above</li>
+								<li>Enter your SurveyJS survey ID</li>
+							</ol>
+						</div>
+						<div>
+							<p className="text-xs font-medium text-blue-800 dark:text-blue-200 mb-1">Option 2: Manual Copy/Paste</p>
+							<ol className="text-xs text-blue-800 dark:text-blue-200 space-y-1 list-decimal list-inside ml-2">
+								<li>
+									Visit <a href="https://surveyjs.io/create-free-survey" target="_blank" rel="noopener noreferrer" className="underline font-medium">SurveyJS Creator</a>
+								</li>
+								<li>Design your survey using the drag-and-drop interface</li>
+								<li>Click the &quot;JSON Editor&quot; tab at the top</li>
+								<li>Copy the entire JSON and paste it here</li>
+							</ol>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			{/* Actions */}

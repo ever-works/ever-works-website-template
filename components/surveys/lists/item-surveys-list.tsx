@@ -8,6 +8,9 @@ import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
 import { SurveysListClient } from './surveys-list-client';
 import { SurveyTypeEnum } from '@/lib/constants';
+import { Logger } from '@/lib/logger';
+
+const logger = Logger.create('ItemSurveysList');
 
 interface DashboardItemSurveysClientProps {
 	itemId: string;
@@ -28,7 +31,7 @@ export function DashboardItemSurveysClient({ itemId }: DashboardItemSurveysClien
 			const data = await surveyApiClient.getMany({ type: SurveyTypeEnum.ITEM, itemId });
 			setSurveys(data.surveys);
 		} catch (error) {
-			console.error('Error loading surveys:', error);
+			logger.error('Error loading surveys', error);
 			toast.error('Failed to load surveys');
 		} finally {
 			setLoading(false);

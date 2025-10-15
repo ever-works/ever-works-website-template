@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { surveyService } from '@/lib/services/survey.service';
+import { Logger } from '@/lib/logger';
+
+const logger = Logger.create('SurveyResponseDetailAPI');
 
 /**
  * @swagger
@@ -57,7 +60,7 @@ export async function GET(
             data: response
         });
     } catch (error) {
-        console.error('Error fetching response:', error);
+        logger.error('Error fetching response', error);
         return NextResponse.json(
             { 
                 success: false, 

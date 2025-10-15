@@ -4,15 +4,15 @@ import { surveyService } from '@/lib/services/survey.service';
 import { SurveyResponsesClient } from '@/components/surveys/responses/survey-responses-client';
 
 interface DashboardSurveyResponsesPageProps {
-	params: Promise<{
+	params: {
 		locale: string;
 		itemId: string;
 		surveySlug: string;
-	}>;
+	};
 }
 
 export async function generateMetadata({ params }: DashboardSurveyResponsesPageProps): Promise<Metadata> {
-	const { surveySlug } = await params;
+	const { surveySlug } = params;
 	const survey = await surveyService.getBySlug(surveySlug);
 
 	if (!survey) {
@@ -28,8 +28,8 @@ export async function generateMetadata({ params }: DashboardSurveyResponsesPageP
 }
 
 export default async function DashboardSurveyResponsesPage({ params }: DashboardSurveyResponsesPageProps) {
-	const { surveySlug, itemId } = await params;
-	const survey = await surveyService.getBySlug(surveySlug, itemId);
+	const { surveySlug, itemId } = params;
+	const survey = await surveyService.getBySlug(surveySlug);
 
 	if (!survey) {
 		notFound();

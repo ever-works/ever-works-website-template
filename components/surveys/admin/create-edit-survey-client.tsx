@@ -9,6 +9,9 @@ import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SurveyTypeEnum } from '@/lib/constants';
+import { Logger } from '@/lib/logger';
+
+const logger = Logger.create('CreateEditSurveyClient');
 
 interface CreateEditSurveyClientProps {
 	survey?: Survey;
@@ -29,11 +32,11 @@ export function CreateEditSurveyClient({ survey, defaultItemId }: CreateEditSurv
 			} else {
 				await surveyApiClient.create(data);
 			}
-			toast.success('Survey updated successfully!');
+			toast.success(mode === 'edit' ? 'Survey updated successfully!' : 'Survey created successfully!');
 			router.push('/admin/surveys');
 		} catch (error) {
-			console.error('Error updating survey:', error);
-			toast.error(error instanceof Error ? error.message : 'Failed to update survey');
+			logger.error('Error updating survey', error);
+			toast.error(error instanceof Error ? error.message : `Failed to ${mode === 'edit' ? 'update' : 'create'} survey`);
 		} finally {
 			setIsSubmitting(false);
 		}

@@ -6,6 +6,7 @@ import { surveyApiClient } from '@/lib/api/survey-api.client';
 import type { SurveyItem } from '@/lib/db/schema';
 import { FileText, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { SurveyStatusEnum, SurveyTypeEnum } from '@/lib/constants';
+import { formatDateTime } from '@/utils/date';
 
 interface ItemSurveysSectionProps {
 	itemId: string;
@@ -124,7 +125,7 @@ export function ItemSurveysSection({ itemId, itemSlug }: ItemSurveysSectionProps
 							<div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
 								<span className="text-xs text-gray-500 dark:text-gray-400">
 									{survey.publishedAt
-										? `Published ${new Date(survey.publishedAt).toLocaleDateString()}`
+										? `Published ${formatDateTime(survey.publishedAt)}`
 										: 'Not yet published'
 									}
 								</span>

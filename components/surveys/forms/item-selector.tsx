@@ -3,6 +3,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Package, Search, ChevronDown, X } from 'lucide-react';
 import Image from 'next/image';
+import { Logger } from '@/lib/logger';
+
+const logger = Logger.create('ItemSelector');
 
 interface Item {
 	id: string;
@@ -69,12 +72,16 @@ export function ItemSelector({
 			setIsLoading(true);
 			const response = await fetch('/api/admin/items?limit=100&status=approved');
 			const data = await response.json();
-			
+
+			if (!response.ok) {
+				throw new Error(`Failed to fetch items: ${response.status} ${response.statusText}`);
+			}
+
 			if (data.success && data.items) {
 				setItems(data.items);
 			}
 		} catch (error) {
-			console.error('Error fetching items:', error);
+			logger.error('Error fetching items', error);
 		} finally {
 			setIsLoading(false);
 		}
@@ -103,7 +110,7 @@ export function ItemSelector({
 			<label className="block text-sm font-medium mb-2">
 				{label} {required && <span className="text-red-500">*</span>}
 			</label>
-			
+
 			<div className="relative" ref={dropdownRef}>
 				{/* Combobox Trigger Button */}
 				<button
@@ -117,8 +124,8 @@ export function ItemSelector({
 					) : selectedItem ? (
 						<div className="flex items-center gap-2 flex-1 min-w-0">
 							{selectedItem.icon_url ? (
-								<Image 
-									src={selectedItem.icon_url} 
+								<Image
+									src={selectedItem.icon_url}
 									alt={selectedItem.name}
 									className="rounded object-cover flex-shrink-0"
 									width={24}
@@ -134,15 +141,17 @@ export function ItemSelector({
 					) : (
 						<span className="text-gray-500 dark:text-gray-400">{placeholder}</span>
 					)}
-					
+
 					<div className="flex items-center gap-1 flex-shrink-0">
 						{selectedItem && !disabled && (
-							<div
+							<button
+								type="button"
 								onClick={handleClearSelection}
-								className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+								aria-label="Clear selection"
+								className="absolute right-9 top-2.5 p-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 z-10"
 							>
 								<X className="w-4 h-4 text-gray-400" />
-							</div>
+							</button>
 						)}
 						<ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'transform rotate-180' : ''}`} />
 					</div>
@@ -183,16 +192,15 @@ export function ItemSelector({
 											key={item.id}
 											type="button"
 											onClick={() => handleSelectItem(item.id)}
-											className={`w-full px-4 py-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-700 ${
-												selectedItemId === item.id
-													? 'bg-blue-50 dark:bg-blue-900/20'
-													: ''
-											}`}
+											className={`w-full px-4 py-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-700 ${selectedItemId === item.id
+												? 'bg-blue-50 dark:bg-blue-900/20'
+												: ''
+												}`}
 										>
 											<div className="flex items-center gap-3">
 												{item.icon_url ? (
-													<Image 
-														src={item.icon_url} 
+													<Image
+														src={item.icon_url}
 														alt={item.name}
 														className="rounded object-cover flex-shrink-0"
 														width={24}
@@ -204,11 +212,10 @@ export function ItemSelector({
 													</div>
 												)}
 												<div className="flex-1 min-w-0">
-													<p className={`font-medium truncate ${
-														selectedItemId === item.id
-															? 'text-blue-600 dark:text-blue-400'
-															: 'text-gray-900 dark:text-white'
-													}`}>
+													<p className={`font-medium truncate ${selectedItemId === item.id
+														? 'text-blue-600 dark:text-blue-400'
+														: 'text-gray-900 dark:text-white'
+														}`}>
 														{item.name}
 													</p>
 													<p className="text-xs text-gray-500 dark:text-gray-400 truncate">
@@ -218,7 +225,8 @@ export function ItemSelector({
 												{selectedItemId === item.id && (
 													<div className="flex-shrink-0">
 														<div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center">
-															<svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+															<svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+																<title>Selected</title>
 																<path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
 															</svg>
 														</div>

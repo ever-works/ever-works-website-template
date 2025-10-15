@@ -5,7 +5,7 @@
 
 import { db } from '../drizzle';
 import { surveys, surveyResponses, type Survey, type NewSurvey, type SurveyResponse, type NewSurveyResponse } from '../schema';
-import { eq, and, or, desc, gte, lte, count, SQL, sql } from 'drizzle-orm';
+import { eq, and, or, desc, gte, lte, count, SQL, sql, not } from 'drizzle-orm';
 
 // ==================== SURVEY QUERIES ====================
 
@@ -130,13 +130,13 @@ export async function getSurveys(filters?: {
 /**
  * Get survey by slug
  */
-export async function getSurveyBySlug(slug: string, itemId?: string): Promise<Survey | null> {
+export async function getSurveyBySlug(slug: string, ignoreId?: string): Promise<Survey | null> {
   const conditions: SQL[] = [eq(surveys.slug, slug)];
-  
-  if (itemId) {
-    conditions.push(eq(surveys.itemId, itemId));
-  }
 
+  if (ignoreId) {
+    conditions.push(not(eq(surveys.id, ignoreId)));
+  }
+  
   const [survey] = await db
     .select()
     .from(surveys)
@@ -170,11 +170,11 @@ export async function createSurvey(survey: NewSurvey): Promise<Survey> {
 /**
  * Update survey
  */
-export async function updateSurvey(slug: string, data: Partial<Survey>): Promise<Survey> {
+export async function updateSurvey(id: string, data: Partial<Survey>): Promise<Survey> {
   const [updatedSurvey] = await db
     .update(surveys)
     .set({ ...data, updatedAt: new Date() })
-    .where(eq(surveys.slug, slug))
+    .where(eq(surveys.id, id))
     .returning();
 
   return updatedSurvey;
@@ -183,11 +183,11 @@ export async function updateSurvey(slug: string, data: Partial<Survey>): Promise
 /**
  * Delete survey (soft delete)
  */
-export async function deleteSurvey(slug: string): Promise<void> {
+export async function deleteSurvey(id: string): Promise<void> {
   await db
     .update(surveys)
     .set({ deletedAt: new Date() })
-    .where(eq(surveys.slug, slug));
+    .where(eq(surveys.id, id));
 }
 
 // ==================== SURVEY RESPONSE QUERIES ====================
