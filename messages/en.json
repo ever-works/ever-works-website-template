@@ -2109,6 +2109,7 @@
       "ADD_COMPANY": "Add Company",
       "TOTAL_COMPANIES": "Total Companies",
       "ACTIVE_COMPANIES": "Active Companies",
+      "INACTIVE_COMPANIES": "Inactive Companies",
       "COMPANIES_TITLE": "Companies",
       "COMPANIES_TOTAL_COUNT": "companies total",
       "NO_COMPANIES_FOUND": "No companies found",

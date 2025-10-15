@@ -2008,6 +2008,7 @@
       "ADD_COMPANY": "Ajouter une Entreprise",
       "TOTAL_COMPANIES": "Entreprises Totales",
       "ACTIVE_COMPANIES": "Entreprises Actives",
+      "INACTIVE_COMPANIES": "Entreprises Inactives",
       "COMPANIES_TITLE": "Entreprises",
       "COMPANIES_TOTAL_COUNT": "entreprises totales",
       "NO_COMPANIES_FOUND": "Aucune entreprise trouvée",

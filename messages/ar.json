@@ -1721,6 +1721,7 @@
       "ADD_COMPANY": "إضافة شركة",
       "TOTAL_COMPANIES": "إجمالي الشركات",
       "ACTIVE_COMPANIES": "الشركات النشطة",
+      "INACTIVE_COMPANIES": "الشركات غير النشطة",
       "COMPANIES_TITLE": "الشركات",
       "COMPANIES_TOTAL_COUNT": "إجمالي الشركات",
       "NO_COMPANIES_FOUND": "لم يتم العثور على شركات",

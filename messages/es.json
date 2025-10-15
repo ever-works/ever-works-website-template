@@ -1750,6 +1750,7 @@
       "ADD_COMPANY": "Agregar Empresa",
       "TOTAL_COMPANIES": "Empresas Totales",
       "ACTIVE_COMPANIES": "Empresas Activas",
+      "INACTIVE_COMPANIES": "Empresas Inactivas",
       "COMPANIES_TITLE": "Empresas",
       "COMPANIES_TOTAL_COUNT": "empresas totales",
       "NO_COMPANIES_FOUND": "No se encontraron empresas",

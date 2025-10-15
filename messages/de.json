@@ -1767,6 +1767,7 @@
       "ADD_COMPANY": "Unternehmen hinzufügen",
       "TOTAL_COMPANIES": "Unternehmen insgesamt",
       "ACTIVE_COMPANIES": "Aktive Unternehmen",
+      "INACTIVE_COMPANIES": "Inaktive Unternehmen",
       "COMPANIES_TITLE": "Unternehmen",
       "COMPANIES_TOTAL_COUNT": "Unternehmen insgesamt",
       "NO_COMPANIES_FOUND": "Keine Unternehmen gefunden",

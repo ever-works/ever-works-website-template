@@ -58,7 +58,7 @@ export function CompanyStats({ stats }: CompanyStatsProps) {
 				<CardBody className={STAT_CARD_BODY}>
 					<div className="flex items-center justify-between">
 						<div className="flex-1">
-							<p className="text-sm font-medium text-gray-600 dark:text-gray-400">Inactive Companies</p>
+							<p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('INACTIVE_COMPANIES')}</p>
 							<p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.inactive}</p>
 							<p className="text-xs text-gray-500 dark:text-gray-400">
 								{stats.total > 0 ? Math.round((stats.inactive / stats.total) * 100) : 0}% of total
