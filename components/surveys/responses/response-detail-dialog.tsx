@@ -5,6 +5,7 @@ import type { Survey, SurveyResponse } from '@/lib/db/schema';
 import { Modal } from '@/components/ui/modal';
 import { SurveyFormNoSSR } from '../forms/survey-form-no-ssr';
 import { formatDateTime } from '@/utils/date';
+import { useTranslations } from 'next-intl';
 
 interface ResponseDetailDialogProps {
     survey: Survey;
@@ -19,6 +20,7 @@ export function ResponseDetailDialog({
     isOpen,
     onClose
 }: ResponseDetailDialogProps) {
+    const t = useTranslations('common');
     const [showAllOnOnePage, setShowAllOnOnePage] = useState(false);
 
     // Create a read-only version of the survey JSON
@@ -35,19 +37,19 @@ export function ResponseDetailDialog({
             onClose={onClose}
             size="2xl"
             className="max-w-4xl max-h-[90vh] flex flex-col"
-            title={`${survey.title} - Response Details`}
+            title={`${survey.title} - ${t('RESPONSE_DETAILS')}`}
             subtitle={
                 <div className="flex items-start justify-between w-full">
                     <div className="flex-1">
                         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            Response ID: {response.id}
+                            {t('RESPONSE_ID')}: {response.id}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Submitted: {formatDateTime(response.completedAt)}
+                            {t('RESPONSE_SUBMITTED')}: {response.completedAt ? formatDateTime(response.completedAt) : '—'}
                         </p>
                         {response.userId && (
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                User: {response.userId}
+                                {t('USER')}: {response.userId}
                             </p>
                         )}
                     </div>
@@ -63,7 +65,7 @@ export function ResponseDetailDialog({
                             htmlFor="show-all-toggle"
                             className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer whitespace-nowrap"
                         >
-                            Show all questions on one page
+                            {t('SHOW_ALL_QUESTIONS_ONE_PAGE')}
                         </label>
                     </div>
                 </div>

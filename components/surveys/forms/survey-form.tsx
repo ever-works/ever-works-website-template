@@ -7,14 +7,14 @@ import 'survey-core/survey-core.min.css';
 
 export interface SurveyFormProps {
 	surveyJson: any;
-	onComplete?: (sender: Model) => void;
+	onComplete?: (sender: Model, options: any) => void;
 	onValueChanged?: (sender: Model, options: any) => void;
 	onCurrentPageChanged?: (sender: Model, options: any) => void;
 	className?: string;
 	data?: any;
 }
 
-type SurveyFormRef = {
+export type SurveyFormRef = {
 	surveyModel: Model | null;
 }
 
@@ -27,7 +27,7 @@ const applySurveyTheme = (survey: Model) => {
 
 	// Get theme colors
 	const primaryColor = computedStyle.getPropertyValue('--theme-primary').trim() || '#3b82f6';
-	const backgroundColor = isDark 
+	const backgroundColor = isDark
 		? computedStyle.getPropertyValue('--dark-theme-900').trim() || '#1a1a1a'
 		: computedStyle.getPropertyValue('--theme-background').trim() || '#ffffff';
 	const surfaceColor = isDark
@@ -66,52 +66,44 @@ export const SurveyForm = forwardRef<SurveyFormRef, SurveyFormProps>(({
 	}));
 
 	useEffect(() => {
-		// Create survey model
 		const survey = new Model(surveyJson);
-
-		// Apply custom theme using SurveyJS variables
 		applySurveyTheme(survey);
-
-		// Configure survey appearance
 		survey.showTitle = true;
 		survey.showPageTitles = true;
 
 		// Navigation buttons
-		survey.showNavigationButtons = 'bottom';
+		survey.showNavigationButtons = true;
+		survey.showNavigationButtonsLocation = 'bottom';
 		survey.showPrevButton = true;
-
-		// Question numbers
 		survey.questionTitleLocation = 'top';
 		survey.questionErrorLocation = 'bottom';
-
-		// Responsive behavior
 		survey.widthMode = 'responsive';
-
-		// Set pre-filled data if provided
-		if (data) {
-			survey.data = data;
-		}
-
-		// Event handlers
-		if (onComplete) {
-			survey.onComplete.add(onComplete);
-		}
-
-		if (onValueChanged) {
-			survey.onValueChanged.add(onValueChanged);
-		}
-
-		if (onCurrentPageChanged) {
-			survey.onCurrentPageChanged.add(onCurrentPageChanged);
-		}
-
 		setSurveyModel(survey);
-
 		return () => {
 			survey.clear();
 			setSurveyModel(null);
 		};
-	}, [surveyJson, onComplete, onValueChanged, onCurrentPageChanged, data]);
+	}, [surveyJson]);
+
+	useEffect(() => {
+		if (!surveyModel) return;
+		if (data != null) surveyModel.data = data;
+	}, [data, surveyModel]);
+
+	useEffect(() => {
+		if (!surveyModel) return;
+		const hComplete = onComplete ? ((s: Model, o: any) => onComplete(s, o)) : null;
+		const hValue = onValueChanged ? ((s: Model, o: any) => onValueChanged(s, o)) : null;
+		const hPage = onCurrentPageChanged ? ((s: Model, o: any) => onCurrentPageChanged(s, o)) : null;
+		if (hComplete) surveyModel.onComplete.add(hComplete);
+		if (hValue) surveyModel.onValueChanged.add(hValue);
+		if (hPage) surveyModel.onCurrentPageChanged.add(hPage);
+		return () => {
+			if (hComplete) surveyModel.onComplete.remove(hComplete);
+			if (hValue) surveyModel.onValueChanged.remove(hValue);
+			if (hPage) surveyModel.onCurrentPageChanged.remove(hPage);
+		};
+	}, [onComplete, onValueChanged, onCurrentPageChanged, surveyModel]);
 
 	if (!surveyModel) {
 		return null;

@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { surveyApiClient } from '@/lib/api/survey-api.client';
 import type { SurveyItem } from '@/lib/db/schema';
 import { FileText, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { SurveyStatusEnum, SurveyTypeEnum } from '@/lib/constants';
 import { formatDateTime } from '@/utils/date';
+import { getStatusColor } from '@/components/surveys/utils/survey-helpers'; 
 
 interface ItemSurveysSectionProps {
 	itemId: string;
@@ -17,12 +18,7 @@ export function ItemSurveysSection({ itemId, itemSlug }: ItemSurveysSectionProps
 	const [surveys, setSurveys] = useState<SurveyItem[]>([]);
 	const [loading, setLoading] = useState(true);
 
-	useEffect(() => {
-		loadSurveys();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [itemId]);
-
-	const loadSurveys = async () => {
+	const loadSurveys = useCallback(async () => {
 		try {
 			setLoading(true);
 			const data = await surveyApiClient.getMany({
@@ -36,7 +32,13 @@ export function ItemSurveysSection({ itemId, itemSlug }: ItemSurveysSectionProps
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, [itemId]);
+
+
+	useEffect(() => {
+		loadSurveys();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [itemId]);
 
 	if (loading) {
 		return (
@@ -67,16 +69,6 @@ export function ItemSurveysSection({ itemId, itemSlug }: ItemSurveysSectionProps
 		}
 	};
 
-	const getStatusColor = (status: string) => {
-		switch (status) {
-			case 'published':
-				return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
-			case 'closed':
-				return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
-			default:
-				return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400';
-		}
-	};
 
 	return (
 		<div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">

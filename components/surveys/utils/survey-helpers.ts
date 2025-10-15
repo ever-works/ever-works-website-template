@@ -5,56 +5,66 @@ const logger = Logger.create('SurveyHelpers');
 /**
  * Export survey responses to CSV
  */
-export function exportResponsesToCSV(responses: any[], filename: string) {
-  if (responses.length === 0) {
-    return;
-  }
-
-  // Get all unique keys from all responses
+export function exportResponsesToCSV(
+  responses: Array<{
+    id: string
+    userId?: string | null
+    completedAt?: string | Date | null
+    data?: Record<string, unknown>
+  }>,
+  filename: string
+) {
+  if (!Array.isArray(responses) || responses.length === 0) return;
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+  const escapeCell = (val: unknown): string => {
+    if (val === null || val === undefined) return '';
+    let s: unknown = val;
+    if (typeof s === 'object') {
+      try {
+        s = JSON.stringify(s);
+      } catch {
+        s = String(s);
+      }
+    }
+    const str = String(s);
+    return /[,"\r\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+  };
   const allKeys = new Set<string>();
-  responses.forEach(response => {
-    Object.keys(response.data).forEach(key => allKeys.add(key));
-  });
-
-  // Create CSV header
-  const headers = ['Response ID', 'User ID', 'Completed At', ...Array.from(allKeys)];
-  const csvRows = [headers.join(',')];
-
-  // Create CSV rows
-  responses.forEach(response => {
-    const row = [
-      response.id,
-      response.userId || 'Anonymous',
-      new Date(response.completedAt).toLocaleString(),
-      ...Array.from(allKeys).map(key => {
-        const value = response.data[key];
-        // Handle different value types
-        if (value === null || value === undefined) return '';
-        if (typeof value === 'object') return JSON.stringify(value);
-        // Escape commas and quotes
-        const stringValue = String(value);
-        if (stringValue.includes(',') || stringValue.includes('"')) {
-          return `"${stringValue.replace(/"/g, '""')}"`;
-        }
-        return stringValue;
-      })
-    ];
-    csvRows.push(row.join(','));
-  });
-
-  // Create and download CSV file
-  const csvContent = csvRows.join('\n');
+  for (const r of responses) {
+    const data = r?.data ?? {};
+    Object.keys(data).forEach(k => allKeys.add(k));
+  }
+  const keys = Array.from(allKeys).sort();
+  const header = ['Response ID', 'User ID', 'Completed At', ...keys]
+    .map(escapeCell)
+    .join(',');
+  const rows: string[] = [header];
+  for (const r of responses) {
+    const completed = r?.completedAt
+      ? new Date(r.completedAt).toISOString()
+      : '';
+    rows.push(
+      [
+        escapeCell(r.id),
+        escapeCell(r.userId ?? 'Anonymous'),
+        escapeCell(completed),
+        ...keys.map(k => escapeCell(r?.data?.[k])),
+      ].join(',')
+    );
+  }
+  const csvContent = '\ufeff' + rows.join('\r\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
-  
-  link.setAttribute('href', url);
-  link.setAttribute('download', `${filename.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_responses.csv`);
-  link.style.visibility = 'hidden';
-  
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${filename
+    .replace(/[^a-z0-9]/gi, '_')
+    .toLowerCase()}_responses.csv`;
+  link.style.display = 'none';
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
 /**

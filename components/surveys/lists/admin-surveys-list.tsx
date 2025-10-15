@@ -11,12 +11,14 @@ import { SurveysListClient } from './surveys-list-client';
 import { useConfirm } from '@/components/providers';
 import { SurveyTypeEnum } from '@/lib/constants';
 import { Logger } from '@/lib/logger';
+import { useTranslations } from 'next-intl';
 
 const logger = Logger.create('AdminSurveysList');
 
 export function AdminSurveysClient() {
 	const router = useRouter();
 	const { confirm } = useConfirm();
+	const t = useTranslations('common');
 	const [surveys, setSurveys] = useState<(Survey & { responseCount: number })[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [filter, setFilter] = useState<'all' | 'global' | 'item'>('all');
@@ -38,7 +40,7 @@ export function AdminSurveysClient() {
 			setSurveys(data.surveys);
 		} catch (error) {
 			logger.error('Error loading surveys', error);
-			toast.error('Failed to load surveys');
+			toast.error(t('FAILED_TO_LOAD_SURVEYS'));
 		} finally {
 			setLoading(false);
 		}
@@ -54,10 +56,10 @@ export function AdminSurveysClient() {
 
 	const handleDeleteSurvey = async (id: string, title: string) => {
 		const confirmed = await confirm({
-			title: 'Delete Survey',
-			message: `Are you sure you want to delete "${title}"? This action cannot be undone.`,
-			confirmText: 'Delete',
-			cancelText: 'Cancel',
+			title: t('DELETE_SURVEY_CONFIRM_TITLE'),
+			message: t('DELETE_SURVEY_CONFIRM_MSG', { title }),
+			confirmText: t('DELETE'),
+			cancelText: t('CANCEL'),
 			variant: 'danger'
 		});
 
@@ -67,11 +69,11 @@ export function AdminSurveysClient() {
 
 		try {
 			await surveyApiClient.delete(id);
-			toast.success('Survey deleted successfully!');
+			toast.success(t('SURVEY_DELETED_SUCCESSFULLY'));
 			loadSurveys();
 		} catch (error) {
 			logger.error('Error deleting survey', error);
-			toast.error('Failed to delete survey');
+			toast.error(t('FAILED_TO_DELETE_SURVEY'));
 		}
 	};
 
@@ -79,8 +81,8 @@ export function AdminSurveysClient() {
 		<div className="container mx-auto px-4 py-8">
 			<div className="mb-8 flex items-center justify-between">
 				<div>
-					<h1 className="text-3xl font-bold mb-2">Surveys Management</h1>
-					<p className="text-gray-600 dark:text-gray-400">Manage and monitor all surveys</p>
+					<h1 className="text-3xl font-bold mb-2">{t('SURVEYS_MANAGEMENT')}</h1>
+					<p className="text-gray-600 dark:text-gray-400">{t('SURVEYS_MANAGEMENT_DESC')}</p>
 				</div>
 				<Button
 					type="button" 
@@ -89,7 +91,7 @@ export function AdminSurveysClient() {
 					className="flex items-center gap-2"
 				>
 					<Plus className="w-5 h-5 mr-1" />
-					Create Survey
+					{t('CREATE_SURVEY')}
 				</Button>
 			</div>
 
@@ -100,21 +102,21 @@ export function AdminSurveysClient() {
 					onClick={() => setFilter('all')}
 					variant={filter === 'all' ? 'default' : 'outline'}
 				>
-					All Surveys
+					{t('ALL_SURVEYS')}
 				</Button>
 				<Button
 					type="button" 
 					onClick={() => setFilter('global')}
 					variant={filter === 'global' ? 'default' : 'outline'}
 				>
-					Global
+					{t('GLOBAL')}
 				</Button>
 				<Button
 					type="button" 
 					onClick={() => setFilter('item')}
 					variant={filter === 'item' ? 'default' : 'outline'}
 				>
-					Items
+					{t('ITEMS')}
 				</Button>
 			</div>
 
@@ -132,7 +134,7 @@ export function AdminSurveysClient() {
 							type="button" 
 							onClick={() => handleEditSurvey(survey.slug)}
 							className="p-2 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded transition-colors"
-							title="Edit Survey"
+							title={t('EDIT_SURVEY')}
 						>
 							<Edit className="w-4 h-4" />
 						</button>
@@ -140,7 +142,7 @@ export function AdminSurveysClient() {
 							type="button" 
 							onClick={() => handleDeleteSurvey(survey.id, survey.title)}
 							className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
-							title="Delete Survey"
+							title={t('DELETE_SURVEY')}
 						>
 							<Trash2 className="w-4 h-4" />
 						</button>

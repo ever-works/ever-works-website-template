@@ -31,8 +31,11 @@ export async function generateMetadata({ params }: SurveyLayoutProps): Promise<M
 	};
 }
 
-export default async function SurveyLayout({ children, params }: { children: React.ReactNode, params: { slug: string } }) {
-
+export default async function SurveyLayout({
+	children,
+	params,
+}: { children: React.ReactNode; params: { locale: string; slug: string } }) {
+	
 	const { slug } = params;
 	const survey = await getSurvey(slug);
 

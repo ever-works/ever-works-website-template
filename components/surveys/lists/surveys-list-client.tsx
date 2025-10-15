@@ -6,6 +6,7 @@ import type { Survey } from '@/lib/db/schema';
 import { getStatusColor, getTypeColor, getPublicSurveyLink, copyToClipboard, formatSurveyTypeLabel, formatSurveyStatusLabel } from '../utils/survey-helpers';
 import { toast } from 'sonner';
 import { Copy, Eye, FileText } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface SurveysListClientProps {
 	surveys: Survey[];
@@ -32,21 +33,22 @@ export function SurveysListClient({
 	getPreviewLink,
 	additionalActions,
 }: SurveysListClientProps) {
+	const t = useTranslations('common');
 
 	const handleCopyLink = async (survey: Survey) => {
 		const link = getPublicSurveyLink(survey.slug, survey.itemId || undefined);
 		const success = await copyToClipboard(link);
 		if (success) {
-			toast.success('Survey link copied to clipboard!');
+			toast.success(t('SURVEY_LINK_COPIED'));
 		} else {
-			toast.error('Failed to copy link');
+			toast.error(t('FAILED_TO_COPY_LINK'));
 		}
 	};
 
 	if (loading) {
 		return (
 			<div className="text-center py-16">
-				<p className="text-gray-500 dark:text-gray-400">Loading surveys...</p>
+				<p className="text-gray-500 dark:text-gray-400">{t('LOADING_SURVEYS')}</p>
 			</div>
 		);
 	}
@@ -69,28 +71,28 @@ export function SurveysListClient({
 					<thead className="bg-gray-50 dark:bg-gray-900">
 						<tr>
 							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-								Name
+								{t('NAME')}
 							</th>
 							{showTypeColumn && (
 								<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-									Type
+									{t('TYPE')}
 								</th>
 							)}
 							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-								Status
+								{t('STATUS')}
 							</th>
 							{showResponsesColumn && (
 								<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-									Responses
+									{t('RESPONSES')}
 								</th>
 							)}
 							{showUpdatedColumn && (
 								<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-									Updated
+									{t('UPDATED')}
 								</th>
 							)}
 							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-								Actions
+								{t('ACTIONS')}
 							</th>
 						</tr>
 					</thead>
@@ -131,27 +133,27 @@ export function SurveysListClient({
 										{getResponsesLink && (
 											<Link
 												href={getResponsesLink(survey)}
-												className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
-												title="View Responses"
-											>
-												<FileText className="w-4 h-4" />
-											</Link>
-										)}
-										{getPreviewLink && (
-											<Link
-												href={getPreviewLink(survey)}
-												className="p-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded transition-colors"
-												title="Preview"
-											>
-												<Eye className="w-4 h-4" />
-											</Link>
-										)}
-										<button
-											type="button"
-											onClick={() => handleCopyLink(survey)}
-											className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
-											title="Copy Public Link"
+											className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
+											title={t('VIEW_RESPONSES')}
 										>
+											<FileText className="w-4 h-4" />
+										</Link>
+									)}
+									{getPreviewLink && (
+										<Link
+											href={getPreviewLink(survey)}
+											className="p-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded transition-colors"
+											title={t('PREVIEW')}
+										>
+											<Eye className="w-4 h-4" />
+										</Link>
+									)}
+									<button
+										type="button"
+										onClick={() => handleCopyLink(survey)}
+										className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+										title={t('COPY_PUBLIC_LINK')}
+									>
 											<Copy className="w-4 h-4" />
 										</button>
 									</div>

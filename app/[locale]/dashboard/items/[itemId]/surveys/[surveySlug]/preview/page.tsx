@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { surveyService } from '@/lib/services/survey.service';
 import { SurveyPreviewClient } from '@/components/surveys/preview/preview-client';
+import { cache } from 'react';
 
 interface DashboardSurveyPreviewPageProps {
 	params: {
@@ -11,10 +12,11 @@ interface DashboardSurveyPreviewPageProps {
 	};
 }
 
+const getSurvey = cache((slug: string) => surveyService.getBySlug(slug));
+
 export async function generateMetadata({ params }: DashboardSurveyPreviewPageProps): Promise<Metadata> {
 	const { surveySlug } =  params;
-	const survey = await surveyService.getBySlug(surveySlug);
-
+	const survey = await getSurvey(surveySlug);
 	if (!survey) {
 		return {
 			title: 'Survey Not Found'
@@ -29,7 +31,7 @@ export async function generateMetadata({ params }: DashboardSurveyPreviewPagePro
 
 export default async function DashboardSurveyPreviewPage({ params }: DashboardSurveyPreviewPageProps) {
 	const { surveySlug, itemId } =  params;
-	const survey = await surveyService.getBySlug(surveySlug);
+	const survey = await getSurvey(surveySlug);
 
 	if (!survey) {
 		notFound();

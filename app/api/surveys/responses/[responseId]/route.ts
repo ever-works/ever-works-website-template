@@ -24,6 +24,44 @@ const logger = Logger.create('SurveyResponseDetailAPI');
  *     responses:
  *       200:
  *         description: "Response retrieved successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     surveyId:
+ *                       type: string
+ *                     userId:
+ *                       type: string
+ *                       nullable: true
+ *                     itemId:
+ *                       type: string
+ *                       nullable: true
+ *                     data:
+ *                       type: object
+ *                     completedAt:
+ *                       type: string
+ *                       format: date-time
+ *                     ipAddress:
+ *                       type: string
+ *                       nullable: true
+ *                     userAgent:
+ *                       type: string
+ *                       nullable: true
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
  *       401:
  *         description: "Unauthorized"
  *       404:

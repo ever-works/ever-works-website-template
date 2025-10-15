@@ -165,11 +165,11 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
                     <div className="flex items-center gap-4">
                       {getStatusBadge(survey)}
                       <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {survey.publishedAt && (
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {"Published at: " + formatDateTime(survey.publishedAt)}
-                          </span>
-                        )}
+                      {survey.publishedAt && (
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                          {t('common.PUBLISHED_AT')}: {formatDateTime(survey.publishedAt)}
+                        </span>
+                      )}
                       </span>
                     </div>
                   </div>
@@ -184,12 +184,12 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
                         className="border-green-600 text-green-700 dark:border-green-500 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950"
                       >
                         <CheckCircle className="w-4 h-4 mr-2" />
-                        Retake Survey
+                        {t('common.RETAKE_SURVEY')}
                       </Button>
                       <Link href={`/items/${item.slug}/surveys/${survey.slug}`} target="_blank" rel="noopener noreferrer">
                         <Button variant="outline" className="gap-2">
                           <ExternalLink className="w-4 h-4" />
-                          Open in New Tab
+                          {t('common.OPEN_IN_NEW_TAB')}
                         </Button>
                       </Link>
                     </>
@@ -205,7 +205,7 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
                       <Link href={`/items/${item.slug}/surveys/${survey.slug}`} target="_blank" rel="noopener noreferrer">
                         <Button variant="outline" className="gap-2">
                           <ExternalLink className="w-4 h-4" />
-                          Open in New Tab
+                          {t('common.OPEN_IN_NEW_TAB')}
                         </Button>
                       </Link>
                     </>

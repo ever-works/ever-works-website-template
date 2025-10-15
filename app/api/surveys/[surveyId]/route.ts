@@ -36,12 +36,11 @@ const logger = Logger.create('SurveyDetailAPI');
  */
 export async function GET(
     request: NextRequest,
-    { params }: { params: Promise<{ surveyId: string }> }
+    { params }: { params: { surveyId: string } }
 ) {
     try {
-        const { surveyId } = await params;
+        const { surveyId } = params;
         const { searchParams } = new URL(request.url);
-        const itemId = searchParams.get('itemId') || undefined;
 
         // Try to get by ID first, then by slug
         let survey = await surveyService.getOne(surveyId);
@@ -55,6 +54,16 @@ export async function GET(
                 { status: 404 }
             );
         }
+        
+        if (survey.status !== 'published') {
+            const session = await auth();
+            if (!session?.user?.isAdmin) {
+                return NextResponse.json(
+                    { success: false, error: 'Survey not found' },
+                    { status: 404 }
+                );
+            }
+        }
 
         return NextResponse.json({
             success: true,
@@ -63,9 +72,9 @@ export async function GET(
     } catch (error) {
         logger.error('Error fetching survey', error);
         return NextResponse.json(
-            { 
-                success: false, 
-                error: error instanceof Error ? error.message : 'Failed to fetch survey' 
+            {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to fetch survey'
             },
             { status: 500 }
         );
@@ -120,7 +129,7 @@ export async function PUT(
 ) {
     try {
         const session = await auth();
-        
+
         if (!session?.user?.isAdmin) {
             return NextResponse.json(
                 { success: false, error: 'Unauthorized' },
@@ -130,20 +139,20 @@ export async function PUT(
 
         const { surveyId } = await params;
         const body: UpdateSurveyData = await request.json();
-        
+
         // Get survey to find its slug
         let survey = await surveyService.getOne(surveyId);
         if (!survey) {
             survey = await surveyService.getBySlug(surveyId);
         }
-        
+
         if (!survey) {
             return NextResponse.json(
                 { success: false, error: 'Survey not found' },
                 { status: 404 }
             );
         }
-        
+
         const updatedSurvey = await surveyService.update(survey.slug, body);
 
         return NextResponse.json({
@@ -153,18 +162,18 @@ export async function PUT(
         });
     } catch (error) {
         logger.error('Error updating survey', error);
-        
+
         if (error instanceof Error && error.message === 'Survey not found') {
             return NextResponse.json(
                 { success: false, error: 'Survey not found' },
                 { status: 404 }
             );
         }
-        
+
         return NextResponse.json(
-            { 
-                success: false, 
-                error: error instanceof Error ? error.message : 'Failed to update survey' 
+            {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to update survey'
             },
             { status: 500 }
         );
@@ -203,7 +212,7 @@ export async function DELETE(
 ) {
     try {
         const session = await auth();
-        
+
         if (!session?.user?.isAdmin) {
             return NextResponse.json(
                 { success: false, error: 'Unauthorized' },
@@ -212,20 +221,20 @@ export async function DELETE(
         }
 
         const { surveyId } = await params;
-        
+
         // Get survey to find its slug
         let survey = await surveyService.getOne(surveyId);
         if (!survey) {
             survey = await surveyService.getBySlug(surveyId);
         }
-        
+
         if (!survey) {
             return NextResponse.json(
                 { success: false, error: 'Survey not found' },
                 { status: 404 }
             );
         }
-        
+
         await surveyService.delete(survey.slug);
 
         return NextResponse.json({
@@ -235,18 +244,18 @@ export async function DELETE(
         });
     } catch (error) {
         logger.error('Error deleting survey', error);
-        
+
         if (error instanceof Error && error.message === 'Survey not found') {
             return NextResponse.json(
                 { success: false, error: 'Survey not found' },
                 { status: 404 }
             );
         }
-        
+
         return NextResponse.json(
-            { 
-                success: false, 
-                error: error instanceof Error ? error.message : 'Failed to delete survey' 
+            {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to delete survey'
             },
             { status: 500 }
         );

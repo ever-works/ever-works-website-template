@@ -9,6 +9,7 @@ import { ImportSurveyJsDialog } from './import-surveyjs-dialog';
 import { SurveyPreviewDialog } from './survey-preview-dialog';
 import { Button } from '@/components/ui/button';
 import { SurveyTypeEnum, SurveyStatusEnum } from '@/lib/constants';
+import { useTranslations } from 'next-intl';
 
 interface SurveyFormProps {
 	survey?: Survey;
@@ -30,6 +31,7 @@ export interface SurveyFormData {
 }
 
 export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, defaultType, defaultItemId }: SurveyFormProps) {
+	const t = useTranslations('common');
 	const [formData, setFormData] = useState<SurveyFormData>({
 		title: survey?.title || '',
 		description: survey?.description || '',
@@ -78,7 +80,7 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 			setFormData(prev => ({ ...prev, surveyJson: parsed }));
 			setPreviewJson(parsed); // Update preview
 		} catch {
-			setJsonError('Invalid JSON format');
+			setJsonError(t('INVALID_JSON_FORMAT'));
 		}
 	};
 
@@ -106,7 +108,7 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 
 	const handlePreview = () => {
 		if (jsonError) {
-			toast.error('Please fix JSON errors before previewing');
+			toast.error(t('FIX_JSON_ERRORS_PREVIEW'));
 			return;
 		}
 		setShowPreview(true);
@@ -121,22 +123,22 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-
+		
 		if (!formData.title.trim()) {
-			toast.error('Title is required');
+			toast.error(t('TITLE_REQUIRED'));
 			return;
 		}
-
+		
 		if (jsonError) {
-			toast.error('Please fix JSON errors before submitting');
+			toast.error(t('FIX_JSON_ERRORS'));
 			return;
 		}
 
 		if (formData.type === SurveyTypeEnum.ITEM && !formData.itemId) {
-			toast.error('Item ID is required for item surveys');
+			toast.error(t('ITEM_ID_REQUIRED'));
 			return;
 		}
-
+		
 		await onSubmit(formData);
 	};
 
@@ -144,15 +146,16 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 		<form onSubmit={handleSubmit} className="p-6 space-y-6">
 			{/* Title */}
 			<div>
-				<label className="block text-sm font-medium mb-2">
-					Title <span className="text-red-500">*</span>
+				<label htmlFor="survey-title" className="block text-sm font-medium mb-2">
+					{t('TITLE')} <span className="text-red-500">*</span>
 				</label>
 				<input
+					id="survey-title"
 					type="text"
 					value={formData.title}
 					onChange={(e) => setFormData({ ...formData, title: e.target.value })}
 					className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-					placeholder="Enter survey title"
+					placeholder={t('ENTER_SURVEY_TITLE')}
 					disabled={isLoading}
 					required
 				/>
@@ -160,15 +163,16 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 
 			{/* Description */}
 			<div>
-				<label className="block text-sm font-medium mb-2">
-					Description
+				<label htmlFor="survey-description" className="block text-sm font-medium mb-2">
+					{t('DESCRIPTION')}
 				</label>
 				<textarea
+					id="survey-description"
 					value={formData.description}
 					onChange={(e) => setFormData({ ...formData, description: e.target.value })}
 					className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
 					rows={3}
-					placeholder="Enter survey description (optional)"
+					placeholder={t('ENTER_SURVEY_DESCRIPTION')}
 					disabled={isLoading}
 				/>
 			</div>
@@ -177,10 +181,11 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 				{/* Type */}
 				<div>
-					<label className="block text-sm font-medium mb-2">
-						Survey Type <span className="text-red-500">*</span>
+					<label htmlFor="survey-type" className="block text-sm font-medium mb-2">
+						{t('SURVEY_TYPE')} <span className="text-red-500">*</span>
 					</label>
 					<select
+						id="survey-type"
 						value={formData.type}
 						onChange={(e) => {
 							const newType = e.target.value as SurveyTypeEnum;
@@ -193,30 +198,31 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 						className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 						disabled={isLoading || mode === 'edit'}
 					>
-						<option value={SurveyTypeEnum.GLOBAL}>Global Survey</option>
-						<option value={SurveyTypeEnum.ITEM}>Items Survey</option>
+						<option value={SurveyTypeEnum.GLOBAL}>{t('GLOBAL_SURVEY')}</option>
+						<option value={SurveyTypeEnum.ITEM}>{t('ITEM_SURVEY')}</option>
 					</select>
 					{mode === 'edit' && (
 						<p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-							Survey type cannot be changed after creation
+							{t('SURVEY_TYPE_CANNOT_BE_CHANGED')}
 						</p>
 					)}
 				</div>
 
 				{/* Status */}
 				<div>
-					<label className="block text-sm font-medium mb-2">
-						Status <span className="text-red-500">*</span>
+					<label htmlFor="survey-status" className="block text-sm font-medium mb-2">
+						{t('STATUS')} <span className="text-red-500">*</span>
 					</label>
 					<select
+						id="survey-status"
 						value={formData.status}
 						onChange={(e) => setFormData({ ...formData, status: e.target.value as SurveyStatusEnum })}
 						className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 						disabled={isLoading}
 					>
-						<option value={SurveyStatusEnum.DRAFT}>Draft</option>
-						<option value={SurveyStatusEnum.PUBLISHED}>Published</option>
-						<option value={SurveyStatusEnum.CLOSED}>Closed</option>
+						<option value={SurveyStatusEnum.DRAFT}>{t('DRAFT')}</option>
+						<option value={SurveyStatusEnum.PUBLISHED}>{t('PUBLISHED')}</option>
+						<option value={SurveyStatusEnum.CLOSED}>{t('CLOSED')}</option>
 					</select>
 				</div>
 			</div>
@@ -225,11 +231,11 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 			{formData.type === SurveyTypeEnum.ITEM && (
 				<ItemSelector
 					selectedItemId={formData.itemId}
-					onItemSelect={(itemId) => setFormData({ ...formData, itemId })}
+					onItemSelect={(itemId) => setFormData(prev => ({ ...prev, itemId }))}
 					disabled={isLoading}
 					required
-					label="Select Item"
-					placeholder="Choose an item for this survey"
+					label={t('SELECT_ITEM')}
+					placeholder={t('CHOOSE_ITEM_FOR_SURVEY')}
 				/>
 			)}
 
@@ -238,7 +244,7 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 			<div>
 				<div className="flex items-center justify-between mb-2">
 					<label htmlFor="survey-json" className="block text-sm font-medium">
-						Survey Definition (JSON) <span className="text-red-500">*</span>
+						{t('SURVEY_DEFINITION_JSON')} <span className="text-red-500">*</span>
 					</label>
 				</div>
 
@@ -250,7 +256,7 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 						size="xs"
 						disabled={isLoading}
 					>
-						Format JSON
+						{t('FORMAT_JSON')}
 					</Button>
 					<Button
 						type="button"
@@ -259,7 +265,7 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 						size="xs"
 						disabled={isLoading}
 					>
-						Minify JSON
+						{t('MINIFY_JSON')}
 					</Button>
 					<Button
 						type="button"
@@ -268,7 +274,7 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 						disabled={isLoading}
 					>
 						<Download className="w-3 h-3 mr-1" />
-						Import from SurveyJS
+						{t('IMPORT_FROM_SURVEYJS')}
 					</Button>
 					<Button
 						type="button"
@@ -277,7 +283,7 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 						disabled={isLoading || !!jsonError}
 					>
 						<Eye className="w-3 h-3 mr-1" />
-						Preview Survey
+						{t('PREVIEW_SURVEY')}
 					</Button>
 				</div>
 
@@ -333,20 +339,20 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 					onClick={onCancel}
 					disabled={isLoading}
 				>
-					Cancel
+					{t('CANCEL')}
 				</Button>
 				<Button
 					type="submit"
 					disabled={isLoading || !!jsonError}
 				>
-					{isLoading ? 'Saving...' : mode === 'create' ? 'Create Survey' : 'Update Survey'}
+					{isLoading ? t('SAVING') : mode === 'create' ? t('CREATE_SURVEY_BTN') : t('UPDATE_SURVEY_BTN')}
 				</Button>
 			</div>
 
 			{/* Preview Dialog */}
 			<SurveyPreviewDialog
 				surveyJson={previewJson}
-				title="Survey Preview"
+				title={t('SURVEY_PREVIEW')}
 				isOpen={showPreview}
 				onClose={() => setShowPreview(false)}
 			/>

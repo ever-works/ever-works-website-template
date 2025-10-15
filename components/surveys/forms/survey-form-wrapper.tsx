@@ -7,6 +7,7 @@ import type { Survey } from '@/lib/db/schema';
 import { toast } from 'sonner';
 import { SurveyFormNoSSR } from './survey-form-no-ssr';
 import { Logger } from '@/lib/logger';
+import { useTranslations } from 'next-intl';
 
 const logger = Logger.create('SurveyFormWrapper');
 
@@ -27,6 +28,7 @@ export function SurveyFormWrapper({
 	onCompleted,
 	className 
 }: SurveyFormWrapperProps) {
+	const t = useTranslations('common');
 	const [hasStarted, setHasStarted] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -47,7 +49,7 @@ export function SurveyFormWrapper({
 				data: sender.data,
 			});
 
-			toast.success('Survey completed! Thank you for your feedback.');
+			toast.success(t('SURVEY_COMPLETED_SUCCESS'));
 			
 			// Call the completion callback if provided
 			if (onCompleted) {
@@ -55,7 +57,7 @@ export function SurveyFormWrapper({
 			}
 		} catch (error) {
 			logger.error('Error saving survey response', error);
-			toast.error('Failed to save survey response. Please try again.');
+			toast.error(t('FAILED_TO_SAVE_SURVEY_RESPONSE'));
 			setIsSubmitting(false);
 		}
 	};
@@ -63,9 +65,9 @@ export function SurveyFormWrapper({
 	if (survey.status !== 'published') {
 		return (
 			<div className="text-center py-8">
-				<h3 className="text-xl font-semibold mb-2">Survey Not Available</h3>
+				<h3 className="text-xl font-semibold mb-2">{t('SURVEY_NOT_AVAILABLE')}</h3>
 				<p className="text-gray-600 dark:text-gray-400">
-					This survey is currently {survey.status} and not available for responses.
+					{t('SURVEY_STATUS_NOT_AVAILABLE', { status: survey.status })}
 				</p>
 			</div>
 		);

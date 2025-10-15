@@ -88,14 +88,16 @@ export class SurveyApiClient {
         if (filters?.page) params.append('page', filters.page.toString());
         if (filters?.limit) params.append('limit', filters.limit.toString());
 
-        return this.client.get<GetManyResponse>(`${this.baseUrl}?${params}`);
+        const paramsStr = params.toString();
+        const url = paramsStr ? `${this.baseUrl}?${paramsStr}` : this.baseUrl;
+        return this.client.get<GetManyResponse>(url);
     }
 
     /**
      * Get one survey by ID
      */
     async getOne(id: string): Promise<Survey | null> {
-        return this.client.get<Survey | null>(`${this.baseUrl}/${id}`);
+        return this.client.get<Survey | null>(`${this.baseUrl}/${encodeURIComponent(id)}`);
     }
 
     /**
@@ -105,7 +107,9 @@ export class SurveyApiClient {
         const params = new URLSearchParams();
         if (itemId) params.append('itemId', itemId);
 
-        return this.client.get<Survey | null>(`${this.baseUrl}/${slug}?${params}`);
+        const paramsStr = params.toString();
+        const url = `${this.baseUrl}/${encodeURIComponent(slug)}${paramsStr ? `?${paramsStr}` : ''}`;
+        return this.client.get<Survey | null>(url);
     }
 
     /**
@@ -119,14 +123,14 @@ export class SurveyApiClient {
      * Update survey by ID
      */
     async update(id: string, data: UpdateSurveyData): Promise<Survey> {
-        return this.client.put<Survey>(`${this.baseUrl}/${id}`, data as any);
+        return this.client.put<Survey>(`${this.baseUrl}/${encodeURIComponent(id)}`, data as any);
     }
 
     /**
      * Delete survey by ID
      */
     async delete(id: string): Promise<void> {
-        await this.client.delete<void>(`${this.baseUrl}/${id}`);
+        await this.client.delete<void>(`${this.baseUrl}/${encodeURIComponent(id)}`);
     }
 
     // ==================== SURVEY RESPONSES ====================
@@ -135,7 +139,7 @@ export class SurveyApiClient {
      * Submit survey response
      */
     async submitResponse(data: SubmitResponseData): Promise<SurveyResponse> {
-        return this.client.post<SurveyResponse>(`${this.baseUrl}/${data.surveyId}/responses`, data as any);
+        return this.client.post<SurveyResponse>(`${this.baseUrl}/${encodeURIComponent(data.surveyId)}/responses`, data as any);
     }
 
     /**
@@ -150,31 +154,18 @@ export class SurveyApiClient {
         if (filters?.page) params.append('page', filters.page.toString());
         if (filters?.limit) params.append('limit', filters.limit.toString());
 
-        return this.client.get<GetResponsesResponse>(`${this.baseUrl}/${surveyId}/responses?${params}`);
+        const paramsStr = params.toString();
+        const url = `${this.baseUrl}/${encodeURIComponent(surveyId)}/responses${paramsStr ? `?${paramsStr}` : ''}`;
+        return this.client.get<GetResponsesResponse>(url);
     }
 
     /**
      * Get single response by ID
      */
     async getResponse(responseId: string): Promise<SurveyResponse | null> {
-        return this.client.get<SurveyResponse | null>(`${this.baseUrl}/responses/${responseId}`);
+        return this.client.get<SurveyResponse | null>(`${this.baseUrl}/responses/${encodeURIComponent(responseId)}`);
     }
 
-    /**
-     * Get survey analytics
-     */
-    async getAnalytics(surveyId: string, filters?: {
-        itemId?: string;
-        startDate?: string;
-        endDate?: string;
-    }): Promise<SurveyAnalytics> {
-        const params = new URLSearchParams();
-        if (filters?.itemId) params.append('itemId', filters.itemId);
-        if (filters?.startDate) params.append('startDate', filters.startDate);
-        if (filters?.endDate) params.append('endDate', filters.endDate);
-
-        return this.client.get<SurveyAnalytics>(`${this.baseUrl}/${surveyId}/analytics?${params}`);
-    }
 }
 
 // Singleton instance

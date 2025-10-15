@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { surveyService } from '@/lib/services/survey.service';
 import { SurveyResponsesClient } from '@/components/surveys/responses/survey-responses-client';
+import { cache } from 'react';
 
 interface DashboardSurveyResponsesPageProps {
 	params: {
@@ -11,9 +12,11 @@ interface DashboardSurveyResponsesPageProps {
 	};
 }
 
+const getSurvey = cache((slug: string) => surveyService.getBySlug(slug));
+
 export async function generateMetadata({ params }: DashboardSurveyResponsesPageProps): Promise<Metadata> {
 	const { surveySlug } = params;
-	const survey = await surveyService.getBySlug(surveySlug);
+	const survey = await getSurvey(surveySlug);
 
 	if (!survey) {
 		return {
@@ -29,7 +32,7 @@ export async function generateMetadata({ params }: DashboardSurveyResponsesPageP
 
 export default async function DashboardSurveyResponsesPage({ params }: DashboardSurveyResponsesPageProps) {
 	const { surveySlug, itemId } = params;
-	const survey = await surveyService.getBySlug(surveySlug);
+	const survey = await getSurvey(surveySlug);
 
 	if (!survey) {
 		notFound();

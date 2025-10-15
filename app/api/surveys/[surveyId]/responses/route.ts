@@ -63,6 +63,57 @@ const logger = Logger.create('SurveyResponsesAPI');
  *     responses:
  *       200:
  *         description: "Responses retrieved successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     responses:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                           surveyId:
+ *                             type: string
+ *                           userId:
+ *                             type: string
+ *                             nullable: true
+ *                           itemId:
+ *                             type: string
+ *                             nullable: true
+ *                           data:
+ *                             type: object
+ *                           completedAt:
+ *                             type: string
+ *                             format: date-time
+ *                           ipAddress:
+ *                             type: string
+ *                             nullable: true
+ *                           userAgent:
+ *                             type: string
+ *                             nullable: true
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                           updatedAt:
+ *                             type: string
+ *                             format: date-time
+ *                     total:
+ *                       type: integer
+ *                       description: "Total number of responses"
+ *                       example: 42
+ *                     totalPages:
+ *                       type: integer
+ *                       description: "Total number of pages"
+ *                       example: 5
  *       401:
  *         description: "Unauthorized"
  *       500:
@@ -148,6 +199,47 @@ export async function GET(
  *     responses:
  *       201:
  *         description: "Response submitted successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     surveyId:
+ *                       type: string
+ *                     userId:
+ *                       type: string
+ *                       nullable: true
+ *                     itemId:
+ *                       type: string
+ *                       nullable: true
+ *                     data:
+ *                       type: object
+ *                     completedAt:
+ *                       type: string
+ *                       format: date-time
+ *                     ipAddress:
+ *                       type: string
+ *                       nullable: true
+ *                     userAgent:
+ *                       type: string
+ *                       nullable: true
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                 message:
+ *                   type: string
+ *                   example: "Response submitted successfully"
  *       400:
  *         description: "Bad request"
  *       500:

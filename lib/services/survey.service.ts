@@ -20,7 +20,6 @@
  * - submitResponse() - Submit survey response
  * - getResponses() - Get survey responses
  * - getResponseById() - Get single response
- * - getAnalytics() - Get survey analytics
  */
 
 import * as queries from '@/lib/db/queries';
@@ -140,7 +139,10 @@ export class SurveyService {
     }
 
     if (data.slug) {
-      data.slug = await this.ensureUniqueSlug(data.slug, id);
+      const conflict = await queries.getSurveyBySlug(data.slug, id);
+      if (conflict) {
+        data.slug = await this.ensureUniqueSlug(data.slug, id);
+      }
     }
 
     const updateData: Partial<Survey> = {

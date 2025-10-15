@@ -6,6 +6,7 @@ import { Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Logger } from '@/lib/logger';
+import { useTranslations } from 'next-intl';
 
 const logger = Logger.create('ImportSurveyJsDialog');
 
@@ -16,12 +17,13 @@ interface ImportSurveyJsDialogProps {
 }
 
 export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurveyJsDialogProps) {
+	const t = useTranslations('common');
 	const [surveyJsId, setSurveyJsId] = useState('');
 	const [isImporting, setIsImporting] = useState(false);
 
 	const handleImport = async () => {
 		if (!surveyJsId.trim()) {
-			toast.error('Please enter a SurveyJS Survey ID');
+			toast.error(t('PLEASE_ENTER_SURVEYJS_ID'));
 			return;
 		}
 
@@ -31,16 +33,16 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 			const response = await fetch(`https://api.surveyjs.io/public/v1/Survey/getSurvey?surveyId=${surveyJsId}`);
 
 			if (!response.ok) {
-				throw new Error('Survey not found or invalid ID');
+				throw new Error(t('SURVEY_NOT_FOUND_INVALID_ID'));
 			}
 
 			const data = await response.json();
 			onImport(data);
-			toast.success('Survey imported successfully!');
+			toast.success(t('SURVEY_IMPORTED_SUCCESSFULLY'));
 			handleClose();
 		} catch (error) {
 			logger.error('Error importing survey', error);
-			toast.error(error instanceof Error ? error.message : 'Failed to import survey from SurveyJS');
+			toast.error(error instanceof Error ? error.message : t('FAILED_TO_IMPORT_SURVEY'));
 		} finally {
 			setIsImporting(false);
 		}
@@ -66,20 +68,20 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 			onClose={handleClose}
 			size="md"
 			isDismissable={!isImporting}
-			title="Import from SurveyJS"
-			subtitle={<p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter your SurveyJS survey ID to import</p>}
+			title={t('IMPORT_SURVEYJS_TITLE')}
+			subtitle={<p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('IMPORT_SURVEYJS_DESC')}</p>}
 		>
 			<ModalBody className="space-y-4">
 				<div>
 					<label className="block text-sm font-medium mb-2" htmlFor="survey-js-id">
-						Survey ID <span className="text-red-500">*</span>
+						{t('SURVEY_ID')} <span className="text-red-500">*</span>
 					</label>
 					<input
 						id="survey-js-id"
 						type="text"
 						value={surveyJsId}
 						onChange={(e) => setSurveyJsId(e.target.value)}
-						placeholder="Enter SurveyJS survey ID"
+						placeholder={t('ENTER_SURVEYJS_ID')}
 						className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-green-500 focus:border-transparent"
 						disabled={isImporting}
 						onKeyDown={handleKeyDown}
@@ -105,7 +107,7 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 					variant="outline"
 					disabled={isImporting}
 				>
-					Cancel
+					{t('CANCEL')}
 				</Button>
 				<Button
 					onClick={handleImport}
@@ -114,12 +116,12 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 					{isImporting ? (
 						<>
 							<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-							Importing...
+							{t('IMPORTING')}
 						</>
 					) : (
 						<>
 							<Download className="w-4 h-4" />
-							Import Survey
+							{t('IMPORT_SURVEY')}
 						</>
 					)}
 				</Button>

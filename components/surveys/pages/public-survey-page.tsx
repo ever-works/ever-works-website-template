@@ -7,6 +7,7 @@ import type { Survey } from '@/lib/db/schema';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SurveyFormWrapper } from '../forms/survey-form-wrapper';
+import { useTranslations } from 'next-intl';
 
 interface SurveyPageClientProps {
 	survey: Survey;
@@ -15,6 +16,7 @@ interface SurveyPageClientProps {
 
 export function SurveyPageClient({ survey, itemSlug }: SurveyPageClientProps) {
 	const router = useRouter();
+	const t = useTranslations('common');
 
 	const handleCompleted = () => {
 		// Redirect after completion
@@ -30,9 +32,9 @@ export function SurveyPageClient({ survey, itemSlug }: SurveyPageClientProps) {
 	if (survey.status !== 'published') {
 		return (
 			<div className="text-center">
-				<h1 className="text-3xl font-bold mb-4">Survey Not Available</h1>
+				<h1 className="text-3xl font-bold mb-4">{t('SURVEY_NOT_AVAILABLE')}</h1>
 				<p className="text-gray-600 dark:text-gray-400">
-					This survey is currently {survey.status} and not available for responses.
+					{t('SURVEY_STATUS_NOT_AVAILABLE', { status: survey.status })}
 				</p>
 			</div>
 		);
@@ -45,7 +47,7 @@ export function SurveyPageClient({ survey, itemSlug }: SurveyPageClientProps) {
 					<Link href={`/items/${itemSlug}`}>
 						<Button variant="ghost" className="gap-2">
 							<ArrowLeft className="w-4 h-4" />
-							Back to Item
+							{t('BACK_TO_ITEM')}
 						</Button>
 					</Link>
 				</div>

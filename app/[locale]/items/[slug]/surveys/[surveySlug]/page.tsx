@@ -3,18 +3,22 @@ import { notFound } from 'next/navigation';
 import { surveyService } from '@/lib/services/survey.service';
 import { SurveyPageClient } from '@/components/surveys/pages/public-survey-page';
 import { Container } from '@/components/ui/container';
+import { cache } from 'react';
 
 interface ItemSurveyPageProps {
-	params: Promise<{
+	params: {
 		locale: string;
 		slug: string;
 		surveySlug: string;
-	}>;
+	};
 }
 
+const getSurvey = cache((slug: string) => surveyService.getBySlug(slug));
+
+
 export async function generateMetadata({ params }: ItemSurveyPageProps): Promise<Metadata> {
-	const { surveySlug } = await params;
-	const survey = await surveyService.getBySlug(surveySlug);
+	const { surveySlug } = params;
+	const survey = await getSurvey(surveySlug);
 
 	if (!survey) {
 		return {
@@ -29,10 +33,10 @@ export async function generateMetadata({ params }: ItemSurveyPageProps): Promise
 }
 
 export default async function ItemSurveyPage({ params }: ItemSurveyPageProps) {
-	const { surveySlug, slug } = await params;
+	const { surveySlug, slug } = params;
 
 	// Fetch survey data on the server
-	const survey = await surveyService.getBySlug(surveySlug);
+	const survey = await getSurvey(surveySlug);
 
 	if (!survey) {
 		notFound();

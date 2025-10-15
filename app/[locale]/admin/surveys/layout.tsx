@@ -5,7 +5,7 @@ interface ItemSurveyLayoutProps {
 }
 
 
-export default async function ItemSurveyLayout({ children }: ItemSurveyLayoutProps) {
+export default function ItemSurveyLayout({ children }: ItemSurveyLayoutProps) {
 	return (
 		<Container maxWidth="7xl" padding="default">
 			{children}

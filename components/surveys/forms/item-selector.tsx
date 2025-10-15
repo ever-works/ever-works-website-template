@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Package, Search, ChevronDown, X } from 'lucide-react';
 import Image from 'next/image';
 import { Logger } from '@/lib/logger';
+import { useTranslations } from 'next-intl';
 
 const logger = Logger.create('ItemSelector');
 
@@ -28,9 +29,10 @@ export function ItemSelector({
 	onItemSelect,
 	disabled = false,
 	required = false,
-	label = 'Select Item',
-	placeholder = 'Choose an item'
+	label,
+	placeholder
 }: ItemSelectorProps) {
+	const t = useTranslations('common');
 	const [items, setItems] = useState<Item[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [searchQuery, setSearchQuery] = useState('');
@@ -120,7 +122,7 @@ export function ItemSelector({
 					className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-between gap-2 text-left"
 				>
 					{isLoading ? (
-						<span className="text-gray-500 dark:text-gray-400">Loading items...</span>
+						<span className="text-gray-500 dark:text-gray-400">{t('LOADING_ITEMS')}</span>
 					) : selectedItem ? (
 						<div className="flex items-center gap-2 flex-1 min-w-0">
 							{selectedItem.icon_url ? (
@@ -167,11 +169,11 @@ export function ItemSelector({
 								<input
 									ref={searchInputRef}
 									type="text"
-									value={searchQuery}
-									onChange={(e) => setSearchQuery(e.target.value)}
-									placeholder="Search items..."
-									className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-								/>
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+								placeholder={t('SEARCH_ITEMS')}
+								className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+							/>
 							</div>
 						</div>
 
@@ -180,9 +182,9 @@ export function ItemSelector({
 							{filteredItems.length === 0 ? (
 								<div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
 									<Package className="w-8 h-8 mx-auto mb-2 opacity-50" />
-									<p className="text-sm">No items found</p>
+									<p className="text-sm">{t('NO_ITEMS_FOUND')}</p>
 									{searchQuery && (
-										<p className="text-xs mt-1">Try a different search</p>
+										<p className="text-xs mt-1">{t('TRY_DIFFERENT_SEARCH')}</p>
 									)}
 								</div>
 							) : (

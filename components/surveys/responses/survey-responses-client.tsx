@@ -11,6 +11,7 @@ import { ResponseDetailDialog } from './response-detail-dialog';
 import { formatDateTime } from '@/utils/date';
 import { Button } from '@/components/ui/button';
 import { Logger } from '@/lib/logger';
+import { useTranslations } from 'next-intl';
 
 const logger = Logger.create('SurveyResponsesClient');
 
@@ -32,6 +33,7 @@ export function SurveyResponsesClient({
 	subtitle,
 	initialFilters = {}
 }: SurveyResponsesClientProps) {
+	const t = useTranslations('common');
 	const [responses, setResponses] = useState<SurveyResponse[]>([]);
 	const [total, setTotal] = useState(0);
 	const [loading, setLoading] = useState(true);
@@ -52,21 +54,21 @@ export function SurveyResponsesClient({
 				setResponses(data.responses || []);
 			setTotal(data.total || 0);
 		}
-	} catch (error) {
-		logger.error('Error loading responses', error);
-		toast.error('Failed to load responses');
-	} finally {
+		} catch (error) {
+			logger.error('Error loading responses', error);
+			toast.error(t('FAILED_TO_LOAD_SURVEYS'));
+		} finally {
 			setLoading(false);
 		}
 	};
 
 	const handleExport = () => {
 		if (responses.length === 0) {
-			toast.error('No responses to export');
+			toast.error(t('NO_RESPONSES_TO_EXPORT'));
 			return;
 		}
-		exportResponsesToCSV(responses, survey.title);
-		toast.success('CSV file downloaded!');
+		exportResponsesToCSV(responses as any, survey.title);
+		toast.success(t('CSV_FILE_DOWNLOADED'));
 	};
 
 	const handleViewDetails = (response: SurveyResponse) => {
@@ -93,9 +95,9 @@ export function SurveyResponsesClient({
 
 			<div className="mb-8 flex items-start justify-between">
 				<div>
-					<h1 className="text-3xl font-bold mb-2">{survey.title} - Responses</h1>
+					<h1 className="text-3xl font-bold mb-2">{survey.title} - {t('RESPONSES')}</h1>
 					<p className="text-gray-600 dark:text-gray-400">
-						{subtitle || `${total} total responses`}
+						{subtitle || t('TOTAL_RESPONSES', { count: total })}
 					</p>
 				</div>
 				<Button
@@ -103,7 +105,7 @@ export function SurveyResponsesClient({
 					disabled={responses.length === 0}
 				>
 					<Download className="w-4 h-4 mr-1" />
-					Export CSV
+					{t('EXPORT_CSV')}
 				</Button>
 			</div>
 
@@ -112,11 +114,12 @@ export function SurveyResponsesClient({
 				<div className="flex items-center gap-4">
 					<div className="flex items-center gap-2">
 						<Filter className="w-4 h-4 text-gray-500" />
-						<span className="text-sm font-medium">Filters:</span>
+						<span className="text-sm font-medium">{t('FILTERS')}:</span>
 					</div>
 					<div className="flex items-center gap-2">
-						<label className="text-sm">From:</label>
+						<label className="text-sm" htmlFor="startDate">{t('FROM')}:</label>
 						<input
+							id="startDate"
 							type="date"
 							value={filters.startDate || ''}
 							onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
@@ -124,8 +127,9 @@ export function SurveyResponsesClient({
 						/>
 					</div>
 					<div className="flex items-center gap-2">
-						<label className="text-sm">To:</label>
+						<label className="text-sm" htmlFor="endDate">{t('TO')}:</label>
 						<input
+							id="endDate"
 							type="date"
 							value={filters.endDate || ''}
 							onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
@@ -138,7 +142,7 @@ export function SurveyResponsesClient({
 							variant="ghost"
 							onClick={() => setFilters({ ...filters, startDate: undefined, endDate: undefined })}
 						>
-							Clear dates
+							{t('CLEAR_DATES')}
 						</Button>
 					)}
 				</div>
@@ -146,11 +150,11 @@ export function SurveyResponsesClient({
 
 			{loading ? (
 				<div className="text-center py-16">
-					<p className="text-gray-500 dark:text-gray-400">Loading responses...</p>
+					<p className="text-gray-500 dark:text-gray-400">{t('LOADING_RESPONSES')}</p>
 				</div>
 			) : responses.length === 0 ? (
 				<div className="text-center py-16 bg-white dark:bg-gray-800 rounded-lg">
-					<p className="text-gray-500 dark:text-gray-400">No responses found.</p>
+					<p className="text-gray-500 dark:text-gray-400">{t('NO_RESPONSES_FOUND')}</p>
 				</div>
 			) : (
 				<div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
@@ -159,16 +163,16 @@ export function SurveyResponsesClient({
 							<thead className="bg-gray-50 dark:bg-gray-900">
 								<tr>
 									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-										Response ID
+										{t('RESPONSE_ID')}
 									</th>
 									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-										User
+										{t('USER')}
 									</th>
 									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-										Completed At
+										{t('COMPLETED_AT')}
 									</th>
 									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-										Actions
+										{t('ACTIONS')}
 									</th>
 								</tr>
 							</thead>
@@ -176,7 +180,7 @@ export function SurveyResponsesClient({
 								{responses.map((response) => (
 									<tr key={response.id} className="hover:bg-gray-50 dark:hover:bg-gray-900/50">
 										<td className="px-6 py-4 text-sm font-mono">{response.id}</td>
-										<td className="px-6 py-4 text-sm">{response.userId || 'Anonymous'}</td>
+										<td className="px-6 py-4 text-sm">{response.userId || t('ANONYMOUS')}</td>
 										<td className="px-6 py-4 text-sm">{formatDateTime(response.completedAt)}</td>
 										<td className="px-6 py-4">
 											<Button
@@ -184,7 +188,7 @@ export function SurveyResponsesClient({
 												size="sm"
 												variant="ghost"
 											>
-												View Details
+												{t('VIEW_DETAILS')}
 											</Button>
 										</td>
 									</tr>

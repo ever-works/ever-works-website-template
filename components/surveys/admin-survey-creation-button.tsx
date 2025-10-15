@@ -8,7 +8,6 @@ import { useTranslations } from 'next-intl';
 
 interface AdminSurveyCreationButtonProps {
   itemId?: string;
-  itemName?: string;
   variant?: 'default' | 'outline' | 'ghost';
   size?: 'sm' | 'default' | 'lg';
   className?: string;
@@ -17,7 +16,6 @@ interface AdminSurveyCreationButtonProps {
 
 export function AdminSurveyCreationButton({ 
   itemId, 
-  itemName, 
   variant = 'outline',
   size = 'sm',
   className = '',

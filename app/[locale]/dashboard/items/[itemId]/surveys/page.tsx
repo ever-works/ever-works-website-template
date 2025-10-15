@@ -8,15 +8,15 @@ interface DashboardItemSurveysPageProps {
 	};
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export function generateMetadata(): Metadata {
 	return {
 		title: `Item Surveys | Dashboard`,
 		description: 'Manage surveys for your listing'
 	};
 }
 
-export default async function DashboardItemSurveysPage({ params }: DashboardItemSurveysPageProps) {
-	const { itemId } =  params;
+export default function DashboardItemSurveysPage({ params }: DashboardItemSurveysPageProps) {
+	const { itemId } = params;
 
 	return <DashboardItemSurveysClient itemId={itemId} />;
 }

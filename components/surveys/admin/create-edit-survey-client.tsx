@@ -10,6 +10,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SurveyTypeEnum } from '@/lib/constants';
 import { Logger } from '@/lib/logger';
+import { useTranslations } from 'next-intl';
 
 const logger = Logger.create('CreateEditSurveyClient');
 
@@ -20,6 +21,7 @@ interface CreateEditSurveyClientProps {
 
 export function CreateEditSurveyClient({ survey, defaultItemId }: CreateEditSurveyClientProps) {
 	const router = useRouter();
+	const t = useTranslations('common');
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const mode = survey?.id ? 'edit' : 'create';
@@ -32,11 +34,11 @@ export function CreateEditSurveyClient({ survey, defaultItemId }: CreateEditSurv
 			} else {
 				await surveyApiClient.create(data);
 			}
-			toast.success(mode === 'edit' ? 'Survey updated successfully!' : 'Survey created successfully!');
+			toast.success(mode === 'edit' ? t('SURVEY_UPDATED_SUCCESSFULLY') : t('SURVEY_CREATED_SUCCESSFULLY'));
 			router.push('/admin/surveys');
 		} catch (error) {
 			logger.error('Error updating survey', error);
-			toast.error(error instanceof Error ? error.message : `Failed to ${mode === 'edit' ? 'update' : 'create'} survey`);
+			toast.error(error instanceof Error ? error.message : (mode === 'edit' ? t('FAILED_TO_UPDATE_SURVEY') : t('FAILED_TO_CREATE_SURVEY')));
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -55,11 +57,11 @@ export function CreateEditSurveyClient({ survey, defaultItemId }: CreateEditSurv
 					className="mb-4"
 				>
 					<ArrowLeft className="w-4 h-4" />
-					Back to Surveys
+					{t('BACK_TO_SURVEYS')}
 				</Button>
-				<h1 className="text-3xl font-bold mb-2">{mode === 'edit' ? 'Edit Survey' : 'Create Survey'}</h1>
+				<h1 className="text-3xl font-bold mb-2">{mode === 'edit' ? t('EDIT_SURVEY') : t('CREATE_SURVEY')}</h1>
 				<p className="text-gray-600 dark:text-gray-400">
-					{mode === 'edit' ? 'Update survey details and configuration' : 'Create a new survey for collecting user feedback'}
+					{mode === 'edit' ? t('SURVEY_UPDATED_SUCCESSFULLY') : t('CREATE_ITEM_SURVEY_DESC')}
 				</p>
 			</div>
 

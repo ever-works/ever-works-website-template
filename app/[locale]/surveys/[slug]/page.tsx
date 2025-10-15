@@ -1,6 +1,7 @@
 import { SurveyPageClient } from '@/components/surveys/pages/public-survey-page';
 import { surveyService } from '@/lib/services/survey.service';
 import { notFound } from 'next/navigation';
+import { cache } from 'react';
 
 interface SurveyPageProps {
 	params: Promise<{
@@ -9,11 +10,13 @@ interface SurveyPageProps {
 	}>;
 }
 
+const getSurvey = cache((slug: string) => surveyService.getBySlug(slug));
+
 export default async function SurveyPage({ params }: SurveyPageProps) {
 	const { slug } = await params;
 
 	// Fetch survey data on the server
-	const survey = await surveyService.getBySlug(slug);
+	const survey = await getSurvey(slug);
 
 	if (!survey) {
 		notFound();

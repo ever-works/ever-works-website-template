@@ -4,23 +4,27 @@ import { surveyService } from '@/lib/services/survey.service';
 import { getStatusColor, getTypeColor } from '@/components/surveys/utils/survey-helpers';
 import { Container } from '@/components/ui/container';
 import { Survey } from '@/lib/db/schema';
+import { Logger } from '@/lib/logger';
+
+const logger = Logger.create('SurveysPage');
 
 export const metadata: Metadata = {
     title: 'Surveys | Ever Works',
     description: 'Browse and complete surveys'
 };
 
+
 export default async function SurveysPage() {
     let publishedSurveys: Survey[] = [];
-    
+
     try {
-        const result = await surveyService.getMany({ 
-            type: 'global', 
-            status: 'published' 
+        const result = await surveyService.getMany({
+            type: 'global',
+            status: 'published'
         });
         publishedSurveys = result.surveys || [];
     } catch (error) {
-        console.error('Error fetching surveys:', error);
+        logger.error('Error fetching surveys:', error);
         publishedSurveys = [];
     }
 
@@ -38,7 +42,7 @@ export default async function SurveysPage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {publishedSurveys.map((survey: any) => (
+                        {publishedSurveys.map((survey) => (
                             <Link
                                 key={survey.id}
                                 href={`/surveys/${survey.slug}`}
