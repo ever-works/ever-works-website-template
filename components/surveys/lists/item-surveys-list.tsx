@@ -33,7 +33,7 @@ export function DashboardItemSurveysClient({ itemId }: DashboardItemSurveysClien
 		} finally {
 			setLoading(false);
 		}
-	}, [itemId]);
+	}, [itemId, t]);
 
 
 	useEffect(() => {

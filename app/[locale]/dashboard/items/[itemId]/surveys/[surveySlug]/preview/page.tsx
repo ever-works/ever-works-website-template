@@ -5,17 +5,17 @@ import { SurveyPreviewClient } from '@/components/surveys/preview/preview-client
 import { cache } from 'react';
 
 interface DashboardSurveyPreviewPageProps {
-	params: {
+	params: Promise<{
 		locale: string;
 		itemId: string;
 		surveySlug: string;
-	};
+	}>;
 }
 
 const getSurvey = cache((slug: string) => surveyService.getBySlug(slug));
 
 export async function generateMetadata({ params }: DashboardSurveyPreviewPageProps): Promise<Metadata> {
-	const { surveySlug } =  params;
+	const { surveySlug } = await params;
 	const survey = await getSurvey(surveySlug);
 	if (!survey) {
 		return {
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: DashboardSurveyPreviewPagePro
 }
 
 export default async function DashboardSurveyPreviewPage({ params }: DashboardSurveyPreviewPageProps) {
-	const { surveySlug, itemId } =  params;
+	const { surveySlug, itemId } = await params;
 	const survey = await getSurvey(surveySlug);
 
 	if (!survey) {

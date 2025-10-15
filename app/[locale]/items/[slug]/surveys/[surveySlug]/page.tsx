@@ -6,18 +6,18 @@ import { Container } from '@/components/ui/container';
 import { cache } from 'react';
 
 interface ItemSurveyPageProps {
-	params: {
+	params: Promise<{
 		locale: string;
 		slug: string;
 		surveySlug: string;
-	};
+	}>;
 }
 
 const getSurvey = cache((slug: string) => surveyService.getBySlug(slug));
 
 
 export async function generateMetadata({ params }: ItemSurveyPageProps): Promise<Metadata> {
-	const { surveySlug } = params;
+	const { surveySlug } = await params;
 	const survey = await getSurvey(surveySlug);
 
 	if (!survey) {
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: ItemSurveyPageProps): Promise
 }
 
 export default async function ItemSurveyPage({ params }: ItemSurveyPageProps) {
-	const { surveySlug, slug } = params;
+	const { surveySlug, slug } = await params;
 
 	// Fetch survey data on the server
 	const survey = await getSurvey(surveySlug);

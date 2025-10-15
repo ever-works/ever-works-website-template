@@ -5,10 +5,10 @@ import { notFound } from 'next/navigation';
 import { cache } from 'react';
 
 interface SurveyLayoutProps {
-	params: {
+	params: Promise<{
 		locale: string;
 		slug: string;
-	};
+	}>;
 }
 
 const getSurvey = cache(async (slug: string) => {
@@ -16,7 +16,7 @@ const getSurvey = cache(async (slug: string) => {
 });
 
 export async function generateMetadata({ params }: SurveyLayoutProps): Promise<Metadata> {
-	const { slug } = params;
+	const { slug } = await params;
 	const survey = await getSurvey(slug);
 
 	if (!survey) {
@@ -34,9 +34,9 @@ export async function generateMetadata({ params }: SurveyLayoutProps): Promise<M
 export default async function SurveyLayout({
 	children,
 	params,
-}: { children: React.ReactNode; params: { locale: string; slug: string } }) {
+}: { children: React.ReactNode; params: SurveyLayoutProps['params'] }) {
 	
-	const { slug } = params;
+	const { slug } = await params;
 	const survey = await getSurvey(slug);
 
 	if (!survey) {

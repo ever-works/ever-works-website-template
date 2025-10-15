@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Plus, FileText } from 'lucide-react';
+import {  FileText } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface AdminSurveyCreationButtonProps {

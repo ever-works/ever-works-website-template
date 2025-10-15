@@ -2,10 +2,10 @@ import { Metadata } from 'next';
 import { DashboardItemSurveysClient } from '@/components/surveys/lists/item-surveys-list';
 
 interface DashboardItemSurveysPageProps {
-	params: {
+	params: Promise<{
 		locale: string;
 		itemId: string;
-	};
+	}>;
 }
 
 export function generateMetadata(): Metadata {
@@ -15,8 +15,8 @@ export function generateMetadata(): Metadata {
 	};
 }
 
-export default function DashboardItemSurveysPage({ params }: DashboardItemSurveysPageProps) {
-	const { itemId } = params;
+export default async function DashboardItemSurveysPage({ params }: DashboardItemSurveysPageProps) {
+	const { itemId } = await params;
 
 	return <DashboardItemSurveysClient itemId={itemId} />;
 }

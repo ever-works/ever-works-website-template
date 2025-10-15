@@ -70,8 +70,8 @@ const logger = Logger.create('SurveyResponseDetailAPI');
  *         description: "Internal server error"
  */
 export async function GET(
-    request: NextRequest,
-    { params }: { params: { responseId: string } }
+    _request: NextRequest,
+    { params }: { params: Promise<{ responseId: string }> }
 ) {
     try {
         const session = await auth();
@@ -83,7 +83,7 @@ export async function GET(
             );
         }
 
-        const { responseId } = params;
+        const { responseId } = await params;
         const response = await surveyService.getResponseById(responseId);
 
         if (!response) {

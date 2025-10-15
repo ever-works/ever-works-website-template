@@ -67,7 +67,7 @@ class Logger {
       return;
     }
 
-    const logEntry = this.formatMessage(level, message, data);
+    this.formatMessage(level, message, data);
     const prefix = this.context ? `[${this.context}]` : '';
     const timePrefix = `[${new Date().toLocaleTimeString()}]`;
 

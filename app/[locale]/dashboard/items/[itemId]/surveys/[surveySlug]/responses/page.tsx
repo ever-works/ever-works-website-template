@@ -5,17 +5,17 @@ import { SurveyResponsesClient } from '@/components/surveys/responses/survey-res
 import { cache } from 'react';
 
 interface DashboardSurveyResponsesPageProps {
-	params: {
+	params: Promise<{
 		locale: string;
 		itemId: string;
 		surveySlug: string;
-	};
+	}>;
 }
 
 const getSurvey = cache((slug: string) => surveyService.getBySlug(slug));
 
 export async function generateMetadata({ params }: DashboardSurveyResponsesPageProps): Promise<Metadata> {
-	const { surveySlug } = params;
+	const { surveySlug } = await params;
 	const survey = await getSurvey(surveySlug);
 
 	if (!survey) {
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: DashboardSurveyResponsesPageP
 }
 
 export default async function DashboardSurveyResponsesPage({ params }: DashboardSurveyResponsesPageProps) {
-	const { surveySlug, itemId } = params;
+	const { surveySlug, itemId } = await params;
 	const survey = await getSurvey(surveySlug);
 
 	if (!survey) {

@@ -5,10 +5,10 @@ import { surveyService } from '@/lib/services/survey.service';
 import { SurveyResponsesClient } from '@/components/surveys/responses/survey-responses-client';
 
 interface AdminSurveyResponsesPageProps {
-	params: {
+	params: Promise<{
 		locale: string;
 		slug: string;
-	};
+	}>;
 }
 
 // Cached fetch to prevent duplicate queries
@@ -17,7 +17,7 @@ const getSurvey = cache(async (slug: string) => {
 });
 
 export async function generateMetadata({ params }: AdminSurveyResponsesPageProps): Promise<Metadata> {
-	const { slug } = params;
+	const { slug } = await params;
 	const survey = await getSurvey(slug);
 
 	if (!survey) {
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: AdminSurveyResponsesPageProps
 }
 
 export default async function AdminSurveyResponsesPage({ params }: AdminSurveyResponsesPageProps) {
-	const { slug } = params;
+	const { slug } = await params;
 	const survey = await getSurvey(slug);
 
 	if (!survey) {

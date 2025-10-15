@@ -121,7 +121,7 @@ const logger = Logger.create('SurveyResponsesAPI');
  */
 export async function GET(
     request: NextRequest,
-    { params }: { params: { surveyId: string } }
+    { params }: { params: Promise<{ surveyId: string }> }
 ) {
     try {
         const session = await auth();
@@ -133,7 +133,7 @@ export async function GET(
             );
         }
 
-        const { surveyId } = params;
+        const { surveyId } = await params;
         const { searchParams } = new URL(request.url);
 
         const toInt = (v: string | null) =>
@@ -243,10 +243,10 @@ export async function GET(
  */
 export async function POST(
     request: NextRequest,
-    { params }: { params: { surveyId: string }}
+    { params }: { params: Promise<{ surveyId: string }> }
 ) {
     try {
-        const { surveyId } =  params;
+        const { surveyId } = await params;
 
         const body = await request.json();
 

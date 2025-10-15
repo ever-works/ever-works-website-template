@@ -4,7 +4,6 @@
  */
 
 import type { Survey, SurveyResponse } from '@/lib/db/schema';
-import { SurveyTypeEnum, SurveyStatusEnum } from '@/lib/constants';
 import { apiClient } from './api-client';
 
 import type {

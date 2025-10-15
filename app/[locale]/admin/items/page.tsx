@@ -489,7 +489,6 @@ export default function AdminItemsPage() {
                         {/* Survey Creation */}
                         <AdminSurveyCreationButton
                           itemId={item.id}
-                          itemName={item.name}
                           variant="ghost"
                           size="sm"
                           className="w-8 p-0 hover:bg-yellow-500/10 hover:text-yellow-600"

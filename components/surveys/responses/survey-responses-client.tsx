@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { surveyApiClient, type ResponseFilters } from '@/lib/api/survey-api.client';
+import { surveyApiClient } from '@/lib/api/survey-api.client';
+import type { ResponseFilters } from '@/lib/services/survey.service';
 import type { Survey, SurveyResponse } from '@/lib/db/schema';
 import { exportResponsesToCSV } from '../utils/survey-helpers';
 import { toast } from 'sonner';

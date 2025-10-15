@@ -5,10 +5,10 @@ import { surveyService } from '@/lib/services/survey.service';
 import { cache } from 'react';
 
 interface AdminSurveyPreviewPageProps {
-	params: {
+	params: Promise<{
 		locale: string;
 		slug: string;
-	};
+	}>;
 }
 
 const getSurvey = cache(async (slug: string) => {
@@ -17,7 +17,7 @@ const getSurvey = cache(async (slug: string) => {
 
 
 export async function generateMetadata({ params }: AdminSurveyPreviewPageProps): Promise<Metadata> {
-	const { slug } =  params;
+	const { slug } = await params;
 	const survey = await getSurvey(slug);
 
 	if (!survey) {
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: AdminSurveyPreviewPageProps):
 }
 
 export default async function AdminSurveyPreviewPage({ params }: AdminSurveyPreviewPageProps) {
-	const { slug } =  params;
+	const { slug } = await params;
 	const survey = await getSurvey(slug);
 
 	if (!survey) {
