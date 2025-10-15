@@ -155,7 +155,16 @@ const LayoutThemeContext = createContext<LayoutThemeContextType | undefined>(und
 
 // Custom hook for theme management
 const useThemeManager = () => {
-  const [themeKey, setThemeKeyState] = useState<ThemeKey>(DEFAULT_THEME);
+  // Initialize with localStorage value synchronously if available (SSR-safe)
+  const [themeKey, setThemeKeyState] = useState<ThemeKey>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = safeLocalStorage.getItem(STORAGE_KEYS.THEME);
+      if (saved && isValidThemeKey(saved)) {
+        return saved;
+      }
+    }
+    return DEFAULT_THEME;
+  });
 
   const applyThemeVariables = useCallback((theme: ThemeConfig) => {
     if (typeof window === "undefined") return;
@@ -212,7 +221,16 @@ const useThemeManager = () => {
 
 // Custom hook for layout home management
 const useLayoutHomeManager = () => {
-  const [layoutHome, setLayoutHomeState] = useState<LayoutHome>(DEFAULT_LAYOUT_HOME);
+  // Initialize with localStorage value synchronously if available (SSR-safe)
+  const [layoutHome, setLayoutHomeState] = useState<LayoutHome>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT_HOME);
+      if (saved && isValidLayoutHome(saved)) {
+        return saved;
+      }
+    }
+    return DEFAULT_LAYOUT_HOME;
+  });
   
   const setLayoutHome = useCallback((key: LayoutHome) => {
     if (!isValidLayoutHome(key)) {
@@ -232,7 +250,16 @@ const useLayoutHomeManager = () => {
 
 // Custom hook for pagination type management
 const usePaginationTypeManager = () => {
-  const [paginationType, setPaginationTypeState] = useState<PaginationType>(DEFAULT_PAGINATION_TYPE);
+  // Initialize with localStorage value synchronously if available (SSR-safe)
+  const [paginationType, setPaginationTypeState] = useState<PaginationType>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = safeLocalStorage.getItem(STORAGE_KEYS.PAGINATION_TYPE);
+      if (saved && isValidPaginationType(saved)) {
+        return saved;
+      }
+    }
+    return DEFAULT_PAGINATION_TYPE;
+  });
 
   const setPaginationType = useCallback((type: PaginationType) => {
     if (!isValidPaginationType(type)) {
@@ -252,7 +279,19 @@ const usePaginationTypeManager = () => {
 
 // Custom hook for items per page management
 const useItemsPerPageManager = () => {
-  const [itemsPerPage, setItemsPerPageState] = useState<number>(DEFAULT_ITEMS_PER_PAGE);
+  // Initialize with localStorage value synchronously if available (SSR-safe)
+  const [itemsPerPage, setItemsPerPageState] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = safeLocalStorage.getItem(STORAGE_KEYS.ITEMS_PER_PAGE);
+      if (saved) {
+        const parsed = parseInt(saved, 10);
+        if (isValidItemsPerPage(parsed)) {
+          return parsed;
+        }
+      }
+    }
+    return DEFAULT_ITEMS_PER_PAGE;
+  });
   
   const setItemsPerPage = useCallback((value: number) => {
     if (!isValidItemsPerPage(value)) {
@@ -272,14 +311,23 @@ const useItemsPerPageManager = () => {
 
 // Custom hook for layout management
 const useLayoutManager = () => {
-  const [layoutKey, setLayoutKeyState] = useState<LayoutKey>(DEFAULT_LAYOUT);
+  // Initialize with localStorage value synchronously if available (SSR-safe)
+  const [layoutKey, setLayoutKeyState] = useState<LayoutKey>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT);
+      if (saved && isValidLayoutKey(saved)) {
+        return saved;
+      }
+    }
+    return DEFAULT_LAYOUT;
+  });
 
   const setLayoutKey = useCallback((key: LayoutKey) => {
     if (!isValidLayoutKey(key)) {
       console.warn(`Invalid layout key: ${key}`);
       return;
     }
-    
+
     setLayoutKeyState(key);
     safeLocalStorage.setItem(STORAGE_KEYS.LAYOUT, key);
   }, []);
@@ -299,54 +347,10 @@ export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const itemsPerPageManager = useItemsPerPageManager();
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize from localStorage with error handling - optimized to run synchronously
+  // Mark as initialized immediately since we now read localStorage synchronously in useState
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    // Mark as initialized immediately to prevent layout shift
     setIsInitialized(true);
-
-    try {
-      const savedLayout = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT);
-      const savedTheme = safeLocalStorage.getItem(STORAGE_KEYS.THEME);
-      const savedLayoutHome = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT_HOME);
-      const savedPaginationType = safeLocalStorage.getItem(STORAGE_KEYS.PAGINATION_TYPE);
-      const savedItemsPerPage = safeLocalStorage.getItem(STORAGE_KEYS.ITEMS_PER_PAGE);
-
-      // Batch state updates using requestAnimationFrame to prevent multiple re-renders
-      requestAnimationFrame(() => {
-        // Validate and apply saved layout
-        if (savedLayout && isValidLayoutKey(savedLayout) && savedLayout !== layoutManager.layoutKey) {
-          layoutManager.setLayoutKey(savedLayout);
-        }
-
-        // Validate and apply saved theme
-        if (savedTheme && isValidThemeKey(savedTheme) && savedTheme !== themeManager.themeKey) {
-          themeManager.setThemeKey(savedTheme);
-        }
-
-        // Validate and apply saved layout home
-        if (savedLayoutHome && isValidLayoutHome(savedLayoutHome) && savedLayoutHome !== layoutHomeManager.layoutHome) {
-          layoutHomeManager.setLayoutHome(savedLayoutHome);
-        }
-
-        // Validate and apply saved pagination type
-        if (savedPaginationType && isValidPaginationType(savedPaginationType) && savedPaginationType !== paginationTypeManager.paginationType) {
-          paginationTypeManager.setPaginationType(savedPaginationType);
-        }
-
-        // Validate and apply saved items per page
-        if (savedItemsPerPage) {
-          const itemsPerPage = parseInt(savedItemsPerPage, 10);
-          if (isValidItemsPerPage(itemsPerPage) && itemsPerPage !== itemsPerPageManager.itemsPerPage) {
-            itemsPerPageManager.setItemsPerPage(itemsPerPage);
-          }
-        }
-      });
-    } catch (error) {
-      console.warn("Failed to initialize from localStorage:", error);
-    }
-  }, [layoutManager, themeManager, layoutHomeManager, paginationTypeManager, itemsPerPageManager]);
+  }, []);
 
   const contextValue = useMemo(
       () => ({

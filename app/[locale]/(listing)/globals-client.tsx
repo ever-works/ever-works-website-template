@@ -47,7 +47,7 @@ export default function GlobalsClient(props: ListingProps) {
 	const sortedTags = sortByNumericProperty(props.tags);
 	const sortedCategories = sortByNumericProperty(props.categories);
 	const searchParams = useSearchParams();
-	const [initialized, setInitialized] = useState(false);
+	const [isMounted, setIsMounted] = useState(false);
 
 	// Use the new hook for featured items
 	const { featuredItems } = useFeaturedItemsSection({
@@ -133,7 +133,10 @@ export default function GlobalsClient(props: ListingProps) {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
+	// Sync URL params to filters only after mount to avoid hydration mismatch
 	useEffect(() => {
+		setIsMounted(true);
+
 		const tagsParam = searchParams.get('tags');
 		if (tagsParam) {
 			setSelectedTags(tagsParam.split(','));
@@ -143,38 +146,11 @@ export default function GlobalsClient(props: ListingProps) {
 		if (categoriesParam) {
 			setSelectedCategories(categoriesParam.split(','));
 		}
-
-		setInitialized(true);
 	}, [searchParams, setSelectedTags, setSelectedCategories]);
-
-	// Show skeleton while initializing to prevent layout shift
-	if (!initialized) {
-		return (
-			<div className={LAYOUT_STYLES.mainContainer}>
-				<div className={LAYOUT_STYLES.contentWrapper}>
-					<div className={`${LAYOUT_STYLES.sidebar} ${LAYOUT_STYLES.sidebarMobile}`}>
-						<div className="h-96 w-64" /> {/* Placeholder for sidebar */}
-					</div>
-					<div className={LAYOUT_STYLES.mainContent}>
-						<div className="space-y-6">
-							{/* Tags skeleton */}
-							<div className="h-16" />
-							{/* Listing skeleton */}
-							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-								{Array.from({ length: 6 }).map((_, i) => (
-									<div key={i} className="h-64 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse" />
-								))}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		);
-	}
 
 	if (layoutHome === LayoutHome.HOME_ONE) {
 		return (
-			<div className={LAYOUT_STYLES.mainContainer}>
+			<div className={LAYOUT_STYLES.mainContainer} suppressHydrationWarning>
 				{/* Featured Items Section - Only show on first page and desktop */}
 				{/* {page === 1 && featuredItems.length > 0 && (
           <div className={`mb-8 sm:mb-10 md:mb-12 lg:mb-16 ${LAYOUT_STYLES.desktopOnly}`}>
@@ -234,7 +210,7 @@ export default function GlobalsClient(props: ListingProps) {
 	}
 
 	return (
-		<div className={LAYOUT_STYLES.mainContainer}>
+		<div className={LAYOUT_STYLES.mainContainer} suppressHydrationWarning>
 			<HomeTwoLayout
 				{...props}
 				categories={sortedCategories}
