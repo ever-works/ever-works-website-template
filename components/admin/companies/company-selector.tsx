@@ -220,10 +220,20 @@ export function CompanySelector({
 			{/* Backdrop to close dropdown */}
 			{isDropdownOpen && (
 				<div
+					role="button"
+					tabIndex={0}
+					aria-label={t('CLOSE_DROPDOWN')}
 					className="fixed inset-0 z-40"
 					onClick={() => {
 						setIsDropdownOpen(false);
 						setSearchTerm('');
+					}}
+					onKeyDown={(e) => {
+						if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+							e.preventDefault();
+							setIsDropdownOpen(false);
+							setSearchTerm('');
+						}
 					}}
 				/>
 			)}

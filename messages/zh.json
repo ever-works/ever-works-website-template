@@ -1792,7 +1792,8 @@
       "NO_RESULTS": "未找到公司",
       "NO_COMPANIES": "没有可用公司",
       "HELPER_TEXT": "搜索并为此项目分配公司。仅显示活跃公司。",
-      "DOMAIN": "域名"
+      "DOMAIN": "域名",
+      "CLOSE_DROPDOWN": "关闭下拉菜单"
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "分类管理",

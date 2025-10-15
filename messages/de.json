@@ -1810,7 +1810,8 @@
       "NO_RESULTS": "Keine Unternehmen gefunden",
       "NO_COMPANIES": "Keine Unternehmen verfügbar",
       "HELPER_TEXT": "Suchen und weisen Sie diesem Element ein Unternehmen zu. Es werden nur aktive Unternehmen angezeigt.",
-      "DOMAIN": "Domain"
+      "DOMAIN": "Domain",
+      "CLOSE_DROPDOWN": "Dropdown schließen"
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Kategorieverwaltung",

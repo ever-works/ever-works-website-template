@@ -2152,7 +2152,8 @@
       "NO_RESULTS": "No companies found",
       "NO_COMPANIES": "No companies available",
       "HELPER_TEXT": "Search and assign a company to this item. Only active companies are shown.",
-      "DOMAIN": "Domain"
+      "DOMAIN": "Domain",
+      "CLOSE_DROPDOWN": "Close dropdown"
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Category Management",

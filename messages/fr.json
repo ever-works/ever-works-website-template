@@ -2051,7 +2051,8 @@
       "NO_RESULTS": "Aucune entreprise trouvée",
       "NO_COMPANIES": "Aucune entreprise disponible",
       "HELPER_TEXT": "Recherchez et attribuez une entreprise à cet élément. Seules les entreprises actives sont affichées.",
-      "DOMAIN": "Domaine"
+      "DOMAIN": "Domaine",
+      "CLOSE_DROPDOWN": "Fermer le menu"
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Gestion des Catégories",

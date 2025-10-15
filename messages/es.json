@@ -1793,7 +1793,8 @@
       "NO_RESULTS": "No se encontraron empresas",
       "NO_COMPANIES": "No hay empresas disponibles",
       "HELPER_TEXT": "Busque y asigne una empresa a este elemento. Solo se muestran empresas activas.",
-      "DOMAIN": "Dominio"
+      "DOMAIN": "Dominio",
+      "CLOSE_DROPDOWN": "Cerrar menú"
     },
     "ADMIN_CATEGORIES_PAGE": {
       "TITLE": "Gestión de Categorías",
