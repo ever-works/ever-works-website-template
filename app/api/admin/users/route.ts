@@ -4,6 +4,7 @@ import { UserRepository } from '@/lib/repositories/user.repository';
 import { RoleRepository } from '@/lib/repositories/role.repository';
 import { CreateUserRequest, UserListOptions } from '@/lib/types/user';
 import { isValidEmail } from '@/lib/utils/email-validation';
+import { validatePaginationParams } from '@/lib/utils/pagination-validation';
 
 /**
  * @swagger
@@ -219,28 +220,15 @@ export async function GET(request: NextRequest) {
     // Parse query parameters
     const { searchParams } = new URL(request.url);
 
-    // Parse and validate pagination parameters
-    const pageParam = searchParams.get('page');
-    const limitParam = searchParams.get('limit');
-
-    const page = pageParam ? parseInt(pageParam, 10) : 1;
-    const limit = limitParam ? parseInt(limitParam, 10) : 10;
-
-    // Validate page parameter
-    if (isNaN(page) || page < 1) {
+    // Validate pagination parameters
+    const paginationResult = validatePaginationParams(searchParams);
+    if ('error' in paginationResult) {
       return NextResponse.json(
-        { success: false, error: 'Invalid page parameter. Must be a positive integer.' },
-        { status: 400 }
+        { success: false, error: paginationResult.error },
+        { status: paginationResult.status }
       );
     }
-
-    // Validate limit parameter
-    if (isNaN(limit) || limit < 1 || limit > 100) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid limit parameter. Must be between 1 and 100.' },
-        { status: 400 }
-      );
-    }
+    const { page, limit } = paginationResult;
 
     const search = searchParams.get('search') || undefined;
     const role = searchParams.get('role') || undefined;

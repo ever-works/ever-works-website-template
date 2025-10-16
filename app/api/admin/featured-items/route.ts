@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/drizzle';
 import { featuredItems } from '@/lib/db/schema';
 import { eq, desc, and, count } from 'drizzle-orm';
+import { validatePaginationParams } from '@/lib/utils/pagination-validation';
 
 /**
  * @swagger
@@ -137,28 +138,15 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
 
-    // Parse and validate pagination parameters
-    const pageParam = searchParams.get('page');
-    const limitParam = searchParams.get('limit');
-
-    const page = pageParam ? parseInt(pageParam, 10) : 1;
-    const limit = limitParam ? parseInt(limitParam, 10) : 10;
-
-    // Validate page parameter
-    if (isNaN(page) || page < 1) {
+    // Validate pagination parameters
+    const paginationResult = validatePaginationParams(searchParams);
+    if ('error' in paginationResult) {
       return NextResponse.json(
-        { success: false, error: 'Invalid page parameter. Must be a positive integer.' },
-        { status: 400 }
+        { success: false, error: paginationResult.error },
+        { status: paginationResult.status }
       );
     }
-
-    // Validate limit parameter
-    if (isNaN(limit) || limit < 1 || limit > 100) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid limit parameter. Must be between 1 and 100.' },
-        { status: 400 }
-      );
-    }
+    const { page, limit } = paginationResult;
 
     const activeOnly = searchParams.get('active') === 'true';
     const offset = (page - 1) * limit;

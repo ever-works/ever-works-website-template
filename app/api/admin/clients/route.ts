@@ -7,6 +7,7 @@ import {
 } from '@/lib/db/queries';
 import { UserDbService } from '@/lib/services/user-db.service';
 import { AuthUserData } from '@/lib/types/user';
+import { validatePaginationParams } from '@/lib/utils/pagination-validation';
 import crypto from 'crypto';
 
 // Type definitions for request bodies
@@ -215,28 +216,15 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
 
-    // Parse and validate pagination parameters
-    const pageParam = searchParams.get('page');
-    const limitParam = searchParams.get('limit');
-
-    const page = pageParam ? parseInt(pageParam, 10) : 1;
-    const limit = limitParam ? parseInt(limitParam, 10) : 10;
-
-    // Validate page parameter
-    if (isNaN(page) || page < 1) {
+    // Validate pagination parameters
+    const paginationResult = validatePaginationParams(searchParams);
+    if ('error' in paginationResult) {
       return NextResponse.json(
-        { error: 'Invalid page parameter. Must be a positive integer.' },
-        { status: 400 }
+        { error: paginationResult.error },
+        { status: paginationResult.status }
       );
     }
-
-    // Validate limit parameter
-    if (isNaN(limit) || limit < 1 || limit > 100) {
-      return NextResponse.json(
-        { error: 'Invalid limit parameter. Must be between 1 and 100.' },
-        { status: 400 }
-      );
-    }
+    const { page, limit } = paginationResult;
 
     const search = searchParams.get('search') || undefined;
     const status = searchParams.get('status') || undefined;
