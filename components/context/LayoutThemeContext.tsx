@@ -347,11 +347,11 @@ export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const itemsPerPageManager = useItemsPerPageManager();
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Mark as initialized after mount with slight delay to ensure stable hydration
+  // Mark as initialized after mount with delay to show skeleton and ensure stable hydration
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsInitialized(true);
-    }, 100); // Small delay to allow all localStorage reads to complete
+    }, 300); // Delay to show skeleton loading state and allow all localStorage reads to complete
     
     return () => clearTimeout(timer);
   }, []);

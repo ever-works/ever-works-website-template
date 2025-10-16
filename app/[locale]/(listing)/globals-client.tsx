@@ -148,13 +148,49 @@ export default function GlobalsClient(props: ListingProps) {
 		}
 	}, [searchParams, setSelectedTags, setSelectedCategories]);
 
-	// Show loading state until context is initialized to prevent layout flash
+	// Show skeleton loading state until context is initialized to prevent layout flash
 	if (!isInitialized) {
 		return (
-			<div className="min-h-screen flex items-center justify-center">
-				<div className="text-center space-y-3">
-					<div className="w-8 h-8 border-2 border-theme-primary/30 border-t-theme-primary rounded-full animate-spin mx-auto" />
-					<p className="text-sm text-gray-600 dark:text-gray-400">Loading...</p>
+			<div className={LAYOUT_STYLES.mainContainer}>
+				<div className={LAYOUT_STYLES.contentWrapper}>
+					{/* Sidebar Skeleton */}
+					<div className={`${LAYOUT_STYLES.sidebar} ${LAYOUT_STYLES.sidebarMobile}`}>
+						<div className="space-y-4 p-4">
+							<div className="h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+							<div className="space-y-2">
+								{Array.from({ length: 5 }).map((_, i) => (
+									<div key={i} className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+								))}
+							</div>
+						</div>
+					</div>
+					{/* Main Content Skeleton */}
+					<div className={LAYOUT_STYLES.mainContent}>
+						{/* Tags Skeleton */}
+						<div className="mb-4 sm:mb-6 md:mb-8">
+							<div className="flex flex-wrap gap-2">
+								{Array.from({ length: 8 }).map((_, i) => (
+									<div key={i} className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+								))}
+							</div>
+						</div>
+						{/* Grid Skeleton */}
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+							{Array.from({ length: 6 }).map((_, i) => (
+								<div key={i} className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+									<div className="space-y-4">
+										<div className="h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+										<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+										<div className="h-4 w-2/3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+										<div className="flex space-x-2">
+											<div className="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+											<div className="h-6 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+										</div>
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
 				</div>
 			</div>
 		);
