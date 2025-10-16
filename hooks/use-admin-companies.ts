@@ -2,18 +2,9 @@ import { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
+import type { Company } from '@/types/company';
 
 // Types
-export interface Company {
-	id: string;
-	name: string;
-	website?: string | null;
-	domain?: string | null;
-	slug?: string | null;
-	status: 'active' | 'inactive';
-	createdAt: string;
-	updatedAt: string;
-}
 
 export interface CompanyStats {
 	total: number;

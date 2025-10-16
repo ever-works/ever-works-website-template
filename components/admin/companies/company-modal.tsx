@@ -8,7 +8,7 @@ import { Button, Input, Select, SelectItem } from '@heroui/react';
 import { X, Building2, Globe, Link as LinkIcon, Hash, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { CreateCompanyInput, UpdateCompanyInput } from '@/lib/validations/company';
-import type { Company } from '@/hooks/use-admin-companies';
+import type { Company } from '@/types/company';
 
 // Define form schema for validation (before transformation)
 const companyFormSchema = z.object({

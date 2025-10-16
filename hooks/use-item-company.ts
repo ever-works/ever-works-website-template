@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { serverClient } from '@/lib/api/server-api-client';
-import type { Company } from './use-admin-companies';
+import type { Company } from '@/types/company';
 
 // Types
 export interface ItemCompanyAssignment {

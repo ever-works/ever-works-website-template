@@ -2,8 +2,9 @@
 
 import { useState, useCallback } from 'react';
 import { useDebounceSearch } from '@/hooks/use-debounced-search';
-import { useAdminCompanies, type Company } from '@/hooks/use-admin-companies';
+import { useAdminCompanies } from '@/hooks/use-admin-companies';
 import { UniversalPagination } from '@/components/universal-pagination';
+import type { Company } from '@/types/company';
 import type { CreateCompanyInput, UpdateCompanyInput } from '@/lib/validations/company';
 
 // Components

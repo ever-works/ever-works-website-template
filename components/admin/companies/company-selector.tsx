@@ -6,7 +6,7 @@ import { Building2, Search, X, Check, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useDebounceValue } from '@/hooks/use-debounced-value';
 import { useAdminCompanies } from '@/hooks/use-admin-companies';
-import type { Company } from '@/hooks/use-admin-companies';
+import type { Company } from '@/types/company';
 
 export interface CompanySelectorProps {
 	/** Currently assigned company (if any) */

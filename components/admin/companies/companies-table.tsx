@@ -2,7 +2,7 @@ import { Card, CardBody, Chip, Button } from '@heroui/react';
 import { Building2, Edit, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { formatDistanceToNow } from 'date-fns';
-import type { Company } from '@/hooks/use-admin-companies';
+import type { Company } from '@/types/company';
 
 interface CompaniesTableProps {
 	companies: Company[];
