@@ -15,7 +15,6 @@ import { Suspense } from 'react';
 import Script from 'next/script';
 import { ConditionalLayout } from '@/components/layout/conditional-layout';
 import { siteConfig } from '@/lib/config';
-import { FontLoader } from '@/components/fonts/font-loader';
 
 /**
  * Generate metadata dynamically using siteConfig
@@ -64,7 +63,6 @@ export default async function RootLayout({
 	// Determine if the current locale is RTL
 	return (
 		<>
-			<FontLoader />
 			<Script src="https://assets.lemonsqueezy.com/lemon.js" strategy="beforeInteractive" />
 			<PHProvider>
 				<Suspense fallback={null}>
