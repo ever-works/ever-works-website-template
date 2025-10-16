@@ -90,8 +90,14 @@ export function CompanyModal({ isOpen, mode, company, isSubmitting, onSubmit, on
 			};
 			await onSubmit(submitData);
 		} else {
+			// Defensive check: ensure company exists in edit mode
+			if (!company) {
+				console.error('CompanyModal: Company is required in edit mode but was not provided');
+				throw new Error('Company is required in edit mode');
+			}
+
 			const submitData: UpdateCompanyInput = {
-				id: company!.id,
+				id: company.id,
 				name: data.name,
 				website: data.website || undefined,
 				domain: data.domain || undefined,
