@@ -55,6 +55,7 @@ export function ReviewStep({
   classification
 }: ReviewStepProps) {
   const t = useTranslations('admin.ITEM_FORM');
+  const tCompany = useTranslations('admin.ITEM_COMPANY');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
 
@@ -306,7 +307,7 @@ export function ReviewStep({
         {basicInfo.slug && (
           <div className="space-y-3">
             <h4 className="font-medium text-gray-900 dark:text-gray-100">
-              Company Assignment
+              {tCompany('TITLE')}
             </h4>
             <ItemCompanyManager itemSlug={basicInfo.slug} />
           </div>
