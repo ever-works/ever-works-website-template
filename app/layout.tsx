@@ -1,8 +1,18 @@
 import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
 import './[locale]/globals.css';
 import { LayoutProvider, ThemeProvider } from '@/components/providers';
 import { siteConfig } from '@/lib/config';
 
+const geistSans = Geist({
+	variable: '--font-geist-sans',
+	subsets: ['latin']
+});
+
+const geistMono = Geist_Mono({
+	variable: '--font-geist-mono',
+	subsets: ['latin']
+});
 
 export const metadata: Metadata = {
 	title: `404 - Page Not Found | ${siteConfig.name}`,
@@ -12,8 +22,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<html suppressHydrationWarning>
-			<body className="antialiased dark:bg-dark--theme-950" suppressHydrationWarning>
+		<html lang="en" suppressHydrationWarning>
+			<body className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-dark--theme-950`} suppressHydrationWarning>
 				<ThemeProvider>
 					<LayoutProvider>{children}</LayoutProvider>
 				</ThemeProvider>
