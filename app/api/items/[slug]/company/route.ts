@@ -94,7 +94,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 			if (error.message.includes('already linked to another company')) {
 				return NextResponse.json({ error: error.message }, { status: 409 });
 			}
-			if (error.message.includes('not found')) {
+			if (
+				error.message.includes('not found') ||
+				error.message.includes('does not exist')
+			) {
 				return NextResponse.json({ error: error.message }, { status: 404 });
 			}
 		}
@@ -144,7 +147,10 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 	} catch (error) {
 		console.error('Error removing company from item:', error);
 
-		if (error instanceof Error && error.message.includes('not found')) {
+		if (
+			error instanceof Error &&
+			(error.message.includes('not found') || error.message.includes('does not exist'))
+		) {
 			return NextResponse.json({ error: error.message }, { status: 404 });
 		}
 
