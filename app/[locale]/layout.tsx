@@ -36,7 +36,7 @@ export async function generateMetadata({
 			type: 'website',
 			siteName: siteConfig.name
 		},
-		languageAlternates: {
+		alternates: {
 			canonical: `/${locale}`
 		}
 	};
