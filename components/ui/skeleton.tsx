@@ -132,7 +132,7 @@ function ItemDetailSkeleton({ className }: { className?: string }) {
         <Skeleton className="h-8 w-16" />
         <Skeleton className="h-8 w-20" />
         <Skeleton className="h-8 w-24" />
-        <Skeleton className="h-8 w-18" />
+        <Skeleton className="h-8 w-20" />
       </div>
     </div>
   );
