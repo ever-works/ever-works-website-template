@@ -13,9 +13,12 @@ export const createCompanySchema = z.object({
   slug: z
     .string()
     .max(255)
-    .regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens")
     .optional()
-    .transform((val) => val?.toLowerCase().trim() || undefined),
+    .transform((val) => val?.toLowerCase().trim() || undefined)
+    .refine(
+      (val) => !val || /^[a-z0-9-]+$/.test(val),
+      { message: "Slug must contain only lowercase letters, numbers, and hyphens" }
+    ),
   status: z.enum(companyStatus).default("active"),
 });
 
@@ -31,9 +34,12 @@ export const updateCompanySchema = z.object({
   slug: z
     .string()
     .max(255)
-    .regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens")
     .optional()
-    .transform((val) => val?.toLowerCase().trim() || undefined),
+    .transform((val) => val?.toLowerCase().trim() || undefined)
+    .refine(
+      (val) => !val || /^[a-z0-9-]+$/.test(val),
+      { message: "Slug must contain only lowercase letters, numbers, and hyphens" }
+    ),
   status: z.enum(companyStatus).optional(),
 });
 
