@@ -124,14 +124,20 @@ export function CompanySelector({
 											</Chip>
 										</div>
 										{selectedCompany.website && (
-											<a
-												href={selectedCompany.website}
-												target="_blank"
-												rel="noopener noreferrer"
-												className="text-sm text-theme-primary hover:underline"
-											>
-												{selectedCompany.website}
-											</a>
+											/^https?:\/\//i.test(selectedCompany.website) ? (
+												<a
+													href={selectedCompany.website}
+													target="_blank"
+													rel="noopener noreferrer nofollow"
+													className="text-sm text-theme-primary hover:underline"
+												>
+													{selectedCompany.website}
+												</a>
+											) : (
+												<span className="text-sm text-gray-500 dark:text-gray-400">
+													{selectedCompany.website}
+												</span>
+											)
 										)}
 										{selectedCompany.domain && (
 											<p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
