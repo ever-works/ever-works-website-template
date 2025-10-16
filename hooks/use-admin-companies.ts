@@ -40,6 +40,8 @@ export interface CompaniesListResponse {
 		totalPages: number;
 		total: number;
 		limit: number;
+		activeCount: number;
+		inactiveCount: number;
 	};
 }
 
@@ -69,23 +71,16 @@ const QUERY_KEYS = {
 
 // API functions
 const fetchCompaniesList = async (params: CompaniesListOptions = {}): Promise<CompaniesListResponse> => {
-	const searchParams = new URLSearchParams();
+	const url = apiUtils.buildUrl('/api/admin/companies', {
+		page: params.page,
+		limit: params.limit,
+		q: params.search,
+		status: params.status,
+		sortBy: params.sortBy,
+		sortOrder: params.sortOrder,
+	});
 
-	// Pagination
-	if (params.page) searchParams.set('page', params.page.toString());
-	if (params.limit) searchParams.set('limit', params.limit.toString());
-
-	// Filters
-	if (params.search) searchParams.set('q', params.search);
-	if (params.status) searchParams.set('status', params.status);
-
-	// Sorting
-	if (params.sortBy) searchParams.set('sortBy', params.sortBy);
-	if (params.sortOrder) searchParams.set('sortOrder', params.sortOrder);
-
-	const response = await serverClient.get<CompaniesListResponse>(
-		`/api/admin/companies?${searchParams.toString()}`
-	);
+	const response = await serverClient.get<CompaniesListResponse>(url);
 
 	if (!apiUtils.isSuccess(response)) {
 		throw new Error(apiUtils.getErrorMessage(response));
@@ -268,12 +263,12 @@ export function useAdminCompanies(options: UseAdminCompaniesOptions = {}): UseAd
 		queryClient.invalidateQueries({ queryKey: QUERY_KEYS.companies });
 	}, [queryClient]);
 
-	// Calculate stats from companies list
+	// Get stats from API (global counts, not page-level)
 	const companies = listData?.data.companies || [];
 	const stats: CompanyStats = {
 		total: listData?.meta.total || 0,
-		active: companies.filter((c) => c.status === 'active').length,
-		inactive: companies.filter((c) => c.status === 'inactive').length,
+		active: listData?.meta.activeCount || 0,
+		inactive: listData?.meta.inactiveCount || 0,
 	};
 
 	return {

@@ -81,7 +81,15 @@ import { ZodError } from 'zod';
  *                     limit:
  *                       type: integer
  *                       example: 10
- *                   required: ["page", "totalPages", "total", "limit"]
+ *                     activeCount:
+ *                       type: integer
+ *                       example: 40
+ *                       description: "Global count of active companies (unfiltered)"
+ *                     inactiveCount:
+ *                       type: integer
+ *                       example: 7
+ *                       description: "Global count of inactive companies (unfiltered)"
+ *                   required: ["page", "totalPages", "total", "limit", "activeCount", "inactiveCount"]
  *               required: ["success", "data", "meta"]
  *             example:
  *               success: true
@@ -108,6 +116,8 @@ import { ZodError } from 'zod';
  *                 totalPages: 5
  *                 total: 47
  *                 limit: 10
+ *                 activeCount: 40
+ *                 inactiveCount: 7
  *       400:
  *         description: "Bad request - Invalid pagination parameters"
  *         content:
@@ -195,7 +205,9 @@ export async function GET(request: NextRequest) {
 				page: result.page,
 				totalPages: result.totalPages,
 				total: result.total,
-				limit: result.limit
+				limit: result.limit,
+				activeCount: result.activeCount,
+				inactiveCount: result.inactiveCount
 			}
 		});
 	} catch (error) {

@@ -142,6 +142,8 @@ export async function listCompanies(params: {
   page: number;
   totalPages: number;
   limit: number;
+  activeCount: number;
+  inactiveCount: number;
 }> {
   const { page = 1, limit = 10, search, status, sortBy = 'createdAt', sortOrder = 'desc' } = params;
   const offset = (page - 1) * limit;
@@ -166,13 +168,27 @@ export async function listCompanies(params: {
 
   const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
-  // Get total count
+  // Get total count for filtered results
   const countResult = await db
     .select({ count: sql<number>`count(*)` })
     .from(companies)
     .where(whereClause);
 
   const total = Number(countResult[0]?.count || 0);
+
+  // Get global active/inactive counts (unfiltered)
+  const activeResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(companies)
+    .where(eq(companies.status, 'active'));
+
+  const inactiveResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(companies)
+    .where(eq(companies.status, 'inactive'));
+
+  const activeCount = Number(activeResult[0]?.count || 0);
+  const inactiveCount = Number(inactiveResult[0]?.count || 0);
 
   // Build sort clause
   let sortClause;
@@ -203,7 +219,9 @@ export async function listCompanies(params: {
     total,
     page,
     totalPages: Math.ceil(total / limit),
-    limit
+    limit,
+    activeCount,
+    inactiveCount
   };
 }
 
