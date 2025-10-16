@@ -598,6 +598,8 @@ export const companies = pgTable("companies", {
 }, (table) => ({
   nameIndex: index("companies_name_idx").on(table.name),
   statusIndex: index("companies_status_idx").on(table.status),
+  domainUniqueIndex: uniqueIndex("companies_domain_unique_idx").on(table.domain),
+  slugUniqueIndex: uniqueIndex("companies_slug_unique_idx").on(table.slug),
 }));
 
 // ######################### Companies Types #########################
