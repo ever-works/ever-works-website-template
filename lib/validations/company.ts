@@ -51,14 +51,8 @@ export const assignCompanyToItemSchema = z.object({
   companyId: z.string().uuid("Invalid company ID format"),
 });
 
-export const updateItemCompanySchema = z.object({
-  itemSlug: z
-    .string()
-    .min(1, "Item slug is required")
-    .max(255)
-    .transform((val) => val.toLowerCase().trim()),
-  companyId: z.string().uuid("Invalid company ID format"),
-});
+// Reuse assignCompanyToItemSchema for updates (identical validation requirements)
+export const updateItemCompanySchema = assignCompanyToItemSchema;
 
 export const removeCompanyFromItemSchema = z.object({
   itemSlug: z
@@ -69,5 +63,5 @@ export const removeCompanyFromItemSchema = z.object({
 });
 
 export type AssignCompanyToItemInput = z.infer<typeof assignCompanyToItemSchema>;
-export type UpdateItemCompanyInput = z.infer<typeof updateItemCompanySchema>;
+export type UpdateItemCompanyInput = AssignCompanyToItemInput;
 export type RemoveCompanyFromItemInput = z.infer<typeof removeCompanyFromItemSchema>;
