@@ -47,7 +47,6 @@ export default function GlobalsClient(props: ListingProps) {
 	const sortedTags = sortByNumericProperty(props.tags);
 	const sortedCategories = sortByNumericProperty(props.categories);
 	const searchParams = useSearchParams();
-	const [isMounted, setIsMounted] = useState(false);
 
 	// Use the new hook for featured items
 	const { featuredItems } = useFeaturedItemsSection({
@@ -135,8 +134,6 @@ export default function GlobalsClient(props: ListingProps) {
 
 	// Sync URL params to filters only after mount to avoid hydration mismatch
 	useEffect(() => {
-		setIsMounted(true);
-
 		const tagsParam = searchParams.get('tags');
 		if (tagsParam) {
 			setSelectedTags(tagsParam.split(','));
