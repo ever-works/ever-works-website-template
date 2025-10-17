@@ -175,14 +175,10 @@ interface CommentsSectionProps {
 }
 
 export function CommentsSection({ itemId }: CommentsSectionProps) {
+	// All hooks must be called before any early returns
 	const { features, isLoading: isFeaturesLoading } = useFeatureFlags();
 	const { comments, isLoading, createComment, isCreating, deleteComment, isDeleting } = useComments(itemId);
 	const { user } = useCurrentUser();
-
-	// Hide comments section when feature is disabled
-	if (isFeaturesLoading || !features.comments) {
-		return null;
-	}
 
 	const handleSubmit = useCallback(
 		async (content: string, rating: number) => {
@@ -206,6 +202,11 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 		},
 		[deleteComment]
 	);
+
+	// Hide comments section when feature is disabled
+	if (isFeaturesLoading || !features.comments) {
+		return null;
+	}
 
 	if (isLoading) {
 		return <CommentSkeleton />;

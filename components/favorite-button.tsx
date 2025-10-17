@@ -31,17 +31,17 @@ export function FavoriteButton({
 	showText = false,
 	position = 'top-right'
 }: FavoriteButtonProps) {
+	// All hooks must be called before any early returns
 	const { data: session } = useSession();
 	const { features, isLoading: isFeaturesLoading } = useFeatureFlags();
+	const { isFavorited, toggleFavorite, isAdding, isRemoving } = useFavorites();
+	const [isHovered, setIsHovered] = useState(false);
+	const loginModal = useLoginModal();
 
 	// Hide favorite button when feature is disabled
 	if (isFeaturesLoading || !features.favorites) {
 		return null;
 	}
-
-	const { isFavorited, toggleFavorite, isAdding, isRemoving } = useFavorites();
-	const [isHovered, setIsHovered] = useState(false);
-	const loginModal = useLoginModal();
 
 	const isFav = isFavorited(itemSlug);
 	const isLoading = isAdding || isRemoving;
