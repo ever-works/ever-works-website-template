@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Star, ExternalLink, Clock, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useFeaturedItemsSection, FeaturedItem } from '@/hooks/use-feature-items-section';
+import { useFeatureFlags } from '@/hooks/use-feature-flags';
 
 
 
@@ -28,12 +29,18 @@ export function FeaturedItemsSection({
   showViewAll = true,
   variant = 'default'
 }: FeaturedItemsSectionProps) {
+  const { features, isLoading: isFeaturesLoading } = useFeatureFlags();
   const { featuredItems, isLoading, isError, error } = useFeaturedItemsSection({
     limit,
     enabled: true,
   });
 
   console.log('featuredItems',featuredItems);
+
+  // Hide featured items section when feature is disabled
+  if (isFeaturesLoading || !features.featuredItems) {
+    return null;
+  }
 
   if (isLoading) {
     return (
