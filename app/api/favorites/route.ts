@@ -4,6 +4,7 @@ import { db } from '@/lib/db/drizzle';
 import { favorites } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
+import { checkDatabaseAvailability } from '@/lib/utils/database-check';
 
 const addFavoriteSchema = z.object({
   itemSlug: z.string().min(1),
@@ -123,6 +124,10 @@ const addFavoriteSchema = z.object({
  */
 export async function GET() {
   try {
+    // Check database availability
+    const dbCheck = checkDatabaseAvailability();
+    if (dbCheck) return dbCheck;
+
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -312,6 +317,10 @@ export async function GET() {
  */
 export async function POST(request: NextRequest) {
   try {
+    // Check database availability
+    const dbCheck = checkDatabaseAvailability();
+    if (dbCheck) return dbCheck;
+
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
