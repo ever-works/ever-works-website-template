@@ -4,6 +4,8 @@ import { FavoritesClient } from '@/components/favorites/favorites-client';
 import { getTranslations } from 'next-intl/server';
 import { fetchItems } from '@/lib/content';
 import { requireAuth } from '@/lib/auth/guards';
+import { getFeatureFlags } from '@/lib/config/feature-flags';
+import { notFound } from 'next/navigation';
 
 
 export default async function FavoritesPage({
@@ -11,6 +13,12 @@ export default async function FavoritesPage({
   }: {
     params: Promise<{locale: string }>;
   }) {
+    // Check if favorites feature is enabled
+    const flags = getFeatureFlags();
+    if (!flags.favorites) {
+      notFound(); // Redirect to 404 page
+    }
+
     // Require authentication
     await requireAuth();
 
