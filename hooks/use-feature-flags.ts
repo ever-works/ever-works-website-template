@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { serverClient } from '@/lib/server-client';
+import { serverClient } from '@/lib/api/server-api-client';
 import type { FeatureFlags } from '@/lib/config/feature-flags';
 
 /**
@@ -21,6 +21,11 @@ interface UseFeatureFlagsResult {
  */
 async function fetchFeatureFlags(): Promise<FeatureFlags> {
   const response = await serverClient.get<FeatureFlags>('/api/config/features');
+
+  if (!response.data) {
+    throw new Error('Failed to fetch feature flags');
+  }
+
   return response.data;
 }
 
