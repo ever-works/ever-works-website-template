@@ -2,7 +2,7 @@
 import { ItemBreadcrumb } from './breadcrumb';
 import { ItemIcon } from './item-icon';
 import { slugify } from '@/lib/utils/slug';
-import { getVideoEmbedUrl } from '@/lib/utils';
+import { getVideoEmbedUrl, toTitleCase } from '@/lib/utils';
 import { ShareButton } from './share-button';
 import { CommentsSection } from './comments-section';
 import { VoteButton } from './vote-button';
@@ -356,12 +356,12 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 									href={`/categories/${slugify(categoryName)}`}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="group relative lowercase px-5 py-3 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 dark:hover:from-purple-900/30 dark:hover:to-pink-900/30 transition-all duration-300 rounded-xl text-sm font-semibold flex items-center border border-purple-200/50 dark:border-purple-700/50 hover:border-purple-300 dark:hover:border-purple-600 transform hover:scale-105 overflow-hidden"
+									className="group relative px-5 py-3 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 dark:hover:from-purple-900/30 dark:hover:to-pink-900/30 transition-all duration-300 rounded-xl text-sm font-semibold flex items-center border border-purple-200/50 dark:border-purple-700/50 hover:border-purple-300 dark:hover:border-purple-600 transform hover:scale-105 overflow-hidden"
 								>
 									<div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-200/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
 									<span className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mr-3 group-hover:scale-125 transition-transform duration-300 relative z-10" />
 									<span className="text-purple-700 dark:text-purple-300 relative z-10">
-										{categoryName}
+										{toTitleCase(categoryName)}
 									</span>
 								</a>
 							</div>
