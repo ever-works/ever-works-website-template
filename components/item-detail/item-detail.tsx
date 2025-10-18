@@ -354,8 +354,6 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 							<div className="flex flex-wrap gap-2">
 								<a
 									href={`/categories/${slugify(categoryName)}`}
-									target="_blank"
-									rel="noopener noreferrer"
 									className="group relative px-5 py-3 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 dark:hover:from-purple-900/30 dark:hover:to-pink-900/30 transition-all duration-300 rounded-xl text-sm font-semibold flex items-center border border-purple-200/50 dark:border-purple-700/50 hover:border-purple-300 dark:hover:border-purple-600 transform hover:scale-105 overflow-hidden"
 								>
 									<div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-200/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
@@ -400,8 +398,6 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 										<a
 											key={index}
 											href={`/tags/${tag}`}
-											target="_blank"
-											rel="noopener noreferrer"
 											className="group relative px-4 py-2 bg-gradient-to-r from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100 dark:from-cyan-900/20 dark:to-blue-900/20 dark:hover:from-cyan-900/30 dark:hover:to-blue-900/30 transition-all duration-300 rounded-lg text-sm font-semibold flex items-center border border-cyan-200/50 dark:border-cyan-700/50 hover:border-cyan-300 dark:hover:border-cyan-600 transform hover:scale-105 overflow-hidden"
 										>
 											<div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-200/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
