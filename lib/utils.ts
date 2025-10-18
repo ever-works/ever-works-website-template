@@ -240,13 +240,17 @@ export function getVideoEmbedUrl(url: string): string {
 
 /**
  * Converts a string to Title Case
+ * Handles both space-separated and hyphenated strings
  * Example: "hello world" -> "Hello World"
+ * Example: "time-tracking-tools" -> "Time-Tracking-Tools"
  */
 export function toTitleCase(str: string): string {
   if (!str) return '';
+  const hasHyphens = str.includes('-');
+  const delimiter = hasHyphens ? '-' : ' ';
   return str
     .toLowerCase()
-    .split(' ')
+    .split(/[\s-]+/)
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+    .join(delimiter);
 }
