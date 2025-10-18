@@ -10,8 +10,6 @@ import { cn } from '@/lib/utils';
 import { useFeaturedItemsSection, FeaturedItem } from '@/hooks/use-feature-items-section';
 import { useFeatureFlags } from '@/hooks/use-feature-flags';
 
-
-
 interface FeaturedItemsSectionProps {
   className?: string;
   title?: string;
@@ -34,8 +32,6 @@ export function FeaturedItemsSection({
     limit,
     enabled: true,
   });
-
-  console.log('featuredItems',featuredItems);
 
   // Hide featured items section when feature is disabled
   if (isFeaturesLoading || !features.featuredItems) {

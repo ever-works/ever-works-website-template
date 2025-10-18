@@ -62,7 +62,6 @@ export function useFeaturedItems() {
     enabled: features.featuredItems, // Only fetch when featuredItems feature is enabled
     queryFn: async () => {
       const response = await fetchFeaturedItems();
-      console.log('response',response);
       return response;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
