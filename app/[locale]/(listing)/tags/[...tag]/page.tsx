@@ -54,6 +54,7 @@ export default async function TagListing({
         page={page}
         total={total}
         basePath={`/tags/${tag}`}
+        initialTag={tag}
       />
     </Suspense>
   );

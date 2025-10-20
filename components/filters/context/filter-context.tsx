@@ -19,12 +19,19 @@ export function useFilters() {
   return context;
 }
 
+export interface FilterProviderProps {
+  children: React.ReactNode;
+  initialTag?: string | null;
+  initialCategory?: string | null;
+}
+
 /**
  * Filter provider component
  * Provides filter state to child components
+ * Can accept initial tag/category from page routes
  */
-export function FilterProvider({ children }: { children: React.ReactNode }) {
-  const filterState = useFilterState();
+export function FilterProvider({ children, initialTag, initialCategory }: FilterProviderProps) {
+  const filterState = useFilterState(initialTag, initialCategory);
 
   return (
     <FilterContext.Provider value={filterState}>

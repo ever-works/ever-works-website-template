@@ -13,13 +13,15 @@ type ListingProps = {
   categories: Category[];
   tags: Tag[];
   items: ItemData[];
+  initialTag?: string | null;
+  initialCategory?: string | null;
 };
 
 export default async function Listing(props: ListingProps) {
   const t = await getTranslations("listing");
 
   return (
-    <FilterProvider>
+    <FilterProvider initialTag={props.initialTag} initialCategory={props.initialCategory}>
       <TagsQuerySync />
       <Hero
         badgeText={t("INTRODUCING_EVER_WORKS")}
