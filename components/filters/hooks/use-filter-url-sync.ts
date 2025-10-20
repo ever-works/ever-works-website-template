@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { generateFilterURL, parseFilterFromSearchParams, type FilterState } from '@/lib/utils/url-filter-sync';
+import { useRouter, usePathname } from 'next/navigation';
+import { generateFilterURL, type FilterState } from '@/lib/utils/url-filter-sync';
 
 interface UseFilterURLSyncOptions {
   basePath?: string;
@@ -10,21 +10,16 @@ interface UseFilterURLSyncOptions {
 
 /**
  * Custom hook for synchronizing filter state with URL
- * Handles URL updates when filters change and parses initial state from URL
+ * Handles URL updates when filters change
+ *
+ * Note: Does not parse from URL to avoid useSearchParams() SSR issues.
+ * Initial state should be passed via initialTag/initialCategory props instead.
  */
 export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
   const { basePath = '/', locale, debounceMs = 300 } = options;
   const router = useRouter();
-  const searchParams = useSearchParams();
   const pathname = usePathname();
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  /**
-   * Parse current filter state from URL
-   */
-  const parseFiltersFromURL = useCallback((): FilterState => {
-    return parseFilterFromSearchParams(searchParams);
-  }, [searchParams]);
 
   /**
    * Update URL based on filter state
@@ -36,8 +31,11 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
         const newURL = generateFilterURL(filters, { basePath, locale });
 
         // Only update if the URL actually changed
-        const currentURL = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '');
-        if (newURL !== currentURL) {
+        // Compare against current pathname (search params will be in newURL if needed)
+        if (newURL !== pathname && !newURL.startsWith(pathname + '?')) {
+          router.push(newURL, { scroll: false });
+        } else if (newURL === pathname || newURL === `${pathname}/`) {
+          // If clearing filters, navigate to base path
           router.push(newURL, { scroll: false });
         }
       };
@@ -55,7 +53,7 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
         debounceTimerRef.current = setTimeout(update, debounceMs);
       }
     },
-    [router, pathname, searchParams, basePath, locale, debounceMs]
+    [router, pathname, basePath, locale, debounceMs]
   );
 
   /**
@@ -70,7 +68,6 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
   }, []);
 
   return {
-    parseFiltersFromURL,
     updateURL,
   };
 }

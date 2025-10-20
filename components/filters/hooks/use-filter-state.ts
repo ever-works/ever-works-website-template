@@ -26,27 +26,22 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
   /** Currently selected category for navigation and filtering */
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(initialCategory || null);
 
-  // URL synchronization
-  const { parseFiltersFromURL, updateURL } = useFilterURLSync({ basePath: '/' });
+  // URL synchronization (only for updates, not parsing)
+  const { updateURL } = useFilterURLSync({ basePath: '/' });
 
   /**
-   * Initialize state from URL on mount
+   * Initialize state from initial props on mount
    */
   useEffect(() => {
-    const urlFilters = parseFiltersFromURL();
-
-    // Only set from URL if there are URL parameters and no initial tag/category
-    if ((urlFilters.tags.length > 0 || urlFilters.categories.length > 0) && !initialTag && !initialCategory) {
-      setSelectedTagsInternal(urlFilters.tags);
-      setSelectedCategoriesInternal(urlFilters.categories);
-    } else if (initialTag) {
+    if (initialTag) {
       // If initial tag is provided (from tag page route), set it
       setSelectedTagsInternal([initialTag]);
     } else if (initialCategory) {
       // If initial category is provided (from category page route), set it
       setSelectedCategoriesInternal([initialCategory]);
     }
-  }, [initialTag, initialCategory, parseFiltersFromURL]);
+    // Note: URL query params should be passed as initialTag/initialCategory from the page
+  }, [initialTag, initialCategory]);
 
   /**
    * Wrapped setter that updates both state and URL
