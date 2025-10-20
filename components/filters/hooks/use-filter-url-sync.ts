@@ -30,12 +30,12 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
       const update = () => {
         const newURL = generateFilterURL(filters, { basePath, locale });
 
+        // Get current full URL (pathname + search)
+        const currentFullPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : pathname;
+
         // Only update if the URL actually changed
-        // Compare against current pathname (search params will be in newURL if needed)
-        if (newURL !== pathname && !newURL.startsWith(pathname + '?')) {
-          router.push(newURL, { scroll: false });
-        } else if (newURL === pathname || newURL === `${pathname}/`) {
-          // If clearing filters, navigate to base path
+        if (newURL !== currentFullPath) {
+          console.log('Updating URL from', currentFullPath, 'to', newURL);
           router.push(newURL, { scroll: false });
         }
       };
