@@ -49,17 +49,20 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
   const setSelectedTags = useCallback((tags: TagId[] | ((prev: TagId[]) => TagId[])) => {
     setSelectedTagsInternal(prev => {
       const newTags = typeof tags === 'function' ? tags(prev) : tags;
-
-      // Update URL with new filter state
-      const filterState: FilterState = {
-        tags: newTags,
-        categories: selectedCategories,
-      };
-      updateURL(filterState);
-
       return newTags;
     });
-  }, [selectedCategories, updateURL]);
+
+    // Update URL after state update (using latest state from closure)
+    setSelectedCategoriesInternal(currentCategories => {
+      const newTags = typeof tags === 'function' ? tags(selectedTags) : tags;
+      const filterState: FilterState = {
+        tags: newTags,
+        categories: currentCategories,
+      };
+      updateURL(filterState);
+      return currentCategories;
+    });
+  }, [selectedTags, updateURL]);
 
   /**
    * Wrapped setter that updates both state and URL
@@ -67,17 +70,20 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
   const setSelectedCategories = useCallback((categories: CategoryId[] | ((prev: CategoryId[]) => CategoryId[])) => {
     setSelectedCategoriesInternal(prev => {
       const newCategories = typeof categories === 'function' ? categories(prev) : categories;
+      return newCategories;
+    });
 
-      // Update URL with new filter state
+    // Update URL after state update (using latest state from closure)
+    setSelectedTagsInternal(currentTags => {
+      const newCategories = typeof categories === 'function' ? categories(selectedCategories) : categories;
       const filterState: FilterState = {
-        tags: selectedTags,
+        tags: currentTags,
         categories: newCategories,
       };
       updateURL(filterState);
-
-      return newCategories;
+      return currentTags;
     });
-  }, [selectedTags, updateURL]);
+  }, [selectedCategories, updateURL]);
 
   /**
    * Clear all active filters

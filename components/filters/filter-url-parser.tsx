@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { useFilters } from '@/hooks/use-filters';
 
 /**
@@ -11,25 +11,44 @@ import { useFilters } from '@/hooks/use-filters';
 function FilterURLParserContent() {
   const searchParams = useSearchParams();
   const { setSelectedTags, setSelectedCategories } = useFilters();
+  const hasInitializedRef = useRef(false);
 
   useEffect(() => {
+    // Only initialize once on mount
+    if (hasInitializedRef.current) {
+      return;
+    }
+
     const tagsParam = searchParams.get('tags');
     const categoriesParam = searchParams.get('categories');
 
-    if (tagsParam) {
-      const tags = tagsParam.split(',').map(tag => decodeURIComponent(tag.trim())).filter(Boolean);
-      if (tags.length > 0) {
-        setSelectedTags(tags);
+    // Only parse and set if query params exist
+    if (tagsParam || categoriesParam) {
+      if (tagsParam) {
+        try {
+          const tags = tagsParam.split(',').map(tag => decodeURIComponent(tag.trim())).filter(Boolean);
+          if (tags.length > 0) {
+            setSelectedTags(tags);
+          }
+        } catch (error) {
+          console.error('Error parsing tags parameter:', error);
+        }
       }
-    }
 
-    if (categoriesParam) {
-      const categories = categoriesParam.split(',').map(cat => decodeURIComponent(cat.trim())).filter(Boolean);
-      if (categories.length > 0) {
-        setSelectedCategories(categories);
+      if (categoriesParam) {
+        try {
+          const categories = categoriesParam.split(',').map(cat => decodeURIComponent(cat.trim())).filter(Boolean);
+          if (categories.length > 0) {
+            setSelectedCategories(categories);
+          }
+        } catch (error) {
+          console.error('Error parsing categories parameter:', error);
+        }
       }
+
+      hasInitializedRef.current = true;
     }
-  }, [searchParams, setSelectedTags, setSelectedCategories]);
+  }, []); // Empty deps - only run once on mount
 
   return null;
 }
