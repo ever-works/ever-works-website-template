@@ -31,12 +31,21 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
         const newURL = generateFilterURL(filters, { basePath, locale });
 
         // Get current full URL (pathname + search)
-        const currentFullPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : pathname;
+        let currentFullPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : pathname;
+
+        // Normalize: remove trailing ? if present but no query params
+        if (currentFullPath.endsWith('?')) {
+          currentFullPath = currentFullPath.slice(0, -1);
+        }
+
+        // Normalize: ensure both URLs are comparable
+        const normalizedNewURL = newURL.endsWith('?') ? newURL.slice(0, -1) : newURL;
+        const normalizedCurrentPath = currentFullPath;
 
         // Only update if the URL actually changed
-        if (newURL !== currentFullPath) {
-          console.log('Updating URL from', currentFullPath, 'to', newURL);
-          router.push(newURL, { scroll: false });
+        if (normalizedNewURL !== normalizedCurrentPath) {
+          console.log('Updating URL from', normalizedCurrentPath, 'to', normalizedNewURL);
+          router.push(normalizedNewURL, { scroll: false });
         }
       };
 

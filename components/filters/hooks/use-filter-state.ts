@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { SORT_OPTIONS } from '../constants';
 import { SortOption, TagId, CategoryId } from '../types';
 import { useFilterURLSync } from './use-filter-url-sync';
@@ -10,6 +11,9 @@ import type { FilterState } from '@/lib/utils/url-filter-sync';
  * Automatically syncs with URL for bookmarkable/shareable filter states
  */
 export function useFilterState(initialTag?: string | null, initialCategory?: string | null) {
+  const params = useParams();
+  const locale = params?.locale as string | undefined;
+
   const [searchTerm, setSearchTerm] = useState("");
 
   /** Multiple tag selection for advanced filtering - allows selecting multiple tags simultaneously */
@@ -27,7 +31,7 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(initialCategory || null);
 
   // URL synchronization (only for updates, not parsing)
-  const { updateURL } = useFilterURLSync({ basePath: '/' });
+  const { updateURL } = useFilterURLSync({ basePath: '/', locale });
 
   /**
    * Initialize state from initial props on mount
