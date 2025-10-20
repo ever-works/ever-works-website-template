@@ -47,43 +47,47 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
    * Wrapped setter that updates both state and URL
    */
   const setSelectedTags = useCallback((tags: TagId[] | ((prev: TagId[]) => TagId[])) => {
+    // Store the computed new tags to use in both setters
+    let computedTags: TagId[] = [];
+
     setSelectedTagsInternal(prev => {
-      const newTags = typeof tags === 'function' ? tags(prev) : tags;
-      return newTags;
+      computedTags = typeof tags === 'function' ? tags(prev) : tags;
+      return computedTags;
     });
 
-    // Update URL after state update (using latest state from closure)
+    // Update URL using the computed tags
     setSelectedCategoriesInternal(currentCategories => {
-      const newTags = typeof tags === 'function' ? tags(selectedTags) : tags;
       const filterState: FilterState = {
-        tags: newTags,
+        tags: computedTags,
         categories: currentCategories,
       };
       updateURL(filterState);
       return currentCategories;
     });
-  }, [selectedTags, updateURL]);
+  }, [updateURL]);
 
   /**
    * Wrapped setter that updates both state and URL
    */
   const setSelectedCategories = useCallback((categories: CategoryId[] | ((prev: CategoryId[]) => CategoryId[])) => {
+    // Store the computed new categories to use in both setters
+    let computedCategories: CategoryId[] = [];
+
     setSelectedCategoriesInternal(prev => {
-      const newCategories = typeof categories === 'function' ? categories(prev) : categories;
-      return newCategories;
+      computedCategories = typeof categories === 'function' ? categories(prev) : categories;
+      return computedCategories;
     });
 
-    // Update URL after state update (using latest state from closure)
+    // Update URL using the computed categories
     setSelectedTagsInternal(currentTags => {
-      const newCategories = typeof categories === 'function' ? categories(selectedCategories) : categories;
       const filterState: FilterState = {
         tags: currentTags,
-        categories: newCategories,
+        categories: computedCategories,
       };
       updateURL(filterState);
       return currentTags;
     });
-  }, [selectedCategories, updateURL]);
+  }, [updateURL]);
 
   /**
    * Clear all active filters
