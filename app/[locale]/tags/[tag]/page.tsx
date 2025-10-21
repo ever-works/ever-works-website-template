@@ -1,13 +1,10 @@
-import { fetchByTag } from "@/lib/content";
-import { paginateMeta } from "@/lib/paginate";
-import ListingTags from "../listing-tags";
-import { Suspense } from "react";
+import { redirect } from "next/navigation";
 
 export const revalidate = 10;
 
 /**
- * Simpler tag route - renders content at /tags/[tag]
- * This provides a cleaner URL structure than /tags/tag/[tag]
+ * Simpler tag route - redirects to homepage with tag filter
+ * /tags/[tag] → /?tags=[tag]
  */
 export default async function TagListing({
   params,
@@ -18,21 +15,7 @@ export default async function TagListing({
   const { tag: rawTag, locale } = resolvedParams;
   const tag = decodeURI(rawTag);
 
-  // Default to page 1 (pagination not supported on simple route)
-  const { page } = paginateMeta("1");
-
-  const { total, tags } = await fetchByTag(tag, {
-    lang: locale,
-  });
-
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ListingTags
-        total={total}
-        page={page}
-        basePath={`/tags/${tag}`}
-        tags={tags}
-      />
-    </Suspense>
-  );
+  // Redirect to homepage with tag filter applied
+  const localePrefix = locale ? `/${locale}` : '';
+  redirect(`${localePrefix}/?tags=${encodeURIComponent(tag)}`);
 }
