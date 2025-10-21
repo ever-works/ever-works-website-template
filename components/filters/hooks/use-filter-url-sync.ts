@@ -31,19 +31,35 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
         const newURL = generateFilterURL(filters, { basePath, locale });
 
         // Get current full URL (pathname + search)
+        // IMPORTANT: Use window.location to get the ACTUAL browser URL
         let currentFullPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : pathname;
 
-        console.log('[use-filter-url-sync] Current URL:', currentFullPath);
-        console.log('[use-filter-url-sync] New URL:', newURL);
+        console.log('[use-filter-url-sync] ===== UPDATE URL =====');
+        console.log('[use-filter-url-sync] Current browser URL:', currentFullPath);
+        console.log('[use-filter-url-sync] Generated new URL:', newURL);
+        console.log('[use-filter-url-sync] Locale:', locale);
 
-        // Normalize: remove trailing ? if present but no query params
-        if (currentFullPath.endsWith('?')) {
-          currentFullPath = currentFullPath.slice(0, -1);
-        }
+        // Normalize URLs for comparison
+        const normalize = (url: string) => {
+          let normalized = url;
 
-        // Normalize: ensure both URLs are comparable
-        const normalizedNewURL = newURL.endsWith('?') ? newURL.slice(0, -1) : newURL;
-        const normalizedCurrentPath = currentFullPath;
+          // Remove trailing ? if present
+          if (normalized.endsWith('?')) {
+            normalized = normalized.slice(0, -1);
+          }
+
+          // Remove locale prefix for comparison (e.g., /en/tags/foo -> /tags/foo)
+          if (locale && normalized.startsWith(`/${locale}/`)) {
+            normalized = normalized.substring(locale.length + 1);
+          } else if (locale && normalized === `/${locale}`) {
+            normalized = '/';
+          }
+
+          return normalized;
+        };
+
+        const normalizedNewURL = normalize(newURL);
+        const normalizedCurrentPath = normalize(currentFullPath);
 
         console.log('[use-filter-url-sync] Normalized current:', normalizedCurrentPath);
         console.log('[use-filter-url-sync] Normalized new:', normalizedNewURL);
@@ -51,8 +67,15 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
 
         // Only update if the URL actually changed
         if (normalizedNewURL !== normalizedCurrentPath) {
-          console.log('Updating URL from', normalizedCurrentPath, 'to', normalizedNewURL);
-          router.push(normalizedNewURL, { scroll: false });
+          console.log('⚠️ Updating URL from', normalizedCurrentPath, 'to', normalizedNewURL);
+          console.log('⚠️ Calling router.push with:', newURL);
+
+          try {
+            router.push(newURL, { scroll: false });
+            console.log('✅ router.push called successfully');
+          } catch (error) {
+            console.error('❌ router.push failed:', error);
+          }
         } else {
           console.log('[use-filter-url-sync] URLs are the same, skipping update');
         }
@@ -66,9 +89,14 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
       } else {
         // Debounce URL updates to avoid creating too many history entries
         if (debounceTimerRef.current) {
+          console.log('[use-filter-url-sync] Clearing previous debounce timer');
           clearTimeout(debounceTimerRef.current);
         }
-        debounceTimerRef.current = setTimeout(update, debounceMs);
+        console.log('[use-filter-url-sync] Setting debounce timer for', debounceMs, 'ms');
+        debounceTimerRef.current = setTimeout(() => {
+          console.log('[use-filter-url-sync] Debounce timer fired, executing update');
+          update();
+        }, debounceMs);
       }
     },
     [router, pathname, basePath, locale, debounceMs]

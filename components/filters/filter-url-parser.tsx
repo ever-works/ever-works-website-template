@@ -14,14 +14,27 @@ function FilterURLParserContent() {
   const pathname = usePathname(); // This strips the locale prefix automatically
   const { setSelectedTags, setSelectedCategories, selectedTags, selectedCategories } = useFilters();
   const lastUrlRef = useRef('');
+  const isUpdatingRef = useRef(false);
 
   useEffect(() => {
     // Create a URL signature to detect actual URL changes
     const currentUrl = `${pathname}?${searchParams.toString()}`;
 
+    console.log('[FilterURLParser] useEffect triggered');
+    console.log('[FilterURLParser] currentUrl:', currentUrl);
+    console.log('[FilterURLParser] lastUrlRef.current:', lastUrlRef.current);
+    console.log('[FilterURLParser] isUpdatingRef.current:', isUpdatingRef.current);
+
     // Skip if URL hasn't changed
     if (currentUrl === lastUrlRef.current) {
       console.log('[FilterURLParser] URL unchanged, skipping parse');
+      return;
+    }
+
+    // Skip if we're currently updating (prevents race conditions)
+    if (isUpdatingRef.current) {
+      console.log('[FilterURLParser] Currently updating, skipping parse to prevent race condition');
+      lastUrlRef.current = currentUrl;
       return;
     }
 
@@ -35,12 +48,45 @@ function FilterURLParserContent() {
     const tagMatch = pathname.match(/\/tags\/([^/]+)$/);
     const categoryMatch = pathname.match(/\/categories\/([^/]+)$/);
 
-    console.log('[FilterURLParser] URL changed to:', currentUrl);
+    console.log('[FilterURLParser] ===== URL CHANGED =====');
+    console.log('[FilterURLParser] New URL:', currentUrl);
     console.log('[FilterURLParser] pathname:', pathname);
     console.log('[FilterURLParser] tagsParam:', tagsParam);
     console.log('[FilterURLParser] categoriesParam:', categoriesParam);
     console.log('[FilterURLParser] tagMatch:', tagMatch);
     console.log('[FilterURLParser] categoryMatch:', categoryMatch);
+
+    // CRITICAL FIX: When on root path (/) with no query params during navigation,
+    // it's likely a timing issue. Don't clear filters unless we're intentionally going to root.
+    if (pathname === '/' && !tagsParam && !categoriesParam && !tagMatch && !categoryMatch) {
+      // Check if the previous URL had filters (indicates we're transitioning)
+      const wasOnFilteredPage = lastUrlRef.current.includes('categories=') ||
+                                 lastUrlRef.current.includes('tags=') ||
+                                 lastUrlRef.current.includes('/categories/') ||
+                                 lastUrlRef.current.includes('/tags/');
+
+      console.log('[FilterURLParser] 🔍 Checking timing issue:');
+      console.log('[FilterURLParser] 🔍 wasOnFilteredPage:', wasOnFilteredPage);
+      console.log('[FilterURLParser] 🔍 isUpdatingRef.current:', isUpdatingRef.current);
+      console.log('[FilterURLParser] 🔍 lastUrlRef.current:', lastUrlRef.current);
+
+      if (wasOnFilteredPage && isUpdatingRef.current) {
+        console.log('[FilterURLParser] ⚠️ Pathname is / with no params during transition from:', lastUrlRef.current);
+        console.log('[FilterURLParser] ⚠️ This is a timing issue. Skipping to wait for query params.');
+        console.log('[FilterURLParser] ===== END URL PARSE (SKIPPED) =====');
+        // Don't update lastUrlRef - we want to process the real URL when it arrives
+        return;
+      }
+
+      // If we reach here and wasOnFilteredPage is true but isUpdatingRef is false,
+      // wait a bit longer for the query params to arrive
+      if (wasOnFilteredPage) {
+        console.log('[FilterURLParser] ⚠️ Was on filtered page but isUpdatingRef is false');
+        console.log('[FilterURLParser] ⚠️ Skipping anyway to wait for query params');
+        console.log('[FilterURLParser] ===== END URL PARSE (SKIPPED) =====');
+        return;
+      }
+    }
 
     // Parse the filters from URL
     let urlTags: string[] = [];
@@ -94,16 +140,28 @@ function FilterURLParserContent() {
     console.log('[FilterURLParser] URL state - tags:', urlTags, 'categories:', urlCategories);
     console.log('[FilterURLParser] Tags changed:', tagsChanged, 'Categories changed:', categoriesChanged);
 
-    if (tagsChanged) {
-      console.log('[FilterURLParser] Updating tags to:', urlTags);
-      setSelectedTags(urlTags);
+    if (tagsChanged || categoriesChanged) {
+      isUpdatingRef.current = true;
+
+      if (tagsChanged) {
+        console.log('[FilterURLParser] ⚠️ CALLING setSelectedTags with:', urlTags);
+        setSelectedTags(urlTags);
+      }
+
+      if (categoriesChanged) {
+        console.log('[FilterURLParser] ⚠️ CALLING setSelectedCategories with:', urlCategories);
+        setSelectedCategories(urlCategories);
+      }
+
+      // Reset the flag after a delay to allow the URL update to complete
+      setTimeout(() => {
+        isUpdatingRef.current = false;
+        console.log('[FilterURLParser] Reset isUpdatingRef to false');
+      }, 500);
     }
 
-    if (categoriesChanged) {
-      console.log('[FilterURLParser] Updating categories to:', urlCategories);
-      setSelectedCategories(urlCategories);
-    }
-  }, [pathname, searchParams]); // Only depend on URL changes, not on state changes
+    console.log('[FilterURLParser] ===== END URL PARSE =====');
+  }, [pathname, searchParams]); // Only depend on URL changes
 
   return null;
 }

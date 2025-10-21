@@ -47,7 +47,6 @@ export default function GlobalsClient(props: ListingProps) {
 	const sortedTags = sortByNumericProperty(props.tags);
 	const sortedCategories = sortByNumericProperty(props.categories);
 	const searchParams = useSearchParams();
-	const [initialized, setInitialized] = useState(false);
 
 	// Use the new hook for featured items
 	const { featuredItems } = useFeaturedItemsSection({
@@ -135,14 +134,7 @@ export default function GlobalsClient(props: ListingProps) {
 
 	// Note: URL parsing is handled by FilterURLParser in the Listing component
 	// No need to duplicate that logic here
-
-	if (!initialized) {
-		// Simple initialization check - just set to true after first render
-		useEffect(() => {
-			setInitialized(true);
-		}, []);
-		return null;
-	}
+	// IMPORTANT: This file should NOT parse URL params - FilterURLParser handles that
 
 	if (layoutHome === LayoutHome.HOME_ONE) {
 		return (

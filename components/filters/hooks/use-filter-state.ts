@@ -51,11 +51,15 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
    * Wrapped setter that updates both state and URL
    */
   const setSelectedTags = useCallback((tags: TagId[] | ((prev: TagId[]) => TagId[])) => {
+    console.log('[useFilterState] setSelectedTags called with:', tags);
+
     // Store the computed new tags to use in both setters
     let computedTags: TagId[] = [];
 
     setSelectedTagsInternal(prev => {
+      console.log('[useFilterState] setSelectedTags - prev:', prev);
       computedTags = typeof tags === 'function' ? tags(prev) : tags;
+      console.log('[useFilterState] setSelectedTags - computed:', computedTags);
       return computedTags;
     });
 
@@ -65,6 +69,7 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
         tags: computedTags,
         categories: currentCategories,
       };
+      console.log('[useFilterState] setSelectedTags - filterState for URL:', filterState);
       updateURL(filterState);
       return currentCategories;
     });
@@ -74,10 +79,18 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
    * Wrapped setter that updates both state and URL
    */
   const setSelectedCategories = useCallback((categories: CategoryId[] | ((prev: CategoryId[]) => CategoryId[])) => {
+    // Get stack trace to see who called this
+    const stack = new Error().stack;
+    console.log('[useFilterState] ========================================');
+    console.log('[useFilterState] setSelectedCategories called with:', categories);
+    console.log('[useFilterState] Call stack:', stack);
+    console.log('[useFilterState] ========================================');
+
     // Store the computed new categories to use in both setters
     let computedCategories: CategoryId[] = [];
 
     setSelectedCategoriesInternal(prev => {
+      console.log('[useFilterState] setSelectedCategories - prev:', prev);
       computedCategories = typeof categories === 'function' ? categories(prev) : categories;
       console.log('[useFilterState] setSelectedCategories - computed:', computedCategories);
       return computedCategories;
