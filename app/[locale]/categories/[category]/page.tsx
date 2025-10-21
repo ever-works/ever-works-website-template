@@ -1,10 +1,12 @@
-import { redirect } from "next/navigation";
+import { fetchItems } from "@/lib/content";
+import ListingCategories from "../listing-categories";
+import { Suspense } from "react";
 
 export const revalidate = 10;
 
 /**
- * Simpler category route - redirects to homepage with category filter
- * /categories/[category] → /?categories=[category]
+ * Single category route - renders homepage with category filter
+ * /categories/[category] shows all items filtered by the category
  */
 export default async function CategoryListing({
   params,
@@ -15,7 +17,26 @@ export default async function CategoryListing({
   const { category: rawCategory, locale } = resolvedParams;
   const category = decodeURIComponent(rawCategory);
 
-  // Redirect to homepage with category filter applied
-  const localePrefix = locale ? `/${locale}` : '';
-  redirect(`${localePrefix}/?categories=${encodeURIComponent(category)}`);
+  // Fetch all items (filtering will be done client-side via FilterURLParser)
+  const { categories, tags, items } = await fetchItems({ lang: locale });
+
+  // Calculate pagination info
+  const total = items.length;
+  const page = 1;
+  const start = 0;
+  const basePath = `/categories/${category}`;
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ListingCategories
+        categories={categories}
+        tags={tags}
+        items={items}
+        total={total}
+        start={start}
+        page={page}
+        basePath={basePath}
+      />
+    </Suspense>
+  );
 }

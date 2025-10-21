@@ -1,10 +1,12 @@
-import { redirect } from "next/navigation";
+import { fetchItems } from "@/lib/content";
+import ListingCategories from "../../categories/listing-categories";
+import { Suspense } from "react";
 
 export const revalidate = 10;
 
 /**
- * Simpler tag route - redirects to homepage with tag filter
- * /tags/[tag] → /?tags=[tag]
+ * Single tag route - renders homepage with tag filter
+ * /tags/[tag] shows all items filtered by the tag
  */
 export default async function TagListing({
   params,
@@ -15,7 +17,26 @@ export default async function TagListing({
   const { tag: rawTag, locale } = resolvedParams;
   const tag = decodeURI(rawTag);
 
-  // Redirect to homepage with tag filter applied
-  const localePrefix = locale ? `/${locale}` : '';
-  redirect(`${localePrefix}/?tags=${encodeURIComponent(tag)}`);
+  // Fetch all items (filtering will be done client-side via FilterURLParser)
+  const { categories, tags, items } = await fetchItems({ lang: locale });
+
+  // Calculate pagination info
+  const total = items.length;
+  const page = 1;
+  const start = 0;
+  const basePath = `/tags/${tag}`;
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ListingCategories
+        categories={categories}
+        tags={tags}
+        items={items}
+        total={total}
+        start={start}
+        page={page}
+        basePath={basePath}
+      />
+    </Suspense>
+  );
 }
