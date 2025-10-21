@@ -133,21 +133,16 @@ export default function GlobalsClient(props: ListingProps) {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
-	useEffect(() => {
-		const tagsParam = searchParams.get('tags');
-		if (tagsParam) {
-			setSelectedTags(tagsParam.split(','));
-		}
+	// Note: URL parsing is handled by FilterURLParser in the Listing component
+	// No need to duplicate that logic here
 
-		const categoriesParam = searchParams.get('categories');
-		if (categoriesParam) {
-			setSelectedCategories(categoriesParam.split(','));
-		}
-
-		setInitialized(true);
-	}, [searchParams, setSelectedTags, setSelectedCategories]);
-
-	if (!initialized) return null;
+	if (!initialized) {
+		// Simple initialization check - just set to true after first render
+		useEffect(() => {
+			setInitialized(true);
+		}, []);
+		return null;
+	}
 
 	if (layoutHome === LayoutHome.HOME_ONE) {
 		return (

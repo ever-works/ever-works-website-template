@@ -55,21 +55,29 @@ export function generateFilterURL(
   const hasCategories = categories.length > 0;
   const localePrefix = locale ? `/${locale}` : '';
 
+  console.log('[generateFilterURL] Input:', { filters, options, hasTags, hasCategories });
+
   // No filters: return base path
   if (!hasTags && !hasCategories) {
-    return `${localePrefix}${basePath}`;
+    const result = `${localePrefix}${basePath}`;
+    console.log('[generateFilterURL] No filters, returning:', result);
+    return result;
   }
 
   // Single tag, no categories: clean URL
   if (tags.length === 1 && !hasCategories) {
     const encodedTag = encodeFilterValue(tags[0]);
-    return `${localePrefix}/tags/${encodedTag}`;
+    const result = `${localePrefix}/tags/${encodedTag}`;
+    console.log('[generateFilterURL] Single tag, returning:', result);
+    return result;
   }
 
   // Single category, no tags: clean URL
   if (categories.length === 1 && !hasTags) {
     const encodedCategory = encodeFilterValue(categories[0]);
-    return `${localePrefix}/categories/${encodedCategory}`;
+    const result = `${localePrefix}/categories/${encodedCategory}`;
+    console.log('[generateFilterURL] Single category, returning:', result);
+    return result;
   }
 
   // Multiple filters: use query parameters
@@ -85,7 +93,9 @@ export function generateFilterURL(
     params.set('categories', encodedCategories);
   }
 
-  return `${localePrefix}${basePath}?${params.toString()}`;
+  const result = `${localePrefix}${basePath}?${params.toString()}`;
+  console.log('[generateFilterURL] Multiple filters, returning:', result);
+  return result;
 }
 
 /**

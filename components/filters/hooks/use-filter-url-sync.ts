@@ -33,6 +33,9 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
         // Get current full URL (pathname + search)
         let currentFullPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : pathname;
 
+        console.log('[use-filter-url-sync] Current URL:', currentFullPath);
+        console.log('[use-filter-url-sync] New URL:', newURL);
+
         // Normalize: remove trailing ? if present but no query params
         if (currentFullPath.endsWith('?')) {
           currentFullPath = currentFullPath.slice(0, -1);
@@ -42,10 +45,16 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
         const normalizedNewURL = newURL.endsWith('?') ? newURL.slice(0, -1) : newURL;
         const normalizedCurrentPath = currentFullPath;
 
+        console.log('[use-filter-url-sync] Normalized current:', normalizedCurrentPath);
+        console.log('[use-filter-url-sync] Normalized new:', normalizedNewURL);
+        console.log('[use-filter-url-sync] Are they equal?', normalizedNewURL === normalizedCurrentPath);
+
         // Only update if the URL actually changed
         if (normalizedNewURL !== normalizedCurrentPath) {
           console.log('Updating URL from', normalizedCurrentPath, 'to', normalizedNewURL);
           router.push(normalizedNewURL, { scroll: false });
+        } else {
+          console.log('[use-filter-url-sync] URLs are the same, skipping update');
         }
       };
 

@@ -79,6 +79,7 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
 
     setSelectedCategoriesInternal(prev => {
       computedCategories = typeof categories === 'function' ? categories(prev) : categories;
+      console.log('[useFilterState] setSelectedCategories - computed:', computedCategories);
       return computedCategories;
     });
 
@@ -88,6 +89,7 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
         tags: currentTags,
         categories: computedCategories,
       };
+      console.log('[useFilterState] setSelectedCategories - filterState:', filterState);
       updateURL(filterState);
       return currentTags;
     });

@@ -1,5 +1,5 @@
 import { fetchItems } from "@/lib/content";
-import ListingCategories from "../../categories/listing-categories";
+import Listing from "../../(listing)/listing";
 import { Suspense } from "react";
 
 export const revalidate = 10;
@@ -24,11 +24,11 @@ export default async function TagListing({
   const total = items.length;
   const page = 1;
   const start = 0;
-  const basePath = `/tags/${tag}`;
+  const basePath = `/`; // Use root path for filter URL generation
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ListingCategories
+      <Listing
         categories={categories}
         tags={tags}
         items={items}

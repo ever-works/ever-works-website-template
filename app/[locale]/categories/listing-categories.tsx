@@ -14,7 +14,6 @@ import { useFilters } from "@/hooks/use-filters";
 import { ListingClient } from "@/components/shared-card/listing-client";
 import { CardPresets } from "@/components/shared-card";
 import CategoriesQuerySync from "@/components/filters/categories-query-sync";
-import { FilterURLParser } from "@/components/filters/filter-url-parser";
 
 interface ListingCategoriesProps {
   total: number;
@@ -32,7 +31,6 @@ export default function ListingCategories(props: ListingCategoriesProps) {
 
   return (
     <>
-      <FilterURLParser />
       <CategoriesQuerySync />
     <Hero
       badgeText={t("listing.CATEGORIES")}
