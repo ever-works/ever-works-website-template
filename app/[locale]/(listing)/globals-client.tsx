@@ -13,6 +13,7 @@ import { useSearchParams } from 'next/navigation';
 import { PER_PAGE, totalPages } from '@/lib/paginate';
 import { sortItemsWithFeatured } from '@/lib/utils/featured-items';
 import { useFeaturedItemsSection } from '@/hooks/use-feature-items-section';
+import { TopLoadingBar } from '@/components/ui/top-loading-bar';
 
 type ListingProps = {
 	total: number;
@@ -42,7 +43,7 @@ const LAYOUT_STYLES = {
 
 export default function GlobalsClient(props: ListingProps) {
 	const { layoutHome = LayoutHome.HOME_ONE, paginationType } = useLayoutTheme();
-	const { selectedCategories, searchTerm, selectedTags, sortBy, setSelectedTags, setSelectedCategories } =
+	const { selectedCategories, searchTerm, selectedTags, sortBy, setSelectedTags, setSelectedCategories, isFiltersLoading } =
 		useFilters();
 	const sortedTags = sortByNumericProperty(props.tags);
 	const sortedCategories = sortByNumericProperty(props.categories);
@@ -138,7 +139,9 @@ export default function GlobalsClient(props: ListingProps) {
 
 	if (layoutHome === LayoutHome.HOME_ONE) {
 		return (
-			<div className={LAYOUT_STYLES.mainContainer}>
+			<>
+				<TopLoadingBar isLoading={isFiltersLoading} />
+				<div className={LAYOUT_STYLES.mainContainer}>
 				{/* Featured Items Section - Only show on first page and desktop */}
 				{/* {page === 1 && featuredItems.length > 0 && (
           <div className={`mb-8 sm:mb-10 md:mb-12 lg:mb-16 ${LAYOUT_STYLES.desktopOnly}`}>
@@ -194,18 +197,22 @@ export default function GlobalsClient(props: ListingProps) {
 					</div>
 				</div>
 			</div>
+			</>
 		);
 	}
 
 	return (
-		<div className={LAYOUT_STYLES.mainContainer}>
-			<HomeTwoLayout
-				{...props}
-				categories={sortedCategories}
-				tags={sortedTags}
-				filteredAndSortedItems={filteredItems}
-				paginatedItems={paginatedItems}
-			/>
-		</div>
+		<>
+			<TopLoadingBar isLoading={isFiltersLoading} />
+			<div className={LAYOUT_STYLES.mainContainer}>
+				<HomeTwoLayout
+					{...props}
+					categories={sortedCategories}
+					tags={sortedTags}
+					filteredAndSortedItems={filteredItems}
+					paginatedItems={paginatedItems}
+				/>
+			</div>
+		</>
 	);
 }

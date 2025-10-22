@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { SORT_OPTIONS } from '../constants';
 import { SortOption, TagId, CategoryId } from '../types';
@@ -30,6 +30,10 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
   /** Currently selected category for navigation and filtering */
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(initialCategory || null);
 
+  /** Loading state for filter updates */
+  const [isFiltersLoading, setIsFiltersLoading] = useState(false);
+  const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // URL synchronization (only for updates, not parsing)
   const { updateURL } = useFilterURLSync({ basePath: '/', locale });
 
@@ -51,26 +55,37 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
    * Wrapped setter that updates both state and URL
    */
   const setSelectedTags = useCallback((tags: TagId[] | ((prev: TagId[]) => TagId[])) => {
-    console.log('[useFilterState] setSelectedTags called with:', tags);
-
     // Store the computed new tags to use in both setters
     let computedTags: TagId[] = [];
 
     setSelectedTagsInternal(prev => {
-      console.log('[useFilterState] setSelectedTags - prev:', prev);
       computedTags = typeof tags === 'function' ? tags(prev) : tags;
-      console.log('[useFilterState] setSelectedTags - computed:', computedTags);
       return computedTags;
     });
 
-    // Update URL using the computed tags
+    // Show loading indicator AFTER state is set (non-blocking)
     setSelectedCategoriesInternal(currentCategories => {
       const filterState: FilterState = {
         tags: computedTags,
         categories: currentCategories,
       };
-      console.log('[useFilterState] setSelectedTags - filterState for URL:', filterState);
+
+      // Clear any existing timeout
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+      }
+
+      // Show loading indicator
+      setIsFiltersLoading(true);
+
+      // Update URL
       updateURL(filterState);
+
+      // Hide loading after delay
+      loadingTimeoutRef.current = setTimeout(() => {
+        setIsFiltersLoading(false);
+      }, 400);
+
       return currentCategories;
     });
   }, [updateURL]);
@@ -79,31 +94,37 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
    * Wrapped setter that updates both state and URL
    */
   const setSelectedCategories = useCallback((categories: CategoryId[] | ((prev: CategoryId[]) => CategoryId[])) => {
-    // Get stack trace to see who called this
-    const stack = new Error().stack;
-    console.log('[useFilterState] ========================================');
-    console.log('[useFilterState] setSelectedCategories called with:', categories);
-    console.log('[useFilterState] Call stack:', stack);
-    console.log('[useFilterState] ========================================');
-
     // Store the computed new categories to use in both setters
     let computedCategories: CategoryId[] = [];
 
     setSelectedCategoriesInternal(prev => {
-      console.log('[useFilterState] setSelectedCategories - prev:', prev);
       computedCategories = typeof categories === 'function' ? categories(prev) : categories;
-      console.log('[useFilterState] setSelectedCategories - computed:', computedCategories);
       return computedCategories;
     });
 
-    // Update URL using the computed categories
+    // Show loading indicator AFTER state is set (non-blocking)
     setSelectedTagsInternal(currentTags => {
       const filterState: FilterState = {
         tags: currentTags,
         categories: computedCategories,
       };
-      console.log('[useFilterState] setSelectedCategories - filterState:', filterState);
+
+      // Clear any existing timeout
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+      }
+
+      // Show loading indicator
+      setIsFiltersLoading(true);
+
+      // Update URL
       updateURL(filterState);
+
+      // Hide loading after delay
+      loadingTimeoutRef.current = setTimeout(() => {
+        setIsFiltersLoading(false);
+      }, 400);
+
       return currentTags;
     });
   }, [updateURL]);
@@ -188,7 +209,8 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
     sortBy,
     selectedTag,
     selectedCategory,
-    
+    isFiltersLoading,
+
     // Setters
     setSearchTerm,
     setSelectedTags,
@@ -196,7 +218,7 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
     setSortBy,
     setSelectedTag,
     setSelectedCategory,
-    
+
     // Actions
     clearAllFilters,
     removeSelectedTag,

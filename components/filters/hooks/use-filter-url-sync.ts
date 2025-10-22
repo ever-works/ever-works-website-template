@@ -34,11 +34,6 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
         // IMPORTANT: Use window.location to get the ACTUAL browser URL
         let currentFullPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : pathname;
 
-        console.log('[use-filter-url-sync] ===== UPDATE URL =====');
-        console.log('[use-filter-url-sync] Current browser URL:', currentFullPath);
-        console.log('[use-filter-url-sync] Generated new URL:', newURL);
-        console.log('[use-filter-url-sync] Locale:', locale);
-
         // Normalize URLs for comparison
         const normalize = (url: string) => {
           let normalized = url;
@@ -61,23 +56,9 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
         const normalizedNewURL = normalize(newURL);
         const normalizedCurrentPath = normalize(currentFullPath);
 
-        console.log('[use-filter-url-sync] Normalized current:', normalizedCurrentPath);
-        console.log('[use-filter-url-sync] Normalized new:', normalizedNewURL);
-        console.log('[use-filter-url-sync] Are they equal?', normalizedNewURL === normalizedCurrentPath);
-
         // Only update if the URL actually changed
         if (normalizedNewURL !== normalizedCurrentPath) {
-          console.log('⚠️ Updating URL from', normalizedCurrentPath, 'to', normalizedNewURL);
-          console.log('⚠️ Calling router.push with:', newURL);
-
-          try {
-            router.push(newURL, { scroll: false });
-            console.log('✅ router.push called successfully');
-          } catch (error) {
-            console.error('❌ router.push failed:', error);
-          }
-        } else {
-          console.log('[use-filter-url-sync] URLs are the same, skipping update');
+          router.push(newURL, { scroll: false });
         }
       };
 
@@ -89,12 +70,9 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
       } else {
         // Debounce URL updates to avoid creating too many history entries
         if (debounceTimerRef.current) {
-          console.log('[use-filter-url-sync] Clearing previous debounce timer');
           clearTimeout(debounceTimerRef.current);
         }
-        console.log('[use-filter-url-sync] Setting debounce timer for', debounceMs, 'ms');
         debounceTimerRef.current = setTimeout(() => {
-          console.log('[use-filter-url-sync] Debounce timer fired, executing update');
           update();
         }, debounceMs);
       }
