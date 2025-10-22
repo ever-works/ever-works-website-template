@@ -773,7 +773,10 @@ export async function fetchItem(slug: string, options: FetchOptions = {}) {
 }
 
 function eqID(value: string | { id: string }, id: string) {
-	const valueId = typeof value === 'string' ? value : value.id;
+	const valueId = typeof value === 'string' ? value : value?.id;
+	if (!valueId || !id) {
+		return false;
+	}
 	// Case-insensitive comparison to match URL encoding behavior
 	return valueId.toLowerCase() === id.toLowerCase();
 }
