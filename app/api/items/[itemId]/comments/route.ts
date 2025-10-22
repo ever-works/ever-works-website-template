@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getCommentsByItemId, createComment, getClientProfileByUserId } from "@/lib/db/queries";
+import { checkDatabaseAvailability } from "@/lib/utils/database-check";
 
 /**
  * @swagger
@@ -138,7 +139,11 @@ export async function GET(
   { params }: { params: Promise<{ itemId: string }> }
 ) {
   try {
-   const itemComments = await getCommentsByItemId((await params).itemId);
+    // Check database availability
+    const dbCheck = checkDatabaseAvailability();
+    if (dbCheck) return dbCheck;
+
+    const itemComments = await getCommentsByItemId((await params).itemId);
 
     return NextResponse.json({
       success: true,
@@ -336,6 +341,10 @@ export async function POST(
   { params }: { params: Promise<{ itemId: string }> }
 ) {
   try {
+    // Check database availability
+    const dbCheck = checkDatabaseAvailability();
+    if (dbCheck) return dbCheck;
+
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(

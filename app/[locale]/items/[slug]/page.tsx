@@ -8,6 +8,7 @@ import { Container } from "@/components/ui/container";
 import { Suspense } from "react";
 import { Metadata } from "next";
 import { siteConfig } from "@/lib/config";
+import { ItemDetailSkeleton } from "@/components/ui/skeleton";
 
 // Disable static generation to prevent MDX compilation errors during build
 export const dynamic = 'force-dynamic';
@@ -154,7 +155,7 @@ export default async function ItemDetails({
 
     return (
       <Container maxWidth="7xl" padding="default">
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<ItemDetailSkeleton />}>
           <ItemDetail
             meta={metaWithVideo}
             renderedContent={renderedContent}

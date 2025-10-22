@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
+import { useFeatureFlags } from '@/hooks/use-feature-flags';
 
 export interface FeaturedItem {
   id: string;
@@ -49,6 +50,8 @@ const fetchFeaturedItems = async (): Promise<FeaturedItem[]> => {
 };
 
 export function useFeaturedItems() {
+  const { features } = useFeatureFlags();
+
   const {
     data: featuredItems = [],
     isLoading,
@@ -56,9 +59,9 @@ export function useFeaturedItems() {
     refetch,
   } = useQuery({
     queryKey: featuredItemsQueryKeys.list({}),
+    enabled: features.featuredItems, // Only fetch when featuredItems feature is enabled
     queryFn: async () => {
       const response = await fetchFeaturedItems();
-      console.log('response',response);
       return response;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes

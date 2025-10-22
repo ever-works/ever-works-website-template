@@ -2,6 +2,7 @@ import { fetchItems } from "@/lib/content";
 import { LOCALES } from "@/lib/constants";
 import ListingCategories from "./listing-categories";
 import { Suspense } from "react";
+import { ListingSkeleton } from "@/components/ui/skeleton";
 
 export const revalidate = 10;
 export async function generateStaticParams() {
@@ -23,8 +24,8 @@ export default async function CategoriesPage({
   const basePath = "/categories";
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ListingCategories 
+    <Suspense fallback={<ListingSkeleton />}>
+      <ListingCategories
         categories={categories}
         tags={tags}
         items={items}

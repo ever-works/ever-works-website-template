@@ -275,7 +275,7 @@ export function SharedCard(props: ExtendedCardProps) {
   }
 
   return (
-    <div className={`w-full space-y-6 ${className}`}>
+    <div className={`w-full space-y-6 ${className}`} suppressHydrationWarning>
       <SharedCardHeader
         searchTerm={searchTerm}
         selectedTags={selectedTags}

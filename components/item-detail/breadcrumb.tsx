@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { toTitleCase } from "@/lib/utils";
 
 interface BreadcrumbProps {
   name: string;
@@ -58,7 +59,7 @@ export function ItemBreadcrumb({
               href={`/categories/${encodedCategory}`}
               className="ml-1 text-sm font-medium text-gray-800 dark:text-white/50 md:ml-2 transition-colors duration-300"
             >
-              {categoryName}
+              {toTitleCase(categoryName)}
             </Link>
           </div>
         </li>

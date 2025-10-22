@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db/drizzle';
 import { featuredItems } from '@/lib/db/schema';
 import { eq, desc, and, gte, or, isNull } from 'drizzle-orm';
+import { checkDatabaseAvailability } from '@/lib/utils/database-check';
 
 /**
  * @swagger
@@ -163,6 +164,10 @@ import { eq, desc, and, gte, or, isNull } from 'drizzle-orm';
  */
 export async function GET(request: NextRequest) {
   try {
+    // Check database availability
+    const dbCheck = checkDatabaseAvailability();
+    if (dbCheck) return dbCheck;
+
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '6');
     const includeExpired = searchParams.get('includeExpired') === 'true';

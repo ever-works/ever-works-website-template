@@ -155,7 +155,16 @@ const LayoutThemeContext = createContext<LayoutThemeContextType | undefined>(und
 
 // Custom hook for theme management
 const useThemeManager = () => {
+  // Always initialize with default to prevent hydration mismatch
   const [themeKey, setThemeKeyState] = useState<ThemeKey>(DEFAULT_THEME);
+
+  // Hydrate from localStorage after mount
+  useEffect(() => {
+    const saved = safeLocalStorage.getItem(STORAGE_KEYS.THEME);
+    if (saved && isValidThemeKey(saved)) {
+      setThemeKeyState(saved);
+    }
+  }, []);
 
   const applyThemeVariables = useCallback((theme: ThemeConfig) => {
     if (typeof window === "undefined") return;
@@ -212,7 +221,16 @@ const useThemeManager = () => {
 
 // Custom hook for layout home management
 const useLayoutHomeManager = () => {
+  // Always initialize with default to prevent hydration mismatch
   const [layoutHome, setLayoutHomeState] = useState<LayoutHome>(DEFAULT_LAYOUT_HOME);
+
+  // Hydrate from localStorage after mount
+  useEffect(() => {
+    const saved = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT_HOME);
+    if (saved && isValidLayoutHome(saved)) {
+      setLayoutHomeState(saved);
+    }
+  }, []);
   
   const setLayoutHome = useCallback((key: LayoutHome) => {
     if (!isValidLayoutHome(key)) {
@@ -232,7 +250,16 @@ const useLayoutHomeManager = () => {
 
 // Custom hook for pagination type management
 const usePaginationTypeManager = () => {
+  // Always initialize with default to prevent hydration mismatch
   const [paginationType, setPaginationTypeState] = useState<PaginationType>(DEFAULT_PAGINATION_TYPE);
+
+  // Hydrate from localStorage after mount
+  useEffect(() => {
+    const saved = safeLocalStorage.getItem(STORAGE_KEYS.PAGINATION_TYPE);
+    if (saved && isValidPaginationType(saved)) {
+      setPaginationTypeState(saved);
+    }
+  }, []);
 
   const setPaginationType = useCallback((type: PaginationType) => {
     if (!isValidPaginationType(type)) {
@@ -252,7 +279,19 @@ const usePaginationTypeManager = () => {
 
 // Custom hook for items per page management
 const useItemsPerPageManager = () => {
+  // Always initialize with default to prevent hydration mismatch
   const [itemsPerPage, setItemsPerPageState] = useState<number>(DEFAULT_ITEMS_PER_PAGE);
+
+  // Hydrate from localStorage after mount
+  useEffect(() => {
+    const saved = safeLocalStorage.getItem(STORAGE_KEYS.ITEMS_PER_PAGE);
+    if (saved) {
+      const parsed = parseInt(saved, 10);
+      if (isValidItemsPerPage(parsed)) {
+        setItemsPerPageState(parsed);
+      }
+    }
+  }, []);
   
   const setItemsPerPage = useCallback((value: number) => {
     if (!isValidItemsPerPage(value)) {
@@ -272,14 +311,23 @@ const useItemsPerPageManager = () => {
 
 // Custom hook for layout management
 const useLayoutManager = () => {
+  // Always initialize with default to prevent hydration mismatch
   const [layoutKey, setLayoutKeyState] = useState<LayoutKey>(DEFAULT_LAYOUT);
+
+  // Hydrate from localStorage after mount
+  useEffect(() => {
+    const saved = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT);
+    if (saved && isValidLayoutKey(saved)) {
+      setLayoutKeyState(saved);
+    }
+  }, []);
 
   const setLayoutKey = useCallback((key: LayoutKey) => {
     if (!isValidLayoutKey(key)) {
       console.warn(`Invalid layout key: ${key}`);
       return;
     }
-    
+
     setLayoutKeyState(key);
     safeLocalStorage.setItem(STORAGE_KEYS.LAYOUT, key);
   }, []);
@@ -299,50 +347,14 @@ export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const itemsPerPageManager = useItemsPerPageManager();
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize from localStorage with error handling
+  // Mark as initialized after mount with delay to show skeleton and ensure stable hydration
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    try {
-      const savedLayout = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT);
-      const savedTheme = safeLocalStorage.getItem(STORAGE_KEYS.THEME);
-      const savedLayoutHome = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT_HOME);
-      const savedPaginationType = safeLocalStorage.getItem(STORAGE_KEYS.PAGINATION_TYPE);
-      const savedItemsPerPage = safeLocalStorage.getItem(STORAGE_KEYS.ITEMS_PER_PAGE);
-
-      // Validate and apply saved layout
-      if (savedLayout && isValidLayoutKey(savedLayout) && savedLayout !== layoutManager.layoutKey) {
-        layoutManager.setLayoutKey(savedLayout);
-      }
-
-      // Validate and apply saved theme
-      if (savedTheme && isValidThemeKey(savedTheme) && savedTheme !== themeManager.themeKey) {
-        themeManager.setThemeKey(savedTheme);
-      }
-
-      // Validate and apply saved layout home
-      if (savedLayoutHome && isValidLayoutHome(savedLayoutHome) && savedLayoutHome !== layoutHomeManager.layoutHome) {
-        layoutHomeManager.setLayoutHome(savedLayoutHome);
-      }
-
-      // Validate and apply saved pagination type
-      if (savedPaginationType && isValidPaginationType(savedPaginationType) && savedPaginationType !== paginationTypeManager.paginationType) {
-        paginationTypeManager.setPaginationType(savedPaginationType);
-      }
-
-      // Validate and apply saved items per page
-      if (savedItemsPerPage) {
-        const itemsPerPage = parseInt(savedItemsPerPage, 10);
-        if (isValidItemsPerPage(itemsPerPage) && itemsPerPage !== itemsPerPageManager.itemsPerPage) {
-          itemsPerPageManager.setItemsPerPage(itemsPerPage);
-        }
-      }
-    } catch (error) {
-      console.warn("Failed to initialize from localStorage:", error);
-    } finally {
+    const timer = setTimeout(() => {
       setIsInitialized(true);
-    }
-  }, [layoutManager, themeManager, layoutHomeManager, paginationTypeManager, itemsPerPageManager]);
+    }, 300); // Delay to show skeleton loading state and allow all localStorage reads to complete
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const contextValue = useMemo(
       () => ({

@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { getCommentById, updateCommentRating } from "@/lib/db/queries";
+import { checkDatabaseAvailability } from "@/lib/utils/database-check";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ itemId: string; commentId: string }> }) {
     try {
+        // Check database availability
+        const dbCheck = checkDatabaseAvailability();
+        if (dbCheck) return dbCheck;
+
         const { commentId } = await params;
         const { rating } = await request.json();
         console.log("============rating=============>", rating);
@@ -15,6 +20,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ it
 }   
 
 export async function GET(request: Request, { params }: { params: Promise<{ itemId: string; commentId: string }> }) {
+    // Check database availability
+    const dbCheck = checkDatabaseAvailability();
+    if (dbCheck) return dbCheck;
+
     const { commentId } = await params;
     const comment = await getCommentById(commentId);
     return NextResponse.json(comment);

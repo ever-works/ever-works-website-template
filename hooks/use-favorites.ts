@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { serverClient } from '@/lib/api/server-api-client';
 import { useCurrentUser } from './use-current-user';
+import { useFeatureFlags } from '@/hooks/use-feature-flags';
 
 export interface Favorite {
   id: string;
@@ -50,6 +51,7 @@ const removeFavorite = async (itemSlug: string): Promise<void> => {
 export function useFavorites() {
   const queryClient = useQueryClient();
   const { user } = useCurrentUser();
+  const { features } = useFeatureFlags();
 
   // Query for fetching favorites
   const {
@@ -60,7 +62,7 @@ export function useFavorites() {
   } = useQuery({
     queryKey: ['favorites'],
     queryFn: fetchFavorites,
-    enabled: !!user?.id,
+    enabled: !!user?.id && features.favorites, // Only fetch when user is logged in AND favorites feature is enabled
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 

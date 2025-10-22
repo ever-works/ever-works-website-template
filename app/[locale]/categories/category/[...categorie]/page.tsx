@@ -3,6 +3,7 @@ import { paginateMeta, totalPages } from "@/lib/paginate";
 import { LOCALES } from "@/lib/constants";
 import Listing from "../../../(listing)/listing";
 import { Suspense } from "react";
+import { ListingSkeleton } from "@/components/ui/skeleton";
 
 export const revalidate = 10;
 
@@ -52,7 +53,7 @@ export default async function CategoryListing({
   const { items, categories, total, tags } = result;
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<ListingSkeleton />}>
       <Listing
         total={total}
         start={start}

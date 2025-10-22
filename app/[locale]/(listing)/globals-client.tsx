@@ -43,7 +43,7 @@ const LAYOUT_STYLES = {
 
 export default function GlobalsClient(props: ListingProps) {
 	const { layoutHome = LayoutHome.HOME_ONE, paginationType } = useLayoutTheme();
-	const { selectedCategories, searchTerm, selectedTags, sortBy, setSelectedTags, setSelectedCategories, isFiltersLoading } =
+	const { selectedCategories, searchTerm, selectedTags, sortBy, isFiltersLoading } =
 		useFilters();
 	const sortedTags = sortByNumericProperty(props.tags);
 	const sortedCategories = sortByNumericProperty(props.categories);

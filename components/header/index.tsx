@@ -20,6 +20,7 @@ import { NavigationControls } from "../navigation-controls";
 import { ProfileButton } from "./profile-button";
 import { IconEverworksSimple } from "../icons/Icons";
 import { Container } from "../ui/container";
+import { useFeatureFlags } from "@/hooks/use-feature-flags";
 
 interface NavigationItem {
   key: string;
@@ -127,6 +128,7 @@ const STYLES = {
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
+  const { features } = useFeatureFlags();
   const t = useTranslations("common");
   const tListing = useTranslations("listing");
   const config = useConfig();
@@ -135,7 +137,8 @@ export default function Header() {
   const navigationItems = useMemo((): NavigationItem[] => {
     return NAVIGATION_CONFIG
       .filter((item) => {
-        if (item.key === "favorites" && !session?.user?.id) {
+        // Hide favorites link when feature is disabled or user is not logged in
+        if (item.key === "favorites" && (!features.favorites || !session?.user?.id)) {
           return false;
         }
         return true;
@@ -149,7 +152,7 @@ export default function Header() {
             : t(item.translationKey as any)
           : item.staticLabel || item.key,
       }));
-  }, [t, tListing, session?.user?.id]);
+  }, [t, tListing, session?.user?.id, features.favorites]);
 
   const isActiveLink = useCallback(
     (href: string): boolean => {
