@@ -25,13 +25,14 @@ function FilterURLParserContent() {
       return;
     }
 
+    // Capture previous URL BEFORE updating (critical for transition detection)
+    const prevUrl = lastUrlRef.current;
+
     // Skip if we're currently updating (prevents race conditions)
     if (isUpdatingRef.current) {
       lastUrlRef.current = currentUrl;
       return;
     }
-
-    lastUrlRef.current = currentUrl;
 
     const tagsParam = searchParams.get('tags');
     const categoriesParam = searchParams.get('categories');
@@ -45,10 +46,10 @@ function FilterURLParserContent() {
     // it's likely a timing issue. Don't clear filters unless we're intentionally going to root.
     if (pathname === '/' && !tagsParam && !categoriesParam && !tagMatch && !categoryMatch) {
       // Check if the previous URL had filters (indicates we're transitioning)
-      const wasOnFilteredPage = lastUrlRef.current.includes('categories=') ||
-                                 lastUrlRef.current.includes('tags=') ||
-                                 lastUrlRef.current.includes('/categories/') ||
-                                 lastUrlRef.current.includes('/tags/');
+      const wasOnFilteredPage = prevUrl.includes('categories=') ||
+                                 prevUrl.includes('tags=') ||
+                                 prevUrl.includes('/categories/') ||
+                                 prevUrl.includes('/tags/');
 
       if (wasOnFilteredPage && isUpdatingRef.current) {
         // Don't update lastUrlRef - we want to process the real URL when it arrives
@@ -121,6 +122,9 @@ function FilterURLParserContent() {
         isUpdatingRef.current = false;
       }, 500);
     }
+
+    // Update lastUrlRef at the very end, after all logic has completed
+    lastUrlRef.current = currentUrl;
   }, [pathname, searchParams]); // Only depend on URL changes
 
   return null;
