@@ -32,7 +32,7 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
 
         // Get current full URL (pathname + search)
         // IMPORTANT: Use window.location to get the ACTUAL browser URL
-        let currentFullPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : pathname;
+        const currentFullPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : pathname;
 
         // Normalize URLs for comparison
         const normalize = (url: string) => {
