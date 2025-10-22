@@ -14,8 +14,7 @@ export default async function TagListing({
   params: Promise<{ tag: string; locale: string }>;
 }) {
   const resolvedParams = await params;
-  const { tag: rawTag, locale } = resolvedParams;
-  const tag = decodeURI(rawTag);
+  const { locale } = resolvedParams;
 
   // Fetch all items (filtering will be done client-side via FilterURLParser)
   const { categories, tags, items } = await fetchItems({ lang: locale });

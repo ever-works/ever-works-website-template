@@ -14,8 +14,7 @@ export default async function CategoryListing({
   params: Promise<{ category: string; locale: string }>;
 }) {
   const resolvedParams = await params;
-  const { category: rawCategory, locale } = resolvedParams;
-  const category = decodeURIComponent(rawCategory);
+  const { locale } = resolvedParams;
 
   // Fetch all items (filtering will be done client-side via FilterURLParser)
   const { categories, tags, items } = await fetchItems({ lang: locale });
