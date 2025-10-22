@@ -52,6 +52,17 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
   }, [initialTag, initialCategory]);
 
   /**
+   * Cleanup: Clear loading timeout on unmount to prevent memory leaks
+   */
+  useEffect(() => {
+    return () => {
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  /**
    * Wrapped setter that updates both state and URL
    */
   const setSelectedTags = useCallback((tags: TagId[] | ((prev: TagId[]) => TagId[])) => {
