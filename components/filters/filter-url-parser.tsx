@@ -55,12 +55,7 @@ function FilterURLParserContent() {
         // Don't update lastUrlRef - we want to process the real URL when it arrives
         return;
       }
-
-      // If we reach here and wasOnFilteredPage is true but isUpdatingRef is false,
-      // wait a bit longer for the query params to arrive
-      if (wasOnFilteredPage) {
-        return;
-      }
+      // otherwise let the parser continue so genuine navigation to "/" clears state
     }
 
     // Parse the filters from URL
