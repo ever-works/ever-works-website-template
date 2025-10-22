@@ -2,6 +2,7 @@ import { fetchByTag } from "@/lib/content";
 import { paginateMeta } from "@/lib/paginate";
 import Listing from "../../listing";
 import { Suspense } from "react";
+import { ListingSkeleton } from "@/components/ui/skeleton";
 
 // Disable static generation to prevent content loading errors during build
 export const dynamic = 'force-dynamic';
@@ -45,7 +46,7 @@ export default async function TagListing({
     lang: locale,
   });
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<ListingSkeleton />}>
       <Listing
         categories={categories}
         tags={tags}

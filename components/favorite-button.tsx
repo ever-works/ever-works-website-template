@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { Heart, Star } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useLoginModal } from '@/hooks/use-login-modal';
+import { useFeatureFlags } from '@/hooks/use-feature-flags';
 
 interface FavoriteButtonProps {
 	itemSlug: string;
@@ -30,11 +31,17 @@ export function FavoriteButton({
 	showText = false,
 	position = 'top-right'
 }: FavoriteButtonProps) {
+	// All hooks must be called before any early returns
 	const { data: session } = useSession();
-
+	const { features, isLoading: isFeaturesLoading } = useFeatureFlags();
 	const { isFavorited, toggleFavorite, isAdding, isRemoving } = useFavorites();
 	const [isHovered, setIsHovered] = useState(false);
 	const loginModal = useLoginModal();
+
+	// Hide favorite button when feature is disabled
+	if (isFeaturesLoading || !features.favorites) {
+		return null;
+	}
 
 	const isFav = isFavorited(itemSlug);
 	const isLoading = isAdding || isRemoving;

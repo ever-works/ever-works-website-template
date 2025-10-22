@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useItemRating } from "@/hooks/use-item-rating";
 import { Rating } from "@/components/ui/rating";
+import { useFeatureFlags } from "@/hooks/use-feature-flags";
 
 interface RatingDisplayProps {
   itemId: string;
@@ -10,7 +11,13 @@ interface RatingDisplayProps {
 
 export function RatingDisplay({ itemId }: RatingDisplayProps) {
   const t = useTranslations();
+  const { features, isLoading } = useFeatureFlags();
   const { rating } = useItemRating(itemId);
+
+  // Hide rating display when feature is disabled
+  if (isLoading || !features.ratings) {
+    return null;
+  }
 
   return (
     <div className="flex justify-between items-center p-4 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-300 group">

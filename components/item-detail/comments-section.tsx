@@ -11,6 +11,7 @@ import { Rating } from '@/components/ui/rating';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import type { CommentWithUser } from '@/lib/types/comment';
 import { toast } from 'sonner';
+import { useFeatureFlags } from '@/hooks/use-feature-flags';
 
 // Extracted loading skeleton component
 const CommentSkeleton = memo(() => (
@@ -174,8 +175,11 @@ interface CommentsSectionProps {
 }
 
 export function CommentsSection({ itemId }: CommentsSectionProps) {
+	// All hooks must be called before any early returns
+	const { features, isLoading: isFeaturesLoading } = useFeatureFlags();
 	const { comments, isLoading, createComment, isCreating, deleteComment, isDeleting } = useComments(itemId);
 	const { user } = useCurrentUser();
+
 	const handleSubmit = useCallback(
 		async (content: string, rating: number) => {
 			try {
@@ -198,6 +202,11 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 		},
 		[deleteComment]
 	);
+
+	// Hide comments section when feature is disabled
+	if (isFeaturesLoading || !features.comments) {
+		return null;
+	}
 
 	if (isLoading) {
 		return <CommentSkeleton />;

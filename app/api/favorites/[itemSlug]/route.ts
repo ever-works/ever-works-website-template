@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/drizzle';
 import { favorites } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { checkDatabaseAvailability } from '@/lib/utils/database-check';
 
 /**
  * @swagger
@@ -85,6 +86,10 @@ export async function DELETE(
   { params }: { params: Promise<{ itemSlug: string }> }
 ) {
   try {
+    // Check database availability
+    const dbCheck = checkDatabaseAvailability();
+    if (dbCheck) return dbCheck;
+
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(

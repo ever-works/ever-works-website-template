@@ -41,13 +41,12 @@ const LAYOUT_STYLES = {
 };
 
 export default function GlobalsClient(props: ListingProps) {
-	const { layoutHome = LayoutHome.HOME_ONE, paginationType } = useLayoutTheme();
+	const { layoutHome = LayoutHome.HOME_ONE, paginationType, isInitialized } = useLayoutTheme();
 	const { selectedCategories, searchTerm, selectedTags, sortBy, setSelectedTags, setSelectedCategories } =
 		useFilters();
 	const sortedTags = sortByNumericProperty(props.tags);
 	const sortedCategories = sortByNumericProperty(props.categories);
 	const searchParams = useSearchParams();
-	const [initialized, setInitialized] = useState(false);
 
 	// Use the new hook for featured items
 	const { featuredItems } = useFeaturedItemsSection({
@@ -133,6 +132,7 @@ export default function GlobalsClient(props: ListingProps) {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
+	// Sync URL params to filters only after mount to avoid hydration mismatch
 	useEffect(() => {
 		const tagsParam = searchParams.get('tags');
 		if (tagsParam) {
@@ -143,15 +143,59 @@ export default function GlobalsClient(props: ListingProps) {
 		if (categoriesParam) {
 			setSelectedCategories(categoriesParam.split(','));
 		}
-
-		setInitialized(true);
 	}, [searchParams, setSelectedTags, setSelectedCategories]);
 
-	if (!initialized) return null;
+	// Show skeleton loading state until context is initialized to prevent layout flash
+	if (!isInitialized) {
+		return (
+			<div className={LAYOUT_STYLES.mainContainer}>
+				<div className={LAYOUT_STYLES.contentWrapper}>
+					{/* Sidebar Skeleton */}
+					<div className={`${LAYOUT_STYLES.sidebar} ${LAYOUT_STYLES.sidebarMobile}`}>
+						<div className="space-y-4 p-4">
+							<div className="h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+							<div className="space-y-2">
+								{Array.from({ length: 5 }).map((_, i) => (
+									<div key={i} className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+								))}
+							</div>
+						</div>
+					</div>
+					{/* Main Content Skeleton */}
+					<div className={LAYOUT_STYLES.mainContent}>
+						{/* Tags Skeleton */}
+						<div className="mb-4 sm:mb-6 md:mb-8">
+							<div className="flex flex-wrap gap-2">
+								{Array.from({ length: 8 }).map((_, i) => (
+									<div key={i} className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+								))}
+							</div>
+						</div>
+						{/* Grid Skeleton */}
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+							{Array.from({ length: 6 }).map((_, i) => (
+								<div key={i} className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+									<div className="space-y-4">
+										<div className="h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+										<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+										<div className="h-4 w-2/3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+										<div className="flex space-x-2">
+											<div className="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+											<div className="h-6 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+										</div>
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	if (layoutHome === LayoutHome.HOME_ONE) {
 		return (
-			<div className={LAYOUT_STYLES.mainContainer}>
+			<div className={LAYOUT_STYLES.mainContainer} suppressHydrationWarning>
 				{/* Featured Items Section - Only show on first page and desktop */}
 				{/* {page === 1 && featuredItems.length > 0 && (
           <div className={`mb-8 sm:mb-10 md:mb-12 lg:mb-16 ${LAYOUT_STYLES.desktopOnly}`}>
@@ -211,7 +255,7 @@ export default function GlobalsClient(props: ListingProps) {
 	}
 
 	return (
-		<div className={LAYOUT_STYLES.mainContainer}>
+		<div className={LAYOUT_STYLES.mainContainer} suppressHydrationWarning>
 			<HomeTwoLayout
 				{...props}
 				categories={sortedCategories}

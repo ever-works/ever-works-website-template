@@ -4,6 +4,7 @@ import { deleteComment, getClientProfileByUserId } from "@/lib/db/queries";
 import { db } from "@/lib/db/drizzle";
 import { comments } from "@/lib/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
+import { checkDatabaseAvailability } from "@/lib/utils/database-check";
 
 /**
  * @swagger
@@ -60,6 +61,10 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ slug: string; commentId: string }> }
 ) {
+  // Check database availability
+  const dbCheck = checkDatabaseAvailability();
+  if (dbCheck) return dbCheck;
+
   const session = await auth();
   if (!session?.user?.id) {
     return new NextResponse("Unauthorized", { status: 401 });

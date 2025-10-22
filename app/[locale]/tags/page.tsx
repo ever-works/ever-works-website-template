@@ -1,6 +1,7 @@
 import { fetchItems } from "@/lib/content";
 import TagsGridClient from "./tags-grid-client";
 import { Suspense } from "react";
+import { GridSkeleton } from "@/components/ui/skeleton";
 
 export const revalidate = 10;
 
@@ -13,7 +14,7 @@ export default async function TagsPage({
   const { tags } = await fetchItems({ lang: locale, sortTags: true });
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<GridSkeleton count={12} />}>
       <TagsGridClient tags={tags} />
     </Suspense>
   );
