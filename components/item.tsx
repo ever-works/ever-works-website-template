@@ -184,10 +184,7 @@ export default function Item(props: ItemProps) {
 
 					{/* Promo Code Section */}
 					{props.promo_code && (
-						<div
-							className="mt-4 pt-4 border-t border-gray-200/50 dark:border-gray-700/50"
-							onClick={(e) => e.stopPropagation()}
-						>
+						<div className="mt-4 pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
 							<PromoCodeComponent
 								promoCode={props.promo_code}
 								variant="compact"
