@@ -514,7 +514,8 @@ export enum ActivityType {
 	VERIFY_EMAIL = 'VERIFY_EMAIL',
 	UPDATE_PASSWORD = 'UPDATE_PASSWORD',
 	DELETE_ACCOUNT = 'DELETE_ACCOUNT',
-	UPDATE_ACCOUNT = 'UPDATE_ACCOUNT'
+	UPDATE_ACCOUNT = 'UPDATE_ACCOUNT',
+	UPDATE_TWENTY_CRM_CONFIG = 'UPDATE_TWENTY_CRM_CONFIG'
 }
 
 // ######################### Client Profile Types #########################
@@ -582,3 +583,27 @@ export type NewFavorite = typeof favorites.$inferInsert;
 export type FavoriteWithUser = Favorite & {
   user: typeof users.$inferSelect;
 };
+
+// ######################### Twenty CRM Config Schema #########################
+export const twentyCrmConfig = pgTable("twenty_crm_config", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  baseUrl: text("base_url").notNull(),
+  apiKey: text("api_key").notNull(),
+  enabled: boolean("enabled").notNull().default(false),
+  syncMode: text("sync_mode", { enum: ["disabled", "platform", "direct_crm"] })
+    .notNull()
+    .default("disabled"),
+  createdBy: text("created_by"),
+  updatedBy: text("updated_by"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  enabledIndex: index("twenty_crm_config_enabled_idx").on(table.enabled),
+  syncModeIndex: index("twenty_crm_config_sync_mode_idx").on(table.syncMode),
+  updatedAtIndex: index("twenty_crm_config_updated_at_idx").on(table.updatedAt),
+}));
+
+export type TwentyCrmConfigRow = typeof twentyCrmConfig.$inferSelect;
+export type NewTwentyCrmConfigRow = typeof twentyCrmConfig.$inferInsert;
