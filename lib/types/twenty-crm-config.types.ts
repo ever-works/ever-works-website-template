@@ -55,3 +55,16 @@ export interface TwentyCrmEnvConfig {
   enabled: boolean;
   syncMode: TwentyCrmSyncMode;
 }
+
+/**
+ * Result from testing Twenty CRM connection
+ */
+export interface TwentyCrmTestConnectionResult {
+  ok: boolean;
+  latencyMs: number;
+  message: string;
+  details?: {
+    status?: number;
+    error?: string;
+  };
+}
