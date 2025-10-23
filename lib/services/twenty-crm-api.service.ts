@@ -4,13 +4,13 @@
  */
 
 import type { TwentyCrmTestConnectionResult } from '@/lib/types/twenty-crm-config.types';
-import { maskApiKey } from '@/lib/utils/twenty-crm-validation';
+import { TwentyCrmRestClient } from './twenty-crm-rest-client.service';
 
 const TEST_CONNECTION_TIMEOUT = 10000; // 10 seconds
 
 export class TwentyCrmApiService {
   /**
-   * Tests connection to Twenty CRM API
+   * Tests connection to Twenty CRM API using the REST client
    * Calls the metadata endpoint which is typically available and requires authentication
    *
    * @param baseUrl - Twenty CRM base URL
@@ -22,131 +22,46 @@ export class TwentyCrmApiService {
     apiKey: string
   ): Promise<TwentyCrmTestConnectionResult> {
     const startTime = performance.now();
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), TEST_CONNECTION_TIMEOUT);
 
-    try {
-      // Construct the test endpoint URL
-      // Twenty CRM typically has /rest/metadata or /graphql endpoints
-      const testUrl = new URL('/rest/metadata', baseUrl).toString();
+    // Create a REST client with test-specific config (no retries for connection test)
+    const client = new TwentyCrmRestClient({
+      baseUrl,
+      apiKey,
+      timeout: TEST_CONNECTION_TIMEOUT,
+      maxRetries: 0, // No retries for connection test
+    });
 
-      // Make the test request
-      const response = await fetch(testUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        signal: controller.signal,
-      });
+    // Test connection by calling the metadata endpoint
+    const response = await client.get<Record<string, unknown>>('/rest/metadata', {
+      skipRetry: true,
+    });
 
-      clearTimeout(timeoutId);
-      const latencyMs = Math.round(performance.now() - startTime);
+    const latencyMs = Math.round(performance.now() - startTime);
 
-      // Handle different response status codes
-      if (response.ok) {
-        return {
-          ok: true,
-          latencyMs,
-          message: 'Successfully connected to Twenty CRM',
-          details: {
-            status: response.status,
-          },
-        };
-      }
-
-      // Handle authentication errors
-      if (response.status === 401 || response.status === 403) {
-        return {
-          ok: false,
-          latencyMs,
-          message: 'Authentication failed - invalid API key',
-          details: {
-            status: response.status,
-            error: 'Unauthorized',
-          },
-        };
-      }
-
-      // Handle rate limiting
-      if (response.status === 429) {
-        return {
-          ok: false,
-          latencyMs,
-          message: 'Rate limit exceeded - too many requests',
-          details: {
-            status: response.status,
-            error: 'Rate Limited',
-          },
-        };
-      }
-
-      // Handle server errors
-      if (response.status >= 500) {
-        return {
-          ok: false,
-          latencyMs,
-          message: 'Twenty CRM server error - service may be down',
-          details: {
-            status: response.status,
-            error: 'Server Error',
-          },
-        };
-      }
-
-      // Handle other client errors
+    // Handle response using discriminated union
+    if (response.success) {
       return {
-        ok: false,
+        ok: true,
         latencyMs,
-        message: `Connection failed with status ${response.status}`,
+        message: 'Successfully connected to Twenty CRM',
         details: {
-          status: response.status,
-          error: response.statusText,
-        },
-      };
-    } catch (error) {
-      clearTimeout(timeoutId);
-      const latencyMs = Math.round(performance.now() - startTime);
-
-      // Handle timeout errors
-      if (error instanceof Error && error.name === 'AbortError') {
-        return {
-          ok: false,
-          latencyMs,
-          message: `Connection timeout after ${TEST_CONNECTION_TIMEOUT / 1000}s`,
-          details: {
-            error: 'Timeout',
-          },
-        };
-      }
-
-      // Handle network errors
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        return {
-          ok: false,
-          latencyMs,
-          message: 'Cannot reach Twenty CRM server - check network or base URL',
-          details: {
-            error: 'Network Error',
-          },
-        };
-      }
-
-      // Handle other errors
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-
-      // Mask API key in error messages
-      const sanitizedMessage = errorMessage.replace(apiKey, maskApiKey(apiKey));
-
-      return {
-        ok: false,
-        latencyMs,
-        message: 'Connection test failed',
-        details: {
-          error: sanitizedMessage,
+          status: 200,
         },
       };
     }
+
+    // Handle error response
+    const error = response.error;
+
+    return {
+      ok: false,
+      latencyMs,
+      message: error.message,
+      details: {
+        status: error.status,
+        error: error.code,
+      },
+    };
   }
 
   /**

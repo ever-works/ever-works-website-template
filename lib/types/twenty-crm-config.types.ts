@@ -3,6 +3,8 @@
  * Types for Twenty CRM integration configuration
  */
 
+import type { TwentyCrmError } from './twenty-crm-errors.types';
+
 /**
  * Sync mode options for Twenty CRM integration
  */
@@ -68,3 +70,36 @@ export interface TwentyCrmTestConnectionResult {
     error?: string;
   };
 }
+
+/**
+ * Configuration for Twenty CRM REST client
+ */
+export interface TwentyCrmClientConfig {
+  baseUrl: string;
+  apiKey: string;
+  timeout?: number;
+  maxRetries?: number;
+  initialBackoffMs?: number;
+  maxBackoffMs?: number;
+}
+
+/**
+ * Successful response from Twenty CRM API
+ */
+export interface TwentyCrmSuccessResponse<T> {
+  success: true;
+  data: T;
+}
+
+/**
+ * Error response from Twenty CRM API
+ */
+export interface TwentyCrmErrorResponse {
+  success: false;
+  error: TwentyCrmError;
+}
+
+/**
+ * Generic response envelope for Twenty CRM API calls
+ */
+export type TwentyCrmResponse<T> = TwentyCrmSuccessResponse<T> | TwentyCrmErrorResponse;
