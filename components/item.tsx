@@ -24,7 +24,6 @@ export default function Item(props: ItemProps) {
 	const pathname = usePathname();
 	const locale = pathname.split('/')[1] || '';
 	const { data: session } = useSession();
-	const { selectedTags, addSelectedTag } = useFilters();
 	const [isNavigating, setIsNavigating] = useState(false);
 
 	const shouldShowFallbackIcon = shouldShowFallback(props.icon_url || '');
