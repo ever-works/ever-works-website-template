@@ -302,7 +302,7 @@ export async function POST(request: NextRequest) {
   try {
     // Check admin authentication
     const session = await auth();
-    if (!session?.user?.isAdmin) {
+    if (!session?.user?.isAdmin || !session.user.id) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized. Admin access required.' },
         { status: 401 }
@@ -331,7 +331,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Save configuration
+    // Save configuration (session.user.id is guaranteed to be string here)
     const savedConfig = await configRepository.saveConfig(
       validation.data,
       session.user.id
@@ -342,7 +342,7 @@ export async function POST(request: NextRequest) {
       ActivityType.UPDATE_TWENTY_CRM_CONFIG,
       session.user.id,
       'user',
-      request.headers.get('x-forwarded-for') || request.ip || undefined
+      request.headers.get('x-forwarded-for') || undefined
     );
 
     return NextResponse.json({

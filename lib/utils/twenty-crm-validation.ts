@@ -13,9 +13,7 @@ export const SYNC_MODE_VALUES = ['disabled', 'platform', 'direct_crm'] as const;
 /**
  * Zod schema for sync mode
  */
-export const syncModeSchema = z.enum(SYNC_MODE_VALUES, {
-  errorMap: () => ({ message: 'Sync mode must be one of: disabled, platform, direct_crm' }),
-});
+export const syncModeSchema = z.enum(SYNC_MODE_VALUES);
 
 /**
  * Zod schema for base URL validation
@@ -50,10 +48,7 @@ export const apiKeySchema = z
 export const updateTwentyCrmConfigSchema = z.object({
   baseUrl: baseUrlSchema,
   apiKey: apiKeySchema,
-  enabled: z.boolean({
-    required_error: 'Enabled field is required',
-    invalid_type_error: 'Enabled must be a boolean',
-  }),
+  enabled: z.boolean(),
   syncMode: syncModeSchema,
 });
 
