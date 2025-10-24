@@ -43,6 +43,13 @@
       "when": 1761210905153,
       "tag": "0005_tiresome_true_believers",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1761211200000,
+      "tag": "0006_add_twenty_crm_singleton_constraint",
+      "breakpoints": true
     }
   ]
 }

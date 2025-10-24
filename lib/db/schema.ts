@@ -585,6 +585,18 @@ export type FavoriteWithUser = Favorite & {
 };
 
 // ######################### Twenty CRM Config Schema #########################
+/**
+ * Twenty CRM Configuration Table
+ *
+ * This table stores the Twenty CRM integration configuration.
+ *
+ * IMPORTANT: This table enforces a singleton pattern via a unique index on ((true)),
+ * which ensures only ONE configuration row can exist. This is enforced by migration
+ * 0006_add_twenty_crm_singleton_constraint.sql and prevents data inconsistencies.
+ *
+ * The singleton constraint is not visible in Drizzle schema definition as it uses
+ * an expression-based index, but it is enforced at the database level.
+ */
 export const twentyCrmConfig = pgTable("twenty_crm_config", {
   id: text("id")
     .primaryKey()
