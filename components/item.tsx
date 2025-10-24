@@ -238,6 +238,7 @@ function CategoryFilterButton({ category }: { category: CategoryProp }) {
 				(isActive ? 'ring-2 ring-theme-primary-500' : '')
 			}
 			onClick={(e) => {
+				e.preventDefault();
 				e.stopPropagation();
 				if (!isActive) {
 					addSelectedCategory(categoryId);
@@ -265,6 +266,7 @@ function TagFilterButton({ tag, index }: { tag: TagProp; index: number }) {
 			)}
 			style={{ animationDelay: `${index * 0.05}s` }}
 			onClick={(e) => {
+				e.preventDefault();
 				e.stopPropagation();
 				if (!isActive) {
 					addSelectedTag(tagId);
