@@ -155,7 +155,7 @@ export async function GET() {
  *                 type: string
  *                 minLength: 10
  *                 description: "Twenty CRM API key (minimum 10 characters)"
- *                 example: "twenty_api_key_12345678"
+ *                 example: "example_api_key_12345678"
  *               enabled:
  *                 type: boolean
  *                 description: "Whether Twenty CRM integration is enabled"
@@ -167,7 +167,7 @@ export async function GET() {
  *                 example: "platform"
  *           example:
  *             baseUrl: "https://api.twenty.com"
- *             apiKey: "twenty_api_key_12345678"
+ *             apiKey: "example_api_key_12345678"
  *             enabled: true
  *             syncMode: "platform"
  *     responses:
