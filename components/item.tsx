@@ -261,9 +261,9 @@ function CategoryFilterButton({ category }: { category: CategoryProp }) {
 
 function TagFilterButton({ tag, index }: { tag: TagProp; index: number }) {
 	const { selectedTags, addSelectedTag } = useFilters();
-	const tagId = typeof tag === 'string' ? tag : tag.id;
-	const tagName = typeof tag === 'string' ? tag : tag.name;
-	const isActive = selectedTags.includes(tagId);
+	const tagId = typeof tag === 'string' ? tag : (tag.id ?? '');
+	const tagName = typeof tag === 'string' ? tag : (tag.name ?? tagId);
+	const isActive = tagId ? selectedTags.includes(tagId) : false;
 
 	return (
 		<button
@@ -277,9 +277,8 @@ function TagFilterButton({ tag, index }: { tag: TagProp; index: number }) {
 			onClick={(e) => {
 				e.preventDefault();
 				e.stopPropagation();
-				if (!isActive) {
-					addSelectedTag(tagId);
-				}
+				if (!tagId || isActive) return;
+				addSelectedTag(tagId);
 			}}
 			aria-label={`Filter by tag ${tagName}`}
 		>
