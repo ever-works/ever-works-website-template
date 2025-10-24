@@ -2,7 +2,7 @@
 
 import { ItemData, Tag, Category } from '@/lib/content';
 import Link from 'next/link';
-import { Card, CardHeader, CardBody, cn } from '@heroui/react';
+import { Card, CardHeader, CardBody, cn, Spinner } from '@heroui/react';
 import { FiArrowUpRight, FiFolder } from 'react-icons/fi';
 import { useFilters } from '@/components/filters/context/filter-context';
 import { usePathname } from 'next/navigation';
@@ -12,6 +12,7 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { shouldShowFallback, isProblematicUrl } from '@/lib/utils/image-domains';
 import { FeaturedBadge } from './featured-items';
+import { useState } from 'react';
 
 type ItemProps = ItemData & {
 	onNavigate?: () => void;
@@ -24,6 +25,7 @@ export default function Item(props: ItemProps) {
 	const locale = pathname.split('/')[1] || '';
 	const { data: session } = useSession();
 	const { selectedTags, addSelectedTag } = useFilters();
+	const [isNavigating, setIsNavigating] = useState(false);
 
 	const shouldShowFallbackIcon = shouldShowFallback(props.icon_url || '');
 
@@ -52,6 +54,7 @@ export default function Item(props: ItemProps) {
 		<Link
 			href={getDetailPath()}
 			onClick={() => {
+				setIsNavigating(true);
 				props.onNavigate?.();
 			}}
 			className="block"
@@ -216,6 +219,13 @@ export default function Item(props: ItemProps) {
 
 			{/* Subtle glow effect */}
 			<div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
+			{/* Loading overlay */}
+			{isNavigating && (
+				<div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl flex items-center justify-center z-50 transition-opacity duration-300">
+					<Spinner size="lg" color="primary" />
+				</div>
+			)}
 		</Card>
 		</Link>
 	);
