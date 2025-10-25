@@ -9,7 +9,8 @@ interface ModalProps {
   onClose: () => void;
   onOpenChange?: (open: boolean) => void;
   title?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  subtitle?: React.ReactNode;
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
   children: React.ReactNode;
   backdrop?: 'blur' | 'opaque' | 'transparent';
   isDismissable?: boolean;
@@ -22,6 +23,7 @@ export function Modal({
   onClose,
   onOpenChange,
   title,
+  subtitle,
   size = 'md',
   children,
   backdrop = 'blur',
@@ -66,6 +68,9 @@ export function Modal({
     lg: 'max-w-lg',
     xl: 'max-w-xl',
     '2xl': 'max-w-2xl',
+    '3xl': 'max-w-3xl',
+    '4xl': 'max-w-4xl',
+    '5xl': 'max-w-5xl',
   };
 
   const backdropClasses = {
@@ -99,23 +104,27 @@ export function Modal({
         onClick={(e) => e.stopPropagation()}
       >
         {(title || !hideCloseButton) && (
-          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-            {title && (
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {title}
-              </h2>
-            )}
-            {!hideCloseButton && (
-              <button
-                onClick={() => {
-                  onClose();
-                  onOpenChange?.(false);
-                }}
-                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
-              >
-                <X size={20} className="text-gray-500 dark:text-gray-400" />
-              </button>
-            )}
+          <div className="flex flex-col gap-2 p-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              {title && (
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {title}
+                </h2>
+              )}
+              {!hideCloseButton && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onOpenChange?.(false);
+                  }}
+                  className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                >
+                  <X size={20} className="text-gray-500 dark:text-gray-400" />
+                </button>
+              )}
+            </div>
+            {subtitle}
           </div>
         )}
         <div className="overflow-y-auto max-h-[calc(90vh-4rem)]">

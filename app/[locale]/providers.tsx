@@ -4,6 +4,7 @@ import type { Config } from '@/lib/content';
 import { HeroUIProvider } from '@heroui/react';
 import { ConfigProvider } from './config';
 import {
+	ConfirmProvider,
 	ErrorProvider,
 	FilterProvider,
 	LayoutProvider,
@@ -24,13 +25,15 @@ export function Providers({ config, children, dehydratedState }: ProvidersProps)
 			<QueryClientProvider dehydratedState={dehydratedState}>
 				<LayoutProvider>
 					<ErrorProvider>
-						<FilterProvider>
-							<ConfigProvider config={config}>
-								<ThemeProvider>
-									<HeroUIProvider>{children}</HeroUIProvider>
-								</ThemeProvider>
-							</ConfigProvider>
-						</FilterProvider>
+						<ConfirmProvider>
+							<FilterProvider>
+								<ConfigProvider config={config}>
+									<ThemeProvider>
+										<HeroUIProvider>{children}</HeroUIProvider>
+									</ThemeProvider>
+								</ConfigProvider>
+							</FilterProvider>
+						</ConfirmProvider>
 					</ErrorProvider>
 				</LayoutProvider>
 			</QueryClientProvider>

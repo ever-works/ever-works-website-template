@@ -272,6 +272,11 @@
   dependencies:
     tslib "^2.4.0"
 
+"@epic-web/invariant@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@epic-web/invariant/-/invariant-1.0.0.tgz#1073e5dee6dd540410784990eb73e4acd25c9813"
+  integrity sha512-lrTPqgvfFQtR/eY/qkIzp98OGdNJu0m5ji3q/nJI8v3SXkRKEnWiOxMmbvcSoAIzv/cGiuvRy57k4suKQSAdwA==
+
 "@esbuild-kit/core-utils@^3.3.2":
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/@esbuild-kit/core-utils/-/core-utils-3.3.2.tgz#186b6598a5066f0413471d7c4d45828e399ba96c"
@@ -6115,6 +6120,14 @@ cronstrue@^2.21.0:
   resolved "https://registry.yarnpkg.com/cronstrue/-/cronstrue-2.61.0.tgz#97c79c77045c052afb44cb9f5f8eaf54398094f2"
   integrity sha512-ootN5bvXbIQI9rW94+QsXN5eROtXWwew6NkdGxIRpS/UFWRggL0G5Al7a9GTBFEsuvVhJ2K3CntIIVt7L2ILhA==
 
+cross-env@^10.1.0:
+  version "10.1.0"
+  resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-10.1.0.tgz#cfd2a6200df9ed75bfb9cb3d7ce609c13ea21783"
+  integrity sha512-GsYosgnACZTADcmEyJctkJIoqAhHjttw7RsFrVoJNXbsWWqaq6Ym+7kZjq6mS45O0jij6vtiReppKQEtqWy6Dw==
+  dependencies:
+    "@epic-web/invariant" "^1.0.0"
+    cross-spawn "^7.0.6"
+
 cross-spawn@^7.0.3, cross-spawn@^7.0.6:
   version "7.0.6"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.6.tgz#8a58fe78f00dcd70c370451759dfbfaf03e8ee9f"
@@ -10540,6 +10553,16 @@ supports-preserve-symlinks-flag@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
+
+survey-core@^2.3.12:
+  version "2.3.12"
+  resolved "https://registry.yarnpkg.com/survey-core/-/survey-core-2.3.12.tgz#e9ed139739e4c170a3d4d72ee6435f620db0614e"
+  integrity sha512-stsqaK0WPGkquksN7GGGN9UYVDB34Qd+AHjNMTQwJlOaPgoCwZqz8jYROvgaU7wCebN0Uo1KRB4vZTUA/7I4Jg==
+
+survey-react-ui@^2.3.12:
+  version "2.3.12"
+  resolved "https://registry.yarnpkg.com/survey-react-ui/-/survey-react-ui-2.3.12.tgz#4c32a0f335d88e379373ca50b35827f488b3986b"
+  integrity sha512-ozv2A7kqGv29DIn7XQug+MU8gLlFz/6mrWh5NDal3Bh7cfBBf6vW9y+Snnw+sD1uL5RCMVUJ5PLy7QspoRTcHA==
 
 swagger-jsdoc@6.2.8, swagger-jsdoc@^6.2.8:
   version "6.2.8"

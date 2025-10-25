@@ -10,6 +10,7 @@ import { UniversalPagination } from "@/components/universal-pagination";
 import { Plus, Edit, Trash2, Package, Clock, CheckCircle, XCircle, Star, ExternalLink, Loader2 } from "lucide-react";
 import { useAdminItems } from "@/hooks/use-admin-items";
 import { useTranslations } from 'next-intl';
+import { AdminSurveyCreationButton } from "@/components/surveys/admin-survey-creation-button";
 
 export default function AdminItemsPage() {
   const t = useTranslations('admin.ADMIN_ITEMS_PAGE');
@@ -250,15 +251,23 @@ export default function AdminItemsPage() {
                 </p>
               </div>
             </div>
-            <Button
-              color="primary"
-              size="lg"
-              onPress={openCreateModal}
-              startContent={<Plus size={18} />}
-              className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
-            >
-              {t('ADD_ITEM')}
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                color="primary"
+                size="lg"
+                onPress={openCreateModal}
+                startContent={<Plus size={18} />}
+                className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
+              >
+                {t('ADD_ITEM')}
+              </Button>
+              <AdminSurveyCreationButton 
+                showLabel
+                variant="default"
+                size="lg"
+                className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/40 transition-all duration-300 text-white font-medium"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -476,6 +485,14 @@ export default function AdminItemsPage() {
                             </Button>
                           </>
                         )}
+
+                        {/* Survey Creation */}
+                        <AdminSurveyCreationButton
+                          itemId={item.id}
+                          variant="ghost"
+                          size="sm"
+                          className="w-8 p-0 hover:bg-yellow-500/10 hover:text-yellow-600"
+                        />
 
                         {/* Edit and Delete */}
                         <Button

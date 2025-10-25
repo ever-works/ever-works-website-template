@@ -8,7 +8,8 @@ import {
   serial,
   varchar,
   uniqueIndex,
-  index
+  index,
+  jsonb
 } from 'drizzle-orm/pg-core';
 import type { AdapterAccountType } from 'next-auth/adapters';
 import { PaymentPlan, PaymentProvider } from '../constants';
@@ -649,8 +650,8 @@ export const itemsCompanies = pgTable("items_companies", {
   companyId: text("company_id")
     .notNull()
     .references(() => companies.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => ({
   companyIdIndex: index("items_companies_company_id_idx").on(table.companyId),
 }));
@@ -658,3 +659,71 @@ export const itemsCompanies = pgTable("items_companies", {
 // ######################### Items Companies Types #########################
 export type ItemCompany = typeof itemsCompanies.$inferSelect;
 export type NewItemCompany = typeof itemsCompanies.$inferInsert;
+// ######################### Survey Schema #########################
+
+export const surveys = pgTable(
+  "surveys",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    slug: text("slug").notNull().unique(),
+    title: text("title").notNull(),
+    description: text("description"),
+    type: text("type", { enum: ["global", "item"] }).notNull(),
+    itemId: text("item_id"),
+    status: text("status", { enum: ["draft", "published", "closed"] })
+      .notNull()
+      .default("draft"),
+    surveyJson: jsonb("survey_json").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    closedAt: timestamp("closed_at", { withTimezone: true }),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+  },
+  (table) => ({
+    slugIndex: index("surveys_slug_idx").on(table.slug),
+    typeIndex: index("surveys_type_idx").on(table.type),
+    itemIdIndex: index("surveys_item_id_idx").on(table.itemId),
+    statusIndex: index("surveys_status_idx").on(table.status),
+    createdAtIndex: index("surveys_created_at_idx").on(table.createdAt),
+  })
+);
+
+export const surveyResponses = pgTable(
+  "survey_responses",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    surveyId: text("survey_id")
+      .notNull()
+      .references(() => surveys.id, { onDelete: "restrict" }),
+    userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
+    itemId: text("item_id"),
+    data: jsonb("data").notNull(),
+    completedAt: timestamp("completed_at", { withTimezone: true }).notNull(),
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    surveyIdIndex: index("survey_responses_survey_id_idx").on(table.surveyId),
+    userIdIndex: index("survey_responses_user_id_idx").on(table.userId),
+    itemIdIndex: index("survey_responses_item_id_idx").on(table.itemId),
+    completedAtIndex: index("survey_responses_completed_at_idx").on(table.completedAt),
+  })
+);
+
+
+// Survey types
+export type Survey = typeof surveys.$inferSelect;
+export type SurveyItem = Survey & {
+  responseCount?: number;
+  isCompletedByUser?: boolean;
+};
+export type NewSurvey = typeof surveys.$inferInsert;
+export type SurveyResponse = typeof surveyResponses.$inferSelect;
+export type NewSurveyResponse = typeof surveyResponses.$inferInsert;

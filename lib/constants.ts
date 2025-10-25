@@ -128,3 +128,17 @@ export enum SubmissionStatus {
 	PUBLISHED = 'published',
 	ARCHIVED = 'archived'
 }
+
+// ============================================
+// SURVEY
+// ============================================
+export enum SurveyTypeEnum {
+	GLOBAL = 'global',
+	ITEM = 'item'
+}
+
+export enum SurveyStatusEnum {
+	DRAFT = 'draft',
+	PUBLISHED = 'published',
+	CLOSED = 'closed'
+}

@@ -13,6 +13,7 @@ import {
   Activity,
   MessageSquare,
   Building2,
+  FileText,
   type LucideIcon
 } from "lucide-react";
 import type { ExtendedUser } from "@/types/profile-button.types";
@@ -159,6 +160,16 @@ function MenuItems({ user, profilePath, onItemClick, onNavigationStart, isNaviga
           gradientTo="to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30"
           iconColor="text-orange-600 dark:text-orange-400"
           endIcon={Activity}
+        />
+
+        <MenuItem
+          href="/admin/surveys"
+          icon={FileText}
+          title={t("survey.SURVEYS")}
+          description={t("survey.MANAGE_SURVEYS_DESC")}
+          gradientFrom="from-yellow-100"
+          gradientTo="to-orange-100 dark:from-yellow-900/30 dark:to-orange-900/30"
+          iconColor="text-yellow-600 dark:text-yellow-400"
         />
 
         <MenuItem
