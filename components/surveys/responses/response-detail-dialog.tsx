@@ -39,7 +39,7 @@ export function ResponseDetailDialog({
             onClose={onClose}
             size="2xl"
             className="max-w-4xl max-h-[90vh] flex flex-col"
-            title={`${survey.title} - $ {t('RESPONSE_DETAILS')}`}
+            title={`${survey.title} - ${t('RESPONSE_DETAILS')}`}
             subtitle={
                 <div className="flex items-start justify-between w-full">
                     <div className="flex-1">

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileText, CheckCircle, Clock, ExternalLink } from 'lucide-react';
 import { surveyApiClient } from '@/lib/api/survey-api.client';
-import type {  SurveyItem } from '@/lib/db/schema';
+import type { SurveyItem } from '@/lib/db/schema';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -78,7 +78,7 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
         </Badge>
       );
     }
-    
+
     return (
       <Badge variant="outline" className="border-blue-200 text-blue-800 dark:border-blue-800 dark:text-blue-200">
         <Clock className="w-3 h-3 mr-1" />
@@ -118,8 +118,8 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
         <CardContent>
           <div className="text-center py-8 text-red-500">
             <p>{error}</p>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={loadSurveys}
               className="mt-4"
             >
@@ -150,7 +150,7 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
         <CardContent>
           <div className="grid gap-4">
             {surveys.map((survey) => (
-              <div 
+              <div
                 key={survey.id}
                 className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
               >
@@ -166,21 +166,19 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
                     )}
                     <div className="flex items-center gap-4">
                       {getStatusBadge(survey)}
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
                       {survey.publishedAt && (
                         <span className="text-sm text-gray-500 dark:text-gray-400">
                           {tCommon('PUBLISHED_AT')}: {formatDateTime(survey.publishedAt, locale)}
                         </span>
                       )}
-                      </span>
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-3 mt-4">
                   {survey.isCompletedByUser ? (
                     <>
-                      <Button 
+                      <Button
                         onClick={() => handleOpenSurveyDialog(survey)}
                         variant="outline"
                         className="border-green-600 text-green-700 dark:border-green-500 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950"
@@ -197,7 +195,7 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
                     </>
                   ) : (
                     <>
-                      <Button 
+                      <Button
                         onClick={() => handleOpenSurveyDialog(survey)}
                         className="bg-blue-600 hover:bg-blue-700 text-white"
                       >

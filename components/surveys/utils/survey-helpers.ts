@@ -2,16 +2,18 @@ import { Logger } from '@/lib/logger';
 
 const logger = Logger.create('SurveyHelpers');
 
+export interface SurveyCSVResponse{
+  id: string
+  userId?: string | null
+  completedAt?: string | Date | null
+  data?: Record<string, unknown>
+}
+
 /**
  * Export survey responses to CSV
  */
 export function exportResponsesToCSV(
-  responses: Array<{
-    id: string
-    userId?: string | null
-    completedAt?: string | Date | null
-    data?: Record<string, unknown>
-  }>,
+  responses: SurveyCSVResponse[],
   filename: string
 ) {
   if (!Array.isArray(responses) || responses.length === 0) return;

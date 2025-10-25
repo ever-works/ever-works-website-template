@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { surveyService } from '@/lib/services/survey.service';
-import type { CreateSurveyData, SurveyFilters } from '@/lib/services/survey.service';
+import type { CreateSurveyData, SurveyFilters } from '@/lib/types/survey';
 import { Logger } from '@/lib/logger';
 
 const logger = Logger.create('SurveyAPI');

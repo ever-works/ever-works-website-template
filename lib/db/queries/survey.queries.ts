@@ -78,26 +78,17 @@ export async function getSurveys(filters?: {
 
     const total = totalCount[0]?.count || 0;
 
-    // Map results - spread the row directly since we're selecting all survey columns
     const surveysList = surveysWithData.map((row: any) => {
-      const result: any = {};
-      // Copy all survey fields
-      Object.keys(surveys).forEach(key => {
-        if (key !== 'responseCount' && key !== 'isCompletedByUser' && row[key] !== undefined) {
-          result[key] = row[key];
-        }
-      });
-
-      // Add computed fields
+      const { responseCount, isCompletedByUser, ...survey } = row;
       if (filters.withResponseCount) {
-        result.responseCount = Number(row.responseCount) || 0;
+        (survey as any).responseCount = Number(responseCount ?? 0);
       }
       if (filters.withCompletionStatus && filters.userId) {
-        result.isCompletedByUser = Number(row.isCompletedByUser) > 0;
+        (survey as any).isCompletedByUser = Number(isCompletedByUser ?? 0) > 0;
       }
-
-      return result;
+      return survey as Survey & { responseCount?: number; isCompletedByUser?: boolean };
     });
+
 
     return {
       surveys: surveysList,
@@ -278,199 +269,7 @@ export async function getSurveyResponseById(id: string): Promise<SurveyResponse 
   return response || null;
 }
 
-/**
- * Check if user has completed a specific survey
- */
-export async function hasUserCompletedSurvey(surveyId: string, userId: string): Promise<boolean> {
-  const [response] = await db
-    .select({ count: count() })
-    .from(surveyResponses)
-    .where(and(
-      eq(surveyResponses.surveyId, surveyId),
-      eq(surveyResponses.userId, userId)
-    ))
-    .limit(1);
 
-  return (response?.count || 0) > 0;
-}
-
-/**
- * Get user's completion status for multiple surveys
- */
-export async function getUserSurveyCompletionStatus(
-  surveyIds: string[],
-  userId: string
-): Promise<Record<string, boolean>> {
-  if (surveyIds.length === 0) {
-    return {};
-  }
-
-  const responses = await db
-    .select({
-      surveyId: surveyResponses.surveyId,
-      count: count()
-    })
-    .from(surveyResponses)
-    .where(and(eq(surveyResponses.userId, userId), inArray(surveyResponses.surveyId, surveyIds)))
-    .groupBy(surveyResponses.surveyId);
-
-  const statusMap: Record<string, boolean> = {};
-  surveyIds.forEach(id => {
-    statusMap[id] = false;
-  });
-
-  responses.forEach(response => {
-    if (response.count > 0) {
-      statusMap[response.surveyId] = true;
-    }
-  });
-
-  return statusMap;
-}
-
-/**
- * Get user's latest response for a survey
- */
-export async function getUserLatestSurveyResponse(
-  surveyId: string,
-  userId: string
-): Promise<SurveyResponse | null> {
-  const [response] = await db
-    .select()
-    .from(surveyResponses)
-    .where(and(
-      eq(surveyResponses.surveyId, surveyId),
-      eq(surveyResponses.userId, userId)
-    ))
-    .orderBy(desc(surveyResponses.completedAt))
-    .limit(1);
-
-  return response || null;
-}
-
-/**
- * Check if user has completed any survey for a specific item
- */
-export async function hasUserCompletedItemSurvey(itemId: string, userId: string): Promise<boolean> {
-  const [result] = await db
-    .select({ count: count() })
-    .from(surveyResponses)
-    .innerJoin(surveys, eq(surveyResponses.surveyId, surveys.id))
-    .where(and(
-      eq(surveys.itemId, itemId),
-      eq(surveys.type, 'item'),
-      eq(surveys.status, 'published'),
-      isNull(surveys.deletedAt), // Exclude soft-deleted surveys
-      eq(surveyResponses.userId, userId)
-    ))
-    .limit(1);
-
-  return (result?.count || 0) > 0;
-}
-
-/**
- * Get item survey completion status for multiple items
- * Returns a map of itemId -> hasCompletedSurvey
- * Uses efficient JOIN query to check completion in a single database call
- */
-export async function getItemsSurveyCompletionStatus(
-  itemIds: string[],
-  userId: string
-): Promise<Record<string, boolean>> {
-  if (itemIds.length === 0) {
-    return {};
-  }
-
-  // Use a single query with JOINs to get all completion statuses
-  // This is much more efficient than N separate queries
-  const responses = await db
-    .select({
-      itemId: surveys.itemId,
-      hasResponse: sql<number>`COUNT(${surveyResponses.id})`,
-    })
-    .from(surveys)
-    .leftJoin(
-      surveyResponses,
-      and(
-        eq(surveys.id, surveyResponses.surveyId),
-        eq(surveyResponses.userId, userId)
-      )
-    )
-    .where(and(
-      eq(surveys.type, 'item'),
-      eq(surveys.status, 'published'),
-      isNull(surveys.deletedAt), // Exclude soft-deleted surveys
-      or(...itemIds.map(id => eq(surveys.itemId, id)))
-    ))
-    .groupBy(surveys.itemId);
-
-  // Initialize all items as not completed
-  const statusMap: Record<string, boolean> = {};
-  itemIds.forEach(id => {
-    statusMap[id] = false;
-  });
-
-  // Mark items with responses as completed
-  responses.forEach(response => {
-    if (response.itemId && Number(response.hasResponse) > 0) {
-      statusMap[response.itemId] = true;
-    }
-  });
-
-  return statusMap;
-}
-
-/**
- * Get survey analytics
- */
-export async function getSurveyAnalytics(
-  surveyId: string,
-  filters?: {
-    itemId?: string;
-    startDate?: string;
-    endDate?: string;
-  }
-): Promise<{
-  totalResponses: number;
-  lastResponseAt: string | null;
-}> {
-  // ensure survey is active (not soft-deleted)
-  const exists = await db.select({ id: surveys.id }).from(surveys)
-    .where(and(eq(surveys.id, surveyId), isNull(surveys.deletedAt))).limit(1);
-
-  if (exists.length === 0) {
-    return { totalResponses: 0, lastResponseAt: null };
-  }
-
-  const responseConditions: SQL[] = [eq(surveyResponses.surveyId, surveyId)];
-
-  if (filters?.itemId) {
-    responseConditions.push(eq(surveyResponses.itemId, filters.itemId));
-  }
-  if (filters?.startDate) {
-    responseConditions.push(gte(surveyResponses.completedAt, new Date(filters.startDate)));
-  }
-  if (filters?.endDate) {
-    responseConditions.push(lte(surveyResponses.completedAt, new Date(filters.endDate)));
-  }
-
-  const [totalCount, lastResponse] = await Promise.all([
-    db.select({ count: count() }).from(surveyResponses).where(and(...responseConditions)),
-    db
-      .select({ completedAt: surveyResponses.completedAt })
-      .from(surveyResponses)
-      .where(and(...responseConditions))
-      .orderBy(desc(surveyResponses.completedAt))
-      .limit(1)
-  ]);
-
-  const totalResponses = totalCount[0]?.count || 0;
-
-  return {
-    totalResponses,
-    lastResponseAt: lastResponse[0]?.completedAt?.toISOString() || null
-  };
-}
 
 /**
  * Get survey response count

@@ -22,7 +22,7 @@ export function DashboardItemSurveysClient({ itemId }: DashboardItemSurveysClien
 	const [surveys, setSurveys] = useState<Survey[]>([]);
 	const [loading, setLoading] = useState(true);
 
-	const loadSurveys = useCallback(async () => {
+	const loadSurveys = async () => {
 		setLoading(true);
 		try {
 			const data = await surveyApiClient.getMany({ type: SurveyTypeEnum.ITEM, itemId });
@@ -33,7 +33,7 @@ export function DashboardItemSurveysClient({ itemId }: DashboardItemSurveysClien
 		} finally {
 			setLoading(false);
 		}
-	}, [itemId, t]);
+	};
 
 
 	useEffect(() => {

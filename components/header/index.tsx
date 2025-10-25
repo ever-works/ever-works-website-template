@@ -137,6 +137,7 @@ export default function Header() {
   const { features } = useFeatureFlags();
   const t = useTranslations("common");
   const tListing = useTranslations("listing");
+  const tSurvey = useTranslations("survey");
   const config = useConfig();
   const pathname = usePathname();
 
@@ -155,10 +156,12 @@ export default function Header() {
         label: item.translationKey
           ? item.translationNamespace === "listing"
             ? tListing(item.translationKey as any)
+            : item.translationNamespace === "survey"
+            ? tSurvey(item.translationKey as any)
             : t(item.translationKey as any)
           : item.staticLabel || item.key,
       }));
-  }, [t, tListing, session?.user?.id, features.favorites]);
+  }, [t, tListing, tSurvey, session?.user?.id, features.favorites]);
 
   const isActiveLink = useCallback(
     (href: string): boolean => {

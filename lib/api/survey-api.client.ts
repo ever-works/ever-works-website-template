@@ -5,14 +5,13 @@
 
 import type { Survey, SurveyResponse } from '@/lib/db/schema';
 import { apiClient } from './api-client';
-
 import type {
     CreateSurveyData,
     UpdateSurveyData,
     SurveyFilters,
     SubmitResponseData,
     ResponseFilters,
-} from '@/lib/services/survey.service';
+} from '@/lib/types/survey';
 
 // ==================== TYPES ====================
 

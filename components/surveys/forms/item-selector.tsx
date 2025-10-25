@@ -115,7 +115,7 @@ export function ItemSelector({
 
 	return (
 		<div className="w-full">
-			<label className="block text-sm font-medium mb-2">
+			<label htmlFor="item-selector-search" className="block text-sm font-medium mb-2">
 				{label} {required && <span className="text-red-500">*</span>}
 			</label>
 
@@ -173,6 +173,7 @@ export function ItemSelector({
 							<div className="relative">
 								<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden="true" focusable="false" />
 								<input
+									id="item-selector-search"
 									ref={searchInputRef}
 									type="text"
 									value={searchQuery}
@@ -227,7 +228,7 @@ export function ItemSelector({
 														{item.name}
 													</p>
 													<p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-														ID: {item.id}
+														{tCommon('ID_LABEL')}: {item.id}
 													</p>
 												</div>
 												{selectedItemId === item.id && (

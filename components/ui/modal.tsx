@@ -10,7 +10,7 @@ interface ModalProps {
   onOpenChange?: (open: boolean) => void;
   title?: string;
   subtitle?: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
   children: React.ReactNode;
   backdrop?: 'blur' | 'opaque' | 'transparent';
   isDismissable?: boolean;
@@ -68,6 +68,9 @@ export function Modal({
     lg: 'max-w-lg',
     xl: 'max-w-xl',
     '2xl': 'max-w-2xl',
+    '3xl': 'max-w-3xl',
+    '4xl': 'max-w-4xl',
+    '5xl': 'max-w-5xl',
   };
 
   const backdropClasses = {

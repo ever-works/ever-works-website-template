@@ -58,8 +58,9 @@ export function SurveyFormWrapper({
 		} catch (error) {
 			logger.error('Error saving survey response', error);
 			toast.error(t('FAILED_TO_SAVE_SURVEY_RESPONSE'));
+		} finally {
 			setIsSubmitting(false);
-		}
+		} 
 	};
 
 	if (survey.status !== 'published') {

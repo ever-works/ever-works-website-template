@@ -24,49 +24,14 @@
 
 import * as queries from '@/lib/db/queries';
 import type { Survey, NewSurvey, SurveyResponse, NewSurveyResponse } from '@/lib/db/schema';
+import type {
+  CreateSurveyData,
+  UpdateSurveyData,
+  SubmitResponseData,
+  SurveyFilters,
+  ResponseFilters,
+} from '@/lib/types/survey';
 
-export interface CreateSurveyData {
-  title: string;
-  description?: string;
-  type: 'global' | 'item';
-  itemId?: string;
-  status?: 'draft' | 'published' | 'closed';
-  surveyJson: any;
-}
-
-export interface UpdateSurveyData {
-  title?: string;
-  slug?: string;
-  description?: string;
-  status?: 'draft' | 'published' | 'closed';
-  surveyJson?: any;
-}
-
-export interface SubmitResponseData {
-  surveyId: string;
-  userId?: string;
-  itemId?: string;
-  data: any;
-  ipAddress?: string;
-  userAgent?: string;
-}
-
-export interface SurveyFilters {
-  type?: 'global' | 'item';
-  itemId?: string;
-  status?: 'draft' | 'published' | 'closed';
-  page?: number;
-  limit?: number;
-}
-
-export interface ResponseFilters {
-  itemId?: string;
-  userId?: string;
-  startDate?: string;
-  endDate?: string;
-  page?: number;
-  limit?: number;
-}
 
 export class SurveyService {
   /**

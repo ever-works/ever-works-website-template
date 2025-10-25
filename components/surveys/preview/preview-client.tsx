@@ -2,13 +2,11 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ArrowLeft, AlertCircle } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { SurveyFormNoSSR } from '../forms/survey-form-no-ssr';
 import { Survey } from '@/lib/db/schema';
-import { Logger } from '@/lib/logger';
 import { useTranslations } from 'next-intl';
-
-const logger = Logger.create('SurveyPreviewClient');
+import { PreviewWarningBanner } from './PreviewWarningBanner';
 
 
 interface SurveyPreviewClientProps {
@@ -31,16 +29,8 @@ export function SurveyPreviewClient({ survey, backLink }: SurveyPreviewClientPro
 				</Link>
 			</div>
 
-			<div className="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-				<div className="flex items-start gap-3">
-					<AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
-					<div>
-						<h3 className="font-medium text-yellow-900 dark:text-yellow-100 mb-1">{t('PREVIEW_MODE')}</h3>
-						<p className="text-sm text-yellow-700 dark:text-yellow-300">
-							{t('PREVIEW_MODE_DESC')}
-						</p>
-					</div>
-				</div>
+			<div className="mb-6">
+				<PreviewWarningBanner />
 			</div>
 
 			<div className="mb-8">
@@ -48,15 +38,13 @@ export function SurveyPreviewClient({ survey, backLink }: SurveyPreviewClientPro
 				{survey.description && <p className="text-gray-600 dark:text-gray-400">{survey.description}</p>}
 			</div>
 
-			<div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-				<SurveyFormNoSSR
-					surveyJson={survey.surveyJson}
-					onComplete={(sender) => {
-						logger.debug('Preview mode - response not saved', sender.data);
-					}}
-					className="survey-preview"
-				/>
-			</div>
+		<div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+			<SurveyFormNoSSR
+				surveyJson={survey.surveyJson}
+				mode="display"
+				className="survey-preview"
+			/>
+		</div>
 		</div>
 	);
 }
