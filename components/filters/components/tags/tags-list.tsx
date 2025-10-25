@@ -4,6 +4,7 @@ import { Tag } from "@/lib/content";
 import { TagItem } from "./tag-item";
 import { getButtonVariantStyles } from "../../utils/style-utils";
 import { expandVisibleTagsWithSelected, orderTagsWithSelectedFirst } from "../../utils/tag-utils";
+import { formatDisplayName } from "../../utils/text-utils";
 import Image from "next/image";
 
 interface TagsListProps {
@@ -122,10 +123,10 @@ export function TagsList({
               "text-sm font-medium transition-all duration-300 min-w-0 max-w-[90px] truncate overflow-hidden whitespace-nowrap",
               isActive
                 ? "text-white tracking-wide"
-                : "text-gray-700 dark:text-gray-300 group-hover:text-theme-primary dark:group-hover:text-theme-primary capitalize"
+                : "text-gray-700 dark:text-gray-300 group-hover:text-theme-primary dark:group-hover:text-theme-primary"
             )}
           >
-            {tag.name}
+            {formatDisplayName(tag.name)}
           </span>
           {typeof tag.count === 'number' && (
             <span

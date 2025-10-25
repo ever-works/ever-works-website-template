@@ -773,11 +773,12 @@ export async function fetchItem(slug: string, options: FetchOptions = {}) {
 }
 
 function eqID(value: string | { id: string }, id: string) {
-	if (typeof value === 'string') {
-		return value === id;
+	const valueId = typeof value === 'string' ? value : value?.id;
+	if (!valueId || !id) {
+		return false;
 	}
-
-	return value.id === id;
+	// Case-insensitive comparison to match URL encoding behavior
+	return valueId.toLowerCase() === id.toLowerCase();
 }
 
 export async function fetchByCategory(raw: string, options: FetchOptions = {}) {

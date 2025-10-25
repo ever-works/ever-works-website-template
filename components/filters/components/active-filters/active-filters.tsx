@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { useMemo } from "react";
 import { ActiveFiltersProps, TagId } from "../../types";
 import { containerStyles, textStyles, filterItemStyles } from "../../utils/style-utils";
+import { formatDisplayName } from "../../utils/text-utils";
 
 /**
  * Active filters component
@@ -101,7 +102,7 @@ export function ActiveFilters({
                   key={tag.id}
                   className={`${filterItemStyles.base} ${filterItemStyles.primary}`}
                 >
-                  {tag.name}
+                  {formatDisplayName(tag.name)}
                   <button
                     onClick={() => removeSelectedTag(tag.id)}
                     className={filterItemStyles.removeButton.primary}
@@ -125,7 +126,7 @@ export function ActiveFilters({
                   key={category.id}
                   className={`${filterItemStyles.base} ${filterItemStyles.primary}`}
                 >
-                  {category.name}
+                  {formatDisplayName(category.name)}
                   <button
                     onClick={() => removeSelectedCategory(category.id)}
                     className={filterItemStyles.removeButton.blue}
