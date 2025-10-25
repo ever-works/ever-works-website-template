@@ -9,23 +9,23 @@ import {
 } from "@/lib/db/queries";
 import { VoteType } from "@/lib/db/schema";
 
-type RouteParams ={ params: Promise<{ itemId: string }> };
+type RouteParams = { params: Promise<{ slug: string }> };
 
 /**
  * @swagger
- * /api/items/{itemId}/votes:
+ * /api/items/{slug}/votes:
  *   get:
  *     tags: ["Item Votes"]
  *     summary: "Get item vote information"
  *     description: "Returns the total vote count for an item and the current user's vote status if authenticated. The vote count represents the net score (upvotes - downvotes). User vote status shows whether the user has upvoted, downvoted, or not voted on the item."
  *     parameters:
- *       - name: "itemId"
+ *       - name: "slug"
  *         in: "path"
  *         required: true
  *         schema:
  *           type: string
- *         description: "Item ID to get vote information for"
- *         example: "item_123abc"
+ *         description: "Item slug to get vote information for"
+ *         example: "awesome-productivity-tool"
  *     responses:
  *       200:
  *         description: "Vote information retrieved successfully"
@@ -89,21 +89,21 @@ type RouteParams ={ params: Promise<{ itemId: string }> };
  */
 export async function GET(
   request: Request,
-  context: { params: Promise<{ itemId: string }> }
+  context: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const [session, { itemId }] = await Promise.all([
+    const [session, { slug }] = await Promise.all([
       auth(),
       Promise.resolve(context.params)
     ]);
 
-    const count = await getVoteCountForItem(itemId);
+    const count = await getVoteCountForItem(slug);
 
     let userVote = null;
     if (session?.user?.id) {
       const clientProfile = await getClientProfileByUserId(session.user.id);
       if (clientProfile) {
-        const votes = await getVoteByUserIdAndItemId(clientProfile.id, itemId);
+        const votes = await getVoteByUserIdAndItemId(clientProfile.id, slug);
         if (votes.length > 0) {
           userVote = votes[0].voteType === VoteType.UPVOTE ? "up" : "down";
         }
@@ -126,7 +126,7 @@ export async function GET(
 
 /**
  * @swagger
- * /api/items/{itemId}/votes:
+ * /api/items/{slug}/votes:
  *   post:
  *     tags: ["Item Votes"]
  *     summary: "Cast or update vote"
@@ -134,13 +134,13 @@ export async function GET(
  *     security:
  *       - sessionAuth: []
  *     parameters:
- *       - name: "itemId"
+ *       - name: "slug"
  *         in: "path"
  *         required: true
  *         schema:
  *           type: string
- *         description: "Item ID to vote on"
- *         example: "item_123abc"
+ *         description: "Item slug to vote on"
+ *         example: "awesome-productivity-tool"
  *     requestBody:
  *       required: true
  *       content:
@@ -252,7 +252,7 @@ export async function POST(
   params: RouteParams
 ) {
   try {
-    const [session, { itemId }] = await Promise.all([
+    const [session, { slug }] = await Promise.all([
       auth(),
       Promise.resolve(params.params)
     ]);
@@ -281,7 +281,7 @@ export async function POST(
       );
     }
 
-    const existingVotes = await getVoteByUserIdAndItemId(clientProfile.id, itemId);
+    const existingVotes = await getVoteByUserIdAndItemId(clientProfile.id, slug);
     if (existingVotes.length > 0) {
       await deleteVote(existingVotes[0].id);
     }
@@ -289,11 +289,11 @@ export async function POST(
     const voteType = type === "up" ? VoteType.UPVOTE : VoteType.DOWNVOTE;
     await createVote({
       userId: clientProfile.id,
-      itemId,
+      itemId: slug,
       voteType
     });
 
-    const count = await getVoteCountForItem(itemId);
+    const count = await getVoteCountForItem(slug);
 
     return NextResponse.json({
       success: true,
@@ -311,7 +311,7 @@ export async function POST(
 
 /**
  * @swagger
- * /api/items/{itemId}/votes:
+ * /api/items/{slug}/votes:
  *   delete:
  *     tags: ["Item Votes"]
  *     summary: "Remove user vote"
@@ -319,13 +319,13 @@ export async function POST(
  *     security:
  *       - sessionAuth: []
  *     parameters:
- *       - name: "itemId"
+ *       - name: "slug"
  *         in: "path"
  *         required: true
  *         schema:
  *           type: string
- *         description: "Item ID to remove vote from"
- *         example: "item_123abc"
+ *         description: "Item slug to remove vote from"
+ *         example: "awesome-productivity-tool"
  *     responses:
  *       200:
  *         description: "Vote removed successfully"
@@ -395,7 +395,7 @@ export async function DELETE(
   params: RouteParams
 ) {
   try {
-    const [session, { itemId }] = await Promise.all([
+    const [session, { slug }] = await Promise.all([
       auth(),
       Promise.resolve(params.params)
     ]);
@@ -415,12 +415,12 @@ export async function DELETE(
       );
     }
 
-    const existingVotes = await getVoteByUserIdAndItemId(clientProfile.id, itemId);
+    const existingVotes = await getVoteByUserIdAndItemId(clientProfile.id, slug);
     if (existingVotes.length > 0) {
       await deleteVote(existingVotes[0].id);
     }
 
-    const count = await getVoteCountForItem(itemId);
+    const count = await getVoteCountForItem(slug);
     return NextResponse.json({
       success: true,
       count,

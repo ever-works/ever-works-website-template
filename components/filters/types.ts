@@ -33,6 +33,7 @@ export interface FilterContextType {
   setSelectedCategory: Dispatch<SetStateAction<CategoryId | null>>;
   selectedTag: TagId | null;
   setSelectedTag: Dispatch<SetStateAction<TagId | null>>;
+  isFiltersLoading: boolean;
 }
 
 /**

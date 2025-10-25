@@ -62,6 +62,7 @@ export default async function CategoryListing({
         categories={categories}
         tags={tags}
         items={items}
+        initialCategory={category}
       />
     </Suspense>
   );

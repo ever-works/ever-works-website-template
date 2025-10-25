@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 
 /**
  * @swagger
- * /api/items/{itemId}/votes/status:
+ * /api/items/{slug}/votes/status:
  *   get:
  *     tags: ["Item Votes"]
  *     summary: "Get user vote status"
@@ -12,13 +12,13 @@ import { NextResponse } from 'next/server';
  *     security:
  *       - sessionAuth: []
  *     parameters:
- *       - name: "itemId"
+ *       - name: "slug"
  *         in: "path"
  *         required: true
  *         schema:
  *           type: string
- *         description: "Item ID to get vote status for"
- *         example: "item_123abc"
+ *         description: "Item slug to get vote status for"
+ *         example: "awesome-productivity-tool"
  *     responses:
  *       200:
  *         description: "Vote status retrieved successfully"
@@ -114,7 +114,7 @@ import { NextResponse } from 'next/server';
  */
 export async function GET(
   request: Request,
-  context: { params: Promise<{ itemId: string }> }
+  context: { params: Promise<{ slug: string }> }
 ) {
   try {
     const session = await auth();
@@ -125,13 +125,13 @@ export async function GET(
       );
     }
 
-    const { itemId } = await context.params;
+    const { slug } = await context.params;
     const clientProfile = await getClientProfileByUserId(session.user.id);
     if (!clientProfile) {
       return NextResponse.json({ error: 'Client profile not found' }, { status: 404 });
     }
     
-    const votes = await getVoteByUserIdAndItemId(clientProfile.id, itemId);
+    const votes = await getVoteByUserIdAndItemId(clientProfile.id, slug);
     return NextResponse.json(votes[0] || null);
   } catch (error) {
     console.error('Error fetching vote status:', error);

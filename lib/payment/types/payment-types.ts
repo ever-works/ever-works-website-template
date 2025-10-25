@@ -328,33 +328,8 @@ export enum PaymentType {
   FREE = "free",
 }
 
-export interface CheckoutSessionParams {
-  customer: string;
-  mode: string;
-  line_items: Array<{ price: string; quantity: number }>;
-  success_url: string;
-  cancel_url: string;
-  metadata: Record<string, any>;
-  ui_mode: string;
-  custom_text: {
-    submit: {
-      message: string;
-    };
-  };
-  subscription_data?: {
-    metadata: Record<string, any>;
-    trial_period_days?: number;
-  };
-  billing_address_collection?: 'auto' | 'required';
-  customer_update?: {
-    address?: 'auto' | 'never';
-    name?: 'auto' | 'never';
-    shipping?: 'auto' | 'never';
-  };
-  allow_promotion_codes?: boolean;
-  payment_method_types?: string[];
-  collection_method?: string
-  
+export interface CheckoutSessionParams extends Omit<Stripe.Checkout.SessionCreateParams, 'mode'> {
+  mode: 'payment' | 'setup' | 'subscription';
 }
 /*
  * Formats an amount in cents to a currency string.

@@ -168,6 +168,12 @@ export async function POST(request: NextRequest) {
 			metadata = {}
 		} = await request.json();
 
+		// Map the incoming mode to Stripe's expected Mode type
+		const stripeMode: 
+		|'payment' 
+		| 'setup' 
+		| 'subscription' = mode === 'one_time' ? 'payment' : mode === 'subscription' ? 'subscription' : 'setup';
+
 
 	
 
@@ -184,7 +190,7 @@ export async function POST(request: NextRequest) {
 
 		const checkoutParams: CheckoutSessionParams = {
 			customer: stripeCustomerId,
-			mode,
+			mode: stripeMode,
 			line_items: [
 				{
 					price: priceId,
@@ -208,19 +214,19 @@ export async function POST(request: NextRequest) {
 		};
 
 		// Add subscription-specific configuration
-		if (mode === 'subscription') {
+		if (stripeMode === 'subscription') {
 			checkoutParams.subscription_data = {
 				metadata: {
-					userId: session.user.id,
-					planId: metadata.planId,
-					planName: metadata.planName,
+					userId: session.user.id || '',
+					planId: metadata.planId || '',
+					planName: metadata.planName || '',
 					billingInterval
 				}
 			};
 
 			// Add trial period if specified
 			if (trialPeriodDays > 0) {
-				checkoutParams.subscription_data.trial_period_days = trialPeriodDays;
+				checkoutParams.subscription_data!.trial_period_days = trialPeriodDays;
 			}
 
 			// Configure billing address collection
@@ -237,7 +243,7 @@ export async function POST(request: NextRequest) {
 		}
 
 	
-		const checkoutSession = await stripe.checkout.sessions.create(checkoutParams as any);
+		const checkoutSession = await stripe.checkout.sessions.create(checkoutParams );
 
 
 		return NextResponse.json({

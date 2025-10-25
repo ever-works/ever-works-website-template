@@ -12,6 +12,7 @@ import {
   Star,
   Activity,
   MessageSquare,
+  Building2,
   type LucideIcon
 } from "lucide-react";
 import type { ExtendedUser } from "@/types/profile-button.types";
@@ -115,6 +116,17 @@ function MenuItems({ user, profilePath, onItemClick, onNavigationStart, isNaviga
           gradientTo="to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30"
           iconColor="text-green-600 dark:text-green-400"
           endIcon={Activity}
+        />
+
+        <MenuItem
+          href="/admin/companies"
+          icon={Building2}
+          title={t("common.MANAGE_COMPANIES")}
+          description={t("common.MANAGE_COMPANIES_DESC")}
+          gradientFrom="from-cyan-100"
+          gradientTo="to-sky-100 dark:from-cyan-900/30 dark:to-sky-900/30"
+          iconColor="text-cyan-600 dark:text-cyan-400"
+          endIcon={Star}
         />
 
         <MenuItem
