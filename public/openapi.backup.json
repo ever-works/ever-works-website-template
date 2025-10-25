@@ -22613,6 +22613,75 @@
         }
       }
     },
+    "/api/config/features": {
+      "get": {
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "Get feature availability flags",
+        "description": "Returns current feature availability based on system configuration. Features depend on database availability. This is a public endpoint that helps the frontend gracefully handle missing features.",
+        "responses": {
+          "200": {
+            "description": "Feature flags retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ratings": {
+                      "type": "boolean",
+                      "description": "Whether ratings feature is available",
+                      "example": true
+                    },
+                    "comments": {
+                      "type": "boolean",
+                      "description": "Whether comments feature is available",
+                      "example": true
+                    },
+                    "favorites": {
+                      "type": "boolean",
+                      "description": "Whether favorites feature is available",
+                      "example": true
+                    },
+                    "featuredItems": {
+                      "type": "boolean",
+                      "description": "Whether featured items feature is available",
+                      "example": true
+                    }
+                  },
+                  "required": [
+                    "ratings",
+                    "comments",
+                    "favorites",
+                    "featuredItems"
+                  ]
+                },
+                "examples": {
+                  "all_enabled": {
+                    "summary": "All features enabled (database configured)",
+                    "value": {
+                      "ratings": true,
+                      "comments": true,
+                      "favorites": true,
+                      "featuredItems": true
+                    }
+                  },
+                  "all_disabled": {
+                    "summary": "All features disabled (no database)",
+                    "value": {
+                      "ratings": false,
+                      "comments": false,
+                      "favorites": false,
+                      "featuredItems": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }      
+    },
     "/api/admin/companies": {
       "get": {
         "tags": [
