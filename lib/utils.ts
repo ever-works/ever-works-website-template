@@ -162,9 +162,10 @@ export function filterItems(
       if (!item.category) return false;
       const itemCategories = Array.isArray(item.category) ? item.category : [item.category];
       return itemCategories.some((cat: string | Category) => {
-        if (typeof cat === "string") return selectedCategories.includes(cat);
-        if (typeof cat === "object" && cat && "id" in cat) return selectedCategories.includes(cat.id);
-        return false;
+        const catId = typeof cat === "string" ? cat : cat?.id;
+        if (!catId) return false;
+        // Case-insensitive comparison to match URL encoding behavior
+        return selectedCategories.some(selected => selected.toLowerCase() === catId.toLowerCase());
       });
     });
   }
@@ -185,7 +186,9 @@ export function filterItems(
       const itemTags = Array.isArray(item.tags) ? item.tags : [item.tags];
       return itemTags.some((tag: string | { id: string }) => {
         const tagId = typeof tag === "string" ? tag : tag.id;
-        return selectedTags.includes(tagId);
+        if (!tagId) return false;
+        // Case-insensitive comparison to match URL encoding behavior
+        return selectedTags.some(selected => selected.toLowerCase() === tagId.toLowerCase());
       });
     });
   }

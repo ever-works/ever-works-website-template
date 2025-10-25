@@ -21,24 +21,34 @@ interface ProviderConfig {
 class ConfigManager {
 	private static config: ProviderConfig | null = null;
 	private static initializedProviders: Set<string> = new Set();
+	private static stripeApiKey: string = process.env.STRIPE_SECRET_KEY || '';
+	private static stripeWebhookSecret: string = process.env.STRIPE_WEBHOOK_SECRET || '';
+	private static stripePublishableKey: string = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';
+	private static stripeApiVersion: string = process.env.STRIPE_API_VERSION || '2023-10-16';
+	private static lemonsqueezyApiKey: string = process.env.LEMONSQUEEZY_API_KEY || '';
+	private static lemonsqueezyWebhookSecret: string = process.env.LEMONSQUEEZY_WEBHOOK_SECRET || '';
+	private static lemonsqueezyStoreId: string = process.env.LEMONSQUEEZY_STORE_ID || '';
+	private static lemonsqueezyTestMode: boolean = process.env.LEMONSQUEEZY_TEST_MODE === 'true';
+	private static lemonsqueezyApiVersion: string = process.env.LEMONSQUEEZY_API_VERSION || '2023-10-16';
+	private static lemonsqueezyAppUrl: string = process.env.NEXT_PUBLIC_APP_URL || '';
 
 	private static ensureConfig(): ProviderConfig {
 		if (!this.config) {
 			this.config = {
 				stripe: {
-					apiKey: process.env.STRIPE_SECRET_KEY || '',
-					webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
-					publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
-					apiVersion: process.env.STRIPE_API_VERSION || '2023-10-16'
+					apiKey: this.stripeApiKey || '',
+					webhookSecret: this.stripeWebhookSecret || '',
+					publishableKey: this.stripePublishableKey || '',
+					apiVersion: this.stripeApiVersion || '2023-10-16'
 				},
 				lemonsqueezy: {
-					apiKey: process.env.LEMONSQUEEZY_API_KEY || '',
-					webhookSecret: process.env.LEMONSQUEEZY_WEBHOOK_SECRET || '',
+					apiKey: this.lemonsqueezyApiKey || '',
+					webhookSecret: this.lemonsqueezyWebhookSecret || '',
 					options: {
-						storeId: process.env.LEMONSQUEEZY_STORE_ID || '',
-						testMode: process.env.LEMONSQUEEZY_TEST_MODE === 'true',
-						apiVersion: process.env.LEMONSQUEEZY_API_VERSION || '2023-10-16',
-						appUrl: process.env.NEXT_PUBLIC_APP_URL || ''
+						storeId: this.lemonsqueezyStoreId || '',
+						testMode: this.lemonsqueezyTestMode,
+						apiVersion: this.lemonsqueezyApiVersion,
+						appUrl: this.lemonsqueezyAppUrl || ''
 					}
 				}
 			};
@@ -68,10 +78,10 @@ class ConfigManager {
 	}
 
 	private static validateStripeConfig(): void {
-		const stripeApiKey = process.env.STRIPE_SECRET_KEY;
-		const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-		const stripePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-		const stripeApiVersion = process.env.STRIPE_API_VERSION || '2023-10-16';
+		const stripeApiKey = this.stripeApiKey;
+		const stripeWebhookSecret = this.stripeWebhookSecret;
+		const stripePublishableKey = this.stripePublishableKey;
+		const stripeApiVersion = this.stripeApiVersion;
 
 		if (!stripeApiKey || !stripeWebhookSecret || !stripePublishableKey) {
 			throw new Error(
@@ -91,12 +101,12 @@ class ConfigManager {
 	}
 
 	private static validateLemonsqueezyConfig(): void {
-		const lemonsqueezyApiKey = process.env.LEMONSQUEEZY_API_KEY;
-		const lemonsqueezyStoreId = process.env.LEMONSQUEEZY_STORE_ID;
-		const lemonsqueezyTestMode = process.env.LEMONSQUEEZY_TEST_MODE === 'true';
-		const lemonsqueezyWebhookSecret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
-		const lemonsqueezyApiVersion = process.env.LEMONSQUEEZY_API_VERSION || '2023-10-16';
-		const lemonsqueezyAppUrl = process.env.NEXT_PUBLIC_APP_URL || '';
+		const lemonsqueezyApiKey = this.lemonsqueezyApiKey;
+		const lemonsqueezyStoreId = this.lemonsqueezyStoreId;
+		const lemonsqueezyTestMode = this.lemonsqueezyTestMode;
+		const lemonsqueezyWebhookSecret = this.lemonsqueezyWebhookSecret;
+		const lemonsqueezyApiVersion = this.lemonsqueezyApiVersion;
+		const lemonsqueezyAppUrl = this.lemonsqueezyAppUrl;
 
 		if (!lemonsqueezyApiKey) {
 			throw new Error('Lemonsqueezy configuration is incomplete. Required: LEMONSQUEEZY_API_KEY');

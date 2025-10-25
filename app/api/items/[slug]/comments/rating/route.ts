@@ -3,22 +3,23 @@ import { db } from "@/lib/db/drizzle";
 import { comments } from "@/lib/db/schema";
 import { and, avg, count, isNull, eq } from "drizzle-orm";
 import { checkDatabaseAvailability } from "@/lib/utils/database-check";
+import { getItemIdFromSlug } from "@/lib/db/queries/item.queries";
 
 /**
  * @swagger
- * /api/items/{itemId}/comments/rating:
+ * /api/items/{slug}/comments/rating:
  *   get:
  *     tags: ["Item Comments"]
  *     summary: "Get item rating statistics"
  *     description: "Returns aggregated rating statistics for a specific item including average rating and total number of ratings. Only counts non-deleted comments. This is a public endpoint that doesn't require authentication and includes database availability checking."
  *     parameters:
- *       - name: "itemId"
+ *       - name: "slug"
  *         in: "path"
  *         required: true
  *         schema:
  *           type: string
- *         description: "Item ID to get rating statistics for"
- *         example: "item_123abc"
+ *         description: "Item slug to get rating statistics for"
+ *         example: "awesome-productivity-tool"
  *     responses:
  *       200:
  *         description: "Rating statistics retrieved successfully"
@@ -63,12 +64,16 @@ import { checkDatabaseAvailability } from "@/lib/utils/database-check";
  */
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ itemId: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     // Check database availability first
     const dbCheck = checkDatabaseAvailability();
     if (dbCheck) return dbCheck;
+    
+    const { slug } = await params;
+    const itemId = getItemIdFromSlug(slug);
+    
     const result = await db
       .select({
         averageRating: avg(comments.rating).as("averageRating"),
@@ -77,7 +82,7 @@ export async function GET(
       .from(comments)
       .where(
         and(
-          eq(comments.itemId, (await params).itemId),
+          eq(comments.itemId, itemId),
           isNull(comments.deletedAt)
         )
       );

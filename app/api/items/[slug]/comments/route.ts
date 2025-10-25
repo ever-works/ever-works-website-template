@@ -11,13 +11,13 @@ import { checkDatabaseAvailability } from "@/lib/utils/database-check";
  *     summary: "Get item comments"
  *     description: "Returns all comments for a specific item including user information, ratings, and timestamps. Comments are returned with associated user profiles for display purposes. This is a public endpoint that doesn't require authentication."
  *     parameters:
- *       - name: "itemId"
+ *       - name: "slug"
  *         in: "path"
  *         required: true
  *         schema:
  *           type: string
- *         description: "Item ID to get comments for"
- *         example: "item_123abc"
+ *         description: "Item slug to get comments for"
+ *         example: "awesome-productivity-tool"
  *     responses:
  *       200:
  *         description: "Comments retrieved successfully"
@@ -136,14 +136,14 @@ import { checkDatabaseAvailability } from "@/lib/utils/database-check";
  */
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ itemId: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     // Check database availability
     const dbCheck = checkDatabaseAvailability();
     if (dbCheck) return dbCheck;
 
-    const itemComments = await getCommentsByItemId((await params).itemId);
+    const itemComments = await getCommentsByItemId((await params).slug);
 
     return NextResponse.json({
       success: true,
@@ -168,13 +168,13 @@ export async function GET(
  *     security:
  *       - sessionAuth: []
  *     parameters:
- *       - name: "itemId"
+ *       - name: "slug"
  *         in: "path"
  *         required: true
  *         schema:
  *           type: string
- *         description: "Item ID to comment on"
- *         example: "item_123abc"
+ *         description: "Item slug to comment on"
+ *         example: "awesome-productivity-tool"
  *     requestBody:
  *       required: true
  *       content:
@@ -338,7 +338,7 @@ export async function GET(
  */
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ itemId: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     // Check database availability
@@ -380,10 +380,10 @@ export async function POST(
       content,
       rating,
       userId: clientProfile.id,
-      itemId: (await params).itemId,
+      itemId: (await params).slug,
     });
 
-    const itemComments = await getCommentsByItemId((await params).itemId);
+    const itemComments = await getCommentsByItemId((await params).slug);
     const commentWithUser = itemComments.find((c) => c.id === comment.id);
 
     return NextResponse.json({

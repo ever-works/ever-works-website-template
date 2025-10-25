@@ -2,7 +2,7 @@ import { Button, Tooltip, cn } from "@heroui/react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { CategoryItemProps } from "../../types";
-import { truncateText, isTextTruncated as checkTextTruncated } from "../../utils/text-utils";
+import { truncateText, isTextTruncated as checkTextTruncated, formatDisplayName } from "../../utils/text-utils";
 import { FILTER_CONSTANTS } from "../../constants";
 
 /**
@@ -18,8 +18,9 @@ export function CategoryItem({
   onToggle
 }: CategoryItemProps) {
   const t = useTranslations("listing");
-  const displayName = truncateText(category.name);
-  const textIsTruncated = checkTextTruncated(category.name);
+  const formattedName = formatDisplayName(category.name);
+  const displayName = truncateText(formattedName);
+  const textIsTruncated = checkTextTruncated(formattedName);
 
   const handleClick = (e: React.MouseEvent) => {
     if (mode === "filter") {
@@ -34,7 +35,7 @@ export function CategoryItem({
 
   return (
     <Tooltip
-      content={isAllCategories ? t("ALL_CATEGORIES") : category.name}
+      content={isAllCategories ? t("ALL_CATEGORIES") : formattedName}
       placement="right"
       delay={FILTER_CONSTANTS.TOOLTIP_DELAY}
       closeDelay={FILTER_CONSTANTS.TOOLTIP_CLOSE_DELAY}
@@ -61,9 +62,9 @@ export function CategoryItem({
           fullWidth
         >
           <div className="flex items-center justify-between w-full group">
-            <span 
-              className="font-medium truncate pr-2 text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300 capitalize"
-              title={textIsTruncated ? category.name : undefined}
+            <span
+              className="font-medium truncate pr-2 text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300"
+              title={textIsTruncated ? formattedName : undefined}
             >
               {isAllCategories ? t("ALL_CATEGORIES") : displayName}
             </span>

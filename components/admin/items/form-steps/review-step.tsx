@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { Star, ExternalLink, Hash, Folder, Image as ImageIcon, FileText, Link as LinkIcon } from 'lucide-react';
 import { ITEM_STATUSES } from '@/lib/types/item';
 import { useTranslations } from 'next-intl';
+import { ItemCompanyManager } from '@/components/admin/items/item-company-manager';
 
 export interface ReviewData {
   featured: boolean;
@@ -54,6 +55,7 @@ export function ReviewStep({
   classification
 }: ReviewStepProps) {
   const t = useTranslations('admin.ITEM_FORM');
+  const tCompany = useTranslations('admin.ITEM_COMPANY');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
 
@@ -300,6 +302,16 @@ export function ReviewStep({
             </div>
           </CardContent>
         </Card>
+
+        {/* Company Assignment - Only show in edit mode when item has a slug */}
+        {basicInfo.slug && (
+          <div className="space-y-3">
+            <h4 className="font-medium text-gray-900 dark:text-gray-100">
+              {tCompany('TITLE')}
+            </h4>
+            <ItemCompanyManager itemSlug={basicInfo.slug} />
+          </div>
+        )}
       </div>
     </StepContainer>
   );

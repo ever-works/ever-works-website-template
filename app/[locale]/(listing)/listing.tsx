@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Category, ItemData, Tag } from "@/lib/content";
 import GlobalsClient from "./globals-client";
 import Hero from "@/components/hero";
-import TagsQuerySync from "@/components/filters/tags-query-sync";
+import { FilterURLParser } from "@/components/filters/filter-url-parser";
 
 type ListingProps = {
   total: number;
@@ -13,14 +13,16 @@ type ListingProps = {
   categories: Category[];
   tags: Tag[];
   items: ItemData[];
+  initialTag?: string | null;
+  initialCategory?: string | null;
 };
 
 export default async function Listing(props: ListingProps) {
   const t = await getTranslations("listing");
 
   return (
-    <FilterProvider>
-      <TagsQuerySync />
+    <FilterProvider initialTag={props.initialTag} initialCategory={props.initialCategory}>
+      <FilterURLParser />
       <Hero
         badgeText={t("INTRODUCING_EVER_WORKS")}
         title={
