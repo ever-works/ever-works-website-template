@@ -20,7 +20,7 @@ export function SurveyPreviewDialog({
 	isOpen,
 	onClose
 }: SurveyPreviewDialogProps) {
-	const t = useTranslations('common');
+	const t = useTranslations('survey');
 
 	return (
 		<Modal

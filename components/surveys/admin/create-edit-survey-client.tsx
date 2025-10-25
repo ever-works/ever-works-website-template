@@ -21,7 +21,7 @@ interface CreateEditSurveyClientProps {
 
 export function CreateEditSurveyClient({ survey, defaultItemId }: CreateEditSurveyClientProps) {
 	const router = useRouter();
-	const t = useTranslations('common');
+	const t = useTranslations('survey');
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const mode = survey?.id ? 'edit' : 'create';

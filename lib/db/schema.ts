@@ -613,8 +613,8 @@ export const itemsCompanies = pgTable("items_companies", {
   companyId: text("company_id")
     .notNull()
     .references(() => companies.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => ({
   companyIdIndex: index("items_companies_company_id_idx").on(table.companyId),
 }));
@@ -639,11 +639,11 @@ export const surveys = pgTable(
       .notNull()
       .default("draft"),
     surveyJson: jsonb("survey_json").notNull(),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-    updatedAt: timestamp("updated_at").notNull().defaultNow(),
-    publishedAt: timestamp("published_at"),
-    closedAt: timestamp("closed_at"),
-    deletedAt: timestamp("deleted_at"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    closedAt: timestamp("closed_at", { withTimezone: true }),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
   (table) => ({
     slugIndex: index("surveys_slug_idx").on(table.slug),
@@ -662,15 +662,15 @@ export const surveyResponses = pgTable(
       .$defaultFn(() => crypto.randomUUID()),
     surveyId: text("survey_id")
       .notNull()
-      .references(() => surveys.id, { onDelete: "cascade" }),
+      .references(() => surveys.id, { onDelete: "restrict" }),
     userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
     itemId: text("item_id"),
     data: jsonb("data").notNull(),
-    completedAt: timestamp("completed_at").notNull(),
+    completedAt: timestamp("completed_at", { withTimezone: true }).notNull(),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => ({
     surveyIdIndex: index("survey_responses_survey_id_idx").on(table.surveyId),

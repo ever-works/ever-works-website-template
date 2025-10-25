@@ -6,7 +6,8 @@ import type { Survey } from '@/lib/db/schema';
 import { getStatusColor, getTypeColor, getPublicSurveyLink, copyToClipboard, formatSurveyTypeLabel, formatSurveyStatusLabel } from '../utils/survey-helpers';
 import { toast } from 'sonner';
 import { Copy, Eye, FileText } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { formatDateTime } from '@/utils/date';
 
 interface SurveysListClientProps {
 	surveys: Survey[];
@@ -33,7 +34,8 @@ export function SurveysListClient({
 	getPreviewLink,
 	additionalActions,
 }: SurveysListClientProps) {
-	const t = useTranslations('common');
+	const t = useTranslations('survey');
+	const locale = useLocale();
 
 	const handleCopyLink = async (survey: Survey) => {
 		const link = getPublicSurveyLink(survey.slug, survey.itemId || undefined);
@@ -124,7 +126,7 @@ export function SurveysListClient({
 								)}
 								{showUpdatedColumn && (
 									<td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-										{new Date(survey.updatedAt).toLocaleDateString()}
+										{survey.updatedAt ? formatDateTime(survey.updatedAt, locale) : '-'}
 									</td>
 								)}
 								<td className="px-6 py-4">

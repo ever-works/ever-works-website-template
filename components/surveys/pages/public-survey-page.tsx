@@ -16,7 +16,7 @@ interface SurveyPageClientProps {
 
 export function SurveyPageClient({ survey, itemSlug }: SurveyPageClientProps) {
 	const router = useRouter();
-	const t = useTranslations('common');
+	const t = useTranslations('survey');
 
 	const handleCompleted = () => {
 		// Redirect after completion

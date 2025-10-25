@@ -18,7 +18,8 @@ const logger = Logger.create('AdminSurveysList');
 export function AdminSurveysClient() {
 	const router = useRouter();
 	const { confirm } = useConfirm();
-	const t = useTranslations('common');
+	const t = useTranslations('survey');
+	const tCommon = useTranslations('common');
 	const [surveys, setSurveys] = useState<(Survey & { responseCount: number })[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [filter, setFilter] = useState<'all' | 'global' | 'item'>('all');
@@ -58,8 +59,8 @@ export function AdminSurveysClient() {
 		const confirmed = await confirm({
 			title: t('DELETE_SURVEY_CONFIRM_TITLE'),
 			message: t('DELETE_SURVEY_CONFIRM_MSG', { title }),
-			confirmText: t('DELETE'),
-			cancelText: t('CANCEL'),
+			confirmText: tCommon('DELETE'),
+			cancelText: tCommon('CANCEL'),
 			variant: 'danger'
 		});
 
@@ -109,14 +110,14 @@ export function AdminSurveysClient() {
 					onClick={() => setFilter('global')}
 					variant={filter === 'global' ? 'default' : 'outline'}
 				>
-					{t('GLOBAL')}
+					{tCommon('GLOBAL')}
 				</Button>
 				<Button
 					type="button" 
 					onClick={() => setFilter('item')}
 					variant={filter === 'item' ? 'default' : 'outline'}
 				>
-					{t('ITEMS')}
+					{tCommon('ITEMS')}
 				</Button>
 			</div>
 

@@ -20,12 +20,6 @@ const logger = Logger.create('SurveyDetailAPI');
  *         schema:
  *           type: string
  *         description: "Survey ID or slug"
- *       - name: "itemId"
- *         in: "query"
- *         required: false
- *         schema:
- *           type: string
- *         description: "Item ID for item surveys"
  *     responses:
  *       200:
  *         description: "Survey retrieved successfully"
@@ -70,13 +64,8 @@ export async function GET(
         });
     } catch (error) {
         logger.error('Error fetching survey', error);
-        return NextResponse.json(
-            {
-                success: false,
-                error: error instanceof Error ? error.message : 'Failed to fetch survey'
-            },
-            { status: 500 }
-        );
+
+        return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
     }
 }
 

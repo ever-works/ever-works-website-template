@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { FileText, CheckCircle, Clock, ExternalLink } from 'lucide-react';
 import { surveyApiClient } from '@/lib/api/survey-api.client';
 import type {  SurveyItem } from '@/lib/db/schema';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { formatDateTime } from '@/utils/date';
@@ -23,7 +23,9 @@ interface UserSurveySectionProps {
 }
 
 export function UserSurveySection({ item }: UserSurveySectionProps) {
-  const t = useTranslations();
+  const t = useTranslations('survey');
+  const tCommon = useTranslations('common');
+  const locale = useLocale();
   const [surveys, setSurveys] = useState<SurveyItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +57,7 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
   const handleSurveySubmitted = () => {
     // Reload surveys to get updated completion status
     loadSurveys();
-    toast.success(t('common.SURVEY_SUBMITTED_SUCCESSFULLY'));
+    toast.success(t('SURVEY_SUBMITTED_SUCCESSFULLY'));
   };
 
   const handleOpenSurveyDialog = (survey: SurveyItem) => {
@@ -72,7 +74,7 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
       return (
         <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
           <CheckCircle className="w-3 h-3 mr-1" />
-          {t('common.COMPLETED')}
+          {tCommon('COMPLETED')}
         </Badge>
       );
     }
@@ -80,7 +82,7 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
     return (
       <Badge variant="outline" className="border-blue-200 text-blue-800 dark:border-blue-800 dark:text-blue-200">
         <Clock className="w-3 h-3 mr-1" />
-        {t('common.AVAILABLE')}
+        {tCommon('AVAILABLE')}
       </Badge>
     );
   };
@@ -91,13 +93,13 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
-            {t('common.SURVEYS')}
+            {t('SURVEYS')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-500 dark:text-gray-400">{t('common.LOADING')}...</p>
+            <p className="mt-2 text-gray-500 dark:text-gray-400">{tCommon('LOADING')}...</p>
           </div>
         </CardContent>
       </Card>
@@ -110,7 +112,7 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
-            {t('common.SURVEYS')}
+            {t('SURVEYS')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -121,7 +123,7 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
               onClick={loadSurveys}
               className="mt-4"
             >
-              {t('common.RETRY')}
+              {tCommon('RETRY')}
             </Button>
           </div>
         </CardContent>
@@ -139,10 +141,10 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
-            {t('common.SURVEYS_FOR_ITEM', { itemName: item.name })}
+            {t('SURVEYS_FOR_ITEM', { itemName: item.name })}
           </CardTitle>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            {t('common.MULTIPLE_SURVEYS_DESC')}
+            {t('MULTIPLE_SURVEYS_DESC')}
           </p>
         </CardHeader>
         <CardContent>
@@ -167,7 +169,7 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
                       <span className="text-sm text-gray-500 dark:text-gray-400">
                       {survey.publishedAt && (
                         <span className="text-sm text-gray-500 dark:text-gray-400">
-                          {t('common.PUBLISHED_AT')}: {formatDateTime(survey.publishedAt)}
+                          {tCommon('PUBLISHED_AT')}: {formatDateTime(survey.publishedAt, locale)}
                         </span>
                       )}
                       </span>
@@ -184,12 +186,12 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
                         className="border-green-600 text-green-700 dark:border-green-500 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950"
                       >
                         <CheckCircle className="w-4 h-4 mr-2" />
-                        {t('common.RETAKE_SURVEY')}
+                        {t('RETAKE_SURVEY')}
                       </Button>
                       <Link href={`/items/${item.slug}/surveys/${survey.slug}`} target="_blank" rel="noopener noreferrer">
                         <Button variant="outline" className="gap-2">
                           <ExternalLink className="w-4 h-4" />
-                          {t('common.OPEN_IN_NEW_TAB')}
+                          {tCommon('OPEN_IN_NEW_TAB')}
                         </Button>
                       </Link>
                     </>
@@ -200,12 +202,12 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
                         className="bg-blue-600 hover:bg-blue-700 text-white"
                       >
                         <FileText className="w-4 h-4 mr-2" />
-                        {t('common.TAKE_SURVEY')}
+                        {t('TAKE_SURVEY')}
                       </Button>
                       <Link href={`/items/${item.slug}/surveys/${survey.slug}`} target="_blank" rel="noopener noreferrer">
                         <Button variant="outline" className="gap-2">
                           <ExternalLink className="w-4 h-4" />
-                          {t('common.OPEN_IN_NEW_TAB')}
+                          {tCommon('OPEN_IN_NEW_TAB')}
                         </Button>
                       </Link>
                     </>

@@ -32,7 +32,7 @@ export function ItemSelector({
 	label,
 	placeholder
 }: ItemSelectorProps) {
-	const t = useTranslations('common');
+	const tCommon = useTranslations('common');
 	const [items, setItems] = useState<Item[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [searchQuery, setSearchQuery] = useState('');
@@ -41,7 +41,9 @@ export function ItemSelector({
 	const searchInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		fetchItems();
+		const controller = new AbortController();
+		fetchItems(controller.signal);
+		return () => controller.abort();
 	}, []);
 
 	// Close dropdown when clicking outside
@@ -69,11 +71,11 @@ export function ItemSelector({
 		}
 	}, [isOpen]);
 
-	const fetchItems = async () => {
+	const fetchItems = async (signal?: AbortSignal) => {
 		try {
 			setIsLoading(true);
-			const response = await fetch('/api/admin/items?limit=100&status=approved');
-			
+			const response = await fetch('/api/admin/items?limit=100&status=approved', { signal });
+
 			if (!response.ok) {
 				throw new Error(`Failed to fetch items: ${response.status} ${response.statusText}`);
 			}
@@ -84,9 +86,12 @@ export function ItemSelector({
 				setItems(data.items);
 			}
 		} catch (error) {
+			// Ignore intentional aborts
+			if ((error as any)?.name === 'AbortError')
+				return;
 			logger.error('Error fetching items', error);
 		} finally {
-			setIsLoading(false);
+			if (!signal?.aborted) setIsLoading(false);
 		}
 	};
 
@@ -123,7 +128,7 @@ export function ItemSelector({
 					className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-between gap-2 text-left"
 				>
 					{isLoading ? (
-						<span className="text-gray-500 dark:text-gray-400">{t('LOADING_ITEMS')}</span>
+						<span className="text-gray-500 dark:text-gray-400"> {tCommon('LOADING_ITEMS')}</span>
 					) : selectedItem ? (
 						<div className="flex items-center gap-2 flex-1 min-w-0">
 							{selectedItem.icon_url ? (
@@ -136,7 +141,7 @@ export function ItemSelector({
 								/>
 							) : (
 								<div className="w-6 h-6 rounded bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-									<Package className="w-3 h-3 text-gray-400" />
+									<Package className="w-3 h-3 text-gray-400" aria-hidden="true" focusable="false" />
 								</div>
 							)}
 							<span className="font-medium text-gray-900 dark:text-white truncate">{selectedItem.name}</span>
@@ -153,10 +158,10 @@ export function ItemSelector({
 								aria-label="Clear selection"
 								className="absolute right-9 top-2.5 p-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 z-10"
 							>
-								<X className="w-4 h-4 text-gray-400" />
+								<X className="w-4 h-4 text-gray-400" aria-hidden="true" focusable="false" />
 							</button>
 						)}
-						<ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'transform rotate-180' : ''}`} />
+						<ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'transform rotate-180' : ''}`} aria-hidden="true" focusable="false" />
 					</div>
 				</button>
 
@@ -166,15 +171,15 @@ export function ItemSelector({
 						{/* Search Input */}
 						<div className="p-2 border-b border-gray-200 dark:border-gray-700">
 							<div className="relative">
-								<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+								<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden="true" focusable="false" />
 								<input
 									ref={searchInputRef}
 									type="text"
-								value={searchQuery}
-								onChange={(e) => setSearchQuery(e.target.value)}
-								placeholder={t('SEARCH_ITEMS')}
-								className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-							/>
+									value={searchQuery}
+									onChange={(e) => setSearchQuery(e.target.value)}
+									placeholder={tCommon('SEARCH_ITEMS')}
+									className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+								/>
 							</div>
 						</div>
 
@@ -182,10 +187,10 @@ export function ItemSelector({
 						<div className="max-h-64 overflow-y-auto">
 							{filteredItems.length === 0 ? (
 								<div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-									<Package className="w-8 h-8 mx-auto mb-2 opacity-50" />
-									<p className="text-sm">{t('NO_ITEMS_FOUND')}</p>
+									<Package className="w-8 h-8 mx-auto mb-2 opacity-50" aria-hidden="true" focusable="false" />
+									<p className="text-sm"> {tCommon('NO_ITEMS_FOUND')}</p>
 									{searchQuery && (
-										<p className="text-xs mt-1">{t('TRY_DIFFERENT_SEARCH')}</p>
+										<p className="text-xs mt-1"> {tCommon('TRY_DIFFERENT_SEARCH')}</p>
 									)}
 								</div>
 							) : (
@@ -211,7 +216,7 @@ export function ItemSelector({
 													/>
 												) : (
 													<div className="w-8 h-8 rounded bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-														<Package className="w-4 h-4 text-gray-400" />
+														<Package className="w-4 h-4 text-gray-400" aria-hidden="true" focusable="false" />
 													</div>
 												)}
 												<div className="flex-1 min-w-0">

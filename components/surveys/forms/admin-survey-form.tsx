@@ -31,7 +31,8 @@ export interface SurveyFormData {
 }
 
 export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, defaultType, defaultItemId }: SurveyFormProps) {
-	const t = useTranslations('common');
+	const t = useTranslations('survey');
+	const tCommon = useTranslations('common');
 	const [formData, setFormData] = useState<SurveyFormData>({
 		title: survey?.title || '',
 		description: survey?.description || '',
@@ -80,7 +81,7 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 			setFormData(prev => ({ ...prev, surveyJson: parsed }));
 			setPreviewJson(parsed); // Update preview
 		} catch {
-			setJsonError(t('INVALID_JSON_FORMAT'));
+			setJsonError(tCommon('INVALID_JSON_FORMAT'));
 		}
 	};
 
@@ -123,12 +124,12 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		
+
 		if (!formData.title.trim()) {
 			toast.error(t('TITLE_REQUIRED'));
 			return;
 		}
-		
+
 		if (jsonError) {
 			toast.error(t('FIX_JSON_ERRORS'));
 			return;
@@ -138,8 +139,13 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 			toast.error(t('ITEM_ID_REQUIRED'));
 			return;
 		}
-		
-		await onSubmit(formData);
+
+		try {
+			await onSubmit(formData);
+		} catch (err) {
+			console.error(err);
+			toast.error(t('FAILED_TO_CREATE_SURVEY'));
+		}
 	};
 
 	return (
@@ -147,13 +153,13 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 			{/* Title */}
 			<div>
 				<label htmlFor="survey-title" className="block text-sm font-medium mb-2">
-					{t('TITLE')} <span className="text-red-500">*</span>
+					{tCommon('TITLE')} <span className="text-red-500">*</span>
 				</label>
 				<input
 					id="survey-title"
 					type="text"
 					value={formData.title}
-					onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+					onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
 					className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 					placeholder={t('ENTER_SURVEY_TITLE')}
 					disabled={isLoading}
@@ -164,12 +170,12 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 			{/* Description */}
 			<div>
 				<label htmlFor="survey-description" className="block text-sm font-medium mb-2">
-					{t('DESCRIPTION')}
+					{tCommon('DESCRIPTION')}
 				</label>
 				<textarea
 					id="survey-description"
 					value={formData.description}
-					onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+					onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
 					className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
 					rows={3}
 					placeholder={t('ENTER_SURVEY_DESCRIPTION')}
@@ -216,13 +222,13 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 					<select
 						id="survey-status"
 						value={formData.status}
-						onChange={(e) => setFormData({ ...formData, status: e.target.value as SurveyStatusEnum })}
+						onChange={(e) => setFormData((prev) => ({ ...prev, status: e.target.value as SurveyStatusEnum }))}
 						className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 						disabled={isLoading}
 					>
-						<option value={SurveyStatusEnum.DRAFT}>{t('DRAFT')}</option>
-						<option value={SurveyStatusEnum.PUBLISHED}>{t('PUBLISHED')}</option>
-						<option value={SurveyStatusEnum.CLOSED}>{t('CLOSED')}</option>
+						<option value={SurveyStatusEnum.DRAFT}> {tCommon('DRAFT')}</option>
+						<option value={SurveyStatusEnum.PUBLISHED}> {tCommon('PUBLISHED')}</option>
+						<option value={SurveyStatusEnum.CLOSED}> {tCommon('CLOSED')}</option>
 					</select>
 				</div>
 			</div>
@@ -234,7 +240,7 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 					onItemSelect={(itemId) => setFormData(prev => ({ ...prev, itemId }))}
 					disabled={isLoading}
 					required
-					label={t('SELECT_ITEM')}
+					label={tCommon('SELECT_ITEM')}
 					placeholder={t('CHOOSE_ITEM_FOR_SURVEY')}
 				/>
 			)}
@@ -256,7 +262,7 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 						size="xs"
 						disabled={isLoading}
 					>
-						{t('FORMAT_JSON')}
+						{tCommon('FORMAT_JSON')}
 					</Button>
 					<Button
 						type="button"
@@ -265,7 +271,7 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 						size="xs"
 						disabled={isLoading}
 					>
-						{t('MINIFY_JSON')}
+						{tCommon('MINIFY_JSON')}
 					</Button>
 					<Button
 						type="button"
@@ -339,13 +345,13 @@ export function AdminSurveyForm({ survey, onSubmit, onCancel, isLoading, mode, d
 					onClick={onCancel}
 					disabled={isLoading}
 				>
-					{t('CANCEL')}
+					{tCommon('CANCEL')}
 				</Button>
 				<Button
 					type="submit"
 					disabled={isLoading || !!jsonError}
 				>
-					{isLoading ? t('SAVING') : mode === 'create' ? t('CREATE_SURVEY_BTN') : t('UPDATE_SURVEY_BTN')}
+					{isLoading ? tCommon('SAVING') : mode === 'create' ? t('CREATE_SURVEY_BTN') : t('UPDATE_SURVEY_BTN')}
 				</Button>
 			</div>
 

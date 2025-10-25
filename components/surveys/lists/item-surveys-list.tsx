@@ -18,7 +18,7 @@ interface DashboardItemSurveysClientProps {
 }
 
 export function DashboardItemSurveysClient({ itemId }: DashboardItemSurveysClientProps) {
-	const t = useTranslations('common');
+	const t = useTranslations('survey');
 	const [surveys, setSurveys] = useState<Survey[]>([]);
 	const [loading, setLoading] = useState(true);
 
@@ -50,7 +50,7 @@ export function DashboardItemSurveysClient({ itemId }: DashboardItemSurveysClien
 					className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline mb-4"
 				>
 					<ArrowLeft className="w-4 h-4" />
-					{t('BACK_TO_ITEM_DASHBOARD')}
+					 {t('BACK_TO_ITEM_DASHBOARD')}
 				</Link>
 			</div>
 

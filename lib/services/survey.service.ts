@@ -89,6 +89,7 @@ export class SurveyService {
       status: data.status || 'draft',
       surveyJson: data.surveyJson,
       publishedAt: data.status === 'published' ? new Date() : undefined,
+      closedAt: data.status === 'closed' ? new Date() : undefined,
     };
 
     return await queries.createSurvey(newSurvey);

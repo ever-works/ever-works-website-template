@@ -21,7 +21,7 @@ export function AdminSurveyCreationButton({
   className = '',
   showLabel = false
 }: AdminSurveyCreationButtonProps) {
-  const t = useTranslations();
+  const t = useTranslations('survey');
 
   // Build URL with query parameters if itemId is provided
   const createSurveyUrl = itemId
@@ -29,14 +29,14 @@ export function AdminSurveyCreationButton({
     : '/admin/surveys/create';
 
   return (
-    <Link href={createSurveyUrl} title={t('common.CREATE_SURVEY')}>
+    <Link href={createSurveyUrl} title={t('CREATE_SURVEY')}>
       <Button
         variant={variant}
         size={size}
         className={`flex items-center justify-center ${showLabel ? 'gap-2' : ''} ${className}`}
       >
         <FileText className="w-4 h-4" />
-        {showLabel && t('common.CREATE_SURVEY')}
+        {showLabel && t('CREATE_SURVEY')}
       </Button>
     </Link>
   );

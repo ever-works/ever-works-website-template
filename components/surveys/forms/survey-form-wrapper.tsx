@@ -28,7 +28,7 @@ export function SurveyFormWrapper({
 	onCompleted,
 	className 
 }: SurveyFormWrapperProps) {
-	const t = useTranslations('common');
+	const t = useTranslations('survey');
 	const [hasStarted, setHasStarted] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 

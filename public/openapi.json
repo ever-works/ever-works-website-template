@@ -22743,7 +22743,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Responses retrieved successfully"
+            "description": "Responses retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedSurveyResponses"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -22800,7 +22807,14 @@
         },
         "responses": {
           "200": {
-            "description": "Response submitted successfully"
+            "description": "Response submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad request"
@@ -22831,7 +22845,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Survey retrieved successfully"
+            "description": "Survey retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Survey"
+                }
+              }
+            }
           },
           "404": {
             "description": "Survey not found"
@@ -23048,7 +23069,14 @@
         },
         "responses": {
           "200": {
-            "description": "Survey created successfully"
+            "description": "Survey created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Survey"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -23551,13 +23579,25 @@
                         "limit": {
                           "type": "integer",
                           "example": 10
+                        },
+                        "activeCount": {
+                          "type": "integer",
+                          "example": 40,
+                          "description": "Global count of active companies (unfiltered)"
+                        },
+                        "inactiveCount": {
+                          "type": "integer",
+                          "example": 7,
+                          "description": "Global count of inactive companies (unfiltered)"
                         }
                       },
                       "required": [
                         "page",
                         "totalPages",
                         "total",
-                        "limit"
+                        "limit",
+                        "activeCount",
+                        "inactiveCount"
                       ]
                     }
                   },
@@ -23597,7 +23637,9 @@
                     "page": 1,
                     "totalPages": 5,
                     "total": 47,
-                    "limit": 10
+                    "limit": 10,
+                    "activeCount": 40,
+                    "inactiveCount": 7
                   }
                 }
               }
@@ -25158,6 +25200,75 @@
           }
         }
       }
+    },
+    "/api/config/features": {
+      "get": {
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "Get feature availability flags",
+        "description": "Returns current feature availability based on system configuration. Features depend on database availability. This is a public endpoint that helps the frontend gracefully handle missing features.",
+        "responses": {
+          "200": {
+            "description": "Feature flags retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ratings": {
+                      "type": "boolean",
+                      "description": "Whether ratings feature is available",
+                      "example": true
+                    },
+                    "comments": {
+                      "type": "boolean",
+                      "description": "Whether comments feature is available",
+                      "example": true
+                    },
+                    "favorites": {
+                      "type": "boolean",
+                      "description": "Whether favorites feature is available",
+                      "example": true
+                    },
+                    "featuredItems": {
+                      "type": "boolean",
+                      "description": "Whether featured items feature is available",
+                      "example": true
+                    }
+                  },
+                  "required": [
+                    "ratings",
+                    "comments",
+                    "favorites",
+                    "featuredItems"
+                  ]
+                },
+                "examples": {
+                  "all_enabled": {
+                    "summary": "All features enabled (database configured)",
+                    "value": {
+                      "ratings": true,
+                      "comments": true,
+                      "favorites": true,
+                      "featuredItems": true
+                    }
+                  },
+                  "all_disabled": {
+                    "summary": "All features disabled (no database)",
+                    "value": {
+                      "ratings": false,
+                      "comments": false,
+                      "favorites": false,
+                      "featuredItems": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -25428,6 +25539,222 @@
           "createdAt",
           "updatedAt"
         ]
+      },
+      "Survey": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique survey identifier",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL-friendly survey identifier",
+            "example": "customer-satisfaction-2024"
+          },
+          "title": {
+            "type": "string",
+            "description": "Survey title",
+            "example": "Customer Satisfaction Survey"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Survey description",
+            "example": "Help us improve our services"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["global", "item"],
+            "description": "Survey type - global or item-specific",
+            "example": "global"
+          },
+          "itemId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Associated item ID for item-specific surveys",
+            "example": "item-123"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "published", "closed"],
+            "description": "Survey status",
+            "example": "published"
+          },
+          "surveyJson": {
+            "type": "object",
+            "description": "SurveyJS JSON definition containing questions and configuration",
+            "example": {
+              "pages": [{
+                "elements": [{
+                  "type": "text",
+                  "name": "question1",
+                  "title": "What is your name?"
+                }]
+              }]
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Survey creation timestamp",
+            "example": "2024-01-15T10:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp",
+            "example": "2024-01-20T14:45:00.000Z"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Survey publication timestamp",
+            "example": "2024-01-16T09:00:00.000Z"
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Survey closure timestamp",
+            "example": null
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Soft deletion timestamp",
+            "example": null
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "type",
+          "status",
+          "surveyJson",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "SurveyResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique response identifier",
+            "example": "660e8400-e29b-41d4-a716-446655440000"
+          },
+          "surveyId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Survey identifier",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true,
+            "description": "User ID if authenticated",
+            "example": "user-123"
+          },
+          "itemId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Associated item ID for item-specific surveys",
+            "example": "item-123"
+          },
+          "data": {
+            "type": "object",
+            "description": "Survey response data containing answers to all questions",
+            "example": {
+              "question1": "John Doe",
+              "question2": 5,
+              "question3": ["option1", "option2"]
+            }
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Response completion timestamp",
+            "example": "2024-01-18T15:30:00.000Z"
+          },
+          "ipAddress": {
+            "type": "string",
+            "nullable": true,
+            "description": "Respondent IP address",
+            "example": "192.168.1.1"
+          },
+          "userAgent": {
+            "type": "string",
+            "nullable": true,
+            "description": "Respondent user agent string",
+            "example": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Response creation timestamp",
+            "example": "2024-01-18T15:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp",
+            "example": "2024-01-18T15:30:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "surveyId",
+          "data",
+          "completedAt",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PaginatedSurveyResponses": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SurveyResponse"
+            },
+            "description": "Array of survey responses"
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer",
+                "description": "Current page number",
+                "example": 1
+              },
+              "pageSize": {
+                "type": "integer",
+                "description": "Number of items per page",
+                "example": 20
+              },
+              "total": {
+                "type": "integer",
+                "description": "Total number of responses",
+                "example": 150
+              },
+              "totalPages": {
+                "type": "integer",
+                "description": "Total number of pages",
+                "example": 8
+              }
+            },
+            "required": ["page", "pageSize", "total", "totalPages"]
+          }
+        },
+        "required": ["items", "pagination"]
       }
     },
     "responses": {},

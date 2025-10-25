@@ -1,13 +1,13 @@
-export function formatDate(date: Date) {
-    return new Date(date).toLocaleDateString('en-US', {
+export function formatDate(date: Date, locale: string = 'en-US') {
+    return new Date(date).toLocaleDateString(locale, {
         month: 'long',
         day: 'numeric',
         year: 'numeric'
     })
 }
 
-export function formatDateTime(date: Date) {
-    return new Date(date).toLocaleString('en-US', {
+export function formatDateTime(date: Date, locale: string = 'en-US') {
+    return new Date(date).toLocaleString(locale, {
         month: 'long',
         day: 'numeric',
         year: 'numeric',

@@ -12,7 +12,7 @@ import { ResponseDetailDialog } from './response-detail-dialog';
 import { formatDateTime } from '@/utils/date';
 import { Button } from '@/components/ui/button';
 import { Logger } from '@/lib/logger';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 const logger = Logger.create('SurveyResponsesClient');
 
@@ -34,7 +34,9 @@ export function SurveyResponsesClient({
 	subtitle,
 	initialFilters = {}
 }: SurveyResponsesClientProps) {
-	const t = useTranslations('common');
+	const t = useTranslations('survey');
+	const tCommon = useTranslations('common');
+	const locale = useLocale();
 	const [responses, setResponses] = useState<SurveyResponse[]>([]);
 	const [total, setTotal] = useState(0);
 	const [loading, setLoading] = useState(true);
@@ -96,7 +98,7 @@ export function SurveyResponsesClient({
 
 			<div className="mb-8 flex items-start justify-between">
 				<div>
-					<h1 className="text-3xl font-bold mb-2">{survey.title} - {t('RESPONSES')}</h1>
+					<h1 className="text-3xl font-bold mb-2">{survey.title} -  {t('RESPONSES')}</h1>
 					<p className="text-gray-600 dark:text-gray-400">
 						{subtitle || t('TOTAL_RESPONSES', { count: total })}
 					</p>
@@ -106,7 +108,7 @@ export function SurveyResponsesClient({
 					disabled={responses.length === 0}
 				>
 					<Download className="w-4 h-4 mr-1" />
-					{t('EXPORT_CSV')}
+					 {tCommon('EXPORT_CSV')}
 				</Button>
 			</div>
 
@@ -115,10 +117,10 @@ export function SurveyResponsesClient({
 				<div className="flex items-center gap-4">
 					<div className="flex items-center gap-2">
 						<Filter className="w-4 h-4 text-gray-500" />
-						<span className="text-sm font-medium">{t('FILTERS')}:</span>
+						<span className="text-sm font-medium"> {tCommon('FILTERS')}:</span>
 					</div>
 					<div className="flex items-center gap-2">
-						<label className="text-sm" htmlFor="startDate">{t('FROM')}:</label>
+						<label className="text-sm" htmlFor="startDate"> {tCommon('FROM')}:</label>
 						<input
 							id="startDate"
 							type="date"
@@ -128,7 +130,7 @@ export function SurveyResponsesClient({
 						/>
 					</div>
 					<div className="flex items-center gap-2">
-						<label className="text-sm" htmlFor="endDate">{t('TO')}:</label>
+						<label className="text-sm" htmlFor="endDate"> {tCommon('TO')}:</label>
 						<input
 							id="endDate"
 							type="date"
@@ -143,7 +145,7 @@ export function SurveyResponsesClient({
 							variant="ghost"
 							onClick={() => setFilters({ ...filters, startDate: undefined, endDate: undefined })}
 						>
-							{t('CLEAR_DATES')}
+							 {tCommon('CLEAR_DATES')}
 						</Button>
 					)}
 				</div>
@@ -151,11 +153,11 @@ export function SurveyResponsesClient({
 
 			{loading ? (
 				<div className="text-center py-16">
-					<p className="text-gray-500 dark:text-gray-400">{t('LOADING_RESPONSES')}</p>
+					<p className="text-gray-500 dark:text-gray-400"> {tCommon('LOADING_RESPONSES')}</p>
 				</div>
 			) : responses.length === 0 ? (
 				<div className="text-center py-16 bg-white dark:bg-gray-800 rounded-lg">
-					<p className="text-gray-500 dark:text-gray-400">{t('NO_RESPONSES_FOUND')}</p>
+					<p className="text-gray-500 dark:text-gray-400"> {tCommon('NO_RESPONSES_FOUND')}</p>
 				</div>
 			) : (
 				<div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
@@ -164,32 +166,32 @@ export function SurveyResponsesClient({
 							<thead className="bg-gray-50 dark:bg-gray-900">
 								<tr>
 									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-										{t('RESPONSE_ID')}
+										 {t('RESPONSE_ID')}
 									</th>
 									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-										{t('USER')}
+										 {tCommon('USER')}
 									</th>
 									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-										{t('COMPLETED_AT')}
-									</th>
-									<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-										{t('ACTIONS')}
-									</th>
+										 {t('COMPLETED_AT')}
+								</th>
+								<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+									 {t('ACTIONS')}
+								</th>
 								</tr>
 							</thead>
 							<tbody className="divide-y divide-gray-200 dark:divide-gray-700">
 								{responses.map((response) => (
 									<tr key={response.id} className="hover:bg-gray-50 dark:hover:bg-gray-900/50">
 										<td className="px-6 py-4 text-sm font-mono">{response.id}</td>
-										<td className="px-6 py-4 text-sm">{response.userId || t('ANONYMOUS')}</td>
-										<td className="px-6 py-4 text-sm">{formatDateTime(response.completedAt)}</td>
+										<td className="px-6 py-4 text-sm">{response.userId || tCommon('ANONYMOUS')}</td>
+										<td className="px-6 py-4 text-sm">{formatDateTime(response.completedAt, locale)}</td>
 										<td className="px-6 py-4">
 											<Button
 												onClick={() => handleViewDetails(response)}
 												size="sm"
 												variant="ghost"
 											>
-												{t('VIEW_DETAILS')}
+												 {tCommon('VIEW_DETAILS')}
 											</Button>
 										</td>
 									</tr>

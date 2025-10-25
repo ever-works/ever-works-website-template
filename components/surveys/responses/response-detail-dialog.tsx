@@ -5,7 +5,7 @@ import type { Survey, SurveyResponse } from '@/lib/db/schema';
 import { Modal } from '@/components/ui/modal';
 import { SurveyFormNoSSR } from '../forms/survey-form-no-ssr';
 import { formatDateTime } from '@/utils/date';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface ResponseDetailDialogProps {
     survey: Survey;
@@ -20,12 +20,14 @@ export function ResponseDetailDialog({
     isOpen,
     onClose
 }: ResponseDetailDialogProps) {
-    const t = useTranslations('common');
+    const t = useTranslations('survey');
+    const tCommon = useTranslations('common');
+    const locale = useLocale();
     const [showAllOnOnePage, setShowAllOnOnePage] = useState(false);
 
     // Create a read-only version of the survey JSON
     const readOnlySurveyJson = {
-        ...(typeof survey.surveyJson === 'object' ? survey.surveyJson : {}),
+        ...(survey.surveyJson && typeof survey.surveyJson === 'object' && !Array.isArray(survey.surveyJson) ? survey.surveyJson : {}),
         mode: 'display', // Set to display mode (read-only)
         showCompletedPage: false,
         questionsOnPageMode: showAllOnOnePage ? 'singlePage' : 'standard' // Toggle view mode
@@ -37,19 +39,19 @@ export function ResponseDetailDialog({
             onClose={onClose}
             size="2xl"
             className="max-w-4xl max-h-[90vh] flex flex-col"
-            title={`${survey.title} - ${t('RESPONSE_DETAILS')}`}
+            title={`${survey.title} - $ {t('RESPONSE_DETAILS')}`}
             subtitle={
                 <div className="flex items-start justify-between w-full">
                     <div className="flex-1">
                         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            {t('RESPONSE_ID')}: {response.id}
+                             {t('RESPONSE_ID')}: {response.id}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {t('RESPONSE_SUBMITTED')}: {response.completedAt ? formatDateTime(response.completedAt) : '—'}
+                             {t('RESPONSE_SUBMITTED')}: {response.completedAt ? formatDateTime(response.completedAt, locale) : '—'}
                         </p>
                         {response.userId && (
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                {t('USER')}: {response.userId}
+                                 {tCommon('USER')}: {response.userId}
                             </p>
                         )}
                     </div>
@@ -65,7 +67,7 @@ export function ResponseDetailDialog({
                             htmlFor="show-all-toggle"
                             className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer whitespace-nowrap"
                         >
-                            {t('SHOW_ALL_QUESTIONS_ONE_PAGE')}
+                             {t('SHOW_ALL_QUESTIONS_ONE_PAGE')}
                         </label>
                     </div>
                 </div>

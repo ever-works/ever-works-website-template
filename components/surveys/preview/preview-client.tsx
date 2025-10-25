@@ -17,7 +17,7 @@ interface SurveyPreviewClientProps {
 }
 
 export function SurveyPreviewClient({ survey, backLink }: SurveyPreviewClientProps) {
-	const t = useTranslations('common');
+	const t = useTranslations('survey');
 	
 	return (
 		<div className="container mx-auto px-4 py-8 max-w-4xl">

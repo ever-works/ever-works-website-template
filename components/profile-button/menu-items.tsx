@@ -165,8 +165,8 @@ function MenuItems({ user, profilePath, onItemClick, onNavigationStart, isNaviga
         <MenuItem
           href="/admin/surveys"
           icon={FileText}
-          title={t("common.SURVEYS")}
-          description={t("common.MANAGE_SURVEYS_DESC")}
+          title={t("survey.SURVEYS")}
+          description={t("survey.MANAGE_SURVEYS_DESC")}
           gradientFrom="from-yellow-100"
           gradientTo="to-orange-100 dark:from-yellow-900/30 dark:to-orange-900/30"
           iconColor="text-yellow-600 dark:text-yellow-400"

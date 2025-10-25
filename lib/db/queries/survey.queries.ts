@@ -5,7 +5,7 @@
 
 import { db } from '../drizzle';
 import { surveys, surveyResponses, type Survey, type NewSurvey, type SurveyResponse, type NewSurveyResponse } from '../schema';
-import { eq, and, or, desc, gte, lte, count, SQL, sql, not } from 'drizzle-orm';
+import { eq, and, or, desc, gte, lte, count, SQL, sql, not, isNull, inArray } from 'drizzle-orm';
 
 // ==================== SURVEY QUERIES ====================
 
@@ -21,17 +21,20 @@ export async function getSurveys(filters?: {
   userId?: string;
   withResponseCount?: boolean;
   withCompletionStatus?: boolean;
-}): Promise<{ 
-  surveys: (Survey & { responseCount?: number; isCompletedByUser?: boolean })[]; 
-  total: number; 
-  totalPages: number 
+}): Promise<{
+  surveys: (Survey & { responseCount?: number; isCompletedByUser?: boolean })[];
+  total: number;
+  totalPages: number
 }> {
   const page = filters?.page || 1;
   const limit = filters?.limit || 10;
   const offset = (page - 1) * limit;
 
   const conditions: SQL[] = [];
-  
+
+  // Exclude soft-deleted surveys
+  conditions.push(isNull(surveys.deletedAt));
+
   if (filters?.type) {
     conditions.push(eq(surveys.type, filters.type));
   }
@@ -49,11 +52,11 @@ export async function getSurveys(filters?: {
     // Build select object with proper typing
     const selectObj = {
       ...surveys,
-      ...(filters.withResponseCount && { 
-        responseCount: count(surveyResponses.id) 
+      ...(filters.withResponseCount && {
+        responseCount: count(surveyResponses.id)
       }),
-      ...(filters.withCompletionStatus && filters.userId && { 
-        isCompletedByUser: sql<number>`COUNT(CASE WHEN ${surveyResponses.userId} = ${filters.userId} THEN 1 END)` 
+      ...(filters.withCompletionStatus && filters.userId && {
+        isCompletedByUser: sql<number>`COUNT(CASE WHEN ${surveyResponses.userId} = ${filters.userId} THEN 1 END)`
       }),
     } as any;
 
@@ -84,7 +87,7 @@ export async function getSurveys(filters?: {
           result[key] = row[key];
         }
       });
-      
+
       // Add computed fields
       if (filters.withResponseCount) {
         result.responseCount = Number(row.responseCount) || 0;
@@ -92,7 +95,7 @@ export async function getSurveys(filters?: {
       if (filters.withCompletionStatus && filters.userId) {
         result.isCompletedByUser = Number(row.isCompletedByUser) > 0;
       }
-      
+
       return result;
     });
 
@@ -131,12 +134,15 @@ export async function getSurveys(filters?: {
  * Get survey by slug
  */
 export async function getSurveyBySlug(slug: string, ignoreId?: string): Promise<Survey | null> {
-  const conditions: SQL[] = [eq(surveys.slug, slug)];
+  const conditions: SQL[] = [
+    eq(surveys.slug, slug),
+    isNull(surveys.deletedAt) // Exclude soft-deleted surveys
+  ];
 
   if (ignoreId) {
     conditions.push(not(eq(surveys.id, ignoreId)));
   }
-  
+
   const [survey] = await db
     .select()
     .from(surveys)
@@ -153,7 +159,10 @@ export async function getSurveyById(id: string): Promise<Survey | null> {
   const [survey] = await db
     .select()
     .from(surveys)
-    .where(eq(surveys.id, id))
+    .where(and(
+      eq(surveys.id, id),
+      isNull(surveys.deletedAt) // Exclude soft-deleted surveys
+    ))
     .limit(1);
 
   return survey || null;
@@ -289,7 +298,7 @@ export async function hasUserCompletedSurvey(surveyId: string, userId: string): 
  * Get user's completion status for multiple surveys
  */
 export async function getUserSurveyCompletionStatus(
-  surveyIds: string[], 
+  surveyIds: string[],
   userId: string
 ): Promise<Record<string, boolean>> {
   if (surveyIds.length === 0) {
@@ -302,17 +311,14 @@ export async function getUserSurveyCompletionStatus(
       count: count()
     })
     .from(surveyResponses)
-    .where(and(
-      eq(surveyResponses.userId, userId),
-      or(...surveyIds.map(id => eq(surveyResponses.surveyId, id)))
-    ))
+    .where(and(eq(surveyResponses.userId, userId), inArray(surveyResponses.surveyId, surveyIds)))
     .groupBy(surveyResponses.surveyId);
 
   const statusMap: Record<string, boolean> = {};
   surveyIds.forEach(id => {
     statusMap[id] = false;
   });
-  
+
   responses.forEach(response => {
     if (response.count > 0) {
       statusMap[response.surveyId] = true;
@@ -326,7 +332,7 @@ export async function getUserSurveyCompletionStatus(
  * Get user's latest response for a survey
  */
 export async function getUserLatestSurveyResponse(
-  surveyId: string, 
+  surveyId: string,
   userId: string
 ): Promise<SurveyResponse | null> {
   const [response] = await db
@@ -354,6 +360,7 @@ export async function hasUserCompletedItemSurvey(itemId: string, userId: string)
       eq(surveys.itemId, itemId),
       eq(surveys.type, 'item'),
       eq(surveys.status, 'published'),
+      isNull(surveys.deletedAt), // Exclude soft-deleted surveys
       eq(surveyResponses.userId, userId)
     ))
     .limit(1);
@@ -383,7 +390,7 @@ export async function getItemsSurveyCompletionStatus(
     })
     .from(surveys)
     .leftJoin(
-      surveyResponses, 
+      surveyResponses,
       and(
         eq(surveys.id, surveyResponses.surveyId),
         eq(surveyResponses.userId, userId)
@@ -392,6 +399,7 @@ export async function getItemsSurveyCompletionStatus(
     .where(and(
       eq(surveys.type, 'item'),
       eq(surveys.status, 'published'),
+      isNull(surveys.deletedAt), // Exclude soft-deleted surveys
       or(...itemIds.map(id => eq(surveys.itemId, id)))
     ))
     .groupBy(surveys.itemId);
@@ -401,7 +409,7 @@ export async function getItemsSurveyCompletionStatus(
   itemIds.forEach(id => {
     statusMap[id] = false;
   });
-  
+
   // Mark items with responses as completed
   responses.forEach(response => {
     if (response.itemId && Number(response.hasResponse) > 0) {
@@ -426,6 +434,14 @@ export async function getSurveyAnalytics(
   totalResponses: number;
   lastResponseAt: string | null;
 }> {
+  // ensure survey is active (not soft-deleted)
+  const exists = await db.select({ id: surveys.id }).from(surveys)
+    .where(and(eq(surveys.id, surveyId), isNull(surveys.deletedAt))).limit(1);
+
+  if (exists.length === 0) {
+    return { totalResponses: 0, lastResponseAt: null };
+  }
+
   const responseConditions: SQL[] = [eq(surveyResponses.surveyId, surveyId)];
 
   if (filters?.itemId) {
@@ -464,7 +480,5 @@ export async function getSurveyResponseCount(surveyId: string): Promise<number> 
     .select({ count: count() })
     .from(surveyResponses)
     .where(eq(surveyResponses.surveyId, surveyId));
-
-  return result?.count || 0;
+  return Number(result?.count ?? 0);
 }
-

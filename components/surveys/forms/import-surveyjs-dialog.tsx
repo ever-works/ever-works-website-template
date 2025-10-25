@@ -17,7 +17,8 @@ interface ImportSurveyJsDialogProps {
 }
 
 export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurveyJsDialogProps) {
-	const t = useTranslations('common');
+	const t = useTranslations('survey');
+	const tCommon = useTranslations('common');
 	const [surveyJsId, setSurveyJsId] = useState('');
 	const [isImporting, setIsImporting] = useState(false);
 
@@ -108,7 +109,7 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 					variant="outline"
 					disabled={isImporting}
 				>
-					{t('CANCEL')}
+					{tCommon('CANCEL')}
 				</Button>
 				<Button
 					onClick={handleImport}
@@ -117,7 +118,7 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 					{isImporting ? (
 						<>
 							<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-							{t('IMPORTING')}
+							{tCommon('IMPORTING')}
 						</>
 					) : (
 						<>

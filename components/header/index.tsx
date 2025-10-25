@@ -27,7 +27,7 @@ interface NavigationItem {
   label: string;
   href: string;
   translationKey?: string;
-  translationNamespace?: "common" | "listing";
+  translationNamespace?: "common" | "listing" | "survey";
 }
 
 interface ChevronProps {
@@ -43,7 +43,7 @@ const NAVIGATION_CONFIG: Array<{
   key: string;
   href: string;
   translationKey?: string;
-  translationNamespace?: "common" | "listing";
+  translationNamespace?: "common" | "listing" | "survey";
   staticLabel?: string;
 }> = [
   {
@@ -91,7 +91,7 @@ const NAVIGATION_CONFIG: Array<{
     key: "surveys",
     href: "/surveys",
     translationKey: "SURVEYS",
-    translationNamespace: "common",
+    translationNamespace: "survey",
   },
   {
     key: "pricing",
