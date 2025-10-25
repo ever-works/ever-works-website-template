@@ -2,7 +2,7 @@
 
 import { ItemData, Tag, Category } from '@/lib/content';
 import Link from 'next/link';
-import { Card, CardHeader, CardBody, cn } from '@heroui/react';
+import { Card, CardHeader, CardBody, cn, Spinner } from '@heroui/react';
 import { FiArrowUpRight, FiFolder } from 'react-icons/fi';
 import { useFilters } from '@/components/filters/context/filter-context';
 import { usePathname } from 'next/navigation';
@@ -12,15 +12,19 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { shouldShowFallback, isProblematicUrl } from '@/lib/utils/image-domains';
 import { FeaturedBadge } from './featured-items';
+import { useState } from 'react';
 
 type ItemProps = ItemData & {
 	onNavigate?: () => void;
 };
 
+const TAG_BUTTON_BASE_CLASS = 'text-xs transition-all duration-300 cursor-pointer text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 hover:scale-105 font-medium px-2 py-1 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20';
+
 export default function Item(props: ItemProps) {
 	const pathname = usePathname();
 	const locale = pathname.split('/')[1] || '';
 	const { data: session } = useSession();
+	const [isNavigating, setIsNavigating] = useState(false);
 
 	const shouldShowFallbackIcon = shouldShowFallback(props.icon_url || '');
 
@@ -32,21 +36,29 @@ export default function Item(props: ItemProps) {
 	const isSourceUrl = props.is_source_url_active === true ? '': `/${locale}`;
 	const getDetailPath = () => (locale ? `${isSourceUrl}/items/${props.slug}` : `/items/${props.slug}`);
 
+	const cardClassName = cn(
+		'group relative border-0 rounded-2xl transition-all duration-700 transform hover:-translate-y-3 backdrop-blur-xl overflow-hidden h-full',
+		'bg-white/80 dark:bg-gray-900/80 shadow-lg hover:shadow-2xl',
+		'ring-1 ring-gray-200/50 dark:ring-gray-700/50 hover:ring-gray-300/70 dark:hover:ring-gray-600/70',
+		'before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/60 before:via-transparent before:to-gray-50/40',
+		'dark:before:from-gray-800/60 dark:before:via-transparent dark:before:to-gray-900/40',
+		'hover:before:from-blue-50/30 hover:before:to-purple-50/20 dark:hover:before:from-blue-900/20 dark:hover:before:to-purple-900/10',
+		{
+			'ring-2 ring-blue-400/40 dark:ring-blue-500/40 shadow-blue-500/10 dark:shadow-blue-500/20':
+				props.featured
+		}
+	);
+
 	return (
-		<Card
-			className={cn(
-				'group relative border-0 rounded-2xl transition-all duration-700 transform hover:-translate-y-3 backdrop-blur-xl overflow-hidden h-full',
-				'bg-white/80 dark:bg-gray-900/80 shadow-lg hover:shadow-2xl',
-				'ring-1 ring-gray-200/50 dark:ring-gray-700/50 hover:ring-gray-300/70 dark:hover:ring-gray-600/70',
-				'before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/60 before:via-transparent before:to-gray-50/40',
-				'dark:before:from-gray-800/60 dark:before:via-transparent dark:before:to-gray-900/40',
-				'hover:before:from-blue-50/30 hover:before:to-purple-50/20 dark:hover:before:from-blue-900/20 dark:hover:before:to-purple-900/10',
-				{
-					'ring-2 ring-blue-400/40 dark:ring-blue-500/40 shadow-blue-500/10 dark:shadow-blue-500/20':
-						props.featured
-				}
-			)}
+		<Link
+			href={getDetailPath()}
+			onClick={() => {
+				setIsNavigating(true);
+				props.onNavigate?.();
+			}}
+			className="block"
 		>
+			<Card className={cardClassName}>
 			<div className="absolute inset-0 bg-gradient-to-br from-gray-50/60 via-white/90 to-gray-100/80 dark:from-gray-900/60 dark:via-gray-800/80 dark:to-black/80 transition-all duration-700" />
 
 			<div
@@ -83,39 +95,34 @@ export default function Item(props: ItemProps) {
 								</div>
 
 								<div className="flex-1 min-w-0">
-									<Link
-										href={getDetailPath()}
-										onClick={(e) => {
-											e.stopPropagation();
-											props.onNavigate?.();
-										}}
-										className="text-lg sm:text-base font-semibold leading-tight text-gray-900 dark:text-white mb-1 transition-colors duration-300 group-hover:text-gray-700 dark:group-hover:text-gray-200"
-									>
+									<div className="text-lg sm:text-base font-semibold leading-tight text-gray-900 dark:text-white mb-1 transition-colors duration-300 group-hover:text-gray-700 dark:group-hover:text-gray-200">
 										{props.name}
-									</Link>
+									</div>
 									<div className="w-0 h-0.5 bg-gray-300 dark:bg-gray-600 group-hover:w-12 transition-all duration-500 ease-out" />
 								</div>
 							</div>
 
 							<div className="flex items-center gap-2">
 								{session?.user?.id && (
-									<FavoriteButton
-										itemSlug={props.slug}
-										itemName={props.name}
-										itemIconUrl={props.icon_url}
-										itemCategory={
-											Array.isArray(props.category)
-												? typeof props.category[0] === 'string'
-													? props.category[0]
-													: props.category[0]?.name
-												: typeof props.category === 'string'
-													? props.category
-													: props.category?.name
-										}
-										variant="star"
-										size="sm"
-										className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-									/>
+									<div onClick={(e) => e.stopPropagation()}>
+										<FavoriteButton
+											itemSlug={props.slug}
+											itemName={props.name}
+											itemIconUrl={props.icon_url}
+											itemCategory={
+												Array.isArray(props.category)
+													? typeof props.category[0] === 'string'
+														? props.category[0]
+														: props.category[0]?.name
+													: typeof props.category === 'string'
+														? props.category
+														: props.category?.name
+											}
+											variant="star"
+											size="sm"
+											className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+										/>
+									</div>
 								)}
 
 								{props.featured && (
@@ -167,13 +174,11 @@ export default function Item(props: ItemProps) {
 									if (!tagName) return null;
 
 									return (
-										<div
+										<TagFilterButton
 											key={tagId || `tag-${index}`}
-											className="text-xs transition-all duration-300 cursor-pointer text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 hover:scale-105 font-medium px-2 py-1 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20"
-											style={{ animationDelay: `${index * 0.05}s` }}
-										>
-											#{tagName}
-										</div>
+											tag={tag}
+											index={index}
+										/>
 									);
 								})}
 						</div>
@@ -204,25 +209,29 @@ export default function Item(props: ItemProps) {
 			</div>
 
 			{/* Enhanced hover indicator */}
-			<Link
-				href={getDetailPath()}
-				onClick={(e) => {
-					e.stopPropagation();
-					props.onNavigate?.();
-				}}
+			<div
 				className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-2 group-hover:translate-x-0 w-8 h-8 rounded-full bg-theme-primary-500/10 dark:bg-theme-primary-400/10 flex items-center justify-center backdrop-blur-sm border border-theme-primary-10 dark:border-theme-primary"
-				aria-label="View details"
+				aria-hidden="true"
 			>
 				<FiArrowUpRight className="w-4 h-4 text-theme-primary-600 dark:text-theme-primary-400" />
-			</Link>
+			</div>
 
 			{/* Subtle glow effect */}
 			<div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
+			{/* Loading overlay */}
+			{isNavigating && (
+				<div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl flex items-center justify-center z-50 transition-opacity duration-300">
+					<Spinner size="lg" color="primary" />
+				</div>
+			)}
 		</Card>
+		</Link>
 	);
 }
 
 type CategoryProp = string | Category;
+type TagProp = string | Tag;
 
 function CategoryFilterButton({ category }: { category: CategoryProp }) {
 	const { selectedCategories, addSelectedCategory } = useFilters();
@@ -238,6 +247,7 @@ function CategoryFilterButton({ category }: { category: CategoryProp }) {
 				(isActive ? 'ring-2 ring-theme-primary-500' : '')
 			}
 			onClick={(e) => {
+				e.preventDefault();
 				e.stopPropagation();
 				if (!isActive) {
 					addSelectedCategory(categoryId);
@@ -245,6 +255,34 @@ function CategoryFilterButton({ category }: { category: CategoryProp }) {
 			}}
 		>
 			{categoryName}
+		</button>
+	);
+}
+
+function TagFilterButton({ tag, index }: { tag: TagProp; index: number }) {
+	const { selectedTags, addSelectedTag } = useFilters();
+	const tagId = typeof tag === 'string' ? tag : (tag.id ?? '');
+	const tagName = typeof tag === 'string' ? tag : (tag.name ?? tagId);
+	const isActive = tagId ? selectedTags.includes(tagId) : false;
+
+	return (
+		<button
+			type="button"
+			data-tag-filter
+			className={cn(
+				TAG_BUTTON_BASE_CLASS,
+				isActive && 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+			)}
+			style={{ animationDelay: `${index * 0.05}s` }}
+			onClick={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				if (!tagId || isActive) return;
+				addSelectedTag(tagId);
+			}}
+			aria-label={`Filter by tag ${tagName}`}
+		>
+			#{tagName}
 		</button>
 	);
 }
