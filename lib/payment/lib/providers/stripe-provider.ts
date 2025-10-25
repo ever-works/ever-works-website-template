@@ -2,23 +2,23 @@ import Stripe from 'stripe';
 import React from 'react';
 import { User } from '@supabase/supabase-js';
 import {
-	PaymentProviderInterface,
-	PaymentIntent,
-	PaymentVerificationResult,
-	WebhookResult,
-	CreatePaymentParams,
-	ClientConfig,
-	PaymentProviderConfig,
-	CreateCustomerParams,
-	CustomerResult,
-	CreateSubscriptionParams,
-	SubscriptionInfo,
-	SubscriptionStatus,
-	UpdateSubscriptionParams,
-	UIComponents,
-	CardBrandIcon,
-	PaymentFormProps,
-	SetupIntent
+    PaymentProviderInterface,
+    PaymentIntent,
+    PaymentVerificationResult,
+    WebhookResult,
+    CreatePaymentParams,
+    ClientConfig,
+    PaymentProviderConfig,
+    CreateCustomerParams,
+    CustomerResult,
+    CreateSubscriptionParams,
+    SubscriptionInfo,
+    SubscriptionStatus,
+    UpdateSubscriptionParams,
+    UIComponents,
+    CardBrandIcon,
+    PaymentFormProps,
+    SetupIntent
 } from '../../types/payment-types';
 import StripeElementsWrapper from '../../ui/stripe/stripe-elements';
 import { PRICES } from '../utils/prices';

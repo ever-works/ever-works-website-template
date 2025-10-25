@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { RoleRepository } from '@/lib/repositories/role.repository';
 import type { CreateRoleRequest, RoleStatus } from '@/lib/types/role';
+import { validatePaginationParams } from '@/lib/utils/pagination-validation';
 
 const roleRepository = new RoleRepository();
 
@@ -112,6 +113,27 @@ const roleRepository = new RoleRepository();
  *               page: 1
  *               limit: 10
  *               totalPages: 3
+ *       400:
+ *         description: "Bad request - Invalid pagination parameters"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *             examples:
+ *               invalid_page:
+ *                 value:
+ *                   success: false
+ *                   error: "Invalid page parameter. Must be a positive integer."
+ *               invalid_limit:
+ *                 value:
+ *                   success: false
+ *                   error: "Invalid limit parameter. Must be between 1 and 100."
  *       500:
  *         description: "Internal server error"
  *         content:
@@ -129,10 +151,18 @@ const roleRepository = new RoleRepository();
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
+    // Validate pagination parameters
+    const paginationResult = validatePaginationParams(searchParams);
+    if ('error' in paginationResult) {
+      return NextResponse.json(
+        { success: false, error: paginationResult.error },
+        { status: paginationResult.status }
+      );
+    }
+    const { page, limit } = paginationResult;
+
     // Parse query parameters
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
     const statusParam = searchParams.get('status');
     const status: RoleStatus | undefined = statusParam === 'active' || statusParam === 'inactive' ? statusParam as RoleStatus : undefined;
     const sortBy = searchParams.get('sortBy') as 'name' | 'id' | 'created_at' | null;
@@ -140,8 +170,8 @@ export async function GET(request: NextRequest) {
 
     // Validate parameters
     const options = {
-      page: Math.max(1, page),
-      limit: Math.min(100, Math.max(1, limit)),
+      page,
+      limit,
       status,
       sortBy: sortBy || 'name',
       sortOrder: sortOrder || 'asc',

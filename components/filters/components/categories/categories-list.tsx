@@ -92,8 +92,8 @@ export function CategoriesList({
       <div className="overflow-y-auto scrollbar-none max-h-[650px]">
         {categories.map((category) => {
           if (!category.count) return null;
-          
-          const href = `/categories/category/${category.id}`;
+
+          const href = `/categories/${category.id}`;
           const isActive = isCategoryPagePath(pathname, href);
 
           return (

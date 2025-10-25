@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { categoryRepository } from "@/lib/repositories/category.repository";
 import { CreateCategoryRequest, CategoryListOptions } from "@/lib/types/category";
 import { auth } from "@/lib/auth";
+import { validatePaginationParams } from "@/lib/utils/pagination-validation";
 
 /**
  * @swagger
@@ -115,6 +116,27 @@ import { auth } from "@/lib/auth";
  *               page: 1
  *               limit: 10
  *               totalPages: 3
+ *       400:
+ *         description: "Bad request - Invalid pagination parameters"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *             examples:
+ *               invalid_page:
+ *                 value:
+ *                   success: false
+ *                   error: "Invalid page parameter. Must be a positive integer."
+ *               invalid_limit:
+ *                 value:
+ *                   success: false
+ *                   error: "Invalid limit parameter. Must be between 1 and 100."
  *       401:
  *         description: "Unauthorized - Admin access required"
  *         content:
@@ -155,13 +177,22 @@ export async function GET(request: NextRequest) {
 
     // Parse query parameters
     const { searchParams } = new URL(request.url);
+
+    // Validate pagination parameters
+    const paginationResult = validatePaginationParams(searchParams);
+    if ('error' in paginationResult) {
+      return NextResponse.json(
+        { success: false, error: paginationResult.error },
+        { status: paginationResult.status }
+      );
+    }
+    const { page, limit } = paginationResult;
+
     const includeInactive = searchParams.get('includeInactive') === 'true';
     const sortByParam = searchParams.get('sortBy');
     const sortBy = (sortByParam === 'name' || sortByParam === 'id') ? sortByParam : 'name';
     const sortOrderParam = searchParams.get('sortOrder');
     const sortOrder = (sortOrderParam === 'asc' || sortOrderParam === 'desc') ? sortOrderParam : 'asc';
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
 
     const options: CategoryListOptions = {
       includeInactive,

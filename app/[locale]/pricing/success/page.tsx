@@ -4,7 +4,6 @@ import { useTransactionDetails } from "@/hooks/use-transaction-details"
 import { useSearchParams } from "next/navigation"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import {
   CheckCircle,
   Loader2,
@@ -23,6 +22,7 @@ import { Badge } from "@heroui/react"
 import { useSuccessPageFeatures } from "@/hooks/use-success-page-features"
 import { useTranslations } from "next-intl"
 import { PaymentPlan } from "@/lib/constants"
+import { Container } from "@/components/ui/container"
 
 
 export default function SubmissionSuccessPage() {
@@ -65,10 +65,10 @@ export default function SubmissionSuccessPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-slate-600">{t("LOADING_SUBMISSION_DETAILS")}</p>
+          <Loader2 className="w-12 h-12 animate-spin text-theme-primary-600 mx-auto mb-4" />
+          <p className="text-slate-600 dark:text-white">{t("LOADING_SUBMISSION_DETAILS")}</p>
         </div>
       </div>
     )
@@ -76,8 +76,8 @@ export default function SubmissionSuccessPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
-        <Card className="bg-white border-slate-200 p-8 max-w-md shadow-lg">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
+        <Container maxWidth="7xl" padding="default">
           <div className="text-center">
             <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-red-500 text-2xl">!</span>
@@ -88,63 +88,61 @@ export default function SubmissionSuccessPage() {
               {t("BACK_TO_PRICING")}
             </Button>
           </div>
-        </Card>
+        </Container>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="px-6 py-16">
-        <div className="max-w-7xl mx-auto">
-          {/* Success Header */}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
+      <Container maxWidth="7xl" padding="default">
           <div className="text-center mb-12">
-            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20   flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-12 h-12 text-green-500" />
             </div>
-            <h1 className="text-4xl font-bold text-slate-900 mb-4">
-              🎉 {transactionDetails?.paymentType === "subscription" ? t("SUBSCRIPTION_ACTIVATED") : t("SUBMISSION_RECEIVED")}
+            <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
+              {transactionDetails?.paymentType === "subscription" ? t("SUBSCRIPTION_ACTIVATED") : t("SUBMISSION_RECEIVED")}
             </h1>
-            <p className="text-xl text-slate-600">
+            <p className="text-xl text-slate-600 dark:text-white">
               {transactionDetails?.paymentType === "subscription"
                 ? t("SUBSCRIPTION_SUCCESS_MESSAGE")
                 : t("SUBMISSION_SUCCESS_MESSAGE")}
             </p>
-            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-500/20 rounded-full">
-              <FileText className="w-4 h-4 text-blue-600" />
-              <span className="text-blue-600 font-medium">
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 ">
+              <FileText className="w-4 h-4 text-theme-primary-600" />
+              <span className="text-theme-primary-600 font-medium">
                 {transactionDetails?.submissionTitle || t("SUBMISSION_PROCESSING")}
               </span>
             </div>
           </div>
 
           {/* Transaction Details */}
-          <Card className="bg-white border-slate-200 p-8 mb-8 shadow-lg">
+          <div   className="p-8 mb-8 ">
             <div className="grid md:grid-cols-2 gap-8">
               {/* Left Column - Transaction Info */}
               <div>
-                <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                  <CreditCard className="w-5 h-5 text-blue-600" />
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                  <CreditCard className="w-5 h-5 text-theme-primary-600 dark:text-white" />
                   {t("TRANSACTION_DETAILS")}
                 </h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-600">{t("PLAN")}</span>
+                    <span className="text-slate-600 dark:text-white">{t("PLAN")}</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-slate-900 font-medium">{transactionDetails?.planName}</span>
+                      <span className="text-slate-900 dark:text-white font-medium">{transactionDetails?.planName}</span>
                       {transactionDetails?.planType !== "free" && <Star className="w-4 h-4 text-yellow-500" />}
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-600">{t("PRICE")}</span>
-                    <span className="text-slate-900 font-medium">
+                    <span className="text-slate-600 dark:text-white">{t("PRICE")}</span>
+                    <span className="text-slate-900 dark:text-white font-medium">
                       {transactionDetails?.price === 0
                         ? t("FREE")
                         : `$${transactionDetails?.price}${transactionDetails?.paymentType === "subscription" ? "/mois" : ""}`}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-600">{t("STATUS")}</span>
+                    <span className="text-slate-600 dark:text-white">{t("STATUS")}</span>
                     <Badge
                       className={cn(
                         "px-2 py-1 rounded-full text-xs font-medium",
@@ -155,13 +153,13 @@ export default function SubmissionSuccessPage() {
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-600">{t("EMAIL")}</span>
+                    <span className="text-slate-600 dark:text-white">{t("EMAIL")}</span>
                     <span className="text-slate-900 font-medium text-sm">{transactionDetails?.customerEmail}</span>
                   </div>
                   {transactionDetails?.submissionsRemaining && (
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-600">{t("SUBMISSIONS_REMAINING")}</span>
-                      <span className="text-slate-900 font-medium">{transactionDetails.submissionsRemaining}</span>
+                      <span className="text-slate-600 dark:text-white">{t("SUBMISSIONS_REMAINING")}</span>
+                      <span className="text-slate-900 dark:text-white font-medium">{transactionDetails.submissionsRemaining}</span>
                     </div>
                   )}
                 </div>
@@ -170,31 +168,31 @@ export default function SubmissionSuccessPage() {
               {/* Right Column - Plan Features */}
               <div>
                 <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                  <Gift className="w-5 h-5 text-blue-600" />
+                  <Gift className="w-5 h-5 text-theme-primary-600" />
                   {t("YOUR_PLAN_INCLUDES")}
                 </h3>
                 <div className="space-y-3 max-h-80 overflow-y-auto">
                   {getPlanFeatures(transactionDetails?.planType || "free").map((feature, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <feature.icon className={cn("w-4 h-4", feature.color)} />
-                      <span className="text-slate-700 text-sm">{feature.text}</span>
+                      <span className="text-slate-700 dark:text-white text-sm">{feature.text}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
-          </Card>
+          </div>
 
           {/* Next Steps */}
-          <Card className="bg-white border-slate-200 p-8 mb-8 shadow-lg">
-            <h3 className="text-xl font-bold text-slate-900 mb-6">{t("NEXT_STEPS")}</h3>
+          <div className="p-8 mb-8 shadow-lg">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">{t("NEXT_STEPS")}</h3>
             <div className="grid md:grid-cols-2 gap-6">
               {transactionDetails?.paymentType === "submission" && (
-                <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
-                  <Clock className="w-5 h-5 text-blue-600 mt-0.5" />
+                <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-slate-800 rounded-lg">
+                  <Clock className="w-5 h-5 text-theme-primary-600 mt-0.5" />
                   <div>
-                    <p className="text-blue-900 font-medium">{t("REVIEW_IN_PROGRESS")}</p>
-                    <p className="text-blue-700 text-sm">
+                    <p className="text-theme-primary-900 dark:text-white font-medium">{t("REVIEW_IN_PROGRESS")}</p>
+                    <p className="text-theme-primary-700 dark:text-white text-sm">
                       {transactionDetails?.planType === "pro" || transactionDetails?.planType === "premium"
                         ? t("STANDARD_REVIEW_TIME")
                         : t("FREE_REVIEW_TIME")}
@@ -204,8 +202,8 @@ export default function SubmissionSuccessPage() {
               )}
 
               {transactionDetails?.nextPaymentDate && (
-                <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg">
-                  <Calendar className="w-5 h-5 text-slate-600 mt-0.5" />
+                <div className="flex items-start gap-3 p-4 bg-slate-50 dark:bg-sl-900 rounded-lg">
+                  <Calendar className="w-5 h-5 text-slate-600 dark:text-white mt-0.5" />
                   <div>
                     <p className="text-slate-900 font-medium">{t("NEXT_PAYMENT")}</p>
                     <p className="text-slate-600 text-sm">
@@ -231,7 +229,7 @@ export default function SubmissionSuccessPage() {
                 </div>
               </div>
             </div>
-          </Card>
+          </div>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -268,8 +266,7 @@ export default function SubmissionSuccessPage() {
               {t("THANK_YOU_MESSAGE")}
             </p>
           </div>
-        </div>
+        </Container>
       </div>
-    </div>
   )
 }
