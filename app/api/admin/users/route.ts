@@ -4,6 +4,7 @@ import { UserRepository } from '@/lib/repositories/user.repository';
 import { RoleRepository } from '@/lib/repositories/role.repository';
 import { CreateUserRequest, UserListOptions } from '@/lib/types/user';
 import { isValidEmail } from '@/lib/utils/email-validation';
+import { validatePaginationParams } from '@/lib/utils/pagination-validation';
 
 /**
  * @swagger
@@ -158,6 +159,8 @@ import { isValidEmail } from '@/lib/utils/email-validation';
  *                 error:
  *                   type: string
  *                   examples:
+ *                     invalid_page: "Invalid page parameter. Must be a positive integer."
+ *                     invalid_limit: "Invalid limit parameter. Must be between 1 and 100."
  *                     invalid_status: "Invalid status parameter"
  *                     invalid_sort: "Invalid sortBy parameter"
  *                     search_too_long: "Search parameter too long"
@@ -216,11 +219,17 @@ export async function GET(request: NextRequest) {
 
     // Parse query parameters
     const { searchParams } = new URL(request.url);
-    
-    // Validate and constrain numeric parameters
-    const page = Math.max(1, parseInt(searchParams.get('page') || '1') || 1);
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '10') || 10));
-    
+
+    // Validate pagination parameters
+    const paginationResult = validatePaginationParams(searchParams);
+    if ('error' in paginationResult) {
+      return NextResponse.json(
+        { success: false, error: paginationResult.error },
+        { status: paginationResult.status }
+      );
+    }
+    const { page, limit } = paginationResult;
+
     const search = searchParams.get('search') || undefined;
     const role = searchParams.get('role') || undefined;
     const status = searchParams.get('status') as 'active' | 'inactive' | undefined;

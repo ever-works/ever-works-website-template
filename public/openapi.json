@@ -10667,6 +10667,8 @@
                     "error": {
                       "type": "string",
                       "examples": {
+                        "invalid_page": "Invalid page parameter. Must be a positive integer.",
+                        "invalid_limit": "Invalid limit parameter. Must be between 1 and 100.",
                         "invalid_status": "Invalid status parameter",
                         "invalid_sort": "Invalid sortBy parameter",
                         "search_too_long": "Search parameter too long"
@@ -12845,14 +12847,14 @@
         "description": "Returns all comments for a specific item including user information, ratings, and timestamps. Comments are returned with associated user profiles for display purposes. This is a public endpoint that doesn't require authentication.",
         "parameters": [
           {
-            "name": "itemId",
+            "name": "slug",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "Item ID to get comments for",
-            "example": "item_123abc"
+            "description": "Item slug to get comments for",
+            "example": "awesome-productivity-tool"
           }
         ],
         "responses": {
@@ -13026,14 +13028,14 @@
         ],
         "parameters": [
           {
-            "name": "itemId",
+            "name": "slug",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "Item ID to comment on",
-            "example": "item_123abc"
+            "description": "Item slug to comment on",
+            "example": "awesome-productivity-tool"
           }
         ],
         "requestBody": {
@@ -22805,66 +22807,1709 @@
         }
       }
     },
-    "/api/config/features": {
+    "/api/admin/companies": {
       "get": {
         "tags": [
-          "Configuration"
+          "Admin - Companies"
         ],
-        "summary": "Get feature availability flags",
-        "description": "Returns current feature availability based on system configuration. Features depend on database availability. This is a public endpoint that helps the frontend gracefully handle missing features.",
+        "summary": "List companies",
+        "description": "Returns a paginated list of companies with filtering options. Supports search by name/domain, status filtering. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "Page number for pagination",
+            "example": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            },
+            "description": "Number of companies per page",
+            "example": 10
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search term for company name or domain (case-insensitive)",
+            "example": "acme"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "inactive"
+              ]
+            },
+            "description": "Filter by company status",
+            "example": "active"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Feature flags retrieved successfully",
+            "description": "Companies retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ratings": {
+                    "success": {
                       "type": "boolean",
-                      "description": "Whether ratings feature is available",
                       "example": true
                     },
-                    "comments": {
-                      "type": "boolean",
-                      "description": "Whether comments feature is available",
-                      "example": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "companies": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Company"
+                          }
+                        }
+                      }
                     },
-                    "favorites": {
-                      "type": "boolean",
-                      "description": "Whether favorites feature is available",
-                      "example": true
-                    },
-                    "featuredItems": {
-                      "type": "boolean",
-                      "description": "Whether featured items feature is available",
-                      "example": true
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "example": 5
+                        },
+                        "total": {
+                          "type": "integer",
+                          "example": 47
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "example": 10
+                        }
+                      },
+                      "required": [
+                        "page",
+                        "totalPages",
+                        "total",
+                        "limit"
+                      ]
                     }
                   },
                   "required": [
-                    "ratings",
-                    "comments",
-                    "favorites",
-                    "featuredItems"
+                    "success",
+                    "data",
+                    "meta"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "companies": [
+                      {
+                        "id": "550e8400-e29b-41d4-a716-446655440000",
+                        "name": "Acme Corporation",
+                        "website": "https://acme.com",
+                        "domain": "acme.com",
+                        "slug": "acme-corporation",
+                        "status": "active",
+                        "createdAt": "2024-01-15T10:30:00.000Z",
+                        "updatedAt": "2024-01-20T14:45:00.000Z"
+                      },
+                      {
+                        "id": "660e8400-e29b-41d4-a716-446655440001",
+                        "name": "Beta Industries",
+                        "website": "https://beta.io",
+                        "domain": "beta.io",
+                        "slug": "beta-industries",
+                        "status": "active",
+                        "createdAt": "2024-01-16T09:15:00.000Z",
+                        "updatedAt": "2024-01-20T16:20:00.000Z"
+                      }
+                    ]
+                  },
+                  "meta": {
+                    "page": 1,
+                    "totalPages": 5,
+                    "total": 47,
+                    "limit": 10
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid pagination parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalid_page": {
+                    "value": {
+                      "error": "Invalid page parameter. Must be a positive integer."
+                    }
+                  },
+                  "invalid_limit": {
+                    "value": {
+                      "error": "Invalid limit parameter. Must be between 1 and 100."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to fetch companies"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Admin - Companies"
+        ],
+        "summary": "Create company",
+        "description": "Creates a new company with validation and conflict handling. Domain and slug are normalized to lowercase. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Company name (required)",
+                    "example": "Acme Corporation",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "website": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Company website URL (optional)",
+                    "example": "https://acme.com"
+                  },
+                  "domain": {
+                    "type": "string",
+                    "description": "Company domain (optional, normalized to lowercase)",
+                    "example": "acme.com",
+                    "maxLength": 255
+                  },
+                  "slug": {
+                    "type": "string",
+                    "description": "URL-friendly identifier (optional, normalized to lowercase)",
+                    "example": "acme-corporation",
+                    "pattern": "^[a-z0-9-]+$",
+                    "maxLength": 255
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "active",
+                      "inactive"
+                    ],
+                    "default": "active",
+                    "description": "Company status (optional)",
+                    "example": "active"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
+              "example": {
+                "name": "Acme Corporation",
+                "website": "https://acme.com",
+                "domain": "acme.com",
+                "slug": "acme-corporation",
+                "status": "active"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Company created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Company"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": "550e8400-e29b-41d4-a716-446655440000",
+                    "name": "Acme Corporation",
+                    "website": "https://acme.com",
+                    "domain": "acme.com",
+                    "slug": "acme-corporation",
+                    "status": "active",
+                    "createdAt": "2024-01-20T16:45:00.000Z",
+                    "updatedAt": "2024-01-20T16:45:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Validation error"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "error": "Validation error",
+                  "details": [
+                    {
+                      "field": "name",
+                      "message": "Company name is required"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - Domain or slug already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Company with this domain already exists"
+                    }
+                  }
+                },
+                "examples": {
+                  "domain_conflict": {
+                    "value": {
+                      "error": "Company with domain 'acme.com' already exists"
+                    }
+                  },
+                  "slug_conflict": {
+                    "value": {
+                      "error": "Company with slug 'acme-corporation' already exists"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to create company"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/companies/{id}": {
+      "get": {
+        "tags": [
+          "Admin - Companies"
+        ],
+        "summary": "Get company by ID",
+        "description": "Retrieves a specific company by ID. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Company UUID",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Company"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": "550e8400-e29b-41d4-a716-446655440000",
+                    "name": "Acme Corporation",
+                    "website": "https://acme.com",
+                    "domain": "acme.com",
+                    "slug": "acme-corporation",
+                    "status": "active",
+                    "createdAt": "2024-01-15T10:30:00.000Z",
+                    "updatedAt": "2024-01-20T14:45:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Company not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to fetch company"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admin - Companies"
+        ],
+        "summary": "Update company",
+        "description": "Updates a specific company by ID. Supports partial updates. Domain and slug are normalized to lowercase. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Company UUID",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Company name",
+                    "example": "Acme Corporation Updated",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "website": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Company website URL",
+                    "example": "https://acme.com"
+                  },
+                  "domain": {
+                    "type": "string",
+                    "description": "Company domain (normalized to lowercase)",
+                    "example": "acme.com",
+                    "maxLength": 255
+                  },
+                  "slug": {
+                    "type": "string",
+                    "description": "URL-friendly identifier (normalized to lowercase)",
+                    "example": "acme-corporation",
+                    "pattern": "^[a-z0-9-]+$",
+                    "maxLength": 255
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "active",
+                      "inactive"
+                    ],
+                    "description": "Company status",
+                    "example": "active"
+                  }
+                }
+              },
+              "example": {
+                "name": "Acme Corporation Updated",
+                "website": "https://acme.com",
+                "status": "active"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Company updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Company"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": "550e8400-e29b-41d4-a716-446655440000",
+                    "name": "Acme Corporation Updated",
+                    "website": "https://acme.com",
+                    "domain": "acme.com",
+                    "slug": "acme-corporation",
+                    "status": "active",
+                    "createdAt": "2024-01-15T10:30:00.000Z",
+                    "updatedAt": "2024-01-20T16:30:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Validation error"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "error": "Validation error",
+                  "details": [
+                    {
+                      "field": "slug",
+                      "message": "Slug must contain only lowercase letters, numbers, and hyphens"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Company not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - Domain or slug already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Company with this domain already exists"
+                    }
+                  }
+                },
+                "examples": {
+                  "domain_conflict": {
+                    "value": {
+                      "error": "Company with domain 'acme.com' already exists"
+                    }
+                  },
+                  "slug_conflict": {
+                    "value": {
+                      "error": "Company with slug 'acme-corporation' already exists"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to update company"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admin - Companies"
+        ],
+        "summary": "Delete company",
+        "description": "Permanently deletes a company by ID. This action cannot be undone. Associated item-company links will be removed via CASCADE. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Company UUID",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Company deleted successfully"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "message"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Company deleted successfully"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Company not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to delete company"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/items/{slug}/comments/{commentId}": {
+      "delete": {
+        "tags": [
+          "Item Comments"
+        ],
+        "summary": "Delete comment",
+        "description": "Deletes a specific comment. Only the comment author can delete their own comment. The comment is soft-deleted (marked as deleted) rather than permanently removed from the database. Requires user authentication and ownership verification.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Item slug that the comment belongs to",
+            "example": "awesome-productivity-tool"
+          },
+          {
+            "name": "commentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comment ID to delete",
+            "example": "comment_456def"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Comment deleted successfully (no content returned)"
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comment not found, client profile not found, or not authorized to delete",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "examples": {
+                    "client_not_found": "Client profile not found",
+                    "comment_not_found": "Comment not found or not authorized"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/items/{slug}/comments/rating": {
+      "get": {
+        "tags": [
+          "Item Comments"
+        ],
+        "summary": "Get item rating statistics",
+        "description": "Returns aggregated rating statistics for a specific item including average rating and total number of ratings. Only counts non-deleted comments. This is a public endpoint that doesn't require authentication and includes database availability checking.",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Item slug to get rating statistics for",
+            "example": "awesome-productivity-tool"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rating statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "averageRating": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 5,
+                      "description": "Average rating (0 if no ratings)",
+                      "example": 4.2
+                    },
+                    "totalRatings": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Total number of ratings",
+                      "example": 15
+                    }
+                  },
+                  "required": [
+                    "averageRating",
+                    "totalRatings"
                   ]
                 },
                 "examples": {
-                  "all_enabled": {
-                    "summary": "All features enabled (database configured)",
+                  "with_ratings": {
+                    "summary": "Item with ratings",
                     "value": {
-                      "ratings": true,
-                      "comments": true,
-                      "favorites": true,
-                      "featuredItems": true
+                      "averageRating": 4.2,
+                      "totalRatings": 15
                     }
                   },
-                  "all_disabled": {
-                    "summary": "All features disabled (no database)",
+                  "no_ratings": {
+                    "summary": "Item with no ratings",
                     "value": {
-                      "ratings": false,
-                      "comments": false,
-                      "favorites": false,
-                      "featuredItems": false
+                      "averageRating": 0,
+                      "totalRatings": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error or database unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to fetch ratings"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/items/{slug}/votes/count": {
+      "get": {
+        "tags": [
+          "Item Votes"
+        ],
+        "summary": "Get item vote count",
+        "description": "Returns the total vote count for a specific item. The count represents the net score (upvotes - downvotes). This is a public endpoint that doesn't require authentication and is optimized for quick vote count retrieval.",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Item slug to get vote count for",
+            "example": "awesome-productivity-tool"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vote count retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Net vote count (upvotes - downvotes)",
+                      "example": 15
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "count"
+                  ]
+                },
+                "examples": {
+                  "positive_score": {
+                    "summary": "Item with positive score",
+                    "value": {
+                      "success": true,
+                      "count": 15
+                    }
+                  },
+                  "negative_score": {
+                    "summary": "Item with negative score",
+                    "value": {
+                      "success": true,
+                      "count": -3
+                    }
+                  },
+                  "zero_score": {
+                    "summary": "Item with no votes or equal votes",
+                    "value": {
+                      "success": true,
+                      "count": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to fetch vote count"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/items/{slug}/votes": {
+      "get": {
+        "tags": [
+          "Item Votes"
+        ],
+        "summary": "Get item vote information",
+        "description": "Returns the total vote count for an item and the current user's vote status if authenticated. The vote count represents the net score (upvotes - downvotes). User vote status shows whether the user has upvoted, downvoted, or not voted on the item.",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Item slug to get vote information for",
+            "example": "awesome-productivity-tool"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vote information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Net vote count (upvotes - downvotes)",
+                      "example": 15
+                    },
+                    "userVote": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "up",
+                        "down",
+                        null
+                      ],
+                      "description": "Current user's vote status (null if not authenticated or no vote)",
+                      "example": "up"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "count",
+                    "userVote"
+                  ]
+                },
+                "examples": {
+                  "authenticated_upvoted": {
+                    "summary": "Authenticated user who upvoted",
+                    "value": {
+                      "success": true,
+                      "count": 15,
+                      "userVote": "up"
+                    }
+                  },
+                  "authenticated_downvoted": {
+                    "summary": "Authenticated user who downvoted",
+                    "value": {
+                      "success": true,
+                      "count": -3,
+                      "userVote": "down"
+                    }
+                  },
+                  "authenticated_no_vote": {
+                    "summary": "Authenticated user with no vote",
+                    "value": {
+                      "success": true,
+                      "count": 0,
+                      "userVote": null
+                    }
+                  },
+                  "unauthenticated": {
+                    "summary": "Unauthenticated user",
+                    "value": {
+                      "success": true,
+                      "count": 20,
+                      "userVote": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Item Votes"
+        ],
+        "summary": "Cast or update vote",
+        "description": "Casts a new vote or updates an existing vote for an item. If the user has already voted, the previous vote is replaced with the new one. Supports upvote ('up') and downvote ('down') types. Requires user authentication and a valid client profile.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Item slug to vote on",
+            "example": "awesome-productivity-tool"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "up",
+                      "down"
+                    ],
+                    "description": "Vote type - 'up' for upvote, 'down' for downvote",
+                    "example": "up"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vote cast successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Updated net vote count (upvotes - downvotes)",
+                      "example": 16
+                    },
+                    "userVote": {
+                      "type": "string",
+                      "enum": [
+                        "up",
+                        "down"
+                      ],
+                      "description": "User's current vote status",
+                      "example": "up"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "count",
+                    "userVote"
+                  ]
+                },
+                "examples": {
+                  "upvote_cast": {
+                    "summary": "Upvote cast successfully",
+                    "value": {
+                      "success": true,
+                      "count": 16,
+                      "userVote": "up"
+                    }
+                  },
+                  "downvote_cast": {
+                    "summary": "Downvote cast successfully",
+                    "value": {
+                      "success": true,
+                      "count": 14,
+                      "userVote": "down"
+                    }
+                  },
+                  "vote_updated": {
+                    "summary": "Previous vote updated",
+                    "value": {
+                      "success": true,
+                      "count": 18,
+                      "userVote": "up"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid vote type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid vote type. Must be 'up' or 'down'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Client profile not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Client profile not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Item Votes"
+        ],
+        "summary": "Remove user vote",
+        "description": "Removes the current user's vote from an item if one exists. This effectively 'unvotes' the item, returning the user to a neutral state. Requires user authentication and a valid client profile.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Item slug to remove vote from",
+            "example": "awesome-productivity-tool"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vote removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Updated net vote count after removal",
+                      "example": 14
+                    },
+                    "userVote": {
+                      "type": null,
+                      "description": "User vote status (always null after removal)",
+                      "example": null
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "count",
+                    "userVote"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "count": 14,
+                  "userVote": null
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Client profile not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Client profile not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/items/{slug}/votes/status": {
+      "get": {
+        "tags": [
+          "Item Votes"
+        ],
+        "summary": "Get user vote status",
+        "description": "Returns the current authenticated user's vote status for a specific item. Returns the complete vote record if the user has voted, or null if no vote exists. Requires user authentication and a valid client profile.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Item slug to get vote status for",
+            "example": "awesome-productivity-tool"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vote status retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "description": "User has voted",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Vote record ID",
+                          "example": "vote_123abc"
+                        },
+                        "userId": {
+                          "type": "string",
+                          "description": "User ID who cast the vote",
+                          "example": "client_456def"
+                        },
+                        "itemId": {
+                          "type": "string",
+                          "description": "Item ID that was voted on",
+                          "example": "item_123abc"
+                        },
+                        "voteType": {
+                          "type": "string",
+                          "enum": [
+                            "UPVOTE",
+                            "DOWNVOTE"
+                          ],
+                          "description": "Type of vote cast",
+                          "example": "UPVOTE"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "When the vote was cast",
+                          "example": "2024-01-20T10:30:00.000Z"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true,
+                          "description": "When the vote was last updated",
+                          "example": "2024-01-20T10:30:00.000Z"
+                        }
+                      }
+                    },
+                    {
+                      "type": "null",
+                      "description": "User has not voted"
+                    }
+                  ]
+                },
+                "examples": {
+                  "upvote_status": {
+                    "summary": "User has upvoted",
+                    "value": {
+                      "id": "vote_123abc",
+                      "userId": "client_456def",
+                      "itemId": "item_123abc",
+                      "voteType": "UPVOTE",
+                      "createdAt": "2024-01-20T10:30:00.000Z",
+                      "updatedAt": "2024-01-20T10:30:00.000Z"
+                    }
+                  },
+                  "downvote_status": {
+                    "summary": "User has downvoted",
+                    "value": {
+                      "id": "vote_789ghi",
+                      "userId": "client_456def",
+                      "itemId": "item_123abc",
+                      "voteType": "DOWNVOTE",
+                      "createdAt": "2024-01-19T15:20:00.000Z",
+                      "updatedAt": "2024-01-19T15:20:00.000Z"
+                    }
+                  },
+                  "no_vote": {
+                    "summary": "User has not voted",
+                    "value": null
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Authentication required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Client profile not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Client profile not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to fetch vote status"
                     }
                   }
                 }
@@ -25426,6 +27071,69 @@
           "updatedAt",
           "accountProvider",
           "isActive"
+        ]
+      },
+      "Company": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique company identifier (UUID)",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "name": {
+            "type": "string",
+            "description": "Company name",
+            "example": "Acme Corporation"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Company website URL",
+            "example": "https://acme.com"
+          },
+          "domain": {
+            "type": "string",
+            "nullable": true,
+            "description": "Company domain (normalized, without www.)",
+            "example": "acme.com"
+          },
+          "slug": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL-friendly company identifier",
+            "example": "acme-corporation"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive"
+            ],
+            "description": "Company status",
+            "example": "active"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Company creation timestamp",
+            "example": "2024-01-15T10:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp",
+            "example": "2024-01-20T14:45:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "createdAt",
+          "updatedAt"
         ]
       }
     },

@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { TagItemProps } from "../../types";
 import { getButtonVariantStyles } from "../../utils/style-utils";
+import { formatDisplayName } from "../../utils/text-utils";
 
 /**
  * Individual tag item component
@@ -55,10 +56,10 @@ export function TagItem({ tag, isActive, href, showCount = true }: TagItemProps)
           "text-sm font-medium transition-all duration-300",
           isActive
             ? "text-white tracking-wide"
-            : "text-gray-700 dark:text-gray-300 group-hover:text-theme-primary dark:group-hover:text-theme-primary capitalize"
+            : "text-gray-700 dark:text-gray-300 group-hover:text-theme-primary dark:group-hover:text-theme-primary"
         )}
       >
-        {tag.name}
+        {formatDisplayName(tag.name)}
       </span>
       
       {showCount && tag.count && (

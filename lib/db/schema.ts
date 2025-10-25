@@ -619,3 +619,42 @@ export const twentyCrmConfig = pgTable("twenty_crm_config", {
 
 export type TwentyCrmConfigRow = typeof twentyCrmConfig.$inferSelect;
 export type NewTwentyCrmConfigRow = typeof twentyCrmConfig.$inferInsert;
+
+// ######################### Companies Schema #########################
+export const companies = pgTable("companies", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  website: text("website"),
+  domain: text("domain"),
+  slug: text("slug"),
+  status: text("status", { enum: ["active", "inactive"] }).notNull().default("active"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  nameIndex: index("companies_name_idx").on(table.name),
+  statusIndex: index("companies_status_idx").on(table.status),
+  domainUniqueIndex: uniqueIndex("companies_domain_unique_idx").on(table.domain),
+  slugUniqueIndex: uniqueIndex("companies_slug_unique_idx").on(table.slug),
+}));
+
+// ######################### Companies Types #########################
+export type Company = typeof companies.$inferSelect;
+export type NewCompany = typeof companies.$inferInsert;
+
+// ######################### Items Companies Schema #########################
+export const itemsCompanies = pgTable("items_companies", {
+  itemSlug: text("item_slug").notNull().unique(),
+  companyId: text("company_id")
+    .notNull()
+    .references(() => companies.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  companyIdIndex: index("items_companies_company_id_idx").on(table.companyId),
+}));
+
+// ######################### Items Companies Types #########################
+export type ItemCompany = typeof itemsCompanies.$inferSelect;
+export type NewItemCompany = typeof itemsCompanies.$inferInsert;

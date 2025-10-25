@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { ItemRepository } from '@/lib/repositories/item.repository';
 import { CreateItemRequest } from '@/lib/types/item';
+import { validatePaginationParams } from '@/lib/utils/pagination-validation';
 
 const itemRepository = new ItemRepository();
 
@@ -119,6 +120,27 @@ const itemRepository = new ItemRepository();
  *               page: 1
  *               limit: 10
  *               totalPages: 16
+ *       400:
+ *         description: "Bad request - Invalid pagination parameters"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *             examples:
+ *               invalid_page:
+ *                 value:
+ *                   success: false
+ *                   error: "Invalid page parameter. Must be a positive integer."
+ *               invalid_limit:
+ *                 value:
+ *                   success: false
+ *                   error: "Invalid limit parameter. Must be between 1 and 100."
  *       401:
  *         description: "Unauthorized - Admin access required"
  *         content:
@@ -159,8 +181,17 @@ export async function GET(request: NextRequest) {
 
     // Parse query parameters
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
+
+    // Validate pagination parameters
+    const paginationResult = validatePaginationParams(searchParams);
+    if ('error' in paginationResult) {
+      return NextResponse.json(
+        { success: false, error: paginationResult.error },
+        { status: paginationResult.status }
+      );
+    }
+    const { page, limit } = paginationResult;
+
     const statusParam = searchParams.get('status');
     const category = searchParams.get('category') || undefined;
     const tag = searchParams.get('tag') || undefined;
