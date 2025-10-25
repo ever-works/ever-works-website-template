@@ -1,20 +1,13 @@
 "use client";
-import { useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import { useFilters } from "@/hooks/use-filters";
 
+/**
+ * TagsQuerySync component
+ *
+ * This component is now deprecated as URL synchronization is handled
+ * directly in the useFilterState hook via useFilterURLSync.
+ *
+ * Kept for backward compatibility but does nothing.
+ */
 export default function TagsQuerySync() {
-  const { setSelectedTags } = useFilters();
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const tagsParam = searchParams.get("tags");
-    if (tagsParam) {
-      setSelectedTags(tagsParam.split(",").map(tag => decodeURIComponent(tag)));
-    } else {
-      setSelectedTags([]);
-    }
-  }, [searchParams, setSelectedTags]);
-
   return null;
 } 

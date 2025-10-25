@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/drizzle';
 import { featuredItems } from '@/lib/db/schema';
 import { eq, desc, and, count } from 'drizzle-orm';
+import { validatePaginationParams } from '@/lib/utils/pagination-validation';
 
 /**
  * @swagger
@@ -79,6 +80,27 @@ import { eq, desc, and, count } from 'drizzle-orm';
  *                       example: false
  *                   required: ["page", "limit", "total", "totalPages", "hasNext", "hasPrev"]
  *               required: ["success", "data", "pagination"]
+ *       400:
+ *         description: "Bad request - Invalid pagination parameters"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *             examples:
+ *               invalid_page:
+ *                 value:
+ *                   success: false
+ *                   error: "Invalid page parameter. Must be a positive integer."
+ *               invalid_limit:
+ *                 value:
+ *                   success: false
+ *                   error: "Invalid limit parameter. Must be between 1 and 100."
  *       401:
  *         description: "Unauthorized - Authentication required"
  *         content:
@@ -115,10 +137,18 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const activeOnly = searchParams.get('active') === 'true';
 
+    // Validate pagination parameters
+    const paginationResult = validatePaginationParams(searchParams);
+    if ('error' in paginationResult) {
+      return NextResponse.json(
+        { success: false, error: paginationResult.error },
+        { status: paginationResult.status }
+      );
+    }
+    const { page, limit } = paginationResult;
+
+    const activeOnly = searchParams.get('active') === 'true';
     const offset = (page - 1) * limit;
 
     // Build query conditions

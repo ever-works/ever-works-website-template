@@ -17,6 +17,9 @@ export * from './client.queries';
 // Comment queries
 export * from './comment.queries';
 
+// Company queries
+export * from './company.queries';
+
 // Newsletter queries
 export * from './newsletter.queries';
 

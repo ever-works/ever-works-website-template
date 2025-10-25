@@ -2,22 +2,29 @@ import { and, eq, isNull, desc } from 'drizzle-orm';
 import { db } from '../drizzle';
 import { comments, clientProfiles, type NewComment } from '../schema';
 import type { CommentWithUser } from './types';
+import { getItemIdFromSlug } from './item.queries';
 
 /**
  * Create a new comment
- * @param data - Comment data
+ * @param data - Comment data with itemId as slug
  * @returns Created comment
  */
 export async function createComment(data: NewComment) {
-  return (await db.insert(comments).values(data).returning())[0];
+  // Ensure itemId is properly normalized (it should be a slug)
+  const normalizedData = {
+    ...data,
+    itemId: getItemIdFromSlug(data.itemId)
+  };
+  return (await db.insert(comments).values(normalizedData).returning())[0];
 }
 
 /**
- * Get comments by item ID with user information
- * @param itemId - Item ID
+ * Get comments by item slug with user information
+ * @param itemSlug - Item slug
  * @returns Array of comments with user details
  */
-export async function getCommentsByItemId(itemId: string): Promise<CommentWithUser[]> {
+export async function getCommentsByItemId(itemSlug: string): Promise<CommentWithUser[]> {
+  const itemId = getItemIdFromSlug(itemSlug);
   return db
     .select({
       id: comments.id,
