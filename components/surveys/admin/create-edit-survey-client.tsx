@@ -8,7 +8,7 @@ import type { Survey } from '@/lib/db/schema';
 import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SurveyTypeEnum } from '@/lib/constants';
+import { SurveyTypeEnum } from '@/lib/types/survey';
 import { Logger } from '@/lib/logger';
 import { useTranslations } from 'next-intl';
 

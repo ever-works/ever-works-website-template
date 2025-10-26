@@ -9,7 +9,7 @@ import { Plus, Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SurveysListClient } from './surveys-list-client';
 import { useConfirm } from '@/components/providers';
-import { SurveyTypeEnum } from '@/lib/constants';
+import { SurveyTypeEnum } from '@/lib/types/survey';
 import { Logger } from '@/lib/logger';
 import { useTranslations } from 'next-intl';
 

@@ -11,7 +11,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { formatDateTime } from '@/utils/date';
-import { SurveyStatusEnum } from '@/lib/constants';
+import { SurveyStatusEnum } from '@/lib/types/survey';
 import { ItemDetailProps } from '../item-detail';
 import { SurveyDialog } from './survey-dialog';
 import { Logger } from '@/lib/logger';

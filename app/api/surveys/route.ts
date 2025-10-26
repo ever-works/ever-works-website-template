@@ -90,8 +90,8 @@ export async function GET(request: NextRequest) {
 
         const pageParsed = pageParam ? parseInt(pageParam, 10) : undefined;
         const limitParsed = limitParam ? parseInt(limitParam, 10) : undefined;
-        const page = Number.isInteger(pageParsed!) && (pageParsed as number) >= 1 ? (pageParsed as number) : undefined;
-        const limit = Number.isInteger(limitParsed!) ? Math.min(100, Math.max(1, limitParsed as number)) : undefined;
+        const page = pageParsed !== undefined && Number.isInteger(pageParsed) && pageParsed >= 1 ? pageParsed : undefined;
+        const limit = limitParsed !== undefined && Number.isInteger(limitParsed) ? Math.min(100, Math.max(1, limitParsed)) : undefined;
 
         const filters: SurveyFilters = {
             type: typeParam as SurveyTypeEnum,

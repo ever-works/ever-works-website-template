@@ -5,8 +5,7 @@ import { getStatusColor, getTypeColor } from '@/components/surveys/utils/survey-
 import { Container } from '@/components/ui/container';
 import { Survey } from '@/lib/db/schema';
 import { Logger } from '@/lib/logger';
-import { SurveyTypeEnum } from '@/lib/types/survey';
-import { SurveyStatusEnum } from '@/lib/constants';
+import { SurveyTypeEnum, SurveyStatusEnum } from '@/lib/types/survey';
 
 const logger = Logger.create('SurveysPage');
 

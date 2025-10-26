@@ -8,7 +8,7 @@ import { Eye, Download } from 'lucide-react';
 import { ImportSurveyJsDialog } from './import-surveyjs-dialog';
 import { SurveyPreviewDialog } from './survey-preview-dialog';
 import { Button } from '@/components/ui/button';
-import { SurveyTypeEnum, SurveyStatusEnum } from '@/lib/constants';
+import { SurveyTypeEnum, SurveyStatusEnum } from '@/lib/types/survey';
 import { useTranslations } from 'next-intl';
 
 interface SurveyFormProps {
