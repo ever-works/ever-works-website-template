@@ -122,7 +122,8 @@
     "COPIED": "Kopiert!",
     "COPY": "Kopieren",
     "TERMS": "Bedingungen",
-    "EXPIRES": "Läuft ab"
+    "EXPIRES": "Läuft ab",
+    "ID_LABEL": "ID:"
   },
   "survey": {
     "SURVEYS": "Umfragen",

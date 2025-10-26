@@ -156,7 +156,8 @@
     "COPIED": "Copié !",
     "COPY": "Copier",
     "TERMS": "Conditions",
-    "EXPIRES": "Expire le"
+    "EXPIRES": "Expire le",
+    "ID_LABEL": "ID :"
   },
   "survey": {
     "SURVEYS": "Sondages",

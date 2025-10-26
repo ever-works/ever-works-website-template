@@ -108,7 +108,8 @@
     "COPIED": "¡Copiado!",
     "COPY": "Copiar",
     "TERMS": "Términos",
-    "EXPIRES": "Expira"
+    "EXPIRES": "Expira",
+    "ID_LABEL": "ID:"
   },
   "survey": {
     "SURVEYS": "Encuestas",

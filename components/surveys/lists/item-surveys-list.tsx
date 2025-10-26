@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { surveyApiClient } from '@/lib/api/survey-api.client';
 import type { Survey } from '@/lib/db/schema';

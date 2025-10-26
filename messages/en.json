@@ -108,6 +108,7 @@
     "COPY": "Copy",
     "TERMS": "Terms",
     "EXPIRES": "Expires",
+    "ID_LABEL": "ID:",
     "COMMENTS": "Comments",
     "ROLES": "Roles",
     "MANAGE_CLIENTS": "Manage Clients",

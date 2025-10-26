@@ -102,7 +102,8 @@
     "COPIED": "已复制！",
     "COPY": "复制",
     "TERMS": "条款",
-    "EXPIRES": "过期"
+    "EXPIRES": "过期",
+    "ID_LABEL": "ID："
   },
   "survey": {
     "SURVEYS": "调查问卷",

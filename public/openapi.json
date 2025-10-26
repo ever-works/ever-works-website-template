@@ -25567,7 +25567,10 @@
           },
           "type": {
             "type": "string",
-            "enum": ["global", "item"],
+            "enum": [
+              "global",
+              "item"
+            ],
             "description": "Survey type - global or item-specific",
             "example": "global"
           },
@@ -25579,7 +25582,11 @@
           },
           "status": {
             "type": "string",
-            "enum": ["draft", "published", "closed"],
+            "enum": [
+              "draft",
+              "published",
+              "closed"
+            ],
             "description": "Survey status",
             "example": "published"
           },
@@ -25587,13 +25594,17 @@
             "type": "object",
             "description": "SurveyJS JSON definition containing questions and configuration",
             "example": {
-              "pages": [{
-                "elements": [{
-                  "type": "text",
-                  "name": "question1",
-                  "title": "What is your name?"
-                }]
-              }]
+              "pages": [
+                {
+                  "elements": [
+                    {
+                      "type": "text",
+                      "name": "question1",
+                      "title": "What is your name?"
+                    }
+                  ]
+                }
+              ]
             }
           },
           "createdAt": {
@@ -25674,7 +25685,10 @@
             "example": {
               "question1": "John Doe",
               "question2": 5,
-              "question3": ["option1", "option2"]
+              "question3": [
+                "option1",
+                "option2"
+              ]
             }
           },
           "completedAt": {
@@ -25751,10 +25765,18 @@
                 "example": 8
               }
             },
-            "required": ["page", "pageSize", "total", "totalPages"]
+            "required": [
+              "page",
+              "pageSize",
+              "total",
+              "totalPages"
+            ]
           }
         },
-        "required": ["items", "pagination"]
+        "required": [
+          "items",
+          "pagination"
+        ]
       }
     },
     "responses": {},

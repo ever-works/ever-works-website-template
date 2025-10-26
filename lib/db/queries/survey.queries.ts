@@ -5,7 +5,7 @@
 
 import { db } from '../drizzle';
 import { surveys, surveyResponses, type Survey, type NewSurvey, type SurveyResponse, type NewSurveyResponse } from '../schema';
-import { eq, and, or, desc, gte, lte, count, SQL, sql, not, isNull, inArray } from 'drizzle-orm';
+import { eq, and, desc, gte, lte, count, SQL, sql, not, isNull } from 'drizzle-orm';
 
 // ==================== SURVEY QUERIES ====================
 
