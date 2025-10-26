@@ -4,11 +4,10 @@ import React from 'react';
 import { Modal } from '@/components/ui/modal';
 import { SurveyFormNoSSR } from './survey-form-no-ssr';
 import { useTranslations } from 'next-intl';
-import type { Model } from 'survey-core';
 import { PreviewWarningBanner } from '../preview/PreviewWarningBanner';
 
 interface SurveyPreviewDialogProps {
-	surveyJson: Model | object;
+	surveyJson: object;
 	title?: string;
 	isOpen: boolean;
 	onClose: () => void;

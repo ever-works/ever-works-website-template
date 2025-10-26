@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { surveyService } from '@/lib/services/survey.service';
-import type { CreateSurveyData, SurveyFilters } from '@/lib/types/survey';
+import type { CreateSurveyData, SurveyFilters, SurveyStatusEnum, SurveyTypeEnum } from '@/lib/types/survey';
 import { Logger } from '@/lib/logger';
 
 const logger = Logger.create('SurveyAPI');
@@ -83,12 +83,22 @@ export async function GET(request: NextRequest) {
         const session = await auth();
         const { searchParams } = new URL(request.url);
 
+        const typeParam = searchParams.get('type');
+        const pageParam = searchParams.get('page');
+        const limitParam = searchParams.get('limit');
+        const statusParam = searchParams.get('status');
+
+        const pageParsed = pageParam ? parseInt(pageParam, 10) : undefined;
+        const limitParsed = limitParam ? parseInt(limitParam, 10) : undefined;
+        const page = Number.isInteger(pageParsed!) && (pageParsed as number) >= 1 ? (pageParsed as number) : undefined;
+        const limit = Number.isInteger(limitParsed!) ? Math.min(100, Math.max(1, limitParsed as number)) : undefined;
+
         const filters: SurveyFilters = {
-            type: searchParams.get('type') as 'global' | 'item' | undefined,
+            type: typeParam as SurveyTypeEnum,
             itemId: searchParams.get('itemId') || undefined,
-            status: searchParams.get('status') as 'draft' | 'published' | 'closed' | undefined,
-            page: searchParams.get('page') ? Math.max(1, parseInt(searchParams.get('page')!) || 1) : undefined,
-            limit: searchParams.get('limit') ? Math.min(100, Math.max(1, parseInt(searchParams.get('limit')!) || 10)) : undefined,
+            status: statusParam ? (statusParam as SurveyStatusEnum) : undefined,
+            page,
+            limit,
         };
 
         const result = await surveyService.getMany(filters, session?.user?.id);
@@ -146,7 +156,7 @@ export async function GET(request: NextRequest) {
  *                 type: object
  *             required: ["title", "type", "surveyJson"]
  *     responses:
- *       200:
+ *       201:
  *         description: "Survey created successfully"
  *       401:
  *         description: "Unauthorized"

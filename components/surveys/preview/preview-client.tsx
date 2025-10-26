@@ -21,6 +21,7 @@ export function SurveyPreviewClient({ survey, backLink }: SurveyPreviewClientPro
 		<div className="container mx-auto px-4 py-8 max-w-4xl">
 			<div className="mb-6">
 				<Link
+					prefetch={false}
 					href={backLink}
 					className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline mb-4"
 				>
@@ -40,7 +41,7 @@ export function SurveyPreviewClient({ survey, backLink }: SurveyPreviewClientPro
 
 		<div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
 			<SurveyFormNoSSR
-				surveyJson={survey.surveyJson}
+				surveyJson={survey.surveyJson as object}
 				mode="display"
 				className="survey-preview"
 			/>

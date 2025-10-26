@@ -14,7 +14,11 @@ export function PreviewWarningBanner() {
 	const t = useTranslations('survey');
 
 	return (
-		<div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+		<div
+			role="alert"
+			aria-live="polite"
+			className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4"
+		>
 			<div className="flex items-start gap-3">
 				<AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
 				<div>

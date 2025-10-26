@@ -77,7 +77,7 @@ export function SurveyFormWrapper({
 	return (
 		<div className={className}>
 			<SurveyFormNoSSR
-				surveyJson={survey.surveyJson}
+				surveyJson={survey.surveyJson as object}
 				onComplete={handleComplete}
 				onValueChanged={handleValueChanged}
 				className="survey-form"

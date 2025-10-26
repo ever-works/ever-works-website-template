@@ -299,7 +299,7 @@ export async function POST(
             message: 'Response submitted successfully'
         }, { status: 201 });
     } catch (error) {
-
+        logger.error('Error submitting response', error);
         return NextResponse.json(
             {
                 success: false,

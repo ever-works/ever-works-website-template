@@ -16,9 +16,9 @@
 export interface CreateSurveyData {
   title: string;
   description?: string;
-  type: 'global' | 'item';
+  type: SurveyTypeEnum;
   itemId?: string;
-  status?: 'draft' | 'published' | 'closed';
+  status?: SurveyStatusEnum;
   surveyJson: any;
 }
 
@@ -29,7 +29,7 @@ export interface UpdateSurveyData {
   title?: string;
   slug?: string;
   description?: string;
-  status?: 'draft' | 'published' | 'closed';
+  status?: SurveyStatusEnum;
   surveyJson?: any;
 }
 
@@ -49,9 +49,9 @@ export interface SubmitResponseData {
  * Filters for querying surveys
  */
 export interface SurveyFilters {
-  type?: 'global' | 'item';
+  type?: SurveyTypeEnum;
   itemId?: string;
-  status?: 'draft' | 'published' | 'closed';
+  status?: SurveyStatusEnum;
   page?: number;
   limit?: number;
 }
@@ -68,3 +68,13 @@ export interface ResponseFilters {
   limit?: number;
 }
 
+export enum SurveyTypeEnum {
+  GLOBAL = 'global',
+  ITEM = 'item'
+} 
+
+export enum SurveyStatusEnum {
+  DRAFT = 'draft',
+  PUBLISHED = 'published',
+  CLOSED = 'closed'
+}

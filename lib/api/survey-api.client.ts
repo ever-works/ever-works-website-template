@@ -71,15 +71,9 @@ export class SurveyApiClient {
     /**
      * Get survey by slug
      */
-    async getBySlug(slug: string, itemId?: string): Promise<Survey | null> {
-        const params = new URLSearchParams();
-        if (itemId) params.append('itemId', itemId);
-
-        const paramsStr = params.toString();
-        const url = `${this.baseUrl}/${encodeURIComponent(slug)}${paramsStr ? `?${paramsStr}` : ''}`;
-        return this.client.get<Survey | null>(url);
+    async getBySlug(slug: string): Promise<Survey | null> {
+        return this.client.get<Survey | null>(`${this.baseUrl}/${encodeURIComponent(slug)}`);
     }
-
     /**
      * Create a new survey
      */
