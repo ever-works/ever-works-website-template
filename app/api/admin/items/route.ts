@@ -451,6 +451,59 @@ export async function POST(request: NextRequest) {
       status: status || 'draft',
     });
 
+    // Direct CRM sync: derive company from source URL, link, and sync to CRM
+    try {
+      // 1. Parse and derive company from source URL
+      let domain: string | null = null;
+      let companyName: string | null = null;
+
+      try {
+        const sourceUrl = new URL(item.source_url);
+        domain = sourceUrl.hostname.toLowerCase().replace(/^www\./, '');
+        const domainParts = domain.split('.');
+        companyName = domainParts[0].charAt(0).toUpperCase() + domainParts[0].slice(1);
+      } catch (urlError) {
+        console.warn(`[CRM Sync] Invalid source URL for item ${item.slug}, skipping company derivation`);
+      }
+
+      if (domain && companyName) {
+        // 2. Get or create company (handles deduplication by domain)
+        const { getOrCreateCompanyFromClient } = await import('@/lib/services/company.service');
+        const company = await getOrCreateCompanyFromClient({
+          name: companyName,
+          website: item.source_url,
+        });
+
+        if (company) {
+          // 3. Link item to company
+          const { linkItemToCompany } = await import('@/lib/db/queries/company.queries');
+          const linkResult = await linkItemToCompany(item.slug, company.id);
+
+          // 4. Sync company to CRM
+          const { createTwentyCrmSyncServiceFromEnv } = await import(
+            '@/lib/services/twenty-crm-sync-factory'
+          );
+          const { mapCompanyToTwentyCompany } = await import(
+            '@/lib/mappers/twenty-crm.mapper'
+          );
+
+          const syncService = createTwentyCrmSyncServiceFromEnv();
+          const companyPayload = mapCompanyToTwentyCompany(company);
+          await syncService.upsertCompany(companyPayload);
+
+          console.log(`[CRM Sync] ✅ Company ${company.id} synced for item ${item.slug}`, {
+            companyId: company.id,
+            companyName: company.name,
+            domain: domain,
+            itemLinked: linkResult.created,
+          });
+        }
+      }
+    } catch (error) {
+      // Non-blocking: log error but don't fail item creation
+      console.error(`[CRM Sync] ❌ Failed to sync company for item ${item.slug}:`, error);
+    }
+
     return NextResponse.json({
       success: true,
       item,
