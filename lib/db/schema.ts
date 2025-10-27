@@ -621,6 +621,40 @@ export const twentyCrmConfig = pgTable("twenty_crm_config", {
 export type TwentyCrmConfigRow = typeof twentyCrmConfig.$inferSelect;
 export type NewTwentyCrmConfigRow = typeof twentyCrmConfig.$inferInsert;
 
+// ######################### Integration Mappings Schema #########################
+/**
+ * Integration Mappings Table
+ *
+ * Stores persistent mappings between Ever system IDs and external CRM IDs.
+ * Enables hybrid caching strategy (memory + database) for optimal performance.
+ *
+ * Key features:
+ * - Unique constraint on (ever_id, object_type) ensures one mapping per entity
+ * - version_hash tracks data changes for sync strategies
+ * - Indexed for fast lookups by ever_id or crm_id
+ */
+export const integrationMappings = pgTable("integration_mappings", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  everId: text("ever_id").notNull(),
+  crmId: text("crm_id").notNull(),
+  objectType: text("object_type", { enum: ["company", "person"] }).notNull(),
+  lastSyncedAt: timestamp("last_synced_at").notNull().defaultNow(),
+  versionHash: text("version_hash"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  everIdObjectTypeIdx: uniqueIndex("integration_mappings_ever_id_object_type_idx")
+    .on(table.everId, table.objectType),
+  crmIdIdx: index("integration_mappings_crm_id_idx").on(table.crmId),
+  lastSyncedAtIdx: index("integration_mappings_last_synced_at_idx").on(table.lastSyncedAt),
+  objectTypeIdx: index("integration_mappings_object_type_idx").on(table.objectType),
+}));
+
+export type IntegrationMapping = typeof integrationMappings.$inferSelect;
+export type NewIntegrationMapping = typeof integrationMappings.$inferInsert;
+
 // ######################### Companies Schema #########################
 export const companies = pgTable("companies", {
   id: text("id")
