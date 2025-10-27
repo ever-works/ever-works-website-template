@@ -50,7 +50,7 @@ export function Rating({
             readOnly && "cursor-default"
           )}
           aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
-          aria-pressed={star <= value}
+          aria-checked={star === value}
           role="radio"
         >
           <svg

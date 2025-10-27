@@ -30,7 +30,7 @@ export function MediaLinksStep({
   const [previewImage, setPreviewImage] = useState<string>('');
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
 
-  const validateField = (field: keyof MediaLinksData, value: string): string => {
+  const validateField = useCallback((field: keyof MediaLinksData, value: string): string => {
     if (!value.trim()) {
       if (field === 'source_url') {
         return t('ERRORS.SOURCE_URL_REQUIRED');
@@ -46,7 +46,7 @@ export function MediaLinksStep({
     }
 
     return '';
-  };
+  }, [t]);
 
   const validateAllFields = useCallback((): Record<string, string> => {
     const newErrors: Record<string, string> = {};
@@ -59,7 +59,7 @@ export function MediaLinksStep({
     });
 
     return newErrors;
-  }, [data]);
+  }, [data, validateField]);
 
   const handleBlur = (field: string) => {
     setTouchedFields(prev => new Set(prev).add(field));
@@ -161,6 +161,7 @@ export function MediaLinksStep({
             {/* Icon Preview */}
             <div className="w-16 h-16 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center bg-gray-50 dark:bg-gray-800">
               {previewImage ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={previewImage}
                   alt="Icon preview"

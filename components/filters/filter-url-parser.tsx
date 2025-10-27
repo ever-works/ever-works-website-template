@@ -120,7 +120,8 @@ function FilterURLParserContent() {
 
     // Update lastUrlRef at the very end, after all logic has completed
     lastUrlRef.current = currentUrl;
-  }, [pathname, searchParams]); // Only depend on URL changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, searchParams]); // Only depend on URL changes, not filter state
 
   return null;
 }

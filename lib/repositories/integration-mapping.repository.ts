@@ -20,10 +20,9 @@ export interface UpsertMappingInput {
 
 /**
  * Batch mapping input
+ * Type alias that allows future extensions without breaking changes
  */
-export interface BatchMappingInput extends UpsertMappingInput {
-  // Same as UpsertMappingInput for now, but allows future extensions
-}
+export type BatchMappingInput = UpsertMappingInput;
 
 /**
  * Integration Mapping Repository
