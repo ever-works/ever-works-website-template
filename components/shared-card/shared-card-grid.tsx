@@ -2,6 +2,7 @@
 
 import type { ItemData } from "@/lib/content";
 import Item from "@/components/item";
+import { ItemSkeletonGrid } from "../item-skeleton";
 
 interface SharedCardGridProps {
   items: ItemData[];
@@ -26,23 +27,29 @@ export function SharedCardGrid({
 }: SharedCardGridProps) {
   return (
     <div className={className}>
+      {items.length === 0 && (
+        <ItemSkeletonGrid
+          count={15}
+          LayoutComponent={LayoutComponent}
+        />
+      )}
       <LayoutComponent>
-        {items.map((item, index) => (
-          <div
-            key={item.slug}
-            className="group animate-fadeInUp h-full"
-            style={{
-              animationDelay: `${index * animationDelay}ms`,
-              animationFillMode: "both",
-            }}
-          >
-            {renderCustomItem ? (
-              renderCustomItem(item, index)
-            ) : (
-              <Item {...item} onNavigate={() => onItemClick?.(item)} />
-            )}
-          </div>
-        ))}
+          {items.length !== 0 && items.map((item, index) => (
+            <div
+              key={item.slug}
+              className="group animate-fadeInUp h-full"
+              style={{
+                animationDelay: `${index * animationDelay}ms`,
+                animationFillMode: "both",
+              }}
+            >
+              {renderCustomItem ? (
+                renderCustomItem(item, index)
+              ) : (
+                <Item {...item} onNavigate={() => onItemClick?.(item)} />
+              )}
+            </div>
+          ))}
       </LayoutComponent>
     </div>
   );

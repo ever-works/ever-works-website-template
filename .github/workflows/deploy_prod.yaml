@@ -3,6 +3,11 @@ on:
     push:
         branches:
           - main
+
+permissions:
+  contents: read
+  deployments: write
+
 jobs:
     Vercel:
         if: ${{ vars.DEPLOY_PROVIDER == 'vercel' }}

@@ -13,6 +13,7 @@ import { PromoCodeComponent } from '../promo-code/promo-code';
 import { FavoriteButton } from '../favorite-button';
 import type { ItemData } from '@/lib/content';
 import { SimilarItemsSection } from './similar-items-section';
+import { UserSurveySection } from '@/components/surveys/user-survey-section';
 import { useTranslations } from 'next-intl';
 import { generateProductSchema } from '@/lib/seo/schema';
 import { useParams } from 'next/navigation';
@@ -179,6 +180,12 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 								</div>
 							</div>
 						</div>
+
+						{/* Surveys Section */}
+						<UserSurveySection
+							item={meta}
+						/>
+
 					</div>
 
 					{/* Right column */}
@@ -246,12 +253,12 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 									>
 										{meta.source_url
 											? (() => {
-													try {
-														return new URL(meta.source_url).hostname;
-													} catch {
-														return 'N/A';
-													}
-												})()
+												try {
+													return new URL(meta.source_url).hostname;
+												} catch {
+													return 'N/A';
+												}
+											})()
 											: 'N/A'}
 									</a>
 								</div>
@@ -270,10 +277,10 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 									<span className="bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 px-4 py-2 rounded-full font-semibold border border-green-200 dark:border-green-700/50 text-green-700 dark:text-green-300 group-hover:scale-105 transition-transform duration-300">
 										{meta.updated_at
 											? new Date(meta.updated_at).toLocaleDateString('en-US', {
-													year: 'numeric',
-													month: 'short',
-													day: 'numeric'
-												})
+												year: 'numeric',
+												month: 'short',
+												day: 'numeric'
+											})
 											: 'N/A'}
 									</span>
 								</div>
@@ -431,6 +438,7 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 								)}
 							</div>
 						</div>
+
 						{meta.allItems && meta.allItems.length > 0 && (
 							<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
 								<div className="mt-8">

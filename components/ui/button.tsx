@@ -21,6 +21,7 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-9 px-4 py-2",
+        xs: "h-7 rounded-md px-2 text-xs",
         sm: "h-8 rounded-md px-3 text-xs",
         lg: "h-10 rounded-md px-8",
         icon: "h-9 w-9",
@@ -48,6 +49,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     
     // Map shadcn sizes to HeroUI sizes
     const heroSize = 
+      size === "xs" ? "xs" :
       size === "sm" ? "sm" :
       size === "lg" ? "lg" :
       "md";
@@ -69,7 +71,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(buttonVariants({ variant, size }), additionalClassNames, className)}
         ref={ref}
         variant={heroVariant}
-        size={heroSize}
+        size={heroSize as any}
         {...props}
       />
     )

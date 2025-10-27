@@ -50,6 +50,20 @@
       "when": 1760371657963,
       "tag": "0006_giant_the_phantom",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1761210905153,
+      "tag": "0007_tiresome_true_believers",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1761211200000,
+      "tag": "0008_add_twenty_crm_singleton_constraint",
+      "breakpoints": true
     }
   ]
 }
