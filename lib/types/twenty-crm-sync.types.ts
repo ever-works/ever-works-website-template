@@ -3,8 +3,6 @@
  * Type definitions for upsert operations and sync-related functionality
  */
 
-import { TwentyPerson, TwentyCompany } from './twenty-crm-entities.types';
-
 /**
  * Result of an upsert operation
  * Generic type that wraps the entity data with metadata
