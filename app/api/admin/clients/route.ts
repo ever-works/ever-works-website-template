@@ -465,6 +465,31 @@ export async function POST(request: NextRequest) {
 
     const newClient = await createClientProfile(clientData);
 
+    // Direct CRM sync: non-blocking with inline retry/timeout
+    try {
+      const { createTwentyCrmSyncServiceFromEnv } = await import(
+        '@/lib/services/twenty-crm-sync-factory'
+      );
+      const { mapClientProfileToPerson } = await import(
+        '@/lib/mappers/twenty-crm.mapper'
+      );
+
+      const syncService = createTwentyCrmSyncServiceFromEnv();
+      const personPayload = mapClientProfileToPerson(newClient);
+
+      // Upsert person to Twenty CRM (has built-in retry/timeout)
+      const syncResult = await syncService.upsertPerson(personPayload);
+
+      // Mapping is auto-saved in integration_mappings table
+      console.log(`[CRM Sync] ✅ Client ${newClient.id} synced to CRM`, {
+        crmId: syncResult.id,
+        created: syncResult.created,
+      });
+    } catch (crmError) {
+      // Non-blocking: log error but don't fail client creation
+      console.error(`[CRM Sync] ❌ Failed to sync client ${newClient.id}:`, crmError);
+    }
+
     return NextResponse.json({
       success: true,
       data: newClient,
