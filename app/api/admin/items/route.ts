@@ -398,17 +398,18 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json();
-    const { 
-      id, 
-      name, 
-      slug, 
-      description, 
-      source_url, 
-      category, 
-      tags, 
-      featured, 
+    const {
+      id,
+      name,
+      slug,
+      description,
+      source_url,
+      category,
+      tags,
+      brand,
+      featured,
       icon_url,
-      status 
+      status
     }: CreateItemRequest = body;
 
     // Validate required fields
@@ -451,53 +452,90 @@ export async function POST(request: NextRequest) {
       status: status || 'draft',
     });
 
-    // Direct CRM sync: derive company from source URL, link, and sync to CRM
+    // Direct CRM sync: auto-create company from brand field, link item, and sync to CRM
     try {
-      // 1. Parse and derive company from source URL
-      let domain: string | null = null;
-      let companyName: string | null = null;
-
-      try {
-        const sourceUrl = new URL(item.source_url);
-        domain = sourceUrl.hostname.toLowerCase().replace(/^www\./, '');
-        const domainParts = domain.split('.');
-        companyName = domainParts[0].charAt(0).toUpperCase() + domainParts[0].slice(1);
-      } catch (urlError) {
-        console.warn(`[CRM Sync] Invalid source URL for item ${item.slug}, skipping company derivation`);
-      }
-
-      if (domain && companyName) {
-        // 2. Get or create company (handles deduplication by domain)
-        const { getOrCreateCompanyFromClient } = await import('@/lib/services/company.service');
-        const company = await getOrCreateCompanyFromClient({
-          name: companyName,
-          website: item.source_url,
-        });
-
-        if (company) {
-          // 3. Link item to company
-          const { linkItemToCompany } = await import('@/lib/db/queries/company.queries');
-          const linkResult = await linkItemToCompany(item.slug, company.id);
-
-          // 4. Sync company to CRM
-          const { createTwentyCrmSyncServiceFromEnv } = await import(
-            '@/lib/services/twenty-crm-sync-factory'
-          );
-          const { mapCompanyToTwentyCompany } = await import(
-            '@/lib/mappers/twenty-crm.mapper'
-          );
-
-          const syncService = createTwentyCrmSyncServiceFromEnv();
-          const companyPayload = mapCompanyToTwentyCompany(company);
-          await syncService.upsertCompany(companyPayload);
-
-          console.log(`[CRM Sync] ✅ Company ${company.id} synced for item ${item.slug}`, {
-            companyId: company.id,
-            companyName: company.name,
-            domain: domain,
-            itemLinked: linkResult.created,
-          });
+      // 1. Check if brand field is provided
+      const brandName = brand?.trim();
+      if (!brandName) {
+        console.log(`[CRM Sync] No brand field provided for item ${item.slug}, skipping company creation`);
+      } else {
+        // 2. Extract domain from source URL for deduplication
+        let domain: string | null = null;
+        try {
+          const sourceUrl = new URL(item.source_url);
+          domain = sourceUrl.hostname.toLowerCase().replace(/^www\./, '');
+        } catch (urlError) {
+          console.warn(`[CRM Sync] Invalid source URL for item ${item.slug}, domain extraction failed`);
         }
+
+        // 3. Find existing company (priority: domain > brand name)
+        const {
+          getCompanyByDomain,
+          getCompanyByName,
+          createCompany,
+          linkItemToCompany
+        } = await import('@/lib/db/queries/company.queries');
+
+        let company = null;
+
+        // Lookup by domain first (most reliable for deduplication)
+        if (domain) {
+          company = await getCompanyByDomain(domain);
+          if (company) {
+            console.log(`[CRM Sync] Found existing company by domain: ${company.id}`);
+          }
+        }
+
+        // Fallback to brand name lookup (exact match)
+        if (!company) {
+          company = await getCompanyByName(brandName);
+          if (company) {
+            console.log(`[CRM Sync] Found existing company by name: ${company.id}`);
+          }
+        }
+
+        // 4. Create new company if not found
+        if (!company) {
+          // Generate slug from brand name
+          const slug = brandName
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '')
+            .slice(0, 50);
+
+          company = await createCompany({
+            name: brandName,
+            website: item.source_url,
+            domain: domain || undefined,
+            slug,
+            status: 'active',
+          });
+
+          console.log(`[CRM Sync] Created new company: ${company.id} (${company.name})`);
+        }
+
+        // 5. Link item to company (idempotent)
+        const linkResult = await linkItemToCompany(item.slug, company.id);
+
+        // 6. Sync company to CRM
+        const { createTwentyCrmSyncServiceFromEnv } = await import(
+          '@/lib/services/twenty-crm-sync-factory'
+        );
+        const { mapCompanyToTwentyCompany } = await import(
+          '@/lib/mappers/twenty-crm.mapper'
+        );
+
+        const syncService = createTwentyCrmSyncServiceFromEnv();
+        const companyPayload = mapCompanyToTwentyCompany(company);
+        await syncService.upsertCompany(companyPayload);
+
+        console.log(`[CRM Sync] ✅ Company ${company.id} synced for item ${item.slug}`, {
+          companyId: company.id,
+          companyName: company.name,
+          brand: brandName,
+          domain: domain || 'none',
+          itemLinked: linkResult.created,
+        });
       }
     } catch (error) {
       // Non-blocking: log error but don't fail item creation

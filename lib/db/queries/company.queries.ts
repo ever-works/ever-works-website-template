@@ -80,6 +80,22 @@ export async function getCompanyByDomain(domain: string): Promise<Company | null
 }
 
 /**
+ * Get company by name
+ * @param name - Company name (case-insensitive, exact match)
+ * @returns Company or null if not found
+ */
+export async function getCompanyByName(name: string): Promise<Company | null> {
+  const normalizedName = name.toLowerCase().trim();
+  const [company] = await db
+    .select()
+    .from(companies)
+    .where(sql`lower(${companies.name}) = ${normalizedName}`)
+    .limit(1);
+
+  return company || null;
+}
+
+/**
  * Update company
  * @param id - Company ID
  * @param data - Partial company data to update
