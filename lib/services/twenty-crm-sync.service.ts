@@ -1,10 +1,11 @@
 /**
  * Twenty CRM Sync Service
  * Implements upsert operations (lookup by external_id → PUT if exists else POST)
- * with in-memory caching and 409 conflict handling
+ * with hybrid caching (memory + database) and 409 conflict handling
  */
 
 import { TwentyCrmRestClient } from './twenty-crm-rest-client.service';
+import { IntegrationMappingRepository } from '@/lib/repositories/integration-mapping.repository';
 import type { TwentyPerson, TwentyCompany } from '@/lib/types/twenty-crm-entities.types';
 import type {
   UpsertResult,
@@ -64,11 +65,17 @@ const DEFAULT_CONFLICT_RETRY_DELAY = 100;
  */
 export class TwentyCrmSyncService {
   private restClient: TwentyCrmRestClient;
+  private mappingRepository: IntegrationMappingRepository;
   private cache: Map<string, CacheEntry>;
   private cacheTtlMs: number;
 
-  constructor(restClient: TwentyCrmRestClient, cacheTtlMs: number = DEFAULT_CACHE_TTL_MS) {
+  constructor(
+    restClient: TwentyCrmRestClient,
+    mappingRepository: IntegrationMappingRepository,
+    cacheTtlMs: number = DEFAULT_CACHE_TTL_MS
+  ) {
     this.restClient = restClient;
+    this.mappingRepository = mappingRepository;
     this.cache = new Map();
     this.cacheTtlMs = cacheTtlMs;
   }
@@ -142,6 +149,14 @@ export class TwentyCrmSyncService {
             throw response.error;
           }
 
+          // Persist mapping to database (fire-and-forget)
+          this.persistMapping('company', input.external_id, existingCrmId, response.data).catch(error => {
+            console.warn(
+              `[TwentyCrmSyncService] Failed to persist company mapping after update`,
+              error
+            );
+          });
+
           return {
             id: existingCrmId,
             externalId: input.external_id,
@@ -191,10 +206,18 @@ export class TwentyCrmSyncService {
           // Extract CRM ID from response
           const crmId = this.extractCrmId(response.data as unknown as Record<string, unknown>);
 
-          // Update cache
+          // Update memory cache
           if (useCache) {
             this.updateCache('company', input.external_id, crmId);
           }
+
+          // Persist mapping to database (fire-and-forget)
+          this.persistMapping('company', input.external_id, crmId, response.data).catch(error => {
+            console.warn(
+              `[TwentyCrmSyncService] Failed to persist company mapping after create`,
+              error
+            );
+          });
 
           return {
             id: crmId,
@@ -323,6 +346,14 @@ export class TwentyCrmSyncService {
             throw response.error;
           }
 
+          // Persist mapping to database (fire-and-forget)
+          this.persistMapping('person', input.external_id, existingCrmId, response.data).catch(error => {
+            console.warn(
+              `[TwentyCrmSyncService] Failed to persist person mapping after update`,
+              error
+            );
+          });
+
           return {
             id: existingCrmId,
             externalId: input.external_id,
@@ -370,10 +401,18 @@ export class TwentyCrmSyncService {
           // Extract CRM ID
           const crmId = this.extractCrmId(response.data as unknown as Record<string, unknown>);
 
-          // Update cache
+          // Update memory cache
           if (useCache) {
             this.updateCache('person', input.external_id, crmId);
           }
+
+          // Persist mapping to database (fire-and-forget)
+          this.persistMapping('person', input.external_id, crmId, response.data).catch(error => {
+            console.warn(
+              `[TwentyCrmSyncService] Failed to persist person mapping after create`,
+              error
+            );
+          });
 
           return {
             id: crmId,
@@ -399,8 +438,109 @@ export class TwentyCrmSyncService {
   }
 
   /**
+   * Batch upserts multiple companies efficiently
+   * Processes all companies and persists mappings in a single database transaction
+   *
+   * @param inputs - Array of company data to upsert
+   * @param options - Upsert options (cache, retries, delay)
+   * @returns Array of upsert results
+   *
+   * @example
+   * ```typescript
+   * const companies = await service.upsertManyCompanies([
+   *   { external_id: 'company_1', name: 'Acme Corp' },
+   *   { external_id: 'company_2', name: 'TechCo' },
+   *   { external_id: 'company_3', name: 'StartupXYZ' },
+   * ]);
+   * console.log(`Synced ${companies.length} companies`);
+   * ```
+   */
+  async upsertManyCompanies(
+    inputs: UpsertCompanyInput[],
+    options?: UpsertOptions
+  ): Promise<UpsertResult<TwentyCompany>[]> {
+    if (inputs.length === 0) {
+      return [];
+    }
+
+    // Process each company individually (keeps existing retry logic)
+    const results = await Promise.all(
+      inputs.map(input => this.upsertCompany(input, options))
+    );
+
+    // Batch persist all mappings to database in one transaction
+    try {
+      const mappingsToUpsert = results.map((result, index) => ({
+        everId: inputs[index].external_id,
+        crmId: result.id,
+        objectType: 'company' as const,
+        dataForHash: result.data as unknown as Record<string, unknown>,
+      }));
+
+      await this.mappingRepository.upsertManyMappings(mappingsToUpsert);
+    } catch (error) {
+      console.warn(
+        `[TwentyCrmSyncService] Failed to batch persist company mappings`,
+        error
+      );
+    }
+
+    return results;
+  }
+
+  /**
+   * Batch upserts multiple persons efficiently
+   * Processes all persons and persists mappings in a single database transaction
+   *
+   * @param inputs - Array of person data to upsert
+   * @param options - Upsert options (cache, retries, delay)
+   * @returns Array of upsert results
+   *
+   * @example
+   * ```typescript
+   * const persons = await service.upsertManyPersons([
+   *   { external_id: 'user_1', name: 'John Doe', email: 'john@example.com' },
+   *   { external_id: 'user_2', name: 'Jane Smith', email: 'jane@example.com' },
+   * ]);
+   * console.log(`Synced ${persons.length} persons`);
+   * ```
+   */
+  async upsertManyPersons(
+    inputs: UpsertPersonInput[],
+    options?: UpsertOptions
+  ): Promise<UpsertResult<TwentyPerson>[]> {
+    if (inputs.length === 0) {
+      return [];
+    }
+
+    // Process each person individually (keeps existing retry logic)
+    const results = await Promise.all(
+      inputs.map(input => this.upsertPerson(input, options))
+    );
+
+    // Batch persist all mappings to database in one transaction
+    try {
+      const mappingsToUpsert = results.map((result, index) => ({
+        everId: inputs[index].external_id,
+        crmId: result.id,
+        objectType: 'person' as const,
+        dataForHash: result.data as unknown as Record<string, unknown>,
+      }));
+
+      await this.mappingRepository.upsertManyMappings(mappingsToUpsert);
+    } catch (error) {
+      console.warn(
+        `[TwentyCrmSyncService] Failed to batch persist person mappings`,
+        error
+      );
+    }
+
+    return results;
+  }
+
+  /**
    * Looks up CRM ID by external_id
-   * Checks cache first, then queries the API if not found
+   * Three-tier lookup: memory cache → database → API
    *
    * @param entityType - 'person' or 'company'
    * @param externalId - External ID from our system
@@ -412,7 +552,7 @@ export class TwentyCrmSyncService {
     externalId: string,
     useCache: boolean = true
   ): Promise<string | null> {
-    // Check cache first
+    // Tier 1: Check memory cache first
     if (useCache) {
       const cacheKey = `${entityType}:${externalId}`;
       const cached = this.cache.get(cacheKey);
@@ -422,7 +562,25 @@ export class TwentyCrmSyncService {
       }
     }
 
-    // Query API
+    // Tier 2: Check database
+    try {
+      const mapping = await this.mappingRepository.findByEverId(externalId, entityType);
+      if (mapping) {
+        // Found in database, update memory cache and return
+        if (useCache) {
+          this.updateCache(entityType, externalId, mapping.crmId);
+        }
+        return mapping.crmId;
+      }
+    } catch (error) {
+      // Log database error but continue to API lookup
+      console.warn(
+        `[TwentyCrmSyncService] Database lookup failed for ${entityType}:${externalId}`,
+        error
+      );
+    }
+
+    // Tier 3: Query API
     const endpoint = entityType === 'person' ? '/rest/people' : '/rest/companies';
     const response = await this.restClient.get<{ data: Array<TwentyPerson | TwentyCompany> }>(
       `${endpoint}?filter[external_id][eq]=${encodeURIComponent(externalId)}`
@@ -445,10 +603,18 @@ export class TwentyCrmSyncService {
     // Extract CRM ID from first result
     const crmId = this.extractCrmId(entities[0] as unknown as Record<string, unknown>);
 
-    // Update cache
+    // Update both memory cache and database
     if (useCache) {
       this.updateCache(entityType, externalId, crmId);
     }
+
+    // Persist to database (fire-and-forget to avoid blocking)
+    this.persistMapping(entityType, externalId, crmId, entities[0]).catch(error => {
+      console.warn(
+        `[TwentyCrmSyncService] Failed to persist mapping ${entityType}:${externalId}`,
+        error
+      );
+    });
 
     return crmId;
   }
@@ -529,6 +695,28 @@ export class TwentyCrmSyncService {
       TwentyCrmErrorCode.OPERATION_FAILED,
       'Failed to extract CRM ID from entity response'
     );
+  }
+
+  /**
+   * Persists a mapping to the database with version hash
+   *
+   * @param entityType - 'person' or 'company'
+   * @param externalId - External ID (Ever ID)
+   * @param crmId - CRM ID (Twenty UUID)
+   * @param entityData - Entity data for version hash generation
+   */
+  private async persistMapping(
+    entityType: 'person' | 'company',
+    externalId: string,
+    crmId: string,
+    entityData: TwentyPerson | TwentyCompany
+  ): Promise<void> {
+    await this.mappingRepository.upsertMapping({
+      everId: externalId,
+      crmId,
+      objectType: entityType,
+      dataForHash: entityData as unknown as Record<string, unknown>,
+    });
   }
 
   /**

@@ -5,6 +5,7 @@
 
 import { TwentyCrmSyncService } from './twenty-crm-sync.service';
 import { TwentyCrmRestClient } from './twenty-crm-rest-client.service';
+import { integrationMappingRepository } from '@/lib/repositories/integration-mapping.repository';
 import type { TwentyCrmClientConfig } from '@/lib/types/twenty-crm-config.types';
 
 /**
@@ -34,7 +35,7 @@ export function createTwentyCrmSyncService(
   cacheTtlMs?: number
 ): TwentyCrmSyncService {
   const restClient = new TwentyCrmRestClient(config);
-  return new TwentyCrmSyncService(restClient, cacheTtlMs);
+  return new TwentyCrmSyncService(restClient, integrationMappingRepository, cacheTtlMs);
 }
 
 /**
