@@ -79,6 +79,7 @@ export function LanguageSwitcher({ compact = false }: LanguageSwitcherProps) {
   return (
     <div className="relative" ref={popoverRef}>
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center gap-1.5 text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all duration-200 ${
           compact ? "px-2 py-1" : "px-3 py-1.5"
