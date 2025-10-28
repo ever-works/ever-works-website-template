@@ -17,10 +17,14 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
   const [searchTerm, setSearchTerm] = useState("");
 
   /** Multiple tag selection for advanced filtering - allows selecting multiple tags simultaneously */
-  const [selectedTags, setSelectedTagsInternal] = useState<TagId[]>([]);
+  const [selectedTags, setSelectedTagsInternal] = useState<TagId[]>(
+    initialTag ? [initialTag] : []
+  );
 
   /** Multiple category selection for advanced filtering */
-  const [selectedCategories, setSelectedCategoriesInternal] = useState<CategoryId[]>([]);
+  const [selectedCategories, setSelectedCategoriesInternal] = useState<CategoryId[]>(
+    initialCategory ? [initialCategory] : []
+  );
 
   const [sortBy, setSortBy] = useState<SortOption>(SORT_OPTIONS.POPULARITY);
 
@@ -36,20 +40,6 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
 
   // URL synchronization (only for updates, not parsing)
   const { updateURL } = useFilterURLSync({ basePath: '/', locale });
-
-  /**
-   * Initialize state from initial props on mount
-   */
-  useEffect(() => {
-    if (initialTag) {
-      // If initial tag is provided (from tag page route), set it
-      setSelectedTagsInternal([initialTag]);
-    } else if (initialCategory) {
-      // If initial category is provided (from category page route), set it
-      setSelectedCategoriesInternal([initialCategory]);
-    }
-    // Note: URL query params should be passed as initialTag/initialCategory from the page
-  }, [initialTag, initialCategory]);
 
   /**
    * Cleanup: Clear loading timeout on unmount to prevent memory leaks
