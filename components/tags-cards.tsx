@@ -19,13 +19,17 @@ export function TagsCards({ tags, className }: TagsCardsProps) {
   const searchParams = useSearchParams();
   const [loadingTag, setLoadingTag] = useState<string | null>(null);
 
+  // Parse current tags from query params to determine active state
+  const currentTagsParam = searchParams.get('tags');
+  const currentTags = currentTagsParam?.split(',') || [];
+
   useEffect(() => {
     setLoadingTag(null);
   }, [pathname, searchParams]);
 
   const renderTagCard = (tag: Tag) => {
-    const tagPath = `/?tags=${tag.id}`;
-    const isActive = pathname === encodeURI(tagPath) || pathname.startsWith(encodeURI(tagPath) + '/');
+    // Check if this tag is in the current selection
+    const isActive = currentTags.includes(tag.id);
 
     const handleClick = () => {
       setLoadingTag(tag.id);
