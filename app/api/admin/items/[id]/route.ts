@@ -312,7 +312,7 @@ export async function PUT(
         try {
           const sourceUrl = new URL(item.source_url);
           domain = sourceUrl.hostname.toLowerCase().replace(/^www\./, '');
-        } catch (_urlError) {
+        } catch {
           console.warn(`[CRM Sync] Invalid source URL for item ${item.slug}, domain extraction failed`);
         }
 
