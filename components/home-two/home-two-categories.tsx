@@ -187,7 +187,7 @@ export function HomeTwoCategories({
         const href = basePath
           ? `${basePath}/${category.id}`
           : `/categories/${category.id}`;
-        const isActive = pathname.startsWith(encodeURI(href));
+        const isActive = pathname === encodeURI(href) || pathname.startsWith(encodeURI(href) + '/');
         const displayName = category.name;
 
         return (
@@ -224,7 +224,7 @@ export function HomeTwoCategories({
         const href = basePath
           ? `${basePath}/${category.id}`
           : `/categories/${category.id}`;
-        return pathname.startsWith(encodeURI(href));
+        return pathname === encodeURI(href) || pathname.startsWith(encodeURI(href) + '/');
       });
 
       if (currentCategory) {
@@ -449,7 +449,7 @@ export function Categories(props: {
       ? `${props.basePath}/${category.id}`
       : `/categories/${category.id}`;
 
-    const isActive = pathname.startsWith(encodeURI(basePath));
+    const isActive = pathname === encodeURI(basePath) || pathname.startsWith(encodeURI(basePath) + '/');
     return (
       <Button
         key={category.id || index}
@@ -527,7 +527,7 @@ export function Categories(props: {
     const basePath = props.basePath
       ? `${props.basePath}/${category.id}`
       : `/categories/${category.id}`;
-    return pathname.startsWith(encodeURI(basePath));
+    return pathname === encodeURI(basePath) || pathname.startsWith(encodeURI(basePath) + '/');
   });
 
   return (

@@ -35,7 +35,7 @@ export function Tags({
         const tagBasePath = basePath
           ? `${basePath}/${encodeURIComponent(tag.id)}`
           : `/tags/${encodeURIComponent(tag.id)}`;
-        return pathname.startsWith(tagBasePath);
+        return pathname === tagBasePath || pathname.startsWith(tagBasePath + '/');
       });
 
   return (

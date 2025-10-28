@@ -44,8 +44,8 @@ export function ItemsCategories(props: {
       const basePath = props.basePath
         ? `${props.basePath}/${category.id}`
         : `/categories/${category.id}`;
-  
-      const isActive = pathname.startsWith(encodeURI(basePath));
+
+      const isActive = pathname === encodeURI(basePath) || pathname.startsWith(encodeURI(basePath) + '/');
       return (
         <Button
           key={category.id || index}
@@ -123,7 +123,7 @@ export function ItemsCategories(props: {
       const basePath = props.basePath
         ? `${props.basePath}/${category.id}`
         : `/categories/${category.id}`;
-      return pathname.startsWith(encodeURI(basePath));
+      return pathname === encodeURI(basePath) || pathname.startsWith(encodeURI(basePath) + '/');
     });
   
     return (

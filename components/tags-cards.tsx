@@ -25,7 +25,7 @@ export function TagsCards({ tags, className }: TagsCardsProps) {
 
   const renderTagCard = (tag: Tag) => {
     const tagPath = `/?tags=${tag.id}`;
-    const isActive = pathname.startsWith(encodeURI(tagPath));
+    const isActive = pathname === encodeURI(tagPath) || pathname.startsWith(encodeURI(tagPath) + '/');
 
     const handleClick = () => {
       setLoadingTag(tag.id);

@@ -264,7 +264,7 @@ export function TagsItemsColumn(props: { total: number; tag: Tag[] }) {
           {tag.map((tag) => {
             if (!tag.count) return null;
             const href = `/tags/${tag.id}`;
-            const isActive = pathname.startsWith(encodeURI(href));
+            const isActive = pathname === encodeURI(href) || pathname.startsWith(encodeURI(href) + '/');
             const displayName = truncateText(tag.name);
             const isTextTruncated = tag.name.length > 20;  
             return (
