@@ -93,6 +93,7 @@ export function LanguageSwitcher({ compact = false }: LanguageSwitcherProps) {
             src={currentLanguage.flagSrc}
             alt={currentLanguage.fullName}
             fill
+            sizes="20px"
             className="object-cover"
           />
         </div>
@@ -136,6 +137,7 @@ export function LanguageSwitcher({ compact = false }: LanguageSwitcherProps) {
                       src={language.flagSrc}
                       alt={language.fullName}
                       fill
+                      sizes="20px"
                       className="object-cover"
                     />
                   </div>
