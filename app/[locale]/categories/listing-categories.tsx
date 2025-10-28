@@ -13,7 +13,6 @@ import { SearchInput } from "@/components/ui/search-input";
 import { useFilters } from "@/hooks/use-filters";
 import { ListingClient } from "@/components/shared-card/listing-client";
 import { CardPresets } from "@/components/shared-card";
-import CategoriesQuerySync from "@/components/filters/categories-query-sync";
 
 interface ListingCategoriesProps {
   total: number;
@@ -31,8 +30,7 @@ export default function ListingCategories(props: ListingCategoriesProps) {
 
   return (
     <>
-      <CategoriesQuerySync />
-    <Hero
+      <Hero
       badgeText={t("listing.CATEGORIES")}
       title={
         <span className="bg-gradient-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent">
