@@ -13,7 +13,7 @@ interface CompanyInput {
 
 /**
  * Get or create company from client profile data
- * Looks up by domain first, creates if not found
+ * Deduplication strategy: domain lookup (primary) → name lookup (fallback) → create new
  *
  * @param input - Company name and website from client profile
  * @returns Company record or null if insufficient data
@@ -37,7 +37,16 @@ export async function getOrCreateCompanyFromClient(
     }
   }
 
-  // Create new company
+  // Fallback to name lookup (exact match)
+  if (input.name) {
+    const { getCompanyByName } = await import('@/lib/db/queries/company.queries');
+    const existing = await getCompanyByName(input.name);
+    if (existing) {
+      return existing;
+    }
+  }
+
+  // Create new company (only if both lookups fail)
   const slug = generateSlug(input.name || domain || 'company');
 
   const newCompany = await createCompany({
