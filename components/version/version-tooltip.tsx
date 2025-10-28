@@ -20,10 +20,10 @@ export function VersionTooltip({
   // Always call all hooks first - this is critical for hook order consistency
   const [isVisible, setIsVisible] = useState(false);
   const { versionInfo, error } = useVersionInfo();
-  
+
   // Use refs to manage timeouts and prevent memory leaks
-  const showTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const showTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
 
   // Optimized show handler with delay

@@ -36,7 +36,7 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
 
   /** Loading state for filter updates */
   const [isFiltersLoading, setIsFiltersLoading] = useState(false);
-  const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const loadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // URL synchronization (only for updates, not parsing)
   const { updateURL } = useFilterURLSync({ basePath: '/', locale });
