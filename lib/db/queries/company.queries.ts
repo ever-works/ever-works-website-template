@@ -272,16 +272,16 @@ export async function getCompaniesStats(): Promise<{
 // ===================== Item-Company Association =====================
 
 /**
- * Link item to company (idempotent - duplicate link is no-op)
+ * Link item to company (idempotent - updates if company changes)
  * @param itemSlug - Item slug (normalized to lowercase)
  * @param companyId - Company ID
- * @returns Created or existing association with success indicator
+ * @returns Association with flags indicating if created or updated
  * @throws Error with friendly message if company doesn't exist
  */
 export async function linkItemToCompany(
   itemSlug: string,
   companyId: string
-): Promise<{ association: ItemCompany; created: boolean }> {
+): Promise<{ association: ItemCompany; created: boolean; updated: boolean }> {
   const normalizedSlug = itemSlug.toLowerCase().trim();
 
   try {
@@ -291,7 +291,7 @@ export async function linkItemToCompany(
       throw new Error(`Company with ID "${companyId}" does not exist.`);
     }
 
-    // Check if association already exists (idempotent check)
+    // Check if association already exists
     const existing = await db
       .select()
       .from(itemsCompanies)
@@ -299,8 +299,20 @@ export async function linkItemToCompany(
       .limit(1);
 
     if (existing.length > 0) {
-      // Already linked, return existing (idempotent - no-op)
-      return { association: existing[0], created: false };
+      // Check if company changed
+      if (existing[0].companyId === companyId) {
+        // Same company, true idempotent no-op
+        return { association: existing[0], created: false, updated: false };
+      }
+
+      // Company changed, update the association
+      const [updated] = await db
+        .update(itemsCompanies)
+        .set({ companyId, updatedAt: new Date() })
+        .where(eq(itemsCompanies.itemSlug, normalizedSlug))
+        .returning();
+
+      return { association: updated, created: false, updated: true };
     }
 
     // Create new association
@@ -312,7 +324,7 @@ export async function linkItemToCompany(
       })
       .returning();
 
-    return { association, created: true };
+    return { association, created: true, updated: false };
   } catch (error) {
     // Handle unique constraint violation with friendly message
     if (error instanceof Error) {
@@ -325,7 +337,7 @@ export async function linkItemToCompany(
           .limit(1);
 
         if (existing.length > 0) {
-          return { association: existing[0], created: false };
+          return { association: existing[0], created: false, updated: false };
         }
 
         throw new Error(`Item "${normalizedSlug}" is already linked to another company. Each item can only belong to one company.`);

@@ -301,11 +301,12 @@ export async function PUT(
             });
 
             if (company) {
-              companyExternalId = company.id;
-
-              // Sync company to CRM
+              // Sync company to CRM first
               const companyPayload = mapCompanyToTwentyCompany(company);
               await syncService.upsertCompany(companyPayload);
+
+              // Only set company ID if CRM sync succeeded
+              companyExternalId = company.id;
 
               console.log(`[CRM Sync] ✅ Company ${company.id} synced for client ${clientId}`);
             }
@@ -315,6 +316,7 @@ export async function PUT(
               companyError
             );
             // Continue - don't fail person sync if company fails
+            // companyExternalId remains undefined, so person syncs without company link
           }
         }
 
