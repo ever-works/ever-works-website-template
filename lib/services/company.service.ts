@@ -61,6 +61,53 @@ export async function getOrCreateCompanyFromClient(
 }
 
 /**
+ * Get or create company from brand and source URL (for items)
+ * Deduplication strategy: domain lookup (primary) → name lookup (fallback) → create new
+ *
+ * @param brand - Brand name from item
+ * @param sourceUrl - Item source URL for domain extraction
+ * @returns Company record
+ *
+ * @example
+ * const company = await getOrCreateCompanyFromBrand('Acme Corp', 'https://acme.com/product');
+ */
+export async function getOrCreateCompanyFromBrand(
+  brand: string,
+  sourceUrl: string
+): Promise<Company> {
+  // Extract and normalize domain from source URL
+  const domain = extractDomain(sourceUrl);
+
+  // Look up by domain first (most reliable for deduplication)
+  if (domain) {
+    const existing = await getCompanyByDomain(domain);
+    if (existing) {
+      return existing;
+    }
+  }
+
+  // Fallback to name lookup (exact match)
+  const { getCompanyByName } = await import('@/lib/db/queries/company.queries');
+  const existing = await getCompanyByName(brand);
+  if (existing) {
+    return existing;
+  }
+
+  // Create new company (only if both lookups fail)
+  const slug = generateSlug(brand);
+
+  const newCompany = await createCompany({
+    name: brand,
+    website: sourceUrl,
+    domain: domain || undefined,
+    slug,
+    status: 'active',
+  });
+
+  return newCompany;
+}
+
+/**
  * Extract domain from URL
  * Normalizes to lowercase and removes www prefix
  *

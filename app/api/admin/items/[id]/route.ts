@@ -309,65 +309,16 @@ export async function PUT(
         if (!brandName) {
           console.log(`[CRM Sync] No brand field in update for item ${item.slug}, skipping company sync`);
         } else {
-        // 2. Extract domain from source URL for deduplication
-        let domain: string | null = null;
-        try {
-          const sourceUrl = new URL(item.source_url);
-          domain = sourceUrl.hostname.toLowerCase().replace(/^www\./, '');
-        } catch {
-          console.warn(`[CRM Sync] Invalid source URL for item ${item.slug}, domain extraction failed`);
-        }
+        // 2. Get or create company from brand using service layer
+        const { getOrCreateCompanyFromBrand } = await import('@/lib/services/company.service');
+        const { linkItemToCompany } = await import('@/lib/db/queries/company.queries');
 
-        // 3. Find existing company (priority: domain > brand name)
-        const {
-          getCompanyByDomain,
-          getCompanyByName,
-          createCompany,
-          linkItemToCompany
-        } = await import('@/lib/db/queries/company.queries');
+        const company = await getOrCreateCompanyFromBrand(brandName, item.source_url);
 
-        let company = null;
+        // 3. Link item to company (idempotent)
+        await linkItemToCompany(item.slug, company.id);
 
-        // Lookup by domain first (most reliable for deduplication)
-        if (domain) {
-          company = await getCompanyByDomain(domain);
-          if (company) {
-            console.log(`[CRM Sync] Found existing company by domain: ${company.id}`);
-          }
-        }
-
-        // Fallback to brand name lookup (exact match)
-        if (!company) {
-          company = await getCompanyByName(brandName);
-          if (company) {
-            console.log(`[CRM Sync] Found existing company by name: ${company.id}`);
-          }
-        }
-
-        // 4. Create new company if not found
-        if (!company) {
-          // Generate slug from brand name
-          const slug = brandName
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-|-$/g, '')
-            .slice(0, 50);
-
-          company = await createCompany({
-            name: brandName,
-            website: item.source_url,
-            domain: domain || undefined,
-            slug,
-            status: 'active',
-          });
-
-          console.log(`[CRM Sync] Created new company: ${company.id} (${company.name})`);
-        }
-
-        // 5. Link item to company (idempotent)
-        const linkResult = await linkItemToCompany(item.slug, company.id);
-
-        // 6. Sync company to CRM
+        // 4. Sync company to CRM
         const { createTwentyCrmSyncServiceFromEnv } = await import(
           '@/lib/services/twenty-crm-sync-factory'
         );
@@ -383,8 +334,6 @@ export async function PUT(
           companyId: company.id,
           companyName: company.name,
           brand: brandName,
-          domain: domain || 'none',
-          itemLinked: linkResult.created,
         });
         }
       } catch (error) {
