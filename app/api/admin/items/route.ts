@@ -457,13 +457,18 @@ export async function POST(request: NextRequest) {
     });
 
     // Direct CRM sync: blocks response but with retry/timeout (non-blocking for DB)
-    const crmEnabled = process.env.TWENTY_CRM_ENABLED !== 'false';
+    const crmEnabled = process.env.TWENTY_CRM_ENABLED === 'true';
     if (crmEnabled) {
       try {
         // 1. Check if brand field is provided
         const brandName = brand?.trim();
         if (!brandName) {
-          console.log(`[CRM Sync] No brand field provided for item ${item.slug}, skipping company creation`);
+          console.info('[CRM Sync] Skipping company creation - no brand provided', {
+            action: 'company_sync',
+            status: 'skipped',
+            reason: 'no_brand',
+            itemSlug: item.slug,
+          });
         } else {
         // 2. Get or create company from brand using service layer
         const { getOrCreateCompanyFromBrand } = await import('@/lib/services/company.service');
@@ -471,30 +476,53 @@ export async function POST(request: NextRequest) {
 
         const company = await getOrCreateCompanyFromBrand(brandName, item.source_url);
 
-        // 3. Link item to company (idempotent)
-        await linkItemToCompany(item.slug, company.id);
+        // 3. Link item to company and check if sync needed
+        const linkResult = await linkItemToCompany(item.slug, company.id);
 
-        // 4. Sync company to CRM
-        const { createTwentyCrmSyncServiceFromEnv } = await import(
-          '@/lib/services/twenty-crm-sync-factory'
-        );
-        const { mapCompanyToTwentyCompany } = await import(
-          '@/lib/mappers/twenty-crm.mapper'
-        );
+        // Only sync if item was newly linked or relinked to different company
+        if (linkResult.created || linkResult.updated) {
+          // 4. Sync company to CRM
+          const { createTwentyCrmSyncServiceFromEnv } = await import(
+            '@/lib/services/twenty-crm-sync-factory'
+          );
+          const { mapCompanyToTwentyCompany } = await import(
+            '@/lib/mappers/twenty-crm.mapper'
+          );
 
-        const syncService = createTwentyCrmSyncServiceFromEnv();
-        const companyPayload = mapCompanyToTwentyCompany(company);
-        await syncService.upsertCompany(companyPayload);
+          const cacheTtlMs = parseInt(process.env.TWENTY_CRM_CACHE_TTL_MS || '300000', 10);
+          const syncService = createTwentyCrmSyncServiceFromEnv(cacheTtlMs);
+          const companyPayload = mapCompanyToTwentyCompany(company);
+          await syncService.upsertCompany(companyPayload);
 
-        console.log(`[CRM Sync] ✅ Company ${company.id} synced for item ${item.slug}`, {
-          companyId: company.id,
-          companyName: company.name,
-          brand: brandName,
-        });
+          console.info('[CRM Sync] Company synced successfully', {
+            action: 'company_sync',
+            status: 'success',
+            companyId: company.id,
+            companyName: company.name,
+            itemSlug: item.slug,
+            brand: brandName,
+            linkCreated: linkResult.created,
+            linkUpdated: linkResult.updated,
+          });
+        } else {
+          console.info('[CRM Sync] Skipping company sync - link unchanged', {
+            action: 'company_sync',
+            status: 'skipped',
+            reason: 'link_unchanged',
+            companyId: company.id,
+            itemSlug: item.slug,
+          });
+        }
         }
       } catch (error) {
         // Non-blocking: log error but don't fail item creation
-        console.error(`[CRM Sync] ❌ Failed to sync company for item ${item.slug}:`, error);
+        console.error('[CRM Sync] Company sync failed', {
+          action: 'company_sync',
+          status: 'error',
+          itemSlug: item.slug,
+          brand: brand?.trim(),
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     }
 
