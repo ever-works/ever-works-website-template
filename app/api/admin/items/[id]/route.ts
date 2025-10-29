@@ -189,6 +189,10 @@ export async function GET(
  *                   type: string
  *                 description: "Item tags"
  *                 example: ["saas", "productivity", "automation", "ai"]
+ *               brand:
+ *                 type: string
+ *                 description: "Brand or company name associated with this item (used for CRM sync)"
+ *                 example: "Acme Corporation"
  *               featured:
  *                 type: boolean
  *                 description: "Whether the item is featured"

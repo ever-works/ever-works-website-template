@@ -279,6 +279,10 @@ export async function GET(request: NextRequest) {
  *                   type: string
  *                 description: "Item tags"
  *                 example: ["saas", "productivity", "collaboration"]
+ *               brand:
+ *                 type: string
+ *                 description: "Brand or company name associated with this item (used for CRM sync)"
+ *                 example: "Acme Corporation"
  *               featured:
  *                 type: boolean
  *                 description: "Whether the item is featured"
