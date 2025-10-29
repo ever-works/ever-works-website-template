@@ -300,13 +300,15 @@ export async function PUT(
 
     const item = await itemRepository.update(resolvedParams.id, updateData);
 
-    // Direct CRM sync: auto-create/update company from brand field and sync to CRM
-    try {
-      // 1. Check if brand field is provided in the update
-      const brandName = body.brand?.trim();
-      if (!brandName) {
-        console.log(`[CRM Sync] No brand field in update for item ${item.slug}, skipping company sync`);
-      } else {
+    // Direct CRM sync: blocks response but with retry/timeout (non-blocking for DB)
+    const crmEnabled = process.env.TWENTY_CRM_ENABLED !== 'false';
+    if (crmEnabled) {
+      try {
+        // 1. Check if brand field is provided in the update
+        const brandName = body.brand?.trim();
+        if (!brandName) {
+          console.log(`[CRM Sync] No brand field in update for item ${item.slug}, skipping company sync`);
+        } else {
         // 2. Extract domain from source URL for deduplication
         let domain: string | null = null;
         try {
@@ -384,10 +386,11 @@ export async function PUT(
           domain: domain || 'none',
           itemLinked: linkResult.created,
         });
+        }
+      } catch (error) {
+        // Non-blocking: log error but don't fail item update
+        console.error(`[CRM Sync] ❌ Failed to sync company for item ${item.slug}:`, error);
       }
-    } catch (error) {
-      // Non-blocking: log error but don't fail item update
-      console.error(`[CRM Sync] ❌ Failed to sync company for item ${item.slug}:`, error);
     }
 
     return NextResponse.json({

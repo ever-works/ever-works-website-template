@@ -273,65 +273,68 @@ export async function PUT(
       );
     }
 
-    // Direct CRM sync: non-blocking with inline retry/timeout
-    try {
-      const { createTwentyCrmSyncServiceFromEnv } = await import(
-        '@/lib/services/twenty-crm-sync-factory'
-      );
-      const { mapClientProfileToPerson, mapCompanyToTwentyCompany } = await import(
-        '@/lib/mappers/twenty-crm.mapper'
-      );
-
-      const syncService = createTwentyCrmSyncServiceFromEnv();
-
-      // Step 1: Handle company if client has company info
-      let companyExternalId: string | undefined;
-
-      if (client.company || client.website) {
-        const { getOrCreateCompanyFromClient } = await import(
-          '@/lib/services/company.service'
+    // Direct CRM sync: blocks response but with retry/timeout (non-blocking for DB)
+    const crmEnabled = process.env.TWENTY_CRM_ENABLED !== 'false';
+    if (crmEnabled) {
+      try {
+        const { createTwentyCrmSyncServiceFromEnv } = await import(
+          '@/lib/services/twenty-crm-sync-factory'
+        );
+        const { mapClientProfileToPerson, mapCompanyToTwentyCompany } = await import(
+          '@/lib/mappers/twenty-crm.mapper'
         );
 
-        try {
-          const company = await getOrCreateCompanyFromClient({
-            name: client.company,
-            website: client.website,
-          });
+        const syncService = createTwentyCrmSyncServiceFromEnv();
 
-          if (company) {
-            companyExternalId = company.id;
+        // Step 1: Handle company if client has company info
+        let companyExternalId: string | undefined;
 
-            // Sync company to CRM
-            const companyPayload = mapCompanyToTwentyCompany(company);
-            await syncService.upsertCompany(companyPayload);
-
-            console.log(`[CRM Sync] ✅ Company ${company.id} synced for client ${clientId}`);
-          }
-        } catch (companyError) {
-          console.error(
-            `[CRM Sync] Company sync failed for client ${clientId}:`,
-            companyError
+        if (client.company || client.website) {
+          const { getOrCreateCompanyFromClient } = await import(
+            '@/lib/services/company.service'
           );
-          // Continue - don't fail person sync if company fails
+
+          try {
+            const company = await getOrCreateCompanyFromClient({
+              name: client.company,
+              website: client.website,
+            });
+
+            if (company) {
+              companyExternalId = company.id;
+
+              // Sync company to CRM
+              const companyPayload = mapCompanyToTwentyCompany(company);
+              await syncService.upsertCompany(companyPayload);
+
+              console.log(`[CRM Sync] ✅ Company ${company.id} synced for client ${clientId}`);
+            }
+          } catch (companyError) {
+            console.error(
+              `[CRM Sync] Company sync failed for client ${clientId}:`,
+              companyError
+            );
+            // Continue - don't fail person sync if company fails
+          }
         }
+
+        // Step 2: Sync person to CRM (with company link if available)
+        const personPayload = mapClientProfileToPerson(client);
+
+        const syncResult = await syncService.upsertPerson({
+          ...personPayload,
+          company_external_id: companyExternalId,
+        });
+
+        console.log(`[CRM Sync] ✅ Client ${clientId} update synced to CRM`, {
+          crmId: syncResult.id,
+          updated: syncResult.updated,
+          companyLinked: !!companyExternalId,
+        });
+      } catch (crmError) {
+        // Non-blocking: log error but don't fail client update
+        console.error(`[CRM Sync] ❌ Failed to sync client update ${clientId}:`, crmError);
       }
-
-      // Step 2: Sync person to CRM (with company link if available)
-      const personPayload = mapClientProfileToPerson(client);
-
-      const syncResult = await syncService.upsertPerson({
-        ...personPayload,
-        company_external_id: companyExternalId,
-      });
-
-      console.log(`[CRM Sync] ✅ Client ${clientId} update synced to CRM`, {
-        crmId: syncResult.id,
-        updated: syncResult.updated,
-        companyLinked: !!companyExternalId,
-      });
-    } catch (crmError) {
-      // Non-blocking: log error but don't fail client update
-      console.error(`[CRM Sync] ❌ Failed to sync client update ${clientId}:`, crmError);
     }
 
     const response = {

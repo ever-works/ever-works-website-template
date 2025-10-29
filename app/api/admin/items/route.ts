@@ -452,13 +452,15 @@ export async function POST(request: NextRequest) {
       status: status || 'draft',
     });
 
-    // Direct CRM sync: auto-create company from brand field, link item, and sync to CRM
-    try {
-      // 1. Check if brand field is provided
-      const brandName = brand?.trim();
-      if (!brandName) {
-        console.log(`[CRM Sync] No brand field provided for item ${item.slug}, skipping company creation`);
-      } else {
+    // Direct CRM sync: blocks response but with retry/timeout (non-blocking for DB)
+    const crmEnabled = process.env.TWENTY_CRM_ENABLED !== 'false';
+    if (crmEnabled) {
+      try {
+        // 1. Check if brand field is provided
+        const brandName = brand?.trim();
+        if (!brandName) {
+          console.log(`[CRM Sync] No brand field provided for item ${item.slug}, skipping company creation`);
+        } else {
         // 2. Extract domain from source URL for deduplication
         let domain: string | null = null;
         try {
@@ -536,10 +538,11 @@ export async function POST(request: NextRequest) {
           domain: domain || 'none',
           itemLinked: linkResult.created,
         });
+        }
+      } catch (error) {
+        // Non-blocking: log error but don't fail item creation
+        console.error(`[CRM Sync] ❌ Failed to sync company for item ${item.slug}:`, error);
       }
-    } catch (error) {
-      // Non-blocking: log error but don't fail item creation
-      console.error(`[CRM Sync] ❌ Failed to sync company for item ${item.slug}:`, error);
     }
 
     return NextResponse.json({
