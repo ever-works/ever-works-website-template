@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { Modal, ModalBody, ModalFooter } from '@/components/ui/modal';
 import { Download } from 'lucide-react';
 import { toast } from 'sonner';
@@ -20,37 +21,35 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 	const t = useTranslations('survey');
 	const tCommon = useTranslations('common');
 	const [surveyJsId, setSurveyJsId] = useState('');
-	const [isImporting, setIsImporting] = useState(false);
+    const importSurveyMutation = useMutation({
+        mutationFn: async (id: string) => {
+            const response = await fetch(`https://api.surveyjs.io/public/v1/Survey/getSurvey?surveyId=${id}`);
+            if (!response.ok) {
+                throw new Error(t('SURVEY_NOT_FOUND_INVALID_ID'));
+            }
+            return response.json();
+        },
+        onSuccess: (data) => {
+            onImport(data);
+            toast.success(t('SURVEY_IMPORTED_SUCCESSFULLY'));
+            handleClose(true);
+        },
+        onError: (error: unknown) => {
+            logger.error('Error importing survey', error);
+            toast.error(error instanceof Error ? error.message : t('FAILED_TO_IMPORT_SURVEY'));
+        }
+    });
 
-	const handleImport = async () => {
+    const handleImport = async () => {
 		if (!surveyJsId.trim()) {
 			toast.error(t('PLEASE_ENTER_SURVEYJS_ID'));
 			return;
 		}
-
-		setIsImporting(true);
-		try {
-			// Fetch from SurveyJS API
-			const response = await fetch(`https://api.surveyjs.io/public/v1/Survey/getSurvey?surveyId=${surveyJsId}`);
-
-			if (!response.ok) {
-				throw new Error(t('SURVEY_NOT_FOUND_INVALID_ID'));
-			}
-
-			const data = await response.json();
-			onImport(data);
-			toast.success(t('SURVEY_IMPORTED_SUCCESSFULLY'));
-			handleClose(true);
-		} catch (error) {
-			logger.error('Error importing survey', error);
-			toast.error(error instanceof Error ? error.message : t('FAILED_TO_IMPORT_SURVEY'));
-		} finally {
-			setIsImporting(false);
-		}
+        await importSurveyMutation.mutateAsync(surveyJsId.trim());
 	};
 
-	const handleClose = (force = false) => {
-		if (isImporting && !force) {
+    const handleClose = (force = false) => {
+        if (importSurveyMutation.isPending && !force) {
 			return;
 		}
 		setSurveyJsId('');
@@ -58,7 +57,7 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 	};
 
 	const handleKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === 'Enter' && !isImporting && surveyJsId.trim()) {
+        if (e.key === 'Enter' && !importSurveyMutation.isPending && surveyJsId.trim()) {
 			e.preventDefault();
 			handleImport();
 		}
@@ -69,7 +68,7 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 			isOpen={isOpen}
 			onClose={() => handleClose()}
 			size="md"
-			isDismissable={!isImporting}
+            isDismissable={!importSurveyMutation.isPending}
 			title={t('IMPORT_SURVEYJS_TITLE')}
 			subtitle={<p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('IMPORT_SURVEYJS_DESC')}</p>}
 		>
@@ -85,7 +84,7 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 						onChange={(e) => setSurveyJsId(e.target.value)}
 						placeholder={t('ENTER_SURVEYJS_ID')}
 						className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-						disabled={isImporting}
+                        disabled={importSurveyMutation.isPending}
 						onKeyDown={handleKeyDown}
 					/>
 				</div>
@@ -107,15 +106,15 @@ export function ImportSurveyJsDialog({ isOpen, onClose, onImport }: ImportSurvey
 				<Button
 					onClick={() => handleClose()}
 					variant="outline"
-					disabled={isImporting}
+                    disabled={importSurveyMutation.isPending}
 				>
 					{tCommon('CANCEL')}
 				</Button>
 				<Button
 					onClick={handleImport}
-					disabled={isImporting || !surveyJsId.trim()}
+                    disabled={importSurveyMutation.isPending || !surveyJsId.trim()}
 				>
-					{isImporting ? (
+                    {importSurveyMutation.isPending ? (
 						<>
 							<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
 							{tCommon('IMPORTING')}
