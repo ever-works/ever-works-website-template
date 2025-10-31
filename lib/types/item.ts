@@ -25,6 +25,7 @@ export interface CreateItemRequest {
   source_url: string;
   category: string | string[];
   tags: string[];
+  brand?: string;
   featured?: boolean;
   icon_url?: string;
   status?: 'draft' | 'pending' | 'approved' | 'rejected';

@@ -189,6 +189,10 @@ export async function GET(
  *                   type: string
  *                 description: "Item tags"
  *                 example: ["saas", "productivity", "automation", "ai"]
+ *               brand:
+ *                 type: string
+ *                 description: "Brand or company name associated with this item (used for CRM sync)"
+ *                 example: "Acme Corporation"
  *               featured:
  *                 type: boolean
  *                 description: "Whether the item is featured"
@@ -299,6 +303,48 @@ export async function PUT(
     };
 
     const item = await itemRepository.update(resolvedParams.id, updateData);
+
+    // Direct CRM sync: blocks response but with retry/timeout (non-blocking for DB)
+    const crmEnabled = process.env.TWENTY_CRM_ENABLED !== 'false';
+    if (crmEnabled) {
+      try {
+        // 1. Check if brand field is provided in the update
+        const brandName = body.brand?.trim();
+        if (!brandName) {
+          console.log(`[CRM Sync] No brand field in update for item ${item.slug}, skipping company sync`);
+        } else {
+        // 2. Get or create company from brand using service layer
+        const { getOrCreateCompanyFromBrand } = await import('@/lib/services/company.service');
+        const { linkItemToCompany } = await import('@/lib/db/queries/company.queries');
+
+        const company = await getOrCreateCompanyFromBrand(brandName, item.source_url);
+
+        // 3. Link item to company (idempotent)
+        await linkItemToCompany(item.slug, company.id);
+
+        // 4. Sync company to CRM
+        const { createTwentyCrmSyncServiceFromEnv } = await import(
+          '@/lib/services/twenty-crm-sync-factory'
+        );
+        const { mapCompanyToTwentyCompany } = await import(
+          '@/lib/mappers/twenty-crm.mapper'
+        );
+
+        const syncService = createTwentyCrmSyncServiceFromEnv();
+        const companyPayload = mapCompanyToTwentyCompany(company);
+        await syncService.upsertCompany(companyPayload);
+
+        console.log(`[CRM Sync] ✅ Company ${company.id} synced for item ${item.slug}`, {
+          companyId: company.id,
+          companyName: company.name,
+          brand: brandName,
+        });
+        }
+      } catch (error) {
+        // Non-blocking: log error but don't fail item update
+        console.error(`[CRM Sync] ❌ Failed to sync company for item ${item.slug}:`, error);
+      }
+    }
 
     return NextResponse.json({
       success: true,

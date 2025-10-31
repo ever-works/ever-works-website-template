@@ -323,6 +323,33 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 			return NextResponse.json({ error: 'Company not found' }, { status: 404 });
 		}
 
+		// Direct CRM sync: blocks response but with retry/timeout (non-blocking for DB)
+		const crmEnabled = process.env.TWENTY_CRM_ENABLED !== 'false';
+		if (crmEnabled) {
+			try {
+				const { createTwentyCrmSyncServiceFromEnv } = await import(
+					'@/lib/services/twenty-crm-sync-factory'
+				);
+				const { mapCompanyToTwentyCompany } = await import(
+					'@/lib/mappers/twenty-crm.mapper'
+				);
+
+				const syncService = createTwentyCrmSyncServiceFromEnv();
+
+				// Sync company to CRM
+				const companyPayload = mapCompanyToTwentyCompany(company);
+				const syncResult = await syncService.upsertCompany(companyPayload);
+
+				console.log(`[CRM Sync] ✅ Company ${id} update synced to CRM`, {
+					crmId: syncResult.id,
+					updated: syncResult.updated,
+				});
+			} catch (crmError) {
+				// Non-blocking: log error but don't fail company update
+				console.error(`[CRM Sync] ❌ Failed to sync company update ${id}:`, crmError);
+			}
+		}
+
 		return NextResponse.json({
 			success: true,
 			data: company

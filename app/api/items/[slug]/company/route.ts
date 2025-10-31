@@ -83,6 +83,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 				success: true,
 				data: result.association,
 				created: result.created,
+				updated: result.updated,
 			},
 			{ status: result.created ? 201 : 200 }
 		);

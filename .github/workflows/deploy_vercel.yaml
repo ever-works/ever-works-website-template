@@ -57,22 +57,47 @@ jobs:
         run: ${{ steps.detect-pm.outputs.global-cmd }} vercel@latest
 
       - name: Link Vercel project
-        run: vercel link --yes --project ${{ github.event.repository.name }} --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -n "${{ secrets.VERCEL_TEAM_SCOPE }}" ]; then
+            vercel link --yes --scope ${{ secrets.VERCEL_TEAM_SCOPE }} --project ${{ github.event.repository.name }} --token=${{ secrets.VERCEL_TOKEN }}
+          else
+            vercel link --yes --project ${{ github.event.repository.name }} --token=${{ secrets.VERCEL_TOKEN }}
+          fi
 
       - name: Set data repository env variable
-        run: echo -n "$DATA_REPOSITORY" | vercel env add DATA_REPOSITORY ${{ inputs.environment }} --token ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -n "${{ secrets.VERCEL_TEAM_SCOPE }}" ]; then
+            echo -n "$DATA_REPOSITORY" | vercel env add DATA_REPOSITORY ${{ inputs.environment }} --scope ${{ secrets.VERCEL_TEAM_SCOPE }} --token ${{ secrets.VERCEL_TOKEN }}
+          else
+            echo -n "$DATA_REPOSITORY" | vercel env add DATA_REPOSITORY ${{ inputs.environment }} --token ${{ secrets.VERCEL_TOKEN }}
+          fi
         continue-on-error: true
 
       - name: Set GitHub API KEY env variable
-        run: echo -n "${{ secrets.GH_TOKEN }}" | vercel env add GH_TOKEN ${{ inputs.environment }} --token ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -n "${{ secrets.VERCEL_TEAM_SCOPE }}" ]; then
+            echo -n "${{ secrets.GH_TOKEN }}" | vercel env add GH_TOKEN ${{ inputs.environment }} --scope ${{ secrets.VERCEL_TEAM_SCOPE }} --token ${{ secrets.VERCEL_TOKEN }}
+          else
+            echo -n "${{ secrets.GH_TOKEN }}" | vercel env add GH_TOKEN ${{ inputs.environment }} --token ${{ secrets.VERCEL_TOKEN }}
+          fi
         continue-on-error: true
 
       - name: Pull settings
-        run: vercel pull --yes  --environment=${{ inputs.environment }} --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -n "${{ secrets.VERCEL_TEAM_SCOPE }}" ]; then
+            vercel pull --yes --scope ${{ secrets.VERCEL_TEAM_SCOPE }} --environment=${{ inputs.environment }} --token=${{ secrets.VERCEL_TOKEN }}
+          else
+            vercel pull --yes --environment=${{ inputs.environment }} --token=${{ secrets.VERCEL_TOKEN }}
+          fi
 
       - name: Trigger Vercel Deployment via API
         run: |
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "https://api.vercel.com/v13/deployments" \
+          API_URL="https://api.vercel.com/v13/deployments"
+          if [ -n "${{ secrets.VERCEL_TEAM_SCOPE }}" ]; then
+            API_URL="${API_URL}?slug=${{ secrets.VERCEL_TEAM_SCOPE }}"
+          fi
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$API_URL" \
             -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{
