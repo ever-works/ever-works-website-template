@@ -14,7 +14,7 @@ export default async function TagListing({
   params: Promise<{ tag: string; locale: string }>;
 }) {
   const resolvedParams = await params;
-  const { locale } = resolvedParams;
+  const { locale, tag } = resolvedParams;
 
   // Fetch all items (filtering will be done client-side via FilterURLParser)
   const { categories, tags, items } = await fetchItems({ lang: locale });
@@ -24,6 +24,9 @@ export default async function TagListing({
   const page = 1;
   const start = 0;
   const basePath = `/`; // Use root path for filter URL generation
+
+  // Decode the tag from URL
+  const decodedTag = decodeURIComponent(tag);
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -35,6 +38,7 @@ export default async function TagListing({
         start={start}
         page={page}
         basePath={basePath}
+        initialTag={decodedTag}
       />
     </Suspense>
   );

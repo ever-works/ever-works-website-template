@@ -44,7 +44,7 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
     perPage: PAGE_SIZE,
   });
 
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {

@@ -19,7 +19,7 @@ export function useFilterURLSync(options: UseFilterURLSyncOptions = {}) {
   const { basePath = '/', locale, debounceMs = 300 } = options;
   const router = useRouter();
   const pathname = usePathname();
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /**
    * Update URL based on filter state

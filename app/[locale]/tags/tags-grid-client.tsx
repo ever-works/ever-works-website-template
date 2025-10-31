@@ -32,7 +32,7 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
   const tagsToShow = paginationType === "infinite" ? loadedTags : pagedTags;
 
   // Move hooks above early return to avoid conditional hook call
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { ref: loadMoreRef } = useInView({
     onChange: (inView) => {
       if (inView && !isLoading && hasMore && paginationType === "infinite" && loadedTags.length > 0) {

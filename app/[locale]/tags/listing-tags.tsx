@@ -5,7 +5,6 @@ import { TagsCards } from "@/components/tags-cards";
 import { Paginate } from "@/components/filters/components/pagination/paginate";
 import { totalPages } from "@/lib/paginate";
 import { Tag } from "@/lib/content";
-import TagsQuerySync from "@/components/filters/tags-query-sync";
 
 export default function ListingTags({
   tags,
@@ -23,7 +22,6 @@ export default function ListingTags({
 
   return (
     <>
-      <TagsQuerySync />
       <Hero
         badgeText={t("TAGS")}
         title={
