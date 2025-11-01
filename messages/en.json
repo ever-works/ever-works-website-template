@@ -342,7 +342,8 @@
     "END_OF_CONTENT": "You've reached the end",
     "RETRY": "Retry",
     "FILTER_STATUS_MATCH_ALL": "Showing {filtered} of {total} items that match all selected tags",
-    "FILTER_STATUS": "Showing {filtered} of {total} items"
+    "FILTER_STATUS": "Showing {filtered} of {total} items",
+    "SHOWING_TOTAL_ITEMS": "Showing {total} items"
   },
   "tagsModal": {
     "SELECTED_TAGS": "Selected Tags",
