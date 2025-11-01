@@ -450,8 +450,8 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 				</div>
 			</div>
 
-			<div className="mt-8">
-				<h2 className="text-2xl font-semibold mb-6">Comments</h2>
+			{/* Comments Section */}
+			<div className="relative z-10 container max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
 				<CommentsSection itemId={meta.name} />
 			</div>
 		</div>
