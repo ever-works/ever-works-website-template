@@ -12,6 +12,7 @@ import { getTagName } from "./utils/filter-utils";
 import type { CardConfigOptions } from "./index";
 import ViewToggle from "../view-toggle";
 import type { LayoutKey } from "@/components/layouts";
+import { PaginationDisplay } from "@/components/shared/pagination-display";
 
 interface SharedCardHeaderProps {
   searchTerm: string;
@@ -268,19 +269,35 @@ export function SharedCardHeader(props: SharedCardHeaderProps) {
   const { config, headerActions, layoutKey, onViewChange } = props;
   const t = useTranslations("listing");
 
+  const currentPage = Math.floor(props.start / (config.perPage || PER_PAGE));
+  const perPage = config.perPage || PER_PAGE;
+
   return (
     <>
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="flex items-center gap-4">
           {config.showStats && (
-            <FilterStats
-              filteredCount={props.filteredCount}
+            <PaginationDisplay
               totalCount={props.totalCount}
-              searchTerm={props.searchTerm}
-              selectedTags={props.selectedTags}
+              filteredCount={props.filteredCount}
+              currentPage={currentPage}
+              perPage={perPage}
               hasActiveFilters={props.hasActiveFilters}
-              t={t}
+              isInfinite={props.isInfinite}
             />
+          )}
+          {(props.searchTerm || props.selectedTags.length > 0) && (
+            <div className={filterBadgeClasses}>
+              <Filter className={filterIconClasses} />
+              <span className={filterLabelClasses}>
+                {props.searchTerm && t("SEARCH")}
+                {props.searchTerm && props.selectedTags.length > 0 && " + "}
+                {props.selectedTags.length > 0 &&
+                  `${props.selectedTags.length} ${
+                    props.selectedTags.length > 1 ? t("TAG_PLURAL") : t("TAG")
+                  }`}
+              </span>
+            </div>
           )}
         </div>
 
