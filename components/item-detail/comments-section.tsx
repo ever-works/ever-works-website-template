@@ -13,6 +13,11 @@ import type { CommentWithUser } from '@/lib/types/comment';
 import { toast } from 'sonner';
 import { useFeatureFlags } from '@/hooks/use-feature-flags';
 
+// Design system class constants
+const CARD_WRAPPER_CLASSES = 'bg-white/95 dark:bg-gray-900/95 rounded-2xl p-8 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500';
+const ICON_CONTAINER_CLASSES = 'p-3 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-xl';
+const SECTION_HEADER_CLASSES = 'flex items-center gap-4 mb-8';
+
 // Extracted loading skeleton component
 const CommentSkeleton = memo(() => (
 	<div className="space-y-4">
@@ -213,14 +218,24 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 	}
 
 	return (
-		<div className="space-y-8">
-			<CommentForm onSubmit={handleSubmit} isCreating={isCreating} />
-
-			<div className="space-y-6">
-				<h2 className="text-xl font-semibold text-theme-primary-900 dark:text-theme-primary-100">
+		<div className={CARD_WRAPPER_CLASSES}>
+			{/* Section Header with Icon */}
+			<div className={SECTION_HEADER_CLASSES}>
+				<div className={ICON_CONTAINER_CLASSES}>
+					<MessageCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+				</div>
+				<h2 className="text-2xl font-bold text-gray-800 dark:text-white">
 					Comments ({comments.length})
 				</h2>
+			</div>
 
+			{/* Comment Form */}
+			<div className="mb-8">
+				<CommentForm onSubmit={handleSubmit} isCreating={isCreating} />
+			</div>
+
+			{/* Comments List */}
+			<div className="space-y-4">
 				<AnimatePresence mode="popLayout">
 					{comments.length > 0 ? (
 						comments.map((comment: CommentWithUser) => (
