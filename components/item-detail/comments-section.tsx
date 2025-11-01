@@ -17,6 +17,7 @@ import { useFeatureFlags } from '@/hooks/use-feature-flags';
 const CARD_WRAPPER_CLASSES = 'bg-white/95 dark:bg-gray-900/95 rounded-2xl p-8 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500';
 const ICON_CONTAINER_CLASSES = 'p-3 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-xl';
 const SECTION_HEADER_CLASSES = 'flex items-center gap-4 mb-8';
+const FORM_CONTAINER_CLASSES = 'p-6 rounded-xl bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50';
 
 // Extracted loading skeleton component with card styling
 const CommentSkeleton = memo(() => (
@@ -73,17 +74,10 @@ const CommentForm = memo(
 		};
 
 		return (
-			<div className="bg-gradient-to-r from-theme-primary-50/50 to-theme-secondary-50/50 p-6 rounded-xl border border-theme-primary-100 dark:from-theme-primary-950/10 dark:to-theme-secondary-950/10 dark:border-theme-primary-800/20">
-				<div className="flex items-center gap-2 mb-6">
-					<MessageCircle className="w-5 h-5 text-theme-primary-500" aria-hidden="true" />
-					<h2 className="text-xl font-semibold text-theme-primary-900 dark:text-theme-primary-100">
-						Add Your Comment
-					</h2>
-				</div>
-
+			<div className={FORM_CONTAINER_CLASSES}>
 				<form onSubmit={handleSubmit} className="space-y-4">
 					<div className="flex items-center gap-2">
-						<label htmlFor="rating" className="text-sm text-muted-foreground">
+						<label htmlFor="rating" className="text-sm font-medium text-gray-700 dark:text-gray-300">
 							Rating:
 						</label>
 						<Rating value={rating} onChange={setRating} size="md" />
