@@ -952,3 +952,81 @@ export async function getSimilarityCacheStats() {
 	};
 }
 
+/**
+ * Fetches static page content from .content/pages/ directory
+ * @param slug - Page slug (e.g., 'privacy-policy', 'terms-of-service', 'about')
+ * @param locale - Optional locale code (e.g., 'en', 'de', 'fr'). Defaults to 'en'
+ * @returns Promise<{content: string, metadata: Record<string, unknown>} | null>
+ */
+export async function fetchPageContent(
+	slug: string,
+	locale: string = 'en'
+): Promise<{ content: string; metadata: Record<string, unknown> } | null> {
+	try {
+		await trySyncRepository();
+
+		const base = getContentPath();
+		const pagesDir = path.join(base, 'pages');
+
+		// Sanitize inputs to prevent path traversal
+		const sanitizedSlug = sanitizeFilename(slug);
+		if (!validateLanguageCode(locale)) {
+			throw new Error(`Invalid language code: ${locale}`);
+		}
+
+		// Check if pages directory exists
+		if (!(await dirExists(pagesDir))) {
+			console.warn(`Pages directory does not exist: ${pagesDir}`);
+			return null;
+		}
+
+		// Try to load localized version first, then fall back to English
+		const localizedPath = path.join(pagesDir, `${sanitizedSlug}.${locale}.md`);
+		const defaultPath = path.join(pagesDir, `${sanitizedSlug}.en.md`);
+
+		// Validate paths
+		validatePath(localizedPath, pagesDir);
+		validatePath(defaultPath, pagesDir);
+
+		let contentPath: string | null = null;
+
+		// Try localized version first
+		if (locale !== 'en' && (await fsExists(localizedPath))) {
+			contentPath = localizedPath;
+		} else if (await fsExists(defaultPath)) {
+			contentPath = defaultPath;
+		}
+
+		if (!contentPath) {
+			console.warn(`Page content not found: ${sanitizedSlug} (locale: ${locale})`);
+			return null;
+		}
+
+		// Read file content securely
+		const rawContent = await safeReadFile(contentPath, base);
+
+		// Parse frontmatter if present
+		const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
+		const match = rawContent.match(frontmatterRegex);
+
+		let metadata: Record<string, unknown> = {};
+		let content: string = rawContent;
+
+		if (match) {
+			try {
+				metadata = yaml.parse(match[1]) || {};
+				content = match[2];
+			} catch (yamlError) {
+				console.warn(`Failed to parse frontmatter for ${sanitizedSlug}:`, yamlError);
+				// If frontmatter parsing fails, use the entire content
+				content = rawContent;
+			}
+		}
+
+		return { content, metadata };
+	} catch (error) {
+		console.error(`Failed to fetch page content for ${slug}:`, error);
+		return null;
+	}
+}
+
