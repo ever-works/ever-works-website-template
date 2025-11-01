@@ -18,18 +18,35 @@ const CARD_WRAPPER_CLASSES = 'bg-white/95 dark:bg-gray-900/95 rounded-2xl p-8 bo
 const ICON_CONTAINER_CLASSES = 'p-3 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-xl';
 const SECTION_HEADER_CLASSES = 'flex items-center gap-4 mb-8';
 
-// Extracted loading skeleton component
+// Extracted loading skeleton component with card styling
 const CommentSkeleton = memo(() => (
-	<div className="space-y-4">
-		{[1, 2, 3].map((i) => (
-			<div key={i} className="flex gap-4 animate-pulse">
-				<div className="w-10 h-10 bg-muted rounded-full" />
-				<div className="flex-1 space-y-2">
-					<div className="h-4 bg-muted rounded w-1/4" />
-					<div className="h-4 bg-muted rounded w-3/4" />
-				</div>
+	<div className={CARD_WRAPPER_CLASSES}>
+		{/* Header Skeleton */}
+		<div className={SECTION_HEADER_CLASSES}>
+			<div className={ICON_CONTAINER_CLASSES}>
+				<div className="w-6 h-6 bg-blue-200 dark:bg-blue-800 rounded animate-pulse" />
 			</div>
-		))}
+			<div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+		</div>
+
+		{/* Form Skeleton */}
+		<div className="mb-8 space-y-4">
+			<div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
+			<div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-lg w-32 ml-auto animate-pulse" />
+		</div>
+
+		{/* Comments List Skeleton */}
+		<div className="space-y-4">
+			{[1, 2, 3].map((i) => (
+				<div key={i} className="flex gap-4 animate-pulse">
+					<div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full" />
+					<div className="flex-1 space-y-2">
+						<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
+						<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+					</div>
+				</div>
+			))}
+		</div>
 	</div>
 ));
 CommentSkeleton.displayName = 'CommentSkeleton';
@@ -208,11 +225,17 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 		[deleteComment]
 	);
 
+	// Show skeleton during feature flag loading to prevent layout shift (CLS)
+	if (isFeaturesLoading) {
+		return <CommentSkeleton />;
+	}
+
 	// Hide comments section when feature is disabled
-	if (isFeaturesLoading || !features.comments) {
+	if (!features.comments) {
 		return null;
 	}
 
+	// Show skeleton during comment data loading
 	if (isLoading) {
 		return <CommentSkeleton />;
 	}
