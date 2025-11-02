@@ -12,6 +12,7 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import type { CommentWithUser } from '@/lib/types/comment';
 import { toast } from 'sonner';
 import { useFeatureFlags } from '@/hooks/use-feature-flags';
+import { useLoginModal } from '@/hooks/use-login-modal';
 
 // Design system class constants
 const CARD_WRAPPER_CLASSES = 'bg-white/95 dark:bg-gray-900/95 rounded-2xl p-8 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500';
@@ -186,6 +187,34 @@ const EmptyState = memo(() => (
 ));
 EmptyState.displayName = 'EmptyState';
 
+// Login prompt component for non-authenticated users
+const LoginPrompt = memo(({ onLoginClick }: { onLoginClick: () => void }) => (
+	<div className={FORM_CONTAINER_CLASSES}>
+		<div className="text-center py-8 space-y-4">
+			<MessageCircle className="w-12 h-12 mx-auto text-theme-primary-400 dark:text-theme-primary-500" aria-hidden="true" />
+			<div>
+				<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+					Join the Conversation
+				</h3>
+				<p className="text-sm text-gray-600 dark:text-gray-400">
+					Sign in to share your thoughts and rate this item
+				</p>
+			</div>
+			<Button
+				onClick={onLoginClick}
+				className="bg-theme-primary-500 hover:bg-theme-primary-600 text-white px-8"
+				size="lg"
+			>
+				Sign In to Comment
+			</Button>
+			<p className="text-xs text-gray-500 dark:text-gray-400">
+				Don&apos;t have an account? Sign up when you click above
+			</p>
+		</div>
+	</div>
+));
+LoginPrompt.displayName = 'LoginPrompt';
+
 interface CommentsSectionProps {
 	itemId: string;
 }
@@ -195,6 +224,7 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 	const { features, isLoading: isFeaturesLoading } = useFeatureFlags();
 	const { comments, isLoading, createComment, isCreating, deleteComment, isDeleting } = useComments(itemId);
 	const { user } = useCurrentUser();
+	const loginModal = useLoginModal();
 
 	const handleSubmit = useCallback(
 		async (content: string, rating: number) => {
@@ -248,7 +278,11 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 
 			{/* Comment Form */}
 			<div className="mb-8">
+				{user ? (
 				<CommentForm onSubmit={handleSubmit} isCreating={isCreating} />
+			) : (
+				<LoginPrompt onLoginClick={() => loginModal.onOpen('Sign in to join the conversation')} />
+			)}
 			</div>
 
 			{/* Comments List */}
