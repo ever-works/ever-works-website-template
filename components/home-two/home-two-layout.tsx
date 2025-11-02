@@ -20,7 +20,7 @@ type Home2LayoutProps = {
 };
 
 export function HomeTwoLayout(props: Home2LayoutProps) {
-  const { layoutKey, setLayoutKey, paginationType } = useLayoutTheme();
+  const { layoutKey, setLayoutKey } = useLayoutTheme();
   const { isSticky, sentinelRef, targetRef } = useStickyState({
     threshold: 0,
     rootMargin: "-20px 0px 0px 0px",
