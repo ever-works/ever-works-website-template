@@ -12,6 +12,7 @@ import {
 	ThemeProvider
 } from '@/components/providers';
 import { SessionProvider } from 'next-auth/react';
+import { LoginModalProvider } from '@/components/auth/login-modal-provider';
 
 interface ProvidersProps {
 	config: Config;
@@ -29,7 +30,10 @@ export function Providers({ config, children, dehydratedState }: ProvidersProps)
 							<FilterProvider>
 								<ConfigProvider config={config}>
 									<ThemeProvider>
-										<HeroUIProvider>{children}</HeroUIProvider>
+										<HeroUIProvider>
+											<LoginModalProvider />
+											{children}
+										</HeroUIProvider>
 									</ThemeProvider>
 								</ConfigProvider>
 							</FilterProvider>

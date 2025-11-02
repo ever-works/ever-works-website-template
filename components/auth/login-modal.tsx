@@ -1,10 +1,6 @@
 "use client";
 
-import {
-    Modal,
-    ModalContent,
-    ModalBody
-} from "@heroui/react";
+import { Modal } from "@/components/ui/modal";
 import { CredentialsForm } from "@/app/[locale]/auth/components/credentials-form";
 import { SocialLogin } from "@/app/[locale]/auth/components/social-login";
 import { Building, Search, Shield } from "lucide-react";
@@ -70,32 +66,28 @@ export function LoginModal({
       isOpen={isOpen}
       onClose={onClose}
       size="3xl"
-      classNames={{
-        backdrop: "bg-black/60 backdrop-blur-md",
-        base: cn(
-          "bg-gradient-to-br from-white to-gray-50",
-          "dark:from-gray-900 dark:to-gray-950",
-          "rounded-xl shadow-2xl border border-gray-200/50 dark:border-gray-800/50",
-          "dark:bg-opacity-95 dark:backdrop-blur-xl",
-          "max-w-[900px] mx-auto",
-          "overflow-hidden"
-        ),
-        body: "p-0",
-      }}
+      backdrop="blur"
+      isDismissable={true}
+      hideCloseButton={true}
+      className={cn(
+        "bg-gradient-to-br from-white to-gray-50",
+        "dark:from-gray-900 dark:to-gray-950",
+        "border border-gray-200/50 dark:border-gray-800/50",
+        "dark:bg-opacity-95 dark:backdrop-blur-xl"
+      )}
     >
-      <ModalContent>
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeIn}
-          transition={{ duration: 0.3 }}
-          className="relative"
-        >
-          {/* Background Pattern */}
-          <div className="absolute inset-0 bg-grid-pattern opacity-[0.02] dark:opacity-[0.05] pointer-events-none" />
-          
-          <ModalBody>
-            <div className="flex flex-col md:flex-row">
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeIn}
+        transition={{ duration: 0.3 }}
+        className="relative"
+      >
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.02] dark:opacity-[0.05] pointer-events-none" />
+
+        <div className="p-0">
+          <div className="flex flex-col md:flex-row">
               {/* Left Side - Features */}
               <div className={cn(
                 "w-full md:w-[45%] p-6 flex flex-col justify-center relative",
@@ -216,9 +208,8 @@ export function LoginModal({
                 </div>
               </div>
             </div>
-          </ModalBody>
-        </motion.div>
-      </ModalContent>
+          </div>
+      </motion.div>
     </Modal>
   );
 }
