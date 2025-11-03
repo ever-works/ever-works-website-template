@@ -7,7 +7,6 @@ import { clsx } from "clsx";
 import type { Tag } from "@/lib/content";
 import type { SortOption } from "@/components/filters/types";
 import { PER_PAGE } from "@/lib/paginate";
-import { SORT_OPTIONS } from "./utils/sort-utils";
 import { getTagName } from "./utils/filter-utils";
 import type { CardConfigOptions } from "./index";
 import ViewToggle from "../view-toggle";
@@ -37,8 +36,6 @@ const filterBadgeClasses = "flex items-center gap-2 text-xs";
 const filterIconClasses = "w-3 h-3 text-theme-primary-500 dark:text-theme-primary-400";
 const filterLabelClasses = "text-theme-primary-500 dark:text-theme-primary-400 font-medium";
 const headerTitleClasses = "text-xl font-semibold text-gray-900 dark:text-white transition-colors duration-300";
-const headerStatsClasses = "flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300";
-const sortLabelClasses = "ml-2 text-theme-primary-500 dark:text-theme-primary-400";
 const activeFilterBadgeClasses = "px-2 py-1 bg-theme-primary-10 dark:bg-theme-primary-900/30 text-white rounded text-xs";
 const emptyStateContainerClasses = "text-center py-8 sm:py-10";
 const emptyStateIconWrapperClasses = "w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center transition-colors duration-300";
@@ -188,56 +185,19 @@ export function EmptyState({
 export function ResultsHeader({
   searchTerm,
   selectedTags,
-  isInfinite = false,
-  sortBy,
-  start,
-  filteredCount,
   t,
-  config,
   className = "",
 }: {
   searchTerm: string;
   selectedTags: string[];
-  isInfinite?: boolean;
-  sortBy: SortOption;
-  start: number;
-  filteredCount: number;
   t: ReturnType<typeof useTranslations>;
-  config: CardConfigOptions;
   className?: string;
 }) {
-  const getSortLabel = useCallback(
-    (sortKey: string): string => {
-      switch (sortKey) {
-        case SORT_OPTIONS.NAME_ASC:
-          return t("NAME_A_Z");
-        case SORT_OPTIONS.NAME_DESC:
-          return t("NAME_Z_A");
-        case SORT_OPTIONS.DATE_DESC:
-          return t("NEWEST");
-        case SORT_OPTIONS.DATE_ASC:
-          return t("OLDEST");
-        default:
-          return t("POPULARITY");
-      }
-    },
-    [t]
-  );
-
   const getHeaderTitle = useCallback((): string => {
     if (searchTerm) return t("SEARCH_RESULTS");
     if (selectedTags.length > 0) return t("TAGGED_ITEMS");
     return t("FEATURED_ITEMS");
   }, [searchTerm, selectedTags, t]);
-
-  const pageSize = config.perPage || PER_PAGE;
-  const hasResults = filteredCount > 0;
-  const startDisplay = hasResults ? start + 1 : 0;
-  const endDisplay = hasResults
-    ? isInfinite
-      ? filteredCount
-      : Math.min(start + pageSize, filteredCount)
-    : 0;
 
   return (
     <div className={clsx("flex items-center justify-between", className)}>
@@ -302,12 +262,7 @@ export function SharedCardHeader(props: SharedCardHeaderProps) {
         <ResultsHeader
           searchTerm={props.searchTerm}
           selectedTags={props.selectedTags}
-          isInfinite={props.isInfinite}
-          sortBy={props.sortBy}
-          start={props.start}
-          filteredCount={props.filteredCount}
           t={t}
-          config={config}
           className="mb-6"
         />
       )}
