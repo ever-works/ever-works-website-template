@@ -395,6 +395,23 @@
     border-color: var(--theme-secondary);
   }
 
+  /* Theme-primary gradient utilities for consistent title styling */
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-theme-primary-600 via-theme-primary-500 to-theme-primary-400 bg-clip-text text-transparent;
+  }
+
+  .dark .text-gradient-primary {
+    @apply from-theme-primary-400 via-theme-primary-500 to-theme-primary-600;
+  }
+
+  .text-gradient-primary-subtle {
+    @apply bg-gradient-to-r from-theme-primary-600 to-theme-primary-500 bg-clip-text text-transparent;
+  }
+
+  .dark .text-gradient-primary-subtle {
+    @apply from-theme-primary-400 to-theme-primary-500;
+  }
+
 }
 
 /* Enhanced animations for modern UI */

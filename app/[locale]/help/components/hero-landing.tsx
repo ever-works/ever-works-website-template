@@ -93,7 +93,7 @@ export function HeroLanding() {
             <div className="space-y-6 transition-all duration-700 delay-200 opacity-100 translate-y-0">
               <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-slate-900 dark:text-white leading-tight">
                 {t('HERO_MAIN_TITLE')}
-                <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-orange-600 bg-clip-text text-transparent">
+                <span className="block bg-gradient-to-r from-theme-primary-600 via-theme-primary-500 to-theme-primary-400 dark:from-theme-primary-400 dark:via-theme-primary-500 dark:to-theme-primary-600 bg-clip-text text-transparent">
                   {t('HERO_MAIN_TITLE_HIGHLIGHT')}
             </span>
           </h1>
