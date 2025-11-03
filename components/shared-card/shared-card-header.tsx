@@ -244,20 +244,6 @@ export function ResultsHeader({
       <h2 className={headerTitleClasses}>
         {getHeaderTitle()}
       </h2>
-      {config.showStats && (
-        <div className={headerStatsClasses}>
-          <span>
-            {t("SHOWING")} {hasResults ? `${startDisplay}-${endDisplay} ${t("OF")} ${filteredCount} items` : 0}
-            {config.enableSorting &&
-              hasResults &&
-              sortBy !== SORT_OPTIONS.POPULARITY && (
-              <span className={sortLabelClasses}>
-                {t("SORTED_BY")} {getSortLabel(sortBy)}
-              </span>
-            )}
-          </span>
-        </div>
-      )}
     </div>
   );
 }
