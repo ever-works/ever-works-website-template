@@ -299,7 +299,7 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 							/>
 						))
 					) : (
-						<EmptyState />
+						user && <EmptyState />
 					)}
 				</AnimatePresence>
 			</div>
