@@ -78,7 +78,7 @@ export function LoginContent({
 
               {/* Features List */}
               <div className="space-y-4">
-                {authFeatures.map((feature, index) => (
+                {authFeatures.map((feature) => (
                   <div
                     key={feature.title}
                     className="flex items-start group"
