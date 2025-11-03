@@ -247,7 +247,7 @@ export function ResultsHeader({
       {config.showStats && (
         <div className={headerStatsClasses}>
           <span>
-            {t("SHOWING")} {hasResults ? `${startDisplay}-${endDisplay}` : 0}
+            {t("SHOWING")} {hasResults ? `${startDisplay}-${endDisplay} ${t("OF")} ${filteredCount}` : 0}
             {config.enableSorting &&
               hasResults &&
               sortBy !== SORT_OPTIONS.POPULARITY && (
