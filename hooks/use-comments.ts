@@ -3,7 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CommentWithUser } from "@/lib/types/comment";
 import { useLoginModal } from "./use-login-modal";
 import { serverClient, apiUtils } from "@/lib/api/server-api-client";
-import { useFeatureFlags } from "@/hooks/use-feature-flags";
 
 interface CreateCommentData {
   content: string;
@@ -14,11 +13,9 @@ interface CreateCommentData {
 export function useComments(itemId: string) {
   const queryClient = useQueryClient();
   const loginModal = useLoginModal();
-  const { features } = useFeatureFlags();
 
   const { data: comments = [], isLoading } = useQuery<CommentWithUser[]>({
     queryKey: ["comments", itemId],
-    enabled: features.comments, // Only fetch when comments feature is enabled
     queryFn: async () => {
       const response = await serverClient.get<{ success: boolean; comments: CommentWithUser[] }>(`/api/items/${itemId}/comments`);
       if (!apiUtils.isSuccess(response)) {
@@ -108,7 +105,6 @@ export function useComments(itemId: string) {
 
   const { data: commentRating = 0, isLoading: isLoadingRating } = useQuery({
     queryKey: ["commentRating", itemId],
-    enabled: features.comments, // Only fetch when comments feature is enabled
     queryFn: async () => {
       const encodedItemId = encodeURIComponent(itemId);
       const response = await serverClient.get(`/api/items/${encodedItemId}/comments/rating`);

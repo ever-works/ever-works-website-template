@@ -249,18 +249,13 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 		[deleteComment]
 	);
 
-	// Show skeleton during feature flag loading to prevent layout shift (CLS)
-	if (isFeaturesLoading) {
-		return <CommentSkeleton />;
-	}
-
 	// Hide comments section when feature is disabled
 	if (!features.comments) {
 		return null;
 	}
 
-	// Show skeleton during comment data loading
-	if (isLoading) {
+	// Show skeleton during loading (feature flags or comment data)
+	if (isFeaturesLoading || isLoading) {
 		return <CommentSkeleton />;
 	}
 
