@@ -40,7 +40,7 @@ export function useComments(itemId: string) {
       return response.data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
+      await queryClient.refetchQueries({ queryKey: ["comments", itemId] });
     },
   });
 

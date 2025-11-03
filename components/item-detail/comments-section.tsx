@@ -249,14 +249,14 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 		[deleteComment]
 	);
 
-	// Hide comments section when feature is disabled
-	if (!features.comments) {
-		return null;
-	}
-
 	// Show skeleton during loading (feature flags or comment data)
 	if (isFeaturesLoading || isLoading) {
 		return <CommentSkeleton />;
+	}
+
+	// Hide comments section when feature is disabled
+	if (!features.comments) {
+		return null;
 	}
 
 	return (
