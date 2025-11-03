@@ -39,8 +39,8 @@ export function useComments(itemId: string) {
 
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
     },
   });
 
