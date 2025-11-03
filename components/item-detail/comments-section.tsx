@@ -221,8 +221,8 @@ interface CommentsSectionProps {
 
 export function CommentsSection({ itemId }: CommentsSectionProps) {
 	// All hooks must be called before any early returns
-	const { features, isLoading: isFeaturesLoading } = useFeatureFlags();
-	const { comments, isLoading, createComment, isCreating, deleteComment, isDeleting } = useComments(itemId);
+	const { features, isPending: isFeaturesPending } = useFeatureFlags();
+	const { comments, isPending, createComment, isCreating, deleteComment, isDeleting } = useComments(itemId);
 	const { user } = useCurrentUser();
 	const loginModal = useLoginModal();
 
@@ -251,7 +251,7 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 	);
 
 	// Show skeleton during loading (feature flags or comment data)
-	if (isFeaturesLoading || isLoading) {
+	if (isFeaturesPending || isPending) {
 		return <CommentSkeleton />;
 	}
 

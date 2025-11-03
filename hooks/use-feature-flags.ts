@@ -8,8 +8,8 @@ import type { FeatureFlags } from '@/lib/config/feature-flags';
 interface UseFeatureFlagsResult {
   /** Feature availability flags */
   features: FeatureFlags;
-  /** Whether flags are currently loading */
-  isLoading: boolean;
+  /** Whether flags are currently loading (no cached data) */
+  isPending: boolean;
   /** Error if flag fetch failed */
   error: Error | null;
   /** Function to manually refetch flags */
@@ -40,9 +40,9 @@ async function fetchFeatureFlags(): Promise<FeatureFlags> {
  * @example
  * ```tsx
  * function MyComponent() {
- *   const { features, isLoading } = useFeatureFlags();
+ *   const { features, isPending } = useFeatureFlags();
  *
- *   if (isLoading) return <Skeleton />;
+ *   if (isPending) return <Skeleton />;
  *   if (!features.comments) return null;
  *
  *   return <CommentsSection />;
@@ -50,7 +50,7 @@ async function fetchFeatureFlags(): Promise<FeatureFlags> {
  * ```
  */
 export function useFeatureFlags(): UseFeatureFlagsResult {
-  const { data, isLoading, error, refetch } = useQuery<FeatureFlags, Error>({
+  const { data, isPending, error, refetch } = useQuery<FeatureFlags, Error>({
     queryKey: ['feature-flags'],
     queryFn: fetchFeatureFlags,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -74,7 +74,7 @@ export function useFeatureFlags(): UseFeatureFlagsResult {
       favorites: false,
       featuredItems: false,
     },
-    isLoading,
+    isPending,
     error: error || null,
     refetch: () => {
       refetch();
@@ -91,9 +91,9 @@ export function useFeatureFlags(): UseFeatureFlagsResult {
  * @example
  * ```tsx
  * function FavoriteButton() {
- *   const { enabled, isLoading } = useFeatureEnabled('favorites');
+ *   const { enabled, isPending } = useFeatureEnabled('favorites');
  *
- *   if (isLoading || !enabled) return null;
+ *   if (isPending || !enabled) return null;
  *
  *   return <button>Add to Favorites</button>;
  * }
@@ -101,12 +101,12 @@ export function useFeatureFlags(): UseFeatureFlagsResult {
  */
 export function useFeatureEnabled(featureName: keyof FeatureFlags): {
   enabled: boolean;
-  isLoading: boolean;
+  isPending: boolean;
 } {
-  const { features, isLoading } = useFeatureFlags();
+  const { features, isPending } = useFeatureFlags();
 
   return {
     enabled: features[featureName],
-    isLoading,
+    isPending,
   };
 }

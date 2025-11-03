@@ -14,7 +14,7 @@ export function useComments(itemId: string) {
   const queryClient = useQueryClient();
   const loginModal = useLoginModal();
 
-  const { data: comments = [], isLoading } = useQuery<CommentWithUser[]>({
+  const { data: comments = [], isPending } = useQuery<CommentWithUser[]>({
     queryKey: ["comments", itemId],
     queryFn: async () => {
       // Use AbortController signal to bypass server client cache
@@ -44,7 +44,7 @@ export function useComments(itemId: string) {
       if (!apiUtils.isSuccess(response)) {
         if (response.error?.includes('401') || response.error?.includes('Unauthorized')) {
           loginModal.onOpen('Please sign in to comment');
-          return null;
+          throw new Error('Unauthorized');
         }
         throw new Error(apiUtils.getErrorMessage(response));
       }
@@ -74,7 +74,7 @@ export function useComments(itemId: string) {
     },
   });
 
-  const { mutate: deleteComment, isPending: isDeleting } = useMutation({
+  const { mutateAsync: deleteComment, isPending: isDeleting } = useMutation({
     mutationFn: async (commentId: string) => {
       const response = await serverClient.delete(`/api/items/${itemId}/comments/${commentId}`);
 
@@ -85,8 +85,11 @@ export function useComments(itemId: string) {
         throw new Error(apiUtils.getErrorMessage(response));
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
+    onSuccess: async () => {
+      await queryClient.refetchQueries({
+        queryKey: ["comments", itemId],
+        exact: true
+      });
     },
   });
 
@@ -148,7 +151,7 @@ export function useComments(itemId: string) {
 
   return {
     comments,
-    isLoading,
+    isPending,
     createComment,
     isCreating,
     deleteComment,
