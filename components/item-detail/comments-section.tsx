@@ -230,6 +230,7 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 		async (content: string, rating: number) => {
 			try {
 				await createComment({ content, itemId, rating });
+				toast.success('Comment posted successfully!');
 			} catch (error) {
 				toast.error(error instanceof Error ? error.message : 'Failed to post comment');
 			}

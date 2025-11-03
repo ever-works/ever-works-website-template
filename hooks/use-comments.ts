@@ -17,30 +17,60 @@ export function useComments(itemId: string) {
   const { data: comments = [], isLoading } = useQuery<CommentWithUser[]>({
     queryKey: ["comments", itemId],
     queryFn: async () => {
-      const response = await serverClient.get<{ success: boolean; comments: CommentWithUser[] }>(`/api/items/${itemId}/comments`);
+      // Use AbortController signal to bypass server client cache
+      const controller = new AbortController();
+      const response = await serverClient.get<{ success: boolean; comments: CommentWithUser[] }>(
+        `/api/items/${itemId}/comments`,
+        {
+          signal: controller.signal,
+          headers: {
+            'Cache-Control': 'no-cache',
+          },
+        }
+      );
       if (!apiUtils.isSuccess(response)) {
         throw new Error(apiUtils.getErrorMessage(response));
       }
       return response.data.comments;
     },
+    staleTime: 0, // Always consider data stale
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes (formerly cacheTime)
   });
 
-  const { mutate: createComment, isPending: isCreating } = useMutation({
+  const { mutateAsync: createComment, isPending: isCreating } = useMutation({
     mutationFn: async ({ content, itemId, rating }: CreateCommentData) => {
-      const response = await serverClient.post(`/api/items/${itemId}/comments`, { content, rating });
+      const response = await serverClient.post<{ success: boolean; comment: CommentWithUser }>(`/api/items/${itemId}/comments`, { content, rating });
 
       if (!apiUtils.isSuccess(response)) {
         if (response.error?.includes('401') || response.error?.includes('Unauthorized')) {
           loginModal.onOpen('Please sign in to comment');
-          return;
+          return null;
         }
         throw new Error(apiUtils.getErrorMessage(response));
       }
 
-      return response.data;
+      // response.data contains the API response: { success: true, comment: CommentWithUser }
+      return response.data.comment;
     },
-    onSuccess: async () => {
-      await queryClient.refetchQueries({ queryKey: ["comments", itemId] });
+    onSuccess: async (newComment) => {
+      if (newComment) {
+        // Immediately update the cache with the new comment
+        queryClient.setQueryData<CommentWithUser[]>(["comments", itemId], (old = []) => {
+          // Check if comment already exists to prevent duplicates
+          const commentExists = old.some(c => c.id === newComment.id);
+          if (commentExists) {
+            return old;
+          }
+          // Add new comment at the beginning
+          return [newComment, ...old];
+        });
+        
+        // Refetch to ensure we have the latest server data
+        await queryClient.refetchQueries({ 
+          queryKey: ["comments", itemId],
+          exact: true 
+        });
+      }
     },
   });
 
