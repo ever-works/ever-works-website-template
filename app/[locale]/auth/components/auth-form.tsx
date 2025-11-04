@@ -139,21 +139,35 @@ export function AuthForm({ form, showSocialLogin = true, onSuccess, clientMode =
                     </>
                   ) : (
                     <>
-                      {authFeatures.map((feature) => (
-                        <div key={feature.title} className="flex items-center">
-                          <div className="bg-theme-primary/10 p-3 rounded-xl mr-4 group hover:bg-theme-primary/20 transition-colors">
-                            <feature.icon className="h-5 w-5 text-theme-primary group-hover:scale-110 transition-transform" />
+                      {authFeatures.map((feature) => {
+                        const bgColorClass = feature.colorVariant === "primary"
+                          ? "bg-theme-primary/10 hover:bg-theme-primary/20"
+                          : feature.colorVariant === "accent"
+                          ? "bg-theme-accent/10 hover:bg-theme-accent/20"
+                          : "bg-theme-secondary/10 hover:bg-theme-secondary/20";
+
+                        const iconColorClass = feature.colorVariant === "primary"
+                          ? "text-theme-primary"
+                          : feature.colorVariant === "accent"
+                          ? "text-theme-accent"
+                          : "text-theme-secondary";
+
+                        return (
+                          <div key={feature.titleKey} className="flex items-center">
+                            <div className={`${bgColorClass} p-3 rounded-xl mr-4 group transition-colors`}>
+                              <feature.icon className={`h-5 w-5 ${iconColorClass} group-hover:scale-110 transition-transform`} />
+                            </div>
+                            <div>
+                              <span className="font-semibold text-gray-900 dark:text-white block">
+                                {t(feature.titleKey as any)}
+                              </span>
+                              <span className="text-sm text-gray-600 dark:text-gray-400">
+                                {t(feature.descriptionKey as any)}
+                              </span>
+                            </div>
                           </div>
-                          <div>
-                            <span className="font-semibold text-gray-900 dark:text-white block">
-                              {feature.title}
-                            </span>
-                            <span className="text-sm text-gray-600 dark:text-gray-400">
-                              {feature.description}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </>
                   )}
                 </StaggerContainer>

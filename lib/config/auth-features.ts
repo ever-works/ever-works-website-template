@@ -1,30 +1,36 @@
-import { Search, Building, Shield } from "lucide-react";
+import { Search, Building, Globe } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+
+export type ColorVariant = "primary" | "accent" | "secondary";
 
 export interface AuthFeature {
   icon: LucideIcon;
-  title: string;
-  description: string;
+  colorVariant: ColorVariant;
+  titleKey: string;
+  descriptionKey: string;
 }
 
 /**
  * Shared authentication features displayed on both login page and modal
- * Single source of truth for consistent messaging
+ * Uses i18n translation keys from common namespace
  */
 export const authFeatures: AuthFeature[] = [
   {
     icon: Search,
-    title: "Smart Search",
-    description: "Advanced filters for precise results"
+    colorVariant: "primary",
+    titleKey: "ADVANCED_SEARCH",
+    descriptionKey: "EXPLORE_THOUSANDS"
   },
   {
     icon: Building,
-    title: "Business Growth",
-    description: "Reach your target audience effectively"
+    colorVariant: "accent",
+    titleKey: "LIST_YOUR_BUSINESS",
+    descriptionKey: "INCREASE_VISIBILITY"
   },
   {
-    icon: Shield,
-    title: "Enterprise Security",
-    description: "Bank-grade data protection"
+    icon: Globe,
+    colorVariant: "secondary",
+    titleKey: "PROFESSIONAL_NETWORK",
+    descriptionKey: "CONNECT_WITH_EXPERTS"
   }
 ];

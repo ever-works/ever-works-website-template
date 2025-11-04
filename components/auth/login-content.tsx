@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useTheme } from "@/hooks/use-theme";
 import Image from "next/image";
 import { authFeatures } from "@/lib/config/auth-features";
+import { useTranslations } from "next-intl";
 
 interface LoginContentProps {
   variant?: 'modal' | 'page';
@@ -26,6 +27,7 @@ export function LoginContent({
   const config = useConfig();
   const { currentTheme } = useTheme();
   const isDark = currentTheme.background === "#000000" || currentTheme.text === "#ffffff";
+  const t = useTranslations("common");
 
   return (
     <div className="relative">
@@ -78,35 +80,54 @@ export function LoginContent({
 
               {/* Features List */}
               <div className="space-y-4">
-                {authFeatures.map((feature) => (
-                  <div
-                    key={feature.title}
-                    className="flex items-start group"
-                  >
-                    <div className={cn(
-                      "p-2 rounded-lg mr-3 transition-all duration-300 transform group-hover:scale-110",
-                      "bg-gradient-to-br from-primary-50 to-primary-100/50",
-                      "dark:from-primary-900/20 dark:to-primary-800/10",
-                      "group-hover:from-primary-100 group-hover:to-primary-50",
-                      "dark:group-hover:from-primary-800/30 dark:group-hover:to-primary-900/20",
-                      "ring-1 ring-primary-100 dark:ring-primary-800/20"
-                    )}>
-                      <feature.icon className={cn(
-                        "h-4 w-4",
-                        "text-primary-600 dark:text-primary-400",
-                        "group-hover:text-primary-700 dark:group-hover:text-primary-300"
-                      )} />
+                {authFeatures.map((feature) => {
+                  const colorVariant = feature.colorVariant;
+                  const bgClasses = colorVariant === "primary"
+                    ? "bg-gradient-to-br from-primary-50 to-primary-100/50 dark:from-primary-900/20 dark:to-primary-800/10 group-hover:from-primary-100 group-hover:to-primary-50 dark:group-hover:from-primary-800/30 dark:group-hover:to-primary-900/20 ring-1 ring-primary-100 dark:ring-primary-800/20"
+                    : colorVariant === "accent"
+                    ? "bg-gradient-to-br from-accent-50 to-accent-100/50 dark:from-accent-900/20 dark:to-accent-800/10 group-hover:from-accent-100 group-hover:to-accent-50 dark:group-hover:from-accent-800/30 dark:group-hover:to-accent-900/20 ring-1 ring-accent-100 dark:ring-accent-800/20"
+                    : "bg-gradient-to-br from-secondary-50 to-secondary-100/50 dark:from-secondary-900/20 dark:to-secondary-800/10 group-hover:from-secondary-100 group-hover:to-secondary-50 dark:group-hover:from-secondary-800/30 dark:group-hover:to-secondary-900/20 ring-1 ring-secondary-100 dark:ring-secondary-800/20";
+
+                  const iconClasses = colorVariant === "primary"
+                    ? "text-primary-600 dark:text-primary-400 group-hover:text-primary-700 dark:group-hover:text-primary-300"
+                    : colorVariant === "accent"
+                    ? "text-accent-600 dark:text-accent-400 group-hover:text-accent-700 dark:group-hover:text-accent-300"
+                    : "text-secondary-600 dark:text-secondary-400 group-hover:text-secondary-700 dark:group-hover:text-secondary-300";
+
+                  const titleHoverClasses = colorVariant === "primary"
+                    ? "group-hover:text-primary-600 dark:group-hover:text-primary-400"
+                    : colorVariant === "accent"
+                    ? "group-hover:text-accent-600 dark:group-hover:text-accent-400"
+                    : "group-hover:text-secondary-600 dark:group-hover:text-secondary-400";
+
+                  return (
+                    <div
+                      key={feature.titleKey}
+                      className="flex items-start group"
+                    >
+                      <div className={cn(
+                        "p-2 rounded-lg mr-3 transition-all duration-300 transform group-hover:scale-110",
+                        bgClasses
+                      )}>
+                        <feature.icon className={cn(
+                          "h-4 w-4",
+                          iconClasses
+                        )} />
+                      </div>
+                      <div>
+                        <h3 className={cn(
+                          "font-medium text-gray-900 dark:text-white text-sm transition-colors",
+                          titleHoverClasses
+                        )}>
+                          {t(feature.titleKey as any)}
+                        </h3>
+                        <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">
+                          {t(feature.descriptionKey as any)}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-medium text-gray-900 dark:text-white text-sm group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                        {feature.title}
-                      </h3>
-                      <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
