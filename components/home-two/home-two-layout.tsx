@@ -10,6 +10,27 @@ import { ListingClient } from "../shared-card/listing-client";
 import { CardPresets } from "../shared-card";
 import { useState, useMemo } from "react";
 import { PER_PAGE } from "@/lib/paginate";
+import clsx from "clsx";
+
+// Style constants for sticky header
+const STICKY_CONTAINER_BASE = clsx(
+  "sticky top-4 z-20",
+  "transition-all duration-300 ease-in-out",
+  "rounded-lg"
+);
+
+const STICKY_CONTAINER_ACTIVE = clsx(
+  STICKY_CONTAINER_BASE,
+  "bg-white/95 dark:bg-gray-800/95",
+  "shadow-md backdrop-blur-sm",
+  "border border-gray-100 dark:border-gray-700/50",
+  "px-4 py-3"
+);
+
+const STICKY_CONTAINER_INACTIVE = clsx(
+  STICKY_CONTAINER_BASE,
+  "bg-transparent"
+);
 
 type Home2LayoutProps = {
   total: number;
@@ -57,11 +78,7 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
         <div ref={sentinelRef} className="md:h-4 md:w-full" />
         <div
           ref={targetRef}
-          className={`sticky top-4 z-10 ${
-            isSticky
-              ? "bg-white/95 dark:bg-gray-800/95 shadow-md backdrop-blur-sm"
-              : "bg-transparent"
-          }`}
+          className={isSticky ? STICKY_CONTAINER_ACTIVE : STICKY_CONTAINER_INACTIVE}
         >
           <HomeTwoFilters
             categories={props.categories}

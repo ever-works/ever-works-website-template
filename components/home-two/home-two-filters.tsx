@@ -7,6 +7,8 @@ import { SearchInput } from "../ui/search-input";
 import { HomeTwoCategories } from "./home-two-categories";
 import { LayoutKey } from "../layouts";
 import { SortOption } from "../filters/types";
+import { LayoutSettings } from "../layout-settings";
+import clsx from "clsx";
 
 const SORT_OPTIONS: SortOption[] = [
   'popularity',
@@ -15,7 +17,13 @@ const SORT_OPTIONS: SortOption[] = [
   'date-desc',
   'date-asc',
 ];
-import { LayoutSettings } from "../layout-settings";
+
+// Style constants
+const FILTERS_CONTAINER = "space-y-3 sm:space-y-4";
+const MOBILE_FILTERS = "block sm:hidden space-y-3";
+const TABLET_FILTERS = "hidden sm:block md:hidden";
+const DESKTOP_FILTERS = "hidden md:flex justify-between items-center gap-4";
+const FILTERS_GROUP = "flex items-center gap-3";
 
 type Home2FiltersProps = {
   categories: Category[];
@@ -62,8 +70,9 @@ export function HomeTwoFilters({
   };
 
   return (
-    <div className="mb-4 sm:mb-6 space-y-3 sm:space-y-4">
-      <div className="block sm:hidden space-y-3">
+    <div className={FILTERS_CONTAINER}>
+      {/* Mobile Layout */}
+      <div className={MOBILE_FILTERS}>
         <div className="w-full">
           <SearchInput
             searchTerm={searchTerm}
@@ -71,7 +80,7 @@ export function HomeTwoFilters({
             className="w-full"
           />
         </div>
-        
+
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 flex-1">
             <HomeTwoSortSelector setSortBy={handleSortChange} sortBy={sortBy} />
@@ -81,16 +90,17 @@ export function HomeTwoFilters({
         </div>
       </div>
 
-      <div className="hidden sm:block md:hidden">
+      {/* Tablet Layout */}
+      <div className={TABLET_FILTERS}>
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
+            <div className={FILTERS_GROUP}>
               <HomeTwoSortSelector setSortBy={handleSortChange} sortBy={sortBy} />
               <HomeTwoTagsSelector tags={tags} />
             </div>
             <LayoutSettings />
           </div>
-          
+
           <div className="w-full">
             <SearchInput
               searchTerm={searchTerm}
@@ -101,21 +111,22 @@ export function HomeTwoFilters({
         </div>
       </div>
 
-      <div className="hidden md:flex justify-between items-center gap-4">
+      {/* Desktop Layout */}
+      <div className={DESKTOP_FILTERS}>
         {/* Left Side: Sort and Tags */}
-        <div className="flex items-center gap-3">
+        <div className={FILTERS_GROUP}>
           <HomeTwoSortSelector setSortBy={handleSortChange} sortBy={sortBy} />
           <HomeTwoTagsSelector tags={tags} />
         </div>
-        
-        <div className="flex items-center gap-3">
+
+        {/* Right Side: Search and Layout */}
+        <div className={FILTERS_GROUP}>
           <div className="w-64 lg:w-80 xl:w-96">
             <SearchInput
               searchTerm={searchTerm}
               setSearchTerm={handleSearchChange}
             />
           </div>
-
           <LayoutSettings />
         </div>
       </div>

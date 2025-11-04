@@ -15,6 +15,48 @@ import React, {
   useState,
 } from "react";
 import Image from "next/image";
+import clsx from "clsx";
+
+// Style constants
+const SCROLL_CONTAINER_STYLES = clsx(
+  "relative flex items-center gap-3 overflow-x-auto pb-4 pr-8",
+  "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+  "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-1",
+  "after:bg-gradient-to-r after:from-transparent after:via-blue-100/20 after:to-transparent",
+  "dark:after:via-blue-900/10"
+);
+
+const STICKY_LEFT_STYLES = clsx(
+  "sticky left-0 flex-shrink-0 z-10 pl-1 py-1 pr-7",
+  "bg-gradient-to-r from-white via-white to-transparent",
+  "dark:from-gray-900 dark:via-gray-900"
+);
+
+const STICKY_RIGHT_STYLES = clsx(
+  "sticky right-0 flex-shrink-0 pl-4",
+  "bg-gradient-to-l from-white via-white to-transparent",
+  "dark:from-gray-900 dark:via-gray-900"
+);
+
+const MORE_BUTTON_STYLES = clsx(
+  "h-8 py-1.5 text-xs flex items-center gap-1.5 rounded-md",
+  "bg-theme-primary-10 hover:bg-theme-primary-10",
+  "dark:bg-theme-primary-10 dark:hover:bg-theme-primary-10",
+  "text-theme-primary-700 dark:text-theme-primary-300",
+  "border border-theme-primary-200 dark:border-theme-primary-800",
+  "shadow-sm hover:shadow transition-all"
+);
+
+const TOGGLE_BUTTON_STYLES = clsx(
+  "px-4 py-1 font-medium transition-all duration-300 rounded-full",
+  "text-theme-primary bg-theme-primary-10",
+  "hover:bg-theme-primary-20 hover:shadow-sm",
+  "text-xs sm:text-sm h-8"
+);
+
+const CATEGORIES_WRAPPER_BASE = "flex items-center gap-2 sm:gap-3";
+const CATEGORIES_WRAPPER_COLLAPSED = clsx(CATEGORIES_WRAPPER_BASE, "flex-nowrap");
+const CATEGORIES_WRAPPER_EXPANDED = clsx(CATEGORIES_WRAPPER_BASE, "flex-wrap");
 
 type Home2CategoriesProps = {
   categories: Category[];
@@ -157,6 +199,7 @@ export function HomeTwoCategories({
   const allCategoriesCount = totalItems ?? calculatedTotalItems;
   const [selectedCategory, setSelectedCategory] = useState("");
   const [hiddenCategories, setHiddenCategories] = useState<Category[]>([]);
+  const [showAllCategories, setShowAllCategories] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const categoriesRef = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -178,7 +221,7 @@ export function HomeTwoCategories({
             onClick={() => onCategoryToggle?.(category.id)}
             ref={
               index !== undefined
-                ? (el) => (categoriesRef.current[index] = el as any)
+                ? (el) => (categoriesRef.current[index] = el)
                 : undefined
             }
           />
@@ -201,7 +244,7 @@ export function HomeTwoCategories({
             fullName={category.name}
             ref={
               index !== undefined
-                ? (el) => (categoriesRef.current[index] = el as any)
+                ? (el) => (categoriesRef.current[index] = el)
                 : undefined
             }
           />
@@ -292,12 +335,69 @@ export function HomeTwoCategories({
       {/* Desktop Categories - Enhanced */}
       <div className="hidden md:block">
         <div className="flex flex-col gap-4">
+          {/* Toggle Button */}
+          {categories.length > 5 && (
+            <div className="flex justify-end">
+              <Button
+                className={TOGGLE_BUTTON_STYLES}
+                onPress={() => setShowAllCategories(!showAllCategories)}
+              >
+                {showAllCategories ? (
+                  <>
+                    <span className="hidden sm:inline">Show as single row</span>
+                    <span className="sm:hidden">Single row</span>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="ml-1.5 transition-transform"
+                    >
+                      <path
+                        d="M3 10h18M3 14h18"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </>
+                ) : (
+                  <>
+                    <span className="hidden sm:inline">
+                      Show all {categories.length} categories
+                    </span>
+                    <span className="sm:hidden">All categories</span>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="ml-1.5 transition-transform"
+                    >
+                      <path
+                        d="M4 4h16v7H4V4zm0 9h16v7H4v-7z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+
           <div
             ref={scrollContainerRef}
             onScroll={(e) => {
-              if (scrollContainerRef.current) {
+              // Only track scroll when in collapsed mode
+              if (scrollContainerRef.current && !showAllCategories) {
                 const container = e.currentTarget;
-         
+                const containerRect = container.getBoundingClientRect();
+                // Add threshold to detect categories earlier (50px before they're fully hidden)
+                const visibilityThreshold = 50;
 
                 const visible: string[] = [];
                 const hidden: Category[] = [];
@@ -306,12 +406,13 @@ export function HomeTwoCategories({
                   const el = categoriesRef.current[index];
                   if (el) {
                     const rect = el.getBoundingClientRect();
-                    const containerRect = container.getBoundingClientRect();
 
-                    if (
-                      rect.left >= containerRect.left &&
-                      rect.right <= containerRect.right
-                    ) {
+                    // Check if element is visible within container bounds with threshold
+                    const isVisible =
+                      rect.left >= containerRect.left - visibilityThreshold &&
+                      rect.right <= containerRect.right + visibilityThreshold;
+
+                    if (isVisible) {
                       visible.push(category.id);
                     } else {
                       hidden.push(category);
@@ -322,10 +423,10 @@ export function HomeTwoCategories({
                 setHiddenCategories(hidden);
               }
             }}
-            className="relative flex items-center gap-3 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-1 after:bg-gradient-to-r after:from-transparent after:via-blue-100/20 after:to-transparent dark:after:via-blue-900/10"
+            className={showAllCategories ? "relative pb-4" : SCROLL_CONTAINER_STYLES}
           >
-            <div className="flex items-center gap-2 sm:gap-3 flex-nowrap">
-              <div className="sticky left-0 flex-shrink-0 bg-gradient-to-r from-white dark:from-gray-900 via-white dark:via-gray-900 to-transparent pr-7 z-10 pl-1 py-1">
+            <div className={showAllCategories ? CATEGORIES_WRAPPER_EXPANDED : CATEGORIES_WRAPPER_COLLAPSED}>
+              <div className={showAllCategories ? "" : STICKY_LEFT_STYLES}>
                 <style jsx global>{`
                   .hover-lift {
                     transition: transform 0.2s ease;
@@ -344,64 +445,66 @@ export function HomeTwoCategories({
               </div>
               {categoriesList}
             </div>
-            <div className="sticky right-0 flex-shrink-0 bg-gradient-to-l ">
-              {hiddenCategories.length > 0 && (
-                <Popover>
-                  <PopoverTrigger>
-                    <Button className="h-8 py-1.5 text-xs flex items-center gap-1.5 bg-theme-primary-10 hover:bg-theme-primary-10 dark:bg-theme-primary-10 dark:hover:bg-theme-primary-10 text-theme-primary-700 dark:text-theme-primary-300 border border-theme-primary-200 dark:border-theme-primary-800 shadow-sm hover:shadow transition-all rounded-md">
-                      <span className="font-medium">
-                        +{hiddenCategories.length}
-                      </span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="w-3.5 h-3.5"
-                      >
-                        <path d="M6 9l6 6 6-6" />
-                      </svg>
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-64 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700">
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 pb-1.5 border-b border-gray-100 dark:border-gray-700 flex items-center gap-1.5 uppercase">
-                        {tCommon("MORE")} {t("CATEGORIES")}
-                        <span className="text-xs bg-gray-100 dark:bg-gray-700 rounded px-1.5 py-0.5">
-                          {hiddenCategories.length}
+            {!showAllCategories && (
+              <div className={STICKY_RIGHT_STYLES}>
+                {hiddenCategories.length > 0 && (
+                  <Popover>
+                    <PopoverTrigger>
+                      <Button className={MORE_BUTTON_STYLES}>
+                        <span className="font-medium">
+                          +{hiddenCategories.length}
                         </span>
-                      </h3>
-                      <div className="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto w-full pr-1 overflow-hidden scrollbar-none">
-                        {hiddenCategories.map((category) => (
-                          <Button
-                            key={category.id}
-                            as={Link}
-                            href={
-                              basePath
-                                ? `${basePath}/${category.id}`
-                                : `/categories/${category.id}`
-                            }
-                            className="flex justify-between items-center h-8 text-xs py-1.5 px-3 text-gray-700 dark:text-gray-300 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/70 rounded-md transition-colors border border-gray-100 dark:border-gray-700 hover:border-theme-primary-200 dark:hover:border-theme-primary-800 w-full"
-                          >
-                            <span className="truncate max-w-[140px] text-left">
-                              {category.name}
-                            </span>
-                            <span className="ml-1 px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-xs font-medium">
-                              {category.count || 0}
-                            </span>
-                          </Button>
-                        ))}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="w-3.5 h-3.5"
+                        >
+                          <path d="M6 9l6 6 6-6" />
+                        </svg>
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-64 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700">
+                      <div className="space-y-2">
+                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 pb-1.5 border-b border-gray-100 dark:border-gray-700 flex items-center gap-1.5 uppercase">
+                          {tCommon("MORE")} {t("CATEGORIES")}
+                          <span className="text-xs bg-gray-100 dark:bg-gray-700 rounded px-1.5 py-0.5">
+                            {hiddenCategories.length}
+                          </span>
+                        </h3>
+                        <div className="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto w-full pr-1 overflow-hidden scrollbar-none">
+                          {hiddenCategories.map((category) => (
+                            <Button
+                              key={category.id}
+                              as={Link}
+                              href={
+                                basePath
+                                  ? `${basePath}/${category.id}`
+                                  : `/categories/${category.id}`
+                              }
+                              className="flex justify-between items-center h-8 text-xs py-1.5 px-3 text-gray-700 dark:text-gray-300 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/70 rounded-md transition-colors border border-gray-100 dark:border-gray-700 hover:border-theme-primary-200 dark:hover:border-theme-primary-800 w-full"
+                            >
+                              <span className="truncate max-w-[140px] text-left">
+                                {category.name}
+                              </span>
+                              <span className="ml-1 px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-xs font-medium">
+                                {category.count || 0}
+                              </span>
+                            </Button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              )}
-            </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
