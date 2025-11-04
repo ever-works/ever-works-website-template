@@ -19,11 +19,25 @@ import clsx from "clsx";
 
 // Style constants
 const SCROLL_CONTAINER_STYLES = clsx(
-  "relative flex items-center gap-3 overflow-x-auto pb-4 pr-8",
+  "relative flex items-center gap-3 overflow-x-auto pb-4 pr-8 scroll-smooth",
   "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
   "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-1",
   "after:bg-gradient-to-r after:from-transparent after:via-blue-100/20 after:to-transparent",
   "dark:after:via-blue-900/10"
+);
+
+const SCROLL_FADE_LEFT = clsx(
+  "absolute left-0 top-0 bottom-4 w-16 pointer-events-none z-[5]",
+  "bg-gradient-to-r from-white via-white/80 to-transparent",
+  "dark:from-gray-900 dark:via-gray-900/80",
+  "opacity-0 transition-opacity duration-300"
+);
+
+const SCROLL_FADE_RIGHT = clsx(
+  "absolute right-0 top-0 bottom-4 w-16 pointer-events-none z-[5]",
+  "bg-gradient-to-l from-white via-white/80 to-transparent",
+  "dark:from-gray-900 dark:via-gray-900/80",
+  "opacity-0 transition-opacity duration-300"
 );
 
 const STICKY_LEFT_STYLES = clsx(
@@ -40,21 +54,23 @@ const STICKY_RIGHT_STYLES = clsx(
 
 const MORE_BUTTON_STYLES = clsx(
   "h-8 py-1.5 text-xs flex items-center gap-1.5 rounded-md",
-  "bg-theme-primary-10 hover:bg-theme-primary-10",
-  "dark:bg-theme-primary-10 dark:hover:bg-theme-primary-10",
+  "bg-theme-primary-10 hover:bg-theme-primary-20",
+  "dark:bg-theme-primary-10 dark:hover:bg-theme-primary-20",
   "text-theme-primary-700 dark:text-theme-primary-300",
   "border border-theme-primary-200 dark:border-theme-primary-800",
-  "shadow-sm hover:shadow transition-all"
+  "shadow-sm hover:shadow transition-all duration-200"
 );
 
 const TOGGLE_BUTTON_STYLES = clsx(
-  "px-4 py-1 font-medium transition-all duration-300 rounded-full",
+  "px-4 py-1.5 font-medium transition-all duration-300 rounded-full",
   "text-theme-primary bg-theme-primary-10",
-  "hover:bg-theme-primary-20 hover:shadow-sm",
-  "text-xs sm:text-sm h-8"
+  "hover:bg-theme-primary-20 hover:shadow-sm hover:scale-105",
+  "active:scale-95",
+  "text-xs sm:text-sm h-8",
+  "focus:outline-none focus:ring-2 focus:ring-theme-primary-300 focus:ring-offset-2"
 );
 
-const CATEGORIES_WRAPPER_BASE = "flex items-center gap-2 sm:gap-3";
+const CATEGORIES_WRAPPER_BASE = "flex items-center gap-2 sm:gap-3 transition-all duration-500";
 const CATEGORIES_WRAPPER_COLLAPSED = clsx(CATEGORIES_WRAPPER_BASE, "flex-nowrap");
 const CATEGORIES_WRAPPER_EXPANDED = clsx(CATEGORIES_WRAPPER_BASE, "flex-wrap");
 
@@ -200,6 +216,8 @@ export function HomeTwoCategories({
   const [selectedCategory, setSelectedCategory] = useState("");
   const [hiddenCategories, setHiddenCategories] = useState<Category[]>([]);
   const [showAllCategories, setShowAllCategories] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const categoriesRef = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -258,6 +276,29 @@ export function HomeTwoCategories({
     () => categories.map((category, index) => renderCategory(category, index)),
     [categories, renderCategory]
   );
+
+  // Update scroll indicators
+  const updateScrollIndicators = useCallback(() => {
+    if (scrollContainerRef.current && !showAllCategories) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setCanScrollLeft(scrollLeft > 10);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    } else {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+    }
+  }, [showAllCategories]);
+
+  // Initialize and update scroll indicators
+  useEffect(() => {
+    updateScrollIndicators();
+    const container = scrollContainerRef.current;
+    if (container) {
+      const resizeObserver = new ResizeObserver(updateScrollIndicators);
+      resizeObserver.observe(container);
+      return () => resizeObserver.disconnect();
+    }
+  }, [updateScrollIndicators, categories]);
 
   useEffect(() => {
     if (isHomeActive) {
@@ -341,6 +382,12 @@ export function HomeTwoCategories({
               <Button
                 className={TOGGLE_BUTTON_STYLES}
                 onPress={() => setShowAllCategories(!showAllCategories)}
+                aria-expanded={showAllCategories}
+                aria-label={
+                  showAllCategories
+                    ? "Collapse categories to single row"
+                    : `Expand to show all ${categories.length} categories`
+                }
               >
                 {showAllCategories ? (
                   <>
@@ -352,6 +399,7 @@ export function HomeTwoCategories({
                       viewBox="0 0 24 24"
                       fill="none"
                       className="ml-1.5 transition-transform"
+                      aria-hidden="true"
                     >
                       <path
                         d="M3 10h18M3 14h18"
@@ -374,6 +422,7 @@ export function HomeTwoCategories({
                       viewBox="0 0 24 24"
                       fill="none"
                       className="ml-1.5 transition-transform"
+                      aria-hidden="true"
                     >
                       <path
                         d="M4 4h16v7H4V4zm0 9h16v7H4v-7z"
@@ -421,10 +470,29 @@ export function HomeTwoCategories({
                 });
 
                 setHiddenCategories(hidden);
+                updateScrollIndicators();
               }
             }}
-            className={showAllCategories ? "relative pb-4" : SCROLL_CONTAINER_STYLES}
+            className={showAllCategories ? "relative pb-4 transition-all duration-500" : SCROLL_CONTAINER_STYLES}
+            role="region"
+            aria-label="Categories filter"
           >
+            {/* Scroll fade indicators */}
+            {!showAllCategories && canScrollLeft && (
+              <div
+                className={SCROLL_FADE_LEFT}
+                style={{ opacity: canScrollLeft ? 1 : 0 }}
+                aria-hidden="true"
+              />
+            )}
+            {!showAllCategories && canScrollRight && (
+              <div
+                className={SCROLL_FADE_RIGHT}
+                style={{ opacity: canScrollRight ? 1 : 0 }}
+                aria-hidden="true"
+              />
+            )}
+
             <div className={showAllCategories ? CATEGORIES_WRAPPER_EXPANDED : CATEGORIES_WRAPPER_COLLAPSED}>
               <div className={showAllCategories ? "" : STICKY_LEFT_STYLES}>
                 <style jsx global>{`
@@ -450,7 +518,10 @@ export function HomeTwoCategories({
                 {hiddenCategories.length > 0 && (
                   <Popover>
                     <PopoverTrigger>
-                      <Button className={MORE_BUTTON_STYLES}>
+                      <Button
+                        className={MORE_BUTTON_STYLES}
+                        aria-label={`Show ${hiddenCategories.length} more ${hiddenCategories.length === 1 ? 'category' : 'categories'}`}
+                      >
                         <span className="font-medium">
                           +{hiddenCategories.length}
                         </span>
@@ -465,6 +536,7 @@ export function HomeTwoCategories({
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           className="w-3.5 h-3.5"
+                          aria-hidden="true"
                         >
                           <path d="M6 9l6 6 6-6" />
                         </svg>
