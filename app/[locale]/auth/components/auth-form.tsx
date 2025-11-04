@@ -139,24 +139,21 @@ export function AuthForm({ form, showSocialLogin = true, onSuccess, clientMode =
                     </>
                   ) : (
                     <>
-                      {authFeatures.map((feature, index) => {
-                        const colorClass = index === 0 ? 'theme-primary' : index === 1 ? 'theme-accent' : 'theme-secondary';
-                        return (
-                          <div key={feature.title} className="flex items-center">
-                            <div className={`bg-${colorClass}/10 p-3 rounded-xl mr-4 group hover:bg-${colorClass}/20 transition-colors`}>
-                              <feature.icon className={`h-5 w-5 text-${colorClass} group-hover:scale-110 transition-transform`} />
-                            </div>
-                            <div>
-                              <span className="font-semibold text-gray-900 dark:text-white block">
-                                {feature.title}
-                              </span>
-                              <span className="text-sm text-gray-600 dark:text-gray-400">
-                                {feature.description}
-                              </span>
-                            </div>
+                      {authFeatures.map((feature) => (
+                        <div key={feature.title} className="flex items-center">
+                          <div className="bg-theme-primary/10 p-3 rounded-xl mr-4 group hover:bg-theme-primary/20 transition-colors">
+                            <feature.icon className="h-5 w-5 text-theme-primary group-hover:scale-110 transition-transform" />
                           </div>
-                        );
-                      })}
+                          <div>
+                            <span className="font-semibold text-gray-900 dark:text-white block">
+                              {feature.title}
+                            </span>
+                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                              {feature.description}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
                     </>
                   )}
                 </StaggerContainer>
