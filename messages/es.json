@@ -2123,17 +2123,17 @@
       "RETRY": "Reintentar",
       "LOADING": "Cargando...",
       "REACHED_THE_END": "Has llegado al final"
-    },
-    "pages": {
-      "LEGAL_BADGE": "Legal",
-      "LAST_UPDATED": "Última actualización:",
-      "RELATED_INFORMATION": "Información Relacionada",
-      "ABOUT_PAGE_META_DESCRIPTION": "Conoce nuestro servicio de directorio y nuestra misión de conectar a las personas con recursos valiosos",
-      "PRIVACY_POLICY_META_DESCRIPTION": "Descubre cómo nuestro directorio recopila, utiliza y protege tu información",
-      "TERMS_OF_SERVICE_META_DESCRIPTION": "Términos y condiciones para usar nuestro servicio de directorio",
-      "ABOUT_US_DESCRIPTION": "Conoce más sobre nuestra empresa",
-      "PRIVACY_POLICY_DESCRIPTION": "Descubre cómo protegemos tus datos",
-      "TERMS_OF_SERVICE_DESCRIPTION": "Revisa nuestros términos y condiciones"
     }
+  },
+  "pages": {
+    "LEGAL_BADGE": "Legal",
+    "LAST_UPDATED": "Última actualización:",
+    "RELATED_INFORMATION": "Información Relacionada",
+    "ABOUT_PAGE_META_DESCRIPTION": "Conoce nuestro servicio de directorio y nuestra misión de conectar a las personas con recursos valiosos",
+    "PRIVACY_POLICY_META_DESCRIPTION": "Descubre cómo nuestro directorio recopila, utiliza y protege tu información",
+    "TERMS_OF_SERVICE_META_DESCRIPTION": "Términos y condiciones para usar nuestro servicio de directorio",
+    "ABOUT_US_DESCRIPTION": "Conoce más sobre nuestra empresa",
+    "PRIVACY_POLICY_DESCRIPTION": "Descubre cómo protegemos tus datos",
+    "TERMS_OF_SERVICE_DESCRIPTION": "Revisa nuestros términos y condiciones"
   }
 }

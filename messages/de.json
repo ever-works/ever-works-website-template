@@ -2141,17 +2141,17 @@
       "RETRY": "Wiederholen",
       "LOADING": "Wird geladen...",
       "REACHED_THE_END": "Sie haben das Ende erreicht"
-    },
-    "pages": {
-      "LEGAL_BADGE": "Rechtliches",
-      "LAST_UPDATED": "Zuletzt aktualisiert:",
-      "RELATED_INFORMATION": "Verwandte Informationen",
-      "ABOUT_PAGE_META_DESCRIPTION": "Erfahren Sie mehr über unseren Verzeichnisdienst und unsere Mission, Menschen mit wertvollen Ressourcen zu verbinden",
-      "PRIVACY_POLICY_META_DESCRIPTION": "Erfahren Sie, wie unser Verzeichnis Ihre Informationen sammelt, verwendet und schützt",
-      "TERMS_OF_SERVICE_META_DESCRIPTION": "Nutzungsbedingungen für die Verwendung unseres Verzeichnisdienstes",
-      "ABOUT_US_DESCRIPTION": "Erfahren Sie mehr über unser Unternehmen",
-      "PRIVACY_POLICY_DESCRIPTION": "Erfahren Sie, wie wir Ihre Daten schützen",
-      "TERMS_OF_SERVICE_DESCRIPTION": "Lesen Sie unsere Nutzungsbedingungen"
     }
+  },
+  "pages": {
+    "LEGAL_BADGE": "Rechtliches",
+    "LAST_UPDATED": "Zuletzt aktualisiert:",
+    "RELATED_INFORMATION": "Verwandte Informationen",
+    "ABOUT_PAGE_META_DESCRIPTION": "Erfahren Sie mehr über unseren Verzeichnisdienst und unsere Mission, Menschen mit wertvollen Ressourcen zu verbinden",
+    "PRIVACY_POLICY_META_DESCRIPTION": "Erfahren Sie, wie unser Verzeichnis Ihre Informationen sammelt, verwendet und schützt",
+    "TERMS_OF_SERVICE_META_DESCRIPTION": "Nutzungsbedingungen für die Verwendung unseres Verzeichnisdienstes",
+    "ABOUT_US_DESCRIPTION": "Erfahren Sie mehr über unser Unternehmen",
+    "PRIVACY_POLICY_DESCRIPTION": "Erfahren Sie, wie wir Ihre Daten schützen",
+    "TERMS_OF_SERVICE_DESCRIPTION": "Lesen Sie unsere Nutzungsbedingungen"
   }
 }

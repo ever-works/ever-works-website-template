@@ -2376,17 +2376,17 @@
       "RETRY": "Réessayer",
       "LOADING": "Chargement...",
       "REACHED_THE_END": "Vous avez atteint la fin"
-    },
-    "pages": {
-      "LEGAL_BADGE": "Légal",
-      "LAST_UPDATED": "Dernière mise à jour :",
-      "RELATED_INFORMATION": "Informations Connexes",
-      "ABOUT_PAGE_META_DESCRIPTION": "Découvrez notre service d'annuaire et notre mission de connecter les gens avec des ressources précieuses",
-      "PRIVACY_POLICY_META_DESCRIPTION": "Découvrez comment notre annuaire collecte, utilise et protège vos informations",
-      "TERMS_OF_SERVICE_META_DESCRIPTION": "Conditions générales d'utilisation de notre service d'annuaire",
-      "ABOUT_US_DESCRIPTION": "En savoir plus sur notre entreprise",
-      "PRIVACY_POLICY_DESCRIPTION": "Découvrez comment nous protégeons vos données",
-      "TERMS_OF_SERVICE_DESCRIPTION": "Consultez nos conditions générales"
     }
+  },
+  "pages": {
+    "LEGAL_BADGE": "Légal",
+    "LAST_UPDATED": "Dernière mise à jour :",
+    "RELATED_INFORMATION": "Informations Connexes",
+    "ABOUT_PAGE_META_DESCRIPTION": "Découvrez notre service d'annuaire et notre mission de connecter les gens avec des ressources précieuses",
+    "PRIVACY_POLICY_META_DESCRIPTION": "Découvrez comment notre annuaire collecte, utilise et protège vos informations",
+    "TERMS_OF_SERVICE_META_DESCRIPTION": "Conditions générales d'utilisation de notre service d'annuaire",
+    "ABOUT_US_DESCRIPTION": "En savoir plus sur notre entreprise",
+    "PRIVACY_POLICY_DESCRIPTION": "Découvrez comment nous protégeons vos données",
+    "TERMS_OF_SERVICE_DESCRIPTION": "Consultez nos conditions générales"
   }
 }

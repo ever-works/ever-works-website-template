@@ -2070,17 +2070,17 @@
       "RETRY": "إعادة المحاولة",
       "LOADING": "جاري التحميل...",
       "REACHED_THE_END": "لقد وصلت إلى النهاية"
-    },
-    "pages": {
-      "LEGAL_BADGE": "قانوني",
-      "LAST_UPDATED": "آخر تحديث:",
-      "RELATED_INFORMATION": "معلومات ذات صلة",
-      "ABOUT_PAGE_META_DESCRIPTION": "تعرف على خدمة الدليل الخاصة بنا ومهمتنا في ربط الأشخاص بالموارد القيمة",
-      "PRIVACY_POLICY_META_DESCRIPTION": "تعرف على كيفية جمع دليلنا لمعلوماتك واستخدامها وحمايتها",
-      "TERMS_OF_SERVICE_META_DESCRIPTION": "الشروط والأحكام لاستخدام خدمة الدليل الخاصة بنا",
-      "ABOUT_US_DESCRIPTION": "تعرف على المزيد عن شركتنا",
-      "PRIVACY_POLICY_DESCRIPTION": "تعرف على كيفية حماية بياناتك",
-      "TERMS_OF_SERVICE_DESCRIPTION": "راجع الشروط والأحكام الخاصة بنا"
     }
+  },
+  "pages": {
+    "LEGAL_BADGE": "قانوني",
+    "LAST_UPDATED": "آخر تحديث:",
+    "RELATED_INFORMATION": "معلومات ذات صلة",
+    "ABOUT_PAGE_META_DESCRIPTION": "تعرف على خدمة الدليل الخاصة بنا ومهمتنا في ربط الأشخاص بالموارد القيمة",
+    "PRIVACY_POLICY_META_DESCRIPTION": "تعرف على كيفية جمع دليلنا لمعلوماتك واستخدامها وحمايتها",
+    "TERMS_OF_SERVICE_META_DESCRIPTION": "الشروط والأحكام لاستخدام خدمة الدليل الخاصة بنا",
+    "ABOUT_US_DESCRIPTION": "تعرف على المزيد عن شركتنا",
+    "PRIVACY_POLICY_DESCRIPTION": "تعرف على كيفية حماية بياناتك",
+    "TERMS_OF_SERVICE_DESCRIPTION": "راجع الشروط والأحكام الخاصة بنا"
   }
 }
