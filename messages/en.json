@@ -2481,6 +2481,17 @@
       "RETRY": "Retry",
       "LOADING": "Loading...",
       "REACHED_THE_END": "You've reached the end"
+    },
+    "pages": {
+      "LEGAL_BADGE": "Legal",
+      "LAST_UPDATED": "Last updated:",
+      "RELATED_INFORMATION": "Related Information",
+      "ABOUT_PAGE_META_DESCRIPTION": "Learn about our directory service and our mission to connect people with valuable resources",
+      "PRIVACY_POLICY_META_DESCRIPTION": "Learn how our directory collects, uses, and protects your information",
+      "TERMS_OF_SERVICE_META_DESCRIPTION": "Terms and conditions for using our directory service",
+      "ABOUT_US_DESCRIPTION": "Learn more about our company",
+      "PRIVACY_POLICY_DESCRIPTION": "Learn how we protect your data",
+      "TERMS_OF_SERVICE_DESCRIPTION": "Review our terms and conditions"
     }
   }
 }

@@ -12,16 +12,17 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'footer' });
+  const tFooter = await getTranslations({ locale, namespace: 'footer' });
+  const tPages = await getTranslations({ locale, namespace: 'pages' });
 
   return {
-    title: t('TERMS_OF_SERVICE'),
-    description: 'Terms and conditions for using our directory service',
+    title: tFooter('TERMS_OF_SERVICE'),
+    description: tPages('TERMS_OF_SERVICE_META_DESCRIPTION'),
   };
 }
 
 export default async function TermsOfServicePage({ params }: PageProps) {
-  const { locale } = await params;
+  const { locale} = await params;
   const pageData = await fetchPageContent('terms-of-service', locale);
 
   if (!pageData) {
@@ -29,7 +30,11 @@ export default async function TermsOfServicePage({ params }: PageProps) {
   }
 
   const { content, metadata } = pageData;
-  const title = (metadata.title as string) || 'Terms of Service';
+  const tCommon = await getTranslations({ locale, namespace: 'common' });
+  const tFooter = await getTranslations({ locale, namespace: 'footer' });
+  const tPages = await getTranslations({ locale, namespace: 'pages' });
+
+  const title = (metadata.title as string) || tFooter('TERMS_OF_SERVICE');
   const lastUpdated = metadata.lastUpdated as string | undefined;
 
   return (
@@ -60,7 +65,7 @@ export default async function TermsOfServicePage({ params }: PageProps) {
                 >
                   <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
                 </svg>
-                Home
+                {tCommon('HOME')}
               </Link>
             </li>
             <li>
@@ -93,7 +98,7 @@ export default async function TermsOfServicePage({ params }: PageProps) {
         <div className="mb-12 animate-fade-in">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-full text-sm font-medium text-slate-700 dark:text-slate-300 mb-6">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            Legal
+            {tPages('LEGAL_BADGE')}
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white mb-4 leading-tight">
@@ -121,7 +126,7 @@ export default async function TermsOfServicePage({ params }: PageProps) {
                 />
               </svg>
               <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                Last updated: {lastUpdated}
+                {tPages('LAST_UPDATED')} {lastUpdated}
               </span>
             </div>
           )}
@@ -140,7 +145,7 @@ export default async function TermsOfServicePage({ params }: PageProps) {
         {/* Related Links Section */}
         <div className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800/50 dark:to-slate-700/50 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-700 p-8 animate-fade-in">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-            Related Information
+            {tPages('RELATED_INFORMATION')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Link
@@ -152,10 +157,10 @@ export default async function TermsOfServicePage({ params }: PageProps) {
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-1 group-hover:text-theme-primary-600 dark:group-hover:text-theme-primary-400 transition-colors">
-                  Privacy Policy
+                  {tFooter('PRIVACY_POLICY')}
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Learn how we protect your data
+                  {tPages('PRIVACY_POLICY_DESCRIPTION')}
                 </p>
               </div>
               <svg
@@ -184,10 +189,10 @@ export default async function TermsOfServicePage({ params }: PageProps) {
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-1 group-hover:text-theme-primary-600 dark:group-hover:text-theme-primary-400 transition-colors">
-                  About Us
+                  {tFooter('ABOUT_US')}
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Learn more about our company
+                  {tPages('ABOUT_US_DESCRIPTION')}
                 </p>
               </div>
               <svg
