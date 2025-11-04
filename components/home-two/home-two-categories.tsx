@@ -19,7 +19,7 @@ import clsx from "clsx";
 
 // Style constants
 const SCROLL_CONTAINER_STYLES = clsx(
-  "relative flex items-center gap-3 overflow-x-auto pb-4 pr-8 scroll-smooth",
+  "relative flex items-center gap-2 sm:gap-3 overflow-x-auto pb-4 pr-8 scroll-smooth",
   "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
   "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-1",
   "after:bg-gradient-to-r after:from-transparent after:via-blue-100/20 after:to-transparent",
@@ -41,7 +41,7 @@ const SCROLL_FADE_RIGHT = clsx(
 );
 
 const STICKY_LEFT_STYLES = clsx(
-  "sticky left-0 flex-shrink-0 z-10 pl-1 py-1 pr-7",
+  "sticky left-0 flex-shrink-0 z-10 pr-7",
   "bg-gradient-to-r from-white via-white to-transparent",
   "dark:from-gray-900 dark:via-gray-900"
 );
@@ -473,7 +473,7 @@ export function HomeTwoCategories({
                 updateScrollIndicators();
               }
             }}
-            className={showAllCategories ? "relative pb-4 transition-all duration-500" : SCROLL_CONTAINER_STYLES}
+            className={showAllCategories ? "relative pb-4 pr-8 transition-all duration-500" : SCROLL_CONTAINER_STYLES}
             role="region"
             aria-label="Categories filter"
           >
