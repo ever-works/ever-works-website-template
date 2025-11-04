@@ -140,7 +140,7 @@ export default async function PrivacyPolicyPage({ params }: PageProps) {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Link
-              href="/terms-of-service"
+              href={`/${locale}/terms-of-service`}
               className="group flex items-center gap-4 p-6 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl border border-slate-200 dark:border-slate-700 hover:border-theme-primary-500 dark:hover:border-theme-primary-500 transition-all duration-300 hover:shadow-lg hover:scale-105"
             >
               <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center text-white text-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -159,6 +159,8 @@ export default async function PrivacyPolicyPage({ params }: PageProps) {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
               >
                 <path
                   strokeLinecap="round"
@@ -170,7 +172,7 @@ export default async function PrivacyPolicyPage({ params }: PageProps) {
             </Link>
 
             <Link
-              href="/about"
+              href={`/${locale}/about`}
               className="group flex items-center gap-4 p-6 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl border border-slate-200 dark:border-slate-700 hover:border-theme-primary-500 dark:hover:border-theme-primary-500 transition-all duration-300 hover:shadow-lg hover:scale-105"
             >
               <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center text-white text-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -189,6 +191,8 @@ export default async function PrivacyPolicyPage({ params }: PageProps) {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
               >
                 <path
                   strokeLinecap="round"
