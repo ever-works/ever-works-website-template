@@ -59,8 +59,9 @@ export function useComments(itemId: string) {
           // Add new comment at the beginning
           return [newComment, ...old];
         });
-        // No refetch needed - server response contains complete comment data
-        // Next natural refetch (on page reload or staleTime expiry) will sync if needed
+        // Update rating caches to reflect new rating immediately
+        queryClient.setQueryData(["commentRating", itemId], newComment.rating);
+        queryClient.invalidateQueries({ queryKey: ["itemRating", itemId], exact: true });
       }
     },
   });
