@@ -6,7 +6,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar } from '@/components/header/avatar';
 import { formatDistanceToNow } from 'date-fns';
 import { MessageCircle, Trash2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Rating } from '@/components/ui/rating';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import type { CommentWithUser } from '@/lib/types/comment';
@@ -128,11 +127,7 @@ const Comment = memo(
 		currentUserId?: string;
 		isDeleting: boolean;
 	}) => (
-		<motion.div
-			layout
-			initial={{ opacity: 0, y: 20 }}
-			animate={{ opacity: 1, y: 0 }}
-			exit={{ opacity: 0, y: -20 }}
+		<div
 			className="group flex gap-4 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
 		>
 			<Avatar
@@ -173,7 +168,7 @@ const Comment = memo(
 				</div>
 				<p className="mt-2 text-sm text-gray-700 dark:text-gray-300">{comment.content}</p>
 			</div>
-		</motion.div>
+		</div>
 	)
 );
 Comment.displayName = 'Comment';
@@ -221,10 +216,13 @@ interface CommentsSectionProps {
 
 export function CommentsSection({ itemId }: CommentsSectionProps) {
 	// All hooks must be called before any early returns
-	const { features, isPending: isFeaturesPending } = useFeatureFlags();
-	const { comments, isPending, createComment, isCreating, deleteComment, isDeleting } = useComments(itemId);
+	const { features, isPending: isFeaturesPending, error: featuresError } = useFeatureFlags();
+	const { comments, isPending: isCommentsPending, createComment, isCreating, deleteComment, isDeleting } = useComments(itemId);
 	const { user } = useCurrentUser();
 	const loginModal = useLoginModal();
+
+	// Combine loading states to prevent race conditions
+	const isLoading = isFeaturesPending || isCommentsPending;
 
 	const handleSubmit = useCallback(
 		async (content: string, rating: number) => {
@@ -250,9 +248,14 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 		[deleteComment]
 	);
 
-	// Show skeleton during loading (feature flags or comment data)
-	if (isFeaturesPending || isPending) {
+	// Show skeleton during loading (single coordinated check)
+	if (isLoading) {
 		return <CommentSkeleton />;
+	}
+
+	// Handle feature flags error state
+	if (featuresError) {
+		return null;
 	}
 
 	// Hide comments section when feature is disabled
@@ -283,21 +286,19 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 
 			{/* Comments List */}
 			<div className="space-y-4">
-				<AnimatePresence mode="popLayout">
-					{comments.length > 0 ? (
-						comments.map((comment: CommentWithUser) => (
-							<Comment
-								key={comment.id}
-								comment={comment}
-								onDelete={handleDelete}
-								currentUserId={user?.id}
-								isDeleting={isDeleting}
-							/>
-						))
-					) : (
-						user && <EmptyState />
-					)}
-				</AnimatePresence>
+				{comments.length > 0 ? (
+					comments.map((comment: CommentWithUser) => (
+						<Comment
+							key={comment.id}
+							comment={comment}
+							onDelete={handleDelete}
+							currentUserId={user?.id}
+							isDeleting={isDeleting}
+						/>
+					))
+				) : (
+					user && <EmptyState />
+				)}
 			</div>
 		</div>
 	);

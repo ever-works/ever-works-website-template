@@ -58,13 +58,6 @@ export function useFeatureFlags(): UseFeatureFlagsResult {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     retry: 2,
-    // On error, disable all features for safety
-    placeholderData: {
-      ratings: false,
-      comments: false,
-      favorites: false,
-      featuredItems: false,
-    },
   });
 
   return {

@@ -33,7 +33,7 @@ export function FavoriteButton({
 }: FavoriteButtonProps) {
 	// All hooks must be called before any early returns
 	const { data: session } = useSession();
-	const { features, isLoading: isFeaturesLoading } = useFeatureFlags();
+	const { features, isPending: isFeaturesLoading } = useFeatureFlags();
 	const { isFavorited, toggleFavorite, isAdding, isRemoving } = useFavorites();
 	const [isHovered, setIsHovered] = useState(false);
 	const loginModal = useLoginModal();

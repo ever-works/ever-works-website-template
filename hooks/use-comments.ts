@@ -16,25 +16,20 @@ export function useComments(itemId: string) {
 
   const { data: comments = [], isPending } = useQuery<CommentWithUser[]>({
     queryKey: ["comments", itemId],
-    queryFn: async () => {
-      // Use AbortController signal to bypass server client cache
-      const controller = new AbortController();
+    queryFn: async ({ signal }) => {
       const response = await serverClient.get<{ success: boolean; comments: CommentWithUser[] }>(
         `/api/items/${itemId}/comments`,
-        {
-          signal: controller.signal,
-          headers: {
-            'Cache-Control': 'no-cache',
-          },
-        }
+        { signal }
       );
       if (!apiUtils.isSuccess(response)) {
         throw new Error(apiUtils.getErrorMessage(response));
       }
       return response.data.comments;
     },
-    staleTime: 0, // Always consider data stale
-    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes (formerly cacheTime)
+    staleTime: 2 * 60 * 1000, // 2 minutes - balance between freshness and stability
+    gcTime: 10 * 60 * 1000, // 10 minutes - match global default
+    refetchOnMount: false, // Don't refetch if data is fresh
+    refetchOnWindowFocus: false, // Prevent flash on window focus
   });
 
   const { mutateAsync: createComment, isPending: isCreating } = useMutation({
@@ -52,9 +47,9 @@ export function useComments(itemId: string) {
       // response.data contains the API response: { success: true, comment: CommentWithUser }
       return response.data.comment;
     },
-    onSuccess: async (newComment) => {
+    onSuccess: (newComment) => {
       if (newComment) {
-        // Immediately update the cache with the new comment
+        // Optimistically update cache with server-returned comment data
         queryClient.setQueryData<CommentWithUser[]>(["comments", itemId], (old = []) => {
           // Check if comment already exists to prevent duplicates
           const commentExists = old.some(c => c.id === newComment.id);
@@ -64,12 +59,8 @@ export function useComments(itemId: string) {
           // Add new comment at the beginning
           return [newComment, ...old];
         });
-        
-        // Refetch to ensure we have the latest server data
-        await queryClient.refetchQueries({ 
-          queryKey: ["comments", itemId],
-          exact: true 
-        });
+        // No refetch needed - server response contains complete comment data
+        // Next natural refetch (on page reload or staleTime expiry) will sync if needed
       }
     },
   });

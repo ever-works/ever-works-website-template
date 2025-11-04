@@ -11,11 +11,11 @@ interface RatingDisplayProps {
 
 export function RatingDisplay({ itemId }: RatingDisplayProps) {
   const t = useTranslations();
-  const { features, isLoading } = useFeatureFlags();
+  const { features, isPending } = useFeatureFlags();
   const { rating } = useItemRating(itemId);
 
   // Hide rating display when feature is disabled
-  if (isLoading || !features.ratings) {
+  if (isPending || !features.ratings) {
     return null;
   }
 
