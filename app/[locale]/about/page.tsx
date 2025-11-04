@@ -53,6 +53,7 @@ export default async function AboutPage({ params }: PageProps) {
                 <svg
                   className="w-4 h-4 mr-2"
                   aria-hidden="true"
+                  focusable="false"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"
                   viewBox="0 0 20 20"
@@ -67,6 +68,7 @@ export default async function AboutPage({ params }: PageProps) {
                 <svg
                   className="w-4 h-4 text-slate-400 dark:text-slate-500 mx-1"
                   aria-hidden="true"
+                  focusable="false"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 6 10"
@@ -108,6 +110,8 @@ export default async function AboutPage({ params }: PageProps) {
                 stroke="currentColor"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                focusable="false"
               >
                 <path
                   strokeLinecap="round"
