@@ -1,3 +1,5 @@
+import type { SortOption } from "@/components/filters/types";
+
 export interface PaginationDisplayProps {
   /**
    * Total number of items (unfiltered)
@@ -28,6 +30,11 @@ export interface PaginationDisplayProps {
    * Whether infinite scroll is enabled
    */
   isInfinite?: boolean;
+
+  /**
+   * Current sort option (optional)
+   */
+  sortBy?: SortOption;
 
   /**
    * Optional additional CSS classes

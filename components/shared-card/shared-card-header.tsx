@@ -230,6 +230,7 @@ export function SharedCardHeader(props: SharedCardHeaderProps) {
               perPage={perPage}
               hasActiveFilters={props.hasActiveFilters}
               isInfinite={props.isInfinite}
+              sortBy={props.sortBy}
             />
           )}
           {(props.searchTerm || props.selectedTags.length > 0) && (

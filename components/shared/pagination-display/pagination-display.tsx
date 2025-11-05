@@ -22,6 +22,7 @@ export function PaginationDisplay({
   perPage,
   hasActiveFilters,
   isInfinite = false,
+  sortBy,
   className = "",
 }: PaginationDisplayProps) {
   const { countText } = usePaginationCounts({
@@ -31,6 +32,7 @@ export function PaginationDisplay({
     perPage,
     hasActiveFilters,
     isInfinite,
+    sortBy,
   });
 
   return (
