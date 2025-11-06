@@ -361,6 +361,17 @@ export const CardPresets = {
     enableSorting: true,
   } as CardConfigOptions,
 
+  homeTwoListing: {
+    showStats: false,
+    showViewToggle: false,
+    showFilters: false,
+    showPagination: true,
+    showEmptyState: true,
+    enableSearch: true,
+    enableTagFilter: true,
+    enableSorting: true,
+  } as CardConfigOptions,
+
   simple: {
     showStats: false,
     showViewToggle: false,

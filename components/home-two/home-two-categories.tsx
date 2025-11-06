@@ -82,6 +82,8 @@ type Home2CategoriesProps = {
   selectedCategories?: string[];
   onCategoryToggle?: (categoryId: string | "clear-all") => void;
   totalItems?: number;
+  showAllCategories?: boolean;
+  onToggleCategories?: () => void;
 };
 
 type CategoryButtonProps = {
@@ -206,6 +208,8 @@ export function HomeTwoCategories({
   selectedCategories = [],
   onCategoryToggle,
   totalItems,
+  showAllCategories = false,
+  onToggleCategories,
 }: Home2CategoriesProps) {
   const t = useTranslations("listing");
   const tCommon = useTranslations("common");
@@ -215,7 +219,6 @@ export function HomeTwoCategories({
   const allCategoriesCount = totalItems ?? calculatedTotalItems;
   const [selectedCategory, setSelectedCategory] = useState("");
   const [hiddenCategories, setHiddenCategories] = useState<Category[]>([]);
-  const [showAllCategories, setShowAllCategories] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -239,7 +242,7 @@ export function HomeTwoCategories({
             onClick={() => onCategoryToggle?.(category.id)}
             ref={
               index !== undefined
-                ? (el) => (categoriesRef.current[index] = el)
+                ? (el) => { categoriesRef.current[index] = el; }
                 : undefined
             }
           />
@@ -262,7 +265,7 @@ export function HomeTwoCategories({
             fullName={category.name}
             ref={
               index !== undefined
-                ? (el) => (categoriesRef.current[index] = el)
+                ? (el) => { categoriesRef.current[index] = el; }
                 : undefined
             }
           />
@@ -299,6 +302,13 @@ export function HomeTwoCategories({
       return () => resizeObserver.disconnect();
     }
   }, [updateScrollIndicators, categories]);
+
+  // Fix flickering: Reset hiddenCategories when toggling between collapsed/expanded views
+  useEffect(() => {
+    setHiddenCategories([]);
+    setCanScrollLeft(false);
+    setCanScrollRight(false);
+  }, [showAllCategories]);
 
   useEffect(() => {
     if (isHomeActive) {
@@ -375,70 +385,7 @@ export function HomeTwoCategories({
 
       {/* Desktop Categories - Enhanced */}
       <div className="hidden md:block">
-        <div className="flex flex-col gap-4">
-          {/* Toggle Button */}
-          {categories.length > 5 && (
-            <div className="flex justify-end">
-              <Button
-                className={TOGGLE_BUTTON_STYLES}
-                onPress={() => setShowAllCategories(!showAllCategories)}
-                aria-expanded={showAllCategories}
-                aria-label={
-                  showAllCategories
-                    ? "Collapse categories to single row"
-                    : `Expand to show all ${categories.length} categories`
-                }
-              >
-                {showAllCategories ? (
-                  <>
-                    <span className="hidden sm:inline">Show as single row</span>
-                    <span className="sm:hidden">Single row</span>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      className="ml-1.5 transition-transform"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="M3 10h18M3 14h18"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </>
-                ) : (
-                  <>
-                    <span className="hidden sm:inline">
-                      Show all {categories.length} categories
-                    </span>
-                    <span className="sm:hidden">All categories</span>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      className="ml-1.5 transition-transform"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="M4 4h16v7H4V4zm0 9h16v7H4v-7z"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </>
-                )}
-              </Button>
-            </div>
-          )}
-
-          <div
+        <div
             ref={scrollContainerRef}
             onScroll={(e) => {
               // Only track scroll when in collapsed mode
@@ -578,7 +525,6 @@ export function HomeTwoCategories({
               </div>
             )}
           </div>
-        </div>
       </div>
     </div>
   );

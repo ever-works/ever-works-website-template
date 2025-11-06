@@ -8,6 +8,8 @@ import { HomeTwoCategories } from "./home-two-categories";
 import { LayoutKey } from "../layouts";
 import { SortOption } from "../filters/types";
 import { LayoutSettings } from "../layout-settings";
+import { Button } from "@heroui/react";
+import { useState } from "react";
 import clsx from "clsx";
 
 const SORT_OPTIONS: SortOption[] = [
@@ -31,22 +33,28 @@ type Home2FiltersProps = {
   layoutKey: LayoutKey;
   setLayoutKey: (layoutKey: LayoutKey) => void;
   onFilterChange?: () => void;
+  totalCount?: number;
+  filteredCount?: number;
 };
 
 export function HomeTwoFilters({
   categories,
   tags,
   onFilterChange,
+  totalCount,
+  filteredCount,
 }: Home2FiltersProps) {
-  const { 
-    searchTerm, 
-    setSearchTerm, 
-    setSortBy, 
+  const {
+    searchTerm,
+    setSearchTerm,
+    setSortBy,
     sortBy,
     selectedCategories,
     toggleSelectedCategory,
     clearSelectedCategories
   } = useFilters();
+
+  const [showAllCategories, setShowAllCategories] = useState(false);
 
   const handleCategoryToggle = (categoryId: string) => {
     if (categoryId === "clear-all") {
@@ -131,13 +139,96 @@ export function HomeTwoFilters({
         </div>
       </div>
 
-      <HomeTwoCategories 
+      <HomeTwoCategories
         categories={categories}
         mode="filter"
         selectedCategories={selectedCategories}
         onCategoryToggle={handleCategoryToggle}
         totalItems={categories.reduce((sum, cat) => sum + (cat.count || 0), 0)}
+        showAllCategories={showAllCategories}
+        onToggleCategories={() => setShowAllCategories(!showAllCategories)}
       />
+
+      {/* New Row: Items count and Toggle button */}
+      <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800">
+        {/* Left: Showing X of Y items */}
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          {filteredCount !== undefined && totalCount !== undefined ? (
+            filteredCount === totalCount ? (
+              <span>Showing {totalCount} items</span>
+            ) : (
+              <span>Showing {filteredCount} of {totalCount} items</span>
+            )
+          ) : null}
+        </div>
+
+        {/* Right: Show all categories toggle button */}
+        {categories.length > 5 && (
+          <Button
+            className={clsx(
+              "px-4 py-1.5 font-medium transition-all duration-300 rounded-full",
+              "text-theme-primary bg-theme-primary-10",
+              "hover:bg-theme-primary-20 hover:shadow-sm hover:scale-105",
+              "active:scale-95",
+              "text-xs sm:text-sm h-8",
+              "focus:outline-none focus:ring-2 focus:ring-theme-primary-300 focus:ring-offset-2"
+            )}
+            onPress={() => setShowAllCategories(!showAllCategories)}
+            aria-expanded={showAllCategories}
+            aria-label={
+              showAllCategories
+                ? "Collapse categories to single row"
+                : `Expand to show all ${categories.length} categories`
+            }
+          >
+            {showAllCategories ? (
+              <>
+                <span className="hidden sm:inline">Show as single row</span>
+                <span className="sm:hidden">Single row</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="ml-1.5 transition-transform"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3 10h18M3 14h18"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </>
+            ) : (
+              <>
+                <span className="hidden sm:inline">
+                  Show all {categories.length} categories
+                </span>
+                <span className="sm:hidden">All categories</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="ml-1.5 transition-transform"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M4 4h16v7H4V4zm0 9h16v7H4v-7z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </>
+            )}
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

@@ -86,6 +86,8 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
             layoutKey={layoutKey}
             setLayoutKey={setLayoutKey}
             onFilterChange={resetToFirstPage}
+            totalCount={props.items.length}
+            filteredCount={props.filteredAndSortedItems.length}
           />
         </div>
         <ListingClient 
@@ -98,7 +100,7 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
           items={paginatedItems}
           filteredCount={props.filteredAndSortedItems.length}
           totalCount={props.items.length}
-          config={CardPresets.showViewToggle}
+          config={CardPresets.homeTwoListing}
         />
         {totalPagesCount > 1 && (
           <div className="mt-8 flex items-center justify-center">
