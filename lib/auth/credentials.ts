@@ -1,6 +1,6 @@
 import { compare, hash } from "bcryptjs";
 import Credentials from "next-auth/providers/credentials";
-import { getUserByEmail, logActivity, getClientAccountByEmail, verifyClientPassword, getClientProfileById, getClientProfileByUserId } from "../db/queries";
+import { getUserByEmail, logActivity, getClientAccountByEmail, verifyClientPassword, getClientProfileByUserId } from "../db/queries";
 import { ActivityType } from "../db/schema";
 
 const SALT_ROUNDS = 10;
