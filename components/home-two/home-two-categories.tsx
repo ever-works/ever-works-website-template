@@ -99,22 +99,40 @@ const CategoryButton = memo(
 
       const button = useMemo(
         () => (
-          <Button
-            as={Link}
-            href={href}
-            onPress={onClick}
-            className={cn(
-              "group h-7 sm:h-9 whitespace-nowrap py-1 sm:py-1.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-300 ease-in-out hover:scale-105",
-              {
-                "bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20 ring-2 ring-white/20 dark:ring-blue-500/30":
-                  isActive,
-                "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700/70 bg-white dark:bg-gray-800/90 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md":
-                  !isActive,
-              }
-            )}
-          >
-            {buttonContent}
-          </Button>
+          onClick ? (
+            // Filter mode: Plain button with onClick, no navigation
+            <Button
+              onPress={onClick}
+              className={cn(
+                "group h-7 sm:h-9 whitespace-nowrap py-1 sm:py-1.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-300 ease-in-out hover:scale-105",
+                {
+                  "bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20 ring-2 ring-white/20 dark:ring-blue-500/30":
+                    isActive,
+                  "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700/70 bg-white dark:bg-gray-800/90 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md":
+                    !isActive,
+                }
+              )}
+            >
+              {buttonContent}
+            </Button>
+          ) : (
+            // Navigation mode: Button as Link with href
+            <Button
+              as={Link}
+              href={href}
+              className={cn(
+                "group h-7 sm:h-9 whitespace-nowrap py-1 sm:py-1.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-300 ease-in-out hover:scale-105",
+                {
+                  "bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20 ring-2 ring-white/20 dark:ring-blue-500/30":
+                    isActive,
+                  "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700/70 bg-white dark:bg-gray-800/90 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md":
+                    !isActive,
+                }
+              )}
+            >
+              {buttonContent}
+            </Button>
+          )
         ),
         [href, isActive, buttonContent, onClick]
       );
@@ -157,8 +175,10 @@ export function HomeTwoCategories({
   const allCategoriesCount = totalItems ?? calculatedTotalItems;
   const [selectedCategory, setSelectedCategory] = useState("");
   const [hiddenCategories, setHiddenCategories] = useState<Category[]>([]);
+  const [isMorePopoverOpen, setIsMorePopoverOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const categoriesRef = useRef<(HTMLDivElement | null)[]>([]);
+  const morePopoverRef = useRef<HTMLDivElement>(null);
 
   const renderCategory = useCallback(
     (category: Category, index?: number) => {
@@ -232,6 +252,20 @@ export function HomeTwoCategories({
       }
     }
   }, [categories, pathname, isHomeActive, basePath]);
+
+  // Handle click outside to close popover
+  useEffect(() => {
+    if (!isMorePopoverOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (morePopoverRef.current && !morePopoverRef.current.contains(event.target as Node)) {
+        setIsMorePopoverOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMorePopoverOpen]);
 
   // Handle category change from select
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
