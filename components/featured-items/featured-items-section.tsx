@@ -27,7 +27,7 @@ export function FeaturedItemsSection({
   showViewAll = true,
   variant = 'default'
 }: FeaturedItemsSectionProps) {
-  const { features, isLoading: isFeaturesLoading } = useFeatureFlags();
+  const { features, isPending: isFeaturesLoading } = useFeatureFlags();
   const { featuredItems, isLoading, isError, error } = useFeaturedItemsSection({
     limit,
     enabled: true,

@@ -244,6 +244,7 @@
     "TAGGED_ITEMS": "已标记项目",
     "FEATURED_ITEMS": "精选项目",
     "SHOWING": "显示",
+    "OF": "的",
     "SORTED_BY": "（排序方式",
     "SORTING": "排序",
     "SORT_BY": "排序方式",
@@ -2123,5 +2124,16 @@
       "LOADING": "加载中...",
       "REACHED_THE_END": "您已到达末尾"
     }
+  },
+  "pages": {
+    "LEGAL_BADGE": "法律",
+    "LAST_UPDATED": "最后更新：",
+    "RELATED_INFORMATION": "相关信息",
+    "ABOUT_PAGE_META_DESCRIPTION": "了解我们的目录服务以及我们将人们与有价值资源连接起来的使命",
+    "PRIVACY_POLICY_META_DESCRIPTION": "了解我们的目录如何收集、使用和保护您的信息",
+    "TERMS_OF_SERVICE_META_DESCRIPTION": "使用我们目录服务的条款和条件",
+    "ABOUT_US_DESCRIPTION": "了解更多关于我们公司的信息",
+    "PRIVACY_POLICY_DESCRIPTION": "了解我们如何保护您的数据",
+    "TERMS_OF_SERVICE_DESCRIPTION": "查看我们的条款和条件"
   }
 }

@@ -270,9 +270,9 @@ export const comments = pgTable('comments', {
 		.references(() => clientProfiles.id, { onDelete: 'cascade' }),
 	itemId: text('itemId').notNull(),
 	rating: integer('rating').notNull().default(0),
-	createdAt: timestamp('created_at').notNull().defaultNow(),
-	updatedAt: timestamp('updated_at').notNull().defaultNow(),
-	deletedAt: timestamp('deleted_at')
+	createdAt: timestamp('created_at', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+	updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+	deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true })
 });
 
 export const VoteType = {

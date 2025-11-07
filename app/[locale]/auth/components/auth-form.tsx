@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Building, Globe, User } from "lucide-react";
+import { Building, Globe, User } from "lucide-react";
 import { useConfig } from "../../config";
 import { CredentialsForm } from "./credentials-form";
 import { SocialLogin } from "./social-login";
@@ -13,6 +13,7 @@ import {
   GeometricDecoration,
   TrustBadge
 } from "@/components/ui/auth-illustrations";
+import { authFeatures } from "@/lib/config/auth-features";
 
 export function AuthForm({ form, showSocialLogin = true, onSuccess, clientMode = false }: { form: "login" | "signup", showSocialLogin?: boolean, onSuccess?: () => void, clientMode?: boolean }) {
   const config = useConfig();
@@ -138,45 +139,35 @@ export function AuthForm({ form, showSocialLogin = true, onSuccess, clientMode =
                     </>
                   ) : (
                     <>
-                      <div className="flex items-center">
-                        <div className="bg-theme-primary/10 p-3 rounded-xl mr-4 group hover:bg-theme-primary/20 transition-colors">
-                          <Search className="h-5 w-5 text-theme-primary group-hover:scale-110 transition-transform" />
-                        </div>
-                        <div>
-                          <span className="font-semibold text-gray-900 dark:text-white block">
-                            {t("ADVANCED_SEARCH")}
-                          </span>
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {t("EXPLORE_THOUSANDS")}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="bg-theme-accent/10 p-3 rounded-xl mr-4 group hover:bg-theme-accent/20 transition-colors">
-                          <Building className="h-5 w-5 text-theme-accent group-hover:scale-110 transition-transform" />
-                        </div>
-                        <div>
-                          <span className="font-semibold text-gray-900 dark:text-white block">
-                            {t("LIST_YOUR_BUSINESS")}
-                          </span>
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {t("INCREASE_VISIBILITY")}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="bg-theme-secondary/10 p-3 rounded-xl mr-4 group hover:bg-theme-secondary/20 transition-colors">
-                          <Globe className="h-5 w-5 text-theme-secondary group-hover:scale-110 transition-transform" />
-                        </div>
-                        <div>
-                          <span className="font-semibold text-gray-900 dark:text-white block">
-                            {t("PROFESSIONAL_NETWORK")}
-                          </span>
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {t("CONNECT_WITH_EXPERTS")}
-                          </span>
-                        </div>
-                      </div>
+                      {authFeatures.map((feature) => {
+                        const bgColorClass = feature.colorVariant === "primary"
+                          ? "bg-theme-primary/10 hover:bg-theme-primary/20"
+                          : feature.colorVariant === "accent"
+                          ? "bg-theme-accent/10 hover:bg-theme-accent/20"
+                          : "bg-theme-secondary/10 hover:bg-theme-secondary/20";
+
+                        const iconColorClass = feature.colorVariant === "primary"
+                          ? "text-theme-primary"
+                          : feature.colorVariant === "accent"
+                          ? "text-theme-accent"
+                          : "text-theme-secondary";
+
+                        return (
+                          <div key={feature.titleKey} className="flex items-center">
+                            <div className={`${bgColorClass} p-3 rounded-xl mr-4 group transition-colors`}>
+                              <feature.icon className={`h-5 w-5 ${iconColorClass} group-hover:scale-110 transition-transform`} />
+                            </div>
+                            <div>
+                              <span className="font-semibold text-gray-900 dark:text-white block">
+                                {t(feature.titleKey as any)}
+                              </span>
+                              <span className="text-sm text-gray-600 dark:text-gray-400">
+                                {t(feature.descriptionKey as any)}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </>
                   )}
                 </StaggerContainer>

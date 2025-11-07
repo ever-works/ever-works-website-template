@@ -53,8 +53,6 @@ export interface ExtendedCardProps extends BaseCardProps {
   renderCustomItem?: (item: ItemData, index: number) => React.ReactNode;
   renderCustomEmpty?: () => React.ReactNode;
   headerActions?: React.ReactNode;
-  filteredCount?: number;
-  totalCount?: number;
 }
 
 interface FilterState {
@@ -240,9 +238,9 @@ export function SharedCard(props: ExtendedCardProps) {
     config.enableSorting ?? true
   );
 
-  // Calculate counts
-  const filteredCount = props.filteredCount ?? sortedItems.length;
-  const totalCount = props.totalCount ?? props.total;
+  // Calculate counts (single source of truth)
+  const filteredCount = sortedItems.length;
+  const totalCount = items.length;
 
   // Handle view change
   const handleViewChange = useCallback(

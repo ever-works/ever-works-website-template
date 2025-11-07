@@ -6,25 +6,48 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar } from '@/components/header/avatar';
 import { formatDistanceToNow } from 'date-fns';
 import { MessageCircle, Trash2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Rating } from '@/components/ui/rating';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import type { CommentWithUser } from '@/lib/types/comment';
 import { toast } from 'sonner';
 import { useFeatureFlags } from '@/hooks/use-feature-flags';
+import { useLoginModal } from '@/hooks/use-login-modal';
 
-// Extracted loading skeleton component
+// Design system class constants
+const CARD_WRAPPER_CLASSES = 'bg-white/95 dark:bg-gray-900/95 rounded-2xl p-8 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500';
+const ICON_CONTAINER_CLASSES = 'p-3 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-xl';
+const SECTION_HEADER_CLASSES = 'flex items-center gap-4 mb-8';
+const FORM_CONTAINER_CLASSES = 'p-6 rounded-xl bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50';
+
+// Extracted loading skeleton component with card styling
 const CommentSkeleton = memo(() => (
-	<div className="space-y-4">
-		{[1, 2, 3].map((i) => (
-			<div key={i} className="flex gap-4 animate-pulse">
-				<div className="w-10 h-10 bg-muted rounded-full" />
-				<div className="flex-1 space-y-2">
-					<div className="h-4 bg-muted rounded w-1/4" />
-					<div className="h-4 bg-muted rounded w-3/4" />
-				</div>
+	<div className={CARD_WRAPPER_CLASSES}>
+		{/* Header Skeleton */}
+		<div className={SECTION_HEADER_CLASSES}>
+			<div className={ICON_CONTAINER_CLASSES}>
+				<div className="w-6 h-6 bg-blue-200 dark:bg-blue-800 rounded animate-pulse" />
 			</div>
-		))}
+			<div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+		</div>
+
+		{/* Form Skeleton */}
+		<div className="mb-8 space-y-4">
+			<div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
+			<div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-lg w-32 ml-auto animate-pulse" />
+		</div>
+
+		{/* Comments List Skeleton */}
+		<div className="space-y-4">
+			{[1, 2, 3].map((i) => (
+				<div key={i} className="flex gap-4 animate-pulse">
+					<div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full" />
+					<div className="flex-1 space-y-2">
+						<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
+						<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+					</div>
+				</div>
+			))}
+		</div>
 	</div>
 ));
 CommentSkeleton.displayName = 'CommentSkeleton';
@@ -51,17 +74,10 @@ const CommentForm = memo(
 		};
 
 		return (
-			<div className="bg-gradient-to-r from-theme-primary-50/50 to-theme-secondary-50/50 p-6 rounded-xl border border-theme-primary-100 dark:from-theme-primary-950/10 dark:to-theme-secondary-950/10 dark:border-theme-primary-800/20">
-				<div className="flex items-center gap-2 mb-6">
-					<MessageCircle className="w-5 h-5 text-theme-primary-500" aria-hidden="true" />
-					<h2 className="text-xl font-semibold text-theme-primary-900 dark:text-theme-primary-100">
-						Add Your Comment
-					</h2>
-				</div>
-
+			<div className={FORM_CONTAINER_CLASSES}>
 				<form onSubmit={handleSubmit} className="space-y-4">
 					<div className="flex items-center gap-2">
-						<label htmlFor="rating" className="text-sm text-muted-foreground">
+						<label htmlFor="rating" className="text-sm font-medium text-gray-700 dark:text-gray-300">
 							Rating:
 						</label>
 						<Rating value={rating} onChange={setRating} size="md" />
@@ -111,11 +127,7 @@ const Comment = memo(
 		currentUserId?: string;
 		isDeleting: boolean;
 	}) => (
-		<motion.div
-			layout
-			initial={{ opacity: 0, y: 20 }}
-			animate={{ opacity: 1, y: 0 }}
-			exit={{ opacity: 0, y: -20 }}
+		<div
 			className="group flex gap-4 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
 		>
 			<Avatar
@@ -156,7 +168,7 @@ const Comment = memo(
 				</div>
 				<p className="mt-2 text-sm text-gray-700 dark:text-gray-300">{comment.content}</p>
 			</div>
-		</motion.div>
+		</div>
 	)
 );
 Comment.displayName = 'Comment';
@@ -170,20 +182,53 @@ const EmptyState = memo(() => (
 ));
 EmptyState.displayName = 'EmptyState';
 
+// Login prompt component for non-authenticated users
+const LoginPrompt = memo(({ onLoginClick }: { onLoginClick: () => void }) => (
+	<div className={FORM_CONTAINER_CLASSES}>
+		<div className="text-center py-8 space-y-4">
+			<MessageCircle className="w-12 h-12 mx-auto text-theme-primary-400 dark:text-theme-primary-500" aria-hidden="true" />
+			<div>
+				<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+					Join the Conversation
+				</h3>
+				<p className="text-sm text-gray-600 dark:text-gray-400">
+					Sign in to share your thoughts and rate this item
+				</p>
+			</div>
+			<Button
+				onClick={onLoginClick}
+				className="bg-theme-primary-500 hover:bg-theme-primary-600 text-white px-8"
+				size="lg"
+			>
+				Sign In to Comment
+			</Button>
+			<p className="text-xs text-gray-500 dark:text-gray-400">
+				Don&apos;t have an account? Sign up when you click above
+			</p>
+		</div>
+	</div>
+));
+LoginPrompt.displayName = 'LoginPrompt';
+
 interface CommentsSectionProps {
 	itemId: string;
 }
 
 export function CommentsSection({ itemId }: CommentsSectionProps) {
 	// All hooks must be called before any early returns
-	const { features, isLoading: isFeaturesLoading } = useFeatureFlags();
-	const { comments, isLoading, createComment, isCreating, deleteComment, isDeleting } = useComments(itemId);
+	const { features, isPending: isFeaturesPending, error: featuresError } = useFeatureFlags();
+	const { comments, isPending: isCommentsPending, createComment, isCreating, deleteComment, isDeleting } = useComments(itemId);
 	const { user } = useCurrentUser();
+	const loginModal = useLoginModal();
+
+	// Combine loading states to prevent race conditions
+	const isLoading = isFeaturesPending || isCommentsPending;
 
 	const handleSubmit = useCallback(
 		async (content: string, rating: number) => {
 			try {
 				await createComment({ content, itemId, rating });
+				toast.success('Comment posted successfully!');
 			} catch (error) {
 				toast.error(error instanceof Error ? error.message : 'Failed to post comment');
 			}
@@ -203,39 +248,57 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 		[deleteComment]
 	);
 
-	// Hide comments section when feature is disabled
-	if (isFeaturesLoading || !features.comments) {
-		return null;
-	}
-
+	// Show skeleton during loading (single coordinated check)
 	if (isLoading) {
 		return <CommentSkeleton />;
 	}
 
-	return (
-		<div className="space-y-8">
-			<CommentForm onSubmit={handleSubmit} isCreating={isCreating} />
+	// Handle feature flags error state
+	if (featuresError) {
+		return null;
+	}
 
-			<div className="space-y-6">
-				<h2 className="text-xl font-semibold text-theme-primary-900 dark:text-theme-primary-100">
+	// Hide comments section when feature is disabled
+	if (!features.comments) {
+		return null;
+	}
+
+	return (
+		<div className={CARD_WRAPPER_CLASSES}>
+			{/* Section Header with Icon */}
+			<div className={SECTION_HEADER_CLASSES}>
+				<div className={ICON_CONTAINER_CLASSES}>
+					<MessageCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+				</div>
+				<h2 className="text-2xl font-bold text-gray-800 dark:text-white">
 					Comments ({comments.length})
 				</h2>
+			</div>
 
-				<AnimatePresence mode="popLayout">
-					{comments.length > 0 ? (
-						comments.map((comment: CommentWithUser) => (
-							<Comment
-								key={comment.id}
-								comment={comment}
-								onDelete={handleDelete}
-								currentUserId={user?.id}
-								isDeleting={isDeleting}
-							/>
-						))
-					) : (
-						<EmptyState />
-					)}
-				</AnimatePresence>
+			{/* Comment Form */}
+			<div className="mb-8">
+				{user ? (
+				<CommentForm onSubmit={handleSubmit} isCreating={isCreating} />
+			) : (
+				<LoginPrompt onLoginClick={() => loginModal.onOpen('Sign in to join the conversation')} />
+			)}
+			</div>
+
+			{/* Comments List */}
+			<div className="space-y-4">
+				{comments.length > 0 ? (
+					comments.map((comment: CommentWithUser) => (
+						<Comment
+							key={comment.id}
+							comment={comment}
+							onDelete={handleDelete}
+							currentUserId={user?.id}
+							isDeleting={isDeleting}
+						/>
+					))
+				) : (
+					user && <EmptyState />
+				)}
 			</div>
 		</div>
 	);

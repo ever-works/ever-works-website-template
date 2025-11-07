@@ -10,7 +10,6 @@ import { Toaster } from 'sonner';
 import { PHProvider } from './integration/posthog/provider';
 import PostHogPageView from './integration/posthog/page-view';
 import { Locale } from '@/lib/constants';
-import { LoginModalProvider } from '@/components/auth/login-modal-provider';
 import { Suspense } from 'react';
 import Script from 'next/script';
 import { ConditionalLayout } from '@/components/layout/conditional-layout';
@@ -71,7 +70,6 @@ export default async function RootLayout({
 				<NextIntlClientProvider messages={messages}>
 					<Toaster position="bottom-right" richColors />
 					<Providers config={config}>
-						<LoginModalProvider />
 						<ConditionalLayout>{children}</ConditionalLayout>
 					</Providers>
 				</NextIntlClientProvider>

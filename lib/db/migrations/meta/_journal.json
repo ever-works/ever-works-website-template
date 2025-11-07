@@ -64,6 +64,20 @@
       "when": 1761211200000,
       "tag": "0008_add_twenty_crm_singleton_constraint",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1730563200000,
+      "tag": "0009_add_integration_mappings",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1730563260000,
+      "tag": "0010_convert_comments_timestamps_to_timestamptz",
+      "breakpoints": true
     }
   ]
 }

@@ -145,7 +145,7 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 
 								<ShareButton url={meta.source_url || ''} title={meta.name} />
 								<VoteButton
-									itemId={meta.name}
+									itemId={meta.slug || meta.name}
 									className="group inline-flex items-center px-6 py-3 bg-white/90 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-semibold transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
 								/>
 							</div>
@@ -186,6 +186,11 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 							item={meta}
 						/>
 
+						{/* Comments Section */}
+						<div className="mt-8">
+							<CommentsSection itemId={meta.slug || meta.name} />
+						</div>
+
 					</div>
 
 					{/* Right column */}
@@ -213,7 +218,7 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 								</h2>
 							</div>
 							<div className="space-y-4">
-								<RatingDisplay itemId={meta.name} />
+								<RatingDisplay itemId={meta.slug || meta.name} />
 
 								{/* Existing information items */}
 								<div className="flex justify-between items-center p-4 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-300 group">
@@ -448,11 +453,6 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 						)}
 					</div>
 				</div>
-			</div>
-
-			<div className="mt-8">
-				<h2 className="text-2xl font-semibold mb-6">Comments</h2>
-				<CommentsSection itemId={meta.name} />
 			</div>
 		</div>
 	);

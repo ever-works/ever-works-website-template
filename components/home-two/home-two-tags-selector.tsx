@@ -1,22 +1,22 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef, useId, useEffect } from "react";
 import { Tag } from "@/lib/content";
-import { Button, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { ChevronDown, Search, Tag as TagIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils/index";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
 
 type HomeTwoTagsSelectorProps = {
   tags: Tag[];
+  selectedTags?: string[];
+  onTagToggle?: (tagId: string) => void;
 };
 
 type TagButtonProps = {
   tag: Tag;
   isActive: boolean;
-  href: string;
-  onPress?: () => void;
+  onPress: () => void;
 };
 
 const MAX_TAG_NAME_LENGTH = 20;
@@ -27,15 +27,13 @@ const truncateText = (text: string): string => {
   return `${text.substring(0, MAX_TAG_NAME_LENGTH)}${TRUNCATE_SUFFIX}`;
 };
 
-const TagButton = ({ tag, isActive, href, onPress }: TagButtonProps) => {
+const TagButton = ({ tag, isActive, onPress }: TagButtonProps) => {
   const displayName = truncateText(tag.name);
   const isTextTruncated = tag.name.length > MAX_TAG_NAME_LENGTH;
 
   return (
     <Button
       onPress={onPress}
-      as={Link}
-      href={href}
       className={cn(
         "group w-full font-medium text-left h-6 justify-start items-center transition-all duration-200",
         "hover:shadow-md hover:scale-[1.02] active:scale-[0.98]",
@@ -93,27 +91,18 @@ const TagButton = ({ tag, isActive, href, onPress }: TagButtonProps) => {
   );
 };
 
-export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
-  const pathname = usePathname();
-  const router = useRouter();
+export const HomeTwoTagsSelector = ({
+  tags,
+  selectedTags = [],
+  onTagToggle
+}: HomeTwoTagsSelectorProps) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const panelId = useId();
   const t = useTranslations();
 
-  const isTagPage = pathname.includes("/tags/");
-  const currentTagId = isTagPage ? pathname.split("/tags/")[1] : null;
-  const currentTag = useMemo(
-    () => (currentTagId ? tags.find((tag) => tag.id === currentTagId) : null),
-    [currentTagId, tags]
-  );
-
-  const handleClearTag = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      router.push("/");
-    },
-    [router]
-  );
+  const selectedTagsCount = selectedTags.length;
 
   const filteredTags = useMemo(() => {
     if (!searchTerm) return tags;
@@ -125,50 +114,74 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
     setSearchTerm("");
   }, []);
 
+  // Manual outside click and escape key handling with deferred listeners
+  useEffect(() => {
+    const handlePointerDownOutside = (event: PointerEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      // Critical: Defer listener attachment to next tick
+      // This prevents the opening click from triggering the outside click handler
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('pointerdown', handlePointerDownOutside, { capture: true });
+        document.addEventListener('keydown', handleKeyDown);
+      }, 0);
+
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener('pointerdown', handlePointerDownOutside, { capture: true });
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isOpen]);
+
   return (
-    <div className="flex flex-col gap-2">
-      <Popover placement="bottom" offset={10}>
-        <PopoverTrigger>
-          <Button
-            disableRipple
-            className={cn(
-              "bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-2 sm:px-3 h-8 sm:h-9 text-xs sm:text-sm text-theme-primary-600 dark:text-theme-primary-400 transition-colors duration-300",
-              "group flex items-center gap-1 sm:gap-2 min-w-[80px] sm:min-w-[100px]"
-            )}
-            radius="sm"
-            variant="light"
-          >
-            <TagIcon className="w-3 h-3 sm:w-4 sm:h-4 transition-transform group-hover:scale-110" />
-            <span className="text-xs sm:text-sm font-normal capitalize truncate max-w-[60px] sm:max-w-[100px]">
-              {currentTag ? currentTag.name : t("listing.TAGS")}
-            </span>
-            {currentTag && (
-              <>
-                <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:inline">
-                  ({currentTag.count})
-                </span>
-                <span
-                  onClick={handleClearTag}
-                  className="ml-1 p-0.5 sm:p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Clear tag selection"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      handleClearTag(e as any);
-                    }
-                  }}
-                >
-                  <X className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-gray-500 dark:text-gray-400" />
-                </span>
-              </>
-            )}
-            <ChevronDown className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-gray-500 dark:text-gray-400 transition-all duration-300 group-hover:rotate-180" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent
+    <div className="flex flex-col gap-2 relative" ref={popoverRef}>
+      <Button
+        disableRipple
+        onPress={() => setIsOpen(!isOpen)}
+        className={cn(
+          "bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-2 sm:px-3 h-8 sm:h-9 text-xs sm:text-sm text-theme-primary-600 dark:text-theme-primary-400 transition-colors duration-300",
+          "group flex items-center gap-1 sm:gap-2 min-w-[80px] sm:min-w-[100px]"
+        )}
+        radius="sm"
+        variant="light"
+        aria-label="Select tags"
+        aria-expanded={isOpen}
+        aria-controls={isOpen ? panelId : undefined}
+      >
+        <TagIcon className="w-3 h-3 sm:w-4 sm:h-4 transition-transform group-hover:scale-110" />
+        <span className="text-xs sm:text-sm font-normal capitalize truncate max-w-[60px] sm:max-w-[100px]">
+          {t("listing.TAGS")}
+        </span>
+        {selectedTagsCount > 0 && (
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            ({selectedTagsCount})
+          </span>
+        )}
+        <ChevronDown className={cn(
+          "h-2.5 w-2.5 sm:h-3 sm:w-3 text-gray-500 dark:text-gray-400 transition-all duration-300",
+          isOpen && "rotate-180"
+        )} />
+      </Button>
+
+      {isOpen && (
+        <div
+          id={panelId}
           className={cn(
-            "p-0 max-h-[300px] sm:max-h-[400px] w-[280px] sm:w-[320px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-2xl overflow-hidden",
+            "absolute top-full mt-2 left-0 z-50",
+            "p-0 max-h-[300px] sm:max-h-[400px] w-[280px] sm:w-[320px]",
+            "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700",
+            "rounded-lg shadow-2xl overflow-hidden",
             "animate-in fade-in-0 zoom-in-95 duration-200"
           )}
         >
@@ -198,21 +211,20 @@ export const HomeTwoTagsSelector = ({ tags }: HomeTwoTagsSelectorProps) => {
             {/* Tags List */}
             <div className="max-h-[200px] sm:max-h-[250px] overflow-y-auto overflow-hidden scrollbar-none space-y-1.5 sm:space-y-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent scrollbar-none">
               {filteredTags.map((tag, index) => {
-                const href = `/tags/${tag.id}`;
-                const isActive = pathname === encodeURI(href) || pathname.startsWith(encodeURI(href) + '/');
+                const isActive = selectedTags.includes(tag.id);
                 return (
                   <TagButton
                     key={`${tag.id}-${index}`}
                     tag={tag}
                     isActive={isActive}
-                    href={href}
+                    onPress={() => onTagToggle?.(tag.id)}
                   />
                 );
               })}
             </div>
           </div>
-        </PopoverContent>
-      </Popover>
+        </div>
+      )}
     </div>
   );
 };
