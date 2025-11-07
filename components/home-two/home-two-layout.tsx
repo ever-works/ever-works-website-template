@@ -14,7 +14,7 @@ import clsx from "clsx";
 
 // Style constants for sticky header
 const STICKY_CONTAINER_BASE = clsx(
-  "sticky top-4 z-20",
+  "sticky top-12 z-20",
   "transition-all duration-300 ease-in-out",
   "rounded-lg"
 );
