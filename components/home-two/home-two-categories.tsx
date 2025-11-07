@@ -183,6 +183,7 @@ export function HomeTwoCategories({
   const categoriesRef = useRef<(HTMLDivElement | null)[]>([]);
   const morePopoverRef = useRef<HTMLDivElement>(null);
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
+  const rafId = useRef<number | null>(null);
   const portalTarget = usePortal('category-popover-portal');
 
   const renderCategory = useCallback(
@@ -277,13 +278,21 @@ export function HomeTwoCategories({
     if (!isMorePopoverOpen || !triggerButtonRef.current) return;
 
     const updatePosition = () => {
-      if (triggerButtonRef.current) {
-        const rect = triggerButtonRef.current.getBoundingClientRect();
-        setPopoverPosition({
-          top: rect.bottom + 8, // 8px gap below trigger (viewport relative for fixed positioning)
-          left: rect.right - 256, // 256px = w-64, align popover right edge with trigger right edge (viewport relative)
-        });
+      // Cancel any pending animation frame to prevent queue buildup
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current);
       }
+
+      // Schedule position update for next browser paint cycle (60fps)
+      rafId.current = requestAnimationFrame(() => {
+        if (triggerButtonRef.current) {
+          const rect = triggerButtonRef.current.getBoundingClientRect();
+          setPopoverPosition({
+            top: rect.bottom + 8, // 8px gap below trigger (viewport relative for fixed positioning)
+            left: rect.right - 256, // 256px = w-64, align popover right edge with trigger right edge (viewport relative)
+          });
+        }
+      });
     };
 
     // Calculate initial position
@@ -294,8 +303,14 @@ export function HomeTwoCategories({
     window.addEventListener('resize', updatePosition);
 
     return () => {
+      // Clean up event listeners
       window.removeEventListener('scroll', updatePosition, true);
       window.removeEventListener('resize', updatePosition);
+
+      // Cancel any pending animation frame
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current);
+      }
     };
   }, [isMorePopoverOpen]);
 
