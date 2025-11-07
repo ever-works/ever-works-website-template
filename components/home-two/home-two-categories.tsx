@@ -264,7 +264,12 @@ export function HomeTwoCategories({
     if (!isMorePopoverOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (morePopoverRef.current && !morePopoverRef.current.contains(event.target as Node)) {
+      if (
+        morePopoverRef.current &&
+        !morePopoverRef.current.contains(event.target as Node) &&
+        triggerButtonRef.current &&
+        !triggerButtonRef.current.contains(event.target as Node)
+      ) {
         setIsMorePopoverOpen(false);
       }
     };
