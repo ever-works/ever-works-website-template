@@ -4,7 +4,7 @@ import { Category } from "@/lib/content";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { cn } from "@/lib/utils/index";
 import React, {
   memo,
@@ -14,8 +14,10 @@ import React, {
   useRef,
   useState,
 } from "react";
+import ReactDOM from "react-dom";
 import Image from "next/image";
 import clsx from "clsx";
+import { usePortal } from "@/hooks/use-portal";
 
 // Style constants
 const SCROLL_CONTAINER_STYLES = clsx(
@@ -44,21 +46,6 @@ const STICKY_LEFT_STYLES = clsx(
   "sticky left-0 flex-shrink-0 z-10 pr-7",
   "bg-gradient-to-r from-white via-white to-transparent",
   "dark:from-gray-900 dark:via-gray-900"
-);
-
-const STICKY_RIGHT_STYLES = clsx(
-  "sticky right-0 flex-shrink-0 pl-4",
-  "bg-gradient-to-l from-white via-white to-transparent",
-  "dark:from-gray-900 dark:via-gray-900"
-);
-
-const MORE_BUTTON_STYLES = clsx(
-  "h-8 py-1.5 text-xs flex items-center gap-1.5 rounded-md",
-  "bg-theme-primary-10 hover:bg-theme-primary-20",
-  "dark:bg-theme-primary-10 dark:hover:bg-theme-primary-20",
-  "text-theme-primary-700 dark:text-theme-primary-300",
-  "border border-theme-primary-200 dark:border-theme-primary-800",
-  "shadow-sm hover:shadow transition-all duration-200"
 );
 
 const CATEGORIES_WRAPPER_BASE = "flex items-center gap-2 sm:gap-3 transition-all duration-500";
@@ -149,22 +136,40 @@ const CategoryButton = memo(
 
       const button = useMemo(
         () => (
-          <Button
-            as={Link}
-            href={href}
-            onPress={onClick}
-            className={cn(
-              "group h-7 sm:h-9 whitespace-nowrap py-1 sm:py-1.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-300 ease-in-out hover:scale-105",
-              {
-                "bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20 ring-2 ring-white/20 dark:ring-blue-500/30":
-                  isActive,
-                "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700/70 bg-white dark:bg-gray-800/90 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md":
-                  !isActive,
-              }
-            )}
-          >
-            {buttonContent}
-          </Button>
+          onClick ? (
+            // Filter mode: Plain button with onClick, no navigation
+            <Button
+              onPress={onClick}
+              className={cn(
+                "group h-7 sm:h-9 whitespace-nowrap py-1 sm:py-1.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-300 ease-in-out hover:scale-105",
+                {
+                  "bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20 ring-2 ring-white/20 dark:ring-blue-500/30":
+                    isActive,
+                  "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700/70 bg-white dark:bg-gray-800/90 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md":
+                    !isActive,
+                }
+              )}
+            >
+              {buttonContent}
+            </Button>
+          ) : (
+            // Navigation mode: Button as Link with href
+            <Button
+              as={Link}
+              href={href}
+              className={cn(
+                "group h-7 sm:h-9 whitespace-nowrap py-1 sm:py-1.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-300 ease-in-out hover:scale-105",
+                {
+                  "bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20 ring-2 ring-white/20 dark:ring-blue-500/30":
+                    isActive,
+                  "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700/70 bg-white dark:bg-gray-800/90 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md":
+                    !isActive,
+                }
+              )}
+            >
+              {buttonContent}
+            </Button>
+          )
         ),
         [href, isActive, buttonContent, onClick]
       );
@@ -210,8 +215,14 @@ export function HomeTwoCategories({
   const [hiddenCategories, setHiddenCategories] = useState<Category[]>([]);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [isMorePopoverOpen, setIsMorePopoverOpen] = useState(false);
+  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const categoriesRef = useRef<(HTMLDivElement | null)[]>([]);
+  const morePopoverRef = useRef<HTMLDivElement>(null);
+  const triggerButtonRef = useRef<HTMLButtonElement>(null);
+  const rafId = useRef<number | null>(null);
+  const portalTarget = usePortal('category-popover-portal');
 
   const renderCategory = useCallback(
     (category: Category, index?: number) => {
@@ -315,6 +326,66 @@ export function HomeTwoCategories({
       }
     }
   }, [categories, pathname, isHomeActive, basePath]);
+
+  // Handle click outside to close popover
+  useEffect(() => {
+    if (!isMorePopoverOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        morePopoverRef.current &&
+        !morePopoverRef.current.contains(event.target as Node) &&
+        triggerButtonRef.current &&
+        !triggerButtonRef.current.contains(event.target as Node)
+      ) {
+        setIsMorePopoverOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMorePopoverOpen]);
+
+  // Calculate popover position when opened and on scroll/resize
+  useEffect(() => {
+    if (!isMorePopoverOpen || !triggerButtonRef.current) return;
+
+    const updatePosition = () => {
+      // Cancel any pending animation frame to prevent queue buildup
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current);
+      }
+
+      // Schedule position update for next browser paint cycle (60fps)
+      rafId.current = requestAnimationFrame(() => {
+        if (triggerButtonRef.current) {
+          const rect = triggerButtonRef.current.getBoundingClientRect();
+          setPopoverPosition({
+            top: rect.bottom + 8, // 8px gap below trigger (viewport relative for fixed positioning)
+            left: rect.right - 256, // 256px = w-64, align popover right edge with trigger right edge (viewport relative)
+          });
+        }
+      });
+    };
+
+    // Calculate initial position
+    updatePosition();
+
+    // Update position on scroll and resize
+    window.addEventListener('scroll', updatePosition, true); // true = capture phase
+    window.addEventListener('resize', updatePosition);
+
+    return () => {
+      // Clean up event listeners
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+
+      // Cancel any pending animation frame
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current);
+      }
+    };
+  }, [isMorePopoverOpen]);
 
   // Handle category change from select
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -449,36 +520,45 @@ export function HomeTwoCategories({
               </div>
               {categoriesList}
             </div>
-            {!showAllCategories && (
-              <div className={STICKY_RIGHT_STYLES}>
-                {hiddenCategories.length > 0 && (
-                  <Popover>
-                    <PopoverTrigger>
-                      <Button
-                        className={MORE_BUTTON_STYLES}
-                        aria-label={`Show ${hiddenCategories.length} more ${hiddenCategories.length === 1 ? 'category' : 'categories'}`}
-                      >
-                        <span className="font-medium">
-                          +{hiddenCategories.length}
-                        </span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="w-3.5 h-3.5"
-                          aria-hidden="true"
-                        >
-                          <path d="M6 9l6 6 6-6" />
-                        </svg>
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-64 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700">
+            <div className="sticky right-0 flex-shrink-0 bg-gradient-to-l">
+              {hiddenCategories.length > 0 && (
+                <div className="relative">
+                  {/* Trigger Button */}
+                  <Button
+                    ref={triggerButtonRef}
+                    className="h-8 py-1.5 text-xs flex items-center gap-1.5 bg-theme-primary-10 hover:bg-theme-primary-10 dark:bg-theme-primary-10 dark:hover:bg-theme-primary-10 text-theme-primary-700 dark:text-theme-primary-300 border border-theme-primary-200 dark:border-theme-primary-800 shadow-sm hover:shadow transition-all rounded-md"
+                    onPress={() => setIsMorePopoverOpen(!isMorePopoverOpen)}
+                    aria-label={`Show ${hiddenCategories.length} more ${hiddenCategories.length === 1 ? 'category' : 'categories'}`}
+                  >
+                    <span className="font-medium">
+                      +{hiddenCategories.length}
+                    </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-3.5 h-3.5"
+                    >
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </Button>
+
+                  {/* Popover Content - Portal Rendered */}
+                  {isMorePopoverOpen && portalTarget && ReactDOM.createPortal(
+                    <div
+                      ref={morePopoverRef}
+                      className="fixed w-64 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 z-50"
+                      style={{
+                        top: `${popoverPosition.top}px`,
+                        left: `${popoverPosition.left}px`,
+                      }}
+                    >
                       <div className="space-y-2">
                         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 pb-1.5 border-b border-gray-100 dark:border-gray-700 flex items-center gap-1.5 uppercase">
                           {tCommon("MORE")} {t("CATEGORIES")}
@@ -487,32 +567,15 @@ export function HomeTwoCategories({
                           </span>
                         </h3>
                         <div className="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto w-full pr-1 overflow-hidden scrollbar-none">
-                          {hiddenCategories.map((category) => (
-                            <Button
-                              key={category.id}
-                              as={Link}
-                              href={
-                                basePath
-                                  ? `${basePath}/${category.id}`
-                                  : `/categories/${category.id}`
-                              }
-                              className="flex justify-between items-center h-8 text-xs py-1.5 px-3 text-gray-700 dark:text-gray-300 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/70 rounded-md transition-colors border border-gray-100 dark:border-gray-700 hover:border-theme-primary-200 dark:hover:border-theme-primary-800 w-full"
-                            >
-                              <span className="truncate max-w-[140px] text-left">
-                                {category.name}
-                              </span>
-                              <span className="ml-1 px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-xs font-medium">
-                                {category.count || 0}
-                              </span>
-                            </Button>
-                          ))}
+                          {hiddenCategories.map((category) => renderCategory(category))}
                         </div>
                       </div>
-                    </PopoverContent>
-                  </Popover>
-                )}
-              </div>
-            )}
+                    </div>,
+                    portalTarget
+                  )}
+                </div>
+              )}
+            </div>
           </div>
       </div>
     </div>
