@@ -430,7 +430,7 @@ export function HomeTwoCategories({
               </div>
               {categoriesList}
             </div>
-            <div className="sticky right-0 flex-shrink-0 bg-gradient-to-l" ref={morePopoverRef}>
+            <div className="sticky right-0 flex-shrink-0 bg-gradient-to-l">
               {hiddenCategories.length > 0 && (
                 <div className="relative">
                   {/* Trigger Button */}
