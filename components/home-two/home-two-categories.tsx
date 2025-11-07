@@ -272,15 +272,31 @@ export function HomeTwoCategories({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isMorePopoverOpen]);
 
-  // Calculate popover position when opened
+  // Calculate popover position when opened and on scroll/resize
   useEffect(() => {
-    if (isMorePopoverOpen && triggerButtonRef.current) {
-      const rect = triggerButtonRef.current.getBoundingClientRect();
-      setPopoverPosition({
-        top: rect.bottom + window.scrollY + 8, // 8px gap (mt-2)
-        left: rect.right + window.scrollX - 256, // 256px = w-64, align to right edge
-      });
-    }
+    if (!isMorePopoverOpen || !triggerButtonRef.current) return;
+
+    const updatePosition = () => {
+      if (triggerButtonRef.current) {
+        const rect = triggerButtonRef.current.getBoundingClientRect();
+        setPopoverPosition({
+          top: rect.bottom + 8, // 8px gap below trigger (viewport relative for fixed positioning)
+          left: rect.right - 256, // 256px = w-64, align popover right edge with trigger right edge (viewport relative)
+        });
+      }
+    };
+
+    // Calculate initial position
+    updatePosition();
+
+    // Update position on scroll and resize
+    window.addEventListener('scroll', updatePosition, true); // true = capture phase
+    window.addEventListener('resize', updatePosition);
+
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
   }, [isMorePopoverOpen]);
 
   // Handle category change from select
