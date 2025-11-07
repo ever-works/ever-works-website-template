@@ -61,15 +61,6 @@ const MORE_BUTTON_STYLES = clsx(
   "shadow-sm hover:shadow transition-all duration-200"
 );
 
-const TOGGLE_BUTTON_STYLES = clsx(
-  "px-4 py-1.5 font-medium transition-all duration-300 rounded-full",
-  "text-theme-primary bg-theme-primary-10",
-  "hover:bg-theme-primary-20 hover:shadow-sm hover:scale-105",
-  "active:scale-95",
-  "text-xs sm:text-sm h-8",
-  "focus:outline-none focus:ring-2 focus:ring-theme-primary-300 focus:ring-offset-2"
-);
-
 const CATEGORIES_WRAPPER_BASE = "flex items-center gap-2 sm:gap-3 transition-all duration-500";
 const CATEGORIES_WRAPPER_COLLAPSED = clsx(CATEGORIES_WRAPPER_BASE, "flex-nowrap");
 const CATEGORIES_WRAPPER_EXPANDED = clsx(CATEGORIES_WRAPPER_BASE, "flex-wrap");
@@ -83,7 +74,6 @@ type Home2CategoriesProps = {
   onCategoryToggle?: (categoryId: string | "clear-all") => void;
   totalItems?: number;
   showAllCategories?: boolean;
-  onToggleCategories?: () => void;
 };
 
 type CategoryButtonProps = {
@@ -209,7 +199,6 @@ export function HomeTwoCategories({
   onCategoryToggle,
   totalItems,
   showAllCategories = false,
-  onToggleCategories,
 }: Home2CategoriesProps) {
   const t = useTranslations("listing");
   const tCommon = useTranslations("common");
