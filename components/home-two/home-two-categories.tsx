@@ -4,7 +4,7 @@ import { Category } from "@/lib/content";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { cn } from "@/lib/utils/index";
 import React, {
   memo,
@@ -378,62 +378,51 @@ export function HomeTwoCategories({
               </div>
               {categoriesList}
             </div>
-            <div className="sticky right-0 flex-shrink-0 bg-gradient-to-l ">
+            <div className="sticky right-0 flex-shrink-0 bg-gradient-to-l" ref={morePopoverRef}>
               {hiddenCategories.length > 0 && (
-                <Popover>
-                  <PopoverTrigger>
-                    <Button className="h-8 py-1.5 text-xs flex items-center gap-1.5 bg-theme-primary-10 hover:bg-theme-primary-10 dark:bg-theme-primary-10 dark:hover:bg-theme-primary-10 text-theme-primary-700 dark:text-theme-primary-300 border border-theme-primary-200 dark:border-theme-primary-800 shadow-sm hover:shadow transition-all rounded-md">
-                      <span className="font-medium">
-                        +{hiddenCategories.length}
-                      </span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="w-3.5 h-3.5"
-                      >
-                        <path d="M6 9l6 6 6-6" />
-                      </svg>
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-64 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700">
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 pb-1.5 border-b border-gray-100 dark:border-gray-700 flex items-center gap-1.5 uppercase">
-                        {tCommon("MORE")} {t("CATEGORIES")}
-                        <span className="text-xs bg-gray-100 dark:bg-gray-700 rounded px-1.5 py-0.5">
-                          {hiddenCategories.length}
-                        </span>
-                      </h3>
-                      <div className="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto w-full pr-1 overflow-hidden scrollbar-none">
-                        {hiddenCategories.map((category) => (
-                          <Button
-                            key={category.id}
-                            as={Link}
-                            href={
-                              basePath
-                                ? `${basePath}/${category.id}`
-                                : `/categories/${category.id}`
-                            }
-                            className="flex justify-between items-center h-8 text-xs py-1.5 px-3 text-gray-700 dark:text-gray-300 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/70 rounded-md transition-colors border border-gray-100 dark:border-gray-700 hover:border-theme-primary-200 dark:hover:border-theme-primary-800 w-full"
-                          >
-                            <span className="truncate max-w-[140px] text-left">
-                              {category.name}
-                            </span>
-                            <span className="ml-1 px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-xs font-medium">
-                              {category.count || 0}
-                            </span>
-                          </Button>
-                        ))}
+                <div className="relative">
+                  {/* Trigger Button */}
+                  <Button
+                    className="h-8 py-1.5 text-xs flex items-center gap-1.5 bg-theme-primary-10 hover:bg-theme-primary-10 dark:bg-theme-primary-10 dark:hover:bg-theme-primary-10 text-theme-primary-700 dark:text-theme-primary-300 border border-theme-primary-200 dark:border-theme-primary-800 shadow-sm hover:shadow transition-all rounded-md"
+                    onPress={() => setIsMorePopoverOpen(!isMorePopoverOpen)}
+                    aria-label={`Show ${hiddenCategories.length} more ${hiddenCategories.length === 1 ? 'category' : 'categories'}`}
+                  >
+                    <span className="font-medium">
+                      +{hiddenCategories.length}
+                    </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-3.5 h-3.5"
+                    >
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </Button>
+
+                  {/* Popover Content - Native Div */}
+                  {isMorePopoverOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-64 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 z-50">
+                      <div className="space-y-2">
+                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 pb-1.5 border-b border-gray-100 dark:border-gray-700 flex items-center gap-1.5 uppercase">
+                          {tCommon("MORE")} {t("CATEGORIES")}
+                          <span className="text-xs bg-gray-100 dark:bg-gray-700 rounded px-1.5 py-0.5">
+                            {hiddenCategories.length}
+                          </span>
+                        </h3>
+                        <div className="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto w-full pr-1 overflow-hidden scrollbar-none">
+                          {hiddenCategories.map((category) => renderCategory(category))}
+                        </div>
                       </div>
                     </div>
-                  </PopoverContent>
-                </Popover>
+                  )}
+                </div>
               )}
             </div>
           </div>
