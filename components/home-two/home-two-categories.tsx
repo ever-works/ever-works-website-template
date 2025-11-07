@@ -14,7 +14,9 @@ import React, {
   useRef,
   useState,
 } from "react";
+import ReactDOM from "react-dom";
 import Image from "next/image";
+import { usePortal } from "@/hooks/use-portal";
 
 type Home2CategoriesProps = {
   categories: Category[];
@@ -176,9 +178,12 @@ export function HomeTwoCategories({
   const [selectedCategory, setSelectedCategory] = useState("");
   const [hiddenCategories, setHiddenCategories] = useState<Category[]>([]);
   const [isMorePopoverOpen, setIsMorePopoverOpen] = useState(false);
+  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const categoriesRef = useRef<(HTMLDivElement | null)[]>([]);
   const morePopoverRef = useRef<HTMLDivElement>(null);
+  const triggerButtonRef = useRef<HTMLButtonElement>(null);
+  const portalTarget = usePortal('category-popover-portal');
 
   const renderCategory = useCallback(
     (category: Category, index?: number) => {
@@ -265,6 +270,17 @@ export function HomeTwoCategories({
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMorePopoverOpen]);
+
+  // Calculate popover position when opened
+  useEffect(() => {
+    if (isMorePopoverOpen && triggerButtonRef.current) {
+      const rect = triggerButtonRef.current.getBoundingClientRect();
+      setPopoverPosition({
+        top: rect.bottom + window.scrollY + 8, // 8px gap (mt-2)
+        left: rect.right + window.scrollX - 256, // 256px = w-64, align to right edge
+      });
+    }
   }, [isMorePopoverOpen]);
 
   // Handle category change from select
@@ -383,6 +399,7 @@ export function HomeTwoCategories({
                 <div className="relative">
                   {/* Trigger Button */}
                   <Button
+                    ref={triggerButtonRef}
                     className="h-8 py-1.5 text-xs flex items-center gap-1.5 bg-theme-primary-10 hover:bg-theme-primary-10 dark:bg-theme-primary-10 dark:hover:bg-theme-primary-10 text-theme-primary-700 dark:text-theme-primary-300 border border-theme-primary-200 dark:border-theme-primary-800 shadow-sm hover:shadow transition-all rounded-md"
                     onPress={() => setIsMorePopoverOpen(!isMorePopoverOpen)}
                     aria-label={`Show ${hiddenCategories.length} more ${hiddenCategories.length === 1 ? 'category' : 'categories'}`}
@@ -406,9 +423,16 @@ export function HomeTwoCategories({
                     </svg>
                   </Button>
 
-                  {/* Popover Content - Native Div */}
-                  {isMorePopoverOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-64 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 z-50">
+                  {/* Popover Content - Portal Rendered */}
+                  {isMorePopoverOpen && portalTarget && ReactDOM.createPortal(
+                    <div
+                      ref={morePopoverRef}
+                      className="fixed w-64 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 z-50"
+                      style={{
+                        top: `${popoverPosition.top}px`,
+                        left: `${popoverPosition.left}px`,
+                      }}
+                    >
                       <div className="space-y-2">
                         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 pb-1.5 border-b border-gray-100 dark:border-gray-700 flex items-center gap-1.5 uppercase">
                           {tCommon("MORE")} {t("CATEGORIES")}
@@ -420,7 +444,8 @@ export function HomeTwoCategories({
                           {hiddenCategories.map((category) => renderCategory(category))}
                         </div>
                       </div>
-                    </div>
+                    </div>,
+                    portalTarget
                   )}
                 </div>
               )}
