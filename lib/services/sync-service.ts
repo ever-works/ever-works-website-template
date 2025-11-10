@@ -1,5 +1,4 @@
 import { trySyncRepository } from "@/lib/repository";
-import { revalidateTag } from 'next/cache';
 
 // Types
 export type SyncResult = {
@@ -108,14 +107,9 @@ class SyncManager {
 
       console.log(`[SYNC_MANAGER] Sync completed successfully in ${duration}ms`);
 
-      // Invalidate Next.js cache to force fresh data
-      try {
-        revalidateTag('content-items');
-        revalidateTag('content-item');
-        revalidateTag('config');
-      } catch (cacheError) {
-        console.warn('[SYNC_MANAGER] Cache invalidation failed:', cacheError);
-      }
+      // TODO: Cache invalidation will be added in PR #2 (caching implementation)
+      // revalidateTag() requires request context, which doesn't exist in background sync
+      // For now, content is read fresh from disk on each request, so no stale cache to invalidate
 
       return result;
 
