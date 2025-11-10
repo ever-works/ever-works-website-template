@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { startBackgroundSync, getSyncStatus } from "@/lib/services/sync-service";
+import { triggerManualSync, getSyncStatus } from "@/lib/services/sync-service";
 
 /**
  * @swagger
@@ -259,17 +259,8 @@ export async function POST(request: Request) {
 
     console.log("[SYNC_API] Manual sync triggered", options);
 
-    const result = await startBackgroundSync();
+    const result = await triggerManualSync();
     const duration = Date.now() - startTime;
-
-    if (result === null) {
-      return createSyncResponse(
-        true,
-        "Sync was already in progress",
-        duration,
-        "Another sync operation is currently running"
-      );
-    }
 
     return createSyncResponse(
       result.success,
@@ -298,12 +289,12 @@ export async function GET() {
   const syncStatus = getSyncStatus();
   const now = new Date();
   const timeSinceLastSync = syncStatus.lastSyncTime ? now.getTime() - syncStatus.lastSyncTime.getTime() : null;
-  
+
   const status = {
-    syncInProgress: syncStatus.syncInProgress,
+    syncInProgress: syncStatus.isRunning,
     lastSyncTime: syncStatus.lastSyncTime?.toISOString() || null,
     timeSinceLastSync,
-    timeSinceLastSyncHuman: timeSinceLastSync 
+    timeSinceLastSyncHuman: timeSinceLastSync
       ? `${Math.floor(timeSinceLastSync / 1000)}s ago`
       : "never",
     uptime: process.uptime(),
