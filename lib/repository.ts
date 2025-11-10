@@ -1,8 +1,10 @@
+import 'server-only';
+
 import git, { GitAuth, Errors } from "isomorphic-git";
 import * as http from "isomorphic-git/http/node";
 import * as path from "node:path";
 import * as fs from "node:fs";
-import { fsExists, getContentPath } from "./lib";
+import { fsExists } from "./lib";
 
 function getGitAuth(token?: string): GitAuth {
   if (!token) {
@@ -106,6 +108,7 @@ copyright_year: ${new Date().getFullYear()}
       "'DATA_REPOSITORY' is not defined. Content features will be limited."
     );
     // Create an empty content directory to avoid errors
+    const { getContentPath } = await import('./lib');
     const dest = getContentPath();
     await fs.promises.mkdir(dest, { recursive: true });
 
@@ -121,6 +124,7 @@ copyright_year: ${new Date().getFullYear()}
   // Note: Repository sync will happen during build to ensure content is available
   // Error handling is in place to gracefully handle any sync issues
 
+  const { getContentPath } = await import('./lib');
   const dest = getContentPath();
   const auth = getGitAuth(token);
 

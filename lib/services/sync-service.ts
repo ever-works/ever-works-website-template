@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { trySyncRepository } from "@/lib/repository";
 
 // Types
@@ -171,9 +173,21 @@ class SyncManager {
 // Singleton instance
 export const syncManager = new SyncManager();
 
-// Auto-start on module load (server startup)
-if (typeof window === 'undefined' && process.env.NODE_ENV !== 'test') {
+// Track initialization state
+let isInitialized = false;
+
+/**
+ * Ensures sync manager is started (lazy initialization)
+ * Safe to call multiple times - will only start once
+ */
+export function ensureSyncManagerStarted(): void {
+  if (isInitialized || typeof window !== 'undefined' || process.env.NODE_ENV === 'test') {
+    return;
+  }
+
+  console.log('[SYNC_MANAGER] Lazy initialization triggered');
   syncManager.startAutoSync();
+  isInitialized = true;
 }
 
 // Export convenience functions

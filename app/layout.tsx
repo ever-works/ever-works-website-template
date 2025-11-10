@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './[locale]/globals.css';
 import { LayoutProvider, ThemeProvider } from '@/components/providers';
 import { siteConfig } from '@/lib/config';
+import { ensureSyncManagerStarted } from '@/lib/services/sync-service';
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -21,6 +22,9 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+	// Initialize background sync manager on first page load
+	ensureSyncManagerStarted();
+
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-dark--theme-950`} suppressHydrationWarning>
