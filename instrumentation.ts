@@ -2,6 +2,7 @@
 
 import * as Sentry from '@sentry/nextjs';
 import { SENTRY_DSN, SENTRY_DEBUG, SENTRY_ENABLED } from '@/lib/constants';
+import '@/lib/services/sync-service'; // Auto-start background sync manager on server boot
 
 export async function register() {
   if (process.env.NEXT_RUNTIME !== 'nodejs' || !SENTRY_ENABLED) return;
