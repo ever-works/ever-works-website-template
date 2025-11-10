@@ -25,6 +25,29 @@ export function capitalizeWords(text: string): string {
 }
 
 /**
+ * Create an excerpt from text with word boundary truncation
+ * Truncates at the last complete word before maxChars limit
+ * Examples:
+ *   createExcerpt("Hello world this is a test", 15) → "Hello world..."
+ *   createExcerpt("Short", 100) → "Short"
+ */
+export function createExcerpt(text: string, maxChars: number): string {
+  if (!text || text.length <= maxChars) return text;
+
+  // Find the last space before maxChars to avoid breaking words
+  const truncated = text.substring(0, maxChars);
+  const lastSpaceIndex = truncated.lastIndexOf(' ');
+
+  // If no space found, truncate at maxChars (single long word)
+  if (lastSpaceIndex === -1) {
+    return truncated + '...';
+  }
+
+  // Truncate at last complete word
+  return truncated.substring(0, lastSpaceIndex) + '...';
+}
+
+/**
  * Format tag/category name from kebab-case to Title Case
  * Examples:
  *   "open-source" → "Open Source"
