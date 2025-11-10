@@ -354,7 +354,7 @@ function populateTag(tag: string | Tag, tags: Map<string, Tag>) {
 }
 
 export async function fetchItems(options: FetchOptions = {}) {
-	await trySyncRepository();
+	// Repository sync now handled by background sync manager (lib/services/sync-service.ts)
 	const dest = path.join(getContentPath(), 'data');
 	const files = await fs.promises.readdir(dest);
 	const categories = await readCategories(options);
@@ -671,7 +671,7 @@ function calculateSimilarityScore(
 }
 
 export async function fetchItem(slug: string, options: FetchOptions = {}) {
-	await trySyncRepository();
+	// Repository sync now handled by background sync manager (lib/services/sync-service.ts)
 
 	// Sanitize slug to prevent path traversal attacks
 	const sanitizedSlug = sanitizeFilename(slug);
@@ -963,7 +963,7 @@ export async function fetchPageContent(
 	locale: string = 'en'
 ): Promise<{ content: string; metadata: Record<string, unknown> } | null> {
 	try {
-		await trySyncRepository();
+		// Repository sync now handled by background sync manager (lib/services/sync-service.ts)
 
 		const base = getContentPath();
 		const pagesDir = path.join(base, 'pages');
