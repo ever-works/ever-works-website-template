@@ -13,9 +13,11 @@ import Image from 'next/image';
 import { shouldShowFallback, isProblematicUrl } from '@/lib/utils/image-domains';
 import { FeaturedBadge } from './featured-items';
 import { useState } from 'react';
+import { createExcerpt } from '@/components/filters/utils/text-utils';
 
 type ItemProps = ItemData & {
 	onNavigate?: () => void;
+	layout?: string;
 };
 
 const TAG_BUTTON_BASE_CLASS = 'text-xs transition-all duration-300 cursor-pointer text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 hover:scale-105 font-medium px-2 py-1 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20';
@@ -47,6 +49,18 @@ export default function Item(props: ItemProps) {
 			'ring-2 ring-blue-400/40 dark:ring-blue-500/40 shadow-blue-500/10 dark:shadow-blue-500/20':
 				props.featured
 		}
+	);
+
+	// Masonry view uses character-based truncation, other layouts use line-clamp
+	const isMasonryLayout = props.layout === 'masonry';
+	const MASONRY_EXCERPT_MAX_CHARS = 512;
+	const displayDescription = isMasonryLayout
+		? createExcerpt(props.description, MASONRY_EXCERPT_MAX_CHARS)
+		: props.description;
+
+	const descriptionClassName = cn(
+		'text-sm leading-relaxed text-gray-600 dark:text-gray-300 transition-colors duration-300 group-hover:text-gray-700 dark:group-hover:text-gray-200 font-medium',
+		!isMasonryLayout && 'line-clamp-3'
 	);
 
 	return (
@@ -160,8 +174,8 @@ export default function Item(props: ItemProps) {
 				<CardBody className="px-6 py-4 pt-0">
 					<div className="space-y-5">
 						{/* Enhanced Description */}
-						<p className="text-sm leading-relaxed line-clamp-3 text-gray-600 dark:text-gray-300 transition-colors duration-300 group-hover:text-gray-700 dark:group-hover:text-gray-200 font-medium">
-							{props.description}
+						<p className={descriptionClassName}>
+							{displayDescription}
 						</p>
 
 						{/* Enhanced Hashtags */}
