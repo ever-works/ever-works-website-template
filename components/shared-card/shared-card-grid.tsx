@@ -7,6 +7,7 @@ import { ItemSkeletonGrid } from "../item-skeleton";
 interface SharedCardGridProps {
   items: ItemData[];
   LayoutComponent: React.ComponentType<{ children: React.ReactNode }>;
+  layout?: string;
   onItemClick?: (item: ItemData) => void;
   renderCustomItem?: (item: ItemData, index: number) => React.ReactNode;
   animationDelay?: number;
@@ -20,6 +21,7 @@ interface SharedCardGridProps {
 export function SharedCardGrid({
   items,
   LayoutComponent,
+  layout,
   onItemClick,
   renderCustomItem,
   animationDelay = 100,
@@ -46,7 +48,7 @@ export function SharedCardGrid({
               {renderCustomItem ? (
                 renderCustomItem(item, index)
               ) : (
-                <Item {...item} onNavigate={() => onItemClick?.(item)} />
+                <Item {...item} layout={layout} onNavigate={() => onItemClick?.(item)} />
               )}
             </div>
           ))}

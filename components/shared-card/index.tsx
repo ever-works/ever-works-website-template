@@ -295,6 +295,7 @@ export function SharedCard(props: ExtendedCardProps) {
         <SharedCardGrid
           items={itemsToDisplay}
           LayoutComponent={LayoutComponent}
+          layout={layoutKey}
           onItemClick={onItemClick}
           renderCustomItem={renderCustomItem}
           animationDelay={config.animationDelay}
