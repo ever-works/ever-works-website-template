@@ -11,6 +11,20 @@ function getGitAuth(token?: string): GitAuth {
   return { username: "x-access-token", password: token };
 }
 
+/**
+ * Wraps a promise with a timeout to prevent indefinite hangs
+ * @param promise - The promise to wrap
+ * @param timeoutMs - Timeout in milliseconds (default: 2 minutes)
+ * @returns Promise that rejects if timeout is reached
+ */
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number = 120000): Promise<T> {
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    setTimeout(() => reject(new Error(`Operation timeout after ${timeoutMs}ms`)), timeoutMs);
+  });
+
+  return Promise.race([promise, timeoutPromise]);
+}
+
 let lastSynced: number;
 const syncInterval = 10 * 1000;
 
@@ -28,15 +42,17 @@ function shouldSync() {
 export async function pullChanges(url: string, dest: string, auth: GitAuth) {
   try {
     const author = { name: "website" }; // required for git pull for some reason
-    await git.pull({
-      onAuth: () => auth,
-      fs,
-      http,
-      url,
-      dir: dest,
-      author,
-      singleBranch: true,
-    });
+    await withTimeout(
+      git.pull({
+        onAuth: () => auth,
+        fs,
+        http,
+        url,
+        dir: dest,
+        author,
+        singleBranch: true,
+      })
+    );
   } catch (err) {
     if (
       err instanceof Errors.MergeConflictError ||
@@ -45,26 +61,30 @@ export async function pullChanges(url: string, dest: string, auth: GitAuth) {
       console.error("Merge conflict detected, resetting repository...");
       await fs.promises.rm(dest, { recursive: true });
       await fs.promises.mkdir(dest, { recursive: true });
-      await git.clone({
-        onAuth: () => auth,
-        fs,
-        http,
-        url,
-        dir: dest,
-        singleBranch: true,
-      });
+      await withTimeout(
+        git.clone({
+          onAuth: () => auth,
+          fs,
+          http,
+          url,
+          dir: dest,
+          singleBranch: true,
+        })
+      );
     } else if (err instanceof Error && err.message.includes("Could not find master")) {
       console.error("Repository branch issue detected, trying to clone fresh...");
       await fs.promises.rm(dest, { recursive: true });
       await fs.promises.mkdir(dest, { recursive: true });
-      await git.clone({
-        onAuth: () => auth,
-        fs,
-        http,
-        url,
-        dir: dest,
-        singleBranch: true,
-      });
+      await withTimeout(
+        git.clone({
+          onAuth: () => auth,
+          fs,
+          http,
+          url,
+          dir: dest,
+          singleBranch: true,
+        })
+      );
     } else {
       throw err;
     }
@@ -123,18 +143,20 @@ copyright_year: ${new Date().getFullYear()}
   try {
     console.log("Clonning repository...");
     await fs.promises.mkdir(dest, { recursive: true });
-    await git.clone({
-      onAuth: () => auth,
-      fs,
-      http,
-      url,
-      dir: dest,
-      singleBranch: true,
-    });
+    await withTimeout(
+      git.clone({
+        onAuth: () => auth,
+        fs,
+        http,
+        url,
+        dir: dest,
+        singleBranch: true,
+      })
+    );
   } catch (error) {
     console.error("Failed to clone repository:", error);
     console.warn("Continuing with local content only...");
-    
+
     // Ensure content directory exists with minimal config
     await fs.promises.mkdir(dest, { recursive: true });
     const configPath = path.join(dest, "config.yml");
