@@ -7,7 +7,10 @@ export const FILTER_CONSTANTS = {
   // Tag visibility
   MAX_VISIBLE_TAGS: 8,
   TEXT_TRUNCATE_LENGTH: 20,
-  
+
+  // Text display
+  MASONRY_EXCERPT_MAX_CHARS: 512,
+
   // Sticky behavior
   SCROLL_THRESHOLD: 250,
   STICKY_OFFSET: 4,

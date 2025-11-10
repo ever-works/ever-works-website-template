@@ -14,6 +14,7 @@ import { shouldShowFallback, isProblematicUrl } from '@/lib/utils/image-domains'
 import { FeaturedBadge } from './featured-items';
 import { useState } from 'react';
 import { createExcerpt } from '@/components/filters/utils/text-utils';
+import { FILTER_CONSTANTS } from '@/components/filters/constants';
 
 type ItemProps = ItemData & {
 	onNavigate?: () => void;
@@ -53,9 +54,8 @@ export default function Item(props: ItemProps) {
 
 	// Masonry view uses character-based truncation, other layouts use line-clamp
 	const isMasonryLayout = props.layout === 'masonry';
-	const MASONRY_EXCERPT_MAX_CHARS = 512;
 	const displayDescription = isMasonryLayout
-		? createExcerpt(props.description, MASONRY_EXCERPT_MAX_CHARS)
+		? createExcerpt(props.description, FILTER_CONSTANTS.MASONRY_EXCERPT_MAX_CHARS)
 		: props.description;
 
 	const descriptionClassName = cn(
