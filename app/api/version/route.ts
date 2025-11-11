@@ -4,7 +4,6 @@ import * as fs from "fs";
 import * as path from "path";
 import { getContentPath } from "@/lib/lib";
 import { fsExists } from "@/lib/lib";
-import { trySyncRepository } from "@/lib/repository";
 
 /**
  * @swagger

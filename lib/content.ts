@@ -5,7 +5,6 @@ import yaml from 'yaml';
 import * as fs from 'fs';
 import * as path from 'path';
 import { parse } from 'date-fns';
-import { trySyncRepository } from './repository';
 import { dirExists, fsExists, getContentPath } from './lib';
 import { unstable_cache } from 'next/cache';
 import { PaymentInterval, PaymentProvider } from './constants';
