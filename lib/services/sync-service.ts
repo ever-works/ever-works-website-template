@@ -87,11 +87,13 @@ class SyncManager {
 
       // Timeout wrapper
       const syncPromise = trySyncRepository();
+      let timeoutHandle: NodeJS.Timeout;
       const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('Sync timeout')), SYNC_TIMEOUT_MS);
+        timeoutHandle = setTimeout(() => reject(new Error('Sync timeout')), SYNC_TIMEOUT_MS);
       });
 
       await Promise.race([syncPromise, timeoutPromise]);
+      clearTimeout(timeoutHandle!);
 
       // Success
       const duration = Date.now() - startTime;
@@ -181,7 +183,7 @@ let isInitialized = false;
  * Safe to call multiple times - will only start once
  */
 export function ensureSyncManagerStarted(): void {
-  if (isInitialized || typeof window !== 'undefined' || process.env.NODE_ENV === 'test') {
+  if (isInitialized || typeof window !== 'undefined' || process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
     return;
   }
 
