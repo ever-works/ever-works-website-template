@@ -30,40 +30,7 @@ class SyncManager {
   private syncInProgress = false;
   private lastSyncTime: Date | null = null;
   private lastSyncResult: SyncResult | null = null;
-  private syncInterval: NodeJS.Timeout | null = null;
   private retryCount = 0;
-
-  /**
-   * Start automatic background sync on server startup
-   * Performs immediate first sync, then runs every 60 seconds
-   */
-  startAutoSync(): void {
-    if (this.syncInterval) {
-      console.log('[SYNC_MANAGER] Auto-sync already running');
-      return;
-    }
-
-    console.log(`[SYNC_MANAGER] Starting auto-sync with ${SYNC_INTERVAL_MS}ms interval`);
-
-    // Immediate first sync
-    this.performSync();
-
-    // Schedule periodic syncs
-    this.syncInterval = setInterval(() => {
-      this.performSync();
-    }, SYNC_INTERVAL_MS);
-  }
-
-  /**
-   * Stop automatic sync (for cleanup)
-   */
-  stopAutoSync(): void {
-    if (this.syncInterval) {
-      clearInterval(this.syncInterval);
-      this.syncInterval = null;
-      console.log('[SYNC_MANAGER] Auto-sync stopped');
-    }
-  }
 
   /**
    * Perform a single sync operation with mutex lock and timeout
@@ -174,23 +141,6 @@ class SyncManager {
 
 // Singleton instance
 export const syncManager = new SyncManager();
-
-// Track initialization state
-let isInitialized = false;
-
-/**
- * Ensures sync manager is started (lazy initialization)
- * Safe to call multiple times - will only start once
- */
-export function ensureSyncManagerStarted(): void {
-  if (isInitialized || typeof window !== 'undefined' || process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
-    return;
-  }
-
-  console.log('[SYNC_MANAGER] Lazy initialization triggered');
-  syncManager.startAutoSync();
-  isInitialized = true;
-}
 
 // Export convenience functions
 export const getSyncStatus = (): SyncStatus => syncManager.getStatus();
