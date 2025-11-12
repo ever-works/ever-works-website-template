@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BackgroundJobManager, JobStatus, JobMetrics } from './types';
 
 /**
