@@ -43,7 +43,11 @@ export class LocalJobManager implements BackgroundJobManager {
     }, interval);
 
     this.jobs.set(id, timeout);
-    console.log(`📝 Scheduled job: ${name} (${id}) - Interval: ${interval}ms`);
+
+    // Reduce logging in development mode
+    if (process.env.NODE_ENV !== 'development') {
+      console.log(`📝 Scheduled job: ${name} (${id}) - Interval: ${interval}ms`);
+    }
   }
 
   /**
@@ -64,7 +68,10 @@ export class LocalJobManager implements BackgroundJobManager {
     if (!jobStatus || !jobFunction) return;
 
     if (jobStatus.status === 'running') {
-      console.log(`Job ${id} is already running, skipping execution`);
+      // Reduce logging in development mode
+      if (process.env.NODE_ENV !== 'development') {
+        console.log(`Job ${id} is already running, skipping execution`);
+      }
       return;
     }
 
@@ -91,8 +98,11 @@ export class LocalJobManager implements BackgroundJobManager {
       this.metrics.successfulJobs++;
       this.metrics.totalExecutions++;
       this.updateAverageJobDuration(jobStatus.duration);
-      
-      console.log(`✅ Job ${id} completed successfully in ${jobStatus.duration}ms`);
+
+      // Reduce logging in development mode
+      if (process.env.NODE_ENV !== 'development') {
+        console.log(`✅ Job ${id} completed successfully in ${jobStatus.duration}ms`);
+      }
     } catch (error) {
       jobStatus.status = 'failed';
       jobStatus.duration = Date.now() - startTime;
@@ -110,7 +120,8 @@ export class LocalJobManager implements BackgroundJobManager {
       this.metrics.failedJobs++;
       this.metrics.totalExecutions++;
       this.updateAverageJobDuration(jobStatus.duration);
-      
+
+      // Always log errors regardless of environment
       console.error(`❌ Job ${id} failed:`, error);
     }
   }
@@ -151,7 +162,10 @@ export class LocalJobManager implements BackgroundJobManager {
       throw new Error(`Job ${id} not found`);
     }
 
-    console.log(`🔄 Manually triggering job: ${id}`);
+    // Reduce logging in development mode
+    if (process.env.NODE_ENV !== 'development') {
+      console.log(`🔄 Manually triggering job: ${id}`);
+    }
     await this.executeJob(id);
   }
 
@@ -166,7 +180,11 @@ export class LocalJobManager implements BackgroundJobManager {
       this.jobFunctions.delete(id);
       this.jobIntervals.delete(id);
       this.jobStatuses.delete(id);
-      console.log(`⏹️  Stopped job: ${id}`);
+
+      // Reduce logging in development mode
+      if (process.env.NODE_ENV !== 'development') {
+        console.log(`⏹️  Stopped job: ${id}`);
+      }
     }
   }
 
@@ -176,12 +194,20 @@ export class LocalJobManager implements BackgroundJobManager {
   stopAllJobs(): void {
     for (const [id, timeout] of this.jobs) {
       clearInterval(timeout);
-      console.log(`⏹️  Stopped job: ${id}`);
+
+      // Reduce logging in development mode
+      if (process.env.NODE_ENV !== 'development') {
+        console.log(`⏹️  Stopped job: ${id}`);
+      }
     }
     this.jobs.clear();
     this.jobFunctions.clear();
     this.jobIntervals.clear();
-    console.log('⏹️  All jobs stopped');
+
+    // Reduce logging in development mode
+    if (process.env.NODE_ENV !== 'development') {
+      console.log('⏹️  All jobs stopped');
+    }
   }
 
   /**

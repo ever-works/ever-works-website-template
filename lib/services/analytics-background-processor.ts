@@ -44,7 +44,11 @@ export class AnalyticsBackgroundProcessor {
 
   constructor() {
     this.repository = new AdminAnalyticsOptimizedRepository();
-    this.initializeJobs();
+
+    // Skip background job initialization in development mode
+    if (process.env.NODE_ENV !== 'development') {
+      this.initializeJobs();
+    }
   }
 
   private initializeJobs(): void {

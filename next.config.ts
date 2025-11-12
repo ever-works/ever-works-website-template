@@ -13,10 +13,25 @@ const nextConfig: NextConfig = {
   generateEtags: false,
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     config.ignoreWarnings = [
       { module: /@supabase\/realtime-js/ }
     ];
+
+    // Exclude .content/ directory from webpack watching in development
+    // Prevents rebuilds when content files change (220+ markdown files)
+    if (dev) {
+      config.watchOptions = {
+        ...config.watchOptions,
+        ignored: [
+          ...(Array.isArray(config.watchOptions?.ignored) ? config.watchOptions.ignored : [config.watchOptions?.ignored].filter(Boolean)),
+          '**/node_modules/**',
+          '**/.git/**',
+          '**/.content/**'
+        ]
+      };
+    }
+
     return config;
   },
   images: {

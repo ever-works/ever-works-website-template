@@ -56,7 +56,11 @@ export class AnalyticsScheduledReportsService {
     this.exportService = new AnalyticsExportService();
     this.repository = new AdminAnalyticsOptimizedRepository();
     this.initializeDefaultTemplates();
-    this.scheduleReports();
+
+    // Skip report scheduling in development mode
+    if (process.env.NODE_ENV !== 'development') {
+      this.scheduleReports();
+    }
   }
 
   /**
