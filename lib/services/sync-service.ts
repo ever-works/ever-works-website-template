@@ -57,17 +57,11 @@ export async function startBackgroundSync(): Promise<SyncResult | null> {
   }
 
   if (syncInProgress) {
-    // Reduce logging in development mode
-    if (process.env.NODE_ENV !== 'development') {
-      console.log("[SYNC_SERVICE] Background sync already in progress");
-    }
+    console.log("[SYNC_SERVICE] Background sync already in progress");
     return null;
   }
 
-  // Reduce logging in development mode
-  if (process.env.NODE_ENV !== 'development') {
-    console.log("[SYNC_SERVICE] Starting automatic background sync");
-  }
+  console.log("[SYNC_SERVICE] Starting automatic background sync");
 
   syncInProgress = true;
   try {
