@@ -21,15 +21,12 @@ const nextConfig: NextConfig = {
     // Exclude .content/ directory from webpack watching in development
     // Prevents rebuilds when content files change (220+ markdown files)
     if (dev) {
-      config.watchOptions = {
-        ...config.watchOptions,
-        ignored: [
-          ...(Array.isArray(config.watchOptions?.ignored) ? config.watchOptions.ignored : [config.watchOptions?.ignored].filter(Boolean)),
-          '**/node_modules/**',
-          '**/.git/**',
-          '**/.content/**'
-        ]
-      };
+      config.watchOptions = config.watchOptions || {};
+      config.watchOptions.ignored = [
+        '**/node_modules/**',
+        '**/.git/**',
+        '**/.content/**'
+      ];
     }
 
     return config;
