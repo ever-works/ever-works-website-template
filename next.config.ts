@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
   generateEtags: false,
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
-  webpack: (config, { isServer, dev }) => {
+  webpack: (config, { dev }) => {
     config.ignoreWarnings = [
       { module: /@supabase\/realtime-js/ }
     ];
