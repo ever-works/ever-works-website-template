@@ -6,13 +6,6 @@ import { SENTRY_DSN, SENTRY_DEBUG, SENTRY_ENABLED } from '@/lib/constants';
 export async function register() {
   if (process.env.NEXT_RUNTIME !== 'nodejs' || !SENTRY_ENABLED) return;
 
-  // Initialize background jobs (dynamic import to avoid bundling issues)
-  if (process.env.NODE_ENV !== 'test') {
-    await import('@/lib/background-jobs/jobs/repository-sync').then((module) => {
-      module.initializeRepositorySyncJob();
-    });
-  }
-
   Sentry.init({
     dsn: SENTRY_DSN.value,
 
