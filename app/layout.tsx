@@ -21,10 +21,13 @@ export const metadata: Metadata = {
 	robots: 'noindex'
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
 	// Initialize background jobs (Server Component - runs only on server)
+	// Fire-and-forget: non-blocking initialization for better performance
 	if (process.env.NODE_ENV !== 'test') {
-		await initializeBackgroundJobs();
+		initializeBackgroundJobs().catch(err =>
+			console.error('[LAYOUT] Background job init failed:', err)
+		);
 	}
 
 	return (
