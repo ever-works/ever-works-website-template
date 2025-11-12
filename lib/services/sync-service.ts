@@ -1,7 +1,5 @@
 import 'server-only';
 
-import { trySyncRepository } from "@/lib/repository";
-
 // Types
 export type SyncResult = {
   success: boolean;
@@ -51,6 +49,9 @@ class SyncManager {
 
     try {
       console.log('[SYNC_MANAGER] Starting background repository sync');
+
+      // Dynamic import to prevent webpack from bundling Node.js modules
+      const { trySyncRepository } = await import('@/lib/repository');
 
       // Timeout wrapper
       const syncPromise = trySyncRepository();
@@ -145,53 +146,3 @@ export const syncManager = new SyncManager();
 // Export convenience functions
 export const getSyncStatus = (): SyncStatus => syncManager.getStatus();
 export const triggerManualSync = (): Promise<SyncResult> => syncManager.triggerManualSync();
-
-// Background sync scheduling
-let syncIntervalHandle: NodeJS.Timeout | null = null;
-
-/**
- * Start automatic background sync (setInterval-based)
- */
-export function startAutoSync(): void {
-  if (syncIntervalHandle) {
-    console.log('[SYNC_MANAGER] Auto-sync already running');
-    return;
-  }
-
-  console.log('[SYNC_MANAGER] Starting auto-sync (60s interval)');
-
-  // Run initial sync immediately
-  syncManager.performSync();
-
-  // Schedule recurring sync
-  syncIntervalHandle = setInterval(() => {
-    syncManager.performSync();
-  }, SYNC_INTERVAL_MS);
-}
-
-/**
- * Stop automatic background sync
- */
-export function stopAutoSync(): void {
-  if (syncIntervalHandle) {
-    clearInterval(syncIntervalHandle);
-    syncIntervalHandle = null;
-    console.log('[SYNC_MANAGER] Auto-sync stopped');
-  }
-}
-
-/**
- * Lazy initialization - starts sync manager if not already running
- * Safe to call multiple times
- */
-export function ensureSyncManagerStarted(): void {
-  // Only run in production or when explicitly enabled
-  if (process.env.NODE_ENV === 'development') {
-    console.log('[SYNC_MANAGER] Skipping auto-sync in development mode');
-    return;
-  }
-
-  if (!syncIntervalHandle) {
-    startAutoSync();
-  }
-}

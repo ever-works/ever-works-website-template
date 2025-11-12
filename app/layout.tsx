@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './[locale]/globals.css';
 import { LayoutProvider, ThemeProvider } from '@/components/providers';
 import { siteConfig } from '@/lib/config';
-import { ensureSyncManagerStarted } from '@/lib/services/sync-service';
+import { initializeBackgroundJobs } from '@/lib/background-jobs/initialize-jobs';
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -21,9 +21,11 @@ export const metadata: Metadata = {
 	robots: 'noindex'
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-	// Start background sync manager (lazy initialization)
-	ensureSyncManagerStarted();
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+	// Initialize background jobs (Server Component - runs only on server)
+	if (process.env.NODE_ENV !== 'test') {
+		await initializeBackgroundJobs();
+	}
 
 	return (
 		<html lang="en" suppressHydrationWarning>
