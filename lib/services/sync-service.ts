@@ -53,7 +53,11 @@ async function performBackgroundSync(): Promise<SyncResult> {
 export async function startBackgroundSync(): Promise<SyncResult | null> {
   // Skip background sync in development mode
   if (process.env.NODE_ENV === 'development') {
-    return null;
+    return {
+      success: true,
+      message: "Sync disabled in development mode",
+      details: "Background sync is skipped in development for better performance"
+    };
   }
 
   if (syncInProgress) {
