@@ -71,11 +71,6 @@ export default function GlobalsClient(props: ListingProps) {
 		return sortItemsWithFeatured(filtered, featuredItems);
 	}, [props.items, searchTerm, selectedTags, selectedCategories, featuredItems]);
 
-	// Paginate filtered items
-	const paginatedItems = useMemo(() => {
-		return filteredItems.slice(start, start + perPage);
-	}, [filteredItems, start, perPage]);
-
 
 	// Note: URL parsing is handled by FilterURLParser in the Listing component
 	// No need to duplicate that logic here
@@ -139,7 +134,6 @@ export default function GlobalsClient(props: ListingProps) {
 					categories={sortedCategories}
 					tags={sortedTags}
 					filteredAndSortedItems={filteredItems}
-					paginatedItems={paginatedItems}
 				/>
 			</div>
 		</>

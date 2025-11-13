@@ -366,9 +366,9 @@ export const CardPresets = {
     showFilters: false,
     showPagination: true,
     showEmptyState: true,
-    enableSearch: true,
-    enableTagFilter: true,
-    enableSorting: true,
+    enableSearch: false,
+    enableTagFilter: false,
+    enableSorting: false,
   } as CardConfigOptions,
 
   simple: {
