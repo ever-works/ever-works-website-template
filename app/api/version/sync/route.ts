@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { startBackgroundSync, getSyncStatus } from "@/lib/services/sync-service";
+import { invalidateContentCaches } from "@/lib/cache-invalidation";
 
 /**
  * @swagger
@@ -269,6 +270,12 @@ export async function POST(request: Request) {
         duration,
         "Another sync operation is currently running"
       );
+    }
+
+    // Invalidate caches after successful manual sync
+    // Note: This is also done in sync-service.ts, but we do it here for manual triggers too
+    if (result.success) {
+      await invalidateContentCaches();
     }
 
     return createSyncResponse(

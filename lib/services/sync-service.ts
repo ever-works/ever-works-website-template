@@ -1,4 +1,5 @@
 import { trySyncRepository } from "@/lib/repository";
+import { invalidateContentCaches } from "@/lib/cache-invalidation";
 
 // Types
 export type SyncResult = { success: boolean; message: string; details?: string };
@@ -20,9 +21,12 @@ async function performBackgroundSync(): Promise<SyncResult> {
     // Update sync status
     lastSyncTime = new Date();
     const duration = Date.now() - startTime;
-    
+
     console.log(`[SYNC_SERVICE] Background sync completed successfully in ${duration}ms`);
-    
+
+    // Invalidate content caches after successful sync
+    await invalidateContentCaches();
+
     return {
       success: true,
       message: "Repository synchronized successfully",
