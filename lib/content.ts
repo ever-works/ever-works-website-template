@@ -1042,7 +1042,7 @@ export async function fetchPageContent(
  * Cache key includes locale to prevent cross-locale pollution
  * Tagged with CONTENT and ITEMS for cache invalidation
  */
-export const getCachedItems = (options: FetchOptions = {}) => {
+export const getCachedItems = async (options: FetchOptions = {}) => {
 	const locale = options.lang || 'en';
 	return unstable_cache(
 		async () => {
@@ -1061,7 +1061,7 @@ export const getCachedItems = (options: FetchOptions = {}) => {
  * Cache key includes slug and locale
  * Tagged with CONTENT and specific ITEM tag for granular invalidation
  */
-export const getCachedItem = (slug: string, options: FetchOptions = {}) => {
+export const getCachedItem = async (slug: string, options: FetchOptions = {}) => {
 	const locale = options.lang || 'en';
 	return unstable_cache(
 		async () => {
@@ -1080,7 +1080,7 @@ export const getCachedItem = (slug: string, options: FetchOptions = {}) => {
  * Cache key includes slug and locale
  * Tagged with CONTENT and PAGES for cache invalidation
  */
-export const getCachedPageContent = (slug: string, locale: string = 'en') => {
+export const getCachedPageContent = async (slug: string, locale: string = 'en') => {
 	return unstable_cache(
 		async () => {
 			return await fetchPageContent(slug, locale);
@@ -1098,7 +1098,7 @@ export const getCachedPageContent = (slug: string, locale: string = 'en') => {
  * Delegates to fetchItems internally, so benefits from its caching
  * Additional caching layer for filtered results
  */
-export const getCachedItemsByCategory = (raw: string, options: FetchOptions = {}) => {
+export const getCachedItemsByCategory = async (raw: string, options: FetchOptions = {}) => {
 	const locale = options.lang || 'en';
 	return unstable_cache(
 		async () => {
@@ -1117,7 +1117,7 @@ export const getCachedItemsByCategory = (raw: string, options: FetchOptions = {}
  * Delegates to fetchItems internally, so benefits from its caching
  * Additional caching layer for filtered results
  */
-export const getCachedItemsByTag = (raw: string, options: FetchOptions = {}) => {
+export const getCachedItemsByTag = async (raw: string, options: FetchOptions = {}) => {
 	const locale = options.lang || 'en';
 	return unstable_cache(
 		async () => {
@@ -1136,7 +1136,7 @@ export const getCachedItemsByTag = (raw: string, options: FetchOptions = {}) => 
  * Delegates to fetchItems internally, so benefits from its caching
  * Additional caching layer for double-filtered results
  */
-export const getCachedItemsByCategoryAndTag = (
+export const getCachedItemsByCategoryAndTag = async (
 	category: string,
 	tag: string,
 	options: FetchOptions = {}
