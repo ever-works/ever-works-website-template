@@ -51,12 +51,12 @@ async function performBackgroundSync(): Promise<SyncResult> {
 
 // Helper function to start automatic background sync
 export async function startBackgroundSync(): Promise<SyncResult | null> {
-  // Skip background sync in development mode
-  if (process.env.NODE_ENV === 'development') {
+  // Allow disabling auto-sync in development via environment variable
+  if (process.env.NODE_ENV === 'development' && process.env.DISABLE_AUTO_SYNC === 'true') {
     return {
       success: true,
       message: "Sync disabled in development mode",
-      details: "Background sync is skipped in development for better performance"
+      details: "Background sync is skipped (DISABLE_AUTO_SYNC=true)"
     };
   }
 

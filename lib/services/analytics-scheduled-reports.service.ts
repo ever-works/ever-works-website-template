@@ -57,8 +57,8 @@ export class AnalyticsScheduledReportsService {
     this.repository = new AdminAnalyticsOptimizedRepository();
     this.initializeDefaultTemplates();
 
-    // Skip report scheduling in development mode
-    if (process.env.NODE_ENV !== 'development') {
+    // Skip report scheduling only if explicitly disabled
+    if (process.env.DISABLE_AUTO_SYNC !== 'true') {
       this.scheduleReports();
     }
   }

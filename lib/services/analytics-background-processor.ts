@@ -45,8 +45,8 @@ export class AnalyticsBackgroundProcessor {
   constructor() {
     this.repository = new AdminAnalyticsOptimizedRepository();
 
-    // Skip background job initialization in development mode
-    if (process.env.NODE_ENV !== 'development') {
+    // Skip background job initialization only if explicitly disabled
+    if (process.env.DISABLE_AUTO_SYNC !== 'true') {
       this.initializeJobs();
     }
   }
