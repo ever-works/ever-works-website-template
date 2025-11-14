@@ -353,6 +353,10 @@ function populateTag(tag: string | Tag, tags: Map<string, Tag>) {
 }
 
 export async function fetchItems(options: FetchOptions = {}) {
+	// Ensure content is available (copies from build to runtime on Vercel)
+	const { ensureContentAvailable } = await import('./lib');
+	await ensureContentAvailable();
+
 	// Repository sync now handled by background sync manager (lib/services/sync-service.ts)
 	const dest = path.join(getContentPath(), 'data');
 	const files = await fs.promises.readdir(dest);
