@@ -116,6 +116,17 @@ export default function GlobalsClient(props: ListingProps) {
 							<ListingClient
 								{...props}
 								items={filteredItems}
+								totalCount={props.items.length}
+								config={{
+									showStats: false,
+									showViewToggle: true,
+									showFilters: false,
+									showPagination: true,
+									showEmptyState: true,
+									enableSearch: false,
+									enableTagFilter: false,
+									enableSorting: true,
+								}}
 							/>
 						</div>
 					</div>

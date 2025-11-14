@@ -40,7 +40,7 @@ type Home2LayoutProps = {
 };
 
 export function HomeTwoLayout(props: Home2LayoutProps) {
-  const { layoutKey, setLayoutKey } = useLayoutTheme();
+  const { layoutKey, setLayoutKey, itemsPerPage } = useLayoutTheme();
   const { isSticky, sentinelRef, targetRef } = useStickyState({
     threshold: 0,
     rootMargin: "-20px 0px 0px 0px",
@@ -71,7 +71,7 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
           categories={props.categories}
           tags={props.tags}
           items={props.filteredAndSortedItems}
-          config={CardPresets.homeTwoListing}
+          config={{ ...CardPresets.homeTwoListing, perPage: itemsPerPage }}
         />
       </div>
     </div>

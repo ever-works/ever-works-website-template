@@ -28,6 +28,7 @@ export interface BaseCardProps {
   categories: Category[];
   tags: Tag[];
   items: ItemData[];
+  totalCount?: number;
 }
 
 export interface CardConfigOptions {
@@ -240,7 +241,7 @@ export function SharedCard(props: ExtendedCardProps) {
 
   // Calculate counts (single source of truth)
   const filteredCount = sortedItems.length;
-  const totalCount = items.length;
+  const totalCount = props.totalCount ?? items.length;
 
   // Handle view change
   const handleViewChange = useCallback(
