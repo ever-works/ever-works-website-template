@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { startBackgroundSync, getSyncStatus } from "@/lib/services/sync-service";
+import { triggerManualSync, getSyncStatus } from "@/lib/services/sync-service";
 
 /**
  * @swagger
@@ -246,7 +246,7 @@ function createSyncResponse(
 // POST endpoint for manual sync trigger
 export async function POST(request: Request) {
   const startTime = Date.now();
-  
+
   try {
     // Parse request body for options
     let options = {};
@@ -259,24 +259,22 @@ export async function POST(request: Request) {
 
     console.log("[SYNC_API] Manual sync triggered", options);
 
-    const result = await startBackgroundSync();
+    const result = await triggerManualSync();
     const duration = Date.now() - startTime;
 
-    if (result === null) {
-      return createSyncResponse(
-        true,
-        "Sync was already in progress",
-        duration,
-        "Another sync operation is currently running"
-      );
-    }
+    return createSyncResponse(
+      result.success,
+      result.message,
+      duration,
+      result.details
+    );
 
   } catch (error) {
     const duration = Date.now() - startTime;
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    
+
     console.error(`[SYNC_API] Manual sync request failed after ${duration}ms:`, error);
-    
+
     return createSyncResponse(
       false,
       "Manual sync request failed",
@@ -291,12 +289,12 @@ export async function GET() {
   const syncStatus = getSyncStatus();
   const now = new Date();
   const timeSinceLastSync = syncStatus.lastSyncTime ? now.getTime() - syncStatus.lastSyncTime.getTime() : null;
-  
+
   const status = {
-    syncInProgress: syncStatus.syncInProgress,
+    syncInProgress: syncStatus.isRunning,
     lastSyncTime: syncStatus.lastSyncTime?.toISOString() || null,
     timeSinceLastSync,
-    timeSinceLastSyncHuman: timeSinceLastSync 
+    timeSinceLastSyncHuman: timeSinceLastSync
       ? `${Math.floor(timeSinceLastSync / 1000)}s ago`
       : "never",
     uptime: process.uptime(),
@@ -309,4 +307,4 @@ export async function GET() {
       "Content-Type": "application/json",
     },
   });
-} 
+}
