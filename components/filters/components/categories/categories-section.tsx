@@ -15,15 +15,16 @@ import { ActiveFilters } from "../active-filters/active-filters";
  */
 export function Categories({ total, categories, tags }: CategoriesProps & { tags: Tag[] }) {
   const t = useTranslations("listing");
-  const { 
-    searchTerm, 
-    setSearchTerm, 
-    sortBy, 
-    setSortBy, 
-    selectedTags, 
+  const {
+    searchTerm,
+    setSearchTerm,
+    sortBy,
+    setSortBy,
+    selectedTags,
     setSelectedTags,
     selectedCategories,
-    setSelectedCategories
+    setSelectedCategories,
+    clearAllFilters
   } = useFilters();
 
   const handleCategoryToggle = (categoryId: string) => {
@@ -106,12 +107,7 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
           setSortBy={setSortBy}
           availableTags={tags}
           availableCategories={categories}
-          clearAllFilters={() => {
-            setSearchTerm("");
-            setSelectedTags([]);
-            setSelectedCategories([]);
-            setSortBy("popularity");
-          }}
+          clearAllFilters={clearAllFilters}
         />
 
         {/* Sort By Section (styled card, now outside categories) */}

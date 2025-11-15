@@ -4,7 +4,6 @@ import * as fs from "fs";
 import * as path from "path";
 import { getContentPath } from "@/lib/lib";
 import { fsExists } from "@/lib/lib";
-import { trySyncRepository } from "@/lib/repository";
 
 /**
  * @swagger
@@ -310,16 +309,9 @@ export async function GET() {
     // Performance: Log API call
     console.log("[VERSION_API] Starting version info request");
 
-    // Step 1: Sync repository with timeout and retry logic
-    try {
-      await trySyncRepository();
-      console.log("[VERSION_API] Repository sync completed successfully");
-    } catch (syncError) {
-      console.warn("[VERSION_API] Repository sync failed:", syncError);
-      // Continue with existing data instead of failing completely
-    }
+    // Repository sync now handled by background sync manager (lib/services/sync-service.ts)
 
-    // Step 2: Validate paths and environment
+    // Step 1: Validate paths and environment
     const contentPath = getContentPath();
     const gitDir = path.join(contentPath, ".git");
     const repository = process.env.DATA_REPOSITORY;
