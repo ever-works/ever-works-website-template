@@ -136,7 +136,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
   const { features } = useFeatureFlags();
-  const { hasGlobalSurveys } = useHasGlobalSurveys();
+  const { hasGlobalSurveys, isPending } = useHasGlobalSurveys();
   const t = useTranslations("common");
   const tListing = useTranslations("listing");
   const tSurvey = useTranslations("survey");
@@ -150,8 +150,8 @@ export default function Header() {
         if (item.key === "favorites" && (!features.favorites || !session?.user?.id)) {
           return false;
         }
-        // Hide surveys link when there are no global surveys
-        if (item.key === "surveys" && !hasGlobalSurveys) {
+        // Hide surveys link when there are no global surveys (but keep it visible while loading to prevent flicker)
+        if (item.key === "surveys" && !isPending && !hasGlobalSurveys) {
           return false;
         }
         return true;
@@ -167,7 +167,7 @@ export default function Header() {
             : t(item.translationKey as any)
           : item.staticLabel || item.key,
       }));
-  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys]);
+  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending]);
 
   const isActiveLink = useCallback(
     (href: string): boolean => {
