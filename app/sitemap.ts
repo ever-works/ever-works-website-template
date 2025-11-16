@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { fetchItems } from "@/lib/content";
+import { getCachedItems } from "@/lib/content";
 
 // Types
 interface RouteConfig {
@@ -165,7 +165,7 @@ const generateLocaleRoutes = (baseUrl: string): SitemapEntry[] => {
 
 const generateDynamicRoutes = async (baseUrl: string): Promise<SitemapEntry[]> => {
   try {
-    const { items, categories, tags } = await fetchItems()
+    const { items, categories, tags } = await getCachedItems()
 
     return [
       // Items - validate and sanitize slugs
