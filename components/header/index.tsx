@@ -13,7 +13,7 @@ import {
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo, useCallback, useState } from "react";
+import { useMemo, useCallback, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { LayoutSwitcher } from "../layout-switcher";
 import { NavigationControls } from "../navigation-controls";
@@ -136,6 +136,7 @@ const STYLES = {
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [hasCategories, setHasCategories] = useState<boolean | null>(null);
   const { data: session } = useSession();
   const { features } = useFeatureFlags();
   const { hasGlobalSurveys, isPending } = useHasGlobalSurveys();
@@ -147,11 +148,28 @@ export default function Header() {
   const config = useConfig();
   const pathname = usePathname();
 
+  // Check if categories exist
+  useEffect(() => {
+    const checkCategories = async () => {
+      try {
+        const response = await fetch("/api/categories/exists");
+        const data = await response.json();
+        setHasCategories(data.exists === true);
+      } catch (error) {
+        console.error("Error checking categories:", error);
+        // On error, assume categories don't exist to be safe
+        setHasCategories(false);
+      }
+    };
+    
+    checkCategories();
+  }, []);
+
   const navigationItems = useMemo((): NavigationItem[] => {
     return NAVIGATION_CONFIG
       .filter((item) => {
         // Hide categories link when categories are disabled
-        if (item.key === "categories" && !categoriesEnabled) {
+        if ((item.key === "categories" && !categoriesEnabled) || (item.key === "categories" && !hasCategories)) {
           return false;
         }
         // Hide favorites link when feature is disabled or user is not logged in
@@ -183,7 +201,7 @@ export default function Header() {
             : t(item.translationKey as any)
           : item.staticLabel || item.key,
       }));
-  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending, categoriesEnabled, headerSettings.pricingEnabled, headerSettings.submitEnabled]);
+  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending, categoriesEnabled, headerSettings.pricingEnabled, headerSettings.submitEnabled, hasCategories]);
 
   const isActiveLink = useCallback(
     (href: string): boolean => {

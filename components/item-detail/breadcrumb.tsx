@@ -5,8 +5,8 @@ import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 
 interface BreadcrumbProps {
   name: string;
-  category: string | { id?: string };
-  categoryName: string;
+  category: string | { id?: string } | null | undefined;
+  categoryName: string | null | undefined;
 }
 
 export function ItemBreadcrumb({
@@ -14,13 +14,27 @@ export function ItemBreadcrumb({
   category,
   categoryName,
 }: BreadcrumbProps) {
+<<<<<<< HEAD
   const { categoriesEnabled } = useCategoriesEnabled();
   const categoryId =
     typeof category === "string"
       ? category
       : (category as { id?: string })?.id || String(category);
+=======
+  // Check if category exists and is valid
+  const hasCategory = category && categoryName && 
+    (typeof category === "string" ? category.trim() !== "" : 
+     (category as { id?: string })?.id?.trim() !== "");
 
-  const encodedCategory = encodeURIComponent(categoryId);
+  const categoryId = hasCategory
+    ? (typeof category === "string"
+        ? category
+        : (category as { id?: string })?.id || String(category))
+    : null;
+
+  const encodedCategory = categoryId ? encodeURIComponent(categoryId) : null;
+>>>>>>> 9afd64a (fix: hide category-related UI when no categories exist)
+
   return (
     <nav className="flex mb-4" aria-label="Breadcrumb">
       <ol className="inline-flex items-center space-x-1 md:space-x-3">
@@ -41,7 +55,11 @@ export function ItemBreadcrumb({
             Home
           </Link>
         </li>
+<<<<<<< HEAD
         {categoriesEnabled && (
+=======
+        {hasCategory && encodedCategory && (
+>>>>>>> 9afd64a (fix: hide category-related UI when no categories exist)
           <li>
             <div className="flex items-center">
               <svg

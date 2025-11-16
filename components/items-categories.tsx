@@ -19,6 +19,14 @@ export function ItemsCategories(props: {
     const [isSticky, setIsSticky] = useState(false);
     const pathname = usePathname();
 
+<<<<<<< HEAD
+=======
+    // Don't render if no categories
+    if (!props.categories || props.categories.length === 0) {
+      return null;
+    }
+  
+>>>>>>> 9afd64a (fix: hide category-related UI when no categories exist)
     useEffect(() => {
       if (props.enableSticky) {
         const handleScroll = () => {

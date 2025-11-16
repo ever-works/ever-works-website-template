@@ -22,6 +22,11 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
   const searchParams = useSearchParams();
   const [loadingCategory, setLoadingCategory] = useState<string | null>(null);
 
+  // Don't render if no categories
+  if (!categories || categories.length === 0) {
+    return null;
+  }
+
   useEffect(() => {
     setLoadingCategory(null);
   }, [pathname, searchParams]);

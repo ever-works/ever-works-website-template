@@ -41,6 +41,11 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
     }
   };
 
+  // Don't render if no categories
+  if (!categories || categories.length === 0) {
+    return null;
+  }
+
   return (
     <>
       {/* Mobile Layout */}
