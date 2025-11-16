@@ -21,6 +21,7 @@ import { ProfileButton } from "./profile-button";
 import { IconEverworksSimple } from "../icons/Icons";
 import { Container } from "../ui/container";
 import { useFeatureFlags } from "@/hooks/use-feature-flags";
+import { useHasGlobalSurveys } from "@/hooks/use-has-global-surveys";
 
 interface NavigationItem {
   key: string;
@@ -135,6 +136,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
   const { features } = useFeatureFlags();
+  const { hasGlobalSurveys } = useHasGlobalSurveys();
   const t = useTranslations("common");
   const tListing = useTranslations("listing");
   const tSurvey = useTranslations("survey");
@@ -146,6 +148,10 @@ export default function Header() {
       .filter((item) => {
         // Hide favorites link when feature is disabled or user is not logged in
         if (item.key === "favorites" && (!features.favorites || !session?.user?.id)) {
+          return false;
+        }
+        // Hide surveys link when there are no global surveys
+        if (item.key === "surveys" && !hasGlobalSurveys) {
           return false;
         }
         return true;
@@ -161,7 +167,7 @@ export default function Header() {
             : t(item.translationKey as any)
           : item.staticLabel || item.key,
       }));
-  }, [t, tListing, tSurvey, session?.user?.id, features.favorites]);
+  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys]);
 
   const isActiveLink = useCallback(
     (href: string): boolean => {
