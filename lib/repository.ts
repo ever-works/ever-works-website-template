@@ -124,6 +124,10 @@ copyright_year: ${new Date().getFullYear()}
   // Note: Repository sync will happen during build to ensure content is available
   // Error handling is in place to gracefully handle any sync issues
 
+  // Ensure content is available (copies from build to runtime on Vercel)
+  const { ensureContentAvailable } = await import('./lib');
+  await ensureContentAvailable();
+
   const { getContentPath } = await import('./lib');
   const dest = getContentPath();
   const auth = getGitAuth(token);

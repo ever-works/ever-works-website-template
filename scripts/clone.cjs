@@ -19,10 +19,7 @@ if (!url) {
 
 function getContentPath() {
   const contentDir = '.content';
-  if (process.env.VERCEL) {
-    return path.join(os.tmpdir(), contentDir);
-  }
-
+  // Always use project directory during build to ensure content is included in deployment
   return path.join(process.cwd(), contentDir);
 }
 
