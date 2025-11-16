@@ -13,7 +13,7 @@ import {
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo, useCallback, useState, useEffect } from "react";
+import { useMemo, useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
 import { LayoutSwitcher } from "../layout-switcher";
 import { NavigationControls } from "../navigation-controls";
@@ -24,6 +24,7 @@ import { useFeatureFlags } from "@/hooks/use-feature-flags";
 import { useHasGlobalSurveys } from "@/hooks/use-has-global-surveys";
 import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 import { useHeaderSettings } from "@/hooks/use-header-settings";
+import { useCategoriesExists } from "@/hooks/use-categories-exists";
 
 interface NavigationItem {
   key: string;
@@ -136,40 +137,27 @@ const STYLES = {
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [hasCategories, setHasCategories] = useState<boolean | null>(null);
   const { data: session } = useSession();
   const { features } = useFeatureFlags();
   const { hasGlobalSurveys, isPending } = useHasGlobalSurveys();
   const { categoriesEnabled } = useCategoriesEnabled();
   const { settings: headerSettings } = useHeaderSettings();
+  const { data: categoriesData } = useCategoriesExists();
+
   const t = useTranslations("common");
   const tListing = useTranslations("listing");
   const tSurvey = useTranslations("survey");
   const config = useConfig();
   const pathname = usePathname();
 
-  // Check if categories exist
-  useEffect(() => {
-    const checkCategories = async () => {
-      try {
-        const response = await fetch("/api/categories/exists");
-        const data = await response.json();
-        setHasCategories(data.exists === true);
-      } catch (error) {
-        console.error("Error checking categories:", error);
-        // On error, assume categories don't exist to be safe
-        setHasCategories(false);
-      }
-    };
-    
-    checkCategories();
-  }, []);
+  // Extract hasCategories from React Query data
+  const hasCategories = categoriesData?.exists ?? false;
 
   const navigationItems = useMemo((): NavigationItem[] => {
     return NAVIGATION_CONFIG
       .filter((item) => {
         // Hide categories link when categories are disabled
-        if ((item.key === "categories" && !categoriesEnabled) || (item.key === "categories" && !hasCategories)) {
+        if (item.key === "categories" && !categoriesEnabled && !hasCategories) {
           return false;
         }
         // Hide favorites link when feature is disabled or user is not logged in
