@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl';
 import { generateProductSchema } from '@/lib/seo/schema';
 import { useParams } from 'next/navigation';
 import { siteConfig } from '@/lib/config';
+import { ItemCTAButton } from './item-cta-button';
 
 export interface ItemDetailProps {
 	meta: {
@@ -32,6 +33,9 @@ export interface ItemDetailProps {
 		slug?: string;
 		promo_code?: PromoCode;
 		allItems?: ItemData[];
+		action?: 'visit-website' | 'start-survey' | 'buy';
+		showSurveys?: boolean;
+		publisher?: string;
 	};
 	renderedContent: React.ReactNode;
 	categoryName: string;
@@ -113,15 +117,12 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 							</p>
 
 							<div className="flex items-center space-x-4 mb-12">
-								<a
-									target="_blank"
-									href={meta.source_url}
-									className="group relative inline-flex items-center px-6 py-3 bg-gradient-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 dark:from-theme-primary-700 dark:to-theme-primary-800 dark:hover:from-theme-primary-800 dark:hover:to-theme-primary-900 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-theme-primary-500/25 transform hover:-translate-y-0.5 overflow-hidden"
-								>
-									<div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-									<span className="mr-2 text-lg">🌐</span>
-									<span className="relative">{t('common.VISIT_WEBSITE')}</span>
-								</a>
+								<ItemCTAButton
+									action={meta.action || 'visit-website'}
+									sourceUrl={meta.source_url}
+									itemSlug={meta.slug}
+									itemName={meta.name}
+								/>
 
 								{/* Favorite Button */}
 								<FavoriteButton
@@ -181,10 +182,12 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 							</div>
 						</div>
 
-						{/* Surveys Section */}
-						<UserSurveySection
-							item={meta}
-						/>
+						{/* Surveys Section - Only show if showSurveys is not false */}
+						{meta.showSurveys !== false && (
+							<UserSurveySection
+								item={meta}
+							/>
+						)}
 
 						{/* Comments Section */}
 						<div className="mt-8">
@@ -220,53 +223,56 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 							<div className="space-y-4">
 								<RatingDisplay itemId={meta.slug || meta.name} />
 
-								{/* Existing information items */}
-								<div className="flex justify-between items-center p-4 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-300 group">
-									<span className="text-gray-600 dark:text-gray-300 font-medium flex items-center gap-2">
-										<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth="2"
-												d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-											/>
-										</svg>
-										{t('itemDetail.PUBLISHER')}
-									</span>
-									<span className="flex items-center bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 px-4 py-2 rounded-full border border-orange-200 dark:border-orange-700/50 group-hover:scale-105 transition-transform duration-300">
-										<span className="w-3 h-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 mr-2 animate-pulse"></span>
-										<span className="font-semibold text-orange-700 dark:text-orange-300">Fox</span>
-									</span>
-								</div>
-								<div className="flex justify-between items-center p-4 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-300 group">
-									<span className="text-gray-600 dark:text-gray-300 font-medium flex items-center gap-2">
-										<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth="2"
-												d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"
-											/>
-										</svg>
-										{t('itemDetail.WEBSITE')}
-									</span>
-									<a
-										href={meta.source_url}
-										target="_blank"
-										rel="noopener noreferrer"
-										className="text-theme-primary-600 hover:text-theme-primary-700 dark:text-theme-primary-400 dark:hover:text-theme-primary-300 duration-300 font-semibold hover:underline group-hover:scale-105 transition-transform"
-									>
-										{meta.source_url
-											? (() => {
+								{/* Publisher - Only show if defined */}
+								{meta.publisher && (
+									<div className="flex justify-between items-center p-4 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-300 group">
+										<span className="text-gray-600 dark:text-gray-300 font-medium flex items-center gap-2">
+											<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													strokeWidth="2"
+													d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+												/>
+											</svg>
+											{t('itemDetail.PUBLISHER')}
+										</span>
+										<span className="flex items-center bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 px-4 py-2 rounded-full border border-orange-200 dark:border-orange-700/50 group-hover:scale-105 transition-transform duration-300">
+											<span className="w-3 h-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 mr-2 animate-pulse"></span>
+											<span className="font-semibold text-orange-700 dark:text-orange-300">{meta.publisher}</span>
+										</span>
+									</div>
+								)}
+								{/* Website - Only show if source_url exists */}
+								{meta.source_url && (
+									<div className="flex justify-between items-center p-4 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-300 group">
+										<span className="text-gray-600 dark:text-gray-300 font-medium flex items-center gap-2">
+											<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													strokeWidth="2"
+													d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"
+												/>
+											</svg>
+											{t('itemDetail.WEBSITE')}
+										</span>
+										<a
+											href={meta.source_url}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="text-theme-primary-600 hover:text-theme-primary-700 dark:text-theme-primary-400 dark:hover:text-theme-primary-300 duration-300 font-semibold hover:underline group-hover:scale-105 transition-transform"
+										>
+											{(() => {
 												try {
 													return new URL(meta.source_url).hostname;
 												} catch {
 													return 'N/A';
 												}
-											})()
-											: 'N/A'}
-									</a>
-								</div>
+											})()}
+										</a>
+									</div>
+								)}
 								<div className="flex justify-between items-center p-4 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-300 group">
 									<span className="text-gray-600 dark:text-gray-300 font-medium flex items-center gap-2">
 										<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -334,79 +340,83 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 							</div>
 						)}
 
-						<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
-							<div className="flex items-center justify-between mb-6">
-								<div className="flex items-center gap-4">
-									<div className="p-3 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl">
-										<svg
-											className="w-6 h-6 text-purple-600 dark:text-purple-400"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-											xmlns="http://www.w3.org/2000/svg"
-											aria-label={t('listing.CATEGORIES')}
-											role="img"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth="2"
-												d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-											/>
-										</svg>
+						{/* Categories - Only show if category exists */}
+						{categoryName && (
+							<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
+								<div className="flex items-center justify-between mb-6">
+									<div className="flex items-center gap-4">
+										<div className="p-3 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl">
+											<svg
+												className="w-6 h-6 text-purple-600 dark:text-purple-400"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
+												xmlns="http://www.w3.org/2000/svg"
+												aria-label={t('listing.CATEGORIES')}
+												role="img"
+											>
+												<path
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													strokeWidth="2"
+													d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+												/>
+											</svg>
+										</div>
+										<h2 className="text-xl font-bold text-gray-800 dark:text-white">
+											{t('common.CATEGORY')}
+										</h2>
 									</div>
-									<h2 className="text-xl font-bold text-gray-800 dark:text-white">
-										{t('common.CATEGORY')}
-									</h2>
-								</div>
-								<span className="text-xs bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full font-semibold border border-purple-200 dark:border-purple-700/50">
-									1 {t('common.ITEM')}
-								</span>
-							</div>
-							<div className="flex flex-wrap gap-2">
-								<a
-									href={`/categories/${slugify(categoryName)}`}
-									className="group relative px-5 py-3 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 dark:hover:from-purple-900/30 dark:hover:to-pink-900/30 transition-all duration-300 rounded-xl text-sm font-semibold flex items-center border border-purple-200/50 dark:border-purple-700/50 hover:border-purple-300 dark:hover:border-purple-600 transform hover:scale-105 overflow-hidden"
-								>
-									<div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-200/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-									<span className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mr-3 group-hover:scale-125 transition-transform duration-300 relative z-10" />
-									<span className="text-purple-700 dark:text-purple-300 relative z-10">
-										{toTitleCase(categoryName)}
+									<span className="text-xs bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full font-semibold border border-purple-200 dark:border-purple-700/50">
+										1 {t('common.ITEM')}
 									</span>
-								</a>
-							</div>
-						</div>
-
-						<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
-							<div className="flex items-center justify-between mb-6">
-								<div className="flex items-center gap-4">
-									<div className="p-3 bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900/30 dark:to-blue-900/30 rounded-xl">
-										<svg
-											className="w-6 h-6 text-cyan-600 dark:text-cyan-400"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-											xmlns="http://www.w3.org/2000/svg"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth="2"
-												d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
-											></path>
-										</svg>
-									</div>
-									<h2 className="text-xl font-bold text-gray-800 dark:text-white">
-										{t('listing.TAGS')}
-									</h2>
 								</div>
-								<span className="text-xs bg-gradient-to-r from-cyan-100 to-blue-100 dark:from-cyan-900/30 dark:to-blue-900/30 text-cyan-700 dark:text-cyan-300 px-3 py-1 rounded-full font-semibold border border-cyan-200 dark:border-cyan-700/50">
-									{tagNames.length} {tagNames.length === 1 ? t('common.ITEM') : t('common.ITEMS')}
-								</span>
+								<div className="flex flex-wrap gap-2">
+									<a
+										href={`/categories/${slugify(categoryName)}`}
+										className="group relative px-5 py-3 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 dark:hover:from-purple-900/30 dark:hover:to-pink-900/30 transition-all duration-300 rounded-xl text-sm font-semibold flex items-center border border-purple-200/50 dark:border-purple-700/50 hover:border-purple-300 dark:hover:border-purple-600 transform hover:scale-105 overflow-hidden"
+									>
+										<div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-200/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+										<span className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mr-3 group-hover:scale-125 transition-transform duration-300 relative z-10" />
+										<span className="text-purple-700 dark:text-purple-300 relative z-10">
+											{toTitleCase(categoryName)}
+										</span>
+									</a>
+								</div>
 							</div>
-							<div className="flex flex-wrap gap-2">
-								{tagNames.length > 0 ? (
-									tagNames.map((tag, index) => (
+						)}
+
+						{/* Tags - Only show if tags exist */}
+						{tagNames.length > 0 && (
+							<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
+								<div className="flex items-center justify-between mb-6">
+									<div className="flex items-center gap-4">
+										<div className="p-3 bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900/30 dark:to-blue-900/30 rounded-xl">
+											<svg
+												className="w-6 h-6 text-cyan-600 dark:text-cyan-400"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
+												xmlns="http://www.w3.org/2000/svg"
+											>
+												<path
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													strokeWidth="2"
+													d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+												></path>
+											</svg>
+										</div>
+										<h2 className="text-xl font-bold text-gray-800 dark:text-white">
+											{t('listing.TAGS')}
+										</h2>
+									</div>
+									<span className="text-xs bg-gradient-to-r from-cyan-100 to-blue-100 dark:from-cyan-900/30 dark:to-blue-900/30 text-cyan-700 dark:text-cyan-300 px-3 py-1 rounded-full font-semibold border border-cyan-200 dark:border-cyan-700/50">
+										{tagNames.length} {tagNames.length === 1 ? t('common.ITEM') : t('common.ITEMS')}
+									</span>
+								</div>
+								<div className="flex flex-wrap gap-2">
+									{tagNames.map((tag, index) => (
 										<a
 											key={index}
 											href={`/tags/${tag}`}
@@ -420,29 +430,10 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 												{tag}
 											</span>
 										</a>
-									))
-								) : (
-									<div className="w-full text-center py-4 sm:py-6 text-gray-500 dark:text-gray-400">
-										<svg
-											className="w-8 h-8 mx-auto mb-3 opacity-50"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth="2"
-												d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
-											/>
-										</svg>
-										<p className="text-sm italic font-medium">
-											{t('itemDetail.NO_TAGS_AVAILABLE')}
-										</p>
-									</div>
-								)}
+									))}
+								</div>
 							</div>
-						</div>
+						)}
 
 						{meta.allItems && meta.allItems.length > 0 && (
 							<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">

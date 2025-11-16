@@ -15,6 +15,9 @@ export interface ItemData {
   reviewed_by?: string;
   reviewed_at?: string;
   review_notes?: string;
+  action?: 'visit-website' | 'start-survey' | 'buy'; // CTA action type
+  showSurveys?: boolean; // Whether to show surveys section (default: true)
+  publisher?: string; // Publisher name for display
 }
 
 export interface CreateItemRequest {

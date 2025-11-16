@@ -139,6 +139,9 @@ export interface ItemData {
 	promo_code?: PromoCode; // New field for promotional codes
 	markdown?: string; // Optional markdown content from YAML
 	is_source_url_active?: boolean;
+	action?: 'visit-website' | 'start-survey' | 'buy'; // CTA action type
+	showSurveys?: boolean; // Whether to show surveys section (default: true)
+	publisher?: string; // Publisher name for display
 }
 
 export interface AuthOptions {
