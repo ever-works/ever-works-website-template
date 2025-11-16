@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { FiFolder } from "react-icons/fi";
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import UniversalPagination from "@/components/universal-pagination";
 import { useLayoutTheme } from "@/components/context";
 import { Loader2 } from "lucide-react";
@@ -22,17 +22,14 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
   const searchParams = useSearchParams();
   const [loadingCategory, setLoadingCategory] = useState<string | null>(null);
 
-  // Don't render if no categories
-  if (!categories || categories.length === 0) {
-    return null;
-  }
-
   useEffect(() => {
     setLoadingCategory(null);
   }, [pathname, searchParams]);
 
   const sortedCategories = useMemo(() =>
-    [...categories].sort((a, b) => (b.count ?? 0) - (a.count ?? 0)),
+    categories && categories.length > 0
+      ? [...categories].sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
+      : [],
     [categories]
   );
 
@@ -95,6 +92,11 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
     setLoadingCategory(categoryId);
     router.push(`/?categories=${categoryId}`);
   };
+
+  // Don't render if no categories
+  if (!categories || categories.length === 0) {
+    return null;
+  }
 
   return (
     <>
