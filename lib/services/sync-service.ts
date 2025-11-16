@@ -97,9 +97,10 @@ class SyncManager {
         console.log(`[SYNC_MANAGER] Sync completed successfully in ${duration}ms`);
       }
 
-      // TODO: Cache invalidation will be added in PR #2 (caching implementation)
-      // revalidateTag() requires request context, which doesn't exist in background sync
-      // For now, content is read fresh from disk on each request, so no stale cache to invalidate
+      // Invalidate content caches after successful sync
+      const { invalidateContentCaches } = await import('@/lib/cache-invalidation');
+      await invalidateContentCaches();
+      console.log('[SYNC_MANAGER] Content caches invalidated');
 
       return result;
 

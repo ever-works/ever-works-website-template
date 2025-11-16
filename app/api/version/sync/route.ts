@@ -246,7 +246,7 @@ function createSyncResponse(
 // POST endpoint for manual sync trigger
 export async function POST(request: Request) {
   const startTime = Date.now();
-  
+
   try {
     // Parse request body for options
     let options = {};
@@ -272,9 +272,9 @@ export async function POST(request: Request) {
   } catch (error) {
     const duration = Date.now() - startTime;
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    
+
     console.error(`[SYNC_API] Manual sync request failed after ${duration}ms:`, error);
-    
+
     return createSyncResponse(
       false,
       "Manual sync request failed",
@@ -307,4 +307,4 @@ export async function GET() {
       "Content-Type": "application/json",
     },
   });
-} 
+}
