@@ -1,7 +1,7 @@
 'use client';
 
 import { SpeedInsights as VercelSpeedInsights } from '@vercel/speed-insights/next';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 
 interface SpeedInsightsConfig {
@@ -28,7 +28,7 @@ export function SpeedInsights({
 	const [shouldRender, setShouldRender] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
 	const [finalSampleRate, setFinalSampleRate] = useState<number>(1.0);
-	const [isInitialized, setIsInitialized] = useState(false);
+	const isInitialized = useRef(false);
 
 	useEffect(() => {
 		// Client-side only check
@@ -37,7 +37,7 @@ export function SpeedInsights({
 		}
 
 		// Prevent multiple initializations
-		if (isInitialized) {
+		if (isInitialized.current) {
 			return;
 		}
 
@@ -45,7 +45,7 @@ export function SpeedInsights({
 			// Priority 1: Check if manually disabled
 			if (enabled === false) {
 				setShouldRender(false);
-				setIsInitialized(true);
+				isInitialized.current = true;
 				return;
 			}
 
@@ -53,7 +53,7 @@ export function SpeedInsights({
 			const envEnabled = process.env.NEXT_PUBLIC_SPEED_INSIGHTS_ENABLED;
 			if (envEnabled === 'false') {
 				setShouldRender(false);
-				setIsInitialized(true);
+				isInitialized.current = true;
 				return;
 			}
 
@@ -93,18 +93,18 @@ export function SpeedInsights({
 				setShouldRender(false);
 			}
 
-			setIsInitialized(true);
+			isInitialized.current = true;
 		} catch (err) {
 			// Catch any errors during initialization
 			console.warn('[SpeedInsights] Error during initialization:', err);
 			setError(err instanceof Error ? err : new Error('Unknown error'));
 			setShouldRender(false);
-			setIsInitialized(true);
+			isInitialized.current = true;
 		}
-	}, [enabled, sampleRate, isInitialized]);
+	}, [enabled, sampleRate]);
 
 	// Don't render if there was an error, not initialized, or explicitly disabled
-	if (error || !isInitialized || !shouldRender) {
+	if (error || !isInitialized.current || !shouldRender) {
 		return null;
 	}
 
