@@ -121,7 +121,6 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 									action={meta.action || 'visit-website'}
 									sourceUrl={meta.source_url}
 									itemSlug={meta.slug}
-									itemName={meta.name}
 								/>
 
 								{/* Favorite Button */}

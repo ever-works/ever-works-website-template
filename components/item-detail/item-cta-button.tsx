@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { surveyApiClient } from '@/lib/api/survey-api.client';
 import { SurveyStatusEnum } from '@/lib/types/survey';
@@ -15,28 +15,22 @@ interface ItemCTAButtonProps {
 	action?: 'visit-website' | 'start-survey' | 'buy';
 	sourceUrl?: string;
 	itemSlug?: string;
-	itemName?: string;
 }
 
-export function ItemCTAButton({ action = 'visit-website', sourceUrl, itemSlug, itemName }: ItemCTAButtonProps) {
+export function ItemCTAButton({ action = 'visit-website', sourceUrl, itemSlug }: ItemCTAButtonProps) {
 	const t = useTranslations('common');
 	const tSurvey = useTranslations('survey');
 	const [firstSurvey, setFirstSurvey] = useState<SurveyItem | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [dialogOpen, setDialogOpen] = useState(false);
 
-	// Load first survey when action is 'start-survey'
-	useEffect(() => {
-		if (action === 'start-survey' && itemSlug) {
-			loadFirstSurvey();
-		}
-	}, [action, itemSlug]);
-
-	const loadFirstSurvey = async () => {
+	const loadFirstSurvey = useCallback(async () => {
+		if (!itemSlug) return;
+		
 		setLoading(true);
 		try {
 			const result = await surveyApiClient.getMany({
-				itemId: itemSlug || '',
+				itemId: itemSlug,
 				status: SurveyStatusEnum.PUBLISHED
 			});
 			if (result.surveys && result.surveys.length > 0) {
@@ -48,7 +42,14 @@ export function ItemCTAButton({ action = 'visit-website', sourceUrl, itemSlug, i
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, [itemSlug, tSurvey]);
+
+	// Load first survey when action is 'start-survey'
+	useEffect(() => {
+		if (action === 'start-survey' && itemSlug) {
+			loadFirstSurvey();
+		}
+	}, [action, itemSlug, loadFirstSurvey]);
 
 	const handleStartSurvey = () => {
 		if (firstSurvey) {
