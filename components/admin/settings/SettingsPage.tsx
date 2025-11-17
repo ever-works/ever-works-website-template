@@ -94,11 +94,6 @@ const ACCORDION_ITEM_CLASSES = [
 	'mb-4'
 ].join(' ');
 
-const ACCORDION_TITLE_WRAPPER_CLASSES = [
-	'py-4',
-	'px-6'
-].join(' ');
-
 const ACCORDION_TITLE_CLASSES = [
 	'text-lg',
 	'font-semibold',
@@ -234,8 +229,8 @@ export function SettingsPage() {
 					value="general"
 					className={ACCORDION_ITEM_CLASSES}
 				>
-					<AccordionTrigger className={ACCORDION_TITLE_WRAPPER_CLASSES}>
-						<div>
+					<AccordionTrigger>
+						<div className="text-left w-full">
 							<h3 className={ACCORDION_TITLE_CLASSES}>
 								General Settings
 							</h3>
@@ -279,8 +274,8 @@ export function SettingsPage() {
 					value="homepage"
 					className={ACCORDION_ITEM_CLASSES}
 				>
-					<AccordionTrigger className={ACCORDION_TITLE_WRAPPER_CLASSES}>
-						<div>
+					<AccordionTrigger>
+						<div className="text-left w-full">
 							<h3 className={ACCORDION_TITLE_CLASSES}>
 								Homepage Settings
 							</h3>
@@ -301,8 +296,8 @@ export function SettingsPage() {
 					value="header"
 					className={ACCORDION_ITEM_CLASSES}
 				>
-					<AccordionTrigger className={ACCORDION_TITLE_WRAPPER_CLASSES}>
-						<div>
+					<AccordionTrigger>
+						<div className="text-left w-full">
 							<h3 className={ACCORDION_TITLE_CLASSES}>
 								Header Settings
 							</h3>
@@ -323,8 +318,8 @@ export function SettingsPage() {
 					value="footer"
 					className={ACCORDION_ITEM_CLASSES}
 				>
-					<AccordionTrigger className={ACCORDION_TITLE_WRAPPER_CLASSES}>
-						<div>
+					<AccordionTrigger>
+						<div className="text-left w-full">
 							<h3 className={ACCORDION_TITLE_CLASSES}>
 								Footer Settings
 							</h3>
