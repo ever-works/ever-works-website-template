@@ -424,6 +424,7 @@
     "LOGOUT_DESC": "Sign out of your account",
     "PROFILE_DESC": "View and edit your profile",
     "ACCOUNT_SETTINGS_DESC": "Account settings and preferences",
+    "ADMIN_SETTINGS_DESC": "Manage site configuration and preferences",
     "PROFILE_SETTINGS": "Profile Settings",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
