@@ -3,6 +3,7 @@ import { categoryRepository } from "@/lib/repositories/category.repository";
 import { CreateCategoryRequest, CategoryListOptions } from "@/lib/types/category";
 import { auth } from "@/lib/auth";
 import { validatePaginationParams } from "@/lib/utils/pagination-validation";
+import { invalidateContentCaches } from "@/lib/cache-invalidation";
 
 /**
  * @swagger
@@ -364,6 +365,9 @@ export async function POST(request: NextRequest) {
 
     // Create category
     const newCategory = await categoryRepository.create(createData);
+
+    // Invalidate content caches to ensure immediate visibility
+    await invalidateContentCaches();
 
     return NextResponse.json({
       success: true,
