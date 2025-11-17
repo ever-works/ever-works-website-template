@@ -1,7 +1,12 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Accordion, AccordionItem } from '@heroui/accordion';
+import {
+	Accordion,
+	AccordionItem,
+	AccordionTrigger,
+	AccordionContent,
+} from '@/components/ui/accordion';
 import { toast } from 'sonner';
 import { Sliders } from 'lucide-react';
 import { SettingSwitch } from './SettingSwitch';
@@ -73,6 +78,62 @@ const SUBTITLE_CLASSES = [
 	'text-gray-600',
 	'dark:text-gray-400',
 	'mt-1'
+].join(' ');
+
+const ACCORDION_ITEM_CLASSES = [
+	'bg-white',
+	'dark:bg-gray-800',
+	'rounded-xl',
+	'border',
+	'border-gray-200',
+	'dark:border-gray-700',
+	'shadow-sm',
+	'hover:shadow-md',
+	'transition-all',
+	'duration-200',
+	'mb-4'
+].join(' ');
+
+const ACCORDION_TITLE_WRAPPER_CLASSES = [
+	'py-4',
+	'px-6'
+].join(' ');
+
+const ACCORDION_TITLE_CLASSES = [
+	'text-lg',
+	'font-semibold',
+	'text-gray-900',
+	'dark:text-gray-100'
+].join(' ');
+
+const ACCORDION_DESC_CLASSES = [
+	'text-sm',
+	'text-gray-600',
+	'dark:text-gray-400',
+	'mt-1'
+].join(' ');
+
+const ACCORDION_CONTENT_CLASSES = [
+	'px-6',
+	'pb-6',
+	'pt-2',
+	'space-y-4'
+].join(' ');
+
+const PLACEHOLDER_TEXT_CLASSES = [
+	'text-sm',
+	'text-gray-500',
+	'dark:text-gray-400',
+	'italic',
+	'py-6',
+	'text-center',
+	'bg-gray-50',
+	'dark:bg-gray-900/50',
+	'rounded-lg',
+	'border',
+	'border-dashed',
+	'border-gray-300',
+	'dark:border-gray-700'
 ].join(' ');
 
 export function SettingsPage() {
@@ -165,27 +226,26 @@ export function SettingsPage() {
 			<div className="p-6 max-w-7xl mx-auto">
 
 			<Accordion
-				variant="splitted"
-				selectionMode="multiple"
+				type="multiple"
+				className="space-y-4"
 			>
 				{/* General Settings Section */}
 				<AccordionItem
-					key="general"
-					aria-label="General Settings"
-					title={
+					value="general"
+					className={ACCORDION_ITEM_CLASSES}
+				>
+					<AccordionTrigger className={ACCORDION_TITLE_WRAPPER_CLASSES}>
 						<div>
-							<h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+							<h3 className={ACCORDION_TITLE_CLASSES}>
 								General Settings
 							</h3>
-							<p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+							<p className={ACCORDION_DESC_CLASSES}>
 								Basic site configuration
 							</p>
 						</div>
-					}
-					className="border-b border-gray-200 dark:border-gray-700"
-				>
-					<div className="pb-4 space-y-1">
-						<p className="text-sm text-gray-500 dark:text-gray-400 italic py-4">
+					</AccordionTrigger>
+					<AccordionContent className={ACCORDION_CONTENT_CLASSES}>
+						<p className={PLACEHOLDER_TEXT_CLASSES}>
 							No settings configured yet. Settings will appear here once added to config.yml
 						</p>
 						{/* Example of how to add settings - uncomment when ready */}
@@ -211,76 +271,73 @@ export function SettingsPage() {
 							type="number"
 						/>
 						*/}
-					</div>
+					</AccordionContent>
 				</AccordionItem>
 
 				{/* Homepage Settings Section */}
 				<AccordionItem
-					key="homepage"
-					aria-label="Homepage Settings"
-					title={
+					value="homepage"
+					className={ACCORDION_ITEM_CLASSES}
+				>
+					<AccordionTrigger className={ACCORDION_TITLE_WRAPPER_CLASSES}>
 						<div>
-							<h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+							<h3 className={ACCORDION_TITLE_CLASSES}>
 								Homepage Settings
 							</h3>
-							<p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+							<p className={ACCORDION_DESC_CLASSES}>
 								Configure homepage display and layout
 							</p>
 						</div>
-					}
-					className="border-b border-gray-200 dark:border-gray-700"
-				>
-					<div className="pb-4 space-y-1">
-						<p className="text-sm text-gray-500 dark:text-gray-400 italic py-4">
+					</AccordionTrigger>
+					<AccordionContent className={ACCORDION_CONTENT_CLASSES}>
+						<p className={PLACEHOLDER_TEXT_CLASSES}>
 							No settings configured yet. Settings will appear here once added to config.yml
 						</p>
-					</div>
+					</AccordionContent>
 				</AccordionItem>
 
 				{/* Header Settings Section */}
 				<AccordionItem
-					key="header"
-					aria-label="Header Settings"
-					title={
+					value="header"
+					className={ACCORDION_ITEM_CLASSES}
+				>
+					<AccordionTrigger className={ACCORDION_TITLE_WRAPPER_CLASSES}>
 						<div>
-							<h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+							<h3 className={ACCORDION_TITLE_CLASSES}>
 								Header Settings
 							</h3>
-							<p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+							<p className={ACCORDION_DESC_CLASSES}>
 								Configure header appearance and behavior
 							</p>
 						</div>
-					}
-					className="border-b border-gray-200 dark:border-gray-700"
-				>
-					<div className="pb-4 space-y-1">
-						<p className="text-sm text-gray-500 dark:text-gray-400 italic py-4">
+					</AccordionTrigger>
+					<AccordionContent className={ACCORDION_CONTENT_CLASSES}>
+						<p className={PLACEHOLDER_TEXT_CLASSES}>
 							No settings configured yet. Settings will appear here once added to config.yml
 						</p>
-					</div>
+					</AccordionContent>
 				</AccordionItem>
 
 				{/* Footer Settings Section */}
 				<AccordionItem
-					key="footer"
-					aria-label="Footer Settings"
-					title={
+					value="footer"
+					className={ACCORDION_ITEM_CLASSES}
+				>
+					<AccordionTrigger className={ACCORDION_TITLE_WRAPPER_CLASSES}>
 						<div>
-							<h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+							<h3 className={ACCORDION_TITLE_CLASSES}>
 								Footer Settings
 							</h3>
-							<p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+							<p className={ACCORDION_DESC_CLASSES}>
 								Configure footer content and links
 							</p>
 						</div>
-					}
-					className="border-b border-gray-200 dark:border-gray-700"
-				>
-					<div className="pb-4 space-y-1">
-						<p className="text-sm text-gray-500 dark:text-gray-400 italic py-4">
+					</AccordionTrigger>
+					<AccordionContent className={ACCORDION_CONTENT_CLASSES}>
+						<p className={PLACEHOLDER_TEXT_CLASSES}>
 							No settings configured yet. Settings will appear here once added to config.yml
 						</p>
-					</div>
+					</AccordionContent>
 				</AccordionItem>
 			</Accordion>
 			</div>
