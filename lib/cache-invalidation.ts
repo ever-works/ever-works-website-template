@@ -10,14 +10,11 @@ import { CACHE_TAGS } from './cache-config';
 function isRenderPhaseError(error: Error): boolean {
   const message = error.message.toLowerCase();
 
-  // Check for multiple patterns to be more robust against Next.js changes
-  const renderPhasePatterns = [
-    'during render',           // Current Next.js error message
-    'render phase',            // Alternative phrasing
-    'revalidate' && 'render',  // Both keywords present
-    'unsupported' && 'render', // Combination for unsupported during render
-  ];
-
+  // Check for multiple patterns to be more robust against Next.js changes:
+  // - "during render": Current Next.js error message
+  // - "render phase": Alternative phrasing
+  // - "revalidate" + "render": Both keywords present
+  // - "unsupported" + "render": Combination for unsupported during render
   return (
     message.includes('during render') ||
     message.includes('render phase') ||
