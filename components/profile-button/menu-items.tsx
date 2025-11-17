@@ -14,6 +14,7 @@ import {
   MessageSquare,
   Building2,
   FileText,
+  Sliders,
   type LucideIcon
 } from "lucide-react";
 import type { ExtendedUser } from "@/types/profile-button.types";
@@ -205,7 +206,7 @@ function MenuItems({ user, profilePath, onItemClick, onNavigationStart, isNaviga
 
         <MenuItem
           href="/admin/settings"
-          icon={Settings}
+          icon={Sliders}
           title={translations.settings}
           description={t("settings.ADMIN_SETTINGS_DESC")}
           gradientFrom="from-slate-100"
