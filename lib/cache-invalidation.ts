@@ -2,6 +2,31 @@ import { revalidateTag } from 'next/cache';
 import { CACHE_TAGS } from './cache-config';
 
 /**
+ * Check if error is a Next.js render phase restriction error
+ * Uses multiple patterns to be resilient to error message changes
+ * @param error - Error to check
+ * @returns true if error is related to render phase restrictions
+ */
+function isRenderPhaseError(error: Error): boolean {
+  const message = error.message.toLowerCase();
+
+  // Check for multiple patterns to be more robust against Next.js changes
+  const renderPhasePatterns = [
+    'during render',           // Current Next.js error message
+    'render phase',            // Alternative phrasing
+    'revalidate' && 'render',  // Both keywords present
+    'unsupported' && 'render', // Combination for unsupported during render
+  ];
+
+  return (
+    message.includes('during render') ||
+    message.includes('render phase') ||
+    (message.includes('revalidate') && message.includes('render')) ||
+    (message.includes('unsupported') && message.includes('render'))
+  );
+}
+
+/**
  * Safely call revalidateTag with error handling
  * Catches errors when called during render phase and logs warning
  * @param tag - Cache tag to revalidate
@@ -13,10 +38,11 @@ function safeRevalidateTag(tag: string): void {
     // revalidateTag throws error when called during render phase
     // This is expected when background sync runs during request handling
     // Cache will be invalidated on next sync outside of render phase
-    if (error instanceof Error && error.message.includes('during render')) {
+    if (error instanceof Error && isRenderPhaseError(error)) {
       console.warn(`[CACHE] Skipping cache invalidation during render phase (tag: ${tag})`);
     } else {
-      // Re-throw unexpected errors
+      // Log unexpected errors for debugging before re-throwing
+      console.error(`[CACHE] Unexpected error during cache invalidation (tag: ${tag}):`, error);
       throw error;
     }
   }
