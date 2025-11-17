@@ -10,6 +10,17 @@ export const SORT_OPTIONS = {
 } as const;
 
 /**
+ * Helper function to safely get timestamp from Date or string
+ * Handles both Date objects and date strings (from cached data)
+ */
+function getTime(date: Date | string): number {
+  if (date instanceof Date) {
+    return date.getTime();
+  }
+  return new Date(date).getTime();
+}
+
+/**
  * Sort items by name (ascending)
  */
 function sortByNameAsc(a: ItemData, b: ItemData): number {
@@ -27,14 +38,14 @@ function sortByNameDesc(a: ItemData, b: ItemData): number {
  * Sort items by date (descending - newest first)
  */
 function sortByDateDesc(a: ItemData, b: ItemData): number {
-  return b.updatedAt.getTime() - a.updatedAt.getTime();
+  return getTime(b.updatedAt) - getTime(a.updatedAt);
 }
 
 /**
  * Sort items by date (ascending - oldest first)
  */
 function sortByDateAsc(a: ItemData, b: ItemData): number {
-  return a.updatedAt.getTime() - b.updatedAt.getTime();
+  return getTime(a.updatedAt) - getTime(b.updatedAt);
 }
 
 /**
@@ -43,7 +54,7 @@ function sortByDateAsc(a: ItemData, b: ItemData): number {
 function sortByPopularity(a: ItemData, b: ItemData): number {
   if (a.featured && !b.featured) return -1;
   if (!a.featured && b.featured) return 1;
-  return b.updatedAt.getTime() - a.updatedAt.getTime();
+  return getTime(b.updatedAt) - getTime(a.updatedAt);
 }
 
 /**
