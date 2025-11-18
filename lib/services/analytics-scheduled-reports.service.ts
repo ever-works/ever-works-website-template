@@ -56,7 +56,11 @@ export class AnalyticsScheduledReportsService {
     this.exportService = new AnalyticsExportService();
     this.repository = new AdminAnalyticsOptimizedRepository();
     this.initializeDefaultTemplates();
-    this.scheduleReports();
+
+    // Skip report scheduling only if explicitly disabled
+    if (process.env.DISABLE_AUTO_SYNC !== 'true') {
+      this.scheduleReports();
+    }
   }
 
   /**

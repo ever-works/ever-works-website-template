@@ -51,6 +51,7 @@ export function TagsItemsColumn(props: { total: number; tag: Tag[] }) {
       setSelectedTags,
       sortBy,
       setSortBy,
+      clearAllFilters,
     } = useFilters();
   
     const availableTags = props.tag
@@ -59,12 +60,6 @@ export function TagsItemsColumn(props: { total: number; tag: Tag[] }) {
   
     const removeSelectedTag = (tagId: string) => {
       setSelectedTags(selectedTags.filter((id) => id !== tagId));
-    };
-  
-    const clearAllFilters = () => {
-      setSearchTerm("");
-      setSelectedTags([]);
-      setSortBy("popularity");
     };
   
     return (

@@ -5,10 +5,10 @@ import yaml from 'yaml';
 import * as fs from 'fs';
 import * as path from 'path';
 import { parse } from 'date-fns';
-import { trySyncRepository } from './repository';
 import { dirExists, fsExists, getContentPath } from './lib';
 import { unstable_cache } from 'next/cache';
 import { PaymentInterval, PaymentProvider } from './constants';
+import { CACHE_TAGS, CACHE_TTL as CONTENT_CACHE_TTL } from './cache-config';
 
 // Security utility functions
 function validateLanguageCode(lang: string): boolean {
@@ -139,6 +139,9 @@ export interface ItemData {
 	promo_code?: PromoCode; // New field for promotional codes
 	markdown?: string; // Optional markdown content from YAML
 	is_source_url_active?: boolean;
+	action?: 'visit-website' | 'start-survey' | 'buy'; // CTA action type
+	showSurveys?: boolean; // Whether to show surveys section (default: true)
+	publisher?: string; // Publisher name for display
 }
 
 export interface AuthOptions {
@@ -354,7 +357,11 @@ function populateTag(tag: string | Tag, tags: Map<string, Tag>) {
 }
 
 export async function fetchItems(options: FetchOptions = {}) {
-	await trySyncRepository();
+	// Ensure content is available (copies from build to runtime on Vercel)
+	const { ensureContentAvailable } = await import('./lib');
+	await ensureContentAvailable();
+
+	// Repository sync now handled by background sync manager (lib/services/sync-service.ts)
 	const dest = path.join(getContentPath(), 'data');
 	const files = await fs.promises.readdir(dest);
 	const categories = await readCategories(options);
@@ -671,7 +678,7 @@ function calculateSimilarityScore(
 }
 
 export async function fetchItem(slug: string, options: FetchOptions = {}) {
-	await trySyncRepository();
+	// Repository sync now handled by background sync manager (lib/services/sync-service.ts)
 
 	// Sanitize slug to prevent path traversal attacks
 	const sanitizedSlug = sanitizeFilename(slug);
@@ -963,7 +970,7 @@ export async function fetchPageContent(
 	locale: string = 'en'
 ): Promise<{ content: string; metadata: Record<string, unknown> } | null> {
 	try {
-		await trySyncRepository();
+		// Repository sync now handled by background sync manager (lib/services/sync-service.ts)
 
 		const base = getContentPath();
 		const pagesDir = path.join(base, 'pages');
@@ -1029,4 +1036,127 @@ export async function fetchPageContent(
 		return null;
 	}
 }
+
+// ============================================================================
+// CACHED WRAPPERS
+// ============================================================================
+// These functions wrap the original fetch functions with Next.js unstable_cache
+// for improved performance. Cache is invalidated after repository sync.
+
+/**
+ * Cached version of fetchItems()
+ * Cache key includes locale to prevent cross-locale pollution
+ * Tagged with CONTENT and ITEMS for cache invalidation
+ */
+export const getCachedItems = async (options: FetchOptions = {}) => {
+	const locale = options.lang || 'en';
+	return unstable_cache(
+		async () => {
+			return await fetchItems(options);
+		},
+		['items', locale],
+		{
+			revalidate: CONTENT_CACHE_TTL.CONTENT,
+			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.ITEMS_LOCALE(locale)],
+		}
+	)();
+};
+
+/**
+ * Cached version of fetchItem()
+ * Cache key includes slug and locale
+ * Tagged with CONTENT and specific ITEM tag for granular invalidation
+ */
+export const getCachedItem = async (slug: string, options: FetchOptions = {}) => {
+	const locale = options.lang || 'en';
+	return unstable_cache(
+		async () => {
+			return await fetchItem(slug, options);
+		},
+		['item', slug, locale],
+		{
+			revalidate: CONTENT_CACHE_TTL.ITEM,
+			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.ITEM(slug)],
+		}
+	)();
+};
+
+/**
+ * Cached version of fetchPageContent()
+ * Cache key includes slug and locale
+ * Tagged with CONTENT and PAGES for cache invalidation
+ */
+export const getCachedPageContent = async (slug: string, locale: string = 'en') => {
+	return unstable_cache(
+		async () => {
+			return await fetchPageContent(slug, locale);
+		},
+		['page', slug, locale],
+		{
+			revalidate: CONTENT_CACHE_TTL.PAGES,
+			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.PAGES, CACHE_TAGS.PAGE(slug)],
+		}
+	)();
+};
+
+/**
+ * Cached version of fetchByCategory()
+ * Delegates to fetchItems internally, so benefits from its caching
+ * Additional caching layer for filtered results
+ */
+export const getCachedItemsByCategory = async (raw: string, options: FetchOptions = {}) => {
+	const locale = options.lang || 'en';
+	return unstable_cache(
+		async () => {
+			return await fetchByCategory(raw, options);
+		},
+		['items-by-category', raw, locale],
+		{
+			revalidate: CONTENT_CACHE_TTL.CONTENT,
+			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.CATEGORIES],
+		}
+	)();
+};
+
+/**
+ * Cached version of fetchByTag()
+ * Delegates to fetchItems internally, so benefits from its caching
+ * Additional caching layer for filtered results
+ */
+export const getCachedItemsByTag = async (raw: string, options: FetchOptions = {}) => {
+	const locale = options.lang || 'en';
+	return unstable_cache(
+		async () => {
+			return await fetchByTag(raw, options);
+		},
+		['items-by-tag', raw, locale],
+		{
+			revalidate: CONTENT_CACHE_TTL.CONTENT,
+			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.TAGS],
+		}
+	)();
+};
+
+/**
+ * Cached version of fetchByCategoryAndTag()
+ * Delegates to fetchItems internally, so benefits from its caching
+ * Additional caching layer for double-filtered results
+ */
+export const getCachedItemsByCategoryAndTag = async (
+	category: string,
+	tag: string,
+	options: FetchOptions = {}
+) => {
+	const locale = options.lang || 'en';
+	return unstable_cache(
+		async () => {
+			return await fetchByCategoryAndTag(category, tag, options);
+		},
+		['items-by-category-tag', category, tag, locale],
+		{
+			revalidate: CONTENT_CACHE_TTL.CONTENT,
+			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.CATEGORIES, CACHE_TAGS.TAGS],
+		}
+	)();
+};
 

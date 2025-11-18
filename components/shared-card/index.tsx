@@ -306,7 +306,7 @@ export function SharedCard(props: ExtendedCardProps) {
           <SharedCardPagination
             paginationType={paginationType}
             standardPaginationProps={
-              paginationType === "standard"
+              paginationType === "standard" && totalPages > 1
                 ? {
                     currentPage,
                     totalPages,

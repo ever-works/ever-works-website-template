@@ -36,6 +36,11 @@ export function Paginate({
     }
   }
 
+  // Don't render pagination if there's only one page
+  if (paginationType === "standard" && total <= 1) {
+    return null;
+  }
+
   return (
     <>
       {paginationType === "standard" && (

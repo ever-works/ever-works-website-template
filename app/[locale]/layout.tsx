@@ -14,6 +14,7 @@ import { Suspense } from 'react';
 import Script from 'next/script';
 import { ConditionalLayout } from '@/components/layout/conditional-layout';
 import { siteConfig } from '@/lib/config';
+import { SpeedInsights } from './integration/speed-insights';
 
 /**
  * Generate metadata dynamically using siteConfig
@@ -74,6 +75,16 @@ export default async function RootLayout({
 					</Providers>
 				</NextIntlClientProvider>
 			</PHProvider>
+			{/* 
+				Vercel Speed Insights Integration
+				- Automatically detects Vercel environment and Speed Insights availability
+				- Gracefully degrades when not enabled or not on a paid plan
+				- Supports environment variable configuration (NEXT_PUBLIC_SPEED_INSIGHTS_ENABLED, NEXT_PUBLIC_SPEED_INSIGHTS_SAMPLE_RATE)
+				- See: app/[locale]/integration/speed-insights/
+			*/}
+			<Suspense fallback={null}>
+				<SpeedInsights />
+			</Suspense>
 		</>
 	);
 }
