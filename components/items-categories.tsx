@@ -5,6 +5,7 @@ import { Button } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 
 export function ItemsCategories(props: {
     categories: Category[];
@@ -13,9 +14,15 @@ export function ItemsCategories(props: {
     enableSticky?: boolean;
     maxVisibleTags?: number;
   }) {
+    const { categoriesEnabled } = useCategoriesEnabled();
     const [showAllCategories, setShowAllCategories] = useState(false);
     const [isSticky, setIsSticky] = useState(false);
     const pathname = usePathname();
+
+    // Don't render if categories are disabled
+    if (!categoriesEnabled) {
+      return null;
+    }
   
     useEffect(() => {
       if (props.enableSticky) {

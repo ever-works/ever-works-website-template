@@ -8,6 +8,7 @@ import { useFilters } from "../../context/filter-context";
 import { containerStyles, textStyles } from "../../utils/style-utils";
 import { SortControl } from "../controls/sort-control";
 import { ActiveFilters } from "../active-filters/active-filters";
+import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 
 /**
  * Main categories section component
@@ -15,6 +16,7 @@ import { ActiveFilters } from "../active-filters/active-filters";
  */
 export function Categories({ total, categories, tags }: CategoriesProps & { tags: Tag[] }) {
   const t = useTranslations("listing");
+  const { categoriesEnabled } = useCategoriesEnabled();
   const {
     searchTerm,
     setSearchTerm,
@@ -42,58 +44,62 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
   return (
     <>
       {/* Mobile Layout */}
-      <div className="md:hidden">
-        <Accordion
-          variant="bordered"
-          className="shadow-sm bg-white dark:bg-gray-900/90 border border-gray-100 dark:border-gray-700 rounded-xl transition-colors duration-300"
-        >
-          <AccordionItem
-            key="1"
-            aria-label="Category"
-            title={
-              <div className="flex items-center gap-3">
-                <span className="font-bold text-gray-800 dark:text-gray-200 transition-colors duration-300">
-                  {t("CATEGORIES")}
-                </span>
-                <span className="bg-theme-primary-100 dark:bg-gray-800 text-theme-primary-700 dark:text-gray-300 px-2 py-1 rounded-full text-xs font-bold border border-theme-primary-200 dark:border-gray-700/50">
-                  {total}
-                </span>
-              </div>
-            }
+      {categoriesEnabled && (
+        <div className="md:hidden">
+          <Accordion
+            variant="bordered"
+            className="shadow-sm bg-white dark:bg-gray-900/90 border border-gray-100 dark:border-gray-700 rounded-xl transition-colors duration-300"
           >
-            <div className="px-2 pb-2">
-              <CategoriesList 
-                categories={categories} 
-                mode="filter" 
-                selectedCategories={selectedCategories}
-                onCategoryToggle={handleCategoryToggle}
-              />
-            </div>
-          </AccordionItem>
-        </Accordion>
-      </div>
+            <AccordionItem
+              key="1"
+              aria-label="Category"
+              title={
+                <div className="flex items-center gap-3">
+                  <span className="font-bold text-gray-800 dark:text-gray-200 transition-colors duration-300">
+                    {t("CATEGORIES")}
+                  </span>
+                  <span className="bg-theme-primary-100 dark:bg-gray-800 text-theme-primary-700 dark:text-gray-300 px-2 py-1 rounded-full text-xs font-bold border border-theme-primary-200 dark:border-gray-700/50">
+                    {total}
+                  </span>
+                </div>
+              }
+            >
+              <div className="px-2 pb-2">
+                <CategoriesList
+                  categories={categories}
+                  mode="filter"
+                  selectedCategories={selectedCategories}
+                  onCategoryToggle={handleCategoryToggle}
+                />
+              </div>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      )}
 
       {/* Desktop Layout */}
       <div className="hidden md:flex flex-col w-full max-w-64 gap-6">
         {/* Search Bar */}
         <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        
+
         {/* Categories Section */}
-        <div className={containerStyles.base}>
-          <div className={containerStyles.header}>
-            <h2 className={textStyles.title}>
-              {t("CATEGORIES")}
-            </h2>
+        {categoriesEnabled && (
+          <div className={containerStyles.base}>
+            <div className={containerStyles.header}>
+              <h2 className={textStyles.title}>
+                {t("CATEGORIES")}
+              </h2>
+            </div>
+            <div className={containerStyles.content}>
+              <CategoriesList
+                categories={categories}
+                mode="filter"
+                selectedCategories={selectedCategories}
+                onCategoryToggle={handleCategoryToggle}
+              />
+            </div>
           </div>
-          <div className={containerStyles.content}>
-            <CategoriesList 
-              categories={categories} 
-              mode="filter" 
-              selectedCategories={selectedCategories}
-              onCategoryToggle={handleCategoryToggle}
-            />
-          </div>
-        </div>
+        )}
 
         {/* Active Filters Section */}
         <ActiveFilters
