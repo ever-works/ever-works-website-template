@@ -1,5 +1,7 @@
+'use client';
 import Link from "next/link";
 import { toTitleCase } from "@/lib/utils";
+import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 
 interface BreadcrumbProps {
   name: string;
@@ -12,6 +14,7 @@ export function ItemBreadcrumb({
   category,
   categoryName,
 }: BreadcrumbProps) {
+  const { categoriesEnabled } = useCategoriesEnabled();
   const categoryId =
     typeof category === "string"
       ? category
@@ -38,31 +41,33 @@ export function ItemBreadcrumb({
             Home
           </Link>
         </li>
-        <li>
-          <div className="flex items-center">
-            <svg
-              className="w-3 h-3 text-dark--theme-800 dark:text-white mx-1 "
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 6 10"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m1 9 4-4-4-4"
-              />
-            </svg>
-            <Link
-              href={`/categories/${encodedCategory}`}
-              className="ml-1 text-sm font-medium text-gray-800 dark:text-white/50 md:ml-2 transition-colors duration-300"
-            >
-              {toTitleCase(categoryName)}
-            </Link>
-          </div>
-        </li>
+        {categoriesEnabled && (
+          <li>
+            <div className="flex items-center">
+              <svg
+                className="w-3 h-3 text-dark--theme-800 dark:text-white mx-1 "
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 6 10"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="m1 9 4-4-4-4"
+                />
+              </svg>
+              <Link
+                href={`/categories/${encodedCategory}`}
+                className="ml-1 text-sm font-medium text-gray-800 dark:text-white/50 md:ml-2 transition-colors duration-300"
+              >
+                {toTitleCase(categoryName)}
+              </Link>
+            </div>
+          </li>
+        )}
         <li aria-current="page">
           <div className="flex items-center">
             <svg
