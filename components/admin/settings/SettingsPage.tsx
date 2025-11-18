@@ -10,6 +10,7 @@ import {
 import { Sliders } from 'lucide-react';
 import { SettingSwitch } from './SettingSwitch';
 import { toast } from '@/hooks/use-toast';
+import { useTranslations } from 'next-intl';
 
 const GRADIENT_HEADER_CLASSES = [
 	'bg-gradient-to-r',
@@ -117,6 +118,7 @@ interface Settings {
 }
 
 export function SettingsPage() {
+	const t = useTranslations('admin.ADMIN_SETTINGS_PAGE');
 	const [settings, setSettings] = useState<Settings>({});
 	const [loading, setLoading] = useState<boolean>(true);
 	const [saving, setSaving] = useState<boolean>(false);
@@ -233,8 +235,8 @@ export function SettingsPage() {
 							</p>
 						) : (
 							<SettingSwitch
-								label="Enable Categories"
-								description="Enable or disable categories throughout the site. When disabled, category filters, pages, and navigation will be hidden."
+								label={t('CATEGORIES_ENABLED_LABEL')}
+								description={t('CATEGORIES_ENABLED_DESC')}
 								value={settings.categories_enabled ?? true}
 								onChange={(value) => updateSetting('categories_enabled', value)}
 								disabled={saving}
