@@ -1,10 +1,10 @@
-import { fetchItems } from '@/lib/content';
+import { getCachedItems } from '@/lib/content';
 import { SubmitFormClient } from '@/components/submit/submit-form-client';
 import { cn } from '@/lib/utils';
 
 export default async function SubmitPage({ params }: { params: Promise<{ locale: string }> }) {
 	const { locale } = await params;
-	const { items, categories, tags } = await fetchItems({
+	const { items, categories, tags } = await getCachedItems({
 		lang: locale
 	});
 

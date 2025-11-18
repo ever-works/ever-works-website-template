@@ -8,7 +8,6 @@ import { HomeTwoLayout } from '@/components/home-two';
 import { ListingClient } from '@/components/shared-card/listing-client';
 import { useFilters } from '@/hooks/use-filters';
 import { useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { sortItemsWithFeatured } from '@/lib/utils/featured-items';
 import { useFeaturedItemsSection } from '@/hooks/use-feature-items-section';
 import { TopLoadingBar } from '@/components/ui/top-loading-bar';
@@ -45,19 +44,12 @@ export default function GlobalsClient(props: ListingProps) {
 		useFilters();
 	const sortedTags = sortByNumericProperty(props.tags);
 	const sortedCategories = sortByNumericProperty(props.categories);
-	const searchParams = useSearchParams();
 
 	// Use the new hook for featured items
 	const { featuredItems } = useFeaturedItemsSection({
 		limit: 6,
 		enabled: true
 	});
-
-	// Get page from query param, default to 1
-	const pageParam = searchParams.get('page');
-	const page = pageParam ? parseInt(pageParam, 10) : 1;
-	const perPage = useLayoutTheme().itemsPerPage ?? 12;
-	const start = (page - 1) * perPage;
 
 	// Filtering logic using shared utility
 	const filteredItems = useMemo(() => {
@@ -70,11 +62,6 @@ export default function GlobalsClient(props: ListingProps) {
 		// Sort items with featured items first
 		return sortItemsWithFeatured(filtered, featuredItems);
 	}, [props.items, searchTerm, selectedTags, selectedCategories, featuredItems]);
-
-	// Paginate filtered items
-	const paginatedItems = useMemo(() => {
-		return filteredItems.slice(start, start + perPage);
-	}, [filteredItems, start, perPage]);
 
 
 	// Note: URL parsing is handled by FilterURLParser in the Listing component
@@ -121,6 +108,17 @@ export default function GlobalsClient(props: ListingProps) {
 							<ListingClient
 								{...props}
 								items={filteredItems}
+								totalCount={props.items.length}
+								config={{
+									showStats: false,
+									showViewToggle: true,
+									showFilters: false,
+									showPagination: true,
+									showEmptyState: true,
+									enableSearch: false,
+									enableTagFilter: false,
+									enableSorting: true,
+								}}
 							/>
 						</div>
 					</div>
@@ -139,7 +137,6 @@ export default function GlobalsClient(props: ListingProps) {
 					categories={sortedCategories}
 					tags={sortedTags}
 					filteredAndSortedItems={filteredItems}
-					paginatedItems={paginatedItems}
 				/>
 			</div>
 		</>

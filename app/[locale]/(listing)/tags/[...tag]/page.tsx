@@ -1,4 +1,4 @@
-import { fetchByTag } from "@/lib/content";
+import { getCachedItemsByTag } from "@/lib/content";
 import { paginateMeta } from "@/lib/paginate";
 import Listing from "../../listing";
 import { Suspense } from "react";
@@ -42,7 +42,7 @@ export default async function TagListing({
   const [rawTag, rawPage] = tagMeta;
   const tag = decodeURI(rawTag);
   const { start, page } = paginateMeta(rawPage);
-  const { items, categories, total, tags } = await fetchByTag(tag, {
+  const { items, categories, total, tags } = await getCachedItemsByTag(tag, {
     lang: locale,
   });
   return (

@@ -1,4 +1,4 @@
-import { fetchItems } from "@/lib/content";
+import { getCachedItems } from "@/lib/content";
 import { LOCALES } from "@/lib/constants";
 import ListingCategories from "./listing-categories";
 import { Suspense } from "react";
@@ -23,7 +23,7 @@ export default async function CategoriesPage({
   }
 
   const { locale } = await params;
-  const { categories, tags, items } = await fetchItems({ lang: locale });
+  const { categories, tags, items } = await getCachedItems({ lang: locale });
 
   // Calculate pagination info
   const total = items.length;

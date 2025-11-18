@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { categoryRepository } from "@/lib/repositories/category.repository";
 import { UpdateCategoryRequest } from "@/lib/types/category";
 import { auth } from "@/lib/auth";
+import { invalidateContentCaches } from "@/lib/cache-invalidation";
 
 interface RouteParams {
   params: Promise<{
@@ -276,6 +277,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     // Update category
     const updatedCategory = await categoryRepository.update(updateData);
 
+    // Invalidate content caches to ensure immediate visibility
+    await invalidateContentCaches();
+
     return NextResponse.json({
       success: true,
       data: updatedCategory,
@@ -424,10 +428,13 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       await categoryRepository.delete(id);
     }
 
+    // Invalidate content caches to ensure immediate visibility
+    await invalidateContentCaches();
+
     return NextResponse.json({
       success: true,
-      message: hardDelete 
-        ? "Category permanently deleted" 
+      message: hardDelete
+        ? "Category permanently deleted"
         : "Category deactivated successfully",
     });
 
