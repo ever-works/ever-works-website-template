@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import {
 	Accordion,
 	AccordionItem,
@@ -7,6 +8,8 @@ import {
 	AccordionContent,
 } from '@/components/ui/accordion';
 import { Sliders } from 'lucide-react';
+import { SettingSwitch } from './SettingSwitch';
+import { toast } from '@/hooks/use-toast';
 
 const GRADIENT_HEADER_CLASSES = [
 	'bg-gradient-to-r',
@@ -108,7 +111,82 @@ const PLACEHOLDER_TEXT_CLASSES = [
 	'dark:border-gray-700'
 ].join(' ');
 
+interface Settings {
+	categories_enabled?: boolean;
+	[key: string]: unknown;
+}
+
 export function SettingsPage() {
+	const [settings, setSettings] = useState<Settings>({});
+	const [loading, setLoading] = useState<boolean>(true);
+	const [saving, setSaving] = useState<boolean>(false);
+
+	// Fetch settings on mount
+	useEffect(() => {
+		const fetchSettings = async () => {
+			try {
+				setLoading(true);
+				const response = await fetch('/api/admin/settings');
+
+				if (!response.ok) {
+					throw new Error('Failed to fetch settings');
+				}
+
+				const data = await response.json();
+				setSettings(data.settings || {});
+			} catch (error) {
+				console.error('Error fetching settings:', error);
+				toast({
+					title: 'Error',
+					description: 'Failed to load settings. Please try again.',
+					variant: 'destructive',
+				});
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchSettings();
+	}, []);
+
+	// Update a specific setting
+	const updateSetting = async (key: string, value: unknown) => {
+		try {
+			setSaving(true);
+
+			const response = await fetch('/api/admin/settings', {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ key, value }),
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to update setting');
+			}
+
+			// Update local state
+			setSettings((prev) => ({
+				...prev,
+				[key]: value,
+			}));
+
+			toast({
+				title: 'Success',
+				description: 'Setting updated successfully',
+			});
+		} catch (error) {
+			console.error('Error updating setting:', error);
+			toast({
+				title: 'Error',
+				description: 'Failed to update setting. Please try again.',
+				variant: 'destructive',
+			});
+		} finally {
+			setSaving(false);
+		}
+	};
 	return (
 		<div className="space-y-8">
 			{/* Welcome Section with Gradient */}
@@ -149,32 +227,19 @@ export function SettingsPage() {
 						</div>
 					</AccordionTrigger>
 					<AccordionContent className={ACCORDION_CONTENT_CLASSES}>
-						<p className={PLACEHOLDER_TEXT_CLASSES}>
-							No settings configured yet. Settings will appear here once added to config.yml
-						</p>
-						{/* Example of how to add settings - uncomment when ready */}
-						{/*
-						<SettingSwitch
-							label="Enable Feature"
-							description="Enable or disable this feature"
-							value={settings.example_feature as boolean ?? false}
-							onChange={(value) => updateSetting('example_feature', value)}
-						/>
-						<SettingInput
-							label="Site Title"
-							description="The title of your website"
-							value={settings.site_title as string ?? ''}
-							onChange={(value) => updateSetting('site_title', value)}
-							type="text"
-						/>
-						<SettingInput
-							label="Items Per Page"
-							description="Number of items to display per page"
-							value={settings.items_per_page as number ?? 12}
-							onChange={(value) => updateSetting('items_per_page', value)}
-							type="number"
-						/>
-						*/}
+						{loading ? (
+							<p className={PLACEHOLDER_TEXT_CLASSES}>
+								Loading settings...
+							</p>
+						) : (
+							<SettingSwitch
+								label="Enable Categories"
+								description="Enable or disable categories throughout the site. When disabled, category filters, pages, and navigation will be hidden."
+								value={settings.categories_enabled ?? true}
+								onChange={(value) => updateSetting('categories_enabled', value)}
+								disabled={saving}
+							/>
+						)}
 					</AccordionContent>
 				</AccordionItem>
 
