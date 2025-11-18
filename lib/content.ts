@@ -1057,7 +1057,7 @@ export const getCachedItems = async (options: FetchOptions = {}) => {
 		['items', locale],
 		{
 			revalidate: CONTENT_CACHE_TTL.CONTENT,
-			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.ITEMS_LOCALE(locale)],
+			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.CATEGORIES, CACHE_TAGS.TAGS, CACHE_TAGS.ITEMS_LOCALE(locale)],
 		}
 	)();
 };

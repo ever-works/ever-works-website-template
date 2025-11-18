@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { tagRepository } from '@/lib/repositories/tag.repository';
 import { CreateTagRequest } from '@/lib/types/tag';
 import { validatePaginationParams } from '@/lib/utils/pagination-validation';
+import { invalidateContentCaches } from '@/lib/cache-invalidation';
 
 /**
  * @swagger
@@ -304,7 +305,10 @@ export async function POST(request: NextRequest) {
     }
 
     const tag = await tagRepository.create({ id, name, isActive: isActive ?? true });
-    
+
+    // Invalidate content caches to ensure immediate visibility
+    await invalidateContentCaches();
+
     return NextResponse.json({ success: true, tag }, { status: 201 });
   } catch (error) {
     console.error('Error creating tag:', error);

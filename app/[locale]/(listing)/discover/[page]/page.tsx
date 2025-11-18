@@ -1,4 +1,4 @@
-import { fetchItems } from "@/lib/content";
+import { getCachedItems } from "@/lib/content";
 import { paginateMeta } from "@/lib/paginate";
 import Listing from "../../listing";
 import { Suspense } from "react";
@@ -34,7 +34,7 @@ export default async function DiscoverListing({
   const { page: rawPage, locale } = await params;
 
   const { start, page } = paginateMeta(rawPage);
-  const { items, categories, total, tags } = await fetchItems({ lang: locale });
+  const { items, categories, total, tags } = await getCachedItems({ lang: locale });
 
   return (
     <Suspense fallback={<ListingSkeleton />}>

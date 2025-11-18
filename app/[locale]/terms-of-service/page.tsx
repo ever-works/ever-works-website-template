@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { PageContainer } from '@/components/ui/container';
 import { MDX } from '@/components/mdx';
-import { fetchPageContent } from '@/lib/content';
+import { getCachedPageContent } from '@/lib/content';
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function TermsOfServicePage({ params }: PageProps) {
   const { locale} = await params;
-  const pageData = await fetchPageContent('terms-of-service', locale);
+  const pageData = await getCachedPageContent('terms-of-service', locale);
 
   if (!pageData) {
     notFound();

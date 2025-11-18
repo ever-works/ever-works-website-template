@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { fetchItems } from "@/lib/content";
+import { getCachedItems } from "@/lib/content";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
 			return NextResponse.json({ success: false, error: 'Invalid locale parameter' }, { status: 400 });
 		}
 
-		const { tags } = await fetchItems({ lang: locale });
+		const { tags } = await getCachedItems({ lang: locale });
 		return NextResponse.json({
 			success: true,
 			data: tags

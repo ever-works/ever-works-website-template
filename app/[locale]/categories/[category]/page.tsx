@@ -1,4 +1,4 @@
-import { fetchItems } from "@/lib/content";
+import { getCachedItems } from "@/lib/content";
 import Listing from "../../(listing)/listing";
 import { Suspense } from "react";
 import { ListingSkeleton } from "@/components/ui/skeleton";
@@ -18,7 +18,7 @@ export default async function CategoryListing({
   const { locale, category } = resolvedParams;
 
   // Fetch all items (filtering will be done client-side via FilterURLParser)
-  const { categories, tags, items } = await fetchItems({ lang: locale });
+  const { categories, tags, items } = await getCachedItems({ lang: locale });
 
   // Calculate pagination info
   const total = items.length;

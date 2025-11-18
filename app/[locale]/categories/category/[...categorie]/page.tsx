@@ -1,4 +1,4 @@
-import { fetchByCategory, fetchItems } from "@/lib/content";
+import { getCachedItemsByCategory, getCachedItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
 import { LOCALES } from "@/lib/constants";
 import Listing from "../../../(listing)/listing";
@@ -9,7 +9,7 @@ export const revalidate = 10;
 
 export async function generateStaticParams() {
   async function fetchItemsTags(locale: string) {
-    const { categories } = await fetchItems({ lang: locale });
+    const { categories } = await getCachedItems({ lang: locale });
     const paths = [];
 
     for (const category of categories) {
@@ -48,7 +48,7 @@ export default async function CategoryListing({
   
   // For now, we'll use the original approach
   // In the future, we can implement query parameters here
-  const result = await fetchByCategory(category, { lang: locale });
+  const result = await getCachedItemsByCategory(category, { lang: locale });
 
   const { items, categories, total, tags } = result;
 

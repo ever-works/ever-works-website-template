@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { Container } from '@/components/ui/container';
 import { FavoritesClient } from '@/components/favorites/favorites-client';
 import { getTranslations } from 'next-intl/server';
-import { fetchItems } from '@/lib/content';
+import { getCachedItems } from '@/lib/content';
 import { requireAuth } from '@/lib/auth/guards';
 import { getFeatureFlags } from '@/lib/config/feature-flags';
 import { notFound } from 'next/navigation';
@@ -24,7 +24,7 @@ export default async function FavoritesPage({
 
     const t = await getTranslations('common');
     const { locale } = await params;
-    const { items, categories, total, tags } = await fetchItems({
+    const { items, categories, total, tags } = await getCachedItems({
         lang: locale,
     });
 

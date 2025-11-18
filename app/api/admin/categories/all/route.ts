@@ -1,5 +1,5 @@
 import { auth } from '@/lib/auth';
-import { fetchItems } from '@/lib/content';
+import { getCachedItems } from '@/lib/content';
 import { NextRequest, NextResponse } from 'next/server';
 
 
@@ -94,7 +94,7 @@ export async function GET(request: NextRequest) {
 		const { searchParams } = new URL(request.url);
 		const locale = searchParams.get('locale') || 'en';
 
-		const { categories } = await fetchItems({ lang: locale });
+		const { categories } = await getCachedItems({ lang: locale });
 		return NextResponse.json({ success: true, data: categories });
 	} catch (error) {
 		console.error('Error fetching categories:', error);

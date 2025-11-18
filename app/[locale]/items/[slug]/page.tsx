@@ -1,4 +1,4 @@
-import { fetchItem, fetchSimilarItems } from "@/lib/content";
+import { getCachedItem, fetchSimilarItems } from "@/lib/content";
 import { notFound } from "next/navigation";
 import { getCategoriesName } from "@/lib/utils";
 import { getTranslations } from "next-intl/server";
@@ -25,7 +25,7 @@ export async function generateMetadata({
 	const { slug, locale } = await params;
 
 	try {
-		const item = await fetchItem(slug, { lang: locale });
+		const item = await getCachedItem(slug, { lang: locale });
 
 		if (!item) {
 			return {
@@ -126,7 +126,7 @@ export default async function ItemDetails({
   const { slug, locale } = await params;
 
   try {
-    const item = await fetchItem(slug, { lang: locale });
+    const item = await getCachedItem(slug, { lang: locale });
 
     if (!item) {
       return notFound();

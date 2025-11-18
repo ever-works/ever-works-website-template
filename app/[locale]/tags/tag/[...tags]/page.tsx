@@ -1,4 +1,4 @@
-import { fetchByTag, fetchItems } from "@/lib/content";
+import { getCachedItemsByTag, getCachedItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
 import { LOCALES } from "@/lib/constants";
 import ListingTags from "../../listing-tags";
@@ -9,7 +9,7 @@ export const revalidate = 10;
 
 export async function generateStaticParams() {
   async function fetchItemsTags(locale: string) {
-    const { tags } = await fetchItems({ lang: locale });
+    const { tags } = await getCachedItems({ lang: locale });
     const paths = [];
 
     for (const tag of tags) {
@@ -42,7 +42,7 @@ export default async function TagListing({
   const [rawTag, rawPage] = tagMeta;
   const tag = decodeURI(rawTag);
   const { page } = paginateMeta(rawPage || "1");
-  const { total, tags } = await fetchByTag(tag, {
+  const { total, tags } = await getCachedItemsByTag(tag, {
     lang: locale,
   });
   

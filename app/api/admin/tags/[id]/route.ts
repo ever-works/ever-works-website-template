@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { tagRepository } from '@/lib/repositories/tag.repository';
 import { UpdateTagRequest } from '@/lib/types/tag';
+import { invalidateContentCaches } from '@/lib/cache-invalidation';
 
 /**
  * @swagger
@@ -271,7 +272,10 @@ export async function PUT(
     };
 
     const tag = await tagRepository.update(id, updateData);
-    
+
+    // Invalidate content caches to ensure immediate visibility
+    await invalidateContentCaches();
+
     return NextResponse.json({ success: true, data: tag, message: 'Tag updated successfully' });
   } catch (error) {
     console.error('Error updating tag:', error);
@@ -393,7 +397,10 @@ export async function DELETE(
 
     const { id } = await params;
     await tagRepository.delete(id);
-    
+
+    // Invalidate content caches to ensure immediate visibility
+    await invalidateContentCaches();
+
     return NextResponse.json({ success: true, message: 'Tag deleted successfully' });
   } catch (error) {
     console.error('Error deleting tag:', error);

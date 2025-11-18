@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { categoryRepository } from "@/lib/repositories/category.repository";
 import { auth } from "@/lib/auth";
+import { invalidateContentCaches } from "@/lib/cache-invalidation";
 
 /**
  * @swagger
@@ -125,6 +126,9 @@ export async function PUT(request: NextRequest) {
 
     // Reorder categories
     await categoryRepository.reorder(categoryIds);
+
+    // Invalidate content caches to ensure immediate visibility
+    await invalidateContentCaches();
 
     return NextResponse.json({
       success: true,

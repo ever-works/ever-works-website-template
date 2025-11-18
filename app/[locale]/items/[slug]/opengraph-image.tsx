@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { siteConfig } from '@/lib/config';
-import { fetchItem } from '@/lib/content';
+import { getCachedItem } from '@/lib/content';
 
 // Use Node.js runtime for file system access
 export const runtime = 'nodejs';
@@ -16,7 +16,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
 	const gradient = `linear-gradient(135deg, ${siteConfig.ogImage.gradientStart} 0%, ${siteConfig.ogImage.gradientEnd} 100%)`;
 
 	try {
-		const item = await fetchItem(slug, { lang: locale });
+		const item = await getCachedItem(slug, { lang: locale });
 
 		if (!item) {
 			// Fallback for items not found
