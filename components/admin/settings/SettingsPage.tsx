@@ -1,35 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
 import {
 	Accordion,
 	AccordionItem,
 	AccordionTrigger,
 	AccordionContent,
 } from '@/components/ui/accordion';
-import { toast } from 'sonner';
 import { Sliders } from 'lucide-react';
-import { SettingSwitch } from './SettingSwitch';
-import { SettingInput } from './SettingInput';
-import { SettingSelect } from './SettingSelect';
-
-interface SettingsData {
-	[key: string]: unknown;
-}
-
-const LOADING_CLASSES = [
-	'min-h-screen',
-	'bg-gray-50',
-	'dark:bg-gray-900',
-	'flex',
-	'items-center',
-	'justify-center'
-].join(' ');
-
-const LOADING_TEXT_CLASSES = [
-	'text-gray-600',
-	'dark:text-gray-400'
-].join(' ');
 
 const GRADIENT_HEADER_CLASSES = [
 	'bg-gradient-to-r',
@@ -132,74 +109,6 @@ const PLACEHOLDER_TEXT_CLASSES = [
 ].join(' ');
 
 export function SettingsPage() {
-	const [settings, setSettings] = useState<SettingsData>({});
-	const [isLoading, setIsLoading] = useState(true);
-
-	// Fetch settings on mount
-	useEffect(() => {
-		fetchSettings();
-	}, []);
-
-	const fetchSettings = async () => {
-		try {
-			setIsLoading(true);
-			const response = await fetch('/api/admin/settings');
-
-			if (!response.ok) {
-				throw new Error('Failed to fetch settings');
-			}
-
-			const data = await response.json();
-			setSettings(data.settings || {});
-		} catch (error) {
-			console.error('Error fetching settings:', error);
-			toast.error('Failed to load settings');
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
-	const updateSetting = useCallback(async (key: string, value: unknown) => {
-		// Optimistically update UI
-		setSettings((prev) => ({
-			...prev,
-			[key]: value
-		}));
-
-		try {
-			const response = await fetch('/api/admin/settings', {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ key, value }),
-			});
-
-			if (!response.ok) {
-				throw new Error('Failed to update setting');
-			}
-
-			toast.success('Setting updated successfully');
-		} catch (error) {
-			console.error('Error updating setting:', error);
-			toast.error('Failed to update setting');
-
-			// Revert optimistic update
-			await fetchSettings();
-		}
-	}, []);
-
-	if (isLoading) {
-		return (
-			<div className={LOADING_CLASSES}>
-				<div className="text-center">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-					<p className={LOADING_TEXT_CLASSES}>Loading settings...</p>
-				</div>
-			</div>
-		);
-	}
-
 	return (
 		<div className="space-y-8">
 			{/* Welcome Section with Gradient */}

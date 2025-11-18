@@ -1,13 +1,7 @@
 'use client';
 
 import { Label } from '@/components/ui/label';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectItem } from '@/components/ui/select';
 
 interface SelectOption {
 	value: string;
@@ -31,6 +25,12 @@ export function SettingSelect({
 	options,
 	disabled = false
 }: SettingSelectProps) {
+	const handleSelectionChange = (keys: string[]) => {
+		if (keys.length > 0) {
+			onChange(keys[0]);
+		}
+	};
+
 	return (
 		<div className="py-3">
 			<Label className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -41,17 +41,17 @@ export function SettingSelect({
 					{description}
 				</p>
 			)}
-			<Select value={value} onValueChange={onChange} disabled={disabled}>
-				<SelectTrigger className="max-w-md">
-					<SelectValue />
-				</SelectTrigger>
-				<SelectContent>
-					{options.map((option) => (
-						<SelectItem key={option.value} value={option.value}>
-							{option.label}
-						</SelectItem>
-					))}
-				</SelectContent>
+			<Select
+				selectedKeys={value ? [value] : []}
+				onSelectionChange={handleSelectionChange}
+				disabled={disabled}
+				className="max-w-md"
+			>
+				{options.map((option) => (
+					<SelectItem key={option.value} value={option.value}>
+						{option.label}
+					</SelectItem>
+				))}
 			</Select>
 		</div>
 	);
