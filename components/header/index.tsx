@@ -22,6 +22,7 @@ import { IconEverworksSimple } from "../icons/Icons";
 import { Container } from "../ui/container";
 import { useFeatureFlags } from "@/hooks/use-feature-flags";
 import { useHasGlobalSurveys } from "@/hooks/use-has-global-surveys";
+import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 
 interface NavigationItem {
   key: string;
@@ -137,6 +138,7 @@ export default function Header() {
   const { data: session } = useSession();
   const { features } = useFeatureFlags();
   const { hasGlobalSurveys, isPending } = useHasGlobalSurveys();
+  const { categoriesEnabled } = useCategoriesEnabled();
   const t = useTranslations("common");
   const tListing = useTranslations("listing");
   const tSurvey = useTranslations("survey");
@@ -146,6 +148,10 @@ export default function Header() {
   const navigationItems = useMemo((): NavigationItem[] => {
     return NAVIGATION_CONFIG
       .filter((item) => {
+        // Hide categories link when categories are disabled
+        if (item.key === "categories" && !categoriesEnabled) {
+          return false;
+        }
         // Hide favorites link when feature is disabled or user is not logged in
         if (item.key === "favorites" && (!features.favorites || !session?.user?.id)) {
           return false;
@@ -167,7 +173,7 @@ export default function Header() {
             : t(item.translationKey as any)
           : item.staticLabel || item.key,
       }));
-  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending]);
+  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending, categoriesEnabled]);
 
   const isActiveLink = useCallback(
     (href: string): boolean => {

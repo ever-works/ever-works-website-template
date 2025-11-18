@@ -8,10 +8,12 @@ import { footerNavigation, categoryLabels, socialLinks } from "./social-links";
 import { FooterLinkGroup } from "./footer-link-group";
 import { FooterBottom } from "./footer-bottom";
 import { Container } from "../ui/container";
+import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 
 export function Footer() {
   const t = useTranslations();
   const config = useConfig();
+  const { categoriesEnabled } = useCategoriesEnabled();
 
   return (
     <footer className="relative w-full overflow-hidden">
@@ -37,7 +39,7 @@ export function Footer() {
 
               {/* Enhanced Navigation links section */}
               <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                {Object.entries(footerNavigation(t)).map(
+                {Object.entries(footerNavigation(t, categoriesEnabled)).map(
                   ([category, links], categoryIndex) => (
                     <FooterLinkGroup
                       key={category}

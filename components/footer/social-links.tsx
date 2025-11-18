@@ -51,24 +51,28 @@ export const socialLinks = [
   },
 ].filter(link => link.href && link.href !== '');
 
-export const footerNavigation = (t: any) => {
+export const footerNavigation = (t: any, categoriesEnabled = true) => {
+  const productLinks = [
+    { label: t("common.CATEGORY"), href: "/categories" },
+    { label: t("common.TAG"), href: "/tags" },
+    { label: t("footer.PRICING"), href: "/pricing" },
+    { label: t("footer.HELP"), href: "/help" },
+  ];
+
   return {
-    product: [
-      { label: t("common.CATEGORY"), href: "/categories" },
-      { label: t("common.TAG"), href: "/tags" },
-      { label: t("footer.PRICING"), href: "/pricing" },
-      { label: t("footer.HELP"), href: "/help" },
-    ],
+    product: categoriesEnabled
+      ? productLinks
+      : productLinks.filter(link => link.href !== "/categories"),
     company: [
       { label: t("footer.ABOUT_US"), href: "/about" },
       { label: t("footer.PRIVACY_POLICY"), href: "/privacy-policy" },
       { label: t("footer.TERMS_OF_SERVICE"), href: "/terms-of-service" },
-      { 
-        label: t("footer.SITEMAP"), 
+      {
+        label: t("footer.SITEMAP"),
         href: "/sitemap.xml",
-        target: "_blank", 
-        rel: "noopener noreferrer", 
-        isExternal: true 
+        target: "_blank",
+        rel: "noopener noreferrer",
+        isExternal: true
       },
     ],
     resources: [
