@@ -40,16 +40,11 @@ type Home2LayoutProps = {
 };
 
 export function HomeTwoLayout(props: Home2LayoutProps) {
-  const { layoutKey, setLayoutKey } = useLayoutTheme();
+  const { layoutKey, setLayoutKey, itemsPerPage } = useLayoutTheme();
   const { isSticky, sentinelRef, targetRef } = useStickyState({
     threshold: 0,
     rootMargin: "-20px 0px 0px 0px",
   });
-
-  const resetToFirstPage = () => {
-    // SharedCard component handles pagination state internally
-    // This callback is kept for filter change compatibility
-  };
 
   return (
     <div className="min-h-screen transition-colors duration-300">
@@ -64,7 +59,6 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
             tags={props.tags}
             layoutKey={layoutKey}
             setLayoutKey={setLayoutKey}
-            onFilterChange={resetToFirstPage}
             totalCount={props.items.length}
             filteredCount={props.filteredAndSortedItems.length}
           />
@@ -77,7 +71,7 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
           categories={props.categories}
           tags={props.tags}
           items={props.filteredAndSortedItems}
-          config={CardPresets.homeTwoListing}
+          config={{ ...CardPresets.homeTwoListing, perPage: itemsPerPage }}
         />
       </div>
     </div>
