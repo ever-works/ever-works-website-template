@@ -1,6 +1,7 @@
 import { PaymentPlan } from '@/lib/constants';
 import { Eye, FileText, Globe, Tag, Type } from 'lucide-react';
 import React, { useCallback, useMemo, useState } from 'react';
+import { useCategoriesEnabled } from './use-categories-enabled';
 interface ProductLink {
     id: string;
     url: string;
@@ -101,6 +102,7 @@ interface ProductLink {
   ];
   
 export function useDetailForm(initialData: Partial<FormData>, onSubmit: (data: FormData) => void) {
+    const { categoriesEnabled } = useCategoriesEnabled();
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState<FormData>(() => {
       const defaultData = {
@@ -252,17 +254,19 @@ export function useDetailForm(initialData: Partial<FormData>, onSubmit: (data: F
     const handleSubmit = useCallback(
       (e: React.FormEvent) => {
         e.preventDefault();
-  
+
         const mainLink = formData.links.find((l) => l.type === "main");
         const transformedData = {
           ...formData,
           link: mainLink?.url || "",
           links: formData.links,
+          // Set category to null if categories are disabled
+          category: categoriesEnabled ? formData.category : null,
         };
-  
+
         onSubmit?.(transformedData);
       },
-      [formData, onSubmit]
+      [formData, onSubmit, categoriesEnabled]
     );
   
     const validateStep = useCallback((step: number) => {
@@ -292,8 +296,12 @@ export function useDetailForm(initialData: Partial<FormData>, onSubmit: (data: F
     // Global progress calculation
     const { progressPercentage, completedRequiredFields, requiredFieldsCount } =
       useMemo(() => {
-        const required = 4; // name, mainLink, category, description
-        const completed = ["name", "mainLink", "category", "description"].filter(
+        // Required fields: name, mainLink, description (category only if enabled)
+        const requiredFields = categoriesEnabled
+          ? ["name", "mainLink", "category", "description"]
+          : ["name", "mainLink", "description"];
+
+        const completed = requiredFields.filter(
           (field) => {
             if (field === "mainLink") {
               return formData.links.find((l) => l.type === "main")?.url?.trim();
@@ -301,13 +309,13 @@ export function useDetailForm(initialData: Partial<FormData>, onSubmit: (data: F
             return formData[field] && formData[field].toString().trim();
           }
         ).length;
-  
+
         return {
-          requiredFieldsCount: required,
+          requiredFieldsCount: requiredFields.length,
           completedRequiredFields: completed,
-          progressPercentage: (completed / required) * 100,
+          progressPercentage: (completed / requiredFields.length) * 100,
         };
-      }, [formData]);
+      }, [formData, categoriesEnabled]);
   
     const getIconComponent = () => {
       return Globe;
