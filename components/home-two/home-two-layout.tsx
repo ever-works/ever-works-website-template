@@ -1,15 +1,11 @@
 "use client";
 
 import { Category, ItemData, Tag } from "@/lib/content";
-import { totalPages } from "@/lib/paginate";
-import { Paginate } from "@/components/filters/components/pagination/paginate";
 import { HomeTwoFilters } from "./home-two-filters";
 import { useLayoutTheme } from "../context";
 import { useStickyState } from "@/hooks/use-sticky-state";
 import { ListingClient } from "../shared-card/listing-client";
 import { CardPresets } from "../shared-card";
-import { useState, useMemo } from "react";
-import { PER_PAGE } from "@/lib/paginate";
 import clsx from "clsx";
 
 // Style constants for sticky header
@@ -41,35 +37,18 @@ type Home2LayoutProps = {
   tags: Tag[];
   items: ItemData[];
   filteredAndSortedItems: ItemData[];
-  paginatedItems: ItemData[];
 };
 
 export function HomeTwoLayout(props: Home2LayoutProps) {
-  const { layoutKey, setLayoutKey, paginationType } = useLayoutTheme();
+  const { layoutKey, setLayoutKey } = useLayoutTheme();
   const { isSticky, sentinelRef, targetRef } = useStickyState({
     threshold: 0,
     rootMargin: "-20px 0px 0px 0px",
   });
 
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const paginatedItems = useMemo(() => {
-    const start = (currentPage - 1) * PER_PAGE;
-    const end = start + PER_PAGE;
-    return props.filteredAndSortedItems.slice(start, end);
-  }, [props.filteredAndSortedItems, currentPage]);
-
-  const totalPagesCount = useMemo(() => {
-    return totalPages(props.filteredAndSortedItems.length);
-  }, [props.filteredAndSortedItems.length]);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   const resetToFirstPage = () => {
-    setCurrentPage(1);
+    // SharedCard component handles pagination state internally
+    // This callback is kept for filter change compatibility
   };
 
   return (
@@ -97,20 +76,9 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
           basePath={props.basePath}
           categories={props.categories}
           tags={props.tags}
-          items={paginatedItems}
+          items={props.filteredAndSortedItems}
           config={CardPresets.homeTwoListing}
         />
-        {totalPagesCount > 1 && (
-          <div className="mt-8 flex items-center justify-center">
-            <Paginate
-              basePath={props.basePath}
-              initialPage={currentPage}
-              total={totalPagesCount}
-              onPageChange={handlePageChange}
-              paginationType={paginationType}
-            />
-          </div>
-        )}
       </div>
     </div>
   );
