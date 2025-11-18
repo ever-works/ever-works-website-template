@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar } from '@/components/header/avatar';
 import { formatDistanceToNow } from 'date-fns';
-import { MessageCircle, Trash2 } from 'lucide-react';
+import { MessageCircle, Trash2, Pencil, Check, X } from 'lucide-react';
 import { Rating } from '@/components/ui/rating';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import type { CommentWithUser } from '@/lib/types/comment';
@@ -119,57 +119,147 @@ const Comment = memo(
 	({
 		comment,
 		onDelete,
+		onUpdate,
 		currentUserId,
-		isDeleting
+		isDeleting,
+		isUpdating
 	}: {
 		comment: CommentWithUser;
 		onDelete: (id: string) => Promise<void>;
+		onUpdate: (id: string, content: string, rating: number) => Promise<void>;
 		currentUserId?: string;
 		isDeleting: boolean;
-	}) => (
-		<div
-			className="group flex gap-4 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
-		>
-			<Avatar
-				src={comment.user.image}
-				alt={comment.user.name || 'Anonymous'}
-				fallback={comment.user.name?.[0] || 'A'}
-				size="md"
-				className="w-10 h-10 ring-2 ring-theme-primary-100 dark:ring-theme-primary-800"
-			/>
-			<div className="flex-1">
-				<div className="flex items-center justify-between">
-					<div className="flex items-center gap-2">
-						<span className="font-medium text-theme-primary-900 dark:text-theme-primary-100">
-							{comment.user.name || 'Anonymous'}
-						</span>
-						<time dateTime={comment.createdAt.toString()} className="text-sm text-muted-foreground">
-							{formatDistanceToNow(new Date(comment.createdAt), {
-								addSuffix: true
-							})}
-						</time>
-					</div>
-					<div className="flex items-center gap-4">
-						{currentUserId === comment.userId && (
-							<Button
-								variant="ghost"
-								size="sm"
-								className="opacity-0 group-hover:opacity-100 transition-opacity 
-                text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
-								onClick={() => onDelete(comment.id)}
-								disabled={isDeleting}
-								aria-label="Delete comment"
-							>
-								<Trash2 className="h-4 w-4" />
-							</Button>
+		isUpdating: boolean;
+	}) => {
+		const [isEditing, setIsEditing] = useState(false);
+		const [editContent, setEditContent] = useState(comment.content);
+		const [editRating, setEditRating] = useState(comment.rating);
+
+		const handleSave = async () => {
+			if (!editContent.trim()) return;
+			await onUpdate(comment.id, editContent, editRating);
+			setIsEditing(false);
+		};
+
+		const handleCancel = () => {
+			setEditContent(comment.content);
+			setEditRating(comment.rating);
+			setIsEditing(false);
+		};
+
+		const isOwner = currentUserId === comment.userId;
+		const wasEdited = comment.editedAt !== null;
+
+		return (
+			<div className="group flex gap-4 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
+				<Avatar
+					src={comment.user.image}
+					alt={comment.user.name || 'Anonymous'}
+					fallback={comment.user.name?.[0] || 'A'}
+					size="md"
+					className="w-10 h-10 ring-2 ring-theme-primary-100 dark:ring-theme-primary-800"
+				/>
+				<div className="flex-1">
+					<div className="flex items-center justify-between">
+						<div className="flex items-center gap-2">
+							<span className="font-medium text-theme-primary-900 dark:text-theme-primary-100">
+								{comment.user.name || 'Anonymous'}
+							</span>
+							<time dateTime={comment.createdAt.toString()} className="text-sm text-muted-foreground">
+								{formatDistanceToNow(new Date(comment.createdAt), {
+									addSuffix: true
+								})}
+							</time>
+							{wasEdited && !isEditing && (
+								<span className="text-xs text-gray-500 dark:text-gray-400 italic" title={`Edited ${formatDistanceToNow(new Date(comment.editedAt), { addSuffix: true })}`}>
+									(edited)
+								</span>
+							)}
+						</div>
+						{!isEditing && (
+							<div className="flex items-center gap-4">
+								{isOwner && (
+									<>
+										<Button
+											variant="ghost"
+											size="sm"
+											className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-500 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/20"
+											onClick={() => setIsEditing(true)}
+											disabled={isDeleting || isUpdating}
+											aria-label="Edit comment"
+										>
+											<Pencil className="h-4 w-4" />
+										</Button>
+										<Button
+											variant="ghost"
+											size="sm"
+											className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
+											onClick={() => onDelete(comment.id)}
+											disabled={isDeleting || isUpdating}
+											aria-label="Delete comment"
+										>
+											<Trash2 className="h-4 w-4" />
+										</Button>
+									</>
+								)}
+								<Rating value={comment.rating} readOnly size="sm" />
+							</div>
 						)}
-						<Rating value={comment.rating} readOnly size="sm" />
 					</div>
+
+					{isEditing ? (
+						<div className="mt-3 space-y-3">
+							<div className="flex items-center gap-2">
+								<label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+									Rating:
+								</label>
+								<Rating value={editRating} onChange={setEditRating} size="sm" />
+							</div>
+							<Textarea
+								value={editContent}
+								onChange={(e) => setEditContent(e.target.value)}
+								className="min-h-[80px] bg-white dark:bg-gray-900 resize-none focus:ring-theme-primary-500"
+								maxLength={1000}
+								required
+							/>
+							<div className="flex gap-2 justify-end">
+								<Button
+									variant="ghost"
+									size="sm"
+									onClick={handleCancel}
+									disabled={isUpdating}
+									className="text-gray-600 hover:text-gray-800"
+								>
+									<X className="h-4 w-4 mr-1" />
+									Cancel
+								</Button>
+								<Button
+									size="sm"
+									onClick={handleSave}
+									disabled={isUpdating || !editContent.trim()}
+									className="bg-theme-primary-500 hover:bg-theme-primary-600 text-white"
+								>
+									{isUpdating ? (
+										<div className="flex items-center gap-2">
+											<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+											<span>Saving...</span>
+										</div>
+									) : (
+										<>
+											<Check className="h-4 w-4 mr-1" />
+											Save
+										</>
+									)}
+								</Button>
+							</div>
+						</div>
+					) : (
+						<p className="mt-2 text-sm text-gray-700 dark:text-gray-300">{comment.content}</p>
+					)}
 				</div>
-				<p className="mt-2 text-sm text-gray-700 dark:text-gray-300">{comment.content}</p>
 			</div>
-		</div>
-	)
+		);
+	}
 );
 Comment.displayName = 'Comment';
 
@@ -217,7 +307,7 @@ interface CommentsSectionProps {
 export function CommentsSection({ itemId }: CommentsSectionProps) {
 	// All hooks must be called before any early returns
 	const { features, isPending: isFeaturesPending, error: featuresError } = useFeatureFlags();
-	const { comments, isPending: isCommentsPending, createComment, isCreating, deleteComment, isDeleting } = useComments(itemId);
+	const { comments, isPending: isCommentsPending, createComment, isCreating, updateComment, isUpdating, deleteComment, isDeleting } = useComments(itemId);
 	const { user } = useCurrentUser();
 	const loginModal = useLoginModal();
 
@@ -246,6 +336,18 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 			}
 		},
 		[deleteComment]
+	);
+
+	const handleUpdate = useCallback(
+		async (commentId: string, content: string, rating: number) => {
+			try {
+				await updateComment({ commentId, content, rating });
+				toast.success('Comment updated successfully!');
+			} catch (error) {
+				toast.error(error instanceof Error ? error.message : 'Failed to update comment');
+			}
+		},
+		[updateComment]
 	);
 
 	// Show skeleton during loading (single coordinated check)
@@ -292,8 +394,10 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 							key={comment.id}
 							comment={comment}
 							onDelete={handleDelete}
+							onUpdate={handleUpdate}
 							currentUserId={user?.id}
 							isDeleting={isDeleting}
+							isUpdating={isUpdating}
 						/>
 					))
 				) : (

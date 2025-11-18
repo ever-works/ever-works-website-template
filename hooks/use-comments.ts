@@ -10,6 +10,12 @@ interface CreateCommentData {
   rating: number;
 }
 
+interface UpdateCommentData {
+  commentId: string;
+  content?: string;
+  rating?: number;
+}
+
 export function useComments(itemId: string) {
   const queryClient = useQueryClient();
   const loginModal = useLoginModal();
@@ -85,6 +91,37 @@ export function useComments(itemId: string) {
     },
   });
 
+  const { mutateAsync: updateComment, isPending: isUpdating } = useMutation({
+    mutationFn: async ({ commentId, content, rating }: UpdateCommentData) => {
+      const response = await serverClient.put<CommentWithUser>(
+        `/api/items/${itemId}/comments/${commentId}`,
+        { content, rating }
+      );
+
+      if (!apiUtils.isSuccess(response)) {
+        if (response.error?.includes('401') || response.error?.includes('Unauthorized')) {
+          loginModal.onOpen('Please sign in to edit comment');
+          throw new Error('Unauthorized');
+        }
+        throw new Error(apiUtils.getErrorMessage(response));
+      }
+
+      return response.data;
+    },
+    onSuccess: (updatedComment) => {
+      if (updatedComment) {
+        // Optimistically update cache with server-returned comment data
+        queryClient.setQueryData<CommentWithUser[]>(["comments", itemId], (old = []) => {
+          return old.map(comment =>
+            comment.id === updatedComment.id ? updatedComment : comment
+          );
+        });
+        // Invalidate rating caches to reflect updated rating
+        queryClient.invalidateQueries({ queryKey: ["itemRating", itemId], exact: true });
+      }
+    },
+  });
+
   const { mutate: rateCommentMutation, isPending: isRatingComment } = useMutation({
     mutationFn: async ({ commentId, rating }: { commentId: string; rating: number }) => {
       const encodedItemId = encodeURIComponent(itemId);
@@ -146,6 +183,8 @@ export function useComments(itemId: string) {
     isPending,
     createComment,
     isCreating,
+    updateComment,
+    isUpdating,
     deleteComment,
     isDeleting,
     updateCommentRating: updateCommentRatingMutation,

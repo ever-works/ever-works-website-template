@@ -57,15 +57,24 @@ export async function getCommentById(id: string) {
 }
 
 /**
- * Update comment content
+ * Update comment content and/or rating
  * @param id - Comment ID
- * @param content - New content
+ * @param data - Updated content and/or rating
  * @returns Updated comment
  */
-export async function updateComment(id: string, content: string) {
+export async function updateComment(
+  id: string,
+  data: { content?: string; rating?: number }
+) {
+  const now = new Date();
   const [comment] = await db
     .update(comments)
-    .set({ content, updatedAt: new Date() })
+    .set({
+      ...(data.content !== undefined && { content: data.content }),
+      ...(data.rating !== undefined && { rating: data.rating }),
+      updatedAt: now,
+      editedAt: now
+    })
     .where(eq(comments.id, id))
     .returning();
 

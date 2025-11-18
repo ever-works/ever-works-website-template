@@ -20,6 +20,8 @@ export type CommentWithUser = {
   itemId: string;
   createdAt: Date;
   updatedAt: Date;
+  editedAt: Date | null;
+  deletedAt: Date | null;
   user: {
     id: string;
     name: string | null;

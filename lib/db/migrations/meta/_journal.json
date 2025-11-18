@@ -78,6 +78,13 @@
       "when": 1730563260000,
       "tag": "0010_convert_comments_timestamps_to_timestamptz",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1763463442163,
+      "tag": "0011_quiet_gravity",
+      "breakpoints": true
     }
   ]
 }
