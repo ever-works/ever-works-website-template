@@ -3,6 +3,8 @@ import { LOCALES } from "@/lib/constants";
 import ListingCategories from "./listing-categories";
 import { Suspense } from "react";
 import { ListingSkeleton } from "@/components/ui/skeleton";
+import { notFound } from "next/navigation";
+import { getCategoriesEnabled } from "@/lib/utils/settings";
 
 export const revalidate = 10;
 export async function generateStaticParams() {
@@ -14,6 +16,12 @@ export default async function CategoriesPage({
 }: {
   params: Promise<{ locale: string }>;
 }) {
+  // Check if categories are enabled
+  const categoriesEnabled = getCategoriesEnabled();
+  if (!categoriesEnabled) {
+    notFound();
+  }
+
   const { locale } = await params;
   const { categories, tags, items } = await fetchItems({ lang: locale });
 

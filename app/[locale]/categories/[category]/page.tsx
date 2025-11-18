@@ -2,6 +2,8 @@ import { fetchItems } from "@/lib/content";
 import Listing from "../../(listing)/listing";
 import { Suspense } from "react";
 import { ListingSkeleton } from "@/components/ui/skeleton";
+import { notFound } from "next/navigation";
+import { getCategoriesEnabled } from "@/lib/utils/settings";
 
 export const revalidate = 10;
 
@@ -14,6 +16,12 @@ export default async function CategoryListing({
 }: {
   params: Promise<{ category: string; locale: string }>;
 }) {
+  // Check if categories are enabled
+  const categoriesEnabled = getCategoriesEnabled();
+  if (!categoriesEnabled) {
+    notFound();
+  }
+
   const resolvedParams = await params;
   const { locale, category } = resolvedParams;
 
