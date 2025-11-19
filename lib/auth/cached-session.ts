@@ -20,7 +20,7 @@ export async function getCachedSession(request?: Request): Promise<Session | nul
     // Try cache first if we have an identifier
     if (sessionToken) {
       const identifier = createSessionIdentifier(sessionToken);
-      const cachedSession = sessionCache.get(identifier);
+      const cachedSession = await sessionCache.get(identifier);
 
       if (cachedSession) {
         if (process.env.NODE_ENV === 'development') {
@@ -40,7 +40,7 @@ export async function getCachedSession(request?: Request): Promise<Session | nul
     // Cache the session if we have it and an identifier
     if (session && sessionToken) {
       const identifier = createSessionIdentifier(sessionToken);
-      sessionCache.set(identifier, session);
+      await sessionCache.set(identifier, session);
 
       if (process.env.NODE_ENV === 'development') {
         console.log('[SessionCache] Cached new session for token:', sessionToken.substring(0, 8) + '...');
@@ -70,11 +70,11 @@ export async function getCachedApiSession(request: NextRequest): Promise<Session
 /**
  * Invalidate cached session (for logout, profile updates, etc.)
  */
-export function invalidateSessionCache(sessionToken?: string, userId?: string): void {
+export async function invalidateSessionCache(sessionToken?: string, userId?: string): Promise<void> {
   try {
     if (sessionToken) {
       const identifier = createSessionIdentifier(sessionToken);
-      sessionCache.delete(identifier);
+      await sessionCache.delete(identifier);
 
       if (process.env.NODE_ENV === 'development') {
         console.log('[SessionCache] Invalidated session cache for token:', sessionToken.substring(0, 8) + '...');
@@ -83,7 +83,7 @@ export function invalidateSessionCache(sessionToken?: string, userId?: string): 
 
     if (userId) {
       const identifier = createSessionIdentifier(undefined, userId);
-      sessionCache.delete(identifier);
+      await sessionCache.delete(identifier);
 
       if (process.env.NODE_ENV === 'development') {
         console.log('[SessionCache] Invalidated session cache for user:', userId);

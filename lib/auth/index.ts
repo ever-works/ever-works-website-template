@@ -161,7 +161,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       const token = 'token' in event ? event.token : undefined;
       if (token?.userId && typeof token.userId === 'string') {
         try {
-          invalidateSessionCache(undefined, token.userId);
+          await invalidateSessionCache(undefined, token.userId);
 
           if (process.env.NODE_ENV === 'development') {
             console.log('[SessionCache] Invalidated cache on sign-out for user:', token.userId);
@@ -175,7 +175,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       // Invalidate cached session when user data is updated
       if (user?.id) {
         try {
-          invalidateSessionCache(undefined, user.id);
+          await invalidateSessionCache(undefined, user.id);
 
           if (process.env.NODE_ENV === 'development') {
             console.log('[SessionCache] Invalidated cache on user update for user:', user.id);

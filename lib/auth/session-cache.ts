@@ -4,7 +4,6 @@
  */
 
 import { Session } from 'next-auth';
-import crypto from 'crypto';
 
 interface CachedSession {
   session: Session;
@@ -28,8 +27,13 @@ class SessionCache {
   /**
    * Generate cache key from session token or user ID
    */
-  private generateKey(identifier: string): string {
-    return crypto.createHash('sha256').update(identifier).digest('hex').substring(0, 32);
+  private async generateKey(identifier: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(identifier);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex.substring(0, 32);
   }
 
   /**
@@ -65,8 +69,8 @@ class SessionCache {
   /**
    * Get session from cache
    */
-  get(identifier: string): Session | null {
-    const key = this.generateKey(identifier);
+  async get(identifier: string): Promise<Session | null> {
+    const key = await this.generateKey(identifier);
     const cached = this.cache.get(key);
 
     if (!cached) {
@@ -87,8 +91,8 @@ class SessionCache {
   /**
    * Store session in cache
    */
-  set(identifier: string, session: Session): void {
-    const key = this.generateKey(identifier);
+  async set(identifier: string, session: Session): Promise<void> {
+    const key = await this.generateKey(identifier);
     const now = Date.now();
 
     this.cache.set(key, {
@@ -106,8 +110,8 @@ class SessionCache {
   /**
    * Remove session from cache
    */
-  delete(identifier: string): void {
-    const key = this.generateKey(identifier);
+  async delete(identifier: string): Promise<void> {
+    const key = await this.generateKey(identifier);
     this.cache.delete(key);
   }
 
@@ -138,7 +142,7 @@ class SessionCache {
   /**
    * Get cache key for external use (debugging)
    */
-  getCacheKey(identifier: string): string {
+  async getCacheKey(identifier: string): Promise<string> {
     return this.generateKey(identifier);
   }
 }
