@@ -20,6 +20,7 @@ import { useParams } from 'next/navigation';
 import { siteConfig } from '@/lib/config';
 import { ItemCTAButton } from './item-cta-button';
 import { useCategoriesEnabled } from '@/hooks/use-categories-enabled';
+import { useSurveysEnabled } from '@/hooks/use-surveys-enabled';
 
 export interface ItemDetailProps {
 	meta: {
@@ -47,6 +48,7 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 	const params = useParams();
 	const locale = params.locale as string;
 	const { categoriesEnabled } = useCategoriesEnabled();
+	const { surveysEnabled } = useSurveysEnabled();
 	const tagNames = Array.isArray(meta.tags) ? meta.tags.map((tag) => (typeof tag === 'string' ? tag : tag.name)) : [];
 
 	// Generate Product schema for SEO
@@ -183,8 +185,8 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 							</div>
 						</div>
 
-						{/* Surveys Section - Only show if showSurveys is not false */}
-						{meta.showSurveys !== false && (
+						{/* Surveys Section - Only show if showSurveys is not false and surveys are enabled */}
+						{meta.showSurveys !== false && surveysEnabled && (
 							<UserSurveySection
 								item={meta}
 							/>

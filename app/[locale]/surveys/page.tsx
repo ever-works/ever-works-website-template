@@ -1,11 +1,13 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { surveyService } from '@/lib/services/survey.service';
 import { getStatusColor, getTypeColor } from '@/components/surveys/utils/survey-helpers';
 import { Container } from '@/components/ui/container';
 import { Survey } from '@/lib/db/schema';
 import { Logger } from '@/lib/logger';
 import { SurveyTypeEnum, SurveyStatusEnum } from '@/lib/types/survey';
+import { getSurveysEnabled } from '@/lib/utils/settings';
 
 const logger = Logger.create('SurveysPage');
 
@@ -16,6 +18,12 @@ export const metadata: Metadata = {
 
 
 export default async function SurveysPage() {
+    // Redirect to 404 if surveys are disabled
+    const surveysEnabled = getSurveysEnabled();
+    if (!surveysEnabled) {
+        notFound();
+    }
+
     let publishedSurveys: Survey[] = [];
 
     try {

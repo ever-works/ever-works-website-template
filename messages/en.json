@@ -194,6 +194,9 @@
     "BACK_TO_SURVEYS": "Back to Surveys",
     "SURVEYS_MANAGEMENT": "Surveys Management",
     "SURVEYS_MANAGEMENT_DESC": "Manage and monitor all surveys",
+    "SURVEYS_DISABLED_WARNING": "Surveys feature is currently disabled in settings",
+    "SURVEYS_DISABLED_MESSAGE": "Surveys are hidden from the public site. You can still manage surveys here, but they won't be visible to non-admin users until re-enabled.",
+    "GO_TO_SETTINGS": "Go to Settings",
     "ALL_SURVEYS": "All Surveys",
     "GLOBAL_SURVEY": "Global Survey",
     "ITEM_SURVEY": "Item Survey",
@@ -2332,7 +2335,10 @@
     },
     "ADMIN_SETTINGS_PAGE": {
       "CATEGORIES_ENABLED_LABEL": "Enable Categories",
-      "CATEGORIES_ENABLED_DESC": "Enable or disable categories throughout the site. When disabled, category filters, pages, and navigation will be hidden."
+      "CATEGORIES_ENABLED_DESC": "Enable or disable categories throughout the site. When disabled, category filters, pages, and navigation will be hidden.",
+      "SURVEYS_ENABLED_LABEL": "Enable Surveys",
+      "SURVEYS_ENABLED_DESC": "Enable or disable surveys throughout the site. When disabled, survey features will be hidden from non-admin users.",
+      "SURVEYS_DISABLED_WARNING": "Surveys feature is currently disabled in settings"
     },
     "AUTH_FORM": {
       "ADMIN_WELCOME_TITLE": "Welcome to the Admin Dashboard",

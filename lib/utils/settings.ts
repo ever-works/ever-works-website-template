@@ -10,3 +10,14 @@ export function getCategoriesEnabled(): boolean {
 	// Default to true if not set (backward compatibility)
 	return categoriesEnabled ?? true;
 }
+
+/**
+ * Server-side utility to check if surveys are enabled
+ * @returns boolean - true if surveys are enabled, false otherwise
+ */
+export function getSurveysEnabled(): boolean {
+	const surveysEnabled = configManager.getNestedValue('settings.surveys_enabled');
+
+	// Default to true if not set (backward compatibility)
+	return surveysEnabled ?? true;
+}

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { surveyService } from '@/lib/services/survey.service';
 import { SurveyResponsesClient } from '@/components/surveys/responses/survey-responses-client';
 import { cache } from 'react';
+import { getSurveysEnabled } from '@/lib/utils/settings';
 
 interface DashboardSurveyResponsesPageProps {
 	params: Promise<{
@@ -31,6 +32,12 @@ export async function generateMetadata({ params }: DashboardSurveyResponsesPageP
 }
 
 export default async function DashboardSurveyResponsesPage({ params }: DashboardSurveyResponsesPageProps) {
+	// Redirect to 404 if surveys are disabled (non-admin users)
+	const surveysEnabled = getSurveysEnabled();
+	if (!surveysEnabled) {
+		notFound();
+	}
+
 	const { surveySlug, itemId } = await params;
 	const survey = await getSurvey(surveySlug);
 

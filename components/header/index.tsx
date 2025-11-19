@@ -23,6 +23,7 @@ import { Container } from "../ui/container";
 import { useFeatureFlags } from "@/hooks/use-feature-flags";
 import { useHasGlobalSurveys } from "@/hooks/use-has-global-surveys";
 import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
+import { useSurveysEnabled } from "@/hooks/use-surveys-enabled";
 
 interface NavigationItem {
   key: string;
@@ -139,6 +140,7 @@ export default function Header() {
   const { features } = useFeatureFlags();
   const { hasGlobalSurveys, isPending } = useHasGlobalSurveys();
   const { categoriesEnabled } = useCategoriesEnabled();
+  const { surveysEnabled } = useSurveysEnabled();
   const t = useTranslations("common");
   const tListing = useTranslations("listing");
   const tSurvey = useTranslations("survey");
@@ -156,8 +158,8 @@ export default function Header() {
         if (item.key === "favorites" && (!features.favorites || !session?.user?.id)) {
           return false;
         }
-        // Hide surveys link when there are no global surveys (but keep it visible while loading to prevent flicker)
-        if (item.key === "surveys" && !isPending && !hasGlobalSurveys) {
+        // Hide surveys link when surveys are disabled or there are no global surveys (but keep it visible while loading to prevent flicker)
+        if (item.key === "surveys" && (!surveysEnabled || (!isPending && !hasGlobalSurveys))) {
           return false;
         }
         return true;
@@ -173,7 +175,7 @@ export default function Header() {
             : t(item.translationKey as any)
           : item.staticLabel || item.key,
       }));
-  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending, categoriesEnabled]);
+  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending, categoriesEnabled, surveysEnabled]);
 
   const isActiveLink = useCallback(
     (href: string): boolean => {

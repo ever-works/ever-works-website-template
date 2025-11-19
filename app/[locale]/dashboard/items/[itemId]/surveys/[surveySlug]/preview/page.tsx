@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { surveyService } from '@/lib/services/survey.service';
 import { SurveyPreviewClient } from '@/components/surveys/preview/preview-client';
 import { cache } from 'react';
+import { getSurveysEnabled } from '@/lib/utils/settings';
 
 interface DashboardSurveyPreviewPageProps {
 	params: Promise<{
@@ -30,6 +31,12 @@ export async function generateMetadata({ params }: DashboardSurveyPreviewPagePro
 }
 
 export default async function DashboardSurveyPreviewPage({ params }: DashboardSurveyPreviewPageProps) {
+	// Redirect to 404 if surveys are disabled (non-admin users)
+	const surveysEnabled = getSurveysEnabled();
+	if (!surveysEnabled) {
+		notFound();
+	}
+
 	const { surveySlug, itemId } = await params;
 	const survey = await getSurvey(surveySlug);
 
