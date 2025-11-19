@@ -2,6 +2,8 @@ import { getCachedItems } from "@/lib/content";
 import Listing from "../../(listing)/listing";
 import { Suspense } from "react";
 import { ListingSkeleton } from "@/components/ui/skeleton";
+import { notFound } from "next/navigation";
+import { getTagsEnabled } from "@/lib/utils/settings";
 
 export const revalidate = 10;
 
@@ -14,6 +16,11 @@ export default async function TagListing({
 }: {
   params: Promise<{ tag: string; locale: string }>;
 }) {
+  const tagsEnabled = getTagsEnabled();
+  if (!tagsEnabled) {
+    notFound();
+  }
+
   const resolvedParams = await params;
   const { locale, tag } = resolvedParams;
 

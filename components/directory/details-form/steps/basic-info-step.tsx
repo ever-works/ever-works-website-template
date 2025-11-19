@@ -9,6 +9,7 @@ import { LinkInput } from '../components/link-input';
 import type { Category, Tag as TagType } from '@/lib/content';
 import type { FormData } from '../validation/form-validators';
 import { useCategoriesEnabled } from '@/hooks/use-categories-enabled';
+import { useTagsEnabled } from '@/hooks/use-tags-enabled';
 import {
 	STEP_CARD_CLASSES,
 	FORM_FIELD_CLASSES,
@@ -55,6 +56,7 @@ export function BasicInfoStep({
 	removeLink
 }: BasicInfoStepProps) {
 	const { categoriesEnabled } = useCategoriesEnabled();
+	const { tagsEnabled } = useTagsEnabled();
 	const [showAllTags, setShowAllTags] = useState(false);
 	const [tagsToShow] = useState(DEFAULT_TAGS_TO_SHOW);
 	const { toolbarRef } = useEditorToolbar(editor);
@@ -183,7 +185,8 @@ export function BasicInfoStep({
 					</div>
 					)}
 
-					{/* Tags */}
+					{/* Tags - Only show if tags enabled */}
+					{tagsEnabled && (
 					<div className="space-y-6">
 						<div>
 							<h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -257,6 +260,7 @@ export function BasicInfoStep({
 							</div>
 						)}
 					</div>
+					)}
 
 					{/* Short Description */}
 					<div className="space-y-3">

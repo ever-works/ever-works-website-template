@@ -6,6 +6,7 @@ import { Button } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { ChevronDown, Search, Tag as TagIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils/index";
+import { useTagsEnabled } from "@/hooks/use-tags-enabled";
 
 type HomeTwoTagsSelectorProps = {
   tags: Tag[];
@@ -101,6 +102,11 @@ export const HomeTwoTagsSelector = ({
   const popoverRef = useRef<HTMLDivElement>(null);
   const panelId = useId();
   const t = useTranslations();
+  const { tagsEnabled } = useTagsEnabled();
+
+  if (!tagsEnabled) {
+    return null;
+  }
 
   const selectedTagsCount = selectedTags.length;
 

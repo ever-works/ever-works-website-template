@@ -114,6 +114,7 @@ const PLACEHOLDER_TEXT_CLASSES = [
 
 interface Settings {
 	categories_enabled?: boolean;
+	tags_enabled?: boolean;
 	[key: string]: unknown;
 }
 
@@ -234,13 +235,22 @@ export function SettingsPage() {
 								Loading settings...
 							</p>
 						) : (
-							<SettingSwitch
-								label={t('CATEGORIES_ENABLED_LABEL')}
-								description={t('CATEGORIES_ENABLED_DESC')}
-								value={settings.categories_enabled ?? true}
-								onChange={(value) => updateSetting('categories_enabled', value)}
-								disabled={saving}
-							/>
+							<>
+								<SettingSwitch
+									label={t('CATEGORIES_ENABLED_LABEL')}
+									description={t('CATEGORIES_ENABLED_DESC')}
+									value={settings.categories_enabled ?? true}
+									onChange={(value) => updateSetting('categories_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('TAGS_ENABLED_LABEL')}
+									description={t('TAGS_ENABLED_DESC')}
+									value={settings.tags_enabled ?? true}
+									onChange={(value) => updateSetting('tags_enabled', value)}
+									disabled={saving}
+								/>
+							</>
 						)}
 					</AccordionContent>
 				</AccordionItem>
