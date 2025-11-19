@@ -239,19 +239,35 @@ export async function PUT(
     }
 
     // Validate content if provided
-    if (content !== undefined && (!content.trim() || content.length > 1000)) {
-      return NextResponse.json(
-        { error: "Content must be between 1 and 1000 characters" },
-        { status: 400 }
-      );
+    if (content !== undefined) {
+      if (typeof content !== 'string') {
+        return NextResponse.json(
+          { error: "Content must be a string" },
+          { status: 400 }
+        );
+      }
+      if (!content.trim() || content.length > 1000) {
+        return NextResponse.json(
+          { error: "Content must be between 1 and 1000 characters" },
+          { status: 400 }
+        );
+      }
     }
 
     // Validate rating if provided
-    if (rating !== undefined && (rating < 1 || rating > 5)) {
-      return NextResponse.json(
-        { error: "Rating must be between 1 and 5" },
-        { status: 400 }
-      );
+    if (rating !== undefined) {
+      if (typeof rating !== 'number' || !Number.isInteger(rating)) {
+        return NextResponse.json(
+          { error: "Rating must be an integer" },
+          { status: 400 }
+        );
+      }
+      if (rating < 1 || rating > 5) {
+        return NextResponse.json(
+          { error: "Rating must be between 1 and 5" },
+          { status: 400 }
+        );
+      }
     }
 
     // Check if comment exists and user owns it
