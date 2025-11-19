@@ -171,7 +171,7 @@ const Comment = memo(
 								})}
 							</time>
 							{wasEdited && !isEditing && (
-								<span className="text-xs text-gray-500 dark:text-gray-400 italic" title={`Edited ${formatDistanceToNow(new Date(comment.editedAt), { addSuffix: true })}`}>
+								<span className="text-xs text-gray-500 dark:text-gray-400 italic" title={`Edited ${formatDistanceToNow(new Date(comment.editedAt!), { addSuffix: true })}`}>
 									(edited)
 								</span>
 							)}

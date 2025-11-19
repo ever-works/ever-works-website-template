@@ -292,7 +292,7 @@ export async function PUT(
           id: clientProfiles.id,
           name: clientProfiles.name,
           email: clientProfiles.email,
-          image: clientProfiles.image
+          image: clientProfiles.avatar
         }
       })
       .from(comments)

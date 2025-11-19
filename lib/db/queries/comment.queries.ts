@@ -34,6 +34,8 @@ export async function getCommentsByItemId(itemSlug: string): Promise<CommentWith
       itemId: comments.itemId,
       createdAt: comments.createdAt,
       updatedAt: comments.updatedAt,
+      editedAt: comments.editedAt,
+      deletedAt: comments.deletedAt,
       user: {
         id: clientProfiles.id,
         name: clientProfiles.name,
