@@ -14,7 +14,7 @@ interface ProductLink {
     name: string;
     link: string;
     links: ProductLink[];
-    category: string;
+    category: string | null;
     tags: string[];
     description: string;
     introduction: string;

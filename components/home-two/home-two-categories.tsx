@@ -211,10 +211,6 @@ export function HomeTwoCategories({
   const tCommon = useTranslations("common");
   const router = useRouter();
 
-  // Don't render if categories are disabled
-  if (!categoriesEnabled) {
-    return null;
-  }
   // Use totalItems prop for All Categories button, fallback to calculated value
   const { totalItems: calculatedTotalItems, isHomeActive, pathname } = useCategoryState(categories);
   const allCategoriesCount = totalItems ?? calculatedTotalItems;
@@ -393,6 +389,11 @@ export function HomeTwoCategories({
       }
     };
   }, [isMorePopoverOpen]);
+
+  // Don't render if categories are disabled
+  if (!categoriesEnabled) {
+    return null;
+  }
 
   // Handle category change from select
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

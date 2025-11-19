@@ -156,7 +156,7 @@ export function BasicInfoStep({
 							<select
 								id="category"
 								name="category"
-								value={formData.category}
+								value={formData.category ?? ''}
 								onChange={handleInputChange}
 								onFocus={() => setFocusedField('category')}
 								onBlur={() => setFocusedField(null)}

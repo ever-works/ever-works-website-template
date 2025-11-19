@@ -19,11 +19,6 @@ export function ItemsCategories(props: {
     const [isSticky, setIsSticky] = useState(false);
     const pathname = usePathname();
 
-    // Don't render if categories are disabled
-    if (!categoriesEnabled) {
-      return null;
-    }
-  
     useEffect(() => {
       if (props.enableSticky) {
         const handleScroll = () => {
@@ -43,7 +38,12 @@ export function ItemsCategories(props: {
       }
       return undefined;
     }, [isSticky, props.enableSticky]);
-  
+
+    // Don't render if categories are disabled
+    if (!categoriesEnabled) {
+      return null;
+    }
+
     const MAX_VISIBLE_CATEGORIES = props.maxVisibleTags || 8;
     const hasMoreTags = props.categories.length > MAX_VISIBLE_CATEGORIES;
   
