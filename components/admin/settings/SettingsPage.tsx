@@ -114,6 +114,11 @@ const PLACEHOLDER_TEXT_CLASSES = [
 
 interface Settings {
 	categories_enabled?: boolean;
+	header_submit_enabled?: boolean;
+	header_pricing_enabled?: boolean;
+	header_layout_enabled?: boolean;
+	header_language_enabled?: boolean;
+	header_theme_enabled?: boolean;
 	[key: string]: unknown;
 }
 
