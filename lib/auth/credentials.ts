@@ -1,9 +1,14 @@
-import { compare, hash } from "bcryptjs";
 import Credentials from "next-auth/providers/credentials";
 import { getUserByEmail, logActivity, getClientAccountByEmail, verifyClientPassword, getClientProfileByUserId } from "../db/queries";
 import { ActivityType } from "../db/schema";
 
 const SALT_ROUNDS = 10;
+
+// Dynamic import to avoid bundling bcryptjs in Edge Runtime
+async function getBcrypt() {
+  const bcryptjs = await import("bcryptjs");
+  return bcryptjs;
+}
 
 export enum AuthProviders {
   CREDENTIALS = "credentials",
@@ -16,6 +21,7 @@ export enum AuthProviders {
 }
 
 export async function hashPassword(password: string) {
+  const { hash } = await getBcrypt();
   return hash(password, SALT_ROUNDS);
 }
 
@@ -26,6 +32,7 @@ export async function comparePasswords(
   if (!hashedPassword) {
     return false;
   }
+  const { compare } = await getBcrypt();
   return compare(plainTextPassword, hashedPassword);
 }
 
