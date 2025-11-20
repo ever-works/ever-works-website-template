@@ -1,6 +1,9 @@
 import { FiBookOpen, FiFacebook, FiLinkedin, FiMail } from "react-icons/fi";
 import { IconGithub, IconX } from "../icons/Icons";
 import { siteConfig } from "@/lib/config";
+import { useTranslations } from "next-intl";
+
+type TranslateFunction = ReturnType<typeof useTranslations>;
 
 export const socialLinks = [
   {
@@ -51,7 +54,7 @@ export const socialLinks = [
   },
 ].filter(link => link.href && link.href !== '');
 
-export const footerNavigation = (t: (key: string, values?: Record<string, unknown>) => string, categoriesEnabled = true, tagsEnabled = true) => {
+export function footerNavigation(t: TranslateFunction, categoriesEnabled = true, tagsEnabled = true) {
   const productLinks = [
     { label: t("common.CATEGORY"), href: "/categories" },
     { label: t("common.TAG"), href: "/tags" },
@@ -87,8 +90,10 @@ export const footerNavigation = (t: (key: string, values?: Record<string, unknow
   };
 };
 
-export const categoryLabels = (t: (key: string, values?: Record<string, unknown>) => string) => ({
-  product: t("footer.PRODUCT"),
-  company: t("footer.COMPANY"),
-  resources: t("footer.RESOURCES"),
-});
+export function categoryLabels(t: TranslateFunction) {
+  return {
+    product: t("footer.PRODUCT"),
+    company: t("footer.COMPANY"),
+    resources: t("footer.RESOURCES"),
+  };
+}
