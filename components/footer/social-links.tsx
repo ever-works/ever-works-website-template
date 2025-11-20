@@ -51,7 +51,7 @@ export const socialLinks = [
   },
 ].filter(link => link.href && link.href !== '');
 
-export const footerNavigation = (t: (key: string) => string, categoriesEnabled = true, tagsEnabled = true) => {
+export const footerNavigation = (t: (key: string, values?: Record<string, unknown>) => string, categoriesEnabled = true, tagsEnabled = true) => {
   const productLinks = [
     { label: t("common.CATEGORY"), href: "/categories" },
     { label: t("common.TAG"), href: "/tags" },
@@ -87,7 +87,7 @@ export const footerNavigation = (t: (key: string) => string, categoriesEnabled =
   };
 };
 
-export const categoryLabels = (t: any) => ({
+export const categoryLabels = (t: (key: string, values?: Record<string, unknown>) => string) => ({
   product: t("footer.PRODUCT"),
   company: t("footer.COMPANY"),
   resources: t("footer.RESOURCES"),
