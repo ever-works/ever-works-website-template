@@ -1,5 +1,4 @@
 import { User } from '@supabase/auth-js';
-import * as crypto from 'crypto';
 import {
 	PaymentProviderInterface,
 	PaymentIntent,
@@ -684,11 +683,26 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 		}
 	}
 
-	async handleWebhook(payload: any, signature: string): Promise<WebhookResult> {
+	async handleWebhook(payload: unknown, signature: string): Promise<WebhookResult> {
 		try {
-			const hmac = crypto.createHmac('sha256', this.webhookSecret);
-			hmac.update(JSON.stringify(payload));
-			const calculatedSignature = hmac.digest('hex');
+			// Convert webhook secret to key for Web Crypto API
+			const encoder = new TextEncoder();
+			const keyData = encoder.encode(this.webhookSecret);
+			const messageData = encoder.encode(JSON.stringify(payload));
+
+			// Import key for HMAC
+			const cryptoKey = await crypto.subtle.importKey(
+				'raw',
+				keyData,
+				{ name: 'HMAC', hash: 'SHA-256' },
+				false,
+				['sign']
+			);
+
+			// Sign the message
+			const signatureBuffer = await crypto.subtle.sign('HMAC', cryptoKey, messageData);
+			const hashArray = Array.from(new Uint8Array(signatureBuffer));
+			const calculatedSignature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
 			if (calculatedSignature !== signature) {
 				return {
@@ -699,7 +713,7 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 				};
 			}
 
-			const event = payload;
+			const event = payload as { meta: { event_name: string }; data: { id: string } };
 			return {
 				received: true,
 				type: event.meta.event_name,
