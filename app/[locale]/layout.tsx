@@ -15,6 +15,8 @@ import Script from 'next/script';
 import { ConditionalLayout } from '@/components/layout/conditional-layout';
 import { siteConfig } from '@/lib/config';
 import { SpeedInsights } from './integration/speed-insights';
+import { SettingsProvider } from '@/components/providers/settings-provider';
+import { getCategoriesEnabled, getTagsEnabled, getCompaniesEnabled } from '@/lib/utils/settings';
 
 /**
  * Generate metadata dynamically using siteConfig
@@ -60,6 +62,11 @@ export default async function RootLayout({
 	const config = await getCachedConfig();
 	const messages = await getMessages();
 
+	// Read settings server-side for instant availability
+	const categoriesEnabled = getCategoriesEnabled();
+	const tagsEnabled = getTagsEnabled();
+	const companiesEnabled = getCompaniesEnabled();
+
 	// Determine if the current locale is RTL
 	return (
 		<>
@@ -70,9 +77,15 @@ export default async function RootLayout({
 				</Suspense>
 				<NextIntlClientProvider messages={messages}>
 					<Toaster position="bottom-right" richColors />
-					<Providers config={config}>
-						<ConditionalLayout>{children}</ConditionalLayout>
-					</Providers>
+					<SettingsProvider
+						categoriesEnabled={categoriesEnabled}
+						tagsEnabled={tagsEnabled}
+						companiesEnabled={companiesEnabled}
+					>
+						<Providers config={config}>
+							<ConditionalLayout>{children}</ConditionalLayout>
+						</Providers>
+					</SettingsProvider>
 				</NextIntlClientProvider>
 			</PHProvider>
 			{/* 

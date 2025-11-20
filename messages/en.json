@@ -2288,7 +2288,10 @@
       "EDIT_COMPANY_SUBTITLE": "Update company information",
       "UPDATE_COMPANY": "Update Company",
       "DELETE_COMPANY": "Delete Company",
-      "DELETE_CONFIRMATION": "Are you sure you want to delete this company? This action cannot be undone."
+      "DELETE_CONFIRMATION": "Are you sure you want to delete this company? This action cannot be undone.",
+      "WARNING_DISABLED_TITLE": "Companies are currently disabled site-wide",
+      "WARNING_DISABLED_MESSAGE": "Companies are hidden from the public site including item company assignments. You can still manage companies here, but they won't be visible to users until re-enabled.",
+      "WARNING_DISABLED_ACTION": "Go to Settings to Enable"
     },
     "ITEM_COMPANY": {
       "TITLE": "Company Assignment",
@@ -2332,7 +2335,9 @@
     },
     "ADMIN_SETTINGS_PAGE": {
       "CATEGORIES_ENABLED_LABEL": "Enable Categories",
-      "CATEGORIES_ENABLED_DESC": "Enable or disable categories throughout the site. When disabled, category filters, pages, and navigation will be hidden."
+      "CATEGORIES_ENABLED_DESC": "Enable or disable categories throughout the site. When disabled, category filters, pages, and navigation will be hidden.",
+      "COMPANIES_ENABLED_LABEL": "Enable Companies",
+      "COMPANIES_ENABLED_DESC": "Enable or disable companies throughout the site. When disabled, company management and item company assignments will be hidden."
     },
     "AUTH_FORM": {
       "ADMIN_WELCOME_TITLE": "Welcome to the Admin Dashboard",
