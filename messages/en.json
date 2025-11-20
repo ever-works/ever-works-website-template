@@ -2332,7 +2332,17 @@
     },
     "ADMIN_SETTINGS_PAGE": {
       "CATEGORIES_ENABLED_LABEL": "Enable Categories",
-      "CATEGORIES_ENABLED_DESC": "Enable or disable categories throughout the site. When disabled, category filters, pages, and navigation will be hidden."
+      "CATEGORIES_ENABLED_DESC": "Enable or disable categories throughout the site. When disabled, category filters, pages, and navigation will be hidden.",
+      "HEADER_SUBMIT_ENABLED_LABEL": "Show Submit Button",
+      "HEADER_SUBMIT_ENABLED_DESC": "Show or hide the Submit button in the header navigation.",
+      "HEADER_PRICING_ENABLED_LABEL": "Show Pricing Menu",
+      "HEADER_PRICING_ENABLED_DESC": "Show or hide the Pricing link in the header navigation.",
+      "HEADER_LAYOUT_ENABLED_LABEL": "Show Layout Switcher",
+      "HEADER_LAYOUT_ENABLED_DESC": "Show or hide the layout switcher control in the header.",
+      "HEADER_LANGUAGE_ENABLED_LABEL": "Show Language Selector",
+      "HEADER_LANGUAGE_ENABLED_DESC": "Show or hide the language selector control in the header.",
+      "HEADER_THEME_ENABLED_LABEL": "Show Theme Toggle",
+      "HEADER_THEME_ENABLED_DESC": "Show or hide the dark/light theme toggle in the header."
     },
     "AUTH_FORM": {
       "ADMIN_WELCOME_TITLE": "Welcome to the Admin Dashboard",
