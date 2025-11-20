@@ -1,7 +1,6 @@
 'use client';
 
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
+import { Switch } from '@heroui/react';
 
 interface SettingSwitchProps {
 	label: string;
@@ -19,11 +18,11 @@ export function SettingSwitch({
 	disabled = false
 }: SettingSwitchProps) {
 	return (
-		<div className="flex items-center justify-between py-3">
+		<div className="flex items-center justify-between py-4 border-b border-gray-100 dark:border-gray-800 last:border-b-0">
 			<div className="flex-1 pr-4">
-				<Label className="text-sm font-medium text-gray-900 dark:text-gray-100">
+				<label className="text-sm font-medium text-gray-900 dark:text-gray-100">
 					{label}
-				</Label>
+				</label>
 				{description && (
 					<p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
 						{description}
@@ -31,9 +30,11 @@ export function SettingSwitch({
 				)}
 			</div>
 			<Switch
-				checked={value}
-				onCheckedChange={onChange}
-				disabled={disabled}
+				isSelected={value}
+				onValueChange={onChange}
+				isDisabled={disabled}
+				color="primary"
+				size="md"
 			/>
 		</div>
 	);
