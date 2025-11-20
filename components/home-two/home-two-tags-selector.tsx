@@ -104,12 +104,6 @@ export const HomeTwoTagsSelector = ({
   const t = useTranslations();
   const { tagsEnabled } = useTagsEnabled();
 
-  if (!tagsEnabled) {
-    return null;
-  }
-
-  const selectedTagsCount = selectedTags.length;
-
   const filteredTags = useMemo(() => {
     if (!searchTerm) return tags;
     const searchLower = searchTerm.toLowerCase();
@@ -149,6 +143,12 @@ export const HomeTwoTagsSelector = ({
       };
     }
   }, [isOpen]);
+
+  if (!tagsEnabled) {
+    return null;
+  }
+
+  const selectedTagsCount = selectedTags.length;
 
   return (
     <div className="flex flex-col gap-2 relative" ref={popoverRef}>

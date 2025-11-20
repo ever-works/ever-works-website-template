@@ -24,16 +24,16 @@ export function Tags({
   const { isSticky } = useStickyHeader({ enableSticky });
   const { selectedTags, setSelectedTags } = useFilters();
   const { tagsEnabled } = useTagsEnabled();
-
-  if (!tagsEnabled) {
-    return null;
-  }
   const {
     showAllTags,
     visibleTags,
     hasMoreTags,
     toggleTagVisibility,
   } = useTagVisibility(tags, maxVisibleTags);
+
+  if (!tagsEnabled) {
+    return null;
+  }
 
   const isAnyTagActive = mode === "filter" 
     ? selectedTags.length > 0
