@@ -4,6 +4,7 @@ import { surveyService } from '@/lib/services/survey.service';
 import { SurveyPreviewClient } from '@/components/surveys/preview/preview-client';
 import { cache } from 'react';
 import { getSurveysEnabled } from '@/lib/utils/settings';
+import { checkIsAdmin } from '@/lib/auth/guards';
 
 interface DashboardSurveyPreviewPageProps {
 	params: Promise<{
@@ -31,9 +32,11 @@ export async function generateMetadata({ params }: DashboardSurveyPreviewPagePro
 }
 
 export default async function DashboardSurveyPreviewPage({ params }: DashboardSurveyPreviewPageProps) {
-	// Redirect to 404 if surveys are disabled (non-admin users)
 	const surveysEnabled = getSurveysEnabled();
-	if (!surveysEnabled) {
+	const isAdmin = await checkIsAdmin();
+
+	// Redirect to 404 if surveys are disabled and user is not admin
+	if (!surveysEnabled && !isAdmin) {
 		notFound();
 	}
 
@@ -44,6 +47,6 @@ export default async function DashboardSurveyPreviewPage({ params }: DashboardSu
 		notFound();
 	}
 
-	return <SurveyPreviewClient survey={survey} backLink={`/dashboard/items/${itemId}/surveys`} />;
+	return <SurveyPreviewClient survey={survey} backLink={`/dashboard/items/${itemId}/surveys`} surveysEnabled={surveysEnabled} />;
 }
 
