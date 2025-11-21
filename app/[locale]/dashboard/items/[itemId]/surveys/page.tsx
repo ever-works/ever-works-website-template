@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { DashboardItemSurveysClient } from '@/components/surveys/lists/item-surveys-list';
 import { getSurveysEnabled } from '@/lib/utils/settings';
+import { checkIsAdmin } from '@/lib/auth/guards';
 
 interface DashboardItemSurveysPageProps {
 	params: Promise<{
@@ -18,14 +19,16 @@ export function generateMetadata(): Metadata {
 }
 
 export default async function DashboardItemSurveysPage({ params }: DashboardItemSurveysPageProps) {
-	// Redirect to 404 if surveys are disabled (non-admin users)
 	const surveysEnabled = getSurveysEnabled();
-	if (!surveysEnabled) {
+	const isAdmin = await checkIsAdmin();
+
+	// Redirect to 404 if surveys are disabled and user is not admin
+	if (!surveysEnabled && !isAdmin) {
 		notFound();
 	}
 
 	const { itemId } = await params;
 
-	return <DashboardItemSurveysClient itemId={itemId} />;
+	return <DashboardItemSurveysClient itemId={itemId} surveysEnabled={surveysEnabled} />;
 }
 

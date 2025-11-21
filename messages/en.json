@@ -282,7 +282,10 @@
     "VIEW_RESPONSES": "View Responses",
     "PREVIEW": "Preview",
     "COPY_PUBLIC_LINK": "Copy Public Link",
-    "BACK_TO_ITEM": "Back to Item"
+    "BACK_TO_ITEM": "Back to Item",
+    "WARNING_DISABLED_TITLE": "Surveys are currently disabled site-wide",
+    "WARNING_DISABLED_MESSAGE": "Surveys are hidden from the public site. You can still view surveys here as an admin, but they won't be accessible to users until re-enabled.",
+    "WARNING_DISABLED_ACTION": "Go to Settings to Enable"
   },
   "listing": {
     "ALL": "All",
