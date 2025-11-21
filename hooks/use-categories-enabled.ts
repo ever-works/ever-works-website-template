@@ -1,14 +1,8 @@
-import { useEffect, useState } from 'react';
-
-interface SettingsResponse {
-	settings: {
-		categories_enabled?: boolean;
-	};
-}
+import { useConfig } from '@/app/[locale]/config';
 
 /**
  * Client-side hook to check if categories are enabled
- * Fetches the setting from the API and returns the current state
+ * Reads setting from ConfigContext (server-side fetched)
  * @returns boolean - true if categories are enabled, false otherwise
  */
 export function useCategoriesEnabled(): {
@@ -16,38 +10,14 @@ export function useCategoriesEnabled(): {
 	loading: boolean;
 	error: Error | null;
 } {
-	const [categoriesEnabled, setCategoriesEnabled] = useState<boolean>(true);
-	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<Error | null>(null);
+	const config = useConfig();
 
-	useEffect(() => {
-		const fetchSettings = async () => {
-			try {
-				setLoading(true);
-				setError(null);
+	// Use server-provided setting or default to true
+	const categoriesEnabled = config.categoriesEnabled ?? true;
 
-				const response = await fetch('/api/admin/settings');
-
-				if (!response.ok) {
-					throw new Error('Failed to fetch settings');
-				}
-
-				const data: SettingsResponse = await response.json();
-
-				// Default to true if not set (backward compatibility)
-				const enabled = data.settings?.categories_enabled ?? true;
-				setCategoriesEnabled(enabled);
-			} catch (err) {
-				setError(err instanceof Error ? err : new Error('Unknown error'));
-				// Default to true on error (backward compatibility)
-				setCategoriesEnabled(true);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchSettings();
-	}, []);
-
-	return { categoriesEnabled, loading, error };
+	return {
+		categoriesEnabled,
+		loading: false,
+		error: null,
+	};
 }

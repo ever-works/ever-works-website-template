@@ -15,6 +15,14 @@ import Script from 'next/script';
 import { ConditionalLayout } from '@/components/layout/conditional-layout';
 import { siteConfig } from '@/lib/config';
 import { SpeedInsights } from './integration/speed-insights';
+import {
+	getCategoriesEnabled,
+	getHeaderSubmitEnabled,
+	getHeaderPricingEnabled,
+	getHeaderLayoutEnabled,
+	getHeaderLanguageEnabled,
+	getHeaderThemeEnabled,
+} from '@/lib/utils/settings';
 
 /**
  * Generate metadata dynamically using siteConfig
@@ -60,6 +68,23 @@ export default async function RootLayout({
 	const config = await getCachedConfig();
 	const messages = await getMessages();
 
+	// Fetch settings server-side
+	const headerSettings = {
+		submitEnabled: getHeaderSubmitEnabled(),
+		pricingEnabled: getHeaderPricingEnabled(),
+		layoutEnabled: getHeaderLayoutEnabled(),
+		languageEnabled: getHeaderLanguageEnabled(),
+		themeEnabled: getHeaderThemeEnabled(),
+	};
+	const categoriesEnabled = getCategoriesEnabled();
+
+	// Merge settings into config
+	const enhancedConfig = {
+		...config,
+		headerSettings,
+		categoriesEnabled,
+	};
+
 	// Determine if the current locale is RTL
 	return (
 		<>
@@ -70,7 +95,7 @@ export default async function RootLayout({
 				</Suspense>
 				<NextIntlClientProvider messages={messages}>
 					<Toaster position="bottom-right" richColors />
-					<Providers config={config}>
+					<Providers config={enhancedConfig}>
 						<ConditionalLayout>{children}</ConditionalLayout>
 					</Providers>
 				</NextIntlClientProvider>
