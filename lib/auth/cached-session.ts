@@ -5,8 +5,13 @@
 
 import { NextRequest } from 'next/server';
 import { Session } from 'next-auth';
-import { auth } from './index';
 import { sessionCache, createSessionIdentifier, logCacheStats } from './session-cache';
+
+// Dynamic import to avoid bundling database driver in Edge Runtime
+async function getAuth() {
+  const { auth } = await import('./index');
+  return auth;
+}
 
 /**
  * Get session with caching for server components and API routes
@@ -35,6 +40,7 @@ export async function getCachedSession(request?: Request): Promise<Session | nul
       console.log('[SessionCache] Cache MISS - fetching from NextAuth');
     }
 
+    const auth = await getAuth();
     const session = await auth();
 
     // Cache the session if we have it and an identifier
@@ -56,6 +62,7 @@ export async function getCachedSession(request?: Request): Promise<Session | nul
   } catch (error) {
     console.error('[SessionCache] Error retrieving session:', error);
     // Fallback to direct NextAuth call
+    const auth = await getAuth();
     return await auth();
   }
 }

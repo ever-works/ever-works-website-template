@@ -15,7 +15,14 @@ const nextConfig: NextConfig = {
   staticPageGenerationTimeout: 180,
   webpack: (config, { dev }) => {
     config.ignoreWarnings = [
-      { module: /@supabase\/realtime-js/ }
+      { module: /@supabase\/realtime-js/ },
+      { module: /@supabase\/supabase-js/ },
+      { module: /bcryptjs/ },
+      { message: /bcryptjs/ },
+      { module: /postgres/ },
+      { message: /postgres/ },
+      { module: /stripe/ },
+      { message: /stripe/ }
     ];
 
     // Exclude .content/ directory from webpack watching in development
