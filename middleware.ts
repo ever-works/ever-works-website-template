@@ -11,7 +11,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthConfig } from "@/lib/auth/config";
 import { updateSession as supabaseUpdate } from "@/lib/auth/supabase/middleware";
 import { getToken } from 'next-auth/jwt';
-import { getCachedApiSession } from "@/lib/auth/cached-session";
 
 const intl = createIntlMiddleware(routing);
 
@@ -37,20 +36,11 @@ function resolveLocalePrefix(pathname: string): { prefix: string; hasLocale: boo
 
 async function nextAuthGuard(req: NextRequest, baseRes: NextResponse): Promise<NextResponse> {
   try {
-    // Try cached session first for performance
-    const cachedSession = await getCachedApiSession(req);
-    if (cachedSession?.user?.isAdmin === true) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[Middleware] Admin access granted via cached session');
-      }
-      return baseRes;
-    }
-
-    // Fallback to token-based auth if no cached session
+    // Use JWT token check (Edge-compatible)
     const token = await getToken({ req, secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET });
     if (token?.isAdmin === true) {
       if (process.env.NODE_ENV === 'development') {
-        console.log('[Middleware] Admin access granted via token (cache miss)');
+        console.log('[Middleware] Admin access granted via token');
       }
       return baseRes;
     }
