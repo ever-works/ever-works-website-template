@@ -4,6 +4,8 @@ import { LOCALES } from "@/lib/constants";
 import ListingTags from "../listing-tags";
 import { Suspense } from "react";
 import { GridSkeleton } from "@/components/ui/skeleton";
+import { getTagsEnabled } from "@/lib/utils/settings";
+import { notFound } from "next/navigation";
 
 export const revalidate = 10;
 export async function generateStaticParams() {
@@ -15,6 +17,11 @@ export default async function TagPagingPage({
 }: {
   params: Promise<{ locale: string }>;
 }) {
+  const tagsEnabled = getTagsEnabled();
+  if (!tagsEnabled) {
+    notFound();
+  }
+
   const { locale } = await params
   const { start, page } = paginateMeta();
   const { tags, total } = await getCachedItems({ lang: locale });
