@@ -188,6 +188,7 @@ function ClientRow({ client, isNavigating, isDeleting, onView, onEdit, onDelete 
 							size="sm"
 							color="primary"
 							variant="light"
+							isDisabled={isNavigating}
 							onPress={() => onEdit(client)}
 							startContent={<Edit className="w-4 h-4" />}
 						>
@@ -199,7 +200,7 @@ function ClientRow({ client, isNavigating, isDeleting, onView, onEdit, onDelete 
 							variant="light"
 							onPress={() => onDelete(client.id)}
 							isLoading={isDeleting}
-							isDisabled={isDeleting}
+							isDisabled={isDeleting || isNavigating}
 							startContent={isDeleting ? null : <Trash2 className="w-4 h-4" />}
 						>
 							{isDeleting ? t('DELETING') : t('DELETE')}
