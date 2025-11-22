@@ -158,8 +158,12 @@ const Comment = memo(
 		const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
 		const handleDeleteConfirm = async () => {
-			await onDelete(comment.id);
-			setIsDeleteDialogOpen(false);
+			try {
+				await onDelete(comment.id);
+				setIsDeleteDialogOpen(false);
+			} catch (error) {
+				// Keep dialog open on error - parent already shows toast
+			}
 		};
 
 		const handleSave = async () => {
@@ -290,6 +294,8 @@ const Comment = memo(
 				isOpen={isDeleteDialogOpen}
 				onClose={() => setIsDeleteDialogOpen(false)}
 				size="md"
+				hideCloseButton={true}
+				isDismissable={!isDeleting}
 			>
 				<ModalContent>
 					<ModalHeader>
