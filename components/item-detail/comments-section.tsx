@@ -161,7 +161,7 @@ const Comment = memo(
 			try {
 				await onDelete(comment.id);
 				setIsDeleteDialogOpen(false);
-			} catch (error) {
+			} catch (_error) {
 				// Keep dialog open on error - parent already shows toast
 			}
 		};
