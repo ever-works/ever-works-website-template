@@ -15,10 +15,11 @@ export function ItemBreadcrumb({
   categoryName,
 }: BreadcrumbProps) {
   const { categoriesEnabled } = useCategoriesEnabled();
-  const encodedCategory =
+  const categoryId =
     typeof category === "string"
       ? category
       : (category as { id?: string })?.id || String(category);
+  const encodedCategory = encodeURIComponent(categoryId);
 
   return (
     <nav className="flex mb-4" aria-label="Breadcrumb">
