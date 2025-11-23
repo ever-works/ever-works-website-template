@@ -194,6 +194,9 @@
     "BACK_TO_SURVEYS": "Back to Surveys",
     "SURVEYS_MANAGEMENT": "Surveys Management",
     "SURVEYS_MANAGEMENT_DESC": "Manage and monitor all surveys",
+    "SURVEYS_DISABLED_WARNING": "Surveys feature is currently disabled in settings",
+    "SURVEYS_DISABLED_MESSAGE": "Surveys are hidden from the public site. You can still manage surveys here, but they won't be visible to non-admin users until re-enabled.",
+    "GO_TO_SETTINGS": "Go to Settings",
     "ALL_SURVEYS": "All Surveys",
     "GLOBAL_SURVEY": "Global Survey",
     "ITEM_SURVEY": "Item Survey",
@@ -279,7 +282,10 @@
     "VIEW_RESPONSES": "View Responses",
     "PREVIEW": "Preview",
     "COPY_PUBLIC_LINK": "Copy Public Link",
-    "BACK_TO_ITEM": "Back to Item"
+    "BACK_TO_ITEM": "Back to Item",
+    "WARNING_DISABLED_TITLE": "Surveys are currently disabled site-wide",
+    "WARNING_DISABLED_MESSAGE": "Surveys are hidden from the public site. You can still view surveys here as an admin, but they won't be accessible to users until re-enabled.",
+    "WARNING_DISABLED_ACTION": "Go to Settings to Enable"
   },
   "listing": {
     "ALL": "All",
@@ -2291,7 +2297,10 @@
       "EDIT_COMPANY_SUBTITLE": "Update company information",
       "UPDATE_COMPANY": "Update Company",
       "DELETE_COMPANY": "Delete Company",
-      "DELETE_CONFIRMATION": "Are you sure you want to delete this company? This action cannot be undone."
+      "DELETE_CONFIRMATION": "Are you sure you want to delete this company? This action cannot be undone.",
+      "WARNING_DISABLED_TITLE": "Companies are currently disabled site-wide",
+      "WARNING_DISABLED_MESSAGE": "Companies are hidden from the public site including item company assignments. You can still manage companies here, but they won't be visible to users until re-enabled.",
+      "WARNING_DISABLED_ACTION": "Go to Settings to Enable"
     },
     "ITEM_COMPANY": {
       "TITLE": "Company Assignment",
@@ -2336,8 +2345,13 @@
     "ADMIN_SETTINGS_PAGE": {
       "CATEGORIES_ENABLED_LABEL": "Enable Categories",
       "CATEGORIES_ENABLED_DESC": "Enable or disable categories throughout the site. When disabled, category filters, pages, and navigation will be hidden.",
+      "COMPANIES_ENABLED_LABEL": "Enable Companies",
+      "COMPANIES_ENABLED_DESC": "Enable or disable companies throughout the site. When disabled, company management and item company assignments will be hidden.",
       "TAGS_ENABLED_LABEL": "Enable Tags",
       "TAGS_ENABLED_DESC": "Enable or disable tags throughout the site. When disabled, tag filters, pages, and navigation will be hidden.",
+      "SURVEYS_ENABLED_LABEL": "Enable Surveys",
+      "SURVEYS_ENABLED_DESC": "Enable or disable surveys throughout the site. When disabled, survey features will be hidden from non-admin users.",
+      "SURVEYS_DISABLED_WARNING": "Surveys feature is currently disabled in settings",
       "HEADER_SUBMIT_ENABLED_LABEL": "Show Submit Button",
       "HEADER_SUBMIT_ENABLED_DESC": "Show or hide the Submit button in the header navigation.",
       "HEADER_PRICING_ENABLED_LABEL": "Show Pricing Menu",
@@ -2347,7 +2361,27 @@
       "HEADER_LANGUAGE_ENABLED_LABEL": "Show Language Selector",
       "HEADER_LANGUAGE_ENABLED_DESC": "Show or hide the language selector control in the header.",
       "HEADER_THEME_ENABLED_LABEL": "Show Theme Toggle",
-      "HEADER_THEME_ENABLED_DESC": "Show or hide the dark/light theme toggle in the header."
+      "HEADER_THEME_ENABLED_DESC": "Show or hide the dark/light theme toggle in the header.",
+      "HEADER_LAYOUT_DEFAULT_LABEL": "Default Layout",
+      "HEADER_LAYOUT_DEFAULT_DESC": "Set the default layout style for the homepage.",
+      "HEADER_PAGINATION_DEFAULT_LABEL": "Default Pagination",
+      "HEADER_PAGINATION_DEFAULT_DESC": "Set the default pagination type for item lists.",
+      "HEADER_THEME_DEFAULT_LABEL": "Default Theme",
+      "HEADER_THEME_DEFAULT_DESC": "Set the default color theme for the site.",
+      "HERO_ENABLED_LABEL": "Show Hero Section",
+      "HERO_ENABLED_DESC": "Show or hide the hero section on the homepage.",
+      "SEARCH_ENABLED_LABEL": "Show Search",
+      "SEARCH_ENABLED_DESC": "Show or hide the search functionality on the homepage.",
+      "DEFAULT_VIEW_LABEL": "Default View",
+      "DEFAULT_VIEW_DESC": "Set the default view layout for the item list.",
+      "DEFAULT_SORT_LABEL": "Default Sort Order",
+      "DEFAULT_SORT_DESC": "Set the default sort order for items.",
+      "FOOTER_SUBSCRIBE_ENABLED_LABEL": "Show Subscribe Form",
+      "FOOTER_SUBSCRIBE_ENABLED_DESC": "Show or hide the 'Stay Updated' newsletter subscription form in the footer.",
+      "FOOTER_VERSION_ENABLED_LABEL": "Show Version Information",
+      "FOOTER_VERSION_ENABLED_DESC": "Show or hide the version information in the footer.",
+      "FOOTER_THEME_SELECTOR_ENABLED_LABEL": "Show Theme Selector",
+      "FOOTER_THEME_SELECTOR_ENABLED_DESC": "Show or hide the theme selector control in the footer."
     },
     "AUTH_FORM": {
       "ADMIN_WELCOME_TITLE": "Welcome to the Admin Dashboard",

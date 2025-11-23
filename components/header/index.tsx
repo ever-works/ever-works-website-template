@@ -23,6 +23,7 @@ import { Container } from "../ui/container";
 import { useFeatureFlags } from "@/hooks/use-feature-flags";
 import { useHasGlobalSurveys } from "@/hooks/use-has-global-surveys";
 import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
+import { useSurveysEnabled } from "@/hooks/use-surveys-enabled";
 import { useTagsEnabled } from "@/hooks/use-tags-enabled";
 import { useHeaderSettings } from "@/hooks/use-header-settings";
 import { useCategoriesExists } from "@/hooks/use-categories-exists";
@@ -142,6 +143,7 @@ export default function Header() {
   const { features } = useFeatureFlags();
   const { hasGlobalSurveys, isPending } = useHasGlobalSurveys();
   const { categoriesEnabled } = useCategoriesEnabled();
+  const { surveysEnabled } = useSurveysEnabled();
   const { tagsEnabled } = useTagsEnabled();
   const { settings: headerSettings } = useHeaderSettings();
   const { data: categoriesData } = useCategoriesExists();
@@ -170,8 +172,8 @@ export default function Header() {
         if (item.key === "favorites" && (!features.favorites || !session?.user?.id)) {
           return false;
         }
-        // Hide surveys link when there are no global surveys (but keep it visible while loading to prevent flicker)
-        if (item.key === "surveys" && !isPending && !hasGlobalSurveys) {
+        // Hide surveys link when surveys are disabled or there are no global surveys (but keep it visible while loading to prevent flicker)
+        if (item.key === "surveys" && (!surveysEnabled || (!isPending && !hasGlobalSurveys))) {
           return false;
         }
         // Hide pricing link when header pricing is disabled
@@ -195,7 +197,7 @@ export default function Header() {
             : t(item.translationKey as any)
           : item.staticLabel || item.key,
       }));
-  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending, categoriesEnabled, tagsEnabled, headerSettings.pricingEnabled, headerSettings.submitEnabled, hasCategories]);
+  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending, categoriesEnabled, tagsEnabled, surveysEnabled, headerSettings.pricingEnabled, headerSettings.submitEnabled, hasCategories]);
 
   const isActiveLink = useCallback(
     (href: string): boolean => {

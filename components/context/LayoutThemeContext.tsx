@@ -3,6 +3,11 @@ import React, { createContext, useContext, useEffect, useState, useMemo, useCall
 import { LayoutKey, layoutComponents } from "@/components/layouts";
 import { applyThemeWithPalettes } from "@/lib/theme-color-manager";
 
+// Config defaults interface
+interface ConfigDefaults {
+  defaultView?: string;
+}
+
 // Constants
 const DEFAULT_LAYOUT: LayoutKey = "classic";
 const DEFAULT_THEME = "everworks" as const;
@@ -310,17 +315,28 @@ const useItemsPerPageManager = () => {
 };
 
 // Custom hook for layout management
-const useLayoutManager = () => {
+const useLayoutManager = (configDefaults?: ConfigDefaults) => {
+  // Determine the effective default from config or fallback
+  const effectiveDefault = useMemo(() => {
+    if (configDefaults?.defaultView && isValidLayoutKey(configDefaults.defaultView)) {
+      return configDefaults.defaultView;
+    }
+    return DEFAULT_LAYOUT;
+  }, [configDefaults]);
+
   // Always initialize with default to prevent hydration mismatch
-  const [layoutKey, setLayoutKeyState] = useState<LayoutKey>(DEFAULT_LAYOUT);
+  const [layoutKey, setLayoutKeyState] = useState<LayoutKey>(effectiveDefault);
 
   // Hydrate from localStorage after mount
   useEffect(() => {
     const saved = safeLocalStorage.getItem(STORAGE_KEYS.LAYOUT);
     if (saved && isValidLayoutKey(saved)) {
       setLayoutKeyState(saved);
+    } else {
+      // Use config default if no localStorage value
+      setLayoutKeyState(effectiveDefault);
     }
-  }, []);
+  }, [effectiveDefault]);
 
   const setLayoutKey = useCallback((key: LayoutKey) => {
     if (!isValidLayoutKey(key)) {
@@ -338,9 +354,15 @@ const useLayoutManager = () => {
   };
 };
 
+// Provider props interface
+interface LayoutThemeProviderProps {
+  children: React.ReactNode;
+  configDefaults?: ConfigDefaults;
+}
+
 // Provider component
-export const LayoutThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const layoutManager = useLayoutManager();
+export const LayoutThemeProvider: React.FC<LayoutThemeProviderProps> = ({ children, configDefaults }) => {
+  const layoutManager = useLayoutManager(configDefaults);
   const themeManager = useThemeManager();
   const layoutHomeManager = useLayoutHomeManager();
   const paginationTypeManager = usePaginationTypeManager();

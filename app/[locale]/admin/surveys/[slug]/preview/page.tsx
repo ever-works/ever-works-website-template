@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { SurveyPreviewClient } from '@/components/surveys/preview/preview-client';
 import { surveyService } from '@/lib/services/survey.service';
 import { cache } from 'react';
+import { getSurveysEnabled } from '@/lib/utils/settings';
 
 interface AdminSurveyPreviewPageProps {
 	params: Promise<{
@@ -40,6 +41,6 @@ export default async function AdminSurveyPreviewPage({ params }: AdminSurveyPrev
 		notFound();
 	}
 
-	return <SurveyPreviewClient survey={survey} backLink="/admin/surveys" />;
+	return <SurveyPreviewClient survey={survey} backLink="/admin/surveys" surveysEnabled={getSurveysEnabled()} />;
 }
 

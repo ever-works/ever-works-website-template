@@ -19,11 +19,16 @@ import { SettingsProvider } from '@/components/providers/settings-provider';
 import {
 	getCategoriesEnabled,
 	getTagsEnabled,
+	getCompaniesEnabled,
+	getSurveysEnabled,
 	getHeaderSubmitEnabled,
 	getHeaderPricingEnabled,
 	getHeaderLayoutEnabled,
 	getHeaderLanguageEnabled,
 	getHeaderThemeEnabled,
+	getHeaderLayoutDefault,
+	getHeaderPaginationDefault,
+	getHeaderThemeDefault,
 } from '@/lib/utils/settings';
 
 /**
@@ -73,12 +78,17 @@ export default async function RootLayout({
 	// Read settings server-side for instant availability
 	const categoriesEnabled = getCategoriesEnabled();
 	const tagsEnabled = getTagsEnabled();
+	const companiesEnabled = getCompaniesEnabled();
+	const surveysEnabled = getSurveysEnabled();
 	const headerSettings = {
 		submitEnabled: getHeaderSubmitEnabled(),
 		pricingEnabled: getHeaderPricingEnabled(),
 		layoutEnabled: getHeaderLayoutEnabled(),
 		languageEnabled: getHeaderLanguageEnabled(),
 		themeEnabled: getHeaderThemeEnabled(),
+		layoutDefault: getHeaderLayoutDefault(),
+		paginationDefault: getHeaderPaginationDefault(),
+		themeDefault: getHeaderThemeDefault(),
 	};
 
 	// Determine if the current locale is RTL
@@ -94,6 +104,8 @@ export default async function RootLayout({
 					<SettingsProvider
 						categoriesEnabled={categoriesEnabled}
 						tagsEnabled={tagsEnabled}
+						companiesEnabled={companiesEnabled}
+						surveysEnabled={surveysEnabled}
 						headerSettings={headerSettings}
 					>
 						<Providers config={config}>
@@ -102,7 +114,7 @@ export default async function RootLayout({
 					</SettingsProvider>
 				</NextIntlClientProvider>
 			</PHProvider>
-			{/* 
+			{/*
 				Vercel Speed Insights Integration
 				- Automatically detects Vercel environment and Speed Insights availability
 				- Gracefully degrades when not enabled or not on a paid plan

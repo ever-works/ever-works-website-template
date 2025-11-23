@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { surveyService } from '@/lib/services/survey.service';
 import { SurveyResponsesClient } from '@/components/surveys/responses/survey-responses-client';
+import { getSurveysEnabled } from '@/lib/utils/settings';
 
 interface AdminSurveyResponsesPageProps {
 	params: Promise<{
@@ -47,6 +48,7 @@ export default async function AdminSurveyResponsesPage({ params }: AdminSurveyRe
 				href: '/admin/surveys',
 				label: 'Back to Surveys'
 			}}
+			surveysEnabled={getSurveysEnabled()}
 		/>
 	);
 }
