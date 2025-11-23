@@ -22,10 +22,18 @@ export default async function Listing(props: ListingProps) {
   const t = await getTranslations("listing");
   const configManager = new ConfigManager();
   const config = configManager.getConfig();
-  const heroEnabled = config.settings?.homepage?.hero_enabled ?? true;
+  const homepageSettings = config.settings?.homepage;
+  const heroEnabled = homepageSettings?.hero_enabled ?? true;
+  const searchEnabled = homepageSettings?.search_enabled ?? true;
+  const defaultView = homepageSettings?.default_view ?? 'classic';
+  const defaultSort = homepageSettings?.default_sort ?? 'popularity';
 
   return (
-    <FilterProvider initialTag={props.initialTag} initialCategory={props.initialCategory}>
+    <FilterProvider
+      initialTag={props.initialTag}
+      initialCategory={props.initialCategory}
+      initialSortBy={defaultSort}
+    >
       <FilterURLParser />
       {heroEnabled ? (
         <Hero
@@ -41,11 +49,11 @@ export default async function Listing(props: ListingProps) {
           description={t("DEMO_DESCRIPTION")}
           className="min-h-screen text-center"
         >
-          <GlobalsClient {...props} />
+          <GlobalsClient {...props} searchEnabled={searchEnabled} defaultView={defaultView} />
         </Hero>
       ) : (
         <div className="min-h-screen pt-24">
-          <GlobalsClient {...props} />
+          <GlobalsClient {...props} searchEnabled={searchEnabled} defaultView={defaultView} />
         </div>
       )}
     </FilterProvider>

@@ -195,6 +195,26 @@ export interface HeaderSettings {
 	themeEnabled: boolean;
 }
 
+export interface HomepageSettings {
+	hero_enabled?: boolean;
+	search_enabled?: boolean;
+	default_view?: string;
+	default_sort?: string;
+}
+
+export interface Settings {
+	categories_enabled?: boolean;
+	companies_enabled?: boolean;
+	tags_enabled?: boolean;
+	surveys_enabled?: boolean;
+	header_submit_enabled?: boolean;
+	header_pricing_enabled?: boolean;
+	header_layout_enabled?: boolean;
+	header_language_enabled?: boolean;
+	header_theme_enabled?: boolean;
+	homepage?: HomepageSettings;
+}
+
 export interface Config {
 	company_name?: string;
 	copyright_year?: number;
@@ -218,6 +238,7 @@ export interface Config {
 	pagination?: TypePagination;
 	headerSettings?: HeaderSettings;
 	categoriesEnabled?: boolean;
+	settings?: Settings;
 }
 
 interface FetchOptions {

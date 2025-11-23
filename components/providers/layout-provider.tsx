@@ -1,12 +1,18 @@
 'use client';
 
-import { PropsWithChildren } from 'react';
 import { LayoutThemeProvider } from '@/components/context';
 import { EditorContextProvider } from '@/lib/editor';
 
-export function LayoutProvider({ children }: PropsWithChildren) {
+interface LayoutProviderProps {
+	children: React.ReactNode;
+	configDefaults?: {
+		defaultView?: string;
+	};
+}
+
+export function LayoutProvider({ children, configDefaults }: LayoutProviderProps) {
 	return (
-		<LayoutThemeProvider>
+		<LayoutThemeProvider configDefaults={configDefaults}>
 			<EditorContextProvider>{children}</EditorContextProvider>
 		</LayoutThemeProvider>
 	);

@@ -37,6 +37,7 @@ type Home2LayoutProps = {
   tags: Tag[];
   items: ItemData[];
   filteredAndSortedItems: ItemData[];
+  searchEnabled?: boolean;
 };
 
 export function HomeTwoLayout(props: Home2LayoutProps) {
@@ -61,6 +62,7 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
             setLayoutKey={setLayoutKey}
             totalCount={props.items.length}
             filteredCount={props.filteredAndSortedItems.length}
+            searchEnabled={props.searchEnabled}
           />
         </div>
         <ListingClient
