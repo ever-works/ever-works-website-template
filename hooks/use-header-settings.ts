@@ -1,17 +1,9 @@
-import { useConfig } from '@/app/[locale]/config';
+import { useSettings } from '@/components/providers/settings-provider';
 import type { HeaderSettings } from '@/lib/content';
-
-const DEFAULT_HEADER_SETTINGS: HeaderSettings = {
-	submitEnabled: true,
-	pricingEnabled: true,
-	layoutEnabled: true,
-	languageEnabled: true,
-	themeEnabled: true,
-};
 
 /**
  * Client-side hook to check header settings
- * Reads settings from ConfigContext (server-side fetched)
+ * Reads from SettingsProvider context for instant access (no loading delay)
  * @returns HeaderSettings with loading and error states
  */
 export function useHeaderSettings(): {
@@ -19,13 +11,11 @@ export function useHeaderSettings(): {
 	loading: boolean;
 	error: Error | null;
 } {
-	const config = useConfig();
+	const { headerSettings } = useSettings();
 
-	// Use server-provided settings or defaults
-	const settings = config.headerSettings ?? DEFAULT_HEADER_SETTINGS;
-
+	// No loading state since value comes from server-rendered context
 	return {
-		settings,
+		settings: headerSettings,
 		loading: false,
 		error: null,
 	};
