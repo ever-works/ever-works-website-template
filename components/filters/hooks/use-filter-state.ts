@@ -6,11 +6,18 @@ import { useFilterURLSync } from './use-filter-url-sync';
 import type { FilterState } from '@/lib/utils/url-filter-sync';
 
 /**
+ * Type guard to check if a string is a valid SortOption
+ */
+function isValidSortOption(value: string): value is SortOption {
+  return ['popularity', 'name-asc', 'name-desc', 'date-desc', 'date-asc'].includes(value);
+}
+
+/**
  * Custom hook for managing filter state
  * Handles search term, selected tags, and sorting
  * Automatically syncs with URL for bookmarkable/shareable filter states
  */
-export function useFilterState(initialTag?: string | null, initialCategory?: string | null) {
+export function useFilterState(initialTag?: string | null, initialCategory?: string | null, initialSortBy?: string) {
   const params = useParams();
   const locale = params?.locale as string | undefined;
 
@@ -26,7 +33,9 @@ export function useFilterState(initialTag?: string | null, initialCategory?: str
     initialCategory ? [initialCategory] : []
   );
 
-  const [sortBy, setSortBy] = useState<SortOption>(SORT_OPTIONS.POPULARITY);
+  const [sortBy, setSortBy] = useState<SortOption>(
+    initialSortBy && isValidSortOption(initialSortBy) ? initialSortBy : SORT_OPTIONS.POPULARITY
+  );
 
   /** Single tag selection for navigation - used when navigating to a specific tag page */
   const [selectedTag, setSelectedTag] = useState<TagId | null>(initialTag || null);

@@ -35,6 +35,7 @@ type Home2FiltersProps = {
   onFilterChange?: () => void;
   totalCount?: number;
   filteredCount?: number;
+  searchEnabled?: boolean;
 };
 
 export function HomeTwoFilters({
@@ -43,6 +44,7 @@ export function HomeTwoFilters({
   onFilterChange,
   totalCount,
   filteredCount,
+  searchEnabled = true,
 }: Home2FiltersProps) {
   const {
     searchTerm,
@@ -88,13 +90,15 @@ export function HomeTwoFilters({
     <div className={FILTERS_CONTAINER}>
       {/* Mobile Layout */}
       <div className={MOBILE_FILTERS}>
-        <div className="w-full">
-          <SearchInput
-            searchTerm={searchTerm}
-            setSearchTerm={handleSearchChange}
-            className="w-full"
-          />
-        </div>
+        {searchEnabled && (
+          <div className="w-full">
+            <SearchInput
+              searchTerm={searchTerm}
+              setSearchTerm={handleSearchChange}
+              className="w-full"
+            />
+          </div>
+        )}
 
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 flex-1">
@@ -124,13 +128,15 @@ export function HomeTwoFilters({
             <LayoutSettings />
           </div>
 
-          <div className="w-full">
-            <SearchInput
-              searchTerm={searchTerm}
-              setSearchTerm={handleSearchChange}
-              className="w-full"
-            />
-          </div>
+          {searchEnabled && (
+            <div className="w-full">
+              <SearchInput
+                searchTerm={searchTerm}
+                setSearchTerm={handleSearchChange}
+                className="w-full"
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -148,12 +154,14 @@ export function HomeTwoFilters({
 
         {/* Right Side: Search and Layout */}
         <div className={FILTERS_GROUP}>
-          <div className="w-64 lg:w-80 xl:w-96">
-            <SearchInput
-              searchTerm={searchTerm}
-              setSearchTerm={handleSearchChange}
-            />
-          </div>
+          {searchEnabled && (
+            <div className="w-64 lg:w-80 xl:w-96">
+              <SearchInput
+                searchTerm={searchTerm}
+                setSearchTerm={handleSearchChange}
+              />
+            </div>
+          )}
           <LayoutSettings />
         </div>
       </div>

@@ -26,6 +26,9 @@ import {
 	getHeaderLayoutEnabled,
 	getHeaderLanguageEnabled,
 	getHeaderThemeEnabled,
+	getHeaderLayoutDefault,
+	getHeaderPaginationDefault,
+	getHeaderThemeDefault,
 } from '@/lib/utils/settings';
 
 /**
@@ -83,6 +86,9 @@ export default async function RootLayout({
 		layoutEnabled: getHeaderLayoutEnabled(),
 		languageEnabled: getHeaderLanguageEnabled(),
 		themeEnabled: getHeaderThemeEnabled(),
+		layoutDefault: getHeaderLayoutDefault(),
+		paginationDefault: getHeaderPaginationDefault(),
+		themeDefault: getHeaderThemeDefault(),
 	};
 
 	// Determine if the current locale is RTL
