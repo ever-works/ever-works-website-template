@@ -131,6 +131,12 @@ interface HeaderConfigSettings {
 	theme_default?: string;
 }
 
+interface FooterConfigSettings {
+	subscribe_enabled?: boolean;
+	version_enabled?: boolean;
+	theme_selector_enabled?: boolean;
+}
+
 interface Settings {
 	categories_enabled?: boolean;
 	companies_enabled?: boolean;
@@ -138,6 +144,7 @@ interface Settings {
 	surveys_enabled?: boolean;
 	header?: HeaderConfigSettings;
 	homepage?: HomepageSettings;
+	footer?: FooterConfigSettings;
 	[key: string]: unknown;
 }
 
