@@ -121,6 +121,11 @@ interface HomepageSettings {
 }
 
 interface HeaderConfigSettings {
+	submit_enabled?: boolean;
+	pricing_enabled?: boolean;
+	layout_enabled?: boolean;
+	language_enabled?: boolean;
+	theme_enabled?: boolean;
 	layout_default?: string;
 	pagination_default?: string;
 	theme_default?: string;
@@ -131,11 +136,6 @@ interface Settings {
 	companies_enabled?: boolean;
 	tags_enabled?: boolean;
 	surveys_enabled?: boolean;
-	header_submit_enabled?: boolean;
-	header_pricing_enabled?: boolean;
-	header_layout_enabled?: boolean;
-	header_language_enabled?: boolean;
-	header_theme_enabled?: boolean;
 	header?: HeaderConfigSettings;
 	homepage?: HomepageSettings;
 	[key: string]: unknown;
@@ -373,36 +373,36 @@ export function SettingsPage() {
 								<SettingSwitch
 									label={t('HEADER_SUBMIT_ENABLED_LABEL')}
 									description={t('HEADER_SUBMIT_ENABLED_DESC')}
-									value={settings.header_submit_enabled ?? true}
-									onChange={(value) => updateSetting('header_submit_enabled', value)}
+									value={settings.header?.submit_enabled ?? true}
+									onChange={(value) => updateSetting('header.submit_enabled', value)}
 									disabled={saving}
 								/>
 								<SettingSwitch
 									label={t('HEADER_PRICING_ENABLED_LABEL')}
 									description={t('HEADER_PRICING_ENABLED_DESC')}
-									value={settings.header_pricing_enabled ?? true}
-									onChange={(value) => updateSetting('header_pricing_enabled', value)}
+									value={settings.header?.pricing_enabled ?? true}
+									onChange={(value) => updateSetting('header.pricing_enabled', value)}
 									disabled={saving}
 								/>
 								<SettingSwitch
 									label={t('HEADER_LAYOUT_ENABLED_LABEL')}
 									description={t('HEADER_LAYOUT_ENABLED_DESC')}
-									value={settings.header_layout_enabled ?? true}
-									onChange={(value) => updateSetting('header_layout_enabled', value)}
+									value={settings.header?.layout_enabled ?? true}
+									onChange={(value) => updateSetting('header.layout_enabled', value)}
 									disabled={saving}
 								/>
 								<SettingSwitch
 									label={t('HEADER_LANGUAGE_ENABLED_LABEL')}
 									description={t('HEADER_LANGUAGE_ENABLED_DESC')}
-									value={settings.header_language_enabled ?? true}
-									onChange={(value) => updateSetting('header_language_enabled', value)}
+									value={settings.header?.language_enabled ?? true}
+									onChange={(value) => updateSetting('header.language_enabled', value)}
 									disabled={saving}
 								/>
 								<SettingSwitch
 									label={t('HEADER_THEME_ENABLED_LABEL')}
 									description={t('HEADER_THEME_ENABLED_DESC')}
-									value={settings.header_theme_enabled ?? true}
-									onChange={(value) => updateSetting('header_theme_enabled', value)}
+									value={settings.header?.theme_enabled ?? true}
+									onChange={(value) => updateSetting('header.theme_enabled', value)}
 									disabled={saving}
 								/>
 								<SettingSelect
