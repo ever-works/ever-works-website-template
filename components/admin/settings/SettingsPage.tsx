@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/accordion';
 import { Sliders } from 'lucide-react';
 import { SettingSwitch } from './SettingSwitch';
+import { SettingSelect } from './SettingSelect';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
@@ -112,6 +113,13 @@ const PLACEHOLDER_TEXT_CLASSES = [
 	'dark:border-gray-700'
 ].join(' ');
 
+interface HomepageSettings {
+	hero_enabled?: boolean;
+	search_enabled?: boolean;
+	default_view?: string;
+	default_sort?: string;
+}
+
 interface Settings {
 	categories_enabled?: boolean;
 	companies_enabled?: boolean;
@@ -122,6 +130,7 @@ interface Settings {
 	header_layout_enabled?: boolean;
 	header_language_enabled?: boolean;
 	header_theme_enabled?: boolean;
+	homepage?: HomepageSettings;
 	[key: string]: unknown;
 }
 
@@ -281,9 +290,54 @@ export function SettingsPage() {
 						</div>
 					</AccordionTrigger>
 					<AccordionContent className={ACCORDION_CONTENT_CLASSES}>
-						<p className={PLACEHOLDER_TEXT_CLASSES}>
-							No settings configured yet. Settings will appear here once added to config.yml
-						</p>
+						{loading ? (
+							<p className={PLACEHOLDER_TEXT_CLASSES}>
+								Loading settings...
+							</p>
+						) : (
+							<>
+								<SettingSwitch
+									label={t('HERO_ENABLED_LABEL')}
+									description={t('HERO_ENABLED_DESC')}
+									value={settings.homepage?.hero_enabled ?? true}
+									onChange={(value) => updateSetting('homepage.hero_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('SEARCH_ENABLED_LABEL')}
+									description={t('SEARCH_ENABLED_DESC')}
+									value={settings.homepage?.search_enabled ?? true}
+									onChange={(value) => updateSetting('homepage.search_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSelect
+									label={t('DEFAULT_VIEW_LABEL')}
+									description={t('DEFAULT_VIEW_DESC')}
+									value={settings.homepage?.default_view ?? 'classic'}
+									onChange={(value) => updateSetting('homepage.default_view', value)}
+									options={[
+										{ value: 'classic', label: 'List View' },
+										{ value: 'grid', label: 'Grid View' },
+										{ value: 'masonry', label: 'Masonry View' },
+									]}
+									disabled={saving}
+								/>
+								<SettingSelect
+									label={t('DEFAULT_SORT_LABEL')}
+									description={t('DEFAULT_SORT_DESC')}
+									value={settings.homepage?.default_sort ?? 'popularity'}
+									onChange={(value) => updateSetting('homepage.default_sort', value)}
+									options={[
+										{ value: 'popularity', label: 'Popularity' },
+										{ value: 'name-asc', label: 'Name A-Z' },
+										{ value: 'name-desc', label: 'Name Z-A' },
+										{ value: 'date-desc', label: 'Newest First' },
+										{ value: 'date-asc', label: 'Oldest First' },
+									]}
+									disabled={saving}
+								/>
+							</>
+						)}
 					</AccordionContent>
 				</AccordionItem>
 

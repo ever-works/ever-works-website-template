@@ -2361,7 +2361,15 @@
       "HEADER_LANGUAGE_ENABLED_LABEL": "Show Language Selector",
       "HEADER_LANGUAGE_ENABLED_DESC": "Show or hide the language selector control in the header.",
       "HEADER_THEME_ENABLED_LABEL": "Show Theme Toggle",
-      "HEADER_THEME_ENABLED_DESC": "Show or hide the dark/light theme toggle in the header."
+      "HEADER_THEME_ENABLED_DESC": "Show or hide the dark/light theme toggle in the header.",
+      "HERO_ENABLED_LABEL": "Show Hero Section",
+      "HERO_ENABLED_DESC": "Show or hide the hero section on the homepage.",
+      "SEARCH_ENABLED_LABEL": "Show Search",
+      "SEARCH_ENABLED_DESC": "Show or hide the search functionality on the homepage.",
+      "DEFAULT_VIEW_LABEL": "Default View",
+      "DEFAULT_VIEW_DESC": "Set the default view layout for the item list.",
+      "DEFAULT_SORT_LABEL": "Default Sort Order",
+      "DEFAULT_SORT_DESC": "Set the default sort order for items."
     },
     "AUTH_FORM": {
       "ADMIN_WELCOME_TITLE": "Welcome to the Admin Dashboard",
