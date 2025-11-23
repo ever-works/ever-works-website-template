@@ -26,6 +26,7 @@ import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 import { useSurveysEnabled } from "@/hooks/use-surveys-enabled";
 import { useTagsEnabled } from "@/hooks/use-tags-enabled";
 import { useHeaderSettings } from "@/hooks/use-header-settings";
+import { useCategoriesExists } from "@/hooks/use-categories-exists";
 
 interface NavigationItem {
   key: string;
@@ -145,17 +146,22 @@ export default function Header() {
   const { surveysEnabled } = useSurveysEnabled();
   const { tagsEnabled } = useTagsEnabled();
   const { settings: headerSettings } = useHeaderSettings();
+  const { data: categoriesData } = useCategoriesExists();
+
   const t = useTranslations("common");
   const tListing = useTranslations("listing");
   const tSurvey = useTranslations("survey");
   const config = useConfig();
   const pathname = usePathname();
 
+  // Extract hasCategories from React Query data
+  const hasCategories = categoriesData?.exists ?? false;
+
   const navigationItems = useMemo((): NavigationItem[] => {
     return NAVIGATION_CONFIG
       .filter((item) => {
         // Hide categories link when categories are disabled
-        if (item.key === "categories" && !categoriesEnabled) {
+        if (item.key === "categories" && (!categoriesEnabled || !hasCategories)) {
           return false;
         }
         // Hide tags link when tags are disabled
@@ -191,7 +197,7 @@ export default function Header() {
             : t(item.translationKey as any)
           : item.staticLabel || item.key,
       }));
-  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending, categoriesEnabled, tagsEnabled, surveysEnabled, headerSettings.pricingEnabled, headerSettings.submitEnabled]);
+  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending, categoriesEnabled, tagsEnabled, surveysEnabled, headerSettings.pricingEnabled, headerSettings.submitEnabled, hasCategories]);
 
   const isActiveLink = useCallback(
     (href: string): boolean => {

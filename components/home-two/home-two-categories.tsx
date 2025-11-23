@@ -206,6 +206,7 @@ export function HomeTwoCategories({
   totalItems,
   showAllCategories = false,
 }: Home2CategoriesProps) {
+
   const { categoriesEnabled } = useCategoriesEnabled();
   const t = useTranslations("listing");
   const tCommon = useTranslations("common");
