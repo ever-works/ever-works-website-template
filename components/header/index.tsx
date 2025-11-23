@@ -23,6 +23,9 @@ import { Container } from "../ui/container";
 import { useFeatureFlags } from "@/hooks/use-feature-flags";
 import { useHasGlobalSurveys } from "@/hooks/use-has-global-surveys";
 import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
+import { useSurveysEnabled } from "@/hooks/use-surveys-enabled";
+import { useTagsEnabled } from "@/hooks/use-tags-enabled";
+import { useHeaderSettings } from "@/hooks/use-header-settings";
 
 interface NavigationItem {
   key: string;
@@ -139,6 +142,9 @@ export default function Header() {
   const { features } = useFeatureFlags();
   const { hasGlobalSurveys, isPending } = useHasGlobalSurveys();
   const { categoriesEnabled } = useCategoriesEnabled();
+  const { surveysEnabled } = useSurveysEnabled();
+  const { tagsEnabled } = useTagsEnabled();
+  const { settings: headerSettings } = useHeaderSettings();
   const t = useTranslations("common");
   const tListing = useTranslations("listing");
   const tSurvey = useTranslations("survey");
@@ -152,12 +158,24 @@ export default function Header() {
         if (item.key === "categories" && !categoriesEnabled) {
           return false;
         }
+        // Hide tags link when tags are disabled
+        if (item.key === "tags" && !tagsEnabled) {
+          return false;
+        }
         // Hide favorites link when feature is disabled or user is not logged in
         if (item.key === "favorites" && (!features.favorites || !session?.user?.id)) {
           return false;
         }
-        // Hide surveys link when there are no global surveys (but keep it visible while loading to prevent flicker)
-        if (item.key === "surveys" && !isPending && !hasGlobalSurveys) {
+        // Hide surveys link when surveys are disabled or there are no global surveys (but keep it visible while loading to prevent flicker)
+        if (item.key === "surveys" && (!surveysEnabled || (!isPending && !hasGlobalSurveys))) {
+          return false;
+        }
+        // Hide pricing link when header pricing is disabled
+        if (item.key === "pricing" && !headerSettings.pricingEnabled) {
+          return false;
+        }
+        // Hide submit link when header submit is disabled
+        if (item.key === "submit" && !headerSettings.submitEnabled) {
           return false;
         }
         return true;
@@ -173,7 +191,7 @@ export default function Header() {
             : t(item.translationKey as any)
           : item.staticLabel || item.key,
       }));
-  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending, categoriesEnabled]);
+  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending, categoriesEnabled, tagsEnabled, surveysEnabled, headerSettings.pricingEnabled, headerSettings.submitEnabled]);
 
   const isActiveLink = useCallback(
     (href: string): boolean => {
@@ -289,12 +307,14 @@ export default function Header() {
           ))}
           
           <div className={STYLES.mobileControls}>
-            <div className="py-2 flex justify-center">
-              <div className="scale-90 sm:scale-95 md:scale-100 transition-transform duration-200">
-                <LayoutSwitcher inline />
+            {headerSettings.layoutEnabled && (
+              <div className="py-2 flex justify-center">
+                <div className="scale-90 sm:scale-95 md:scale-100 transition-transform duration-200">
+                  <LayoutSwitcher inline />
+                </div>
               </div>
-            </div>
-            
+            )}
+
             <div className={`py-2 flex justify-center ${STYLES.mobileOnly}`}>
               <div className="scale-90 sm:scale-95 md:scale-100 transition-transform duration-200">
                 <NavigationControls />

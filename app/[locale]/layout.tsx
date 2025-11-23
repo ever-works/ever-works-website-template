@@ -16,7 +16,17 @@ import { ConditionalLayout } from '@/components/layout/conditional-layout';
 import { siteConfig } from '@/lib/config';
 import { SpeedInsights } from './integration/speed-insights';
 import { SettingsProvider } from '@/components/providers/settings-provider';
-import { getCategoriesEnabled, getTagsEnabled, getCompaniesEnabled } from '@/lib/utils/settings';
+import {
+	getCategoriesEnabled,
+	getTagsEnabled,
+	getCompaniesEnabled,
+	getSurveysEnabled,
+	getHeaderSubmitEnabled,
+	getHeaderPricingEnabled,
+	getHeaderLayoutEnabled,
+	getHeaderLanguageEnabled,
+	getHeaderThemeEnabled,
+} from '@/lib/utils/settings';
 
 /**
  * Generate metadata dynamically using siteConfig
@@ -66,6 +76,14 @@ export default async function RootLayout({
 	const categoriesEnabled = getCategoriesEnabled();
 	const tagsEnabled = getTagsEnabled();
 	const companiesEnabled = getCompaniesEnabled();
+	const surveysEnabled = getSurveysEnabled();
+	const headerSettings = {
+		submitEnabled: getHeaderSubmitEnabled(),
+		pricingEnabled: getHeaderPricingEnabled(),
+		layoutEnabled: getHeaderLayoutEnabled(),
+		languageEnabled: getHeaderLanguageEnabled(),
+		themeEnabled: getHeaderThemeEnabled(),
+	};
 
 	// Determine if the current locale is RTL
 	return (
@@ -81,6 +99,8 @@ export default async function RootLayout({
 						categoriesEnabled={categoriesEnabled}
 						tagsEnabled={tagsEnabled}
 						companiesEnabled={companiesEnabled}
+						surveysEnabled={surveysEnabled}
+						headerSettings={headerSettings}
 					>
 						<Providers config={config}>
 							<ConditionalLayout>{children}</ConditionalLayout>
@@ -88,7 +108,7 @@ export default async function RootLayout({
 					</SettingsProvider>
 				</NextIntlClientProvider>
 			</PHProvider>
-			{/* 
+			{/*
 				Vercel Speed Insights Integration
 				- Automatically detects Vercel environment and Speed Insights availability
 				- Gracefully degrades when not enabled or not on a paid plan

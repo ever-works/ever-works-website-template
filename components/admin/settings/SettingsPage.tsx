@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/accordion';
 import { Sliders } from 'lucide-react';
 import { SettingSwitch } from './SettingSwitch';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
 const GRADIENT_HEADER_CLASSES = [
@@ -115,6 +115,13 @@ const PLACEHOLDER_TEXT_CLASSES = [
 interface Settings {
 	categories_enabled?: boolean;
 	companies_enabled?: boolean;
+	tags_enabled?: boolean;
+	surveys_enabled?: boolean;
+	header_submit_enabled?: boolean;
+	header_pricing_enabled?: boolean;
+	header_layout_enabled?: boolean;
+	header_language_enabled?: boolean;
+	header_theme_enabled?: boolean;
 	[key: string]: unknown;
 }
 
@@ -139,11 +146,7 @@ export function SettingsPage() {
 				setSettings(data.settings || {});
 			} catch (error) {
 				console.error('Error fetching settings:', error);
-				toast({
-					title: 'Error',
-					description: 'Failed to load settings. Please try again.',
-					variant: 'destructive',
-				});
+				toast.error('Failed to load settings. Please try again.');
 			} finally {
 				setLoading(false);
 			}
@@ -175,17 +178,10 @@ export function SettingsPage() {
 				[key]: value,
 			}));
 
-			toast({
-				title: 'Success',
-				description: 'Setting updated successfully',
-			});
+			toast.success('Setting updated successfully');
 		} catch (error) {
 			console.error('Error updating setting:', error);
-			toast({
-				title: 'Error',
-				description: 'Failed to update setting. Please try again.',
-				variant: 'destructive',
-			});
+			toast.error('Failed to update setting. Please try again.');
 		} finally {
 			setSaving(false);
 		}
@@ -250,6 +246,20 @@ export function SettingsPage() {
 									onChange={(value) => updateSetting('companies_enabled', value)}
 									disabled={saving}
 								/>
+								<SettingSwitch
+									label={t('TAGS_ENABLED_LABEL')}
+									description={t('TAGS_ENABLED_DESC')}
+									value={settings.tags_enabled ?? true}
+									onChange={(value) => updateSetting('tags_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('SURVEYS_ENABLED_LABEL')}
+									description={t('SURVEYS_ENABLED_DESC')}
+									value={settings.surveys_enabled ?? true}
+									onChange={(value) => updateSetting('surveys_enabled', value)}
+									disabled={saving}
+								/>
 							</>
 						)}
 					</AccordionContent>
@@ -293,9 +303,49 @@ export function SettingsPage() {
 						</div>
 					</AccordionTrigger>
 					<AccordionContent className={ACCORDION_CONTENT_CLASSES}>
-						<p className={PLACEHOLDER_TEXT_CLASSES}>
-							No settings configured yet. Settings will appear here once added to config.yml
-						</p>
+						{loading ? (
+							<p className={PLACEHOLDER_TEXT_CLASSES}>
+								Loading settings...
+							</p>
+						) : (
+							<>
+								<SettingSwitch
+									label={t('HEADER_SUBMIT_ENABLED_LABEL')}
+									description={t('HEADER_SUBMIT_ENABLED_DESC')}
+									value={settings.header_submit_enabled ?? true}
+									onChange={(value) => updateSetting('header_submit_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('HEADER_PRICING_ENABLED_LABEL')}
+									description={t('HEADER_PRICING_ENABLED_DESC')}
+									value={settings.header_pricing_enabled ?? true}
+									onChange={(value) => updateSetting('header_pricing_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('HEADER_LAYOUT_ENABLED_LABEL')}
+									description={t('HEADER_LAYOUT_ENABLED_DESC')}
+									value={settings.header_layout_enabled ?? true}
+									onChange={(value) => updateSetting('header_layout_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('HEADER_LANGUAGE_ENABLED_LABEL')}
+									description={t('HEADER_LANGUAGE_ENABLED_DESC')}
+									value={settings.header_language_enabled ?? true}
+									onChange={(value) => updateSetting('header_language_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('HEADER_THEME_ENABLED_LABEL')}
+									description={t('HEADER_THEME_ENABLED_DESC')}
+									value={settings.header_theme_enabled ?? true}
+									onChange={(value) => updateSetting('header_theme_enabled', value)}
+									disabled={saving}
+								/>
+							</>
+						)}
 					</AccordionContent>
 				</AccordionItem>
 

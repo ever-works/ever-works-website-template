@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, AlertTriangle } from 'lucide-react';
 import { SurveyFormNoSSR } from '../forms/survey-form-no-ssr';
 import { Survey } from '@/lib/db/schema';
 import { useTranslations } from 'next-intl';
@@ -12,9 +12,10 @@ import { PreviewWarningBanner } from './PreviewWarningBanner';
 interface SurveyPreviewClientProps {
 	survey: Survey;
 	backLink: string;
+	surveysEnabled: boolean;
 }
 
-export function SurveyPreviewClient({ survey, backLink }: SurveyPreviewClientProps) {
+export function SurveyPreviewClient({ survey, backLink, surveysEnabled }: SurveyPreviewClientProps) {
 	const t = useTranslations('survey');
 	
 	return (
@@ -29,6 +30,33 @@ export function SurveyPreviewClient({ survey, backLink }: SurveyPreviewClientPro
 					{t('BACK_TO_SURVEYS')}
 				</Link>
 			</div>
+
+			{/* Warning Banner - Surveys Disabled */}
+			{!surveysEnabled && (
+				<div className="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 dark:border-yellow-600 p-4 rounded-lg shadow-md">
+					<div className="flex items-start">
+						<div className="flex-shrink-0">
+							<AlertTriangle className="h-6 w-6 text-yellow-400 dark:text-yellow-500" aria-hidden="true" />
+						</div>
+						<div className="ml-3 flex-1">
+							<h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
+								{t('WARNING_DISABLED_TITLE')}
+							</h3>
+							<div className="mt-2 text-sm text-yellow-700 dark:text-yellow-400">
+								<p>{t('WARNING_DISABLED_MESSAGE')}</p>
+							</div>
+							<div className="mt-4">
+								<Link
+									href="/admin/settings"
+									className="text-sm font-medium text-yellow-800 dark:text-yellow-300 hover:text-yellow-600 dark:hover:text-yellow-200 underline"
+								>
+									{t('WARNING_DISABLED_ACTION')}
+								</Link>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
 
 			<div className="mb-6">
 				<PreviewWarningBanner />

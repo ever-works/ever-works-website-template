@@ -20,6 +20,9 @@ interface ClientsTableProps {
 
 const TABLE_CARD_WRAPPER = 'border-0 shadow-lg';
 const TABLE_ROW_HOVER = 'px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors';
+const ROW_LOADING_OVERLAY =
+	'absolute inset-0 bg-white/60 dark:bg-gray-900/60 flex items-center justify-center z-10 pointer-events-none';
+const ROW_LOADING_SPINNER = 'w-5 h-5 border-2 border-theme-primary border-t-transparent rounded-full animate-spin';
 
 /**
  * Clients Table Component
@@ -113,7 +116,12 @@ function ClientRow({ client, isNavigating, isDeleting, onView, onEdit, onDelete 
 	};
 
 	return (
-		<div className={TABLE_ROW_HOVER}>
+		<div className={`${TABLE_ROW_HOVER} relative`}>
+			{isNavigating && (
+				<div className={ROW_LOADING_OVERLAY}>
+					<div className={ROW_LOADING_SPINNER}></div>
+				</div>
+			)}
 			<div className="flex items-center justify-between">
 				{/* Client Info */}
 				<div className="flex items-center space-x-4 flex-1 min-w-0">
@@ -134,12 +142,8 @@ function ClientRow({ client, isNavigating, isDeleting, onView, onEdit, onDelete 
 						onKeyDown={handleKeyDown}
 						title={isNavigating ? 'Loading...' : 'Click to view client details'}
 					>
-						<div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm relative">
-							{isNavigating ? (
-								<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-							) : (
-								(client.displayName || client.name || 'U').charAt(0).toUpperCase()
-							)}
+						<div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm">
+							{(client.displayName || client.name || 'U').charAt(0).toUpperCase()}
 						</div>
 						<div className="flex-1 min-w-0 pr-4">
 							<h4 className="font-medium text-gray-900 dark:text-white hover:text-theme-primary transition-colors">
@@ -176,20 +180,15 @@ function ClientRow({ client, isNavigating, isDeleting, onView, onEdit, onDelete 
 							variant="light"
 							isDisabled={isNavigating}
 							onPress={() => onView(client.id)}
-							startContent={
-								isNavigating ? (
-									<div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-								) : (
-									<Eye className="w-4 h-4" />
-								)
-							}
+							startContent={<Eye className="w-4 h-4" />}
 						>
-							{isNavigating ? t('LOADING') : t('VIEW')}
+							{t('VIEW')}
 						</Button>
 						<Button
 							size="sm"
 							color="primary"
 							variant="light"
+							isDisabled={isNavigating}
 							onPress={() => onEdit(client)}
 							startContent={<Edit className="w-4 h-4" />}
 						>
@@ -201,7 +200,7 @@ function ClientRow({ client, isNavigating, isDeleting, onView, onEdit, onDelete 
 							variant="light"
 							onPress={() => onDelete(client.id)}
 							isLoading={isDeleting}
-							isDisabled={isDeleting}
+							isDisabled={isDeleting || isNavigating}
 							startContent={isDeleting ? null : <Trash2 className="w-4 h-4" />}
 						>
 							{isDeleting ? t('DELETING') : t('DELETE')}
