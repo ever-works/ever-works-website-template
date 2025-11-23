@@ -2375,7 +2375,13 @@
       "DEFAULT_VIEW_LABEL": "Default View",
       "DEFAULT_VIEW_DESC": "Set the default view layout for the item list.",
       "DEFAULT_SORT_LABEL": "Default Sort Order",
-      "DEFAULT_SORT_DESC": "Set the default sort order for items."
+      "DEFAULT_SORT_DESC": "Set the default sort order for items.",
+      "FOOTER_SUBSCRIBE_ENABLED_LABEL": "Show Subscribe Form",
+      "FOOTER_SUBSCRIBE_ENABLED_DESC": "Show or hide the 'Stay Updated' newsletter subscription form in the footer.",
+      "FOOTER_VERSION_ENABLED_LABEL": "Show Version Information",
+      "FOOTER_VERSION_ENABLED_DESC": "Show or hide the version information in the footer.",
+      "FOOTER_THEME_SELECTOR_ENABLED_LABEL": "Show Theme Selector",
+      "FOOTER_THEME_SELECTOR_ENABLED_DESC": "Show or hide the theme selector control in the footer."
     },
     "AUTH_FORM": {
       "ADMIN_WELCOME_TITLE": "Welcome to the Admin Dashboard",

@@ -216,6 +216,12 @@ export interface HeaderConfigSettings {
 	theme_default?: string;
 }
 
+export interface FooterConfigSettings {
+	subscribe_enabled?: boolean;
+	version_enabled?: boolean;
+	theme_selector_enabled?: boolean;
+}
+
 export interface Settings {
 	categories_enabled?: boolean;
 	companies_enabled?: boolean;
@@ -223,6 +229,7 @@ export interface Settings {
 	surveys_enabled?: boolean;
 	header?: HeaderConfigSettings;
 	homepage?: HomepageSettings;
+	footer?: FooterConfigSettings;
 }
 
 export interface Config {

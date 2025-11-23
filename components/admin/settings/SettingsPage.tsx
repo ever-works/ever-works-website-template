@@ -131,6 +131,12 @@ interface HeaderConfigSettings {
 	theme_default?: string;
 }
 
+interface FooterConfigSettings {
+	subscribe_enabled?: boolean;
+	version_enabled?: boolean;
+	theme_selector_enabled?: boolean;
+}
+
 interface Settings {
 	categories_enabled?: boolean;
 	companies_enabled?: boolean;
@@ -138,6 +144,7 @@ interface Settings {
 	surveys_enabled?: boolean;
 	header?: HeaderConfigSettings;
 	homepage?: HomepageSettings;
+	footer?: FooterConfigSettings;
 	[key: string]: unknown;
 }
 
@@ -475,9 +482,35 @@ export function SettingsPage() {
 						</div>
 					</AccordionTrigger>
 					<AccordionContent className={ACCORDION_CONTENT_CLASSES}>
-						<p className={PLACEHOLDER_TEXT_CLASSES}>
-							No settings configured yet. Settings will appear here once added to config.yml
-						</p>
+						{loading ? (
+							<p className={PLACEHOLDER_TEXT_CLASSES}>
+								Loading settings...
+							</p>
+						) : (
+							<>
+								<SettingSwitch
+									label={t('FOOTER_SUBSCRIBE_ENABLED_LABEL')}
+									description={t('FOOTER_SUBSCRIBE_ENABLED_DESC')}
+									value={settings.footer?.subscribe_enabled ?? false}
+									onChange={(value) => updateSetting('footer.subscribe_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('FOOTER_VERSION_ENABLED_LABEL')}
+									description={t('FOOTER_VERSION_ENABLED_DESC')}
+									value={settings.footer?.version_enabled ?? false}
+									onChange={(value) => updateSetting('footer.version_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('FOOTER_THEME_SELECTOR_ENABLED_LABEL')}
+									description={t('FOOTER_THEME_SELECTOR_ENABLED_DESC')}
+									value={settings.footer?.theme_selector_enabled ?? false}
+									onChange={(value) => updateSetting('footer.theme_selector_enabled', value)}
+									disabled={saving}
+								/>
+							</>
+						)}
 					</AccordionContent>
 				</AccordionItem>
 			</Accordion>
