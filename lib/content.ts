@@ -193,6 +193,9 @@ export interface HeaderSettings {
 	layoutEnabled: boolean;
 	languageEnabled: boolean;
 	themeEnabled: boolean;
+	layoutDefault: string;
+	paginationDefault: string;
+	themeDefault: string;
 }
 
 export interface HomepageSettings {
@@ -202,17 +205,31 @@ export interface HomepageSettings {
 	default_sort?: string;
 }
 
+export interface HeaderConfigSettings {
+	submit_enabled?: boolean;
+	pricing_enabled?: boolean;
+	layout_enabled?: boolean;
+	language_enabled?: boolean;
+	theme_enabled?: boolean;
+	layout_default?: string;
+	pagination_default?: string;
+	theme_default?: string;
+}
+
+export interface FooterConfigSettings {
+	subscribe_enabled?: boolean;
+	version_enabled?: boolean;
+	theme_selector_enabled?: boolean;
+}
+
 export interface Settings {
 	categories_enabled?: boolean;
 	companies_enabled?: boolean;
 	tags_enabled?: boolean;
 	surveys_enabled?: boolean;
-	header_submit_enabled?: boolean;
-	header_pricing_enabled?: boolean;
-	header_layout_enabled?: boolean;
-	header_language_enabled?: boolean;
-	header_theme_enabled?: boolean;
+	header?: HeaderConfigSettings;
 	homepage?: HomepageSettings;
+	footer?: FooterConfigSettings;
 }
 
 export interface Config {
