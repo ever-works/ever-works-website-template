@@ -6,6 +6,7 @@ import { Button } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { ChevronDown, Search, Tag as TagIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils/index";
+import { useTagsEnabled } from "@/hooks/use-tags-enabled";
 
 type HomeTwoTagsSelectorProps = {
   tags: Tag[];
@@ -101,8 +102,7 @@ export const HomeTwoTagsSelector = ({
   const popoverRef = useRef<HTMLDivElement>(null);
   const panelId = useId();
   const t = useTranslations();
-
-  const selectedTagsCount = selectedTags.length;
+  const { tagsEnabled } = useTagsEnabled();
 
   const filteredTags = useMemo(() => {
     if (!searchTerm) return tags;
@@ -143,6 +143,12 @@ export const HomeTwoTagsSelector = ({
       };
     }
   }, [isOpen]);
+
+  if (!tagsEnabled) {
+    return null;
+  }
+
+  const selectedTagsCount = selectedTags.length;
 
   return (
     <div className="flex flex-col gap-2 relative" ref={popoverRef}>

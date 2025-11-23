@@ -4,6 +4,8 @@ import { LOCALES } from "@/lib/constants";
 import ListingTags from "../../listing-tags";
 import { Suspense } from "react";
 import { GridSkeleton } from "@/components/ui/skeleton";
+import { getTagsEnabled } from "@/lib/utils/settings";
+import { notFound } from "next/navigation";
 
 export const revalidate = 10;
 
@@ -37,6 +39,11 @@ export default async function TagListing({
 }: {
   params: Promise<{ tags: string[]; locale: string }>;
 }) {
+  const tagsEnabled = getTagsEnabled();
+  if (!tagsEnabled) {
+    notFound();
+  }
+
   const resolvedParams = await params;
   const { tags: tagMeta, locale } = resolvedParams;
   const [rawTag, rawPage] = tagMeta;

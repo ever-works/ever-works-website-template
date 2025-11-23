@@ -187,6 +187,14 @@ export interface AuthConfig {
 		providers?: any[];
 	};
 }
+export interface HeaderSettings {
+	submitEnabled: boolean;
+	pricingEnabled: boolean;
+	layoutEnabled: boolean;
+	languageEnabled: boolean;
+	themeEnabled: boolean;
+}
+
 export interface Config {
 	company_name?: string;
 	copyright_year?: number;
@@ -208,6 +216,8 @@ export interface Config {
 	authConfig?: AuthConfig;
 	pricing?: PricingPlanConfig;
 	pagination?: TypePagination;
+	headerSettings?: HeaderSettings;
+	categoriesEnabled?: boolean;
 }
 
 interface FetchOptions {

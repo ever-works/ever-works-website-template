@@ -2042,7 +2042,10 @@
       "TAG_CREATE_ERROR": "Failed to create tag",
       "TAG_UPDATE_ERROR": "Failed to update tag",
       "TAG_DELETE_ERROR": "Failed to delete tag",
-      "DELETE_CONFIRMATION": "Are you sure you want to delete this tag?"
+      "DELETE_CONFIRMATION": "Are you sure you want to delete this tag?",
+      "WARNING_DISABLED_TITLE": "Tags are currently disabled site-wide",
+      "WARNING_DISABLED_MESSAGE": "Tags are hidden from the public site including navigation, filters, and item pages. You can still manage tags here, but they won't be visible to users until re-enabled.",
+      "WARNING_DISABLED_ACTION": "Go to Settings to Enable"
     },
     "ADMIN_ROLES_PAGE": {
       "TITLE": "Role Management",
@@ -2339,9 +2342,21 @@
     "ADMIN_SETTINGS_PAGE": {
       "CATEGORIES_ENABLED_LABEL": "Enable Categories",
       "CATEGORIES_ENABLED_DESC": "Enable or disable categories throughout the site. When disabled, category filters, pages, and navigation will be hidden.",
+      "TAGS_ENABLED_LABEL": "Enable Tags",
+      "TAGS_ENABLED_DESC": "Enable or disable tags throughout the site. When disabled, tag filters, pages, and navigation will be hidden.",
       "SURVEYS_ENABLED_LABEL": "Enable Surveys",
       "SURVEYS_ENABLED_DESC": "Enable or disable surveys throughout the site. When disabled, survey features will be hidden from non-admin users.",
-      "SURVEYS_DISABLED_WARNING": "Surveys feature is currently disabled in settings"
+      "SURVEYS_DISABLED_WARNING": "Surveys feature is currently disabled in settings",
+      "HEADER_SUBMIT_ENABLED_LABEL": "Show Submit Button",
+      "HEADER_SUBMIT_ENABLED_DESC": "Show or hide the Submit button in the header navigation.",
+      "HEADER_PRICING_ENABLED_LABEL": "Show Pricing Menu",
+      "HEADER_PRICING_ENABLED_DESC": "Show or hide the Pricing link in the header navigation.",
+      "HEADER_LAYOUT_ENABLED_LABEL": "Show Layout Switcher",
+      "HEADER_LAYOUT_ENABLED_DESC": "Show or hide the layout switcher control in the header.",
+      "HEADER_LANGUAGE_ENABLED_LABEL": "Show Language Selector",
+      "HEADER_LANGUAGE_ENABLED_DESC": "Show or hide the language selector control in the header.",
+      "HEADER_THEME_ENABLED_LABEL": "Show Theme Toggle",
+      "HEADER_THEME_ENABLED_DESC": "Show or hide the dark/light theme toggle in the header."
     },
     "AUTH_FORM": {
       "ADMIN_WELCOME_TITLE": "Welcome to the Admin Dashboard",

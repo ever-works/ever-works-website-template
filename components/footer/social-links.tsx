@@ -51,7 +51,7 @@ export const socialLinks = [
   },
 ].filter(link => link.href && link.href !== '');
 
-export const footerNavigation = (t: any, categoriesEnabled = true) => {
+export function footerNavigation(t: (key: string) => string, categoriesEnabled = true, tagsEnabled = true) {
   const productLinks = [
     { label: t("common.CATEGORY"), href: "/categories" },
     { label: t("common.TAG"), href: "/tags" },
@@ -59,10 +59,14 @@ export const footerNavigation = (t: any, categoriesEnabled = true) => {
     { label: t("footer.HELP"), href: "/help" },
   ];
 
+  const filteredProductLinks = productLinks.filter(link => {
+    if (link.href === "/categories" && !categoriesEnabled) return false;
+    if (link.href === "/tags" && !tagsEnabled) return false;
+    return true;
+  });
+
   return {
-    product: categoriesEnabled
-      ? productLinks
-      : productLinks.filter(link => link.href !== "/categories"),
+    product: filteredProductLinks,
     company: [
       { label: t("footer.ABOUT_US"), href: "/about" },
       { label: t("footer.PRIVACY_POLICY"), href: "/privacy-policy" },
@@ -83,8 +87,10 @@ export const footerNavigation = (t: any, categoriesEnabled = true) => {
   };
 };
 
-export const categoryLabels = (t: any) => ({
-  product: t("footer.PRODUCT"),
-  company: t("footer.COMPANY"),
-  resources: t("footer.RESOURCES"),
-});
+export function categoryLabels(t: (key: string) => string) {
+  return {
+    product: t("footer.PRODUCT"),
+    company: t("footer.COMPANY"),
+    resources: t("footer.RESOURCES"),
+  };
+}

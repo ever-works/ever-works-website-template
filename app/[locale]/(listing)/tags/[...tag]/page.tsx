@@ -3,6 +3,8 @@ import { paginateMeta } from "@/lib/paginate";
 import Listing from "../../listing";
 import { Suspense } from "react";
 import { ListingSkeleton } from "@/components/ui/skeleton";
+import { getTagsEnabled } from "@/lib/utils/settings";
+import { notFound } from "next/navigation";
 
 // Disable static generation to prevent content loading errors during build
 export const dynamic = 'force-dynamic';
@@ -38,6 +40,11 @@ export default async function TagListing({
 }: {
   params: Promise<{ tag: string[]; locale: string }>;
 }) {
+  const tagsEnabled = getTagsEnabled();
+  if (!tagsEnabled) {
+    notFound();
+  }
+
   const { tag: tagMeta, locale } = await params;
   const [rawTag, rawPage] = tagMeta;
   const tag = decodeURI(rawTag);

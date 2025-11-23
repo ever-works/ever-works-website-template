@@ -2,6 +2,7 @@ import { PaymentPlan } from '@/lib/constants';
 import { Eye, FileText, Globe, Tag, Type } from 'lucide-react';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useCategoriesEnabled } from './use-categories-enabled';
+import { useTagsEnabled } from './use-tags-enabled';
 interface ProductLink {
     id: string;
     url: string;
@@ -103,6 +104,7 @@ interface ProductLink {
   
 export function useDetailForm(initialData: Partial<FormData>, onSubmit: (data: FormData) => void) {
     const { categoriesEnabled } = useCategoriesEnabled();
+    const { tagsEnabled } = useTagsEnabled();
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState<FormData>(() => {
       const defaultData = {
@@ -262,11 +264,13 @@ export function useDetailForm(initialData: Partial<FormData>, onSubmit: (data: F
           links: formData.links,
           // Set category to null if categories are disabled
           category: categoriesEnabled ? formData.category : null,
+          // Set tags to empty array if tags are disabled
+          tags: tagsEnabled ? formData.tags : [],
         };
 
         onSubmit?.(transformedData);
       },
-      [formData, onSubmit, categoriesEnabled]
+      [formData, onSubmit, categoriesEnabled, tagsEnabled]
     );
   
     const validateStep = useCallback((step: number) => {

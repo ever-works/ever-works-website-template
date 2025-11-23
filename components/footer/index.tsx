@@ -9,11 +9,13 @@ import { FooterLinkGroup } from "./footer-link-group";
 import { FooterBottom } from "./footer-bottom";
 import { Container } from "../ui/container";
 import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
+import { useTagsEnabled } from "@/hooks/use-tags-enabled";
 
 export function Footer() {
   const t = useTranslations();
   const config = useConfig();
   const { categoriesEnabled } = useCategoriesEnabled();
+  const { tagsEnabled } = useTagsEnabled();
 
   return (
     <footer className="relative w-full overflow-hidden">
@@ -39,13 +41,13 @@ export function Footer() {
 
               {/* Enhanced Navigation links section */}
               <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                {Object.entries(footerNavigation(t, categoriesEnabled)).map(
+                {Object.entries(footerNavigation(t as (key: string) => string, categoriesEnabled, tagsEnabled)).map(
                   ([category, links], categoryIndex) => (
                     <FooterLinkGroup
                       key={category}
                       links={links}
                       categoryLabel={
-                        categoryLabels(t)[
+                        categoryLabels(t as (key: string) => string)[
                           category as keyof typeof categoryLabels
                         ]
                       }

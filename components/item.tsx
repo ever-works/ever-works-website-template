@@ -15,6 +15,8 @@ import { FeaturedBadge } from './featured-items';
 import { useState } from 'react';
 import { createExcerpt } from '@/components/filters/utils/text-utils';
 import { FILTER_CONSTANTS } from '@/components/filters/constants';
+import { useCategoriesEnabled } from '@/hooks/use-categories-enabled';
+import { useTagsEnabled } from '@/hooks/use-tags-enabled';
 
 type ItemProps = ItemData & {
 	onNavigate?: () => void;
@@ -28,6 +30,8 @@ export default function Item(props: ItemProps) {
 	const locale = params?.locale as string | undefined;
 	const { data: session } = useSession();
 	const [isNavigating, setIsNavigating] = useState(false);
+	const { categoriesEnabled } = useCategoriesEnabled();
+	const { tagsEnabled } = useTagsEnabled();
 
 	const shouldShowFallbackIcon = shouldShowFallback(props.icon_url || '');
 
@@ -153,6 +157,7 @@ export default function Item(props: ItemProps) {
 							</div>
 						</div>
 
+						{categoriesEnabled && (
 						<div className="flex items-center gap-2 flex-wrap">
 							{Array.isArray(props.category) ? (
 								props.category.map(
@@ -168,6 +173,7 @@ export default function Item(props: ItemProps) {
 								<CategoryFilterButton category={props.category} />
 							)}
 						</div>
+						)}
 					</div>
 				</CardHeader>
 
@@ -179,6 +185,7 @@ export default function Item(props: ItemProps) {
 						</p>
 
 						{/* Enhanced Hashtags */}
+						{tagsEnabled && (
 						<div className="flex flex-wrap gap-0.5">
 							{props.tags &&
 								Array.isArray(props.tags) &&
@@ -196,6 +203,7 @@ export default function Item(props: ItemProps) {
 									);
 								})}
 						</div>
+						)}
 					</div>
 
 					{/* Promo Code Section */}

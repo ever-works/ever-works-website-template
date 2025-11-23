@@ -21,6 +21,7 @@ import { siteConfig } from '@/lib/config';
 import { ItemCTAButton } from './item-cta-button';
 import { useCategoriesEnabled } from '@/hooks/use-categories-enabled';
 import { useSurveysEnabled } from '@/hooks/use-surveys-enabled';
+import { useTagsEnabled } from '@/hooks/use-tags-enabled';
 
 export interface ItemDetailProps {
 	meta: {
@@ -49,6 +50,7 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 	const locale = params.locale as string;
 	const { categoriesEnabled } = useCategoriesEnabled();
 	const { surveysEnabled } = useSurveysEnabled();
+	const { tagsEnabled } = useTagsEnabled();
 	const tagNames = Array.isArray(meta.tags) ? meta.tags.map((tag) => (typeof tag === 'string' ? tag : tag.name)) : [];
 
 	// Generate Product schema for SEO
@@ -389,8 +391,8 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 							</div>
 						)}
 
-						{/* Tags - Only show if tags exist */}
-						{tagNames.length > 0 && (
+						{/* Tags - Only show if tags exist and tags are enabled */}
+						{tagsEnabled && tagNames.length > 0 && (
 							<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
 								<div className="flex items-center justify-between mb-6">
 									<div className="flex items-center gap-4">

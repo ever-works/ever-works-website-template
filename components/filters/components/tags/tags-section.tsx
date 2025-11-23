@@ -5,6 +5,7 @@ import { TagsList } from "./tags-list";
 import { useStickyHeader } from "../../hooks/use-sticky-header";
 import { useTagVisibility } from "../../hooks/use-tag-visibility";
 import { useFilters } from "../../context/filter-context";
+import { useTagsEnabled } from "@/hooks/use-tags-enabled";
 
 /**
  * Main tags section component
@@ -22,12 +23,17 @@ export function Tags({
   const pathname = usePathname();
   const { isSticky } = useStickyHeader({ enableSticky });
   const { selectedTags, setSelectedTags } = useFilters();
+  const { tagsEnabled } = useTagsEnabled();
   const {
     showAllTags,
     visibleTags,
     hasMoreTags,
     toggleTagVisibility,
   } = useTagVisibility(tags, maxVisibleTags);
+
+  if (!tagsEnabled) {
+    return null;
+  }
 
   const isAnyTagActive = mode === "filter" 
     ? selectedTags.length > 0
