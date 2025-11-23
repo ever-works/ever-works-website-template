@@ -120,6 +120,12 @@ interface HomepageSettings {
 	default_sort?: string;
 }
 
+interface HeaderConfigSettings {
+	layout_default?: string;
+	pagination_default?: string;
+	theme_default?: string;
+}
+
 interface Settings {
 	categories_enabled?: boolean;
 	companies_enabled?: boolean;
@@ -130,6 +136,7 @@ interface Settings {
 	header_layout_enabled?: boolean;
 	header_language_enabled?: boolean;
 	header_theme_enabled?: boolean;
+	header?: HeaderConfigSettings;
 	homepage?: HomepageSettings;
 	[key: string]: unknown;
 }
@@ -396,6 +403,39 @@ export function SettingsPage() {
 									description={t('HEADER_THEME_ENABLED_DESC')}
 									value={settings.header_theme_enabled ?? true}
 									onChange={(value) => updateSetting('header_theme_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSelect
+									label={t('HEADER_LAYOUT_DEFAULT_LABEL')}
+									description={t('HEADER_LAYOUT_DEFAULT_DESC')}
+									value={settings.header?.layout_default ?? 'home1'}
+									onChange={(value) => updateSetting('header.layout_default', value)}
+									options={[
+										{ value: 'home1', label: 'Home 1' },
+										{ value: 'home2', label: 'Home 2' },
+									]}
+									disabled={saving}
+								/>
+								<SettingSelect
+									label={t('HEADER_PAGINATION_DEFAULT_LABEL')}
+									description={t('HEADER_PAGINATION_DEFAULT_DESC')}
+									value={settings.header?.pagination_default ?? 'standard'}
+									onChange={(value) => updateSetting('header.pagination_default', value)}
+									options={[
+										{ value: 'standard', label: 'Standard' },
+										{ value: 'infinite', label: 'Infinite Scroll' },
+									]}
+									disabled={saving}
+								/>
+								<SettingSelect
+									label={t('HEADER_THEME_DEFAULT_LABEL')}
+									description={t('HEADER_THEME_DEFAULT_DESC')}
+									value={settings.header?.theme_default ?? 'light'}
+									onChange={(value) => updateSetting('header.theme_default', value)}
+									options={[
+										{ value: 'light', label: 'Light' },
+										{ value: 'dark', label: 'Dark' },
+									]}
 									disabled={saving}
 								/>
 							</>
