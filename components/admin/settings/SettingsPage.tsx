@@ -115,6 +115,11 @@ const PLACEHOLDER_TEXT_CLASSES = [
 interface Settings {
 	categories_enabled?: boolean;
 	tags_enabled?: boolean;
+	header_submit_enabled?: boolean;
+	header_pricing_enabled?: boolean;
+	header_layout_enabled?: boolean;
+	header_language_enabled?: boolean;
+	header_theme_enabled?: boolean;
 	[key: string]: unknown;
 }
 
@@ -282,9 +287,49 @@ export function SettingsPage() {
 						</div>
 					</AccordionTrigger>
 					<AccordionContent className={ACCORDION_CONTENT_CLASSES}>
-						<p className={PLACEHOLDER_TEXT_CLASSES}>
-							No settings configured yet. Settings will appear here once added to config.yml
-						</p>
+						{loading ? (
+							<p className={PLACEHOLDER_TEXT_CLASSES}>
+								Loading settings...
+							</p>
+						) : (
+							<>
+								<SettingSwitch
+									label={t('HEADER_SUBMIT_ENABLED_LABEL')}
+									description={t('HEADER_SUBMIT_ENABLED_DESC')}
+									value={settings.header_submit_enabled ?? true}
+									onChange={(value) => updateSetting('header_submit_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('HEADER_PRICING_ENABLED_LABEL')}
+									description={t('HEADER_PRICING_ENABLED_DESC')}
+									value={settings.header_pricing_enabled ?? true}
+									onChange={(value) => updateSetting('header_pricing_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('HEADER_LAYOUT_ENABLED_LABEL')}
+									description={t('HEADER_LAYOUT_ENABLED_DESC')}
+									value={settings.header_layout_enabled ?? true}
+									onChange={(value) => updateSetting('header_layout_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('HEADER_LANGUAGE_ENABLED_LABEL')}
+									description={t('HEADER_LANGUAGE_ENABLED_DESC')}
+									value={settings.header_language_enabled ?? true}
+									onChange={(value) => updateSetting('header_language_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('HEADER_THEME_ENABLED_LABEL')}
+									description={t('HEADER_THEME_ENABLED_DESC')}
+									value={settings.header_theme_enabled ?? true}
+									onChange={(value) => updateSetting('header_theme_enabled', value)}
+									disabled={saving}
+								/>
+							</>
+						)}
 					</AccordionContent>
 				</AccordionItem>
 

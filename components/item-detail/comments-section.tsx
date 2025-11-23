@@ -5,19 +5,40 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar } from '@/components/header/avatar';
 import { formatDistanceToNow } from 'date-fns';
-import { MessageCircle, Trash2, Pencil, Check, X } from 'lucide-react';
+import { MessageCircle, Trash2, Pencil, Check, X, AlertTriangle } from 'lucide-react';
 import { Rating } from '@/components/ui/rating';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import type { CommentWithUser } from '@/lib/types/comment';
 import { toast } from 'sonner';
 import { useFeatureFlags } from '@/hooks/use-feature-flags';
 import { useLoginModal } from '@/hooks/use-login-modal';
+import {
+	Modal,
+	ModalContent,
+	ModalHeader,
+	ModalBody,
+	ModalFooter
+} from '@/components/ui/modal';
 
 // Design system class constants
 const CARD_WRAPPER_CLASSES = 'bg-white/95 dark:bg-gray-900/95 rounded-2xl p-8 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500';
 const ICON_CONTAINER_CLASSES = 'p-3 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-xl';
 const SECTION_HEADER_CLASSES = 'flex items-center gap-4 mb-8';
 const FORM_CONTAINER_CLASSES = 'p-6 rounded-xl bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50';
+
+// Delete confirmation dialog class constants
+const DELETE_DIALOG_CLASSES = {
+	headerContainer: 'flex items-center gap-3',
+	alertIcon: 'w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg',
+	headerText: 'text-xl font-bold text-gray-900 dark:text-white',
+	warningContainer: 'bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/10 dark:to-orange-900/10 border border-red-200 dark:border-red-800 rounded-xl p-4',
+	warningContent: 'flex items-start gap-3',
+	warningIcon: 'h-5 w-5 text-red-500 mt-0.5 flex-shrink-0',
+	warningText: 'text-sm text-red-700 dark:text-red-300',
+	footerContainer: 'flex gap-3 w-full',
+	cancelButton: 'flex-1',
+	deleteButton: 'flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200'
+} as const;
 
 // Extracted loading skeleton component with card styling
 const CommentSkeleton = memo(() => (
@@ -134,6 +155,16 @@ const Comment = memo(
 		const [isEditing, setIsEditing] = useState(false);
 		const [editContent, setEditContent] = useState(comment.content);
 		const [editRating, setEditRating] = useState(comment.rating);
+		const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+		const handleDeleteConfirm = async () => {
+			try {
+				await onDelete(comment.id);
+				setIsDeleteDialogOpen(false);
+			} catch {
+				// Keep dialog open on error - parent already shows toast
+			}
+		};
 
 		const handleSave = async () => {
 			if (!editContent.trim()) return;
@@ -194,7 +225,7 @@ const Comment = memo(
 											variant="ghost"
 											size="sm"
 											className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
-											onClick={() => onDelete(comment.id)}
+											onClick={() => setIsDeleteDialogOpen(true)}
 											disabled={isDeleting || isUpdating}
 											aria-label="Delete comment"
 										>
@@ -257,8 +288,70 @@ const Comment = memo(
 						<p className="mt-2 text-sm text-gray-700 dark:text-gray-300">{comment.content}</p>
 					)}
 				</div>
-			</div>
-		);
+
+			{/* Delete Confirmation Dialog */}
+			<Modal
+				isOpen={isDeleteDialogOpen}
+				onClose={() => setIsDeleteDialogOpen(false)}
+				size="md"
+				hideCloseButton={true}
+				isDismissable={!isDeleting}
+			>
+				<ModalContent>
+					<ModalHeader>
+						<div className={DELETE_DIALOG_CLASSES.headerContainer}>
+							<div className={DELETE_DIALOG_CLASSES.alertIcon}>
+								<AlertTriangle className="h-5 w-5 text-white" />
+							</div>
+							<h2 className={DELETE_DIALOG_CLASSES.headerText}>Delete Comment</h2>
+						</div>
+					</ModalHeader>
+
+					<ModalBody>
+						<div className={DELETE_DIALOG_CLASSES.warningContainer}>
+							<div className={DELETE_DIALOG_CLASSES.warningContent}>
+								<AlertTriangle className={DELETE_DIALOG_CLASSES.warningIcon} />
+								<p className={DELETE_DIALOG_CLASSES.warningText}>
+									Are you sure you want to delete this comment? This action cannot be undone.
+								</p>
+							</div>
+						</div>
+					</ModalBody>
+
+					<ModalFooter>
+						<div className={DELETE_DIALOG_CLASSES.footerContainer}>
+							<Button
+								variant="outline"
+								onClick={() => setIsDeleteDialogOpen(false)}
+								disabled={isDeleting}
+								className={DELETE_DIALOG_CLASSES.cancelButton}
+							>
+								Cancel
+							</Button>
+							<Button
+								variant="destructive"
+								onClick={handleDeleteConfirm}
+								disabled={isDeleting}
+								className={DELETE_DIALOG_CLASSES.deleteButton}
+							>
+								{isDeleting ? (
+									<div className="flex items-center gap-2">
+										<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+										<span>Deleting...</span>
+									</div>
+								) : (
+									<>
+										<Trash2 className="h-4 w-4 mr-2" />
+										Delete
+									</>
+								)}
+							</Button>
+						</div>
+					</ModalFooter>
+				</ModalContent>
+			</Modal>
+		</div>
+	);
 	}
 );
 Comment.displayName = 'Comment';

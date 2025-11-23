@@ -24,6 +24,7 @@ import { useFeatureFlags } from "@/hooks/use-feature-flags";
 import { useHasGlobalSurveys } from "@/hooks/use-has-global-surveys";
 import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 import { useTagsEnabled } from "@/hooks/use-tags-enabled";
+import { useHeaderSettings } from "@/hooks/use-header-settings";
 
 interface NavigationItem {
   key: string;
@@ -141,6 +142,7 @@ export default function Header() {
   const { hasGlobalSurveys, isPending } = useHasGlobalSurveys();
   const { categoriesEnabled } = useCategoriesEnabled();
   const { tagsEnabled } = useTagsEnabled();
+  const { settings: headerSettings } = useHeaderSettings();
   const t = useTranslations("common");
   const tListing = useTranslations("listing");
   const tSurvey = useTranslations("survey");
@@ -166,6 +168,14 @@ export default function Header() {
         if (item.key === "surveys" && !isPending && !hasGlobalSurveys) {
           return false;
         }
+        // Hide pricing link when header pricing is disabled
+        if (item.key === "pricing" && !headerSettings.pricingEnabled) {
+          return false;
+        }
+        // Hide submit link when header submit is disabled
+        if (item.key === "submit" && !headerSettings.submitEnabled) {
+          return false;
+        }
         return true;
       })
       .map((item) => ({
@@ -179,7 +189,7 @@ export default function Header() {
             : t(item.translationKey as any)
           : item.staticLabel || item.key,
       }));
-  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending, categoriesEnabled, tagsEnabled]);
+  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending, categoriesEnabled, tagsEnabled, headerSettings.pricingEnabled, headerSettings.submitEnabled]);
 
   const isActiveLink = useCallback(
     (href: string): boolean => {
@@ -295,12 +305,14 @@ export default function Header() {
           ))}
           
           <div className={STYLES.mobileControls}>
-            <div className="py-2 flex justify-center">
-              <div className="scale-90 sm:scale-95 md:scale-100 transition-transform duration-200">
-                <LayoutSwitcher inline />
+            {headerSettings.layoutEnabled && (
+              <div className="py-2 flex justify-center">
+                <div className="scale-90 sm:scale-95 md:scale-100 transition-transform duration-200">
+                  <LayoutSwitcher inline />
+                </div>
               </div>
-            </div>
-            
+            )}
+
             <div className={`py-2 flex justify-center ${STYLES.mobileOnly}`}>
               <div className="scale-90 sm:scale-95 md:scale-100 transition-transform duration-200">
                 <NavigationControls />
