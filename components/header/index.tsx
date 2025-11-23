@@ -157,7 +157,7 @@ export default function Header() {
     return NAVIGATION_CONFIG
       .filter((item) => {
         // Hide categories link when categories are disabled
-        if (item.key === "categories" && !categoriesEnabled && !hasCategories) {
+        if (item.key === "categories" && (!categoriesEnabled || !hasCategories)) {
           return false;
         }
         // Hide favorites link when feature is disabled or user is not logged in
