@@ -5,8 +5,8 @@ import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 
 interface BreadcrumbProps {
   name: string;
-  category: string | { id?: string };
-  categoryName: string;
+  category: string | { id?: string } | null | undefined;
+  categoryName: string | null | undefined;
 }
 
 export function ItemBreadcrumb({
@@ -19,8 +19,8 @@ export function ItemBreadcrumb({
     typeof category === "string"
       ? category
       : (category as { id?: string })?.id || String(category);
-
   const encodedCategory = encodeURIComponent(categoryId);
+
   return (
     <nav className="flex mb-4" aria-label="Breadcrumb">
       <ol className="inline-flex items-center space-x-1 md:space-x-3">
@@ -63,7 +63,7 @@ export function ItemBreadcrumb({
                 href={`/categories/${encodedCategory}`}
                 className="ml-1 text-sm font-medium text-gray-800 dark:text-white/50 md:ml-2 transition-colors duration-300"
               >
-                {toTitleCase(categoryName)}
+                {toTitleCase(categoryName ?? "") ?? ""}
               </Link>
             </div>
           </li>

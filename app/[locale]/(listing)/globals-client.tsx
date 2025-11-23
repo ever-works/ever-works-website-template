@@ -87,9 +87,11 @@ export default function GlobalsClient(props: ListingProps) {
 
 				<div className={LAYOUT_STYLES.contentWrapper}>
 					{/* Sidebar - Categories */}
-					<div className={`${LAYOUT_STYLES.sidebar} ${LAYOUT_STYLES.sidebarMobile}`}>
-						<Categories total={props.total} categories={sortedCategories} tags={sortedTags} />
-					</div>
+					{sortedCategories.length > 0 && (
+						<div className={`${LAYOUT_STYLES.sidebar} ${LAYOUT_STYLES.sidebarMobile}`}>
+							<Categories total={props.total} categories={sortedCategories} tags={sortedTags} />
+						</div>
+					)}
 
 					{/* Main Content */}
 					<div className={LAYOUT_STYLES.mainContent}>
