@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/accordion';
 import { Sliders } from 'lucide-react';
 import { SettingSwitch } from './SettingSwitch';
+import { SettingSelect } from './SettingSelect';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
@@ -112,15 +113,38 @@ const PLACEHOLDER_TEXT_CLASSES = [
 	'dark:border-gray-700'
 ].join(' ');
 
+interface HomepageSettings {
+	hero_enabled?: boolean;
+	search_enabled?: boolean;
+	default_view?: string;
+	default_sort?: string;
+}
+
+interface HeaderConfigSettings {
+	submit_enabled?: boolean;
+	pricing_enabled?: boolean;
+	layout_enabled?: boolean;
+	language_enabled?: boolean;
+	theme_enabled?: boolean;
+	layout_default?: string;
+	pagination_default?: string;
+	theme_default?: string;
+}
+
+interface FooterConfigSettings {
+	subscribe_enabled?: boolean;
+	version_enabled?: boolean;
+	theme_selector_enabled?: boolean;
+}
+
 interface Settings {
 	categories_enabled?: boolean;
+	companies_enabled?: boolean;
 	tags_enabled?: boolean;
 	surveys_enabled?: boolean;
-	header_submit_enabled?: boolean;
-	header_pricing_enabled?: boolean;
-	header_layout_enabled?: boolean;
-	header_language_enabled?: boolean;
-	header_theme_enabled?: boolean;
+	header?: HeaderConfigSettings;
+	homepage?: HomepageSettings;
+	footer?: FooterConfigSettings;
 	[key: string]: unknown;
 }
 
@@ -154,6 +178,25 @@ export function SettingsPage() {
 		fetchSettings();
 	}, []);
 
+	// Helper to update nested state paths
+	const setNestedValue = (obj: Settings, path: string, value: unknown): Settings => {
+		const keys = path.split('.');
+		if (keys.length === 1) {
+			return { ...obj, [path]: value };
+		}
+
+		const result = { ...obj } as Record<string, unknown>;
+		let current = result;
+
+		for (let i = 0; i < keys.length - 1; i++) {
+			const key = keys[i];
+			current[key] = { ...(current[key] as Record<string, unknown> || {}) };
+			current = current[key] as Record<string, unknown>;
+		}
+		current[keys[keys.length - 1]] = value;
+		return result as Settings;
+	};
+
 	// Update a specific setting
 	const updateSetting = async (key: string, value: unknown) => {
 		try {
@@ -171,11 +214,8 @@ export function SettingsPage() {
 				throw new Error('Failed to update setting');
 			}
 
-			// Update local state
-			setSettings((prev) => ({
-				...prev,
-				[key]: value,
-			}));
+			// Update local state with nested path support
+			setSettings((prev) => setNestedValue(prev, key, value));
 
 			toast.success('Setting updated successfully');
 		} catch (error) {
@@ -239,6 +279,13 @@ export function SettingsPage() {
 									disabled={saving}
 								/>
 								<SettingSwitch
+									label={t('COMPANIES_ENABLED_LABEL')}
+									description={t('COMPANIES_ENABLED_DESC')}
+									value={settings.companies_enabled ?? true}
+									onChange={(value) => updateSetting('companies_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
 									label={t('TAGS_ENABLED_LABEL')}
 									description={t('TAGS_ENABLED_DESC')}
 									value={settings.tags_enabled ?? true}
@@ -273,9 +320,54 @@ export function SettingsPage() {
 						</div>
 					</AccordionTrigger>
 					<AccordionContent className={ACCORDION_CONTENT_CLASSES}>
-						<p className={PLACEHOLDER_TEXT_CLASSES}>
-							No settings configured yet. Settings will appear here once added to config.yml
-						</p>
+						{loading ? (
+							<p className={PLACEHOLDER_TEXT_CLASSES}>
+								Loading settings...
+							</p>
+						) : (
+							<>
+								<SettingSwitch
+									label={t('HERO_ENABLED_LABEL')}
+									description={t('HERO_ENABLED_DESC')}
+									value={settings.homepage?.hero_enabled ?? true}
+									onChange={(value) => updateSetting('homepage.hero_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('SEARCH_ENABLED_LABEL')}
+									description={t('SEARCH_ENABLED_DESC')}
+									value={settings.homepage?.search_enabled ?? true}
+									onChange={(value) => updateSetting('homepage.search_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSelect
+									label={t('DEFAULT_VIEW_LABEL')}
+									description={t('DEFAULT_VIEW_DESC')}
+									value={settings.homepage?.default_view ?? 'classic'}
+									onChange={(value) => updateSetting('homepage.default_view', value)}
+									options={[
+										{ value: 'classic', label: 'List View' },
+										{ value: 'grid', label: 'Grid View' },
+										{ value: 'masonry', label: 'Masonry View' },
+									]}
+									disabled={saving}
+								/>
+								<SettingSelect
+									label={t('DEFAULT_SORT_LABEL')}
+									description={t('DEFAULT_SORT_DESC')}
+									value={settings.homepage?.default_sort ?? 'popularity'}
+									onChange={(value) => updateSetting('homepage.default_sort', value)}
+									options={[
+										{ value: 'popularity', label: 'Popularity' },
+										{ value: 'name-asc', label: 'Name A-Z' },
+										{ value: 'name-desc', label: 'Name Z-A' },
+										{ value: 'date-desc', label: 'Newest First' },
+										{ value: 'date-asc', label: 'Oldest First' },
+									]}
+									disabled={saving}
+								/>
+							</>
+						)}
 					</AccordionContent>
 				</AccordionItem>
 
@@ -304,36 +396,69 @@ export function SettingsPage() {
 								<SettingSwitch
 									label={t('HEADER_SUBMIT_ENABLED_LABEL')}
 									description={t('HEADER_SUBMIT_ENABLED_DESC')}
-									value={settings.header_submit_enabled ?? true}
-									onChange={(value) => updateSetting('header_submit_enabled', value)}
+									value={settings.header?.submit_enabled ?? true}
+									onChange={(value) => updateSetting('header.submit_enabled', value)}
 									disabled={saving}
 								/>
 								<SettingSwitch
 									label={t('HEADER_PRICING_ENABLED_LABEL')}
 									description={t('HEADER_PRICING_ENABLED_DESC')}
-									value={settings.header_pricing_enabled ?? true}
-									onChange={(value) => updateSetting('header_pricing_enabled', value)}
+									value={settings.header?.pricing_enabled ?? true}
+									onChange={(value) => updateSetting('header.pricing_enabled', value)}
 									disabled={saving}
 								/>
 								<SettingSwitch
 									label={t('HEADER_LAYOUT_ENABLED_LABEL')}
 									description={t('HEADER_LAYOUT_ENABLED_DESC')}
-									value={settings.header_layout_enabled ?? true}
-									onChange={(value) => updateSetting('header_layout_enabled', value)}
+									value={settings.header?.layout_enabled ?? true}
+									onChange={(value) => updateSetting('header.layout_enabled', value)}
 									disabled={saving}
 								/>
 								<SettingSwitch
 									label={t('HEADER_LANGUAGE_ENABLED_LABEL')}
 									description={t('HEADER_LANGUAGE_ENABLED_DESC')}
-									value={settings.header_language_enabled ?? true}
-									onChange={(value) => updateSetting('header_language_enabled', value)}
+									value={settings.header?.language_enabled ?? true}
+									onChange={(value) => updateSetting('header.language_enabled', value)}
 									disabled={saving}
 								/>
 								<SettingSwitch
 									label={t('HEADER_THEME_ENABLED_LABEL')}
 									description={t('HEADER_THEME_ENABLED_DESC')}
-									value={settings.header_theme_enabled ?? true}
-									onChange={(value) => updateSetting('header_theme_enabled', value)}
+									value={settings.header?.theme_enabled ?? true}
+									onChange={(value) => updateSetting('header.theme_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSelect
+									label={t('HEADER_LAYOUT_DEFAULT_LABEL')}
+									description={t('HEADER_LAYOUT_DEFAULT_DESC')}
+									value={settings.header?.layout_default ?? 'home1'}
+									onChange={(value) => updateSetting('header.layout_default', value)}
+									options={[
+										{ value: 'home1', label: 'Home 1' },
+										{ value: 'home2', label: 'Home 2' },
+									]}
+									disabled={saving}
+								/>
+								<SettingSelect
+									label={t('HEADER_PAGINATION_DEFAULT_LABEL')}
+									description={t('HEADER_PAGINATION_DEFAULT_DESC')}
+									value={settings.header?.pagination_default ?? 'standard'}
+									onChange={(value) => updateSetting('header.pagination_default', value)}
+									options={[
+										{ value: 'standard', label: 'Standard' },
+										{ value: 'infinite', label: 'Infinite Scroll' },
+									]}
+									disabled={saving}
+								/>
+								<SettingSelect
+									label={t('HEADER_THEME_DEFAULT_LABEL')}
+									description={t('HEADER_THEME_DEFAULT_DESC')}
+									value={settings.header?.theme_default ?? 'light'}
+									onChange={(value) => updateSetting('header.theme_default', value)}
+									options={[
+										{ value: 'light', label: 'Light' },
+										{ value: 'dark', label: 'Dark' },
+									]}
 									disabled={saving}
 								/>
 							</>
@@ -357,9 +482,35 @@ export function SettingsPage() {
 						</div>
 					</AccordionTrigger>
 					<AccordionContent className={ACCORDION_CONTENT_CLASSES}>
-						<p className={PLACEHOLDER_TEXT_CLASSES}>
-							No settings configured yet. Settings will appear here once added to config.yml
-						</p>
+						{loading ? (
+							<p className={PLACEHOLDER_TEXT_CLASSES}>
+								Loading settings...
+							</p>
+						) : (
+							<>
+								<SettingSwitch
+									label={t('FOOTER_SUBSCRIBE_ENABLED_LABEL')}
+									description={t('FOOTER_SUBSCRIBE_ENABLED_DESC')}
+									value={settings.footer?.subscribe_enabled ?? false}
+									onChange={(value) => updateSetting('footer.subscribe_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('FOOTER_VERSION_ENABLED_LABEL')}
+									description={t('FOOTER_VERSION_ENABLED_DESC')}
+									value={settings.footer?.version_enabled ?? false}
+									onChange={(value) => updateSetting('footer.version_enabled', value)}
+									disabled={saving}
+								/>
+								<SettingSwitch
+									label={t('FOOTER_THEME_SELECTOR_ENABLED_LABEL')}
+									description={t('FOOTER_THEME_SELECTOR_ENABLED_DESC')}
+									value={settings.footer?.theme_selector_enabled ?? false}
+									onChange={(value) => updateSetting('footer.theme_selector_enabled', value)}
+									disabled={saving}
+								/>
+							</>
+						)}
 					</AccordionContent>
 				</AccordionItem>
 			</Accordion>

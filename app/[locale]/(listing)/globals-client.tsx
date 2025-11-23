@@ -20,6 +20,8 @@ type ListingProps = {
 	categories: Category[];
 	tags: Tag[];
 	items: ItemData[];
+	searchEnabled?: boolean;
+	defaultView?: string;
 };
 
 const LAYOUT_STYLES = {
@@ -138,6 +140,7 @@ export default function GlobalsClient(props: ListingProps) {
 					categories={sortedCategories}
 					tags={sortedTags}
 					filteredAndSortedItems={filteredItems}
+					searchEnabled={props.searchEnabled}
 				/>
 			</div>
 		</>

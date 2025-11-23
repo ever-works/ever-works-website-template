@@ -21,10 +21,15 @@ interface ProvidersProps {
 }
 
 export function Providers({ config, children, dehydratedState }: ProvidersProps) {
+	// Extract homepage settings for layout defaults
+	const configDefaults = {
+		defaultView: config.settings?.homepage?.default_view,
+	};
+
 	return (
 		<SessionProvider>
 			<QueryClientProvider dehydratedState={dehydratedState}>
-				<LayoutProvider>
+				<LayoutProvider configDefaults={configDefaults}>
 					<ErrorProvider>
 						<ConfirmProvider>
 							<FilterProvider>

@@ -23,6 +23,7 @@ export interface FilterProviderProps {
   children: React.ReactNode;
   initialTag?: string | null;
   initialCategory?: string | null;
+  initialSortBy?: string;
 }
 
 /**
@@ -30,8 +31,8 @@ export interface FilterProviderProps {
  * Provides filter state to child components
  * Can accept initial tag/category from page routes
  */
-export function FilterProvider({ children, initialTag, initialCategory }: FilterProviderProps) {
-  const filterState = useFilterState(initialTag, initialCategory);
+export function FilterProvider({ children, initialTag, initialCategory, initialSortBy }: FilterProviderProps) {
+  const filterState = useFilterState(initialTag, initialCategory, initialSortBy);
 
   return (
     <FilterContext.Provider value={filterState}>

@@ -23,6 +23,17 @@ export function getTagsEnabled(): boolean {
 }
 
 /**
+ * Server-side utility to check if companies are enabled
+ * @returns boolean - true if companies are enabled, false otherwise
+ */
+export function getCompaniesEnabled(): boolean {
+	const companiesEnabled = configManager.getNestedValue('settings.companies_enabled');
+
+	// Default to true if not set (backward compatibility)
+	return companiesEnabled ?? true;
+}
+
+/**
  * Server-side utility to check if surveys are enabled
  * @returns boolean - true if surveys are enabled, false otherwise
  */
@@ -38,7 +49,7 @@ export function getSurveysEnabled(): boolean {
  * @returns boolean - true if enabled, false otherwise
  */
 export function getHeaderSubmitEnabled(): boolean {
-	const enabled = configManager.getNestedValue('settings.header_submit_enabled');
+	const enabled = configManager.getNestedValue('settings.header.submit_enabled');
 	return enabled ?? true;
 }
 
@@ -47,7 +58,7 @@ export function getHeaderSubmitEnabled(): boolean {
  * @returns boolean - true if enabled, false otherwise
  */
 export function getHeaderPricingEnabled(): boolean {
-	const enabled = configManager.getNestedValue('settings.header_pricing_enabled');
+	const enabled = configManager.getNestedValue('settings.header.pricing_enabled');
 	return enabled ?? true;
 }
 
@@ -56,7 +67,7 @@ export function getHeaderPricingEnabled(): boolean {
  * @returns boolean - true if enabled, false otherwise
  */
 export function getHeaderLayoutEnabled(): boolean {
-	const enabled = configManager.getNestedValue('settings.header_layout_enabled');
+	const enabled = configManager.getNestedValue('settings.header.layout_enabled');
 	return enabled ?? true;
 }
 
@@ -65,7 +76,7 @@ export function getHeaderLayoutEnabled(): boolean {
  * @returns boolean - true if enabled, false otherwise
  */
 export function getHeaderLanguageEnabled(): boolean {
-	const enabled = configManager.getNestedValue('settings.header_language_enabled');
+	const enabled = configManager.getNestedValue('settings.header.language_enabled');
 	return enabled ?? true;
 }
 
@@ -74,6 +85,33 @@ export function getHeaderLanguageEnabled(): boolean {
  * @returns boolean - true if enabled, false otherwise
  */
 export function getHeaderThemeEnabled(): boolean {
-	const enabled = configManager.getNestedValue('settings.header_theme_enabled');
+	const enabled = configManager.getNestedValue('settings.header.theme_enabled');
 	return enabled ?? true;
+}
+
+/**
+ * Server-side utility to get the default layout
+ * @returns string - 'home1' or 'home2'
+ */
+export function getHeaderLayoutDefault(): string {
+	const layoutDefault = configManager.getNestedValue('settings.header.layout_default');
+	return layoutDefault ?? 'home1';
+}
+
+/**
+ * Server-side utility to get the default pagination type
+ * @returns string - 'standard' or 'infinite'
+ */
+export function getHeaderPaginationDefault(): string {
+	const paginationDefault = configManager.getNestedValue('settings.header.pagination_default');
+	return paginationDefault ?? 'standard';
+}
+
+/**
+ * Server-side utility to get the default theme
+ * @returns string - 'light' or 'dark'
+ */
+export function getHeaderThemeDefault(): string {
+	const themeDefault = configManager.getNestedValue('settings.header.theme_default');
+	return themeDefault ?? 'light';
 }

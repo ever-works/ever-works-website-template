@@ -4,6 +4,7 @@ import { Category, ItemData, Tag } from "@/lib/content";
 import GlobalsClient from "./globals-client";
 import Hero from "@/components/hero";
 import { FilterURLParser } from "@/components/filters/filter-url-parser";
+import { ConfigManager } from "@/lib/config-manager";
 
 type ListingProps = {
   total: number;
@@ -19,25 +20,42 @@ type ListingProps = {
 
 export default async function Listing(props: ListingProps) {
   const t = await getTranslations("listing");
+  const configManager = new ConfigManager();
+  const config = configManager.getConfig();
+  const homepageSettings = config.settings?.homepage;
+  const heroEnabled = homepageSettings?.hero_enabled ?? true;
+  const searchEnabled = homepageSettings?.search_enabled ?? true;
+  const defaultView = homepageSettings?.default_view ?? 'classic';
+  const defaultSort = homepageSettings?.default_sort ?? 'popularity';
 
   return (
-    <FilterProvider initialTag={props.initialTag} initialCategory={props.initialCategory}>
+    <FilterProvider
+      initialTag={props.initialTag}
+      initialCategory={props.initialCategory}
+      initialSortBy={defaultSort}
+    >
       <FilterURLParser />
-      <Hero
-        badgeText={t("INTRODUCING_EVER_WORKS")}
-        title={
-          <div className=" font-bold text-balance text-3xl sm:text-4xl md:text-5xl text-center">
-            {t("THE_BEST")} <br className="hidden md:block" />
-            <span className="bg-gradient-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent">
-              {t("DIRECTORY_WEBSITE_TEMPLATE")}
-            </span>
-          </div>
-        }
-        description={t("DEMO_DESCRIPTION")}
-        className="min-h-screen text-center"
-      >
-        <GlobalsClient {...props} />
-      </Hero>
+      {heroEnabled ? (
+        <Hero
+          badgeText={t("INTRODUCING_EVER_WORKS")}
+          title={
+            <div className=" font-bold text-balance text-3xl sm:text-4xl md:text-5xl text-center">
+              {t("THE_BEST")} <br className="hidden md:block" />
+              <span className="bg-gradient-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent">
+                {t("DIRECTORY_WEBSITE_TEMPLATE")}
+              </span>
+            </div>
+          }
+          description={t("DEMO_DESCRIPTION")}
+          className="min-h-screen text-center"
+        >
+          <GlobalsClient {...props} searchEnabled={searchEnabled} defaultView={defaultView} />
+        </Hero>
+      ) : (
+        <div className="min-h-screen pt-24">
+          <GlobalsClient {...props} searchEnabled={searchEnabled} defaultView={defaultView} />
+        </div>
+      )}
     </FilterProvider>
   );
 }

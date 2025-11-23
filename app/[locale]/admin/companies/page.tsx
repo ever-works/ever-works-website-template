@@ -3,7 +3,10 @@
 import { useState, useCallback } from 'react';
 import { useDebounceSearch } from '@/hooks/use-debounced-search';
 import { useAdminCompanies } from '@/hooks/use-admin-companies';
+import { useCompaniesEnabled } from '@/hooks/use-companies-enabled';
 import { UniversalPagination } from '@/components/universal-pagination';
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import type { Company } from '@/types/company';
 import type { CreateCompanyInput, UpdateCompanyInput } from '@/lib/validations/company';
 
@@ -20,6 +23,9 @@ import { CompanyModal, DeleteConfirmationModal } from '@/components/admin/compan
  * Main orchestrator for the companies management page
  */
 export default function CompaniesPage() {
+	const t = useTranslations('admin.ADMIN_COMPANIES_PAGE');
+	const { companiesEnabled } = useCompaniesEnabled();
+
 	// UI state
 	const [currentPage, setCurrentPage] = useState(1);
 	const [limit] = useState(10);
@@ -154,6 +160,62 @@ export default function CompaniesPage() {
 
 	return (
 		<div className="p-6 max-w-7xl mx-auto">
+			{/* Warning Banner - Companies Disabled */}
+			{!companiesEnabled && (
+				<div className="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 dark:border-yellow-600 p-4 rounded-lg shadow-md">
+					<div className="flex items-start">
+						<div className="flex-shrink-0">
+							<svg
+								className="h-6 w-6 text-yellow-400 dark:text-yellow-500"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								aria-hidden="true"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+								/>
+							</svg>
+						</div>
+						<div className="ml-3 flex-1">
+							<h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
+								{t('WARNING_DISABLED_TITLE')}
+							</h3>
+							<div className="mt-2 text-sm text-yellow-700 dark:text-yellow-400">
+								<p>
+									{t('WARNING_DISABLED_MESSAGE')}
+								</p>
+							</div>
+							<div className="mt-4">
+								<Link
+									href="/admin/settings"
+									className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-yellow-800 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-900/40 hover:bg-yellow-200 dark:hover:bg-yellow-900/60 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors"
+								>
+									{t('WARNING_DISABLED_ACTION')}
+									<svg
+										className="ml-2 -mr-0.5 h-4 w-4"
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 20 20"
+										fill="currentColor"
+										aria-hidden="true"
+									>
+										<path
+											fillRule="evenodd"
+											d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+											clipRule="evenodd"
+										/>
+									</svg>
+								</Link>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
+
 			{/* Page Header */}
 			<PageHeader onAddCompany={handleAddCompany} />
 
