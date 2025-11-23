@@ -171,6 +171,25 @@ export function SettingsPage() {
 		fetchSettings();
 	}, []);
 
+	// Helper to update nested state paths
+	const setNestedValue = (obj: Settings, path: string, value: unknown): Settings => {
+		const keys = path.split('.');
+		if (keys.length === 1) {
+			return { ...obj, [path]: value };
+		}
+
+		const result = { ...obj } as Record<string, unknown>;
+		let current = result;
+
+		for (let i = 0; i < keys.length - 1; i++) {
+			const key = keys[i];
+			current[key] = { ...(current[key] as Record<string, unknown> || {}) };
+			current = current[key] as Record<string, unknown>;
+		}
+		current[keys[keys.length - 1]] = value;
+		return result as Settings;
+	};
+
 	// Update a specific setting
 	const updateSetting = async (key: string, value: unknown) => {
 		try {
@@ -188,11 +207,8 @@ export function SettingsPage() {
 				throw new Error('Failed to update setting');
 			}
 
-			// Update local state
-			setSettings((prev) => ({
-				...prev,
-				[key]: value,
-			}));
+			// Update local state with nested path support
+			setSettings((prev) => setNestedValue(prev, key, value));
 
 			toast.success('Setting updated successfully');
 		} catch (error) {
