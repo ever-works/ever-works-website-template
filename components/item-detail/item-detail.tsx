@@ -341,12 +341,8 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 							</div>
 						)}
 
-<<<<<<< HEAD
 						{/* Categories - Only show if categories enabled and category exists */}
 						{categoriesEnabled && categoryName && (
-=======
-						{categoryName && categoryName.trim() !== "" && (
->>>>>>> 9afd64a (fix: hide category-related UI when no categories exist)
 							<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
 								<div className="flex items-center justify-between mb-6">
 									<div className="flex items-center gap-4">
@@ -375,47 +371,6 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 									<span className="text-xs bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full font-semibold border border-purple-200 dark:border-purple-700/50">
 										1 {t('common.ITEM')}
 									</span>
-<<<<<<< HEAD
-=======
-								</div>
-								<div className="flex flex-wrap gap-2">
-									<a
-										href={`/categories/${slugify(categoryName)}`}
-										className="group relative px-5 py-3 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 dark:hover:from-purple-900/30 dark:hover:to-pink-900/30 transition-all duration-300 rounded-xl text-sm font-semibold flex items-center border border-purple-200/50 dark:border-purple-700/50 hover:border-purple-300 dark:hover:border-purple-600 transform hover:scale-105 overflow-hidden"
-									>
-										<div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-200/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-										<span className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mr-3 group-hover:scale-125 transition-transform duration-300 relative z-10" />
-										<span className="text-purple-700 dark:text-purple-300 relative z-10">
-											{toTitleCase(categoryName)}
-										</span>
-									</a>
-								</div>
-							</div>
-						)}
-
-						<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
-							<div className="flex items-center justify-between mb-6">
-								<div className="flex items-center gap-4">
-									<div className="p-3 bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900/30 dark:to-blue-900/30 rounded-xl">
-										<svg
-											className="w-6 h-6 text-cyan-600 dark:text-cyan-400"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-											xmlns="http://www.w3.org/2000/svg"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth="2"
-												d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
-											></path>
-										</svg>
-									</div>
-									<h2 className="text-xl font-bold text-gray-800 dark:text-white">
-										{t('listing.TAGS')}
-									</h2>
->>>>>>> 9afd64a (fix: hide category-related UI when no categories exist)
 								</div>
 								<div className="flex flex-wrap gap-2">
 									<a

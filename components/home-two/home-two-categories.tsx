@@ -7,12 +7,12 @@ import { useTranslations } from "next-intl";
 import { Button } from "@heroui/react";
 import { cn } from "@/lib/utils/index";
 import React, {
-    memo,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 import ReactDOM from "react-dom";
 import Image from "next/image";
@@ -206,15 +206,8 @@ export function HomeTwoCategories({
   totalItems,
   showAllCategories = false,
 }: Home2CategoriesProps) {
-<<<<<<< HEAD
-  const { categoriesEnabled } = useCategoriesEnabled();
-=======
-  // Don't render if no categories
-  if (!categories || categories.length === 0) {
-    return null;
-  }
 
->>>>>>> 9afd64a (fix: hide category-related UI when no categories exist)
+  const { categoriesEnabled } = useCategoriesEnabled();
   const t = useTranslations("listing");
   const tCommon = useTranslations("common");
   const router = useRouter();

@@ -14,26 +14,11 @@ export function ItemBreadcrumb({
   category,
   categoryName,
 }: BreadcrumbProps) {
-<<<<<<< HEAD
   const { categoriesEnabled } = useCategoriesEnabled();
-  const categoryId =
+  const encodedCategory =
     typeof category === "string"
       ? category
       : (category as { id?: string })?.id || String(category);
-=======
-  // Check if category exists and is valid
-  const hasCategory = category && categoryName && 
-    (typeof category === "string" ? category.trim() !== "" : 
-     (category as { id?: string })?.id?.trim() !== "");
-
-  const categoryId = hasCategory
-    ? (typeof category === "string"
-        ? category
-        : (category as { id?: string })?.id || String(category))
-    : null;
-
-  const encodedCategory = categoryId ? encodeURIComponent(categoryId) : null;
->>>>>>> 9afd64a (fix: hide category-related UI when no categories exist)
 
   return (
     <nav className="flex mb-4" aria-label="Breadcrumb">
@@ -55,11 +40,7 @@ export function ItemBreadcrumb({
             Home
           </Link>
         </li>
-<<<<<<< HEAD
         {categoriesEnabled && (
-=======
-        {hasCategory && encodedCategory && (
->>>>>>> 9afd64a (fix: hide category-related UI when no categories exist)
           <li>
             <div className="flex items-center">
               <svg
@@ -81,7 +62,7 @@ export function ItemBreadcrumb({
                 href={`/categories/${encodedCategory}`}
                 className="ml-1 text-sm font-medium text-gray-800 dark:text-white/50 md:ml-2 transition-colors duration-300"
               >
-                {toTitleCase(categoryName)}
+                {toTitleCase(categoryName ?? "") ?? ""}
               </Link>
             </div>
           </li>
