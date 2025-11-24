@@ -255,19 +255,22 @@ export default function Header() {
   );
 
   const renderNavigationItems = useCallback(
-    () => navigationItems.map(renderNavigationItem),
-    [navigationItems, renderNavigationItem]
+    () => (
+      <>
+        {navigationItems.map(renderNavigationItem)}
+        {headerSettings.moreEnabled && (
+          <NavbarItem key="more">
+            <MoreMenu />
+          </NavbarItem>
+        )}
+      </>
+    ),
+    [navigationItems, renderNavigationItem, headerSettings.moreEnabled]
   );
 
   const renderRightSection = useCallback(
     () => (
       <NavbarContent justify="end" className={STYLES.rightSection}>
-        {headerSettings.moreEnabled && (
-          <NavbarItem className={STYLES.desktopOnly}>
-            <MoreMenu />
-          </NavbarItem>
-        )}
-
         <NavbarItem className={STYLES.largeUp}>
           <NavigationControls />
         </NavbarItem>
@@ -284,7 +287,7 @@ export default function Header() {
         />
       </NavbarContent>
     ),
-    [isMenuOpen, headerSettings.moreEnabled]
+    [isMenuOpen]
   );
 
   return (

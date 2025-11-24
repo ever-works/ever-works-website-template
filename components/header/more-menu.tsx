@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "./index";
-import { ExternalLink } from "lucide-react";
 
 interface MoreMenuItem {
   key: string;
@@ -61,10 +60,9 @@ const MENU_ITEMS_CONFIG: Array<{
 
 const STYLES = {
   button: cn(
-    "flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md",
-    "text-gray-700 dark:text-gray-300",
-    "hover:text-theme-primary hover:bg-gray-100 dark:hover:bg-gray-800",
-    "transition-all duration-200"
+    "flex items-center gap-1.5",
+    "transition-all duration-200 font-medium whitespace-nowrap text-sm lg:text-base xl:text-lg",
+    "text-gray-700 dark:text-gray-300"
   ),
   menuContainer: cn(
     "absolute right-0 mt-2 w-48 origin-top-right",
@@ -74,7 +72,7 @@ const STYLES = {
     "py-1 z-50"
   ),
   menuItem: cn(
-    "flex items-center justify-between w-full px-4 py-2 text-sm",
+    "flex items-center w-full px-4 py-2 text-sm",
     "text-gray-700 dark:text-gray-300",
     "hover:bg-gray-100 dark:hover:bg-gray-700",
     "hover:text-theme-primary",
@@ -91,7 +89,7 @@ const STYLES = {
     "mt-1 ml-4 space-y-1"
   ),
   mobileMenuItem: cn(
-    "flex items-center justify-between w-full px-3 py-2 text-sm rounded-md",
+    "flex items-center w-full px-3 py-2 text-sm rounded-md",
     "text-gray-600 dark:text-gray-400",
     "hover:bg-gray-100 dark:hover:bg-gray-800",
     "hover:text-theme-primary",
@@ -179,7 +177,6 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
           {...commonProps}
         >
           {item.label}
-          <ExternalLink className="w-3.5 h-3.5 text-gray-400" />
         </a>
       );
     }
