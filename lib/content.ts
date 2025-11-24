@@ -1018,7 +1018,9 @@ export async function fetchPageContent(
 	locale: string = 'en'
 ): Promise<{ content: string; metadata: Record<string, unknown> } | null> {
 	try {
-		// Repository sync now handled by background sync manager (lib/services/sync-service.ts)
+		// Ensure content is available (copies from build to runtime on Vercel)
+		const { ensureContentAvailable } = await import('./lib');
+		await ensureContentAvailable();
 
 		const base = getContentPath();
 		const pagesDir = path.join(base, 'pages');
