@@ -90,6 +90,15 @@ export function getHeaderThemeEnabled(): boolean {
 }
 
 /**
+ * Server-side utility to check if header more menu is enabled
+ * @returns boolean - true if enabled, false otherwise
+ */
+export function getHeaderMoreEnabled(): boolean {
+	const enabled = configManager.getNestedValue('settings.header.more_enabled');
+	return enabled ?? true;
+}
+
+/**
  * Server-side utility to get the default layout
  * @returns string - 'home1' or 'home2'
  */

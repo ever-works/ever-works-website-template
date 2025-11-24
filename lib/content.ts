@@ -193,6 +193,7 @@ export interface HeaderSettings {
 	layoutEnabled: boolean;
 	languageEnabled: boolean;
 	themeEnabled: boolean;
+	moreEnabled: boolean;
 	layoutDefault: string;
 	paginationDefault: string;
 	themeDefault: string;
@@ -211,6 +212,7 @@ export interface HeaderConfigSettings {
 	layout_enabled?: boolean;
 	language_enabled?: boolean;
 	theme_enabled?: boolean;
+	more_enabled?: boolean;
 	layout_default?: string;
 	pagination_default?: string;
 	theme_default?: string;
