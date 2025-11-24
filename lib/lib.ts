@@ -6,7 +6,12 @@ import * as fs from 'fs/promises';
 
 export function getContentPath() {
     const contentDir = '.content';
-    if (process.env.VERCEL) {
+
+    // During build phase on Vercel, use source directory directly
+    // At runtime, use /tmp because build artifact is read-only
+    const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
+
+    if (process.env.VERCEL && !isBuildPhase) {
         return path.join(os.tmpdir(), contentDir);
     }
 
