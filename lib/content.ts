@@ -266,6 +266,10 @@ interface FetchOptions {
 async function getConfig() {
 	console.log('Fetching config');
 	try {
+		// Ensure content is available (copies from build to runtime on Vercel)
+		const { ensureContentAvailable } = await import('./lib');
+		await ensureContentAvailable();
+
 		const contentPath = getContentPath();
 		const configPath = path.join(contentPath, 'config.yml');
 		const raw = await safeReadFile(configPath, contentPath);
@@ -337,6 +341,10 @@ async function readCollection<T extends Identifiable>(
 	options: FetchOptions = {}
 ): Promise<Map<string, T>> {
 	try {
+		// Ensure content is available (copies from build to runtime on Vercel)
+		const { ensureContentAvailable } = await import('./lib');
+		await ensureContentAvailable();
+
 		const contentPath = getContentPath();
 		const collectionDir = path.join(contentPath, type);
 
@@ -726,7 +734,9 @@ function calculateSimilarityScore(
 }
 
 export async function fetchItem(slug: string, options: FetchOptions = {}) {
-	// Repository sync now handled by background sync manager (lib/services/sync-service.ts)
+	// Ensure content is available (copies from build to runtime on Vercel)
+	const { ensureContentAvailable } = await import('./lib');
+	await ensureContentAvailable();
 
 	// Sanitize slug to prevent path traversal attacks
 	const sanitizedSlug = sanitizeFilename(slug);
