@@ -8,6 +8,9 @@ import { triggerManualSync } from "@/lib/services/sync-service";
  * This endpoint calls the same triggerManualSync() function used by
  * the manual sync endpoint, ensuring consistent behavior and
  * proper cache invalidation after successful sync.
+ *
+ * Authentication: Requires CRON_SECRET environment variable.
+ * Vercel automatically sends this in the Authorization header for cron jobs.
  */
 
 interface CronSyncResponse {
@@ -18,8 +21,25 @@ interface CronSyncResponse {
     details?: string;
 }
 
-export async function GET(): Promise<NextResponse<CronSyncResponse>> {
+export async function GET(request: Request): Promise<NextResponse<CronSyncResponse>> {
     const startTime = Date.now();
+
+    // Verify cron secret for authentication
+    const authHeader = request.headers.get("authorization");
+    const cronSecret = process.env.CRON_SECRET;
+
+    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+        console.warn("[CRON_SYNC] Unauthorized request - invalid or missing CRON_SECRET");
+        return NextResponse.json(
+            {
+                success: false,
+                timestamp: new Date().toISOString(),
+                duration: Date.now() - startTime,
+                message: "Unauthorized",
+            },
+            { status: 401 }
+        );
+    }
 
     try {
         console.log("[CRON_SYNC] Vercel cron sync triggered");
