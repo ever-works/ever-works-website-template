@@ -16,13 +16,13 @@ export interface SyncStatus {
 }
 
 // Configuration
-const SYNC_INTERVAL_MS = 60 * 1000; // 60 seconds
+const SYNC_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 const SYNC_TIMEOUT_MS = 5 * 60 * 1000; // 5 minute timeout
 const MAX_RETRIES = 3;
 
 /**
  * Singleton sync manager that handles automatic background synchronization
- * Runs git repository sync every 60 seconds without blocking requests
+ * Runs git repository sync every 5 minutes without blocking requests
  */
 class SyncManager {
   private syncInProgress = false;

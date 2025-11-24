@@ -101,3 +101,8 @@ export interface TriggerDevConfig {
   isFullyConfigured: boolean;
   isPartiallyConfigured: boolean;
 }
+
+/**
+ * Scheduling mode determines which scheduling system is active
+ */
+export type SchedulingMode = 'trigger-dev' | 'vercel' | 'local' | 'disabled';

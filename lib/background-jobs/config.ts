@@ -1,4 +1,4 @@
-import { TriggerDevConfig } from './types';
+import { TriggerDevConfig, SchedulingMode } from './types';
 
 /**
  * Get Trigger.dev configuration from environment variables
@@ -27,7 +27,46 @@ export function getTriggerDevConfig(): TriggerDevConfig {
  */
 export function shouldUseTriggerDev(): boolean {
   const config = getTriggerDevConfig();
-  return config.isFullyConfigured && 
-         config.enabled && 
+  return config.isFullyConfigured &&
+         config.enabled &&
          process.env.NODE_ENV === 'production';
+}
+
+/**
+ * Check if running in Vercel environment
+ * @returns True if running on Vercel
+ */
+export function isVercelEnvironment(): boolean {
+  return process.env.VERCEL === '1';
+}
+
+/**
+ * Determine which scheduling mode should be used
+ * Priority order:
+ * 1. Disabled - if DISABLE_AUTO_SYNC is true
+ * 2. Trigger.dev - if fully configured and enabled in production
+ * 3. Vercel - if running on Vercel platform
+ * 4. Local - fallback for all other environments
+ *
+ * @returns The scheduling mode to use
+ */
+export function getSchedulingMode(): SchedulingMode {
+  // Check if auto-sync is disabled
+  const disableAutoSync = process.env.DISABLE_AUTO_SYNC?.toLowerCase()?.trim();
+  if (['1', 'true', 'yes', 'on'].includes(disableAutoSync || '')) {
+    return 'disabled';
+  }
+
+  // Priority 1: Trigger.dev (production only)
+  if (shouldUseTriggerDev()) {
+    return 'trigger-dev';
+  }
+
+  // Priority 2: Vercel cron
+  if (isVercelEnvironment()) {
+    return 'vercel';
+  }
+
+  // Priority 3: Local fallback
+  return 'local';
 }

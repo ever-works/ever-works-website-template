@@ -41,7 +41,7 @@ export async function initializeBackgroundJobs(): Promise<void> {
       // - Status tracking
       await syncManager.performSync();
     },
-    60 * 1000 // 60 seconds interval
+    5 * 60 * 1000 // 5 minutes interval
   );
 
   console.log('[BACKGROUND_JOBS] Repository sync job registered with BackgroundJobManager');
