@@ -17,10 +17,8 @@
 7. [Admin Portal Features](#7-admin-portal-features)
 8. [API Documentation](#8-api-documentation)
 9. [Feature Flags System](#9-feature-flags-system)
-10. [Issues, Concerns & Improvements](#10-issues-concerns--improvements)
-11. [Services Architecture](#11-services-architecture)
-12. [Custom Hooks](#12-custom-hooks)
-13. [Recommendations Summary](#13-recommendations-summary)
+10. [Services Architecture](#10-services-architecture)
+11. [Custom Hooks](#11-custom-hooks)
 
 ---
 
@@ -1711,117 +1709,7 @@ Additional toggles read from admin settings:
 
 ---
 
-## 10. Issues, Concerns & Improvements
-
-### Security Issues
-
-#### 1. Sensitive Data in Console Logs
-**Location**: `/lib/auth/index.ts` (lines 62-63)
-```typescript
-console.log('Sign-in attempt', { user, account, profile });
-```
-**Issue**: Logs sensitive user data including email, account info
-**Severity**: Medium
-**Recommendation**: Remove or mask PII in production logs
-
-#### 2. Temporary Password Generation
-**Location**: `/app/api/admin/clients/route.ts` (lines 420-423)
-```typescript
-const tempPassword = `Temp${randomString}!`;
-```
-**Issue**: Predictable password pattern; password not communicated to user
-**Severity**: Medium
-**Recommendation**: Use secure random generation; send via email
-
-### Code Quality Issues
-
-#### 1. Console Logs in Production Code
-Multiple files contain `console.log` statements that should be removed or replaced with proper logging:
-- `/lib/auth/index.ts`
-- `/app/[locale]/admin/layout-client.tsx` (lines 22, 30, 38)
-- `/middleware.ts` (lines 43-44, 55-56)
-
-#### 2. Commented-Out Code
-**Location**: `/app/[locale]/admin/layout-client.tsx` (lines 42-51)
-Large block of commented-out loading UI code should be removed
-
-#### 3. Type Assertions
-**Location**: `/lib/auth/index.ts` (lines 28-31)
-```typescript
-usersTable: users as any,
-accountsTable: accounts as any,
-```
-**Issue**: Using `as any` bypasses type checking
-**Recommendation**: Fix Drizzle adapter types
-
-#### 4. Deprecated Field
-**Location**: `/app/api/admin/clients/route.ts` (line 15)
-```typescript
-/** @deprecated use `email` instead */
-userId?: string;
-```
-**Recommendation**: Remove deprecated field after migration period
-
-### Architecture Concerns
-
-#### 1. Dual Authentication Complexity
-The project supports both NextAuth and Supabase Auth, creating:
-- Complex middleware logic
-- Potential inconsistencies
-- Maintenance burden
-
-**Recommendation**: Standardize on single auth provider unless both are required
-
-#### 2. Client-Side Admin Auth Check
-**Location**: `/app/[locale]/admin/layout-client.tsx`
-
-Admin authentication is checked client-side, which:
-- Shows loading spinner before redirect
-- Could be bypassed temporarily
-- Creates flash of unauthorized content
-
-**Recommendation**: Add server-side protection in `layout.tsx`
-
-#### 3. Missing Error Boundaries
-Some pages lack proper error boundaries for graceful failure handling.
-
-### Performance Concerns
-
-#### 1. No Pagination Limit Enforcement
-While `validatePaginationParams` exists, some endpoints may bypass it.
-
-#### 2. Large Bundle Size
-Dependencies include:
-- Multiple TipTap extensions
-- Full Recharts library
-- Survey.js libraries
-
-**Recommendation**: Implement code splitting and lazy loading
-
-### Missing Features
-
-#### 1. Two-Factor Authentication
-Field exists (`twoFactorEnabled`) but no implementation
-
-#### 2. Rate Limiting
-No visible rate limiting on API endpoints
-
-#### 3. Audit Logging
-Activity logs exist but may not capture all admin actions
-
-#### 4. Password Policies
-No password strength requirements beyond basic validation
-
-### Testing Concerns
-
-No test files visible in the codebase. Recommend adding:
-- Unit tests for utilities
-- Integration tests for APIs
-- E2E tests for critical flows
-
----
-
-## 11. Services Architecture
+## 10. Services Architecture
 
 **Location**: `/lib/services/`
 
@@ -1868,7 +1756,7 @@ No test files visible in the codebase. Recommend adding:
 
 ---
 
-## 12. Custom Hooks
+## 11. Custom Hooks
 
 **Location**: `/hooks/`
 
@@ -1936,40 +1824,6 @@ No test files visible in the codebase. Recommend adding:
 | `use-filters.ts` | Filter state |
 | `use-multi-step-form.ts` | Multi-step forms |
 | `use-sticky-state.ts` | Sticky elements |
-
----
-
-## 13. Recommendations Summary
-
-### High Priority
-
-| Issue | Recommendation |
-|-------|----------------|
-| Console logs with sensitive data | Remove or mask PII in `/lib/auth/index.ts` |
-| Client-side admin protection | Add server-side checks in admin `layout.tsx` |
-| No rate limiting | Implement rate limiting on auth endpoints |
-| No test coverage | Add unit, integration, and E2E tests |
-| Weak temporary passwords | Use secure random generation + email notification |
-
-### Medium Priority
-
-| Issue | Recommendation |
-|-------|----------------|
-| Dual auth complexity | Standardize on single provider |
-| Missing error boundaries | Add to all pages |
-| Console logs throughout | Replace with proper logging (Winston/Pino) |
-| Commented-out code | Remove unused code blocks |
-| No password policies | Add strength requirements |
-
-### Low Priority
-
-| Issue | Recommendation |
-|-------|----------------|
-| Large bundle size | Implement code splitting |
-| Incomplete 2FA | Complete two-factor implementation |
-| Basic audit logging | Add comprehensive admin action logging |
-| Type assertions | Fix Drizzle adapter types |
-| Deprecated fields | Remove after migration period |
 
 ---
 
