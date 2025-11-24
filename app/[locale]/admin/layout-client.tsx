@@ -63,6 +63,11 @@ function AdminAuthGuard({ children }: { children: React.ReactNode }) {
   }
 
   // User is authenticated and is admin
+  // On auth pages, render children directly without admin layout wrapper
+  if (isAuthPage) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <header className="p-4 bg-gray-800 text-white font-bold text-xl">Admin Panel</header>
