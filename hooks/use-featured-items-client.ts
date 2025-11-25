@@ -66,15 +66,20 @@ export function useFeaturedItems() {
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
+    // Custom retry logic with exponential backoff
+    // Note: Changed from immediate retries (retry: 3) to smart retry with delays
+    // This is an improvement that prevents server hammering on transient errors
     retry: (failureCount, error) => {
-      // Don't retry if database is unavailable
+      // Don't retry if database is unavailable (fail fast)
       if (error instanceof Error && error.message?.includes('Database not configured')) {
         return false;
       }
       // Otherwise retry once (reduced from 3 to minimize timeouts)
       return failureCount < 1;
     },
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
+    // Exponential backoff: 1s, 2s, 4s... up to 30s max
+    // Prevents overwhelming the server during outages or rate limiting
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
   return {
