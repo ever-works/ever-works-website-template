@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSettingsModal } from "@/hooks/use-settings-modal";
@@ -16,7 +17,7 @@ const BUTTON_CLASSES = cn(
 	"cursor-pointer"
 );
 
-export function SettingsButton() {
+function SettingsButtonComponent() {
 	const { openModal } = useSettingsModal();
 	const t = useTranslations("settings");
 
@@ -31,3 +32,6 @@ export function SettingsButton() {
 		</button>
 	);
 }
+
+export const SettingsButton = memo(SettingsButtonComponent);
+SettingsButton.displayName = "SettingsButton";

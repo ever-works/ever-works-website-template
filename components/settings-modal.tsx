@@ -4,14 +4,13 @@ import { X } from "lucide-react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { useSettingsModal } from "@/hooks/use-settings-modal";
-import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
 const BACKDROP_CLASSES = cn(
 	"fixed inset-0",
 	"bg-black/50 dark:bg-black/70",
 	"backdrop-blur-sm",
-	"z-50",
+	"z-[9998]",
 	"transition-opacity duration-300"
 );
 
@@ -23,21 +22,16 @@ const MODAL_CLASSES = cn(
 	"bg-white dark:bg-gray-900",
 	"border border-gray-200 dark:border-gray-700",
 	"rounded-2xl shadow-2xl",
-	"z-[60]",
+	"z-[9999]",
 	"overflow-hidden",
 	"transition-all duration-300"
 );
 
 export function SettingsModal() {
 	const { isOpen, closeModal } = useSettingsModal();
-	const [mounted, setMounted] = useState(false);
 	const t = useTranslations("settings");
 
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-
-	if (!mounted || !isOpen) {
+	if (!isOpen || typeof window === "undefined") {
 		return null;
 	}
 

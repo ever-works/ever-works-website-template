@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSettingsModal } from "@/hooks/use-settings-modal";
@@ -32,7 +33,7 @@ const TOOLTIP_CLASSES = cn(
 	"pointer-events-none"
 );
 
-export function FloatingSettingsButton() {
+function FloatingSettingsButtonComponent() {
 	const { openModal } = useSettingsModal();
 	const t = useTranslations("settings");
 
@@ -44,7 +45,6 @@ export function FloatingSettingsButton() {
 			type="button"
 		>
 			<Settings className="h-6 w-6" />
-
 			{/* Tooltip - visibility controlled by CSS group-hover */}
 			<span className={TOOLTIP_CLASSES}>
 				{t("SETTINGS")}
@@ -52,3 +52,6 @@ export function FloatingSettingsButton() {
 		</button>
 	);
 }
+
+export const FloatingSettingsButton = memo(FloatingSettingsButtonComponent);
+FloatingSettingsButton.displayName = "FloatingSettingsButton";
