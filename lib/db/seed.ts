@@ -250,7 +250,11 @@ async function seedContent(ids: { adminProfileId: string; clientProfileId1: stri
   }
 }
 
-async function main() {
+/**
+ * Main seed function - exported for reuse by auto-initialization
+ * Wipes existing data and seeds the database with test data
+ */
+export async function runSeed(): Promise<void> {
   await ensureDb();
   console.log('Seeding database: wiping existing data...');
   await wipeData();
@@ -271,6 +275,13 @@ async function main() {
   const [{ count: permsCount }] = await db.select({ count: sql<number>`count(*)` }).from(permissions);
 
   console.log('Seed complete:', { users: usersCount, profiles: profilesCount, roles: rolesCount, permissions: permsCount });
+}
+
+/**
+ * CLI entry point for manual seeding via `yarn db:seed`
+ */
+async function main() {
+  await runSeed();
 }
 
 main().catch((err) => {
