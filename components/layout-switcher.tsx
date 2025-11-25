@@ -8,7 +8,6 @@ import {
 } from "@/components/context/LayoutThemeContext";
 import { useTheme } from "next-themes";
 import Image from "next/image";
-import SelectPaginationType from "./ui/select-pagination-type";
 import { useTranslations } from "next-intl";
 
 const getLayoutMap = (isDark: boolean, t: any) =>
@@ -312,7 +311,6 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
                 </p>
               </div>
             </div>
-            <SelectPaginationType />
             {layoutContent}
           </div>
         </div>

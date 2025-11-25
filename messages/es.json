@@ -345,6 +345,8 @@
     "PROFILE_DESC": "Ver y editar tu perfil",
     "ACCOUNT_SETTINGS_DESC": "Configuración y preferencias de la cuenta",
     "PROFILE_SETTINGS": "Configuración del perfil",
+    "PAGINATION_STYLE": "Estilo de paginación",
+    "PAGINATION_STYLE_DESC": "Elige cómo se muestra el contenido al navegar por los listados",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Información básica",

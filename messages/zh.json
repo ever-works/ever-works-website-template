@@ -297,6 +297,8 @@
     "PROFILE_DESC": "查看和编辑您的个人资料",
     "ACCOUNT_SETTINGS_DESC": "账户设置和偏好",
     "PROFILE_SETTINGS": "个人资料设置",
+    "PAGINATION_STYLE": "分页样式",
+    "PAGINATION_STYLE_DESC": "选择浏览列表时内容的显示方式",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "基本信息",

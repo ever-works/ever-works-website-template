@@ -394,6 +394,8 @@
     "PROFILE_DESC": "Afficher et modifier votre profil",
     "ACCOUNT_SETTINGS_DESC": "Paramètres et préférences du compte",
     "PROFILE_SETTINGS": "Paramètres du profil",
+    "PAGINATION_STYLE": "Style de pagination",
+    "PAGINATION_STYLE_DESC": "Choisissez comment le contenu est affiché lors de la navigation dans les listes",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Informations de base",

@@ -56,9 +56,9 @@ const SelectPaginationType: React.FC<SelectPaginationTypeProps> = ({
   };
 
   return (
-    <div 
+    <div
       className={cn(
-        "space-y-3 p-4 bg-gray-50/50 dark:bg-gray-800/30 rounded-xl h-[140px]",
+        "space-y-3 p-4 bg-gray-50/50 dark:bg-gray-800/30 rounded-xl min-h-[120px]",
         "border border-gray-200/30 dark:border-gray-700/30",
         disabled && "opacity-50 cursor-not-allowed",
         className

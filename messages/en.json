@@ -436,6 +436,8 @@
     "ACCOUNT_SETTINGS_DESC": "Account settings and preferences",
     "ADMIN_SETTINGS_DESC": "Manage site configuration and preferences",
     "PROFILE_SETTINGS": "Profile Settings",
+    "PAGINATION_STYLE": "Pagination Style",
+    "PAGINATION_STYLE_DESC": "Choose how content is displayed when browsing listings",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Basic Information",

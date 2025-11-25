@@ -5,6 +5,8 @@ import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { useSettingsModal } from "@/hooks/use-settings-modal";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import SelectPaginationType from "@/components/ui/select-pagination-type";
 
 const BACKDROP_CLASSES = cn(
 	"fixed inset-0",
@@ -27,9 +29,18 @@ const MODAL_CLASSES = cn(
 	"transition-all duration-300"
 );
 
+const CONTENT_SECTION_CLASSES = cn("space-y-3");
+
+const SECTION_HEADING_CLASSES = cn("text-sm font-semibold text-gray-900 dark:text-white");
+
+const SECTION_DESC_CLASSES = cn("text-xs text-gray-500 dark:text-gray-400 mt-1");
+
+const DIVIDER_CLASSES = cn("border-t border-gray-200 dark:border-gray-700");
+
 export function SettingsModal() {
 	const { isOpen, closeModal } = useSettingsModal();
 	const [mounted, setMounted] = useState(false);
+	const t = useTranslations("settings");
 
 	useEffect(() => {
 		setMounted(true);
@@ -62,11 +73,21 @@ export function SettingsModal() {
 				</div>
 
 				{/* Modal Content */}
-				<div className="px-6 py-8">
-					{/* Empty content area - settings will be added in future PRs */}
-					<p className="text-gray-500 dark:text-gray-400 text-center">
-						Settings options will be added here
-					</p>
+				<div className="px-6 py-8 space-y-6">
+					{/* Pagination Style Section */}
+					<div className={CONTENT_SECTION_CLASSES}>
+						<div>
+							<h3 className={SECTION_HEADING_CLASSES}>{t("PAGINATION_STYLE")}</h3>
+							<p className={SECTION_DESC_CLASSES}>{t("PAGINATION_STYLE_DESC")}</p>
+						</div>
+
+						<SelectPaginationType />
+					</div>
+
+					{/* Divider for future sections */}
+					<div className={DIVIDER_CLASSES} />
+
+					{/* Future settings sections will go here */}
 				</div>
 			</div>
 		</>,

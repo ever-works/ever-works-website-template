@@ -297,6 +297,8 @@
     "PROFILE_DESC": "عرض وتعديل ملفك الشخصي",
     "ACCOUNT_SETTINGS_DESC": "إعدادات الحساب والتفضيلات",
     "PROFILE_SETTINGS": "إعدادات الملف الشخصي",
+    "PAGINATION_STYLE": "نمط الترقيم",
+    "PAGINATION_STYLE_DESC": "اختر كيفية عرض المحتوى عند تصفح القوائم",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "المعلومات الأساسية",

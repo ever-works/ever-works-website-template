@@ -317,6 +317,8 @@
     "PROFILE_DESC": "Ihr Profil anzeigen und bearbeiten",
     "ACCOUNT_SETTINGS_DESC": "Kontoeinstellungen und Präferenzen",
     "PROFILE_SETTINGS": "Profileinstellungen",
+    "PAGINATION_STYLE": "Paginierungsstil",
+    "PAGINATION_STYLE_DESC": "Wählen Sie aus, wie Inhalte beim Durchsuchen von Listen angezeigt werden",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Grundinformationen",
