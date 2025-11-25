@@ -38,26 +38,43 @@ export class SurveyService {
    * Create a new survey
    */
   async create(data: CreateSurveyData): Promise<Survey> {
-    // Generate slug from title
-    const slug = this.generateSlug(data.title);
+    try {
+      // Generate slug from title
+      const slug = this.generateSlug(data.title);
 
-    // Check if slug exists
-    const existingSurvey = await queries.getSurveyBySlug(slug);
-    const finalSlug = existingSurvey ? await this.ensureUniqueSlug(slug) : slug;
+      // Check if slug exists
+      const existingSurvey = await queries.getSurveyBySlug(slug);
+      const finalSlug = existingSurvey ? await this.ensureUniqueSlug(slug) : slug;
 
-    const newSurvey: NewSurvey = {
-      slug: finalSlug,
-      title: data.title,
-      description: data.description,
-      type: data.type,
-      itemId: data.itemId,
-      status: data.status || 'draft',
-      surveyJson: data.surveyJson,
-      publishedAt: data.status === 'published' ? new Date() : undefined,
-      closedAt: data.status === 'closed' ? new Date() : undefined,
-    };
+      const newSurvey: NewSurvey = {
+        slug: finalSlug,
+        title: data.title,
+        description: data.description,
+        type: data.type,
+        itemId: data.itemId,
+        status: data.status || 'draft',
+        surveyJson: data.surveyJson,
+        publishedAt: data.status === 'published' ? new Date() : undefined,
+        closedAt: data.status === 'closed' ? new Date() : undefined,
+      };
 
-    return await queries.createSurvey(newSurvey);
+      return await queries.createSurvey(newSurvey);
+    } catch (error) {
+      // Check if error is database-related
+      if (error instanceof Error && (
+        error.message?.includes('DATABASE_URL') ||
+        error.message?.includes('connect ECONNREFUSED') ||
+        error.message?.includes('relation') ||
+        error.message?.includes('database')
+      )) {
+        // Only log in development mode
+        if (process.env.NODE_ENV === 'development') {
+          console.error('[SurveyService] Database error in create:', error.message);
+        }
+        throw new Error('Database not configured');
+      }
+      throw error;
+    }
   }
 
   /**
@@ -79,19 +96,36 @@ export class SurveyService {
    * Uses efficient JOINs to get response count and completion status in a single query
    */
   async getMany(filters?: SurveyFilters, userId?: string) {
-    const result = await queries.getSurveys({
-      ...filters,
-      userId,
-      withResponseCount: true,
-      withCompletionStatus: !!userId,
-    });
+    try {
+      const result = await queries.getSurveys({
+        ...filters,
+        userId,
+        withResponseCount: true,
+        withCompletionStatus: !!userId,
+      });
 
-    return {
-      surveys: result.surveys,
-      total: result.total,
-      totalPages: result.totalPages,
-      page: filters?.page || 1
-    };
+      return {
+        surveys: result.surveys,
+        total: result.total,
+        totalPages: result.totalPages,
+        page: filters?.page || 1
+      };
+    } catch (error) {
+      // Check if error is database-related
+      if (error instanceof Error && (
+        error.message?.includes('DATABASE_URL') ||
+        error.message?.includes('connect ECONNREFUSED') ||
+        error.message?.includes('relation') ||
+        error.message?.includes('database')
+      )) {
+        // Only log in development mode
+        if (process.env.NODE_ENV === 'development') {
+          console.error('[SurveyService] Database error in getMany:', error.message);
+        }
+        throw new Error('Database not configured');
+      }
+      throw error;
+    }
   }
 
   /**
