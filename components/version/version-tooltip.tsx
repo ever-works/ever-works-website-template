@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { VersionDisplay } from "./version-display";
 import { useVersionInfo } from "@/hooks/use-version-info";
+import { useIsDevOrAdmin } from "@/hooks/use-is-dev-or-admin";
 
 interface VersionTooltipProps {
   children: React.ReactNode;
@@ -11,15 +12,16 @@ interface VersionTooltipProps {
   delay?: number;
 }
 
-export function VersionTooltip({ 
-  children, 
-  className = "", 
+export function VersionTooltip({
+  children,
+  className = "",
   disabled = false,
-  delay = 300 
+  delay = 300
 }: VersionTooltipProps) {
   // Always call all hooks first - this is critical for hook order consistency
   const [isVisible, setIsVisible] = useState(false);
   const { versionInfo, error } = useVersionInfo();
+  const isDevOrAdmin = useIsDevOrAdmin();
 
   // Use refs to manage timeouts and prevent memory leaks
   const showTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -81,7 +83,18 @@ export function VersionTooltip({
     };
   }, []);
 
-  if (disabled || error || !versionInfo) {
+  // Handle disabled state
+  if (disabled) {
+    return <>{children}</>;
+  }
+
+  // Handle error state - hide completely for regular users
+  if (error || !versionInfo) {
+    // For regular users: hide the entire component
+    if (!isDevOrAdmin) {
+      return null;
+    }
+    // For dev/admin: show children without tooltip functionality
     return <>{children}</>;
   }
 

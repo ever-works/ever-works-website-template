@@ -307,7 +307,7 @@ export async function GET() {
   
   try {
     // Performance: Log API call
-    console.log("[VERSION_API] Starting version info request");
+    // console.log("[VERSION_API] Starting version info request");
 
     // Repository sync now handled by background sync manager (lib/services/sync-service.ts)
 
@@ -336,8 +336,8 @@ export async function GET() {
     const headers = createSuccessHeaders(latestCommit);
 
     // Performance: Log completion time
-    const duration = Date.now() - startTime;
-    console.log(`[VERSION_API] Request completed successfully in ${duration}ms`);
+    // const duration = Date.now() - startTime;
+    // console.log(`[VERSION_API] Request completed successfully in ${duration}ms`);
 
     return NextResponse.json(versionInfo, { headers });
 

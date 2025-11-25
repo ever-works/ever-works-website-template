@@ -2,6 +2,7 @@
 
 import { Clock, GitBranch, User, Calendar, Info } from "lucide-react";
 import { useVersionInfo } from "@/hooks/use-version-info";
+import { useIsDevOrAdmin } from "@/hooks/use-is-dev-or-admin";
 import { memo, useMemo } from "react";
 
 interface VersionDisplayProps {
@@ -11,9 +12,9 @@ interface VersionDisplayProps {
   refreshInterval?: number;
 }
 
-const VersionDisplay = memo(function VersionDisplay({ 
-  className = "", 
-  variant = "inline", 
+const VersionDisplay = memo(function VersionDisplay({
+  className = "",
+  variant = "inline",
   showDetails = false,
   refreshInterval = 5 * 60 * 1000 // 5 minutes
 }: VersionDisplayProps) {
@@ -21,6 +22,7 @@ const VersionDisplay = memo(function VersionDisplay({
     refreshInterval,
     retryOnError: true,
   });
+  const isDevOrAdmin = useIsDevOrAdmin();
 
   // Memoize date formatters for performance
   const dateFormatters = useMemo(() => ({
@@ -55,8 +57,14 @@ const VersionDisplay = memo(function VersionDisplay({
     }
   }), []);
 
-  // Error state
+  // Error state - only show error UI to dev/admin users
   if (error || !versionInfo) {
+    // For regular users: hide the component silently
+    if (!isDevOrAdmin) {
+      return null;
+    }
+
+    // For dev/admin: show error message
     return (
       <div className={`inline-flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 ${className}`}>
         <Info className="h-3 w-3" />
