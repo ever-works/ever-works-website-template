@@ -202,7 +202,10 @@ export async function GET(request: NextRequest) {
       count: featuredItemsList.length,
     });
   } catch (error) {
-    console.error('Error fetching featured items:', error);
+    // Only log errors in development mode
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error fetching featured items:', error);
+    }
     return NextResponse.json(
       { success: false, error: 'Failed to fetch featured items' },
       { status: 500 }
