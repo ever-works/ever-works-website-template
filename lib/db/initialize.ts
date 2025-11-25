@@ -39,6 +39,7 @@ export async function isDatabaseSeeded(): Promise<boolean> {
 /**
  * Initialize database by auto-seeding if needed
  * - Silent skip if DATABASE_URL is not configured (optional DB)
+ * - Silent skip if AUTO_SEED_ON_STARTUP is not enabled (safe by default)
  * - Throws error if DATABASE_URL exists but seeding fails
  */
 export async function initializeDatabase(): Promise<void> {
@@ -46,6 +47,15 @@ export async function initializeDatabase(): Promise<void> {
 	if (!process.env.DATABASE_URL) {
 		if (process.env.NODE_ENV === 'development') {
 			console.log('[DB Init] DATABASE_URL not configured - skipping database initialization');
+		}
+		return;
+	}
+
+	// Silent skip if auto-seed not explicitly enabled (safe by default)
+	if (process.env.AUTO_SEED_ON_STARTUP !== 'true') {
+		if (process.env.NODE_ENV === 'development') {
+			console.log('[DB Init] AUTO_SEED_ON_STARTUP not enabled - skipping auto-seed');
+			console.log('[DB Init] Set AUTO_SEED_ON_STARTUP=true to enable automatic seeding');
 		}
 		return;
 	}
