@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { surveyService } from '@/lib/services/survey.service';
 import type { CreateSurveyData, SurveyFilters, SurveyStatusEnum, SurveyTypeEnum } from '@/lib/types/survey';
 import { Logger } from '@/lib/logger';
+import { checkDatabaseAvailability } from '@/lib/utils/database-check';
 
 const logger = Logger.create('SurveyAPI');
 
@@ -80,6 +81,10 @@ const logger = Logger.create('SurveyAPI');
  */
 export async function GET(request: NextRequest) {
     try {
+        // Check database availability first
+        const dbCheck = checkDatabaseAvailability();
+        if (dbCheck) return dbCheck;
+
         const session = await auth();
         const { searchParams } = new URL(request.url);
 
@@ -113,7 +118,10 @@ export async function GET(request: NextRequest) {
             }
         });
     } catch (error) {
-        logger.error('Error fetching surveys', error);
+        // Only log errors in development mode
+        if (process.env.NODE_ENV === 'development') {
+            logger.error('Error fetching surveys', error);
+        }
         return NextResponse.json(
             {
                 success: false,
@@ -165,6 +173,10 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
     try {
+        // Check database availability first
+        const dbCheck = checkDatabaseAvailability();
+        if (dbCheck) return dbCheck;
+
         const session = await auth();
 
         if (!session?.user?.isAdmin) {
@@ -182,7 +194,10 @@ export async function POST(request: NextRequest) {
             data: survey
         }, { status: 201 });
     } catch (error) {
-        logger.error('Error creating survey', error);
+        // Only log errors in development mode
+        if (process.env.NODE_ENV === 'development') {
+            logger.error('Error creating survey', error);
+        }
         return NextResponse.json(
             {
                 success: false,
