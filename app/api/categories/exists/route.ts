@@ -19,7 +19,10 @@ export async function GET(request: NextRequest) {
       count: categories?.length || 0
     });
   } catch (error) {
-    console.error("Error checking categories existence:", error);
+    // Only log errors in development mode
+    if (process.env.NODE_ENV === 'development') {
+      console.error("Error checking categories existence:", error);
+    }
     // On error, assume categories don't exist to be safe
     return NextResponse.json({
       exists: false,
