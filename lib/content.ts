@@ -266,7 +266,6 @@ interface FetchOptions {
 }
 
 async function getConfig() {
-	console.log('Fetching config');
 	try {
 		// Ensure content is available (copies from build to runtime on Vercel)
 		const { ensureContentAvailable } = await import('./lib');
