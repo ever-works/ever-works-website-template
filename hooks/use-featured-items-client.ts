@@ -66,8 +66,15 @@ export function useFeaturedItems() {
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
-    refetchInterval: 10 * 60 * 1000, // 10 minutes - reduced from 1 minute
-    retry: 3,
+    retry: (failureCount, error) => {
+      // Don't retry if database is unavailable
+      if (error instanceof Error && error.message?.includes('Database not configured')) {
+        return false;
+      }
+      // Otherwise retry once (reduced from 3 to minimize timeouts)
+      return failureCount < 1;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
   });
 
   return {
