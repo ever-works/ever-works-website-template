@@ -140,3 +140,18 @@ export function calculateActiveFilterCount(filters: {
 		filters.datePreset !== 'all' ? 'dateFilter' : null,
 	].filter(Boolean).length;
 }
+
+export function toDateTime(date: unknown, locale: string = "en"): string {
+	try {
+	  if (!date) return "—";
+	  const d = new Date(String(date));
+	  if (Number.isNaN(d.getTime())) return "—";
+	  return new Intl.DateTimeFormat(locale, {
+		year: "numeric",
+		month: "short",
+		day: "2-digit",
+	  }).format(d);
+	} catch {
+	  return "—";
+	}
+  }
