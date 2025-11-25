@@ -289,6 +289,8 @@
     "BILLING": "账单",
     "NOTIFICATIONS": "通知",
     "SETTINGS": "设置",
+    "OPEN_SETTINGS": "打开设置",
+    "CLOSE_SETTINGS": "关闭设置",
     "SECURITY": "安全",
     "LEGAL": "法律",
     "HELP": "帮助中心",

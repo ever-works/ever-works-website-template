@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { useSettingsModal } from "@/hooks/use-settings-modal";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 const BACKDROP_CLASSES = cn(
 	"fixed inset-0",
@@ -30,6 +31,7 @@ const MODAL_CLASSES = cn(
 export function SettingsModal() {
 	const { isOpen, closeModal } = useSettingsModal();
 	const [mounted, setMounted] = useState(false);
+	const t = useTranslations("settings");
 
 	useEffect(() => {
 		setMounted(true);
@@ -49,12 +51,12 @@ export function SettingsModal() {
 				{/* Modal Header */}
 				<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
 					<h2 id="settings-title" className="text-xl font-semibold text-gray-900 dark:text-white">
-						Settings
+						{t("SETTINGS")}
 					</h2>
 					<button
 						onClick={closeModal}
 						className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-						aria-label="Close settings"
+						aria-label={t("CLOSE_SETTINGS")}
 						type="button"
 					>
 						<X className="h-5 w-5" />

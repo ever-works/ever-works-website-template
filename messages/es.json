@@ -337,6 +337,8 @@
     "BILLING": "Facturación",
     "NOTIFICATIONS": "Notificaciones",
     "SETTINGS": "Configuración",
+    "OPEN_SETTINGS": "Abrir configuración",
+    "CLOSE_SETTINGS": "Cerrar configuración",
     "SECURITY": "Seguridad",
     "LEGAL": "Legal",
     "HELP": "Centro de ayuda",

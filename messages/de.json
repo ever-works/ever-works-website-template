@@ -309,6 +309,8 @@
     "BILLING": "Abrechnung",
     "NOTIFICATIONS": "Benachrichtigungen",
     "SETTINGS": "Einstellungen",
+    "OPEN_SETTINGS": "Einstellungen öffnen",
+    "CLOSE_SETTINGS": "Einstellungen schließen",
     "SECURITY": "Sicherheit",
     "LEGAL": "Rechtliches",
     "HELP": "Hilfe-Center",
