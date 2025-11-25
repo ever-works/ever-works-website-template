@@ -8,9 +8,10 @@ import { HomeTwoCategories } from "./home-two-categories";
 import { LayoutKey } from "../layouts";
 import { SortOption } from "../filters/types";
 import { LayoutSettings } from "../layout-settings";
-import { Button } from "@heroui/react";
 import { useState } from "react";
 import clsx from "clsx";
+import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
 
 const SORT_OPTIONS: SortOption[] = [
   'popularity',
@@ -191,7 +192,7 @@ export function HomeTwoFilters({
         {/* Right: Show all categories toggle button */}
         {categories.length > 5 && (
           <Button
-            className={clsx(
+            className={cn(
               "px-4 py-1.5 font-medium transition-all duration-300 rounded-full",
               "text-theme-primary bg-theme-primary-10",
               "hover:bg-theme-primary-20 hover:shadow-sm hover:scale-105",
@@ -199,7 +200,7 @@ export function HomeTwoFilters({
               "text-xs sm:text-sm h-8",
               "focus:outline-none focus:ring-2 focus:ring-theme-primary-300 focus:ring-offset-2"
             )}
-            onPress={() => setShowAllCategories(!showAllCategories)}
+            onClick={() => setShowAllCategories(!showAllCategories)}
             aria-expanded={showAllCategories}
             aria-label={
               showAllCategories

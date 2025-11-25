@@ -1,4 +1,4 @@
-import { Button } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 import { Building2, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -34,13 +34,8 @@ export function PageHeader({ onAddClient }: PageHeaderProps) {
 							<p className="text-gray-600 dark:text-gray-400 mt-1">{t('SUBTITLE')}</p>
 						</div>
 					</div>
-					<Button
-						color="primary"
-						size="lg"
-						onPress={onAddClient}
-						startContent={<Plus size={18} />}
-						className={ADD_BUTTON_CLASSES}
-					>
+					<Button color="primary" size="lg" onClick={onAddClient} className={ADD_BUTTON_CLASSES}>
+						<Plus size={18} />
 						{t('ADD_CLIENT')}
 					</Button>
 				</div>

@@ -1,7 +1,7 @@
 "use client";
 
+import { cn } from '@/lib/utils';
 import React, { useEffect, useState } from 'react';
-import { cn } from '@heroui/react';
 
 // Types pour les animations
 export type AnimationType = 'fadeIn' | 'slideUp' | 'slideDown' | 'slideLeft' | 'slideRight' | 'scaleIn' | 'bounceIn';

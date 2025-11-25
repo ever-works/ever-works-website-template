@@ -4,7 +4,7 @@ import { Edit, Trash2, Star, Shield, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { getCardBrandInfo, PaymentMethodData } from '@/hooks/use-payment-methods';
-import { Badge } from '@heroui/react';
+import { Badge } from '../ui/badge';
 
 interface PaymentMethodCardProps {
 	paymentMethod: PaymentMethodData;

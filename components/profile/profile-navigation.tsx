@@ -1,8 +1,8 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { FiUser, FiBriefcase, FiAward, FiFileText } from "react-icons/fi";
-import { cn } from "@heroui/react";
 
 interface ProfileNavigationProps {
   activeTab?: string;

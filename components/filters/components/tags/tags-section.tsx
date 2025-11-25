@@ -1,4 +1,3 @@
-import { Button, cn } from "@heroui/react";
 import { usePathname } from "@/i18n/navigation";
 import { TagsProps } from "../../types";
 import { TagsList } from "./tags-list";
@@ -6,6 +5,8 @@ import { useStickyHeader } from "../../hooks/use-sticky-header";
 import { useTagVisibility } from "../../hooks/use-tag-visibility";
 import { useFilters } from "../../context/filter-context";
 import { useTagsEnabled } from "@/hooks/use-tags-enabled";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 /**
  * Main tags section component
@@ -73,13 +74,12 @@ export function Tags({
           {hasMoreTags && (
             <Button
               variant="flat"
-              radius="full"
               size="sm"
               className={cn(
-                "px-4 py-1 font-medium transition-all duration-300 bg-theme-primary-10 text-theme-primary",
+                "px-4 py-1 font-medium transition-all duration-300 bg-theme-primary-10 text-theme-primary rounded-full",
                 isSticky && "shadow-sm"
               )}
-              onPress={toggleTagVisibility}
+              onClick={toggleTagVisibility}
             >
               {showAllTags ? (
                 <>

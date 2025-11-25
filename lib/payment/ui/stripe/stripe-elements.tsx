@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { PaymentElement, useStripe, useElements, Elements } from '@stripe/react-stripe-js';
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import { PaymentFormProps } from '../../types/payment-types';
-import { Button } from '@heroui/react';
 import { useSetupIntent } from '@/hooks/use-setup-intent';
+import { Button } from '@/components/ui/button';
 
 // Wrapper with Stripe Elements
 interface StripeElementsWrapperProps extends PaymentFormProps {

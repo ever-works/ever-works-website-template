@@ -1,9 +1,9 @@
-import { Button } from "@heroui/react";
 import { X } from "lucide-react";
 import { useMemo } from "react";
 import { ActiveFiltersProps, TagId } from "../../types";
 import { containerStyles, textStyles, filterItemStyles } from "../../utils/style-utils";
 import { formatDisplayName } from "../../utils/text-utils";
+import { Button } from "@/components/ui/button";
 
 /**
  * Active filters component
@@ -66,7 +66,7 @@ export function ActiveFilters({
             size="sm"
             variant="ghost"
             color="danger"
-            onPress={clearAllFilters}
+            onClick={clearAllFilters}
             className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
           >
             Clear All

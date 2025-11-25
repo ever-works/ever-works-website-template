@@ -3,8 +3,8 @@
 import { useState, useCallback } from "react";
 import { FiCopy, FiCheck, FiPercent, FiDollarSign, FiTruck, FiClock, FiExternalLink } from "react-icons/fi";
 import { PromoCode } from "@/lib/content";
-import { cn } from "@heroui/react";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 
 interface PromoCodeProps {
   promoCode: PromoCode;

@@ -1,7 +1,7 @@
 "use client";
 
+import { cn } from '@/lib/utils';
 import React from 'react';
-import { cn } from '@heroui/react';
 
 // Component for screen readers only
 interface ScreenReaderOnlyProps {

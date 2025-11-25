@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { Divider } from "@heroui/react";
 import { ThemeToggler } from "../theme-toggler";
 import { Container } from "../ui/container";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { VersionDisplay, VersionTooltip } from "../version";
+import { Separator } from "../ui/separator";
 
 export function FooterBottom({ config, t }: { config: any; t: any }) {
   const { theme } = useTheme();
@@ -66,7 +66,7 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
                     className="font-normal text-xs sm:text-sm md:text-base flex items-center transition-all duration-300 hover:scale-105 relative group"
                   >
                     {index > 0 && (
-                      <Divider
+                      <Separator
                         orientation="vertical"
                         className="mr-1 sm:mr-2 h-[12px] sm:h-[16px] w-px sm:w-[2px] bg-gray-600 dark:bg-gray-500"
                       />

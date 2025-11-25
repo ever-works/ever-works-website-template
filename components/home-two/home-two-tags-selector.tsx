@@ -2,11 +2,11 @@
 
 import { useState, useMemo, useCallback, useRef, useId, useEffect } from "react";
 import { Tag } from "@/lib/content";
-import { Button } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { ChevronDown, Search, Tag as TagIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils/index";
 import { useTagsEnabled } from "@/hooks/use-tags-enabled";
+import { Button } from "../ui/button";
 
 type HomeTwoTagsSelectorProps = {
   tags: Tag[];
@@ -17,7 +17,7 @@ type HomeTwoTagsSelectorProps = {
 type TagButtonProps = {
   tag: Tag;
   isActive: boolean;
-  onPress: () => void;
+  onClick: () => void;
 };
 
 const MAX_TAG_NAME_LENGTH = 20;
@@ -28,13 +28,13 @@ const truncateText = (text: string): string => {
   return `${text.substring(0, MAX_TAG_NAME_LENGTH)}${TRUNCATE_SUFFIX}`;
 };
 
-const TagButton = ({ tag, isActive, onPress }: TagButtonProps) => {
+const TagButton = ({ tag, isActive, onClick }: TagButtonProps) => {
   const displayName = truncateText(tag.name);
   const isTextTruncated = tag.name.length > MAX_TAG_NAME_LENGTH;
 
   return (
     <Button
-      onPress={onPress}
+      onClick={onClick}
       className={cn(
         "group w-full font-medium text-left h-6 justify-start items-center transition-all duration-200",
         "hover:shadow-md hover:scale-[1.02] active:scale-[0.98]",
@@ -153,13 +153,11 @@ export const HomeTwoTagsSelector = ({
   return (
     <div className="flex flex-col gap-2 relative" ref={popoverRef}>
       <Button
-        disableRipple
-        onPress={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-2 sm:px-3 h-8 sm:h-9 text-xs sm:text-sm text-theme-primary-600 dark:text-theme-primary-400 transition-colors duration-300",
-          "group flex items-center gap-1 sm:gap-2 min-w-[80px] sm:min-w-[100px]"
+          "group flex items-center gap-1 sm:gap-2 min-w-[80px] sm:min-w-[100px] rounded-sm"
         )}
-        radius="sm"
         variant="light"
         aria-label="Select tags"
         aria-expanded={isOpen}
@@ -206,7 +204,7 @@ export const HomeTwoTagsSelector = ({
               />
               {searchTerm && (
                 <Button
-                  onPress={clearSearch}
+                  onClick={clearSearch}
                   className="absolute inset-y-0 right-0 pr-2.5 sm:pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors bg-transparent"
                 >
                   <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -223,7 +221,7 @@ export const HomeTwoTagsSelector = ({
                     key={`${tag.id}-${index}`}
                     tag={tag}
                     isActive={isActive}
-                    onPress={() => onTagToggle?.(tag.id)}
+                    onClick={() => onTagToggle?.(tag.id)}
                   />
                 );
               })}

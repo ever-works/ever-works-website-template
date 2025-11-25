@@ -1,9 +1,10 @@
-import { Button } from '@heroui/react';
 import { Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { ClientForm } from '@/components/admin/clients/client-form';
 import type { ClientProfileWithAuth } from '@/lib/db/queries';
 import type { CreateClientRequest, UpdateClientRequest } from '@/lib/types/client';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 
 interface ClientFormModalProps {
 	isOpen: boolean;
@@ -25,7 +26,7 @@ export function ClientFormModal({
 	selectedClient,
 	isSubmitting,
 	onSubmit,
-	onClose,
+	onClose
 }: ClientFormModalProps) {
 	if (!isOpen) return null;
 	if (mode === 'edit' && !selectedClient) return null;
@@ -57,12 +58,7 @@ interface DeleteConfirmationModalProps {
  * Handles client deletion confirmation
  * Following SRP: Only responsible for delete confirmation UI
  */
-export function DeleteConfirmationModal({
-	isOpen,
-	isDeleting,
-	onConfirm,
-	onCancel,
-}: DeleteConfirmationModalProps) {
+export function DeleteConfirmationModal({ isOpen, isDeleting, onConfirm, onCancel }: DeleteConfirmationModalProps) {
 	const t = useTranslations('admin.ADMIN_CLIENTS_PAGE');
 
 	if (!isOpen) return null;
@@ -77,10 +73,11 @@ export function DeleteConfirmationModal({
 					<h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('DELETE_CLIENT')}</h3>
 					<p className="text-sm text-gray-600 dark:text-gray-400 mb-6">{t('DELETE_CONFIRMATION')}</p>
 					<div className="flex justify-center space-x-3">
-						<Button color="default" variant="bordered" onPress={onCancel} isDisabled={isDeleting}>
+						<Button color="default" variant="bordered" onClick={onCancel} disabled={isDeleting}>
 							{t('CANCEL')}
 						</Button>
-						<Button color="danger" onPress={onConfirm} isLoading={isDeleting} isDisabled={isDeleting}>
+						<Button color="danger" onClick={onConfirm} disabled={isDeleting}>
+							{isDeleting && <Spinner />}
 							{t('DELETE')}
 						</Button>
 					</div>

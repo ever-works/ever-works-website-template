@@ -1,4 +1,5 @@
-import { cn, Input } from "@heroui/react";
+import { cn } from "@/lib/utils";
+import { Input } from "@heroui/react";
 import { Search, X } from "lucide-react";
 
 interface SearchInputProps {

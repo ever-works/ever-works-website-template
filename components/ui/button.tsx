@@ -1,82 +1,52 @@
-"use client"
+import * as React from 'react';
+import { Slot } from '@radix-ui/react-slot';
+import { cva, type VariantProps } from 'class-variance-authority';
 
-import * as React from "react"
-import { Button as HeroButton } from "@heroui/react"
-import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from '@/lib/utils';
 
-import { cn } from "@/lib/utils"
-
-// Define button variants for compatibility with existing code
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
-  {
-    variants: {
-      variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-      },
-      size: {
-        default: "h-9 px-4 py-2",
-        xs: "h-7 rounded-md px-2 text-xs",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
-  }
-)
+	'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+	{
+		variants: {
+			variant: {
+				default: 'bg-primary text-primary-foreground shadow hover:bg-primary/90',
+				solid: 'bg-blue-500 text-white shadow hover:bg-blue-600/90',
 
-export interface ButtonProps extends Omit<React.ComponentPropsWithRef<typeof HeroButton>, 'variant' | 'size'>, VariantProps<typeof buttonVariants> {}
+				bordered: 'bg-transparent text-blue-500 border-blue-500 shadow hover:bg-blue-500 hover:text-white',
+				destructive: 'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
+				outline: 'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
+				secondary: 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
+				ghost: 'hover:bg-accent hover:text-accent-foreground',
+				light: 'hover:bg-blue-100 text-blue-500 hover:text-blue-600',
+				flat: 'hover:bg-blue-200 text-blue-600 hover:text-blue-700',
+				link: 'text-primary underline-offset-4 hover:underline'
+			},
+			size: {
+				default: 'h-9 px-4 py-2',
+				sm: 'h-8 rounded-md px-3 text-xs',
+				lg: 'h-10 rounded-md px-8',
+				icon: 'h-9 w-9'
+			}
+		},
+		defaultVariants: {
+			variant: 'default',
+			size: 'default'
+		}
+	}
+);
+
+export interface ButtonProps
+	extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+		VariantProps<typeof buttonVariants> {
+	asChild?: boolean;
+}
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
-    // Map shadcn variants to HeroUI variants
-    const heroVariant = 
-      variant === "default" ? "solid" :
-      variant === "destructive" ? "solid" :
-      variant === "outline" ? "bordered" :
-      variant === "secondary" ? "flat" :
-      variant === "ghost" ? "ghost" :
-      variant === "link" ? "light" : "solid";
-    
-    // Map shadcn sizes to HeroUI sizes
-    const heroSize = 
-      size === "xs" ? "xs" :
-      size === "sm" ? "sm" :
-      size === "lg" ? "lg" :
-      "md";
-    
-    // Add custom classes for variants not directly supported by HeroUI
-    let additionalClassNames = "";
-    if (variant === "destructive") {
-      additionalClassNames += " bg-destructive text-destructive-foreground hover:bg-destructive/90";
-    }
-    if (variant === "link") {
-      additionalClassNames += " underline-offset-4 hover:underline";
-    }
-    if (size === "icon") {
-      additionalClassNames += " w-9 h-9 p-0";
-    }
-    
-    return (
-      <HeroButton
-        className={cn(buttonVariants({ variant, size }), additionalClassNames, className)}
-        ref={ref}
-        variant={heroVariant}
-        size={heroSize as any}
-        {...props}
-      />
-    )
-  }
-)
-Button.displayName = "Button"
+	({ className, variant, size, asChild = false, ...props }, ref) => {
+		const Comp = asChild ? Slot : 'button';
+		return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
+	}
+);
+Button.displayName = 'Button';
 
-export { Button, buttonVariants }
+export { Button, buttonVariants };

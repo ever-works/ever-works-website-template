@@ -1,6 +1,5 @@
 "use client";
 
-import { Button, cn } from "@heroui/react";
 import { useConfig } from "../../config";
 import { useTranslations, useLocale } from "next-intl";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -15,6 +14,8 @@ import { useActionState, useEffect } from "react";
 import { signInWithProvider } from "../actions";
 import { ActionState } from "@/lib/auth/middleware";
 import { signIn } from "next-auth/react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type SocialProvider = {
   icon: React.ReactNode;

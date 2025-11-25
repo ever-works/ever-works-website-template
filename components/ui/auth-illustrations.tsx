@@ -1,6 +1,7 @@
 "use client";
 
-import { cn } from '@heroui/react';
+import { cn } from "@/lib/utils";
+
 
 // Modern login illustration
 export function LoginIllustration({ className }: { className?: string }) {

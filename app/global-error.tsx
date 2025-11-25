@@ -1,8 +1,8 @@
 'use client';
 import Link from 'next/link';
-import { Button } from '@heroui/react';
 import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
 import { useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 
 export default function GlobalError({
   error,
@@ -44,7 +44,7 @@ export default function GlobalError({
             )}
           </div>
           <div className="flex gap-4">
-            <Button onPress={() => reset()} variant="solid">
+            <Button onClick={() => reset()} variant="solid">
               <RefreshCw className="mr-2 h-4 w-4" />
               Refresh
             </Button>
