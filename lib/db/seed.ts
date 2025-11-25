@@ -1,24 +1,4 @@
-
-import { config } from 'dotenv';
 import bcrypt from 'bcryptjs';
-import * as fs from 'fs';
-import * as path from 'path';
-
-// Load environment variables from .env.local first, then .env as fallback
-const envLocalPath = path.resolve(process.cwd(), '.env.local');
-const envPath = path.resolve(process.cwd(), '.env');
-
-// Try to load from .env.local first
-if (fs.existsSync(envLocalPath)) {
-  config({ path: envLocalPath });
-  console.log('Loaded environment variables from .env.local');
-} else if (fs.existsSync(envPath)) {
-  // Fallback to .env if .env.local doesn't exist
-  config({ path: envPath });
-  console.log('Loaded environment variables from .env');
-} else {
-  console.warn('No .env.local or .env file found. Using system environment variables only.');
-}
 
 // Import schema types and sql
 import {
