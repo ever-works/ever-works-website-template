@@ -232,7 +232,7 @@ export default function BasicInfoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       <Container maxWidth="7xl" padding="default">
         <div className="space-y-8 py-8">
           {/* Header */}
@@ -247,7 +247,7 @@ export default function BasicInfoPage() {
           </div>
 
           <div className="text-center space-y-4">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-2xl mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-linear-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-2xl mb-4">
               <FiUser className="w-8 h-8 text-theme-primary-600 dark:text-theme-primary-400" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">

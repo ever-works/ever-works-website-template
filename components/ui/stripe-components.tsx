@@ -262,7 +262,7 @@ export function ErrorDisplay({ error, className, variant = 'default' }: ErrorDis
 
 	return (
 		<div className={`${variantClasses[variant]} ${className}`}>
-			<AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+			<AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
 			<p className="text-red-800 dark:text-red-200 text-sm">{error}</p>
 		</div>
 	);

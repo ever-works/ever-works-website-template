@@ -181,7 +181,7 @@ pnpm start`,
   const progressPercentage = (completedSteps.length / installationSteps.length) * 100;
 
   return (
-    <section className="py-20 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black">
+    <section className="py-20 bg-linear-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
         <div className="text-center mb-16">
@@ -209,7 +209,7 @@ pnpm start`,
           </div>
           <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3">
             <div 
-              className="bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-500 ease-out"
+              className="bg-linear-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progressPercentage}%` }}
             ></div>
           </div>
@@ -238,7 +238,7 @@ pnpm start`,
                   }`}>
                     {/* Step Header */}
                     <div className="flex items-center gap-4 mb-4">
-                      <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${step.gradient} flex items-center justify-center text-white font-bold text-lg group-hover:scale-110 transition-transform duration-300`}>
+                      <div className={`w-12 h-12 rounded-full bg-linear-to-r ${step.gradient} flex items-center justify-center text-white font-bold text-lg group-hover:scale-110 transition-transform duration-300`}>
                         {completedSteps.includes(index) ? "✓" : step.number}
                       </div>
                       <div className="flex-1">
@@ -414,7 +414,7 @@ pnpm start`,
 
         {/* Call to Action */}
         <div className="mt-16 text-center">
-          <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/30 dark:to-blue-900/30 rounded-2xl p-8 border border-green-200 dark:border-green-800">
+          <div className="bg-linear-to-r from-green-50 to-blue-50 dark:from-green-900/30 dark:to-blue-900/30 rounded-2xl p-8 border border-green-200 dark:border-green-800">
             <h3 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
               Ready to Launch Your Platform?
             </h3>
@@ -422,7 +422,7 @@ pnpm start`,
               You&apos;re just a few steps away from having your web platform live and ready for users.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Button className="bg-linear-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                 Deploy to Production
               </Button>
               <Button variant="outline" className="border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold px-8 py-3 rounded-xl transition-all duration-300">

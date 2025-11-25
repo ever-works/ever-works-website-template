@@ -26,7 +26,7 @@ export default async function SubmissionsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       <Container maxWidth="7xl" padding="default">
         <div className="space-y-12 py-8">
           {/* Header */}
@@ -42,7 +42,7 @@ export default async function SubmissionsPage() {
 
           {/* Page Header */}
           <div className="text-center space-y-4">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-2xl mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-linear-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-2xl mb-4">
               <FiFileText className="w-8 h-8 text-theme-primary-600 dark:text-theme-primary-400" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">
@@ -58,7 +58,7 @@ export default async function SubmissionsPage() {
             <Card className="hover:shadow-lg hover:shadow-theme-primary-500/10 border border-gray-200 dark:border-gray-800 transition-all duration-300 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
               <CardContent className="p-6">
                 <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/40 dark:to-blue-800/40 rounded-xl mb-3 mx-auto">
+                  <div className="flex items-center justify-center w-12 h-12 bg-linear-to-br from-blue-100 to-blue-200 dark:from-blue-900/40 dark:to-blue-800/40 rounded-xl mb-3 mx-auto">
                     <FiFileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.total}</div>
@@ -70,7 +70,7 @@ export default async function SubmissionsPage() {
             <Card className="hover:shadow-lg hover:shadow-green-500/10 border border-gray-200 dark:border-gray-800 transition-all duration-300 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
               <CardContent className="p-6">
                 <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/40 dark:to-green-800/40 rounded-xl mb-3 mx-auto">
+                  <div className="flex items-center justify-center w-12 h-12 bg-linear-to-br from-green-100 to-green-200 dark:from-green-900/40 dark:to-green-800/40 rounded-xl mb-3 mx-auto">
                     <FiCheck className="w-6 h-6 text-green-600 dark:text-green-400" />
                   </div>
                   <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.approved}</div>
@@ -82,7 +82,7 @@ export default async function SubmissionsPage() {
             <Card className="hover:shadow-lg hover:shadow-yellow-500/10 border border-gray-200 dark:border-gray-800 transition-all duration-300 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
               <CardContent className="p-6">
                 <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-yellow-100 to-yellow-200 dark:from-yellow-900/40 dark:to-yellow-800/40 rounded-xl mb-3 mx-auto">
+                  <div className="flex items-center justify-center w-12 h-12 bg-linear-to-br from-yellow-100 to-yellow-200 dark:from-yellow-900/40 dark:to-yellow-800/40 rounded-xl mb-3 mx-auto">
                     <FiClock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
                   </div>
                   <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</div>
@@ -94,7 +94,7 @@ export default async function SubmissionsPage() {
             <Card className="hover:shadow-lg hover:shadow-red-500/10 border border-gray-200 dark:border-gray-800 transition-all duration-300 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
               <CardContent className="p-6">
                 <div className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-red-100 to-red-200 dark:from-red-900/40 dark:to-red-800/40 rounded-xl mb-3 mx-auto">
+                  <div className="flex items-center justify-center w-12 h-12 bg-linear-to-br from-red-100 to-red-200 dark:from-red-900/40 dark:to-red-800/40 rounded-xl mb-3 mx-auto">
                     <FiX className="w-6 h-6 text-red-600 dark:text-red-400" />
                   </div>
                   <div className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.rejected}</div>
@@ -163,7 +163,7 @@ export default async function SubmissionsPage() {
                   </div>
                 ) : (
                   <div className="space-y-4 text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-100 to-indigo-200 dark:from-indigo-900/40 dark:to-indigo-800/40 rounded-2xl mb-4">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-linear-to-br from-indigo-100 to-indigo-200 dark:from-indigo-900/40 dark:to-indigo-800/40 rounded-2xl mb-4">
                       <FiFileText className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
@@ -198,7 +198,7 @@ export default async function SubmissionsPage() {
                 </CardTitle>
                 <Link
                   href="/submit"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 text-white rounded-lg transition-all duration-300 font-medium shadow-sm hover:shadow-md"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 text-white rounded-lg transition-all duration-300 font-medium shadow-sm hover:shadow-md"
                 >
                   <FiPlus className="w-4 h-4" />
                   New Submission

@@ -48,7 +48,7 @@ export function FavoritesClient(props: ListingProps) {
 		return (
 			<div className="text-center py-12">
 				<div className="max-w-md mx-auto">
-					<div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center">
+					<div className="w-16 h-16 mx-auto mb-4 bg-linear-to-br from-red-100 to-pink-100 dark:from-red-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center">
 						<Heart className="w-8 h-8 text-red-500 dark:text-red-400" />
 					</div>
 					<h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -63,7 +63,7 @@ export function FavoritesClient(props: ListingProps) {
 					</p>
 					<Link
 						href={`/auth/signin`}
-						className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+						className="inline-flex items-center px-6 py-3 bg-linear-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
 					>
 						{t('SIGN_IN_TO_VIEW_FAVORITES', {
 							defaultValue: 'Sign in to view your favorites'
@@ -101,7 +101,7 @@ export function FavoritesClient(props: ListingProps) {
 		return (
 			<div className="text-center py-12">
 				<div className="max-w-md mx-auto">
-					<div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center">
+					<div className="w-16 h-16 mx-auto mb-4 bg-linear-to-br from-red-100 to-pink-100 dark:from-red-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center">
 						<Heart className="w-8 h-8 text-red-500 dark:text-red-400" />
 					</div>
 					<h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -116,7 +116,7 @@ export function FavoritesClient(props: ListingProps) {
 					</p>
 					<button
 						onClick={() => window.location.reload()}
-						className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+						className="inline-flex items-center px-6 py-3 bg-linear-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
 					>
 						{t('RETRY')}
 					</button>
@@ -130,7 +130,7 @@ export function FavoritesClient(props: ListingProps) {
 		return (
 			<div className="text-center py-12">
 				<div className="max-w-md mx-auto">
-					<div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-blue-100 dark:from-gray-900/30 dark:to-blue-900/30 rounded-full flex items-center justify-center">
+					<div className="w-16 h-16 mx-auto mb-4 bg-linear-to-br from-gray-100 to-blue-100 dark:from-gray-900/30 dark:to-blue-900/30 rounded-full flex items-center justify-center">
 						<Star className="w-8 h-8 text-gray-500 dark:text-gray-400" />
 					</div>
 					<h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -145,7 +145,7 @@ export function FavoritesClient(props: ListingProps) {
 					</p>
 					<Link
 						href={`/`}
-						className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+						className="inline-flex items-center px-6 py-3 bg-linear-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
 					>
 						{t('EXPLORE_ITEMS', {
 							defaultValue: 'Explore Items'

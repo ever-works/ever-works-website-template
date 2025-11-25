@@ -9,7 +9,7 @@ export default async function SecuritySettingsPage() {
 	const t = await getTranslations('settings.SECURITY_PAGE');
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+		<div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
 			<Container maxWidth="7xl" padding="default">
 				<div className="space-y-8 py-8">
 					{/* Header */}
@@ -43,19 +43,19 @@ export default async function SecuritySettingsPage() {
 								</h3>
 								<ul className="space-y-2 text-theme-primary-800 dark:text-theme-primary-200 text-sm">
 									<li className="flex items-start gap-2">
-										<span className="w-1.5 h-1.5 bg-theme-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+										<span className="w-1.5 h-1.5 bg-theme-primary-500 rounded-full mt-2 shrink-0"></span>
 										{t('SECURITY_TIPS.TIP_1')}
 									</li>
 									<li className="flex items-start gap-2">
-										<span className="w-1.5 h-1.5 bg-theme-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+										<span className="w-1.5 h-1.5 bg-theme-primary-500 rounded-full mt-2 shrink-0"></span>
 										{t('SECURITY_TIPS.TIP_2')}
 									</li>
 									<li className="flex items-start gap-2">
-										<span className="w-1.5 h-1.5 bg-theme-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+										<span className="w-1.5 h-1.5 bg-theme-primary-500 rounded-full mt-2 shrink-0"></span>
 										{t('SECURITY_TIPS.TIP_3')}
 									</li>
 									<li className="flex items-start gap-2">
-										<span className="w-1.5 h-1.5 bg-theme-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+										<span className="w-1.5 h-1.5 bg-theme-primary-500 rounded-full mt-2 shrink-0"></span>
 										{t('SECURITY_TIPS.TIP_4')}
 									</li>
 								</ul>

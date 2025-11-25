@@ -109,8 +109,8 @@ export function FavoriteButton({
 					className={cn(
 						'absolute inset-0 rounded-full transition-all duration-300',
 						isFav
-							? 'bg-gradient-to-r from-yellow-400/20 to-orange-500/20 dark:from-yellow-400/30 dark:to-orange-500/30'
-							: 'bg-gradient-to-r from-gray-400/10 to-gray-500/10 dark:from-gray-400/20 dark:to-gray-500/20',
+							? 'bg-linear-to-r from-yellow-400/20 to-orange-500/20 dark:from-yellow-400/30 dark:to-orange-500/30'
+							: 'bg-linear-to-r from-gray-400/10 to-gray-500/10 dark:from-gray-400/20 dark:to-gray-500/20',
 						isHovered && isFav && 'scale-110 opacity-100',
 						isHovered && !isFav && 'scale-105 opacity-80'
 					)}

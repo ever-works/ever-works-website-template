@@ -81,10 +81,10 @@ function MenuItems({ user, profilePath, onItemClick, onNavigationStart, isNaviga
         type="button"
         onClick={() => handleNavigation(href)}
         disabled={isNavigating}
-        className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-50 dark:hover:from-gray-700/50 dark:hover:to-gray-700/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 w-full text-left disabled:opacity-50 disabled:cursor-not-allowed"
+        className="group flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-linear-to-r hover:from-gray-50 hover:to-gray-50 dark:hover:from-gray-700/50 dark:hover:to-gray-700/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 w-full text-left disabled:opacity-50 disabled:cursor-not-allowed"
         role="menuitem"
       >
-        <div className={`flex items-center justify-center w-10 h-10 mr-3 rounded-xl bg-gradient-to-br ${gradientFrom} ${gradientTo} group-hover:from-opacity-80 group-hover:to-opacity-80 transition-all duration-200`}>
+        <div className={`flex items-center justify-center w-10 h-10 mr-3 rounded-xl bg-linear-to-br ${gradientFrom} ${gradientTo} group-hover:from-opacity-80 group-hover:to-opacity-80 transition-all duration-200`}>
           <Icon aria-hidden="true" className={`h-5 w-5 ${iconColor}`} />
         </div>
         <div className="flex-1">

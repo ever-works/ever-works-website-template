@@ -212,7 +212,7 @@ export function SubscriptionHistoryCard({ subscription }: { subscription: Subscr
             </button>
             
             {isActive && (
-              <button className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium text-white bg-gradient-to-r from-theme-primary-600 to-theme-primary-700 rounded-lg hover:from-theme-primary-700 hover:to-theme-primary-800 transition-all duration-200 dark:text-slate-300 dark:bg-theme-primary-20">
+              <button className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium text-white bg-linear-to-r from-theme-primary-600 to-theme-primary-700 rounded-lg hover:from-theme-primary-700 hover:to-theme-primary-800 transition-all duration-200 dark:text-slate-300 dark:bg-theme-primary-20">
                 <TrendingUp className="w-3 h-3" />
                 Manage
               </button>

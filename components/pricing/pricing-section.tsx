@@ -61,10 +61,10 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							{t('CHOOSE_YOUR_PERFECT_PLAN')}
 						</div>
 					</div>
-					<h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent transition-colors duration-300">
+					<h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 bg-linear-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent transition-colors duration-300">
 						{t('START_YOUR_JOURNEY')}
 						<br className="hidden md:block" />
-						<span className="bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 bg-clip-text text-transparent">
+						<span className="bg-linear-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 bg-clip-text text-transparent">
 							{t('CHOOSE_WHAT_FITS_YOU')}
 						</span>
 					</h1>
@@ -141,7 +141,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
 				<div className="relative group animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
 					{/* Card Glow Effect */}
-					<div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-600/20 dark:to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+					<div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-600/20 dark:to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
 					<div
 						className={cn(
@@ -185,7 +185,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 					{/* Popular Badge */}
 
 					{/* Card Glow Effect */}
-					<div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-600/20 dark:to-pink-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+					<div className="absolute inset-0 bg-linear-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-600/20 dark:to-pink-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
 					<div
 						className={cn(
@@ -230,7 +230,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 
 				<div className="relative group animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
 					{/* Card Glow Effect */}
-					<div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 dark:from-blue-600/20 dark:to-cyan-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+					<div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-cyan-500/10 dark:from-blue-600/20 dark:to-cyan-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
 					<div
 						className={cn(
@@ -278,7 +278,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 				<div className="text-center animate-fade-in-up">
 					<div className="inline-flex flex-col items-center gap-6 p-8 rounded-3xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-200/30 dark:border-gray-700/30 shadow-xl">
 						<div className="flex items-center gap-3">
-							<div className="w-12 h-12 rounded-full bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 flex items-center justify-center">
+							<div className="w-12 h-12 rounded-full bg-linear-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 flex items-center justify-center">
 								<Check className="w-6 h-6 text-white" />
 							</div>
 							<div className="text-left">
@@ -293,7 +293,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 						<Button
 							size="lg"
 							onClick={() => router.push('/submit')}
-							className="h-14 px-12 rounded-xl font-semibold bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 hover:from-theme-primary-600 hover:via-purple-600 hover:to-theme-primary-700 text-white transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
+							className="h-14 px-12 rounded-xl font-semibold bg-linear-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 hover:from-theme-primary-600 hover:via-purple-600 hover:to-theme-primary-700 text-white transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
 						>
 							<div className="flex items-center gap-3">
 								<span className="text-lg">{t('CONTINUE_TO_NEXT_STEP')}</span>

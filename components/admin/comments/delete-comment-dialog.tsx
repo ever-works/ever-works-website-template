@@ -17,22 +17,22 @@ const CLASSES = {
   // Header styles
   headerContainer: "flex items-center justify-between",
   headerLeft: "flex items-center gap-3",
-  alertIcon: "w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg",
+  alertIcon: "w-10 h-10 bg-linear-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg",
   headerText: "text-xl font-bold text-gray-900 dark:text-white",
   headerSubtext: "text-sm text-gray-600 dark:text-gray-400",
   closeButton: "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1",
   
   // Warning message styles
-  warningContainer: "bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/10 dark:to-orange-900/10 border border-red-200 dark:border-red-800 rounded-xl p-4",
+  warningContainer: "bg-linear-to-r from-red-50 to-orange-50 dark:from-red-900/10 dark:to-orange-900/10 border border-red-200 dark:border-red-800 rounded-xl p-4",
   warningContent: "flex items-start gap-3",
-  warningIcon: "h-5 w-5 text-red-500 mt-0.5 flex-shrink-0",
+  warningIcon: "h-5 w-5 text-red-500 mt-0.5 shrink-0",
   warningTitle: "font-medium text-red-800 dark:text-red-200 mb-1",
   warningText: "text-sm text-red-700 dark:text-red-300",
   
   // Comment preview styles
-  commentContainer: "bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm",
+  commentContainer: "bg-linear-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm",
   commentHeader: "flex items-start gap-4",
-  userAvatar: "w-12 h-12 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-lg flex-shrink-0",
+  userAvatar: "w-12 h-12 bg-linear-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-lg shrink-0",
   commentContent: "flex-1 min-w-0",
   userInfo: "flex items-center gap-2 mb-2",
   userName: "font-semibold text-gray-900 dark:text-white",

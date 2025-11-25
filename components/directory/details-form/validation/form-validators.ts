@@ -89,15 +89,15 @@ export const HEADER_CLASSES = {
 	badgeIcon: 'w-8 h-8 rounded-full bg-theme-primary-500 flex items-center justify-center',
 	badgeIconInner: 'w-4 h-4 text-white animate-pulse',
 	badgeText: 'text-sm font-semibold text-gray-700 dark:text-gray-300',
-	title: 'text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent',
+	title: 'text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 bg-linear-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent',
 	description: 'text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed'
 };
 
 export const BACKGROUND_CLASSES = {
 	container: 'absolute inset-0 overflow-hidden pointer-events-none',
-	blob1: 'absolute top-0 -left-4 w-96 h-96 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 dark:from-blue-600/20 dark:via-purple-600/20 dark:to-cyan-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob',
-	blob2: 'absolute top-0 -right-4 w-96 h-96 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 dark:from-purple-600/20 dark:via-pink-600/20 dark:to-orange-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000',
-	blob3: 'absolute -bottom-8 left-1/4 w-96 h-96 bg-gradient-to-r from-green-500/10 via-blue-500/10 to-indigo-500/10 dark:from-green-600/20 dark:via-blue-600/20 dark:to-indigo-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000'
+	blob1: 'absolute top-0 -left-4 w-96 h-96 bg-linear-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 dark:from-blue-600/20 dark:via-purple-600/20 dark:to-cyan-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob',
+	blob2: 'absolute top-0 -right-4 w-96 h-96 bg-linear-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 dark:from-purple-600/20 dark:via-pink-600/20 dark:to-orange-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000',
+	blob3: 'absolute -bottom-8 left-1/4 w-96 h-96 bg-linear-to-r from-green-500/10 via-blue-500/10 to-indigo-500/10 dark:from-green-600/20 dark:via-blue-600/20 dark:to-indigo-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000'
 };
 
 export const FORM_FIELD_CLASSES = {
@@ -150,11 +150,11 @@ export const STEP_CARD_CLASSES = {
 	},
 	reviewCard: {
 		wrapper: 'relative group animate-fade-in-up',
-		glow: 'absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-500/20 dark:from-orange-400/30 dark:to-red-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500',
+		glow: 'absolute inset-0 bg-linear-to-r from-orange-500/20 to-red-500/20 dark:from-orange-400/30 dark:to-red-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500',
 		content: 'relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/30 p-8 shadow-2xl',
 		header: {
 			wrapper: 'flex items-center gap-3 mb-8',
-			icon: 'w-12 h-12 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center',
+			icon: 'w-12 h-12 rounded-2xl bg-linear-to-r from-orange-500 to-red-500 flex items-center justify-center',
 			iconInner: 'w-6 h-6 text-white',
 			title: 'text-2xl font-bold text-gray-900 dark:text-white'
 		},
@@ -173,7 +173,7 @@ export const NAVIGATION_CLASSES = {
 			disabled: 'h-14 px-12 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl min-w-[200px] bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
 		},
 		submit: {
-			enabled: 'h-14 px-12 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl min-w-[200px] bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:via-emerald-600 hover:to-green-700 text-white hover:shadow-green-500/30',
+			enabled: 'h-14 px-12 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl min-w-[200px] bg-linear-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:via-emerald-600 hover:to-green-700 text-white hover:shadow-green-500/30',
 			disabled: 'h-14 px-12 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl min-w-[200px] bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
 		}
 	}

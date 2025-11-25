@@ -68,7 +68,7 @@ export function ToggleGroup({
       button: 'rounded-xl',
       activeButton: 'text-white shadow-lg',
       inactiveButton: 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50',
-      slider: 'bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg'
+      slider: 'bg-linear-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg'
     }
   };
 
@@ -93,14 +93,14 @@ export function ToggleGroup({
           style={{ minWidth: `${100 / options.length}%` }}
         >
           {option.icon && (
-            <span className="flex-shrink-0">
+            <span className="shrink-0">
               {option.icon}
             </span>
           )}
           <span>{option.label}</span>
           {option.badge && (
             <span className={cn(
-              'font-bold bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full shadow-sm',
+              'font-bold bg-linear-to-r from-green-500 to-emerald-500 text-white rounded-full shadow-sm',
               currentSize.badge
             )}>
               {option.badge}

@@ -47,7 +47,7 @@ export default function Item(props: ItemProps) {
 		'group relative border-0 rounded-2xl transition-all duration-700 transform hover:-translate-y-3 backdrop-blur-xl overflow-hidden h-full',
 		'bg-white/80 dark:bg-gray-900/80 shadow-lg hover:shadow-2xl',
 		'ring-1 ring-gray-200/50 dark:ring-gray-700/50 hover:ring-gray-300/70 dark:hover:ring-gray-600/70',
-		'before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/60 before:via-transparent before:to-gray-50/40',
+		'before:absolute before:inset-0 before:bg-linear-to-br before:from-white/60 before:via-transparent before:to-gray-50/40',
 		'dark:before:from-gray-800/60 dark:before:via-transparent dark:before:to-gray-900/40',
 		'hover:before:from-blue-50/30 hover:before:to-purple-50/20 dark:hover:before:from-blue-900/20 dark:hover:before:to-purple-900/10',
 		{
@@ -77,7 +77,7 @@ export default function Item(props: ItemProps) {
 			className="block"
 		>
 			<Card className={cardClassName}>
-			<div className="absolute inset-0 bg-gradient-to-br from-gray-50/60 via-white/90 to-gray-100/80 dark:from-gray-900/60 dark:via-gray-800/80 dark:to-black/80 transition-all duration-700" />
+			<div className="absolute inset-0 bg-linear-to-br from-gray-50/60 via-white/90 to-gray-100/80 dark:from-gray-900/60 dark:via-gray-800/80 dark:to-black/80 transition-all duration-700" />
 
 			<div
 				className="absolute inset-0 opacity-10 dark:opacity-20"
@@ -90,11 +90,11 @@ export default function Item(props: ItemProps) {
 			{/* Content container */}
 			<div className="relative z-10">
 				<CardHeader className="flex gap-4  pb-4">
-					<div className="flex flex-col flex-grow gap-4 min-w-0">
+					<div className="flex flex-col grow gap-4 min-w-0">
 						<div className="flex justify-between items-start gap-3">
 							<div className="flex items-center gap-4">
-								<div className="relative flex-shrink-0">
-									<div className="w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-500 bg-gradient-to-br from-theme-primary-10 to-indigo-100 border border-theme-primary-500 group-hover:from-theme-primary-10 group-hover:to-indigo-200 dark:from-theme-primary-10 dark:to-indigo-900/30 dark:border-theme-primary-700/30 dark:group-hover:from-theme-primary-800/40 dark:group-hover:to-indigo-800/40 group-hover:scale-110 group-hover:rotate-3 shadow-sm group-hover:shadow-md">
+								<div className="relative shrink-0">
+									<div className="w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-500 bg-linear-to-br from-theme-primary-10 to-indigo-100 border border-theme-primary-500 group-hover:from-theme-primary-10 group-hover:to-indigo-200 dark:from-theme-primary-10 dark:to-indigo-900/30 dark:border-theme-primary-700/30 dark:group-hover:from-theme-primary-800/40 dark:group-hover:to-indigo-800/40 group-hover:scale-110 group-hover:rotate-3 shadow-sm group-hover:shadow-md">
 										{shouldShowFallbackIcon ? (
 											<FiFolder className="w-6 h-6 text-theme-primary dark:text-theme-primary transition-transform duration-500 group-hover:scale-110" />
 										) : (
@@ -148,7 +148,7 @@ export default function Item(props: ItemProps) {
 										<FeaturedBadge 
 											variant="hero" 
 											size="sm"
-											className="px-3 py-1 text-xs font-normal bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 border border-amber-200/50 dark:from-amber-900/30 dark:to-yellow-900/30 dark:text-amber-300 dark:border-amber-700/30 transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-md rounded-full"
+											className="px-3 py-1 text-xs font-normal bg-linear-to-r from-amber-100 to-yellow-100 text-amber-800 border border-amber-200/50 dark:from-amber-900/30 dark:to-yellow-900/30 dark:text-amber-300 dark:border-amber-700/30 transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-md rounded-full"
 										/>
 										{/* Glow effect */}
 										<div className="absolute inset-0 bg-amber-400/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -239,7 +239,7 @@ export default function Item(props: ItemProps) {
 			</div>
 
 			{/* Subtle glow effect */}
-			<div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+			<div className="absolute inset-0 rounded-2xl bg-linear-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
 			{/* Loading overlay */}
 			{isNavigating && (
@@ -265,7 +265,7 @@ function CategoryFilterButton({ category }: { category: CategoryProp }) {
 			type="button"
 			data-category-filter
 			className={
-				'bg-theme-primary-10 px-3 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-theme-primary-100 to-theme-primary-100 text-theme-primary  dark:from-theme-primary-900/30 dark:to-theme-primary-900/30 dark:text-theme-primary border-theme-primary-10 transition-all duration-300 hover:scale-105 hover:shadow-md capitalize shadow-sm border dark:border-gray-600/30 focus:outline-none ' +
+				'bg-theme-primary-10 px-3 py-2 text-xs font-semibold rounded-full bg-linear-to-r from-theme-primary-100 to-theme-primary-100 text-theme-primary  dark:from-theme-primary-900/30 dark:to-theme-primary-900/30 dark:text-theme-primary border-theme-primary-10 transition-all duration-300 hover:scale-105 hover:shadow-md capitalize shadow-sm border dark:border-gray-600/30 focus:outline-none ' +
 				(isActive ? 'ring-2 ring-theme-primary-500' : '')
 			}
 			onClick={(e) => {

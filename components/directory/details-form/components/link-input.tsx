@@ -73,7 +73,7 @@ export function LinkInput({
 								<div className="p-4 space-y-3">
 									{/* Link Label Row */}
 									<div className="flex items-center gap-3">
-										<div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center group-hover:from-theme-primary-100 group-hover:to-theme-primary-200 dark:group-hover:from-theme-primary-900 dark:group-hover:to-theme-primary-800 transition-all duration-300">
+										<div className="shrink-0 w-10 h-10 rounded-xl bg-linear-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center group-hover:from-theme-primary-100 group-hover:to-theme-primary-200 dark:group-hover:from-theme-primary-900 dark:group-hover:to-theme-primary-800 transition-all duration-300">
 											<IconComponent className="w-5 h-5 text-gray-600 dark:text-gray-400 group-hover:text-theme-primary-600 dark:group-hover:text-theme-primary-400" />
 										</div>
 
@@ -96,7 +96,7 @@ export function LinkInput({
 												type="button"
 												onClick={() => removeLink(link.id)}
 												aria-label={t('directory.DETAILS_FORM.REMOVE_LINK')}
-												className="flex-shrink-0 w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 transition-all duration-200 opacity-0 group-hover:opacity-100 flex items-center justify-center"
+												className="shrink-0 w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 transition-all duration-200 opacity-0 group-hover:opacity-100 flex items-center justify-center"
 											>
 												<X className="w-4 h-4" />
 											</button>
@@ -145,7 +145,7 @@ export function LinkInput({
 								</div>
 
 								{/* Hover Effect Gradient */}
-								<div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" />
+								<div className="absolute inset-0 bg-linear-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" />
 							</div>
 						);
 					})}

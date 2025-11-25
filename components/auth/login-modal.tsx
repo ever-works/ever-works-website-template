@@ -28,7 +28,7 @@ export function LoginModal({
       isDismissable={true}
       hideCloseButton={true}
       className={cn(
-        "bg-gradient-to-br from-white to-gray-50",
+        "bg-linear-to-br from-white to-gray-50",
         "dark:from-gray-900 dark:to-gray-950",
         "border border-gray-200/50 dark:border-gray-800/50",
         "dark:bg-opacity-95 dark:backdrop-blur-xl"

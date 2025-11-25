@@ -8,11 +8,11 @@ export default function NotFound() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:!from-gray-900 dark:!via-gray-800 dark:!to-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900! dark:via-gray-800! dark:to-gray-900!">
       <div className="text-center px-6 py-12 max-w-md mx-auto">
         {/* 404 Number */}
         <div className="mb-8">
-          <h1 className="text-8xl md:text-9xl font-bold bg-gradient-to-r from-theme-primary-600 to-theme-accent-600 bg-clip-text text-transparent">
+          <h1 className="text-8xl md:text-9xl font-bold bg-linear-to-r from-theme-primary-600 to-theme-accent-600 bg-clip-text text-transparent">
             404
           </h1>
         </div>

@@ -171,7 +171,7 @@ export default function AdminItemsPage() {
       <div className="p-6 max-w-7xl mx-auto">
         {/* Header Skeleton */}
         <div className="mb-8">
-          <div className="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6">
+          <div className="bg-linear-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center space-x-4">
                 <Skeleton className="w-12 h-12 rounded-xl" />
@@ -232,14 +232,14 @@ export default function AdminItemsPage() {
     <div className="p-6 max-w-7xl mx-auto">
       {/* Enhanced Header */}
       <div className="mb-8">
-        <div className="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6">
+        <div className="bg-linear-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-theme-primary to-theme-accent rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 bg-linear-to-br from-theme-primary to-theme-accent rounded-xl flex items-center justify-center shadow-lg">
                 <Package className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                <h1 className="text-2xl sm:text-3xl font-bold bg-linear-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
                   {t('TITLE')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center space-x-2">
@@ -257,7 +257,7 @@ export default function AdminItemsPage() {
                 size="lg"
                 onPress={openCreateModal}
                 startContent={<Plus size={18} />}
-                className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
+                className="bg-linear-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
               >
                 {t('ADD_ITEM')}
               </Button>
@@ -265,7 +265,7 @@ export default function AdminItemsPage() {
                 showLabel
                 variant="default"
                 size="lg"
-                className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/40 transition-all duration-300 text-white font-medium"
+                className="bg-linear-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/40 transition-all duration-300 text-white font-medium"
               />
             </div>
           </div>
@@ -274,7 +274,7 @@ export default function AdminItemsPage() {
 
       {/* Enhanced Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card className="border-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
+        <Card className="border-0 bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -292,7 +292,7 @@ export default function AdminItemsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
+        <Card className="border-0 bg-linear-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -310,7 +310,7 @@ export default function AdminItemsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
+        <Card className="border-0 bg-linear-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -328,7 +328,7 @@ export default function AdminItemsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
+        <Card className="border-0 bg-linear-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -375,7 +375,7 @@ export default function AdminItemsPage() {
                         <div className="flex items-start space-x-3">
                           {/* Featured Badge */}
                           {item.featured && (
-                            <div className="flex-shrink-0">
+                            <div className="shrink-0">
                               <Star className="w-5 h-5 text-yellow-500 fill-current" />
                             </div>
                           )}
@@ -539,7 +539,7 @@ export default function AdminItemsPage() {
           {items.length === 0 && (
             <div className="px-6 py-16 text-center">
               <div className="max-w-sm mx-auto">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-theme-primary/10 to-theme-accent/10 rounded-full flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-linear-to-br from-theme-primary/10 to-theme-accent/10 rounded-full flex items-center justify-center">
                   <Package className="w-8 h-8 text-theme-primary opacity-60" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
@@ -552,7 +552,7 @@ export default function AdminItemsPage() {
                   color="primary"
                   onPress={openCreateModal}
                   startContent={<Plus size={16} />}
-                  className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90"
+                  className="bg-linear-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90"
                 >
                   {t('CREATE_ITEM')}
                 </Button>

@@ -18,7 +18,7 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
   return (
     <div className="relative backdrop-blur-xl bg-white/5 dark:bg-black/5 border-t border-white/10 dark:border-gray-700/20">
       {/* Subtle animated background */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/5 to-transparent animate-shimmer-slow" />
+      <div className="absolute inset-0 bg-linear-to-r from-transparent via-blue-500/5 to-transparent animate-shimmer-slow" />
 
       <Container maxWidth="7xl" padding="default" className="relative px-4 sm:px-6 lg:px-8 py-8">
         {/* Enhanced Disclaimer and utilities */}
@@ -68,7 +68,7 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
                     {index > 0 && (
                       <Divider
                         orientation="vertical"
-                        className="mr-1 sm:mr-2 h-[12px] sm:h-[16px] w-[1px] sm:w-[2px] bg-gray-600 dark:bg-gray-500"
+                        className="mr-1 sm:mr-2 h-[12px] sm:h-[16px] w-px sm:w-[2px] bg-gray-600 dark:bg-gray-500"
                       />
                     )}
                     {item.label}

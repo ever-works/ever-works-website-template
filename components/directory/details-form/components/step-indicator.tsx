@@ -43,7 +43,7 @@ export function StepIndicator({ currentStep, onStepClick }: StepIndicatorProps) 
 									isCompleted && STEP_INDICATOR_CLASSES.button.completed,
 									isActive &&
 										!isCompleted &&
-										`bg-gradient-to-r ${step.color} text-white shadow-lg`,
+										`bg-linear-to-r ${step.color} text-white shadow-lg`,
 									!isActive &&
 										!isCompleted &&
 										!isAccessible &&

@@ -535,14 +535,14 @@ export default function NewPasswordPage() {
 
       {/* Bottom left avatar - matching the forgot password style */}
       <div className="absolute bottom-6 left-6">
-        <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center shadow-lg">
+        <div className="w-12 h-12 bg-linear-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center shadow-lg">
           <span className="text-white font-bold text-lg">N</span>
         </div>
       </div>
 
       {/* Bottom right avatar - matching the forgot password style */}
       <div className="absolute bottom-6 right-6">
-        <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
+        <div className="w-12 h-12 bg-linear-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
           <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
           </div>

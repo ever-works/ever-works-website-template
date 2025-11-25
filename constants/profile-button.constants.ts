@@ -115,7 +115,7 @@ export const MENU_STYLES = {
     avatar: [
       'w-10',
       'h-10',
-      'bg-gradient-to-br',
+      'bg-linear-to-br',
       'from-slate-200',
       'via-slate-300',
       'to-slate-400',
@@ -156,7 +156,7 @@ export const MENU_STYLES = {
       '-right-1',
       'w-4',
       'h-4',
-      'bg-gradient-to-r',
+      'bg-linear-to-r',
       'from-yellow-400',
       'via-orange-500',
       'to-red-500',

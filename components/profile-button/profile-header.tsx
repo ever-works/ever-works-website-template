@@ -17,13 +17,13 @@ function ProfileHeader({ user, displayRole, onlineStatus }: ProfileHeaderProps) 
   const isOnline = (onlineStatus ?? '').toLowerCase().includes('online');
 
   const roleBadgeClasses = isAdmin 
-    ? 'bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-800 dark:from-yellow-900/30 dark:to-orange-900/30 dark:text-yellow-200'
+    ? 'bg-linear-to-r from-yellow-100 to-orange-100 text-yellow-800 dark:from-yellow-900/30 dark:to-orange-900/30 dark:text-yellow-200'
     : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
 
   return (
     <div className="px-5 py-4 border-b border-gray-100/50 dark:border-gray-600/50">
       <div className="flex items-start space-x-4">
-        <div className="relative flex-shrink-0">
+        <div className="relative shrink-0">
           <Avatar
             src={user?.image}
             alt={user?.name || "User"}
@@ -41,7 +41,7 @@ function ProfileHeader({ user, displayRole, onlineStatus }: ProfileHeaderProps) 
           ></div>
           {isAdmin && (
             <div 
-              className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-lg motion-safe:animate-pulse motion-reduce:animate-none"
+              className="absolute -top-1 -right-1 w-6 h-6 bg-linear-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-lg motion-safe:animate-pulse motion-reduce:animate-none"
               title="Administrator"
             >
               <Crown aria-hidden="true" className="w-3.5 h-3.5 text-white" />

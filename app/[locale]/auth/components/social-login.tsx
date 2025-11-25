@@ -92,7 +92,7 @@ export function SocialLogin() {
       {/* Elegant separator with gradient */}
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent dark:via-gray-600" />
+          <div className="w-full h-px bg-linear-to-r from-transparent via-gray-300 to-transparent dark:via-gray-600" />
         </div>
         <div className="relative flex justify-center">
           <div className="bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full shadow-sm border border-gray-200 dark:border-gray-700">

@@ -97,7 +97,7 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4 rounded-t-lg">
+      <div className="bg-linear-to-r from-blue-500 to-purple-600 px-6 py-4 rounded-t-lg">
         <h2 className="text-xl font-bold text-white">
           {mode === 'create' ? t('TITLE_CREATE') : t('TITLE_EDIT')}
         </h2>
@@ -207,7 +207,7 @@ export function TagForm({ tag, mode, onSubmit, onCancel, isLoading = false }: Ta
             type="submit"
             color="primary"
             isLoading={isLoading}
-            className="px-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+            className="px-6 bg-linear-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
           >
 {mode === 'create' ? t('CREATE_TAG') : t('UPDATE_TAG')}
           </Button>

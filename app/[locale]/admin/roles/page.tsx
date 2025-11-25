@@ -12,24 +12,24 @@ import clsx from 'clsx';
 
 // CSS classes constants
 const headerContainerClass = clsx(
-  'bg-gradient-to-r from-white via-gray-50 to-white',
+  'bg-linear-to-r from-white via-gray-50 to-white',
   'dark:from-gray-900 dark:via-gray-800 dark:to-gray-900',
   'rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6'
 );
 
 const headerIconClass = clsx(
-  'w-12 h-12 bg-gradient-to-br from-theme-primary to-theme-accent',
+  'w-12 h-12 bg-linear-to-br from-theme-primary to-theme-accent',
   'rounded-xl flex items-center justify-center shadow-lg'
 );
 
 const headerTitleClass = clsx(
-  'text-2xl sm:text-3xl font-bold bg-gradient-to-r',
+  'text-2xl sm:text-3xl font-bold bg-linear-to-r',
   'from-gray-900 to-gray-600 dark:from-white dark:to-gray-300',
   'bg-clip-text text-transparent'
 );
 
 const addButtonClass = clsx(
-  'bg-gradient-to-r from-theme-primary to-theme-accent',
+  'bg-linear-to-r from-theme-primary to-theme-accent',
   'hover:from-theme-primary/90 hover:to-theme-accent/90',
   'shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40',
   'transition-all duration-300 text-white font-medium'
@@ -317,7 +317,7 @@ export default function RolesPage() {
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('TOTAL_ROLES_STAT')}</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                 <Shield className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -331,7 +331,7 @@ export default function RolesPage() {
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('ADMIN_ROLES_STAT')}</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.admin}</p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 bg-linear-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
                 <ShieldCheck className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -345,7 +345,7 @@ export default function RolesPage() {
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('CLIENT_ROLES_STAT')}</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.client}</p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 bg-linear-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                 <Shield className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -467,7 +467,7 @@ export default function RolesPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 flex-1">
                       <div className="flex items-center space-x-3">
-                        <div className={clsx('w-10 h-10 bg-gradient-to-br rounded-full flex items-center justify-center text-white font-semibold text-sm', getAvatarColor(role.name || role.id))}>
+                        <div className={clsx('w-10 h-10 bg-linear-to-br rounded-full flex items-center justify-center text-white font-semibold text-sm', getAvatarColor(role.name || role.id))}>
                           {role.name?.charAt(0).toUpperCase() || 'R'}
                         </div>
                         <div className="flex-1">

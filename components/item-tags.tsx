@@ -16,7 +16,7 @@ function normalizeTagForUrl(tag: string): string {
 const getTagClasses = () =>
   cn(
     "relative px-4 py-1.5 text-xs font-semibold rounded-full flex items-center gap-2",
-    "bg-gradient-to-r from-primary-50/80 to-primary-100/80",
+    "bg-linear-to-r from-primary-50/80 to-primary-100/80",
     "dark:from-primary-900/80 dark:to-primary-800/80",
     "text-primary-700 dark:text-primary-300",
     "border border-primary-200/60 dark:border-primary-700/60",
@@ -51,13 +51,13 @@ export function ItemTag({ name }: { name: string }) {
           </span>
 
           <span
-            className="absolute inset-0 rounded-full bg-gradient-to-r from-primary-400/0 via-primary-400/10 to-primary-400/0 
+            className="absolute inset-0 rounded-full bg-linear-to-r from-primary-400/0 via-primary-400/10 to-primary-400/0 
         dark:via-primary-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
           />
 
           <span className="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
             <span
-              className="absolute -inset-x-full top-0 h-full w-[200%] bg-gradient-to-r from-transparent via-white/15 to-transparent 
+              className="absolute -inset-x-full top-0 h-full w-[200%] bg-linear-to-r from-transparent via-white/15 to-transparent 
           dark:via-white/10 opacity-0 group-hover:opacity-100 animate-[shine_1.5s_ease-out_forwards]"
             />
           </span>

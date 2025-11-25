@@ -59,7 +59,7 @@ export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
     return (
       <button
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        className="relative inline-flex items-center h-10 w-20 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 bg-gray-300 data-[checked]:bg-theme-primary"
+        className="relative inline-flex items-center h-10 w-20 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:ring-offset-2 bg-gray-300 data-checked:bg-theme-primary"
         data-checked={theme === "dark" ? "" : undefined}
         aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
       >
@@ -84,7 +84,7 @@ export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
     <div className="relative" ref={popoverRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative flex items-center gap-1.5 px-3 py-1.5 text-sm bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-900/95 dark:to-gray-800/95 backdrop-blur-sm text-gray-800 dark:text-white rounded-lg hover:from-gray-200 hover:to-gray-300 dark:hover:from-gray-800/95 dark:hover:to-gray-700/95 transition-all duration-300 border border-gray-100 dark:border-gray-700/50 hover:border-gray-400 dark:hover:border-gray-600/70 group overflow-hidden"
+        className="relative flex items-center gap-1.5 px-3 py-1.5 text-sm bg-linear-to-r from-gray-100 to-gray-200 dark:from-gray-900/95 dark:to-gray-800/95 backdrop-blur-sm text-gray-800 dark:text-white rounded-lg hover:from-gray-200 hover:to-gray-300 dark:hover:from-gray-800/95 dark:hover:to-gray-700/95 transition-all duration-300 border border-gray-100 dark:border-gray-700/50 hover:border-gray-400 dark:hover:border-gray-600/70 group overflow-hidden"
         aria-label={`Current theme: ${theme || "loading"}`}
         aria-expanded={isOpen}
         aria-controls={isOpen ? panelId : undefined}

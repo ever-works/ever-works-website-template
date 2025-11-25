@@ -52,7 +52,7 @@ export function Newsletter({ t }: { t: any }) {
           <button
             type="submit"
             disabled={pending}
-            className="mt-2 sm:mt-0 w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-gradient-to-r from-theme-primary via-purple-500 to-purple-500 hover:from-theme-primary hover:to-purple-600 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-theme-primary/25 hover:scale-105 text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="mt-2 sm:mt-0 w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-linear-to-r from-theme-primary via-purple-500 to-purple-500 hover:from-theme-primary hover:to-purple-600 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-theme-primary/25 hover:scale-105 text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
             {pending
               ? t("footer.SUBMITTING") || "Submitting..."

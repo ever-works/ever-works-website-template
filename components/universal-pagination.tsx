@@ -21,7 +21,7 @@ export function UniversalPagination({ page, totalPages, onPageChange, className 
       {/* Enhanced Pagination */}
       <div className="relative group w-full max-w-fit mx-auto">
         {/* Background glow effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 via-primary-600/5 to-primary-500/10 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+        <div className="absolute inset-0 bg-linear-to-r from-primary-500/10 via-primary-600/5 to-primary-500/10 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
         <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl px-4 py-2 shadow-lg hover:shadow-xl transition-all duration-300 dark:shadow-lg dark:shadow-theme-primary-500/20">
           <Pagination
             showControls
@@ -44,21 +44,21 @@ export function UniversalPagination({ page, totalPages, onPageChange, className 
                 "cursor-pointer relative overflow-hidden"
               ),
               cursor: cn(
-                "!bg-theme-primary text-white font-semibold",
+                "bg-theme-primary! text-white font-semibold",
                 "shadow-lg shadow-theme-primary dark:shadow-theme-primary",
                 "border-2 border-theme-primary dark:border-theme-primary",
                 "relative overflow-hidden"
               ),
               prev: cn(
                 "min-w-10 h-10 font-medium transition-all duration-300",
-                "bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700",
+                "bg-linear-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700",
                 "text-gray-600 dark:text-gray-300 hover:text-theme-primary dark:hover:text-theme-primary",
                 "border border-gray-200 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
                 "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               ),
               next: cn(
                 "min-w-10 h-10 font-medium transition-all duration-300",
-                "bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700",
+                "bg-linear-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700",
                 "text-gray-600 dark:text-gray-300 hover:text-theme-primary dark:hover:text-theme-primary",
                 "border border-gray-200 dark:border-gray-600 hover:border-theme-primary dark:hover:border-theme-primary",
                 "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"

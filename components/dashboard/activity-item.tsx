@@ -60,7 +60,7 @@ export function ActivityItem({
   return (
     <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start space-x-3">
-        <div className="flex-shrink-0 mt-1">
+        <div className="shrink-0 mt-1">
           <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
             {getActivityIcon()}
           </div>

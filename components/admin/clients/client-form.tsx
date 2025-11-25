@@ -38,7 +38,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
 
   // Extract long className strings into constants for better maintainability
   const containerClasses = "bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden";
-  const headerClasses = "bg-gradient-to-r from-theme-primary to-theme-accent px-6 py-4";
+  const headerClasses = "bg-linear-to-r from-theme-primary to-theme-accent px-6 py-4";
   const formClasses = "p-6 space-y-6";
   const actionsClasses = "flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-700";
 
@@ -370,7 +370,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
                 type="button"
                 onClick={handleNext}
                 disabled={isLoading}
-                className="flex items-center gap-2 bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 text-white"
+                className="flex items-center gap-2 bg-linear-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 text-white"
               >
                 Next
                 <ChevronRight className="w-4 h-4" />
@@ -380,7 +380,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading = false, mode
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="flex items-center gap-2 bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 text-white"
+                className="flex items-center gap-2 bg-linear-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 text-white"
               >
                 <Save className="w-4 h-4" />
                 {mode === 'create' ? t('CREATE_CLIENT') : t('UPDATE_CLIENT')}

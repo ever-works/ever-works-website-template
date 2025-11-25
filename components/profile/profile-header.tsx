@@ -78,7 +78,7 @@ export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderPr
       <Card className="relative z-30 mt-8 md:mt-4 mx-auto max-w-4xl px-6 py-8 md:px-12 md:py-10 shadow-lg border-0">
         <div className="flex flex-col md:flex-row items-center md:items-start md:space-x-8">
           {/* Spacer for avatar on desktop */}
-          <div className="hidden md:block md:w-0 md:h-0 flex-shrink-0" />
+          <div className="hidden md:block md:w-0 md:h-0 shrink-0" />
           {/* Profile Info */}
           <div className="flex-1 min-w-0 w-full">
             <div className="space-y-4">

@@ -32,11 +32,11 @@ export const SearchInput = ({
           style={{ background: "transparent" }}
           maxLength={20}
           classNames={{
-            base: "!bg-transparent",
+            base: "bg-transparent!",
             input:
-              "!bg-transparent text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm",
+              "bg-transparent! text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm",
             inputWrapper:
-              "!bg-transparent border-none shadow-none focus-within:ring-0 focus-within:shadow-none hover:bg-transparent dark:hover:bg-transparent",
+              "bg-transparent! border-none shadow-none focus-within:ring-0 focus-within:shadow-none hover:bg-transparent dark:hover:bg-transparent",
           }}
         />
         {searchTerm && (

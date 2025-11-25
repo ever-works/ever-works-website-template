@@ -31,11 +31,11 @@ export function PaymentMethodCard({
 
 	return (
 		<div className="relative group">
-			<div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg p-6 border border-gray-200 dark:border-gray-600 hover:shadow-md transition-all duration-200">
+			<div className="bg-linear-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg p-6 border border-gray-200 dark:border-gray-600 hover:shadow-md transition-all duration-200">
 				<div className="flex items-start justify-between">
 					<div className="flex items-start space-x-4 flex-1">
 						<div
-							className={`w-12 h-8 bg-gradient-to-r ${info.color} rounded-md flex items-center justify-center text-white text-lg font-bold shadow-sm`}
+							className={`w-12 h-8 bg-linear-to-r ${info.color} rounded-md flex items-center justify-center text-white text-lg font-bold shadow-sm`}
 						>
 							{info.text}
 						</div>

@@ -118,7 +118,7 @@ export function VersionTooltip({
             {/* Header */}
             <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100 dark:border-gray-800">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-linear-to-r from-blue-500 to-indigo-500 rounded-full"></div>
                 Data Repository Version
               </h3>
               <div className="flex items-center gap-1">

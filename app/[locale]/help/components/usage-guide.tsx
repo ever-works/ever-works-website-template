@@ -355,7 +355,7 @@ npm start`,
   const currentSection = usageSections.find(s => s.id === activeSection);
 
   return (
-    <section className="py-20 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black">
+    <section className="py-20 bg-linear-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
@@ -422,7 +422,7 @@ npm start`,
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${section.gradient} flex items-center justify-center text-white text-sm`}>
+                        <div className={`w-8 h-8 rounded-lg bg-linear-to-r ${section.gradient} flex items-center justify-center text-white text-sm`}>
                           {section.icon}
                         </div>
                         <div className="flex-1">
@@ -611,14 +611,14 @@ npm start`,
 
         {/* Best Practices */}
         <div className="mt-16">
-          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-2xl p-8 border border-indigo-200 dark:border-indigo-800">
+          <div className="bg-linear-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-2xl p-8 border border-indigo-200 dark:border-indigo-800">
             <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 text-center">
               {t("USAGE_BEST_PRACTICES_TITLE")}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white/80 dark:bg-slate-800/80 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg">
+                  <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center shrink-0 shadow-lg">
                     <span className="text-white text-lg">✓</span>
                   </div>
                   <div>
@@ -634,7 +634,7 @@ npm start`,
               
               <div className="bg-white/80 dark:bg-slate-800/80 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg">
+                  <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center shrink-0 shadow-lg">
                     <span className="text-white text-lg">🔒</span>
                   </div>
                   <div>
@@ -650,7 +650,7 @@ npm start`,
               
               <div className="bg-white/80 dark:bg-slate-800/80 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg">
+                  <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center shrink-0 shadow-lg">
                     <span className="text-white text-lg">⚡</span>
                   </div>
                   <div>
@@ -666,7 +666,7 @@ npm start`,
               
               <div className="bg-white/80 dark:bg-slate-800/80 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg">
+                  <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center shrink-0 shadow-lg">
                     <span className="text-white text-lg">📊</span>
                   </div>
                   <div>

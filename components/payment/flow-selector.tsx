@@ -143,7 +143,7 @@ export function PaymentFlowSelector({
 
                 {/* Simplified Content */}
                 <div className="flex items-center gap-3 relative z-10">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-r from-slate-600 to-slate-800 shadow-sm">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-linear-to-r from-slate-600 to-slate-800 shadow-sm">
                     <IconComponent className="w-5 h-5 text-white" />
                   </div>
 
@@ -302,7 +302,7 @@ export function PaymentFlowSelector({
 
               {/* Simplified Header */}
               <div className="flex items-start gap-3 mb-4 relative z-10">
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-r from-slate-600 to-slate-800 shadow-sm">
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-linear-to-r from-slate-600 to-slate-800 shadow-sm">
                   <IconComponent className="w-6 h-6 text-white" />
                 </div>
 

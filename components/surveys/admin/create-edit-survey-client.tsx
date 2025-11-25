@@ -57,7 +57,7 @@ export function CreateEditSurveyClient({ survey, defaultItemId }: CreateEditSurv
 			{!surveysEnabled && (
 				<div className="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 dark:border-yellow-600 p-4 rounded-lg shadow-md">
 					<div className="flex items-start">
-						<div className="flex-shrink-0">
+						<div className="shrink-0">
 							<svg
 								className="h-6 w-6 text-yellow-400 dark:text-yellow-500"
 								xmlns="http://www.w3.org/2000/svg"

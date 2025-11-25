@@ -170,7 +170,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-theme-primary to-theme-accent px-6 py-4">
+      <div className="bg-linear-to-r from-theme-primary to-theme-accent px-6 py-4">
         <h2 className="text-xl font-bold text-white">
           {mode === 'create' ? t('TITLE_CREATE') : t('TITLE_EDIT')}
         </h2>
@@ -443,7 +443,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
           <Button
             type="submit"
             disabled={isLoading}
-            className="px-4 py-2 bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 text-white"
+            className="px-4 py-2 bg-linear-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 text-white"
           >
             {isLoading ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />

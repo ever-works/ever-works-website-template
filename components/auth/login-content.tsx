@@ -46,7 +46,7 @@ export function LoginContent({
         <div className={cn(
           "w-full p-6 flex flex-col justify-center relative",
           variant === 'modal' ? "md:w-[45%]" : "md:w-1/2",
-          "bg-gradient-to-br from-gray-50 to-white",
+          "bg-linear-to-br from-gray-50 to-white",
           "dark:from-gray-900 dark:via-gray-900 dark:to-gray-950"
         )}>
           <div className="relative z-10">
@@ -66,7 +66,7 @@ export function LoginContent({
               <div>
                 <h2 className={cn(
                   "text-2xl font-bold mb-3",
-                  "bg-gradient-to-r from-gray-900 to-gray-700",
+                  "bg-linear-to-r from-gray-900 to-gray-700",
                   "dark:from-white dark:to-gray-300",
                   "bg-clip-text text-transparent"
                 )}>
@@ -83,10 +83,10 @@ export function LoginContent({
                 {authFeatures.map((feature) => {
                   const colorVariant = feature.colorVariant;
                   const bgClasses = colorVariant === "primary"
-                    ? "bg-gradient-to-br from-primary-50 to-primary-100/50 dark:from-primary-900/20 dark:to-primary-800/10 group-hover:from-primary-100 group-hover:to-primary-50 dark:group-hover:from-primary-800/30 dark:group-hover:to-primary-900/20 ring-1 ring-primary-100 dark:ring-primary-800/20"
+                    ? "bg-linear-to-br from-primary-50 to-primary-100/50 dark:from-primary-900/20 dark:to-primary-800/10 group-hover:from-primary-100 group-hover:to-primary-50 dark:group-hover:from-primary-800/30 dark:group-hover:to-primary-900/20 ring-1 ring-primary-100 dark:ring-primary-800/20"
                     : colorVariant === "accent"
-                    ? "bg-gradient-to-br from-accent-50 to-accent-100/50 dark:from-accent-900/20 dark:to-accent-800/10 group-hover:from-accent-100 group-hover:to-accent-50 dark:group-hover:from-accent-800/30 dark:group-hover:to-accent-900/20 ring-1 ring-accent-100 dark:ring-accent-800/20"
-                    : "bg-gradient-to-br from-secondary-50 to-secondary-100/50 dark:from-secondary-900/20 dark:to-secondary-800/10 group-hover:from-secondary-100 group-hover:to-secondary-50 dark:group-hover:from-secondary-800/30 dark:group-hover:to-secondary-900/20 ring-1 ring-secondary-100 dark:ring-secondary-800/20";
+                    ? "bg-linear-to-br from-accent-50 to-accent-100/50 dark:from-accent-900/20 dark:to-accent-800/10 group-hover:from-accent-100 group-hover:to-accent-50 dark:group-hover:from-accent-800/30 dark:group-hover:to-accent-900/20 ring-1 ring-accent-100 dark:ring-accent-800/20"
+                    : "bg-linear-to-br from-secondary-50 to-secondary-100/50 dark:from-secondary-900/20 dark:to-secondary-800/10 group-hover:from-secondary-100 group-hover:to-secondary-50 dark:group-hover:from-secondary-800/30 dark:group-hover:to-secondary-900/20 ring-1 ring-secondary-100 dark:ring-secondary-800/20";
 
                   const iconClasses = colorVariant === "primary"
                     ? "text-primary-600 dark:text-primary-400 group-hover:text-primary-700 dark:group-hover:text-primary-300"
@@ -133,7 +133,7 @@ export function LoginContent({
           </div>
 
           {/* Decorative gradient */}
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white dark:from-gray-950 to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-white dark:from-gray-950 to-transparent pointer-events-none" />
         </div>
 
         {/* Right Side - Auth Form */}

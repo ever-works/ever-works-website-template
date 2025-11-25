@@ -186,7 +186,7 @@ export default function HelpPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black text-slate-900 dark:text-white transition-all duration-300">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black text-slate-900 dark:text-white transition-all duration-300">
       {/* Progress Bar */}
       {showProgress && (
         <div className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700">
@@ -198,7 +198,7 @@ export default function HelpPage() {
                 </span>
                 <div className="w-32 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-theme-primary-500 to-cyan-500 transition-all duration-500"
+                    className="h-full bg-linear-to-r from-theme-primary-500 to-cyan-500 transition-all duration-500"
                     style={{ width: `${progressPercentage}%` }}
                   ></div>
                 </div>
@@ -218,10 +218,10 @@ export default function HelpPage() {
         <div className="mb-16">
           <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
             {/* Header */}
-            <div className="bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+            <div className="bg-linear-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10 bg-linear-to-r from-theme-primary-500 to-theme-primary-600 rounded-xl flex items-center justify-center">
                     <span className="text-white text-lg">📋</span>
                   </div>
                   <div>
@@ -281,7 +281,7 @@ export default function HelpPage() {
                       }`}>
                         {index + 1}
                       </div>
-                      <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${step.gradient} flex items-center justify-center text-white text-base shadow-lg`}>
+                      <div className={`w-8 h-8 rounded-lg bg-linear-to-r ${step.gradient} flex items-center justify-center text-white text-base shadow-lg`}>
                         {step.icon}
                       </div>
                     </div>
@@ -327,10 +327,10 @@ export default function HelpPage() {
         <div ref={contentSectionRef} className="mb-16">
           <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
             {/* Step Header */}
-            <div className="bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+            <div className="bg-linear-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${navigationSteps[currentStep].gradient} flex items-center justify-center text-white text-xl shadow-lg`}>
+                  <div className={`w-12 h-12 rounded-xl bg-linear-to-r ${navigationSteps[currentStep].gradient} flex items-center justify-center text-white text-xl shadow-lg`}>
                     {navigationSteps[currentStep].icon}
                   </div>
                   <div>
@@ -356,7 +356,7 @@ export default function HelpPage() {
                   <Button
                     onClick={nextStep}
                     disabled={currentStep === totalSteps - 1}
-                    className="bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 hover:from-theme-primary-600 hover:to-theme-primary-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
+                    className="bg-linear-to-r from-theme-primary-500 to-theme-primary-600 hover:from-theme-primary-600 hover:to-theme-primary-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
                   >
                     {currentStep === totalSteps - 1 ? t("COMPLETE") : `${t("NEXT")} →`}
                   </Button>

@@ -23,14 +23,14 @@ const containerClasses = clsx(
 
 const headerClasses = clsx(
   'px-6 py-4 border-b border-gray-200 dark:border-gray-700',
-  'bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900'
+  'bg-linear-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900'
 );
 
 const formClasses = 'p-6 space-y-6';
 
 const actionsClasses = clsx(
   'flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700',
-  'bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900',
+  'bg-linear-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900',
   '-mx-6 -mb-6 px-6 pb-6'
 );
 
@@ -230,7 +230,7 @@ export function RoleForm({ role, onSubmit, onCancel, isLoading = false, mode }: 
             isLoading={isLoading}
             startContent={!isLoading && <Save size={16} />}
             className={clsx(
-              'bg-gradient-to-r from-theme-primary to-theme-accent',
+              'bg-linear-to-r from-theme-primary to-theme-accent',
               'hover:from-theme-primary/90 hover:to-theme-accent/90',
               'shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40',
               'transition-all duration-300 text-white font-medium'

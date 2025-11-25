@@ -19,7 +19,7 @@ export function TagItem({ tag, isActive, href, showCount = true }: TagItemProps)
       href={href}
       className={getButtonVariantStyles(
         isActive,
-        "px-1.5 py-1 h-8 font-medium transition-all duration-200 flex-shrink-0"
+        "px-1.5 py-1 h-8 font-medium transition-all duration-200 shrink-0"
       )}
     >
       {isActive && (

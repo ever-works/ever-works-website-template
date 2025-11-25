@@ -60,7 +60,7 @@ export default function AdminCommentsPage() {
       <div className="p-6 max-w-7xl mx-auto">
         {/* Loading Header */}
         <div className="mb-8">
-          <div className="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6">
+          <div className="bg-linear-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse"></div>
@@ -130,14 +130,14 @@ export default function AdminCommentsPage() {
     <div className="p-6 max-w-7xl mx-auto">
       {/* Enhanced Header */}
       <div className="mb-8">
-        <div className="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6">
+        <div className="bg-linear-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-lg p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-theme-primary to-theme-accent rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 bg-linear-to-br from-theme-primary to-theme-accent rounded-xl flex items-center justify-center shadow-lg">
                 <MessageSquare className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                <h1 className="text-2xl sm:text-3xl font-bold bg-linear-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
                   {t('TITLE')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center space-x-2">
@@ -239,7 +239,7 @@ export default function AdminCommentsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-3 mb-2">
                         <div className="flex items-center space-x-2">
-                          <div className="w-8 h-8 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white text-sm font-medium">
+                          <div className="w-8 h-8 bg-linear-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white text-sm font-medium">
                             {(comment.user.name || comment.user.email || "U").charAt(0).toUpperCase()}
                           </div>
                           <div>
@@ -257,14 +257,14 @@ export default function AdminCommentsPage() {
                           </Chip>
                         )}
                       </div>
-                      <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words mb-2">
+                      <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap wrap-break-word mb-2">
                         {comment.content}
                       </p>
                       <div className="text-xs text-gray-400">
                         {t('ITEM_ID_LABEL')} {comment.itemId}
                       </div>
                     </div>
-                    <div className="ml-4 flex-shrink-0">
+                    <div className="ml-4 shrink-0">
                       <Button
                         color="danger"
                         variant="flat"
@@ -289,7 +289,7 @@ export default function AdminCommentsPage() {
       {totalComments > 0 && (
         <div className="mt-8 space-y-6">
           {/* Results Info */}
-          <div className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 px-6 py-4 shadow-sm">
+          <div className="bg-linear-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 px-6 py-4 shadow-sm">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-theme-primary rounded-full"></div>

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Design system constants
-const SHIMMER_STYLES = "animate-pulse bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700";
+const SHIMMER_STYLES = "animate-pulse bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700";
 const STATS_CARD_STYLES = "bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700";
 const SKELETON_CONTAINER_STYLES = "flex items-center space-x-2";
 const SKELETON_ICON_CONTAINER_STYLES = "p-2 bg-gray-200 dark:bg-gray-700 rounded-lg";

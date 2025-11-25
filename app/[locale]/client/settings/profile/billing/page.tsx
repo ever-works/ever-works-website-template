@@ -51,7 +51,7 @@ export default function BillingPage() {
 			<Container maxWidth="7xl" padding="default">
 				<div className="text-center py-16">
 					<div className="max-w-md mx-auto">
-						<div className="w-24 h-24 bg-gradient-to-br from-theme-primary-100 to-theme-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+						<div className="w-24 h-24 bg-linear-to-br from-theme-primary-100 to-theme-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
 							<CreditCard className="w-12 h-12 text-theme-primary-600" />
 						</div>
 						<h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
@@ -59,7 +59,7 @@ export default function BillingPage() {
 						</h2>
 						<p className="text-gray-600 dark:text-gray-300 mb-8">{t('FREE_PLAN_MESSAGE')}</p>
 						<div className="space-y-3">
-							<button className="w-full bg-gradient-to-r from-theme-primary-600 to-theme-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-theme-primary-700 hover:to-theme-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+							<button className="w-full bg-linear-to-r from-theme-primary-600 to-theme-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-theme-primary-700 hover:to-theme-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
 								<Plus className="w-5 h-5 inline mr-2" />
 								{t('UPGRADE_NOW')}
 							</button>

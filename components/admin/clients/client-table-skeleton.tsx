@@ -20,7 +20,7 @@ export function ClientTableSkeleton({ rows = 10 }: ClientTableSkeletonProps) {
             <Skeleton className="h-4 w-14" />
           </div>
           <div className="col-span-2">
-            <Skeleton className="h-4 w-[4.5rem]" />
+            <Skeleton className="h-4 w-18" />
           </div>
           <div className="col-span-2">
             <Skeleton className="h-4 w-16" />

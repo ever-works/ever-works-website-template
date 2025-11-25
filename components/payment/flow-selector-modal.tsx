@@ -164,7 +164,7 @@ export function PaymentFlowSelectorModal({
                                   key={index}
                                   className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400"
                                 >
-                                  <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" />
+                                  <CheckCircle className="w-3 h-3 text-green-500 shrink-0" />
                                   <span>{benefit}</span>
                                 </div>
                               ))}

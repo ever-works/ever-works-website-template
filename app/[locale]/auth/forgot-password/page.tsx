@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-5xl mx-auto rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 shadow-2xl overflow-hidden">      
         <div className="flex flex-col lg:flex-row min-h-[500px]">
           {/* Illustration and branding side */}
-          <div className="w-full lg:w-1/2 relative bg-gradient-to-br from-theme-primary/5 via-theme-accent/5 to-theme-secondary/5 p-8 lg:p-12 flex flex-col justify-center">
+          <div className="w-full lg:w-1/2 relative bg-linear-to-br from-theme-primary/5 via-theme-accent/5 to-theme-secondary/5 p-8 lg:p-12 flex flex-col justify-center">
             {/* Password recovery illustration */}
             <div className="flex-1 flex items-center justify-center mb-8 lg:mb-0">
               <div className="relative w-full max-w-sm">
@@ -224,7 +224,7 @@ export default function ForgotPasswordPage() {
               <div className="text-center mb-8">
                 <div className="flex justify-center mb-6">
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-theme-primary to-theme-accent flex items-center justify-center shadow-xl shadow-theme-primary/25">
+                    <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-theme-primary to-theme-accent flex items-center justify-center shadow-xl shadow-theme-primary/25">
                       <Key className="text-white w-8 h-8" />
                     </div>
                     <div className="absolute -top-1 -right-1 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center shadow-lg">
@@ -247,7 +247,7 @@ export default function ForgotPasswordPage() {
                 <div className="space-y-6">
                   {/* Success message */}
                   <div className="flex items-start space-x-3 p-6 bg-green-900/20 border border-green-700/50 rounded-xl backdrop-blur-sm">
-                    <div className="flex-shrink-0">
+                    <div className="shrink-0">
                       <div className="w-8 h-8 bg-green-900/40 rounded-full flex items-center justify-center">
                         <CheckCircle className="w-5 h-5 text-green-400" />
                       </div>
@@ -291,7 +291,7 @@ export default function ForgotPasswordPage() {
                   {/* Email field */}
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                      <Mail className="h-5 w-5 text-gray-400 pointer-events-none flex-shrink-0" />
+                      <Mail className="h-5 w-5 text-gray-400 pointer-events-none shrink-0" />
                     </div>
                     <input
                       id="email"
@@ -319,7 +319,7 @@ export default function ForgotPasswordPage() {
                     isLoading={pending}
                     size="lg"
                     radius="lg"
-                    className="w-full font-semibold bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 text-white shadow-xl shadow-theme-primary/25 hover:shadow-2xl hover:shadow-theme-primary/30 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] backdrop-blur-sm"
+                    className="w-full font-semibold bg-linear-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 text-white shadow-xl shadow-theme-primary/25 hover:shadow-2xl hover:shadow-theme-primary/30 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] backdrop-blur-sm"
                     spinner={
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

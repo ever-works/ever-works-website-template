@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
 const GRADIENT_HEADER_CLASSES = [
-	'bg-gradient-to-r',
+	'bg-linear-to-r',
 	'from-white',
 	'via-gray-50',
 	'to-white',
@@ -33,7 +33,7 @@ const GRADIENT_HEADER_CLASSES = [
 const ICON_WRAPPER_CLASSES = [
 	'w-12',
 	'h-12',
-	'bg-gradient-to-br',
+	'bg-linear-to-br',
 	'from-theme-primary',
 	'to-theme-accent',
 	'rounded-xl',
@@ -47,7 +47,7 @@ const TITLE_CLASSES = [
 	'text-2xl',
 	'sm:text-3xl',
 	'font-bold',
-	'bg-gradient-to-r',
+	'bg-linear-to-r',
 	'from-gray-900',
 	'to-gray-600',
 	'dark:from-white',

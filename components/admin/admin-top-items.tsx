@@ -75,7 +75,7 @@ export function AdminTopItems({ data, isLoading }: AdminTopItemsProps) {
                 {/* Progress bar for views */}
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                   <div 
-                    className="bg-gradient-to-r from-theme-primary to-theme-accent h-1.5 rounded-full transition-all duration-300"
+                    className="bg-linear-to-r from-theme-primary to-theme-accent h-1.5 rounded-full transition-all duration-300"
                     style={{ width: `${(item.views / maxViews) * 100}%` }}
                   />
                 </div>

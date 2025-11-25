@@ -240,7 +240,7 @@ function ProfileButton() {
 
       {/* Full screen loading overlay with backdrop blur - render as portal */}
       {isNavigating && typeof window !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[9999999] bg-black/50 backdrop-blur-sm flex items-center justify-center" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999999 }}>
+        <div className="fixed inset-0 z-9999999 bg-black/50 backdrop-blur-sm flex items-center justify-center" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999999 }}>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-2xl">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600 dark:border-gray-400 mx-auto mb-4"></div>

@@ -28,7 +28,7 @@ export function CompanyStats({ stats }: CompanyStatsProps) {
 							<p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('TOTAL_COMPANIES')}</p>
 							<p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
 						</div>
-						<div className={`${STAT_ICON_BASE} bg-gradient-to-br from-cyan-500 to-blue-600`}>
+						<div className={`${STAT_ICON_BASE} bg-linear-to-br from-cyan-500 to-blue-600`}>
 							<Building2 aria-hidden="true" className="w-6 h-6 text-white" />
 						</div>
 					</div>
@@ -46,7 +46,7 @@ export function CompanyStats({ stats }: CompanyStatsProps) {
 								{stats.total > 0 ? Math.round((stats.active / stats.total) * 100) : 0}% of total
 							</p>
 						</div>
-						<div className={`${STAT_ICON_BASE} bg-gradient-to-br from-green-500 to-green-600`}>
+						<div className={`${STAT_ICON_BASE} bg-linear-to-br from-green-500 to-green-600`}>
 							<CheckCircle aria-hidden="true" className="w-6 h-6 text-white" />
 						</div>
 					</div>
@@ -64,7 +64,7 @@ export function CompanyStats({ stats }: CompanyStatsProps) {
 								{stats.total > 0 ? Math.round((stats.inactive / stats.total) * 100) : 0}% of total
 							</p>
 						</div>
-						<div className={`${STAT_ICON_BASE} bg-gradient-to-br from-gray-500 to-gray-600`}>
+						<div className={`${STAT_ICON_BASE} bg-linear-to-br from-gray-500 to-gray-600`}>
 							<XCircle aria-hidden="true" className="w-6 h-6 text-white" />
 						</div>
 					</div>

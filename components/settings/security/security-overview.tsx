@@ -31,7 +31,7 @@ function SecurityMetric({ icon, title, value, status, description }: SecurityMet
   return (
     <div className={cn("p-4 rounded-lg border", statusBgColors[status])}>
       <div className="flex items-start gap-3">
-        <div className={cn("flex-shrink-0", statusColors[status])}>
+        <div className={cn("shrink-0", statusColors[status])}>
           {icon}
         </div>
         <div className="flex-1 min-w-0">

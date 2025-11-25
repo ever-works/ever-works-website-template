@@ -290,7 +290,7 @@ export function SelectItem({
         )}
       </div>
       {isSelected && (
-        <Check size={16} className="text-blue-600 dark:text-blue-400 flex-shrink-0" />
+        <Check size={16} className="text-blue-600 dark:text-blue-400 shrink-0" />
       )}
       {endContent}
     </button>

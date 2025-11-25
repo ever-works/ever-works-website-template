@@ -68,7 +68,7 @@ const VersionDisplay = memo(function VersionDisplay({
   // Badge variant
   if (variant === "badge") {
     return (
-      <div className={`inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-full text-xs font-medium text-blue-700 dark:text-blue-300 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 ${className}`}>
+      <div className={`inline-flex items-center gap-2 px-3 py-1.5 bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-full text-xs font-medium text-blue-700 dark:text-blue-300 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 ${className}`}>
         <GitBranch className="h-3 w-3" />
         <span>v{versionInfo.commit}</span>
         <div className="w-1 h-1 bg-blue-400 dark:bg-blue-500 rounded-full animate-pulse"></div>

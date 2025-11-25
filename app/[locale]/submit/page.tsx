@@ -11,7 +11,7 @@ export default async function SubmitPage({ params }: { params: Promise<{ locale:
 	return (
 		<div
 			className={cn(
-				'w-full min-h-screen bg-gradient-to-br from-gray-50 via-white',
+				'w-full min-h-screen bg-linear-to-br from-gray-50 via-white',
 				'to-gray-100 dark:from-gray-900 dark:via-gray-800',
 				'dark:to-gray-900 transition-colors duration-300'
 			)}

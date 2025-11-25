@@ -264,7 +264,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                         )}
                         
                         <div className="flex items-start gap-3">
-                          <div className="flex-shrink-0 mt-0.5">
+                          <div className="shrink-0 mt-0.5">
                             {getNotificationIcon(notification.type)}
                           </div>
                           

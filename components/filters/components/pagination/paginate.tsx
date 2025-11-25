@@ -62,7 +62,7 @@ export function Paginate({
           {/* Enhanced Pagination */}
           <div className="relative group">
             {/* Background glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 via-primary-600/5 to-primary-500/10 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-linear-to-r from-primary-500/10 via-primary-600/5 to-primary-500/10 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
 
             <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-2 shadow-lg hover:shadow-xl transition-all duration-300 dark:shadow-lg dark:shadow-theme-primary-500/20 dark:shadow-theme-primary-500/20">
               <Pagination
@@ -86,7 +86,7 @@ export function Paginate({
                     "cursor-pointer relative overflow-hidden"
                   ),
                   cursor: cn(
-                    "!bg-theme-primary text-white font-semibold",
+                    "bg-theme-primary! text-white font-semibold",
                     "shadow-lg shadow-theme-primary dark:shadow-theme-primary",
                     "border-2 border-theme-primary dark:border-theme-primary",
                     "relative overflow-hidden"

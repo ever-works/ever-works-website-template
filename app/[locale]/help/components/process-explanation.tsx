@@ -138,7 +138,7 @@ export const ProcessExplanation = () => {
   };
 
   return (
-    <div className="mt-12 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black rounded-3xl p-8 border border-slate-200 dark:border-slate-700 shadow-2xl">
+    <div className="mt-12 bg-linear-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black rounded-3xl p-8 border border-slate-200 dark:border-slate-700 shadow-2xl">
       {/* Header */}
       <div className="text-center mb-12">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-blue-700 dark:text-blue-300 text-sm font-medium mb-6">
@@ -165,7 +165,7 @@ export const ProcessExplanation = () => {
           </div>
         <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
           <div 
-            className="bg-gradient-to-r from-blue-500 to-cyan-500 h-full rounded-full transition-all duration-1000 ease-out"
+            className="bg-linear-to-r from-blue-500 to-cyan-500 h-full rounded-full transition-all duration-1000 ease-out"
             style={{ width: `${progress}%` }}
           ></div>
         </div>
@@ -207,7 +207,7 @@ export const ProcessExplanation = () => {
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${step.gradient} flex items-center justify-center text-white text-xl shadow-lg`}>
+                      <div className={`w-12 h-12 rounded-xl bg-linear-to-r ${step.gradient} flex items-center justify-center text-white text-xl shadow-lg`}>
                         {step.icon}
           </div>
                       <div>
@@ -281,7 +281,7 @@ export const ProcessExplanation = () => {
 
                       {/* Action Buttons */}
                       <div className="flex gap-3 mt-6">
-                        <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold px-6 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+                        <Button className="bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold px-6 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
                           Start This Step
                         </Button>
                         <Button variant="outline" className="border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold px-6 py-2 rounded-xl transition-all duration-300">
@@ -299,7 +299,7 @@ export const ProcessExplanation = () => {
 
       {/* Bottom CTA */}
       <div className="mt-12 text-center">
-        <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-2xl p-8 border border-blue-200 dark:border-blue-800">
+        <div className="bg-linear-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-2xl p-8 border border-blue-200 dark:border-blue-800">
           <h4 className="text-xl font-bold mb-4 text-slate-900 dark:text-white">
             Ready to Get Started?
           </h4>
@@ -307,7 +307,7 @@ export const ProcessExplanation = () => {
             Follow our step-by-step process and have your platform running in under 2 hours
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+            <Button className="bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
               Begin Setup Process
             </Button>
             <Button variant="outline" className="border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold px-8 py-3 rounded-xl transition-all duration-300">
