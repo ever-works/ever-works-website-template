@@ -69,7 +69,7 @@ function TagsGridContent({ tags }: { tags: Tag[] }) {
     <Hero
       badgeText={t("TAGS")}
       title={
-        <span className="bg-gradient-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent">
+        <span className="bg-linear-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent">
           {t("TAGS", { defaultValue: "Tags" })}
         </span>
       }
@@ -99,7 +99,7 @@ function TagsGridContent({ tags }: { tags: Tag[] }) {
                   </p>
                   <button 
                     onClick={() => loadMore()} 
-                    className="text-sm text-theme-primary-500 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 transition-colors focus:outline-none focus:ring-2 focus:ring-theme-primary-500 rounded px-2 py-1"
+                    className="text-sm text-theme-primary-500 dark:text-theme-primary-400 hover:text-theme-primary-700 dark:hover:text-theme-primary-300 transition-colors focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500 rounded-sm px-2 py-1"
                   >
                     {tGrid("RETRY")}
                   </button>

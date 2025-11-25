@@ -77,7 +77,7 @@ export default function TagsFilter({
           <input
             type="text"
             placeholder="Search tags..."
-            className="w-full bg-gray-800/50 text-gray-100 text-sm rounded-md py-2 pl-9 pr-3 focus:outline-none focus:ring-1 focus:ring-theme-primary-500"
+            className="w-full bg-gray-800/50 text-gray-100 text-sm rounded-md py-2 pl-9 pr-3 focus:outline-hidden focus:ring-1 focus:ring-theme-primary-500"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -85,10 +85,10 @@ export default function TagsFilter({
       </div>
 
       <div className="px-2 py-1 max-h-60 overflow-y-auto">
-        <label className="flex items-center px-2 py-1.5 hover:bg-gray-800/50 rounded cursor-pointer">
+        <label className="flex items-center px-2 py-1.5 hover:bg-gray-800/50 rounded-sm cursor-pointer">
           <input
             type="checkbox"
-            className="h-4 w-4 rounded border-gray-600 bg-gray-800 text-theme-primary-500 focus:ring-theme-primary-500 focus:ring-offset-gray-900"
+            className="h-4 w-4 rounded-sm border-gray-600 bg-gray-800 text-theme-primary-500 focus:ring-theme-primary-500 focus:ring-offset-gray-900"
             checked={
               selectedTags.length === filteredTags.length &&
               filteredTags.length > 0
@@ -101,13 +101,13 @@ export default function TagsFilter({
         {filteredTags.map((tag) => (
           <label
             key={tag.id}
-            className="flex items-center px-2 py-1.5 hover:bg-gray-800/50 rounded cursor-pointer"
+            className="flex items-center px-2 py-1.5 hover:bg-gray-800/50 rounded-sm cursor-pointer"
           >
             <div className="relative flex items-center justify-center">
               <input
                 type="checkbox"
                 className={cn(
-                  "h-4 w-4 rounded border-gray-600 bg-gray-800 focus:ring-offset-gray-900",
+                  "h-4 w-4 rounded-sm border-gray-600 bg-gray-800 focus:ring-offset-gray-900",
                   selectedTags.includes(tag.id)
                     ? "text-theme-primary-500 focus:ring-theme-primary-500"
                     : "text-gray-600"
@@ -117,7 +117,7 @@ export default function TagsFilter({
               />
               {selectedTags.includes(tag.id) && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="h-3 w-3 bg-theme-primary-500 rounded-sm" />
+                  <div className="h-3 w-3 bg-theme-primary-500 rounded-xs" />
                 </div>
               )}
             </div>

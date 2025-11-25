@@ -22,18 +22,18 @@ import {
 
 // Design system class constants
 const CARD_WRAPPER_CLASSES = 'bg-white/95 dark:bg-gray-900/95 rounded-2xl p-8 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500';
-const ICON_CONTAINER_CLASSES = 'p-3 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-xl';
+const ICON_CONTAINER_CLASSES = 'p-3 bg-linear-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-xl';
 const SECTION_HEADER_CLASSES = 'flex items-center gap-4 mb-8';
 const FORM_CONTAINER_CLASSES = 'p-6 rounded-xl bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50';
 
 // Delete confirmation dialog class constants
 const DELETE_DIALOG_CLASSES = {
 	headerContainer: 'flex items-center gap-3',
-	alertIcon: 'w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg',
+	alertIcon: 'w-10 h-10 bg-linear-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg',
 	headerText: 'text-xl font-bold text-gray-900 dark:text-white',
-	warningContainer: 'bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/10 dark:to-orange-900/10 border border-red-200 dark:border-red-800 rounded-xl p-4',
+	warningContainer: 'bg-linear-to-r from-red-50 to-orange-50 dark:from-red-900/10 dark:to-orange-900/10 border border-red-200 dark:border-red-800 rounded-xl p-4',
 	warningContent: 'flex items-start gap-3',
-	warningIcon: 'h-5 w-5 text-red-500 mt-0.5 flex-shrink-0',
+	warningIcon: 'h-5 w-5 text-red-500 mt-0.5 shrink-0',
 	warningText: 'text-sm text-red-700 dark:text-red-300',
 	footerContainer: 'flex gap-3 w-full',
 	cancelButton: 'flex-1',
@@ -46,9 +46,9 @@ const CommentSkeleton = memo(() => (
 		{/* Header Skeleton */}
 		<div className={SECTION_HEADER_CLASSES}>
 			<div className={ICON_CONTAINER_CLASSES}>
-				<div className="w-6 h-6 bg-blue-200 dark:bg-blue-800 rounded animate-pulse" />
+				<div className="w-6 h-6 bg-blue-200 dark:bg-blue-800 rounded-sm animate-pulse" />
 			</div>
-			<div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse" />
+			<div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-sm w-48 animate-pulse" />
 		</div>
 
 		{/* Form Skeleton */}
@@ -63,8 +63,8 @@ const CommentSkeleton = memo(() => (
 				<div key={i} className="flex gap-4 animate-pulse">
 					<div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full" />
 					<div className="flex-1 space-y-2">
-						<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
-						<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+						<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-sm w-1/4" />
+						<div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-sm w-3/4" />
 					</div>
 				</div>
 			))}

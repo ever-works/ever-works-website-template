@@ -87,7 +87,7 @@ export function TagsList({
           size="sm"
           className={getButtonVariantStyles(
             isActive,
-            "px-1.5 py-1 h-8 font-medium transition-all duration-200 flex-shrink-0 min-w-0 max-w-[140px] overflow-hidden whitespace-nowrap"
+            "px-1.5 py-1 h-8 font-medium transition-all duration-200 shrink-0 min-w-0 max-w-[140px] overflow-hidden whitespace-nowrap"
           )}
           onClick={() => handleTagClick(tag.id)}
         >
@@ -156,7 +156,7 @@ export function TagsList({
 
   // Helper to wrap tag in min-width div for single-row view
   const renderTagWithMinWidth = (tag: Tag, idx: number) => (
-    <div key={tag.id || idx} className="min-w-[120px] max-w-[140px] flex-shrink-0">
+    <div key={tag.id || idx} className="min-w-[120px] max-w-[140px] shrink-0">
       {renderTag(tag, idx)}
     </div>
   );
@@ -173,7 +173,7 @@ export function TagsList({
               size="sm"
               className={getButtonVariantStyles(
                 isAllTagsActive,
-                "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group capitalize min-w-[90px] max-w-[140px] overflow-hidden"
+                "px-3 py-1 h-8 font-medium transition-all duration-300 shrink-0 group capitalize min-w-[90px] max-w-[140px] overflow-hidden"
               )}
               onClick={() => setSelectedTags([])}
             >
@@ -214,7 +214,7 @@ export function TagsList({
               href={resetPath || basePath || "/"}
               className={getButtonVariantStyles(
                 isAllTagsActive,
-                "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group capitalize min-w-[90px] max-w-[140px] overflow-hidden"
+                "px-3 py-1 h-8 font-medium transition-all duration-300 shrink-0 group capitalize min-w-[90px] max-w-[140px] overflow-hidden"
               )}
             >
               {isAllTagsActive && (
@@ -268,7 +268,7 @@ export function TagsList({
               <>
                 {tagsToShow.map(renderTagWithMinWidth)}
                 {hiddenCount > 0 && (
-                  <div className="min-w-[60px] max-w-[80px] flex-shrink-0">
+                  <div className="min-w-[60px] max-w-[80px] shrink-0">
                     <span className="inline-flex items-center justify-center px-2 py-1 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-medium select-none cursor-default">
                       +{hiddenCount} more
                     </span>

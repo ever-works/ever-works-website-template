@@ -36,7 +36,7 @@ export function SkipLink({ href, children, className }: SkipLinkProps) {
       className={cn(
         'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4',
         'bg-theme-primary text-white px-4 py-2 rounded-md font-medium',
-        'focus:z-50 focus:outline-none focus:ring-2 focus:ring-theme-primary/50',
+        'focus:z-50 focus:outline-hidden focus:ring-2 focus:ring-theme-primary/50',
         'transition-all duration-200',
         className
       )}
@@ -131,7 +131,7 @@ export function AccessibleError({ id, error, className }: AccessibleErrorProps) 
       )}
     >
       <svg
-        className="w-4 h-4 mt-0.5 flex-shrink-0"
+        className="w-4 h-4 mt-0.5 shrink-0"
         fill="currentColor"
         viewBox="0 0 20 20"
         aria-hidden="true"
@@ -244,7 +244,7 @@ export function AccessibleButton({
     <button
       className={cn(
         'font-medium rounded-lg transition-all duration-200',
-        'focus:outline-none focus:ring-2 focus:ring-offset-2',
+        'focus:outline-hidden focus:ring-2 focus:ring-offset-2',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         variantClasses[variant],
         sizeClasses[size],

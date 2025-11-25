@@ -92,7 +92,7 @@ export function PromoCodeComponent({
     return (
       <div className={cn(
         "inline-flex items-center gap-2 px-3 py-2 rounded-lg border transition-all duration-200",
-        "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200",
+        "bg-linear-to-r from-green-50 to-emerald-50 border-green-200",
         "dark:from-green-900/20 dark:to-emerald-900/20 dark:border-green-700/50",
         "hover:shadow-md hover:scale-105",
         isExpired && "opacity-50 grayscale",
@@ -119,7 +119,7 @@ export function PromoCodeComponent({
     <div
       className={cn(
         "relative overflow-hidden rounded-2xl border transition-all duration-300 transform",
-        "bg-gradient-to-br from-white via-green-50/30 to-emerald-50/50",
+        "bg-linear-to-br from-white via-green-50/30 to-emerald-50/50",
         "dark:from-gray-900 dark:via-green-900/10 dark:to-emerald-900/20",
         "border-green-200/60 dark:border-green-700/40",
         "hover:shadow-xl hover:shadow-green-500/10 hover:-translate-y-1",
@@ -133,14 +133,14 @@ export function PromoCodeComponent({
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(34,197,94,0.1),transparent_50%)]" />
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-green-400/20 to-transparent rounded-full -translate-y-16 translate-x-16" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-bl from-green-400/20 to-transparent rounded-full -translate-y-16 translate-x-16" />
       </div>
 
       <div className="relative p-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 rounded-xl bg-linear-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg">
               <DiscountIcon className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -239,7 +239,7 @@ export function PromoCodeComponent({
       {/* Animated border on hover */}
       <div className={cn(
         "absolute inset-0 rounded-2xl transition-opacity duration-300",
-        "bg-gradient-to-r from-green-400/20 via-emerald-400/20 to-green-400/20",
+        "bg-linear-to-r from-green-400/20 via-emerald-400/20 to-green-400/20",
         "opacity-0 group-hover:opacity-100",
         "-z-10"
       )} />

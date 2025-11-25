@@ -197,7 +197,7 @@ export function Support() {
   };
 
   return (
-    <div className="py-20 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black">
+    <div className="py-20 bg-linear-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
@@ -214,7 +214,7 @@ export function Support() {
         </div>
 
         {/* Support Dashboard */}
-        <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+        <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xs rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
           {/* Dashboard Header */}
           <div className="bg-slate-100 dark:bg-slate-900 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between">
@@ -239,7 +239,7 @@ export function Support() {
                     onClick={() => setActiveTab(tab.id as any)}
                     className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all duration-300 ${
                       activeTab === tab.id
-                        ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm"
+                        ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs"
                         : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
@@ -264,7 +264,7 @@ export function Support() {
                       {/* Header */}
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${channel.gradient} flex items-center justify-center text-white text-xl shadow-lg`}>
+                          <div className={`w-12 h-12 rounded-xl bg-linear-to-r ${channel.gradient} flex items-center justify-center text-white text-xl shadow-lg`}>
                             {channel.icon}
                           </div>
                           <div>
@@ -326,7 +326,7 @@ export function Support() {
                       {/* Action Button */}
                       <Button
                         onClick={() => channel.id === 'live-chat' ? setChatOpen(true) : window.open(channel.link, '_blank')}
-                        className={`w-full bg-gradient-to-r ${channel.gradient} hover:opacity-90 text-white font-semibold py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300`}
+                        className={`w-full bg-linear-to-r ${channel.gradient} hover:opacity-90 text-white font-semibold py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300`}
                       >
                         {channel.id === 'live-chat' ? 'Start Chat' : 'Get Help'}
                       </Button>
@@ -436,7 +436,7 @@ export function Support() {
                           onChange={(e) => setInputMessage(e.target.value)}
                           onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                           placeholder="Type your message..."
-                          className="flex-1 px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          className="flex-1 px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
                         />
                         <Button
                           onClick={sendMessage}
@@ -473,7 +473,7 @@ export function Support() {
 
         {/* Bottom CTA */}
         <div className="mt-16 text-center">
-          <div className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/30 dark:to-orange-900/30 rounded-2xl p-8 border border-red-200 dark:border-red-800">
+          <div className="bg-linear-to-r from-red-50 to-orange-50 dark:from-red-900/30 dark:to-orange-900/30 rounded-2xl p-8 border border-red-200 dark:border-red-800">
             <h3 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
               Still Need Help?
             </h3>
@@ -481,7 +481,7 @@ export function Support() {
               Our support team is here to help you succeed with your project
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Button className="bg-linear-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                 Contact Support
               </Button>
               <Button variant="outline" className="border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold px-8 py-3 rounded-xl transition-all duration-300">

@@ -29,8 +29,8 @@ export function Newsletter() {
   return (
     <div className="relative w-full bg-gray-900 rounded-xl overflow-hidden">
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-500/30 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-blue-500/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute top-0 left-0 w-96 h-96 bg-linear-to-br from-blue-500/30 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-linear-to-tl from-blue-500/30 to-transparent rounded-full blur-3xl"></div>
       </div>
 
       <div className="absolute inset-0 pointer-events-none">
@@ -63,12 +63,12 @@ export function Newsletter() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t("EMAIL_PLACEHOLDER")}
                   required
-                  className="flex-1 px-4 py-3 bg-gray-800/80 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
+                  className="flex-1 px-4 py-3 bg-gray-800/80 border border-gray-700 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
                 />
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-3 font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-colors duration-200 disabled:opacity-70"
+                  className="px-6 py-3 font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-colors duration-200 disabled:opacity-70"
                 >
                   {isSubmitting ? t("SUBMITTING") : t("SUBSCRIBE")}
                 </button>

@@ -55,7 +55,7 @@ export function TagsCards({ tags, className }: TagsCardsProps) {
       >
         {/* Full card loading overlay */}
         {loadingTag === tag.id && (
-          <div className="absolute inset-0 z-20 bg-gray-900/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg flex items-center justify-center transition-all duration-300">
+          <div className="absolute inset-0 z-20 bg-gray-900/90 dark:bg-gray-800/90 backdrop-blur-xs rounded-lg flex items-center justify-center transition-all duration-300">
             <div className="flex flex-col items-center gap-3">
               <div className="relative">
                 <Loader2 className="h-8 w-8 animate-spin text-theme-primary-400 dark:text-theme-primary-300" />
@@ -74,7 +74,7 @@ export function TagsCards({ tags, className }: TagsCardsProps) {
         )}
         <Card
           className={cn(
-            "dark:bg-gray-800/90 backdrop-blur-sm border border-gray-50 dark:border-gray-700/70",
+            "dark:bg-gray-800/90 backdrop-blur-xs border border-gray-50 dark:border-gray-700/70",
             "hover:border-theme-primary-400 dark:hover:border-theme-primary-500",
             isActive && "ring-2 ring-theme-primary-500 dark:ring-theme-primary-400"
           )}

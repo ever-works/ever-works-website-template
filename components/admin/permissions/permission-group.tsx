@@ -21,7 +21,7 @@ interface PermissionGroupProps {
 
 const groupContainerClasses = clsx(
   'border border-gray-200 dark:border-gray-700 rounded-lg',
-  'bg-white dark:bg-gray-900 shadow-sm'
+  'bg-white dark:bg-gray-900 shadow-xs'
 );
 
 const groupHeaderClasses = clsx(
@@ -56,11 +56,11 @@ const groupContentClasses = clsx(
 
 const toggleButtonClasses = clsx(
   'p-1 hover:bg-gray-200 dark:hover:bg-gray-700',
-  'rounded transition-colors duration-200'
+  'rounded-sm transition-colors duration-200'
 );
 
 const bulkActionButtonClasses = clsx(
-  'text-xs px-2 py-1 rounded',
+  'text-xs px-2 py-1 rounded-sm',
   'hover:bg-gray-200 dark:hover:bg-gray-700',
   'transition-colors duration-200'
 );

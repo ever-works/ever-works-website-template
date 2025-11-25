@@ -10,30 +10,30 @@ const ThemePreview: React.FC<{ themeKey: ThemeKey }> = React.memo(
   ({ themeKey }) => {
     const previews: Record<ThemeKey, React.ReactNode> = {
       everworks: (
-        <div className="w-12 h-8 bg-[#3d70ef] rounded overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/10" />
-          <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-sm" />
+        <div className="w-12 h-8 bg-[#3d70ef] rounded-sm overflow-hidden relative">
+          <div className="absolute inset-0 bg-linear-to-br from-white/10 to-black/10" />
+          <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-xs" />
           <div className="absolute top-1 right-1 w-1 h-1 bg-white/60 rounded-full" />
         </div>
       ),
       corporate: (
-        <div className="w-12 h-8 bg-[#00c853] rounded overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/10" />
-          <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-sm" />
+        <div className="w-12 h-8 bg-[#00c853] rounded-sm overflow-hidden relative">
+          <div className="absolute inset-0 bg-linear-to-br from-white/10 to-black/10" />
+          <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-xs" />
           <div className="absolute top-1 right-1 w-1 h-1 bg-white/60 rounded-full" />
         </div>
       ),
       material: (
-        <div className="w-12 h-8 bg-[#673ab7] rounded overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/10" />
-          <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-sm" />
+        <div className="w-12 h-8 bg-[#673ab7] rounded-sm overflow-hidden relative">
+          <div className="absolute inset-0 bg-linear-to-br from-white/10 to-black/10" />
+          <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-xs" />
           <div className="absolute top-1 right-1 w-1 h-1 bg-white/60 rounded-full" />
         </div>
       ),
       funny: (
-        <div className="w-12 h-8 bg-[#ff4081] rounded overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/10" />
-          <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-sm" />
+        <div className="w-12 h-8 bg-[#ff4081] rounded-sm overflow-hidden relative">
+          <div className="absolute inset-0 bg-linear-to-br from-white/10 to-black/10" />
+          <div className="absolute bottom-1 left-1 w-2 h-1 bg-white/80 rounded-xs" />
           <div className="absolute top-1 right-1 w-1 h-1 bg-white/60 rounded-full" />
         </div>
       )
@@ -99,7 +99,7 @@ const ThemeItem: React.FC<ThemeItemProps> = React.memo(
         <ColorIndicators colors={themeInfo.colors} size="lg" />
 
         {/* Preview */}
-        <div className="w-12 h-8 bg-gray-100 dark:bg-gray-700 rounded overflow-hidden relative">
+        <div className="w-12 h-8 bg-gray-100 dark:bg-gray-700 rounded-sm overflow-hidden relative">
           <ThemePreview themeKey={themeInfo.key} />
         </div>
 
@@ -193,7 +193,7 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
   if (!mounted) {
     return (
       <div className={`animate-pulse ${className}`}>
-        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded" />
+        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-sm" />
       </div>
     );
   }

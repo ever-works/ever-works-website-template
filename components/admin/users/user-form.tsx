@@ -224,7 +224,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
   return (
     <>
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700">
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-linear-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
           {isEditing ? t('TITLE_EDIT') : t('TITLE_CREATE')}
         </h2>
@@ -236,7 +236,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
       <form onSubmit={onSubmit} className="p-6 space-y-6">
         {/* Avatar Section */}
         <div className="flex items-center space-x-4">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-theme-primary to-theme-accent flex items-center justify-center text-white text-lg font-semibold">
+          <div className="w-16 h-16 rounded-full bg-linear-to-br from-theme-primary to-theme-accent flex items-center justify-center text-white text-lg font-semibold">
             {formData.name?.split(' ').map(n => n[0]).join('') || 'U'}
           </div>
           <div className="flex-1">
@@ -412,7 +412,7 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 -mx-6 -mb-6 px-6 pb-6">
+      <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 bg-linear-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 -mx-6 -mb-6 px-6 pb-6">
         {onCancel && (
           <Button
             variant="bordered"

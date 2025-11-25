@@ -62,7 +62,7 @@ interface CardSkeletonProps {
 
 function CardSkeleton({ className }: CardSkeletonProps) {
   return (
-    <div className={cn("bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6", className)}>
+    <div className={cn("bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700 p-6", className)}>
       <div className="space-y-4">
         <Skeleton className="h-6 w-3/4" />
         <Skeleton className="h-4 w-full" />

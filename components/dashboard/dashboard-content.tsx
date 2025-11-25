@@ -51,16 +51,16 @@ export function DashboardContent({ session }: DashboardContentProps) {
   // Auth check intentionally skipped: This dashboard is designed for demo/public view or authentication is handled at a higher level (e.g., route protection). If sensitive data is exposed, implement proper authentication checks here.
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Error Handling */}
         {statsError && (
-          <div className="mb-4 p-4 bg-red-100 text-red-800 rounded">
+          <div className="mb-4 p-4 bg-red-100 text-red-800 rounded-sm">
             Failed to load dashboard stats: {statsError.message}
           </div>
         )}
         {activityError && (
-          <div className="mb-4 p-4 bg-red-100 text-red-800 rounded">
+          <div className="mb-4 p-4 bg-red-100 text-red-800 rounded-sm">
             Failed to load user activity: {activityError.message}
           </div>
         )}
@@ -164,7 +164,7 @@ export function DashboardContent({ session }: DashboardContentProps) {
         </div>
 
         {/* Activity Section */}
-        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700">
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">

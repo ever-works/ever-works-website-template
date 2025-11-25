@@ -105,7 +105,7 @@ export function PaymentCard({ payment }: { payment: PaymentHistoryItem }) {
 
 
   return (
-    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 group">
+    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-xs hover:shadow-md transition-all duration-300 group">
       <div className="flex items-start justify-between">
         {/* Left Section - Payment Details */}
         <div className="flex-1">
@@ -248,14 +248,14 @@ export function PaymentCard({ payment }: { payment: PaymentHistoryItem }) {
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-4 text-slate-600 dark:text-slate-400">
             <span className="font-medium">Payment ID:</span>
-            <code className="bg-slate-100 dark:bg-slate-700/50 px-2 py-1 rounded text-xs font-mono border border-slate-200 dark:border-slate-600/50">
+            <code className="bg-slate-100 dark:bg-slate-700/50 px-2 py-1 rounded-sm text-xs font-mono border border-slate-200 dark:border-slate-600/50">
               {payment.id.slice(-8)}
             </code>
             
             {payment.subscriptionId && (
               <>
                 <span className="font-medium">Subscription:</span>
-                <code className="bg-slate-100 dark:bg-slate-700/50 px-2 py-1 rounded text-xs font-mono border border-slate-200 dark:border-slate-600/50">
+                <code className="bg-slate-100 dark:bg-slate-700/50 px-2 py-1 rounded-sm text-xs font-mono border border-slate-200 dark:border-slate-600/50">
                   {payment.subscriptionId.slice(-8)}
                 </code>
               </>

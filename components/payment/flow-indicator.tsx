@@ -170,7 +170,7 @@ export function PaymentFlowIndicator({
       <div className={cn(
         "flex items-center justify-center p-4 rounded-lg border border-slate-200 dark:border-slate-700",
         "bg-white dark:bg-slate-800",
-        "shadow-sm",
+        "shadow-xs",
         className
       )}>
         <div className="w-5 h-5 rounded-full bg-slate-400 animate-pulse" />
@@ -184,7 +184,7 @@ export function PaymentFlowIndicator({
       <div className={cn(
         "flex items-center justify-center p-4 rounded-lg border border-slate-200 dark:border-slate-700",
         "bg-white dark:bg-slate-800",
-        "shadow-sm",
+        "shadow-xs",
         className
       )}>
         <AlertCircle className="w-4 h-4 mr-2 text-slate-500 dark:text-slate-400" />
@@ -201,7 +201,7 @@ export function PaymentFlowIndicator({
           <div
             className={cn(
               "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all duration-200",
-              "shadow-sm",
+              "shadow-xs",
               flowTheme.bgColor,
               flowTheme.borderColor,
               interactive && !disabled && "cursor-pointer hover:shadow-md",
@@ -224,7 +224,7 @@ export function PaymentFlowIndicator({
           >
             <div className={cn(
               "w-5 h-5 rounded-md flex items-center justify-center transition-all duration-200",
-              `bg-gradient-to-r ${flowTheme.gradient}`,
+              `bg-linear-to-r ${flowTheme.gradient}`,
               loading && "animate-spin"
             )}>
               {loading ? (
@@ -285,14 +285,14 @@ export function PaymentFlowIndicator({
           <div className={cn(
             "absolute inset-0 opacity-0 transition-opacity duration-500",
             isHovered && "opacity-10",
-            `bg-gradient-to-r ${flowTheme.gradient}`
+            `bg-linear-to-r ${flowTheme.gradient}`
           )} />
         )}
 
         {/* Premium Badge */}
         {variant === 'premium' && (
           <div className="absolute top-3 left-3 z-20">
-            <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-primary-600 text-white rounded-md shadow-sm">
+            <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-primary-600 text-white rounded-md shadow-xs">
               <Crown className="w-3 h-3" />
               PREMIUM
             </span>
@@ -303,8 +303,8 @@ export function PaymentFlowIndicator({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className={cn(
-              "w-10 h-10 !bg-primary-600 rounded-lg flex items-center justify-center shadow-sm transition-all duration-200",
-              `bg-gradient-to-r ${flowTheme.gradient}`,
+              "w-10 h-10 bg-primary-600! rounded-lg flex items-center justify-center shadow-xs transition-all duration-200",
+              `bg-linear-to-r ${flowTheme.gradient}`,
               loading && "animate-spin"
             )}>
               {loading ? (
@@ -371,7 +371,7 @@ export function PaymentFlowIndicator({
                     flowTheme.accentColor
                   )}
                 >
-                  <CheckCircle className="w-3 h-3 text-slate-500 flex-shrink-0" />
+                  <CheckCircle className="w-3 h-3 text-slate-500 shrink-0" />
                   <span className="truncate">{feature}</span>
                 </div>
               ))}
@@ -384,7 +384,7 @@ export function PaymentFlowIndicator({
           <div className="absolute top-3 right-3 z-20">
             <div className={cn(
               "w-2 h-2 rounded-full",
-              `bg-gradient-to-r ${flowTheme.gradient}`
+              `bg-linear-to-r ${flowTheme.gradient}`
             )} />
           </div>
         )}

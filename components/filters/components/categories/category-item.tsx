@@ -70,7 +70,7 @@ export function CategoryItem({
             </span>
             <span
               className={cn(
-                "text-xs font-semibold px-2 py-0.5 rounded-full transition-all duration-300 flex-shrink-0 group-hover:scale-105",
+                "text-xs font-semibold px-2 py-0.5 rounded-full transition-all duration-300 shrink-0 group-hover:scale-105",
                 isActive
                   ? "text-white"
                   : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"

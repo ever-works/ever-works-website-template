@@ -21,7 +21,7 @@ export function MarkdownTag({ name }: { name: string }) {
         href={`/tags/${normalizedTag}`}
         className="no-underline inline-block"
       >
-        <span className="px-2 py-1 text-xs font-medium bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300 rounded-full inline-flex items-center gap-1 hover:shadow-sm transition-all">
+        <span className="px-2 py-1 text-xs font-medium bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300 rounded-full inline-flex items-center gap-1 hover:shadow-xs transition-all">
           <FiTag className="w-3 h-3" />
           {name}
         </span>

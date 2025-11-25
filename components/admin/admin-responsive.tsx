@@ -62,7 +62,7 @@ export function AdminResponsiveCard({
 
   return (
     <div className={cn(
-      "bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700",
+      "bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700",
       getVariantStyles(),
       className
     )}>

@@ -79,10 +79,10 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
 			{children}
 
 			{isOpen && options && (
-				<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4">
+				<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-9999 p-4">
 					<div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
 						<div className="flex items-start gap-4">
-							<div className={`flex-shrink-0 w-10 h-10 rounded-full ${variantStyles.iconBg} flex items-center justify-center`}>
+							<div className={`shrink-0 w-10 h-10 rounded-full ${variantStyles.iconBg} flex items-center justify-center`}>
 								<AlertTriangle className={`w-5 h-5 ${variantStyles.iconColor}`} />
 							</div>
 							<div className="flex-1">
@@ -98,7 +98,7 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
 							<button
 								type="button"
 								onClick={handleCancel}
-								className="flex-shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+								className="shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
 							>
 								<X className="w-5 h-5" />
 							</button>

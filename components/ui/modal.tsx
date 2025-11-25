@@ -12,7 +12,7 @@ interface ModalProps {
   subtitle?: React.ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
   children: React.ReactNode;
-  backdrop?: 'blur' | 'opaque' | 'transparent';
+  backdrop?: 'blur-sm' | 'opaque' | 'transparent';
   isDismissable?: boolean;
   hideCloseButton?: boolean;
   className?: string;
@@ -26,7 +26,7 @@ export function Modal({
   subtitle,
   size = 'md',
   children,
-  backdrop = 'blur',
+  backdrop = 'blur-sm',
   isDismissable = true,
   hideCloseButton = false,
   className = '',
@@ -74,7 +74,7 @@ export function Modal({
   };
 
   const backdropClasses = {
-    blur: 'backdrop-blur-sm bg-black/50',
+    'blur-sm': 'backdrop-blur-xs bg-black/50',
     opaque: 'bg-black/60',
     transparent: 'bg-black/20',
   };
@@ -118,7 +118,7 @@ export function Modal({
                     onClose();
                     onOpenChange?.(false);
                   }}
-                  className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                  className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-sm transition-colors"
                 >
                   <X size={20} className="text-gray-500 dark:text-gray-400" />
                 </button>

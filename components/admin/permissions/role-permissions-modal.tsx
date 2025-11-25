@@ -27,7 +27,7 @@ interface RolePermissionsModalProps {
 }
 
 const modalOverlayClasses = clsx(
-  'fixed inset-0 z-[9999] flex items-center justify-center',
+  'fixed inset-0 z-9999 flex items-center justify-center',
   'p-4 overflow-y-auto'
 );
 
@@ -45,7 +45,7 @@ const modalContainerClasses = clsx(
 const modalHeaderClasses = clsx(
   'flex items-center justify-between p-6',
   'border-b border-gray-200 dark:border-gray-700',
-  'bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900'
+  'bg-linear-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900'
 );
 
 const modalTitleClasses = clsx(
@@ -68,7 +68,7 @@ const permissionsSectionClasses = clsx(
 const modalFooterClasses = clsx(
   'flex justify-between items-center p-6',
   'border-t border-gray-200 dark:border-gray-700',
-  'bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900'
+  'bg-linear-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900'
 );
 
 const changesSummaryClasses = clsx(
@@ -245,7 +245,7 @@ export function RolePermissionsModal({
         {/* Header */}
         <div className={modalHeaderClasses}>
           <div className={modalTitleClasses}>
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-linear-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
               <Shield className="w-4 h-4 text-white" />
             </div>
             <div>
@@ -262,7 +262,7 @@ export function RolePermissionsModal({
             <button
               type="button"
               onClick={handleClose}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-sm transition-colors"
               aria-label={translations.CLOSE}
             >
               <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
@@ -346,7 +346,7 @@ export function RolePermissionsModal({
               disabled={isButtonDisabled}
               startContent={!isSubmitting && !(isOpen && isLoadingPermissions) && <Save size={16} />}
               className={clsx(
-                'bg-gradient-to-r from-theme-primary to-theme-accent',
+                'bg-linear-to-r from-theme-primary to-theme-accent',
                 'hover:from-theme-primary/90 hover:to-theme-accent/90',
                 'shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40',
                 'transition-all duration-300 text-white font-medium'

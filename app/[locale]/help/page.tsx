@@ -186,10 +186,10 @@ export default function HelpPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black text-slate-900 dark:text-white transition-all duration-300">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black text-slate-900 dark:text-white transition-all duration-300">
       {/* Progress Bar */}
       {showProgress && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700">
+        <div className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xs border-b border-slate-200 dark:border-slate-700">
           <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -198,7 +198,7 @@ export default function HelpPage() {
                 </span>
                 <div className="w-32 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-theme-primary-500 to-cyan-500 transition-all duration-500"
+                    className="h-full bg-linear-to-r from-theme-primary-500 to-cyan-500 transition-all duration-500"
                     style={{ width: `${progressPercentage}%` }}
                   ></div>
                 </div>
@@ -216,12 +216,12 @@ export default function HelpPage() {
       <PageContainer className="max-w-7xl mx-auto px-4 py-12">
         {/* Interactive Navigation */}
         <div className="mb-16">
-          <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+          <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xs rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
             {/* Header */}
-            <div className="bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+            <div className="bg-linear-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10 bg-linear-to-r from-theme-primary-500 to-theme-primary-600 rounded-xl flex items-center justify-center">
                     <span className="text-white text-lg">📋</span>
                   </div>
                   <div>
@@ -241,7 +241,7 @@ export default function HelpPage() {
                     placeholder={t("SEARCH_GUIDES_PLACEHOLDER")}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-64 px-4 py-2 pl-10 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-theme-primary-500"
+                    className="w-64 px-4 py-2 pl-10 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500"
                   />
                   <span className="absolute left-3 top-2.5 text-slate-400">🔍</span>
                 </div>
@@ -281,7 +281,7 @@ export default function HelpPage() {
                       }`}>
                         {index + 1}
                       </div>
-                      <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${step.gradient} flex items-center justify-center text-white text-base shadow-lg`}>
+                      <div className={`w-8 h-8 rounded-lg bg-linear-to-r ${step.gradient} flex items-center justify-center text-white text-base shadow-lg`}>
                         {step.icon}
                       </div>
                     </div>
@@ -325,12 +325,12 @@ export default function HelpPage() {
 
         {/* Current Step Content */}
         <div ref={contentSectionRef} className="mb-16">
-          <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+          <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xs rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
             {/* Step Header */}
-            <div className="bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+            <div className="bg-linear-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${navigationSteps[currentStep].gradient} flex items-center justify-center text-white text-xl shadow-lg`}>
+                  <div className={`w-12 h-12 rounded-xl bg-linear-to-r ${navigationSteps[currentStep].gradient} flex items-center justify-center text-white text-xl shadow-lg`}>
                     {navigationSteps[currentStep].icon}
                   </div>
                   <div>
@@ -356,7 +356,7 @@ export default function HelpPage() {
                   <Button
                     onClick={nextStep}
                     disabled={currentStep === totalSteps - 1}
-                    className="bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 hover:from-theme-primary-600 hover:to-theme-primary-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
+                    className="bg-linear-to-r from-theme-primary-500 to-theme-primary-600 hover:from-theme-primary-600 hover:to-theme-primary-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
                   >
                     {currentStep === totalSteps - 1 ? t("COMPLETE") : `${t("NEXT")} →`}
                   </Button>
@@ -372,7 +372,7 @@ export default function HelpPage() {
         </div>
 
         {/* Quick Navigation */}
-        <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xl">
+        <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xs rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xl">
           <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
             {t("QUICK_NAVIGATION")}
           </h3>

@@ -38,7 +38,7 @@ const SortMenu: React.FC<SortMenuProps> = ({
         value={value}
         onChange={e => onSortChange(e.target.value)}
         aria-label={ariaLabel}
-        className="appearance-none bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-2 sm:px-3 py-1.5 pr-8 sm:pr-10 text-xs sm:text-sm text-theme-primary-600 dark:text-theme-primary-400 w-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-transparent transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+        className="appearance-none bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-2 sm:px-3 py-1.5 pr-8 sm:pr-10 text-xs sm:text-sm text-theme-primary-600 dark:text-theme-primary-400 w-full cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500 focus:border-transparent transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700"
       >
         {options.map(opt => (
           <option className="text-gray-900 dark:text-white cursor-pointer" key={opt.value} value={opt.value}>

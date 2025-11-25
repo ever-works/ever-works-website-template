@@ -247,7 +247,7 @@ export function SubscriptionActions({
 
 			{/* Actions Panel */}
 			{isExpanded && (
-				<div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 shadow-sm">
+				<div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 shadow-xs">
 					<div className="flex items-center justify-between mb-4">
 						<h4 className="text-base font-semibold text-slate-900 dark:text-slate-100">
 							Subscription Actions
@@ -317,14 +317,14 @@ export function SubscriptionActions({
 						<div className="flex gap-2 justify-end">
 							<button
 								onClick={() => setShowConfirmDialog(null)}
-								className="px-3 py-1.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 rounded hover:bg-slate-200 dark:hover:bg-slate-600/50 transition-colors"
+								className="px-3 py-1.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 rounded-sm hover:bg-slate-200 dark:hover:bg-slate-600/50 transition-colors"
 								disabled={isProcessing}
 							>
 								Cancel
 							</button>
 							<button
 								onClick={() => handleConfirmAction(showConfirmDialog)}
-								className="px-3 py-1.5 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700 transition-colors disabled:opacity-50"
+								className="px-3 py-1.5 text-sm font-medium text-white bg-red-600 rounded-sm hover:bg-red-700 transition-colors disabled:opacity-50"
 								disabled={isProcessing}
 							>
 								{isProcessing ? (

@@ -170,7 +170,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-theme-primary to-theme-accent px-6 py-4">
+      <div className="bg-linear-to-r from-theme-primary to-theme-accent px-6 py-4">
         <h2 className="text-xl font-bold text-white">
           {mode === 'create' ? t('TITLE_CREATE') : t('TITLE_EDIT')}
         </h2>
@@ -193,7 +193,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             value={formData.id}
             onChange={(e) => handleInputChange('id', e.target.value)}
             disabled={mode === 'edit'}
-            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
               errors.id 
                 ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
                 : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
@@ -218,7 +218,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             placeholder={t('ITEM_NAME_PLACEHOLDER')}
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
-            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
               errors.name 
                 ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
                 : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
@@ -244,7 +244,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
               placeholder={t('ITEM_SLUG_PLACEHOLDER')}
               value={formData.slug}
               onChange={(e) => handleInputChange('slug', e.target.value)}
-              className={`flex-1 px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              className={`flex-1 px-3 py-2 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                 errors.slug 
                   ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
                   : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
@@ -278,7 +278,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             placeholder={t('DESCRIPTION_PLACEHOLDER')}
             value={formData.description}
             onChange={(e) => handleInputChange('description', e.target.value)}
-            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none ${
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none ${
               errors.description 
                 ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
                 : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
@@ -303,7 +303,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             placeholder={t('SOURCE_URL_PLACEHOLDER')}
             value={formData.source_url}
             onChange={(e) => handleInputChange('source_url', e.target.value)}
-            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
               errors.source_url 
                 ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
                 : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
@@ -328,7 +328,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             placeholder={t('CATEGORIES_PLACEHOLDER')}
             value={(formData.category as string[]).join(', ')}
             onChange={(e) => handleCategoryChange(e.target.value)}
-            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
               errors.category 
                 ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700' 
                 : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
@@ -353,7 +353,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             placeholder={t('TAGS_PLACEHOLDER')}
             value={formData.tags.join(', ')}
             onChange={(e) => handleTagsChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           />
           <p className='text-xs text-gray-500 dark:text-gray-400'>
             {t('TAGS_HELP')}
@@ -371,7 +371,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             placeholder={t('ICON_URL_PLACEHOLDER')}
             value={formData.icon_url}
             onChange={(e) => handleInputChange('icon_url', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           />
           <p className='text-xs text-gray-500 dark:text-gray-400'>
             {t('ICON_URL_HELP')}
@@ -387,7 +387,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             <button
               type="button"
               onClick={() => handleInputChange('featured', !formData.featured)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                 formData.featured 
                   ? 'bg-blue-600 dark:bg-blue-500' 
                   : 'bg-gray-200 dark:bg-gray-700'
@@ -417,7 +417,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
             id="item-status"
             value={formData.status}
             onChange={(e) => handleInputChange('status', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           >
             <option value={ITEM_STATUSES.DRAFT}>{t('STATUS_OPTIONS.DRAFT')}</option>
             <option value={ITEM_STATUSES.PENDING}>{t('STATUS_OPTIONS.PENDING')}</option>
@@ -443,7 +443,7 @@ export function ItemForm({ item, mode, onSubmit, onCancel, isLoading = false }: 
           <Button
             type="submit"
             disabled={isLoading}
-            className="px-4 py-2 bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 text-white"
+            className="px-4 py-2 bg-linear-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 text-white"
           >
             {isLoading ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />

@@ -230,8 +230,8 @@ export function GeometricDecoration({ className }: { className?: string }) {
       <div className="absolute bottom-10 right-10 w-2 h-2 bg-theme-primary/40 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }} />
       
       {/* Decorative lines */}
-      <div className="absolute top-1/4 left-0 w-20 h-px bg-gradient-to-r from-transparent via-theme-primary/30 to-transparent" />
-      <div className="absolute bottom-1/4 right-0 w-20 h-px bg-gradient-to-l from-transparent via-theme-accent/30 to-transparent" />
+      <div className="absolute top-1/4 left-0 w-20 h-px bg-linear-to-r from-transparent via-theme-primary/30 to-transparent" />
+      <div className="absolute bottom-1/4 right-0 w-20 h-px bg-linear-to-l from-transparent via-theme-accent/30 to-transparent" />
     </div>
   );
 }

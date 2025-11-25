@@ -37,7 +37,7 @@ export function DeletePaymentMethodModal({ isOpen, onClose, paymentMethod, isDef
 				{/* Payment method card preview */}
 				<div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
 					<div className="flex items-center space-x-3">
-						<div className="w-10 h-6 bg-gradient-to-r from-red-500 to-red-600 rounded flex items-center justify-center text-white text-sm font-bold">
+						<div className="w-10 h-6 bg-linear-to-r from-red-500 to-red-600 rounded-sm flex items-center justify-center text-white text-sm font-bold">
 							💳
 						</div>
 						<div>

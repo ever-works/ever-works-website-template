@@ -25,22 +25,22 @@ export default function ItemSkeleton({
 
 	return (
 		<Card className={cardClassName}>
-			<div className="absolute inset-0 bg-gradient-to-br from-gray-50/60 via-white/90 to-gray-100/80 dark:from-gray-900/60 dark:via-gray-800/80 dark:to-black/80" />
+			<div className="absolute inset-0 bg-linear-to-br from-gray-50/60 via-white/90 to-gray-100/80 dark:from-gray-900/60 dark:via-gray-800/80 dark:to-black/80" />
 
 			{/* Content container */}
 			<div className="relative z-10">
 				<CardHeader className="flex gap-4 pb-4">
-					<div className="flex flex-col flex-grow gap-4 min-w-0">
+					<div className="flex flex-col grow gap-4 min-w-0">
 						<div className="flex justify-between items-start gap-3">
 							<div className="flex items-center gap-4">
 								{/* Icon skeleton */}
-								<div className="flex-shrink-0">
+								<div className="shrink-0">
 									<div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-2xl animate-pulse" />
 								</div>
 
 								{/* Title skeleton */}
 								<div className="flex-1 min-w-0">
-									<div className="h-5 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-1" />
+									<div className="h-5 w-32 bg-gray-200 dark:bg-gray-700 rounded-sm animate-pulse mb-1" />
 									<div className="w-0 h-0.5 bg-gray-200 dark:bg-gray-700" />
 								</div>
 							</div>
@@ -66,19 +66,19 @@ export default function ItemSkeleton({
 						{/* Description skeleton */}
 						{showDescription && (
 							<div className="space-y-2">
-								<div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-								<div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-								<div className="h-4 w-4/5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+								<div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded-sm animate-pulse" />
+								<div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded-sm animate-pulse" />
+								<div className="h-4 w-4/5 bg-gray-200 dark:bg-gray-700 rounded-sm animate-pulse" />
 							</div>
 						)}
 
 						{/* Hashtags skeleton */}
 						{showHashtags && (
 							<div className="flex flex-wrap gap-2">
-								<div className="h-6 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-								<div className="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-								<div className="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-								<div className="h-6 w-22 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+								<div className="h-6 w-20 bg-gray-200 dark:bg-gray-700 rounded-sm animate-pulse" />
+								<div className="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded-sm animate-pulse" />
+								<div className="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded-sm animate-pulse" />
+								<div className="h-6 w-22 bg-gray-200 dark:bg-gray-700 rounded-sm animate-pulse" />
 							</div>
 						)}
 					</div>

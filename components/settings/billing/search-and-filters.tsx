@@ -50,7 +50,7 @@ export function SearchAndFilters({
   const hasActiveFilters = selectedFilters.length > 0 || searchTerm.length > 0;
 
   return (
-    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm mb-6">
+    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-xs mb-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
@@ -104,7 +104,7 @@ export function SearchAndFilters({
           placeholder="Search payments by plan, description, or status..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="block w-full pl-12 pr-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 transition-all duration-200"
+          className="block w-full pl-12 pr-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 bg-white dark:bg-slate-700 focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 transition-all duration-200"
         />
         {searchTerm && (
           <button
@@ -133,7 +133,7 @@ export function SearchAndFilters({
                       type="checkbox"
                       checked={selectedFilters.includes(filter.value)}
                       onChange={() => handleFilterToggle(filter.value)}
-                      className="w-4 h-4 text-theme-primary-600 border-slate-300 dark:border-slate-600 rounded focus:ring-theme-primary-500 focus:ring-2 bg-white dark:bg-slate-700"
+                      className="w-4 h-4 text-theme-primary-600 border-slate-300 dark:border-slate-600 rounded-sm focus:ring-theme-primary-500 focus:ring-2 bg-white dark:bg-slate-700"
                     />
                     <span className="text-sm text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">
                       {filter.label}

@@ -8,7 +8,7 @@ export function ClientFiltersSkeleton() {
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={`stats-card-${index}`}
-            className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
+            className="bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700 p-6"
           >
             <div className="flex items-center justify-between">
               <div className="space-y-2">
@@ -26,7 +26,7 @@ export function ClientFiltersSkeleton() {
       </div>
 
       {/* Search and Filters Skeleton */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700 p-6">
         <div className="space-y-4">
           {/* Search Bar */}
           <div className="relative">
@@ -35,19 +35,19 @@ export function ClientFiltersSkeleton() {
 
           {/* Filter Controls */}
           <div className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-[12rem]">
+            <div className="flex-1 min-w-48">
               <Skeleton className="h-4 w-16 mb-2" />
               <Skeleton className="h-10 w-full rounded-lg" />
             </div>
-            <div className="flex-1 min-w-[12rem]">
+            <div className="flex-1 min-w-48">
               <Skeleton className="h-4 w-12 mb-2" />
               <Skeleton className="h-10 w-full rounded-lg" />
             </div>
-            <div className="flex-1 min-w-[12rem]">
+            <div className="flex-1 min-w-48">
               <Skeleton className="h-4 w-20 mb-2" />
               <Skeleton className="h-10 w-full rounded-lg" />
             </div>
-            <div className="flex-1 min-w-[12rem]">
+            <div className="flex-1 min-w-48">
               <Skeleton className="h-4 w-16 mb-2" />
               <Skeleton className="h-10 w-full rounded-lg" />
             </div>

@@ -72,10 +72,10 @@ export function TagsModal({
           {selectedTags.length === 0 && (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="relative mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-full flex items-center justify-center">
+                <div className="w-20 h-20 bg-linear-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-full flex items-center justify-center">
                   <TagIcon className="w-10 h-10 text-gray-400 dark:text-gray-600" />
                 </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center animate-pulse">
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-linear-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center animate-pulse">
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
               </div>

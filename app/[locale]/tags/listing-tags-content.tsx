@@ -27,7 +27,7 @@ export function ListingTagsContent({
 			<Hero
 				badgeText={t('TAGS')}
 				title={
-					<span className="bg-gradient-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent">
+					<span className="bg-linear-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent">
 						{t('TAGS', { defaultValue: 'Tags' })}
 					</span>
 				}

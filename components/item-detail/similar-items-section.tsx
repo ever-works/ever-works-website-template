@@ -13,7 +13,7 @@ export function SimilarItemsSection({ allItems, className, title = 'Similar Prod
 			<div className="flex items-center gap-2 mb-6">
 				<h3 className="text-xl font-semibold text-gray-800 dark:text-white">{title}</h3>
 				<span
-					className="text-xs bg-gradient-to-r from-cyan-100 to-blue-100 dark:from-cyan-900/30 dark:to-blue-900/
+					className="text-xs bg-linear-to-r from-cyan-100 to-blue-100 dark:from-cyan-900/30 dark:to-blue-900/
                         30 text-cyan-700 dark:text-cyan-300 px-3 py-1 rounded-full font-semibold border border-cyan-200 
                         dark:border-cyan-700/50"
 				>

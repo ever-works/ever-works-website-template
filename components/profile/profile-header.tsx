@@ -78,7 +78,7 @@ export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderPr
       <Card className="relative z-30 mt-8 md:mt-4 mx-auto max-w-4xl px-6 py-8 md:px-12 md:py-10 shadow-lg border-0">
         <div className="flex flex-col md:flex-row items-center md:items-start md:space-x-8">
           {/* Spacer for avatar on desktop */}
-          <div className="hidden md:block md:w-0 md:h-0 flex-shrink-0" />
+          <div className="hidden md:block md:w-0 md:h-0 shrink-0" />
           {/* Profile Info */}
           <div className="flex-1 min-w-0 w-full">
             <div className="space-y-4">
@@ -133,7 +133,7 @@ export function ProfileHeader({ profile, isOwnProfile = false }: ProfileHeaderPr
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg hover:bg-white dark:hover:bg-gray-800 transition-all duration-200 shadow-sm hover:shadow-md"
+                      className="flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xs rounded-lg hover:bg-white dark:hover:bg-gray-800 transition-all duration-200 shadow-xs hover:shadow-md"
                     >
                       {getSocialIcon(link.platform)}
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">

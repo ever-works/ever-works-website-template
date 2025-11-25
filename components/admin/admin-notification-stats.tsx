@@ -19,10 +19,10 @@ export function AdminNotificationStats() {
         {[...Array(5)].map((_, i) => (
           <Card key={i} className="animate-pulse">
             <CardHeader className="pb-2">
-              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              <div className="h-4 bg-gray-200 rounded-sm w-3/4"></div>
             </CardHeader>
             <CardContent>
-              <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+              <div className="h-8 bg-gray-200 rounded-sm w-1/2"></div>
             </CardContent>
           </Card>
         ))}

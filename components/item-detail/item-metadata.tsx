@@ -12,7 +12,7 @@ export function ItemMetadata({
 }: ItemMetadataProps) {
   return (
     <div className="flex flex-wrap items-center gap-3 mt-6">
-      <div className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-white/10 text-white backdrop-blur-sm">
+      <div className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-white/10 text-white backdrop-blur-xs">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="w-4 h-4 mr-2 opacity-70"
@@ -31,7 +31,7 @@ export function ItemMetadata({
       </div>
 
       {updatedAt && (
-        <div className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-white/10 text-white backdrop-blur-sm dark:bg-dark--theme-800/30">
+        <div className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-white/10 text-white backdrop-blur-xs dark:bg-dark--theme-800/30">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-4 h-4 mr-2 opacity-70"
@@ -55,7 +55,7 @@ export function ItemMetadata({
           href={sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-primary-700 hover:bg-primary-600 text-white transition-all duration-300 shadow-sm hover:shadow-md dark:bg-primary-800 dark:hover:bg-primary-700 dark:shadow-primary-900/20"
+          className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-primary-700 hover:bg-primary-600 text-white transition-all duration-300 shadow-xs hover:shadow-md dark:bg-primary-800 dark:hover:bg-primary-700 dark:shadow-primary-900/20"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

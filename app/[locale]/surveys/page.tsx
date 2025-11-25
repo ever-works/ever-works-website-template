@@ -55,17 +55,17 @@ export default async function SurveysPage() {
                             <Link
                                 key={survey.id}
                                 href={`/surveys/${survey.slug}`}
-                                className="block bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-200 dark:border-gray-700"
+                                className="block bg-white dark:bg-gray-800 rounded-lg shadow-xs hover:shadow-md transition-shadow p-6 border border-gray-200 dark:border-gray-700"
                             >
                                 <div className="flex items-start justify-between mb-3">
                                     <h2 className="text-xl font-semibold flex-1">{survey.title}</h2>
-                                    <span className={`px-2 py-1 rounded text-xs font-medium ${getTypeColor(survey.type)}`}>
+                                    <span className={`px-2 py-1 rounded-sm text-xs font-medium ${getTypeColor(survey.type)}`}>
                                         {survey.type}
                                     </span>
                                 </div>
 
                                 <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
-                                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(survey.status)}`}>
+                                    <span className={`px-2 py-1 rounded-sm text-xs font-medium ${getStatusColor(survey.status)}`}>
                                         {survey.status}
                                     </span>
                                 </div>
