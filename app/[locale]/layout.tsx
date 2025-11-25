@@ -16,6 +16,9 @@ import { ConditionalLayout } from '@/components/layout/conditional-layout';
 import { siteConfig } from '@/lib/config';
 import { SpeedInsights } from './integration/speed-insights';
 import { SettingsProvider } from '@/components/providers/settings-provider';
+import { SettingsModalProvider } from '@/hooks/use-settings-modal';
+import { SettingsModal } from '@/components/settings-modal';
+import { FloatingSettingsButton } from '@/components/floating-settings-button';
 import {
 	getCategoriesEnabled,
 	getTagsEnabled,
@@ -27,6 +30,7 @@ import {
 	getHeaderLanguageEnabled,
 	getHeaderThemeEnabled,
 	getHeaderMoreEnabled,
+	getHeaderSettingsEnabled,
 	getHeaderLayoutDefault,
 	getHeaderPaginationDefault,
 	getHeaderThemeDefault,
@@ -88,6 +92,7 @@ export default async function RootLayout({
 		languageEnabled: getHeaderLanguageEnabled(),
 		themeEnabled: getHeaderThemeEnabled(),
 		moreEnabled: getHeaderMoreEnabled(),
+		settingsEnabled: getHeaderSettingsEnabled(),
 		layoutDefault: getHeaderLayoutDefault(),
 		paginationDefault: getHeaderPaginationDefault(),
 		themeDefault: getHeaderThemeDefault(),
@@ -110,9 +115,15 @@ export default async function RootLayout({
 						surveysEnabled={surveysEnabled}
 						headerSettings={headerSettings}
 					>
-						<Providers config={config}>
-							<ConditionalLayout>{children}</ConditionalLayout>
-						</Providers>
+						<SettingsModalProvider>
+							<Providers config={config}>
+								<ConditionalLayout>{children}</ConditionalLayout>
+							</Providers>
+							{/* Settings Modal - Shared by header and floating button */}
+							<SettingsModal />
+							{/* Floating Settings Button - WordPress customizer style */}
+							{headerSettings.settingsEnabled && <FloatingSettingsButton />}
+						</SettingsModalProvider>
 					</SettingsProvider>
 				</NextIntlClientProvider>
 			</PHProvider>

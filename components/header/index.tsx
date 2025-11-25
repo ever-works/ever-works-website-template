@@ -19,6 +19,7 @@ import { LayoutSwitcher } from "../layout-switcher";
 import { NavigationControls } from "../navigation-controls";
 import { ProfileButton } from "./profile-button";
 import { MoreMenu } from "./more-menu";
+import { SettingsButton } from "../settings-button";
 import { IconEverworksSimple } from "../icons/Icons";
 import { Container } from "../ui/container";
 import { useFeatureFlags } from "@/hooks/use-feature-flags";
@@ -263,9 +264,14 @@ export default function Header() {
             <MoreMenu />
           </NavbarItem>
         )}
+        {headerSettings.settingsEnabled && (
+          <NavbarItem key="settings">
+            <SettingsButton />
+          </NavbarItem>
+        )}
       </>
     ),
-    [navigationItems, renderNavigationItem, headerSettings.moreEnabled]
+    [navigationItems, renderNavigationItem, headerSettings.moreEnabled, headerSettings.settingsEnabled]
   );
 
   const renderRightSection = useCallback(
@@ -325,6 +331,12 @@ export default function Header() {
           {headerSettings.moreEnabled && (
             <NavbarMenuItem className={STYLES.mobileMenuItem}>
               <MoreMenu inline onItemClick={() => setIsMenuOpen(false)} />
+            </NavbarMenuItem>
+          )}
+
+          {headerSettings.settingsEnabled && (
+            <NavbarMenuItem className={STYLES.mobileMenuItem}>
+              <SettingsButton />
             </NavbarMenuItem>
           )}
 

@@ -10,6 +10,7 @@ const DEFAULT_HEADER_SETTINGS: HeaderSettings = {
 	languageEnabled: true,
 	themeEnabled: true,
 	moreEnabled: true,
+	settingsEnabled: true,
 	layoutDefault: 'home1',
 	paginationDefault: 'standard',
 	themeDefault: 'light',

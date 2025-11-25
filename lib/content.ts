@@ -194,6 +194,7 @@ export interface HeaderSettings {
 	languageEnabled: boolean;
 	themeEnabled: boolean;
 	moreEnabled: boolean;
+	settingsEnabled: boolean;
 	layoutDefault: string;
 	paginationDefault: string;
 	themeDefault: string;
