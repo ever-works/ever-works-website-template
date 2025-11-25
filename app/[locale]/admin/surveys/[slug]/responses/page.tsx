@@ -36,6 +36,7 @@ export async function generateMetadata({ params }: AdminSurveyResponsesPageProps
 export default async function AdminSurveyResponsesPage({ params }: AdminSurveyResponsesPageProps) {
 	const { slug } = await params;
 	const survey = await getSurvey(slug);
+	const surveysEnabled = getSurveysEnabled();
 
 	if (!survey) {
 		notFound();
@@ -48,7 +49,7 @@ export default async function AdminSurveyResponsesPage({ params }: AdminSurveyRe
 				href: '/admin/surveys',
 				label: 'Back to Surveys'
 			}}
-			surveysEnabled={getSurveysEnabled()}
+			surveysEnabled={surveysEnabled}
 		/>
 	);
 }

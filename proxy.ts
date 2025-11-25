@@ -107,7 +107,7 @@ async function supabaseGuard(req: NextRequest, baseRes: NextResponse): Promise<N
 
 /* ──────────────────────────────────── Main middleware ─────────────────────────────────── */
 
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const cfg = getAuthConfig();
   const originalPathname = req.nextUrl.pathname;
 
