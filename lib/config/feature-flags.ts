@@ -19,6 +19,8 @@ export interface FeatureFlags {
   favorites: boolean;
   /** Admin-managed featured items display */
   featuredItems: boolean;
+  /** User surveys and feedback collection */
+  surveys: boolean;
 }
 
 /**
@@ -51,6 +53,7 @@ export function getFeatureFlags(): FeatureFlags {
     comments: isDatabaseConfigured,
     favorites: isDatabaseConfigured,
     featuredItems: isDatabaseConfigured,
+    surveys: isDatabaseConfigured,
   };
 }
 
