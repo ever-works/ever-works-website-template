@@ -1,9 +1,15 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { Modal } from '@/components/ui/modal';
 import type { Survey } from '@/lib/db/schema';
-import { SurveyFormWrapper } from './forms/survey-form-wrapper';
+
+// Dynamic import to avoid survey-react-ui SSR issues with Next.js 16
+const SurveyFormWrapper = dynamic(
+	() => import('./forms/survey-form-wrapper').then((mod) => mod.SurveyFormWrapper),
+	{ ssr: false }
+);
 
 interface SurveyDialogProps {
     survey: Survey | null;

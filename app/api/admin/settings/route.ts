@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
 
-		// Get settings from config
+		// Get settings from config - API routes can use configManager directly
 		const config = configManager.getConfig();
 		const settings = config.settings || {};
 
@@ -51,7 +51,7 @@ export async function PATCH(req: NextRequest) {
 			);
 		}
 
-		// Update the nested key under settings
+		// Update the nested key under settings - API routes can use configManager directly
 		const settingsKey = `settings.${key}`;
 		const success = configManager.updateNestedKey(settingsKey, value);
 

@@ -1,8 +1,6 @@
-import { getCachedItems } from "@/lib/content";
-import { paginateMeta } from "@/lib/paginate";
-import Listing from "../../listing";
-import { Suspense } from "react";
-import { ListingSkeleton } from "@/components/ui/skeleton";
+import { getCachedItems } from '@/lib/content';
+import { paginateMeta } from '@/lib/paginate';
+import DiscoverListingPageContent from '@/components/pages/discover';
 
 // Disable static generation to prevent content loading errors during build
 export const dynamic = 'force-dynamic';
@@ -26,27 +24,20 @@ export const dynamic = 'force-dynamic';
 //   return (await Promise.all(params)).flat();
 // }
 
-export default async function DiscoverListing({
-  params,
-}: {
-  params: Promise<{ page: string; locale: string }>;
-}) {
-  const { page: rawPage, locale } = await params;
+export default async function DiscoverListing({ params }: { params: Promise<{ page: string; locale: string }> }) {
+	const { page: rawPage, locale } = await params;
 
-  const { start, page } = paginateMeta(rawPage);
-  const { items, categories, total, tags } = await getCachedItems({ lang: locale });
+	const { start, page } = paginateMeta(rawPage);
+	const { items, categories, total, tags } = await getCachedItems({ lang: locale });
 
-  return (
-    <Suspense fallback={<ListingSkeleton />}>
-      <Listing
-        tags={tags}
-        categories={categories}
-        items={items}
-        start={start}
-        page={page}
-        total={total}
-        basePath="/discover"
-      />
-    </Suspense>
-  );
+	return (
+		<DiscoverListingPageContent
+			start={start}
+			page={page}
+			categories={categories}
+			tags={tags}
+			items={items}
+			total={total}
+		/>
+	);
 }

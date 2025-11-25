@@ -45,7 +45,8 @@ export default async function ItemSurveyPage({ params }: ItemSurveyPageProps) {
 	// Pass the item slug for context
 	return (
 		<Container className="my-8" maxWidth="7xl" padding="default">
-			<SurveyPageClient survey={survey} itemSlug={slug} />
+			<p>Helo</p>
+			{/* <SurveyPageClient survey={survey} itemSlug={slug} /> */}
 		</Container>
 	);
 }

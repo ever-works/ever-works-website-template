@@ -1,10 +1,11 @@
+'use server';
 /*
   Seed script to insert realistic local data into the database.
   Usage: DATABASE_URL=... yarn seed
 */
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import dotenv from 'dotenv';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';

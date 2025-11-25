@@ -1,18 +1,18 @@
 "use client";
-import { createContext, useContext } from 'react';
+import React from 'react';
 import { FilterContextType } from '../types';
 import { useFilterState } from '../hooks/use-filter-state';
 
 /**
  * Filter context for sharing filter state across components
  */
-export const FilterContext = createContext<FilterContextType | null>(null);
+export const FilterContext = React.createContext<FilterContextType | null>(null);
 
 /**
  * Hook to use filter context
  */
 export function useFilters() {
-  const context = useContext(FilterContext);
+  const context = React.useContext(FilterContext);
   if (!context) {
     throw new Error("useFilters must be used within a FilterProvider");
   }

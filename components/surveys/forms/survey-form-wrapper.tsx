@@ -40,7 +40,7 @@ export function SurveyFormWrapper({
 
 	const handleComplete = async (sender: Model) => {
 		if (isSubmitting) return;
-		
+
 		try {
 			setIsSubmitting(true);
 			await surveyApiClient.submitResponse({
@@ -50,7 +50,7 @@ export function SurveyFormWrapper({
 			});
 
 			toast.success(t('SURVEY_COMPLETED_SUCCESS'));
-			
+
 			// Call the completion callback if provided
 			if (onCompleted) {
 				onCompleted();
@@ -60,7 +60,7 @@ export function SurveyFormWrapper({
 			toast.error(t('FAILED_TO_SAVE_SURVEY_RESPONSE'));
 		} finally {
 			setIsSubmitting(false);
-		} 
+		}
 	};
 
 	if (survey.status !== 'published') {

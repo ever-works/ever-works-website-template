@@ -4,7 +4,7 @@ import { Category, ItemData, Tag } from "@/lib/content";
 import GlobalsClient from "./globals-client";
 import Hero from "@/components/hero";
 import { FilterURLParser } from "@/components/filters/filter-url-parser";
-import { ConfigManager } from "@/lib/config-manager";
+import { getConfig } from "@/lib/config-manager.server";
 
 type ListingProps = {
   total: number;
@@ -20,8 +20,9 @@ type ListingProps = {
 
 export default async function Listing(props: ListingProps) {
   const t = await getTranslations("listing");
-  const configManager = new ConfigManager();
-  const config = configManager.getConfig();
+
+  // Read config on server side only
+  const config = await getConfig();
   const homepageSettings = config.settings?.homepage;
   const heroEnabled = homepageSettings?.hero_enabled ?? true;
   const searchEnabled = homepageSettings?.search_enabled ?? true;

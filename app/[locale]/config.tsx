@@ -1,21 +1,21 @@
 'use client';
 
 import type { Config } from '@/lib/content';
-import { createContext, useContext, useMemo } from 'react';
+import React from 'react';
 import { getAuthConfig } from '@/lib/auth/config';
 import { defaultPricingConfig } from '@/lib/types';
 
-const ConfigContext = createContext<Config>({});
+const ConfigContext = React.createContext<Config>({});
 
 // Initialize auth config once during module load
 const initialAuthConfig = getAuthConfig();
 
 export function ConfigProvider({ config, children }: { config: Config; children: React.ReactNode }) {
-	const enhancedConfig = useMemo(() => {
+	const enhancedConfig = React.useMemo(() => {
         const pricing = config.pricing ?? defaultPricingConfig;
         const configWithPricing = { ...config, pricing };
 		return { ...configWithPricing,
-             authConfig: initialAuthConfig, 
+             authConfig: initialAuthConfig,
          };
 	}, [config]);
 
@@ -23,7 +23,7 @@ export function ConfigProvider({ config, children }: { config: Config; children:
 }
 
 export function useConfig() {
-	const context = useContext<Config>(ConfigContext);
+	const context = React.useContext<Config>(ConfigContext);
 	if (!context) {
 		throw new Error('useConfig must be used within a ConfigProvider');
 	}

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, PropsWithChildren } from 'react';
+import React, { createContext, useContext, PropsWithChildren } from 'react';
 import type { HeaderSettings } from '@/lib/content';
 
 const DEFAULT_HEADER_SETTINGS: HeaderSettings = {

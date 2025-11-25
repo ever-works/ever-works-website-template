@@ -4,7 +4,7 @@ import './globals.css';
 import { getCachedConfig } from '@/lib/content';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-import { getMessages, unstable_setRequestLocale } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
 import { Toaster } from 'sonner';
 import { PHProvider } from './integration/posthog/provider';
@@ -71,26 +71,26 @@ export default async function RootLayout({
 	}
 
 	// Ensure server-side i18n helpers use the current route locale
-	unstable_setRequestLocale(locale);
+	setRequestLocale(locale);
 
 	const config = await getCachedConfig();
 	const messages = await getMessages();
 
 	// Read settings server-side for instant availability
-	const categoriesEnabled = getCategoriesEnabled();
-	const tagsEnabled = getTagsEnabled();
-	const companiesEnabled = getCompaniesEnabled();
-	const surveysEnabled = getSurveysEnabled();
+	const categoriesEnabled = await getCategoriesEnabled();
+	const tagsEnabled = await getTagsEnabled();
+	const companiesEnabled = await getCompaniesEnabled();
+	const surveysEnabled = await getSurveysEnabled();
 	const headerSettings = {
-		submitEnabled: getHeaderSubmitEnabled(),
-		pricingEnabled: getHeaderPricingEnabled(),
-		layoutEnabled: getHeaderLayoutEnabled(),
-		languageEnabled: getHeaderLanguageEnabled(),
-		themeEnabled: getHeaderThemeEnabled(),
-		moreEnabled: getHeaderMoreEnabled(),
-		layoutDefault: getHeaderLayoutDefault(),
-		paginationDefault: getHeaderPaginationDefault(),
-		themeDefault: getHeaderThemeDefault(),
+		submitEnabled: await getHeaderSubmitEnabled(),
+		pricingEnabled: await getHeaderPricingEnabled(),
+		layoutEnabled: await getHeaderLayoutEnabled(),
+		languageEnabled: await getHeaderLanguageEnabled(),
+		themeEnabled: await getHeaderThemeEnabled(),
+		moreEnabled: await getHeaderMoreEnabled(),
+		layoutDefault: await getHeaderLayoutDefault(),
+		paginationDefault: await getHeaderPaginationDefault(),
+		themeDefault: await getHeaderThemeDefault(),
 	};
 
 	// Determine if the current locale is RTL

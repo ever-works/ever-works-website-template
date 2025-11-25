@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import { LayoutKey, layoutComponents } from "@/components/layouts";
 import { applyThemeWithPalettes } from "@/lib/theme-color-manager";
 
@@ -156,7 +156,7 @@ const isValidItemsPerPage = (value: number): boolean => {
 };
 
 // Context
-const LayoutThemeContext = createContext<LayoutThemeContextType | undefined>(undefined);
+const LayoutThemeContext = React.createContext<LayoutThemeContextType | undefined>(undefined);
 
 // Custom hook for theme management
 const useThemeManager = () => {

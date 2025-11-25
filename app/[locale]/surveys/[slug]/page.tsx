@@ -22,6 +22,9 @@ export default async function SurveyPage({ params }: SurveyPageProps) {
 		notFound();
 	}
 
-	return <SurveyPageClient survey={survey} />;
+	return <p>Hello
+
+{/* <SurveyPageClient survey={survey} /> */}
+	</p>;
 }
 

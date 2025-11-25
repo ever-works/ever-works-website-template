@@ -1,4 +1,5 @@
-import { createContext, useMemo } from 'react';
+'use client';
+import React, { createContext, useMemo } from 'react';
 import { useEditor, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {

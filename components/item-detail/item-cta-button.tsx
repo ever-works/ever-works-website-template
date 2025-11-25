@@ -2,12 +2,18 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
+import dynamic from 'next/dynamic';
 import { surveyApiClient } from '@/lib/api/survey-api.client';
 import { SurveyStatusEnum } from '@/lib/types/survey';
 import type { SurveyItem } from '@/lib/db/schema';
-import { SurveyDialog } from '@/components/surveys/survey-dialog';
 import { Logger } from '@/lib/logger';
 import { toast } from 'sonner';
+
+// Dynamic import to avoid survey-react-ui SSR issues with Next.js 16
+const SurveyDialog = dynamic(
+	() => import('@/components/surveys/survey-dialog').then((mod) => mod.SurveyDialog),
+	{ ssr: false }
+);
 
 const logger = Logger.create('ItemCTAButton');
 

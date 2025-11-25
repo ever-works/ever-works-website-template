@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { PaymentService } from '../lib/payment-service';
 import { PaymentServiceManager } from '../lib/payment-service-manager';
