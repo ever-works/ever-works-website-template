@@ -344,18 +344,24 @@ export async function GET() {
   } catch (error) {
     // Performance: Log error time
     const duration = Date.now() - startTime;
-    
+
     if (error instanceof VersionApiError) {
-      console.error(`[VERSION_API] Known error after ${duration}ms:`, {
-        code: error.code,
-        message: error.message,
-        details: error.details,
-      });
+      // Only log errors in development mode
+      if (process.env.NODE_ENV === 'development') {
+        console.error(`[VERSION_API] Known error after ${duration}ms:`, {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+        });
+      }
       return createErrorResponse(error);
     }
 
     // Handle unexpected errors
-    console.error(`[VERSION_API] Unexpected error after ${duration}ms:`, error);
+    // Only log errors in development mode
+    if (process.env.NODE_ENV === 'development') {
+      console.error(`[VERSION_API] Unexpected error after ${duration}ms:`, error);
+    }
     
     const unexpectedError = new VersionApiError(
       "Internal server error",
