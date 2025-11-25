@@ -1,7 +1,6 @@
 "use client";
 
 import { Settings } from "lucide-react";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useSettingsModal } from "@/hooks/use-settings-modal";
 import { useTranslations } from "next-intl";
@@ -35,26 +34,21 @@ const TOOLTIP_CLASSES = cn(
 
 export function FloatingSettingsButton() {
 	const { openModal } = useSettingsModal();
-	const [showTooltip, setShowTooltip] = useState(false);
 	const t = useTranslations("settings");
 
 	return (
 		<button
 			onClick={openModal}
-			onMouseEnter={() => setShowTooltip(true)}
-			onMouseLeave={() => setShowTooltip(false)}
 			className={BUTTON_CLASSES}
 			aria-label={t("OPEN_SETTINGS")}
 			type="button"
 		>
 			<Settings className="h-6 w-6" />
 
-			{/* Tooltip */}
-			{showTooltip && (
-				<span className={TOOLTIP_CLASSES}>
-					{t("SETTINGS")}
-				</span>
-			)}
+			{/* Tooltip - visibility controlled by CSS group-hover */}
+			<span className={TOOLTIP_CLASSES}>
+				{t("SETTINGS")}
+			</span>
 		</button>
 	);
 }
