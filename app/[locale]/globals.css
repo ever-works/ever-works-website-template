@@ -1,74 +1,284 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap')
+layer(base);
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-@layer components {
-  /* Custom input component using Tailwind utilities */
-  .custom-input {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm transition-all duration-300 ease-in-out outline-none;
+@config '../../tailwind.config.ts';
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
   }
-  
-  .custom-input:hover {
+}
+
+@utility custom-input {
+  /* Custom input component using Tailwind utilities */
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm transition-all duration-300 ease-in-out outline-hidden;
+
+  &:hover {
     @apply border-gray-500;
   }
-  
-  .custom-input:focus {
+
+  &:focus {
     @apply border-blue-500 shadow-[0_0_0_2px_rgba(59,130,246,0.2)] bg-white;
   }
-  
-  .custom-input:disabled {
+
+  &:disabled {
     @apply bg-gray-50 text-gray-500 cursor-not-allowed;
   }
-  
-  .custom-input.error {
+
+  &.error {
     @apply border-red-500;
   }
-  
-  .custom-input.error:focus {
+
+  &.error:focus {
     @apply border-red-500 shadow-[0_0_0_2px_rgba(239,68,68,0.2)];
   }
-  
+
   /* Dark mode styles using Tailwind dark: prefix */
-  .dark .custom-input {
+  .dark & {
     @apply bg-gray-800 text-white border-gray-600;
   }
-  
-  .dark .custom-input:hover {
+
+  .dark &:hover {
     @apply border-gray-500;
   }
-  
-  .dark .custom-input:focus {
+
+  .dark &:focus {
     @apply bg-gray-800 text-white;
   }
-  
-  .dark .custom-input:disabled {
+
+  .dark &:disabled {
     @apply bg-gray-700 text-gray-400;
   }
 }
 
-@layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 0.6s ease-out;
-  }
-  
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+
+
+@utility animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@utility line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@utility bg-theme-primary {
+  /* Theme-based utility classes */
+  background-color: var(--theme-primary);
+}
+
+@utility bg-theme-primary-50 {
+  background-color: var(--theme-primary-50);
+}
+
+@utility bg-theme-primary-100 {
+  background-color: var(--theme-primary-100);
+}
+
+@utility bg-theme-primary-200 {
+  background-color: var(--theme-primary-200);
+}
+
+@utility bg-theme-primary-300 {
+  background-color: var(--theme-primary-300);
+}
+
+@utility bg-theme-primary-400 {
+  background-color: var(--theme-primary-400);
+}
+
+@utility bg-theme-primary-500 {
+  background-color: var(--theme-primary-500);
+}
+
+@utility bg-theme-primary-600 {
+  background-color: var(--theme-primary-600);
+}
+
+@utility bg-theme-primary-700 {
+  background-color: var(--theme-primary-700);
+}
+
+@utility bg-theme-primary-800 {
+  background-color: var(--theme-primary-800);
+}
+
+@utility to-theme-primary {
+  --tw-gradient-to: var(--theme-primary) var(--tw-gradient-to-position);
+}
+
+@utility from-theme-primary {
+  --tw-gradient-from: var(--theme-primary) var(--tw-gradient-from-position);
+}
+
+@utility from-theme-primary-900/30 {
+  --tw-gradient-from: rgba(var(--theme-primary), 0.3)
+    var(--tw-gradient-from-position);
+  --tw-gradient-to: rgba(var(--theme-primary), 0.3)
+    var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+@utility border-theme-primary-200 {
+  border-color: var(--theme-primary-200);
+}
+
+@utility border-theme-primary-300 {
+  border-color: var(--theme-primary-300);
+}
+
+@utility border-theme-primary-400 {
+  border-color: var(--theme-primary-400);
+}
+
+@utility border-theme-primary-500 {
+  border-color: var(--theme-primary-500);
+}
+
+@utility bg-theme-secondary {
+  background-color: var(--theme-secondary);
+}
+
+@utility bg-theme-accent {
+  background-color: var(--theme-accent);
+}
+
+@utility bg-theme-surface {
+  background-color: var(--theme-surface);
+}
+
+@utility text-theme-primary {
+  color: var(--theme-primary);
+}
+
+@utility text-theme-primary-50 {
+  color: var(--theme-primary-50);
+}
+
+@utility text-theme-primary-100 {
+  color: var(--theme-primary-100);
+}
+
+@utility text-theme-primary-200 {
+  color: var(--theme-primary-200);
+}
+
+@utility text-theme-primary-300 {
+  color: var(--theme-primary-300);
+}
+
+@utility text-theme-primary-400 {
+  color: var(--theme-primary-400);
+}
+
+@utility text-theme-primary-500 {
+  color: var(--theme-primary-500);
+}
+
+@utility text-theme-primary-600 {
+  color: var(--theme-primary-600);
+}
+
+@utility text-theme-primary-700 {
+  color: var(--theme-primary-700);
+}
+
+@utility text-theme-primary-800 {
+  color: var(--theme-primary-800);
+}
+
+@utility text-theme-primary-900 {
+  color: var(--theme-primary-900);
+}
+
+@utility text-theme-primary-950 {
+  color: var(--theme-primary-950);
+}
+
+@utility text-theme-secondary {
+  color: var(--theme-secondary);
+}
+
+@utility text-theme-accent {
+  color: var(--theme-accent);
+}
+
+@utility text-theme-text {
+  color: var(--theme-text);
+}
+
+@utility text-theme-text-secondary {
+  color: var(--theme-text-secondary);
+}
+
+@utility border-theme-primary {
+  border-color: var(--theme-primary);
+}
+
+@utility border-theme-secondary {
+  border-color: var(--theme-secondary);
+}
+
+@utility border-theme-accent {
+  border-color: var(--theme-accent);
+}
+
+@utility bg-theme-primary-10 {
+  /* Opacity variants */
+  background-color: rgba(var(--theme-primary-rgb), 0.1);
+}
+
+@utility bg-theme-primary-5 {
+  background-color: rgba(var(--theme-primary-rgb), 0.05);
+}
+
+@utility bg-theme-primary-20 {
+  background-color: rgba(var(--theme-primary-rgb), 0.2);
+}
+
+@utility text-gradient-primary {
+  /* Theme-primary gradient utilities for consistent title styling */
+  @apply bg-linear-to-r from-theme-primary-600 via-theme-primary-500 to-theme-primary-400 bg-clip-text text-transparent;
+
+  .dark & {
+    @apply from-theme-primary-400 via-theme-primary-500 to-theme-primary-600;
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+@utility text-gradient-primary-subtle {
+  @apply bg-linear-to-r from-theme-primary-600 to-theme-primary-500 bg-clip-text text-transparent;
+
+  .dark & {
+    @apply from-theme-primary-400 to-theme-primary-500;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+}
+
+@layer utilities {
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
@@ -207,211 +417,6 @@
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 150ms;
   }
-}
-
-@layer utilities {
-  /* Theme-based utility classes */
-  .bg-theme-primary {
-    background-color: var(--theme-primary);
-  }
-  .bg-theme-primary-50 {
-    background-color: var(--theme-primary-50);
-  }
-  .bg-theme-primary-100 {
-    background-color: var(--theme-primary-100);
-  }
-  .bg-theme-primary-200 {
-    background-color: var(--theme-primary-200);
-  }
-  .bg-theme-primary-300 {
-    background-color: var(--theme-primary-300);
-  }
-  .bg-theme-primary-400 {
-    background-color: var(--theme-primary-400);
-  }
-  .bg-theme-primary-500 {
-    background-color: var(--theme-primary-500);
-  }
-  .bg-theme-primary-600 {
-    background-color: var(--theme-primary-600);   
-  }
-  .bg-theme-primary-700 {
-    background-color: var(--theme-primary-700);
-  }
-  .bg-theme-primary-800 {
-    background-color: var(--theme-primary-800);
-  }
-  .to-theme-primary {
-    --tw-gradient-to: var(--theme-primary) var(--tw-gradient-to-position);
-  }
-  .from-theme-primary {
-    --tw-gradient-from: var(--theme-primary) var(--tw-gradient-from-position);
-  }
-
- .from-theme-primary-900\/30 {
-  --tw-gradient-from: rgba(var(--theme-primary), 0.3) var(--tw-gradient-from-position);
-  --tw-gradient-to: rgba(var(--theme-primary), 0.3) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-
-
-  .border-theme-primary-200 {
-    border-color: var(--theme-primary-200);
-  }
-  .border-theme-primary-300 {
-    border-color: var(--theme-primary-300);
-  }
-  .border-theme-primary-400 {
-    border-color: var(--theme-primary-400);
-  }
-  .border-theme-primary-500 {
-    border-color: var(--theme-primary-500);
-  }
-  .hover\:border-theme-primary:hover {
-    --tw-border-opacity: 1;
-    border-color: rgb(59 130 246 / var(--tw-border-opacity, 1)) /* #3b82f6 */;
-  }
-  .hover\:border-theme-primary-500:hover {
-    --tw-border-opacity: 1;
-    border-color: rgb(59 130 246 / var(--tw-border-opacity, 1)) /* #3b82f6 */;
-  }
-  .hover\:border-theme-primary-400:hover {
-    --tw-border-opacity: 1;
-    border-color: rgb(59 130 246 / var(--tw-border-opacity, 1)) /* #3b82f6 */;
-  }
-  
-  .bg-theme-secondary {
-    background-color: var(--theme-secondary);
-  }
-  
-  .bg-theme-accent {
-    background-color: var(--theme-accent);
-  }
-  
-  .bg-theme-surface {
-    background-color: var(--theme-surface);
-  }
-  
-  .text-theme-primary {
-    color: var(--theme-primary);
-  }
-  .text-theme-primary-50 {
-    color: var(--theme-primary-50);
-  }
-  .text-theme-primary-100 {
-    color: var(--theme-primary-100);
-  }
-  .text-theme-primary-200 {
-    color: var(--theme-primary-200);
-  }
-  .text-theme-primary-300 {
-    color: var(--theme-primary-300);
-  }
-  .text-theme-primary-400 {
-    color: var(--theme-primary-400);
-  }
-  .text-theme-primary-500 {
-    color: var(--theme-primary-500);
-  }
-  .text-theme-primary-600 {
-    color: var(--theme-primary-600);
-  }
-  .text-theme-primary-700 {
-    color: var(--theme-primary-700);
-  }
-  .text-theme-primary-800 {
-    color: var(--theme-primary-800);
-  }
-  .text-theme-primary-900 {
-    color: var(--theme-primary-900);
-  }
-  .text-theme-primary-950 {
-    color: var(--theme-primary-950);
-  }
-  
-  .text-theme-secondary {
-    color: var(--theme-secondary);
-  }
-  
-  .text-theme-accent {
-    color: var(--theme-accent);
-  }
-  
-  .text-theme-text {
-    color: var(--theme-text);
-  }
-  
-  .text-theme-text-secondary {
-    color: var(--theme-text-secondary);
-  }
-  
-  .border-theme-primary {
-    border-color: var(--theme-primary);
-  }
-  
-  .border-theme-secondary {
-    border-color: var(--theme-secondary);
-  }
-  
-  .border-theme-accent {
-    border-color: var(--theme-accent);
-  }
-  
-  /* Opacity variants */
-  .bg-theme-primary-10 {
-    background-color: rgba(var(--theme-primary-rgb), 0.1);
-  }
-
-  .bg-theme-primary-5 {
-    background-color: rgba(var(--theme-primary-rgb), 0.05);
-  }
-  
-  .bg-theme-primary-20 {
-    background-color: rgba(var(--theme-primary-rgb), 0.2);
-  }
-  
-  /* Hover variants */
-  .hover\:bg-theme-primary:hover {
-    background-color: var(--theme-primary);
-  }
-  
-  .hover\:bg-theme-secondary:hover {
-    background-color: var(--theme-secondary);
-  }
-  
-  .hover\:text-theme-primary:hover {
-    color: var(--theme-primary);
-  }
-  
-  .hover\:text-theme-secondary:hover {
-    color: var(--theme-secondary);
-  }
-  
-  .hover\:border-theme-primary:hover {
-    border-color: var(--theme-primary);
-  }
-  
-  .hover\:border-theme-secondary:hover {
-    border-color: var(--theme-secondary);
-  }
-
-  /* Theme-primary gradient utilities for consistent title styling */
-  .text-gradient-primary {
-    @apply bg-gradient-to-r from-theme-primary-600 via-theme-primary-500 to-theme-primary-400 bg-clip-text text-transparent;
-  }
-
-  .dark .text-gradient-primary {
-    @apply from-theme-primary-400 via-theme-primary-500 to-theme-primary-600;
-  }
-
-  .text-gradient-primary-subtle {
-    @apply bg-gradient-to-r from-theme-primary-600 to-theme-primary-500 bg-clip-text text-transparent;
-  }
-
-  .dark .text-gradient-primary-subtle {
-    @apply from-theme-primary-400 to-theme-primary-500;
-  }
-
 }
 
 /* Enhanced animations for modern UI */
