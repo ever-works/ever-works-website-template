@@ -49,7 +49,15 @@ export function useHasGlobalSurveys(): UseHasGlobalSurveysResult {
     gcTime: 10 * 60 * 1000, // 10 minutes
     refetchOnMount: false,
     refetchOnWindowFocus: false,
-    retry: 2,
+    retry: (failureCount, error) => {
+      // Don't retry if database is unavailable
+      if (error?.message?.includes('Database not configured')) {
+        return false;
+      }
+      // Otherwise retry once (reduced from 2 to minimize timeouts)
+      return failureCount < 1;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
   });
 
   return {
