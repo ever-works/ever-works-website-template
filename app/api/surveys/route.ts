@@ -82,6 +82,10 @@ const logger = Logger.create('SurveyAPI');
 export async function GET(request: NextRequest) {
     try {
         // Check database availability first
+        // Note: We check database directly rather than feature flags here.
+        // This is intentional - the API validates actual capability (database availability)
+        // while the client hook checks feature flags to prevent unnecessary calls.
+        // This provides defense in depth: client optimization + server validation.
         const dbCheck = checkDatabaseAvailability();
         if (dbCheck) return dbCheck;
 
