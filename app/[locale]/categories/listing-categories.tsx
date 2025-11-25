@@ -1,4 +1,5 @@
 "use client";
+import { Suspense } from "react";
 import { useTranslations } from "next-intl";
 import Hero from "@/components/hero";
 import Link from "next/link";
@@ -13,6 +14,7 @@ import { SearchInput } from "@/components/ui/search-input";
 import { useFilters } from "@/hooks/use-filters";
 import { ListingClient } from "@/components/shared-card/listing-client";
 import { CardPresets } from "@/components/shared-card";
+import { ListingSkeleton } from "@/components/ui/skeleton";
 
 interface ListingCategoriesProps {
   total: number;
@@ -24,7 +26,7 @@ interface ListingCategoriesProps {
   items: ItemData[];
 }
 
-export default function ListingCategories(props: ListingCategoriesProps) {
+function ListingCategoriesContent(props: ListingCategoriesProps) {
   const { layoutHome = LayoutHome.HOME_ONE, paginationType } = useLayoutTheme();
   const t = useTranslations();
 
@@ -67,6 +69,14 @@ export default function ListingCategories(props: ListingCategoriesProps) {
       )}
     </Hero>
     </>
+  );
+}
+
+export default function ListingCategories(props: ListingCategoriesProps) {
+  return (
+    <Suspense fallback={<ListingSkeleton />}>
+      <ListingCategoriesContent {...props} />
+    </Suspense>
   );
 }
 

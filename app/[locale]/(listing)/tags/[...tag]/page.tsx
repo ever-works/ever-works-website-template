@@ -1,8 +1,6 @@
 import { getCachedItemsByTag } from "@/lib/content";
 import { paginateMeta } from "@/lib/paginate";
 import Listing from "../../listing";
-import { Suspense } from "react";
-import { ListingSkeleton } from "@/components/ui/skeleton";
 import { getTagsEnabled } from "@/lib/utils/settings";
 import { notFound } from "next/navigation";
 
@@ -53,17 +51,15 @@ export default async function TagListing({
     lang: locale,
   });
   return (
-    <Suspense fallback={<ListingSkeleton />}>
-      <Listing
-        categories={categories}
-        tags={tags}
-        items={items}
-        start={start}
-        page={page}
-        total={total}
-        basePath={`/tags/${tag}`}
-        initialTag={tag}
-      />
-    </Suspense>
+    <Listing
+      categories={categories}
+      tags={tags}
+      items={items}
+      start={start}
+      page={page}
+      total={total}
+      basePath={`/tags/${tag}`}
+      initialTag={tag}
+    />
   );
 }

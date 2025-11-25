@@ -1,4 +1,5 @@
 'use client';
+import { Suspense } from 'react';
 import { ItemBreadcrumb } from './breadcrumb';
 import { ItemIcon } from './item-icon';
 import { slugify } from '@/lib/utils/slug';
@@ -22,6 +23,7 @@ import { ItemCTAButton } from './item-cta-button';
 import { useCategoriesEnabled } from '@/hooks/use-categories-enabled';
 import { useSurveysEnabled } from '@/hooks/use-surveys-enabled';
 import { useTagsEnabled } from '@/hooks/use-tags-enabled';
+import { ItemDetailSkeleton } from '@/components/ui/skeleton';
 
 export interface ItemDetailProps {
 	meta: {
@@ -44,7 +46,7 @@ export interface ItemDetailProps {
 	categoryName: string;
 }
 
-export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailProps) {
+function ItemDetailContent({ meta, renderedContent, categoryName }: ItemDetailProps) {
 	const t = useTranslations();
 	const params = useParams();
 	const locale = params.locale as string;
@@ -451,5 +453,13 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 				</div>
 			</div>
 		</div>
+	);
+}
+
+export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailProps) {
+	return (
+		<Suspense fallback={<ItemDetailSkeleton />}>
+			<ItemDetailContent meta={meta} renderedContent={renderedContent} categoryName={categoryName} />
+		</Suspense>
 	);
 }

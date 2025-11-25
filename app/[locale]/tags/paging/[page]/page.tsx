@@ -2,8 +2,6 @@ import { getCachedItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
 import { LOCALES } from "@/lib/constants";
 import ListingTags from "../../listing-tags";
-import { Suspense } from "react";
-import { GridSkeleton } from "@/components/ui/skeleton";
 
 export const revalidate = 10;
 
@@ -51,13 +49,11 @@ export default async function TagPagingPage({
   });
 
   return (
-    <Suspense fallback={<GridSkeleton count={12} />}>
-      <ListingTags
-        total={tags.length}
-        page={page}
-        basePath="/tags/paging"
-        tags={paginatedTags} // <-- Only pass paginated tags!
-      />
-    </Suspense>
+    <ListingTags
+      total={tags.length}
+      page={page}
+      basePath="/tags/paging"
+      tags={paginatedTags} // <-- Only pass paginated tags!
+    />
   );
 }

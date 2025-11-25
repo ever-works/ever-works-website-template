@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, Suspense } from "react";
 import { Tag } from "@/lib/content";
 import { TagsCards } from "@/components/tags-cards";
 import UniversalPagination from "@/components/universal-pagination";
@@ -9,8 +9,9 @@ import { useLayoutTheme } from "@/components/context";
 import { Loader2 } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteLoading } from "@/hooks/use-infinite-loading";
+import { GridSkeleton } from "@/components/ui/skeleton";
 
-export default function TagsGridClient({ tags }: { tags: Tag[] }) {
+function TagsGridContent({ tags }: { tags: Tag[] }) {
   const t = useTranslations("listing");
   const tCommon = useTranslations("common");
   const tGrid = useTranslations("admin.TAGS_GRID_CLIENT");
@@ -124,4 +125,12 @@ export default function TagsGridClient({ tags }: { tags: Tag[] }) {
       )}
     </Hero>
   );
-} 
+}
+
+export default function TagsGridClient({ tags }: { tags: Tag[] }) {
+  return (
+    <Suspense fallback={<GridSkeleton count={12} />}>
+      <TagsGridContent tags={tags} />
+    </Suspense>
+  );
+}
