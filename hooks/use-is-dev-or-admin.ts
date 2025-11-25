@@ -10,8 +10,9 @@ export function useIsDevOrAdmin(): boolean {
 	const isDevelopment = process.env.NODE_ENV === 'development';
 
 	// Get user to check admin status (reuses existing /api/current-user cache)
+	// Hook must always be called (Rules of Hooks), but we short-circuit in development
 	const { user } = useCurrentUser();
-	const isAdmin = user?.isAdmin === true;
+	const isAdmin = isDevelopment ? false : (user?.isAdmin === true);
 
 	return isDevelopment || isAdmin;
 }
