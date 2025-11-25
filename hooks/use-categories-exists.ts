@@ -30,7 +30,7 @@ export function useCategoriesExists() {
     // Categories change rarely, so we can set a longer staleTime
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 30 * 60 * 1000, // Keep data in cache for 30 minutes
-    retry: 2, // Retry 2 times in case of network error
+    retry: 1, // Retry once (reduced from 2 to minimize timeout for first-time users)
     retryOnMount: true, // Assume no categories exist on mount to avoid UI issues
     refetchOnWindowFocus: false, // No need to refetch on window focus
     refetchOnReconnect: true, // Refetch if connection comes back
