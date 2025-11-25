@@ -276,17 +276,3 @@ export async function runSeed(): Promise<void> {
 
   console.log('Seed complete:', { users: usersCount, profiles: profilesCount, roles: rolesCount, permissions: permsCount });
 }
-
-/**
- * CLI entry point for manual seeding via `yarn db:seed`
- */
-async function main() {
-  await runSeed();
-}
-
-main().catch((err) => {
-  console.error('Seed failed:', err);
-  process.exit(1);
-});
-
-
