@@ -3,15 +3,15 @@
  * Used for conditional error display and debugging features
  */
 
-import { useSession } from 'next-auth/react';
+import { useCurrentUser } from './use-current-user';
 
 export function useIsDevOrAdmin(): boolean {
 	// Check if in development environment
 	const isDevelopment = process.env.NODE_ENV === 'development';
 
-	// Get session to check admin status
-	const { data: session } = useSession();
-	const isAdmin = session?.user?.isAdmin === true;
+	// Get user to check admin status (reuses existing /api/current-user cache)
+	const { user } = useCurrentUser();
+	const isAdmin = user?.isAdmin === true;
 
 	return isDevelopment || isAdmin;
 }
