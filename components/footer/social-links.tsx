@@ -55,7 +55,7 @@ export function footerNavigation(t: (key: string) => string, categoriesEnabled =
   const productLinks = [
     { label: t("common.CATEGORY"), href: "/categories" },
     { label: t("common.TAG"), href: "/tags" },
-    { label: t("footer.PRICING"), href: "/pricing" },
+    { label: t("common.PRICING"), href: "/pricing" },
     { label: t("footer.HELP"), href: "/help" },
   ];
 
