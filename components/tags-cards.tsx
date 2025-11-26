@@ -19,11 +19,6 @@ export function TagsCards({ tags, className }: TagsCardsProps) {
   const searchParams = useSearchParams();
   const [loadingTag, setLoadingTag] = useState<string | null>(null);
 
-  // Don't render if tags array is empty or undefined
-  if (!tags || tags.length === 0) {
-    return null;
-  }
-
   // Parse current tags from query params to determine active state
   const currentTagsParam = searchParams.get('tags');
   const currentTags = currentTagsParam?.split(',') || [];
@@ -31,6 +26,11 @@ export function TagsCards({ tags, className }: TagsCardsProps) {
   useEffect(() => {
     setLoadingTag(null);
   }, [pathname, searchParams]);
+
+  // Don't render if tags array is empty or undefined (after all hooks)
+  if (!tags || tags.length === 0) {
+    return null;
+  }
 
   const renderTagCard = (tag: Tag) => {
     // Check if this tag is in the current selection
