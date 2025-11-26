@@ -241,6 +241,9 @@ export async function runSeed(options: { manageStatus?: boolean } = {}): Promise
 
   await ensureDb();
 
+  // Determine if we should wipe data based on previous seed status
+  let shouldWipe = true;
+
   // If managing status, upsert seed_status record at start
   if (manageStatus) {
     try {
@@ -249,6 +252,9 @@ export async function runSeed(options: { manageStatus?: boolean } = {}): Promise
         .from(seedStatus)
         .where(eq(seedStatus.id, 'singleton'))
         .limit(1);
+
+      // Save old status BEFORE updating (for wipe decision)
+      const oldStatus = existingStatus.length > 0 ? existingStatus[0].status : null;
 
       if (existingStatus.length > 0) {
         // Update existing record to 'seeding'
@@ -273,36 +279,19 @@ export async function runSeed(options: { manageStatus?: boolean } = {}): Promise
 
         console.log('[Seed] Created seed_status record with status "seeding"');
       }
+
+      // Check old status (before we updated it) to decide if we should wipe
+      if (oldStatus === 'failed') {
+        // Failed seed - preserve existing data, don't wipe
+        console.log('[Seed] Previous seed failed - skipping wipeData() to preserve existing data');
+        shouldWipe = false;
+      } else if (oldStatus) {
+        console.log(`[Seed] Previous seed status: ${oldStatus}`);
+      }
     } catch (statusError) {
       // If seed_status table doesn't exist, log warning and continue
       console.warn('[Seed] Could not manage seed_status (table may not exist):', statusError instanceof Error ? statusError.message : statusError);
     }
-  }
-
-  // Check if previous seed attempt exists (for wipe decision)
-  let shouldWipe = true;
-  try {
-    const existingStatus = await db
-      .select()
-      .from(seedStatus)
-      .where(eq(seedStatus.id, 'singleton'))
-      .limit(1);
-
-    if (existingStatus.length > 0) {
-      const status = existingStatus[0].status;
-      console.log(`[Seed] Previous seed status detected: ${status}`);
-
-      if (status === 'failed') {
-        // Failed seed - preserve existing data, don't wipe
-        console.log('[Seed] Skipping wipeData() to preserve existing data from failed attempt');
-        shouldWipe = false;
-      }
-      // If status is 'completed', we shouldn't even be here (isDatabaseSeeded would return true)
-      // But if we are, proceed with wipe for fresh seed
-    }
-  } catch {
-    // seed_status table doesn't exist yet - fresh database, proceed with wipe
-    console.log('[Seed] No previous seed status found - proceeding with fresh seed');
   }
 
   try {
