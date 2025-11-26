@@ -223,9 +223,19 @@ export async function initializeDatabase(): Promise<void> {
 		}
 
 		// We have the lock - run the seed
+		// Pass manageStatus: false because we already manage the lock/status in this function
 		console.log('[DB Init] Running database seed...');
 		const { runSeed } = await import('./seed');
-		await runSeed();
+		await runSeed({ manageStatus: false });
+
+		// Update status to completed after successful seed
+		await db
+			.update(seedStatus)
+			.set({
+				status: 'completed',
+				completedAt: new Date()
+			})
+			.where(eq(seedStatus.id, 'singleton'));
 
 		console.log('[DB Init] Database seeding completed successfully');
 	} catch (error) {

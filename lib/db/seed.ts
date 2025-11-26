@@ -232,11 +232,55 @@ async function seedContent(ids: { adminProfileId: string; clientProfileId1: stri
 /**
  * Main seed function - exported for reuse by auto-initialization
  * Wipes existing data and seeds the database with test data
+ *
+ * @param options.manageStatus - If true, manages seed_status table (upsert at start, update on completion/failure)
+ *                                If false, assumes caller manages status (e.g., initializeDatabase with lock)
+ *                                Default: true
  */
-export async function runSeed(): Promise<void> {
+export async function runSeed(options: { manageStatus?: boolean } = {}): Promise<void> {
+  const { manageStatus = true } = options;
+
   await ensureDb();
 
-  // Check if previous seed attempt exists
+  // If managing status, upsert seed_status record at start
+  if (manageStatus) {
+    try {
+      const existingStatus = await db
+        .select()
+        .from(seedStatus)
+        .where(eq(seedStatus.id, 'singleton'))
+        .limit(1);
+
+      if (existingStatus.length > 0) {
+        // Update existing record to 'seeding'
+        await db
+          .update(seedStatus)
+          .set({
+            status: 'seeding',
+            startedAt: new Date(),
+            completedAt: null,
+            error: null
+          })
+          .where(eq(seedStatus.id, 'singleton'));
+
+        console.log('[Seed] Updated seed_status to "seeding"');
+      } else {
+        // Insert new record
+        await db.insert(seedStatus).values({
+          id: 'singleton',
+          status: 'seeding',
+          startedAt: new Date()
+        });
+
+        console.log('[Seed] Created seed_status record with status "seeding"');
+      }
+    } catch (statusError) {
+      // If seed_status table doesn't exist, log warning and continue
+      console.warn('[Seed] Could not manage seed_status (table may not exist):', statusError instanceof Error ? statusError.message : statusError);
+    }
+  }
+
+  // Check if previous seed attempt exists (for wipe decision)
   let shouldWipe = true;
   try {
     const existingStatus = await db
@@ -249,7 +293,7 @@ export async function runSeed(): Promise<void> {
       const status = existingStatus[0].status;
       console.log(`[Seed] Previous seed status detected: ${status}`);
 
-      if (status === 'failed' || status === 'seeding') {
+      if (status === 'failed' || (status === 'seeding' && !manageStatus)) {
         // Partial/failed seed - preserve existing data, don't wipe
         console.log('[Seed] Skipping wipeData() to preserve existing data from previous attempt');
         shouldWipe = false;
@@ -262,47 +306,71 @@ export async function runSeed(): Promise<void> {
     console.log('[Seed] No previous seed status found - proceeding with fresh seed');
   }
 
-  if (shouldWipe) {
-    console.log('Seeding database: wiping existing data...');
-    await wipeData();
-  }
-
-  console.log('Seeding roles and permissions...');
-  const { roleAdminId, roleClientId } = await seedCoreRBAC();
-
-  console.log('Seeding users, accounts, and client profiles...');
-  const profileIds = await seedUsersAndProfiles(roleAdminId, roleClientId);
-
-  console.log('Seeding comments, activity logs, and favorites...');
-  await seedContent(profileIds);
-
-  // Basic verification counts (skip if tables don't exist yet)
   try {
-    const [{ count: usersCount }] = await db.select({ count: sql<number>`count(*)` }).from(users);
-    const [{ count: profilesCount }] = await db.select({ count: sql<number>`count(*)` }).from(clientProfiles);
-    const [{ count: rolesCount }] = await db.select({ count: sql<number>`count(*)` }).from(roles);
-    const [{ count: permsCount }] = await db.select({ count: sql<number>`count(*)` }).from(permissions);
+    if (shouldWipe) {
+      console.log('Seeding database: wiping existing data...');
+      await wipeData();
+    }
 
-    console.log('Seed complete:', { users: usersCount, profiles: profilesCount, roles: rolesCount, permissions: permsCount });
-  } catch {
-    // Tables may not exist yet (schema not migrated) - skip verification but seeding succeeded
-    console.log('Seed complete (verification skipped - tables may not exist yet)');
-  }
+    console.log('Seeding roles and permissions...');
+    const { roleAdminId, roleClientId } = await seedCoreRBAC();
 
-  // Mark seed as completed in seed_status table
-  try {
-    await db
-      .update(seedStatus)
-      .set({
-        status: 'completed',
-        completedAt: new Date()
-      })
-      .where(eq(seedStatus.id, 'singleton'));
+    console.log('Seeding users, accounts, and client profiles...');
+    const profileIds = await seedUsersAndProfiles(roleAdminId, roleClientId);
 
-    console.log('Seed status marked as completed');
-  } catch (statusError) {
-    // If seed_status table doesn't exist, log warning but don't fail
-    // This can happen if migration hasn't run yet
-    console.warn('Could not update seed status (table may not exist):', statusError instanceof Error ? statusError.message : statusError);
+    console.log('Seeding comments, activity logs, and favorites...');
+    await seedContent(profileIds);
+
+    // Basic verification counts (skip if tables don't exist yet)
+    try {
+      const [{ count: usersCount }] = await db.select({ count: sql<number>`count(*)` }).from(users);
+      const [{ count: profilesCount }] = await db.select({ count: sql<number>`count(*)` }).from(clientProfiles);
+      const [{ count: rolesCount }] = await db.select({ count: sql<number>`count(*)` }).from(roles);
+      const [{ count: permsCount }] = await db.select({ count: sql<number>`count(*)` }).from(permissions);
+
+      console.log('Seed complete:', { users: usersCount, profiles: profilesCount, roles: rolesCount, permissions: permsCount });
+    } catch {
+      // Tables may not exist yet (schema not migrated) - skip verification but seeding succeeded
+      console.log('Seed complete (verification skipped - tables may not exist yet)');
+    }
+
+    // Mark seed as completed in seed_status table
+    if (manageStatus) {
+      try {
+        await db
+          .update(seedStatus)
+          .set({
+            status: 'completed',
+            completedAt: new Date()
+          })
+          .where(eq(seedStatus.id, 'singleton'));
+
+        console.log('[Seed] Seed status marked as completed');
+      } catch (statusError) {
+        // If seed_status table doesn't exist, log warning but don't fail
+        console.warn('[Seed] Could not update seed status (table may not exist):', statusError instanceof Error ? statusError.message : statusError);
+      }
+    }
+  } catch (seedError) {
+    // If managing status, mark seed as failed
+    if (manageStatus) {
+      try {
+        await db
+          .update(seedStatus)
+          .set({
+            status: 'failed',
+            error: seedError instanceof Error ? seedError.message : 'Unknown error',
+            completedAt: new Date()
+          })
+          .where(eq(seedStatus.id, 'singleton'));
+
+        console.error('[Seed] Seed status marked as failed');
+      } catch {
+        // Ignore errors updating status - original error is more important
+      }
+    }
+
+    // Re-throw the original error
+    throw seedError;
   }
 }
