@@ -280,12 +280,8 @@ export async function runSeed(options: { manageStatus?: boolean } = {}): Promise
         console.log('[Seed] Created seed_status record with status "seeding"');
       }
 
-      // Check old status (before we updated it) to decide if we should wipe
-      if (oldStatus === 'failed') {
-        // Failed seed - preserve existing data, don't wipe
-        console.log('[Seed] Previous seed failed - skipping wipeData() to preserve existing data');
-        shouldWipe = false;
-      } else if (oldStatus) {
+      // Log previous status for debugging
+      if (oldStatus) {
         console.log(`[Seed] Previous seed status: ${oldStatus}`);
       }
     } catch (statusError) {

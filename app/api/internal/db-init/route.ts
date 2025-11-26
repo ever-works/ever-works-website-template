@@ -1,8 +1,8 @@
 /**
  * Internal API route for database initialization
  * Triggers auto-migration and seeding if database is not yet initialized
- * 
- * Security: Only accessible in development or from localhost
+ *
+ * Security: Only accessible in development mode
  */
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -10,12 +10,8 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
-	// Security: only allow in development or from localhost
-	const host = request.headers.get('host') || '';
-	const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
-	const isDev = process.env.NODE_ENV === 'development';
-	
-	if (!isDev && !isLocalhost) {
+	// Security: Only allow in development mode
+	if (process.env.NODE_ENV !== 'development') {
 		return NextResponse.json({ error: 'Not available in production' }, { status: 403 });
 	}
 
