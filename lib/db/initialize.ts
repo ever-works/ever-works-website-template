@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { seedStatus } from './schema';
 import type { SeedStatus } from './schema';
 
@@ -80,6 +80,8 @@ export async function initializeDatabase(): Promise<void> {
 		return;
 	}
 
+	let hasLock = false; // Track if this instance has the seed lock
+
 	try {
 		console.log('[DB Init] Checking if database needs seeding...');
 
@@ -116,7 +118,6 @@ export async function initializeDatabase(): Promise<void> {
 		console.log('[DB Init] Attempting to acquire seed lock...');
 
 		const { db } = await import('./drizzle');
-		let hasLock = false;
 
 		// Try to acquire seed lock by inserting singleton record
 		try {
@@ -171,16 +172,16 @@ export async function initializeDatabase(): Promise<void> {
 				// Lock already exists - need to poll until available or completed
 				console.log('[DB Init] Seed lock held by another instance - entering polling mode');
 
-			const startWaitTime = Date.now();
+				const startWaitTime = Date.now();
 
-			// Poll until lock is available, seed completes, or timeout
-			while (true) {
-				// Check if we've exceeded maximum wait time
-				const waitTime = Date.now() - startWaitTime;
-				if (waitTime > MAX_WAIT_MS) {
-					throw new Error(
-						`[DB Init] Timeout waiting for seed lock after ${MAX_WAIT_MS / 1000}s. ` +
-						`Another instance may be stuck. Check seed_status table manually.`
+				// Poll until lock is available, seed completes, or timeout
+				while (true) {
+					// Check if we've exceeded maximum wait time
+					const waitTime = Date.now() - startWaitTime;
+					if (waitTime > MAX_WAIT_MS) {
+						throw new Error(
+							`[DB Init] Timeout waiting for seed lock after ${MAX_WAIT_MS / 1000}s. ` +
+							`Another instance may be stuck. Check seed_status table manually.`
 					);
 				}
 
@@ -223,6 +224,7 @@ export async function initializeDatabase(): Promise<void> {
 						);
 
 						try {
+							// Atomic update: only succeed if status and timestamp haven't changed
 							await db
 								.update(seedStatus)
 								.set({
@@ -230,8 +232,15 @@ export async function initializeDatabase(): Promise<void> {
 									startedAt: new Date(),
 									error: 'Taken over from stale lock'
 								})
-								.where(eq(seedStatus.id, 'singleton'));
+								.where(
+									and(
+										eq(seedStatus.id, 'singleton'),
+										eq(seedStatus.status, 'seeding'),
+										eq(seedStatus.startedAt, status.startedAt)
+									)
+								);
 
+							// If we reach here, update succeeded
 							hasLock = true;
 							break;
 						} catch {
@@ -253,6 +262,7 @@ export async function initializeDatabase(): Promise<void> {
 					console.log('[DB Init] Previous seed attempt failed - taking over to retry');
 
 					try {
+						// Atomic update: only succeed if status is still 'failed'
 						await db
 							.update(seedStatus)
 							.set({
@@ -260,8 +270,14 @@ export async function initializeDatabase(): Promise<void> {
 								startedAt: new Date(),
 								error: null
 							})
-							.where(eq(seedStatus.id, 'singleton'));
+							.where(
+								and(
+									eq(seedStatus.id, 'singleton'),
+									eq(seedStatus.status, 'failed')
+								)
+							);
 
+						// If we reach here, update succeeded
 						hasLock = true;
 						break;
 					} catch {
@@ -304,19 +320,22 @@ export async function initializeDatabase(): Promise<void> {
 		// If DATABASE_URL is configured but seeding fails, this is an error
 		console.error('[DB Init] Database initialization failed:', error);
 
-		// Mark seed as failed in database if possible
-		try {
-			const { db } = await import('./drizzle');
-			await db
-				.update(seedStatus)
-				.set({
-					status: 'failed',
-					error: error instanceof Error ? error.message : 'Unknown error',
-					completedAt: new Date()
-				})
-				.where(eq(seedStatus.id, 'singleton'));
-		} catch {
-			// Ignore errors updating status - original error is more important
+		// Only mark seed as failed if we actually have the lock
+		// Polling instances that timeout should not mark as failed
+		if (hasLock) {
+			try {
+				const { db } = await import('./drizzle');
+				await db
+					.update(seedStatus)
+					.set({
+						status: 'failed',
+						error: error instanceof Error ? error.message : 'Unknown error',
+						completedAt: new Date()
+					})
+					.where(eq(seedStatus.id, 'singleton'));
+			} catch {
+				// Ignore errors updating status - original error is more important
+			}
 		}
 
 		throw new Error(
