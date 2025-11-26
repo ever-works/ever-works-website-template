@@ -32,6 +32,7 @@ interface PlanCardProps {
   readonly className?: string;
   readonly selectedFlow?: PaymentFlow;
   readonly onFlowChange?: (flow: PaymentFlow) => void;
+  readonly onOpenModal?: () => void;
 }
 
 // Constants for modern design based on reference image
@@ -40,6 +41,11 @@ const PLAN_TYPES = {
   STANDARD: 'STANDARD',
   PREMIUM: 'PREMIUM'
 } as const;
+
+const PAYMENT_FLOW_OPTIONS = [
+  { value: PaymentFlow.PAY_AT_START, label: "Pay Now" },
+  { value: PaymentFlow.PAY_AT_END, label: "Pay Later" },
+];
 
 const getButtonStyles = (title: string, isPopular: boolean) => {
   const upperTitle = title.toUpperCase();
@@ -154,17 +160,28 @@ export function PlanCard({
             {title}
           </h3>
           {isPaidPlan && onFlowChange && (
-            <ToggleGroup
-              options={[
-                { value: PaymentFlow.PAY_AT_START, label: "Pay Now" },
-                { value: PaymentFlow.PAY_AT_END, label: "Pay Later" },
-              ]}
-              value={selectedFlow}
-              onValueChange={(value) => onFlowChange(value as PaymentFlow)}
-              size="sm"
-              variant="modern"
-              className="flex-shrink-0"
-            />
+            <div className="flex items-center gap-2 flex-shrink-0 justify-center">
+              <ToggleGroup
+                options={PAYMENT_FLOW_OPTIONS}
+                value={selectedFlow}
+                onValueChange={(value) => onFlowChange(value as PaymentFlow)}
+                size="sm"
+                variant="modern"
+                className="flex-shrink-0 justify-center h-10"
+              />
+              {/* {onOpenModal && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenModal();
+                  }}
+                  className="w-5 h-5 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                  aria-label="Learn more about payment options"
+                >
+                  <Info className="w-4 h-4" />
+                </button>
+              )} */}
+            </div>
           )}
         </div>
         <div className="flex justify-center items-baseline gap-1 mb-2">

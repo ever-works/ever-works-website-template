@@ -26,7 +26,7 @@ export interface UsePricingSectionState {
 }
 
 export interface UsePricingSectionActions {
-	setShowSelector: (show: boolean) => void;
+	setShowSelector: (show: boolean | ((prev: boolean) => boolean)) => void;
 	setBillingInterval: (interval: PaymentInterval) => void;
 	setSelectedPlan: (plan: PaymentPlan | null) => void;
 	handleFlowChange: () => void;
@@ -85,7 +85,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 	});
 
 	// Local state
-	const [showSelector, setShowSelector] = useState(false);
+	const [showSelector, setShowSelector] = useState<boolean>(false);
 	const [billingInterval, setBillingInterval] = useState<PaymentInterval>(PaymentInterval.MONTHLY);
 	const [processingPlan, setProcessingPlan] = useState<string | null>(null);
 	const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(null);
@@ -114,9 +114,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 	/**
 	 * Handle flow change
 	 */
-	const handleFlowChange = useCallback(() => {
-		setShowSelector(true);
-	}, []);
+	const handleFlowChange = useCallback(() => setShowSelector((prev) => !prev), []);
 
 	/**
 	 * Handle flow selection

@@ -14,6 +14,7 @@ function PricingPage() {
 			<Container maxWidth="7xl" padding="default" className="py-12">
 				<PricingSection />
 			</Container>
+
 		</div>
 	);
 }

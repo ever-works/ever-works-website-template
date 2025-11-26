@@ -1,14 +1,13 @@
 "use client";
 
-import React from "react";
 import { PaymentFlow } from "@/lib/payment/types/payment";
 import {
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
-  useDisclosure,
-  Card
+  Card,
+  useDisclosure
 } from "@heroui/react";
 import {
   CreditCard,
@@ -18,47 +17,15 @@ import {
 import { cn } from "@/lib/utils";
 
 interface PaymentFlowSelectorModalProps {
-  isOpen: boolean;
-  onClose: () => void;
   selectedFlow: PaymentFlow;
-  onFlowSelect: (flow: PaymentFlow) => void;
   title?: string;
 }
 
 export function PaymentFlowSelectorModal({
-  isOpen,
-  onClose,
   selectedFlow,
-  onFlowSelect,
   title = "Payment Flow Explanation",
 }: PaymentFlowSelectorModalProps) {
-  const {
-    isOpen: isModalOpen,
-    onOpen,
-    onClose: onModalClose,
-  } = useDisclosure();
-
-  // Sync modal state with prop
-  React.useEffect(() => {
-    if (isOpen) {
-      onOpen();
-    } else {
-      onModalClose();
-    }
-  }, [isOpen, onOpen, onModalClose]);
-
-  const handleClose = () => {
-    onModalClose();
-    onClose();
-  };
-
-  const handleFlowClick = (flow: PaymentFlow) => {
-    if (flow !== selectedFlow) {
-      onFlowSelect(flow);
-    }
-    // Close modal after selection
-    handleClose();
-  };
+  const { isOpen, onClose } = useDisclosure();
 
   const flows = [
     {
@@ -81,9 +48,9 @@ export function PaymentFlowSelectorModal({
 
   return (
     <Modal
-      isOpen={isModalOpen}
-      onClose={handleClose}
-      isDismissable={true}
+      isOpen={isOpen}
+      onClose={onClose}
+      isDismissable={false}
       size="lg"
       scrollBehavior="inside"
       classNames={{
@@ -115,12 +82,11 @@ export function PaymentFlowSelectorModal({
                   <Card
                     key={flowOption.flow}
                     className={cn(
-                      "transition-all duration-300 cursor-pointer",
+                      "transition-all duration-300",
                       isSelected
                         ? "bg-blue-50 dark:bg-theme-primary-20 border-2 border-blue-300 dark:border-theme-primary-700"
-                        : "border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md bg-white dark:bg-gray-900"
+                        : "border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
                     )}
-                    onClick={() => handleFlowClick(flowOption.flow)}
                   >
                     <div className="p-4">
                       <div className="flex items-start justify-between">

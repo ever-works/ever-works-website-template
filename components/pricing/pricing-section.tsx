@@ -8,6 +8,7 @@ import { PaymentInterval, PaymentPlan } from '@/lib/constants';
 import { PaymentFlowSelectorModal } from '../payment';
 import { PricingConfig } from '@/lib/content';
 import { usePricingSection } from '@/hooks/use-pricing-section';
+import { useDisclosure } from '@heroui/react';
 
 interface PricingSectionProps {
 	onSelectPlan?: (plan: PaymentPlan) => void;
@@ -15,6 +16,8 @@ interface PricingSectionProps {
 }
 
 export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) {
+	const { onOpen: onOpenSelectorModal } = useDisclosure();
+
 	const {
 		FREE,
 		STANDARD,
@@ -28,8 +31,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 		t,
 		tBilling,
 		router,
-		showSelector,
-		setShowSelector,
+
 		billingInterval,
 		setBillingInterval,
 		processingPlan,
@@ -46,7 +48,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 		premiumPlanFeatures,
 		loginModal
 	} = usePricingSection({
-		onSelectPlan: onSelectPlan,
+		onSelectPlan: onSelectPlan
 	});
 
 	return (
@@ -221,6 +223,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							}}
 							selectedFlow={selectedFlow}
 							onFlowChange={handleFlowSelect}
+							onOpenModal={onOpenSelectorModal}
 						>
 							{getSavingsText(STANDARD as PricingConfig) && (
 								<div className="text-center">
@@ -273,6 +276,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							}}
 							selectedFlow={selectedFlow}
 							onFlowChange={handleFlowSelect}
+							onOpenModal={onOpenSelectorModal}
 						>
 							{getSavingsText(PREMIUM as PricingConfig) && (
 								<div className="text-center">
@@ -350,12 +354,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 					))}
 				</div>
 			</div>
-			<PaymentFlowSelectorModal
-				selectedFlow={selectedFlow}
-				onFlowSelect={handleFlowSelect}
-				isOpen={showSelector}
-				onClose={() => setShowSelector(false)}
-			/>
+			<PaymentFlowSelectorModal selectedFlow={selectedFlow} />
 		</div>
 	);
 }
