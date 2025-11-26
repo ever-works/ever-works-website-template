@@ -118,11 +118,11 @@ export default async function RootLayout({
 						<SettingsModalProvider>
 							<Providers config={config}>
 								<ConditionalLayout>{children}</ConditionalLayout>
+								{/* Settings Modal - Shared by header and floating button */}
+								<SettingsModal />
+								{/* Floating Settings Button - WordPress customizer style */}
+								{headerSettings.settingsEnabled && <FloatingSettingsButton />}
 							</Providers>
-							{/* Settings Modal - Shared by header and floating button */}
-							<SettingsModal />
-							{/* Floating Settings Button - WordPress customizer style */}
-							{headerSettings.settingsEnabled && <FloatingSettingsButton />}
 						</SettingsModalProvider>
 					</SettingsProvider>
 				</NextIntlClientProvider>

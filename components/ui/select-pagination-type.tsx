@@ -17,7 +17,8 @@ const SelectPaginationType: React.FC<SelectPaginationTypeProps> = ({ className, 
 
 	const handleToggle = (isInfinite: boolean) => {
 		if (disabled) return;
-		setPaginationType(isInfinite ? 'infinite' : 'standard');
+		const newType = isInfinite ? 'infinite' : 'standard';
+		setPaginationType(newType);
 	};
 
 	return (
