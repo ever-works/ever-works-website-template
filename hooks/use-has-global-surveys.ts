@@ -55,7 +55,7 @@ export function useHasGlobalSurveys(): UseHasGlobalSurveysResult {
         return false;
       }
       // Otherwise retry once (reduced from 2 to minimize timeouts)
-      return failureCount < 1;
+      return failureCount < 2;
     },
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
   });

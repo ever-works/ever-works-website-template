@@ -75,7 +75,7 @@ export function useFeaturedItems() {
         return false;
       }
       // Otherwise retry once (reduced from 3 to minimize timeouts)
-      return failureCount < 1;
+      return failureCount < 2;
     },
     // Exponential backoff: 1s, 2s, 4s... up to 30s max
     // Prevents overwhelming the server during outages or rate limiting

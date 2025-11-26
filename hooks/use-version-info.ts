@@ -106,7 +106,7 @@ export function useVersionInfo({
       }
 
       // Retry network errors and server errors once (reduced from 3 for better UX)
-      return failureCount < 1;
+      return failureCount < 2;
     },
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
   });

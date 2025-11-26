@@ -73,7 +73,7 @@ export function useCurrentUser() {
 			}
 
 			// Retry network errors and server errors once (reduced from 2 to minimize timeouts)
-			return failureCount < 1;
+			return failureCount < 2;
 		}
 	});
 
