@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useState, useCallback, useEffect, PropsWithChildren } from "react";
+import { createContext, useState, useCallback, useEffect, useRef, PropsWithChildren } from "react";
 
 export interface SettingsModalContextValue {
 	isOpen: boolean;
@@ -13,13 +13,21 @@ export const SettingsModalContext = createContext<SettingsModalContextValue | nu
 
 export function SettingsModalProvider({ children }: PropsWithChildren) {
 	const [isOpen, setIsOpen] = useState(false);
+	const previouslyFocusedElement = useRef<HTMLElement | null>(null);
 
 	const openModal = useCallback(() => {
+		// Store the currently focused element before opening modal
+		previouslyFocusedElement.current = document.activeElement as HTMLElement;
 		setIsOpen(true);
 	}, []);
 
 	const closeModal = useCallback(() => {
 		setIsOpen(false);
+		// Restore focus to the previously focused element
+		if (previouslyFocusedElement.current) {
+			previouslyFocusedElement.current.focus();
+			previouslyFocusedElement.current = null;
+		}
 	}, []);
 
 	const toggleModal = useCallback(() => {

@@ -339,6 +339,7 @@
     "SETTINGS": "Configuración",
     "OPEN_SETTINGS": "Abrir configuración",
     "CLOSE_SETTINGS": "Cerrar configuración",
+    "SETTINGS_PLACEHOLDER": "Las opciones de configuración se agregarán aquí",
     "SECURITY": "Seguridad",
     "LEGAL": "Legal",
     "HELP": "Centro de ayuda",

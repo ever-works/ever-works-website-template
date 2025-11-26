@@ -388,6 +388,7 @@
     "SETTINGS": "Paramètres",
     "OPEN_SETTINGS": "Ouvrir les paramètres",
     "CLOSE_SETTINGS": "Fermer les paramètres",
+    "SETTINGS_PLACEHOLDER": "Les options de paramètres seront ajoutées ici",
     "SECURITY": "Sécurité",
     "LEGAL": "Légal",
     "HELP": "Centre d'aide",

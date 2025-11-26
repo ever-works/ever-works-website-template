@@ -1,10 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import { X } from "lucide-react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { useSettingsModal } from "@/hooks/use-settings-modal";
 import { useTranslations } from "next-intl";
+import { useFocusManagement } from "@/components/ui/accessibility";
 
 const BACKDROP_CLASSES = cn(
 	"fixed inset-0",
@@ -30,6 +32,23 @@ const MODAL_CLASSES = cn(
 export function SettingsModal() {
 	const { isOpen, closeModal } = useSettingsModal();
 	const t = useTranslations("settings");
+	const { focusRef, setFocus, trapFocus } = useFocusManagement();
+
+	// Auto-focus the modal when it opens and setup focus trap
+	useEffect(() => {
+		if (isOpen) {
+			// Focus the modal container after a brief delay to ensure it's rendered
+			setTimeout(() => setFocus(), 100);
+
+			// Add keyboard listener for focus trap
+			const handleKeyDown = (e: KeyboardEvent) => trapFocus(e);
+			document.addEventListener("keydown", handleKeyDown);
+
+			return () => {
+				document.removeEventListener("keydown", handleKeyDown);
+			};
+		}
+	}, [isOpen, setFocus, trapFocus]);
 
 	if (!isOpen || typeof window === "undefined") {
 		return null;
@@ -41,7 +60,14 @@ export function SettingsModal() {
 			<div className={BACKDROP_CLASSES} onClick={closeModal} aria-hidden="true" />
 
 			{/* Modal */}
-			<div className={MODAL_CLASSES} role="dialog" aria-modal="true" aria-labelledby="settings-title">
+			<div
+				ref={focusRef as React.RefObject<HTMLDivElement>}
+				className={MODAL_CLASSES}
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby="settings-title"
+				tabIndex={-1}
+			>
 				{/* Modal Header */}
 				<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
 					<h2 id="settings-title" className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -61,7 +87,7 @@ export function SettingsModal() {
 				<div className="px-6 py-8">
 					{/* Empty content area - settings will be added in future PRs */}
 					<p className="text-gray-500 dark:text-gray-400 text-center">
-						Settings options will be added here
+						{t("SETTINGS_PLACEHOLDER")}
 					</p>
 				</div>
 			</div>

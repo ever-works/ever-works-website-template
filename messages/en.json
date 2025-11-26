@@ -429,6 +429,7 @@
     "SETTINGS": "Settings",
     "OPEN_SETTINGS": "Open Settings",
     "CLOSE_SETTINGS": "Close settings",
+    "SETTINGS_PLACEHOLDER": "Settings options will be added here",
     "SECURITY": "Security",
     "LEGAL": "Legal",
     "HELP": "Help Center",
