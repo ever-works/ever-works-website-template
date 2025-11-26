@@ -299,6 +299,12 @@
     "PROFILE_SETTINGS": "个人资料设置",
     "PAGINATION_STYLE": "分页样式",
     "PAGINATION_STYLE_DESC": "选择浏览列表时内容的显示方式",
+    "PAGINATION_STANDARD_LABEL": "标准",
+    "PAGINATION_STANDARD_DESC": "使用传统分页控件浏览页面，精确选择页面",
+    "PAGINATION_STANDARD_USE_CASE": "最适合浏览特定页面和受控导航",
+    "PAGINATION_INFINITE_LABEL": "无限滚动",
+    "PAGINATION_INFINITE_DESC": "向下滚动时持续加载内容，获得无缝浏览体验",
+    "PAGINATION_INFINITE_USE_CASE": "最适合持续发现和探索式浏览",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "基本信息",

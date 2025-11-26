@@ -319,6 +319,12 @@
     "PROFILE_SETTINGS": "Profileinstellungen",
     "PAGINATION_STYLE": "Paginierungsstil",
     "PAGINATION_STYLE_DESC": "Wählen Sie aus, wie Inhalte beim Durchsuchen von Listen angezeigt werden",
+    "PAGINATION_STANDARD_LABEL": "Standard",
+    "PAGINATION_STANDARD_DESC": "Navigieren Sie durch Seiten mit traditionellen Paginierungssteuerungen für präzise Seitenauswahl",
+    "PAGINATION_STANDARD_USE_CASE": "Am besten zum Durchsuchen bestimmter Seiten und kontrollierter Navigation",
+    "PAGINATION_INFINITE_LABEL": "Unendliches Scrollen",
+    "PAGINATION_INFINITE_DESC": "Laden Sie kontinuierlich Inhalte beim Scrollen nach unten für ein nahtloses Surferlebnis",
+    "PAGINATION_INFINITE_USE_CASE": "Am besten für kontinuierliche Entdeckung und exploratives Surfen",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Grundinformationen",

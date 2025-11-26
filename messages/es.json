@@ -347,6 +347,12 @@
     "PROFILE_SETTINGS": "Configuración del perfil",
     "PAGINATION_STYLE": "Estilo de paginación",
     "PAGINATION_STYLE_DESC": "Elige cómo se muestra el contenido al navegar por los listados",
+    "PAGINATION_STANDARD_LABEL": "Estándar",
+    "PAGINATION_STANDARD_DESC": "Navega a través de páginas con controles de paginación tradicionales para selección precisa de páginas",
+    "PAGINATION_STANDARD_USE_CASE": "Mejor para navegar páginas específicas y navegación controlada",
+    "PAGINATION_INFINITE_LABEL": "Desplazamiento infinito",
+    "PAGINATION_INFINITE_DESC": "Carga contenido continuamente mientras te desplazas hacia abajo para una experiencia de navegación fluida",
+    "PAGINATION_INFINITE_USE_CASE": "Mejor para descubrimiento continuo y navegación exploratoria",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Información básica",

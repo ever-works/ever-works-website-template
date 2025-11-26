@@ -438,6 +438,12 @@
     "PROFILE_SETTINGS": "Profile Settings",
     "PAGINATION_STYLE": "Pagination Style",
     "PAGINATION_STYLE_DESC": "Choose how content is displayed when browsing listings",
+    "PAGINATION_STANDARD_LABEL": "Standard",
+    "PAGINATION_STANDARD_DESC": "Navigate through pages with traditional pagination controls for precise page selection",
+    "PAGINATION_STANDARD_USE_CASE": "Best for browsing specific pages and controlled navigation",
+    "PAGINATION_INFINITE_LABEL": "Infinite Scroll",
+    "PAGINATION_INFINITE_DESC": "Continuously load content as you scroll down for seamless browsing experience",
+    "PAGINATION_INFINITE_USE_CASE": "Best for continuous discovery and exploratory browsing",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Basic Information",

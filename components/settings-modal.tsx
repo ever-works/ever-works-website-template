@@ -75,14 +75,7 @@ export function SettingsModal() {
 				{/* Modal Content */}
 				<div className="px-6 py-8 space-y-6">
 					{/* Pagination Style Section */}
-					<div className={CONTENT_SECTION_CLASSES}>
-						<div>
-							<h3 className={SECTION_HEADING_CLASSES}>{t("PAGINATION_STYLE")}</h3>
-							<p className={SECTION_DESC_CLASSES}>{t("PAGINATION_STYLE_DESC")}</p>
-						</div>
-
-						<SelectPaginationType />
-					</div>
+					<SelectPaginationType />
 
 					{/* Divider for future sections */}
 					<div className={DIVIDER_CLASSES} />
