@@ -33,10 +33,7 @@ async function ensureDb() {
   if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL is not set. Aborting seed to prevent accidental DummyDb operations.');
   }
-  if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DB_SEED !== '1') {
-    throw new Error('Refusing to seed in production. Set ALLOW_DB_SEED=1 to proceed.');
-  }
-  
+
   // Initialize database connection
   const { db: dbConnection } = await import('./drizzle');
   db = dbConnection;
@@ -237,8 +234,37 @@ async function seedContent(ids: { adminProfileId: string; clientProfileId1: stri
  */
 export async function runSeed(): Promise<void> {
   await ensureDb();
-  console.log('Seeding database: wiping existing data...');
-  await wipeData();
+
+  // Check if previous seed attempt exists
+  let shouldWipe = true;
+  try {
+    const existingStatus = await db
+      .select()
+      .from(seedStatus)
+      .where(eq(seedStatus.id, 'singleton'))
+      .limit(1);
+
+    if (existingStatus.length > 0) {
+      const status = existingStatus[0].status;
+      console.log(`[Seed] Previous seed status detected: ${status}`);
+
+      if (status === 'failed' || status === 'seeding') {
+        // Partial/failed seed - preserve existing data, don't wipe
+        console.log('[Seed] Skipping wipeData() to preserve existing data from previous attempt');
+        shouldWipe = false;
+      }
+      // If status is 'completed', we shouldn't even be here (isDatabaseSeeded would return true)
+      // But if we are, proceed with wipe for fresh seed
+    }
+  } catch {
+    // seed_status table doesn't exist yet - fresh database, proceed with wipe
+    console.log('[Seed] No previous seed status found - proceeding with fresh seed');
+  }
+
+  if (shouldWipe) {
+    console.log('Seeding database: wiping existing data...');
+    await wipeData();
+  }
 
   console.log('Seeding roles and permissions...');
   const { roleAdminId, roleClientId } = await seedCoreRBAC();

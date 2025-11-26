@@ -1,4 +1,4 @@
-import { sql, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { seedStatus } from './schema';
 
 /**
@@ -67,6 +67,14 @@ export async function initializeDatabase(): Promise<void> {
 		return;
 	}
 
+	// Production safety: warn and skip if ALLOW_DB_SEED not set
+	if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DB_SEED !== '1') {
+		console.warn('[DB Init] ⚠️  AUTO_SEED_ON_STARTUP enabled in production but ALLOW_DB_SEED != 1');
+		console.warn('[DB Init] ⚠️  Skipping auto-seed for safety. Set ALLOW_DB_SEED=1 to allow.');
+		console.warn('[DB Init] ⚠️  Alternatively, disable AUTO_SEED_ON_STARTUP in production.');
+		return;
+	}
+
 	try {
 		console.log('[DB Init] Checking if database needs seeding...');
 
@@ -92,7 +100,7 @@ export async function initializeDatabase(): Promise<void> {
 			});
 
 			console.log('[DB Init] Seed lock acquired - running seed...');
-		} catch (lockError) {
+		} catch {
 			// Another instance is seeding or already seeded
 			// Check if it completed or is still in progress
 			const existingStatus = await isDatabaseSeeded();
