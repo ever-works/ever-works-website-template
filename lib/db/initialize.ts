@@ -157,7 +157,7 @@ export async function initializeDatabase(): Promise<void> {
 
 					console.log('[DB Init] Seed lock acquired successfully after migration');
 					hasLock = true;
-				} catch (retryError) {
+				} catch {
 					// If still fails, another instance likely grabbed the lock
 					console.log('[DB Init] Lock held by another instance after migration - entering polling mode');
 				}
