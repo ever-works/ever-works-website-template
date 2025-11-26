@@ -1,14 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 
+@import "tailwindcss";
 
-
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@config '../../tailwind.config.ts';
 
 @import '@/lib/editor/styles/_variables.scss';
 @import '@/lib/editor/styles/_keyframe-animations.scss';
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 @layer components {
   /* Custom input component using Tailwind utilities */
@@ -54,17 +61,15 @@
   }
 }
 
-@layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 0.6s ease-out;
-  }
-  
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+@utility animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@utility line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 @keyframes fadeIn {

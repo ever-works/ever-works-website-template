@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap')
 layer(base);
-
+@import '../../lib/editor/styles/_variables.scss';
+@import '../../lib/editor/styles/_keyframe-animations.scss';
 @import 'tailwindcss';
 
 @config '../../tailwind.config.ts';
