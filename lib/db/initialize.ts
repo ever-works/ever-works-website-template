@@ -1,46 +1,66 @@
 import { eq } from 'drizzle-orm';
 import { seedStatus } from './schema';
+import type { SeedStatus } from './schema';
 
 /**
- * Check if database has been seeded by checking seed_status table
- * @returns Promise<boolean> - true if database has been successfully seeded
+ * Get the current seed status from the database
+ * @returns Promise<SeedStatus | null> - seed status record or null if not found
  */
-export async function isDatabaseSeeded(): Promise<boolean> {
+async function getSeedStatus(): Promise<SeedStatus | null> {
 	try {
 		const { db } = await import('./drizzle');
 
-		// Check seed_status table for completion
 		const result = await db
 			.select()
 			.from(seedStatus)
 			.where(eq(seedStatus.id, 'singleton'))
 			.limit(1);
 
-		const status = result[0];
-
-		if (!status) {
-			// No seed status record - database not seeded
-			return false;
-		}
-
-		// Database is seeded if status is 'completed'
-		const isSeeded = status.status === 'completed';
-
-		if (process.env.NODE_ENV === 'development') {
-			console.log('[DB Init] Seed status:', {
-				status: status.status,
-				startedAt: status.startedAt,
-				completedAt: status.completedAt,
-				isSeeded
-			});
-		}
-
-		return isSeeded;
+		return result[0] || null;
 	} catch (error) {
-		// If seed_status table doesn't exist or query fails, assume not seeded
+		// If seed_status table doesn't exist or query fails, return null
 		console.warn('[DB Init] Error checking seed status:', error instanceof Error ? error.message : error);
+		return null;
+	}
+}
+
+/**
+ * Check if database has been seeded by checking seed_status table
+ * @returns Promise<boolean> - true if database has been successfully seeded
+ */
+export async function isDatabaseSeeded(): Promise<boolean> {
+	const status = await getSeedStatus();
+
+	if (!status) {
+		// No seed status record - database not seeded
 		return false;
 	}
+
+	// Database is seeded if status is 'completed'
+	const isSeeded = status.status === 'completed';
+
+	if (process.env.NODE_ENV === 'development') {
+		console.log('[DB Init] Seed status:', {
+			status: status.status,
+			startedAt: status.startedAt,
+			completedAt: status.completedAt,
+			isSeeded
+		});
+	}
+
+	return isSeeded;
+}
+
+// Configuration constants for seed locking
+const STALE_LOCK_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes - consider lock stale if held this long
+const POLL_INTERVAL_MS = 2000; // 2 seconds - how often to check lock status
+const MAX_WAIT_MS = 10 * 60 * 1000; // 10 minutes - maximum time to wait for lock
+
+/**
+ * Sleep for specified milliseconds
+ */
+function sleep(ms: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -48,6 +68,7 @@ export async function isDatabaseSeeded(): Promise<boolean> {
  * - Silent skip if DATABASE_URL is not configured (optional DB)
  * - Automatically checks if database is seeded on every startup
  * - Seeds database if not already seeded
+ * - Uses polling with stale lock detection to prevent race conditions
  * - Throws error if DATABASE_URL exists but seeding fails
  */
 export async function initializeDatabase(): Promise<void> {
@@ -70,12 +91,12 @@ export async function initializeDatabase(): Promise<void> {
 			return;
 		}
 
-		console.log('[DB Init] Database empty - attempting to acquire seed lock...');
+		console.log('[DB Init] Database not seeded - attempting to acquire seed lock...');
+
+		const { db } = await import('./drizzle');
+		let hasLock = false;
 
 		// Try to acquire seed lock by inserting singleton record
-		// If another instance already inserted it, this will fail due to unique constraint
-		const { db } = await import('./drizzle');
-
 		try {
 			await db.insert(seedStatus).values({
 				id: 'singleton',
@@ -83,33 +104,126 @@ export async function initializeDatabase(): Promise<void> {
 				startedAt: new Date()
 			});
 
-			console.log('[DB Init] Seed lock acquired - running seed...');
+			console.log('[DB Init] Seed lock acquired successfully');
+			hasLock = true;
 		} catch {
-			// Another instance is seeding or already seeded
-			// Check if it completed or is still in progress
-			const existingStatus = await isDatabaseSeeded();
+			// Lock already exists - need to poll until available or completed
+			console.log('[DB Init] Seed lock held by another instance - entering polling mode');
 
-			if (existingStatus) {
-				console.log('[DB Init] Another instance completed seeding - skipping');
-				return;
+			const startWaitTime = Date.now();
+
+			// Poll until lock is available, seed completes, or timeout
+			while (true) {
+				// Check if we've exceeded maximum wait time
+				const waitTime = Date.now() - startWaitTime;
+				if (waitTime > MAX_WAIT_MS) {
+					throw new Error(
+						`[DB Init] Timeout waiting for seed lock after ${MAX_WAIT_MS / 1000}s. ` +
+						`Another instance may be stuck. Check seed_status table manually.`
+					);
+				}
+
+				// Get current seed status
+				const status = await getSeedStatus();
+
+				if (!status) {
+					// Lock disappeared - try to acquire again
+					console.log('[DB Init] Lock disappeared - attempting to acquire');
+					try {
+						await db.insert(seedStatus).values({
+							id: 'singleton',
+							status: 'seeding',
+							startedAt: new Date()
+						});
+						hasLock = true;
+						break;
+					} catch {
+						// Another instance grabbed it - continue polling
+						console.log('[DB Init] Another instance acquired lock - continuing to poll');
+						await sleep(POLL_INTERVAL_MS);
+						continue;
+					}
+				}
+
+				// Check if seeding completed
+				if (status.status === 'completed') {
+					console.log('[DB Init] Seeding completed by another instance - skipping');
+					return;
+				}
+
+				// Check if lock is stale (instance crashed or hung)
+				if (status.status === 'seeding') {
+					const lockAge = Date.now() - new Date(status.startedAt).getTime();
+
+					if (lockAge > STALE_LOCK_THRESHOLD_MS) {
+						// Lock is stale - take it over
+						console.warn(
+							`[DB Init] Detected stale seed lock (held for ${lockAge / 1000}s) - taking over`
+						);
+
+						try {
+							await db
+								.update(seedStatus)
+								.set({
+									status: 'seeding',
+									startedAt: new Date(),
+									error: 'Taken over from stale lock'
+								})
+								.where(eq(seedStatus.id, 'singleton'));
+
+							hasLock = true;
+							break;
+						} catch (updateError) {
+							// Update failed - continue polling
+							console.warn('[DB Init] Failed to take over stale lock - continuing to poll');
+							await sleep(POLL_INTERVAL_MS);
+							continue;
+						}
+					}
+
+					// Lock is active and fresh - wait and retry
+					console.log('[DB Init] Another instance is actively seeding - waiting...');
+					await sleep(POLL_INTERVAL_MS);
+					continue;
+				}
+
+				// Check if previous seed failed
+				if (status.status === 'failed') {
+					console.log('[DB Init] Previous seed attempt failed - taking over to retry');
+
+					try {
+						await db
+							.update(seedStatus)
+							.set({
+								status: 'seeding',
+								startedAt: new Date(),
+								error: null
+							})
+							.where(eq(seedStatus.id, 'singleton'));
+
+						hasLock = true;
+						break;
+					} catch (updateError) {
+						// Update failed - continue polling
+						console.warn('[DB Init] Failed to take over failed seed - continuing to poll');
+						await sleep(POLL_INTERVAL_MS);
+						continue;
+					}
+				}
+
+				// Unknown status - wait and retry
+				console.warn(`[DB Init] Unexpected seed status: ${status.status} - waiting...`);
+				await sleep(POLL_INTERVAL_MS);
 			}
-
-			// Still seeding - wait and check again
-			console.log('[DB Init] Another instance is currently seeding - waiting...');
-			await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds
-
-			const recheckStatus = await isDatabaseSeeded();
-			if (recheckStatus) {
-				console.log('[DB Init] Seeding completed by another instance');
-				return;
-			}
-
-			// If still not completed after wait, something may be wrong
-			console.warn('[DB Init] Seed appears stuck - proceeding cautiously');
-			// Continue to prevent startup deadlock, but log warning
 		}
 
-		// Import and run seed logic
+		// If we don't have the lock at this point, something went wrong
+		if (!hasLock) {
+			throw new Error('[DB Init] Failed to acquire seed lock - this should never happen');
+		}
+
+		// We have the lock - run the seed
+		console.log('[DB Init] Running database seed...');
 		const { runSeed } = await import('./seed');
 		await runSeed();
 
