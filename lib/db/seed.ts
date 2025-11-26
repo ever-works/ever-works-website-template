@@ -292,9 +292,9 @@ export async function runSeed(options: { manageStatus?: boolean } = {}): Promise
       const status = existingStatus[0].status;
       console.log(`[Seed] Previous seed status detected: ${status}`);
 
-      if (status === 'failed' || (status === 'seeding' && !manageStatus)) {
-        // Partial/failed seed - preserve existing data, don't wipe
-        console.log('[Seed] Skipping wipeData() to preserve existing data from previous attempt');
+      if (status === 'failed') {
+        // Failed seed - preserve existing data, don't wipe
+        console.log('[Seed] Skipping wipeData() to preserve existing data from failed attempt');
         shouldWipe = false;
       }
       // If status is 'completed', we shouldn't even be here (isDatabaseSeeded would return true)
