@@ -19,15 +19,8 @@ export async function register() {
     });
   }
 
-  // Initialize database (auto-seed if needed)
-  try {
-    const { initializeDatabase } = await import('@/lib/db/initialize');
-    await initializeDatabase();
-  } catch (error) {
-    console.error('[Instrumentation] Database initialization error:', error);
-    // Re-throw to prevent server startup if DB is configured but initialization fails
-    throw error;
-  }
+  // Note: Database initialization moved to instrumentation.node.ts
+  // to avoid Edge Runtime bundling issues with Node.js modules
 }
 
 // Add hook to capture errors from React Server Components

@@ -19,10 +19,11 @@ import {
   subscriptions,
   subscriptionHistory,
   paymentAccounts,
-  paymentProviders
+  paymentProviders,
+  seedStatus
 } from './schema';
 import { getAllPermissions } from '../permissions/definitions';
-import { sql } from 'drizzle-orm';
+import { sql, eq } from 'drizzle-orm';
 
 // Global database connection - will be initialized after environment loading
 let db: any;
@@ -256,8 +257,25 @@ export async function runSeed(): Promise<void> {
     const [{ count: permsCount }] = await db.select({ count: sql<number>`count(*)` }).from(permissions);
 
     console.log('Seed complete:', { users: usersCount, profiles: profilesCount, roles: rolesCount, permissions: permsCount });
-  } catch (error) {
+  } catch {
     // Tables may not exist yet (schema not migrated) - skip verification but seeding succeeded
     console.log('Seed complete (verification skipped - tables may not exist yet)');
+  }
+
+  // Mark seed as completed in seed_status table
+  try {
+    await db
+      .update(seedStatus)
+      .set({
+        status: 'completed',
+        completedAt: new Date()
+      })
+      .where(eq(seedStatus.id, 'singleton'));
+
+    console.log('Seed status marked as completed');
+  } catch (statusError) {
+    // If seed_status table doesn't exist, log warning but don't fail
+    // This can happen if migration hasn't run yet
+    console.warn('Could not update seed status (table may not exist):', statusError instanceof Error ? statusError.message : statusError);
   }
 }
