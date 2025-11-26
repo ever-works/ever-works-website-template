@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { seedStatus } from './schema';
 import type { SeedStatus } from './schema';
+import { isMigrationNeeded, runMigrations } from './migrate';
 
 /**
  * Get the current seed status from the database
@@ -91,7 +92,27 @@ export async function initializeDatabase(): Promise<void> {
 			return;
 		}
 
-		console.log('[DB Init] Database not seeded - attempting to acquire seed lock...');
+		console.log('[DB Init] Database not seeded - checking if migrations needed...');
+
+		// Check if migrations are needed (seed_status table missing)
+		const migrationNeeded = await isMigrationNeeded();
+
+		if (migrationNeeded) {
+			console.log('[DB Init] Migrations needed - running auto-migration...');
+
+			const migrationSuccess = await runMigrations();
+
+			if (!migrationSuccess) {
+				// Migration failed - log error and skip seeding
+				console.warn('[DB Init] ⚠️  Auto-migration failed - skipping database initialization');
+				console.warn('[DB Init] ⚠️  Please run migrations manually: yarn db:migrate');
+				return;
+			}
+
+			console.log('[DB Init] Migrations completed - proceeding with seeding');
+		}
+
+		console.log('[DB Init] Attempting to acquire seed lock...');
 
 		const { db } = await import('./drizzle');
 		let hasLock = false;
@@ -106,9 +127,46 @@ export async function initializeDatabase(): Promise<void> {
 
 			console.log('[DB Init] Seed lock acquired successfully');
 			hasLock = true;
-		} catch {
-			// Lock already exists - need to poll until available or completed
-			console.log('[DB Init] Seed lock held by another instance - entering polling mode');
+		} catch (lockError) {
+			// Check if error is due to missing table (PostgreSQL error code 42P01)
+			const isTableMissingError =
+				lockError &&
+				typeof lockError === 'object' &&
+				'code' in lockError &&
+				lockError.code === '42P01';
+
+			if (isTableMissingError) {
+				// Table doesn't exist - try auto-migration once
+				console.log('[DB Init] seed_status table not found - attempting auto-migration...');
+
+				const migrationSuccess = await runMigrations();
+
+				if (!migrationSuccess) {
+					console.warn('[DB Init] ⚠️  Auto-migration failed - skipping database initialization');
+					console.warn('[DB Init] ⚠️  Please run migrations manually: yarn db:migrate');
+					return;
+				}
+
+				// Retry lock acquisition after migration
+				try {
+					await db.insert(seedStatus).values({
+						id: 'singleton',
+						status: 'seeding',
+						startedAt: new Date()
+					});
+
+					console.log('[DB Init] Seed lock acquired successfully after migration');
+					hasLock = true;
+				} catch (retryError) {
+					// If still fails, another instance likely grabbed the lock
+					console.log('[DB Init] Lock held by another instance after migration - entering polling mode');
+				}
+			}
+
+			// If we don't have lock yet, enter polling mode
+			if (!hasLock) {
+				// Lock already exists - need to poll until available or completed
+				console.log('[DB Init] Seed lock held by another instance - entering polling mode');
 
 			const startWaitTime = Date.now();
 
@@ -173,7 +231,7 @@ export async function initializeDatabase(): Promise<void> {
 
 							hasLock = true;
 							break;
-						} catch (updateError) {
+						} catch {
 							// Update failed - continue polling
 							console.warn('[DB Init] Failed to take over stale lock - continuing to poll');
 							await sleep(POLL_INTERVAL_MS);
@@ -203,7 +261,7 @@ export async function initializeDatabase(): Promise<void> {
 
 						hasLock = true;
 						break;
-					} catch (updateError) {
+					} catch {
 						// Update failed - continue polling
 						console.warn('[DB Init] Failed to take over failed seed - continuing to poll');
 						await sleep(POLL_INTERVAL_MS);
@@ -214,6 +272,7 @@ export async function initializeDatabase(): Promise<void> {
 				// Unknown status - wait and retry
 				console.warn(`[DB Init] Unexpected seed status: ${status.status} - waiting...`);
 				await sleep(POLL_INTERVAL_MS);
+			}
 			}
 		}
 
