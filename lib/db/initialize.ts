@@ -225,7 +225,7 @@ export async function initializeDatabase(): Promise<void> {
 
 						try {
 							// Atomic update: only succeed if status and timestamp haven't changed
-							await db
+							const result = await db
 								.update(seedStatus)
 								.set({
 									status: 'seeding',
@@ -240,7 +240,15 @@ export async function initializeDatabase(): Promise<void> {
 									)
 								);
 
-							// If we reach here, update succeeded
+							// Verify we actually got the lock (postgres returns affected row count)
+							// If another instance took it first, continue polling
+							if (!result || (Array.isArray(result) && result.length === 0)) {
+								console.warn('[DB Init] Another instance took stale lock first - continuing to poll');
+								await sleep(POLL_INTERVAL_MS);
+								continue;
+							}
+
+							// Update succeeded - we have the lock
 							hasLock = true;
 							break;
 						} catch {
@@ -263,7 +271,7 @@ export async function initializeDatabase(): Promise<void> {
 
 					try {
 						// Atomic update: only succeed if status is still 'failed'
-						await db
+						const result = await db
 							.update(seedStatus)
 							.set({
 								status: 'seeding',
@@ -277,7 +285,15 @@ export async function initializeDatabase(): Promise<void> {
 								)
 							);
 
-						// If we reach here, update succeeded
+						// Verify we actually got the lock (postgres returns affected row count)
+						// If another instance took it first, continue polling
+						if (!result || (Array.isArray(result) && result.length === 0)) {
+							console.warn('[DB Init] Another instance took failed seed first - continuing to poll');
+							await sleep(POLL_INTERVAL_MS);
+							continue;
+						}
+
+						// Update succeeded - we have the lock
 						hasLock = true;
 						break;
 					} catch {
