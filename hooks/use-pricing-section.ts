@@ -76,8 +76,8 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 	const { freePlanFeatures, standardPlanFeatures, premiumPlanFeatures, getPlanConfig, getActionText } =
 		usePricingFeatures();
 
-	const stripeHook: ReturnType<typeof useCreateCheckoutSession> = useCreateCheckoutSession();
-	const lemonsqueezyHook: ReturnType<typeof useCheckoutButton> = useCheckoutButton();
+		const stripeHook: ReturnType<typeof useCreateCheckoutSession> = useCreateCheckoutSession();
+		const lemonsqueezyHook: ReturnType<typeof useCheckoutButton> = useCheckoutButton();
 
 	const { selectedFlow, selectFlow, triggerAnimation } = usePaymentFlow({
 		enableAnimations: true,
