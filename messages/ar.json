@@ -289,6 +289,8 @@
     "BILLING": "الفواتير",
     "NOTIFICATIONS": "الإشعارات",
     "SETTINGS": "الإعدادات",
+    "OPEN_SETTINGS": "فتح الإعدادات",
+    "CLOSE_SETTINGS": "إغلاق الإعدادات",
     "SECURITY": "الأمان",
     "LEGAL": "القانونية",
     "HELP": "مركز المساعدة",

@@ -12,7 +12,7 @@ const BACKDROP_CLASSES = cn(
 	"fixed inset-0",
 	"bg-black/50 dark:bg-black/70",
 	"backdrop-blur-sm",
-	"z-50",
+	"z-[9998]",
 	"transition-opacity duration-300"
 );
 
@@ -24,7 +24,7 @@ const MODAL_CLASSES = cn(
 	"bg-white dark:bg-gray-900",
 	"border border-gray-200 dark:border-gray-700",
 	"rounded-2xl shadow-2xl",
-	"z-[60]",
+	"z-[9999]",
 	"overflow-hidden",
 	"transition-all duration-300"
 );
@@ -42,11 +42,7 @@ export function SettingsModal() {
 	const [mounted, setMounted] = useState(false);
 	const t = useTranslations("settings");
 
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-
-	if (!mounted || !isOpen) {
+	if (!isOpen || typeof window === "undefined") {
 		return null;
 	}
 
@@ -60,12 +56,12 @@ export function SettingsModal() {
 				{/* Modal Header */}
 				<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
 					<h2 id="settings-title" className="text-xl font-semibold text-gray-900 dark:text-white">
-						Settings
+						{t("SETTINGS")}
 					</h2>
 					<button
 						onClick={closeModal}
 						className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-						aria-label="Close settings"
+						aria-label={t("CLOSE_SETTINGS")}
 						type="button"
 					>
 						<X className="h-5 w-5" />

@@ -1,8 +1,10 @@
 "use client";
 
+import { memo } from "react";
 import { Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSettingsModal } from "@/hooks/use-settings-modal";
+import { useTranslations } from "next-intl";
 
 const BUTTON_CLASSES = cn(
 	"flex items-center gap-1.5",
@@ -15,18 +17,21 @@ const BUTTON_CLASSES = cn(
 	"cursor-pointer"
 );
 
-export function SettingsButton() {
+function SettingsButtonComponent() {
 	const { openModal } = useSettingsModal();
+	const t = useTranslations("settings");
 
 	return (
 		<button
 			onClick={openModal}
 			className={BUTTON_CLASSES}
-			aria-label="Open Settings"
+			aria-label={t("OPEN_SETTINGS")}
 			type="button"
 		>
 			<Settings className="h-4 w-4 lg:h-5 lg:w-5" />
-			<span></span>
 		</button>
 	);
 }
+
+export const SettingsButton = memo(SettingsButtonComponent);
+SettingsButton.displayName = "SettingsButton";

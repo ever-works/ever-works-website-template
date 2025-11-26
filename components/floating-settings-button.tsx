@@ -1,9 +1,10 @@
 "use client";
 
+import { memo } from "react";
 import { Settings } from "lucide-react";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useSettingsModal } from "@/hooks/use-settings-modal";
+import { useTranslations } from "next-intl";
 
 const BUTTON_CLASSES = cn(
 	"fixed bottom-6 right-6",
@@ -32,27 +33,25 @@ const TOOLTIP_CLASSES = cn(
 	"pointer-events-none"
 );
 
-export function FloatingSettingsButton() {
+function FloatingSettingsButtonComponent() {
 	const { openModal } = useSettingsModal();
-	const [showTooltip, setShowTooltip] = useState(false);
+	const t = useTranslations("settings");
 
 	return (
 		<button
 			onClick={openModal}
-			onMouseEnter={() => setShowTooltip(true)}
-			onMouseLeave={() => setShowTooltip(false)}
 			className={BUTTON_CLASSES}
-			aria-label="Open Settings"
+			aria-label={t("OPEN_SETTINGS")}
 			type="button"
 		>
 			<Settings className="h-6 w-6" />
-
-			{/* Tooltip */}
-			{showTooltip && (
-				<span className={TOOLTIP_CLASSES}>
-					Settings
-				</span>
-			)}
+			{/* Tooltip - visibility controlled by CSS group-hover */}
+			<span className={TOOLTIP_CLASSES}>
+				{t("SETTINGS")}
+			</span>
 		</button>
 	);
 }
+
+export const FloatingSettingsButton = memo(FloatingSettingsButtonComponent);
+FloatingSettingsButton.displayName = "FloatingSettingsButton";

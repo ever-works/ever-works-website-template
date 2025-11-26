@@ -16,7 +16,7 @@ import { ConditionalLayout } from '@/components/layout/conditional-layout';
 import { siteConfig } from '@/lib/config';
 import { SpeedInsights } from './integration/speed-insights';
 import { SettingsProvider } from '@/components/providers/settings-provider';
-import { SettingsModalProvider } from '@/hooks/use-settings-modal';
+import { SettingsModalProvider } from '@/components/providers/settings-modal-provider';
 import { SettingsModal } from '@/components/settings-modal';
 import { FloatingSettingsButton } from '@/components/floating-settings-button';
 import {
