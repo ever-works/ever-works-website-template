@@ -41,6 +41,7 @@ const LAYOUT_STYLES = {
 };
 
 export default function GlobalsClient(props: ListingProps) {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { layoutHome = LayoutHome.HOME_ONE, paginationType } = useLayoutTheme();
 	const { selectedCategories, searchTerm, selectedTags, isFiltersLoading } =
 		useFilters();

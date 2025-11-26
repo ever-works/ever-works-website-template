@@ -4,7 +4,6 @@ import { X } from "lucide-react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { useSettingsModal } from "@/hooks/use-settings-modal";
-import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import SelectPaginationType from "@/components/ui/select-pagination-type";
 
@@ -29,17 +28,10 @@ const MODAL_CLASSES = cn(
 	"transition-all duration-300"
 );
 
-const CONTENT_SECTION_CLASSES = cn("space-y-3");
-
-const SECTION_HEADING_CLASSES = cn("text-sm font-semibold text-gray-900 dark:text-white");
-
-const SECTION_DESC_CLASSES = cn("text-xs text-gray-500 dark:text-gray-400 mt-1");
-
 const DIVIDER_CLASSES = cn("border-t border-gray-200 dark:border-gray-700");
 
 export function SettingsModal() {
 	const { isOpen, closeModal } = useSettingsModal();
-	const [mounted, setMounted] = useState(false);
 	const t = useTranslations("settings");
 
 	if (!isOpen || typeof window === "undefined") {
