@@ -399,11 +399,7 @@
     "PAGINATION_STYLE": "Style de pagination",
     "PAGINATION_STYLE_DESC": "Choisissez comment le contenu est affiché lors de la navigation dans les listes",
     "PAGINATION_STANDARD_LABEL": "Standard",
-    "PAGINATION_STANDARD_DESC": "Naviguez à travers les pages avec des contrôles de pagination traditionnels pour une sélection précise des pages",
-    "PAGINATION_STANDARD_USE_CASE": "Idéal pour parcourir des pages spécifiques et une navigation contrôlée",
     "PAGINATION_INFINITE_LABEL": "Défilement infini",
-    "PAGINATION_INFINITE_DESC": "Chargez continuellement le contenu en faisant défiler vers le bas pour une expérience de navigation fluide",
-    "PAGINATION_INFINITE_USE_CASE": "Idéal pour la découverte continue et la navigation exploratoire",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Informations de base",
