@@ -1,7 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { seedStatus } from './schema';
 import type { SeedStatus } from './schema';
-import { isMigrationNeeded, runMigrations } from './migrate';
 
 /**
  * Get the current seed status from the database
@@ -95,6 +94,8 @@ export async function initializeDatabase(): Promise<void> {
 		console.log('[DB Init] Database not seeded - checking if migrations needed...');
 
 		// Check if migrations are needed (seed_status table missing)
+		// Dynamic import to avoid bundling Node.js-only migrate module
+		const { isMigrationNeeded, runMigrations } = await import('./migrate');
 		const migrationNeeded = await isMigrationNeeded();
 
 		if (migrationNeeded) {
@@ -139,7 +140,9 @@ export async function initializeDatabase(): Promise<void> {
 				// Table doesn't exist - try auto-migration once
 				console.log('[DB Init] seed_status table not found - attempting auto-migration...');
 
-				const migrationSuccess = await runMigrations();
+				// Dynamic import to avoid bundling Node.js-only migrate module
+				const { runMigrations: runMig } = await import('./migrate');
+				const migrationSuccess = await runMig();
 
 				if (!migrationSuccess) {
 					console.warn('[DB Init] ⚠️  Auto-migration failed - skipping database initialization');

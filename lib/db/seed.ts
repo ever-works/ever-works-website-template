@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs';
-import { randomUUID } from 'crypto';
 
 // Import schema types and sql
 import {
@@ -41,7 +40,7 @@ async function ensureDb() {
 }
 
 function uuid(): string {
-  return randomUUID();
+  return crypto.randomUUID();
 }
 
 async function tableExists(name: string): Promise<boolean> {

@@ -1,6 +1,6 @@
 /**
  * CLI entry point for manual database seeding
- * Usage: yarn db:seed
+ * Usage: pnpm db:seed
  */
 
 import { config } from 'dotenv';

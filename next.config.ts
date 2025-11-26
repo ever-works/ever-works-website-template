@@ -6,6 +6,7 @@ import { generateImageRemotePatterns } from './lib/utils/image-domains';
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  serverExternalPackages: ['postgres', 'bcryptjs', 'drizzle-orm'],
   experimental: {
     optimizePackageImports: ["@heroui/react", "lucide-react"],
   },
