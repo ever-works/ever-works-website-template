@@ -144,7 +144,8 @@ export const HomeTwoTagsSelector = ({
     }
   }, [isOpen]);
 
-  if (!tagsEnabled) {
+  // Hide if tags are disabled or if tags array is empty
+  if (!tagsEnabled || !tags || tags.length === 0) {
     return null;
   }
 

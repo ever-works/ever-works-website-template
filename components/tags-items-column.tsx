@@ -54,6 +54,11 @@ export function TagsItemsColumn(props: { total: number; tag: Tag[] }) {
       clearAllFilters,
     } = useFilters();
   
+    // Don't render if tags array is empty or undefined
+    if (!props.tag || props.tag.length === 0) {
+      return null;
+    }
+
     const availableTags = props.tag
       .flatMap((cat) => (Array.isArray(cat) ? cat : [cat]))
       .filter(Boolean);

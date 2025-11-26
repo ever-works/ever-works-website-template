@@ -19,6 +19,11 @@ export function TagsCards({ tags, className }: TagsCardsProps) {
   const searchParams = useSearchParams();
   const [loadingTag, setLoadingTag] = useState<string | null>(null);
 
+  // Don't render if tags array is empty or undefined
+  if (!tags || tags.length === 0) {
+    return null;
+  }
+
   // Parse current tags from query params to determine active state
   const currentTagsParam = searchParams.get('tags');
   const currentTags = currentTagsParam?.split(',') || [];

@@ -184,24 +184,22 @@ export default function Item(props: ItemProps) {
 							{displayDescription}
 						</p>
 
-						{/* Enhanced Hashtags */}
-						{tagsEnabled && (
+						{/* Enhanced Hashtags - Only show if tags are enabled, tags exist, and have valid names */}
+						{tagsEnabled && props.tags && Array.isArray(props.tags) && props.tags.length > 0 && (
 						<div className="flex flex-wrap gap-0.5">
-							{props.tags &&
-								Array.isArray(props.tags) &&
-								props.tags.slice(0, 4).map((tag, index) => {
-									const tagName = getTagName(tag);
-									const tagId = typeof tag === 'string' ? tag : tag.id;
-									if (!tagName) return null;
+							{props.tags.slice(0, 4).map((tag, index) => {
+								const tagName = getTagName(tag);
+								const tagId = typeof tag === 'string' ? tag : tag.id;
+								if (!tagName) return null;
 
-									return (
-										<TagFilterButton
-											key={tagId || `tag-${index}`}
-											tag={tag}
-											index={index}
-										/>
-									);
-								})}
+								return (
+									<TagFilterButton
+										key={tagId || `tag-${index}`}
+										tag={tag}
+										index={index}
+									/>
+								);
+							})}
 						</div>
 						)}
 					</div>

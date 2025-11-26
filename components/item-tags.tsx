@@ -68,6 +68,11 @@ export function ItemTag({ name }: { name: string }) {
 }
 
 export function ItemTags({ tags }: { tags: string[] }) {
+  // Don't render if tags array is empty or undefined
+  if (!tags || tags.length === 0) {
+    return null;
+  }
+
   return (
     <div className="flex flex-wrap gap-2 animate-fade-in dark:border-dark--theme-200">
       {tags.map((tag, index) => (
@@ -84,6 +89,11 @@ export function ItemTagsSection({
   title: string;
   tags: string[];
 }) {
+  // Don't render if tags array is empty or undefined
+  if (!tags || tags.length === 0) {
+    return null;
+  }
+
   return (
     <div className="mb-6">
       {title && (
