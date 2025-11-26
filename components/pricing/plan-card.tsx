@@ -4,8 +4,9 @@ import { ReactNode, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ToggleGroup } from "@/components/ui/toggle-group";
 import { Check, X } from "lucide-react";
-import { PaymentPlan } from "@/lib/constants";
+import { PaymentPlan, PaymentFlow } from "@/lib/constants";
 
 export type PlanFeature = {
   readonly included: boolean;
@@ -29,6 +30,8 @@ interface PlanCardProps {
   readonly onClick?: () => void;
   readonly isLoading?: boolean;
   readonly className?: string;
+  readonly selectedFlow?: PaymentFlow;
+  readonly onFlowChange?: (flow: PaymentFlow) => void;
 }
 
 // Constants for modern design based on reference image
@@ -99,8 +102,12 @@ export function PlanCard({
   isLoading = false,
   onClick,
   className,
+  selectedFlow = PaymentFlow.PAY_AT_END,
+  onFlowChange,
 }: PlanCardProps) {
   const router = useRouter();
+  
+  const isPaidPlan = title.toUpperCase() === PLAN_TYPES.STANDARD || title.toUpperCase() === PLAN_TYPES.PREMIUM;
 
   const cardStyles = useMemo(() => cn(
     "relative flex flex-col",
@@ -142,9 +149,24 @@ export function PlanCard({
       )}
 
       <header className="flex flex-col items-start text-left px-6 pt-6 pb-4 shrink-0">
-        <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-          {title}
-        </h3>
+      <div className="flex items-center justify-between w-full mb-4 gap-4">
+          <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
+            {title}
+          </h3>
+          {isPaidPlan && onFlowChange && (
+            <ToggleGroup
+              options={[
+                { value: PaymentFlow.PAY_AT_START, label: "Pay Now" },
+                { value: PaymentFlow.PAY_AT_END, label: "Pay Later" },
+              ]}
+              value={selectedFlow}
+              onValueChange={(value) => onFlowChange(value as PaymentFlow)}
+              size="sm"
+              variant="modern"
+              className="flex-shrink-0"
+            />
+          )}
+        </div>
         <div className="flex justify-center items-baseline gap-1 mb-2">
           <span className={cn(
             "text-4xl font-bold leading-none",

@@ -26,7 +26,7 @@ export function SubmitFormClient({ initialData, locale }: SubmitFormClientProps)
   };
 
   const handleBack = () => {
-    router.push(`/${locale}/submit`);
+    router.push(`/${locale}/pricing`);
   };
 
   return (

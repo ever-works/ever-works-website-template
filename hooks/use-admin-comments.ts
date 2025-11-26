@@ -131,7 +131,6 @@ export function useAdminComments(options: UseAdminCommentsOptions = {}): UseAdmi
   const {
     data: commentsData,
     isLoading,
-    error,
     refetch,
   } = useQuery({
     queryKey: commentsQueryKeys.list({ 
