@@ -257,18 +257,14 @@ const useLayoutHomeManager = () => {
 const usePaginationTypeManager = () => {
   // Always initialize with default to prevent hydration mismatch
   const [paginationType, setPaginationTypeState] = useState<PaginationType>(DEFAULT_PAGINATION_TYPE);
-  const [isHydrated, setIsHydrated] = useState(false);
 
-  // Hydrate from localStorage after mount - ONLY ONCE
+  // Hydrate from localStorage after mount - runs only once on mount
   useEffect(() => {
-    if (isHydrated) return; // Prevent re-hydration
-
     const saved = safeLocalStorage.getItem(STORAGE_KEYS.PAGINATION_TYPE);
     if (saved && isValidPaginationType(saved)) {
       setPaginationTypeState(saved);
     }
-    setIsHydrated(true);
-  }, [isHydrated]);
+  }, []);
 
   const setPaginationType = useCallback((type: PaginationType) => {
     if (!isValidPaginationType(type)) {
