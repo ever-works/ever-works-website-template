@@ -46,7 +46,8 @@ export async function isDatabaseSeeded(): Promise<boolean> {
 /**
  * Initialize database by auto-seeding if needed
  * - Silent skip if DATABASE_URL is not configured (optional DB)
- * - Silent skip if AUTO_SEED_ON_STARTUP is not enabled (safe by default)
+ * - Automatically checks if database is seeded on every startup
+ * - Seeds database if not already seeded
  * - Throws error if DATABASE_URL exists but seeding fails
  */
 export async function initializeDatabase(): Promise<void> {
@@ -55,23 +56,6 @@ export async function initializeDatabase(): Promise<void> {
 		if (process.env.NODE_ENV === 'development') {
 			console.log('[DB Init] DATABASE_URL not configured - skipping database initialization');
 		}
-		return;
-	}
-
-	// Silent skip if auto-seed not explicitly enabled (safe by default)
-	if (process.env.AUTO_SEED_ON_STARTUP !== 'true') {
-		if (process.env.NODE_ENV === 'development') {
-			console.log('[DB Init] AUTO_SEED_ON_STARTUP not enabled - skipping auto-seed');
-			console.log('[DB Init] Set AUTO_SEED_ON_STARTUP=true to enable automatic seeding');
-		}
-		return;
-	}
-
-	// Production safety: warn and skip if ALLOW_DB_SEED not set
-	if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DB_SEED !== '1') {
-		console.warn('[DB Init] ⚠️  AUTO_SEED_ON_STARTUP enabled in production but ALLOW_DB_SEED != 1');
-		console.warn('[DB Init] ⚠️  Skipping auto-seed for safety. Set ALLOW_DB_SEED=1 to allow.');
-		console.warn('[DB Init] ⚠️  Alternatively, disable AUTO_SEED_ON_STARTUP in production.');
 		return;
 	}
 
