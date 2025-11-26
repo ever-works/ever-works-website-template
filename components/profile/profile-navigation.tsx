@@ -24,7 +24,7 @@ export function ProfileNavigation({ activeTab = "about", onTabChange }: ProfileN
   ];
 
   return (
-    <div className="sticky top-0 z-nav bg-white/80 dark:bg-gray-950/80 backdrop-blur-md rounded-t-2xl shadow-sm border-b border-gray-200 dark:border-gray-800 mb-4">
+    <div className="sticky top-0 z-nav bg-white/80 dark:bg-gray-950/80 backdrop-blur-md rounded-t-2xl shadow-xs border-b border-gray-200 dark:border-gray-800 mb-4">
       <nav
         className="flex space-x-2 sm:space-x-4 px-2 sm:px-6 py-2 overflow-x-auto"
         aria-label="Profile navigation"
@@ -32,9 +32,9 @@ export function ProfileNavigation({ activeTab = "about", onTabChange }: ProfileN
         {tabs.map((tab) => {
           const isActive = activeTabState === tab.id;
           const tabButtonClass = cn(
-            "flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-sm transition-all whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary-500",
+            "flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-sm transition-all whitespace-nowrap focus:outline-hidden focus-visible:ring-2 focus-visible:ring-theme-primary-500",
             isActive
-              ? "bg-theme-primary-600/10 text-theme-primary-700 dark:text-theme-primary-300 shadow border border-theme-primary-300 dark:border-theme-primary-700"
+              ? "bg-theme-primary-600/10 text-theme-primary-700 dark:text-theme-primary-300 shadow-sm border border-theme-primary-300 dark:border-theme-primary-700"
               : "bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 border border-transparent"
           );
           return (

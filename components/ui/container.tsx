@@ -18,11 +18,11 @@ const containerVariants = cva(
        * @default "7xl"
        */
       maxWidth: {
-        sm: "max-w-screen-sm",     // 640px
-        md: "max-w-screen-md",     // 768px
-        lg: "max-w-screen-lg",     // 1024px
-        xl: "max-w-screen-xl",     // 1280px
-        "2xl": "max-w-screen-2xl", // 1536px
+        sm: "max-w-(--breakpoint-sm)",     // 640px
+        md: "max-w-(--breakpoint-md)",     // 768px
+        lg: "max-w-(--breakpoint-lg)",     // 1024px
+        xl: "max-w-(--breakpoint-xl)",     // 1280px
+        "2xl": "max-w-(--breakpoint-2xl)", // 1536px
         "7xl": "max-w-7xl",        // 1280px (Tailwind default)
         full: "max-w-full",        // 100%
         none: "",                  // No max-width constraint

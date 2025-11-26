@@ -32,7 +32,7 @@ export function SkillsSection({ profile }: SkillsSectionProps) {
   return (
     <div className="space-y-8">
       {/* Skills Tag Summary */}
-      <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
+      <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow-sm p-6">
         <CardHeader className="p-0 mb-2">
           <CardTitle className="text-lg font-bold text-gray-100 flex items-center gap-2">
             <FiAward className="w-5 h-5 text-theme-primary-500" />
@@ -84,7 +84,7 @@ export function SkillsSection({ profile }: SkillsSectionProps) {
       </Card>
 
       {/* Skills Summary */}
-      <Card className="border border-gray-700/20 dark:border-gray-300/10 rounded-xl bg-card shadow p-6">
+      <Card className="border border-gray-700/20 dark:border-gray-300/10 rounded-xl bg-card shadow-sm p-6">
         <CardHeader className="p-0 mb-2">
           <CardTitle className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
             <FiTrendingUp className="w-5 h-5 text-theme-primary-500" />
@@ -94,7 +94,7 @@ export function SkillsSection({ profile }: SkillsSectionProps) {
         <CardContent className="p-0">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Total Skills */}
-            <div className="flex flex-col items-center justify-center text-center p-4 bg-card rounded-lg border border-theme-primary-100/40 dark:border-theme-primary-900/30 shadow-sm">
+            <div className="flex flex-col items-center justify-center text-center p-4 bg-card rounded-lg border border-theme-primary-100/40 dark:border-theme-primary-900/30 shadow-xs">
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-theme-primary-100/60 dark:bg-theme-primary-900/40 mb-2 ring-2 ring-theme-primary-200/60 dark:ring-theme-primary-800/40">
                 <FiAward className="w-6 h-6 text-theme-primary-600 dark:text-theme-primary-400" />
               </div>
@@ -105,7 +105,7 @@ export function SkillsSection({ profile }: SkillsSectionProps) {
             </div>
 
             {/* Categories */}
-            <div className="flex flex-col items-center justify-center text-center p-4 bg-card rounded-lg border border-theme-primary-100/40 dark:border-theme-primary-900/30 shadow-sm">
+            <div className="flex flex-col items-center justify-center text-center p-4 bg-card rounded-lg border border-theme-primary-100/40 dark:border-theme-primary-900/30 shadow-xs">
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-theme-primary-100/60 dark:bg-theme-primary-900/40 mb-2 ring-2 ring-theme-primary-200/60 dark:ring-theme-primary-800/40">
                 <FiGrid className="w-6 h-6 text-theme-primary-600 dark:text-theme-primary-400" />
               </div>
@@ -116,7 +116,7 @@ export function SkillsSection({ profile }: SkillsSectionProps) {
             </div>
 
             {/* Avg. Proficiency */}
-            <div className="flex flex-col items-center justify-center text-center p-4 bg-card rounded-lg border border-theme-primary-100/40 dark:border-theme-primary-900/30 shadow-sm">
+            <div className="flex flex-col items-center justify-center text-center p-4 bg-card rounded-lg border border-theme-primary-100/40 dark:border-theme-primary-900/30 shadow-xs">
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-theme-primary-100/60 dark:bg-theme-primary-900/40 mb-2 ring-2 ring-theme-primary-200/60 dark:ring-theme-primary-800/40">
                 <FiBarChart2 className="w-6 h-6 text-theme-primary-600 dark:text-theme-primary-400" />
               </div>

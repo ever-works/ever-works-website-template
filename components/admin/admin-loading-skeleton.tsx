@@ -2,8 +2,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Design system constants
-const SHIMMER_STYLES = "animate-pulse bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700";
-const STATS_CARD_STYLES = "bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700";
+const SHIMMER_STYLES = "animate-pulse bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700";
+const STATS_CARD_STYLES = "bg-white dark:bg-gray-900 rounded-xl shadow-xs p-6 border border-gray-200 dark:border-gray-700";
 const SKELETON_CONTAINER_STYLES = "flex items-center space-x-2";
 const SKELETON_ICON_CONTAINER_STYLES = "p-2 bg-gray-200 dark:bg-gray-700 rounded-lg";
 const SKELETON_CONTENT_STYLES = "flex-1";
@@ -14,11 +14,11 @@ export function AdminStatsCardSkeleton() {
     <div role="status" aria-live="polite" aria-label="Loading" className={STATS_CARD_STYLES}>
       <div className={SKELETON_CONTAINER_STYLES}>
         <div className={`${SKELETON_ICON_CONTAINER_STYLES} ${SHIMMER_STYLES}`}>
-          <div className="h-5 w-5 bg-gray-300 dark:bg-gray-600 rounded"></div>
+          <div className="h-5 w-5 bg-gray-300 dark:bg-gray-600 rounded-sm"></div>
         </div>
         <div className={SKELETON_CONTENT_STYLES}>
-          <div className={`h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2 ${SHIMMER_STYLES}`}></div>
-          <div className={`h-8 bg-gray-200 dark:bg-gray-700 rounded ${SHIMMER_STYLES}`}></div>
+          <div className={`h-4 bg-gray-200 dark:bg-gray-700 rounded-sm mb-2 ${SHIMMER_STYLES}`}></div>
+          <div className={`h-8 bg-gray-200 dark:bg-gray-700 rounded-sm ${SHIMMER_STYLES}`}></div>
         </div>
       </div>
     </div>

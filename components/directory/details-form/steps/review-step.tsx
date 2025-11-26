@@ -62,7 +62,7 @@ export function ReviewStep({ formData, t }: ReviewStepProps) {
 									formData.tags.map((tag) => (
 										<span
 											key={tag}
-											className="px-2 py-1 text-xs bg-theme-primary-500 text-white rounded"
+											className="px-2 py-1 text-xs bg-theme-primary-500 text-white rounded-sm"
 										>
 											{tag}
 										</span>

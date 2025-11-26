@@ -125,8 +125,8 @@ function ClientRow({ client, isNavigating, isDeleting, onView, onEdit, onDelete 
 			<div className="flex items-center justify-between">
 				{/* Client Info */}
 				<div className="flex items-center space-x-4 flex-1 min-w-0">
-					<div className="flex items-center space-x-2 flex-shrink-0">
-						<div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+					<div className="flex items-center space-x-2 shrink-0">
+						<div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-sm"></div>
 						<span className="text-sm text-gray-500 dark:text-gray-400">#{client.id.slice(0, 8)}</span>
 					</div>
 					<button
@@ -142,7 +142,7 @@ function ClientRow({ client, isNavigating, isDeleting, onView, onEdit, onDelete 
 						onKeyDown={handleKeyDown}
 						title={isNavigating ? 'Loading...' : 'Click to view client details'}
 					>
-						<div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm">
+						<div className="w-10 h-10 bg-linear-to-br from-theme-primary to-theme-accent rounded-full flex items-center justify-center text-white font-semibold text-sm">
 							{(client.displayName || client.name || 'U').charAt(0).toUpperCase()}
 						</div>
 						<div className="flex-1 min-w-0 pr-4">
@@ -160,7 +160,7 @@ function ClientRow({ client, isNavigating, isDeleting, onView, onEdit, onDelete 
 				</div>
 
 				{/* Client Badges & Actions */}
-				<div className="flex items-center space-x-3 flex-shrink-0">
+				<div className="flex items-center space-x-3 shrink-0">
 					<div className="flex items-center space-x-1">
 						<Chip color={getStatusColor(client.status || 'active')} variant="flat" size="sm">
 							{(client.status || 'active').charAt(0).toUpperCase() + (client.status || 'active').slice(1)}

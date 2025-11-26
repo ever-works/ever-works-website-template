@@ -107,20 +107,20 @@ export function ReviewSection({
       {/* Enhanced Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Gradient orbs */}
-        <div className="absolute top-0 -left-4 w-72 h-72 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-600/20 dark:to-purple-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        <div className="absolute top-0 -right-4 w-72 h-72 bg-gradient-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-600/20 dark:to-pink-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 dark:from-blue-600/20 dark:to-cyan-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+        <div className="absolute top-0 -left-4 w-72 h-72 bg-linear-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-600/20 dark:to-purple-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        <div className="absolute top-0 -right-4 w-72 h-72 bg-linear-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-600/20 dark:to-pink-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-linear-to-r from-blue-500/10 to-cyan-500/10 dark:from-blue-600/20 dark:to-cyan-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
 
         {/* Additional floating elements */}
-        <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 dark:from-yellow-400/30 dark:to-orange-400/30 rounded-full blur-lg animate-float"></div>
-        <div className="absolute bottom-1/3 left-1/3 w-24 h-24 bg-gradient-to-r from-green-500/15 to-blue-500/15 dark:from-green-400/25 dark:to-blue-400/25 rounded-full blur-xl animate-float-slower"></div>
+        <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-linear-to-r from-yellow-500/20 to-orange-500/20 dark:from-yellow-400/30 dark:to-orange-400/30 rounded-full blur-lg animate-float"></div>
+        <div className="absolute bottom-1/3 left-1/3 w-24 h-24 bg-linear-to-r from-green-500/15 to-blue-500/15 dark:from-green-400/25 dark:to-blue-400/25 rounded-full blur-xl animate-float-slower"></div>
       </div>
 
       <div className="relative z-10 py-12">
         {/* Enhanced Header Section */}
         <div className="text-center mb-16 animate-fade-in-up">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 mb-6 shadow-lg">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-xs border border-gray-200/50 dark:border-gray-700/50 mb-6 shadow-lg">
+            <div className="w-8 h-8 rounded-full bg-linear-to-r from-green-500 to-emerald-500 flex items-center justify-center">
               <Eye className="w-4 h-4 text-white animate-pulse" />
             </div>
             <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -128,7 +128,7 @@ export function ReviewSection({
             </span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 bg-linear-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
             Review Your Submission
           </h1>
 
@@ -144,11 +144,11 @@ export function ReviewSection({
             className="relative group animate-fade-in-up"
             style={{ animationDelay: "0.1s" }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-theme-primary-500/20 to-purple-500/20 dark:from-theme-primary-400/30 dark:to-purple-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-linear-to-r from-theme-primary-500/20 to-purple-500/20 dark:from-theme-primary-400/30 dark:to-purple-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
             <div className="relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/30 p-8 shadow-2xl">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-theme-primary-500 to-purple-500 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-linear-to-r from-theme-primary-500 to-purple-500 flex items-center justify-center">
                   <Star className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -156,9 +156,9 @@ export function ReviewSection({
                 </h3>
               </div>
 
-              <div className="flex justify-between items-center p-6 bg-gradient-to-r from-gray-50/80 to-theme-primary-50/80 dark:from-gray-900/40 dark:to-theme-primary-900/40 rounded-2xl border border-gray-200/30 dark:border-gray-700/30">
+              <div className="flex justify-between items-center p-6 bg-linear-to-r from-gray-50/80 to-theme-primary-50/80 dark:from-gray-900/40 dark:to-theme-primary-900/40 rounded-2xl border border-gray-200/30 dark:border-gray-700/30">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-theme-primary-500 to-purple-500 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-2xl bg-linear-to-r from-theme-primary-500 to-purple-500 flex items-center justify-center">
                     <Star className="w-8 h-8 text-white" />
                   </div>
                   <div>
@@ -171,7 +171,7 @@ export function ReviewSection({
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-theme-primary-600 to-purple-600 dark:from-theme-primary-400 dark:to-purple-400 bg-clip-text text-transparent">
+                  <div className="text-3xl font-bold bg-linear-to-r from-theme-primary-600 to-purple-600 dark:from-theme-primary-400 dark:to-purple-400 bg-clip-text text-transparent">
                     {getPlanPrice()}
                   </div>
                   {selectedPlan === PaymentPlan.PREMIUM && (
@@ -189,11 +189,11 @@ export function ReviewSection({
             className="relative group animate-fade-in-up"
             style={{ animationDelay: "0.2s" }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 dark:from-purple-400/30 dark:to-pink-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-linear-to-r from-purple-500/20 to-pink-500/20 dark:from-purple-400/30 dark:to-pink-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
             <div className="relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/30 p-8 shadow-2xl">
               <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-linear-to-r from-purple-500 to-pink-500 flex items-center justify-center">
                   <Globe className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -298,11 +298,11 @@ export function ReviewSection({
             className="relative group animate-fade-in-up"
             style={{ animationDelay: "0.3s" }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 dark:from-green-400/30 dark:to-emerald-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-linear-to-r from-green-500/20 to-emerald-500/20 dark:from-green-400/30 dark:to-emerald-400/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
             <div className="relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/30 p-8 shadow-2xl">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-linear-to-r from-green-500 to-emerald-500 flex items-center justify-center">
                   <Shield className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -416,7 +416,7 @@ export function ReviewSection({
 
             <Button
               type="submit"
-              className="h-14 px-12 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl min-w-[200px] bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:via-emerald-600 hover:to-green-700 text-white hover:shadow-green-500/30"
+              className="h-14 px-12 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl min-w-[200px] bg-linear-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:via-emerald-600 hover:to-green-700 text-white hover:shadow-green-500/30"
             >
               <div className="flex items-center gap-3">
                 <Send className="w-5 h-5" />

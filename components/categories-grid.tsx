@@ -104,7 +104,7 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
         {categoriesToShow.map((category) => (
           <div
             key={category.id}
-            className="focus:outline-none focus:ring-2 focus:ring-theme-primary rounded-lg transition group cursor-pointer relative"
+            className="focus:outline-hidden focus:ring-2 focus:ring-theme-primary rounded-lg transition group cursor-pointer relative"
             onClick={() => handleCategoryClick(category.id)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -117,7 +117,7 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
           >
             {/* Full card loading overlay */}
             {loadingCategory === category.id && (
-              <div className="absolute inset-0 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-lg flex items-center justify-center transition-all duration-300">
+              <div className="absolute inset-0 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xs rounded-lg flex items-center justify-center transition-all duration-300">
                 <div className="flex flex-col items-center gap-3">
                   <div className="relative">
                     <Loader2 className="h-8 w-8 animate-spin text-theme-primary-500 dark:text-theme-primary-400" />
@@ -138,7 +138,7 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
               className="group relative border-0 rounded-lg transition-all duration-700 transform hover:-translate-y-2 backdrop-blur-xl overflow-hidden h-full
                 bg-white/80 dark:bg-gray-900/80 shadow-lg hover:shadow-2xl
                 ring-1 ring-gray-200/50 dark:ring-gray-700/50 hover:ring-theme-primary/70
-                before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/60 before:via-transparent before:to-gray-50/40
+                before:absolute before:inset-0 before:bg-linear-to-br before:from-white/60 before:via-transparent before:to-gray-50/40
                 dark:before:from-gray-800/60 dark:before:via-transparent dark:before:to-gray-900/40
                 hover:before:from-blue-50/30 hover:before:to-purple-50/20 dark:hover:before:from-blue-900/20 dark:hover:before:to-purple-900/10
                 px-6 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10
@@ -154,8 +154,8 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
               />
               {/* Icon with animated background */}
               <div className="relative flex flex-col items-center justify-center pt-2 pb-4">
-                <div className="relative flex-shrink-0">
-                  <div className="w-14 h-14 flex items-center justify-center rounded-lg transition-all duration-500 bg-gradient-to-br from-theme-primary-10 to-indigo-100 border border-theme-primary-500 group-hover:from-theme-primary-10 group-hover:to-indigo-200 dark:from-theme-primary-10 dark:to-indigo-900/30 dark:border-theme-primary-700/30 dark:group-hover:from-theme-primary-800/40 dark:group-hover:to-indigo-800/40 group-hover:scale-110 group-hover:rotate-3 shadow-sm group-hover:shadow-md">
+                <div className="relative shrink-0">
+                  <div className="w-14 h-14 flex items-center justify-center rounded-lg transition-all duration-500 bg-linear-to-br from-theme-primary-10 to-indigo-100 border border-theme-primary-500 group-hover:from-theme-primary-10 group-hover:to-indigo-200 dark:from-theme-primary-10 dark:to-indigo-900/30 dark:border-theme-primary-700/30 dark:group-hover:from-theme-primary-800/40 dark:group-hover:to-indigo-800/40 group-hover:scale-110 group-hover:rotate-3 shadow-xs group-hover:shadow-md">
                     {category.icon_url ? (
                       <Image
                         src={category.icon_url}
@@ -184,12 +184,12 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
               )}
               {/* Enhanced hover indicator */}
               <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-2 group-hover:translate-x-0">
-                <div className="w-8 h-8 rounded-full bg-theme-primary-500/10 dark:bg-theme-primary-400/10 flex items-center justify-center backdrop-blur-sm border border-theme-primary-10 dark:border-theme-primary">
+                <div className="w-8 h-8 rounded-full bg-theme-primary-500/10 dark:bg-theme-primary-400/10 flex items-center justify-center backdrop-blur-xs border border-theme-primary-10 dark:border-theme-primary">
                   <svg className="w-4 h-4 text-theme-primary-600 dark:text-theme-primary-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M17 7l-10 10M7 7h10v10" /></svg>
                 </div>
               </div>
               {/* Subtle glow effect */}
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              <div className="absolute inset-0 rounded-lg bg-linear-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
             </Card>
           </div>
         ))}

@@ -194,10 +194,10 @@ export function HomeTwoFilters({
             className={clsx(
               "px-4 py-1.5 font-medium transition-all duration-300 rounded-full",
               "text-theme-primary bg-theme-primary-10",
-              "hover:bg-theme-primary-20 hover:shadow-sm hover:scale-105",
+              "hover:bg-theme-primary-20 hover:shadow-xs hover:scale-105",
               "active:scale-95",
               "text-xs sm:text-sm h-8",
-              "focus:outline-none focus:ring-2 focus:ring-theme-primary-300 focus:ring-offset-2"
+              "focus:outline-hidden focus:ring-2 focus:ring-theme-primary-300 focus:ring-offset-2"
             )}
             onPress={() => setShowAllCategories(!showAllCategories)}
             aria-expanded={showAllCategories}

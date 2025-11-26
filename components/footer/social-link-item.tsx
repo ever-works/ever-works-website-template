@@ -29,7 +29,7 @@ type SocialLinkItemProps = {
       const linkProps = {
         href: href.trim(),
         className:
-          "group relative p-3 rounded-2xl bg-gradient-to-br from-white/50 to-white/30 dark:from-gray-800/50 dark:to-gray-900/30 backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/40 hover:border-theme-primary-300/50 dark:hover:border-theme-primary-500/30 transition-all duration-500 hover:shadow-xl hover:shadow-theme-primary-500/10 hover:scale-110 hover:-translate-y-1",
+          "group relative p-3 rounded-2xl bg-linear-to-br from-white/50 to-white/30 dark:from-gray-800/50 dark:to-gray-900/30 backdrop-blur-lg border border-gray-200/30 dark:border-gray-700/40 hover:border-theme-primary-300/50 dark:hover:border-theme-primary-500/30 transition-all duration-500 hover:shadow-xl hover:shadow-theme-primary-500/10 hover:scale-110 hover:-translate-y-1",
         "aria-label": label,
         style: { animationDelay },
       };

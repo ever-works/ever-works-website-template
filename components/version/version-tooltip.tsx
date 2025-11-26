@@ -109,7 +109,7 @@ export function VersionTooltip({
           onMouseEnter={handleTooltipMouseEnter}
           onMouseLeave={handleTooltipMouseLeave}
         >
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-4 min-w-72 max-w-80 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-4 min-w-72 max-w-80 backdrop-blur-xs">
             {/* Tooltip Arrow */}
             <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
               <div className="w-3 h-3 bg-white dark:bg-gray-900 border-r border-b border-gray-200 dark:border-gray-700 transform rotate-45"></div>
@@ -118,7 +118,7 @@ export function VersionTooltip({
             {/* Header */}
             <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100 dark:border-gray-800">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-linear-to-r from-blue-500 to-indigo-500 rounded-full"></div>
                 Data Repository Version
               </h3>
               <div className="flex items-center gap-1">

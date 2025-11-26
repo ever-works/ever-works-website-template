@@ -92,10 +92,10 @@ export function FavoriteButton({
 			disabled={isLoading}
 			className={cn(
 				'group relative flex items-center justify-center rounded-full transition-all duration-300 ease-out',
-				'bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50',
+				'bg-white/80 dark:bg-gray-900/80 backdrop-blur-xs border border-gray-200/50 dark:border-gray-700/50',
 				'hover:bg-white dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600',
-				'shadow-sm hover:shadow-md active:scale-95',
-				'focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 dark:focus:ring-offset-gray-900',
+				'shadow-xs hover:shadow-md active:scale-95',
+				'focus:outline-hidden focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 dark:focus:ring-offset-gray-900',
 				'disabled:opacity-50 disabled:cursor-not-allowed',
 				variant === 'star' && sizeClasses[size],
 				variant === 'star' && positionClasses[position],
@@ -109,8 +109,8 @@ export function FavoriteButton({
 					className={cn(
 						'absolute inset-0 rounded-full transition-all duration-300',
 						isFav
-							? 'bg-gradient-to-r from-yellow-400/20 to-orange-500/20 dark:from-yellow-400/30 dark:to-orange-500/30'
-							: 'bg-gradient-to-r from-gray-400/10 to-gray-500/10 dark:from-gray-400/20 dark:to-gray-500/20',
+							? 'bg-linear-to-r from-yellow-400/20 to-orange-500/20 dark:from-yellow-400/30 dark:to-orange-500/30'
+							: 'bg-linear-to-r from-gray-400/10 to-gray-500/10 dark:from-gray-400/20 dark:to-gray-500/20',
 						isHovered && isFav && 'scale-110 opacity-100',
 						isHovered && !isFav && 'scale-105 opacity-80'
 					)}
@@ -158,7 +158,7 @@ export function FavoriteButton({
 			{variant === 'heart' && (
 				<div
 					className={cn(
-						'absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 dark:bg-gray-800 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10',
+						'absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 dark:bg-gray-800 rounded-sm shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10',
 						'after:absolute after:top-full after:left-1/2 after:transform after:-translate-x-1/2 after:border-4 after:border-transparent after:border-t-gray-900 dark:after:border-t-gray-800'
 					)}
 				>

@@ -27,10 +27,15 @@ function isRenderPhaseError(error: Error): boolean {
  * Safely call revalidateTag with error handling
  * Catches errors when called during render phase and logs warning
  * @param tag - Cache tag to revalidate
+ *
+ * Note: In Next.js 16, revalidateTag requires a second argument (profile).
+ * Using 'max' profile for stale-while-revalidate semantics (recommended).
  */
 function safeRevalidateTag(tag: string): void {
   try {
-    revalidateTag(tag);
+    // Next.js 16: revalidateTag now requires a profile parameter
+    // Using 'max' for stale-while-revalidate semantics (recommended)
+    revalidateTag(tag, 'max');
   } catch (error) {
     // revalidateTag throws error when called during render phase
     // This is expected when background sync runs during request handling

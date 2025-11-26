@@ -82,7 +82,7 @@ export function AdminSubmissionStatus({ data, isLoading }: AdminSubmissionStatus
             {/* Demo Insight Card */}
             <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-4 border border-indigo-200 dark:border-indigo-800">
               <div className="flex items-start gap-3">
-                <BarChart3 className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mt-0.5 flex-shrink-0" />
+                <BarChart3 className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mt-0.5 shrink-0" />
                 <div>
                   <h4 className="font-medium text-indigo-900 dark:text-indigo-100 mb-1">
                     Awaiting Your First Submissions

@@ -126,7 +126,7 @@ export function TechnologyCard({
   };
 
   return (
-    <div className={`group relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl border-2 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${colors.border} ${colors.hover} ${popularityData[popularity].ring}`}>
+    <div className={`group relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-xs rounded-2xl border-2 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${colors.border} ${colors.hover} ${popularityData[popularity].ring}`}>
       {/* Popularity Badge */}
       <div className="absolute -top-3 -right-3 z-10">
         <span className={`px-3 py-1 text-xs font-bold rounded-full shadow-lg transition-all duration-300 ${popularityData[popularity].color}`}>
@@ -138,11 +138,11 @@ export function TechnologyCard({
       <div className="p-6">
         {/* Header */}
         <div className="flex items-start gap-4 mb-4">
-        <div className="flex-shrink-0 relative">
-            <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${colors.bg} flex items-center justify-center text-white text-2xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
+        <div className="shrink-0 relative">
+            <div className={`w-16 h-16 rounded-xl bg-linear-to-br ${colors.bg} flex items-center justify-center text-white text-2xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
             {icon}
           </div>
-            <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute -inset-1 rounded-xl bg-linear-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
 
         <div className="flex-1 min-w-0">
@@ -183,7 +183,7 @@ export function TechnologyCard({
           </div>
           <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
             <div 
-              className={`h-full bg-gradient-to-r ${colors.bg} transition-all duration-1000 ease-out`}
+              className={`h-full bg-linear-to-r ${colors.bg} transition-all duration-1000 ease-out`}
               style={{ width: `${popularityData[popularity].percentage}%` }}
             ></div>
           </div>
@@ -233,7 +233,7 @@ export function TechnologyCard({
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium rounded-md transition-all duration-300 ${
                     activeTab === tab.id
-                      ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm'
+                      ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -318,7 +318,7 @@ export function TechnologyCard({
                       </div>
                       <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                         <div 
-                          className={`h-full bg-gradient-to-r ${colors.bg} transition-all duration-1000 ease-out`}
+                          className={`h-full bg-linear-to-r ${colors.bg} transition-all duration-1000 ease-out`}
                           style={{ width: `${value}%` }}
           ></div>
         </div>
@@ -357,7 +357,7 @@ export function TechnologyCard({
       </div>
 
       {/* Glow Effect */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 dark:via-slate-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+      <div className="absolute inset-0 rounded-2xl bg-linear-to-r from-transparent via-white/20 dark:via-slate-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
     </div>
   );
 }

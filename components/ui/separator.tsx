@@ -16,8 +16,8 @@ export function Separator({
       className={cn(
         "bg-border",
         orientation === "horizontal"
-          ? "h-[1px] w-full"
-          : "h-full w-[1px]",
+          ? "h-px w-full"
+          : "h-full w-px",
         className
       )}
     />

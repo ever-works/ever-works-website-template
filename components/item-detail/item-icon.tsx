@@ -14,13 +14,13 @@ export function ItemIcon({ iconUrl, name }: ItemIconProps) {
 
   const shouldShowFallbackIcon = imageError || shouldShowFallback(iconUrl || '');
   return (
-    <div className="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 relative">
+    <div className="shrink-0 w-24 h-24 md:w-32 md:h-32 relative">
       <div className="absolute inset-0 bg-gray-100/80 backdrop-blur-xl rounded-xl overflow-hidden flex items-center justify-center p-4 shadow-md border border-gray-200 group transition-all duration-300 hover:bg-gray-50 hover:border-indigo-100 dark:bg-gray-800/30 dark:border-gray-700/30 dark:hover:bg-gray-800/50 dark:hover:border-indigo-700/50 dark:shadow-lg dark:shadow-indigo-900/10 hover:scale-105">
         {shouldShowFallbackIcon ? (
           <svg
           xmlns="http://www.w3.org/2000/svg"
           className="w-12 h-12 text-gray-600 group-hover:text-indigo-600 transition-all duration-300 
-            drop-shadow-sm group-hover:drop-shadow-md dark:text-gray-300 dark:group-hover:text-indigo-300"
+            drop-shadow-xs group-hover:drop-shadow-md dark:text-gray-300 dark:group-hover:text-indigo-300"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

@@ -61,10 +61,10 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							{t('CHOOSE_YOUR_PERFECT_PLAN')}
 						</div>
 					</div>
-					<h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent transition-colors duration-300">
+					<h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 bg-linear-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent transition-colors duration-300">
 						{t('START_YOUR_JOURNEY')}
 						<br className="hidden md:block" />
-						<span className="bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 bg-clip-text text-transparent">
+						<span className="bg-linear-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 bg-clip-text text-transparent">
 							{t('CHOOSE_WHAT_FITS_YOU')}
 						</span>
 					</h1>
@@ -74,7 +74,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 					</p>
 
 					{/* Trust Indicators */}
-					<div className="mt-8 inline-flex items-center gap-3 p-1 rounded-xl bg-gray-200/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-300/30 dark:border-gray-700/30">
+					<div className="mt-8 inline-flex items-center gap-3 p-1 rounded-xl bg-gray-200/50 dark:bg-gray-800/50 backdrop-blur-xs border border-gray-300/30 dark:border-gray-700/30">
 						<div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/60 dark:bg-gray-900/60">
 							<Check className="w-4 h-4 text-gray-600 dark:text-gray-400" />
 							<span className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -103,13 +103,13 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 			)}
 			{/* Billing Interval Selector */}
 			<div className="flex justify-center mb-14">
-				<div className="relative inline-flex items-center bg-slate-100 dark:bg-slate-800/50 rounded-xl p-1 border border-slate-200 dark:border-slate-700/50 shadow-sm backdrop-blur-sm">
+				<div className="relative inline-flex items-center bg-slate-100 dark:bg-slate-800/50 rounded-xl p-1 border border-slate-200 dark:border-slate-700/50 shadow-xs backdrop-blur-xs">
 					<button
 						onClick={() => setBillingInterval(PaymentInterval.MONTHLY)}
 						className={cn(
 							'relative px-6 py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 z-10 min-w-[100px]',
 							billingInterval === PaymentInterval.MONTHLY
-								? 'text-slate-900 dark:text-white shadow-sm'
+								? 'text-slate-900 dark:text-white shadow-xs'
 								: 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700/30'
 						)}
 					>
@@ -120,7 +120,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 						className={cn(
 							'relative px-6 py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 z-10 min-w-[100px] flex items-center justify-center gap-2',
 							billingInterval === PaymentInterval.YEARLY
-								? 'text-slate-900 dark:text-white shadow-sm'
+								? 'text-slate-900 dark:text-white shadow-xs'
 								: 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700/30'
 						)}
 					>
@@ -129,7 +129,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 					{/* Enhanced sliding background */}
 					<div
 						className={cn(
-							'absolute top-1 h-[calc(100%-8px)] bg-white dark:bg-slate-700 rounded-lg shadow-md border border-slate-200/50 dark:border-slate-600/50 transition-all duration-300 ease-out backdrop-blur-sm',
+							'absolute top-1 h-[calc(100%-8px)] bg-white dark:bg-slate-700 rounded-lg shadow-md border border-slate-200/50 dark:border-slate-600/50 transition-all duration-300 ease-out backdrop-blur-xs',
 							billingInterval === PaymentInterval.MONTHLY
 								? 'left-1 w-[calc(50%-4px)]'
 								: 'left-[calc(50%+2px)] w-[calc(50%-4px)]'
@@ -141,7 +141,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
 				<div className="relative group animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
 					{/* Card Glow Effect */}
-					<div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-600/20 dark:to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+					<div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-600/20 dark:to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
 					<div
 						className={cn(
@@ -185,7 +185,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 					{/* Popular Badge */}
 
 					{/* Card Glow Effect */}
-					<div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-600/20 dark:to-pink-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+					<div className="absolute inset-0 bg-linear-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-600/20 dark:to-pink-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
 					<div
 						className={cn(
@@ -230,7 +230,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 
 				<div className="relative group animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
 					{/* Card Glow Effect */}
-					<div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 dark:from-blue-600/20 dark:to-cyan-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+					<div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-cyan-500/10 dark:from-blue-600/20 dark:to-cyan-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
 					<div
 						className={cn(
@@ -278,7 +278,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 				<div className="text-center animate-fade-in-up">
 					<div className="inline-flex flex-col items-center gap-6 p-8 rounded-3xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-200/30 dark:border-gray-700/30 shadow-xl">
 						<div className="flex items-center gap-3">
-							<div className="w-12 h-12 rounded-full bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 flex items-center justify-center">
+							<div className="w-12 h-12 rounded-full bg-linear-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 flex items-center justify-center">
 								<Check className="w-6 h-6 text-white" />
 							</div>
 							<div className="text-left">
@@ -293,7 +293,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 						<Button
 							size="lg"
 							onClick={() => router.push('/submit')}
-							className="h-14 px-12 rounded-xl font-semibold bg-gradient-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 hover:from-theme-primary-600 hover:via-purple-600 hover:to-theme-primary-700 text-white transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
+							className="h-14 px-12 rounded-xl font-semibold bg-linear-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 hover:from-theme-primary-600 hover:via-purple-600 hover:to-theme-primary-700 text-white transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
 						>
 							<div className="flex items-center gap-3">
 								<span className="text-lg">{t('CONTINUE_TO_NEXT_STEP')}</span>
@@ -326,7 +326,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 					].map((item, index) => (
 						<div
 							key={index}
-							className="flex flex-col items-center gap-3 p-6 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30 hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 hover:scale-105"
+							className="flex flex-col items-center gap-3 p-6 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-xs border border-gray-200/30 dark:border-gray-700/30 hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 hover:scale-105"
 						>
 							<div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
 								<item.icon className="w-6 h-6 text-gray-600 dark:text-gray-400" />

@@ -158,7 +158,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
           role="menu"
           className="absolute right-0 top-12 w-[420px] z-50 animate-in slide-in-from-top-2 duration-200"
         >
-          <Card className="shadow-xl border bg-background/95 backdrop-blur-sm">
+          <Card className="shadow-xl border bg-background/95 backdrop-blur-xs">
             <CardHeader className="pb-3 border-b">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -264,7 +264,7 @@ export function AdminNotifications({ className }: AdminNotificationsProps) {
                         )}
                         
                         <div className="flex items-start gap-3">
-                          <div className="flex-shrink-0 mt-0.5">
+                          <div className="shrink-0 mt-0.5">
                             {getNotificationIcon(notification.type)}
                           </div>
                           

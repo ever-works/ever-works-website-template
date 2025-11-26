@@ -37,7 +37,7 @@ interface ClientFiltersProps {
 }
 
 const SEARCH_INPUT_CLASSES =
-	'w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400';
+	'w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400';
 
 /**
  * Client Filters Component
@@ -136,7 +136,7 @@ export function ClientFilters(props: ClientFiltersProps) {
 								closeButton: 'ml-2',
 							}}
 						>
-							<Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+							<Calendar className="w-3.5 h-3.5 shrink-0" />
 							<span className="truncate">
 								{props.datePreset === 'last7' && t('LAST_7_DAYS_SHORT')}
 								{props.datePreset === 'last30' && t('LAST_30_DAYS_SHORT')}
@@ -207,7 +207,7 @@ function FilterModal(props: FilterModalProps) {
 			<ModalContent>
 				<div className="relative overflow-visible">
 					{/* Background Pattern */}
-					<div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900" />
+					<div className="absolute inset-0 bg-linear-to-br from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900" />
 					<div
 						className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]"
 						style={{
@@ -217,9 +217,9 @@ function FilterModal(props: FilterModalProps) {
 					/>
 
 					{/* Header */}
-					<div className="relative z-10 px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gradient-to-r from-gray-50/50 to-white/50 dark:from-gray-800/50 dark:to-gray-900/50">
+					<div className="relative z-10 px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-linear-to-r from-gray-50/50 to-white/50 dark:from-gray-800/50 dark:to-gray-900/50">
 						<div className="flex items-center space-x-3">
-							<div className="w-8 h-8 bg-gradient-to-br from-theme-primary to-theme-accent rounded-lg flex items-center justify-center shadow-lg">
+							<div className="w-8 h-8 bg-linear-to-br from-theme-primary to-theme-accent rounded-lg flex items-center justify-center shadow-lg">
 								<Filter className="w-4 h-4 text-white" />
 							</div>
 							<div>
@@ -235,10 +235,10 @@ function FilterModal(props: FilterModalProps) {
 							{/* Basic Filters */}
 							<div className="space-y-4 relative z-20">
 								<div className="flex items-center space-x-2">
-									<div className="w-1 h-6 bg-gradient-to-b from-theme-primary to-theme-accent rounded-full"></div>
+									<div className="w-1 h-6 bg-linear-to-b from-theme-primary to-theme-accent rounded-full"></div>
 									<h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('BASIC_FILTERS')}</h3>
 								</div>
-								<div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200/50 dark:border-gray-700/50 shadow-sm">
+								<div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-xs rounded-xl p-5 border border-gray-200/50 dark:border-gray-700/50 shadow-xs">
 									<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 										<div className="space-y-2">
 											<span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('STATUS')}</span>
@@ -371,7 +371,7 @@ function FilterModal(props: FilterModalProps) {
 					</div>
 
 					{/* Footer */}
-					<div className="relative z-10 px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-gradient-to-r from-gray-50/50 to-white/50 dark:from-gray-800/50 dark:to-gray-900/50">
+					<div className="relative z-10 px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-linear-to-r from-gray-50/50 to-white/50 dark:from-gray-800/50 dark:to-gray-900/50">
 						<div className="flex items-center justify-between">
 							<Button
 								variant="flat"
@@ -391,7 +391,7 @@ function FilterModal(props: FilterModalProps) {
 								<Button
 									color="primary"
 									onPress={props.onClose}
-									className="bg-gradient-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
+									className="bg-linear-to-r from-theme-primary to-theme-accent hover:from-theme-primary/90 hover:to-theme-accent/90 shadow-lg shadow-theme-primary/25 hover:shadow-xl hover:shadow-theme-primary/40 transition-all duration-300 text-white font-medium"
 								>
 									{t('APPLY_FILTERS')}
 								</Button>
@@ -430,13 +430,13 @@ function DateFilters(props: DateFiltersProps) {
 	return (
 		<div className="space-y-4 relative z-10">
 			<div className="flex items-center space-x-2">
-				<div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-600 rounded-full"></div>
+				<div className="w-1 h-6 bg-linear-to-b from-emerald-500 to-teal-600 rounded-full"></div>
 				<h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('DATE_RANGE')}</h3>
 				<div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full">
 					{t('QUICK_EASY')}
 				</div>
 			</div>
-			<div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-5 border border-gray-200/50 dark:border-gray-700/50 shadow-sm relative z-10">
+			<div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-xs rounded-xl p-5 border border-gray-200/50 dark:border-gray-700/50 shadow-xs relative z-10">
 				{/* Apply To Toggle */}
 				<div className="mb-6">
 					<span className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3 block">
@@ -485,10 +485,10 @@ function DateFilters(props: DateFiltersProps) {
 								onClick={() => props.onDatePresetChange(preset.value)}
 								className={cn(
 									'p-3 rounded-xl text-sm font-medium transition-all duration-200 text-left',
-									'border-2 backdrop-blur-sm relative group overflow-hidden',
+									'border-2 backdrop-blur-xs relative group overflow-hidden',
 									props.datePreset === preset.value
 										? cn(
-												'border-emerald-500 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30',
+												'border-emerald-500 bg-linear-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30',
 												'text-emerald-700 dark:text-emerald-300 shadow-lg shadow-emerald-500/20'
 											)
 										: 'border-gray-200 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 hover:border-emerald-300 dark:hover:border-emerald-600'
@@ -504,7 +504,7 @@ function DateFilters(props: DateFiltersProps) {
 									)}
 								</div>
 								{props.datePreset === preset.value && (
-									<div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 pointer-events-none"></div>
+									<div className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-teal-500/10 pointer-events-none"></div>
 								)}
 							</button>
 						))}
@@ -513,7 +513,7 @@ function DateFilters(props: DateFiltersProps) {
 
 				{/* Custom Date Range */}
 				{props.datePreset === 'custom' && (
-					<div className="space-y-4 p-4 bg-gradient-to-r from-blue-50/50 to-cyan-50/50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-200/50 dark:border-blue-700/50">
+					<div className="space-y-4 p-4 bg-linear-to-r from-blue-50/50 to-cyan-50/50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-200/50 dark:border-blue-700/50">
 						<h4 className="text-sm font-semibold text-blue-800 dark:text-blue-300 flex items-center gap-2">
 							<Calendar className="w-4 h-4" />
 							{t('CUSTOM_DATE_RANGE')}
@@ -534,13 +534,13 @@ function DateFilters(props: DateFiltersProps) {
 											base: 'group-hover:scale-[1.01] transition-transform duration-200',
 											input: 'text-gray-900 dark:text-white text-sm font-medium bg-transparent',
 											inputWrapper: cn(
-												'bg-gradient-to-r from-white to-blue-50/30 dark:from-gray-800 dark:to-blue-900/30',
+												'bg-linear-to-r from-white to-blue-50/30 dark:from-gray-800 dark:to-blue-900/30',
 												'border-2 border-blue-200/60 dark:border-blue-600/40',
 												'hover:border-blue-400/60 dark:hover:border-blue-500/60',
 												'focus-within:border-blue-500 dark:focus-within:border-blue-400',
 												'focus-within:ring-4 focus-within:ring-blue-500/20',
-												'rounded-xl shadow-sm hover:shadow-md transition-all duration-300',
-												'backdrop-blur-sm'
+												'rounded-xl shadow-xs hover:shadow-md transition-all duration-300',
+												'backdrop-blur-xs'
 											),
 										}}
 									/>
@@ -561,13 +561,13 @@ function DateFilters(props: DateFiltersProps) {
 											base: 'group-hover:scale-[1.01] transition-transform duration-200',
 											input: 'text-gray-900 dark:text-white text-sm font-medium bg-transparent',
 											inputWrapper: cn(
-												'bg-gradient-to-r from-white to-blue-50/30 dark:from-gray-800 dark:to-blue-900/30',
+												'bg-linear-to-r from-white to-blue-50/30 dark:from-gray-800 dark:to-blue-900/30',
 												'border-2 border-blue-200/60 dark:border-blue-600/40',
 												'hover:border-blue-400/60 dark:hover:border-blue-500/60',
 												'focus-within:border-blue-500 dark:focus-within:border-blue-400',
 												'focus-within:ring-4 focus-within:ring-blue-500/20',
-												'rounded-xl shadow-sm hover:shadow-md transition-all duration-300',
-												'backdrop-blur-sm'
+												'rounded-xl shadow-xs hover:shadow-md transition-all duration-300',
+												'backdrop-blur-xs'
 											),
 										}}
 									/>

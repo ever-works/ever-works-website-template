@@ -59,7 +59,7 @@ export function ScrollToTopButton({
     default: "bg-primary-600 hover:bg-primary-700 text-white border-2 border-primary-500 hover:border-primary-600",
     elegant: "bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg text-gray-800 dark:text-white border border-gray-200/50 dark:border-gray-700/50 hover:bg-white dark:hover:bg-gray-700 shadow-lg hover:shadow-xl",
     minimal: "bg-gray-800/80 dark:bg-white/80 text-white dark:text-gray-800 backdrop-blur-md hover:bg-gray-900 dark:hover:bg-white",
-    gradient: "bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white border-2 border-white/20 hover:shadow-2xl hover:shadow-purple-500/25"
+    gradient: "bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 text-white border-2 border-white/20 hover:shadow-2xl hover:shadow-purple-500/25"
   };
 
   const handleClick = () => {
@@ -119,7 +119,7 @@ export function ScrollToTopButton({
        aria-label="Scroll to top"
       >
         {/* Background glow effect */}
-        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary-400/20 to-primary-600/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
+        <div className="absolute inset-0 rounded-full bg-linear-to-r from-primary-400/20 to-primary-600/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
         
         {/* Icon with rotation animation */}
         <div className="relative overflow-hidden">

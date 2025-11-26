@@ -63,7 +63,7 @@ export const MENU_CONTAINER_BASE = [
 
 export const MENU_STYLES = {
   CONTAINER: {
-    base: [...MENU_CONTAINER_BASE, 'focus:outline-none'],
+    base: [...MENU_CONTAINER_BASE, 'focus:outline-hidden'],
     background: [
       'bg-white/95',
       'dark:bg-gray-900/95',
@@ -100,7 +100,7 @@ export const MENU_STYLES = {
       'items-center',
       'text-sm',
       'rounded-full',
-      'focus:outline-none',
+      'focus:outline-hidden',
       'focus:ring-2',
       'focus:ring-offset-2',
       'focus:ring-theme-primary',
@@ -115,7 +115,7 @@ export const MENU_STYLES = {
     avatar: [
       'w-10',
       'h-10',
-      'bg-gradient-to-br',
+      'bg-linear-to-br',
       'from-slate-200',
       'via-slate-300',
       'to-slate-400',
@@ -148,7 +148,7 @@ export const MENU_STYLES = {
       'border-2',
       'border-white',
       'dark:border-gray-800',
-      'shadow-sm',
+      'shadow-xs',
     ],
     adminBadge: [
       'absolute',
@@ -156,7 +156,7 @@ export const MENU_STYLES = {
       '-right-1',
       'w-4',
       'h-4',
-      'bg-gradient-to-r',
+      'bg-linear-to-r',
       'from-yellow-400',
       'via-orange-500',
       'to-red-500',

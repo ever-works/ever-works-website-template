@@ -203,7 +203,7 @@ export function MultiStepItemForm({
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-theme-primary to-theme-accent px-6 py-4">
+      <div className="bg-linear-to-r from-theme-primary to-theme-accent px-6 py-4">
         <h2 className="text-xl font-bold text-white">
           {mode === 'create' ? t('TITLE_CREATE') : t('TITLE_EDIT')}
         </h2>

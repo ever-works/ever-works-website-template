@@ -1,5 +1,3 @@
-import getConfig from 'next/config';
-
 type Env = Record<string, string | undefined>;
 
 const NEXT_PUBLIC_ENVS: { value: Env } = { value: {} };
@@ -42,15 +40,16 @@ export function getNextPublicEnv<O extends Options<unknown>>(name: string, optio
 	};
 }
 
+/**
+ * @deprecated serverRuntimeConfig is removed in Next.js 16. Use environment variables directly.
+ * Migration: Access process.env.GAUZY_API_SERVER_URL directly in server components/API routes.
+ */
 export function getServerRuntimeConfig() {
-	try {
-		const { serverRuntimeConfig } = getConfig();
-		return {
-			GAUZY_API_SERVER_URL: serverRuntimeConfig.GAUZY_API_SERVER_URL
-		};
-	} catch (e) {
-		console.log('skip get config on call from client');
-	}
+	// serverRuntimeConfig was removed in Next.js 16
+	// Return environment variable directly
+	return {
+		GAUZY_API_SERVER_URL: process.env.GAUZY_API_SERVER_URL
+	};
 }
 
 export function setNextPublicEnv(envs: Env) {

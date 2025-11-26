@@ -22,7 +22,7 @@ interface PlanCardProps {
   readonly isSelected: boolean;
   readonly onSelect?: (plan: PaymentPlan) => void;
   readonly actionText: string;
-  readonly actionVariant?: "default" | "outline";
+  readonly actionVariant?: "default" | "outline-solid";
   readonly actionHref?: string;
   readonly children?: ReactNode;
   readonly isButton?: boolean;
@@ -42,7 +42,7 @@ const getButtonStyles = (title: string, isPopular: boolean) => {
   const upperTitle = title.toUpperCase();
 
   if (upperTitle === PLAN_TYPES.STANDARD || isPopular) {
-    return "bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 hover:from-theme-primary-600 hover:to-theme-primary-500 text-white border-0 shadow-lg h-12 text-sm font-medium rounded-lg";
+    return "bg-linear-to-r from-theme-primary-500 to-theme-primary-600 hover:from-theme-primary-600 hover:to-theme-primary-500 text-white border-0 shadow-lg h-12 text-sm font-medium rounded-lg";
   }
 
   if (upperTitle === PLAN_TYPES.PREMIUM) {
@@ -105,7 +105,7 @@ export function PlanCard({
   const cardStyles = useMemo(() => cn(
     "relative flex flex-col",
     "w-full rounded-xl border",
-    "backdrop-blur-sm transition-all duration-300 ease-out",
+    "backdrop-blur-xs transition-all duration-300 ease-out",
     "hover:shadow-xl dark:hover:shadow-2xl hover:-translate-y-1",
     (title.toUpperCase() === 'STANDARD' || isPopular) ? "mt-6" : "mt-2",
 
@@ -141,7 +141,7 @@ export function PlanCard({
         </div>
       )}
 
-      <header className="flex flex-col items-start text-left px-6 pt-6 pb-4 flex-shrink-0">
+      <header className="flex flex-col items-start text-left px-6 pt-6 pb-4 shrink-0">
         <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
           {title}
         </h3>
@@ -173,7 +173,7 @@ export function PlanCard({
               key={`feature-${index}`}
               className="flex items-start gap-3 group"
             >
-              <div className="flex-shrink-0 mt-0.5">
+              <div className="shrink-0 mt-0.5">
                 {feature.included ? (
                   <Check className="w-4 h-4 text-green-500 dark:text-green-400 stroke-[2.5]" />
                 ) : (
@@ -198,7 +198,7 @@ export function PlanCard({
       </section>
 
       {/* Action Button Section - Style exactly like reference image */}
-      <footer className="flex-shrink-0 mt-auto px-6 pb-6">
+      <footer className="shrink-0 mt-auto px-6 pb-6">
         <Button
           size="default"
           disabled={isLoading}

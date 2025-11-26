@@ -2,8 +2,6 @@ import { getCachedItemsByCategory, getCachedItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
 import { LOCALES } from "@/lib/constants";
 import Listing from "../../../(listing)/listing";
-import { Suspense } from "react";
-import { ListingSkeleton } from "@/components/ui/skeleton";
 
 export const revalidate = 10;
 
@@ -53,17 +51,15 @@ export default async function CategoryListing({
   const { items, categories, total, tags } = result;
 
   return (
-    <Suspense fallback={<ListingSkeleton />}>
-      <Listing
-        total={total}
-        start={start}
-        page={page}
-        basePath={`/categories/category/${category}`}
-        categories={categories}
-        tags={tags}
-        items={items}
-        initialCategory={category}
-      />
-    </Suspense>
+    <Listing
+      total={total}
+      start={start}
+      page={page}
+      basePath={`/categories/category/${category}`}
+      categories={categories}
+      tags={tags}
+      items={items}
+      initialCategory={category}
+    />
   );
 }

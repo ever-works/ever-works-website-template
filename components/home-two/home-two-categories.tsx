@@ -25,27 +25,27 @@ const SCROLL_CONTAINER_STYLES = clsx(
   "relative flex items-center gap-2 sm:gap-3 overflow-x-auto pb-4 pr-8 scroll-smooth",
   "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
   "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-1",
-  "after:bg-gradient-to-r after:from-transparent after:via-blue-100/20 after:to-transparent",
+  "after:bg-linear-to-r after:from-transparent after:via-blue-100/20 after:to-transparent",
   "dark:after:via-blue-900/10"
 );
 
 const SCROLL_FADE_LEFT = clsx(
-  "absolute left-0 top-0 bottom-4 w-16 pointer-events-none z-[5]",
-  "bg-gradient-to-r from-white via-white/80 to-transparent",
+  "absolute left-0 top-0 bottom-4 w-16 pointer-events-none z-5",
+  "bg-linear-to-r from-white via-white/80 to-transparent",
   "dark:from-gray-900 dark:via-gray-900/80",
   "opacity-0 transition-opacity duration-300"
 );
 
 const SCROLL_FADE_RIGHT = clsx(
-  "absolute right-0 top-0 bottom-4 w-16 pointer-events-none z-[5]",
-  "bg-gradient-to-l from-white via-white/80 to-transparent",
+  "absolute right-0 top-0 bottom-4 w-16 pointer-events-none z-5",
+  "bg-linear-to-l from-white via-white/80 to-transparent",
   "dark:from-gray-900 dark:via-gray-900/80",
   "opacity-0 transition-opacity duration-300"
 );
 
 const STICKY_LEFT_STYLES = clsx(
-  "sticky left-0 flex-shrink-0 z-10 pr-7",
-  "bg-gradient-to-r from-white via-white to-transparent",
+  "sticky left-0 shrink-0 z-10 pr-7",
+  "bg-linear-to-r from-white via-white to-transparent",
   "dark:from-gray-900 dark:via-gray-900"
 );
 
@@ -115,7 +115,7 @@ const CategoryButton = memo(
         () => (
           <>
             <span
-              className="text-xs sm:text-sm truncate max-w-[90px] sm:max-w-[120px] md:max-w-full !capitalize font-medium"
+              className="text-xs sm:text-sm truncate max-w-[90px] sm:max-w-[120px] md:max-w-full capitalize! font-medium"
               title={fullName}
             >
               {displayName}
@@ -144,9 +144,9 @@ const CategoryButton = memo(
               className={cn(
                 "group h-7 sm:h-9 whitespace-nowrap py-1 sm:py-1.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-300 ease-in-out hover:scale-105",
                 {
-                  "bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20 ring-2 ring-white/20 dark:ring-blue-500/30":
+                  "bg-linear-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20 ring-2 ring-white/20 dark:ring-blue-500/30":
                     isActive,
-                  "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700/70 bg-white dark:bg-gray-800/90 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md":
+                  "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700/70 bg-white dark:bg-gray-800/90 border border-gray-100 dark:border-gray-700 shadow-xs hover:shadow-md":
                     !isActive,
                 }
               )}
@@ -161,9 +161,9 @@ const CategoryButton = memo(
               className={cn(
                 "group h-7 sm:h-9 whitespace-nowrap py-1 sm:py-1.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-300 ease-in-out hover:scale-105",
                 {
-                  "bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20 ring-2 ring-white/20 dark:ring-blue-500/30":
+                  "bg-linear-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20 ring-2 ring-white/20 dark:ring-blue-500/30":
                     isActive,
-                  "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700/70 bg-white dark:bg-gray-800/90 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md":
+                  "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700/70 bg-white dark:bg-gray-800/90 border border-gray-100 dark:border-gray-700 shadow-xs hover:shadow-md":
                     !isActive,
                 }
               )}
@@ -180,7 +180,7 @@ const CategoryButton = memo(
           <div ref={ref} className="relative group" title={fullName}>
             {button}
             <div
-              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 dark:bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10 !capitalize"
+              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 dark:bg-gray-900 text-white text-xs rounded-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10 capitalize!"
               role="tooltip"
             >
               {fullName}
@@ -529,13 +529,13 @@ export function HomeTwoCategories({
               </div>
               {categoriesList}
             </div>
-            <div className="sticky right-0 flex-shrink-0 bg-gradient-to-l">
+            <div className="sticky right-0 shrink-0 bg-linear-to-l">
               {hiddenCategories.length > 0 && (
                 <div className="relative">
                   {/* Trigger Button */}
                   <Button
                     ref={triggerButtonRef}
-                    className="h-8 py-1.5 text-xs flex items-center gap-1.5 bg-theme-primary-10 hover:bg-theme-primary-10 dark:bg-theme-primary-10 dark:hover:bg-theme-primary-10 text-theme-primary-700 dark:text-theme-primary-300 border border-theme-primary-200 dark:border-theme-primary-800 shadow-sm hover:shadow transition-all rounded-md"
+                    className="h-8 py-1.5 text-xs flex items-center gap-1.5 bg-theme-primary-10 hover:bg-theme-primary-10 dark:bg-theme-primary-10 dark:hover:bg-theme-primary-10 text-theme-primary-700 dark:text-theme-primary-300 border border-theme-primary-200 dark:border-theme-primary-800 shadow-xs hover:shadow-sm transition-all rounded-md"
                     onPress={() => setIsMorePopoverOpen(!isMorePopoverOpen)}
                     aria-label={`Show ${hiddenCategories.length} more ${hiddenCategories.length === 1 ? 'category' : 'categories'}`}
                   >
@@ -571,7 +571,7 @@ export function HomeTwoCategories({
                       <div className="space-y-2">
                         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 pb-1.5 border-b border-gray-100 dark:border-gray-700 flex items-center gap-1.5 uppercase">
                           {tCommon("MORE")} {t("CATEGORIES")}
-                          <span className="text-xs bg-gray-100 dark:bg-gray-700 rounded px-1.5 py-0.5">
+                          <span className="text-xs bg-gray-100 dark:bg-gray-700 rounded-sm px-1.5 py-0.5">
                             {hiddenCategories.length}
                           </span>
                         </h3>
@@ -644,10 +644,10 @@ export function Categories(props: {
         className={cn(
           "px-1.5 py-1 h-8 font-medium transition-all duration-200",
           isActive
-            ? "bg-theme-primary text-white border-theme-primary shadow-sm"
+            ? "bg-theme-primary text-white border-theme-primary shadow-xs"
             : "border border-dark--theme-200 dark:border-dark--theme-800",
           "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800",
-          !showAllCategories && "flex-shrink-0"
+          !showAllCategories && "shrink-0"
         )}
       >
         {isActive && (
@@ -720,7 +720,7 @@ export function Categories(props: {
           ? cn(
               "sticky top-4 z-10",
               isSticky
-                ? "bg-white/95 dark:bg-gray-800/95 shadow-md backdrop-blur-sm"
+                ? "bg-white/95 dark:bg-gray-800/95 shadow-md backdrop-blur-xs"
                 : "bg-transparent"
             )
           : "bg-inherit"
@@ -746,7 +746,7 @@ export function Categories(props: {
               size="sm"
               className={cn(
                 "px-4 py-1 font-medium transition-all duration-300  text-theme-primary bg-theme-primary-10 hover:to-theme-primary",
-                isSticky && "shadow-sm"
+                isSticky && "shadow-xs"
               )}
               onPress={() => setShowAllCategories(!showAllCategories)}
             >
@@ -807,9 +807,9 @@ export function Categories(props: {
                 prefetch={false}
                 href={props.resetPath || props.basePath || "/"}
                 className={cn(
-                  "px-3 py-1 h-8 font-medium transition-all duration-300 flex-shrink-0 group",
+                  "px-3 py-1 h-8 font-medium transition-all duration-300 shrink-0 group",
                   !isAnyTagActive
-                    ? "bg-theme-primary text-white border-theme-primary-500 shadow-sm"
+                    ? "bg-theme-primary text-white border-theme-primary-500 shadow-xs"
                     : "border border-dark--theme-200 dark:border-dark--theme-800",
                   "hover:shadow-md hover:border-theme-primary dark:hover:border-theme-primary"
                 )}
@@ -857,7 +857,7 @@ export function Categories(props: {
                 className={cn(
                   "px-3 py-1 h-8 font-medium transition-all duration-200",
                   !isAnyTagActive
-                    ? "bg-primary-500 text-white border-primary-500 shadow-sm"
+                    ? "bg-primary-500 text-white border-primary-500 shadow-xs"
                     : "border border-dark--theme-200 dark:border-dark--theme-800",
                   "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800"
                 )}

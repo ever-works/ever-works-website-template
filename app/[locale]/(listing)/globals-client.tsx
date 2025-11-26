@@ -97,14 +97,18 @@ export default function GlobalsClient(props: ListingProps) {
 
 					{/* Main Content */}
 					<div className={LAYOUT_STYLES.mainContent}>
-						{/* Tags Section - Mobile version */}
-						<div className={` lg:sticky lg:top-4 mb-4 sm:mb-6 md:mb-8 ${LAYOUT_STYLES.mobileOnly}`}>
-							<Tags tags={sortedTags} enableSticky={false} maxVisibleTags={3} allItems={props.items} />
-						</div>
-						{/* Tags Section - Desktop version */}
-						<div className={`lg:sticky lg:top-4 mb-4 sm:mb-6 md:mb-8 ${LAYOUT_STYLES.desktopOnly}`}>
-							<Tags tags={sortedTags} enableSticky={true} maxVisibleTags={5} allItems={props.items} />
-						</div>
+						{/* Tags Section - Mobile version - Only show if tags exist */}
+						{sortedTags.length > 0 && (
+							<div className={` lg:sticky lg:top-4 mb-4 sm:mb-6 md:mb-8 ${LAYOUT_STYLES.mobileOnly}`}>
+								<Tags tags={sortedTags} enableSticky={false} maxVisibleTags={3} allItems={props.items} />
+							</div>
+						)}
+						{/* Tags Section - Desktop version - Only show if tags exist */}
+						{sortedTags.length > 0 && (
+							<div className={`lg:sticky lg:top-4 mb-4 sm:mb-6 md:mb-8 ${LAYOUT_STYLES.desktopOnly}`}>
+								<Tags tags={sortedTags} enableSticky={true} maxVisibleTags={5} allItems={props.items} />
+							</div>
+						)}
 
 						{/* Listing Content */}
 						<div className="mb-6 sm:mb-8 md:mb-10">

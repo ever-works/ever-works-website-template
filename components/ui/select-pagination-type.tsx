@@ -84,7 +84,7 @@ const SelectPaginationType: React.FC<SelectPaginationTypeProps> = ({
                 "px-3 py-2 rounded-xl font-medium text-sm transition-all duration-300",
                 "flex items-center justify-center gap-2",
                 isActive
-                  ? "bg-gradient-to-br from-theme-primary-500 to-theme-primary-600 text-white shadow-lg  ring-2 ring-theme-primary-400/50"
+                  ? "bg-linear-to-br from-theme-primary-500 to-theme-primary-600 text-white shadow-lg  ring-2 ring-theme-primary-400/50"
                   : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700",
                 disabled && "cursor-not-allowed hover:bg-white dark:hover:bg-gray-800"
               )}

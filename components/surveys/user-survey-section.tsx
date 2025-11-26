@@ -87,6 +87,12 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
     );
   };
 
+  // Don't show section if no surveys (hide immediately after loading completes)
+  // This check happens after loading to avoid showing loading state when there are no surveys
+  if (!loading && surveys.length === 0) {
+    return null;
+  }
+
   if (loading) {
     return (
       <Card className="mt-8">
@@ -107,6 +113,10 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
   }
 
   if (error) {
+    // If there's an error but no surveys, don't show error state (hide the section)
+    if (surveys.length === 0) {
+      return null;
+    }
     return (
       <Card className="mt-8">
         <CardHeader>
@@ -131,8 +141,9 @@ export function UserSurveySection({ item }: UserSurveySectionProps) {
     );
   }
 
+  // Safety check: don't show section if no surveys
   if (surveys.length === 0) {
-    return null; // Don't show section if no surveys
+    return null;
   }
 
   return (

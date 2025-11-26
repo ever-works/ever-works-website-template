@@ -60,7 +60,7 @@ export function FeaturedBadge({
   if (variant === 'hero') {
     return (
       <div className={cn(
-        "inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-800 dark:from-yellow-900 dark:to-orange-900 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-800",
+        "inline-flex items-center gap-2 rounded-full bg-linear-to-r from-yellow-100 to-orange-100 text-yellow-800 dark:from-yellow-900 dark:to-orange-900 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-800",
         sizeClasses[size],
         className
       )}>

@@ -51,7 +51,7 @@ export function ClientStats({ stats }: ClientStatsProps) {
 								+{stats.activity.newThisWeek} {t('THIS_WEEK')}
 							</p>
 						</div>
-						<div className={`${STAT_ICON_BASE} bg-gradient-to-br from-blue-500 to-blue-600`}>
+						<div className={`${STAT_ICON_BASE} bg-linear-to-br from-blue-500 to-blue-600`}>
 							<Users aria-hidden="true" className="w-6 h-6 text-white" />
 						</div>
 					</div>
@@ -76,7 +76,7 @@ export function ClientStats({ stats }: ClientStatsProps) {
 								{t('OF_TOTAL')}
 							</p>
 						</div>
-						<div className={`${STAT_ICON_BASE} bg-gradient-to-br from-green-500 to-green-600`}>
+						<div className={`${STAT_ICON_BASE} bg-linear-to-br from-green-500 to-green-600`}>
 							<UserCheck aria-hidden="true" className="w-6 h-6 text-white" />
 						</div>
 					</div>
@@ -98,7 +98,7 @@ export function ClientStats({ stats }: ClientStatsProps) {
 								{getTopProviderCount(stats.byProvider)} {t('USERS')}
 							</p>
 						</div>
-						<div className={`${STAT_ICON_BASE} bg-gradient-to-br from-purple-500 to-purple-600`}>
+						<div className={`${STAT_ICON_BASE} bg-linear-to-br from-purple-500 to-purple-600`}>
 							<Shield aria-hidden="true" className="w-6 h-6 text-white" />
 						</div>
 					</div>
@@ -120,7 +120,7 @@ export function ClientStats({ stats }: ClientStatsProps) {
 								{stats.activity.newThisMonth} {t('NEW_CLIENTS')}
 							</p>
 						</div>
-						<div className={`${STAT_ICON_BASE} bg-gradient-to-br from-emerald-500 to-emerald-600`}>
+						<div className={`${STAT_ICON_BASE} bg-linear-to-br from-emerald-500 to-emerald-600`}>
 							<TrendingUp aria-hidden="true" className="w-6 h-6 text-white" />
 						</div>
 					</div>

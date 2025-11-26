@@ -29,23 +29,59 @@ export interface EmailServiceConfig {
 }
 
 export class EmailService {
-  private provider: EmailProvider;
+  private provider: EmailProvider | null = null;
   private domain: string;
   private defaultFrom: string;
+  private isAvailable: boolean = false;
 
   constructor(config: EmailServiceConfig) {
-    this.provider = EmailProviderFactory.createProvider(config);
-    this.domain = config.domain;
-    this.defaultFrom = config.defaultFrom;
+    try {
+      // Check if required API keys are present
+      const hasApiKey = Object.values(config.apiKeys).some(key => key && key.trim() !== '');
+
+      if (!hasApiKey) {
+        console.warn('⚠️  Email service: No API keys configured. Email features will be disabled.');
+        this.isAvailable = false;
+      } else {
+        this.provider = EmailProviderFactory.createProvider(config);
+        this.isAvailable = true;
+      }
+
+      this.domain = config.domain;
+      this.defaultFrom = config.defaultFrom;
+    } catch (error) {
+      console.warn('⚠️  Email service initialization failed:', error instanceof Error ? error.message : 'Unknown error');
+      this.isAvailable = false;
+      this.domain = config.domain;
+      this.defaultFrom = config.defaultFrom;
+    }
+  }
+
+  /**
+   * Check if email service is available
+   */
+  public isServiceAvailable(): boolean {
+    return this.isAvailable && this.provider !== null;
+  }
+
+  /**
+   * Ensure email service is available before sending
+   */
+  private ensureAvailable(): void {
+    if (!this.isServiceAvailable()) {
+      throw new Error('Email service is not available. Please configure email provider API keys.');
+    }
   }
 
   async sendVerificationEmail(email: string, token: string): Promise<any> {
+    this.ensureAvailable();
     // Use the new professional template instead of the simple one
     return this.sendVerificationEmailWithTemplate(email, token);
   }
 
   async sendNewsletterSubscriptionEmail(email: string): Promise<any> {
-    return this.provider.sendEmail({
+    this.ensureAvailable();
+    return this.provider!.sendEmail({
       from: this.defaultFrom,
       to: email,
       subject: "Welcome to the newsletter",
@@ -54,7 +90,8 @@ export class EmailService {
   }
 
   async sendNewsletterUnsubscriptionEmail(email: string): Promise<any> {
-    return this.provider.sendEmail({
+    this.ensureAvailable();
+    return this.provider!.sendEmail({
       from: this.defaultFrom,
       to: email,
       subject: "Unsubscribe from the newsletter",
@@ -63,8 +100,9 @@ export class EmailService {
   }
 
   async sendPasswordResetEmail(email: string, token: string): Promise<any> {
+    this.ensureAvailable();
     const resetLink = `${this.domain}/auth/new-password?token=${token}`;
-    return this.provider.sendEmail({
+    return this.provider!.sendEmail({
       from: this.defaultFrom,
       to: email,
       subject: "Reset your password",
@@ -73,7 +111,8 @@ export class EmailService {
   }
 
   async sendTwoFactorTokenEmail(email: string, token: string): Promise<any> {
-    return this.provider.sendEmail({
+    this.ensureAvailable();
+    return this.provider!.sendEmail({
       from: this.defaultFrom,
       to: email,
       subject: "2FA Code",
@@ -113,7 +152,9 @@ export class EmailService {
       text: template.text,
     };
 
-    console.log("📮 Sending email with provider:", this.provider.getName());
+    this.ensureAvailable();
+
+    console.log("📮 Sending email with provider:", this.provider!.getName());
     console.log("📬 Email message:", {
       from: emailMessage.from,
       to: emailMessage.to,
@@ -123,7 +164,7 @@ export class EmailService {
     });
 
     try {
-      const result = await this.provider.sendEmail(emailMessage);
+      const result = await this.provider!.sendEmail(emailMessage);
       console.log("✅ Provider send result:", result);
       return result;
     } catch (providerError) {
@@ -133,7 +174,8 @@ export class EmailService {
   }
 
   async sendCustomEmail(message: EmailMessage): Promise<any> {
-    return this.provider.sendEmail(message);
+    this.ensureAvailable();
+    return this.provider!.sendEmail(message);
   }
 
   async sendAccountCreatedEmail(
@@ -141,6 +183,7 @@ export class EmailService {
     userEmail: string,
     companyName?: string
   ): Promise<any> {
+    this.ensureAvailable();
     const { getAccountCreatedTemplate } = await import("./templates");
     const template = getAccountCreatedTemplate({
       userName,
@@ -149,7 +192,7 @@ export class EmailService {
       companyUrl: this.domain,
     });
 
-    return this.provider.sendEmail({
+    return this.provider!.sendEmail({
       from: this.defaultFrom,
       to: userEmail,
       subject: template.subject,
@@ -163,6 +206,7 @@ export class EmailService {
     token: string,
     userName?: string
   ): Promise<any> {
+    this.ensureAvailable();
     const { getEmailVerificationTemplate } = await import("./templates");
     const verificationLink = `${this.domain}/auth/new-verification?token=${token}`;
     const template = getEmailVerificationTemplate({
@@ -172,7 +216,7 @@ export class EmailService {
       userName,
     });
 
-    return this.provider.sendEmail({
+    return this.provider!.sendEmail({
       from: this.defaultFrom,
       to: email,
       subject: template.subject,
@@ -182,7 +226,8 @@ export class EmailService {
   }
 
   getProviderName(): string {
-    return this.provider.getName();
+    this.ensureAvailable();
+    return this.provider!.getName();
   }
 }
 

@@ -107,7 +107,7 @@ export function SubscriptionHistoryCard({ subscription }: { subscription: Subscr
   const isTrialing = subscription.status.toLowerCase() === 'trialing';
   
   return (
-    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 group">
+    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-xs hover:shadow-md transition-all duration-300 group">
       <div className="flex items-start justify-between">
         {/* Left Section - Subscription Details */}
         <div className="flex-1">
@@ -212,7 +212,7 @@ export function SubscriptionHistoryCard({ subscription }: { subscription: Subscr
             </button>
             
             {isActive && (
-              <button className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium text-white bg-gradient-to-r from-theme-primary-600 to-theme-primary-700 rounded-lg hover:from-theme-primary-700 hover:to-theme-primary-800 transition-all duration-200 dark:text-slate-300 dark:bg-theme-primary-20">
+              <button className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium text-white bg-linear-to-r from-theme-primary-600 to-theme-primary-700 rounded-lg hover:from-theme-primary-700 hover:to-theme-primary-800 transition-all duration-200 dark:text-slate-300 dark:bg-theme-primary-20">
                 <TrendingUp className="w-3 h-3" />
                 Manage
               </button>
@@ -226,12 +226,12 @@ export function SubscriptionHistoryCard({ subscription }: { subscription: Subscr
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-4 text-slate-600 dark:text-slate-300">
             <span className="font-medium">Subscription ID:</span>
-            <code className="bg-slate-100 dark:bg-slate-700/50 px-2 py-1 rounded text-xs font-mono">
+            <code className="bg-slate-100 dark:bg-slate-700/50 px-2 py-1 rounded-sm text-xs font-mono">
               {subscription.id.slice(-8)}
             </code>
             
             <span className="font-medium">Plan ID:</span>
-            <code className="bg-slate-100 dark:bg-slate-700/50 px-2 py-1 rounded text-xs font-mono">
+            <code className="bg-slate-100 dark:bg-slate-700/50 px-2 py-1 rounded-sm text-xs font-mono">
               {subscription.planId.slice(-8)}
             </code>
           </div>

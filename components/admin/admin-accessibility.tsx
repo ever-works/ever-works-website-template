@@ -3,8 +3,8 @@ import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
 // Design system constants for accessibility
-const SKIP_LINK_STYLES = "sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded focus:shadow-lg";
-const FOCUS_RING_STYLES = "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-blue-400 dark:focus:ring-offset-gray-900";
+const SKIP_LINK_STYLES = "sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-sm focus:shadow-lg";
+const FOCUS_RING_STYLES = "focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-blue-400 dark:focus:ring-offset-gray-900";
 const LANDMARK_STYLES = "scroll-mt-16";
 
 // Skip link component for keyboard navigation

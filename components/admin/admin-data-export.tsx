@@ -183,7 +183,7 @@ export function AdminDataExport() {
                 {(['csv', 'json'] as const).map((format) => (
                   <Button
                     key={format}
-                    variant={selectedFormat === format ? "default" : "outline"}
+                    variant={selectedFormat === format ? "default" : "outline-solid"}
                     size="sm"
                     onClick={() => setSelectedFormat(format)}
                     className="w-16"
@@ -201,7 +201,7 @@ export function AdminDataExport() {
                 id="include-metadata"
                 checked={includeMetadata}
                 onChange={(e) => setIncludeMetadata(e.target.checked)}
-                className="rounded border-gray-300"
+                className="rounded-sm border-gray-300"
               />
               <label htmlFor="include-metadata" className="text-sm">
                 {t('INCLUDE_METADATA')}

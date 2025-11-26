@@ -87,7 +87,7 @@ export function AdminSurveysClient() {
 			{!surveysEnabled && (
 				<div className="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 dark:border-yellow-600 p-4 rounded-lg shadow-md">
 					<div className="flex items-start">
-						<div className="flex-shrink-0">
+						<div className="shrink-0">
 							<svg
 								className="h-6 w-6 text-yellow-400 dark:text-yellow-500"
 								xmlns="http://www.w3.org/2000/svg"
@@ -114,7 +114,7 @@ export function AdminSurveysClient() {
 							<div className="mt-4">
 								<Link
 									href="/admin/settings"
-									className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-yellow-800 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-900/40 hover:bg-yellow-200 dark:hover:bg-yellow-900/60 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors"
+									className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-yellow-800 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-900/40 hover:bg-yellow-200 dark:hover:bg-yellow-900/60 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors"
 								>
 									{t('GO_TO_SETTINGS')}
 									<svg
@@ -158,21 +158,21 @@ export function AdminSurveysClient() {
 				<Button
 					type="button" 
 					onClick={() => setFilter('all')}
-					variant={filter === 'all' ? 'default' : 'outline'}
+					variant={filter === 'all' ? 'default' : 'outline-solid'}
 				>
 					{t('ALL_SURVEYS')}
 				</Button>
 				<Button
 					type="button" 
 					onClick={() => setFilter('global')}
-					variant={filter === 'global' ? 'default' : 'outline'}
+					variant={filter === 'global' ? 'default' : 'outline-solid'}
 				>
 					{tCommon('GLOBAL')}
 				</Button>
 				<Button
 					type="button" 
 					onClick={() => setFilter('item')}
-					variant={filter === 'item' ? 'default' : 'outline'}
+					variant={filter === 'item' ? 'default' : 'outline-solid'}
 				>
 					{tCommon('ITEMS')}
 				</Button>
@@ -191,7 +191,7 @@ export function AdminSurveysClient() {
 						<button
 							type="button" 
 							onClick={() => handleEditSurvey(survey.slug)}
-							className="p-2 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded transition-colors"
+							className="p-2 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-sm transition-colors"
 							title={t('EDIT_SURVEY')}
 						>
 							<Edit className="w-4 h-4" />
@@ -199,7 +199,7 @@ export function AdminSurveysClient() {
 						<button
 							type="button" 
 							onClick={() => handleDeleteSurvey(survey.id, survey.title)}
-							className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+							className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-sm transition-colors"
 							title={t('DELETE_SURVEY')}
 						>
 							<Trash2 className="w-4 h-4" />

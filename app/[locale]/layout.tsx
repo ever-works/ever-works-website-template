@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { Providers } from './providers';
-import './globals.css';
+import './globals.scss';
 import { getCachedConfig } from '@/lib/content';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-import { getMessages, unstable_setRequestLocale } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
 import { Toaster } from 'sonner';
 import { PHProvider } from './integration/posthog/provider';
@@ -71,7 +71,8 @@ export default async function RootLayout({
 	}
 
 	// Ensure server-side i18n helpers use the current route locale
-	unstable_setRequestLocale(locale);
+	// Next.js 16 / next-intl: unstable_setRequestLocale renamed to setRequestLocale
+	setRequestLocale(locale);
 
 	const config = await getCachedConfig();
 	const messages = await getMessages();

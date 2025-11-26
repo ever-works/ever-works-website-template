@@ -113,7 +113,7 @@ function PasswordInput({ id, label, placeholder, error, register, showStrength, 
           aria-describedby={error ? `${id}-error` : showStrength ? `${id}-strength` : undefined}
           aria-invalid={error ? "true" : "false"}
           className={cn(
-            "block w-full pl-10 pr-10 py-3 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 transition-colors",
+            "block w-full pl-10 pr-10 py-3 border rounded-lg shadow-xs placeholder-gray-400 focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 transition-colors",
             error
               ? "border-red-300 dark:border-red-600 bg-red-50 dark:bg-red-900/20"
               : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
@@ -208,7 +208,7 @@ export function ChangePasswordForm() {
   }
 
   return (
-    <Card className="border border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-lg">
+    <Card className="border border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xs shadow-lg">
       <CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-800">
         <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
           <Shield className="w-5 h-5 text-theme-primary-500" />

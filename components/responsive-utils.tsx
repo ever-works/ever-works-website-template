@@ -176,11 +176,11 @@ export const responsiveClasses = {
   
   // Responsive container
   container: {
-    sm: "max-w-screen-sm px-4 sm:px-6",
-    md: "max-w-screen-md px-4 sm:px-6 lg:px-8",
-    lg: "max-w-screen-lg px-4 sm:px-6 lg:px-8",
-    xl: "max-w-screen-xl px-4 sm:px-6 lg:px-8",
-    "2xl": "max-w-screen-2xl px-4 sm:px-6 lg:px-8 xl:px-10",
+    sm: "max-w-(--breakpoint-sm) px-4 sm:px-6",
+    md: "max-w-(--breakpoint-md) px-4 sm:px-6 lg:px-8",
+    lg: "max-w-(--breakpoint-lg) px-4 sm:px-6 lg:px-8",
+    xl: "max-w-(--breakpoint-xl) px-4 sm:px-6 lg:px-8",
+    "2xl": "max-w-(--breakpoint-2xl) px-4 sm:px-6 lg:px-8 xl:px-10",
     full: "max-w-full px-4 sm:px-6 lg:px-8 xl:px-12",
   },
 } as const; 

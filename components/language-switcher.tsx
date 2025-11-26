@@ -88,7 +88,7 @@ export function LanguageSwitcher({ compact = false }: LanguageSwitcherProps) {
         aria-expanded={isOpen}
         aria-controls={isOpen ? panelId : undefined}
       >
-        <div className="relative w-5 h-4 overflow-hidden shadow-sm rounded-sm">
+        <div className="relative w-5 h-4 overflow-hidden shadow-xs rounded-xs">
           <Image
             src={currentLanguage.flagSrc}
             alt={currentLanguage.fullName}
@@ -132,7 +132,7 @@ export function LanguageSwitcher({ compact = false }: LanguageSwitcherProps) {
                   aria-label={`Switch to ${language.fullName}`}
                   dir={language.isRTL ? "rtl" : "ltr"}
                 >
-                  <div className="relative w-5 h-4 overflow-hidden shadow-sm rounded-sm">
+                  <div className="relative w-5 h-4 overflow-hidden shadow-xs rounded-xs">
                     <Image
                       src={language.flagSrc}
                       alt={language.fullName}

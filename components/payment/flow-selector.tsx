@@ -86,7 +86,7 @@ export function PaymentFlowSelector({
       <div className={cn("space-y-4", className)}>
         {/* Simplified Compact Header */}
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white dark:bg-theme-primary-800 border border-slate-200 dark:border-theme-primary-700 shadow-sm mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white dark:bg-theme-primary-800 border border-slate-200 dark:border-theme-primary-700 shadow-xs mb-3">
             <Sparkles className="w-4 h-4 text-slate-600 dark:text-slate-400" />
             <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
               Smart Selection
@@ -114,7 +114,7 @@ export function PaymentFlowSelector({
                   "relative cursor-pointer transition-all duration-200 p-4 border group",
                   isSelected
                     ? "border-slate-400 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 shadow-md"
-                    : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-sm",
+                    : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-xs",
                   animated && "hover:scale-[1.01]",
                   isSelecting && "pointer-events-none opacity-75"
                 )}
@@ -129,21 +129,21 @@ export function PaymentFlowSelector({
 
                 {/* Simplified Badge */}
                 {flow.badge && (
-                  <div className="absolute -top-2 -right-2 px-2 py-1 rounded-md text-xs font-medium bg-slate-600 text-white shadow-sm">
+                  <div className="absolute -top-2 -right-2 px-2 py-1 rounded-md text-xs font-medium bg-slate-600 text-white shadow-xs">
                     {flow.badge}
                   </div>
                 )}
 
                 {/* Simplified Selection Indicator */}
                 {isSelected && (
-                  <div className="absolute -top-1 -left-1 w-6 h-6 bg-slate-600 rounded-full flex items-center justify-center shadow-sm">
+                  <div className="absolute -top-1 -left-1 w-6 h-6 bg-slate-600 rounded-full flex items-center justify-center shadow-xs">
                     <CheckCircle className="w-4 h-4 text-white" />
                   </div>
                 )}
 
                 {/* Simplified Content */}
                 <div className="flex items-center gap-3 relative z-10">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-r from-slate-600 to-slate-800 shadow-sm">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-linear-to-r from-slate-600 to-slate-800 shadow-xs">
                     <IconComponent className="w-5 h-5 text-white" />
                   </div>
 
@@ -157,7 +157,7 @@ export function PaymentFlowSelector({
                   </div>
 
                   <Button
-                    variant={isSelected ? "default" : "outline"}
+                    variant={isSelected ? "default" : "outline-solid"}
                     size="sm"
                     className={cn(
                       "transition-all duration-200",
@@ -185,7 +185,7 @@ export function PaymentFlowSelector({
 
         {/* Simplified Compact Comparison */}
         {showComparison && (
-          <div className="mt-4 p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div className="mt-4 p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs">
             <div className="flex items-center gap-2 mb-3">
               <Info className="w-4 h-4 text-slate-600 dark:text-slate-400" />
               <h5 className="font-semibold text-slate-900 dark:text-white text-sm">
@@ -244,7 +244,7 @@ export function PaymentFlowSelector({
     <div className={cn("space-y-6", className)}>
       {/* Simplified Header */}
       <div className="text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm mb-4">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xs mb-4">
           <Sparkles className="w-4 h-4 text-slate-600 dark:text-slate-400" />
           <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
             Choose Your Payment Flow
@@ -273,7 +273,7 @@ export function PaymentFlowSelector({
                 "relative cursor-pointer transition-all duration-200 p-5 border group",
                 isSelected
                   ? "border-slate-400 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 shadow-md"
-                  : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-sm",
+                  : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-xs",
                 animated && "hover:scale-[1.01]",
                 isSelecting && "pointer-events-none opacity-75"
               )}
@@ -288,21 +288,21 @@ export function PaymentFlowSelector({
 
               {/* Simplified Badge */}
               {flow.badge && (
-                <div className="absolute -top-3 -right-3 px-3 py-1 rounded-md text-xs font-medium bg-slate-600 text-white shadow-sm">
+                <div className="absolute -top-3 -right-3 px-3 py-1 rounded-md text-xs font-medium bg-slate-600 text-white shadow-xs">
                   {flow.badge}
                 </div>
               )}
 
               {/* Simplified Selection Indicator */}
               {isSelected && (
-                <div className="absolute -top-2 -left-2 w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center shadow-sm">
+                <div className="absolute -top-2 -left-2 w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center shadow-xs">
                   <CheckCircle className="w-5 h-5 text-white" />
                 </div>
               )}
 
               {/* Simplified Header */}
               <div className="flex items-start gap-3 mb-4 relative z-10">
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-r from-slate-600 to-slate-800 shadow-sm">
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-linear-to-r from-slate-600 to-slate-800 shadow-xs">
                   <IconComponent className="w-6 h-6 text-white" />
                 </div>
 
@@ -333,7 +333,7 @@ export function PaymentFlowSelector({
 
               {/* Simplified Selection Button */}
               <Button
-                variant={isSelected ? "default" : "outline"}
+                variant={isSelected ? "default" : "outline-solid"}
                 className={cn(
                   "w-full h-10 transition-all duration-200",
                   isSelected && "bg-slate-600 hover:bg-slate-700",
@@ -370,7 +370,7 @@ export function PaymentFlowSelector({
       {/* Simplified Flow Comparison */}
       {showComparison && (
         <div className="max-w-3xl mx-auto">
-          <Card className="p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+          <Card className="p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xs">
             <div className="text-center mb-4">
               <div className="inline-flex items-center gap-2 mb-2">
                 <Info className="w-4 h-4 text-slate-600 dark:text-slate-400" />
@@ -433,7 +433,7 @@ export function PaymentFlowSelector({
       {/* Simplified Current Selection Info */}
       {showCurrentSelection && selectedConfig && (
         <div className="text-center">
-          <div className="inline-flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+          <div className="inline-flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-xs">
             <div className="w-6 h-6 rounded-full flex items-center justify-center bg-slate-600">
               {selectedFlow === PaymentFlow.PAY_AT_START ? (
                 <CreditCard className="w-3 h-3 text-white" />

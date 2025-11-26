@@ -97,7 +97,7 @@ export function EditPaymentMethodModal({
         {/* Non-editable information display */}
         <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-6 bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 rounded flex items-center justify-center text-white text-sm font-bold">
+            <div className="w-10 h-6 bg-linear-to-r from-theme-primary-500 to-theme-primary-600 rounded-sm flex items-center justify-center text-white text-sm font-bold">
               💳
             </div>
             <div>
@@ -128,7 +128,7 @@ export function EditPaymentMethodModal({
               value={formData.holderName}
               onChange={(e) => handleInputChange("holderName", e.target.value)}
               placeholder="John Doe"
-              className={`w-full h-12 px-4 pr-12 bg-transparent border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 ${
+              className={`w-full h-12 px-4 pr-12 bg-transparent border rounded-lg transition-all duration-200 focus:outline-hidden focus:ring-2 ${
                 errors.holderName
                   ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
                   : "border-gray-300 focus:border-theme-primary-10 focus:ring-theme-primary-10"
@@ -144,7 +144,7 @@ export function EditPaymentMethodModal({
               type="checkbox"
               checked={formData.isDefault}
               onChange={(e) => setFormData(prev => ({ ...prev, isDefault: e.target.checked }))}
-              className="rounded border-gray-300 text-theme-primary-600 focus:ring-blue-500"
+              className="rounded-sm border-gray-300 text-theme-primary-600 focus:ring-blue-500"
             />
             <label htmlFor="isDefault" className="text-sm text-gray-700 dark:text-gray-300">
               {t("SET_AS_DEFAULT_PAYMENT")}

@@ -102,7 +102,7 @@ export function SurveyResponsesClient({
 			{!surveysEnabled && (
 				<div className="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 dark:border-yellow-600 p-4 rounded-lg shadow-md">
 					<div className="flex items-start">
-						<div className="flex-shrink-0">
+						<div className="shrink-0">
 							<AlertTriangle className="h-6 w-6 text-yellow-400 dark:text-yellow-500" aria-hidden="true" />
 						</div>
 						<div className="ml-3 flex-1">
@@ -142,7 +142,7 @@ export function SurveyResponsesClient({
 			</div>
 
 			{/* Filters */}
-			<div className="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+			<div className="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-xs p-4">
 				<div className="flex items-center gap-4">
 					<div className="flex items-center gap-2">
 						<Filter className="w-4 h-4 text-gray-500" />
@@ -155,7 +155,7 @@ export function SurveyResponsesClient({
 							type="date"
 							value={filters.startDate || ''}
 							onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
-							className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-900"
+							className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-sm text-sm bg-white dark:bg-gray-900"
 						/>
 					</div>
 					<div className="flex items-center gap-2">
@@ -165,7 +165,7 @@ export function SurveyResponsesClient({
 							type="date"
 							value={filters.endDate || ''}
 							onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
-							className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-900"
+							className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-sm text-sm bg-white dark:bg-gray-900"
 						/>
 					</div>
 					{(filters.startDate || filters.endDate) && (
@@ -189,7 +189,7 @@ export function SurveyResponsesClient({
 					<p className="text-gray-500 dark:text-gray-400"> {tCommon('NO_RESPONSES_FOUND')}</p>
 				</div>
 			) : (
-				<div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+				<div className="bg-white dark:bg-gray-800 rounded-lg shadow-xs overflow-hidden">
 					<div className="overflow-x-auto">
 						<table className="w-full">
 							<thead className="bg-gray-50 dark:bg-gray-900">

@@ -92,10 +92,10 @@ export function SocialLogin() {
       {/* Elegant separator with gradient */}
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent dark:via-gray-600" />
+          <div className="w-full h-px bg-linear-to-r from-transparent via-gray-300 to-transparent dark:via-gray-600" />
         </div>
         <div className="relative flex justify-center">
-          <div className="bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full shadow-sm border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full shadow-xs border border-gray-200 dark:border-gray-700">
             <span className="text-xs font-medium text-gray-600 dark:text-gray-300 flex items-center gap-1.5">
               <svg className="w-3 h-3 text-theme-primary/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -193,8 +193,8 @@ export function SocialLogin() {
                   "border-gray-200 dark:border-gray-700",
                   "hover:border-gray-300 dark:hover:border-gray-600",
                   "hover:bg-gray-50 dark:hover:bg-gray-700",
-                  "shadow-sm hover:shadow",
-                  "focus:outline-none focus:ring-2 focus:ring-theme-primary/20",
+                  "shadow-xs hover:shadow-sm",
+                  "focus:outline-hidden focus:ring-2 focus:ring-theme-primary/20",
                   "transition-colors duration-150",
                   "flex items-center justify-center",
                   "disabled:opacity-50 disabled:cursor-not-allowed",
@@ -217,7 +217,7 @@ export function SocialLogin() {
 
       {/* Elegant security badge */}
       <div className="mt-6 flex justify-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full  dark:from-theme-primary-20 dark:to-emerald-20 border dark:border-theme-primary-800 shadow-sm">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full  dark:from-theme-primary-20 dark:to-emerald-20 border dark:border-theme-primary-800 shadow-xs">
           <div className="relative">
             <svg className="w-3 h-3 text-theme-primary-600 dark:text-theme-primary-400" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />

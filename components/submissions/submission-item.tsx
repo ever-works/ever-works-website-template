@@ -86,7 +86,7 @@ export function SubmissionItem({ submission, onEdit, onDelete, onView }: Submiss
   };
 
   return (
-    <div className="group p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-theme-primary-300 dark:hover:border-theme-primary-600 hover:shadow-lg hover:shadow-theme-primary-500/10 transition-all duration-300 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+    <div className="group p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-theme-primary-300 dark:hover:border-theme-primary-600 hover:shadow-lg hover:shadow-theme-primary-500/10 transition-all duration-300 bg-white/50 dark:bg-gray-800/50 backdrop-blur-xs">
       <div className="flex items-start gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between mb-3">

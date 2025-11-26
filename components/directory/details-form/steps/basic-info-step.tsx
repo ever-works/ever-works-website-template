@@ -300,10 +300,11 @@ export function BasicInfoStep({
 								<EditorContent
 									className={cn(
 										FORM_FIELD_CLASSES.textarea.base,
-										focusedField === 'introduction' && FORM_FIELD_CLASSES.textarea.focused
+										focusedField === 'introduction' && FORM_FIELD_CLASSES.textarea.focused,
+										'[&_.ProseMirror]:min-h-[5rem] [&_.ProseMirror]:break-words [&_.ProseMirror]:whitespace-pre-wrap [&_.ProseMirror]:overflow-wrap-[anywhere]'
 									)}
 									toolbar={
-										<Toolbar className="bg-gray-50/80 dark:bg-gray-900/50" ref={toolbarRef}>
+										<Toolbar className="bg-white/75 dark:bg-gray-900/75 backdrop-blur-md" ref={toolbarRef}>
 											<ToolbarContent editor={editor} />
 										</Toolbar>
 									}

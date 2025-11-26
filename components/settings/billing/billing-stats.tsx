@@ -88,7 +88,7 @@ export function BillingStats({
       {/* Main Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Total Spent */}
-        <div className="bg-gradient-to-br from-theme-primary-20 dark:from-theme-primary-20 to-theme-primary-10 dark:to-theme-primary-20 border border-theme-primary-200 dark:border-theme-primary-300 rounded-xl p-6 hover:shadow-lg transition-all duration-300 group bg-theme-primary-10 dark:bg-theme-primary-10">
+        <div className="bg-linear-to-br from-theme-primary-20 dark:from-theme-primary-20 to-theme-primary-10 dark:to-theme-primary-20 border border-theme-primary-200 dark:border-theme-primary-300 rounded-xl p-6 hover:shadow-lg transition-all duration-300 group bg-theme-primary-10 dark:bg-theme-primary-10">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-theme-primary-20 dark:bg-theme-primary-10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-theme-primary-200 dark:border-theme-primary-500">
               <DollarSign className="w-6 h-6 text-theme-primary-600 dark:text-theme-primary-700" />
@@ -104,7 +104,7 @@ export function BillingStats({
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-emerald-50 dark:from-emerald-900/20 to-teal-50 dark:to-teal-900/20 border border-emerald-200 dark:border-emerald-700/50 rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
+        <div className="bg-linear-to-br from-emerald-50 dark:from-emerald-900/20 to-teal-50 dark:to-teal-900/20 border border-emerald-200 dark:border-emerald-700/50 rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-800/50 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-emerald-200 dark:border-emerald-600/50">
               <CreditCard className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
@@ -121,7 +121,7 @@ export function BillingStats({
         </div>
 
         {/* Monthly Average */}
-        <div className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 border border-purple-200 dark:border-purple-700/50 rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
+        <div className="bg-linear-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 border border-purple-200 dark:border-purple-700/50 rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-purple-100 dark:bg-purple-800/50 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-purple-200 dark:border-purple-600/50">
               <BarChart3 className="w-6 h-6 text-purple-600 dark:text-purple-400" />
@@ -138,7 +138,7 @@ export function BillingStats({
         </div>
 
         {/* Plan Status */}
-        <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border border-orange-200 dark:border-orange-700/50 rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
+        <div className="bg-linear-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border border-orange-200 dark:border-orange-700/50 rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-orange-100 dark:bg-orange-800/50 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-orange-200 dark:border-orange-600/50">
               <Crown className="w-6 h-6 text-orange-600 dark:text-orange-400" />
@@ -166,7 +166,7 @@ export function BillingStats({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Monthly Comparison */}
           {lastMonthSpent !== undefined && (
-            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-xs">
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Monthly Comparison</h4>
                 <Calendar className="w-5 h-5 text-slate-400" />
@@ -196,7 +196,7 @@ export function BillingStats({
 
           {/* Growth Rate */}
           {growthRate !== undefined && (
-            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-xs">
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Growth Rate</h4>
                 <TrendingUp className="w-5 h-5 text-slate-400" />
@@ -226,7 +226,7 @@ export function BillingStats({
 
           {/* Renewal Status */}
           {renewalStatus && (
-            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-xs">
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Renewal Status</h4>
                 <renewalStatus.icon className="w-5 h-5 text-slate-400" />
@@ -267,7 +267,7 @@ export function BillingStats({
       )}
 
       {/* Quick Actions */}
-      <div className="bg-gradient-to-r from-slate-50 to-theme-primary-50 dark:from-slate-800 dark:to-theme-primary-900/20 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
+      <div className="bg-linear-to-r from-slate-50 to-theme-primary-50 dark:from-slate-800 dark:to-theme-primary-900/20 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-theme-primary-100 dark:bg-theme-primary-10 rounded-lg flex items-center justify-center border border-theme-primary-200 dark:border-transparent">
@@ -285,7 +285,7 @@ export function BillingStats({
               View History
             </button>
             
-            <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-theme-primary-600 to-theme-primary-700 rounded-lg hover:from-theme-primary-700 hover:to-theme-primary-800 transition-colors">
+            <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-linear-to-r from-theme-primary-600 to-theme-primary-700 rounded-lg hover:from-theme-primary-700 hover:to-theme-primary-800 transition-colors">
               <CreditCard className="w-4 h-4" />
               Manage Plan
             </button>
@@ -330,7 +330,7 @@ export function DetailedBillingStats({
       {/* Additional Insights */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Payment Trends */}
-        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <h4 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Payment Trends</h4>
             <TrendingUp className="w-5 h-5 text-slate-400" />
@@ -356,7 +356,7 @@ export function DetailedBillingStats({
         </div>
 
         {/* Subscription Insights */}
-        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <h4 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Subscription Insights</h4>
             <Users className="w-5 h-5 text-slate-400" />

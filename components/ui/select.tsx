@@ -183,7 +183,7 @@ export function Select({
           disabled={disabled}
           className={cn(
             "w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+            "focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             sizeClasses[size],
             variantClasses[variant],
@@ -290,7 +290,7 @@ export function SelectItem({
         )}
       </div>
       {isSelected && (
-        <Check size={16} className="text-blue-600 dark:text-blue-400 flex-shrink-0" />
+        <Check size={16} className="text-blue-600 dark:text-blue-400 shrink-0" />
       )}
       {endContent}
     </button>

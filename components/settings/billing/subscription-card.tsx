@@ -73,7 +73,7 @@ export function SubscriptionCard({ subscription }: { subscription: SubscriptionI
   const StatusIcon = statusConfig.icon;
   
   return (
-    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200">
+    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 shadow-xs hover:shadow-md transition-all duration-200">
       {/* Header */}
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1">
@@ -128,7 +128,7 @@ export function SubscriptionCard({ subscription }: { subscription: SubscriptionI
           </span>
         </div>
         
-        <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-500 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-sm">
+        <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-500 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-xs">
           Manage
         </button>
       </div>

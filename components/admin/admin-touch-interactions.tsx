@@ -59,7 +59,7 @@ export function AdminTouchButton({
       type="button"
       className={cn(
         "inline-flex items-center justify-center rounded-lg font-medium",
-        "transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+        "transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
         TOUCH_TARGET_SIZE,
         TOUCH_FEEDBACK_STYLES,
         getVariantStyles(),
@@ -334,7 +334,7 @@ export function AdminTouchSearch({
           "w-full px-4 py-3 text-base",
           "border border-gray-300 dark:border-gray-600 rounded-lg",
           "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100",
-          "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+          "focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent",
           "placeholder-gray-500 dark:placeholder-gray-400",
           TOUCH_TARGET_SIZE
         )}

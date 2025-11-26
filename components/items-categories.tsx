@@ -68,10 +68,10 @@ export function ItemsCategories(props: {
           className={cn(
             "px-2 sm:px-3 py-1 h-7 sm:h-8 font-medium transition-all duration-200",
             isActive
-              ? "bg-theme-primary text-white border-theme-primary shadow-sm"
+              ? "bg-theme-primary text-white border-theme-primary shadow-xs"
               : "border border-dark--theme-200 dark:border-dark--theme-800",
             "hover:shadow-md hover:border-theme-primary dark:hover:border-theme-primary",
-            !showAllCategories && "flex-shrink-0"
+            !showAllCategories && "shrink-0"
           )}
         >
           {isActive && (
@@ -144,7 +144,7 @@ export function ItemsCategories(props: {
             ? cn(
                 "sticky top-4 z-10",
                 isSticky
-                  ? "bg-white/95 dark:bg-gray-800/95 shadow-md backdrop-blur-sm"
+                  ? "bg-white/95 dark:bg-gray-800/95 shadow-md backdrop-blur-xs"
                   : "bg-transparent"
               )
             : "bg-inherit"
@@ -168,7 +168,7 @@ export function ItemsCategories(props: {
                 radius="full"
                 size="sm"
                 className={cn(
-                  "px-3 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-theme-primary-100 to-theme-primary-100 text-theme-primary border border-theme-primary-500 dark:from-theme-primary-900/30 dark:to-theme-primary-900/30 dark:text-theme-primary dark:border-theme-primary-500 transition-all duration-300 hover:scale-105 hover:shadow-md capitalize shadow-sm bg-theme-primary-10",
+                  "px-3 py-2 text-xs font-semibold rounded-full bg-linear-to-r from-theme-primary-100 to-theme-primary-100 text-theme-primary border border-theme-primary-500 dark:from-theme-primary-900/30 dark:to-theme-primary-900/30 dark:text-theme-primary dark:border-theme-primary-500 transition-all duration-300 hover:scale-105 hover:shadow-md capitalize shadow-xs bg-theme-primary-10",
                   isSticky && "shadow-md"
                 )}
                 onPress={() => setShowAllCategories(!showAllCategories)}
@@ -231,9 +231,9 @@ export function ItemsCategories(props: {
                   prefetch={false}
                   href={props.resetPath || props.basePath || "/"}
                   className={cn(
-                    "px-2 sm:px-3 py-1 h-7 sm:h-8 font-medium transition-all duration-300 flex-shrink-0 group",
+                    "px-2 sm:px-3 py-1 h-7 sm:h-8 font-medium transition-all duration-300 shrink-0 group",
                     !isAnyTagActive
-                      ? "bg-theme-primary-500 text-white border-theme-primary-500 shadow-sm"
+                      ? "bg-theme-primary-500 text-white border-theme-primary-500 shadow-xs"
                       : "border border-dark--theme-200 dark:border-dark--theme-800",
                     "hover:shadow-md hover:border-theme-primary-200 dark:hover:border-theme-primary-800"
                   )}
@@ -281,7 +281,7 @@ export function ItemsCategories(props: {
                   className={cn(
                     "px-2 sm:px-3 py-1 h-7 sm:h-8 font-medium transition-all duration-200",
                     !isAnyTagActive
-                      ? "bg-primary-500 text-white border-primary-500 shadow-sm"
+                      ? "bg-primary-500 text-white border-primary-500 shadow-xs"
                       : "border border-dark--theme-200 dark:border-dark--theme-800",
                     "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800"
                   )}
