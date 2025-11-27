@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import { createHash } from 'crypto';
 
 // Import schema types and sql
 import {
@@ -44,7 +45,7 @@ async function ensureDb() {
  * This ensures the same key always generates the same UUID
  */
 function deterministicUuid(key: string): string {
-  const hash = crypto.createHash('sha256').update(key).digest('hex');
+  const hash = createHash('sha256').update(key).digest('hex');
   // Format as UUID v4: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
   return [
     hash.slice(0, 8),
@@ -283,7 +284,7 @@ async function seedContent(ids: { adminProfileId: string; clientProfileId1: stri
         { id: deterministicUuid('favorite:client2:beta'), userId: ids.clientUserId2, itemSlug: 'beta', itemName: 'Beta' }
       ])
       .onConflictDoUpdate({
-        target: favorites.id,
+        target: [favorites.userId, favorites.itemSlug],
         set: {
           itemName: sql`excluded."itemName"`
         }
