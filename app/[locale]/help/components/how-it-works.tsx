@@ -133,7 +133,7 @@ vercel --prod`,
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black">
+    <section className="py-20 bg-linear-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-16">
@@ -162,13 +162,13 @@ vercel --prod`,
               onClick={() => setActiveStep(index)}
                 >
               {/* Step Card */}
-              <div className={`relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 border-2 transition-all duration-300 ${
+              <div className={`relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xs rounded-2xl p-8 border-2 transition-all duration-300 ${
                 activeStep === index
                   ? 'border-blue-500 shadow-xl shadow-blue-500/20'
                   : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
               }`}>
                 {/* Step Number */}
-                <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${step.gradient} flex items-center justify-center text-white font-bold text-xl mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`w-16 h-16 rounded-full bg-linear-to-r ${step.gradient} flex items-center justify-center text-white font-bold text-xl mb-6 group-hover:scale-110 transition-transform duration-300`}>
                   {step.number}
                 </div>
 
@@ -187,7 +187,7 @@ vercel --prod`,
                 <div className="space-y-2">
                   {step.features.map((feature, featureIndex) => (
                     <div key={featureIndex} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${step.gradient}`}></div>
+                      <div className={`w-2 h-2 rounded-full bg-linear-to-r ${step.gradient}`}></div>
                       {feature}
                     </div>
                   ))}
@@ -206,7 +206,7 @@ vercel --prod`,
 
         {/* Code Preview */}
         <div className="mb-16">
-          <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+          <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xs rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
             {/* Code Header */}
             <div className="bg-slate-100 dark:bg-slate-900 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between">
@@ -262,7 +262,7 @@ vercel --prod`,
             {benefits.map((benefit, index) => (
               <div
                 key={index}
-                className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-200 dark:border-slate-700 hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all duration-300 hover:transform hover:scale-105"
+                className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xs rounded-xl p-6 border border-slate-200 dark:border-slate-700 hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all duration-300 hover:transform hover:scale-105"
               >
                 <div className="text-3xl mb-4">{benefit.icon}</div>
                 <h4 className="font-semibold text-slate-900 dark:text-white mb-2">
@@ -278,7 +278,7 @@ vercel --prod`,
 
         {/* Call to Action */}
         <div className="text-center">
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 rounded-2xl p-8 border border-blue-200 dark:border-blue-800">
+          <div className="bg-linear-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 rounded-2xl p-8 border border-blue-200 dark:border-blue-800">
             <h3 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
               {t('READY_TO_GET_STARTED')}
             </h3>
@@ -286,7 +286,7 @@ vercel --prod`,
               {t('JOIN_DEVELOPERS_DESC')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Button className="bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                 {t('START_BUILDING_NOW')}
               </Button>
               <Button variant="outline" className="border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold px-8 py-3 rounded-xl transition-all duration-300">

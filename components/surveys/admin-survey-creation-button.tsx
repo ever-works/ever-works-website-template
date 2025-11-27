@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 
 interface AdminSurveyCreationButtonProps {
   itemId?: string;
-  variant?: 'default' | 'outline' | 'ghost';
+  variant?: 'default' | 'outline-solid' | 'ghost';
   size?: 'sm' | 'default' | 'lg';
   className?: string;
   showLabel?: boolean;
@@ -16,7 +16,7 @@ interface AdminSurveyCreationButtonProps {
 
 export function AdminSurveyCreationButton({
   itemId,
-  variant = 'outline',
+  variant = 'outline-solid',
   size = 'sm',
   className = '',
   showLabel = false

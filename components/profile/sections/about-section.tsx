@@ -19,7 +19,7 @@ export function AboutSection({ profile }: AboutSectionProps) {
   return (
     <div className="space-y-6">
       {/* About Me */}
-      <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
+      <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow-sm p-6">
         <CardHeader className="p-0 mb-2">
           <CardTitle className="text-lg font-bold text-gray-900 dark:text-gray-100">About Me</CardTitle>
         </CardHeader>
@@ -31,7 +31,7 @@ export function AboutSection({ profile }: AboutSectionProps) {
       </Card>
 
       {/* Personal Information */}
-      <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
+      <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow-sm p-6">
         <CardHeader className="p-0 mb-2">
           <CardTitle className="text-lg font-bold text-gray-900 dark:text-gray-100">Personal Information</CardTitle>
         </CardHeader>
@@ -97,7 +97,7 @@ export function AboutSection({ profile }: AboutSectionProps) {
 
       {/* Skills */}
       {profile.skills.length > 0 && (
-        <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
+        <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow-sm p-6">
           <CardHeader>
             <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
               Skills & Expertise
@@ -115,7 +115,7 @@ export function AboutSection({ profile }: AboutSectionProps) {
 
       {/* Interests */}
       {profile.interests.length > 0 && (
-        <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
+        <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow-sm p-6">
           <CardHeader>
             <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
               Interests

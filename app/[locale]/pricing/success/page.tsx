@@ -65,7 +65,7 @@ export default function SubmissionSuccessPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-theme-primary-600 mx-auto mb-4" />
           <p className="text-slate-600 dark:text-white">{t("LOADING_SUBMISSION_DETAILS")}</p>
@@ -76,7 +76,7 @@ export default function SubmissionSuccessPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
+      <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
         <Container maxWidth="7xl" padding="default">
           <div className="text-center">
             <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -94,7 +94,7 @@ export default function SubmissionSuccessPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
       <Container maxWidth="7xl" padding="default">
           <div className="text-center mb-12">
             <div className="w-20 h-20   flex items-center justify-center mx-auto mb-6">

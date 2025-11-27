@@ -1,12 +1,12 @@
 :root {
   --tt-toolbar-height: 2.75rem;
   --tt-safe-area-bottom: env(safe-area-inset-bottom, 0px);
-  --tt-toolbar-bg-color: var(--white);
+  --tt-toolbar-bg-color: rgba(255, 255, 255, 0.75);
   --tt-toolbar-border-color: var(--tt-gray-light-a-100);
 }
 
 .dark {
-  --tt-toolbar-bg-color: var(--black);
+  --tt-toolbar-bg-color: rgba(14, 14, 17, 0);
   --tt-toolbar-border-color: var(--tt-gray-dark-a-50);
 }
 
@@ -37,6 +37,8 @@
     width: 100%;
     min-height: var(--tt-toolbar-height);
     background: var(--tt-toolbar-bg-color);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--tt-toolbar-border-color);
     padding: 0 0.5rem;
     overflow-x: auto;
@@ -76,6 +78,8 @@
     );
     border: var(--tt-toolbar-border-width) solid var(--tt-toolbar-border-color);
     background-color: var(--tt-toolbar-bg-color);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--tt-shadow-elevated-md);
     outline: none;
     overflow: hidden;

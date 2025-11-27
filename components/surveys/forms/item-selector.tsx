@@ -135,12 +135,12 @@ export function ItemSelector({
 								<Image
 									src={selectedItem.icon_url}
 									alt={selectedItem.name}
-									className="rounded object-cover flex-shrink-0"
+									className="rounded-sm object-cover shrink-0"
 									width={24}
 									height={24}
 								/>
 							) : (
-								<div className="w-6 h-6 rounded bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+								<div className="w-6 h-6 rounded-sm bg-gray-200 dark:bg-gray-700 flex items-center justify-center shrink-0">
 									<Package className="w-3 h-3 text-gray-400" aria-hidden="true" focusable="false" />
 								</div>
 							)}
@@ -150,13 +150,13 @@ export function ItemSelector({
 						<span className="text-gray-500 dark:text-gray-400">{placeholder}</span>
 					)}
 
-					<div className="flex items-center gap-1 flex-shrink-0">
+					<div className="flex items-center gap-1 shrink-0">
 						{selectedItem && !disabled && (
 							<button
 								type="button"
 								onClick={handleClearSelection}
 								aria-label="Clear selection"
-								className="absolute right-9 top-2.5 p-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 z-10"
+								className="absolute right-9 top-2.5 p-0.5 rounded-sm hover:bg-gray-200 dark:hover:bg-gray-700 z-10"
 							>
 								<X className="w-4 h-4 text-gray-400" aria-hidden="true" focusable="false" />
 							</button>
@@ -211,12 +211,12 @@ export function ItemSelector({
 													<Image
 														src={item.icon_url}
 														alt={item.name}
-														className="rounded object-cover flex-shrink-0"
+														className="rounded-sm object-cover shrink-0"
 														width={24}
 														height={24}
 													/>
 												) : (
-													<div className="w-8 h-8 rounded bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+													<div className="w-8 h-8 rounded-sm bg-gray-200 dark:bg-gray-700 flex items-center justify-center shrink-0">
 														<Package className="w-4 h-4 text-gray-400" aria-hidden="true" focusable="false" />
 													</div>
 												)}
@@ -232,7 +232,7 @@ export function ItemSelector({
 													</p>
 												</div>
 												{selectedItemId === item.id && (
-													<div className="flex-shrink-0">
+													<div className="shrink-0">
 														<div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center">
 															<svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
 																<title>Selected</title>

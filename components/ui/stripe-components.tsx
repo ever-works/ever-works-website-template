@@ -262,7 +262,7 @@ export function ErrorDisplay({ error, className, variant = 'default' }: ErrorDis
 
 	return (
 		<div className={`${variantClasses[variant]} ${className}`}>
-			<AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+			<AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
 			<p className="text-red-800 dark:text-red-200 text-sm">{error}</p>
 		</div>
 	);
@@ -324,7 +324,7 @@ export function SetAsDefaultCheckbox({ checked, onChange, disabled, className }:
 				id="setAsDefault"
 				checked={checked}
 				onChange={(e) => onChange(e.target.checked)}
-				className="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+				className="mr-2 rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
 				disabled={disabled}
 			/>
 			<label htmlFor="setAsDefault" className="text-sm text-gray-700 dark:text-gray-300">

@@ -108,7 +108,7 @@ function CompanyRow({ company, isDeleting, onEdit, onDelete }: CompanyRowProps) 
 			<div className="flex items-center justify-between">
 				{/* Company Info */}
 				<div className="flex items-center space-x-4 flex-1 min-w-0">
-					<div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center text-white font-semibold text-sm">
+					<div className="w-10 h-10 bg-linear-to-br from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center text-white font-semibold text-sm">
 						{company.name.charAt(0).toUpperCase()}
 					</div>
 					<div className="flex-1 min-w-0">
@@ -132,7 +132,7 @@ function CompanyRow({ company, isDeleting, onEdit, onDelete }: CompanyRowProps) 
 				</div>
 
 				{/* Status, Date & Actions */}
-				<div className="flex items-center space-x-4 flex-shrink-0">
+				<div className="flex items-center space-x-4 shrink-0">
 					<Chip color={getStatusColor(company.status)} variant="flat" size="sm">
 						{company.status.charAt(0).toUpperCase() + company.status.slice(1)}
 					</Chip>

@@ -2,7 +2,7 @@ import { useId } from "react";
 import { LucideIcon } from "lucide-react";
 
 // Design system constants for accessibility
-const CARD_BASE_STYLES = "bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700";
+const CARD_BASE_STYLES = "bg-white dark:bg-gray-900 rounded-xl shadow-xs p-6 border border-gray-200 dark:border-gray-700";
 const ICON_CONTAINER_STYLES = "p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg";
 const ICON_STYLES = "h-5 w-5 text-blue-600 dark:text-blue-400";
 const TITLE_STYLES = "text-sm font-medium text-gray-600 dark:text-gray-400";
@@ -46,11 +46,11 @@ export function StatsCard({
         <div className="animate-pulse">
           <div className="flex items-center space-x-2">
             <div className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg">
-              <div className="h-5 w-5 bg-gray-300 dark:bg-gray-600 rounded"></div>
+              <div className="h-5 w-5 bg-gray-300 dark:bg-gray-600 rounded-sm"></div>
             </div>
             <div className="flex-1">
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-sm mb-2"></div>
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-sm"></div>
             </div>
           </div>
         </div>

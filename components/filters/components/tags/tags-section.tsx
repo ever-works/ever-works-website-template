@@ -31,7 +31,8 @@ export function Tags({
     toggleTagVisibility,
   } = useTagVisibility(tags, maxVisibleTags);
 
-  if (!tagsEnabled) {
+  // Hide if tags are disabled or if tags array is empty
+  if (!tagsEnabled || !tags || tags.length === 0) {
     return null;
   }
 
@@ -52,7 +53,7 @@ export function Tags({
           ? cn(
               "sticky top-4 z-10",
               isSticky
-                ? "bg-white/95 dark:bg-gray-800/95 shadow-md backdrop-blur-sm"
+                ? "bg-white/95 dark:bg-gray-800/95 shadow-md backdrop-blur-xs"
                 : "bg-transparent"
             )
           : "bg-inherit"
@@ -77,7 +78,7 @@ export function Tags({
               size="sm"
               className={cn(
                 "px-4 py-1 font-medium transition-all duration-300 bg-theme-primary-10 text-theme-primary",
-                isSticky && "shadow-sm"
+                isSticky && "shadow-xs"
               )}
               onPress={toggleTagVisibility}
             >

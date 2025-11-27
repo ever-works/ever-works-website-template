@@ -16,7 +16,7 @@ export const SearchInput = ({
     <div className="relative">
       <div
         className={cn(
-          "bg-gray-100 dark:bg-gray-900/90 backdrop-blur-md rounded-lg px-1 border border-gray-200 dark:border-gray-700/30 transition-all duration-300 hover:shadow-md",
+          "bg-gray-100 dark:bg-gray-900/90 backdrop-blur-md rounded-lg px-1 border border-gray-200 dark:border-gray-700/30 transition-all duration-300 hover:shadow-md outline-0",
           className
         )}
       >
@@ -32,11 +32,11 @@ export const SearchInput = ({
           style={{ background: "transparent" }}
           maxLength={20}
           classNames={{
-            base: "!bg-transparent",
+            base: "bg-transparent!",
             input:
-              "!bg-transparent text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm",
+              "bg-transparent! text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm outline-none focus:border-none! focus-within:border-none! focus:outline-hidden!",
             inputWrapper:
-              "!bg-transparent border-none shadow-none focus-within:ring-0 focus-within:shadow-none hover:bg-transparent dark:hover:bg-transparent",
+              "bg-transparent! border-none shadow-none focus-within:ring-0 focus-within:shadow-none hover:bg-transparent dark:hover:bg-transparent",
           }}
         />
         {searchTerm && (

@@ -27,7 +27,7 @@ export  function VoteButton({
         "shadow-md hover:shadow-lg",
         "transform hover:-translate-y-0.5",
         userVote === "up" ? (
-          "bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-500 dark:to-theme-primary-600 border-theme-primary-300 dark:border-theme-primary-600"
+          "bg-linear-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-500 dark:to-theme-primary-600 border-theme-primary-300 dark:border-theme-primary-600"
         ) : (
           "hover:border-theme-primary-300 dark:hover:border-theme-primary-600"
         ),

@@ -53,7 +53,7 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
         <div className="md:hidden">
           <Accordion
             variant="bordered"
-            className="shadow-sm bg-white dark:bg-gray-900/90 border border-gray-100 dark:border-gray-700 rounded-xl transition-colors duration-300"
+            className="shadow-xs bg-white dark:bg-gray-900/90 border border-gray-100 dark:border-gray-700 rounded-xl transition-colors duration-300"
           >
             <AccordionItem
               key="1"
@@ -122,7 +122,7 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
         />
 
         {/* Sort By Section (styled card, now outside categories) */}
-        <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden shadow-sm dark:shadow-lg transition-colors duration-300">
+        <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xs rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden shadow-xs dark:shadow-lg transition-colors duration-300">
           <div className="p-3 lg:p-4 border-b border-gray-200 dark:border-gray-700/50">
             <h2 className="text-base lg:text-lg font-semibold text-gray-900 dark:text-gray-200 transition-colors duration-300 capitalize">
               {t("SORT_BY")}

@@ -84,7 +84,7 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
             <button
               type="button"
               onClick={handleCancel}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-sm transition-colors"
               aria-label={t('CLOSE_DIALOG')}
             >
               <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -98,7 +98,7 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
         <div className="p-6 space-y-4">
           {/* Role Info */}
           <div className="flex items-start space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-theme-primary to-theme-accent rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-linear-to-br from-theme-primary to-theme-accent rounded-lg flex items-center justify-center">
               <Shield size={20} className="text-white" aria-hidden="true" focusable="false" />
             </div>
             <div className="flex-1">
@@ -128,7 +128,7 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
           {/* Warning */}
           <div className="bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
             <div className="flex items-start space-x-2">
-              <AlertTriangle size={16} className="text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" aria-hidden="true" focusable="false" />
+              <AlertTriangle size={16} className="text-yellow-600 dark:text-yellow-400 mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
               <div className="text-sm text-yellow-800 dark:text-yellow-200">
                 <p className="font-medium">{t('WARNING_TITLE')}</p>
                 <p className="mt-1">
@@ -156,7 +156,7 @@ export function DeleteRoleDialog({ role, isOpen, onConfirm, onCancel }: DeleteRo
             isLoading={isLoading}
             startContent={!isLoading && <Trash2 size={16} aria-hidden="true" focusable="false" />}
             className={clsx(
-              'bg-gradient-to-r from-red-500 to-red-600',
+              'bg-linear-to-r from-red-500 to-red-600',
               'hover:from-red-600 hover:to-red-700',
               'shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40',
               'transition-all duration-300 text-white font-medium'

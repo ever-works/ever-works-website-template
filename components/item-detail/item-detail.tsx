@@ -1,4 +1,5 @@
 'use client';
+import { Suspense } from 'react';
 import { ItemBreadcrumb } from './breadcrumb';
 import { ItemIcon } from './item-icon';
 import { slugify } from '@/lib/utils/slug';
@@ -22,6 +23,7 @@ import { ItemCTAButton } from './item-cta-button';
 import { useCategoriesEnabled } from '@/hooks/use-categories-enabled';
 import { useSurveysEnabled } from '@/hooks/use-surveys-enabled';
 import { useTagsEnabled } from '@/hooks/use-tags-enabled';
+import { ItemDetailSkeleton } from '@/components/ui/skeleton';
 
 export interface ItemDetailProps {
 	meta: {
@@ -44,7 +46,7 @@ export interface ItemDetailProps {
 	categoryName: string;
 }
 
-export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailProps) {
+function ItemDetailContent({ meta, renderedContent, categoryName }: ItemDetailProps) {
 	const t = useTranslations();
 	const params = useParams();
 	const locale = params.locale as string;
@@ -65,7 +67,7 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 	});
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800 text-gray-800 dark:text-white relative overflow-hidden">
+		<div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800 text-gray-800 dark:text-white relative overflow-hidden">
 			{/* Product Schema JSON-LD */}
 			<script
 				type="application/ld+json"
@@ -86,19 +88,19 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 
 							<div className="flex items-center gap-6 mb-8 group">
 								<div className="relative transform transition-all duration-300 group-hover:scale-105">
-									<div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+									<div className="absolute inset-0 bg-linear-to-r from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 									<div className="relative">
 										<ItemIcon iconUrl={meta.icon_url} name={meta.name} />
-										<div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full border-2 border-white dark:border-gray-900 shadow-lg animate-pulse" />
+										<div className="absolute -bottom-1 -right-1 w-4 h-4 bg-linear-to-r from-green-400 to-emerald-500 rounded-full border-2 border-white dark:border-gray-900 shadow-lg animate-pulse" />
 									</div>
 								</div>
 								<div className="flex-1">
 									<div className="flex items-center gap-2">
-										<h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-900 via-theme-primary-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent tracking-tight leading-tight mb-2">
+										<h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-linear-to-r from-gray-900 via-theme-primary-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent tracking-tight leading-tight mb-2">
 											{meta.name}
 										</h1>
 									</div>
-									<div className="h-1 w-24 bg-gradient-to-r from-theme-primary-500 to-theme-purple-500 rounded-full transform transition-all duration-500 group-hover:w-32"></div>
+									<div className="h-1 w-24 bg-linear-to-r from-theme-primary-500 to-theme-purple-500 rounded-full transform transition-all duration-500 group-hover:w-32"></div>
 								</div>
 							</div>
 
@@ -159,7 +161,7 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 
 						<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-8 mb-8 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
 							<div className="flex items-center gap-4 mb-6">
-								<div className="p-3 bg-gradient-to-br from-theme-primary-100 to-theme-purple-100 dark:from-theme-primary-900/30 dark:to-theme-purple-900/30 rounded-xl">
+								<div className="p-3 bg-linear-to-br from-theme-primary-100 to-theme-purple-100 dark:from-theme-primary-900/30 dark:to-theme-purple-900/30 rounded-xl">
 									<svg
 										className="w-6 h-6 text-theme-primary-600 dark:text-theme-primary-400"
 										fill="none"
@@ -205,7 +207,7 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 					<div className="lg:w-96 space-y-6">
 						<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
 							<div className="flex items-center gap-4 mb-6">
-								<div className="p-3 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-xl">
+								<div className="p-3 bg-linear-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-xl">
 									<svg
 										className="w-6 h-6 text-emerald-600 dark:text-emerald-400"
 										fill="none"
@@ -242,8 +244,8 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 											</svg>
 											{t('itemDetail.PUBLISHER')}
 										</span>
-										<span className="flex items-center bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 px-4 py-2 rounded-full border border-orange-200 dark:border-orange-700/50 group-hover:scale-105 transition-transform duration-300">
-											<span className="w-3 h-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 mr-2 animate-pulse"></span>
+										<span className="flex items-center bg-linear-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 px-4 py-2 rounded-full border border-orange-200 dark:border-orange-700/50 group-hover:scale-105 transition-transform duration-300">
+											<span className="w-3 h-3 rounded-full bg-linear-to-r from-orange-500 to-red-500 mr-2 animate-pulse"></span>
 											<span className="font-semibold text-orange-700 dark:text-orange-300">{meta.publisher}</span>
 										</span>
 									</div>
@@ -290,7 +292,7 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 										</svg>
 										{t('itemDetail.PUBLISHED')}
 									</span>
-									<span className="bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 px-4 py-2 rounded-full font-semibold border border-green-200 dark:border-green-700/50 text-green-700 dark:text-green-300 group-hover:scale-105 transition-transform duration-300">
+									<span className="bg-linear-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 px-4 py-2 rounded-full font-semibold border border-green-200 dark:border-green-700/50 text-green-700 dark:text-green-300 group-hover:scale-105 transition-transform duration-300">
 										{meta.updated_at
 											? new Date(meta.updated_at).toLocaleDateString('en-US', {
 												year: 'numeric',
@@ -307,7 +309,7 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 						{meta.promo_code && (
 							<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
 								<div className="flex items-center gap-4 mb-6">
-									<div className="p-3 bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-xl">
+									<div className="p-3 bg-linear-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-xl">
 										<svg
 											className="w-6 h-6 text-green-600 dark:text-green-400"
 											fill="none"
@@ -350,7 +352,7 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 							<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
 								<div className="flex items-center justify-between mb-6">
 									<div className="flex items-center gap-4">
-										<div className="p-3 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl">
+										<div className="p-3 bg-linear-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl">
 											<svg
 												className="w-6 h-6 text-purple-600 dark:text-purple-400"
 												fill="none"
@@ -372,17 +374,17 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 											{t('common.CATEGORY')}
 										</h2>
 									</div>
-									<span className="text-xs bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full font-semibold border border-purple-200 dark:border-purple-700/50">
+									<span className="text-xs bg-linear-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full font-semibold border border-purple-200 dark:border-purple-700/50">
 										1 {t('common.ITEM')}
 									</span>
 								</div>
 								<div className="flex flex-wrap gap-2">
 									<a
 										href={`/categories/${slugify(categoryName)}`}
-										className="group relative px-5 py-3 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 dark:hover:from-purple-900/30 dark:hover:to-pink-900/30 transition-all duration-300 rounded-xl text-sm font-semibold flex items-center border border-purple-200/50 dark:border-purple-700/50 hover:border-purple-300 dark:hover:border-purple-600 transform hover:scale-105 overflow-hidden"
+										className="group relative px-5 py-3 bg-linear-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 dark:hover:from-purple-900/30 dark:hover:to-pink-900/30 transition-all duration-300 rounded-xl text-sm font-semibold flex items-center border border-purple-200/50 dark:border-purple-700/50 hover:border-purple-300 dark:hover:border-purple-600 transform hover:scale-105 overflow-hidden"
 									>
-										<div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-200/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-										<span className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mr-3 group-hover:scale-125 transition-transform duration-300 relative z-10" />
+										<div className="absolute inset-0 bg-linear-to-r from-transparent via-purple-200/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+										<span className="w-3 h-3 bg-linear-to-r from-purple-500 to-pink-500 rounded-full mr-3 group-hover:scale-125 transition-transform duration-300 relative z-10" />
 										<span className="text-purple-700 dark:text-purple-300 relative z-10">
 											{toTitleCase(categoryName)}
 										</span>
@@ -396,7 +398,7 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 							<div className="bg-white/95 dark:bg-gray-900/95 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
 								<div className="flex items-center justify-between mb-6">
 									<div className="flex items-center gap-4">
-										<div className="p-3 bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900/30 dark:to-blue-900/30 rounded-xl">
+										<div className="p-3 bg-linear-to-br from-cyan-100 to-blue-100 dark:from-cyan-900/30 dark:to-blue-900/30 rounded-xl">
 											<svg
 												className="w-6 h-6 text-cyan-600 dark:text-cyan-400"
 												fill="none"
@@ -416,7 +418,7 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 											{t('listing.TAGS')}
 										</h2>
 									</div>
-									<span className="text-xs bg-gradient-to-r from-cyan-100 to-blue-100 dark:from-cyan-900/30 dark:to-blue-900/30 text-cyan-700 dark:text-cyan-300 px-3 py-1 rounded-full font-semibold border border-cyan-200 dark:border-cyan-700/50">
+									<span className="text-xs bg-linear-to-r from-cyan-100 to-blue-100 dark:from-cyan-900/30 dark:to-blue-900/30 text-cyan-700 dark:text-cyan-300 px-3 py-1 rounded-full font-semibold border border-cyan-200 dark:border-cyan-700/50">
 										{tagNames.length} {tagNames.length === 1 ? t('common.ITEM') : t('common.ITEMS')}
 									</span>
 								</div>
@@ -425,9 +427,9 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 										<a
 											key={index}
 											href={`/tags/${tag}`}
-											className="group relative px-4 py-2 bg-gradient-to-r from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100 dark:from-cyan-900/20 dark:to-blue-900/20 dark:hover:from-cyan-900/30 dark:hover:to-blue-900/30 transition-all duration-300 rounded-lg text-sm font-semibold flex items-center border border-cyan-200/50 dark:border-cyan-700/50 hover:border-cyan-300 dark:hover:border-cyan-600 transform hover:scale-105 overflow-hidden"
+											className="group relative px-4 py-2 bg-linear-to-r from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100 dark:from-cyan-900/20 dark:to-blue-900/20 dark:hover:from-cyan-900/30 dark:hover:to-blue-900/30 transition-all duration-300 rounded-lg text-sm font-semibold flex items-center border border-cyan-200/50 dark:border-cyan-700/50 hover:border-cyan-300 dark:hover:border-cyan-600 transform hover:scale-105 overflow-hidden"
 										>
-											<div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-200/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+											<div className="absolute inset-0 bg-linear-to-r from-transparent via-cyan-200/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
 											<span className="mr-2 text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform duration-300 relative z-10">
 												#
 											</span>
@@ -451,5 +453,13 @@ export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailPr
 				</div>
 			</div>
 		</div>
+	);
+}
+
+export function ItemDetail({ meta, renderedContent, categoryName }: ItemDetailProps) {
+	return (
+		<Suspense fallback={<ItemDetailSkeleton />}>
+			<ItemDetailContent meta={meta} renderedContent={renderedContent} categoryName={categoryName} />
+		</Suspense>
 	);
 }

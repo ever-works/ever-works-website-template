@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import './[locale]/globals.css';
+import './[locale]/globals.scss';
 import { LayoutProvider, ThemeProvider } from '@/components/providers';
 import { siteConfig } from '@/lib/config';
 import { initializeBackgroundJobs } from '@/lib/background-jobs/initialize-jobs';

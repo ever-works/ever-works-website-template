@@ -1,5 +1,6 @@
 import { Editor, EditorContent as TiptapEditorContent } from '@tiptap/react';
-import { DetailedHTMLProps, HTMLAttributes } from 'react';
+import { CSSProperties } from 'react';
+import { cn } from '@/lib/editor/utils';
 
 
 interface EditorContentProps {
@@ -17,7 +18,7 @@ interface EditorContentProps {
 	onFocus?: (event: React.FocusEvent<HTMLDivElement>) => void;
 	onBlur?: (event: React.FocusEvent<HTMLDivElement>) => void;
 	toolbar?: React.ReactNode;
-	style?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+	style?: CSSProperties;
 }
 /**
  * Editor content component
@@ -36,11 +37,19 @@ interface EditorContentProps {
  * @param props.onBlur - On blur event
  * @returns Editor content component
  */
-export function EditorContent({ ...props }: EditorContentProps) {
+export function EditorContent({ style, className, ...props }: EditorContentProps) {
 	return (
-		<div {...props.style}>
+		<div style={{ wordWrap: 'break-word', overflowWrap: 'break-word', ...style }}>
 			{props.toolbar && props.toolbar}
-			<TiptapEditorContent {...props}  />
+			<TiptapEditorContent 
+				{...props} 
+				className={cn(
+					className,
+					'[&_.ProseMirror]:break-words',
+					'[&_.ProseMirror]:whitespace-pre-wrap',
+					'[&_.ProseMirror]:overflow-wrap-anywhere'
+				)}
+			/>
 		</div>
 	);
 }

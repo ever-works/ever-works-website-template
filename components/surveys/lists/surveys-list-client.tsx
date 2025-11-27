@@ -67,7 +67,7 @@ export function SurveysListClient({
 	}
 
 	return (
-		<div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+		<div className="bg-white dark:bg-gray-800 rounded-lg shadow-xs overflow-hidden">
 			<div className="overflow-x-auto">
 				<table className="w-full">
 					<thead className="bg-gray-50 dark:bg-gray-900">
@@ -109,13 +109,13 @@ export function SurveysListClient({
 								</td>
 								{showTypeColumn && (
 									<td className="px-6 py-4">
-										<span className={`px-2 py-1 rounded text-xs font-medium ${getTypeColor(survey.type)}`}>
+										<span className={`px-2 py-1 rounded-sm text-xs font-medium ${getTypeColor(survey.type)}`}>
 											{formatSurveyTypeLabel(survey.type)}
 										</span>
 									</td>
 								)}
 								<td className="px-6 py-4">
-									<span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(survey.status)}`}>
+									<span className={`px-2 py-1 rounded-sm text-xs font-medium ${getStatusColor(survey.status)}`}>
 										{formatSurveyStatusLabel(survey.status)}
 									</span>
 								</td>
@@ -135,7 +135,7 @@ export function SurveysListClient({
 										{getResponsesLink && (
 											<Link
 												href={getResponsesLink(survey)}
-											className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
+											className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-sm transition-colors"
 											title={t('VIEW_RESPONSES')}
 										>
 											<FileText className="w-4 h-4" />
@@ -144,7 +144,7 @@ export function SurveysListClient({
 									{getPreviewLink && (
 										<Link
 											href={getPreviewLink(survey)}
-											className="p-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded transition-colors"
+											className="p-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-sm transition-colors"
 											title={t('PREVIEW')}
 										>
 											<Eye className="w-4 h-4" />
@@ -153,7 +153,7 @@ export function SurveysListClient({
 									<button
 										type="button"
 										onClick={() => handleCopyLink(survey)}
-										className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+										className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm transition-colors"
 										title={t('COPY_PUBLIC_LINK')}
 									>
 											<Copy className="w-4 h-4" />

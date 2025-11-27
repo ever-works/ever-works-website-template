@@ -50,9 +50,9 @@ export function FeaturedItemsSection({
             {Array.from({ length: limit }).map((_, i) => (
               <Card key={i} className="animate-pulse">
                 <CardContent className="p-6">
-                  <div className="h-4 bg-gray-200 rounded mb-4"></div>
-                  <div className="h-3 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                  <div className="h-4 bg-gray-200 rounded-sm mb-4"></div>
+                  <div className="h-3 bg-gray-200 rounded-sm mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded-sm w-2/3"></div>
                 </CardContent>
               </Card>
             ))}
@@ -146,7 +146,7 @@ function FeaturedItemCard({ item, variant, index }: FeaturedItemCardProps) {
                   className="w-12 h-12 mx-auto rounded-lg object-cover"
                 />
               ) : (
-                <div className="w-12 h-12 mx-auto bg-gradient-to-br from-yellow-100 to-orange-100 dark:from-yellow-900 dark:to-orange-900 rounded-lg flex items-center justify-center">
+                <div className="w-12 h-12 mx-auto bg-linear-to-br from-yellow-100 to-orange-100 dark:from-yellow-900 dark:to-orange-900 rounded-lg flex items-center justify-center">
                   <Star className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
                 </div>
               )}
@@ -169,7 +169,7 @@ function FeaturedItemCard({ item, variant, index }: FeaturedItemCardProps) {
   if (variant === 'hero') {
     return (
       <Link href={`/items/${item.itemSlug}`}>
-        <Card className="group hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border-2 border-yellow-200 dark:border-yellow-800 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20">
+        <Card className="group hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border-2 border-yellow-200 dark:border-yellow-800 bg-linear-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20">
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
@@ -182,7 +182,7 @@ function FeaturedItemCard({ item, variant, index }: FeaturedItemCardProps) {
                     className="w-16 h-16 rounded-xl object-cover"
                   />
                 ) : (
-                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-100 to-orange-100 dark:from-yellow-900 dark:to-orange-900 rounded-xl flex items-center justify-center">
+                  <div className="w-16 h-16 bg-linear-to-br from-yellow-100 to-orange-100 dark:from-yellow-900 dark:to-orange-900 rounded-xl flex items-center justify-center">
                     <Star className="w-8 h-8 text-yellow-600 dark:text-yellow-400" />
                   </div>
                 )}
@@ -245,7 +245,7 @@ function FeaturedItemCard({ item, variant, index }: FeaturedItemCardProps) {
                   className="w-12 h-12 rounded-lg object-cover"
                 />
               ) : (
-                <div className="w-12 h-12 bg-gradient-to-br from-yellow-100 to-orange-100 dark:from-yellow-900 dark:to-orange-900 rounded-lg flex items-center justify-center">
+                <div className="w-12 h-12 bg-linear-to-br from-yellow-100 to-orange-100 dark:from-yellow-900 dark:to-orange-900 rounded-lg flex items-center justify-center">
                   <Star className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
                 </div>
               )}

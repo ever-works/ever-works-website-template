@@ -16,7 +16,7 @@ export function Tag({ name }: { name: string }) {
         size="sm"
         variant="flat"
         color={isActive ? "primary" : "secondary"}
-        className="px-2 py-1 text-xs font-medium gap-1 inline-flex items-center cursor-pointer hover:shadow-sm transition-all dark:text-default-200"
+        className="px-2 py-1 text-xs font-medium gap-1 inline-flex items-center cursor-pointer hover:shadow-xs transition-all dark:text-default-200"
         startContent={<FiTag className="w-3 h-3" />}
       >
         {name}

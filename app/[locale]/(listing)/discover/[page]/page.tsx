@@ -1,8 +1,6 @@
 import { getCachedItems } from "@/lib/content";
 import { paginateMeta } from "@/lib/paginate";
 import Listing from "../../listing";
-import { Suspense } from "react";
-import { ListingSkeleton } from "@/components/ui/skeleton";
 
 // Disable static generation to prevent content loading errors during build
 export const dynamic = 'force-dynamic';
@@ -37,7 +35,6 @@ export default async function DiscoverListing({
   const { items, categories, total, tags } = await getCachedItems({ lang: locale });
 
   return (
-    <Suspense fallback={<ListingSkeleton />}>
       <Listing
         tags={tags}
         categories={categories}
@@ -47,6 +44,5 @@ export default async function DiscoverListing({
         total={total}
         basePath="/discover"
       />
-    </Suspense>
   );
 }

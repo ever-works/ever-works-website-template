@@ -214,7 +214,25 @@ export class ServerClient {
       const response = await fetchWithTimeout(url, mergedOptions);
 
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        // Try to extract error details from response body
+        let errorBody: any = null;
+        try {
+          const contentType = response.headers.get('content-type');
+          if (contentType?.includes('application/json')) {
+            errorBody = await response.json();
+          } else {
+            errorBody = await response.text();
+          }
+        } catch {
+          // Ignore parsing errors, we'll just use status
+        }
+
+        const errorMessage = errorBody?.error || errorBody?.message || response.statusText || 'Request failed';
+        const error = new Error(`HTTP ${response.status}: ${errorMessage}`);
+        (error as any).status = response.status;
+        (error as any).statusText = response.statusText;
+        (error as any).responseBody = errorBody;
+        throw error;
       }
 
       const contentType = response.headers.get('content-type');
@@ -236,11 +254,38 @@ export class ServerClient {
         data,
       };
     } catch (error) {
-      logger.error(`API request failed for ${url}`, { 
-        url, 
-        error: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined
-      });
+      // Capture comprehensive error information
+      const errorDetails: Record<string, any> = {
+        url,
+        errorType: error instanceof Error ? error.constructor.name : typeof error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      };
+
+      // Add HTTP status information if available
+      if (error instanceof Error && 'status' in error) {
+        errorDetails.status = (error as any).status;
+        errorDetails.statusText = (error as any).statusText;
+        if ((error as any).responseBody) {
+          errorDetails.responseBody = (error as any).responseBody;
+        }
+      }
+
+      // Add stack trace if available
+      if (error instanceof Error && error.stack) {
+        errorDetails.stack = error.stack;
+      }
+
+      // Add error code if available (e.g., ETIMEDOUT, ECONNREFUSED)
+      if (error instanceof Error && 'code' in error) {
+        errorDetails.code = (error as any).code;
+      }
+
+      // Add cause if available
+      if (error instanceof Error && error.cause) {
+        errorDetails.cause = error.cause instanceof Error ? error.cause.message : String(error.cause);
+      }
+
+      logger.error(`API request failed for ${url}`, errorDetails);
 
       return {
         success: false,

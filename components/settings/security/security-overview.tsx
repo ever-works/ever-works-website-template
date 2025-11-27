@@ -31,7 +31,7 @@ function SecurityMetric({ icon, title, value, status, description }: SecurityMet
   return (
     <div className={cn("p-4 rounded-lg border", statusBgColors[status])}>
       <div className="flex items-start gap-3">
-        <div className={cn("flex-shrink-0", statusColors[status])}>
+        <div className={cn("shrink-0", statusColors[status])}>
           {icon}
         </div>
         <div className="flex-1 min-w-0">
@@ -67,7 +67,7 @@ function SecurityOverviewSkeleton() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="p-4 rounded-lg border">
             <div className="flex items-start gap-3">
-              <Skeleton className="w-5 h-5 rounded" />
+              <Skeleton className="w-5 h-5 rounded-sm" />
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-between">
                   <Skeleton className="h-4 w-24" />

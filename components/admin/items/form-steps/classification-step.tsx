@@ -173,7 +173,7 @@ export function ClassificationStep({
               onKeyDown={(e) => handleKeyDown(e, 'category', newCategory)}
               onBlur={() => handleBlur('category')}
               placeholder={t('FIELDS.CATEGORY.PLACEHOLDER')}
-              className={`flex-1 px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              className={`flex-1 px-3 py-2 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                 errors.category
                   ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
                   : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
@@ -253,7 +253,7 @@ export function ClassificationStep({
               onKeyDown={(e) => handleKeyDown(e, 'tag', newTag)}
               onBlur={() => handleBlur('tags')}
               placeholder={t('FIELDS.TAGS.PLACEHOLDER')}
-              className={`flex-1 px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              className={`flex-1 px-3 py-2 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                 errors.tags
                   ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
                   : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'

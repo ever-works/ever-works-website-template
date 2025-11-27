@@ -8,7 +8,7 @@ export function RelatedTags({ tags }: RelatedTagsProps) {
   if (tags.length === 0) return null;
 
   return (
-    <div className="bg-dark--theme-50 dark:bg-dark--theme-800 rounded-xl p-6 sm:p-8 border border-dark--theme-100 dark:border-dark--theme-700 transition-all duration-300 hover:shadow-md hover:border-primary-100 dark:hover:border-primary-900/50 backdrop-blur-sm dark:pulse-on-hover dark:transition-smooth dark:depth-effect dark:fade-up">
+    <div className="bg-dark--theme-50 dark:bg-dark--theme-800 rounded-xl p-6 sm:p-8 border border-dark--theme-100 dark:border-dark--theme-700 transition-all duration-300 hover:shadow-md hover:border-primary-100 dark:hover:border-primary-900/50 backdrop-blur-xs dark:pulse-on-hover dark:transition-smooth dark:depth-effect dark:fade-up">
       <h3 className="text-lg font-semibold text-dark--theme-900 dark:text-dark--theme-200 mb-4 flex items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"

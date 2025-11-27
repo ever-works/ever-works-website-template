@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils"
 function Skeleton({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: Readonly<React.HTMLAttributes<HTMLDivElement>>) {
   return (
     <HeroSkeleton
-      className={cn("animate-pulse rounded-md bg-primary/10", className)}
+      className={cn("animate-pulse rounded-md bg-primary/10 max-w-7xl w-full mx-auto py-3", className)}
       {...props}
     />
   )
@@ -19,9 +19,9 @@ interface TableSkeletonProps {
   className?: string;
 }
 
-function TableSkeleton({ rows = 5, columns = 6, className }: TableSkeletonProps) {
+function TableSkeleton({ rows = 5, columns = 6, className }: Readonly<TableSkeletonProps>) {
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn("w-full max-w-7xl mx-auto w-full", className)}>
       {/* Header skeleton */}
       <div className="flex items-center space-x-4 p-4 border-b border-gray-200 dark:border-gray-700">
         {Array.from({ length: columns }).map((_, index) => (
@@ -62,7 +62,7 @@ interface CardSkeletonProps {
 
 function CardSkeleton({ className }: CardSkeletonProps) {
   return (
-    <div className={cn("bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6", className)}>
+    <div className={cn("bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700 p-6", className)}>
       <div className="space-y-4">
         <Skeleton className="h-6 w-3/4" />
         <Skeleton className="h-4 w-full" />
@@ -85,7 +85,7 @@ function GridSkeleton({
   className?: string;
 }) {
   return (
-    <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4", className)}>
+    <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-7xl mx-auto w-full pt-3", className)}>
       {Array.from({ length: count }).map((_, i) => (
         <CardSkeleton key={i} />
       ))}
@@ -96,7 +96,7 @@ function GridSkeleton({
 // Skeleton for item detail page
 function ItemDetailSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn("space-y-6 p-6", className)}>
+    <div className={cn("space-y-6 p-6 container max-w-7xl w-full mx-auto pt-3", className)}>
       {/* Breadcrumb */}
       <div className="flex gap-2">
         <Skeleton className="h-4 w-16" />
@@ -141,7 +141,7 @@ function ItemDetailSkeleton({ className }: { className?: string }) {
 // Skeleton for listing page content
 function ListingSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn("space-y-6 max-w-7xl mx-auto w-full pt-3", className)}>
       {/* Header with search and filters */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
         <Skeleton className="h-10 w-full md:w-96" />

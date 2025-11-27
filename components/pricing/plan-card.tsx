@@ -4,8 +4,9 @@ import { ReactNode, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ToggleGroup } from "@/components/ui/toggle-group";
 import { Check, X } from "lucide-react";
-import { PaymentPlan } from "@/lib/constants";
+import { PaymentPlan, PaymentFlow } from "@/lib/constants";
 
 export type PlanFeature = {
   readonly included: boolean;
@@ -22,13 +23,16 @@ interface PlanCardProps {
   readonly isSelected: boolean;
   readonly onSelect?: (plan: PaymentPlan) => void;
   readonly actionText: string;
-  readonly actionVariant?: "default" | "outline";
+  readonly actionVariant?: "default" | "outline-solid";
   readonly actionHref?: string;
   readonly children?: ReactNode;
   readonly isButton?: boolean;
   readonly onClick?: () => void;
   readonly isLoading?: boolean;
   readonly className?: string;
+  readonly selectedFlow?: PaymentFlow;
+  readonly onFlowChange?: (flow: PaymentFlow) => void;
+  readonly onOpenModal?: () => void;
 }
 
 // Constants for modern design based on reference image
@@ -38,11 +42,16 @@ const PLAN_TYPES = {
   PREMIUM: 'PREMIUM'
 } as const;
 
+const PAYMENT_FLOW_OPTIONS = [
+  { value: PaymentFlow.PAY_AT_START, label: "Pay Now" },
+  { value: PaymentFlow.PAY_AT_END, label: "Pay Later" },
+];
+
 const getButtonStyles = (title: string, isPopular: boolean) => {
   const upperTitle = title.toUpperCase();
 
   if (upperTitle === PLAN_TYPES.STANDARD || isPopular) {
-    return "bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 hover:from-theme-primary-600 hover:to-theme-primary-500 text-white border-0 shadow-lg h-12 text-sm font-medium rounded-lg";
+    return "bg-linear-to-r from-theme-primary-500 to-theme-primary-600 hover:from-theme-primary-600 hover:to-theme-primary-500 text-white border-0 shadow-lg h-12 text-sm font-medium rounded-lg";
   }
 
   if (upperTitle === PLAN_TYPES.PREMIUM) {
@@ -99,13 +108,17 @@ export function PlanCard({
   isLoading = false,
   onClick,
   className,
+  selectedFlow = PaymentFlow.PAY_AT_END,
+  onFlowChange,
 }: PlanCardProps) {
   const router = useRouter();
+  
+  const isPaidPlan = title.toUpperCase() === PLAN_TYPES.STANDARD || title.toUpperCase() === PLAN_TYPES.PREMIUM;
 
   const cardStyles = useMemo(() => cn(
     "relative flex flex-col",
     "w-full rounded-xl border",
-    "backdrop-blur-sm transition-all duration-300 ease-out",
+    "backdrop-blur-xs transition-all duration-300 ease-out",
     "hover:shadow-xl dark:hover:shadow-2xl hover:-translate-y-1",
     (title.toUpperCase() === 'STANDARD' || isPopular) ? "mt-6" : "mt-2",
 
@@ -141,10 +154,36 @@ export function PlanCard({
         </div>
       )}
 
-      <header className="flex flex-col items-start text-left px-6 pt-6 pb-4 flex-shrink-0">
-        <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-          {title}
-        </h3>
+      <header className="flex flex-col items-start text-left px-6 pt-6 pb-4 shrink-0">
+      <div className="flex items-center justify-between w-full mb-4 gap-4">
+          <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
+            {title}
+          </h3>
+          {isPaidPlan && onFlowChange && (
+            <div className="flex items-center gap-2 flex-shrink-0 justify-center">
+              <ToggleGroup
+                options={PAYMENT_FLOW_OPTIONS}
+                value={selectedFlow}
+                onValueChange={(value) => onFlowChange(value as PaymentFlow)}
+                size="sm"
+                variant="modern"
+                className="flex-shrink-0 justify-center h-10"
+              />
+              {/* {onOpenModal && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenModal();
+                  }}
+                  className="w-5 h-5 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                  aria-label="Learn more about payment options"
+                >
+                  <Info className="w-4 h-4" />
+                </button>
+              )} */}
+            </div>
+          )}
+        </div>
         <div className="flex justify-center items-baseline gap-1 mb-2">
           <span className={cn(
             "text-4xl font-bold leading-none",
@@ -173,7 +212,7 @@ export function PlanCard({
               key={`feature-${index}`}
               className="flex items-start gap-3 group"
             >
-              <div className="flex-shrink-0 mt-0.5">
+              <div className="shrink-0 mt-0.5">
                 {feature.included ? (
                   <Check className="w-4 h-4 text-green-500 dark:text-green-400 stroke-[2.5]" />
                 ) : (
@@ -198,7 +237,7 @@ export function PlanCard({
       </section>
 
       {/* Action Button Section - Style exactly like reference image */}
-      <footer className="flex-shrink-0 mt-auto px-6 pb-6">
+      <footer className="shrink-0 mt-auto px-6 pb-6">
         <Button
           size="default"
           disabled={isLoading}

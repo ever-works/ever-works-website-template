@@ -174,9 +174,9 @@ export default function NewPasswordPage() {
 
                 {/* Key */}
                 <div className="absolute bottom-8 right-8 w-16 h-6 bg-blue-500 rounded-full">
-                  <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-blue-500 rounded-sm"></div>
-                  <div className="absolute right-1 top-1 w-2 h-1 bg-white rounded-sm"></div>
-                  <div className="absolute right-1 bottom-1 w-2 h-1 bg-white rounded-sm"></div>
+                  <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-blue-500 rounded-xs"></div>
+                  <div className="absolute right-1 top-1 w-2 h-1 bg-white rounded-xs"></div>
+                  <div className="absolute right-1 bottom-1 w-2 h-1 bg-white rounded-xs"></div>
                 </div>
 
                 {/* Security indicators */}
@@ -190,8 +190,8 @@ export default function NewPasswordPage() {
               </div>
 
               {/* Background circles */}
-              <div className="absolute -top-8 -left-8 w-24 h-24 bg-gray-400/20 rounded-full blur-sm"></div>
-              <div className="absolute -bottom-6 -right-6 w-20 h-20 bg-gray-500/15 rounded-full blur-sm"></div>
+              <div className="absolute -top-8 -left-8 w-24 h-24 bg-gray-400/20 rounded-full blur-xs"></div>
+              <div className="absolute -bottom-6 -right-6 w-20 h-20 bg-gray-500/15 rounded-full blur-xs"></div>
             </div>
           </div>
 
@@ -287,7 +287,7 @@ export default function NewPasswordPage() {
                   </p>
                 </div>
 
-                <div className="p-4 bg-red-900/20 border border-red-700/50 rounded-xl backdrop-blur-sm">
+                <div className="p-4 bg-red-900/20 border border-red-700/50 rounded-xl backdrop-blur-xs">
                   <p className="text-red-300 text-sm">
                     {error || t("TOKEN_INVALID")}
                   </p>
@@ -331,7 +331,7 @@ export default function NewPasswordPage() {
                   </p>
                 </div>
 
-                <div className="p-4 bg-green-900/20 border border-green-700/50 rounded-xl backdrop-blur-sm">
+                <div className="p-4 bg-green-900/20 border border-green-700/50 rounded-xl backdrop-blur-xs">
                   <p className="text-green-300 text-sm">
                     {t("ACCOUNT_SECURE_MESSAGE")}
                   </p>
@@ -384,7 +384,7 @@ export default function NewPasswordPage() {
                         placeholder={t("ENTER_NEW_PASSWORD")}
                         name="newPassword"
                         required
-                        className="w-full h-14 bg-gray-800/50 border border-gray-600/50 rounded-xl pl-12 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:bg-gray-800/70 transition-all duration-200"
+                        className="w-full h-14 bg-gray-800/50 border border-gray-600/50 rounded-xl pl-12 pr-12 text-white placeholder-gray-400 focus:outline-hidden focus:border-blue-500 focus:bg-gray-800/70 transition-all duration-200"
                       />
                       <button
                         type="button"
@@ -489,7 +489,7 @@ export default function NewPasswordPage() {
                         placeholder={t("CONFIRM_NEW_PASSWORD")}
                         name="confirmPassword"
                         required
-                        className="w-full h-14 bg-gray-800/50 border border-gray-600/50 rounded-xl pl-12 pr-4 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:bg-gray-800/70 transition-all duration-200"
+                        className="w-full h-14 bg-gray-800/50 border border-gray-600/50 rounded-xl pl-12 pr-4 text-white placeholder-gray-400 focus:outline-hidden focus:border-blue-500 focus:bg-gray-800/70 transition-all duration-200"
                       />
                     </div>
                     {confirmPassword && password !== confirmPassword && (
@@ -499,7 +499,7 @@ export default function NewPasswordPage() {
 
                   {/* Error message */}
                   {error && (
-                    <div className="p-4 bg-red-900/20 border border-red-700/50 rounded-xl backdrop-blur-sm">
+                    <div className="p-4 bg-red-900/20 border border-red-700/50 rounded-xl backdrop-blur-xs">
                       <p className="text-red-300 text-sm">{error}</p>
                     </div>
                   )}
@@ -535,14 +535,14 @@ export default function NewPasswordPage() {
 
       {/* Bottom left avatar - matching the forgot password style */}
       <div className="absolute bottom-6 left-6">
-        <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center shadow-lg">
+        <div className="w-12 h-12 bg-linear-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center shadow-lg">
           <span className="text-white font-bold text-lg">N</span>
         </div>
       </div>
 
       {/* Bottom right avatar - matching the forgot password style */}
       <div className="absolute bottom-6 right-6">
-        <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
+        <div className="w-12 h-12 bg-linear-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
           <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
           </div>

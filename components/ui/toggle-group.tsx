@@ -54,21 +54,21 @@ export function ToggleGroup({
       button: 'rounded-md',
       activeButton: 'text-gray-900 dark:text-white',
       inactiveButton: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white',
-      slider: 'bg-white dark:bg-gray-700 rounded-md shadow-sm border border-gray-200/50 dark:border-gray-600/50'
+      slider: 'bg-white dark:bg-gray-700 rounded-md shadow-xs border border-gray-200/50 dark:border-gray-600/50'
     },
     modern: {
-      container: 'bg-slate-100 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm backdrop-blur-sm',
+      container: 'bg-slate-100 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-xs backdrop-blur-xs',
       button: 'rounded-lg',
-      activeButton: 'text-slate-900 dark:text-white shadow-sm',
+      activeButton: 'text-slate-900 dark:text-white shadow-xs',
       inactiveButton: 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700/30',
-      slider: 'bg-white dark:bg-slate-700 rounded-lg shadow-md border border-slate-200/50 dark:border-slate-600/50 backdrop-blur-sm'
+      slider: 'bg-white dark:bg-slate-700 rounded-lg shadow-md border border-slate-200/50 dark:border-slate-600/50 backdrop-blur-xs'
     },
     pills: {
       container: 'bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700/30 shadow-inner',
       button: 'rounded-xl',
       activeButton: 'text-white shadow-lg',
       inactiveButton: 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50',
-      slider: 'bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg'
+      slider: 'bg-linear-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg'
     }
   };
 
@@ -83,7 +83,7 @@ export function ToggleGroup({
           onClick={() => !option.disabled && onValueChange(option.value)}
           disabled={option.disabled}
           className={cn(
-            'relative font-semibold transition-all duration-300 z-10 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed',
+            'relative font-semibold transition-all h-10 rounded-lg duration-300 z-10 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed',
             currentVariant.button,
             currentSize.button,
             value === option.value
@@ -93,14 +93,14 @@ export function ToggleGroup({
           style={{ minWidth: `${100 / options.length}%` }}
         >
           {option.icon && (
-            <span className="flex-shrink-0">
+            <span className="shrink-0">
               {option.icon}
             </span>
           )}
           <span>{option.label}</span>
           {option.badge && (
             <span className={cn(
-              'font-bold bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full shadow-sm',
+              'font-bold bg-linear-to-r from-green-500 to-emerald-500 text-white rounded-full shadow-xs',
               currentSize.badge
             )}>
               {option.badge}
@@ -243,13 +243,13 @@ export function ToggleGroupDemo() {
           </h3>
           <div className="space-y-2 text-sm">
             <p className="text-slate-600 dark:text-slate-400">
-              Billing: <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">{billingInterval}</code>
+              Billing: <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-sm">{billingInterval}</code>
             </p>
             <p className="text-slate-600 dark:text-slate-400">
-              View Mode: <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">{viewMode}</code>
+              View Mode: <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-sm">{viewMode}</code>
             </p>
             <p className="text-slate-600 dark:text-slate-400">
-              Theme: <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">{theme}</code>
+              Theme: <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-sm">{theme}</code>
             </p>
           </div>
         </div>

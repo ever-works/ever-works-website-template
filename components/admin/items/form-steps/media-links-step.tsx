@@ -146,7 +146,7 @@ export function MediaLinksStep({
                 onChange={(e) => handleFieldChange('icon_url', e.target.value)}
                 onBlur={() => handleBlur('icon_url')}
                 placeholder={t('FIELDS.ICON_URL.PLACEHOLDER')}
-                className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                   errors.icon_url
                     ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
                     : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
@@ -165,7 +165,7 @@ export function MediaLinksStep({
                 <img
                   src={previewImage}
                   alt="Icon preview"
-                  className="w-12 h-12 object-contain rounded"
+                  className="w-12 h-12 object-contain rounded-sm"
                   onLoad={handleImageLoad}
                   onError={handleImageError}
                 />
@@ -202,7 +202,7 @@ export function MediaLinksStep({
               onChange={(e) => handleFieldChange('source_url', e.target.value)}
               onBlur={() => handleBlur('source_url')}
               placeholder={t('FIELDS.SOURCE_URL.PLACEHOLDER')}
-              className={`w-full px-3 py-2 pr-10 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              className={`w-full px-3 py-2 pr-10 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                 errors.source_url
                   ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
                   : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'

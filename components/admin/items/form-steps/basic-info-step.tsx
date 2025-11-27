@@ -189,7 +189,7 @@ export function BasicInfoStep({
             onBlur={() => handleBlur('id')}
             placeholder={t('FIELDS.ID.PLACEHOLDER')}
             disabled={mode === 'edit'}
-            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
               errors.id
                 ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
                 : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
@@ -213,7 +213,7 @@ export function BasicInfoStep({
             onChange={(e) => handleFieldChange('name', e.target.value)}
             onBlur={() => handleBlur('name')}
             placeholder={t('FIELDS.NAME.PLACEHOLDER')}
-            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
               errors.name
                 ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
                 : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
@@ -236,7 +236,7 @@ export function BasicInfoStep({
             onChange={(e) => handleFieldChange('slug', e.target.value)}
             onBlur={() => handleBlur('slug')}
             placeholder={t('FIELDS.SLUG.PLACEHOLDER')}
-            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+            className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
               errors.slug
                 ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
                 : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
@@ -261,7 +261,7 @@ export function BasicInfoStep({
           onBlur={() => handleBlur('description')}
           placeholder={t('FIELDS.DESCRIPTION.PLACEHOLDER')}
           rows={4}
-          className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+          className={`w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
             errors.description
               ? 'border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700'
               : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'

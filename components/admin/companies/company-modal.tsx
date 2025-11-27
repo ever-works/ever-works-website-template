@@ -120,7 +120,7 @@ export function CompanyModal({ isOpen, mode, company, isSubmitting, onSubmit, on
 		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
 			<div className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-xl shadow-xl max-h-[calc(100vh-4rem)] overflow-y-auto">
 				{/* Header */}
-				<div className="bg-gradient-to-r from-theme-primary to-theme-accent px-6 py-4 flex items-center justify-between">
+				<div className="bg-linear-to-r from-theme-primary to-theme-accent px-6 py-4 flex items-center justify-between">
 					<div className="flex items-center space-x-3">
 						<div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
 							<Building2 className="w-6 h-6 text-white" />
@@ -247,7 +247,7 @@ export function CompanyModal({ isOpen, mode, company, isSubmitting, onSubmit, on
 						</Button>
 						<Button
 							type="submit"
-							className="bg-gradient-to-r from-theme-primary to-theme-accent text-white"
+							className="bg-linear-to-r from-theme-primary to-theme-accent text-white"
 							isLoading={isSubmitting}
 							isDisabled={isSubmitting}
 						>

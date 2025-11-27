@@ -56,7 +56,7 @@ export function SubmissionsSection({ profile }: SubmissionsSectionProps) {
   return (
     <div className="space-y-6">
       {/* Submissions Overview */}
-      <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
+      <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow-sm p-6">
         <CardHeader className="p-0 mb-2">
           <CardTitle className="text-lg font-bold text-gray-100">My Submissions</CardTitle>
         </CardHeader>
@@ -91,7 +91,7 @@ export function SubmissionsSection({ profile }: SubmissionsSectionProps) {
 
       {/* Submission Stats */}
       {profile.submissions.length > 0 && (
-        <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow p-6">
+        <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow-sm p-6">
           <CardHeader className="p-0 mb-2">
             <CardTitle className="text-lg font-bold text-gray-100">Submission Statistics</CardTitle>
           </CardHeader>
@@ -147,7 +147,7 @@ function SubmissionCard({ submission, getStatusIcon, getStatusColor, formatDate 
   };
   const isEditable = submission.status === "approved";
   return (
-    <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow hover:shadow-md transition-shadow duration-200 p-0">
+    <Card className="border border-gray-600/40 dark:border-gray-300/10 rounded-xl bg-transparent shadow-sm hover:shadow-md transition-shadow duration-200 p-0">
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">

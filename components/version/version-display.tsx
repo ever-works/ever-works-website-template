@@ -68,7 +68,7 @@ const VersionDisplay = memo(function VersionDisplay({
   // Badge variant
   if (variant === "badge") {
     return (
-      <div className={`inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-full text-xs font-medium text-blue-700 dark:text-blue-300 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 ${className}`}>
+      <div className={`inline-flex items-center gap-2 px-3 py-1.5 bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-full text-xs font-medium text-blue-700 dark:text-blue-300 shadow-xs hover:shadow-md transition-all duration-200 hover:scale-105 ${className}`}>
         <GitBranch className="h-3 w-3" />
         <span>v{versionInfo.commit}</span>
         <div className="w-1 h-1 bg-blue-400 dark:bg-blue-500 rounded-full animate-pulse"></div>
@@ -82,7 +82,7 @@ const VersionDisplay = memo(function VersionDisplay({
   // Detailed variant
   if (variant === "detailed") {
     return (
-      <div className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-md transition-all duration-200 ${className}`}>
+      <div className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-xs hover:shadow-md transition-all duration-200 ${className}`}>
         <div className="space-y-3">
           {/* Header */}
           <div className="flex items-center justify-between">
@@ -100,7 +100,7 @@ const VersionDisplay = memo(function VersionDisplay({
           <div className="space-y-2">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <code className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono text-gray-800 dark:text-gray-200 border">
+                <code className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-sm text-xs font-mono text-gray-800 dark:text-gray-200 border">
                   {versionInfo.commit}
                 </code>
                 <span className="text-xs text-gray-500 dark:text-gray-400">•</span>
@@ -116,7 +116,7 @@ const VersionDisplay = memo(function VersionDisplay({
             </div>
 
             {versionInfo.message && (
-              <div className="text-xs text-gray-500 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-700/50 p-2 rounded border-l-2 border-blue-200 dark:border-blue-800">
+              <div className="text-xs text-gray-500 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-700/50 p-2 rounded-sm border-l-2 border-blue-200 dark:border-blue-800">
                 &ldquo;{versionInfo.message.split('\n')[0]}&rdquo;
               </div>
             )}
@@ -137,7 +137,7 @@ const VersionDisplay = memo(function VersionDisplay({
               
               <div className="text-xs text-gray-500 dark:text-gray-400">
                 <span>Repository: </span>
-                <code className="text-xs bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded font-mono">
+                <code className="text-xs bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded-sm font-mono">
                   {dateFormatters.getRepositoryName(versionInfo.repository)}
                 </code>
               </div>

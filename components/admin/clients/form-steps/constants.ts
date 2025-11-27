@@ -1,6 +1,6 @@
 // Input styling classes (DRY - reused across all form fields)
 export const inputBaseClasses =
-  "w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
+  "w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
 
 export const inputErrorClasses =
   "border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700";

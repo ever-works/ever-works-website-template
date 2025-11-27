@@ -60,7 +60,7 @@ export function SurveyDialog({
             title={survey.title}
             subtitle={survey.description}
             isOpen={open}
-            backdrop="blur"
+            backdrop="blur-sm"
             isDismissable={true}
             onClose={handleClose}
             size="2xl"

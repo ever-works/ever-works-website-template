@@ -35,7 +35,7 @@ export function SurveyPreviewClient({ survey, backLink, surveysEnabled }: Survey
 			{!surveysEnabled && (
 				<div className="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 dark:border-yellow-600 p-4 rounded-lg shadow-md">
 					<div className="flex items-start">
-						<div className="flex-shrink-0">
+						<div className="shrink-0">
 							<AlertTriangle className="h-6 w-6 text-yellow-400 dark:text-yellow-500" aria-hidden="true" />
 						</div>
 						<div className="ml-3 flex-1">
@@ -67,7 +67,7 @@ export function SurveyPreviewClient({ survey, backLink, surveysEnabled }: Survey
 				{survey.description && <p className="text-gray-600 dark:text-gray-400">{survey.description}</p>}
 			</div>
 
-		<div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+		<div className="bg-white dark:bg-gray-800 rounded-lg shadow-xs p-6">
 			<SurveyFormNoSSR
 				surveyJson={survey.surveyJson as object}
 				mode="display"

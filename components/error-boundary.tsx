@@ -54,7 +54,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return this.props.fallback || (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 via-white to-orange-50 dark:from-red-950 dark:via-gray-900 dark:to-orange-950">
+        <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-red-50 via-white to-orange-50 dark:from-red-950 dark:via-gray-900 dark:to-orange-950">
           <div className="text-center px-6 py-12 max-w-2xl mx-auto">
             {/* Error Icon */}
             <div className="mb-8 flex justify-center">

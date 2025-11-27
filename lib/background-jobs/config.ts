@@ -6,7 +6,7 @@ import { TriggerDevConfig, SchedulingMode } from './types';
  */
 export function getTriggerDevConfig(): TriggerDevConfig {
   const apiKey = process.env.TRIGGER_DEV_API_KEY;
-  const apiUrl = process.env.TRIGGER_DEV_API_URL;
+  const apiUrl = process.env.TRIGGER_DEV_API_URL || 'https://api.trigger.dev';
   const enabledRaw = process.env.TRIGGER_DEV_ENABLED?.toLowerCase()?.trim();
   const enabled = ['1', 'true', 'yes', 'on'].includes(enabledRaw || '');
   const environment = process.env.TRIGGER_DEV_ENVIRONMENT || 'development';

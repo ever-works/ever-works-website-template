@@ -54,7 +54,7 @@ export function TabNavigation({
 	}));
 
 	return (
-		<div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm my-6">
+		<div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-xs my-6">
 			{/* Desktop Navigation */}
 			<div className="hidden lg:block">
 				<div className="flex items-center justify-between">

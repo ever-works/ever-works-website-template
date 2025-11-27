@@ -41,6 +41,8 @@ export default async function AdminSurveyPreviewPage({ params }: AdminSurveyPrev
 		notFound();
 	}
 
-	return <SurveyPreviewClient survey={survey} backLink="/admin/surveys" surveysEnabled={getSurveysEnabled()} />;
+	const surveysEnabled = getSurveysEnabled();
+
+	return <SurveyPreviewClient survey={survey} backLink="/admin/surveys" surveysEnabled={surveysEnabled} />;
 }
 

@@ -1,7 +1,5 @@
 import { getCachedItems } from "@/lib/content";
 import Listing from "../../(listing)/listing";
-import { Suspense } from "react";
-import { ListingSkeleton } from "@/components/ui/skeleton";
 import { notFound } from "next/navigation";
 import { getTagsEnabled } from "@/lib/utils/settings";
 
@@ -37,17 +35,15 @@ export default async function TagListing({
   const decodedTag = decodeURIComponent(tag);
 
   return (
-    <Suspense fallback={<ListingSkeleton />}>
-      <Listing
-        categories={categories}
-        tags={tags}
-        items={items}
-        total={total}
-        start={start}
-        page={page}
-        basePath={basePath}
-        initialTag={decodedTag}
-      />
-    </Suspense>
+    <Listing
+      categories={categories}
+      tags={tags}
+      items={items}
+      total={total}
+      start={start}
+      page={page}
+      basePath={basePath}
+      initialTag={decodedTag}
+    />
   );
 }

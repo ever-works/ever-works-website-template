@@ -187,7 +187,7 @@ export function ReviewStep({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <span className="text-xs font-medium text-gray-600 dark:text-gray-400">ID:</span>
-                    <p className="text-sm font-mono bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-2 py-1 rounded border border-gray-200 dark:border-gray-600">
+                    <p className="text-sm font-mono bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-2 py-1 rounded-sm border border-gray-200 dark:border-gray-600">
                       {basicInfo.id || t('STEPS.REVIEW.NOT_SET')}
                     </p>
                   </div>
@@ -197,14 +197,14 @@ export function ReviewStep({
                   </div>
                   <div>
                     <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Slug:</span>
-                    <p className="text-sm font-mono bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-2 py-1 rounded border border-gray-200 dark:border-gray-600">
+                    <p className="text-sm font-mono bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-2 py-1 rounded-sm border border-gray-200 dark:border-gray-600">
                       {basicInfo.slug || t('STEPS.REVIEW.NOT_SET')}
                     </p>
                   </div>
                 </div>
                 <div>
                   <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Description:</span>
-                  <p className="text-sm text-gray-900 dark:text-gray-100 mt-1 p-3 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 max-h-20 overflow-y-auto">
+                  <p className="text-sm text-gray-900 dark:text-gray-100 mt-1 p-3 bg-white dark:bg-gray-700 rounded-sm border border-gray-200 dark:border-gray-600 max-h-20 overflow-y-auto">
                     {basicInfo.description || t('STEPS.REVIEW.NOT_SET')}
                   </p>
                 </div>
@@ -227,7 +227,7 @@ export function ReviewStep({
                       <img
                         src={mediaLinks.icon_url}
                         alt={`${basicInfo.name || 'Item'} icon`}
-                        className="w-8 h-8 object-contain rounded"
+                        className="w-8 h-8 object-contain rounded-sm"
                       />
                     ) : (
                       <ImageIcon className="w-4 h-4 text-gray-400" />

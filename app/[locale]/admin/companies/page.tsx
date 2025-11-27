@@ -164,7 +164,7 @@ export default function CompaniesPage() {
 			{!companiesEnabled && (
 				<div className="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 dark:border-yellow-600 p-4 rounded-lg shadow-md">
 					<div className="flex items-start">
-						<div className="flex-shrink-0">
+						<div className="shrink-0">
 							<svg
 								className="h-6 w-6 text-yellow-400 dark:text-yellow-500"
 								xmlns="http://www.w3.org/2000/svg"
@@ -193,7 +193,7 @@ export default function CompaniesPage() {
 							<div className="mt-4">
 								<Link
 									href="/admin/settings"
-									className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-yellow-800 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-900/40 hover:bg-yellow-200 dark:hover:bg-yellow-900/60 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors"
+									className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-yellow-800 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-900/40 hover:bg-yellow-200 dark:hover:bg-yellow-900/60 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors"
 								>
 									{t('WARNING_DISABLED_ACTION')}
 									<svg

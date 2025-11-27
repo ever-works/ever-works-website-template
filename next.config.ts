@@ -59,7 +59,8 @@ const nextConfig: NextConfig = {
   },
 } satisfies NextConfig;
 
-const withNextIntl = createNextIntlPlugin();
+// Next.js 16: Specify the path to the next-intl config file
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 // Apply plugins in the correct order
 const configWithIntl = withNextIntl(nextConfig);

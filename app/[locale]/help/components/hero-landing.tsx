@@ -59,11 +59,11 @@ export function HeroLanding() {
   // Show loading skeleton until mounted
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black">
         <PageContainer className="flex items-center justify-center min-h-screen">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-96 mb-4"></div>
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-64"></div>
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-sm w-96 mb-4"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-sm w-64"></div>
           </div>
         </PageContainer>
       </div>
@@ -71,7 +71,7 @@ export function HeroLanding() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black overflow-hidden">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black overflow-hidden">
       {/* Floating Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-float"></div>
@@ -84,7 +84,7 @@ export function HeroLanding() {
           {/* Left Column - Content */}
           <div className="space-y-8">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-full text-sm font-medium text-slate-700 dark:text-slate-300 transition-all duration-700 opacity-100 translate-y-0">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xs border border-slate-200 dark:border-slate-700 rounded-full text-sm font-medium text-slate-700 dark:text-slate-300 transition-all duration-700 opacity-100 translate-y-0">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
               {t('HERO_BADGE_TEXT')}
         </div>
@@ -93,7 +93,7 @@ export function HeroLanding() {
             <div className="space-y-6 transition-all duration-700 delay-200 opacity-100 translate-y-0">
               <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-slate-900 dark:text-white leading-tight">
                 {t('HERO_MAIN_TITLE')}
-                <span className="block bg-gradient-to-r from-theme-primary-600 via-theme-primary-500 to-theme-primary-400 dark:from-theme-primary-400 dark:via-theme-primary-500 dark:to-theme-primary-600 bg-clip-text text-transparent">
+                <span className="block bg-linear-to-r from-theme-primary-600 via-theme-primary-500 to-theme-primary-400 dark:from-theme-primary-400 dark:via-theme-primary-500 dark:to-theme-primary-600 bg-clip-text text-transparent">
                   {t('HERO_MAIN_TITLE_HIGHLIGHT')}
             </span>
           </h1>
@@ -115,7 +115,7 @@ export function HeroLanding() {
                   }`}
                   onClick={() => setActiveFeature(index)}
                 >
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${feature.gradient} flex items-center justify-center text-white text-xl shadow-lg`}>
+                  <div className={`w-12 h-12 rounded-lg bg-linear-to-r ${feature.gradient} flex items-center justify-center text-white text-xl shadow-lg`}>
                     {feature.icon}
                   </div>
                   <div className="flex-1">
@@ -138,7 +138,7 @@ export function HeroLanding() {
               <Button
                 onClick={handleGetStarted}
                 size="lg"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                className="bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
                 {t('HERO_CTA_PRIMARY')}
               </Button>
@@ -169,7 +169,7 @@ export function HeroLanding() {
           {/* Right Column - Visual Demo */}
           <div className="relative transition-all duration-700 delay-1000 opacity-100 translate-y-0">
             {/* Main Demo Container */}
-            <div className="relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-slate-200 dark:border-slate-700">
+            <div className="relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-xs rounded-2xl p-8 shadow-2xl border border-slate-200 dark:border-slate-700">
                 {/* Browser Header */}
               <div className="flex items-center gap-3 mb-6">
                   <div className="flex gap-2">
@@ -217,15 +217,15 @@ export function HeroLanding() {
                 </div>
 
                 {/* Action Button */}
-                <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 rounded-lg transition-all duration-300">
+                <Button className="w-full bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 rounded-lg transition-all duration-300">
                   {t('HERO_DEMO_CTA')}
                 </Button>
               </div>
             </div>
 
             {/* Floating Elements */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-20 blur-xl animate-pulse"></div>
-            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-r from-orange-500 to-red-500 rounded-full opacity-20 blur-xl animate-pulse delay-1000"></div>
+            <div className="absolute -top-4 -right-4 w-24 h-24 bg-linear-to-r from-blue-500 to-purple-500 rounded-full opacity-20 blur-xl animate-pulse"></div>
+            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-linear-to-r from-orange-500 to-red-500 rounded-full opacity-20 blur-xl animate-pulse delay-1000"></div>
           </div>
         </div>
       </PageContainer>

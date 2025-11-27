@@ -266,7 +266,7 @@ export function CredentialsForm({
         {!isLogin && showPasswordTips && (
           <div id="password-tips" className="mt-3 p-4 bg-theme-primary/5 border border-theme-primary/20 rounded-xl">
             <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0 w-6 h-6 bg-theme-primary/10 rounded-full flex items-center justify-center mt-0.5">
+              <div className="shrink-0 w-6 h-6 bg-theme-primary/10 rounded-full flex items-center justify-center mt-0.5">
                 <Lock className="w-3 h-3 text-theme-primary" />
               </div>
               <div className="flex-1">
@@ -296,7 +296,7 @@ export function CredentialsForm({
       {/* Modern error and success messages */}
       {(state?.error || clientError) && (
         <div className="flex items-start space-x-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <div className="w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center">
               <svg className="w-3 h-3 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -317,7 +317,7 @@ export function CredentialsForm({
       {/* Server-side success message */}
       {state?.success && !clientMode && (
         <div className="flex items-start space-x-3 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <div className="w-6 h-6 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center">
               <svg className="w-3 h-3 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -338,7 +338,7 @@ export function CredentialsForm({
       {/* Client-side success message for admin login */}
       {clientMode && clientSuccess && (
         <div className="flex items-start space-x-3 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <div className="w-6 h-6 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center">
               <svg className="w-3 h-3 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -422,8 +422,8 @@ export function CredentialsForm({
         disabled={clientPending || clientSuccess || pending || isPending || isVerifying || isRecaptchaBlocking}
         type="submit"
         className={cn(
-          "w-full h-12 bg-gradient-to-r from-theme-primary to-theme-accent text-white font-semibold rounded-xl",
-          "hover:from-theme-primary/90 hover:to-theme-accent/90 focus:outline-none",
+          "w-full h-12 bg-linear-to-r from-theme-primary to-theme-accent text-white font-semibold rounded-xl",
+          "hover:from-theme-primary/90 hover:to-theme-accent/90 focus:outline-hidden",
           "focus:ring-4 focus:ring-theme-primary/20 transition-all duration-200",
           "shadow-lg hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed",
           "transform hover:scale-[1.02] active:scale-[0.98]"

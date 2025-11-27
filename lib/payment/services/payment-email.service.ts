@@ -173,8 +173,15 @@ export class PaymentEmailService {
     try {
       this.emailConfig = await createEmailConfig();
       this.emailService = new EmailService(this.emailConfig);
+
+      // Check if email service is actually available
+      if (!this.emailService.isServiceAvailable()) {
+        console.warn('⚠️  Payment email service: Email provider not configured. Payment emails will be disabled.');
+        this.emailService = null;
+      }
     } catch (error) {
-      console.error('❌ Failed to initialize email service:', error);
+      console.warn('⚠️  Payment email service initialization failed:', error instanceof Error ? error.message : 'Unknown error');
+      this.emailService = null;
     }
   }
 
@@ -185,9 +192,9 @@ export class PaymentEmailService {
     if (!this.emailService || !this.emailConfig) {
       await this.initializeEmailService();
     }
-    
+
     if (!this.emailService) {
-      throw new Error('Email service is not available');
+      throw new Error('Email service is not available. Please configure email provider API keys.');
     }
   }
 

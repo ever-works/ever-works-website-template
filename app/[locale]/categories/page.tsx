@@ -1,8 +1,6 @@
 import { getCachedItems } from "@/lib/content";
 import { LOCALES } from "@/lib/constants";
 import ListingCategories from "./listing-categories";
-import { Suspense } from "react";
-import { ListingSkeleton } from "@/components/ui/skeleton";
 import { notFound } from "next/navigation";
 import { getCategoriesEnabled } from "@/lib/utils/settings";
 
@@ -32,16 +30,14 @@ export default async function CategoriesPage({
   const basePath = "/categories";
 
   return (
-    <Suspense fallback={<ListingSkeleton />}>
-      <ListingCategories
-        categories={categories}
-        tags={tags}
-        items={items}
-        total={total}
-        start={start}
-        page={page}
-        basePath={basePath}
-      />
-    </Suspense>
+    <ListingCategories
+      categories={categories}
+      tags={tags}
+      items={items}
+      total={total}
+      start={start}
+      page={page}
+      basePath={basePath}
+    />
   );
 }
