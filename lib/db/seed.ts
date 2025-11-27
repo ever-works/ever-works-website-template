@@ -114,7 +114,7 @@ async function seedCoreRBAC() {
       target: roles.name,
       set: {
         description: sql`excluded.description`,
-        isAdmin: sql`excluded."isAdmin"`
+        isAdmin: sql`excluded."is_admin"`
       }
     });
 
@@ -145,20 +145,45 @@ async function seedUsersAndProfiles(roleAdminId: string, roleClientId: string) {
     return { adminProfileId: '', clientProfileId1: '', clientProfileId2: '', adminUserId: '', clientUserId1: '', clientUserId2: '' };
   }
 
+  // SECURITY: Production environment guard
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  // Get credentials from environment or use defaults (development only)
+  const adminEmail = process.env.SEED_ADMIN_EMAIL || 'admin@example.com';
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+  const defaultPassword = 'Passw0rd123!';
+
+  // SECURITY CHECK: Refuse to use default password in production
+  if (isProduction && !adminPassword) {
+    console.error('[Seed] ERROR: Cannot seed users in production without SEED_ADMIN_PASSWORD');
+    console.error('[Seed] Set SEED_ADMIN_PASSWORD environment variable or disable seeding');
+    throw new Error('SEED_ADMIN_PASSWORD required in production environment');
+  }
+
+  // SECURITY WARNING: Alert if using default credentials
+  if (!isProduction && !adminPassword) {
+    console.warn('[Seed] ⚠️  WARNING: Using default development credentials');
+    console.warn('[Seed] ⚠️  Email: admin@example.com, Password: Passw0rd123!');
+    console.warn('[Seed] ⚠️  DO NOT use these credentials in production!');
+  }
+
+  // Use environment password in production, default in development
+  const passwordToHash = adminPassword || defaultPassword;
+
   // Deterministic user IDs (based on email)
-  const adminUserId = deterministicUuid('user:admin@example.com');
+  const adminUserId = deterministicUuid(`user:${adminEmail}`);
   const clientUserId1 = deterministicUuid('user:client1@example.com');
   const clientUserId2 = deterministicUuid('user:client2@example.com');
 
-  // Users (one credentials admin, one credentials client, one OAuth client)
-  const hashed = await bcrypt.hash('Passw0rd123!', 10);
+  // Hash password
+  const hashed = await bcrypt.hash(passwordToHash, 10);
 
   // UPSERT users
   await db.insert(users)
     .values([
       {
         id: adminUserId,
-        email: 'admin@example.com',
+        email: adminEmail,
         passwordHash: hashed
       },
       {
@@ -174,7 +199,7 @@ async function seedUsersAndProfiles(roleAdminId: string, roleClientId: string) {
     .onConflictDoUpdate({
       target: users.email,
       set: {
-        passwordHash: sql`excluded."passwordHash"`
+        passwordHash: sql`excluded."password_hash"`
       }
     });
 
@@ -183,7 +208,7 @@ async function seedUsersAndProfiles(roleAdminId: string, roleClientId: string) {
     // UPSERT accounts (composite key: userId + provider + providerAccountId)
     await db.insert(accounts)
       .values([
-        { userId: adminUserId, type: 'email', provider: 'credentials', providerAccountId: 'admin@example.com', email: 'admin@example.com', passwordHash: hashed },
+        { userId: adminUserId, type: 'email', provider: 'credentials', providerAccountId: adminEmail, email: adminEmail, passwordHash: hashed },
         { userId: clientUserId1, type: 'email', provider: 'credentials', providerAccountId: 'client1@example.com', email: 'client1@example.com', passwordHash: hashed },
         { userId: clientUserId2, type: 'oauth', provider: 'google', providerAccountId: 'google-oauth-123' }
       ])
@@ -193,13 +218,13 @@ async function seedUsersAndProfiles(roleAdminId: string, roleClientId: string) {
           userId: sql`excluded."userId"`,
           type: sql`excluded.type`,
           email: sql`excluded.email`,
-          passwordHash: sql`excluded."passwordHash"`
+          passwordHash: sql`excluded."password_hash"`
         }
       });
   }
 
   // Client Profiles with deterministic IDs (based on email)
-  const adminProfileId = deterministicUuid('profile:admin@example.com');
+  const adminProfileId = deterministicUuid(`profile:${adminEmail}`);
   const clientProfileId1 = deterministicUuid('profile:client1@example.com');
   const clientProfileId2 = deterministicUuid('profile:client2@example.com');
 
@@ -208,7 +233,7 @@ async function seedUsersAndProfiles(roleAdminId: string, roleClientId: string) {
     await db.execute(sql`
       INSERT INTO client_profiles (id, "userId", email, name)
       VALUES
-        (${adminProfileId}, ${adminUserId}, 'admin@example.com', 'Admin User'),
+        (${adminProfileId}, ${adminUserId}, ${adminEmail}, 'Admin User'),
         (${clientProfileId1}, ${clientUserId1}, 'client1@example.com', 'Client One'),
         (${clientProfileId2}, ${clientUserId2}, 'client2@example.com', 'Client Two')
       ON CONFLICT ("userId")
@@ -286,7 +311,7 @@ async function seedContent(ids: { adminProfileId: string; clientProfileId1: stri
       .onConflictDoUpdate({
         target: [favorites.userId, favorites.itemSlug],
         set: {
-          itemName: sql`excluded."itemName"`
+          itemName: sql`excluded."item_name"`
         }
       });
   }

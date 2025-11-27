@@ -31,7 +31,7 @@ export const users = pgTable("users", {
 
 export const roles = pgTable("roles", {
   id: text("id").primaryKey(),
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
   description: text("description"),
   isAdmin: boolean("is_admin").notNull().default(false),
   status: text("status", { enum: ["active", "inactive"] }).default("active"),
