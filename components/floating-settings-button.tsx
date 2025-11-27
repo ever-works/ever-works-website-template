@@ -7,7 +7,7 @@ import { useSettingsModal } from "@/hooks/use-settings-modal";
 import { useTranslations } from "next-intl";
 
 const BUTTON_CLASSES = cn(
-	"fixed bottom-6 right-6",
+	"fixed bottom-24 right-6",
 	"w-12 h-12",
 	"flex items-center justify-center",
 	"bg-theme-primary hover:bg-theme-primary-600",
@@ -16,7 +16,7 @@ const BUTTON_CLASSES = cn(
 	"shadow-lg hover:shadow-xl",
 	"hover:scale-110",
 	"transition-all duration-300",
-	"z-40",
+	"z-[60]",
 	"cursor-pointer",
 	"group"
 );

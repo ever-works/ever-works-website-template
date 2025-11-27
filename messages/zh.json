@@ -291,6 +291,7 @@
     "SETTINGS": "设置",
     "OPEN_SETTINGS": "打开设置",
     "CLOSE_SETTINGS": "关闭设置",
+    "SETTINGS_PLACEHOLDER": "设置选项将在此处添加",
     "SECURITY": "安全",
     "LEGAL": "法律",
     "HELP": "帮助中心",
