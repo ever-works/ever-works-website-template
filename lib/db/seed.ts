@@ -39,8 +39,20 @@ async function ensureDb() {
   db = dbConnection;
 }
 
-function uuid(): string {
-  return crypto.randomUUID();
+/**
+ * Generate deterministic UUID based on a string key
+ * This ensures the same key always generates the same UUID
+ */
+function deterministicUuid(key: string): string {
+  const hash = crypto.createHash('sha256').update(key).digest('hex');
+  // Format as UUID v4: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+  return [
+    hash.slice(0, 8),
+    hash.slice(8, 12),
+    '4' + hash.slice(13, 16), // Version 4
+    ((parseInt(hash.slice(16, 18), 16) & 0x3f) | 0x80).toString(16) + hash.slice(18, 20),
+    hash.slice(20, 32)
+  ].join('-');
 }
 
 async function tableExists(name: string): Promise<boolean> {
@@ -56,27 +68,6 @@ async function tableExists(name: string): Promise<boolean> {
   return rows.length > 0;
 }
 
-async function wipeData() {
-  // Delete in FK-safe order (children → parents), guard for non-existent tables
-  if (await tableExists('subscriptionHistory')) await db.delete(subscriptionHistory);
-  if (await tableExists('subscriptions')) await db.delete(subscriptions);
-  if (await tableExists('favorites')) await db.delete(favorites);
-  if (await tableExists('activityLogs')) await db.delete(activityLogs);
-  if (await tableExists('comments')) await db.delete(comments);
-  if (await tableExists('authenticators')) await db.delete(authenticators);
-  if (await tableExists('sessions')) await db.delete(sessions);
-  if (await tableExists('verificationTokens')) await db.delete(verificationTokens);
-  if (await tableExists('passwordResetTokens')) await db.delete(passwordResetTokens);
-  if (await tableExists('paymentAccounts')) await db.delete(paymentAccounts);
-  if (await tableExists('paymentProviders')) await db.delete(paymentProviders);
-  if (await tableExists('role_permissions')) await db.delete(rolePermissions);
-  if (await tableExists('user_roles')) await db.delete(userRoles);
-  if (await tableExists('accounts')) await db.delete(accounts);
-  if (await tableExists('client_profiles')) await db.delete(clientProfiles);
-  if (await tableExists('users')) await db.delete(users);
-  if (await tableExists('roles')) await db.delete(roles);
-  if (await tableExists('permissions')) await db.delete(permissions);
-}
 
 async function seedCoreRBAC() {
   const hasPermissions = await tableExists('permissions');
@@ -91,23 +82,40 @@ async function seedCoreRBAC() {
   // Get all available permissions from definitions
   const allPermissions = getAllPermissions();
 
-  // Create permission records with UUIDs
+  // Create permission records with deterministic UUIDs (based on key)
   const permissionRecords = allPermissions.map(permission => ({
-    id: uuid(),
+    id: deterministicUuid(`permission:${permission}`),
     key: permission,
     description: permission.replace(':', ' ').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()
   }));
 
-  await db.insert(permissions).values(permissionRecords);
+  // UPSERT permissions (update if exists, insert if not)
+  await db.insert(permissions)
+    .values(permissionRecords)
+    .onConflictDoUpdate({
+      target: permissions.key,
+      set: {
+        description: sql`excluded.description`
+      }
+    });
 
-  // Roles
-  const roleAdminId = uuid();
-  const roleClientId = uuid();
+  // Roles with deterministic UUIDs (based on name)
+  const roleAdminId = deterministicUuid('role:admin');
+  const roleClientId = deterministicUuid('role:client');
 
-  await db.insert(roles).values([
-    { id: roleAdminId, name: 'admin', description: 'Administrator', isAdmin: true },
-    { id: roleClientId, name: 'client', description: 'Client user', isAdmin: false }
-  ]);
+  // UPSERT roles
+  await db.insert(roles)
+    .values([
+      { id: roleAdminId, name: 'admin', description: 'Administrator', isAdmin: true },
+      { id: roleClientId, name: 'client', description: 'Client user', isAdmin: false }
+    ])
+    .onConflictDoUpdate({
+      target: roles.name,
+      set: {
+        description: sql`excluded.description`,
+        isAdmin: sql`excluded."isAdmin"`
+      }
+    });
 
   // Role-Permissions: Give admin role ALL permissions
   if (hasRolePermissions) {
@@ -116,7 +124,10 @@ async function seedCoreRBAC() {
       permissionId: perm.id
     }));
 
-    await db.insert(rolePermissions).values(adminRolePermissions);
+    // UPSERT role-permissions (composite key)
+    await db.insert(rolePermissions)
+      .values(adminRolePermissions)
+      .onConflictDoNothing(); // Skip if relationship already exists
   }
 
   return { roleAdminId, roleClientId };
@@ -132,61 +143,90 @@ async function seedUsersAndProfiles(roleAdminId: string, roleClientId: string) {
     console.log('Skipping user/profile seed (users table missing)');
     return { adminProfileId: '', clientProfileId1: '', clientProfileId2: '', adminUserId: '', clientUserId1: '', clientUserId2: '' };
   }
-  const adminUserId = uuid();
-  const clientUserId1 = uuid();
-  const clientUserId2 = uuid();
+
+  // Deterministic user IDs (based on email)
+  const adminUserId = deterministicUuid('user:admin@example.com');
+  const clientUserId1 = deterministicUuid('user:client1@example.com');
+  const clientUserId2 = deterministicUuid('user:client2@example.com');
 
   // Users (one credentials admin, one credentials client, one OAuth client)
   const hashed = await bcrypt.hash('Passw0rd123!', 10);
-  await db.insert(users).values([
-    {
-      id: adminUserId,
-      email: 'admin@example.com',
-      passwordHash: hashed
-    },
-    {
-      id: clientUserId1,
-      email: 'client1@example.com',
-      passwordHash: hashed
-    },
-    {
-      id: clientUserId2,
-      email: 'client2@example.com'
-    }
-  ]);
+
+  // UPSERT users
+  await db.insert(users)
+    .values([
+      {
+        id: adminUserId,
+        email: 'admin@example.com',
+        passwordHash: hashed
+      },
+      {
+        id: clientUserId1,
+        email: 'client1@example.com',
+        passwordHash: hashed
+      },
+      {
+        id: clientUserId2,
+        email: 'client2@example.com'
+      }
+    ])
+    .onConflictDoUpdate({
+      target: users.email,
+      set: {
+        passwordHash: sql`excluded."passwordHash"`
+      }
+    });
 
   // Accounts (credentials for admin and client1; oauth for client2)
   if (hasAccounts) {
-    await db.insert(accounts).values([
-      { userId: adminUserId, type: 'email', provider: 'credentials', providerAccountId: 'admin@example.com', email: 'admin@example.com', passwordHash: hashed },
-      { userId: clientUserId1, type: 'email', provider: 'credentials', providerAccountId: 'client1@example.com', email: 'client1@example.com', passwordHash: hashed },
-      { userId: clientUserId2, type: 'oauth', provider: 'google', providerAccountId: 'google-oauth-123' }
-    ]);
+    // UPSERT accounts (composite key: userId + provider + providerAccountId)
+    await db.insert(accounts)
+      .values([
+        { userId: adminUserId, type: 'email', provider: 'credentials', providerAccountId: 'admin@example.com', email: 'admin@example.com', passwordHash: hashed },
+        { userId: clientUserId1, type: 'email', provider: 'credentials', providerAccountId: 'client1@example.com', email: 'client1@example.com', passwordHash: hashed },
+        { userId: clientUserId2, type: 'oauth', provider: 'google', providerAccountId: 'google-oauth-123' }
+      ])
+      .onConflictDoUpdate({
+        target: [accounts.provider, accounts.providerAccountId],
+        set: {
+          userId: sql`excluded."userId"`,
+          type: sql`excluded.type`,
+          email: sql`excluded.email`,
+          passwordHash: sql`excluded."passwordHash"`
+        }
+      });
   }
 
-  // Client Profiles
-  const clientProfileId1 = uuid();
-  const clientProfileId2 = uuid();
-  const adminProfileId = uuid();
+  // Client Profiles with deterministic IDs (based on email)
+  const adminProfileId = deterministicUuid('profile:admin@example.com');
+  const clientProfileId1 = deterministicUuid('profile:client1@example.com');
+  const clientProfileId2 = deterministicUuid('profile:client2@example.com');
 
   if (hasClientProfiles) {
-    // Use explicit SQL to avoid mismatches with optional columns present in code schema but not in DB
+    // UPSERT client profiles using raw SQL with ON CONFLICT
     await db.execute(sql`
       INSERT INTO client_profiles (id, "userId", email, name)
       VALUES
         (${adminProfileId}, ${adminUserId}, 'admin@example.com', 'Admin User'),
         (${clientProfileId1}, ${clientUserId1}, 'client1@example.com', 'Client One'),
         (${clientProfileId2}, ${clientUserId2}, 'client2@example.com', 'Client Two')
+      ON CONFLICT ("userId")
+      DO UPDATE SET
+        email = EXCLUDED.email,
+        name = EXCLUDED.name
     `);
   }
 
   // User Roles
   if (hasUserRoles && roleAdminId && roleClientId) {
-    await db.insert(userRoles).values([
-      { userId: adminUserId, roleId: roleAdminId },
-      { userId: clientUserId1, roleId: roleClientId },
-      { userId: clientUserId2, roleId: roleClientId }
-    ]);
+    // UPSERT user roles (composite key)
+    await db.insert(userRoles)
+      .values([
+        { userId: adminUserId, roleId: roleAdminId },
+        { userId: clientUserId1, roleId: roleClientId },
+        { userId: clientUserId2, roleId: roleClientId }
+      ])
+      .onConflictDoNothing(); // Skip if relationship already exists
   }
 
   return { adminProfileId, clientProfileId1, clientProfileId2, adminUserId, clientUserId1, clientUserId2 };
@@ -195,42 +235,66 @@ async function seedUsersAndProfiles(roleAdminId: string, roleClientId: string) {
 async function seedContent(ids: { adminProfileId: string; clientProfileId1: string; clientProfileId2: string; adminUserId: string; clientUserId1: string; clientUserId2: string }) {
   // Comments: only if table exists
   if (await tableExists('comments')) {
-    await db.insert(comments).values([
-      { id: uuid(), content: 'Welcome to the platform!', userId: ids.adminProfileId, itemId: 'item-1' },
-      { id: uuid(), content: 'Great product!', userId: ids.clientProfileId1, itemId: 'item-2', rating: 5 },
-      { id: uuid(), content: 'Trying it out.', userId: ids.clientProfileId2, itemId: 'item-3', rating: 4 }
-    ]);
+    // UPSERT comments with deterministic IDs
+    await db.insert(comments)
+      .values([
+        { id: deterministicUuid('comment:admin:item-1'), content: 'Welcome to the platform!', userId: ids.adminProfileId, itemId: 'item-1' },
+        { id: deterministicUuid('comment:client1:item-2'), content: 'Great product!', userId: ids.clientProfileId1, itemId: 'item-2', rating: 5 },
+        { id: deterministicUuid('comment:client2:item-3'), content: 'Trying it out.', userId: ids.clientProfileId2, itemId: 'item-3', rating: 4 }
+      ])
+      .onConflictDoUpdate({
+        target: comments.id,
+        set: {
+          content: sql`excluded.content`,
+          rating: sql`excluded.rating`
+        }
+      });
   }
 
   // Activity Logs: try users first; if FK expects client_profiles, fallback
   if (await tableExists('activityLogs')) {
     try {
-      await db.insert(activityLogs).values([
-        { userId: ids.adminUserId, action: 'SIGN_IN' },
-        { userId: ids.clientUserId1, action: 'SIGN_UP' },
-        { userId: ids.clientUserId2, action: 'SIGN_IN' }
-      ]);
+      // UPSERT activity logs (skip duplicates)
+      await db.insert(activityLogs)
+        .values([
+          { userId: ids.adminUserId, action: 'SIGN_IN' },
+          { userId: ids.clientUserId1, action: 'SIGN_UP' },
+          { userId: ids.clientUserId2, action: 'SIGN_IN' }
+        ])
+        .onConflictDoNothing(); // Skip if already exists
     } catch {
-      await db.insert(activityLogs).values([
-        { userId: ids.adminProfileId, action: 'SIGN_IN' },
-        { userId: ids.clientProfileId1, action: 'SIGN_UP' },
-        { userId: ids.clientProfileId2, action: 'SIGN_IN' }
-      ]);
+      // Fallback to client profiles if users FK doesn't work
+      await db.insert(activityLogs)
+        .values([
+          { userId: ids.adminProfileId, action: 'SIGN_IN' },
+          { userId: ids.clientProfileId1, action: 'SIGN_UP' },
+          { userId: ids.clientProfileId2, action: 'SIGN_IN' }
+        ])
+        .onConflictDoNothing(); // Skip if already exists
     }
   }
 
   // Favorites: only if table exists
   if (await tableExists('favorites')) {
-    await db.insert(favorites).values([
-      { id: uuid(), userId: ids.clientUserId1, itemSlug: 'alpha', itemName: 'Alpha' },
-      { id: uuid(), userId: ids.clientUserId2, itemSlug: 'beta', itemName: 'Beta' }
-    ]);
+    // UPSERT favorites with deterministic IDs
+    await db.insert(favorites)
+      .values([
+        { id: deterministicUuid('favorite:client1:alpha'), userId: ids.clientUserId1, itemSlug: 'alpha', itemName: 'Alpha' },
+        { id: deterministicUuid('favorite:client2:beta'), userId: ids.clientUserId2, itemSlug: 'beta', itemName: 'Beta' }
+      ])
+      .onConflictDoUpdate({
+        target: favorites.id,
+        set: {
+          itemName: sql`excluded."itemName"`
+        }
+      });
   }
 }
 
 /**
  * Main seed function - exported for reuse by auto-initialization
- * Wipes existing data and seeds the database with test data
+ * Idempotently seeds the database with test data using UPSERT operations
+ * Safe to run multiple times - will update existing records or insert new ones
  *
  * @param options.manageStatus - If true, manages seed_status table (upsert at start, update on completion/failure)
  *                                If false, assumes caller manages status (e.g., initializeDatabase with lock)
@@ -240,9 +304,6 @@ export async function runSeed(options: { manageStatus?: boolean } = {}): Promise
   const { manageStatus = true } = options;
 
   await ensureDb();
-
-  // Determine if we should wipe data based on previous seed status
-  let shouldWipe = true;
 
   // If managing status, upsert seed_status record at start
   if (manageStatus) {
@@ -291,11 +352,7 @@ export async function runSeed(options: { manageStatus?: boolean } = {}): Promise
   }
 
   try {
-    if (shouldWipe) {
-      console.log('Seeding database: wiping existing data...');
-      await wipeData();
-    }
-
+    console.log('Seeding database (using idempotent UPSERT operations)...');
     console.log('Seeding roles and permissions...');
     const { roleAdminId, roleClientId } = await seedCoreRBAC();
 
