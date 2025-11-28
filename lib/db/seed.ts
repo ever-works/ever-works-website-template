@@ -16,11 +16,10 @@ import {
 	favorites
 } from './schema';
 import { getAllPermissions } from '../permissions/definitions';
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from './schema';
 
 // Global database connection - will be initialized after environment loading
-let db: NodePgDatabase<typeof schema>;
+let db: ReturnType<typeof import('./drizzle').getDrizzleInstance>;
 
 async function ensureDb() {
 	// Quick sanity check similar to drizzle.ts behavior
@@ -28,9 +27,9 @@ async function ensureDb() {
 		throw new Error('DATABASE_URL is not set. Aborting seed to prevent accidental DummyDb operations.');
 	}
 
-	// Initialize database connection
-	const { db: dbConnection } = await import('./drizzle');
-	db = dbConnection;
+	// Initialize database connection - use getDrizzleInstance() to get real instance, not Proxy
+	const { getDrizzleInstance } = await import('./drizzle');
+	db = getDrizzleInstance();
 }
 
 async function tableExists(name: string): Promise<boolean> {
@@ -47,71 +46,117 @@ async function tableExists(name: string): Promise<boolean> {
 }
 
 /**
+ * Check if a table is empty
+ */
+async function isTableEmpty(tableName: string, table: unknown): Promise<boolean> {
+	const exists = await tableExists(tableName);
+	if (!exists) return true; // Table doesn't exist = treat as empty
+
+	const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(table as never);
+	return count === 0;
+}
+
+/**
  * Main seed function - exported for reuse by auto-initialization
- * Seeds database using drizzle-seed with try-catch for idempotency
- * Safe to run multiple times - duplicate key errors are caught and ignored
+ * Seeds database using drizzle-seed with per-table idempotency checks
+ * Safe to run multiple times - only seeds tables that are empty
  *
  * NOTE: This function ONLY seeds data. Status management is handled by the caller (initialize.ts)
  */
 export async function runSeed(): Promise<void> {
 	await ensureDb();
 
-	console.log('Seeding database with drizzle-seed...');
+	console.log('[Seed] Checking existing data...');
 
 	try {
+		// Check each table individually
+		const permissionsEmpty = await isTableEmpty('permissions', permissions);
+		const rolesEmpty = await isTableEmpty('roles', roles);
+		const usersEmpty = await isTableEmpty('users', users);
+		const accountsEmpty = await isTableEmpty('accounts', accounts);
+		const profilesEmpty = await isTableEmpty('client_profiles', clientProfiles);
+		const commentsEmpty = await isTableEmpty('comments', comments);
+		const activityLogsEmpty = await isTableEmpty('activity_logs', activityLogs);
+		const favoritesEmpty = await isTableEmpty('favorites', favorites);
+
+		// Log what will be seeded
+		const tablesToSeed: string[] = [];
+		if (permissionsEmpty) tablesToSeed.push('permissions');
+		if (rolesEmpty) tablesToSeed.push('roles');
+		if (usersEmpty) tablesToSeed.push('users');
+		if (accountsEmpty) tablesToSeed.push('accounts');
+		if (profilesEmpty) tablesToSeed.push('clientProfiles');
+		if (commentsEmpty) tablesToSeed.push('comments');
+		if (activityLogsEmpty) tablesToSeed.push('activityLogs');
+		if (favoritesEmpty) tablesToSeed.push('favorites');
+
+		if (tablesToSeed.length === 0) {
+			console.log('[Seed] All tables have data - skipping seed');
+			return;
+		}
+
+		console.log(`[Seed] Will seed: ${tablesToSeed.join(', ')}`);
+
 		// Read environment variables outside seed()
 		const adminEmail = process.env.SEED_ADMIN_EMAIL || 'admin@example.com';
 		const adminPassword = process.env.SEED_ADMIN_PASSWORD || 'Passw0rd123!';
 		const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
-	// Get all permissions
-	const allPermissions = getAllPermissions();
+		// Get all permissions
+		const allPermissions = getAllPermissions();
 
-	// Generate role IDs manually (roles table doesn't have $defaultFn)
-	const roleAdminId = crypto.randomUUID();
-	const roleClientId = crypto.randomUUID();
+		// Generate role IDs manually (roles table doesn't have $defaultFn)
+		const roleAdminId = crypto.randomUUID();
+		const roleClientId = crypto.randomUUID();
 
-	// Wrap seed in try-catch for idempotency (ignore duplicate key errors)
-	try {
-		await seed(db, schema as never, {
-			permissions: {
+		// Build seed config conditionally based on which tables are empty
+		const seedConfig: Record<string, unknown> = {};
+
+		if (permissionsEmpty) {
+			seedConfig.permissions = {
 				count: allPermissions.length,
 				columns: {
-					key: ({ index }) => allPermissions[index],
-					description: ({ index }) =>
+					key: ({ index }: { index: number }) => allPermissions[index],
+					description: ({ index }: { index: number }) =>
 						allPermissions[index]
 							.replace(':', ' ')
 							.replace(/([a-z])([A-Z])/g, '$1 $2')
 							.toLowerCase()
 				}
-			},
+			};
+		}
 
-			roles: {
+		if (rolesEmpty) {
+			seedConfig.roles = {
 				count: 2,
 				columns: {
-					id: ({ index }) => (index === 0 ? roleAdminId : roleClientId),
-					name: ({ index }) => (index === 0 ? 'admin' : 'client'),
-					description: ({ index }) => (index === 0 ? 'Administrator' : 'Client user'),
-					isAdmin: ({ index }) => index === 0
+					id: ({ index }: { index: number }) => (index === 0 ? roleAdminId : roleClientId),
+					name: ({ index }: { index: number }) => (index === 0 ? 'admin' : 'client'),
+					description: ({ index }: { index: number }) => (index === 0 ? 'Administrator' : 'Client user'),
+					isAdmin: ({ index }: { index: number }) => index === 0
 				}
-			},
+			};
+		}
 
-			users: {
+		if (usersEmpty) {
+			seedConfig.users = {
 				count: 3,
 				columns: {
-					email: ({ index }) => {
+					email: ({ index }: { index: number }) => {
 						if (index === 0) return adminEmail;
 						if (index === 1) return 'client1@example.com';
 						return 'client2@example.com';
 					},
-					passwordHash: ({ index }) => {
+					passwordHash: ({ index }: { index: number }) => {
 						if (index < 2) return hashedPassword;
 						return null;
 					}
 				}
-			},
+			};
+		}
 
-			accounts: {
+		if (accountsEmpty) {
+			seedConfig.accounts = {
 				count: 3,
 				with: {
 					users: {
@@ -121,26 +166,28 @@ export async function runSeed(): Promise<void> {
 					}
 				},
 				columns: {
-					type: ({ index }) => (index === 2 ? 'oauth' : 'email'),
-					provider: ({ index }) => (index === 2 ? 'google' : 'credentials'),
-					providerAccountId: ({ index }) => {
+					type: ({ index }: { index: number }) => (index === 2 ? 'oauth' : 'email'),
+					provider: ({ index }: { index: number }) => (index === 2 ? 'google' : 'credentials'),
+					providerAccountId: ({ index }: { index: number }) => {
 						if (index === 0) return adminEmail;
 						if (index === 1) return 'client1@example.com';
 						return 'google-oauth-123';
 					},
-					email: ({ index }) => {
+					email: ({ index }: { index: number }) => {
 						if (index === 0) return adminEmail;
 						if (index === 1) return 'client1@example.com';
 						return null;
 					},
-					passwordHash: ({ index }) => {
+					passwordHash: ({ index }: { index: number }) => {
 						if (index < 2) return hashedPassword;
 						return null;
 					}
 				}
-			},
+			};
+		}
 
-			clientProfiles: {
+		if (profilesEmpty) {
+			seedConfig.clientProfiles = {
 				count: 3,
 				with: {
 					users: {
@@ -150,20 +197,22 @@ export async function runSeed(): Promise<void> {
 					}
 				},
 				columns: {
-					email: ({ index }) => {
+					email: ({ index }: { index: number }) => {
 						if (index === 0) return adminEmail;
 						if (index === 1) return 'client1@example.com';
 						return 'client2@example.com';
 					},
-					name: ({ index }) => {
+					name: ({ index }: { index: number }) => {
 						if (index === 0) return 'Admin User';
 						if (index === 1) return 'Client One';
 						return 'Client Two';
 					}
 				}
-			},
+			};
+		}
 
-			comments: {
+		if (commentsEmpty) {
+			seedConfig.comments = {
 				count: 3,
 				with: {
 					clientProfiles: {
@@ -173,21 +222,23 @@ export async function runSeed(): Promise<void> {
 					}
 				},
 				columns: {
-					itemId: ({ index }) => `item-${index + 1}`,
-					content: ({ index }) => {
+					itemId: ({ index }: { index: number }) => `item-${index + 1}`,
+					content: ({ index }: { index: number }) => {
 						if (index === 0) return 'Welcome to the platform!';
 						if (index === 1) return 'Great product!';
 						return 'Trying it out.';
 					},
-					rating: ({ index }) => {
+					rating: ({ index }: { index: number }) => {
 						if (index === 0) return null;
 						if (index === 1) return 5;
 						return 4;
 					}
 				}
-			},
+			};
+		}
 
-			activityLogs: {
+		if (activityLogsEmpty) {
+			seedConfig.activityLogs = {
 				count: 3,
 				with: {
 					users: {
@@ -197,15 +248,17 @@ export async function runSeed(): Promise<void> {
 					}
 				},
 				columns: {
-					action: ({ index }) => {
+					action: ({ index }: { index: number }) => {
 						if (index === 0) return 'SIGN_IN';
 						if (index === 1) return 'SIGN_UP';
 						return 'SIGN_IN';
 					}
 				}
-			},
+			};
+		}
 
-			favorites: {
+		if (favoritesEmpty) {
+			seedConfig.favorites = {
 				count: 2,
 				with: {
 					users: {
@@ -215,20 +268,16 @@ export async function runSeed(): Promise<void> {
 					}
 				},
 				columns: {
-					itemSlug: ({ index }) => (index === 0 ? 'alpha' : 'beta'),
-					itemName: ({ index }) => (index === 0 ? 'Alpha' : 'Beta')
+					itemSlug: ({ index }: { index: number }) => (index === 0 ? 'alpha' : 'beta'),
+					itemName: ({ index }: { index: number }) => (index === 0 ? 'Alpha' : 'Beta')
 				}
-			}
-		});
-
-		console.log('[Seed] drizzle-seed completed successfully');
-		} catch (seedError) {
-		// Check if error is duplicate key violation (idempotency)
-		if (seedError && typeof seedError === 'object' && 'code' in seedError && seedError.code === '23505') {
-		console.log('[Seed] Data already exists - skipping (idempotent)');
-		} else {
-		throw seedError;
+			};
 		}
+
+		// Only call seed if there's something to seed
+		if (Object.keys(seedConfig).length > 0) {
+			await seed(db, schema as never, seedConfig);
+			console.log(`[Seed] Completed seeding ${Object.keys(seedConfig).length} tables`);
 		}
 
 		// Seed junction tables separately (role_permissions, user_roles)
