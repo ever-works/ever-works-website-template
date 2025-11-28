@@ -56,20 +56,33 @@ export function checkNextAuthEnvironment(): string | null {
   
   if (missingVars.length > 0) {
     const warningMessage = `Missing NextAuth environment variables: ${missingVars.join(', ')}`;
-    console.warn(`[NextAuth Config] ${warningMessage}. Authentication features may be limited.`);
+    
+    // Suppress warnings during CI/linting
+    const shouldSuppress = 
+      process.env.CI === 'true' ||
+      process.env.NODE_ENV === 'test' ||
+      process.argv.some(arg => arg.includes('eslint') || arg.includes('lint'));
+    
+    if (!shouldSuppress) {
+      console.warn(`[NextAuth Config] ${warningMessage}. Authentication features may be limited.`);
+    }
     
     // Generate default values for missing variables
     if (!process.env.NEXTAUTH_SECRET) {
       // Generate a random string for NEXTAUTH_SECRET
       process.env.NEXTAUTH_SECRET = Math.random().toString(36).substring(2, 15) + 
                                    Math.random().toString(36).substring(2, 15);
-      console.warn('[NextAuth Config] Generated temporary NEXTAUTH_SECRET for development');
+      if (!shouldSuppress) {
+        console.warn('[NextAuth Config] Generated temporary NEXTAUTH_SECRET for development');
+      }
     }
     
     if (!process.env.NEXTAUTH_URL) {
       // Set a default URL for local development
       process.env.NEXTAUTH_URL = 'http://localhost:3000';
-      console.warn('[NextAuth Config] Using default NEXTAUTH_URL: http://localhost:3000');
+      if (!shouldSuppress) {
+        console.warn('[NextAuth Config] Using default NEXTAUTH_URL: http://localhost:3000');
+      }
     }
     
     return warningMessage;

@@ -30,12 +30,29 @@ export class ConfigManager {
     return key === '__proto__' || key === 'constructor' || key === 'prototype';
   }
   /**
+   * Check if we're in a CI/linting environment where warnings should be suppressed
+   */
+  private shouldSuppressWarnings(): boolean {
+    // Suppress warnings during CI, linting, or when DATA_REPOSITORY is not set
+    return (
+      process.env.CI === 'true' ||
+      process.env.NODE_ENV === 'test' ||
+      !process.env.DATA_REPOSITORY ||
+      process.argv.some(arg => arg.includes('eslint') || arg.includes('lint'))
+    );
+  }
+
+  /**
    * Read the current config file
    */
   private readConfig(): AppConfig {
     try {
       if (!fs.existsSync(this.configPath)) {
-        console.warn('Config file not found at:', this.configPath);
+        // Only warn in development when DATA_REPOSITORY is configured
+        // Suppress warnings during CI/linting since the code handles missing files gracefully
+        if (!this.shouldSuppressWarnings()) {
+          console.warn('Config file not found at:', this.configPath);
+        }
         return this.getDefaultConfig();
       }
 
@@ -43,7 +60,10 @@ export class ConfigManager {
       const config = yaml.load(fileContents) as AppConfig;
       return { ...this.getDefaultConfig(), ...config };
     } catch (error) {
-      console.error('Error reading config file:', error);
+      // Only log errors in non-CI environments
+      if (!this.shouldSuppressWarnings()) {
+        console.error('Error reading config file:', error);
+      }
       return this.getDefaultConfig();
     }
   }
