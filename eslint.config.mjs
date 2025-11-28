@@ -45,7 +45,6 @@ export default [
 			"no-console": "off", // Allow console in Next.js
 			"react-hooks/rules-of-hooks": "error",
 			"react-hooks/exhaustive-deps": "warn",
-			"@next/next/no-img-element": "off", // Disabled as eslint-config-next is not compatible with ESLint 9 flat config
 		},
 	},
 	{
