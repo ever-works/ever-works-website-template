@@ -3,8 +3,6 @@
  * Lint script that works around Next.js 16 + ESLint 9 compatibility issues
  * Uses ESLint directly with flat config instead of next lint
  */
-
-const { execSync } = require('child_process');
 const { execSync } = require('child_process');
 
 const projectRoot = process.cwd();
