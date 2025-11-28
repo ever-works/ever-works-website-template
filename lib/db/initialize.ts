@@ -121,6 +121,14 @@ export async function initializeDatabase(): Promise<void> {
 			return;
 		}
 
+		// If previous seed failed, delete the failed status record so we can start fresh
+		const status = await getSeedStatus();
+		if (status?.status === 'failed') {
+			console.log('[DB Init] Previous seed failed - deleting failed status record');
+			const { db } = await import('./drizzle');
+			await db.delete(seedStatus).where(eq(seedStatus.id, sql`'singleton'`));
+		}
+
 		console.log('[DB Init] Database not seeded - checking if migrations needed...');
 
 		// Check if migrations are needed (seed_status table missing)
