@@ -50,7 +50,18 @@ async function isTableEmpty(tableName: string, table: unknown): Promise<boolean>
 	if (!exists) return true; // Table doesn't exist = treat as empty
 
 	const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(table as never);
-	return count === 0;
+	return Number(count) === 0;
+}
+
+/**
+ * Get table row count
+ */
+async function getTableCount(tableName: string, table: unknown): Promise<number> {
+	const exists = await tableExists(tableName);
+	if (!exists) return 0;
+
+	const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(table as never);
+	return Number(count);
 }
 
 /**
@@ -72,6 +83,26 @@ export async function runSeed(): Promise<void> {
 		const usersEmpty = await isTableEmpty('users', users);
 		const accountsEmpty = await isTableEmpty('accounts', accounts);
 		const profilesEmpty = await isTableEmpty('client_profiles', clientProfiles);
+
+		// Debug logging - show actual data in each table
+		if (process.env.NODE_ENV === 'development') {
+			console.log('[Seed] Table status:');
+
+			const permissionsData = await db.select().from(permissions);
+			console.log(`  permissions: ${permissionsData.length} rows`, permissionsData.length <= 5 ? permissionsData : `[showing first 5]`, permissionsData.slice(0, 5));
+
+			const rolesData = await db.select().from(roles);
+			console.log(`  roles: ${rolesData.length} rows`, rolesData);
+
+			const usersData = await db.select().from(users);
+			console.log(`  users: ${usersData.length} rows`, usersData);
+
+			const accountsData = await db.select().from(accounts);
+			console.log(`  accounts: ${accountsData.length} rows`, accountsData.length <= 5 ? accountsData : `[showing first 5]`, accountsData.slice(0, 5));
+
+			const profilesData = await db.select().from(clientProfiles);
+			console.log(`  clientProfiles: ${profilesData.length} rows`, profilesData);
+		}
 
 		// Log what will be seeded
 		const tablesToSeed: string[] = [];
@@ -280,7 +311,12 @@ export async function runSeed(): Promise<void> {
 			const [{ count: rolesCount }] = await db.select({ count: sql<number>`count(*)` }).from(roles);
 			const [{ count: permsCount }] = await db.select({ count: sql<number>`count(*)` }).from(permissions);
 
-			console.log('Seed complete:', { users: usersCount, profiles: profilesCount, roles: rolesCount, permissions: permsCount });
+			console.log('Seed complete:', {
+				users: Number(usersCount),
+				profiles: Number(profilesCount),
+				roles: Number(rolesCount),
+				permissions: Number(permsCount)
+			});
 		} catch {
 			// Tables may not exist yet (schema not migrated) - skip verification but seeding succeeded
 			console.log('Seed complete (verification skipped - tables may not exist yet)');
