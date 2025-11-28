@@ -38,7 +38,7 @@ export class ConfigManager {
       process.env.CI === 'true' ||
       process.env.NODE_ENV === 'test' ||
       !process.env.DATA_REPOSITORY ||
-      process.argv.some(arg => arg.includes('eslint') || arg.includes('lint'))
+      process.argv.some(arg => /(?:^|[/\\])(eslint|lint(?:-staged)?)(?:\.[jt]s)?$/.test(arg))
     );
   }
 
@@ -60,10 +60,8 @@ export class ConfigManager {
       const config = yaml.load(fileContents) as AppConfig;
       return { ...this.getDefaultConfig(), ...config };
     } catch (error) {
-      // Only log errors in non-CI environments
-      if (!this.shouldSuppressWarnings()) {
-        console.error('Error reading config file:', error);
-      }
+      // Always log errors - they indicate real problems (read failures, parse errors, etc.)
+      console.error('Error reading config file:', error);
       return this.getDefaultConfig();
     }
   }

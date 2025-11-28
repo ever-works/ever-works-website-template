@@ -61,7 +61,7 @@ export function checkNextAuthEnvironment(): string | null {
     const shouldSuppress = 
       process.env.CI === 'true' ||
       process.env.NODE_ENV === 'test' ||
-      process.argv.some(arg => arg.includes('eslint') || arg.includes('lint'));
+      process.argv.some(arg => /(?:^|[/\\])(eslint|lint(?:-staged)?)(?:\.[jt]s)?$/.test(arg));
     
     if (!shouldSuppress) {
       console.warn(`[NextAuth Config] ${warningMessage}. Authentication features may be limited.`);

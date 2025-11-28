@@ -29,7 +29,7 @@ export function validateAuthConfig() {
     const shouldSuppress = 
       process.env.CI === 'true' ||
       process.env.NODE_ENV === 'test' ||
-      process.argv.some(arg => arg.includes('eslint') || arg.includes('lint'));
+      process.argv.some(arg => /(?:^|[/\\])(eslint|lint(?:-staged)?)(?:\.[jt]s)?$/.test(arg));
     
     if (!shouldSuppress) {
       // Just log a warning instead of throwing an error
