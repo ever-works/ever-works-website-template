@@ -18,7 +18,7 @@ import {
 } from './schema';
 import { getAllPermissions } from '../permissions/definitions';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import type * as schema from './schema';
+import * as schema from './schema';
 
 // Global database connection - will be initialized after environment loading
 let db: NodePgDatabase<typeof schema>;
