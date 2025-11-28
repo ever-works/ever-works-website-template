@@ -313,7 +313,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 		}
 
 		// Remove id from update data
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { id: _idToRemove, ...updateData } = validatedData;
 
 		// Update company

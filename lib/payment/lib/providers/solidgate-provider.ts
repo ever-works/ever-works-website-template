@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { User } from '@supabase/auth-js';
 import {
   PaymentProviderInterface,
