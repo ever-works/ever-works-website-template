@@ -10,10 +10,7 @@ import {
 	roles,
 	permissions,
 	rolePermissions,
-	userRoles,
-	comments,
-	activityLogs,
-	favorites
+	userRoles
 } from './schema';
 import { getAllPermissions } from '../permissions/definitions';
 import * as schema from './schema';
@@ -69,15 +66,12 @@ export async function runSeed(): Promise<void> {
 	console.log('[Seed] Checking existing data...');
 
 	try {
-		// Check each table individually
+		// Check each essential table individually
 		const permissionsEmpty = await isTableEmpty('permissions', permissions);
 		const rolesEmpty = await isTableEmpty('roles', roles);
 		const usersEmpty = await isTableEmpty('users', users);
 		const accountsEmpty = await isTableEmpty('accounts', accounts);
 		const profilesEmpty = await isTableEmpty('client_profiles', clientProfiles);
-		const commentsEmpty = await isTableEmpty('comments', comments);
-		const activityLogsEmpty = await isTableEmpty('activity_logs', activityLogs);
-		const favoritesEmpty = await isTableEmpty('favorites', favorites);
 
 		// Log what will be seeded
 		const tablesToSeed: string[] = [];
@@ -86,9 +80,6 @@ export async function runSeed(): Promise<void> {
 		if (usersEmpty) tablesToSeed.push('users');
 		if (accountsEmpty) tablesToSeed.push('accounts');
 		if (profilesEmpty) tablesToSeed.push('clientProfiles');
-		if (commentsEmpty) tablesToSeed.push('comments');
-		if (activityLogsEmpty) tablesToSeed.push('activityLogs');
-		if (favoritesEmpty) tablesToSeed.push('favorites');
 
 		if (tablesToSeed.length === 0) {
 			console.log('[Seed] All tables have data - skipping seed');
@@ -207,69 +198,6 @@ export async function runSeed(): Promise<void> {
 						if (index === 1) return 'Client One';
 						return 'Client Two';
 					}
-				}
-			};
-		}
-
-		if (commentsEmpty) {
-			seedConfig.comments = {
-				count: 3,
-				with: {
-					clientProfiles: {
-						columns: {
-							userId: 'id'
-						}
-					}
-				},
-				columns: {
-					itemId: ({ index }: { index: number }) => `item-${index + 1}`,
-					content: ({ index }: { index: number }) => {
-						if (index === 0) return 'Welcome to the platform!';
-						if (index === 1) return 'Great product!';
-						return 'Trying it out.';
-					},
-					rating: ({ index }: { index: number }) => {
-						if (index === 0) return null;
-						if (index === 1) return 5;
-						return 4;
-					}
-				}
-			};
-		}
-
-		if (activityLogsEmpty) {
-			seedConfig.activityLogs = {
-				count: 3,
-				with: {
-					users: {
-						columns: {
-							userId: 'id'
-						}
-					}
-				},
-				columns: {
-					action: ({ index }: { index: number }) => {
-						if (index === 0) return 'SIGN_IN';
-						if (index === 1) return 'SIGN_UP';
-						return 'SIGN_IN';
-					}
-				}
-			};
-		}
-
-		if (favoritesEmpty) {
-			seedConfig.favorites = {
-				count: 2,
-				with: {
-					users: {
-						columns: {
-							userId: 'id'
-						}
-					}
-				},
-				columns: {
-					itemSlug: ({ index }: { index: number }) => (index === 0 ? 'alpha' : 'beta'),
-					itemName: ({ index }: { index: number }) => (index === 0 ? 'Alpha' : 'Beta')
 				}
 			};
 		}
