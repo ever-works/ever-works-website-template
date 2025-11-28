@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import crypto from 'crypto';
 import { logError, ErrorType, createAppError } from '@/lib/utils/error-handler';
 
 /**
@@ -69,9 +70,8 @@ export function checkNextAuthEnvironment(): string | null {
     
     // Generate default values for missing variables
     if (!process.env.NEXTAUTH_SECRET) {
-      // Generate a random string for NEXTAUTH_SECRET
-      process.env.NEXTAUTH_SECRET = Math.random().toString(36).substring(2, 15) + 
-                                   Math.random().toString(36).substring(2, 15);
+      // Generate a cryptographically secure random string for NEXTAUTH_SECRET
+      process.env.NEXTAUTH_SECRET = crypto.randomBytes(32).toString('hex');
       if (!shouldSuppress) {
         console.warn('[NextAuth Config] Generated temporary NEXTAUTH_SECRET for development');
       }
