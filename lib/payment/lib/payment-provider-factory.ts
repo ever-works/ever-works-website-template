@@ -1,10 +1,11 @@
 import { PaymentProviderInterface, PaymentProviderConfig } from '../types/payment-types';
 import { StripeProvider } from './providers/stripe-provider';
 import { LemonSqueezyProvider, LemonSqueezyConfig } from './providers/lemonsqueezy-provider';
+import { PolarProvider, PolarConfig } from './providers/polar-provider';
 // import { SolidgateProvider } from './providers/solidgate-provider';
 
 // Supported provider types
-export type SupportedProvider = 'stripe' | 'solidgate' | 'lemonsqueezy';
+export type SupportedProvider = 'stripe' | 'solidgate' | 'lemonsqueezy' | 'polar';
 
 /**
  * Factory to create instances of payment providers
@@ -29,6 +30,8 @@ export class PaymentProviderFactory {
         throw new Error('Solidgate provider not implemented yet');
       case 'lemonsqueezy':
         return new LemonSqueezyProvider(config as unknown as LemonSqueezyConfig);
+      case 'polar':
+        return new PolarProvider(config as unknown as PolarConfig);
       default:
         throw new Error(`Unsupported payment provider: ${providerType}`);
     }

@@ -31,6 +31,15 @@ export const createProviderConfigs = (
       testMode?: boolean;
       [key: string]: any;
     };
+  },
+  polarConfig?: { 
+    apiKey: string; 
+    webhookSecret: string;
+    options?: {
+      organizationId?: string;
+      appUrl?: string;
+      [key: string]: any;
+    };
   }
 ): Record<SupportedProvider, PaymentProviderConfig> => ({
   stripe: {
@@ -50,6 +59,11 @@ export const createProviderConfigs = (
     apiKey: lemonsqueezyConfig?.apiKey || '',
     webhookSecret: lemonsqueezyConfig?.webhookSecret || '',
     options: lemonsqueezyConfig?.options || {}
+  },
+  polar: {
+    apiKey: polarConfig?.apiKey || '',
+    webhookSecret: polarConfig?.webhookSecret || '',
+    options: polarConfig?.options || {}
   }
 }); 
 

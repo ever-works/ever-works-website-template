@@ -1,0 +1,681 @@
+import { User } from '@supabase/auth-js';
+import React from 'react';
+import { Polar } from '@polar-sh/sdk';
+import {
+    PaymentProviderInterface,
+    PaymentIntent,
+    PaymentVerificationResult,
+    WebhookResult,
+    CreatePaymentParams,
+    ClientConfig,
+    PaymentProviderConfig,
+    CreateCustomerParams,
+    CustomerResult,
+    CreateSubscriptionParams,
+    SubscriptionInfo,
+    UpdateSubscriptionParams,
+    SetupIntent,
+    UIComponents,
+    CardBrandIcon,
+    PaymentFormProps,
+    SubscriptionStatus
+} from '../../types/payment-types';
+import { paymentAccountClient } from '../client/payment-account-client';
+
+export interface PolarConfig extends PaymentProviderConfig {
+	apiKey: string;
+	webhookSecret: string;
+	options?: {
+		organizationId?: string;
+		appUrl?: string;
+	};
+}
+
+const polarCardBrands: CardBrandIcon[] = [
+	{
+		name: 'visa',
+		lightIcon: '/assets/payment/polar/visa-light.svg',
+		darkIcon: '/assets/payment/polar/visa-dark.svg',
+		width: 40,
+		height: 25
+	},
+	{
+		name: 'mastercard',
+		lightIcon: '/assets/payment/polar/mastercard-light.svg',
+		darkIcon: '/assets/payment/polar/mastercard-dark.svg',
+		width: 40,
+		height: 25
+	},
+	{
+		name: 'amex',
+		lightIcon: '/assets/payment/polar/amex-light.svg',
+		darkIcon: '/assets/payment/polar/amex-dark.svg',
+		width: 40,
+		height: 25
+	}
+];
+
+// Mock translations - would be actual translations in real implementation
+const polarTranslations = {
+	en: {
+		cardNumber: 'Card number',
+		cardExpiry: 'Expiration date',
+		cardCvc: 'CVC',
+		submit: 'Pay now',
+		processingPayment: 'Processing payment...',
+		paymentSuccessful: 'Payment successful',
+		paymentFailed: 'Payment failed'
+	},
+	fr: {
+		cardNumber: 'Numéro de carte',
+		cardExpiry: 'Date d\'expiration',
+		cardCvc: 'CVC',
+		submit: 'Payer maintenant',
+		processingPayment: 'Traitement du paiement...',
+		paymentSuccessful: 'Paiement réussi',
+		paymentFailed: 'Échec du paiement'
+	}
+};
+
+export class PolarProvider implements PaymentProviderInterface {
+	private polar: Polar;
+	private webhookSecret: string;
+	private organizationId?: string;
+	private appUrl?: string;
+
+	constructor(config: PolarConfig) {
+		if (!config.apiKey) {
+			throw new Error('Polar API key is required');
+		}
+
+		this.polar = new Polar({
+			accessToken: config.apiKey
+		});
+		this.webhookSecret = config.webhookSecret || '';
+		this.organizationId = config.options?.organizationId;
+		this.appUrl = config.options?.appUrl || process.env.NEXT_PUBLIC_APP_URL || '';
+
+		if (!this.organizationId) {
+			throw new Error('Polar organization ID is required');
+		}
+	}
+
+	hasCustomerId(user: User | null): boolean {
+		return !!user?.user_metadata?.polar_customer_id;
+	}
+
+	private isValidUser(user: User | null): user is User {
+		return user !== null && typeof user.id === 'string' && user.id.length > 0;
+	}
+
+	private extractCustomerIdFromMetadata(user: User): string | null {
+		if (!this.hasCustomerId(user)) {
+			return null;
+		}
+
+		const customerId = user.user_metadata?.polar_customer_id;
+		return typeof customerId === 'string' && customerId.length > 0 ? customerId : null;
+	}
+
+	async getCustomerId(user: User | null): Promise<string | null> {
+		const userId = user?.id;
+		if (!this.isValidUser(user)) {
+			this.logger.warn('getCustomerId: Invalid or disconnected user', { userId: userId || 'undefined' });
+			return null;
+		}
+		const validatedUserId = user.id;
+		this.logger.info('Starting Polar customer retrieval/creation', { userId: validatedUserId });
+
+		try {
+			const customerIdFromMetadata = this.extractCustomerIdFromMetadata(user);
+			if (customerIdFromMetadata) {
+				this.logger.info('Polar customer retrieved from metadata', {
+					userId: validatedUserId,
+					customerId: customerIdFromMetadata
+				});
+				return customerIdFromMetadata;
+			}
+			const customerIdFromDatabase = await this.retrieveCustomerIdFromDatabase(validatedUserId);
+			if (customerIdFromDatabase) {
+				this.logger.info('Polar customer retrieved from database', {
+					userId: validatedUserId,
+					customerId: customerIdFromDatabase
+				});
+				return customerIdFromDatabase;
+			}
+			this.logger.info('Creating new Polar customer', { userId: validatedUserId });
+			const newCustomer = await this.createNewPolarCustomer(user);
+			await this.synchronizePaymentAccount(validatedUserId, newCustomer.id);
+
+			this.logger.info('New Polar customer created successfully', {
+				userId: validatedUserId,
+				customerId: newCustomer.id
+			});
+			return newCustomer.id;
+		} catch (error) {
+			const errorMessage = this.formatErrorMessage(error);
+			this.logger.error('Failed to retrieve/create Polar customer', {
+				userId: validatedUserId,
+				error: errorMessage
+			});
+			throw new Error(`Unable to retrieve/create Polar customer: ${errorMessage}`);
+		}
+	}
+
+	private async retrieveCustomerIdFromDatabase(userId: string): Promise<string | null> {
+		try {
+			const existingPaymentAccount = await paymentAccountClient.getPaymentAccount(userId, 'polar');
+
+			if (existingPaymentAccount?.customerId) {
+				this.logger.debug('Existing PaymentAccount found in database', {
+					userId,
+					accountId: existingPaymentAccount.id,
+					customerId: existingPaymentAccount.customerId
+				});
+				return existingPaymentAccount.customerId;
+			}
+
+			this.logger.debug('No existing PaymentAccount found in database', { userId });
+			return null;
+		} catch (error) {
+			// Handle 404 errors gracefully (account doesn't exist yet)
+			if (error instanceof Error && error.message.includes('404')) {
+				this.logger.debug('Payment account not found (404) - this is expected for new users', { userId });
+				return null;
+			}
+
+			this.logger.warn('Error retrieving from database', {
+				userId,
+				error: this.formatErrorMessage(error)
+			});
+			return null;
+		}
+	}
+
+	private async createNewPolarCustomer(user: User): Promise<CustomerResult> {
+		const customerData = this.buildCustomerData(user);
+		try {
+			const customer = await this.createCustomer(customerData);
+			this.logger.debug('Polar customer created successfully', {
+				userId: user.id,
+				customerId: customer.id,
+				email: customer.email
+			});
+			return customer;
+		} catch (error) {
+			this.logger.error('Failed to create Polar customer', {
+				userId: user.id,
+				error: this.formatErrorMessage(error),
+				customerData
+			});
+			throw error;
+		}
+	}
+
+	private buildCustomerData(user: User): CreateCustomerParams {
+		return {
+			email: user.email || '',
+			name: user.user_metadata?.name || undefined,
+			metadata: {
+				userId: user.id,
+				planId: user.user_metadata?.planId || undefined,
+				planName: user.user_metadata?.planName || undefined,
+				billingInterval: user.user_metadata?.billingInterval || undefined
+			}
+		};
+	}
+
+	private async synchronizePaymentAccount(userId: string, customerId: string): Promise<void> {
+		try {
+			const paymentAccount = await paymentAccountClient.setupPaymentAccount({
+				provider: 'polar',
+				userId,
+				customerId
+			});
+			this.logger.info('PaymentAccount synchronized successfully in database', {
+				userId,
+				customerId,
+				accountId: paymentAccount.id,
+				providerId: paymentAccount.providerId
+			});
+		} catch (error) {
+			// Handle duplicate key constraint violations
+			if (error instanceof Error && error.message.includes('duplicate key value violates unique constraint')) {
+				this.logger.warn('Payment account already exists - attempting to update', {
+					userId,
+					customerId,
+					error: this.formatErrorMessage(error)
+				});
+
+				// Try to get the existing account and update it
+				try {
+					const existingAccount = await paymentAccountClient.getPaymentAccount(userId, 'polar');
+					if (existingAccount) {
+						this.logger.info('Found existing payment account - synchronization completed', {
+							userId,
+							customerId,
+							accountId: existingAccount.id
+						});
+						return;
+					}
+				} catch (updateError) {
+					this.logger.error('Failed to retrieve existing payment account', {
+						userId,
+						customerId,
+						error: this.formatErrorMessage(updateError)
+					});
+				}
+			}
+
+			this.logger.error('Failed to synchronize PaymentAccount in database', {
+				userId,
+				customerId,
+				error: this.formatErrorMessage(error)
+			});
+
+			this.reportSynchronizationFailure(userId, customerId, error);
+		}
+	}
+
+	private formatErrorMessage(error: unknown): string {
+		if (error instanceof Error) {
+			return error.message;
+		}
+		if (typeof error === 'string') {
+			return error;
+		}
+		return 'Unknown error';
+	}
+
+	private reportSynchronizationFailure(userId: string, customerId: string, error: unknown): void {
+		this.logger.warn('Synchronization failure reported', {
+			userId,
+			customerId,
+			error: this.formatErrorMessage(error),
+			timestamp: new Date().toISOString()
+		});
+	}
+
+	private get logger() {
+		return {
+			info: (message: string, context?: Record<string, any>) =>
+				console.log(`[PolarProvider] ${message}`, context || ''),
+			warn: (message: string, context?: Record<string, any>) =>
+				console.warn(`[PolarProvider] ${message}`, context || ''),
+			error: (message: string, context?: Record<string, any>) =>
+				console.error(`[PolarProvider] ${message}`, context || ''),
+			debug: (message: string, context?: Record<string, any>) =>
+				console.log(`[PolarProvider] ${message}`, context || '')
+		};
+	}
+
+	async createSetupIntent(user: User | null): Promise<SetupIntent> {
+		// Polar doesn't have a direct setup intent equivalent
+		// Return a mock setup intent for compatibility
+		return {
+			id: 'polar_setup_' + Date.now(),
+			client_secret: '',
+			status: 'requires_payment_method',
+			payment_method_types: ['card']
+		} as SetupIntent;
+	}
+
+	async createPaymentIntent(params: CreatePaymentParams): Promise<PaymentIntent> {
+		try {
+			const { amount, currency, metadata, customerId, productId } = params;
+
+			// Create a checkout link for Polar
+			// Note: Adjust API calls based on actual Polar SDK documentation
+			const checkout = await this.polar.checkouts.create({
+				productId: productId || '',
+				organizationId: this.organizationId!,
+				amount: Math.round(amount * 100), // Convert to cents
+				currency: currency.toUpperCase(),
+				successUrl: params.successUrl || `${this.appUrl}/pricing/success`,
+				customerId: customerId,
+				metadata: metadata || {}
+			} as any);
+
+			return {
+				id: checkout.id || '',
+				amount: amount,
+				currency: currency,
+				status: 'requires_payment_method',
+				clientSecret: (checkout as any).clientSecret || undefined,
+				customerId: customerId
+			};
+		} catch (error) {
+			this.logger.error('Failed to create Polar payment intent', {
+				error: this.formatErrorMessage(error),
+				params
+			});
+			throw new Error(`Failed to create payment intent: ${this.formatErrorMessage(error)}`);
+		}
+	}
+
+	async confirmPayment(paymentId: string, paymentMethodId: string): Promise<PaymentIntent> {
+		// Polar handles payment confirmation through webhooks
+		// This method is kept for interface compatibility
+		try {
+			const payment = await this.polar.payments.get({ id: paymentId } as any);
+			
+			return {
+				id: payment.id || paymentId,
+				amount: ((payment as any).amount || 0) / 100, // Convert from cents
+				currency: ((payment as any).currency || 'usd').toLowerCase(),
+				status: (payment as any).status || 'succeeded',
+				customerId: (payment as any).customerId
+			};
+		} catch (error) {
+			this.logger.error('Failed to confirm Polar payment', {
+				error: this.formatErrorMessage(error),
+				paymentId
+			});
+			throw new Error(`Failed to confirm payment: ${this.formatErrorMessage(error)}`);
+		}
+	}
+
+	async verifyPayment(paymentId: string): Promise<PaymentVerificationResult> {
+		try {
+			const payment = await this.polar.payments.get({ id: paymentId } as any);
+			const status = (payment as any).status || 'unknown';
+
+			return {
+				isValid: status === 'succeeded',
+				paymentId: (payment as any).id || paymentId,
+				status: status,
+				details: payment
+			};
+		} catch (error) {
+			this.logger.error('Failed to verify Polar payment', {
+				error: this.formatErrorMessage(error),
+				paymentId
+			});
+			return {
+				isValid: false,
+				paymentId,
+				status: 'error',
+				details: { error: this.formatErrorMessage(error) }
+			};
+		}
+	}
+
+	async createCustomer(params: CreateCustomerParams): Promise<CustomerResult> {
+		try {
+			const customer = await this.polar.customers.create({
+				email: params.email,
+				name: params.name,
+				metadata: params.metadata || {}
+			} as any);
+
+			return {
+				id: (customer as any).id || '',
+				email: (customer as any).email || params.email,
+				name: (customer as any).name || params.name,
+				metadata: (customer as any).metadata || params.metadata || {}
+			};
+		} catch (error) {
+			this.logger.error('Failed to create Polar customer', {
+				error: this.formatErrorMessage(error),
+				params
+			});
+			throw new Error(`Failed to create customer: ${this.formatErrorMessage(error)}`);
+		}
+	}
+
+	async createSubscription(params: CreateSubscriptionParams): Promise<SubscriptionInfo> {
+		try {
+			const { customerId, priceId, metadata } = params;
+
+			// Create a checkout for subscription
+			const checkout = await this.polar.checkouts.create({
+				productId: priceId,
+				organizationId: this.organizationId!,
+				customerId: customerId,
+				successUrl: metadata?.successUrl || `${this.appUrl}/pricing/success`,
+				cancelUrl: metadata?.cancelUrl || `${this.appUrl}/pricing`,
+				metadata: metadata || {}
+			} as any);
+
+			// Get subscription from checkout if available
+			const subscriptionId = (checkout as any).subscriptionId;
+			let subscription: any = null;
+			if (subscriptionId) {
+				try {
+					subscription = await this.polar.subscriptions.get({ id: subscriptionId } as any);
+				} catch (err) {
+					this.logger.warn('Could not fetch subscription after checkout creation', { subscriptionId });
+				}
+			}
+
+			return {
+				id: (subscription as any)?.id || (checkout as any).id || '',
+				customerId: customerId,
+				status: this.mapSubscriptionStatus((subscription as any)?.status || 'incomplete'),
+				currentPeriodEnd: (subscription as any)?.currentPeriodEnd ? new Date((subscription as any).currentPeriodEnd).getTime() / 1000 : undefined,
+				cancelAtPeriodEnd: (subscription as any)?.cancelAtPeriodEnd || false,
+				priceId: priceId,
+				checkoutData: {
+					checkoutId: (checkout as any).id,
+					url: (checkout as any).url
+				}
+			};
+		} catch (error) {
+			this.logger.error('Failed to create Polar subscription', {
+				error: this.formatErrorMessage(error),
+				params
+			});
+			throw new Error(`Failed to create subscription: ${this.formatErrorMessage(error)}`);
+		}
+	}
+
+	async cancelSubscription(subscriptionId: string, cancelAtPeriodEnd: boolean = true): Promise<SubscriptionInfo> {
+		try {
+			// Note: Adjust API call based on actual Polar SDK documentation
+			const subscription = await (this.polar.subscriptions as any).cancel({
+				id: subscriptionId,
+				cancelAtPeriodEnd: cancelAtPeriodEnd
+			} as any);
+
+			return {
+				id: (subscription as any).id || subscriptionId,
+				customerId: (subscription as any).customerId || '',
+				status: this.mapSubscriptionStatus((subscription as any).status || 'canceled'),
+				currentPeriodEnd: (subscription as any).currentPeriodEnd ? new Date((subscription as any).currentPeriodEnd).getTime() / 1000 : undefined,
+				cancelAtPeriodEnd: (subscription as any).cancelAtPeriodEnd || false,
+				priceId: (subscription as any).priceId || ''
+			};
+		} catch (error) {
+			this.logger.error('Failed to cancel Polar subscription', {
+				error: this.formatErrorMessage(error),
+				subscriptionId
+			});
+			throw new Error(`Failed to cancel subscription: ${this.formatErrorMessage(error)}`);
+		}
+	}
+
+	async updateSubscription(params: UpdateSubscriptionParams): Promise<SubscriptionInfo> {
+		try {
+			const { subscriptionId, priceId, cancelAtPeriodEnd, metadata } = params;
+
+			const updateData: any = {};
+			if (priceId) {
+				updateData.priceId = priceId;
+			}
+			if (cancelAtPeriodEnd !== undefined) {
+				updateData.cancelAtPeriodEnd = cancelAtPeriodEnd;
+			}
+			if (metadata) {
+				updateData.metadata = metadata;
+			}
+
+			const subscription = await this.polar.subscriptions.update({
+				id: subscriptionId,
+				...updateData
+			} as any);
+
+			return {
+				id: (subscription as any).id || subscriptionId,
+				customerId: (subscription as any).customerId || '',
+				status: this.mapSubscriptionStatus((subscription as any).status || 'active'),
+				currentPeriodEnd: (subscription as any).currentPeriodEnd ? new Date((subscription as any).currentPeriodEnd).getTime() / 1000 : undefined,
+				cancelAtPeriodEnd: (subscription as any).cancelAtPeriodEnd || false,
+				priceId: (subscription as any).priceId || priceId || ''
+			};
+		} catch (error) {
+			this.logger.error('Failed to update Polar subscription', {
+				error: this.formatErrorMessage(error),
+				params
+			});
+			throw new Error(`Failed to update subscription: ${this.formatErrorMessage(error)}`);
+		}
+	}
+
+	async handleWebhook(payload: any, signature: string): Promise<WebhookResult> {
+		try {
+			// Verify webhook signature
+			// Polar uses HMAC SHA256 for webhook verification
+			const crypto = await import('crypto');
+			const expectedSignature = crypto
+				.createHmac('sha256', this.webhookSecret)
+				.update(JSON.stringify(payload))
+				.digest('hex');
+
+			if (signature !== expectedSignature) {
+				throw new Error('Invalid webhook signature');
+			}
+
+			const event = payload;
+			let eventType: string;
+			let eventData: any = {};
+
+			// Map Polar event types to generic types
+			switch (event.type) {
+				case 'checkout.succeeded':
+					eventType = 'payment_succeeded';
+					eventData = event.data;
+					break;
+				case 'checkout.failed':
+					eventType = 'payment_failed';
+					eventData = event.data;
+					break;
+				case 'subscription.created':
+					eventType = 'subscription_created';
+					eventData = event.data;
+					break;
+				case 'subscription.updated':
+					eventType = 'subscription_updated';
+					eventData = event.data;
+					break;
+				case 'subscription.canceled':
+					eventType = 'subscription_cancelled';
+					eventData = event.data;
+					break;
+				case 'invoice.paid':
+					eventType = 'subscription_payment_succeeded';
+					eventData = event.data;
+					break;
+				case 'invoice.payment_failed':
+					eventType = 'subscription_payment_failed';
+					eventData = event.data;
+					break;
+				default:
+					eventType = event.type;
+					eventData = event.data;
+			}
+
+			return {
+				received: true,
+				type: eventType,
+				id: event.id || event.data?.id || '',
+				data: eventData
+			};
+		} catch (error) {
+			this.logger.error('Polar webhook handling error', {
+				error: this.formatErrorMessage(error)
+			});
+			throw error;
+		}
+	}
+
+	async refundPayment(paymentId: string, amount?: number): Promise<any> {
+		try {
+			// Note: Adjust API call based on actual Polar SDK documentation
+			const refund = await (this.polar.payments as any).refund({
+				id: paymentId,
+				amount: amount ? Math.round(amount * 100) : undefined // Convert to cents
+			} as any);
+
+			return {
+				id: (refund as any).id || '',
+				amount: ((refund as any).amount || 0) / 100, // Convert from cents
+				status: (refund as any).status || 'succeeded'
+			};
+		} catch (error) {
+			this.logger.error('Failed to refund Polar payment', {
+				error: this.formatErrorMessage(error),
+				paymentId
+			});
+			throw new Error(`Failed to refund payment: ${this.formatErrorMessage(error)}`);
+		}
+	}
+
+	getClientConfig(): ClientConfig {
+		return {
+			publicKey: this.organizationId || '',
+			paymentGateway: 'polar',
+			options: {
+				organizationId: this.organizationId,
+				appUrl: this.appUrl
+			}
+		};
+	}
+
+	getUIComponents(): UIComponents {
+		return {
+			PaymentForm: this.getPaymentFormComponent(),
+			logo: '/assets/payment/polar/logo.svg',
+			cardBrands: polarCardBrands,
+			supportedPaymentMethods: ['card'],
+			translations: polarTranslations
+		};
+	}
+
+	private mapSubscriptionStatus(status: string): SubscriptionStatus {
+		const statusMap: Record<string, SubscriptionStatus> = {
+			active: SubscriptionStatus.ACTIVE,
+			trialing: SubscriptionStatus.TRIALING,
+			past_due: SubscriptionStatus.PAST_DUE,
+			canceled: SubscriptionStatus.CANCELED,
+			unpaid: SubscriptionStatus.UNPAID,
+			incomplete: SubscriptionStatus.INCOMPLETE,
+			incomplete_expired: SubscriptionStatus.INCOMPLETE_EXPIRED
+		};
+
+		return statusMap[status.toLowerCase()] || SubscriptionStatus.INCOMPLETE;
+	}
+
+	private getPaymentFormComponent(): React.ComponentType<PaymentFormProps> {
+		// Return a simple payment form component
+		// In a real implementation, this would use Polar's checkout embed
+		const PolarPaymentForm = ({ onSuccess, onError, amount, currency }: PaymentFormProps) => {
+			return React.createElement(
+				'div',
+				{ className: 'polar-payment-form' },
+				React.createElement('p', null, 'Polar payment form - redirect to checkout'),
+				React.createElement(
+					'button',
+					{
+						onClick: () => {
+							// In real implementation, redirect to Polar checkout
+							onSuccess('polar_checkout_' + Date.now());
+						}
+					},
+					'Proceed to Payment'
+				)
+			);
+		};
+		return PolarPaymentForm;
+	}
+}
+

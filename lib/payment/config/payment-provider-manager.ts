@@ -1,4 +1,4 @@
-import { LemonSqueezyProvider, StripeProvider } from '..';
+import { LemonSqueezyProvider, StripeProvider, PolarProvider } from '..';
 
 // Centralized configuration for all providers
 interface ProviderConfig {
@@ -15,16 +15,36 @@ interface ProviderConfig {
 			[key: string]: any;
 		};
 	};
+	solidgate?: {
+		apiKey: string;
+		webhookSecret: string;
+		options: {
+			[key: string]: any;
+		};
+	};
+	polar: {
+		apiKey: string;
+		webhookSecret: string;
+		options: {
+			organizationId?: string;
+			appUrl?: string;
+			[key: string]: any;
+		};
+	};
 }
 
 // Environment variables validation and configuration
 class ConfigManager {
 	private static config: ProviderConfig | null = null;
 	private static initializedProviders: Set<string> = new Set();
+
+	// Stripe configuration
 	private static stripeApiKey: string = process.env.STRIPE_SECRET_KEY || '';
 	private static stripeWebhookSecret: string = process.env.STRIPE_WEBHOOK_SECRET || '';
 	private static stripePublishableKey: string = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';
 	private static stripeApiVersion: string = process.env.STRIPE_API_VERSION || '2023-10-16';
+
+	// LemonSqueezy configuration
 	private static lemonsqueezyApiKey: string = process.env.LEMONSQUEEZY_API_KEY || '';
 	private static lemonsqueezyWebhookSecret: string = process.env.LEMONSQUEEZY_WEBHOOK_SECRET || '';
 	private static lemonsqueezyStoreId: string = process.env.LEMONSQUEEZY_STORE_ID || '';
@@ -32,6 +52,12 @@ class ConfigManager {
 	private static lemonsqueezyApiVersion: string = process.env.LEMONSQUEEZY_API_VERSION || '2023-10-16';
 	private static lemonsqueezyAppUrl: string = process.env.NEXT_PUBLIC_APP_URL || 'https://demo.ever.works';
 	private static lemonsqueezySiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works';
+
+	// Polar configuration
+	private static polarApiKey: string = process.env.POLAR_ACCESS_TOKEN || '';
+	private static polarWebhookSecret: string = process.env.POLAR_WEBHOOK_SECRET || '';
+	private static polarOrganizationId: string = process.env.POLAR_ORGANIZATION_ID || '';
+	private static polarAppUrl: string = process.env.NEXT_PUBLIC_APP_URL || '';
 
 	private static ensureConfig(): ProviderConfig {
 		if (!this.config) {
@@ -51,6 +77,14 @@ class ConfigManager {
 						apiVersion: this.lemonsqueezyApiVersion,
 						appUrl: this.lemonsqueezyAppUrl || '',
 						siteUrl: this.lemonsqueezySiteUrl || ''
+					}
+				},
+				polar: {
+					apiKey: this.polarApiKey || '',
+					webhookSecret: this.polarWebhookSecret || '',
+					options: {
+						organizationId: this.polarOrganizationId || '',
+						appUrl: this.polarAppUrl || ''
 					}
 				}
 			};
@@ -77,6 +111,14 @@ class ConfigManager {
 			this.initializedProviders.add('lemonsqueezy');
 		}
 		return this.ensureConfig().lemonsqueezy;
+	}
+
+	public static getPolarConfig() {
+		if (!this.initializedProviders.has('polar')) {
+			this.validatePolarConfig();
+			this.initializedProviders.add('polar');
+		}
+		return this.ensureConfig().polar;
 	}
 
 	private static validateStripeConfig(): void {
@@ -129,6 +171,30 @@ class ConfigManager {
 
 		console.log('✅ LemonSqueezy configuration validated successfully');
 	}
+
+	private static validatePolarConfig(): void {
+		const polarApiKey = this.polarApiKey;
+		const polarWebhookSecret = this.polarWebhookSecret;
+		const polarOrganizationId = this.polarOrganizationId;
+		const polarAppUrl = this.polarAppUrl;
+
+		if (!polarApiKey || !polarOrganizationId) {
+			throw new Error(
+				'Polar configuration is incomplete. Required: POLAR_ACCESS_TOKEN, POLAR_ORGANIZATION_ID'
+			);
+		}
+
+		this.ensureConfig().polar = {
+			apiKey: polarApiKey,
+			webhookSecret: polarWebhookSecret || '',
+			options: {
+				organizationId: polarOrganizationId,
+				appUrl: polarAppUrl
+			}
+		};
+
+		console.log('✅ Polar configuration validated successfully');
+	}
 }
 
 export class PaymentProviderManager {
@@ -172,6 +238,11 @@ export class PaymentProviderManager {
 		return this.getProvider('lemonsqueezy', lemonsqueezyConfig, LemonSqueezyProvider);
 	}
 
+	public static getPolarProvider(): PolarProvider {
+		const polarConfig = ConfigManager.getPolarConfig();
+		return this.getProvider('polar', polarConfig, PolarProvider);
+	}
+
 	public static reset(): void {
 		this.instances.clear();
 		this.isInitializing.clear();
@@ -210,4 +281,16 @@ export function getOrCreateStripeProvider(): StripeProvider {
 
 export function getOrCreateLemonsqueezyProvider(): LemonSqueezyProvider {
 	return getLemonsqueezyProvider() || initializeLemonsqueezyProvider();
+}
+
+export function initializePolarProvider(): PolarProvider {
+	return PaymentProviderManager.getPolarProvider();
+}
+
+export function getPolarProvider(): PolarProvider | null {
+	return PaymentProviderManager.isInitialized('polar') ? PaymentProviderManager.getPolarProvider() : null;
+}
+
+export function getOrCreatePolarProvider(): PolarProvider {
+	return getPolarProvider() || initializePolarProvider();
 }

@@ -267,7 +267,7 @@ export interface UpdateSubscriptionParams {
 // Client configuration for frontend integration
 export interface ClientConfig {
   publicKey: string;
-  paymentGateway: "stripe" | "solidgate" | "lemonsqueezy";
+  paymentGateway: "stripe" | "solidgate" | "lemonsqueezy" | "polar";
   options?: Record<string, any>;
 }
 
@@ -305,7 +305,7 @@ export enum WebhookEventType {
 
 
 // Supported providers type
-export type SupportedProvider = "stripe" | "solidgate" | "lemonsqueezy";
+export type SupportedProvider = "stripe" | "solidgate" | "lemonsqueezy" | "polar";
 
 // Interface for the configuration of a provider
 export interface PaymentProviderConfig {

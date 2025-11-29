@@ -21,6 +21,7 @@ export { PaymentProviderFactory } from './lib/payment-provider-factory';
 export * from './lib/providers/stripe-provider';
 export * from './lib/providers/solidgate-provider';
 export * from './lib/providers/lemonsqueezy-provider';
+export * from './lib/providers/polar-provider';
 
 // Export configurations
 export { createProviderConfigs } from './config/provider-configs';
