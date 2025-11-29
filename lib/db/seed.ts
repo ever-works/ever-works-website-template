@@ -180,12 +180,9 @@ export async function runSeed(): Promise<void> {
 		if (accountsEmpty) {
 			seedConfig.accounts = {
 				count: 3,
+				// Link each account to 1 user
 				with: {
-					users: {
-						columns: {
-							userId: 'id'
-						}
-					}
+					users: 1
 				},
 				columns: {
 					type: ({ index }: { index: number }) => (index === 2 ? 'oauth' : 'email'),
@@ -208,43 +205,43 @@ export async function runSeed(): Promise<void> {
 			};
 		}
 
-		if (profilesEmpty) {
-			seedConfig.clientProfiles = {
-				count: 3,
-				with: {
-					users: {
-						columns: {
-							userId: 'id'
-						}
-					}
-				},
-				columns: {
-					email: ({ index }: { index: number }) => {
-						if (index === 0) return adminEmail;
-						if (index === 1) return 'client1@example.com';
-						return 'client2@example.com';
-					},
-					name: ({ index }: { index: number }) => {
-						if (index === 0) return 'Admin User';
-						if (index === 1) return 'Client One';
-						return 'Client Two';
-					}
-				}
-			};
-		}
-
-		// Explicitly exclude singleton and configuration tables from auto-generation
-		// drizzle-seed auto-generates data for ALL tables in schema unless we specify count: 0
-		seedConfig.twentyCrmConfig = { count: 0 };
-		seedConfig.seedStatus = { count: 0 };
-		seedConfig.featuredItems = { count: 0 };
-		seedConfig.paymentProviders = { count: 0 };
-		seedConfig.integrationMappings = { count: 0 };
+		// NOTE: clientProfiles is seeded manually AFTER seed() to respect 1:1 unique constraint
+		// Do NOT add clientProfiles to seedConfig - it causes duplicate key errors
 
 		// Only call seed if there's something to seed
 		if (Object.keys(seedConfig).length > 0) {
-			await seed(db, schema as never, seedConfig);
-			console.log(`[Seed] Completed seeding ${Object.keys(seedConfig).length} tables`);
+			// IMPORTANT: drizzle-seed only knows about tables we explicitly pass to it
+			// We must NOT pass the entire schema, only the tables we want to seed
+			// This prevents auto-generation of singleton/config tables
+			const tablesToSeed = {
+				permissions,
+				roles,
+				users,
+				accounts
+				// NOTE: clientProfiles is excluded - seeded manually below
+			};
+
+			await seed(db, tablesToSeed as never, seedConfig);
+			console.log(`[Seed] Completed seeding ${Object.keys(seedConfig).length} configured tables`);
+		}
+
+		// Seed clientProfiles manually to ensure 1:1 mapping with users (unique constraint)
+		if (profilesEmpty) {
+			console.log('[Seed] Seeding clientProfiles manually...');
+
+			// Get the users we just seeded
+			const seededUsers = await db.select().from(users).limit(3);
+
+			if (seededUsers.length > 0) {
+				const profileValues = seededUsers.slice(0, 3).map((user, index) => ({
+					userId: user.id,
+					email: index === 0 ? adminEmail : index === 1 ? 'client1@example.com' : 'client2@example.com',
+					name: index === 0 ? 'Admin User' : index === 1 ? 'Client One' : 'Client Two'
+				}));
+
+				await db.insert(clientProfiles).values(profileValues).onConflictDoNothing();
+				console.log(`[Seed] Created ${profileValues.length} client profiles`);
+			}
 		}
 
 		// Seed junction tables separately (role_permissions, user_roles)
