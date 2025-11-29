@@ -233,6 +233,14 @@ export async function runSeed(): Promise<void> {
 			};
 		}
 
+		// Explicitly exclude singleton and configuration tables from auto-generation
+		// drizzle-seed auto-generates data for ALL tables in schema unless we specify count: 0
+		seedConfig.twentyCrmConfig = { count: 0 };
+		seedConfig.seedStatus = { count: 0 };
+		seedConfig.featuredItems = { count: 0 };
+		seedConfig.paymentProviders = { count: 0 };
+		seedConfig.integrationMappings = { count: 0 };
+
 		// Only call seed if there's something to seed
 		if (Object.keys(seedConfig).length > 0) {
 			await seed(db, schema as never, seedConfig);

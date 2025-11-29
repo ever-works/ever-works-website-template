@@ -18,7 +18,9 @@ export async function isMigrationNeeded(): Promise<boolean> {
 			) as exists`
 		);
 
-		const exists = (result as unknown as { rows: Array<{ exists: boolean }> }).rows[0]?.exists;
+		// Handle postgres-js result format (can be {rows: []} or array directly)
+		const rows = (result as { rows?: unknown[] }).rows ?? (Array.isArray(result) ? result : []);
+		const exists = rows.length > 0 ? (rows[0] as { exists: boolean }).exists : false;
 
 		if (process.env.NODE_ENV === 'development') {
 			console.log('[Migration] seed_status table exists:', exists);
