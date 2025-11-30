@@ -99,6 +99,15 @@ export function getHeaderMoreEnabled(): boolean {
 }
 
 /**
+ * Server-side utility to check if header settings button is enabled
+ * @returns boolean - true if enabled, false otherwise
+ */
+export function getHeaderSettingsEnabled(): boolean {
+	const enabled = configManager.getNestedValue('settings.header.settings_enabled');
+	return enabled ?? true;
+}
+
+/**
  * Server-side utility to get the default layout
  * @returns string - 'home1' or 'home2'
  */

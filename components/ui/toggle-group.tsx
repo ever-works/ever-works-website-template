@@ -83,7 +83,7 @@ export function ToggleGroup({
           onClick={() => !option.disabled && onValueChange(option.value)}
           disabled={option.disabled}
           className={cn(
-            'relative font-semibold transition-all duration-300 z-10 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed',
+            'relative font-semibold transition-all h-10 rounded-lg duration-300 z-10 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed',
             currentVariant.button,
             currentSize.button,
             value === option.value

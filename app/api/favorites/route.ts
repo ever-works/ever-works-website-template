@@ -148,11 +148,14 @@ export async function GET() {
     });
 
   } catch (error) {
-    console.error('Failed to fetch favorites:', error);
+    // Only log errors in development mode
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Failed to fetch favorites:', error);
+    }
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Failed to fetch favorites' 
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch favorites'
       },
       { status: 500 }
     );

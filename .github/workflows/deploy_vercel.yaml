@@ -82,6 +82,21 @@ jobs:
           fi
         continue-on-error: true
 
+      - name: Set Cron Secret environment variable
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          VERCEL_TEAM_SCOPE: ${{ secrets.VERCEL_TEAM_SCOPE }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -n "$CRON_SECRET" ]; then
+            if [ -n "$VERCEL_TEAM_SCOPE" ]; then
+              echo -n "$CRON_SECRET" | vercel env add CRON_SECRET ${{ inputs.environment }} --scope "$VERCEL_TEAM_SCOPE" --token "$VERCEL_TOKEN"
+            else
+              echo -n "$CRON_SECRET" | vercel env add CRON_SECRET ${{ inputs.environment }} --token "$VERCEL_TOKEN"
+            fi
+          fi
+        continue-on-error: true
+
       - name: Pull settings
         run: |
           if [ -n "${{ secrets.VERCEL_TEAM_SCOPE }}" ]; then

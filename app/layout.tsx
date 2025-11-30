@@ -27,7 +27,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 	// Skip initialization when Vercel cron is active (relies on external cron job)
 	if (process.env.NODE_ENV !== 'test') {
 		const schedulingMode = getSchedulingMode();
-		console.log(`[LAYOUT] Scheduling mode: ${schedulingMode}`);
 
 		if (schedulingMode === 'vercel') {
 			console.log('[LAYOUT] Vercel cron detected - skipping internal background job initialization');

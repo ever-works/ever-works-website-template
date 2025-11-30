@@ -337,6 +337,9 @@
     "BILLING": "Facturación",
     "NOTIFICATIONS": "Notificaciones",
     "SETTINGS": "Configuración",
+    "OPEN_SETTINGS": "Abrir configuración",
+    "CLOSE_SETTINGS": "Cerrar configuración",
+    "SETTINGS_PLACEHOLDER": "Las opciones de configuración se agregarán aquí",
     "SECURITY": "Seguridad",
     "LEGAL": "Legal",
     "HELP": "Centro de ayuda",
@@ -345,6 +348,10 @@
     "PROFILE_DESC": "Ver y editar tu perfil",
     "ACCOUNT_SETTINGS_DESC": "Configuración y preferencias de la cuenta",
     "PROFILE_SETTINGS": "Configuración del perfil",
+    "PAGINATION_STYLE": "Estilo de paginación",
+    "PAGINATION_STYLE_DESC": "Elige cómo se muestra el contenido al navegar por los listados",
+    "PAGINATION_STANDARD_LABEL": "Estándar",
+    "PAGINATION_INFINITE_LABEL": "Desplazamiento infinito",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Información básica",

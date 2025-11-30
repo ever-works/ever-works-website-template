@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { PaymentFlow, PaymentInterval, PaymentPlan, PaymentProvider } from '@/lib/constants';
@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { usePricingFeatures } from '@/hooks/use-pricing-features';
 import { useConfig } from '@/app/[locale]/config';
 import { PricingConfig } from '@/lib/content';
-import { useLoginModal } from './use-login-modal';
+import { useLoginModal, type LoginModalStore } from './use-login-modal';
 import { useCheckoutButton } from './use-checkout-button';
 
 export interface UsePricingSectionParams {
@@ -26,7 +26,7 @@ export interface UsePricingSectionState {
 }
 
 export interface UsePricingSectionActions {
-	setShowSelector: (show: boolean) => void;
+	setShowSelector: (show: boolean | ((prev: boolean) => boolean)) => void;
 	setBillingInterval: (interval: PaymentInterval) => void;
 	setSelectedPlan: (plan: PaymentPlan | null) => void;
 	handleFlowChange: () => void;
@@ -57,6 +57,7 @@ export interface UsePricingSectionReturn extends UsePricingSectionState, UsePric
 	t: any;
 	tBilling: any;
 	router: any;
+	loginModal: LoginModalStore;
 }
 
 /**
@@ -75,27 +76,28 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 	const { freePlanFeatures, standardPlanFeatures, premiumPlanFeatures, getPlanConfig, getActionText } =
 		usePricingFeatures();
 
-	const stripeHook = useCreateCheckoutSession();
-	const lemonsqueezyHook = useCheckoutButton();
+		const stripeHook: ReturnType<typeof useCreateCheckoutSession> = useCreateCheckoutSession();
+		const lemonsqueezyHook: ReturnType<typeof useCheckoutButton> = useCheckoutButton();
 
 	const { selectedFlow, selectFlow, triggerAnimation } = usePaymentFlow({
 		enableAnimations: true,
 		autoSave: true
 	});
 
-  // Local state
-  const [showSelector, setShowSelector] = useState(false);
-  const [billingInterval, setBillingInterval] = useState<PaymentInterval>(PaymentInterval.MONTHLY);
-  const [processingPlan, setProcessingPlan] = useState<string | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(null);
-  const loginModal = useLoginModal();
-  
-  const currentProcessingPlanRef = useRef<string | null>(null);
+	// Local state
+	const [showSelector, setShowSelector] = useState<boolean>(false);
+	const [billingInterval, setBillingInterval] = useState<PaymentInterval>(PaymentInterval.MONTHLY);
+	const [processingPlan, setProcessingPlan] = useState<string | null>(null);
+	const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(null);
+	const loginModal = useLoginModal();
+
+	const currentProcessingPlanRef = useRef<string | null>(null);
 
 	const { FREE, STANDARD, PREMIUM } = config.pricing?.plans ?? {};
-	const paymentHook = config.pricing?.provider === PaymentProvider.LEMONSQUEEZY ? lemonsqueezyHook : stripeHook;
-	const { isLoading, isError, isSuccess, error } = paymentHook;
-	const resetPaymentHook = 'reset' in paymentHook ? paymentHook.reset : () => {};
+	const paymentProvider = useMemo(() => config.pricing?.provider, [config.pricing?.provider]);
+	const paymentHook = paymentProvider === PaymentProvider.LEMONSQUEEZY ? lemonsqueezyHook : stripeHook;
+	const { isLoading, isSuccess, error } = paymentHook;
+	const resetPaymentHook = useMemo(() => ('reset' in paymentHook ? paymentHook.reset : () => {}), [paymentHook]);
 
 	/**
 	 * Cancel current processing and reset state
@@ -112,9 +114,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 	/**
 	 * Handle flow change
 	 */
-	const handleFlowChange = useCallback(() => {
-		setShowSelector(true);
-	}, []);
+	const handleFlowChange = useCallback(() => setShowSelector((prev) => !prev), []);
 
 	/**
 	 * Handle flow selection
@@ -174,18 +174,21 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 		[billingInterval, calculatePrice]
 	);
 
-  /**
-   * Handle checkout process
-   */
-  const handleCheckout = useCallback(async (plan: PricingConfig) => {
-    if (!user?.id) {
-      loginModal.onOpen('Please sign in to continue with your purchase.');
-      return;
-    }
+	/**
+	 * Handle checkout process
+	 */
+	const handleCheckout = useCallback(
+		async (plan: PricingConfig) => {
+			if (!user?.id) {
+				loginModal.onOpen('Please sign in to continue with your purchase.');
+				return;
+			}
 
 			// Si un autre plan est en cours de traitement, on l'annule d'abord
 			if (currentProcessingPlanRef.current && currentProcessingPlanRef.current !== plan.id) {
-				console.log(`Cancelling previous process for ${currentProcessingPlanRef.current}, starting new process for ${plan.id}`);
+				console.log(
+					`Cancelling previous process for ${currentProcessingPlanRef.current}, starting new process for ${plan.id}`
+				);
 				toast.info(`Switching to ${plan.name} plan...`);
 				cancelCurrentProcess();
 			}
@@ -195,8 +198,8 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 			setProcessingPlan(plan.id);
 
 			try {
-				if (config.pricing?.provider === PaymentProvider.LEMONSQUEEZY) {
-					if(!plan.lemonVariantId) {
+				if (paymentProvider === PaymentProvider.LEMONSQUEEZY) {
+					if (!plan.lemonVariantId) {
 						toast.error('No variant ID found for plan');
 						currentProcessingPlanRef.current = null;
 						setProcessingPlan(null);
@@ -232,10 +235,11 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 		},
 		[
 			user,
-			router,
 			cancelCurrentProcess,
-			lemonsqueezyHook.handleSubmitWithParams,
-			stripeHook.createCheckoutSession,
+			loginModal,
+			paymentProvider,
+			lemonsqueezyHook,
+			stripeHook,
 			billingInterval
 		]
 	);
@@ -265,10 +269,10 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 		}
 
 		if (isSuccess) {
-			toast.success(`Checkout session created! Redirecting to ${config.pricing?.provider}...`);
+			toast.success(`Checkout session created! Redirecting to ${paymentProvider}...`);
 			setProcessingPlan(null);
 		}
-	}, [error, isSuccess]);
+	}, [error, isSuccess, paymentProvider]);
 
 	return {
 		// State
@@ -304,10 +308,11 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 		getActionText: (planId: string) => getActionText(planId as PaymentPlan),
 		isLoading,
 		error,
-		provider: config.pricing?.provider,
+		provider: paymentProvider,
 		isSuccess,
 		t,
 		tBilling,
-		router
-	};
+		router,
+		loginModal
+	} satisfies UsePricingSectionReturn;
 }

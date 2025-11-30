@@ -150,7 +150,10 @@ export async function GET(
       comments: itemComments
     });
   } catch (error) {
-    console.error("Failed to fetch comments:", error);
+    // Only log errors in development mode
+    if (process.env.NODE_ENV === 'development') {
+      console.error("Failed to fetch comments:", error);
+    }
     return NextResponse.json(
       { success: false, error: "Failed to fetch comments" },
       { status: 500 }

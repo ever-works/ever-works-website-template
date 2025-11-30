@@ -223,7 +223,6 @@ export function ReviewStep({
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 flex items-center justify-center">
                     {mediaLinks.icon_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={mediaLinks.icon_url}
                         alt={`${basicInfo.name || 'Item'} icon`}

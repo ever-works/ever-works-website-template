@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 
-interface LoginModalStore {
+export interface LoginModalStore {
   isOpen: boolean;
   message: string | undefined;
   onOpen: (message?: string) => void;
@@ -14,4 +14,6 @@ export const useLoginModal = create<LoginModalStore>()((set) => ({
   message: undefined,
   onOpen: (message) => set({ isOpen: true, message }),
   onClose: () => set({ isOpen: false, message: undefined }),
-})); 
+}));
+
+export type LoginModalReturn = ReturnType<typeof useLoginModal>; 

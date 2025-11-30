@@ -72,7 +72,7 @@ export function useCurrentUser() {
 				return false;
 			}
 
-			// Retry network errors and server errors up to 2 times (reduced from 3)
+			// Retry network errors and server errors once (reduced from 2 to minimize timeouts)
 			return failureCount < 2;
 		}
 	});

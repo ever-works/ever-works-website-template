@@ -32,7 +32,11 @@ import { getFeatureFlags } from '@/lib/config/feature-flags';
  *                   type: boolean
  *                   description: "Whether featured items feature is available"
  *                   example: true
- *               required: ["ratings", "comments", "favorites", "featuredItems"]
+ *                 surveys:
+ *                   type: boolean
+ *                   description: "Whether surveys feature is available"
+ *                   example: true
+ *               required: ["ratings", "comments", "favorites", "featuredItems", "surveys"]
  *             examples:
  *               all_enabled:
  *                 summary: "All features enabled (database configured)"
@@ -41,6 +45,7 @@ import { getFeatureFlags } from '@/lib/config/feature-flags';
  *                   comments: true
  *                   favorites: true
  *                   featuredItems: true
+ *                   surveys: true
  *               all_disabled:
  *                 summary: "All features disabled (no database)"
  *                 value:
@@ -48,6 +53,7 @@ import { getFeatureFlags } from '@/lib/config/feature-flags';
  *                   comments: false
  *                   favorites: false
  *                   featuredItems: false
+ *                   surveys: false
  */
 export async function GET() {
   try {
@@ -69,6 +75,7 @@ export async function GET() {
         comments: false,
         favorites: false,
         featuredItems: false,
+        surveys: false,
       },
       {
         status: 500,

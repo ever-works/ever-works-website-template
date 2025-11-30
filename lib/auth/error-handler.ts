@@ -25,9 +25,17 @@ export function validateAuthConfig() {
   // Check base NextAuth variables but don't throw errors
   const baseError = validateEnvVariables(baseNextAuthVars);
   if (baseError) {
-    // Just log a warning instead of throwing an error
-    console.warn(`[AUTH CONFIG WARNING] NextAuth base configuration incomplete: ${baseError.message}`);
-    console.warn('Authentication features may be limited.');
+    // Suppress warnings during CI/linting
+    const shouldSuppress = 
+      process.env.CI === 'true' ||
+      process.env.NODE_ENV === 'test' ||
+      process.argv.some(arg => /(?:^|[/\\])(eslint|lint(?:-staged)?)(?:\.[jt]s)?$/.test(arg));
+    
+    if (!shouldSuppress) {
+      // Just log a warning instead of throwing an error
+      console.warn(`[AUTH CONFIG WARNING] NextAuth base configuration incomplete: ${baseError.message}`);
+      console.warn('Authentication features may be limited.');
+    }
   }
 
   // Check which providers are enabled based on environment variables

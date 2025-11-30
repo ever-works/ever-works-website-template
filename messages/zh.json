@@ -289,6 +289,9 @@
     "BILLING": "账单",
     "NOTIFICATIONS": "通知",
     "SETTINGS": "设置",
+    "OPEN_SETTINGS": "打开设置",
+    "CLOSE_SETTINGS": "关闭设置",
+    "SETTINGS_PLACEHOLDER": "设置选项将在此处添加",
     "SECURITY": "安全",
     "LEGAL": "法律",
     "HELP": "帮助中心",
@@ -297,6 +300,10 @@
     "PROFILE_DESC": "查看和编辑您的个人资料",
     "ACCOUNT_SETTINGS_DESC": "账户设置和偏好",
     "PROFILE_SETTINGS": "个人资料设置",
+    "PAGINATION_STYLE": "分页样式",
+    "PAGINATION_STYLE_DESC": "选择浏览列表时内容的显示方式",
+    "PAGINATION_STANDARD_LABEL": "标准",
+    "PAGINATION_INFINITE_LABEL": "无限滚动",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "基本信息",

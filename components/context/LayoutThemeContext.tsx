@@ -258,7 +258,7 @@ const usePaginationTypeManager = () => {
   // Always initialize with default to prevent hydration mismatch
   const [paginationType, setPaginationTypeState] = useState<PaginationType>(DEFAULT_PAGINATION_TYPE);
 
-  // Hydrate from localStorage after mount
+  // Hydrate from localStorage after mount - runs only once on mount
   useEffect(() => {
     const saved = safeLocalStorage.getItem(STORAGE_KEYS.PAGINATION_TYPE);
     if (saved && isValidPaginationType(saved)) {

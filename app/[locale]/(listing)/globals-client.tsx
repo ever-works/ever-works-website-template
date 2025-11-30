@@ -41,7 +41,9 @@ const LAYOUT_STYLES = {
 };
 
 export default function GlobalsClient(props: ListingProps) {
-	const { layoutHome = LayoutHome.HOME_ONE } = useLayoutTheme();
+	// Destructure paginationType to subscribe to context changes - forces re-render when pagination type changes
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { layoutHome = LayoutHome.HOME_ONE, paginationType } = useLayoutTheme();
 	const { selectedCategories, searchTerm, selectedTags, isFiltersLoading } =
 		useFilters();
 	const sortedTags = sortByNumericProperty(props.tags);

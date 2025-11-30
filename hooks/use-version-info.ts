@@ -93,8 +93,9 @@ export function useVersionInfo({
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
     refetchInterval: refreshInterval > 0 ? refreshInterval : false,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false, // Don't refetch on tab switch to reduce API calls
     refetchOnReconnect: true,
+    refetchOnMount: false, // Don't refetch if data exists in cache
     enabled,
     retry: (failureCount, error) => {
       if (!retryOnError) return false;
@@ -104,11 +105,16 @@ export function useVersionInfo({
         return false;
       }
 
-      // Retry network errors and server errors up to 3 times
-      return failureCount < 3;
+      // Retry network errors and server errors once (reduced from 3 for better UX)
+      return failureCount < 2;
     },
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
   });
+
+  // Log errors in development mode (only for dev/admin)
+  if (isError && error && process.env.NODE_ENV === 'development') {
+    console.error('[VersionInfo] Failed to fetch version:', error.message);
+  }
 
   // Utility function to invalidate version info cache
   const invalidateVersionInfo = async () => {
@@ -116,10 +122,10 @@ export function useVersionInfo({
   };
 
   return {
-    versionInfo: versionInfo || null,
+    versionInfo: versionInfo ?? null,
     isLoading,
     isError,
-    error: error || null,
+    error: error ?? null,
     refetch,
     isStale,
     dataUpdatedAt,

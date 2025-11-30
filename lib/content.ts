@@ -194,6 +194,7 @@ export interface HeaderSettings {
 	languageEnabled: boolean;
 	themeEnabled: boolean;
 	moreEnabled: boolean;
+	settingsEnabled: boolean;
 	layoutDefault: string;
 	paginationDefault: string;
 	themeDefault: string;
@@ -266,7 +267,6 @@ interface FetchOptions {
 }
 
 async function getConfig() {
-	console.log('Fetching config');
 	try {
 		// Ensure content is available (copies from build to runtime on Vercel)
 		const { ensureContentAvailable } = await import('./lib');

@@ -11,11 +11,11 @@ interface VersionTooltipProps {
   delay?: number;
 }
 
-export function VersionTooltip({ 
-  children, 
-  className = "", 
+export function VersionTooltip({
+  children,
+  className = "",
   disabled = false,
-  delay = 300 
+  delay = 300
 }: VersionTooltipProps) {
   // Always call all hooks first - this is critical for hook order consistency
   const [isVisible, setIsVisible] = useState(false);
@@ -81,7 +81,15 @@ export function VersionTooltip({
     };
   }, []);
 
-  if (disabled || error || !versionInfo) {
+  // Handle disabled state
+  if (disabled) {
+    return <>{children}</>;
+  }
+
+  // Handle error state - hide tooltip but preserve UI structure
+  if (error || !versionInfo) {
+    // For all users: return children without tooltip functionality
+    // This preserves the UI structure (important for layout)
     return <>{children}</>;
   }
 

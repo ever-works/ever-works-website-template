@@ -309,6 +309,9 @@
     "BILLING": "Abrechnung",
     "NOTIFICATIONS": "Benachrichtigungen",
     "SETTINGS": "Einstellungen",
+    "OPEN_SETTINGS": "Einstellungen öffnen",
+    "CLOSE_SETTINGS": "Einstellungen schließen",
+    "SETTINGS_PLACEHOLDER": "Einstellungsoptionen werden hier hinzugefügt",
     "SECURITY": "Sicherheit",
     "LEGAL": "Rechtliches",
     "HELP": "Hilfe-Center",
@@ -317,6 +320,10 @@
     "PROFILE_DESC": "Ihr Profil anzeigen und bearbeiten",
     "ACCOUNT_SETTINGS_DESC": "Kontoeinstellungen und Präferenzen",
     "PROFILE_SETTINGS": "Profileinstellungen",
+    "PAGINATION_STYLE": "Paginierungsstil",
+    "PAGINATION_STYLE_DESC": "Wählen Sie aus, wie Inhalte beim Durchsuchen von Listen angezeigt werden",
+    "PAGINATION_STANDARD_LABEL": "Standard",
+    "PAGINATION_INFINITE_LABEL": "Unendliches Scrollen",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Grundinformationen",

@@ -5,10 +5,10 @@ import { PlanCard } from './plan-card';
 import { Check, ArrowRight, Zap, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PaymentInterval, PaymentPlan } from '@/lib/constants';
-import { PaymentFlowIndicator } from '../payment/flow-indicator';
 import { PaymentFlowSelectorModal } from '../payment';
 import { PricingConfig } from '@/lib/content';
 import { usePricingSection } from '@/hooks/use-pricing-section';
+import { useDisclosure } from '@heroui/react';
 
 interface PricingSectionProps {
 	onSelectPlan?: (plan: PaymentPlan) => void;
@@ -16,6 +16,8 @@ interface PricingSectionProps {
 }
 
 export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) {
+	const { onOpen: onOpenSelectorModal } = useDisclosure();
+
 	const {
 		FREE,
 		STANDARD,
@@ -29,15 +31,13 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 		t,
 		tBilling,
 		router,
-		showSelector,
-		setShowSelector,
+
 		billingInterval,
 		setBillingInterval,
 		processingPlan,
 		selectedPlan,
 		selectedFlow,
 		isButton,
-		handleFlowChange,
 		handleFlowSelect,
 		handleSelectPlan,
 		handleCheckout,
@@ -45,9 +45,10 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 		getSavingsText,
 		freePlanFeatures,
 		standardPlanFeatures,
-		premiumPlanFeatures
+		premiumPlanFeatures,
+		loginModal
 	} = usePricingSection({
-		onSelectPlan: onSelectPlan,
+		onSelectPlan: onSelectPlan
 	});
 
 	return (
@@ -91,16 +92,6 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 				</div>
 			)}
 
-			{!isReview && (
-				<div className="text-center mb-8">
-					<PaymentFlowIndicator
-						selectedFlow={selectedFlow}
-						onFlowChange={handleFlowChange}
-						showChangeButton={true}
-						animated={true}
-					/>
-				</div>
-			)}
 			{/* Billing Interval Selector */}
 			<div className="flex justify-center mb-14">
 				<div className="relative inline-flex items-center bg-slate-100 dark:bg-slate-800/50 rounded-xl p-1 border border-slate-200 dark:border-slate-700/50 shadow-xs backdrop-blur-xs">
@@ -170,7 +161,15 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							actionHref="/submit"
 							isLoading={processingPlan === FREE?.id && isLoading}
 							isButton={isButton}
-							onClick={() => handleCheckout(FREE as PricingConfig)}
+							onClick={() => {
+								if (!user?.id) {
+									loginModal?.onOpen('Please sign in to continue with your purchase.');
+									return;
+								}
+								handleCheckout(FREE as PricingConfig);
+							}}
+							selectedFlow={selectedFlow}
+							onFlowChange={handleFlowSelect}
 						>
 							{FREE && getSavingsText(FREE) && (
 								<div className="text-green-600 dark:text-green-400 text-sm font-medium">
@@ -215,7 +214,16 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							actionHref="/submit"
 							isLoading={processingPlan === STANDARD?.id && isLoading}
 							isButton={isButton}
-							onClick={() => handleCheckout(STANDARD as PricingConfig)}
+							onClick={() => {
+								if (!user?.id) {
+									loginModal.onOpen('Please sign in to continue with your purchase.');
+									return;
+								}
+								handleCheckout(STANDARD as PricingConfig);
+							}}
+							selectedFlow={selectedFlow}
+							onFlowChange={handleFlowSelect}
+							onOpenModal={onOpenSelectorModal}
 						>
 							{getSavingsText(STANDARD as PricingConfig) && (
 								<div className="text-center">
@@ -259,7 +267,16 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							actionHref="/submit"
 							isButton={isButton}
 							isLoading={processingPlan === PREMIUM?.id && isLoading}
-							onClick={() => handleCheckout(PREMIUM as PricingConfig)}
+							onClick={() => {
+								if (!user?.id) {
+									loginModal.onOpen('Please sign in to continue with your purchase.');
+									return;
+								}
+								handleCheckout(PREMIUM as PricingConfig);
+							}}
+							selectedFlow={selectedFlow}
+							onFlowChange={handleFlowSelect}
+							onOpenModal={onOpenSelectorModal}
 						>
 							{getSavingsText(PREMIUM as PricingConfig) && (
 								<div className="text-center">
@@ -325,8 +342,8 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 						}
 					].map((item, index) => (
 						<div
-							key={index}
-							className="flex flex-col items-center gap-3 p-6 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-xs border border-gray-200/30 dark:border-gray-700/30 hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 hover:scale-105"
+						key={`trust-item-${item.title}-${index}`}
+						className="flex flex-col items-center gap-3 p-6 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-xs border border-gray-200/30 dark:border-gray-700/30 hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 hover:scale-105"
 						>
 							<div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
 								<item.icon className="w-6 h-6 text-gray-600 dark:text-gray-400" />
@@ -337,12 +354,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 					))}
 				</div>
 			</div>
-			<PaymentFlowSelectorModal
-				selectedFlow={selectedFlow}
-				onFlowSelect={handleFlowSelect}
-				isOpen={showSelector}
-				onClose={() => setShowSelector(false)}
-			/>
+			<PaymentFlowSelectorModal selectedFlow={selectedFlow} />
 		</div>
 	);
 }

@@ -161,7 +161,6 @@ export function MediaLinksStep({
             {/* Icon Preview */}
             <div className="w-16 h-16 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center bg-gray-50 dark:bg-gray-800">
               {previewImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={previewImage}
                   alt="Icon preview"

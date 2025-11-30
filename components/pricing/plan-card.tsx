@@ -4,8 +4,9 @@ import { ReactNode, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ToggleGroup } from "@/components/ui/toggle-group";
 import { Check, X } from "lucide-react";
-import { PaymentPlan } from "@/lib/constants";
+import { PaymentPlan, PaymentFlow } from "@/lib/constants";
 
 export type PlanFeature = {
   readonly included: boolean;
@@ -29,6 +30,9 @@ interface PlanCardProps {
   readonly onClick?: () => void;
   readonly isLoading?: boolean;
   readonly className?: string;
+  readonly selectedFlow?: PaymentFlow;
+  readonly onFlowChange?: (flow: PaymentFlow) => void;
+  readonly onOpenModal?: () => void;
 }
 
 // Constants for modern design based on reference image
@@ -37,6 +41,11 @@ const PLAN_TYPES = {
   STANDARD: 'STANDARD',
   PREMIUM: 'PREMIUM'
 } as const;
+
+const PAYMENT_FLOW_OPTIONS = [
+  { value: PaymentFlow.PAY_AT_START, label: "Pay Now" },
+  { value: PaymentFlow.PAY_AT_END, label: "Pay Later" },
+];
 
 const getButtonStyles = (title: string, isPopular: boolean) => {
   const upperTitle = title.toUpperCase();
@@ -99,8 +108,12 @@ export function PlanCard({
   isLoading = false,
   onClick,
   className,
+  selectedFlow = PaymentFlow.PAY_AT_END,
+  onFlowChange,
 }: PlanCardProps) {
   const router = useRouter();
+  
+  const isPaidPlan = title.toUpperCase() === PLAN_TYPES.STANDARD || title.toUpperCase() === PLAN_TYPES.PREMIUM;
 
   const cardStyles = useMemo(() => cn(
     "relative flex flex-col",
@@ -142,9 +155,35 @@ export function PlanCard({
       )}
 
       <header className="flex flex-col items-start text-left px-6 pt-6 pb-4 shrink-0">
-        <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-          {title}
-        </h3>
+      <div className="flex items-center justify-between w-full mb-4 gap-4">
+          <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
+            {title}
+          </h3>
+          {isPaidPlan && onFlowChange && (
+            <div className="flex items-center gap-2 flex-shrink-0 justify-center">
+              <ToggleGroup
+                options={PAYMENT_FLOW_OPTIONS}
+                value={selectedFlow}
+                onValueChange={(value) => onFlowChange(value as PaymentFlow)}
+                size="sm"
+                variant="modern"
+                className="flex-shrink-0 justify-center h-10"
+              />
+              {/* {onOpenModal && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenModal();
+                  }}
+                  className="w-5 h-5 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                  aria-label="Learn more about payment options"
+                >
+                  <Info className="w-4 h-4" />
+                </button>
+              )} */}
+            </div>
+          )}
+        </div>
         <div className="flex justify-center items-baseline gap-1 mb-2">
           <span className={cn(
             "text-4xl font-bold leading-none",

@@ -66,6 +66,7 @@ export function useFeatureFlags(): UseFeatureFlagsResult {
       comments: false,
       favorites: false,
       featuredItems: false,
+      surveys: false,
     },
     isPending,
     error: error || null,
