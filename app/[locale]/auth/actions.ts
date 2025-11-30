@@ -401,7 +401,7 @@ export const verifyEmailAction = async (token: string) => {
     deleteVerificationToken(existingToken.token),
   ]);
 
-  		logActivity(ActivityType.VERIFY_EMAIL, existingUser.id, 'user');
+  await logActivity(ActivityType.VERIFY_EMAIL, existingUser.id, 'user');
 
   return { success: true };
 };
@@ -451,7 +451,7 @@ export const newPasswordAction = validatedAction(
       deletePasswordResetToken(data.token),
     ]);
 
-    		logActivity(ActivityType.UPDATE_PASSWORD, result.userId, 'user');
+    await logActivity(ActivityType.UPDATE_PASSWORD, result.userId, 'user');
 
     return { success: true };
   }
