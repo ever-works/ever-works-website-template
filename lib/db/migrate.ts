@@ -2,32 +2,60 @@ import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import { sql } from 'drizzle-orm';
 
 /**
- * Check if migrations are needed by checking if seed_status table exists
- * @returns Promise<boolean> - true if migrations needed, false if already applied
+ * Check if there are pending migrations by comparing journal entries with applied migrations
+ * @returns Promise<boolean> - true if migrations needed, false if all migrations applied
  */
 export async function isMigrationNeeded(): Promise<boolean> {
 	try {
 		const { db } = await import('./drizzle');
 
-		// Check if seed_status table exists in PostgreSQL
-		const result = await db.execute(
+		// Check if drizzle migrations table exists
+		const tableCheck = await db.execute(
 			sql`SELECT EXISTS (
 				SELECT FROM information_schema.tables
-				WHERE table_schema = 'public'
-				AND table_name = 'seed_status'
+				WHERE table_schema = 'drizzle'
+				AND table_name = '__drizzle_migrations'
 			) as exists`
 		);
 
-		// Handle postgres-js result format (can be {rows: []} or array directly)
-		const rows = (result as { rows?: unknown[] }).rows ?? (Array.isArray(result) ? result : []);
-		const exists = rows.length > 0 ? (rows[0] as { exists: boolean }).exists : false;
+		const tableRows = (tableCheck as { rows?: unknown[] }).rows ?? (Array.isArray(tableCheck) ? tableCheck : []);
+		const tableExists = tableRows.length > 0 ? (tableRows[0] as { exists: boolean }).exists : false;
 
-		if (process.env.NODE_ENV === 'development') {
-			console.log('[Migration] seed_status table exists:', exists);
+		if (!tableExists) {
+			console.log('[Migration] Drizzle migrations table does not exist - migrations needed');
+			return true;
 		}
 
-		// If table doesn't exist, migrations are needed
-		return !exists;
+		// Get count of applied migrations
+		const appliedResult = await db.execute(
+			sql`SELECT COUNT(*) as count FROM drizzle.__drizzle_migrations`
+		);
+		const appliedRows = (appliedResult as { rows?: unknown[] }).rows ?? (Array.isArray(appliedResult) ? appliedResult : []);
+		const appliedCount = appliedRows.length > 0 ? Number((appliedRows[0] as { count: string | number }).count) : 0;
+
+		// Read journal to get total migrations
+		const fs = await import('fs');
+		const path = await import('path');
+		const journalPath = path.join(process.cwd(), 'lib/db/migrations/meta/_journal.json');
+		
+		let totalMigrations = 0;
+		try {
+			const journalContent = fs.readFileSync(journalPath, 'utf-8');
+			const journal = JSON.parse(journalContent);
+			totalMigrations = journal.entries?.length ?? 0;
+		} catch {
+			// Journal not found - let Drizzle handle it
+			console.log('[Migration] Could not read journal - will run migrations');
+			return true;
+		}
+
+		const pendingCount = totalMigrations - appliedCount;
+		
+		if (process.env.NODE_ENV === 'development' || pendingCount > 0) {
+			console.log(`[Migration] Applied: ${appliedCount}, Total: ${totalMigrations}, Pending: ${pendingCount}`);
+		}
+
+		return pendingCount > 0;
 	} catch (error) {
 		// If we can't check, assume migrations are needed
 		console.warn(
