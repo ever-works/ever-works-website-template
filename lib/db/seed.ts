@@ -211,6 +211,11 @@ export async function runSeed(): Promise<void> {
 		const roleAdminId = crypto.randomUUID();
 		const roleClientId = crypto.randomUUID();
 
+		// Generate user IDs manually (drizzle-seed doesn't use $defaultFn)
+		const userAdminId = crypto.randomUUID();
+		const userClient1Id = crypto.randomUUID();
+		const userClient2Id = crypto.randomUUID();
+
 		// Build schema object for drizzle-seed based on which tables are empty
 		// NOTE: we intentionally exclude `accounts` here and seed it manually below to
 		// avoid drizzle-seed `with` relation constraints.
@@ -282,6 +287,10 @@ export async function runSeed(): Promise<void> {
 					users: {
 						count: 3,
 						columns: {
+							id: funcs.valuesFromArray({
+								values: [userAdminId, userClient1Id, userClient2Id],
+								isUnique: true
+							}),
 							email: funcs.valuesFromArray({
 								values: [adminEmail, 'client1@example.com', 'client2@example.com'],
 								isUnique: true
