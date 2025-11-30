@@ -19,7 +19,11 @@ import {
 	comments,
 	votes,
 	favorites,
-	notifications
+	notifications,
+	sessions,
+	authenticators,
+	verificationTokens,
+	passwordResetTokens
 } from './schema';
 import type { NewAccount, NewPaymentProvider, NewPaymentAccount } from './schema';
 import { getAllPermissions } from '../permissions/definitions';
@@ -803,7 +807,130 @@ export async function runSeed(): Promise<void> {
 				console.log(`[Seed] ✓ Created ${notificationValues.length} notifications`);
 			}
 
-			// TODO: Step 4 - Auth/Session tables will be added here
+			// ============================================
+			// Step 4: Auth/Session Tables
+			// ============================================
+
+			// Seed Sessions (active user sessions)
+			const sessionsEmpty = await isTableEmpty('sessions', sessions);
+			if (sessionsEmpty) {
+				console.log('[Seed] 🔐 Seeding sessions...');
+
+				// Get all users for sessions
+				const allUsersForSessions = await db.select().from(users);
+
+				// Create 0-2 sessions per user (30% of users have active sessions)
+				const sessionValues = allUsersForSessions.flatMap((user) => {
+					const shouldHaveSession = faker.datatype.boolean(0.3); // 30% have active sessions
+					if (!shouldHaveSession) return [];
+
+					const numSessions = faker.number.int({ min: 1, max: 2 }); // 1-2 active sessions
+					return Array.from({ length: numSessions }, () => ({
+						sessionToken: faker.string.alphanumeric(64),
+						userId: user.id,
+						expires: faker.date.future({ years: 0.1 }) // Expires within next ~1 month
+					}));
+				});
+
+				if (sessionValues.length > 0) {
+					await db.insert(sessions).values(sessionValues).onConflictDoNothing();
+					console.log(`[Seed] ✓ Created ${sessionValues.length} sessions`);
+				}
+			}
+
+			// Seed Authenticators (WebAuthn/passkey devices)
+			const authenticatorsEmpty = await isTableEmpty('authenticators', authenticators);
+			if (authenticatorsEmpty) {
+				console.log('[Seed] 🔑 Seeding authenticators...');
+
+				// Get all users for authenticators
+				const allUsersForAuthenticators = await db.select().from(users);
+
+				// Create 0-2 authenticators for 20% of users (not everyone uses WebAuthn)
+				const authenticatorValues = allUsersForAuthenticators.flatMap((user) => {
+					const shouldHaveAuthenticator = faker.datatype.boolean(0.2); // 20% use WebAuthn
+					if (!shouldHaveAuthenticator) return [];
+
+					const numAuthenticators = faker.number.int({ min: 1, max: 2 }); // 1-2 devices
+					return Array.from({ length: numAuthenticators }, () => {
+						const deviceTypes = ['platform', 'cross-platform'] as const;
+						const deviceType = faker.helpers.arrayElement(deviceTypes);
+
+						return {
+							credentialID: faker.string.alphanumeric(32),
+							userId: user.id,
+							providerAccountId: `webauthn_${faker.string.alphanumeric(16)}`,
+							credentialPublicKey: faker.string.alphanumeric(128),
+							counter: faker.number.int({ min: 0, max: 100 }),
+							credentialDeviceType: deviceType,
+							credentialBackedUp: faker.datatype.boolean(0.7), // 70% backed up
+							transports: faker.helpers.arrayElement([
+								'usb',
+								'nfc',
+								'ble',
+								'internal',
+								'usb,nfc',
+								'usb,ble',
+								'internal'
+							])
+						};
+					});
+				});
+
+				if (authenticatorValues.length > 0) {
+					await db.insert(authenticators).values(authenticatorValues).onConflictDoNothing();
+					console.log(`[Seed] ✓ Created ${authenticatorValues.length} authenticators`);
+				}
+			}
+
+			// Seed Verification Tokens (for email verification)
+			const verificationTokensEmpty = await isTableEmpty('verificationTokens', verificationTokens);
+			if (verificationTokensEmpty) {
+				console.log('[Seed] ✉️ Seeding verification tokens...');
+
+				// Get all users for verification tokens
+				const allUsersForVerification = await db.select().from(users);
+
+				// Create verification tokens for 10% of users (recently registered or changed email)
+				const verificationTokenValues = allUsersForVerification
+					.filter(() => faker.datatype.boolean(0.1)) // 10% have pending verification
+					.map((user) => ({
+						identifier: user.id,
+						email: user.email,
+						token: faker.string.alphanumeric(32),
+						expires: faker.date.future({ years: 0.01 }) // Expires within ~3-4 days
+					}));
+
+				if (verificationTokenValues.length > 0) {
+					await db.insert(verificationTokens).values(verificationTokenValues).onConflictDoNothing();
+					console.log(`[Seed] ✓ Created ${verificationTokenValues.length} verification tokens`);
+				}
+			}
+
+			// Seed Password Reset Tokens (for password reset requests)
+			const passwordResetTokensEmpty = await isTableEmpty('passwordResetTokens', passwordResetTokens);
+			if (passwordResetTokensEmpty) {
+				console.log('[Seed] 🔒 Seeding password reset tokens...');
+
+				// Get all users for password reset tokens
+				const allUsersForPasswordReset = await db.select().from(users);
+
+				// Create password reset tokens for 5% of users (recently requested password reset)
+				const passwordResetTokenValues = allUsersForPasswordReset
+					.filter(() => faker.datatype.boolean(0.05)) // 5% have pending reset
+					.map((user) => ({
+						email: user.email,
+						token: faker.string.alphanumeric(32),
+						expires: faker.date.future({ years: 0.002 }) // Expires within ~18 hours
+					}));
+
+				if (passwordResetTokenValues.length > 0) {
+					await db.insert(passwordResetTokens).values(passwordResetTokenValues).onConflictDoNothing();
+					console.log(`[Seed] ✓ Created ${passwordResetTokenValues.length} password reset tokens`);
+				}
+			}
+
+			console.log('[Seed] ✅ Demo mode seeding complete!');
 		}
 
 		// Seed junction tables separately (role_permissions, user_roles)
