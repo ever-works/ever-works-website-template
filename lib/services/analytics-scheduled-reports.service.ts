@@ -75,7 +75,7 @@ export class AnalyticsScheduledReportsService {
         schedule: REPORT_SCHEDULES.DAILY,
         format: 'csv',
         includeMetadata: true,
-        recipients: ['admin@example.com'],
+        recipients: ['admin@demo.ever.works'],
         isActive: true
       },
       {
@@ -85,7 +85,7 @@ export class AnalyticsScheduledReportsService {
         schedule: REPORT_SCHEDULES.WEEKLY,
         format: 'csv',
         includeMetadata: true,
-        recipients: ['admin@example.com', 'growth@example.com'],
+        recipients: ['admin@demo.ever.works', 'growth@example.com'],
         isActive: true
       },
       {
@@ -95,7 +95,7 @@ export class AnalyticsScheduledReportsService {
         schedule: REPORT_SCHEDULES.MONTHLY,
         format: 'json',
         includeMetadata: true,
-        recipients: ['admin@example.com', 'analytics@example.com', 'management@example.com'],
+        recipients: ['admin@demo.ever.works', 'analytics@example.com', 'management@example.com'],
         isActive: true
       },
       {
@@ -105,7 +105,7 @@ export class AnalyticsScheduledReportsService {
         schedule: REPORT_SCHEDULES.QUARTERLY,
         format: 'csv',
         includeMetadata: true,
-        recipients: ['admin@example.com', 'executives@example.com'],
+        recipients: ['admin@demo.ever.works', 'executives@example.com'],
         isActive: true
       }
     ];

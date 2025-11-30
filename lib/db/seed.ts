@@ -119,9 +119,36 @@ export async function runSeed(): Promise<void> {
 
 		console.log(`[Seed] Will seed: ${tablesToSeedNames.join(', ')}`);
 
-		// Read environment variables outside seed()
-		const adminEmail = process.env.SEED_ADMIN_EMAIL || 'admin@example.com';
-		const adminPassword = process.env.SEED_ADMIN_PASSWORD || 'Passw0rd123!';
+		// Resolve admin credentials with environment-sensitive defaults
+		const isProd = process.env.NODE_ENV === 'production';
+
+		const envAdminEmail = process.env.SEED_ADMIN_EMAIL;
+		const envAdminPassword = process.env.SEED_ADMIN_PASSWORD;
+
+		let adminEmail: string;
+		let adminPassword: string;
+
+		if (isProd) {
+			if (!envAdminEmail || !envAdminPassword) {
+				throw new Error(
+					'[Seed] SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD must be set in production. Refusing to seed admin user with implicit defaults.'
+				);
+			}
+
+			if (envAdminPassword === 'Passw0rd123!') {
+				throw new Error(
+					'[Seed] Insecure SEED_ADMIN_PASSWORD detected in production. Use a strong, unique password instead of the default.'
+				);
+			}
+
+			adminEmail = envAdminEmail;
+			adminPassword = envAdminPassword;
+		} else {
+			// In non-production, allow safe defaults for developer convenience
+			adminEmail = envAdminEmail || 'admin@demo.ever.works';
+			adminPassword = envAdminPassword || 'Passw0rd123!';
+		}
+
 		const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
 		// Get all permissions

@@ -182,6 +182,19 @@ DATA_REPOSITORY='https://github.com/ever-works/awesome-data'
 DATABASE_URL=postgresql://user:password@localhost:5432/db_name
 ```
 
+### Seeding admin user credentials
+
+The database seeding script (`pnpm db:seed`) can create an initial admin user. Admin credentials are controlled via:
+
+```bash
+SEED_ADMIN_EMAIL="admin@demo.ever.works"  # required in production
+SEED_ADMIN_PASSWORD="a-strong-password"   # required in production
+```
+
+- In **production**, both variables **must** be set; the seed will refuse to run with implicit defaults.
+- In **development**, if these are not set, the seeder falls back to convenient defaults (`admin@demo.ever.works` / `Passw0rd123!`).
+- In production, the seeder will **reject** the default `Passw0rd123!` password even if explicitly configured.
+
 ### Details
 
 - `user`: PostgreSQL username
