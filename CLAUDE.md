@@ -29,8 +29,6 @@ NODE_ENV=development
 
 # Auth / NextAuth
 AUTH_SECRET=...          # openssl rand -base64 32
-NEXTAUTH_SECRET=...      # usually same as AUTH_SECRET
-NEXTAUTH_URL=http://localhost:3000
 
 # Cookies
 COOKIE_SECRET=...        # openssl rand -base64 32

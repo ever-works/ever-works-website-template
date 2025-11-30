@@ -14,12 +14,7 @@ export interface LemonSqueezyCheckoutResult {
 	metadata?: Record<string, any>;
 }
 
-export class LemonSqueezyClient {
-	private baseUrl: string;
-
-	constructor() {
-		this.baseUrl = process.env.NEXT_PUBLIC_APP_URL || '';
-	}
+export class LemonSqueezyClient {	
 
 	async createCheckout(params: LemonSqueezyCheckoutParams): Promise<LemonSqueezyCheckoutResult> {
 		const endpoint = '/api/lemonsqueezy/checkout';

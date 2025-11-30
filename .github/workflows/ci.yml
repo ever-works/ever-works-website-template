@@ -18,8 +18,7 @@ jobs:
       NEXT_PUBLIC_APP_URL: http://localhost:3000
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
       # Auth defaults to suppress warnings
-      NEXTAUTH_SECRET: "ci-test-secret-not-for-production"
-      NEXTAUTH_URL: "http://localhost:3000"
+      AUTH_SECRET: "ci-test-secret-not-for-production"      
       # Content repository defaults
       DATA_REPOSITORY: "ci-test-repo-not-used"
       CONTENT_WARNINGS_SILENT: "true"
@@ -87,8 +86,8 @@ jobs:
         env:
           # Use GitHub secrets for sensitive environment variables
           # Auth related variables
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || env.NEXT_PUBLIC_APP_URL }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET}}
+          NEXT_PUBLIC_APP_URL: ${{ env.NEXT_PUBLIC_APP_URL }}
+          AUTH_SECRET: ${{ env.AUTH_SECRET }}
           
           # Supabase related variables (if using Supabase)
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}

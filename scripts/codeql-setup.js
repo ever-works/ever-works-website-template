@@ -21,8 +21,7 @@ if (!fs.existsSync(contentDir)) {
 const requiredEnvVars = {
   'NEXT_PUBLIC_APP_URL': 'http://localhost:3000',
   'DATABASE_URL': 'postgresql://postgres:postgres@localhost:5432/postgres',
-  'NEXTAUTH_SECRET': 'codeql-test-secret',
-  'NEXTAUTH_URL': 'http://localhost:3000',
+  'AUTH_SECRET': 'codeql-test-secret',  
   'DATA_REPOSITORY': 'codeql-test-repo',
   'CONTENT_WARNINGS_SILENT': 'true',
   'CI': 'true'

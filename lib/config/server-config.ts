@@ -20,9 +20,9 @@ interface ServerConfig {
  * Validates required variables and provides defaults where appropriate
  */
 export function getServerConfig(): ServerConfig {
-  const supportEmail = process.env.SUPPORT_EMAIL;
+  const supportEmail = process.env.SUPPORT_EMAIL || 'support@ever.works';
   const companyName = process.env.COMPANY_NAME || "Ever Works";
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://app.ever.works';
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
   const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   const databaseUrl = process.env.DATABASE_URL;
@@ -83,7 +83,7 @@ export async function getEmailConfig() {
     : process.env.SUPPORT_EMAIL;
 
   const companyName = config.company_name || process.env.COMPANY_NAME || "Ever Works";
-  const appUrl = config.app_url || process.env.NEXT_PUBLIC_APP_URL;
+  const appUrl = config.app_url || process.env.NEXT_PUBLIC_APP_URL || 'https://app.ever.works';
 
   // Validate required values
   if (!supportEmail) {

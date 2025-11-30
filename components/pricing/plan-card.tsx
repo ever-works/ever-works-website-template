@@ -1,11 +1,11 @@
 "use client";
 
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup } from "@/components/ui/toggle-group";
-import { Check, X } from "lucide-react";
+import { Check, X, Info } from "lucide-react";
 import { PaymentPlan, PaymentFlow } from "@/lib/constants";
 
 export type PlanFeature = {
@@ -51,14 +51,14 @@ const getButtonStyles = (title: string, isPopular: boolean) => {
   const upperTitle = title.toUpperCase();
 
   if (upperTitle === PLAN_TYPES.STANDARD || isPopular) {
-    return "bg-linear-to-r from-theme-primary-500 to-theme-primary-600 hover:from-theme-primary-600 hover:to-theme-primary-500 text-white border-0 shadow-lg h-12 text-sm font-medium rounded-lg";
+    return "bg-linear-to-r from-theme-primary-500 to-theme-primary-600 hover:from-theme-primary-600 hover:to-theme-primary-500 text-white border-0 shadow-lg h-12 text-sm font-medium rounded-lg cursor-pointer";
   }
 
   if (upperTitle === PLAN_TYPES.PREMIUM) {
-    return "bg-transparent border border-slate-500/70 dark:border-slate-400/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/30 hover:border-slate-600 dark:hover:border-slate-400 h-12 text-sm font-medium rounded-lg";
+    return "bg-transparent border border-slate-500/70 dark:border-slate-400/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/30 hover:border-slate-600 dark:hover:border-slate-400 h-12 text-sm font-medium rounded-lg cursor-pointer";
   }
 
-  return "bg-transparent border border-slate-500/70 dark:border-slate-400/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/30 hover:border-slate-600 dark:hover:border-slate-400 h-12 text-sm font-medium rounded-lg";
+  return "bg-transparent border border-slate-500/70 dark:border-slate-400/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/30 hover:border-slate-600 dark:hover:border-slate-400 h-12 text-sm font-medium rounded-lg cursor-pointer";
 };
 
 const getPriceColor = (title: string, isPopular: boolean) => {
@@ -83,7 +83,7 @@ const getCardStyles = (title: string, isPopular: boolean) => {
       "border-slate-300/50 dark:border-slate-600/50 shadow-xl",
       "bg-white/95 dark:bg-slate-800/90",
       "scale-105 z-10", // Larger for middle card
-      "max-w-[380px] min-h-[672px]" // Larger height
+      "max-w-[380px] min-h-[672px] " // Larger height
     ];
   }
 
@@ -110,6 +110,7 @@ export function PlanCard({
   className,
   selectedFlow = PaymentFlow.PAY_AT_END,
   onFlowChange,
+  onOpenModal,
 }: PlanCardProps) {
   const router = useRouter();
   
@@ -118,8 +119,6 @@ export function PlanCard({
   const cardStyles = useMemo(() => cn(
     "relative flex flex-col",
     "w-full rounded-xl border",
-    "backdrop-blur-xs transition-all duration-300 ease-out",
-    "hover:shadow-xl dark:hover:shadow-2xl hover:-translate-y-1",
     (title.toUpperCase() === 'STANDARD' || isPopular) ? "mt-6" : "mt-2",
 
     ...getCardStyles(title, isPopular),
@@ -129,20 +128,32 @@ export function PlanCard({
   ), [title, isPopular, isSelected, className]);
 
   const buttonStyles = useMemo(() => cn(
-    "w-full rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl",
+    "w-full rounded-xl transition-all duration-300 shadow-lg",
     "disabled:opacity-50 disabled:cursor-not-allowed",
-    "font-semibold tracking-wide",
+    "font-semibold tracking-wide transition duration-700 ease-in-out cursor-pointer",
     getButtonStyles(title, isPopular),
     isLoading && "animate-pulse"
   ), [title, isPopular, isLoading]);
 
 
 
-  const handleAction = () => {
+  const handleAction = useCallback(() => {
     if (actionHref) {
       router.push(actionHref);
     }
-  };
+  }, [actionHref, router]);
+
+  const handleFlowChange = useCallback((value: string) => {
+    if (value !== selectedFlow) {
+      onFlowChange?.(value as PaymentFlow);
+    }
+  }, [onFlowChange, selectedFlow]);
+
+  const handleOpenModal = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onOpenModal?.();
+  }, [onOpenModal]);
 
   return (
     <article className={cardStyles}>
@@ -160,27 +171,25 @@ export function PlanCard({
             {title}
           </h3>
           {isPaidPlan && onFlowChange && (
-            <div className="flex items-center gap-2 flex-shrink-0 justify-center">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <ToggleGroup
                 options={PAYMENT_FLOW_OPTIONS}
                 value={selectedFlow}
-                onValueChange={(value) => onFlowChange(value as PaymentFlow)}
+                onValueChange={handleFlowChange}
                 size="sm"
-                variant="modern"
-                className="flex-shrink-0 justify-center h-10"
+                variant="default"
+                className="flex-shrink-0 h-10 cursor-pointer"
               />
-              {/* {onOpenModal && (
+              {onOpenModal && (
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onOpenModal();
-                  }}
-                  className="w-5 h-5 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                  onClick={handleOpenModal}
+                  className="w-5 h-5 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex-shrink-0 cursor-pointer"
                   aria-label="Learn more about payment options"
+                  type="button"
                 >
                   <Info className="w-4 h-4" />
                 </button>
-              )} */}
+              )}
             </div>
           )}
         </div>

@@ -68,8 +68,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_key
 
 # Authentication
-NEXTAUTH_SECRET=your_nextauth_secret
-NEXTAUTH_URL=http://localhost:3000
+AUTH_SECRET=your_auth_secret
 
 # External Services
 RESEND_API_KEY=your_resend_key

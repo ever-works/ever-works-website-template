@@ -44,7 +44,7 @@ export function EnvConfiguration() {
 
     // Authentication
     {
-      name: "NEXTAUTH_SECRET",
+      name: "AUTH_SECRET",
       description: "Secret key for NextAuth.js session encryption",
       type: "secret",
       required: true,
@@ -53,11 +53,11 @@ export function EnvConfiguration() {
       importance: "critical"
     },
     {
-      name: "NEXTAUTH_URL",
+      name: "NEXT_PUBLIC_APP_URL",
       description: "Base URL of your application",
       type: "url",
       required: true,
-      example: "http://localhost:3000",
+      example: "http://app.ever.works",
       category: "auth",
       importance: "critical"
     },

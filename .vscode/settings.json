@@ -4,5 +4,12 @@
     ],
     "i18n-ally.keystyle": "nested",
     "deepscan.enable": true,
-    "postman.settings.dotenv-detection-notification-visibility": false
+    "postman.settings.dotenv-detection-notification-visibility": false,
+    "cSpell.words": [
+        "LEMONSQUEEZY",
+        "NEXTAUTH",
+        "POSTHOG",
+        "Squeezy",
+        "SUPABASE"
+    ]
 }

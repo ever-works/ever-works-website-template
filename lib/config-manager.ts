@@ -34,8 +34,18 @@ export class ConfigManager {
    */
   private shouldSuppressWarnings(): boolean {
     // Suppress warnings during CI, linting, or when DATA_REPOSITORY is not set
+    const isCI = Boolean(
+      process.env.CI || 
+      process.env.GITHUB_ACTIONS || 
+      process.env.GITLAB_CI || 
+      process.env.CIRCLECI || 
+      process.env.JENKINS_URL ||
+      process.env.BUILDKITE ||
+      process.env.TF_BUILD
+    );
+    
     return (
-      process.env.CI === 'true' ||
+      isCI ||
       process.env.NODE_ENV === 'test' ||
       !process.env.DATA_REPOSITORY ||
       process.argv.some(arg => /(?:^|[/\\])(eslint|lint(?:-staged)?)(?:\.[jt]s)?$/.test(arg))

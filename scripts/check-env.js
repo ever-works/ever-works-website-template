@@ -77,15 +77,15 @@ try {
 // Define critical variable patterns
 const CRITICAL_PATTERNS = [
   /^DATA_REPOSITORY$/,
-  /^NEXTAUTH_SECRET$/,
-  /^NEXTAUTH_URL$/
+  /^AUTH_SECRET$/,
+  /^NEXT_PUBLIC_APP_URL$/
 ];
 
 // Define variable categories based on prefixes or patterns
 const CATEGORY_PATTERNS = [
   { name: 'core', pattern: /^(NODE_ENV|PORT|APP_|BASE_URL)/ },
   { name: 'database', pattern: /^(DATABASE_|DB_|POSTGRES_|MYSQL_|MONGO_)/ },
-  { name: 'auth', pattern: /^(NEXTAUTH_|AUTH_|JWT_|OAUTH_|GOOGLE_|GITHUB_|FACEBOOK_|TWITTER_|MICROSOFT_)/ },
+  { name: 'auth', pattern: /^(AUTH_|JWT_|OAUTH_|GOOGLE_|GITHUB_|FACEBOOK_|TWITTER_|MICROSOFT_)/ },
   { name: 'supabase', pattern: /^(SUPABASE_|NEXT_PUBLIC_SUPABASE_)/ },
   { name: 'content', pattern: /^(CONTENT_|DATA_REPOSITORY|GH_TOKEN)/ },
   { name: 'email', pattern: /^(EMAIL_|SMTP_|MAIL_|RESEND_)/ },

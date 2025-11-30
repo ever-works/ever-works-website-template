@@ -140,7 +140,7 @@ export const TAG_CLASSES = {
 
 export const STEP_CARD_CLASSES = {
 	wrapper: 'relative group animate-fade-in-up',
-	background: 'absolute inset-0 bg-theme-primary-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500',
+	background: 'absolute inset-0 bg-theme-primary-500/20 opacity-0 transition-opacity duration-500',
 	content: 'relative py-8',
 	header: {
 		wrapper: 'flex items-center gap-3 mb-8',
@@ -174,7 +174,7 @@ export const NAVIGATION_CLASSES = {
 		},
 		submit: {
 			enabled: 'h-14 px-12 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl min-w-[200px] bg-linear-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:via-emerald-600 hover:to-green-700 text-white hover:shadow-green-500/30',
-			disabled: 'h-14 px-12 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl min-w-[200px] bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+		disabled: 'h-14 px-12 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl min-w-[200px] bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
 		}
 	}
 };

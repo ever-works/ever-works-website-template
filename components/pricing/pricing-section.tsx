@@ -16,7 +16,7 @@ interface PricingSectionProps {
 }
 
 export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) {
-	const { onOpen: onOpenSelectorModal } = useDisclosure();
+	const { isOpen: isModalOpen, onOpen: onOpenSelectorModal, onClose: onCloseSelectorModal } = useDisclosure();
 
 	const {
 		FREE,
@@ -130,7 +130,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-				<div className="relative group animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+				<div className="transition duration-700 ease-in-out hover:scale-105">
 					{/* Card Glow Effect */}
 					<div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-600/20 dark:to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
@@ -180,15 +180,15 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 					</div>
 				</div>
 
-				<div className="relative group animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+				{/* <div className="relative group animate-fade-in-up" style={{ animationDelay: '0.2s' }}> */}
 					{/* Popular Badge */}
 
 					{/* Card Glow Effect */}
-					<div className="absolute inset-0 bg-linear-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-600/20 dark:to-pink-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+					<div className="absolute inset-0 bg-linear-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-600/20 dark:to-pink-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
 
 					<div
 						className={cn(
-							'relative transition-all duration-500 hover:scale-105 hover:-translate-y-2 scale-105',
+							'relative transition-all scale-105',
 							selectedPlan === PaymentPlan.STANDARD && 'ring-2 ring-purple-500/50 dark:ring-purple-400/50'
 						)}
 					>
@@ -234,15 +234,15 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							)}
 						</PlanCard>
 					</div>
-				</div>
+				{/* </div> */}
 
-				<div className="relative group animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+				{/* <div className="relative group animate-fade-in-up" style={{ animationDelay: '0.3s' }}> */}
 					{/* Card Glow Effect */}
-					<div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-cyan-500/10 dark:from-blue-600/20 dark:to-cyan-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+					{/* <div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-cyan-500/10 dark:from-blue-600/20 dark:to-cyan-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" /> */}
 
 					<div
 						className={cn(
-							'relative transition-all duration-500 hover:scale-105 hover:-translate-y-2',
+							'relative',
 							selectedPlan === PaymentPlan.PREMIUM && 'ring-2 ring-cyan-500/50 dark:ring-cyan-400/50'
 						)}
 					>
@@ -288,7 +288,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 						</PlanCard>
 					</div>
 				</div>
-			</div>
+			{/* </div> */}
 
 			{/* Enhanced Continue Section */}
 			{selectedPlan && (
@@ -354,7 +354,11 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 					))}
 				</div>
 			</div>
-			<PaymentFlowSelectorModal selectedFlow={selectedFlow} />
+			<PaymentFlowSelectorModal 
+				selectedFlow={selectedFlow} 
+				isOpen={isModalOpen}
+				onClose={onCloseSelectorModal}
+			/>
 		</div>
 	);
 }

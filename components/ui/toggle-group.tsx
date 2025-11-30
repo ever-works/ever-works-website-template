@@ -51,21 +51,21 @@ export function ToggleGroup({
   const variantClasses = {
     default: {
       container: 'bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700',
-      button: 'rounded-md',
+      button: 'rounded-md cursor-pointer',
       activeButton: 'text-gray-900 dark:text-white',
       inactiveButton: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white',
       slider: 'bg-white dark:bg-gray-700 rounded-md shadow-xs border border-gray-200/50 dark:border-gray-600/50'
     },
     modern: {
       container: 'bg-slate-100 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-xs backdrop-blur-xs',
-      button: 'rounded-lg',
+      button: 'rounded-lg cursor-pointer',
       activeButton: 'text-slate-900 dark:text-white shadow-xs',
       inactiveButton: 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700/30',
       slider: 'bg-white dark:bg-slate-700 rounded-lg shadow-md border border-slate-200/50 dark:border-slate-600/50 backdrop-blur-xs'
     },
     pills: {
       container: 'bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700/30 shadow-inner',
-      button: 'rounded-xl',
+      button: 'rounded-xl cursor-pointer',
       activeButton: 'text-white shadow-lg',
       inactiveButton: 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50',
       slider: 'bg-linear-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg'
@@ -97,7 +97,7 @@ export function ToggleGroup({
               {option.icon}
             </span>
           )}
-          <span>{option.label}</span>
+          <span className="whitespace-nowrap">{option.label}</span>
           {option.badge && (
             <span className={cn(
               'font-bold bg-linear-to-r from-green-500 to-emerald-500 text-white rounded-full shadow-xs',

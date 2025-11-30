@@ -75,8 +75,7 @@ jobs:
         # Environment variables for build
         NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' }}
         DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres' }}
-        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'codeql-test-secret' }}
-        NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
+        AUTH_SECRET: ${{ secrets.AUTH_SECRET || 'ci-test-secret-not-for-production' }}
         DATA_REPOSITORY: ${{ secrets.DATA_REPOSITORY || 'codeql-test-repo' }}
         CONTENT_WARNINGS_SILENT: "true"
         CI: "true"

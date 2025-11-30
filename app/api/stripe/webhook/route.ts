@@ -366,8 +366,8 @@ async function handleSubscriptionUpdated(data: any) {
 			subscriptionId: data.id,
 			manageSubscriptionUrl: `${process.env.NEXT_PUBLIC_APP_URL}/settings/subscription`,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_APP_URL,
-			supportEmail: process.env.SUPPORT_EMAIL,
+			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
+			supportEmail: process.env.SUPPORT_EMAIL || 'support@ever.works',
 			features: getSubscriptionFeatures(planName)
 		};
 
@@ -408,7 +408,7 @@ async function handleSubscriptionCancelled(data: any) {
 			cancellationReason: data.cancellation_details?.reason || 'Cancellation requested by user',
 			reactivateUrl: `${process.env.NEXT_PUBLIC_APP_URL}/subscription/reactivate?subscription=${data.id}`,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://ever.works',
+			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
 			supportEmail: process.env.SUPPORT_EMAIL || 'support@ever.works'
 		};
 
@@ -456,7 +456,7 @@ async function handleSubscriptionPaymentSucceeded(data: any) {
 				: undefined,
 			receiptUrl: data.receipt_url,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://ever.works',
+			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
 			supportEmail: process.env.SUPPORT_EMAIL || 'support@ever.works'
 		};
 
@@ -502,7 +502,7 @@ async function handleSubscriptionPaymentFailed(data: any) {
 			retryUrl: `${process.env.NEXT_PUBLIC_APP_URL}/subscription/retry?invoice=${data.id}`,
 			updatePaymentUrl: `${process.env.NEXT_PUBLIC_APP_URL}/settings/payment-methods`,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://ever.works',
+			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
 			supportEmail: process.env.SUPPORT_EMAIL || 'support@ever.works'
 		};
 
@@ -546,7 +546,7 @@ async function handleSubscriptionTrialEnding(data: any) {
 			subscriptionId: data.id,
 			manageSubscriptionUrl: `${process.env.NEXT_PUBLIC_APP_URL}/settings/subscription`,
 			companyName: 'Ever Works',
-			companyUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://ever.works',
+			companyUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ever.works',
 			supportEmail: process.env.SUPPORT_EMAIL || 'support@ever.works'
 		};
 

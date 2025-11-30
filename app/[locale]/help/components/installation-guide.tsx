@@ -82,7 +82,7 @@ nano .env
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-NEXTAUTH_SECRET=your_nextauth_secret`,
+AUTH_SECRET=your_nextauth_secret`,
       codeLanguage: "env",
       icon: "⚙️",
       color: "text-purple-600 dark:text-purple-400",
@@ -183,19 +183,19 @@ pnpm start`,
   return (
     <section className="py-20 bg-linear-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
+        {/* Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 rounded-full text-green-700 dark:text-green-300 text-sm font-medium mb-6">
             <span>⚡</span>
-              {t("INSTALLATION_GUIDE_TITLE")}
+            {t("INSTALLATION_GUIDE_TITLE")}
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white">
             {t("INSTALLATION_GUIDE_SUBTITLE")}
-            </h2>
+          </h2>
           <p className="text-slate-600 dark:text-slate-400 text-lg max-w-3xl mx-auto leading-relaxed">
             {t("INSTALLATION_GUIDE_DESC")}
-            </p>
-          </div>
+          </p>
+        </div>
 
         {/* Progress Bar */}
         <div className="mb-12">
@@ -208,12 +208,12 @@ pnpm start`,
             </span>
           </div>
           <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3">
-            <div 
+            <div
               className="bg-linear-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progressPercentage}%` }}
             ></div>
           </div>
-          </div>
+        </div>
 
         {/* Main Content */}
         <div className="grid lg:grid-cols-3 gap-8">
@@ -223,19 +223,17 @@ pnpm start`,
               {installationSteps.map((step, index) => (
                 <div
                   key={step.id}
-                  className={`relative group cursor-pointer transition-all duration-300 ${
-                    activeStep === index ? 'transform scale-105' : 'hover:transform hover:scale-102'
-                  }`}
+                  className={`relative group cursor-pointer transition-all duration-300 ${activeStep === index ? 'transform scale-105' : 'hover:transform hover:scale-102'
+                    }`}
                   onClick={() => setActiveStep(index)}
                 >
                   {/* Step Card */}
-                  <div className={`relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xs rounded-xl p-6 border-2 transition-all duration-300 ${
-                    activeStep === index
+                  <div className={`relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xs rounded-xl p-6 border-2 transition-all duration-300 ${activeStep === index
                       ? 'border-blue-500 shadow-xl shadow-blue-500/20'
                       : completedSteps.includes(index)
-                      ? 'border-green-500 shadow-lg shadow-green-500/20'
-                      : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
-                  }`}>
+                        ? 'border-green-500 shadow-lg shadow-green-500/20'
+                        : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                    }`}>
                     {/* Step Header */}
                     <div className="flex items-center gap-4 mb-4">
                       <div className={`w-12 h-12 rounded-full bg-linear-to-r ${step.gradient} flex items-center justify-center text-white font-bold text-lg group-hover:scale-110 transition-transform duration-300`}>
@@ -243,17 +241,16 @@ pnpm start`,
                       </div>
                       <div className="flex-1">
                         <h3 className={`font-semibold ${step.color}`}>
-                      {step.title}
-                    </h3>
+                          {step.title}
+                        </h3>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-xs text-slate-500 dark:text-slate-400">
                             {step.estimatedTime}
                           </span>
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            step.difficulty === "Easy" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" :
-                            step.difficulty === "Medium" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300" :
-                            "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
-                          }`}>
+                          <span className={`text-xs px-2 py-1 rounded-full ${step.difficulty === "Easy" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" :
+                              step.difficulty === "Medium" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300" :
+                                "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                            }`}>
                             {step.difficulty}
                           </span>
                         </div>
@@ -277,7 +274,7 @@ pnpm start`,
                     {completedSteps.includes(index) && (
                       <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
                         <span className="text-white text-xs">✓</span>
-                    </div>
+                      </div>
                     )}
                   </div>
 
@@ -288,7 +285,7 @@ pnpm start`,
                 </div>
               ))}
             </div>
-            </div>
+          </div>
 
           {/* Code Preview */}
           <div className="lg:col-span-2">
@@ -298,10 +295,10 @@ pnpm start`,
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="flex gap-2">
-                          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                          <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                        </div>
+                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    </div>
                     <span className="text-slate-600 dark:text-slate-400 text-sm font-medium">
                       {installationSteps[activeStep].codeLanguage}
                     </span>
@@ -314,43 +311,42 @@ pnpm start`,
                       <span className="text-xs text-slate-500 dark:text-slate-400">
                         {installationSteps[activeStep].estimatedTime}
                       </span>
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        installationSteps[activeStep].difficulty === "Easy" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" :
-                        installationSteps[activeStep].difficulty === "Medium" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300" :
-                        "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
-                      }`}>
+                      <span className={`text-xs px-2 py-1 rounded-full ${installationSteps[activeStep].difficulty === "Easy" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" :
+                          installationSteps[activeStep].difficulty === "Medium" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300" :
+                            "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                        }`}>
                         {installationSteps[activeStep].difficulty}
                       </span>
                     </div>
                   </div>
-                        </div>
-                      </div>
+                </div>
+              </div>
 
-                      {/* Code Content */}
+              {/* Code Content */}
               <div className="p-6">
                 <pre className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed overflow-x-auto">
-                          <code>
+                  <code>
                     {installationSteps[activeStep].code.split('\n').map((line, index) => (
-                              <div key={index} className="flex">
+                      <div key={index} className="flex">
                         <span className="text-slate-500 dark:text-slate-600 mr-4 select-none w-8 text-right">
-                                  {index + 1}
-                                </span>
+                          {index + 1}
+                        </span>
                         <span className={
                           line.startsWith('#') ? 'text-slate-500 dark:text-slate-500' :
-                          line.includes('pnpm') || line.includes('npm') || line.includes('yarn') ? 'text-green-600 dark:text-green-400' :
-                          line.startsWith('git') ? 'text-blue-600 dark:text-blue-400' :
-                          line.startsWith('cp') ? 'text-yellow-600 dark:text-yellow-400' :
-                          line.includes('http://') ? 'text-cyan-600 dark:text-cyan-400' :
-                          line.includes('=') ? 'text-purple-600 dark:text-purple-400' :
-                          'text-slate-800 dark:text-slate-200'
+                            line.includes('pnpm') || line.includes('npm') || line.includes('yarn') ? 'text-green-600 dark:text-green-400' :
+                              line.startsWith('git') ? 'text-blue-600 dark:text-blue-400' :
+                                line.startsWith('cp') ? 'text-yellow-600 dark:text-yellow-400' :
+                                  line.includes('http://') ? 'text-cyan-600 dark:text-cyan-400' :
+                                    line.includes('=') ? 'text-purple-600 dark:text-purple-400' :
+                                      'text-slate-800 dark:text-slate-200'
                         }>
-                                  {line}
-                                </span>
-                              </div>
-                            ))}
-                          </code>
-                        </pre>
+                          {line}
+                        </span>
                       </div>
+                    ))}
+                  </code>
+                </pre>
+              </div>
 
               {/* Navigation */}
               <div className="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-t border-slate-200 dark:border-slate-700">
@@ -363,7 +359,7 @@ pnpm start`,
                   >
                     ← Previous
                   </Button>
-                  
+
                   <div className="flex items-center gap-2">
                     <Button
                       onClick={() => handleStepComplete(activeStep)}
@@ -372,7 +368,7 @@ pnpm start`,
                     >
                       {completedSteps.includes(activeStep) ? "✓ Completed" : "Mark Complete"}
                     </Button>
-                        </div>
+                  </div>
 
                   <Button
                     onClick={handleNextStep}
@@ -384,14 +380,14 @@ pnpm start`,
                 </div>
               </div>
             </div>
-            </div>
           </div>
+        </div>
 
         {/* Tips Section */}
         <div className="mt-16">
           <h3 className="text-2xl font-bold text-center mb-12 text-slate-900 dark:text-white">
             💡 Quick Tips for Success
-            </h3>
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {tips.map((tip, index) => (
               <div
@@ -406,11 +402,11 @@ pnpm start`,
                 </h4>
                 <p className="text-slate-600 dark:text-slate-400 text-sm">
                   {tip.description}
-                  </p>
+                </p>
               </div>
             ))}
-                </div>
-              </div>
+          </div>
+        </div>
 
         {/* Call to Action */}
         <div className="mt-16 text-center">

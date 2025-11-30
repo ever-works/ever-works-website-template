@@ -37,7 +37,7 @@ function resolveLocalePrefix(pathname: string): { prefix: string; hasLocale: boo
 async function nextAuthGuard(req: NextRequest, baseRes: NextResponse): Promise<NextResponse> {
   try {
     // Use JWT token check (Edge-compatible)
-    const token = await getToken({ req, secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET });
+    const token = await getToken({ req, secret: process.env.AUTH_SECRET });
     if (token?.isAdmin === true) {
       if (process.env.NODE_ENV === 'development') {
         console.log('[Middleware] Admin access granted via token');

@@ -69,8 +69,8 @@ try {
 // Define critical variable patterns
 const CRITICAL_PATTERNS = [
   /^DATA_REPOSITORY$/,
-  /^NEXTAUTH_SECRET$/,
-  /^NEXTAUTH_URL$/
+  /^AUTH_SECRET$/,
+  /^NEXT_PUBLIC_APP_URL$/
 ];
 
 // Get all environment variables

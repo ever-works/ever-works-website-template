@@ -10,6 +10,7 @@ export const validateEnvironment = () => {
     LEMONSQUEEZY_STORE_ID: process.env.LEMONSQUEEZY_STORE_ID,
     LEMONSQUEEZY_API_KEY: process.env.LEMONSQUEEZY_API_KEY,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL
   };
 
   const optionalEnvVars = {
@@ -61,7 +62,7 @@ export async function createCustomCheckout(params: CheckoutParams): Promise<stri
       {
         customPrice,
         productOptions: {
-          redirectUrl: `${env.NEXT_PUBLIC_APP_URL}/pricing`,
+          redirectUrl: `${env.NEXT_PUBLIC_SITE_URL}/pricing`,
         },
         checkoutOptions: { 
           embed: true,
@@ -98,4 +99,3 @@ export async function createCustomCheckout(params: CheckoutParams): Promise<stri
     throw new Error('Failed to create checkout: Unknown error occurred');
   }
 }
-  

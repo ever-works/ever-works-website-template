@@ -49,8 +49,8 @@ export function handleNextAuthError(
  */
 export function checkNextAuthEnvironment(): string | null {
   const optionalVars = [
-    'NEXTAUTH_SECRET',
-    'NEXTAUTH_URL'
+    'AUTH_SECRET',
+    'NEXT_PUBLIC_APP_URL'
   ];
   
   const missingVars = optionalVars.filter(varName => !process.env[varName]);
@@ -69,19 +69,19 @@ export function checkNextAuthEnvironment(): string | null {
     }
     
     // Generate default values for missing variables
-    if (!process.env.NEXTAUTH_SECRET) {
-      // Generate a cryptographically secure random string for NEXTAUTH_SECRET
-      process.env.NEXTAUTH_SECRET = crypto.randomBytes(32).toString('hex');
+    if (!process.env.AUTH_SECRET) {
+      // Generate a cryptographically secure random string for AUTH_SECRET
+      process.env.AUTH_SECRET = crypto.randomBytes(32).toString('hex');
       if (!shouldSuppress) {
-        console.warn('[NextAuth Config] Generated temporary NEXTAUTH_SECRET for development');
+        console.warn('[NextAuth Config] Generated temporary AUTH_SECRET for development');
       }
     }
     
-    if (!process.env.NEXTAUTH_URL) {
+    if (!process.env.NEXT_PUBLIC_APP_URL) {
       // Set a default URL for local development
-      process.env.NEXTAUTH_URL = 'http://localhost:3000';
+      process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000';
       if (!shouldSuppress) {
-        console.warn('[NextAuth Config] Using default NEXTAUTH_URL: http://localhost:3000');
+        console.warn('[NextAuth Config] Using default NEXT_PUBLIC_APP_URL: http://localhost:3000');
       }
     }
     

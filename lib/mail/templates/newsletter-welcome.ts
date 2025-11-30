@@ -243,7 +243,7 @@ export const getWelcomeEmailTemplate = (
             </div>
             
             <div class="cta-section">
-              <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://ever.works"}" class="cta-button">
+              <a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://ever.works"}" class="cta-button">
                 Discover our platform
               </a>
             </div>
@@ -251,7 +251,7 @@ export const getWelcomeEmailTemplate = (
           
           <div class="footer">
             <p>This email was sent to <strong>${email}</strong></p>
-            <p>If you didn't request this subscription, you can <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://ever.works"}/newsletter/unsubscribe">unsubscribe here</a></p>
+            <p>If you didn't request this subscription, you can <a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://ever.works"}/newsletter/unsubscribe">unsubscribe here</a></p>
             <p>© 2025 ${appName}. All rights reserved.</p>
             
             <div class="social-links">
@@ -275,10 +275,12 @@ What you'll receive:
 • Exclusive offers and premium content
 • New features and sneak peeks
 
-Discover our platform: ${process.env.NEXT_PUBLIC_APP_URL || "https://ever.works"}
+Discover our platform: ${process.env.NEXT_PUBLIC_SITE_URL || "https://ever.works"}.
 
-This email was sent to ${email}
-If you didn't request this subscription, you can unsubscribe here: ${process.env.NEXT_PUBLIC_APP_URL || "https://ever.works"}/newsletter/unsubscribe
+This email was sent to ${email}.
+
+If you didn't request this subscription, you can unsubscribe here: 
+${process.env.NEXT_PUBLIC_SITE_URL || "https://ever.works"}/newsletter/unsubscribe
 
 © 2025 ${appName}. All rights reserved.
     `,

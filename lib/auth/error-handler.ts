@@ -11,7 +11,7 @@ export { logError } from "../utils/error-handler";
  */
 export function validateAuthConfig() {
   // Base NextAuth environment variables
-  const baseNextAuthVars = ["NEXTAUTH_SECRET", "NEXTAUTH_URL"];
+  const baseNextAuthVars = ["AUTH_SECRET", "NEXT_PUBLIC_APP_URL"];
 
   // Provider-specific environment variables
   const providerEnvVars = {

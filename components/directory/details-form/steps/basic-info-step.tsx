@@ -63,8 +63,12 @@ export function BasicInfoStep({
 
 	return (
 		<div className={STEP_CARD_CLASSES.wrapper}>
-			<div className={STEP_CARD_CLASSES.background} />
-			<div className={STEP_CARD_CLASSES.content}>
+			<div 
+			className={STEP_CARD_CLASSES.background}
+			 />
+			<div 
+			className={STEP_CARD_CLASSES.content}
+			>
 				<div className={STEP_CARD_CLASSES.header.wrapper}>
 					<div className={STEP_CARD_CLASSES.header.icon}>
 						<Type className={STEP_CARD_CLASSES.header.iconInner} />
