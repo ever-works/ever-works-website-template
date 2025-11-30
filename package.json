@@ -137,7 +137,7 @@
     "yaml": "^2.7.0",
     "zod": "^4.0.5",
     "zustand": "^5.0.6",
-    "esbuild": "^0.23.0"
+    "esbuild": "^0.25.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
