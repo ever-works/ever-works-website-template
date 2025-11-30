@@ -194,6 +194,7 @@ SEED_ADMIN_PASSWORD="a-strong-password"   # required in production
 - In **production**, both variables **must** be set; the seed will refuse to run with implicit defaults.
 - In **development**, if these are not set, the seeder falls back to convenient defaults (`admin@demo.ever.works` / `Passw0rd123!`).
 - In production, the seeder will **reject** the default `Passw0rd123!` password even if explicitly configured.
+- Optionally, set `SEED_FAKE_USER_COUNT` (**defaults to 10** when unset) to generate extra fake users (with profiles & accounts) using Faker when the `users` table is initially empty. This applies in all environments, including production.
 
 ### Details
 

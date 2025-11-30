@@ -133,7 +133,8 @@
     "tailwindcss-animate": "^1.0.7",
     "yaml": "^2.7.0",
     "zod": "^4.0.5",
-    "zustand": "^5.0.6"
+    "zustand": "^5.0.6",
+    "esbuild": "^0.23.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -152,7 +153,6 @@
     "cross-env": "^10.1.0",
     "drizzle-kit": "^0.30.5",
     "drizzle-seed": "^0.3.1",
-    "esbuild": "^0.24.0",
     "eslint": "^9",
     "eslint-config-next": "^16.0.4",
     "eslint-plugin-react": "^7.37.5",
@@ -201,7 +201,8 @@
   "pnpm": {
     "overrides": {
       "@types/react": "19.2.7",
-      "@types/react-dom": "19.2.3"
+    "@types/react-dom": "19.2.3",
+      "esbuild": "npm:esbuild@^0.23.0"
     }
   }
 }

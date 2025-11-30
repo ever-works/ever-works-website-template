@@ -25407,13 +25407,19 @@
                       "type": "boolean",
                       "description": "Whether featured items feature is available",
                       "example": true
+                    },
+                    "surveys": {
+                      "type": "boolean",
+                      "description": "Whether surveys feature is available",
+                      "example": true
                     }
                   },
                   "required": [
                     "ratings",
                     "comments",
                     "favorites",
-                    "featuredItems"
+                    "featuredItems",
+                    "surveys"
                   ]
                 },
                 "examples": {
@@ -25423,7 +25429,8 @@
                       "ratings": true,
                       "comments": true,
                       "favorites": true,
-                      "featuredItems": true
+                      "featuredItems": true,
+                      "surveys": true
                     }
                   },
                   "all_disabled": {
@@ -25432,7 +25439,8 @@
                       "ratings": false,
                       "comments": false,
                       "favorites": false,
-                      "featuredItems": false
+                      "featuredItems": false,
+                      "surveys": false
                     }
                   }
                 }

@@ -312,6 +312,52 @@ export async function runSeed(): Promise<void> {
 			}
 		}
 
+		// Optional: generate additional fake users, profiles, and accounts when users table is initially empty
+		if (usersEmpty) {
+			const fakeUserCountRaw = process.env.SEED_FAKE_USER_COUNT;
+			const fakeUserCount =
+				fakeUserCountRaw === undefined || fakeUserCountRaw === ''
+					? 10
+					: Number(fakeUserCountRaw);
+
+			if (!Number.isNaN(fakeUserCount) && fakeUserCount > 0) {
+				const { faker } = await import('@faker-js/faker');
+
+				console.log(`[Seed] Generating ${fakeUserCount} fake users with faker...`);
+
+				const fakeUsersData = Array.from({ length: fakeUserCount }, () => {
+					const email = faker.internet.email({ provider: 'demo.ever.works' });
+					return {
+						email,
+						passwordHash: hashedPassword
+					};
+				});
+
+				const insertedFakeUsers = await db.insert(users).values(fakeUsersData).returning();
+
+				const fakeProfiles = insertedFakeUsers.map((user) => ({
+					userId: user.id,
+					email: user.email as string,
+					name: faker.person.fullName()
+				}));
+
+				await db.insert(clientProfiles).values(fakeProfiles).onConflictDoNothing();
+
+				const fakeAccounts: NewAccount[] = insertedFakeUsers.map((user) => ({
+					userId: user.id,
+					type: 'email',
+					provider: 'credentials',
+					providerAccountId: user.email as string,
+					email: user.email as string,
+					passwordHash: hashedPassword
+				}));
+
+				await db.insert(accounts).values(fakeAccounts).onConflictDoNothing();
+
+				console.log(`[Seed] Added ${insertedFakeUsers.length} fake users (with profiles & accounts)`);
+			}
+		}
+
 		// Seed junction tables separately (role_permissions, user_roles)
 		// These need to be queried after seed() completes
 
