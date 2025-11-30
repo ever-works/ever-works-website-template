@@ -14,12 +14,17 @@ import {
 	paymentProviders,
 	paymentAccounts,
 	subscriptions,
-	subscriptionHistory
+	subscriptionHistory,
+	activityLogs,
+	comments,
+	votes,
+	favorites,
+	notifications
 } from './schema';
 import type { NewAccount, NewPaymentProvider, NewPaymentAccount } from './schema';
 import { getAllPermissions } from '../permissions/definitions';
 import { PaymentProvider, PaymentPlan } from '../constants';
-import { SubscriptionStatus } from './schema';
+import { SubscriptionStatus, VoteType } from './schema';
 
 // Global database connection - will be initialized after environment loading
 let db: ReturnType<typeof import('./drizzle').getDrizzleInstance>;
@@ -580,7 +585,224 @@ export async function runSeed(): Promise<void> {
 				}
 			}
 
-			// TODO: Step 3 - Activity/Engagement tables will be added here
+			// ============================================
+			// Step 3: Activity/Engagement Tables
+			// ============================================
+
+			// Sample item slugs for comments, votes, and favorites
+			const sampleItemSlugs = [
+				'toggl-track', 'clockify', 'harvest', 'timely', 'rescuetime',
+				'everhour', 'hubstaff', 'timeneye', 'timesheets', 'trackingtime',
+				'toggl-plan', 'monday', 'asana', 'clickup', 'notion'
+			];
+
+			// Seed Activity Logs
+			const activityLogsEmpty = await isTableEmpty('activityLogs', activityLogs);
+			if (activityLogsEmpty) {
+				console.log('[Seed] 📊 Seeding activity logs...');
+
+				// Get all users and client profiles
+				const allUsersForActivity = await db.select().from(users);
+				const allProfilesForActivity = await db.select().from(clientProfiles);
+
+				const activityActions = [
+					'SIGN_UP', 'SIGN_IN', 'SIGN_OUT', 'UPDATE_PROFILE', 'UPDATE_PASSWORD',
+					'VERIFY_EMAIL', 'RESET_PASSWORD', 'ADD_COMMENT', 'VOTE_ITEM',
+					'ADD_FAVORITE', 'REMOVE_FAVORITE', 'UPDATE_SUBSCRIPTION', 'SUBMIT_ITEM'
+				];
+
+				// Create 3-10 activity logs per user
+				const activityLogValues = allUsersForActivity.flatMap((user) => {
+					const numLogs = faker.number.int({ min: 3, max: 10 });
+					const userProfile = allProfilesForActivity.find((p) => p.userId === user.id);
+
+					return Array.from({ length: numLogs }, () => {
+						const action = faker.helpers.arrayElement(activityActions);
+						const useUserId = ['SIGN_UP', 'SIGN_IN', 'SIGN_OUT', 'UPDATE_PASSWORD', 'VERIFY_EMAIL', 'RESET_PASSWORD'].includes(action);
+
+						return {
+							userId: useUserId ? user.id : undefined,
+							clientId: !useUserId && userProfile ? userProfile.id : undefined,
+							action,
+							timestamp: faker.date.recent({ days: 90 }),
+							ipAddress: faker.datatype.boolean(0.8) ? faker.internet.ipv4() : undefined
+						};
+					});
+				});
+
+				await db.insert(activityLogs).values(activityLogValues).onConflictDoNothing();
+				console.log(`[Seed] ✓ Created ${activityLogValues.length} activity logs`);
+			}
+
+			// Seed Comments
+			const commentsEmpty = await isTableEmpty('comments', comments);
+			if (commentsEmpty) {
+				console.log('[Seed] 💬 Seeding comments...');
+
+				// Get all client profiles for comments
+				const allProfilesForComments = await db.select().from(clientProfiles);
+
+				// Create 0-5 comments per profile (not all users comment)
+				const commentValues = allProfilesForComments.flatMap((profile) => {
+					const shouldComment = faker.datatype.boolean(0.4); // 40% of users comment
+					if (!shouldComment) return [];
+
+					const numComments = faker.number.int({ min: 1, max: 5 });
+					return Array.from({ length: numComments }, () => ({
+						userId: profile.id,
+						itemId: faker.helpers.arrayElement(sampleItemSlugs),
+						content: faker.lorem.sentences(faker.number.int({ min: 1, max: 5 })),
+						rating: faker.number.int({ min: 1, max: 5 }),
+						createdAt: faker.date.recent({ days: 180 }),
+						editedAt: faker.datatype.boolean(0.2) ? faker.date.recent({ days: 60 }) : undefined
+					}));
+				});
+
+				if (commentValues.length > 0) {
+					await db.insert(comments).values(commentValues).onConflictDoNothing();
+					console.log(`[Seed] ✓ Created ${commentValues.length} comments`);
+				}
+			}
+
+			// Seed Votes
+			const votesEmpty = await isTableEmpty('votes', votes);
+			if (votesEmpty) {
+				console.log('[Seed] 👍 Seeding votes...');
+
+				// Get all client profiles for votes
+				const allProfilesForVotes = await db.select().from(clientProfiles);
+
+				// Create 0-10 votes per profile (users vote on different items)
+				const voteValues = allProfilesForVotes.flatMap((profile) => {
+					const numVotes = faker.number.int({ min: 0, max: 10 });
+					const votedItems = new Set<string>(); // Track to avoid duplicate votes on same item
+
+					return Array.from({ length: numVotes }, () => {
+						let itemId;
+						do {
+							itemId = faker.helpers.arrayElement(sampleItemSlugs);
+						} while (votedItems.has(itemId) && votedItems.size < sampleItemSlugs.length);
+
+						votedItems.add(itemId);
+
+						return {
+							userId: profile.id,
+							itemId,
+							voteType: faker.datatype.boolean(0.8) ? VoteType.UPVOTE : VoteType.DOWNVOTE, // 80% upvotes
+							createdAt: faker.date.recent({ days: 180 })
+						};
+					}).filter((vote) => vote.itemId); // Filter out any undefined itemIds
+				});
+
+				if (voteValues.length > 0) {
+					await db.insert(votes).values(voteValues).onConflictDoNothing();
+					console.log(`[Seed] ✓ Created ${voteValues.length} votes`);
+				}
+			}
+
+			// Seed Favorites
+			const favoritesEmpty = await isTableEmpty('favorites', favorites);
+			if (favoritesEmpty) {
+				console.log('[Seed] ⭐ Seeding favorites...');
+
+				// Get all users for favorites
+				const allUsersForFavorites = await db.select().from(users);
+
+				// Create 0-8 favorites per user
+				const favoriteValues = allUsersForFavorites.flatMap((user) => {
+					const numFavorites = faker.number.int({ min: 0, max: 8 });
+					const favoritedItems = new Set<string>(); // Track to avoid duplicate favorites
+
+					return Array.from({ length: numFavorites }, () => {
+						let itemSlug;
+						do {
+							itemSlug = faker.helpers.arrayElement(sampleItemSlugs);
+						} while (favoritedItems.has(itemSlug) && favoritedItems.size < sampleItemSlugs.length);
+
+						favoritedItems.add(itemSlug);
+
+						return {
+							userId: user.id,
+							itemSlug,
+							itemName: itemSlug
+								.split('-')
+								.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+								.join(' '),
+							itemIconUrl: `https://demo.ever.works/icons/${itemSlug}.png`,
+							itemCategory: faker.helpers.arrayElement(['Time Tracking', 'Project Management', 'Productivity', 'Analytics']),
+							createdAt: faker.date.recent({ days: 180 })
+						};
+					}).filter((fav) => fav.itemSlug); // Filter out any undefined slugs
+				});
+
+				if (favoriteValues.length > 0) {
+					await db.insert(favorites).values(favoriteValues).onConflictDoNothing();
+					console.log(`[Seed] ✓ Created ${favoriteValues.length} favorites`);
+				}
+			}
+
+			// Seed Notifications
+			const notificationsEmpty = await isTableEmpty('notifications', notifications);
+			if (notificationsEmpty) {
+				console.log('[Seed] 🔔 Seeding notifications...');
+
+				// Get all users for notifications
+				const allUsersForNotifications = await db.select().from(users);
+
+				// Create 1-10 notifications per user
+				const notificationTypes = ['item_submission', 'comment_reported', 'user_registered', 'payment_failed', 'system_alert'] as const;
+
+				const notificationValues = allUsersForNotifications.flatMap((user) => {
+					const numNotifications = faker.number.int({ min: 1, max: 10 });
+
+					return Array.from({ length: numNotifications }, () => {
+						const type = faker.helpers.arrayElement(notificationTypes);
+						const isRead = faker.datatype.boolean(0.6); // 60% read
+						const createdAt = faker.date.recent({ days: 90 });
+
+						let title: string;
+						let message: string;
+
+						switch (type) {
+							case 'item_submission':
+								title = 'New Item Submitted';
+								message = `A new time tracking tool "${faker.helpers.arrayElement(sampleItemSlugs)}" has been submitted for review.`;
+								break;
+							case 'comment_reported':
+								title = 'Comment Reported';
+								message = 'A comment has been reported by users and needs moderation.';
+								break;
+							case 'user_registered':
+								title = 'Welcome!';
+								message = 'Welcome to Ever Works! Start exploring time tracking tools.';
+								break;
+							case 'payment_failed':
+								title = 'Payment Failed';
+								message = 'Your recent payment failed. Please update your payment method.';
+								break;
+							case 'system_alert':
+								title = 'System Maintenance';
+								message = 'Scheduled maintenance will occur on ' + faker.date.future({ years: 0.1 }).toLocaleDateString();
+								break;
+						}
+
+						return {
+							userId: user.id,
+							type,
+							title,
+							message,
+							data: faker.datatype.boolean(0.3) ? JSON.stringify({ itemSlug: faker.helpers.arrayElement(sampleItemSlugs) }) : undefined,
+							isRead,
+							readAt: isRead ? faker.date.between({ from: createdAt, to: new Date() }) : undefined,
+							createdAt
+						};
+					});
+				});
+
+				await db.insert(notifications).values(notificationValues).onConflictDoNothing();
+				console.log(`[Seed] ✓ Created ${notificationValues.length} notifications`);
+			}
+
 			// TODO: Step 4 - Auth/Session tables will be added here
 		}
 
