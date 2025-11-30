@@ -12,8 +12,8 @@ import {
 	rolePermissions,
 	userRoles
 } from './schema';
+import type { NewAccount } from './schema';
 import { getAllPermissions } from '../permissions/definitions';
-import * as schema from './schema';
 
 // Global database connection - will be initialized after environment loading
 let db: ReturnType<typeof import('./drizzle').getDrizzleInstance>;
@@ -104,20 +104,20 @@ export async function runSeed(): Promise<void> {
 			console.log(`  clientProfiles: ${profilesData.length} rows`, profilesData);
 		}
 
-		// Log what will be seeded
-		const tablesToSeed: string[] = [];
-		if (permissionsEmpty) tablesToSeed.push('permissions');
-		if (rolesEmpty) tablesToSeed.push('roles');
-		if (usersEmpty) tablesToSeed.push('users');
-		if (accountsEmpty) tablesToSeed.push('accounts');
-		if (profilesEmpty) tablesToSeed.push('clientProfiles');
+		// Log what will be seeded (names only, for debug output)
+		const tablesToSeedNames: string[] = [];
+		if (permissionsEmpty) tablesToSeedNames.push('permissions');
+		if (rolesEmpty) tablesToSeedNames.push('roles');
+		if (usersEmpty) tablesToSeedNames.push('users');
+		if (accountsEmpty) tablesToSeedNames.push('accounts');
+		if (profilesEmpty) tablesToSeedNames.push('clientProfiles');
 
-		if (tablesToSeed.length === 0) {
+		if (tablesToSeedNames.length === 0) {
 			console.log('[Seed] All tables have data - skipping seed');
 			return;
 		}
 
-		console.log(`[Seed] Will seed: ${tablesToSeed.join(', ')}`);
+		console.log(`[Seed] Will seed: ${tablesToSeedNames.join(', ')}`);
 
 		// Read environment variables outside seed()
 		const adminEmail = process.env.SEED_ADMIN_EMAIL || 'admin@example.com';
@@ -131,101 +131,96 @@ export async function runSeed(): Promise<void> {
 		const roleAdminId = crypto.randomUUID();
 		const roleClientId = crypto.randomUUID();
 
-		// Build seed config conditionally based on which tables are empty
-		const seedConfig: Record<string, unknown> = {};
-
-		if (permissionsEmpty) {
-			seedConfig.permissions = {
-				count: allPermissions.length,
-				columns: {
-					key: ({ index }: { index: number }) => allPermissions[index],
-					description: ({ index }: { index: number }) =>
-						allPermissions[index]
-							.replace(':', ' ')
-							.replace(/([a-z])([A-Z])/g, '$1 $2')
-							.toLowerCase()
-				}
-			};
-		}
-
-		if (rolesEmpty) {
-			seedConfig.roles = {
-				count: 2,
-				columns: {
-					id: ({ index }: { index: number }) => (index === 0 ? roleAdminId : roleClientId),
-					name: ({ index }: { index: number }) => (index === 0 ? 'admin' : 'client'),
-					description: ({ index }: { index: number }) => (index === 0 ? 'Administrator' : 'Client user'),
-					isAdmin: ({ index }: { index: number }) => index === 0
-				}
-			};
-		}
-
-		if (usersEmpty) {
-			seedConfig.users = {
-				count: 3,
-				columns: {
-					email: ({ index }: { index: number }) => {
-						if (index === 0) return adminEmail;
-						if (index === 1) return 'client1@example.com';
-						return 'client2@example.com';
-					},
-					passwordHash: ({ index }: { index: number }) => {
-						if (index < 2) return hashedPassword;
-						return null;
-					}
-				}
-			};
-		}
-
-		if (accountsEmpty) {
-			seedConfig.accounts = {
-				count: 3,
-				// Link each account to 1 user
-				with: {
-					users: 1
-				},
-				columns: {
-					type: ({ index }: { index: number }) => (index === 2 ? 'oauth' : 'email'),
-					provider: ({ index }: { index: number }) => (index === 2 ? 'google' : 'credentials'),
-					providerAccountId: ({ index }: { index: number }) => {
-						if (index === 0) return adminEmail;
-						if (index === 1) return 'client1@example.com';
-						return 'google-oauth-123';
-					},
-					email: ({ index }: { index: number }) => {
-						if (index === 0) return adminEmail;
-						if (index === 1) return 'client1@example.com';
-						return null;
-					},
-					passwordHash: ({ index }: { index: number }) => {
-						if (index < 2) return hashedPassword;
-						return null;
-					}
-				}
-			};
-		}
+		// Build schema object for drizzle-seed based on which tables are empty
+		// NOTE: we intentionally exclude `accounts` here and seed it manually below to
+		// avoid drizzle-seed `with` relation constraints.
+		const schemaToSeed: {
+			permissions?: typeof permissions;
+			roles?: typeof roles;
+			users?: typeof users;
+		} = {};
+		if (permissionsEmpty) schemaToSeed.permissions = permissions;
+		if (rolesEmpty) schemaToSeed.roles = roles;
+		if (usersEmpty) schemaToSeed.users = users;
 
 		// NOTE: clientProfiles is seeded manually AFTER seed() to respect 1:1 unique constraint
-		// Do NOT add clientProfiles to seedConfig - it causes duplicate key errors
+		// Do NOT add clientProfiles to schemaToSeed - it causes duplicate key errors
 
 		// Only call seed if there's something to seed
-		if (Object.keys(seedConfig).length > 0) {
-			// IMPORTANT: drizzle-seed only knows about tables we explicitly pass to it
-			// We must NOT pass the entire schema, only the tables we want to seed
-			// This prevents auto-generation of singleton/config tables
-			const tablesToSeed = {
-				permissions,
-				roles,
-				users,
-				accounts
-				// NOTE: clientProfiles is excluded - seeded manually below
-			};
+		if (Object.keys(schemaToSeed).length > 0) {
+			// Use drizzle-seed refine API to provide PREDEFINED data via generator functions
+			// Base options { count: 1 } just return a SeedPromise; real counts are per-table below
+			await seed(db, schemaToSeed, { count: 1 }).refine((funcs) => ({
+				// Permissions: 1 row per permission key from definitions
+				...(permissionsEmpty && {
+					permissions: {
+						count: allPermissions.length,
+						columns: {
+							key: funcs.valuesFromArray({
+								values: allPermissions,
+								isUnique: true
+							}),
+							description: funcs.valuesFromArray({
+								values: allPermissions.map((p) =>
+									p
+										.replace(':', ' ')
+										.replace(/([a-z])([A-Z])/g, '$1 $2')
+										.toLowerCase()
+								),
+								isUnique: true
+							})
+						}
+					}
+				}),
 
-			await seed(db, tablesToSeed as never, seedConfig);
-			console.log(`[Seed] Completed seeding ${Object.keys(seedConfig).length} configured tables`);
+				// Roles: admin + client with fixed IDs/names
+				...(rolesEmpty && {
+					roles: {
+						count: 2,
+						columns: {
+							id: funcs.valuesFromArray({
+								values: [roleAdminId, roleClientId],
+								isUnique: true
+							}),
+							name: funcs.valuesFromArray({
+								values: ['admin', 'client'],
+								isUnique: true
+							}),
+							description: funcs.valuesFromArray({
+								values: ['Administrator', 'Client user'],
+								isUnique: true
+							}),
+							isAdmin: funcs.valuesFromArray({
+								values: [true, false]
+							})
+						}
+					}
+				}),
+
+				// Users: 3 known emails, 2 with password
+				...(usersEmpty && {
+					users: {
+						count: 3,
+						columns: {
+							email: funcs.valuesFromArray({
+								values: [adminEmail, 'client1@example.com', 'client2@example.com'],
+								isUnique: true
+							}),
+							passwordHash: funcs.valuesFromArray({
+								values: [hashedPassword, hashedPassword, undefined]
+							})
+						}
+					}
+				}),
+
+			}));
+
+			console.log('[Seed] Completed seeding permissions, roles, users, and accounts with predefined data');
 		}
 
 		// Seed clientProfiles manually to ensure 1:1 mapping with users (unique constraint)
+		// NOTE: we intentionally do NOT create a client_profile for the admin user
+		// (adminEmail). Only client1 and client2 get profiles.
 		if (profilesEmpty) {
 			console.log('[Seed] Seeding clientProfiles manually...');
 
@@ -233,14 +228,60 @@ export async function runSeed(): Promise<void> {
 			const seededUsers = await db.select().from(users).limit(3);
 
 			if (seededUsers.length > 0) {
-				const profileValues = seededUsers.slice(0, 3).map((user, index) => ({
+				// Assume first user is admin, next two are clients (as per seed order)
+				const profileValues = seededUsers.slice(1, 3).map((user, index) => ({
 					userId: user.id,
-					email: index === 0 ? adminEmail : index === 1 ? 'client1@example.com' : 'client2@example.com',
-					name: index === 0 ? 'Admin User' : index === 1 ? 'Client One' : 'Client Two'
+					email: index === 0 ? 'client1@example.com' : 'client2@example.com',
+					name: index === 0 ? 'Client One' : 'Client Two'
 				}));
 
 				await db.insert(clientProfiles).values(profileValues).onConflictDoNothing();
-				console.log(`[Seed] Created ${profileValues.length} client profiles`);
+				console.log(`[Seed] Created ${profileValues.length} client profiles (excluding admin)`);
+			}
+		}
+
+		// Seed accounts manually to avoid drizzle-seed relation constraints
+		if (accountsEmpty) {
+			console.log('[Seed] Seeding accounts manually...');
+
+			// Fetch users by email to get stable IDs
+			const allUsers = await db.select().from(users);
+			const adminUser = allUsers.find((u) => u.email === adminEmail);
+			const client1User = allUsers.find((u) => u.email === 'client1@example.com');
+			const client2User = allUsers.find((u) => u.email === 'client2@example.com');
+
+			if (adminUser && client1User && client2User) {
+				const accountValues: NewAccount[] = [
+					{
+						userId: adminUser.id,
+						type: 'email',
+						provider: 'credentials',
+						providerAccountId: adminEmail,
+						email: adminEmail,
+						passwordHash: hashedPassword
+					},
+					{
+						userId: client1User.id,
+						type: 'email',
+						provider: 'credentials',
+						providerAccountId: 'client1@example.com',
+						email: 'client1@example.com',
+						passwordHash: hashedPassword
+					},
+					{
+						userId: client2User.id,
+						type: 'oauth',
+						provider: 'google',
+						providerAccountId: 'google-oauth-123',
+						email: null,
+						passwordHash: null
+					}
+				];
+
+				await db.insert(accounts).values(accountValues).onConflictDoNothing();
+				console.log(`[Seed] Created ${accountValues.length} accounts`);
+			} else {
+				console.warn('[Seed] Skipping manual accounts seeding - expected seed users not found');
 			}
 		}
 
