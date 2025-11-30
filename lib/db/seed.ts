@@ -10,10 +10,16 @@ import {
 	roles,
 	permissions,
 	rolePermissions,
-	userRoles
+	userRoles,
+	paymentProviders,
+	paymentAccounts,
+	subscriptions,
+	subscriptionHistory
 } from './schema';
-import type { NewAccount } from './schema';
+import type { NewAccount, NewPaymentProvider, NewPaymentAccount } from './schema';
 import { getAllPermissions } from '../permissions/definitions';
+import { PaymentProvider, PaymentPlan } from '../constants';
+import { SubscriptionStatus } from './schema';
 
 // Global database connection - will be initialized after environment loading
 let db: ReturnType<typeof import('./drizzle').getDrizzleInstance>;
@@ -411,7 +417,169 @@ export async function runSeed(): Promise<void> {
 		// ============================================
 		if (isDemoMode) {
 			console.log('[Seed] 🎭 Demo mode: seeding additional tables...');
-			// TODO: Step 2 - Payment/Subscription tables will be added here
+
+			// Import faker dynamically for demo mode
+			const { faker } = await import('@faker-js/faker');
+
+			// ============================================
+			// Step 2: Payment/Subscription Tables
+			// ============================================
+
+			// Seed Payment Providers (Stripe & LemonSqueezy)
+			const providersEmpty = await isTableEmpty('paymentProviders', paymentProviders);
+			if (providersEmpty) {
+				console.log('[Seed] 💳 Seeding payment providers...');
+
+				const providerValues: NewPaymentProvider[] = [
+					{
+						name: PaymentProvider.STRIPE,
+						isActive: true
+					},
+					{
+						name: PaymentProvider.LEMONSQUEEZY,
+						isActive: true
+					}
+				];
+
+				await db.insert(paymentProviders).values(providerValues).onConflictDoNothing();
+				console.log(`[Seed] ✓ Created ${providerValues.length} payment providers`);
+			}
+
+			// Get seeded providers
+			const allProviders = await db.select().from(paymentProviders);
+			const stripeProvider = allProviders.find((p) => p.name === PaymentProvider.STRIPE);
+			const lemonSqueezyProvider = allProviders.find((p) => p.name === PaymentProvider.LEMONSQUEEZY);
+
+			// Seed Payment Accounts (for users with paid plans)
+			const paymentAccountsEmpty = await isTableEmpty('paymentAccounts', paymentAccounts);
+			if (paymentAccountsEmpty && stripeProvider && lemonSqueezyProvider) {
+				console.log('[Seed] 💳 Seeding payment accounts...');
+
+				// Get all users for payment accounts
+				const allUsersForPayment = await db.select().from(users);
+
+				// Create payment accounts for 70% of users (mix of Stripe and LemonSqueezy)
+				const usersWithPayment = allUsersForPayment.filter(() => faker.datatype.boolean(0.7));
+
+				const paymentAccountValues: NewPaymentAccount[] = usersWithPayment.map((user) => {
+					const useStripe = faker.datatype.boolean(0.7); // 70% Stripe, 30% LemonSqueezy
+					const provider = useStripe ? stripeProvider : lemonSqueezyProvider;
+
+					return {
+						userId: user.id,
+						providerId: provider.id,
+						customerId: useStripe
+							? `cus_${faker.string.alphanumeric(14).toUpperCase()}`
+							: `cus_${faker.string.alphanumeric(32)}`,
+						accountId: faker.datatype.boolean(0.5) ? faker.string.alphanumeric(16) : undefined,
+						lastUsed: faker.datatype.boolean(0.8) ? faker.date.recent({ days: 30 }) : undefined
+					};
+				});
+
+				await db.insert(paymentAccounts).values(paymentAccountValues).onConflictDoNothing();
+				console.log(`[Seed] ✓ Created ${paymentAccountValues.length} payment accounts`);
+			}
+
+			// Seed Subscriptions
+			const subscriptionsEmpty = await isTableEmpty('subscriptions', subscriptions);
+			if (subscriptionsEmpty) {
+				console.log('[Seed] 💳 Seeding subscriptions...');
+
+				// Get all users for subscriptions
+				const allUsersForSubscriptions = await db.select().from(users);
+
+				// Create subscriptions for all users
+				// Distribution: 60% free, 30% standard, 10% premium
+				const subscriptionValues = allUsersForSubscriptions.map((user) => {
+					const planRandom = faker.number.float({ min: 0, max: 1, precision: 0.01 });
+					let plan: PaymentPlan;
+					let status: string;
+					let provider: string;
+
+					if (planRandom < 0.6) {
+						// 60% free plan
+						plan = PaymentPlan.FREE;
+						status = SubscriptionStatus.ACTIVE;
+						provider = PaymentProvider.STRIPE; // Default provider for free
+					} else if (planRandom < 0.9) {
+						// 30% standard plan
+						plan = PaymentPlan.STANDARD;
+						// 80% active, 15% cancelled, 5% expired
+						const statusRandom = faker.number.float({ min: 0, max: 1, precision: 0.01 });
+						if (statusRandom < 0.8) status = SubscriptionStatus.ACTIVE;
+						else if (statusRandom < 0.95) status = SubscriptionStatus.CANCELLED;
+						else status = SubscriptionStatus.EXPIRED;
+						provider = faker.datatype.boolean(0.7) ? PaymentProvider.STRIPE : PaymentProvider.LEMONSQUEEZY;
+					} else {
+						// 10% premium plan
+						plan = PaymentPlan.PREMIUM;
+						// 85% active, 10% cancelled, 5% paused
+						const statusRandom = faker.number.float({ min: 0, max: 1, precision: 0.01 });
+						if (statusRandom < 0.85) status = SubscriptionStatus.ACTIVE;
+						else if (statusRandom < 0.95) status = SubscriptionStatus.CANCELLED;
+						else status = SubscriptionStatus.PAUSED;
+						provider = faker.datatype.boolean(0.7) ? PaymentProvider.STRIPE : PaymentProvider.LEMONSQUEEZY;
+					}
+
+					const startDate = faker.date.past({ years: 2 });
+					const isActive = status === SubscriptionStatus.ACTIVE;
+
+					return {
+						userId: user.id,
+						planId: plan,
+						status,
+						startDate,
+						endDate: isActive ? undefined : faker.date.between({ from: startDate, to: new Date() }),
+						paymentProvider: provider,
+						subscriptionId: plan !== PaymentPlan.FREE
+							? provider === PaymentProvider.STRIPE
+								? `sub_${faker.string.alphanumeric(14).toUpperCase()}`
+								: `sub_${faker.string.alphanumeric(32)}`
+							: undefined,
+						customerId: plan !== PaymentPlan.FREE
+							? provider === PaymentProvider.STRIPE
+								? `cus_${faker.string.alphanumeric(14).toUpperCase()}`
+								: `cus_${faker.string.alphanumeric(32)}`
+							: undefined,
+						priceId: plan !== PaymentPlan.FREE
+							? provider === PaymentProvider.STRIPE
+								? `price_${faker.string.alphanumeric(14).toUpperCase()}`
+								: `price_${faker.string.alphanumeric(32)}`
+							: undefined,
+						amountPaid: plan === PaymentPlan.FREE ? 0 : plan === PaymentPlan.STANDARD ? 1000 : 2000, // in cents
+						currency: 'usd'
+					};
+				});
+
+				const insertedSubscriptions = await db.insert(subscriptions).values(subscriptionValues).returning();
+				console.log(`[Seed] ✓ Created ${insertedSubscriptions.length} subscriptions`);
+
+				// Seed Subscription History
+				const subscriptionHistoryEmpty = await isTableEmpty('subscriptionHistory', subscriptionHistory);
+				if (subscriptionHistoryEmpty) {
+					console.log('[Seed] 💳 Seeding subscription history...');
+
+					// Create 1-3 history entries for each subscription
+					const historyValues = insertedSubscriptions.flatMap((sub) => {
+						const numEntries = faker.number.int({ min: 1, max: 3 });
+						return Array.from({ length: numEntries }, (_, index) => ({
+							subscriptionId: sub.id,
+							action: index === 0 ? 'created' : faker.helpers.arrayElement(['upgraded', 'downgraded', 'renewed', 'cancelled', 'paused', 'resumed']),
+							previousStatus: index === 0 ? undefined : faker.helpers.arrayElement([SubscriptionStatus.ACTIVE, SubscriptionStatus.PENDING]),
+							newStatus: index === numEntries - 1 ? sub.status : faker.helpers.arrayElement([SubscriptionStatus.ACTIVE, SubscriptionStatus.CANCELLED]),
+							previousPlan: index === 0 ? undefined : faker.helpers.arrayElement([PaymentPlan.FREE, PaymentPlan.STANDARD]),
+							newPlan: sub.planId,
+							reason: faker.helpers.arrayElement([undefined, 'User requested', 'Payment failed', 'Trial ended', 'Upgrade']),
+							metadata: faker.datatype.boolean(0.3) ? JSON.stringify({ source: faker.helpers.arrayElement(['web', 'mobile', 'api']) }) : undefined,
+							createdAt: faker.date.between({ from: sub.startDate, to: new Date() })
+						}));
+					});
+
+					await db.insert(subscriptionHistory).values(historyValues).onConflictDoNothing();
+					console.log(`[Seed] ✓ Created ${historyValues.length} subscription history entries`);
+				}
+			}
+
 			// TODO: Step 3 - Activity/Engagement tables will be added here
 			// TODO: Step 4 - Auth/Session tables will be added here
 		}
