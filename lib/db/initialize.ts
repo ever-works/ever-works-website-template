@@ -164,11 +164,23 @@ export async function initializeDatabase(): Promise<void> {
 		console.log('[DB Init] Starting database initialization...');
 		console.log('[DB Init] DATABASE_URL is configured (length:', process.env.DATABASE_URL.length, ')');
 
-		// Check if already seeded
+		// STEP 1: Always run migrations first (Drizzle handles idempotency - only runs new ones)
+		console.log('[DB Init] Running migrations (Drizzle will skip already-applied)...');
+		const { runMigrations } = await import('./migrate');
+		const migrationSuccess = await runMigrations();
+
+		if (!migrationSuccess) {
+			// Migration failed - log error and skip seeding
+			console.warn('[DB Init] ⚠️  Auto-migration failed - skipping database initialization');
+			console.warn('[DB Init] ⚠️  Please run migrations manually: pnpm db:migrate');
+			return;
+		}
+
+		// STEP 2: Check if already seeded (only matters for seeding, not migrations)
 		const isSeeded = await isDatabaseSeeded();
 
 		if (isSeeded) {
-			console.log('[DB Init] Database already seeded - skipping');
+			console.log('[DB Init] Database already seeded - skipping seed step');
 			return;
 		}
 
@@ -203,28 +215,7 @@ export async function initializeDatabase(): Promise<void> {
 			}
 		}
 
-		console.log('[DB Init] Database not seeded - checking if migrations needed...');
-
-		// Check if migrations are needed (seed_status table missing)
-		const { isMigrationNeeded, runMigrations } = await import('./migrate');
-		const migrationNeeded = await isMigrationNeeded();
-
-		if (migrationNeeded) {
-			console.log('[DB Init] Migrations needed - running auto-migration...');
-
-			const migrationSuccess = await runMigrations();
-
-			if (!migrationSuccess) {
-				// Migration failed - log error and skip seeding
-				console.warn('[DB Init] ⚠️  Auto-migration failed - skipping database initialization');
-				console.warn('[DB Init] ⚠️  Please run migrations manually: pnpm db:migrate');
-				return;
-			}
-
-			console.log('[DB Init] Migrations completed - proceeding with seeding');
-		} else {
-			console.log('[DB Init] No migrations needed');
-		}
+		console.log('[DB Init] Database not seeded - proceeding with seeding...');
 
 		console.log('[DB Init] Attempting to acquire seed lock...');
 
