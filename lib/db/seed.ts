@@ -251,19 +251,29 @@ export async function runSeed(): Promise<void> {
 		if (profilesEmpty) {
 			console.log('[Seed] Seeding clientProfiles manually...');
 
-			// Get the users we just seeded
-			const seededUsers = await db.select().from(users).limit(3);
+			// Look up the seeded client users by their known emails to avoid relying on implicit ordering
+			const allUsersForProfiles = await db.select().from(users);
+			const client1User = allUsersForProfiles.find((u) => u.email === 'client1@example.com');
+			const client2User = allUsersForProfiles.find((u) => u.email === 'client2@example.com');
 
-			if (seededUsers.length > 0) {
-				// Assume first user is admin, next two are clients (as per seed order)
-				const profileValues = seededUsers.slice(1, 3).map((user, index) => ({
-					userId: user.id,
-					email: index === 0 ? 'client1@example.com' : 'client2@example.com',
-					name: index === 0 ? 'Client One' : 'Client Two'
-				}));
+			if (client1User && client2User) {
+				const profileValues = [
+					{
+						userId: client1User.id,
+						email: 'client1@example.com',
+						name: 'Client One'
+					},
+					{
+						userId: client2User.id,
+						email: 'client2@example.com',
+						name: 'Client Two'
+					}
+				];
 
 				await db.insert(clientProfiles).values(profileValues).onConflictDoNothing();
 				console.log(`[Seed] Created ${profileValues.length} client profiles (excluding admin)`);
+			} else {
+				console.warn('[Seed] Skipping clientProfiles seeding - expected seed client users not found');
 			}
 		}
 
@@ -395,23 +405,27 @@ export async function runSeed(): Promise<void> {
 		if (hasUserRoles) {
 		console.log('[Seed] Seeding user-roles...');
 
-		// Get all users and roles
-		const allUsers = await db.select().from(users).limit(3);
+		// Get specific seeded users and roles to avoid relying on implicit ordering
+		const allUsersForRoles = await db.select().from(users);
+		const adminUserForRoles = allUsersForRoles.find((u) => u.email === adminEmail);
+		const client1UserForRoles = allUsersForRoles.find((u) => u.email === 'client1@example.com');
+		const client2UserForRoles = allUsersForRoles.find((u) => u.email === 'client2@example.com');
+
 		const adminRoles = await db.select().from(roles).where(eq(roles.name, 'admin')).limit(1);
 		const clientRoles = await db.select().from(roles).where(eq(roles.name, 'client')).limit(1);
 
-		if (allUsers.length === 3 && adminRoles.length > 0 && clientRoles.length > 0) {
+		if (adminUserForRoles && client1UserForRoles && client2UserForRoles && adminRoles.length > 0 && clientRoles.length > 0) {
 		try {
 			await db
 				.insert(userRoles)
 				.values([
-					{ userId: allUsers[0].id, roleId: adminRoles[0].id }, // Admin user → admin role
-					{ userId: allUsers[1].id, roleId: clientRoles[0].id }, // Client1 → client role
-					{ userId: allUsers[2].id, roleId: clientRoles[0].id } // Client2 → client role
+					{ userId: adminUserForRoles.id, roleId: adminRoles[0].id }, // Admin user → admin role
+					{ userId: client1UserForRoles.id, roleId: clientRoles[0].id }, // Client1 → client role
+					{ userId: client2UserForRoles.id, roleId: clientRoles[0].id } // Client2 → client role
 				])
 				.onConflictDoNothing();
 
-			console.log('[Seed] Assigned roles to users');
+			console.log('[Seed] Assigned roles to seeded users');
 		} catch (urError) {
 			// Ignore duplicate errors
 			if (urError && typeof urError === 'object' && 'code' in urError && urError.code === '23505') {
@@ -420,6 +434,8 @@ export async function runSeed(): Promise<void> {
 				console.warn('[Seed] Error seeding user-roles:', urError);
 			}
 		}
+		} else {
+			console.warn('[Seed] Skipping user-roles seeding - expected seed users or roles not found');
 		}
 		}
 
