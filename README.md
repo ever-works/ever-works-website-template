@@ -140,7 +140,7 @@ auth:
 
 - Node.js 18.x or higher
 - PostgreSQL database (optional)
-- `npm` or `yarn` or `pnpm` package manager
+- `pnpm` package manager
 
 ### Environment Setup
 
@@ -210,16 +210,14 @@ SEED_ADMIN_PASSWORD="a-strong-password"   # required in production
 
 ```bash
 # Install dependencies
-npm install
-# or
-yarn install
+pnpm install
 
 # Set up the database
-npm run db:generate
-npm run db:migrate
+pnpm db:generate
+pnpm db:migrate
 
 # Start the dev server
-npm run dev
+pnpm dev
 ```
 
 The app will be available at [http://localhost:3000](http://localhost:3000/).

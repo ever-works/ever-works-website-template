@@ -1,6 +1,6 @@
 /*
   Seed script to insert realistic local data into the database.
-  Usage: DATABASE_URL=... yarn seed
+  Usage: DATABASE_URL=... pnpm seed
 */
 
 import fs from 'fs';

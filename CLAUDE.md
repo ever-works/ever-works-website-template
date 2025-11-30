@@ -7,7 +7,7 @@ This file gives Claude Code (and other AI coding tools) project-specific instruc
 - Always run commands from the repository root.
 - Node.js: **>= 20.19.0** (see `package.json.engines`).
 - Primary package manager: **pnpm** (lockfile: `pnpm-lock.yaml`).
-- Scripts in `package.json` may call `yarn` internally; invoking them via `pnpm` is correct.
+- Scripts in `package.json` should not call `yarn` or `npm`; invoking them via `pnpm` is correct.
 
 ## 2. Install dependencies
 

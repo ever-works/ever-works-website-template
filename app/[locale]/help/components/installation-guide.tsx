@@ -52,12 +52,6 @@ ls -la`,
       code: `# Using pnpm (recommended)
 pnpm install
 
-# Or using npm
-npm install
-
-# Or using yarn
-yarn install
-
 # Verify installation
 pnpm --version`,
       codeLanguage: "bash",
