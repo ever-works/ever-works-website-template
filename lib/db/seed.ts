@@ -74,6 +74,15 @@ async function getTableCount(tableName: string, table: unknown): Promise<number>
 export async function runSeed(): Promise<void> {
 	await ensureDb();
 
+	// Check if demo mode is enabled
+	const isDemoMode = process.env.NEXT_PUBLIC_DEMO === 'true';
+
+	if (isDemoMode) {
+		console.log('[Seed] 🎭 Running in DEMO mode - will seed comprehensive test data');
+	} else {
+		console.log('[Seed] 🔒 Running in PRODUCTION mode - minimal essential seeding only');
+	}
+
 	console.log('[Seed] Checking existing data...');
 
 	try {
@@ -395,6 +404,16 @@ export async function runSeed(): Promise<void> {
 
 				console.log(`[Seed] Added ${insertedFakeUsers.length} fake users (with profiles & accounts)`);
 			}
+		}
+
+		// ============================================
+		// DEMO MODE: Seed additional tables
+		// ============================================
+		if (isDemoMode) {
+			console.log('[Seed] 🎭 Demo mode: seeding additional tables...');
+			// TODO: Step 2 - Payment/Subscription tables will be added here
+			// TODO: Step 3 - Activity/Engagement tables will be added here
+			// TODO: Step 4 - Auth/Session tables will be added here
 		}
 
 		// Seed junction tables separately (role_permissions, user_roles)
