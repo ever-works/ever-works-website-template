@@ -509,7 +509,7 @@ export async function runSeed(): Promise<void> {
 				// Create subscriptions for all users
 				// Distribution: 60% free, 30% standard, 10% premium
 				const subscriptionValues = allUsersForSubscriptions.map((user) => {
-					const planRandom = faker.number.float({ min: 0, max: 1, precision: 0.01 });
+					const planRandom = faker.number.float({ min: 0, max: 1, fractionDigits: 2 });
 					let plan: PaymentPlan;
 					let status: string;
 					let provider: string;
@@ -523,7 +523,7 @@ export async function runSeed(): Promise<void> {
 						// 30% standard plan
 						plan = PaymentPlan.STANDARD;
 						// 80% active, 15% cancelled, 5% expired
-						const statusRandom = faker.number.float({ min: 0, max: 1, precision: 0.01 });
+						const statusRandom = faker.number.float({ min: 0, max: 1, fractionDigits: 2 });
 						if (statusRandom < 0.8) status = SubscriptionStatus.ACTIVE;
 						else if (statusRandom < 0.95) status = SubscriptionStatus.CANCELLED;
 						else status = SubscriptionStatus.EXPIRED;
@@ -532,7 +532,7 @@ export async function runSeed(): Promise<void> {
 						// 10% premium plan
 						plan = PaymentPlan.PREMIUM;
 						// 85% active, 10% cancelled, 5% paused
-						const statusRandom = faker.number.float({ min: 0, max: 1, precision: 0.01 });
+						const statusRandom = faker.number.float({ min: 0, max: 1, fractionDigits: 2 });
 						if (statusRandom < 0.85) status = SubscriptionStatus.ACTIVE;
 						else if (statusRandom < 0.95) status = SubscriptionStatus.CANCELLED;
 						else status = SubscriptionStatus.PAUSED;
@@ -902,10 +902,10 @@ export async function runSeed(): Promise<void> {
 
 				// Create verification tokens for 10% of users (recently registered or changed email)
 				const verificationTokenValues = allUsersForVerification
-					.filter(() => faker.datatype.boolean(0.1)) // 10% have pending verification
+					.filter((user) => user.email && faker.datatype.boolean(0.1)) // 10% have pending verification, must have email
 					.map((user) => ({
 						identifier: user.id,
-						email: user.email,
+						email: user.email as string,
 						token: faker.string.alphanumeric(32),
 						expires: faker.date.future({ years: 0.01 }) // Expires within ~3-4 days
 					}));
@@ -926,9 +926,9 @@ export async function runSeed(): Promise<void> {
 
 				// Create password reset tokens for 5% of users (recently requested password reset)
 				const passwordResetTokenValues = allUsersForPasswordReset
-					.filter(() => faker.datatype.boolean(0.05)) // 5% have pending reset
+					.filter((user) => user.email && faker.datatype.boolean(0.05)) // 5% have pending reset, must have email
 					.map((user) => ({
-						email: user.email,
+						email: user.email as string,
 						token: faker.string.alphanumeric(32),
 						expires: faker.date.future({ years: 0.002 }) // Expires within ~18 hours
 					}));

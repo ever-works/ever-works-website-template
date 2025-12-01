@@ -1,6 +1,6 @@
 'use client';
 
-import { Analytics as VercelAnalytics, type BeforeSendEvent } from '@vercel/analytics/next';
+import { Analytics as VercelAnalytics, type BeforeSendEvent } from '@vercel/analytics/react';
 import { useEffect, useState, useRef } from 'react';
 
 interface AnalyticsConfig {

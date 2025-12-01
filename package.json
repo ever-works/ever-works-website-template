@@ -37,7 +37,8 @@
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx scripts/cli-seed.ts"
   },
-  "dependencies": {
+"dependencies": {
+    "@vercel/analytics": "^1.0.0",
     "@auth/drizzle-adapter": "^1.8.0",
     "@auth/supabase-adapter": "^1.9.0",
     "@floating-ui/react": "^0.27.16",
