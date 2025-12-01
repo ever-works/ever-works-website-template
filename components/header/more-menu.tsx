@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useState, useRef } from "react";
+import { memo, useCallback, useState, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
@@ -72,7 +72,7 @@ const STYLES = {
     "flex items-center gap-1.5",
     "transition-all duration-200 font-medium whitespace-nowrap text-sm lg:text-base xl:text-lg",
     "text-gray-700 dark:text-gray-300",
-    "cursor-pointer hover:text-theme-primary hover:scale-105"
+    "cursor-pointer hover:text-theme-primary"
   ),
   dropdownContent: cn(
     "min-w-[15rem]",
@@ -157,17 +157,26 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
     onItemClick?.();
   }, [onItemClick]);
 
-  const handleMouseEnter = useCallback(() => {
+  const handlePointerEnter = useCallback(() => {
     if (hoverTimeoutRef.current) {
       clearTimeout(hoverTimeoutRef.current);
     }
     setIsHovered(true);
   }, []);
 
-  const handleMouseLeave = useCallback(() => {
+  const handlePointerLeave = useCallback(() => {
     hoverTimeoutRef.current = setTimeout(() => {
       setIsHovered(false);
-    }, 150);
+    }, 300);
+  }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
   }, []);
 
   const renderMobileMenuItem = (item: MoreMenuItem) => {
@@ -230,8 +239,8 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
 
   // Desktop version (Radix UI Dropdown with hover trigger)
   return (
-    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <DropdownMenu.Root open={isHovered} onOpenChange={setIsHovered}>
+    <div onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave}>
+      <DropdownMenu.Root open={isHovered} modal={false}>
         <DropdownMenu.Trigger asChild>
           <button
             type="button"
@@ -251,10 +260,10 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
         <DropdownMenu.Portal>
           <DropdownMenu.Content
             className={STYLES.dropdownContent}
-            sideOffset={12}
+            sideOffset={4}
             align="end"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+            onPointerEnter={handlePointerEnter}
+            onPointerLeave={handlePointerLeave}
           >
             {menuItems.map((item) => {
               const Icon = item.icon;
