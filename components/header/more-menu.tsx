@@ -62,7 +62,8 @@ const STYLES = {
   button: cn(
     "flex items-center gap-1.5",
     "transition-all duration-200 font-medium whitespace-nowrap text-sm lg:text-base xl:text-lg",
-    "text-gray-700 dark:text-gray-300"
+    "text-gray-700 dark:text-gray-300",
+    "cursor-pointer hover:text-theme-primary hover:scale-105"
   ),
   menuContainer: cn(
     "absolute right-0 mt-2 w-48 origin-top-right",
@@ -83,7 +84,8 @@ const STYLES = {
     "flex items-center justify-between w-full px-3 py-2 text-sm font-medium rounded-md",
     "text-gray-700 dark:text-gray-200",
     "hover:bg-gray-100 dark:hover:bg-gray-800",
-    "transition-all duration-200"
+    "transition-all duration-200",
+    "cursor-pointer"
   ),
   mobileMenuContainer: cn(
     "mt-1 ml-4 space-y-1"
