@@ -151,7 +151,7 @@ export class ItemGitService {
               icon_url: item.icon_url,
               updated_at: item.updated_at || formatDateForYaml(),
               status: item.status || 'approved', // Read status from YAML or default to approved
-              submitted_by: item.submitted_by || 'admin',
+              submitted_by: item.submitted_by,
               submitted_at: item.submitted_at || item.updated_at || formatDateForYaml(),
               reviewed_by: item.reviewed_by || 'admin',
               reviewed_at: item.reviewed_at || item.updated_at || formatDateForYaml(),
@@ -194,7 +194,8 @@ export class ItemGitService {
         icon_url: item.icon_url,
         updated_at: item.updated_at,
         status: item.status, // Include status for admin management
-        // Don't write other review fields to YAML as they're for admin use only
+        submitted_by: item.submitted_by,
+        submitted_at: item.submitted_at,
       };
       
       // Write item data
@@ -276,7 +277,7 @@ export class ItemGitService {
       icon_url: data.icon_url,
       updated_at: formatDateForYaml(),
       status: data.status || 'draft',
-      submitted_by: 'admin', // TODO: Get from session
+      submitted_by: data.submitted_by || 'anonymous',
       submitted_at: formatDateForYaml(),
     };
 

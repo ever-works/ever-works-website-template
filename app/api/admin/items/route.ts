@@ -454,6 +454,7 @@ export async function POST(request: NextRequest) {
       featured: featured || false,
       icon_url,
       status: status || 'draft',
+      submitted_by: session.user.id,
     });
 
     // Direct CRM sync: blocks response but with retry/timeout (non-blocking for DB)

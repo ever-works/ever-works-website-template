@@ -32,6 +32,7 @@ export interface CreateItemRequest {
   featured?: boolean;
   icon_url?: string;
   status?: 'draft' | 'pending' | 'approved' | 'rejected';
+  submitted_by?: string;
 }
 
 export interface UpdateItemRequest extends Partial<CreateItemRequest> {

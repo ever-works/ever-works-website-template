@@ -1,4 +1,5 @@
   import { AdminNotificationEmailHtml } from "@/lib/mail/templates/admin-notification";
+import { getSubmissionDecisionTemplate } from "@/lib/mail/templates/submission-decision";
 import { EmailService } from "@/lib/mail";
 
   export interface EmailNotificationData {
@@ -208,5 +209,69 @@ import { EmailService } from "@/lib/mail";
           result: result.status === "fulfilled" ? result.value : { success: false, error: "Failed" },
         })),
       };
+    }
+
+    /**
+     * Send submission decision notification email to user
+     */
+    static async sendSubmissionDecisionEmail(
+      userEmail: string,
+      itemName: string,
+      status: "approved" | "rejected",
+      reviewNotes?: string
+    ) {
+      try {
+        const emailService = new EmailService({
+          provider: process.env.EMAIL_PROVIDER || "resend",
+          defaultFrom: process.env.EMAIL_FROM || "noreply@demo.ever.works",
+          domain: process.env.NEXT_PUBLIC_APP_URL || "https://demo.ever.works",
+          apiKeys: {
+            resend: process.env.RESEND_API_KEY || "",
+            novu: process.env.NOVU_API_KEY || "",
+          },
+        });
+
+        if (!emailService.isServiceAvailable()) {
+          console.warn("[EmailNotification] Skipped - email service not configured");
+          return {
+            success: false,
+            skipped: true,
+            error: "Email service not configured",
+          };
+        }
+
+        const template = getSubmissionDecisionTemplate({
+          itemName,
+          status,
+          reviewNotes,
+        });
+
+        const result = await emailService.sendCustomEmail({
+          from: process.env.EMAIL_FROM || "noreply@demo.ever.works",
+          to: userEmail,
+          subject: template.subject,
+          html: template.html,
+          text: template.text,
+        });
+
+        return {
+          success: true,
+          messageId: result.messageId,
+        };
+      } catch (error) {
+        if (error instanceof Error && error.message.includes("not available")) {
+          console.warn("[EmailNotification] Skipped -", error.message);
+          return {
+            success: false,
+            skipped: true,
+            error: error.message,
+          };
+        }
+        console.error("Error sending submission decision email:", error);
+        return {
+          success: false,
+          error: "Failed to send email notification",
+        };
+      }
     }
   }

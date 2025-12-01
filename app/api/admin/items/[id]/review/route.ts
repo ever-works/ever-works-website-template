@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { ItemRepository } from '@/lib/repositories/item.repository';
+import { UserRepository } from '@/lib/repositories/user.repository';
+import { EmailNotificationService } from '@/lib/services/email-notification.service';
 import { ReviewRequest } from '@/lib/types/item';
 
 const itemRepository = new ItemRepository();
+const userRepository = new UserRepository();
 
 /**
  * @swagger
@@ -159,6 +162,29 @@ export async function POST(
       status,
       review_notes,
     });
+
+    // Send email notification to submitter (async, don't block response)
+    if (item.submitted_by && item.submitted_by !== 'admin' && item.submitted_by !== 'anonymous') {
+      try {
+        const user = await userRepository.findById(item.submitted_by);
+        if (user?.email) {
+          await EmailNotificationService.sendSubmissionDecisionEmail(
+            user.email,
+            item.name,
+            status,
+            review_notes
+          );
+          console.log(`[Review] Email notification sent to ${user.email} for item ${item.id}`);
+        } else {
+          console.warn(`[Review] User ${item.submitted_by} not found or has no email`);
+        }
+      } catch (notificationError) {
+        console.error('[Review] Failed to send notification email:', notificationError);
+        // Don't block the review response if notification fails
+      }
+    } else {
+      console.warn(`[Review] Skipping notification - invalid submitted_by: ${item.submitted_by}`);
+    }
 
     return NextResponse.json({
       success: true,
