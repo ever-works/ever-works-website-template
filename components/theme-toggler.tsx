@@ -6,9 +6,11 @@ import { useEffect, useState, useRef, useId } from "react";
 
 interface ThemeTogglerProps {
   compact?: boolean;
+  /** Open dropdown upward instead of downward (useful for footer) */
+  openUp?: boolean;
 }
 
-export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
+export function ThemeToggler({ compact = false, openUp = false }: ThemeTogglerProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -110,7 +112,9 @@ export function ThemeToggler({ compact = false }: ThemeTogglerProps) {
       {isOpen && (
         <div
           id={panelId}
-          className="absolute right-0 mt-2 p-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200 dark:border-gray-700/50 rounded-xl shadow-xl z-50"
+          className={`absolute right-0 p-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-gray-200 dark:border-gray-700/50 rounded-xl shadow-xl z-50 ${
+            openUp ? 'bottom-full mb-2' : 'top-full mt-2'
+          }`}
         >
           <div className="flex flex-col gap-1">
             <button

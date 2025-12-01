@@ -69,8 +69,6 @@ export function footerNavigation(t: (key: string) => string, categoriesEnabled =
     product: filteredProductLinks,
     company: [
       { label: t("footer.ABOUT_US"), href: "/about" },
-      { label: t("footer.PRIVACY_POLICY"), href: "/privacy-policy" },
-      { label: t("footer.TERMS_OF_SERVICE"), href: "/terms-of-service" },
       {
         label: t("footer.SITEMAP"),
         href: "/sitemap.xml",
