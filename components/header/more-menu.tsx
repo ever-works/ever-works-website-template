@@ -1,9 +1,9 @@
 "use client";
 
-import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { memo, useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "./index";
 
@@ -65,21 +65,21 @@ const STYLES = {
     "text-gray-700 dark:text-gray-300",
     "cursor-pointer hover:text-theme-primary hover:scale-105"
   ),
-  menuContainer: cn(
-    "absolute right-0 mt-2 w-48 origin-top-right",
+  dropdownContent: cn(
+    "min-w-[12rem]",
     "bg-white dark:bg-gray-800",
     "border border-gray-200 dark:border-gray-700",
     "rounded-lg shadow-lg",
     "py-1 z-50"
   ),
-  menuItem: cn(
+  dropdownItem: cn(
     "flex items-center w-full px-4 py-2 text-sm",
     "text-gray-700 dark:text-gray-300",
     "hover:bg-gray-100 dark:hover:bg-gray-700",
     "hover:text-theme-primary",
+    "cursor-pointer outline-none",
     "transition-colors duration-150"
   ),
-  backdrop: "fixed inset-0 z-40",
   mobileButton: cn(
     "flex items-center justify-between w-full px-3 py-2 text-sm font-medium rounded-md",
     "text-gray-700 dark:text-gray-200",
@@ -106,9 +106,8 @@ interface MoreMenuProps {
 
 function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
   const t = useTranslations("common");
+  // State only needed for mobile inline collapsible mode
   const [isOpen, setIsOpen] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   const menuItems: MoreMenuItem[] = MENU_ITEMS_CONFIG.map((item) => ({
     key: item.key,
@@ -121,51 +120,14 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
     setIsOpen((prev) => !prev);
   }, []);
 
-  const closeMenu = useCallback(() => {
-    setIsOpen(false);
-  }, []);
-
   const handleItemClick = useCallback(() => {
-    closeMenu();
+    setIsOpen(false);
     onItemClick?.();
-  }, [closeMenu, onItemClick]);
+  }, [onItemClick]);
 
-  // Handle click outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
-      ) {
-        closeMenu();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
-    }
-  }, [isOpen, closeMenu]);
-
-  // Handle escape key
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isOpen) {
-        closeMenu();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("keydown", handleKeyDown);
-      return () => document.removeEventListener("keydown", handleKeyDown);
-    }
-  }, [isOpen, closeMenu]);
-
-  const renderMenuItem = (item: MoreMenuItem) => {
+  const renderMobileMenuItem = (item: MoreMenuItem) => {
     const commonProps = {
-      className: inline ? STYLES.mobileMenuItem : STYLES.menuItem,
+      className: STYLES.mobileMenuItem,
       onClick: handleItemClick,
     };
 
@@ -195,7 +157,6 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
     return (
       <div>
         <button
-          ref={buttonRef}
           type="button"
           className={STYLES.mobileButton}
           onClick={toggleMenu}
@@ -212,50 +173,55 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
         </button>
         {isOpen && (
           <div className={STYLES.mobileMenuContainer}>
-            {menuItems.map(renderMenuItem)}
+            {menuItems.map(renderMobileMenuItem)}
           </div>
         )}
       </div>
     );
   }
 
-  // Desktop version (dropdown)
+  // Desktop version (Radix UI Dropdown)
   return (
-    <div className="relative">
-      <button
-        ref={buttonRef}
-        type="button"
-        className={STYLES.button}
-        onClick={toggleMenu}
-        aria-expanded={isOpen}
-        aria-haspopup="menu"
-      >
-        {t("MORE")}
-        <ChevronDown
-          className={cn(
-            "w-4 h-4 transition-transform duration-200",
-            isOpen && "rotate-180"
-          )}
-        />
-      </button>
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button
+          type="button"
+          className={STYLES.button}
+          aria-label={t("MORE")}
+        >
+          {t("MORE")}
+          <ChevronDown className="w-4 h-4 transition-transform duration-200" />
+        </button>
+      </DropdownMenu.Trigger>
 
-      {isOpen && typeof window !== "undefined" && (
-        <>
-          {createPortal(
-            <div className={STYLES.backdrop} onClick={closeMenu} aria-hidden="true" />,
-            document.body
-          )}
-          <div
-            ref={menuRef}
-            className={STYLES.menuContainer}
-            role="menu"
-            aria-orientation="vertical"
-          >
-            {menuItems.map(renderMenuItem)}
-          </div>
-        </>
-      )}
-    </div>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          className={STYLES.dropdownContent}
+          sideOffset={8}
+          align="end"
+        >
+          {menuItems.map((item) => (
+            <DropdownMenu.Item
+              key={item.key}
+              className={STYLES.dropdownItem}
+              asChild
+            >
+              {item.isExternal ? (
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <Link href={item.href}>{item.label}</Link>
+              )}
+            </DropdownMenu.Item>
+          ))}
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 }
 

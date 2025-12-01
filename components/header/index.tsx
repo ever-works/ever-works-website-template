@@ -118,7 +118,7 @@ const NAVIGATION_CONFIG: Array<{
 const STYLES = {
   navbar: "bg-white/75 dark:bg-gray-900/75 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 sticky top-0 z-50",
   container: "flex items-center justify-between w-full min-h-[60px] sm:min-h-[64px] md:min-h-[68px] lg:min-h-[72px]",
-  navContent: "hidden lg:flex gap-4 xl:gap-6 2xl:gap-8",
+  navContent: "hidden lg:flex gap-4 xl:gap-6 2xl:gap-8 mr-6 xl:mr-8 2xl:mr-10",
   navbarMenuToggle: "lg:hidden transition-transform duration-200 hover:scale-105",
   brand: "flex items-center group transition-transform duration-200 hover:scale-105",
   brandIcon: "relative font-bold mr-2 sm:mr-3 md:mr-4 lg:mr-5",
