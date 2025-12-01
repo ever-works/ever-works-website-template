@@ -41,6 +41,61 @@ function shouldSync() {
   return false;
 }
 
+/**
+ * Check if there are uncommitted local changes in the repository
+ */
+async function checkForLocalChanges(dir: string): Promise<boolean> {
+  try {
+    const status = await git.statusMatrix({ fs, dir });
+    // Status matrix: [filepath, HEAD, WORKDIR, STAGE]
+    // If HEAD !== WORKDIR or HEAD !== STAGE, there are changes
+    return status.some(([, head, workdir, stage]) =>
+      head !== workdir || head !== stage
+    );
+  } catch (error) {
+    console.error("[SYNC] Failed to check local changes:", error);
+    return false; // Assume no changes on error
+  }
+}
+
+/**
+ * Attempt to commit and push local changes
+ */
+async function tryPushLocalChanges(
+  dir: string,
+  url: string,
+  auth: GitAuth
+): Promise<boolean> {
+  try {
+    // Stage all changes
+    await git.add({ fs, dir, filepath: '.' });
+
+    // Commit
+    const author = {
+      name: 'Website Bot',
+      email: 'bot@ever.works'
+    };
+    await git.commit({
+      fs,
+      dir,
+      message: `[Auto] Save local changes before sync - ${new Date().toISOString()}`,
+      author,
+      committer: author,
+    });
+
+    // Push
+    await withTimeout(
+      git.push({ onAuth: () => auth, fs, http, dir }),
+      60000 // 1 minute timeout for push
+    );
+
+    return true;
+  } catch (error) {
+    console.error("[SYNC] Failed to push local changes:", error);
+    return false;
+  }
+}
+
 export async function pullChanges(url: string, dest: string, auth: GitAuth) {
   try {
     const author = { name: "website" }; // required for git pull for some reason
@@ -56,11 +111,48 @@ export async function pullChanges(url: string, dest: string, auth: GitAuth) {
       })
     );
   } catch (err) {
-    if (
+    // Handle all conflict types
+    const isConflictError =
       err instanceof Errors.MergeConflictError ||
-      err instanceof Errors.MergeNotSupportedError
-    ) {
-      console.error("Merge conflict detected, resetting repository...");
+      err instanceof Errors.MergeNotSupportedError ||
+      err instanceof Errors.CheckoutConflictError;
+
+    const isBranchError = err instanceof Error &&
+      err.message.includes("Could not find master");
+
+    if (isConflictError) {
+      console.error("[SYNC] Conflict detected, checking for local changes...");
+
+      // Check if there are uncommitted local changes
+      const hasLocalChanges = await checkForLocalChanges(dest);
+
+      if (hasLocalChanges) {
+        console.log("[SYNC] Found local changes, attempting to push first...");
+        const pushSuccess = await tryPushLocalChanges(dest, url, auth);
+
+        if (pushSuccess) {
+          // Push succeeded, retry pull
+          console.log("[SYNC] Push succeeded, retrying pull...");
+          const author = { name: "website" };
+          await withTimeout(
+            git.pull({
+              onAuth: () => auth,
+              fs,
+              http,
+              url,
+              dir: dest,
+              author,
+              singleBranch: true,
+            })
+          );
+          return;
+        } else {
+          console.warn("[SYNC] Push failed, local changes will be lost. Proceeding with reset...");
+        }
+      }
+
+      // Reset: delete and re-clone
+      console.log("[SYNC] Resetting repository...");
       await fs.promises.rm(dest, { recursive: true });
       await fs.promises.mkdir(dest, { recursive: true });
       await withTimeout(
@@ -73,7 +165,7 @@ export async function pullChanges(url: string, dest: string, auth: GitAuth) {
           singleBranch: true,
         })
       );
-    } else if (err instanceof Error && err.message.includes("Could not find master")) {
+    } else if (isBranchError) {
       console.error("Repository branch issue detected, trying to clone fresh...");
       await fs.promises.rm(dest, { recursive: true });
       await fs.promises.mkdir(dest, { recursive: true });
