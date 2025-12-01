@@ -133,19 +133,24 @@ export async function pullChanges(url: string, dest: string, auth: GitAuth) {
         if (pushSuccess) {
           // Push succeeded, retry pull
           console.log("[SYNC] Push succeeded, retrying pull...");
-          const author = { name: "website" };
-          await withTimeout(
-            git.pull({
-              onAuth: () => auth,
-              fs,
-              http,
-              url,
-              dir: dest,
-              author,
-              singleBranch: true,
-            })
-          );
-          return;
+          try {
+            const author = { name: "website" };
+            await withTimeout(
+              git.pull({
+                onAuth: () => auth,
+                fs,
+                http,
+                url,
+                dir: dest,
+                author,
+                singleBranch: true,
+              })
+            );
+            return;
+          } catch (retryErr) {
+            console.error("[SYNC] Retry pull failed after push, proceeding with reset...", retryErr);
+            // Fall through to reset logic below
+          }
         } else {
           console.warn("[SYNC] Push failed, local changes will be lost. Proceeding with reset...");
         }
