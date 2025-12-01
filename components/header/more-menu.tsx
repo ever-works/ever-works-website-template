@@ -154,6 +154,7 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
 
   const handleItemClick = useCallback(() => {
     setIsOpen(false);
+    setIsHovered(false);
     onItemClick?.();
   }, [onItemClick]);
 
@@ -240,7 +241,7 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
   // Desktop version (Radix UI Dropdown with hover trigger)
   return (
     <div onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave}>
-      <DropdownMenu.Root open={isHovered} modal={false}>
+      <DropdownMenu.Root open={isHovered} onOpenChange={(open) => setIsHovered(open)} modal={false}>
         <DropdownMenu.Trigger asChild>
           <button
             type="button"
@@ -278,12 +279,13 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
                       href={item.href}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={handleItemClick}
                     >
                       <Icon className={STYLES.icon} />
                       {item.label}
                     </a>
                   ) : (
-                    <Link href={item.href}>
+                    <Link href={item.href} onClick={handleItemClick}>
                       <Icon className={STYLES.icon} />
                       {item.label}
                     </Link>
