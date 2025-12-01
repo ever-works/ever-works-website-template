@@ -85,7 +85,7 @@ async function tryPushLocalChanges(
 
     // Push
     await withTimeout(
-      git.push({ onAuth: () => auth, fs, http, dir }),
+      git.push({ onAuth: () => auth, fs, http, dir, url }),
       60000 // 1 minute timeout for push
     );
 
