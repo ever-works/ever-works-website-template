@@ -1,9 +1,10 @@
 "use client";
 
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { BookOpen, HelpCircle, FileText, Code, Building, Mail, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "./index";
 
@@ -12,6 +13,7 @@ interface MoreMenuItem {
   label: string;
   href: string;
   isExternal: boolean;
+  icon: LucideIcon;
 }
 
 const MENU_ITEMS_CONFIG: Array<{
@@ -19,42 +21,49 @@ const MENU_ITEMS_CONFIG: Array<{
   href: string;
   translationKey: string;
   isExternal: boolean;
+  icon: LucideIcon;
 }> = [
   {
     key: "blog",
     href: "https://blog.ever.works",
     translationKey: "BLOG",
     isExternal: true,
+    icon: BookOpen,
   },
   {
     key: "help",
     href: "/help",
     translationKey: "HELP",
     isExternal: false,
+    icon: HelpCircle,
   },
   {
     key: "docs",
     href: "https://docs.ever.works",
     translationKey: "DOCS",
     isExternal: true,
+    icon: FileText,
   },
   {
     key: "api-docs",
     href: "https://demo.ever.works/docs",
     translationKey: "API_DOCS",
     isExternal: true,
+    icon: Code,
   },
   {
     key: "about",
     href: "/about",
     translationKey: "ABOUT",
     isExternal: false,
+    icon: Building,
   },
   {
     key: "contacts",
     href: "https://ever.co/contacts",
     translationKey: "CONTACTS",
     isExternal: true,
+    icon: Mail,
   },
 ];
 
@@ -66,19 +75,38 @@ const STYLES = {
     "cursor-pointer hover:text-theme-primary hover:scale-105"
   ),
   dropdownContent: cn(
-    "min-w-[12rem]",
-    "bg-white dark:bg-gray-800",
-    "border border-gray-200 dark:border-gray-700",
-    "rounded-lg shadow-lg",
-    "py-1 z-50"
+    "min-w-[15rem]",
+    "bg-white/95 dark:bg-gray-900/95",
+    "backdrop-blur-xl",
+    "border border-gray-200/50 dark:border-gray-700/50",
+    "rounded-2xl",
+    "shadow-2xl shadow-gray-900/10 dark:shadow-black/30",
+    "p-2",
+    "z-50",
+    "data-[state=open]:animate-in data-[state=closed]:animate-out",
+    "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+    "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+    "data-[side=bottom]:slide-in-from-top-2",
+    "data-[side=top]:slide-in-from-bottom-2"
   ),
   dropdownItem: cn(
-    "flex items-center w-full px-4 py-2 text-sm",
+    "flex items-center gap-3",
+    "px-4 py-3",
+    "rounded-xl",
+    "text-sm font-medium",
     "text-gray-700 dark:text-gray-300",
-    "hover:bg-gray-100 dark:hover:bg-gray-700",
-    "hover:text-theme-primary",
+    "hover:bg-gradient-to-r hover:from-theme-primary/10 hover:to-theme-primary/5",
+    "hover:text-theme-primary dark:hover:text-theme-primary",
     "cursor-pointer outline-none",
-    "transition-colors duration-150"
+    "transition-all duration-200",
+    "group"
+  ),
+  icon: cn(
+    "w-5 h-5",
+    "text-gray-400 dark:text-gray-500",
+    "group-hover:text-theme-primary",
+    "group-hover:scale-110",
+    "transition-all duration-200"
   ),
   mobileButton: cn(
     "flex items-center justify-between w-full px-3 py-2 text-sm font-medium rounded-md",
@@ -91,7 +119,7 @@ const STYLES = {
     "mt-1 ml-4 space-y-1"
   ),
   mobileMenuItem: cn(
-    "flex items-center w-full px-3 py-2 text-sm rounded-md",
+    "flex items-center gap-3 w-full px-3 py-2 text-sm rounded-md",
     "text-gray-600 dark:text-gray-400",
     "hover:bg-gray-100 dark:hover:bg-gray-800",
     "hover:text-theme-primary",
@@ -106,14 +134,18 @@ interface MoreMenuProps {
 
 function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
   const t = useTranslations("common");
-  // State only needed for mobile inline collapsible mode
+  // State for mobile inline collapsible mode
   const [isOpen, setIsOpen] = useState(false);
+  // State for desktop hover trigger
+  const [isHovered, setIsHovered] = useState(false);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const menuItems: MoreMenuItem[] = MENU_ITEMS_CONFIG.map((item) => ({
     key: item.key,
     label: t(item.translationKey as keyof IntlMessages["common"]),
     href: item.href,
     isExternal: item.isExternal,
+    icon: item.icon,
   }));
 
   const toggleMenu = useCallback(() => {
@@ -125,7 +157,21 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
     onItemClick?.();
   }, [onItemClick]);
 
+  const handleMouseEnter = useCallback(() => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    setIsHovered(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(false);
+    }, 150);
+  }, []);
+
   const renderMobileMenuItem = (item: MoreMenuItem) => {
+    const Icon = item.icon;
     const commonProps = {
       className: STYLES.mobileMenuItem,
       onClick: handleItemClick,
@@ -140,6 +186,7 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
           rel="noopener noreferrer"
           {...commonProps}
         >
+          <Icon className={STYLES.icon} />
           {item.label}
         </a>
       );
@@ -147,6 +194,7 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
 
     return (
       <Link key={item.key} href={item.href} {...commonProps}>
+        <Icon className={STYLES.icon} />
         {item.label}
       </Link>
     );
@@ -180,48 +228,62 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
     );
   }
 
-  // Desktop version (Radix UI Dropdown)
+  // Desktop version (Radix UI Dropdown with hover trigger)
   return (
-    <DropdownMenu.Root>
-      <DropdownMenu.Trigger asChild>
-        <button
-          type="button"
-          className={STYLES.button}
-          aria-label={t("MORE")}
-        >
-          {t("MORE")}
-          <ChevronDown className="w-4 h-4 transition-transform duration-200" />
-        </button>
-      </DropdownMenu.Trigger>
-
-      <DropdownMenu.Portal>
-        <DropdownMenu.Content
-          className={STYLES.dropdownContent}
-          sideOffset={8}
-          align="end"
-        >
-          {menuItems.map((item) => (
-            <DropdownMenu.Item
-              key={item.key}
-              className={STYLES.dropdownItem}
-              asChild
-            >
-              {item.isExternal ? (
-                <a
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {item.label}
-                </a>
-              ) : (
-                <Link href={item.href}>{item.label}</Link>
+    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <DropdownMenu.Root open={isHovered} onOpenChange={setIsHovered}>
+        <DropdownMenu.Trigger asChild>
+          <button
+            type="button"
+            className={STYLES.button}
+            aria-label={t("MORE")}
+          >
+            {t("MORE")}
+            <ChevronDown
+              className={cn(
+                "w-4 h-4 transition-transform duration-300",
+                isHovered && "rotate-180"
               )}
-            </DropdownMenu.Item>
-          ))}
-        </DropdownMenu.Content>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Root>
+            />
+          </button>
+        </DropdownMenu.Trigger>
+
+        <DropdownMenu.Portal>
+          <DropdownMenu.Content
+            className={STYLES.dropdownContent}
+            sideOffset={12}
+            align="end"
+          >
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <DropdownMenu.Item
+                  key={item.key}
+                  className={STYLES.dropdownItem}
+                  asChild
+                >
+                  {item.isExternal ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Icon className={STYLES.icon} />
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link href={item.href}>
+                      <Icon className={STYLES.icon} />
+                      {item.label}
+                    </Link>
+                  )}
+                </DropdownMenu.Item>
+              );
+            })}
+          </DropdownMenu.Content>
+        </DropdownMenu.Portal>
+      </DropdownMenu.Root>
+    </div>
   );
 }
 
