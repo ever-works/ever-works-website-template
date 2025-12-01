@@ -253,6 +253,8 @@ function MoreMenuComponent({ inline = false, onItemClick }: MoreMenuProps) {
             className={STYLES.dropdownContent}
             sideOffset={12}
             align="end"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
             {menuItems.map((item) => {
               const Icon = item.icon;
