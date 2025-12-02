@@ -49,7 +49,7 @@ import { EmailService } from "@/lib/mail";
         });
 
         const result = await emailService.sendCustomEmail({
-          from: process.env.SUPPORT_EMAIL || "noreply@demo.ever.works",
+          from: process.env.EMAIL_FROM || "noreply@demo.ever.works",
           to: data.to,
           subject: template.subject,
           html: template.html,
@@ -225,7 +225,7 @@ import { EmailService } from "@/lib/mail";
       try {
         const emailService = new EmailService({
           provider: process.env.EMAIL_PROVIDER || "resend",
-          defaultFrom: process.env.SUPPORT_EMAIL || "noreply@demo.ever.works",
+          defaultFrom: process.env.EMAIL_FROM || "noreply@demo.ever.works",
           domain: process.env.NEXT_PUBLIC_APP_URL || "https://demo.ever.works",
           apiKeys: {
             resend: process.env.RESEND_API_KEY || "",
