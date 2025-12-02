@@ -308,6 +308,7 @@
     "DATABASE_MODE_DESC": "控制依赖数据库的功能的可见性,如评分、评论和收藏",
     "DATABASE_ENABLED_LABEL": "启用",
     "DATABASE_DISABLED_LABEL": "禁用",
+    "FEATURE_DISABLED_IN_SETTINGS": "{feature}功能当前在设置中已禁用",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "基本信息",

@@ -308,6 +308,7 @@
     "DATABASE_MODE_DESC": "التحكم في رؤية الميزات التي تعتمد على قاعدة البيانات مثل التقييمات والتعليقات والمفضلة",
     "DATABASE_ENABLED_LABEL": "مفعل",
     "DATABASE_DISABLED_LABEL": "معطل",
+    "FEATURE_DISABLED_IN_SETTINGS": "ميزات {feature} معطلة حاليًا في الإعدادات",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "المعلومات الأساسية",

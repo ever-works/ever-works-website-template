@@ -9,6 +9,7 @@ import { Star, ExternalLink, Clock, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useFeaturedItemsSection, FeaturedItem } from '@/hooks/use-feature-items-section';
 import { useFeatureFlagsWithSimulation } from '@/hooks/use-feature-flags-with-simulation';
+import { FeatureDisabledNotice } from '@/components/ui/feature-disabled-notice';
 
 interface FeaturedItemsSectionProps {
   className?: string;
@@ -27,13 +28,18 @@ export function FeaturedItemsSection({
   showViewAll = true,
   variant = 'default'
 }: FeaturedItemsSectionProps) {
-  const { features, isPending: isFeaturesLoading } = useFeatureFlagsWithSimulation();
+  const { features, isPending: isFeaturesLoading, isSimulationActive } = useFeatureFlagsWithSimulation();
   const { featuredItems, isLoading, isError, error } = useFeaturedItemsSection({
     limit,
     enabled: true,
   });
 
-  // Hide featured items section when feature is disabled
+  // Show notice when feature is disabled due to simulation
+  if (!isFeaturesLoading && !features.featuredItems && isSimulationActive) {
+    return <FeatureDisabledNotice feature="Featured Items" />;
+  }
+
+  // Hide featured items section when feature is disabled (database not configured)
   if (isFeaturesLoading || !features.featuredItems) {
     return null;
   }

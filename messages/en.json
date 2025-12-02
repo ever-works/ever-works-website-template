@@ -452,6 +452,7 @@
     "DATABASE_MODE_DESC": "Control visibility of database-dependent features like ratings, comments, and favorites",
     "DATABASE_ENABLED_LABEL": "Enabled",
     "DATABASE_DISABLED_LABEL": "Disabled",
+    "FEATURE_DISABLED_IN_SETTINGS": "{feature} features are currently disabled in settings",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Basic Information",

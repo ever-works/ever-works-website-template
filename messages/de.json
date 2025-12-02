@@ -328,6 +328,7 @@
     "DATABASE_MODE_DESC": "Steuert die Sichtbarkeit datenbankabhängiger Funktionen wie Bewertungen, Kommentare und Favoriten",
     "DATABASE_ENABLED_LABEL": "Aktiviert",
     "DATABASE_DISABLED_LABEL": "Deaktiviert",
+    "FEATURE_DISABLED_IN_SETTINGS": "{feature}-Funktionen sind derzeit in den Einstellungen deaktiviert",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Grundinformationen",

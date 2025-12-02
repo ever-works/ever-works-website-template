@@ -359,6 +359,7 @@
     "DATABASE_MODE_DESC": "Controla la visibilidad de funciones dependientes de la base de datos como calificaciones, comentarios y favoritos",
     "DATABASE_ENABLED_LABEL": "Activado",
     "DATABASE_DISABLED_LABEL": "Desactivado",
+    "FEATURE_DISABLED_IN_SETTINGS": "Las funciones de {feature} están actualmente desactivadas en la configuración",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Información básica",

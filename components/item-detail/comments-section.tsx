@@ -12,6 +12,7 @@ import type { CommentWithUser } from '@/lib/types/comment';
 import { toast } from 'sonner';
 import { useFeatureFlagsWithSimulation } from '@/hooks/use-feature-flags-with-simulation';
 import { useLoginModal } from '@/hooks/use-login-modal';
+import { FeatureDisabledNotice } from '@/components/ui/feature-disabled-notice';
 import {
 	Modal,
 	ModalContent,
@@ -399,7 +400,7 @@ interface CommentsSectionProps {
 
 export function CommentsSection({ itemId }: CommentsSectionProps) {
 	// All hooks must be called before any early returns
-	const { features, isPending: isFeaturesPending } = useFeatureFlagsWithSimulation();
+	const { features, isPending: isFeaturesPending, isSimulationActive } = useFeatureFlagsWithSimulation();
 	const { comments, isPending: isCommentsPending, createComment, isCreating, updateComment, isUpdating, deleteComment, isDeleting } = useComments(itemId);
 	const { user } = useCurrentUser();
 	const loginModal = useLoginModal();
@@ -450,7 +451,12 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 
 	// Feature flags error handling removed - simulation mode doesn't expose error
 
-	// Hide comments section when feature is disabled
+	// Show notice when feature is disabled due to simulation
+	if (!isFeaturesPending && !features.comments && isSimulationActive) {
+		return <FeatureDisabledNotice feature="Comments" className="mt-4" />;
+	}
+
+	// Hide comments section when feature is disabled (database not configured)
 	if (!features.comments) {
 		return null;
 	}
