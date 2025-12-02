@@ -57,7 +57,7 @@ export function CredentialsForm({
           ? `/${locale}${redirectPath}` 
           : redirectPath;
         router.push(finalRedirectPath);
-        router.refresh();
+        // Note: router.refresh() removed - push() already triggers RSC revalidation
       }
     }
   }, [state, redirect, router, onSuccess, locale]);

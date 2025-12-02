@@ -1,7 +1,9 @@
 "use server";
 
 import { z } from "zod";
-import { ActivityType, users, clientProfiles } from "@/lib/db/schema";
+import { ActivityType, users, clientProfiles, accounts, verificationTokens } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import type { AdapterAccountType } from "next-auth/adapters";
 import { db } from "@/lib/db/drizzle";
 
 import { redirect } from "next/navigation";
@@ -20,20 +22,17 @@ import {
   getPasswordResetTokenByToken,
   getUserByEmail,
   getVerificationTokenByToken,
+  getVerificationTokenByEmail,
   logActivity,
   softDeleteUser,
   updateUser,
   updateUserPassword,
   updateUserVerification,
-  createClientAccount,
   getClientAccountByEmail,
   updateClientProfileName,
 } from "@/lib/db/queries";
 import { signIn } from "@/lib/auth";
-import {
-  generatePasswordResetToken,
-  generateVerificationToken,
-} from "@/lib/db/tokens";
+import { generatePasswordResetToken } from "@/lib/db/tokens";
 import { sendPasswordResetEmail, sendVerificationEmailWithTemplate } from "@/lib/mail";
 import { authServiceFactory } from "@/lib/auth/services";
 
@@ -136,10 +135,25 @@ const signUpSchema = z.object({
 
 export const signUp = validatedAction(signUpSchema, async (data) => {
   try {
-    // ReCAPTCHA is already verified on client-side with React Query
-    // No need to re-verify here
-
     const { name, email, password } = data;
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // OPTIMIZATION 1: Parallelize password hashing with duplicate email check
+    // hashPassword is CPU-bound (~100ms), checking for existing user is I/O-bound
+    const [passwordHash, existingUser] = await Promise.all([
+      hashPassword(password),
+      getUserByEmail(normalizedEmail).catch(() => null),
+    ]);
+
+    // Fail fast if email already exists
+    if (existingUser) {
+      return {
+        error: "An account with this email already exists.",
+        ...data,
+      };
+    }
+
+    // Handle Supabase auth if needed (after duplicate check to avoid unnecessary calls)
     const authService = authServiceFactory(data.authProvider);
     if (data.authProvider === 'supabase') {
       const { error } = await authService.signUp(email, password);
@@ -148,12 +162,11 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
       }
     }
 
-    const passwordHash = await hashPassword(password);
-
-    // Normalize email once for consistency across all operations
-    const normalizedEmail = email.toLowerCase().trim();
-
-    // Wrap in transaction to ensure atomicity
+    // OPTIMIZATION 2: Single transaction for ALL database operations
+    // - users insert
+    // - clientProfiles insert (with username retry)
+    // - accounts insert (was createClientAccount)
+    // - verificationTokens cleanup + insert (was generateVerificationToken)
     const result = await db.transaction(async (tx) => {
       // 1) Create user record
       const userId = crypto.randomUUID();
@@ -161,12 +174,11 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
         id: userId,
         email: normalizedEmail,
       }).returning();
-      
-      // 2) Create client profile record using transaction
+
+      // 2) Create client profile with unique username
       const extractedUsername = normalizedEmail.split('@')[0] || 'user';
       const base = (extractedUsername.replace(/[^a-z0-9_]/gi, '').toLowerCase() || 'user').slice(0, 30);
-      
-      // Generate unique username via onConflictDoNothing + retry
+
       let counter = 1;
       let clientProfile;
       for (;;) {
@@ -195,32 +207,56 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
         counter++;
         if (counter > 50) throw new Error("Failed to allocate unique username after 50 attempts");
       }
-      
-      return { user, clientProfile };
+
+      // 3) Create credentials account (was separate createClientAccount call)
+      const [account] = await tx
+        .insert(accounts)
+        .values({
+          userId: user.id,
+          type: 'credentials' as AdapterAccountType,
+          provider: 'credentials',
+          providerAccountId: normalizedEmail,
+          email: normalizedEmail,
+          passwordHash,
+        })
+        .returning();
+
+      if (!account) {
+        throw new Error("Failed to create client account");
+      }
+
+      // 4) Generate verification token (was separate generateVerificationToken call)
+      // Delete any existing tokens for this email first
+      const existingToken = await getVerificationTokenByEmail(normalizedEmail);
+      if (existingToken) {
+        await tx.delete(verificationTokens).where(eq(verificationTokens.email, normalizedEmail));
+      }
+
+      const token = crypto.randomUUID();
+      const expires = new Date(Date.now() + 3600 * 1000); // 1 hour
+      const [verificationToken] = await tx
+        .insert(verificationTokens)
+        .values({
+          identifier: token,
+          email: normalizedEmail,
+          token,
+          expires,
+        })
+        .returning();
+
+      return { user, clientProfile, account, verificationToken };
     });
-    
-    const { user, clientProfile } = result;
 
-    // 2) Create credentials account record holding the password hash linked to user
-    const clientAccount = await createClientAccount(user.id, normalizedEmail, passwordHash);
-    if (!clientAccount) {
-      throw new Error("Failed to create client account");
-    }
+    const { clientProfile, verificationToken } = result;
 
-    // Log activity using the client profile ID
-    		await logActivity(ActivityType.SIGN_UP, clientProfile.id, 'client');
+    // Fire and forget - don't block signup response
+    void logActivity(ActivityType.SIGN_UP, clientProfile.id, 'client')
+      .catch((err) => console.error('[SignUp] Activity logging failed:', err));
 
-    // // Send welcome email for account creation
-    // try {
-    //   await sendAccountCreatedEmail(name, normalizedEmail);
-    // } catch (emailError) {
-    //   console.error("Failed to send welcome email:", emailError);
-    //   // Don't fail the registration if email fails
-    // }
-
-    const verificationToken = await generateVerificationToken(normalizedEmail);
     if (verificationToken) {
-      await sendVerificationEmailWithTemplate(normalizedEmail, verificationToken.token, name);
+      sendVerificationEmailWithTemplate(normalizedEmail, verificationToken.token, name)
+        .then(() => console.log(`[SignUp] Verification email sent to ${normalizedEmail}`))
+        .catch((err) => console.error(`[SignUp] Failed to send verification email:`, err));
     }
 
     await signIn(AuthProviders.CREDENTIALS, {
@@ -229,7 +265,6 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
       redirect: false,
     });
 
-    // Redirect clients to client dashboard
     return { success: true, redirect: "/client/dashboard", preserveLocale: true };
   } catch (error) {
     console.error('SignUp error:', error);
