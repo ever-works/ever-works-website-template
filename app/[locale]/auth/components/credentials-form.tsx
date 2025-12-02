@@ -332,7 +332,7 @@ export function CredentialsForm({
               {isLogin ? tCred("LOGIN_SUCCESSFUL") : tCred("ACCOUNT_CREATED_SUCCESSFULLY")}
             </h4>
             <p className="text-sm text-green-700 dark:text-green-300">
-              {isLogin ? tCred("REDIRECTING") : tCred("YOU_CAN_NOW_SIGN_IN")}
+              {isLogin ? tCred("REDIRECTING") : tCred("WELCOME_SETTING_UP_ACCOUNT")}
             </p>
           </div>
         </div>

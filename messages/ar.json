@@ -1951,7 +1951,7 @@
       "LOGIN_SUCCESSFUL": "تم تسجيل الدخول بنجاح!",
       "ACCOUNT_CREATED_SUCCESSFULLY": "تم إنشاء الحساب بنجاح!",
       "REDIRECTING": "جاري التوجيه...",
-      "YOU_CAN_NOW_SIGN_IN": "يمكنك الآن تسجيل الدخول.",
+      "WELCOME_SETTING_UP_ACCOUNT": "مرحباً! جاري إعداد حسابك...",
       "ADMIN_LOGIN_SUCCESSFUL": "تم تسجيل دخول الإدارة بنجاح!",
       "REDIRECTING_TO_ADMIN": "جاري التوجيه إلى لوحة تحكم الإدارة...",
       "SIGNING_IN": "جاري تسجيل الدخول...",

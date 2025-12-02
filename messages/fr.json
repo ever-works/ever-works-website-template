@@ -2257,7 +2257,7 @@
       "LOGIN_SUCCESSFUL": "Connexion Réussie !",
       "ACCOUNT_CREATED_SUCCESSFULLY": "Compte Créé avec Succès !",
       "REDIRECTING": "Redirection...",
-      "YOU_CAN_NOW_SIGN_IN": "Vous pouvez maintenant vous connecter.",
+      "WELCOME_SETTING_UP_ACCOUNT": "Bienvenue ! Configuration de votre compte...",
       "ADMIN_LOGIN_SUCCESSFUL": "Connexion Admin Réussie !",
       "REDIRECTING_TO_ADMIN": "Redirection vers le tableau de bord admin...",
       "SIGNING_IN": "Connexion en cours...",
