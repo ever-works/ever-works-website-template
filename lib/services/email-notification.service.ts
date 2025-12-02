@@ -280,7 +280,7 @@ import { EmailService } from "@/lib/mail";
             console.error('   Fix: Use onboarding@resend.dev for testing, or verify your domain at https://resend.com/domains');
             return {
               success: false,
-              error: `Domain not verified. Use EMAIL_FROM=onboarding@resend.dev for testing, or verify your domain at https://resend.com/domains`
+              error: `Domain not verified. Use SUPPORT_EMAIL=onboarding@resend.dev for testing, or verify your domain at https://resend.com/domains`
             };
           }
 
