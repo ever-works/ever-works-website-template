@@ -1,4 +1,4 @@
-  import { AdminNotificationEmailHtml } from "@/lib/mail/templates/admin-notification";
+import { AdminNotificationEmailHtml } from "@/lib/mail/templates/admin-notification";
 import { getSubmissionDecisionTemplate } from "@/lib/mail/templates/submission-decision";
 import { EmailService } from "@/lib/mail";
 
@@ -260,7 +260,7 @@ import { EmailService } from "@/lib/mail";
 
         console.log('[EmailNotification] Calling sendCustomEmail...');
         const result = await emailService.sendCustomEmail({
-          from: process.env.SUPPORT_EMAIL || "noreply@demo.ever.works",
+          from: process.env.EMAIL_FROM || "noreply@demo.ever.works",
           to: userEmail,
           subject: template.subject,
           html: template.html,
@@ -280,7 +280,7 @@ import { EmailService } from "@/lib/mail";
             console.error('   Fix: Use onboarding@resend.dev for testing, or verify your domain at https://resend.com/domains');
             return {
               success: false,
-              error: `Domain not verified. Use SUPPORT_EMAIL=onboarding@resend.dev for testing, or verify your domain at https://resend.com/domains`
+              error: `Domain not verified. Use EMAIL_FROM=onboarding@resend.dev for testing, or verify your domain at https://resend.com/domains`
             };
           }
 
