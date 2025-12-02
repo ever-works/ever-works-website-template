@@ -1,10 +1,21 @@
+const escapeHtml = (text: string): string => {
+	return text
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#039;');
+};
+
 export const getSubmissionDecisionTemplate = (data: {
 	itemName: string;
 	status: "approved" | "rejected";
 	reviewNotes?: string;
 	appName?: string;
 }) => {
-	const { itemName, status, reviewNotes, appName = "Ever Works" } = data;
+	const { status, appName = "Ever Works" } = data;
+	const itemName = escapeHtml(data.itemName);
+	const reviewNotes = data.reviewNotes ? escapeHtml(data.reviewNotes) : undefined;
 
 	const isApproved = status === "approved";
 	const subject = isApproved
@@ -188,14 +199,14 @@ export const getSubmissionDecisionTemplate = (data: {
     `,
 		text: `
 ${isApproved ? "Submission Approved" : "Submission Not Approved"}
-${itemName}
+${data.itemName}
 
 Hello,
 
-Your submission "${itemName}" has been reviewed and ${isApproved ? "approved" : "was not approved at this time"}.
+Your submission "${data.itemName}" has been reviewed and ${isApproved ? "approved" : "was not approved at this time"}.
 ${isApproved ? "It is now live on the platform." : ""}
 
-${reviewNotes ? `Reviewer feedback: ${reviewNotes}` : ""}
+${data.reviewNotes ? `Reviewer feedback: ${data.reviewNotes}` : ""}
 
 Thank you for your ${isApproved ? "contribution" : "interest in contributing"}.
 
