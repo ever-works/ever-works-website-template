@@ -21,7 +21,7 @@ import { EmailService } from "@/lib/mail";
         // Create a simple email service instance for notifications
         const emailService = new EmailService({
           provider: process.env.EMAIL_PROVIDER || "resend",
-          defaultFrom: process.env.EMAIL_FROM || "noreply@demo.ever.works",
+          defaultFrom: process.env.SUPPORT_EMAIL || "noreply@demo.ever.works",
           domain: process.env.NEXT_PUBLIC_APP_URL || 'https://demo.ever.works',
           apiKeys: {
             resend: process.env.RESEND_API_KEY || "",
@@ -49,7 +49,7 @@ import { EmailService } from "@/lib/mail";
         });
 
         const result = await emailService.sendCustomEmail({
-          from: process.env.EMAIL_FROM || "noreply@demo.ever.works",
+          from: process.env.SUPPORT_EMAIL || "noreply@demo.ever.works",
           to: data.to,
           subject: template.subject,
           html: template.html,
@@ -220,10 +220,12 @@ import { EmailService } from "@/lib/mail";
       status: "approved" | "rejected",
       reviewNotes?: string
     ) {
+      console.log('[EmailNotification] Starting sendSubmissionDecisionEmail:', { userEmail, itemName, status });
+
       try {
         const emailService = new EmailService({
           provider: process.env.EMAIL_PROVIDER || "resend",
-          defaultFrom: process.env.EMAIL_FROM || "noreply@demo.ever.works",
+          defaultFrom: process.env.SUPPORT_EMAIL || "noreply@demo.ever.works",
           domain: process.env.NEXT_PUBLIC_APP_URL || "https://demo.ever.works",
           apiKeys: {
             resend: process.env.RESEND_API_KEY || "",
@@ -231,7 +233,11 @@ import { EmailService } from "@/lib/mail";
           },
         });
 
-        if (!emailService.isServiceAvailable()) {
+        console.log('[EmailNotification] Email service initialized, checking availability...');
+        const isAvailable = emailService.isServiceAvailable();
+        console.log('[EmailNotification] Email service available:', isAvailable);
+
+        if (!isAvailable) {
           console.warn("[EmailNotification] Skipped - email service not configured");
           return {
             success: false,
@@ -240,25 +246,56 @@ import { EmailService } from "@/lib/mail";
           };
         }
 
+        console.log('[EmailNotification] Generating template...');
         const template = getSubmissionDecisionTemplate({
           itemName,
           status,
           reviewNotes,
         });
+        console.log('[EmailNotification] Template generated:', {
+          subject: template.subject,
+          hasHtml: !!template.html,
+          hasText: !!template.text
+        });
 
+        console.log('[EmailNotification] Calling sendCustomEmail...');
         const result = await emailService.sendCustomEmail({
-          from: process.env.EMAIL_FROM || "noreply@demo.ever.works",
+          from: process.env.SUPPORT_EMAIL || "noreply@demo.ever.works",
           to: userEmail,
           subject: template.subject,
           html: template.html,
           text: template.text,
         });
 
+        console.log('[EmailNotification] Email sent successfully:', result);
+
+        // Check if result contains an error (Resend returns errors in result.error)
+        if (result && typeof result === 'object' && 'error' in result && result.error) {
+          const error = result.error as any;
+          console.error('[EmailNotification] Provider returned error:', error);
+
+          // Handle domain verification error specifically
+          if (error.statusCode === 403 && error.message?.includes('domain is not verified')) {
+            console.error('❌ [EmailNotification] DOMAIN NOT VERIFIED');
+            console.error('   Fix: Use onboarding@resend.dev for testing, or verify your domain at https://resend.com/domains');
+            return {
+              success: false,
+              error: `Domain not verified. Use EMAIL_FROM=onboarding@resend.dev for testing, or verify your domain at https://resend.com/domains`
+            };
+          }
+
+          return {
+            success: false,
+            error: error.message || 'Email provider error'
+          };
+        }
+
         return {
           success: true,
-          messageId: result.messageId,
+          messageId: result.messageId || result.id,
         };
       } catch (error) {
+        console.error('[EmailNotification] Error:', error);
         if (error instanceof Error && error.message.includes("not available")) {
           console.warn("[EmailNotification] Skipped -", error.message);
           return {

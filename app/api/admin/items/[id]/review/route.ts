@@ -163,18 +163,43 @@ export async function POST(
       review_notes,
     });
 
+    // Debug: Log item details for troubleshooting
+    console.log('[Review] Item reviewed:', {
+      id: item.id,
+      name: item.name,
+      status: status,
+      submitted_by: item.submitted_by,
+      hasSubmittedBy: !!item.submitted_by,
+      isAdmin: item.submitted_by === 'admin',
+      isAnonymous: item.submitted_by === 'anonymous'
+    });
+
     // Send email notification to submitter (async, don't block response)
     if (item.submitted_by && item.submitted_by !== 'admin' && item.submitted_by !== 'anonymous') {
+      console.log('[Review] Attempting to send notification to user:', item.submitted_by);
       try {
         const user = await userRepository.findById(item.submitted_by);
+        console.log('[Review] User found:', {
+          id: user?.id,
+          email: user?.email,
+          hasEmail: !!user?.email
+        });
+
         if (user?.email) {
-          await EmailNotificationService.sendSubmissionDecisionEmail(
+          console.log('[Review] Sending email to:', user.email);
+          const emailResult = await EmailNotificationService.sendSubmissionDecisionEmail(
             user.email,
             item.name,
             status,
             review_notes
           );
-          console.log(`[Review] Email notification sent to ${user.email} for item ${item.id}`);
+          console.log('[Review] Email send result:', emailResult);
+
+          if (emailResult.success) {
+            console.log(`✅ [Review] Email notification sent to ${user.email} for item ${item.id}`);
+          } else if (emailResult.skipped) {
+            console.warn(`⚠️ [Review] Email skipped: ${emailResult.error}`);
+          }
         } else {
           console.warn(`[Review] User ${item.submitted_by} not found or has no email`);
         }
@@ -183,7 +208,7 @@ export async function POST(
         // Don't block the review response if notification fails
       }
     } else {
-      console.warn(`[Review] Skipping notification - invalid submitted_by: ${item.submitted_by}`);
+      console.warn(`[Review] Skipping notification - submitted_by: "${item.submitted_by}" (admin=${item.submitted_by === 'admin'}, anonymous=${item.submitted_by === 'anonymous'}, empty=${!item.submitted_by})`);
     }
 
     return NextResponse.json({
