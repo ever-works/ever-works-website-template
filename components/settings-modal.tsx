@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useSettingsModal } from "@/hooks/use-settings-modal";
 import { useTranslations } from "next-intl";
 import SelectPaginationType from "@/components/ui/select-pagination-type";
+import SelectDatabaseMode from "@/components/ui/select-database-mode";
 import { useFocusManagement } from "@/components/ui/accessibility";
 
 const BACKDROP_CLASSES = cn(
@@ -90,6 +91,12 @@ export function SettingsModal() {
 				<div className="px-6 py-8 space-y-6">
 					{/* Pagination Style Section */}
 					<SelectPaginationType />
+
+					{/* Divider */}
+					<div className={DIVIDER_CLASSES} />
+
+					{/* Database Features Section */}
+					<SelectDatabaseMode />
 
 					{/* Divider for future sections */}
 					<div className={DIVIDER_CLASSES} />

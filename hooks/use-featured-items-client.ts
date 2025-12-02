@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
-import { useFeatureFlags } from '@/hooks/use-feature-flags';
+import { useFeatureFlagsWithSimulation } from '@/hooks/use-feature-flags-with-simulation';
 
 export interface FeaturedItem {
   id: string;
@@ -50,7 +50,7 @@ const fetchFeaturedItems = async (): Promise<FeaturedItem[]> => {
 };
 
 export function useFeaturedItems() {
-  const { features } = useFeatureFlags();
+  const { features } = useFeatureFlagsWithSimulation();
 
   const {
     data: featuredItems = [],

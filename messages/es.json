@@ -355,6 +355,10 @@
     "PAGINATION_STYLE_DESC": "Elige cómo se muestra el contenido al navegar por los listados",
     "PAGINATION_STANDARD_LABEL": "Estándar",
     "PAGINATION_INFINITE_LABEL": "Desplazamiento infinito",
+    "DATABASE_MODE": "Funciones de Base de Datos",
+    "DATABASE_MODE_DESC": "Controla la visibilidad de funciones dependientes de la base de datos como calificaciones, comentarios y favoritos",
+    "DATABASE_ENABLED_LABEL": "Activado",
+    "DATABASE_DISABLED_LABEL": "Desactivado",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Información básica",

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { surveyApiClient } from '@/lib/api/survey-api.client';
 import { SurveyTypeEnum, SurveyStatusEnum } from '@/lib/types/survey';
-import { useFeatureFlags } from './use-feature-flags';
+import { useFeatureFlagsWithSimulation } from './use-feature-flags-with-simulation';
 
 /**
  * Result type for useHasGlobalSurveys hook
@@ -39,7 +39,7 @@ async function checkGlobalSurveys(): Promise<boolean> {
  * @returns {UseHasGlobalSurveysResult} Whether global surveys exist and loading state
  */
 export function useHasGlobalSurveys(): UseHasGlobalSurveysResult {
-  const { features } = useFeatureFlags();
+  const { features } = useFeatureFlagsWithSimulation();
 
   const { data, isPending, error, refetch } = useQuery<boolean, Error>({
     queryKey: ['has-global-surveys'],

@@ -324,6 +324,10 @@
     "PAGINATION_STYLE_DESC": "Wählen Sie aus, wie Inhalte beim Durchsuchen von Listen angezeigt werden",
     "PAGINATION_STANDARD_LABEL": "Standard",
     "PAGINATION_INFINITE_LABEL": "Unendliches Scrollen",
+    "DATABASE_MODE": "Datenbankfunktionen",
+    "DATABASE_MODE_DESC": "Steuert die Sichtbarkeit datenbankabhängiger Funktionen wie Bewertungen, Kommentare und Favoriten",
+    "DATABASE_ENABLED_LABEL": "Aktiviert",
+    "DATABASE_DISABLED_LABEL": "Deaktiviert",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Grundinformationen",

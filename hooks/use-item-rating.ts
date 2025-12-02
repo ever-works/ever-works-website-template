@@ -1,7 +1,7 @@
 "use client";
 import { apiUtils, serverClient } from "@/lib/api/server-api-client";
 import { useQuery } from "@tanstack/react-query";
-import { useFeatureFlags } from "@/hooks/use-feature-flags";
+import { useFeatureFlagsWithSimulation } from "@/hooks/use-feature-flags-with-simulation";
 
 interface RatingData {
   averageRating: number;
@@ -9,7 +9,7 @@ interface RatingData {
 }
 
 export function useItemRating(itemId: string) {
-  const { features } = useFeatureFlags();
+  const { features } = useFeatureFlagsWithSimulation();
 
   const {
     data: rating = { averageRating: 0, totalRatings: 0 },

@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { serverClient } from '@/lib/api/server-api-client';
 import { useCurrentUser } from './use-current-user';
-import { useFeatureFlags } from '@/hooks/use-feature-flags';
+import { useFeatureFlagsWithSimulation } from '@/hooks/use-feature-flags-with-simulation';
 
 export interface Favorite {
   id: string;
@@ -51,7 +51,7 @@ const removeFavorite = async (itemSlug: string): Promise<void> => {
 export function useFavorites() {
   const queryClient = useQueryClient();
   const { user } = useCurrentUser();
-  const { features } = useFeatureFlags();
+  const { features } = useFeatureFlagsWithSimulation();
 
   // Query for fetching favorites
   const {

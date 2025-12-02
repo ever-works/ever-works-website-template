@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { Heart, Star } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useLoginModal } from '@/hooks/use-login-modal';
-import { useFeatureFlags } from '@/hooks/use-feature-flags';
+import { useFeatureFlagsWithSimulation } from '@/hooks/use-feature-flags-with-simulation';
 
 interface FavoriteButtonProps {
 	itemSlug: string;
@@ -33,7 +33,7 @@ export function FavoriteButton({
 }: FavoriteButtonProps) {
 	// All hooks must be called before any early returns
 	const { data: session } = useSession();
-	const { features, isPending: isFeaturesLoading } = useFeatureFlags();
+	const { features, isPending: isFeaturesLoading } = useFeatureFlagsWithSimulation();
 	const { isFavorited, toggleFavorite, isAdding, isRemoving } = useFavorites();
 	const [isHovered, setIsHovered] = useState(false);
 	const loginModal = useLoginModal();

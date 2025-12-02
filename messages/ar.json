@@ -304,6 +304,10 @@
     "PAGINATION_STYLE_DESC": "اختر كيفية عرض المحتوى عند تصفح القوائم",
     "PAGINATION_STANDARD_LABEL": "قياسي",
     "PAGINATION_INFINITE_LABEL": "التمرير اللانهائي",
+    "DATABASE_MODE": "ميزات قاعدة البيانات",
+    "DATABASE_MODE_DESC": "التحكم في رؤية الميزات التي تعتمد على قاعدة البيانات مثل التقييمات والتعليقات والمفضلة",
+    "DATABASE_ENABLED_LABEL": "مفعل",
+    "DATABASE_DISABLED_LABEL": "معطل",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "المعلومات الأساسية",

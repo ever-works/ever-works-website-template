@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useItemRating } from "@/hooks/use-item-rating";
 import { Rating } from "@/components/ui/rating";
-import { useFeatureFlags } from "@/hooks/use-feature-flags";
+import { useFeatureFlagsWithSimulation } from "@/hooks/use-feature-flags-with-simulation";
 
 interface RatingDisplayProps {
   itemId: string;
@@ -11,7 +11,7 @@ interface RatingDisplayProps {
 
 export function RatingDisplay({ itemId }: RatingDisplayProps) {
   const t = useTranslations();
-  const { features, isPending } = useFeatureFlags();
+  const { features, isPending } = useFeatureFlagsWithSimulation();
   const { rating } = useItemRating(itemId);
 
   // Hide rating display when feature is disabled

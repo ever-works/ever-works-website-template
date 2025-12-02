@@ -22,7 +22,7 @@ import { MoreMenu } from "./more-menu";
 import { SettingsButton } from "../settings-button";
 import { IconEverworksSimple } from "../icons/Icons";
 import { Container } from "../ui/container";
-import { useFeatureFlags } from "@/hooks/use-feature-flags";
+import { useFeatureFlagsWithSimulation } from "@/hooks/use-feature-flags-with-simulation";
 import { useHasGlobalSurveys } from "@/hooks/use-has-global-surveys";
 import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 import { useSurveysEnabled } from "@/hooks/use-surveys-enabled";
@@ -142,7 +142,7 @@ const STYLES = {
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
-  const { features } = useFeatureFlags();
+  const { features } = useFeatureFlagsWithSimulation();
   const { hasGlobalSurveys, isPending } = useHasGlobalSurveys();
   const { categoriesEnabled } = useCategoriesEnabled();
   const { surveysEnabled } = useSurveysEnabled();

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Star, ExternalLink, Clock, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useFeaturedItemsSection, FeaturedItem } from '@/hooks/use-feature-items-section';
-import { useFeatureFlags } from '@/hooks/use-feature-flags';
+import { useFeatureFlagsWithSimulation } from '@/hooks/use-feature-flags-with-simulation';
 
 interface FeaturedItemsSectionProps {
   className?: string;
@@ -27,7 +27,7 @@ export function FeaturedItemsSection({
   showViewAll = true,
   variant = 'default'
 }: FeaturedItemsSectionProps) {
-  const { features, isPending: isFeaturesLoading } = useFeatureFlags();
+  const { features, isPending: isFeaturesLoading } = useFeatureFlagsWithSimulation();
   const { featuredItems, isLoading, isError, error } = useFeaturedItemsSection({
     limit,
     enabled: true,

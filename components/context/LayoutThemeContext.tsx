@@ -17,8 +17,10 @@ export enum LayoutHome {
   HOME_THREE = 'Home_Three',
 }
 export type PaginationType = "standard" | "infinite";
+export type DatabaseSimulationMode = "enabled" | "disabled";
 const DEFAULT_LAYOUT_HOME: LayoutHome = LayoutHome.HOME_ONE;
 const DEFAULT_PAGINATION_TYPE: PaginationType = "standard";
+const DEFAULT_DATABASE_SIMULATION_MODE: DatabaseSimulationMode = "enabled";
 const DEFAULT_ITEMS_PER_PAGE = 12;
 const MIN_ITEMS_PER_PAGE = 1;
 const MAX_ITEMS_PER_PAGE = 100;
@@ -29,6 +31,7 @@ const STORAGE_KEYS = {
   LAYOUT_HOME: "layoutHome",
   PAGINATION_TYPE: "paginationType",
   ITEMS_PER_PAGE: "itemsPerPage",
+  DATABASE_SIMULATION_MODE: "databaseSimulationMode",
 } as const;
 
 // Types
@@ -56,6 +59,8 @@ interface LayoutThemeContextType {
   setPaginationType: (type: PaginationType) => void;
   itemsPerPage: number;
   setItemsPerPage: (itemsPerPage: number) => void;
+  databaseSimulationMode: DatabaseSimulationMode;
+  setDatabaseSimulationMode: (mode: DatabaseSimulationMode) => void;
   isInitialized: boolean;
 }
 
@@ -153,6 +158,10 @@ const isValidPaginationType = (key: string): key is PaginationType => {
 
 const isValidItemsPerPage = (value: number): boolean => {
   return Number.isInteger(value) && value >= MIN_ITEMS_PER_PAGE && value <= MAX_ITEMS_PER_PAGE;
+};
+
+const isValidDatabaseSimulationMode = (mode: string): mode is DatabaseSimulationMode => {
+  return mode === "enabled" || mode === "disabled";
 };
 
 // Context
@@ -314,6 +323,35 @@ const useItemsPerPageManager = () => {
   };
 };
 
+// Custom hook for database simulation mode management
+const useDatabaseSimulationModeManager = () => {
+  // Always initialize with default to prevent hydration mismatch
+  const [databaseSimulationMode, setDatabaseSimulationModeState] = useState<DatabaseSimulationMode>(DEFAULT_DATABASE_SIMULATION_MODE);
+
+  // Hydrate from localStorage after mount
+  useEffect(() => {
+    const saved = safeLocalStorage.getItem(STORAGE_KEYS.DATABASE_SIMULATION_MODE);
+    if (saved && isValidDatabaseSimulationMode(saved)) {
+      setDatabaseSimulationModeState(saved);
+    }
+  }, []);
+
+  const setDatabaseSimulationMode = useCallback((mode: DatabaseSimulationMode) => {
+    if (!isValidDatabaseSimulationMode(mode)) {
+      console.warn(`Invalid database simulation mode: ${mode}`);
+      return;
+    }
+
+    setDatabaseSimulationModeState(mode);
+    safeLocalStorage.setItem(STORAGE_KEYS.DATABASE_SIMULATION_MODE, mode);
+  }, []);
+
+  return {
+    databaseSimulationMode,
+    setDatabaseSimulationMode,
+  };
+};
+
 // Custom hook for layout management
 const useLayoutManager = (configDefaults?: ConfigDefaults) => {
   // Determine the effective default from config or fallback
@@ -367,6 +405,7 @@ export const LayoutThemeProvider: React.FC<LayoutThemeProviderProps> = ({ childr
   const layoutHomeManager = useLayoutHomeManager();
   const paginationTypeManager = usePaginationTypeManager();
   const itemsPerPageManager = useItemsPerPageManager();
+  const databaseSimulationModeManager = useDatabaseSimulationModeManager();
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Mark as initialized after mount with delay to show skeleton and ensure stable hydration
@@ -391,6 +430,8 @@ export const LayoutThemeProvider: React.FC<LayoutThemeProviderProps> = ({ childr
         setPaginationType: paginationTypeManager.setPaginationType,
         itemsPerPage: itemsPerPageManager.itemsPerPage,
         setItemsPerPage: itemsPerPageManager.setItemsPerPage,
+        databaseSimulationMode: databaseSimulationModeManager.databaseSimulationMode,
+        setDatabaseSimulationMode: databaseSimulationModeManager.setDatabaseSimulationMode,
         isInitialized,
       }),
       [
@@ -405,6 +446,8 @@ export const LayoutThemeProvider: React.FC<LayoutThemeProviderProps> = ({ childr
         paginationTypeManager.setPaginationType,
         itemsPerPageManager.itemsPerPage,
         itemsPerPageManager.setItemsPerPage,
+        databaseSimulationModeManager.databaseSimulationMode,
+        databaseSimulationModeManager.setDatabaseSimulationMode,
         isInitialized,
       ]
     );
@@ -448,13 +491,14 @@ export const getAllThemes = (): Array<{ key: ThemeKey; config: ThemeConfig }> =>
 // Additional utility functions for better developer experience
 export const resetToDefaults = (): void => {
   if (typeof window === "undefined") return;
-  
+
   try {
     safeLocalStorage.setItem(STORAGE_KEYS.LAYOUT, DEFAULT_LAYOUT);
     safeLocalStorage.setItem(STORAGE_KEYS.THEME, DEFAULT_THEME);
     safeLocalStorage.setItem(STORAGE_KEYS.LAYOUT_HOME, DEFAULT_LAYOUT_HOME);
     safeLocalStorage.setItem(STORAGE_KEYS.PAGINATION_TYPE, DEFAULT_PAGINATION_TYPE);
     safeLocalStorage.setItem(STORAGE_KEYS.ITEMS_PER_PAGE, DEFAULT_ITEMS_PER_PAGE.toString());
+    safeLocalStorage.setItem(STORAGE_KEYS.DATABASE_SIMULATION_MODE, DEFAULT_DATABASE_SIMULATION_MODE);
   } catch (error) {
     console.warn("Failed to reset to defaults:", error);
   }
