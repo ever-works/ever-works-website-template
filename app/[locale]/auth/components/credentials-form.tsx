@@ -12,6 +12,7 @@ import { Link } from "@/i18n/navigation";
 import ReCAPTCHA from 'react-google-recaptcha';
 import { RECAPTCHA_SITE_KEY } from "@/lib/constants";
 import { useAutoRecaptchaVerification } from '../hooks/useRecaptchaVerification';
+import { useUserCache } from '@/hooks/use-current-user';
 
 
 export function CredentialsForm({
@@ -35,6 +36,7 @@ export function CredentialsForm({
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState<string | null>(null);
   const { verifyToken, isLoading: isVerifying, error: verificationError } = useAutoRecaptchaVerification();
+  const { invalidateAllUserData } = useUserCache();
   const [isPending, startTransition] = useTransition();
 
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
@@ -53,14 +55,15 @@ export function CredentialsForm({
       } else {
         const redirectPath = state.redirect || redirect || "/client/dashboard";
         // Handle locale preservation for redirects
-        const finalRedirectPath = state.preserveLocale && locale !== 'en' 
-          ? `/${locale}${redirectPath}` 
+        const finalRedirectPath = state.preserveLocale && locale !== 'en'
+          ? `/${locale}${redirectPath}`
           : redirectPath;
+        // Invalidate user cache so dashboard fetches fresh user data for menu
+        invalidateAllUserData();
         router.push(finalRedirectPath);
-        // Note: router.refresh() removed - push() already triggers RSC revalidation
       }
     }
-  }, [state, redirect, router, onSuccess, locale]);
+  }, [state, redirect, router, onSuccess, locale, invalidateAllUserData]);
 
   useEffect(() => {
     if (RECAPTCHA_SITE_KEY.value || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
