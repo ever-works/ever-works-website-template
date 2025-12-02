@@ -186,7 +186,6 @@ export async function POST(
         });
 
         if (user?.email) {
-          console.log('[Review] Sending email to:', user.email);
           const emailResult = await EmailNotificationService.sendSubmissionDecisionEmail(
             user.email,
             item.name,
