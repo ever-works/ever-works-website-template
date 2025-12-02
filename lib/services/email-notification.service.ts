@@ -220,7 +220,7 @@ import { EmailService } from "@/lib/mail";
       status: "approved" | "rejected",
       reviewNotes?: string
     ) {
-      console.log('[EmailNotification] Starting sendSubmissionDecisionEmail:', { userEmail, itemName, status });
+      console.log('[EmailNotification] Starting sendSubmissionDecisionEmail');
 
       try {
         const emailService = new EmailService({

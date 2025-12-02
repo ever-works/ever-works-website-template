@@ -196,6 +196,9 @@ export class ItemGitService {
         status: item.status, // Include status for admin management
         submitted_by: item.submitted_by,
         submitted_at: item.submitted_at,
+        reviewed_by: item.reviewed_by,
+        reviewed_at: item.reviewed_at,
+        review_notes: item.review_notes,
       };
       
       // Write item data

@@ -181,7 +181,6 @@ export async function POST(
         const user = await userRepository.findById(item.submitted_by);
         console.log('[Review] User found:', {
           id: user?.id,
-          email: user?.email,
           hasEmail: !!user?.email
         });
 
@@ -193,12 +192,6 @@ export async function POST(
             review_notes
           );
           console.log('[Review] Email send result:', emailResult);
-
-          if (emailResult.success) {
-            console.log(`✅ [Review] Email notification sent to ${user.email} for item ${item.id}`);
-          } else if (emailResult.skipped) {
-            console.warn(`⚠️ [Review] Email skipped: ${emailResult.error}`);
-          }
         } else {
           console.warn(`[Review] User ${item.submitted_by} not found or has no email`);
         }
