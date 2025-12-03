@@ -316,7 +316,7 @@
     "PAGINATION_STANDARD_LABEL": "标准",
     "PAGINATION_INFINITE_LABEL": "无限滚动",
     "DATABASE_MODE": "数据库功能",
-    "DATABASE_MODE_DESC": "控制依赖数据库的功能的可见性,如评分、评论和收藏",
+    "DATABASE_MODE_DESC": "控制依赖数据库的功能的可见性，如评分、评论和收藏",
     "DATABASE_ENABLED_LABEL": "启用",
     "DATABASE_DISABLED_LABEL": "禁用",
     "FEATURE_DISABLED_IN_SETTINGS": "{feature}功能当前在设置中已禁用",
