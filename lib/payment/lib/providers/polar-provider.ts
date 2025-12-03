@@ -814,24 +814,33 @@ export class PolarProvider implements PaymentProviderInterface {
 		}
 
 		if (!this.apiKey) {
-			throw new Error('Polar API key is not configured. Please set POLAR_API_KEY environment variable.');
+			throw new Error('Polar API key is not configured. Please set POLAR_ACCESS_TOKEN environment variable.');
 		}
 	}
 
 	/**
 	 * Normalizes and validates the return URL
 	 * Removes encoding artifacts, ensures absolute URL format
+	 * Uses safe string methods to avoid ReDoS vulnerabilities
 	 */
 	private normalizeReturnUrl(returnUrl?: string): string {
 		const defaultUrl = `${this.appUrl}/settings/billing`;
 		let url = returnUrl || defaultUrl;
 
 		// Remove encoding artifacts (quotes, escaped characters)
-		url = url
-			.replace(/^["']+|["']+$/g, '') // Remove surrounding quotes
-			.replace(/\\"/g, '') // Remove escaped double quotes
-			.replace(/\\'/g, '') // Remove escaped single quotes
-			.trim();
+		// Use safe string methods instead of regex to prevent ReDoS attacks
+		url = url.trim();
+		
+		// Remove surrounding quotes (safe, bounded operations)
+		// Only remove one layer of quotes to avoid DoS on nested quotes
+		if ((url.startsWith('"') && url.endsWith('"')) || 
+		    (url.startsWith("'") && url.endsWith("'"))) {
+			url = url.slice(1, -1).trim();
+		}
+		
+		// Remove escaped quotes using simple string operations
+		// Split and join is safer than regex for escaping
+		url = url.split('\\"').join('').split("\\'").join('');
 
 		// Convert relative URLs to absolute
 		if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -958,7 +967,7 @@ export class PolarProvider implements PaymentProviderInterface {
 			case 401:
 			case 403:
 				throw new Error(
-					'Polar API authentication failed. Please verify your POLAR_API_KEY is correct and has the required permissions.'
+					'Polar API authentication failed. Please verify your POLAR_ACCESS_TOKEN is correct and has the required permissions.'
 				);
 			case 400:
 				throw new Error(

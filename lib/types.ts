@@ -7,7 +7,7 @@ export type SessionProps = {
 };
 export const defaultPricingConfig: PricingPlanConfig = {
 	// Default provider
-	provider: PaymentProvider.POLAR,
+	provider: PaymentProvider.STRIPE,
 	
 	// Used, if Lemon provider is enabled. Ignored by other providers.
 	lemonCheckoutUrl: '',
