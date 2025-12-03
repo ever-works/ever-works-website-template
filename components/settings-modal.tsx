@@ -8,6 +8,7 @@ import { useSettingsModal } from "@/hooks/use-settings-modal";
 import { useTranslations } from "next-intl";
 import SelectPaginationType from "@/components/ui/select-pagination-type";
 import SelectDatabaseMode from "@/components/ui/select-database-mode";
+import { DatabaseStatusWarning } from "@/components/ui/database-status-warning";
 import { useFocusManagement } from "@/components/ui/accessibility";
 
 const BACKDROP_CLASSES = cn(
@@ -97,6 +98,9 @@ export function SettingsModal() {
 
 					{/* Database Features Section */}
 					<SelectDatabaseMode />
+
+					{/* Database Status Warning - Only shows when DB not configured */}
+					<DatabaseStatusWarning className="mt-3" />
 
 					{/* Divider for future sections */}
 					<div className={DIVIDER_CLASSES} />

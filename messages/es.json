@@ -360,6 +360,8 @@
     "DATABASE_ENABLED_LABEL": "Activado",
     "DATABASE_DISABLED_LABEL": "Desactivado",
     "FEATURE_DISABLED_IN_SETTINGS": "Las funciones de {feature} están actualmente desactivadas en la configuración",
+    "DATABASE_PREVIEW_MODE": "Modo de Vista Previa",
+    "DATABASE_PREVIEW_MODE_DESC": "Base de datos no configurada. Los indicadores visuales muestran cómo aparecen las funciones cuando están desactivadas en la configuración.",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Información básica",

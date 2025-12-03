@@ -329,6 +329,8 @@
     "DATABASE_ENABLED_LABEL": "Aktiviert",
     "DATABASE_DISABLED_LABEL": "Deaktiviert",
     "FEATURE_DISABLED_IN_SETTINGS": "{feature}-Funktionen sind derzeit in den Einstellungen deaktiviert",
+    "DATABASE_PREVIEW_MODE": "Vorschaumodus",
+    "DATABASE_PREVIEW_MODE_DESC": "Datenbank nicht konfiguriert. Visuelle Indikatoren zeigen, wie Funktionen aussehen, wenn sie in den Einstellungen deaktiviert sind.",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Grundinformationen",

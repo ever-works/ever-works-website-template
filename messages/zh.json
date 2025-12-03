@@ -309,6 +309,8 @@
     "DATABASE_ENABLED_LABEL": "启用",
     "DATABASE_DISABLED_LABEL": "禁用",
     "FEATURE_DISABLED_IN_SETTINGS": "{feature}功能当前在设置中已禁用",
+    "DATABASE_PREVIEW_MODE": "预览模式",
+    "DATABASE_PREVIEW_MODE_DESC": "数据库未配置。视觉指示器显示在设置中禁用功能时的外观。",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "基本信息",

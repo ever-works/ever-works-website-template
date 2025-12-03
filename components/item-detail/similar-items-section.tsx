@@ -23,7 +23,7 @@ export function SimilarItemsSection({ allItems, className, title = 'Similar Prod
 
 			<div className="grid grid-cols-1 gap-4 overflow-y-auto">
 				{allItems.map((similarItem) => (
-					<Item key={similarItem.slug} {...similarItem} is_source_url_active={true} />
+					<Item key={similarItem.slug} {...similarItem} is_source_url_active={true} hideIndicatorInSimilarProducts={true} />
 				))}
 			</div>
 		</section>

@@ -19,6 +19,7 @@ interface FavoriteButtonProps {
 	className?: string;
 	showText?: boolean;
 	position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+	hideIndicatorInSimilarProducts?: boolean;
 }
 
 export function FavoriteButton({
@@ -30,7 +31,8 @@ export function FavoriteButton({
 	size = 'md',
 	className,
 	showText = false,
-	position = 'top-right'
+	position = 'top-right',
+	hideIndicatorInSimilarProducts = false
 }: FavoriteButtonProps) {
 	// All hooks must be called before any early returns
 	const { data: session } = useSession();
@@ -41,7 +43,7 @@ export function FavoriteButton({
 
 	// Show notice when feature is disabled due to simulation
 	if (!isFeaturesLoading && !features.favorites && isSimulationActive) {
-		return <FeatureDisabledNotice feature="Favorites" />;
+		return <FeatureDisabledNotice feature="Favorites" hideInSimilarProducts={hideIndicatorInSimilarProducts} />;
 	}
 
 	// Hide favorite button when feature is disabled (database not configured)

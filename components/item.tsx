@@ -21,6 +21,7 @@ import { useTagsEnabled } from '@/hooks/use-tags-enabled';
 type ItemProps = ItemData & {
 	onNavigate?: () => void;
 	layout?: string;
+	hideIndicatorInSimilarProducts?: boolean;
 };
 
 const TAG_BUTTON_BASE_CLASS = 'text-xs transition-all duration-300 cursor-pointer text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 hover:scale-105 font-medium px-1 py-0.5 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20';
@@ -139,6 +140,7 @@ export default function Item(props: ItemProps) {
 											variant="star"
 											size="sm"
 											className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+											hideIndicatorInSimilarProducts={props.hideIndicatorInSimilarProducts}
 										/>
 									</div>
 								)}

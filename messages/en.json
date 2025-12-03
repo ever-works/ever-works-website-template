@@ -453,6 +453,8 @@
     "DATABASE_ENABLED_LABEL": "Enabled",
     "DATABASE_DISABLED_LABEL": "Disabled",
     "FEATURE_DISABLED_IN_SETTINGS": "{feature} features are currently disabled in settings",
+    "DATABASE_PREVIEW_MODE": "Preview Mode",
+    "DATABASE_PREVIEW_MODE_DESC": "Database not configured. Visual indicators show how features appear when disabled in settings.",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Basic Information",
