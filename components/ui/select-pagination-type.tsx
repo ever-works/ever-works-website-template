@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { useLayoutTheme } from '@/components/context';
 import { useTranslations } from 'next-intl';
 import { SegmentedToggle } from './segmented-toggle';
-import { Layers, Infinity } from 'lucide-react';
+import { Layers, Infinity as InfinityIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface SelectPaginationTypeProps {
@@ -104,13 +104,13 @@ const SelectPaginationType: React.FC<SelectPaginationTypeProps> = ({ className, 
 						leftLabel={
 							<span className="flex items-center gap-1.5">
 								<Layers className="h-3.5 w-3.5" />
-								<span>Standard</span>
+								<span>{t('PAGINATION_STANDARD_LABEL')}</span>
 							</span>
 						}
 						rightLabel={
 							<span className="flex items-center gap-1.5">
-								<Infinity className="h-3.5 w-3.5" />
-								<span>Scroll</span>
+								<InfinityIcon className="h-3.5 w-3.5" />
+								<span>{t('PAGINATION_INFINITE_LABEL')}</span>
 							</span>
 						}
 					/>
