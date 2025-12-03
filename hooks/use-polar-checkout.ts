@@ -73,7 +73,7 @@ export const usePolarCheckout = () => {
     }): Promise<string> => {
       if (!user) {
         // Throw error first to immediately reject the promise
-        throw new PolarCheckoutSessionError('User must be signed in to create a checkout session');
+        throw new PolarCheckoutSessionError('Authentication required: User must be signed in to create a checkout session');
       }
 
       // Use provided productId (required for Polar)

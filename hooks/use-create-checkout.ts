@@ -88,7 +88,7 @@ export const useCreateCheckoutSession = () => {
     }): Promise<string> => {
       if (!user) {
         // Throw error first to immediately reject the promise
-        throw new CheckoutSessionError('User must be signed in to create a checkout session');
+        throw new CheckoutSessionError('Authentication required: User must be signed in to create a checkout session');
       }
 
       const priceId = billingInterval === PaymentInterval.YEARLY ? plan.annualPriceId : plan.stripePriceId;

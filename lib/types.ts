@@ -29,9 +29,9 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			popular: false,
 
 			// Stripe configuration
-			stripeProductId: '',
-			stripePriceId: '',
-			annualPriceId: '',
+			stripeProductId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID,
+			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
+			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
 			trialDays: 0,
 
 			// LemonSqueezy configuration
@@ -57,9 +57,9 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			isFeatured: true,
 
 			// Stripe configuration
-			stripeProductId:process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRODUCT_ID || '',
-			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRICE_ID || '',
-			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_ANNUAL_PRICE_ID || '',
+			stripeProductId:process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRODUCT_ID ,
+			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRICE_ID ,
+			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRICE_ID ,
 			annualDiscount: 10,
 			disabled: false,
 			popular: true,
@@ -87,9 +87,9 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			isFeatured: true,
 
 			// Stripe configuration
-			stripeProductId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRODUCT_ID || '',
-			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID || '',
-			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_ANNUAL_PRICE_ID || '',
+			stripeProductId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRODUCT_ID ,
+			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID ,
+			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID ,
 			annualDiscount: 10,
 			disabled: true,
 			trialPeriodDays: 0,
