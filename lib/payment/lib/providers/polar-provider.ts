@@ -834,12 +834,15 @@ export class PolarProvider implements PaymentProviderInterface {
 
 	/**
 	 * Normalizes and validates the return URL
+	 * Prevents open-redirect vulnerabilities by rejecting all absolute URLs
+	 * and only allowing relative paths that are resolved against this.appUrl
 	 * Removes encoding artifacts, ensures absolute URL format
 	 * Uses safe string methods to avoid ReDoS vulnerabilities
 	 */
 	private normalizeReturnUrl(returnUrl?: string): string {
-		const defaultUrl = `${this.appUrl}/settings/billing`;
-		let url = returnUrl || defaultUrl;
+		// Default to relative path (will be resolved against this.appUrl)
+		const defaultPath = '/settings/billing';
+		let url = returnUrl ?? defaultPath;
 
 		// Remove encoding artifacts (quotes, escaped characters)
 		// Use safe string methods instead of regex to prevent ReDoS attacks
@@ -856,21 +859,44 @@ export class PolarProvider implements PaymentProviderInterface {
 		// Split and join is safer than regex for escaping
 		url = url.split('\\"').join('').split("\\'").join('');
 
-		// Convert relative URLs to absolute
-		if (!url.startsWith('http://') && !url.startsWith('https://')) {
-			url = url.startsWith('/') 
-				? `${this.appUrl}${url}`
-				: `${this.appUrl}/${url}`;
+		// Security: Reject all absolute URLs to prevent open-redirect attacks
+		// If an absolute URL is provided, immediately fall back to default path
+		if (url.startsWith('http://') || url.startsWith('https://')) {
+			// Absolute URL detected - reject and use default path
+			// This prevents open-redirect attacks even if the URL appears to be from the same origin
+			this.logger.warn('Absolute return URL rejected, using default path', {
+				rejectedUrl: url,
+				fallbackPath: defaultPath
+			});
+			url = defaultPath;
 		}
 
-		// Validate URL format
+		// Build absolute URL from relative path
+		// Handle leading slash properly
+		const relativePath = url.startsWith('/') ? url : `/${url}`;
+		const absoluteUrl = `${this.appUrl}${relativePath}`;
+
+		// Validate the constructed URL format
+		if (!this.appUrl) {
+			throw new Error('App URL is not configured. Cannot construct return URL.');
+		}
+
 		try {
-			new URL(url);
-		} catch {
-			throw new Error(`Invalid return URL format: ${url}. Must be a valid absolute URL.`);
+			const validatedUrl = new URL(absoluteUrl);
+			const appUrlObj = new URL(this.appUrl);
+			
+			// Double-check that the origin matches (defense in depth)
+			if (validatedUrl.origin !== appUrlObj.origin) {
+				throw new Error('URL origin mismatch');
+			}
+			
+			return absoluteUrl;
+		} catch (error) {
+			if (error instanceof Error && error.message === 'URL origin mismatch') {
+				throw error;
+			}
+			throw new Error(`Invalid return URL format: ${absoluteUrl}. Must be a valid absolute URL from the same origin.`);
 		}
-
-		return url;
 	}
 
 	/**
