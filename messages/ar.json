@@ -311,6 +311,11 @@
     "FEATURE_DISABLED_IN_SETTINGS": "ميزات {feature} معطلة حاليًا في الإعدادات",
     "DATABASE_PREVIEW_MODE": "وضع المعاينة",
     "DATABASE_PREVIEW_MODE_DESC": "قاعدة البيانات غير مكونة. تُظهر المؤشرات المرئية كيف تظهر الميزات عند تعطيلها في الإعدادات.",
+    "PAGINATION_CHANGED_TO_STANDARD": "تم تغيير الترقيم إلى قياسي",
+    "PAGINATION_CHANGED_TO_INFINITE": "تم تغيير الترقيم إلى التمرير اللانهائي",
+    "DATABASE_MODE_ENABLED": "تم تفعيل ميزات قاعدة البيانات",
+    "DATABASE_MODE_DISABLED": "تم تعطيل ميزات قاعدة البيانات",
+    "SETTINGS_SAVED_AUTOMATICALLY": "تم حفظ الإعدادات تلقائيًا",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "المعلومات الأساسية",

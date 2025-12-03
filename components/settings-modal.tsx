@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Settings } from "lucide-react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { useSettingsModal } from "@/hooks/use-settings-modal";
@@ -13,10 +13,11 @@ import { useFocusManagement } from "@/components/ui/accessibility";
 
 const BACKDROP_CLASSES = cn(
 	"fixed inset-0",
-	"bg-black/50 dark:bg-black/70",
-	"backdrop-blur-sm",
+	"bg-gradient-to-br from-black/40 via-black/50 to-black/60",
+	"dark:bg-gradient-to-br dark:from-black/60 dark:via-black/70 dark:to-black/80",
+	"backdrop-blur-md",
 	"z-[9998]",
-	"transition-opacity duration-300"
+	"transition-all duration-300 ease-out"
 );
 
 const MODAL_CLASSES = cn(
@@ -24,12 +25,15 @@ const MODAL_CLASSES = cn(
 	"transform -translate-x-1/2 -translate-y-1/2",
 	"w-full max-w-2xl",
 	"max-h-[90vh]",
-	"bg-white dark:bg-gray-900",
-	"border border-gray-200 dark:border-gray-700",
-	"rounded-2xl shadow-2xl",
+	"bg-gradient-to-br from-white via-white to-gray-50/30",
+	"dark:from-gray-900 dark:via-gray-900 dark:to-gray-800/30",
+	"border border-gray-200/80 dark:border-gray-700/80",
+	"ring-1 ring-theme-primary-500/10 dark:ring-theme-primary-400/10",
+	"rounded-2xl shadow-2xl shadow-black/10 dark:shadow-black/40",
 	"z-[9999]",
 	"overflow-hidden",
-	"transition-all duration-300"
+	"transition-all duration-300 ease-out",
+	"animate-fade-in-up"
 );
 
 const DIVIDER_CLASSES = cn("border-t border-gray-200 dark:border-gray-700");
@@ -74,13 +78,35 @@ export function SettingsModal() {
 				tabIndex={-1}
 			>
 				{/* Modal Header */}
-				<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-					<h2 id="settings-title" className="text-xl font-semibold text-gray-900 dark:text-white">
-						{t("SETTINGS")}
-					</h2>
+				<div className={cn(
+					"flex items-center justify-between px-6 py-4",
+					"border-b border-gray-200 dark:border-gray-700",
+					"bg-gradient-to-r from-gray-50/50 to-white",
+					"dark:from-gray-800/50 dark:to-gray-900/50",
+					"shadow-sm"
+				)}>
+					<div className="flex items-center gap-3">
+						<div className={cn(
+							"p-2 rounded-lg",
+							"bg-gradient-to-br from-theme-primary-100 to-theme-primary-200",
+							"dark:from-theme-primary-900/30 dark:to-theme-primary-800/30",
+							"border border-theme-primary-300/50 dark:border-theme-primary-600/50"
+						)}>
+							<Settings className="h-5 w-5 text-theme-primary-600 dark:text-theme-primary-400" />
+						</div>
+						<h2 id="settings-title" className="text-xl font-semibold text-gray-900 dark:text-white">
+							{t("SETTINGS")}
+						</h2>
+					</div>
 					<button
 						onClick={closeModal}
-						className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+						className={cn(
+							"p-2 rounded-lg transition-all duration-200",
+							"text-gray-500 hover:text-gray-700",
+							"dark:text-gray-400 dark:hover:text-gray-200",
+							"hover:bg-gray-100 dark:hover:bg-gray-800",
+							"hover:scale-110"
+						)}
 						aria-label={t("CLOSE_SETTINGS")}
 						type="button"
 					>
@@ -89,23 +115,15 @@ export function SettingsModal() {
 				</div>
 
 				{/* Modal Content */}
-				<div className="px-6 py-8 space-y-6">
+				<div className="px-6 py-8 space-y-5">
 					{/* Pagination Style Section */}
 					<SelectPaginationType />
-
-					{/* Divider */}
-					<div className={DIVIDER_CLASSES} />
 
 					{/* Database Features Section */}
 					<SelectDatabaseMode />
 
 					{/* Database Status Warning - Only shows when DB not configured */}
 					<DatabaseStatusWarning className="mt-3" />
-
-					{/* Divider for future sections */}
-					<div className={DIVIDER_CLASSES} />
-
-					{/* Future settings sections will go here */}
 				</div>
 			</div>
 		</>,

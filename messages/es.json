@@ -362,6 +362,11 @@
     "FEATURE_DISABLED_IN_SETTINGS": "Las funciones de {feature} están actualmente desactivadas en la configuración",
     "DATABASE_PREVIEW_MODE": "Modo de Vista Previa",
     "DATABASE_PREVIEW_MODE_DESC": "Base de datos no configurada. Los indicadores visuales muestran cómo aparecen las funciones cuando están desactivadas en la configuración.",
+    "PAGINATION_CHANGED_TO_STANDARD": "Paginación cambiada a Estándar",
+    "PAGINATION_CHANGED_TO_INFINITE": "Paginación cambiada a Desplazamiento Infinito",
+    "DATABASE_MODE_ENABLED": "Funciones de base de datos habilitadas",
+    "DATABASE_MODE_DISABLED": "Funciones de base de datos deshabilitadas",
+    "SETTINGS_SAVED_AUTOMATICALLY": "Configuración guardada automáticamente",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Información básica",

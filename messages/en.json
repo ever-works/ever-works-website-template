@@ -455,6 +455,11 @@
     "FEATURE_DISABLED_IN_SETTINGS": "{feature} features are currently disabled in settings",
     "DATABASE_PREVIEW_MODE": "Preview Mode",
     "DATABASE_PREVIEW_MODE_DESC": "Database not configured. Visual indicators show how features appear when disabled in settings.",
+    "PAGINATION_CHANGED_TO_STANDARD": "Pagination changed to Standard",
+    "PAGINATION_CHANGED_TO_INFINITE": "Pagination changed to Infinite Scroll",
+    "DATABASE_MODE_ENABLED": "Database features enabled",
+    "DATABASE_MODE_DISABLED": "Database features disabled",
+    "SETTINGS_SAVED_AUTOMATICALLY": "Settings saved automatically",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Basic Information",
