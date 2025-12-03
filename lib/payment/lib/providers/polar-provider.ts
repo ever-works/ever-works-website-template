@@ -82,12 +82,14 @@ export class PolarProvider implements PaymentProviderInterface {
 	private webhookSecret: string;
 	private organizationId?: string;
 	private appUrl?: string;
+	private apiKey: string;
 
 	constructor(config: PolarConfig) {
 		if (!config.apiKey) {
 			throw new Error('Polar API key is required');
 		}
 
+		this.apiKey = config.apiKey;
 		this.polar = new Polar({
 			accessToken: config.apiKey
 		});
@@ -749,31 +751,342 @@ export class PolarProvider implements PaymentProviderInterface {
 	}
 
 	/**
-	 * Create a customer portal session for managing subscriptions and billing
-	 * @param customerId - Polar customer ID
-	 * @param returnUrl - URL to redirect after portal session
-	 * @returns Customer portal session with URL
+	 * Create a customer portal session for managing subscriptions and billing.
+	 * 
+	 * This method creates a pre-authenticated session that allows customers to access
+	 * their Polar portal to manage subscriptions, payment methods, and billing history.
+	 * 
+	 * @param customerId - Polar customer ID (required)
+	 * @param returnUrl - Optional absolute URL to redirect after portal session ends
+	 * @returns Promise resolving to session object with `id` and `url` properties
+	 * @throws {Error} If customer ID is invalid, API key is missing, or session creation fails
+	 * 
+	 * @example
+	 * ```typescript
+	 * const session = await provider.createCustomerPortalSession(
+	 *   'cus_123',
+	 *   'https://example.com/settings/billing'
+	 * );
+	 * // Redirect user to session.url
+	 * ```
 	 */
-	async createCustomerPortalSession(customerId: string, returnUrl?: string): Promise<{ url: string; id: string }> {
-		try {
-			// Polar uses customer sessions for the customer portal
-			// Create a customer session which provides access to customer portal endpoints
-			const session = await this.polar.customerSessions.create({
-				customerId: customerId,
-				returnUrl: returnUrl || `${this.appUrl}/settings/billing`
-			} as any);
+	async createCustomerPortalSession(
+		customerId: string,
+		returnUrl?: string
+	): Promise<{ url: string; id: string }> {
+		this.validateCustomerPortalSessionInputs(customerId);
 
-			return {
-				id: (session as any).id || '',
-				url: (session as any).url || (session as any).accessToken || ''
-			};
-		} catch (error) {
-			this.logger.error('Failed to create Polar customer portal session', {
-				error: this.formatErrorMessage(error),
+		const normalizedReturnUrl = this.normalizeReturnUrl(returnUrl);
+		const apiUrl = this.getPolarApiUrl();
+
+		// Primary approach: REST API (more reliable, better error handling)
+		const restApiResult = await this.createPortalSessionViaRestApi(
+			customerId,
+			normalizedReturnUrl,
+			apiUrl
+		);
+		if (restApiResult) {
+			return restApiResult;
+		}
+
+		// Fallback approach: SDK (if REST API fails)
+		const sdkResult = await this.createPortalSessionViaSdk(
+			customerId,
+			normalizedReturnUrl
+		);
+		if (sdkResult) {
+			return sdkResult;
+		}
+
+		// Both approaches failed
+		throw new Error(
+			'Failed to create customer portal session: All methods exhausted. ' +
+			'Please verify your Polar API configuration and customer ID.'
+		);
+	}
+
+	/**
+	 * Validates inputs for customer portal session creation
+	 */
+	private validateCustomerPortalSessionInputs(customerId: string): void {
+		if (!customerId || typeof customerId !== 'string' || customerId.trim().length === 0) {
+			throw new Error('Customer ID is required and must be a non-empty string');
+		}
+
+		if (!this.apiKey) {
+			throw new Error('Polar API key is not configured. Please set POLAR_API_KEY environment variable.');
+		}
+	}
+
+	/**
+	 * Normalizes and validates the return URL
+	 * Removes encoding artifacts, ensures absolute URL format
+	 */
+	private normalizeReturnUrl(returnUrl?: string): string {
+		const defaultUrl = `${this.appUrl}/settings/billing`;
+		let url = returnUrl || defaultUrl;
+
+		// Remove encoding artifacts (quotes, escaped characters)
+		url = url
+			.replace(/^["']+|["']+$/g, '') // Remove surrounding quotes
+			.replace(/\\"/g, '') // Remove escaped double quotes
+			.replace(/\\'/g, '') // Remove escaped single quotes
+			.trim();
+
+		// Convert relative URLs to absolute
+		if (!url.startsWith('http://') && !url.startsWith('https://')) {
+			url = url.startsWith('/') 
+				? `${this.appUrl}${url}`
+				: `${this.appUrl}/${url}`;
+		}
+
+		// Validate URL format
+		try {
+			new URL(url);
+		} catch {
+			throw new Error(`Invalid return URL format: ${url}. Must be a valid absolute URL.`);
+		}
+
+		return url;
+	}
+
+	/**
+	 * Gets the Polar API base URL from environment or defaults
+	 */
+	private getPolarApiUrl(): string {
+		return process.env.POLAR_API_URL || 'https://api.polar.sh';
+	}
+
+	/**
+	 * Creates portal session using Polar REST API directly
+	 * This is the preferred method as it avoids SDK serialization issues
+	 */
+	private async createPortalSessionViaRestApi(
+		customerId: string,
+		returnUrl: string,
+		apiUrl: string
+	): Promise<{ url: string; id: string } | null> {
+		try {
+			const requestBody = this.buildRestApiRequestBody(customerId, returnUrl);
+
+			this.logger.info('Creating Polar customer portal session via REST API', {
+				endpoint: `${apiUrl}/v1/customer-sessions`,
+				customerId,
+				hasReturnUrl: !!requestBody.return_url
+			});
+
+			const response = await fetch(`${apiUrl}/v1/customer-sessions`, {
+				method: 'POST',
+				headers: {
+					'Authorization': `Bearer ${this.apiKey}`,
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(requestBody)
+			});
+
+			if (!response.ok) {
+				await this.handleRestApiError(response, customerId);
+				return null; // Error was logged, continue to fallback
+			}
+
+			const session = await response.json();
+			const portalSession = this.extractPortalSessionFromResponse(session);
+
+			if (portalSession) {
+				this.logger.info('Polar customer portal session created successfully via REST API', {
+					sessionId: portalSession.id,
+					customerId
+				});
+				return portalSession;
+			}
+
+			this.logger.warn('REST API response missing portal URL', {
+				responseKeys: Object.keys(session),
 				customerId
 			});
-			throw new Error(`Failed to create customer portal session: ${this.formatErrorMessage(error)}`);
+			return null;
+
+		} catch (error) {
+			const errorMsg = this.formatErrorMessage(error);
+			this.logger.warn('REST API portal session creation failed, attempting SDK fallback', {
+				error: errorMsg,
+				customerId
+			});
+			return null;
 		}
+	}
+
+	/**
+	 * Builds request body for REST API call
+	 */
+	private buildRestApiRequestBody(
+		customerId: string,
+		returnUrl: string
+	): { customer_id: string; return_url?: string } {
+		const body: { customer_id: string; return_url?: string } = {
+			customer_id: customerId
+		};
+
+		// Only include return_url if it's a valid absolute URL
+		if (returnUrl && (returnUrl.startsWith('http://') || returnUrl.startsWith('https://'))) {
+			body.return_url = returnUrl;
+		}
+
+		return body;
+	}
+
+	/**
+	 * Handles REST API error responses with appropriate error messages
+	 */
+	private async handleRestApiError(
+		response: Response,
+		customerId: string
+	): Promise<void> {
+		const errorText = await response.text().catch(() => 'Unable to read error response');
+
+		this.logger.error('Polar REST API customer-sessions request failed', {
+			status: response.status,
+			statusText: response.statusText,
+			error: errorText,
+			customerId
+		});
+
+		// Map HTTP status codes to specific error messages
+		switch (response.status) {
+			case 404:
+				throw new Error(`Customer not found: ${customerId}. Please verify the customer exists in Polar.`);
+			case 401:
+			case 403:
+				throw new Error(
+					'Polar API authentication failed. Please verify your POLAR_API_KEY is correct and has the required permissions.'
+				);
+			case 400:
+				throw new Error(
+					`Invalid request to Polar API: ${errorText}. Please check your customer ID and return URL format.`
+				);
+			case 429:
+				throw new Error('Polar API rate limit exceeded. Please try again later.');
+			case 500:
+			case 502:
+			case 503:
+				throw new Error('Polar API is currently unavailable. Please try again later.');
+			default:
+				// Don't throw for other errors, allow fallback to SDK
+				break;
+		}
+	}
+
+	/**
+	 * Extracts portal session data from API response
+	 * Handles various response formats from Polar API
+	 */
+	private extractPortalSessionFromResponse(
+		session: any
+	): { url: string; id: string } | null {
+		// Try multiple possible field names for portal URL
+		const portalUrlFields = [
+			'customer_portal_url', // Primary field (snake_case)
+			'customerPortalUrl',  // camelCase variant
+			'portal_url',
+			'portalUrl',
+			'url'
+		];
+
+		const sessionUrl = portalUrlFields
+			.map(field => session[field])
+			.find(url => url && typeof url === 'string' && url.length > 0);
+
+		if (!sessionUrl) {
+			return null;
+		}
+
+		const sessionId = session.id || session.session_id || `cs_${Date.now()}`;
+
+		return {
+			id: sessionId,
+			url: sessionUrl
+		};
+	}
+
+	/**
+	 * Creates portal session using Polar SDK (fallback method)
+	 */
+	private async createPortalSessionViaSdk(
+		customerId: string,
+		returnUrl: string
+	): Promise<{ url: string; id: string } | null> {
+		if (!this.isSdkCustomerSessionsAvailable()) {
+			this.logger.debug('Polar SDK customerSessions not available, skipping SDK approach');
+			return null;
+		}
+
+		try {
+			const sessionParams = this.buildSdkSessionParams(customerId, returnUrl);
+
+			this.logger.info('Creating Polar customer portal session via SDK (fallback)', {
+				customerId,
+				hasReturnUrl: !!sessionParams.returnUrl
+			});
+
+			const session = await (this.polar.customerSessions as any).create(sessionParams);
+			const portalSession = this.extractPortalSessionFromResponse(session);
+
+			if (portalSession) {
+				this.logger.info('Polar customer portal session created successfully via SDK', {
+					sessionId: portalSession.id,
+					customerId
+				});
+				return portalSession;
+			}
+
+			this.logger.warn('SDK response missing portal URL', {
+				responseKeys: Object.keys(session || {}),
+				customerId
+			});
+			return null;
+
+		} catch (error) {
+			const errorMsg = this.formatErrorMessage(error);
+			this.logger.error('Polar SDK customerSessions.create failed', {
+				error: errorMsg,
+				customerId,
+				errorType: error instanceof Error ? error.constructor.name : typeof error,
+				...(error instanceof Error && {
+					stack: error.stack,
+					message: error.message
+				})
+			});
+			return null;
+		}
+	}
+
+	/**
+	 * Checks if SDK customerSessions API is available
+	 */
+	private isSdkCustomerSessionsAvailable(): boolean {
+		return !!(
+			this.polar.customerSessions &&
+			typeof (this.polar.customerSessions as any).create === 'function'
+		);
+	}
+
+	/**
+	 * Builds parameters for SDK customerSessions.create call
+	 */
+	private buildSdkSessionParams(
+		customerId: string,
+		returnUrl: string
+	): { customerId: string; returnUrl?: string } {
+		const params: { customerId: string; returnUrl?: string } = {
+			customerId
+		};
+
+		// Only include returnUrl if it's a valid absolute URL
+		if (returnUrl && (returnUrl.startsWith('http://') || returnUrl.startsWith('https://'))) {
+			params.returnUrl = returnUrl;
+		}
+
+		return params;
 	}
 
 	getClientConfig(): ClientConfig {

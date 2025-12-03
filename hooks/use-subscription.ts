@@ -2,6 +2,9 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiUtils, serverClient } from "@/lib/api/server-api-client";
+import { useConfig } from "@/app/[locale]/config";
+import { PaymentProvider } from "@/lib/constants";
+import { useMemo } from "react";
 
 // Types
 export interface SubscriptionData {
@@ -64,10 +67,16 @@ export interface SubscriptionResponse {
 }
 
 /**
- * Hook for managing Stripe subscriptions
+ * Hook for managing subscriptions (supports multiple payment providers)
  */
 export function useSubscription() {
   const queryClient = useQueryClient();
+  const config = useConfig();
+  
+  // Get the current payment provider from config, default to Stripe
+  const currentProvider = useMemo(() => {
+    return config?.pricing?.provider || PaymentProvider.STRIPE;
+  }, [config?.pricing?.provider]);
 
   // Create subscription mutation
   const createSubscription = useMutation({
@@ -215,7 +224,12 @@ export function useSubscription() {
 
   const createBillingPortalSession = useMutation({
     mutationFn: async (): Promise<BillingPortalResponse> => {
-      const response = await serverClient.post<BillingPortalResponse>('/api/stripe/subscription/portal');
+      // Determine the API endpoint based on the current provider
+      const portalEndpoint = currentProvider === PaymentProvider.POLAR 
+        ? '/api/polar/subscription/portal'
+        : '/api/stripe/subscription/portal';
+      
+      const response = await serverClient.post<BillingPortalResponse>(portalEndpoint);
       if (!apiUtils.isSuccess(response)) {
         throw new Error(apiUtils.getErrorMessage(response) || 'Failed to create billing portal session');
       }
