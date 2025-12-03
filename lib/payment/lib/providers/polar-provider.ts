@@ -871,16 +871,17 @@ export class PolarProvider implements PaymentProviderInterface {
 			url = defaultPath;
 		}
 
+		// Validate appUrl is configured before constructing absolute URL
+		if (!this.appUrl) {
+			throw new Error('App URL is not configured. Cannot construct return URL.');
+		}
+
 		// Build absolute URL from relative path
 		// Handle leading slash properly
 		const relativePath = url.startsWith('/') ? url : `/${url}`;
 		const absoluteUrl = `${this.appUrl}${relativePath}`;
 
-		// Validate the constructed URL format
-		if (!this.appUrl) {
-			throw new Error('App URL is not configured. Cannot construct return URL.');
-		}
-
+		// Validate the constructed URL format and origin
 		try {
 			const validatedUrl = new URL(absoluteUrl);
 			const appUrlObj = new URL(this.appUrl);
@@ -892,9 +893,11 @@ export class PolarProvider implements PaymentProviderInterface {
 			
 			return absoluteUrl;
 		} catch (error) {
+			// Preserve specific error messages
 			if (error instanceof Error && error.message === 'URL origin mismatch') {
 				throw error;
 			}
+			// Generic error for invalid URL format
 			throw new Error(`Invalid return URL format: ${absoluteUrl}. Must be a valid absolute URL from the same origin.`);
 		}
 	}
