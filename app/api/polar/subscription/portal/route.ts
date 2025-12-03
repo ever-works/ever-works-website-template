@@ -186,7 +186,9 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json(
 			{
 				error: 'Failed to create customer portal session',
-				message: errorMessage,
+				message: process.env.NODE_ENV === 'development'
+					? errorMessage
+					: 'Failed to create customer portal session',
 				...(process.env.NODE_ENV === 'development' && {
 					details: errorDetails
 				})

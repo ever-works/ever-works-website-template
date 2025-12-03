@@ -22,6 +22,20 @@ import {
 } from '../../types/payment-types';
 import { paymentAccountClient } from '../client/payment-account-client';
 
+/**
+ * Custom error class for fatal Polar API errors that should not trigger fallback
+ */
+class PolarFatalError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'PolarFatalError';
+		// Maintains proper stack trace for where our error was thrown (only available on V8)
+		if (Error.captureStackTrace) {
+			Error.captureStackTrace(this, PolarFatalError);
+		}
+	}
+}
+
 export interface PolarConfig extends PaymentProviderConfig {
 	apiKey: string;
 	webhookSecret: string;
@@ -894,8 +908,11 @@ export class PolarProvider implements PaymentProviderInterface {
 			});
 
 			if (!response.ok) {
-				await this.handleRestApiError(response, customerId);
-				return null; // Error was logged, continue to fallback
+				// handleRestApiError throws for fatal errors (401, 403, 404, 400, 429)
+				// and returns true for recoverable errors (allowing fallback)
+				const shouldFallback = await this.handleRestApiError(response, customerId);
+				// If we reach here, it's a recoverable error - allow fallback
+				return null;
 			}
 
 			const session = await response.json();
@@ -916,6 +933,14 @@ export class PolarProvider implements PaymentProviderInterface {
 			return null;
 
 		} catch (error) {
+			// Check if this is a fatal error (PolarFatalError)
+			// Fatal errors should be propagated immediately, not caught
+			if (error instanceof PolarFatalError) {
+				// This is a fatal error - propagate it to the caller
+				throw error;
+			}
+			
+			// Otherwise, it's a recoverable error (network, etc.) - allow fallback
 			const errorMsg = this.formatErrorMessage(error);
 			this.logger.warn('REST API portal session creation failed, attempting SDK fallback', {
 				error: errorMsg,
@@ -946,11 +971,13 @@ export class PolarProvider implements PaymentProviderInterface {
 
 	/**
 	 * Handles REST API error responses with appropriate error messages
+	 * @returns false if error is fatal (should throw), true if recoverable (allow fallback)
+	 * @throws Error for fatal errors (401, 403, 404, 400, 429, 5xx)
 	 */
 	private async handleRestApiError(
 		response: Response,
 		customerId: string
-	): Promise<void> {
+	): Promise<boolean> {
 		const errorText = await response.text().catch(() => 'Unable to read error response');
 
 		this.logger.error('Polar REST API customer-sessions request failed', {
@@ -961,27 +988,37 @@ export class PolarProvider implements PaymentProviderInterface {
 		});
 
 		// Map HTTP status codes to specific error messages
+		// Fatal errors (client errors and rate limits) should be thrown immediately
 		switch (response.status) {
 			case 404:
-				throw new Error(`Customer not found: ${customerId}. Please verify the customer exists in Polar.`);
+				throw new PolarFatalError(`Customer not found: ${customerId}. Please verify the customer exists in Polar.`);
 			case 401:
 			case 403:
-				throw new Error(
+				throw new PolarFatalError(
 					'Polar API authentication failed. Please verify your POLAR_ACCESS_TOKEN is correct and has the required permissions.'
 				);
 			case 400:
-				throw new Error(
+				throw new PolarFatalError(
 					`Invalid request to Polar API: ${errorText}. Please check your customer ID and return URL format.`
 				);
 			case 429:
-				throw new Error('Polar API rate limit exceeded. Please try again later.');
+				throw new PolarFatalError('Polar API rate limit exceeded. Please try again later.');
 			case 500:
 			case 502:
 			case 503:
-				throw new Error('Polar API is currently unavailable. Please try again later.');
+				// Server errors are recoverable - allow fallback to SDK
+				this.logger.warn('Polar API server error, will attempt SDK fallback', {
+					status: response.status,
+					customerId
+				});
+				return true; // Allow fallback
 			default:
-				// Don't throw for other errors, allow fallback to SDK
-				break;
+				// Unknown errors - allow fallback to SDK
+				this.logger.warn('Polar API unknown error, will attempt SDK fallback', {
+					status: response.status,
+					customerId
+				});
+				return true; // Allow fallback
 		}
 	}
 
