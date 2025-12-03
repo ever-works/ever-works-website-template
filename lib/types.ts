@@ -74,7 +74,7 @@ export const defaultPricingConfig: PricingPlanConfig = {
 
 			// Polar configuration
 			polarStandardPlanId: process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID,
-			polarProductId:process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID,
+			polarProductId: process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID,
 		},
 		PREMIUM: {
 			id: PaymentPlan.PREMIUM,
