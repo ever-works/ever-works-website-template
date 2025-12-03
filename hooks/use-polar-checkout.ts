@@ -72,8 +72,8 @@ export const usePolarCheckout = () => {
       productId?: string;
     }): Promise<string> => {
       if (!user) {
-        router.push('/auth/signin');
-        return new Promise(() => {});
+        // Throw error first to immediately reject the promise
+        throw new PolarCheckoutSessionError('User must be signed in to create a checkout session');
       }
 
       // Use provided productId (required for Polar)
@@ -152,7 +152,13 @@ export const usePolarCheckout = () => {
     },
     onError: (error) => {
       console.error('Polar checkout error:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to create checkout session');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create checkout session';
+      toast.error(errorMessage);
+      
+      // Redirect to signin if it's an authentication error
+      if (error instanceof PolarCheckoutSessionError && errorMessage.includes('signed in')) {
+        router.push('/auth/signin');
+      }
     },
   });
 

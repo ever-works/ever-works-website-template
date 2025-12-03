@@ -87,8 +87,8 @@ export const useCreateCheckoutSession = () => {
       billingInterval: PaymentInterval;
     }): Promise<string> => {
       if (!user) {
-        router.push('/auth/signin');
-        return new Promise(() => {});
+        // Throw error first to immediately reject the promise
+        throw new CheckoutSessionError('User must be signed in to create a checkout session');
       }
 
       const priceId = billingInterval === PaymentInterval.YEARLY ? plan.annualPriceId : plan.stripePriceId;
@@ -184,6 +184,12 @@ export const useCreateCheckoutSession = () => {
       },
       onError: (error) => {
         console.error('Failed to create checkout session:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Failed to create checkout session';
+        
+        // Redirect to signin if it's an authentication error
+        if (error instanceof CheckoutSessionError && errorMessage.includes('signed in')) {
+          router.push('/auth/signin');
+        }
       },
     });
   };

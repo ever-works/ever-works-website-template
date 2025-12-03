@@ -57,9 +57,9 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			isFeatured: true,
 
 			// Stripe configuration
-			stripeProductId: 'price_1RlzDpKlJU1BkehBMNBX6OHI',
-			stripePriceId: 'price_1RlzDpKlJU1BkehBMNBX6OHI',
-			annualPriceId: 'price_1RlzDpKlJU1BkehBMNBX6OHI',
+			stripeProductId:process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRODUCT_ID || '',
+			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRICE_ID || '',
+			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_ANNUAL_PRICE_ID || '',
 			annualDiscount: 10,
 			disabled: false,
 			popular: true,
@@ -87,9 +87,9 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			isFeatured: true,
 
 			// Stripe configuration
-			stripeProductId: 'price_1RlzDqKlJU1BkehBszBVt6Ui',
-			stripePriceId: 'price_1RlzDqKlJU1BkehBszBVt6Ui',
-			annualPriceId: 'price_1RlzDqKlJU1BkehBszBVt6Ui',
+			stripeProductId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRODUCT_ID || '',
+			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID || '',
+			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_ANNUAL_PRICE_ID || '',
 			annualDiscount: 10,
 			disabled: true,
 			trialPeriodDays: 0,

@@ -26,13 +26,14 @@ export function usePayment() {
 interface PaymentProviderProps {
   children: ReactNode;
   providerConfigs: Record<SupportedProvider, PaymentProviderConfig>;
+  defaultProvider?: SupportedProvider;
 }
 
-export function PaymentProvider({ children, providerConfigs }: PaymentProviderProps) {
+export function PaymentProvider({ children, providerConfigs, defaultProvider }: PaymentProviderProps) {
   const [service, setService] = useState<PaymentService | null>(null);
-  const [currentProvider, setCurrentProvider] = useState<SupportedProvider>('stripe');
+  const [currentProvider, setCurrentProvider] = useState<SupportedProvider>(defaultProvider || 'stripe');
   const [availableProviders, setAvailableProviders] = useState<SupportedProvider[]>([]);
-  const serviceManager = PaymentServiceManager.getInstance(providerConfigs);
+  const serviceManager = PaymentServiceManager.getInstance(providerConfigs, defaultProvider);
 
   useEffect(() => {
     setService(serviceManager.getPaymentService());

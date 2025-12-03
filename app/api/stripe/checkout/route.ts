@@ -263,7 +263,7 @@ export async function POST(request: NextRequest) {
 			{
 				error: errorMessage,
 				message: 'Failed to create checkout session',
-				details: error instanceof Error ? error.stack : undefined
+				details: process.env.NODE_ENV === 'development' && error instanceof Error ? error.stack : undefined
 			},
 			{ status: 500 }
 		);
@@ -413,7 +413,7 @@ export async function GET(request: NextRequest) {
 		return NextResponse.json(
 			{
 				error: errorMessage,
-				details: error instanceof Error ? error.stack : undefined
+				details: process.env.NODE_ENV === 'development' && error instanceof Error ? error.stack : undefined
 			},
 			{ status: 500 }
 		);
