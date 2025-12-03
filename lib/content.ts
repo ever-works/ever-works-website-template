@@ -90,8 +90,17 @@ export interface PricingConfig {
 	envKey?: string;
 	disabled?: boolean;
 	
+	// Polar configuration
+	polarFreePlanId?: string;
+	polarStandardPlanId?: string;
+	polarPremiumPlanId?: string;
+	polarProductId?:string;
+
+	// LemonSqueezy configuration
 	lemonVariantId?: string;
 	lemonCheckoutUrl?: string;
+
+
 }
 
 export interface PricingPlans {

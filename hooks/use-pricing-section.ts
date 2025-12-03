@@ -11,6 +11,7 @@ import { useConfig } from '@/app/[locale]/config';
 import { PricingConfig } from '@/lib/content';
 import { useLoginModal, type LoginModalStore } from './use-login-modal';
 import { useCheckoutButton } from './use-checkout-button';
+import { usePolarCheckout } from './use-polar-checkout';
 
 export interface UsePricingSectionParams {
 	onSelectPlan?: (plan: PaymentPlan) => void;
@@ -74,29 +75,44 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 	const t = useTranslations('pricing');
 	const tBilling = useTranslations('billing');
 
-	const { freePlanFeatures, standardPlanFeatures, premiumPlanFeatures, getPlanConfig, getActionText, getNotLoggedInActionText } =
-		usePricingFeatures();
+	const {
+		freePlanFeatures,
+		standardPlanFeatures,
+		premiumPlanFeatures,
+		getPlanConfig,
+		getActionText,
+		getNotLoggedInActionText
+	} = usePricingFeatures();
 
-		const stripeHook: ReturnType<typeof useCreateCheckoutSession> = useCreateCheckoutSession();
-		const lemonsqueezyHook: ReturnType<typeof useCheckoutButton> = useCheckoutButton();
+	// Hooks for different payment providers
+	const stripeHook: ReturnType<typeof useCreateCheckoutSession> = useCreateCheckoutSession(); // Stripe checkout hook
+	const lemonsqueezyHook: ReturnType<typeof useCheckoutButton> = useCheckoutButton(); // Lemonsqueezy checkout hook
+	const polarHook: ReturnType<typeof usePolarCheckout> = usePolarCheckout(); // Polar checkout hook
 
+	// Hook for payment flow
 	const { selectedFlow, selectFlow, triggerAnimation } = usePaymentFlow({
 		enableAnimations: true,
 		autoSave: true
 	});
 
-	// Local state
+	// Local state for pricing section
 	const [showSelector, setShowSelector] = useState<boolean>(false);
 	const [billingInterval, setBillingInterval] = useState<PaymentInterval>(PaymentInterval.MONTHLY);
 	const [processingPlan, setProcessingPlan] = useState<string | null>(null);
 	const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(null);
 	const loginModal = useLoginModal();
 
+	// Ref for current processing plan
 	const currentProcessingPlanRef = useRef<string | null>(null);
 
 	const { FREE, STANDARD, PREMIUM } = config.pricing?.plans ?? {};
 	const paymentProvider = useMemo(() => config.pricing?.provider, [config.pricing?.provider]);
-	const paymentHook = paymentProvider === PaymentProvider.LEMONSQUEEZY ? lemonsqueezyHook : stripeHook;
+	const paymentHook =
+		paymentProvider === PaymentProvider.LEMONSQUEEZY
+			? lemonsqueezyHook
+			: paymentProvider === PaymentProvider.POLAR
+				? polarHook
+				: stripeHook;
 	const { isLoading, isSuccess, error } = paymentHook;
 	const resetPaymentHook = useMemo(() => ('reset' in paymentHook ? paymentHook.reset : () => {}), [paymentHook]);
 
@@ -206,6 +222,8 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 						setProcessingPlan(null);
 						return;
 					}
+					// Create checkout session for Lemonsqueezy
+					// Lemonsqueezy checkout hook
 					await lemonsqueezyHook.handleSubmitWithParams({
 						variantId: Number(plan.lemonVariantId),
 						defaultPrice: plan.price,
@@ -220,10 +238,33 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 						},
 						embedded: false
 					});
-				} else {
+				} else if (paymentProvider === PaymentProvider.POLAR) {
+					// Check if the product ID is valid
+					if (!plan.polarProductId) {
+						toast.error('No product ID found for plan');
+						currentProcessingPlanRef.current = null;
+						setProcessingPlan(null);
+						return;
+					}
+					// Create checkout session for Polar
+					await polarHook.createCheckoutSession(
+						plan?.polarProductId || '',
+						user as any,
+						plan,
+						billingInterval
+					);
+				} else if (paymentProvider === PaymentProvider.STRIPE) {
+					// Create checkout session for Stripe
+					if (!plan.stripeProductId) {
+						toast.error('No product ID found for plan');
+						currentProcessingPlanRef.current = null;
+						setProcessingPlan(null);
+						return;
+					}
 					await stripeHook.createCheckoutSession(plan, user as any, billingInterval);
 				}
-			} catch (checkoutError) {
+				} catch (checkoutError) {
+				// Log error if checkout fails
 				console.error('Checkout error:', checkoutError);
 				toast.error('Failed to create checkout session. Please try again.');
 			} finally {
@@ -241,14 +282,15 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 			paymentProvider,
 			lemonsqueezyHook,
 			stripeHook,
-			billingInterval
+			billingInterval,
+			polarHook
 		]
 	);
 
 	// Computed values
 	const isButton = selectedFlow === 'pay_at_end';
 
-	// Effects
+	// Effect to handle plan selection from URL
 	useEffect(() => {
 		const planFromUrl = searchParams.get('plan');
 		const availablePlans = [FREE, STANDARD, PREMIUM];
@@ -262,6 +304,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 		}
 	}, [searchParams, selectedPlan, FREE, STANDARD, PREMIUM]);
 
+	// Effect to handle checkout error
 	useEffect(() => {
 		if (error) {
 			toast.error('Failed to create checkout session. Please try again.');

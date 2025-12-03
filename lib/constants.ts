@@ -117,7 +117,8 @@ export enum PaymentCurrency {
 export enum PaymentProvider {
 	STRIPE = 'stripe',
 	SOLIDGATE = 'solidgate',
-	LEMONSQUEEZY = 'lemonsqueezy'
+	LEMONSQUEEZY = 'lemonsqueezy',
+	POLAR = 'polar'
 }
 
 export enum SubmissionStatus {

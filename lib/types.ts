@@ -6,7 +6,7 @@ export type SessionProps = {
 	session: Session | null;
 };
 export const defaultPricingConfig: PricingPlanConfig = {
-	provider: PaymentProvider.STRIPE, // Default provider set to Stripe, can be changed to 'lemonsqueezy' or 'manual' ,
+	provider: PaymentProvider.POLAR, // Default provider set to Stripe, can be changed to 'lemonsqueezy' or 'manual' ,
 	lemonCheckoutUrl: '', // Ignored by default as provider is 'stripe'
 	currency: '$',
 	plans: {
@@ -33,6 +33,10 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_FREE_VARIANT_ID || '939211',
 			lemonCheckoutUrl: '',
 			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_FREE_PRODUCT_ID || '939211',
+
+			// Polar configuration
+			polarFreePlanId: process.env.NEXT_PUBLIC_POLAR_FREE_PLAN_ID || '',
+			polarProductId: process.env.NEXT_PUBLIC_POLAR_FREE_PLAN_ID || '',
 
 			envKey: 'FREE_PLAN',
 		},
@@ -61,7 +65,11 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			// LemonSqueezy configuration
 			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_VARIANT_ID || '939206',
 			lemonCheckoutUrl: '',
-			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_PRODUCT_ID || '939206'
+			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_PRODUCT_ID || '939206',
+
+			// Polar configuration
+			polarStandardPlanId: process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID || '',
+			polarProductId:process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID || '',
 		},
 		PREMIUM: {
 			id: PaymentPlan.PREMIUM,
@@ -88,7 +96,11 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			// LemonSqueezy configuration
 			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_VARIANT_ID || '939208',
 			lemonCheckoutUrl: '',
-			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_PRODUCT_ID || '939208'
+			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_PRODUCT_ID || '939208',
+
+			// Polar configuration
+			polarPremiumPlanId: process.env.NEXT_PUBLIC_POLAR_PREMIUM_PLAN_ID || '',
+			polarProductId:process.env.NEXT_PUBLIC_POLAR_PREMIUM_PLAN_ID || '',
 		}
 	}
 };

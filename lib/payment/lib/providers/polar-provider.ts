@@ -2,23 +2,23 @@ import { User } from '@supabase/auth-js';
 import React from 'react';
 import { Polar } from '@polar-sh/sdk';
 import {
-    PaymentProviderInterface,
-    PaymentIntent,
-    PaymentVerificationResult,
-    WebhookResult,
-    CreatePaymentParams,
-    ClientConfig,
-    PaymentProviderConfig,
-    CreateCustomerParams,
-    CustomerResult,
-    CreateSubscriptionParams,
-    SubscriptionInfo,
-    UpdateSubscriptionParams,
-    SetupIntent,
-    UIComponents,
-    CardBrandIcon,
-    PaymentFormProps,
-    SubscriptionStatus
+	PaymentProviderInterface,
+	PaymentIntent,
+	PaymentVerificationResult,
+	WebhookResult,
+	CreatePaymentParams,
+	ClientConfig,
+	PaymentProviderConfig,
+	CreateCustomerParams,
+	CustomerResult,
+	CreateSubscriptionParams,
+	SubscriptionInfo,
+	UpdateSubscriptionParams,
+	SetupIntent,
+	UIComponents,
+	CardBrandIcon,
+	PaymentFormProps,
+	SubscriptionStatus
 } from '../../types/payment-types';
 import { paymentAccountClient } from '../client/payment-account-client';
 
@@ -212,16 +212,40 @@ export class PolarProvider implements PaymentProviderInterface {
 		}
 	}
 
+	/**
+	 * Remove undefined values from metadata object
+	 * Polar doesn't accept undefined values in metadata
+	 */
+	private sanitizeMetadata(metadata: Record<string, any>): Record<string, any> {
+		const sanitized: Record<string, any> = {};
+		for (const [key, value] of Object.entries(metadata)) {
+			if (value !== undefined && value !== null) {
+				sanitized[key] = value;
+			}
+		}
+		return sanitized;
+	}
+
 	private buildCustomerData(user: User): CreateCustomerParams {
+		const metadata: Record<string, any> = {
+			userId: user.id
+		};
+
+		// Only add optional fields if they exist
+		if (user.user_metadata?.planId) {
+			metadata.planId = user.user_metadata.planId;
+		}
+		if (user.user_metadata?.planName) {
+			metadata.planName = user.user_metadata.planName;
+		}
+		if (user.user_metadata?.billingInterval) {
+			metadata.billingInterval = user.user_metadata.billingInterval;
+		}
+
 		return {
 			email: user.email || '',
 			name: user.user_metadata?.name || undefined,
-			metadata: {
-				userId: user.id,
-				planId: user.user_metadata?.planId || undefined,
-				planName: user.user_metadata?.planName || undefined,
-				billingInterval: user.user_metadata?.billingInterval || undefined
-			}
+			metadata: this.sanitizeMetadata(metadata)
 		};
 	}
 
@@ -279,9 +303,73 @@ export class PolarProvider implements PaymentProviderInterface {
 
 	private formatErrorMessage(error: unknown): string {
 		if (error instanceof Error) {
-			return error.message;
+			// Check if it's a Polar API error with validation details
+			const errorMessage = error.message;
+			
+			// Check for payment setup errors
+			if (errorMessage.includes('Payments are currently unavailable') || 
+			    errorMessage.includes('needs to complete their payment setup') ||
+			    errorMessage.includes('payment setup') ||
+			    errorMessage.includes('complete their payment')) {
+				return 'Polar payment setup incomplete: The organization needs to complete payment configuration in the Polar dashboard before payments can be processed. Please contact the administrator or complete the payment setup in your Polar dashboard.';
+			}
+			
+			// Try to parse Polar API error response
+			try {
+				// Check if error message contains JSON
+				if (errorMessage.includes('{') || errorMessage.includes('detail')) {
+					// Try to extract meaningful error from Polar API response
+					const jsonMatch = errorMessage.match(/\{[\s\S]*\}/);
+					if (jsonMatch) {
+						const errorData = JSON.parse(jsonMatch[0]);
+						
+						// Handle Polar validation errors
+						if (errorData.detail && Array.isArray(errorData.detail)) {
+							const emailError = errorData.detail.find((err: any) => 
+								err.loc && Array.isArray(err.loc) && err.loc.includes('email')
+							);
+							
+							if (emailError) {
+								// Check if it's an invalid email domain error
+								if (emailError.msg && emailError.msg.includes('does not accept email')) {
+									return `Invalid email address: ${emailError.input}. Polar requires a valid email address with a real domain. Test domains like 'example.com' are not accepted. Please use a real email address.`;
+								}
+								return emailError.msg || errorMessage;
+							}
+							
+							// Return first error message
+							const firstError = errorData.detail[0];
+							if (firstError && firstError.msg) {
+								// Check for payment setup errors in parsed response
+								if (firstError.msg.includes('Payments are currently unavailable') || 
+								    firstError.msg.includes('needs to complete their payment setup')) {
+									return 'Polar payment setup incomplete: The organization needs to complete payment configuration in the Polar dashboard before payments can be processed. Please contact the administrator or complete the payment setup in your Polar dashboard.';
+								}
+								return firstError.msg;
+							}
+						}
+						
+						// Check for payment setup errors in error message field
+						if (errorData.message && (
+							errorData.message.includes('Payments are currently unavailable') || 
+							errorData.message.includes('needs to complete their payment setup')
+						)) {
+							return 'Polar payment setup incomplete: The organization needs to complete payment configuration in the Polar dashboard before payments can be processed. Please contact the administrator or complete the payment setup in your Polar dashboard.';
+						}
+					}
+				}
+			} catch (parseError) {
+				// If parsing fails, return original message
+			}
+			
+			return errorMessage;
 		}
 		if (typeof error === 'string') {
+			// Check for payment setup errors in string errors
+			if (error.includes('Payments are currently unavailable') || 
+			    error.includes('needs to complete their payment setup')) {
+				return 'Polar payment setup incomplete: The organization needs to complete payment configuration in the Polar dashboard before payments can be processed. Please contact the administrator or complete the payment setup in your Polar dashboard.';
+			}
 			return error;
 		}
 		return 'Unknown error';
@@ -324,16 +412,23 @@ export class PolarProvider implements PaymentProviderInterface {
 		try {
 			const { amount, currency, metadata, customerId, productId } = params;
 
+			if (!productId) {
+				throw new Error('Product ID is required for payment intent');
+			}
+
+			// Sanitize metadata to remove undefined values
+			const sanitizedMetadata = metadata ? this.sanitizeMetadata(metadata) : {};
+
 			// Create a checkout link for Polar
-			// Note: Adjust API calls based on actual Polar SDK documentation
+			// Polar expects 'products' as an array, not 'productId'
 			const checkout = await this.polar.checkouts.create({
-				productId: productId || '',
+				products: [productId], // Polar requires products as an array
 				organizationId: this.organizationId!,
 				amount: Math.round(amount * 100), // Convert to cents
 				currency: currency.toUpperCase(),
 				successUrl: params.successUrl || `${this.appUrl}/pricing/success`,
 				customerId: customerId,
-				metadata: metadata || {}
+				metadata: sanitizedMetadata
 			} as any);
 
 			return {
@@ -402,10 +497,25 @@ export class PolarProvider implements PaymentProviderInterface {
 
 	async createCustomer(params: CreateCustomerParams): Promise<CustomerResult> {
 		try {
+			// Validate email format before sending to Polar
+			if (!params.email || !this.isValidEmail(params.email)) {
+				throw new Error(`Invalid email address: ${params.email}. Please provide a valid email address.`);
+			}
+			
+			// Check for test domains that Polar rejects
+			const testDomains = ['example.com', 'test.com', 'invalid.com'];
+			const emailDomain = params.email.split('@')[1]?.toLowerCase();
+			if (emailDomain && testDomains.includes(emailDomain)) {
+				throw new Error(`Email domain '${emailDomain}' is not accepted by Polar. Please use a real email address with a valid domain.`);
+			}
+			
+			// Sanitize metadata to remove undefined values
+			const sanitizedMetadata = params.metadata ? this.sanitizeMetadata(params.metadata) : {};
+			
 			const customer = await this.polar.customers.create({
 				email: params.email,
 				name: params.name,
-				metadata: params.metadata || {}
+				metadata: sanitizedMetadata
 			} as any);
 
 			return {
@@ -415,26 +525,44 @@ export class PolarProvider implements PaymentProviderInterface {
 				metadata: (customer as any).metadata || params.metadata || {}
 			};
 		} catch (error) {
+			const errorMessage = this.formatErrorMessage(error);
 			this.logger.error('Failed to create Polar customer', {
-				error: this.formatErrorMessage(error),
-				params
+				error: errorMessage,
+				email: params.email,
+				hasName: !!params.name
 			});
-			throw new Error(`Failed to create customer: ${this.formatErrorMessage(error)}`);
+			throw new Error(`Failed to create customer: ${errorMessage}`);
 		}
+	}
+
+	/**
+	 * Basic email validation
+	 */
+	private isValidEmail(email: string): boolean {
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		return emailRegex.test(email);
 	}
 
 	async createSubscription(params: CreateSubscriptionParams): Promise<SubscriptionInfo> {
 		try {
 			const { customerId, priceId, metadata } = params;
 
+			if (!priceId) {
+				throw new Error('Product ID is required for subscription');
+			}
+
+			// Sanitize metadata to remove undefined values
+			const sanitizedMetadata = metadata ? this.sanitizeMetadata(metadata) : {};
+
 			// Create a checkout for subscription
+			// Polar expects 'products' as an array, not 'productId'
 			const checkout = await this.polar.checkouts.create({
-				productId: priceId,
+				products: [priceId], // Polar requires products as an array
 				organizationId: this.organizationId!,
 				customerId: customerId,
 				successUrl: metadata?.successUrl || `${this.appUrl}/pricing/success`,
 				cancelUrl: metadata?.cancelUrl || `${this.appUrl}/pricing`,
-				metadata: metadata || {}
+				metadata: sanitizedMetadata
 			} as any);
 
 			// Get subscription from checkout if available
@@ -617,6 +745,34 @@ export class PolarProvider implements PaymentProviderInterface {
 				paymentId
 			});
 			throw new Error(`Failed to refund payment: ${this.formatErrorMessage(error)}`);
+		}
+	}
+
+	/**
+	 * Create a customer portal session for managing subscriptions and billing
+	 * @param customerId - Polar customer ID
+	 * @param returnUrl - URL to redirect after portal session
+	 * @returns Customer portal session with URL
+	 */
+	async createCustomerPortalSession(customerId: string, returnUrl?: string): Promise<{ url: string; id: string }> {
+		try {
+			// Polar uses customer sessions for the customer portal
+			// Create a customer session which provides access to customer portal endpoints
+			const session = await this.polar.customerSessions.create({
+				customerId: customerId,
+				returnUrl: returnUrl || `${this.appUrl}/settings/billing`
+			} as any);
+
+			return {
+				id: (session as any).id || '',
+				url: (session as any).url || (session as any).accessToken || ''
+			};
+		} catch (error) {
+			this.logger.error('Failed to create Polar customer portal session', {
+				error: this.formatErrorMessage(error),
+				customerId
+			});
+			throw new Error(`Failed to create customer portal session: ${this.formatErrorMessage(error)}`);
 		}
 	}
 

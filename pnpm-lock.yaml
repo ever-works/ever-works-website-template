@@ -57,15 +57,15 @@ importers:
       '@novu/api':
         specifier: ^3.11.0
         version: 3.11.0
-<<<<<<< HEAD
       '@opentelemetry/api':
         specifier: 1.9.0
         version: 1.9.0
-=======
+      '@polar-sh/nextjs':
+        specifier: ^0.9.0
+        version: 0.9.0(next@16.0.5(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(sass@1.94.2))
       '@polar-sh/sdk':
         specifier: ^0.41.5
         version: 0.41.5
->>>>>>> b331c73 (feat: integrate Polar Payments provider)
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -2036,6 +2036,15 @@ packages:
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
+
+  '@polar-sh/adapter-utils@0.4.0':
+    resolution: {integrity: sha512-HfiJgAfCfE7qs9L8o3KgDzToUz3Z0sfvoX6ZnyMnfldX8ERnYxwQN79OsQq+dGKoak7+VhhJQvf348qop+5OKQ==}
+
+  '@polar-sh/nextjs@0.9.0':
+    resolution: {integrity: sha512-ehlKBqa8GftFFyHM+o9pV7wQNLBzMPELXmVm1BUoF30ZvAp0Wx63/3m7hmqEgnM9HGzlxoA0BNG6D/pq4VaFyQ==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      next: ^15.0.0 || ^16.0.0
 
   '@polar-sh/sdk@0.41.5':
     resolution: {integrity: sha512-E+VoVV+WvebZKmj+KZ/fj1byBZbG7J8hHyzYD9kktvAToigPM19sywo2tFCHeb44aWGCVACMOP8r31e6je7dxA==}
@@ -9695,6 +9704,16 @@ snapshots:
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
+
+  '@polar-sh/adapter-utils@0.4.0':
+    dependencies:
+      '@polar-sh/sdk': 0.41.5
+
+  '@polar-sh/nextjs@0.9.0(next@16.0.5(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(sass@1.94.2))':
+    dependencies:
+      '@polar-sh/adapter-utils': 0.4.0
+      '@polar-sh/sdk': 0.41.5
+      next: 16.0.5(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(sass@1.94.2)
 
   '@polar-sh/sdk@0.41.5':
     dependencies:
