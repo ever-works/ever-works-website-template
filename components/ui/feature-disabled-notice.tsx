@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useTranslations } from 'next-intl';
+import { usePathname } from 'next/navigation';
 import { Info, AlertCircle, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -40,15 +41,13 @@ export function FeatureDisabledNotice({
 	hideInSimilarProducts = false
 }: FeatureDisabledNoticeProps) {
 	const t = useTranslations('settings');
+	const pathname = usePathname();
 	const styles = variantStyles[variant];
 	const IconComponent = styles.Icon;
 
 	// Check if we're in a similar products context
-	if (hideInSimilarProducts && typeof window !== 'undefined') {
-		const path = window.location.pathname;
-		if (path.includes('/items/')) {
-			return null;
-		}
+	if (hideInSimilarProducts && pathname?.includes('/items/')) {
+		return null;
 	}
 
 	return (
