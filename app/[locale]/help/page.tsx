@@ -213,7 +213,7 @@ export default function HelpPage() {
 
       {/* Hero Section */}
       <HeroLanding />
-      <PageContainer className="max-w-7xl mx-auto px-4 py-12">
+      <PageContainer className="py-12">
         {/* Interactive Navigation */}
         <div className="mb-16">
           <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xs rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">

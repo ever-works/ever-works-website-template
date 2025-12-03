@@ -4,8 +4,10 @@ import { ChevronDown, Layout, Sparkles } from "lucide-react";
 import { useMemo, useCallback, useState, useEffect, useRef, useId } from "react";
 import {
   LayoutHome,
+  ContainerWidth,
   useLayoutTheme,
 } from "@/components/context/LayoutThemeContext";
+import { Maximize2, Minimize2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -94,7 +96,7 @@ interface LayoutSwitcherProps {
 }
 
 export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
-  const { layoutHome, setLayoutHome } = useLayoutTheme();
+  const { layoutHome, setLayoutHome, containerWidth, setContainerWidth } = useLayoutTheme();
   const { theme, resolvedTheme } = useTheme();
   const t = useTranslations("common");
   const [isOpen, setIsOpen] = useState(false);
@@ -165,6 +167,47 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
       setIsOpen(false); // Close popover after selection
     },
     [layoutHome, setLayoutHome]
+  );
+
+  const containerWidthOptions: { value: ContainerWidth; label: string; icon: React.ReactNode; description: string }[] = [
+    { 
+      value: "fixed", 
+      label: t("FIXED_WIDTH"), 
+      icon: <Minimize2 className="w-4 h-4" />,
+      description: t("FIXED_WIDTH_DESC")
+    },
+    { 
+      value: "fluid", 
+      label: t("FULL_WIDTH"), 
+      icon: <Maximize2 className="w-4 h-4" />,
+      description: t("FULL_WIDTH_DESC")
+    },
+  ];
+
+  const containerWidthSwitch = (
+    <div className="mb-6 pb-5 border-b border-gray-200/50 dark:border-gray-700/50">
+      <div className="flex items-center gap-2 mb-3">
+        <Maximize2 className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+        <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t("CONTAINER_WIDTH")}</span>
+      </div>
+      <div className="flex gap-2">
+        {containerWidthOptions.map((option) => (
+          <button
+            key={option.value}
+            onClick={() => setContainerWidth(option.value)}
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl transition-all duration-300 ${
+              containerWidth === option.value
+                ? "bg-linear-to-br from-theme-primary-500 to-theme-primary-600 text-white shadow-lg shadow-theme-primary-500/25"
+                : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+            }`}
+            title={option.description}
+          >
+            {option.icon}
+            <span className="text-sm font-medium">{option.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 
   const layoutContent = (
@@ -311,6 +354,7 @@ export function LayoutSwitcher({ inline = false }: LayoutSwitcherProps) {
                 </p>
               </div>
             </div>
+            {containerWidthSwitch}
             {layoutContent}
           </div>
         </div>

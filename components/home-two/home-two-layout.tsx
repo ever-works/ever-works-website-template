@@ -6,6 +6,7 @@ import { useLayoutTheme } from "../context";
 import { useStickyState } from "@/hooks/use-sticky-state";
 import { ListingClient } from "../shared-card/listing-client";
 import { CardPresets } from "../shared-card";
+import { Container } from "../ui/container";
 import clsx from "clsx";
 
 // Style constants for sticky header
@@ -49,7 +50,7 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
 
   return (
     <div className="min-h-screen transition-colors duration-300">
-      <div className="max-w-7xl flex flex-col gap-4 py-8 w-full">
+      <Container maxWidth="7xl" padding="default" useGlobalWidth className="flex flex-col gap-4 py-8">
         <div ref={sentinelRef} className="md:h-4 md:w-full" />
         <div
           ref={targetRef}
@@ -75,7 +76,7 @@ export function HomeTwoLayout(props: Home2LayoutProps) {
           items={props.filteredAndSortedItems}
           config={{ ...CardPresets.homeTwoListing, perPage: itemsPerPage }}
         />
-      </div>
+      </Container>
     </div>
   );
 }

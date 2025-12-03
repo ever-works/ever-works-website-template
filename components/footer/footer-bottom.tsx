@@ -20,7 +20,7 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
       {/* Subtle animated background */}
       <div className="absolute inset-0 bg-linear-to-r from-transparent via-blue-500/5 to-transparent animate-shimmer-slow" />
 
-      <Container maxWidth="7xl" padding="default" className="relative px-4 sm:px-6 lg:px-8 py-6">
+      <Container maxWidth="7xl" padding="default" useGlobalWidth className="relative px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col gap-4">
           {/* Top row: Logo and disclaimer */}
           <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">

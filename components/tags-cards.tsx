@@ -6,6 +6,7 @@ import { Card, CardBody, CardFooter } from "@heroui/react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Hash, ArrowRight, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useContainerWidth } from "@/components/ui/container";
 
 interface TagsCardsProps {
   tags: Tag[];
@@ -20,6 +21,8 @@ export function TagsCards({ tags, className, compact = false }: TagsCardsProps) 
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [loadingTag, setLoadingTag] = useState<string | null>(null);
+  const containerWidth = useContainerWidth();
+  const isFluid = containerWidth === "fluid";
 
   // Parse current tags from query params to determine active state
   const currentTagsParam = searchParams.get('tags');
@@ -151,7 +154,11 @@ export function TagsCards({ tags, className, compact = false }: TagsCardsProps) 
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+      <div className={`grid gap-4 sm:gap-6 ${
+        isFluid
+          ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6"
+          : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      }`}>
         {tags.map(renderTagCard)}
       </div>
       

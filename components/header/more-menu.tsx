@@ -46,7 +46,7 @@ const MENU_ITEMS_CONFIG: Array<{
   },
   {
     key: "api-docs",
-    href: "https://demo.ever.works/docs",
+    href: "/docs",
     translationKey: "API_DOCS",
     isExternal: true,
     icon: Code,

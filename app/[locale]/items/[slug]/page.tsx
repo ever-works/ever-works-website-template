@@ -152,7 +152,7 @@ export default async function ItemDetails({
     );
 
     return (
-      <Container maxWidth="7xl" padding="default">
+      <Container maxWidth="7xl" padding="default" useGlobalWidth>
         <ItemDetail
           meta={metaWithVideo}
           renderedContent={renderedContent}

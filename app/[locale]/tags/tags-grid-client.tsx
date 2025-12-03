@@ -11,6 +11,7 @@ import { useInView } from "react-intersection-observer";
 import { useInfiniteLoading } from "@/hooks/use-infinite-loading";
 import { GridSkeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import { Container } from "@/components/ui/container";
 
 /**
  * Hook to calculate optimal items per page based on viewport height
@@ -184,9 +185,9 @@ function TagsGridContent({ tags }: { tags: Tag[] }) {
         </ol>
       </nav>
 
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 flex-1">
+      <Container maxWidth="7xl" padding="lg" useGlobalWidth className="flex-1">
         <TagsCards tags={tagsToShow} compact />
-      </div>
+      </Container>
       {/* Standard Pagination - sticky at bottom */}
       {paginationType === "standard" && (
         <footer className="flex items-center justify-center py-6 mt-auto sticky bottom-0 bg-gradient-to-t from-white via-white dark:from-gray-900 dark:via-gray-900 to-transparent">

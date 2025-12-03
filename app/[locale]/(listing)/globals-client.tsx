@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 import { sortItemsWithFeatured } from '@/lib/utils/featured-items';
 import { useFeaturedItemsSection } from '@/hooks/use-feature-items-section';
 import { TopLoadingBar } from '@/components/ui/top-loading-bar';
+import { Container, useContainerWidth } from '@/components/ui/container';
 
 type ListingProps = {
 	total: number;
@@ -32,7 +33,9 @@ const LAYOUT_STYLES = {
 	largeUp: 'hidden xl:block',
 	mainContainer: 'pb-8 sm:pb-10 md:pb-12 lg:pb-16 xl:pb-20',
 	contentWrapper: 'flex flex-col lg:flex-row w-full gap-2 sm:gap-3 md:gap-4 lg:gap-4 xl:gap-5',
-	sidebar: 'lg:sticky lg:top-4 lg:self-start',
+	contentWrapperFluid: 'flex flex-col lg:flex-row w-full gap-2 sm:gap-3 md:gap-3 lg:gap-3 xl:gap-4',
+	sidebar: 'lg:sticky lg:top-4 lg:self-start lg:w-64 lg:flex-shrink-0',
+	sidebarFluid: 'lg:sticky lg:top-4 lg:self-start lg:w-80 xl:w-[340px] 2xl:w-[380px] lg:flex-shrink-0',
 	sidebarMobile: 'mb-3 sm:mb-4 md:mb-5 lg:mb-0',
 	mainContent: 'w-full flex-1 min-w-0',
 	pagination: 'flex items-center justify-center mt-6 sm:mt-8 md:mt-10 lg:mt-12',
@@ -70,11 +73,15 @@ export default function GlobalsClient(props: ListingProps) {
 	// No need to duplicate that logic here
 	// IMPORTANT: This file should NOT parse URL params - FilterURLParser handles that
 
+	// Get container width to conditionally apply styles
+	const containerWidth = useContainerWidth();
+	const isFluid = containerWidth === 'fluid';
+
 	if (layoutHome === LayoutHome.HOME_ONE) {
 		return (
 			<>
 				<TopLoadingBar isLoading={isFiltersLoading} />
-				<div className={LAYOUT_STYLES.mainContainer}>
+				<Container maxWidth="7xl" padding="default" useGlobalWidth className={LAYOUT_STYLES.mainContainer}>
 				{/* Featured Items Section - Only show on first page and desktop */}
 				{/* {page === 1 && featuredItems.length > 0 && (
           <div className={`mb-8 sm:mb-10 md:mb-12 lg:mb-16 ${LAYOUT_STYLES.desktopOnly}`}>
@@ -88,10 +95,10 @@ export default function GlobalsClient(props: ListingProps) {
           </div>
         )} */}
 
-				<div className={LAYOUT_STYLES.contentWrapper}>
+				<div className={isFluid ? LAYOUT_STYLES.contentWrapperFluid : LAYOUT_STYLES.contentWrapper}>
 					{/* Sidebar - Categories */}
 					{sortedCategories.length > 0 && (
-						<div className={`${LAYOUT_STYLES.sidebar} ${LAYOUT_STYLES.sidebarMobile}`}>
+						<div className={`${isFluid ? LAYOUT_STYLES.sidebarFluid : LAYOUT_STYLES.sidebar} ${LAYOUT_STYLES.sidebarMobile}`}>
 							<Categories total={props.total} categories={sortedCategories} tags={sortedTags} />
 						</div>
 					)}
@@ -107,7 +114,7 @@ export default function GlobalsClient(props: ListingProps) {
 						{/* Tags Section - Desktop version - Only show if tags exist */}
 						{sortedTags.length > 0 && (
 							<div className={`lg:sticky lg:top-4 mb-4 sm:mb-6 md:mb-8 ${LAYOUT_STYLES.desktopOnly}`}>
-								<Tags tags={sortedTags} enableSticky={true} maxVisibleTags={5} allItems={props.items} />
+								<Tags tags={sortedTags} enableSticky={true} maxVisibleTags={isFluid ? 8 : 5} allItems={props.items} />
 							</div>
 						)}
 
@@ -131,7 +138,7 @@ export default function GlobalsClient(props: ListingProps) {
 						</div>
 					</div>
 				</div>
-			</div>
+			</Container>
 			</>
 		);
 	}

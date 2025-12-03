@@ -7,7 +7,7 @@ function Skeleton({
 }: Readonly<React.HTMLAttributes<HTMLDivElement>>) {
   return (
     <HeroSkeleton
-      className={cn("animate-pulse rounded-md bg-primary/10 max-w-7xl w-full mx-auto py-3", className)}
+      className={cn("animate-pulse rounded-md bg-gray-200/50 dark:bg-gray-700/50", className)}
       {...props}
     />
   )
@@ -21,7 +21,7 @@ interface TableSkeletonProps {
 
 function TableSkeleton({ rows = 5, columns = 6, className }: Readonly<TableSkeletonProps>) {
   return (
-    <div className={cn("w-full max-w-7xl mx-auto w-full", className)}>
+    <div className={cn("w-full max-w-7xl mx-auto", className)}>
       {/* Header skeleton */}
       <div className="flex items-center space-x-4 p-4 border-b border-gray-200 dark:border-gray-700">
         {Array.from({ length: columns }).map((_, index) => (

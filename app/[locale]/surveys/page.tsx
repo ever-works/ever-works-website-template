@@ -39,7 +39,7 @@ export default async function SurveysPage() {
 
     return (
         <div className="py-8">
-            <Container maxWidth="7xl" padding="default">
+            <Container maxWidth="7xl" padding="default" useGlobalWidth>
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold mb-2">Surveys</h1>
                     <p className="text-gray-600 dark:text-gray-400">Help us improve by sharing your feedback</p>

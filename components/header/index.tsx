@@ -139,22 +139,40 @@ const STYLES = {
   largeUp: "hidden xl:block",
 };
 
+// Skeleton component for header navigation while loading
+function HeaderNavSkeleton() {
+  return (
+    <div className="hidden lg:flex gap-4 xl:gap-6 2xl:gap-8 mr-6 xl:mr-8 2xl:mr-10">
+      {/* Show skeleton placeholders for nav items */}
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div 
+          key={i} 
+          className="h-5 w-16 bg-gray-200/50 dark:bg-gray-700/50 rounded animate-pulse"
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
-  const { features } = useFeatureFlagsWithSimulation();
-  const { hasGlobalSurveys, isPending } = useHasGlobalSurveys();
+  const { features } = useFeatureFlagsWithSimulation(); 
+  const { hasGlobalSurveys, isPending: surveysPending } = useHasGlobalSurveys();
   const { categoriesEnabled } = useCategoriesEnabled();
   const { surveysEnabled } = useSurveysEnabled();
   const { tagsEnabled } = useTagsEnabled();
   const { settings: headerSettings } = useHeaderSettings();
-  const { data: categoriesData } = useCategoriesExists();
+  const { data: categoriesData, isLoading: categoriesLoading } = useCategoriesExists();
 
   const t = useTranslations("common");
   const tListing = useTranslations("listing");
   const tSurvey = useTranslations("survey");
   const config = useConfig();
   const pathname = usePathname();
+
+  // Check if we're still loading essential data for navigation
+  const isNavigationLoading = categoriesLoading;
 
   // Extract hasCategories from React Query data
   const hasCategories = categoriesData?.exists ?? false;
@@ -175,7 +193,7 @@ export default function Header() {
           return false;
         }
         // Hide surveys link when surveys are disabled or there are no global surveys (but keep it visible while loading to prevent flicker)
-        if (item.key === "surveys" && (!surveysEnabled || (!isPending && !hasGlobalSurveys))) {
+        if (item.key === "surveys" && (!surveysEnabled || (!surveysPending && !hasGlobalSurveys))) {
           return false;
         }
         // Hide pricing link when header pricing is disabled
@@ -199,7 +217,7 @@ export default function Header() {
             : t(item.translationKey as any)
           : item.staticLabel || item.key,
       }));
-  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, isPending, categoriesEnabled, tagsEnabled, surveysEnabled, headerSettings.pricingEnabled, headerSettings.submitEnabled, hasCategories]);
+  }, [t, tListing, tSurvey, session?.user?.id, features.favorites, hasGlobalSurveys, surveysPending, categoriesEnabled, tagsEnabled, surveysEnabled, headerSettings.pricingEnabled, headerSettings.submitEnabled, hasCategories]);
 
   const isActiveLink = useCallback(
     (href: string): boolean => {
@@ -303,12 +321,16 @@ export default function Header() {
       onMenuOpenChange={setIsMenuOpen}
       isMenuOpen={isMenuOpen}
     >
-      <Container maxWidth="7xl" padding="default" className={STYLES.container}>
+      <Container maxWidth="7xl" padding="default" useGlobalWidth className={STYLES.container}>
         {renderBrand()}
 
-        <NavbarContent className={STYLES.navContent} justify="center">
-          {renderNavigationItems()}
-        </NavbarContent>
+        {isNavigationLoading ? (
+          <HeaderNavSkeleton />
+        ) : (
+          <NavbarContent className={STYLES.navContent} justify="center">
+            {renderNavigationItems()}
+          </NavbarContent>
+        )}
 
         {renderRightSection()}
       </Container>

@@ -10,7 +10,7 @@ export default async function SecuritySettingsPage() {
 
 	return (
 		<div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
-			<Container maxWidth="7xl" padding="default">
+			<Container maxWidth="7xl" padding="default" useGlobalWidth>
 				<div className="space-y-8 py-8">
 					{/* Header */}
 					<div className="flex items-center gap-4">

@@ -30,7 +30,7 @@ export function Footer() {
       <div className="relative z-10">
         {/* Main footer content with glassmorphism */}
         <div className="backdrop-blur-xl bg-white/10 dark:bg-black/10 border-t border-white/20 dark:border-gray-700/30">
-          <Container maxWidth="7xl" padding="default" className="px-4 sm:px-6 lg:px-8 pt-20 pb-12">
+          <Container maxWidth="7xl" padding="default" useGlobalWidth className="px-4 sm:px-6 lg:px-8 pt-20 pb-12">
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
               {/* Enhanced Brand and social section */}
               <div className="lg:col-span-2 space-y-8">

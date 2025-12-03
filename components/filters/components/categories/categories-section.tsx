@@ -9,6 +9,7 @@ import { containerStyles, textStyles } from "../../utils/style-utils";
 import { SortControl } from "../controls/sort-control";
 import { ActiveFilters } from "../active-filters/active-filters";
 import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
+import { useContainerWidth } from "@/components/ui/container";
 
 /**
  * Main categories section component
@@ -17,6 +18,8 @@ import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 export function Categories({ total, categories, tags }: CategoriesProps & { tags: Tag[] }) {
   const t = useTranslations("listing");
   const { categoriesEnabled } = useCategoriesEnabled();
+  const containerWidth = useContainerWidth();
+  const isFluid = containerWidth === "fluid";
   const {
     searchTerm,
     setSearchTerm,
@@ -83,7 +86,7 @@ export function Categories({ total, categories, tags }: CategoriesProps & { tags
       )}
 
       {/* Desktop Layout */}
-      <div className="hidden md:flex flex-col w-full max-w-64 gap-6">
+      <div className={`hidden md:flex flex-col w-full gap-6 ${isFluid ? "" : "max-w-64"}`}>
         {/* Search Bar */}
         <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 

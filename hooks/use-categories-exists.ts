@@ -31,9 +31,8 @@ export function useCategoriesExists() {
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 30 * 60 * 1000, // Keep data in cache for 30 minutes
     retry: 1, // Retry once (reduced from 2 to minimize timeout for first-time users)
-    retryOnMount: true, // Assume no categories exist on mount to avoid UI issues
+    retryOnMount: true,
     refetchOnWindowFocus: false, // No need to refetch on window focus
     refetchOnReconnect: true, // Refetch if connection comes back
-    placeholderData: { exists: false, count: 0 }, // Default value if query fails
   });
 }

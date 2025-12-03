@@ -7,6 +7,7 @@ import { Paginate } from '@/components/filters/components/pagination/paginate';
 import { totalPages } from '@/lib/paginate';
 import { Tag } from '@/lib/content';
 import { GridSkeleton } from '@/components/ui/skeleton';
+import { Container } from '@/components/ui/container';
 
 export function ListingTagsContent({
 	tags,
@@ -36,9 +37,9 @@ export function ListingTagsContent({
 				})}
 				className="min-h-screen text-center"
 			>
-				<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+				<Container maxWidth="7xl" padding="lg" useGlobalWidth>
 					<TagsCards tags={tags} />
-				</div>
+				</Container>
 				<footer className="flex items-center justify-center">
 					<Paginate basePath={basePath} initialPage={page} total={totalPages(total)} />
 				</footer>

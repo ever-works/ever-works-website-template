@@ -15,6 +15,7 @@ import { useFilters } from "@/hooks/use-filters";
 import { ListingClient } from "@/components/shared-card/listing-client";
 import { CardPresets } from "@/components/shared-card";
 import { ListingSkeleton } from "@/components/ui/skeleton";
+import { Container } from "@/components/ui/container";
 
 interface ListingCategoriesProps {
   total: number;
@@ -137,9 +138,9 @@ function HomeOneLayout({
 
       {/* Categories Grid */}
       {categories.length > 0 && (
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+        <Container maxWidth="7xl" padding="lg" useGlobalWidth>
           <CategoriesGrid categories={categories} />
-        </div>
+        </Container>
       )}
     </>
   );

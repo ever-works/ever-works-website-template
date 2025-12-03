@@ -45,7 +45,7 @@ export default async function SurveyLayout({
 
 	return (
 		<div className="py-8">
-			<Container maxWidth="7xl" padding="default">
+			<Container maxWidth="7xl" padding="default" useGlobalWidth>
 				{children}
 			</Container>
 		</div>

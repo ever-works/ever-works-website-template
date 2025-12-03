@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { CategoryItemProps } from "../../types";
 import { truncateText, isTextTruncated as checkTextTruncated, formatDisplayName } from "../../utils/text-utils";
 import { FILTER_CONSTANTS } from "../../constants";
+import { useContainerWidth } from "@/components/ui/container";
 
 /**
  * Individual category item component
@@ -18,9 +19,12 @@ export function CategoryItem({
   onToggle
 }: CategoryItemProps) {
   const t = useTranslations("listing");
+  const containerWidth = useContainerWidth();
+  const isFluid = containerWidth === "fluid";
   const formattedName = formatDisplayName(category.name);
-  const displayName = truncateText(formattedName);
-  const textIsTruncated = checkTextTruncated(formattedName);
+  // In fluid mode, use longer truncation (35 chars) to show more text
+  const displayName = isFluid ? truncateText(formattedName, 35) : truncateText(formattedName);
+  const textIsTruncated = isFluid ? checkTextTruncated(formattedName, 35) : checkTextTruncated(formattedName);
 
   const handleClick = (e: React.MouseEvent) => {
     if (mode === "filter") {

@@ -24,6 +24,7 @@ import { useCategoriesEnabled } from '@/hooks/use-categories-enabled';
 import { useSurveysEnabled } from '@/hooks/use-surveys-enabled';
 import { useTagsEnabled } from '@/hooks/use-tags-enabled';
 import { ItemDetailSkeleton } from '@/components/ui/skeleton';
+import { Container } from '../ui/container';
 
 export interface ItemDetailProps {
 	meta: {
@@ -77,7 +78,7 @@ function ItemDetailContent({ meta, renderedContent, categoryName }: ItemDetailPr
 			<div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)]"></div>
 			<div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.1),transparent_50%)]"></div>
 
-			<div className="relative z-10 container max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+			<Container maxWidth="7xl" padding="default" useGlobalWidth className="relative z-10 py-8">
 				<div className="flex flex-col lg:flex-row gap-8">
 					<div className="flex-1">
 						{/* Video Showcase */}
@@ -451,7 +452,7 @@ function ItemDetailContent({ meta, renderedContent, categoryName }: ItemDetailPr
 						)}
 					</div>
 				</div>
-			</div>
+			</Container>
 		</div>
 	);
 }

@@ -50,7 +50,7 @@ export default function Hero({
 
       {/* Main Content */}
       <div className="relative z-10 w-full py-8 sm:py-10 md:py-12">
-        {/* Header Section */}
+        {/* Header Section - Title and description */}
         <div className="pt-2 pb-1 sm:pt-3 sm:pb-2">
           <Container maxWidth="7xl" padding="default">
             {/* Introducing badge */}
@@ -84,12 +84,15 @@ export default function Hero({
                 {description}
               </p>
             )}
-
-            <div className="mt-4 sm:mt-6">
-              {children}
-            </div>
           </Container>
         </div>
+        
+        {/* Children section - rendered outside the header Container to allow full-width in fluid mode */}
+        {children && (
+          <div className="mt-4 sm:mt-6">
+            {children}
+          </div>
+        )}
       </div>
     </div>
   );

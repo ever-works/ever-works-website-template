@@ -1,8 +1,38 @@
 "use client";
 
-import { forwardRef, HTMLAttributes } from "react";
+import { forwardRef, HTMLAttributes, createContext, useContext } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+
+// Re-export ContainerWidth type for convenience
+export type ContainerWidth = "fixed" | "fluid";
+
+// Context value includes both width and loaded state
+interface ContainerWidthContextValue {
+  width: ContainerWidth;
+  isLoaded: boolean;
+}
+
+// Create a separate context for container width to avoid circular dependencies
+// This will be set by the main LayoutThemeProvider
+const ContainerWidthContext = createContext<ContainerWidthContextValue>({ 
+  width: "fixed", 
+  isLoaded: false 
+});
+
+export const ContainerWidthProvider = ContainerWidthContext.Provider;
+
+// Returns the container width - returns actual value for smooth transitions
+export const useContainerWidth = () => {
+  const { width } = useContext(ContainerWidthContext);
+  return width;
+};
+
+// Hook to get the loaded state (for transition timing)
+export const useContainerWidthLoaded = () => {
+  const { isLoaded } = useContext(ContainerWidthContext);
+  return isLoaded;
+};
 
 /**
  * Container variants configuration using class-variance-authority
@@ -70,6 +100,12 @@ export interface ContainerProps
    * @default false
    */
   fluid?: boolean;
+  /**
+   * Use global container width setting from LayoutThemeContext
+   * When true, the container will respect the user's width preference (fixed/fluid)
+   * @default false
+   */
+  useGlobalWidth?: boolean;
 }
 
 export const Container = forwardRef<HTMLDivElement, ContainerProps>(
@@ -81,13 +117,24 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
       padding,
       centered,
       fluid = false,
+      useGlobalWidth = false,
       children,
       ...props
     },
     ref
   ) => {
+    // Get global container width setting from context (defaults to "fixed" if not in provider)
+    const globalContainerWidth = useContainerWidth();
+    const isLoaded = useContainerWidthLoaded();
+    
+    // Determine if we should use fluid mode
+    const isFluid = useGlobalWidth ? globalContainerWidth === "fluid" : fluid;
+    
     // Override maxWidth to 'none' when fluid is true
-    const effectiveMaxWidth = fluid ? "none" : maxWidth;
+    const effectiveMaxWidth = isFluid ? "none" : maxWidth;
+    
+    // Use smaller padding in fluid mode to maximize screen usage, but respect explicit "none" padding
+    const effectivePadding = padding === "none" ? "none" : (isFluid ? "sm" : padding);
 
     return (
       <Component
@@ -95,9 +142,13 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
         className={cn(
           containerVariants({
             maxWidth: effectiveMaxWidth,
-            padding,
+            padding: effectivePadding,
             centered,
           }),
+          // For containers using global width: fade in after settings load to prevent flash
+          useGlobalWidth && "transition-opacity duration-150",
+          useGlobalWidth && !isLoaded && "opacity-0",
+          useGlobalWidth && isLoaded && "opacity-100",
           className
         )}
         {...props}
@@ -117,7 +168,7 @@ export const PageContainer = forwardRef<
   HTMLDivElement,
   Omit<ContainerProps, "as">
 >((props, ref) => (
-  <Container ref={ref} as="main" maxWidth="7xl" {...props} />
+  <Container ref={ref} as="main" maxWidth="7xl" useGlobalWidth {...props} />
 ));
 
 PageContainer.displayName = "PageContainer";
@@ -126,7 +177,7 @@ export const SectionContainer = forwardRef<
   HTMLDivElement,
   Omit<ContainerProps, "as">
 >((props, ref) => (
-  <Container ref={ref} as="section" {...props} />
+  <Container ref={ref} as="section" useGlobalWidth {...props} />
 ));
 
 SectionContainer.displayName = "SectionContainer";
