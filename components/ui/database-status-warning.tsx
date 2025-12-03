@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useFeatureFlagsWithSimulation } from '@/hooks/use-feature-flags-with-simulation';
+import { useFeatureFlags } from '@/hooks/use-feature-flags';
 
 interface DatabaseStatusWarningProps {
 	className?: string;
@@ -12,7 +12,7 @@ interface DatabaseStatusWarningProps {
 
 export function DatabaseStatusWarning({ className }: DatabaseStatusWarningProps) {
 	const t = useTranslations('settings');
-	const { features } = useFeatureFlagsWithSimulation();
+	const { features } = useFeatureFlags();
 
 	// Check if database is actually configured (not simulation)
 	const isDatabaseConfigured = features.ratings || features.comments || features.favorites;
