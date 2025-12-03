@@ -7,8 +7,8 @@ interface SegmentedToggleProps {
 	value: boolean;
 	onChange: (value: boolean) => void;
 	disabled?: boolean;
-	leftLabel?: string;
-	rightLabel?: string;
+	leftLabel?: React.ReactNode;
+	rightLabel?: React.ReactNode;
 	className?: string;
 }
 
@@ -35,16 +35,16 @@ export function SegmentedToggle({
 			)}
 			role="group"
 		>
-			{/* Sliding indicator with gradient and glow */}
+			{/* Sliding indicator with gradient, glow, and spring animation */}
 			<div
 				className={cn(
 					'absolute inset-y-1 rounded-md',
 					'bg-gradient-to-r from-theme-primary-500 to-theme-primary-600',
 					'dark:from-theme-primary-600 dark:to-theme-primary-700',
 					'shadow-lg shadow-theme-primary-500/30',
-					'transition-all duration-300 ease-out',
+					// Spring easing for smooth glide
+					'transition-all duration-400 ease-[cubic-bezier(0.45,0,0.15,1)]',
 					'transform',
-					'animate-pulse-subtle',
 					value ? 'translate-x-[calc(100%+0.25rem)]' : 'translate-x-0'
 				)}
 				style={{
@@ -59,7 +59,11 @@ export function SegmentedToggle({
 				onClick={() => !disabled && onChange(false)}
 				disabled={disabled}
 				className={cn(
-					'relative z-10 px-3 py-1.5 text-sm font-medium rounded-md',
+					'relative z-10',
+					'px-4 py-2', // Increased from px-3 py-1.5
+					'min-w-[90px]', // Prevent cramping
+					'text-sm font-medium tracking-wide', // Added tracking-wide
+					'rounded-md',
 					'transition-colors duration-300',
 					'focus:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary-500 focus-visible:ring-offset-1',
 					!value
@@ -77,7 +81,11 @@ export function SegmentedToggle({
 				onClick={() => !disabled && onChange(true)}
 				disabled={disabled}
 				className={cn(
-					'relative z-10 px-3 py-1.5 text-sm font-medium rounded-md',
+					'relative z-10',
+					'px-4 py-2', // Increased from px-3 py-1.5
+					'min-w-[90px]', // Prevent cramping
+					'text-sm font-medium tracking-wide', // Added tracking-wide
+					'rounded-md',
 					'transition-colors duration-300',
 					'focus:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary-500 focus-visible:ring-offset-1',
 					value

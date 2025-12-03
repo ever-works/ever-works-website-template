@@ -13,9 +13,9 @@ import { useFocusManagement } from "@/components/ui/accessibility";
 
 const BACKDROP_CLASSES = cn(
 	"fixed inset-0",
-	"bg-gradient-to-br from-black/40 via-black/50 to-black/60",
-	"dark:bg-gradient-to-br dark:from-black/60 dark:via-black/70 dark:to-black/80",
-	"backdrop-blur-md",
+	"bg-gradient-to-br from-black/50 via-black/60 to-black/70",
+	"dark:bg-gradient-to-br dark:from-black/70 dark:via-black/80 dark:to-black/90",
+	"backdrop-blur-2xl backdrop-saturate-150",
 	"z-[9998]",
 	"transition-all duration-300 ease-out"
 );
@@ -25,11 +25,11 @@ const MODAL_CLASSES = cn(
 	"transform -translate-x-1/2 -translate-y-1/2",
 	"w-full max-w-2xl",
 	"max-h-[90vh]",
-	"bg-gradient-to-br from-white via-white to-gray-50/30",
-	"dark:from-gray-900 dark:via-gray-900 dark:to-gray-800/30",
-	"border border-gray-200/80 dark:border-gray-700/80",
+	"bg-white/70 dark:bg-gray-900/70",
+	"backdrop-blur-2xl backdrop-saturate-200",
+	"border border-white/20 dark:border-white/10",
 	"ring-1 ring-theme-primary-500/10 dark:ring-theme-primary-400/10",
-	"rounded-2xl shadow-2xl shadow-black/10 dark:shadow-black/40",
+	"rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/60",
 	"z-[9999]",
 	"overflow-hidden",
 	"transition-all duration-300 ease-out",
@@ -94,7 +94,7 @@ export function SettingsModal() {
 						)}>
 							<Settings className="h-5 w-5 text-theme-primary-600 dark:text-theme-primary-400" />
 						</div>
-						<h2 id="settings-title" className="text-xl font-semibold text-gray-900 dark:text-white">
+						<h2 id="settings-title" className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
 							{t("SETTINGS")}
 						</h2>
 					</div>

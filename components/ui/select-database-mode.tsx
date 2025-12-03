@@ -35,23 +35,31 @@ const SelectDatabaseMode: React.FC<SelectDatabaseModeProps> = ({ className, disa
 	return (
 		<div className={cn(
 			// Structure
-			'p-5 rounded-xl',
+			'group p-5 rounded-xl',
 
-			// Background with gradient
-			'bg-gradient-to-br from-white to-gray-50/50',
-			'dark:from-gray-800/50 dark:to-gray-900/50',
+			// Emerald/Teal/Cyan gradient - data/storage feel
+			'bg-gradient-to-br from-emerald-50/80 via-teal-50/60 to-cyan-50/40',
+			'dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-cyan-950/20',
 
-			// Border
-			'border border-gray-200/60 dark:border-gray-700/60',
+			// Glassmorphism
+			'backdrop-blur-xl backdrop-saturate-150',
 
-			// Shadow
-			'shadow-sm hover:shadow-md',
+			// Border with green tones
+			'border border-emerald-200/40 dark:border-emerald-800/30',
 
-			// Transition
-			'transition-all duration-300 ease-out',
+			// Enhanced shadow
+			'shadow-lg shadow-black/5 dark:shadow-black/20',
 
-			// Hover effect
-			'hover:scale-[1.01] hover:border-theme-primary-300/50 dark:hover:border-theme-primary-600/50',
+			// Spring animation on hover
+			'transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+
+			// Hover effects - lift and enhanced border
+			'hover:scale-[1.02] hover:-translate-y-1',
+			'hover:shadow-2xl hover:shadow-emerald-500/10',
+			'hover:border-emerald-300/60 dark:hover:border-emerald-700/50',
+
+			// Press feedback
+			'active:scale-[0.98]',
 
 			// Animation entrance
 			'animate-fade-in-up',
@@ -61,28 +69,33 @@ const SelectDatabaseMode: React.FC<SelectDatabaseModeProps> = ({ className, disa
 			<div className="flex items-start justify-between gap-4">
 				{/* Icon + Title/Description */}
 				<div className="flex items-start gap-3 flex-1 min-w-0">
-					{/* Icon container */}
+					{/* Icon container with emerald gradient and glassmorphism */}
 					<div className={cn(
 						'p-2 rounded-lg flex-shrink-0',
-						'bg-gradient-to-br from-theme-primary-100 to-theme-primary-200',
-						'dark:from-theme-primary-900/30 dark:to-theme-primary-800/30',
-						'border border-theme-primary-300/50 dark:border-theme-primary-600/50'
+						'bg-gradient-to-br from-emerald-100 to-teal-200',
+						'dark:from-emerald-900/40 dark:to-teal-900/40',
+						'backdrop-blur-md',
+						'border border-emerald-300/50 dark:border-emerald-700/50',
+						'shadow-inner',
+						// Icon animation
+						'transition-transform duration-700 ease-in-out',
+						'group-hover:scale-110 group-hover:rotate-3'
 					)}>
-						<Database className="h-5 w-5 text-theme-primary-600 dark:text-theme-primary-400" />
+						<Database className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
 					</div>
 
-					{/* Text content */}
+					{/* Text content with improved typography */}
 					<div className="flex-1 min-w-0">
-						<h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+						<h3 className="text-base font-semibold tracking-tight leading-tight text-gray-900 dark:text-gray-100">
 							{t('DATABASE_MODE')}
 						</h3>
-						<p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+						<p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mt-1">
 							{t('DATABASE_MODE_DESC')}
 						</p>
 					</div>
 				</div>
 
-				{/* Toggle */}
+				{/* Toggle - using text labels (Database doesn't need icons in toggle) */}
 				<div className="flex-shrink-0">
 					<SegmentedToggle
 						value={databaseSimulationMode === 'disabled'}

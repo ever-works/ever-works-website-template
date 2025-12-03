@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { useLayoutTheme } from '@/components/context';
 import { useTranslations } from 'next-intl';
 import { SegmentedToggle } from './segmented-toggle';
-import { List } from 'lucide-react';
+import { Layers, Infinity } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface SelectPaginationTypeProps {
@@ -35,23 +35,31 @@ const SelectPaginationType: React.FC<SelectPaginationTypeProps> = ({ className, 
 	return (
 		<div className={cn(
 			// Structure
-			'p-5 rounded-xl',
+			'group p-5 rounded-xl',
 
-			// Background with gradient
-			'bg-gradient-to-br from-white to-gray-50/50',
-			'dark:from-gray-800/50 dark:to-gray-900/50',
+			// Blue/Indigo/Purple gradient - navigation feel
+			'bg-gradient-to-br from-blue-50/80 via-indigo-50/60 to-purple-50/40',
+			'dark:from-blue-950/40 dark:via-indigo-950/30 dark:to-purple-950/20',
 
-			// Border
-			'border border-gray-200/60 dark:border-gray-700/60',
+			// Glassmorphism
+			'backdrop-blur-xl backdrop-saturate-150',
 
-			// Shadow
-			'shadow-sm hover:shadow-md',
+			// Border with blue tones
+			'border border-blue-200/40 dark:border-blue-800/30',
 
-			// Transition
-			'transition-all duration-300 ease-out',
+			// Enhanced shadow
+			'shadow-lg shadow-black/5 dark:shadow-black/20',
 
-			// Hover effect
-			'hover:scale-[1.01] hover:border-theme-primary-300/50 dark:hover:border-theme-primary-600/50',
+			// Spring animation on hover
+			'transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+
+			// Hover effects - lift and enhanced border
+			'hover:scale-[1.02] hover:-translate-y-1',
+			'hover:shadow-2xl hover:shadow-blue-500/10',
+			'hover:border-blue-300/60 dark:hover:border-blue-700/50',
+
+			// Press feedback
+			'active:scale-[0.98]',
 
 			// Animation entrance
 			'animate-fade-in-up',
@@ -61,35 +69,50 @@ const SelectPaginationType: React.FC<SelectPaginationTypeProps> = ({ className, 
 			<div className="flex items-start justify-between gap-4">
 				{/* Icon + Title/Description */}
 				<div className="flex items-start gap-3 flex-1 min-w-0">
-					{/* Icon container */}
+					{/* Icon container with blue gradient and glassmorphism */}
 					<div className={cn(
 						'p-2 rounded-lg flex-shrink-0',
-						'bg-gradient-to-br from-theme-primary-100 to-theme-primary-200',
-						'dark:from-theme-primary-900/30 dark:to-theme-primary-800/30',
-						'border border-theme-primary-300/50 dark:border-theme-primary-600/50'
+						'bg-gradient-to-br from-blue-100 to-indigo-200',
+						'dark:from-blue-900/40 dark:to-indigo-900/40',
+						'backdrop-blur-md',
+						'border border-blue-300/50 dark:border-blue-700/50',
+						'shadow-inner',
+						// Icon animation
+						'transition-transform duration-700 ease-in-out',
+						'group-hover:scale-110 group-hover:rotate-3'
 					)}>
-						<List className="h-5 w-5 text-theme-primary-600 dark:text-theme-primary-400" />
+						<Layers className="h-5 w-5 text-blue-700 dark:text-blue-300" />
 					</div>
 
-					{/* Text content */}
+					{/* Text content with improved typography */}
 					<div className="flex-1 min-w-0">
-						<h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+						<h3 className="text-base font-semibold tracking-tight leading-tight text-gray-900 dark:text-gray-100">
 							{t('PAGINATION_STYLE')}
 						</h3>
-						<p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+						<p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mt-1">
 							{t('PAGINATION_STYLE_DESC')}
 						</p>
 					</div>
 				</div>
 
-				{/* Toggle */}
+				{/* Toggle with icons */}
 				<div className="flex-shrink-0">
 					<SegmentedToggle
 						value={paginationType === 'infinite'}
 						onChange={handleToggle}
 						disabled={disabled}
-						leftLabel={t('PAGINATION_STANDARD_LABEL')}
-						rightLabel={t('PAGINATION_INFINITE_LABEL')}
+						leftLabel={
+							<span className="flex items-center gap-1.5">
+								<Layers className="h-3.5 w-3.5" />
+								<span>Standard</span>
+							</span>
+						}
+						rightLabel={
+							<span className="flex items-center gap-1.5">
+								<Infinity className="h-3.5 w-3.5" />
+								<span>Scroll</span>
+							</span>
+						}
 					/>
 				</div>
 			</div>
