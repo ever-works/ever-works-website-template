@@ -26070,6 +26070,701 @@
           }
         }
       }
+    },
+    "/api/polar/checkout": {
+      "post": {
+        "tags": [
+          "Polar - Core"
+        ],
+        "summary": "Create Polar checkout session",
+        "description": "Creates a new Polar checkout session for the authenticated user. Supports both one-time payments and subscription modes. Automatically creates or retrieves Polar customer.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productId": {
+                    "type": "string",
+                    "description": "Polar product ID for the product/service",
+                    "example": "prod_1234567890abcdef"
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "one_time",
+                      "subscription"
+                    ],
+                    "default": "subscription",
+                    "description": "Checkout mode",
+                    "example": "subscription"
+                  },
+                  "successUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL to redirect after successful payment",
+                    "example": "https://example.com/success"
+                  },
+                  "cancelUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL to redirect after cancelled payment",
+                    "example": "https://example.com/cancel"
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "description": "Additional metadata for the checkout session",
+                    "properties": {
+                      "planId": {
+                        "type": "string",
+                        "example": "pro_plan"
+                      },
+                      "planName": {
+                        "type": "string",
+                        "example": "Pro Plan"
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "productId",
+                  "successUrl",
+                  "cancelUrl"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Checkout session created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Polar checkout session ID",
+                          "example": "checkout_1234567890abcdef"
+                        },
+                        "url": {
+                          "type": "string",
+                          "format": "uri",
+                          "description": "Polar checkout URL",
+                          "example": "https://polar.sh/checkout/checkout_1234567890abcdef"
+                        }
+                      }
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Checkout session created successfully"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "status",
+                    "message"
+                  ]
+                },
+                "example": {
+                  "data": {
+                    "id": "checkout_1234567890abcdef",
+                    "url": "https://polar.sh/checkout/checkout_1234567890abcdef"
+                  },
+                  "status": 200,
+                  "message": "Checkout session created successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Failed to create customer or invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to create customer"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unable to create Polar customer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Authentication required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to create checkout session"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Failed to create checkout session"
+                    },
+                    "details": {
+                      "type": "string",
+                      "description": "Error stack trace (development only)",
+                      "example": "Error: Invalid product ID..."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Polar - Core"
+        ],
+        "summary": "Retrieve checkout session",
+        "description": "Retrieves a Polar checkout session by session ID. Used to verify payment status and get session details after checkout completion.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "checkout_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Polar checkout session ID",
+            "example": "checkout_1234567890abcdef"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Checkout session retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "checkout": {
+                      "type": "object",
+                      "description": "Complete Polar checkout session object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "checkout_1234567890abcdef"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "open",
+                            "complete",
+                            "expired"
+                          ],
+                          "example": "complete"
+                        },
+                        "customer": {
+                          "type": "string",
+                          "example": "customer_1234567890abcdef"
+                        },
+                        "subscription": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "Polar subscription ID (if applicable)",
+                          "example": "subscription_1234567890abcdef"
+                        }
+                      }
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "Session status",
+                      "example": "complete"
+                    },
+                    "customer": {
+                      "type": "string",
+                      "description": "Polar customer ID",
+                      "example": "customer_1234567890abcdef"
+                    },
+                    "subscription": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Polar subscription ID (if applicable)",
+                      "example": "subscription_1234567890abcdef"
+                    }
+                  },
+                  "required": [
+                    "checkout",
+                    "status",
+                    "customer"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Checkout ID is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Checkout ID is required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to retrieve checkout session"
+                    },
+                    "details": {
+                      "type": "string",
+                      "description": "Error stack trace (development only)",
+                      "example": "Error: No such checkout session..."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/polar/subscription/portal": {
+      "post": {
+        "tags": [
+          "Polar - Subscriptions"
+        ],
+        "summary": "Create customer portal session",
+        "description": "Creates a Polar customer portal session for the authenticated user to manage their subscription, payment methods, and billing history. Automatically redirects back to the billing settings page after completion.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "returnUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL to redirect after portal session (optional)",
+                    "example": "https://example.com/settings/billing"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Customer portal session created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Customer portal session ID",
+                          "example": "session_1234567890abcdef"
+                        },
+                        "url": {
+                          "type": "string",
+                          "format": "uri",
+                          "description": "Customer portal URL",
+                          "example": "https://polar.sh/customer-portal/session_1234567890abcdef"
+                        },
+                        "customer": {
+                          "type": "string",
+                          "description": "Polar customer ID",
+                          "example": "customer_1234567890abcdef"
+                        },
+                        "returnUrl": {
+                          "type": "string",
+                          "format": "uri",
+                          "description": "Return URL after portal session",
+                          "example": "https://example.com/settings/billing"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "url",
+                        "customer",
+                        "returnUrl"
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Customer portal session created"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data",
+                    "message"
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": "session_1234567890abcdef",
+                    "url": "https://polar.sh/customer-portal/session_1234567890abcdef",
+                    "customer": "customer_1234567890abcdef",
+                    "returnUrl": "https://example.com/settings/billing"
+                  },
+                  "message": "Customer portal session created"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found - Polar customer ID not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Polar customer ID not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to create customer portal session"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-portal-features": {
+          "description": "Features available in the customer portal",
+          "features": [
+            "View and download invoices",
+            "Update payment methods",
+            "Change subscription plan",
+            "Cancel subscription",
+            "Update billing address",
+            "View payment history",
+            "Manage subscription settings"
+          ]
+        }
+      }
+    },
+    "/api/polar/webhook": {
+      "post": {
+        "tags": [
+          "Polar - Webhooks"
+        ],
+        "summary": "Handle Polar webhooks",
+        "description": "Processes incoming Polar webhook events including subscription lifecycle, payment events, and checkout updates. Automatically handles email notifications, subscription management, and database updates. Requires valid Polar signature for security.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Polar webhook event payload",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Polar event ID",
+                    "example": "evt_1234567890abcdef"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Webhook event type",
+                    "enum": [
+                      "checkout.succeeded",
+                      "checkout.failed",
+                      "subscription.created",
+                      "subscription.updated",
+                      "subscription.canceled",
+                      "invoice.paid",
+                      "invoice.payment_failed"
+                    ],
+                    "example": "subscription.created"
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "Event data object",
+                    "properties": {
+                      "object": {
+                        "type": "object",
+                        "description": "The Polar object (subscription, checkout, invoice, etc.)"
+                      }
+                    }
+                  },
+                  "created": {
+                    "type": "integer",
+                    "description": "Unix timestamp of event creation",
+                    "example": 1640995200
+                  }
+                },
+                "required": [
+                  "id",
+                  "type",
+                  "data"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "x-polar-signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Polar webhook signature for verification (HMAC SHA256)",
+            "example": "sha256=abc123def456..."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook processed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "received": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  },
+                  "required": [
+                    "received"
+                  ]
+                },
+                "example": {
+                  "received": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid signature or webhook processing failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "examples": {
+                        "no_signature": "No signature provided",
+                        "not_processed": "Webhook not processed",
+                        "processing_failed": "Webhook processing failed"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "no_signature": {
+                    "summary": "Missing signature",
+                    "value": {
+                      "error": "No signature provided"
+                    }
+                  },
+                  "not_processed": {
+                    "summary": "Webhook not processed",
+                    "value": {
+                      "error": "Webhook not processed"
+                    }
+                  },
+                  "processing_failed": {
+                    "summary": "Processing failed",
+                    "value": {
+                      "error": "Webhook processing failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-webhook-events": {
+          "description": "Supported webhook events and their actions",
+          "events": {
+            "checkout.succeeded": {
+              "description": "Records successful checkout and sends confirmation email",
+              "actions": [
+                "database_update",
+                "email_notification"
+              ]
+            },
+            "checkout.failed": {
+              "description": "Records failed checkout and sends failure email",
+              "actions": [
+                "database_update",
+                "email_notification"
+              ]
+            },
+            "subscription.created": {
+              "description": "Creates subscription record and sends welcome email",
+              "actions": [
+                "database_update",
+                "email_notification"
+              ]
+            },
+            "subscription.updated": {
+              "description": "Updates subscription record and sends update email",
+              "actions": [
+                "database_update",
+                "email_notification"
+              ]
+            },
+            "subscription.canceled": {
+              "description": "Marks subscription as cancelled and sends cancellation email",
+              "actions": [
+                "database_update",
+                "email_notification"
+              ]
+            },
+            "invoice.paid": {
+              "description": "Records successful payment and sends receipt email",
+              "actions": [
+                "database_update",
+                "email_notification"
+              ]
+            },
+            "invoice.payment_failed": {
+              "description": "Records failed payment and sends retry email",
+              "actions": [
+                "database_update",
+                "email_notification"
+              ]
+            }
+          }
+        },
+        "x-email-notifications": {
+          "description": "Email notifications sent for different events",
+          "templates": {
+            "welcome": "Sent when subscription is created",
+            "update": "Sent when subscription is updated",
+            "cancellation": "Sent when subscription is cancelled",
+            "payment_success": "Sent when payment succeeds",
+            "payment_failed": "Sent when payment fails"
+          }
+        }
+      }
     }
   },
   "components": {
