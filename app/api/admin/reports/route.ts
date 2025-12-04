@@ -81,8 +81,8 @@ export async function GET(request: Request) {
 		}
 
 		const { searchParams } = new URL(request.url);
-		const page = Math.max(1, Number(searchParams.get('page') || 1));
-		const limit = Math.min(100, Math.max(1, Number(searchParams.get('limit') || 10)));
+		const page = Math.max(1, Number(searchParams.get('page')) || 1);
+		const limit = Math.min(100, Math.max(1, Number(searchParams.get('limit')) || 10));
 		const search = (searchParams.get('search') || '').trim();
 		const status = searchParams.get('status') as ReportStatusValues | null;
 		const contentType = searchParams.get('contentType') as ReportContentTypeValues | null;
