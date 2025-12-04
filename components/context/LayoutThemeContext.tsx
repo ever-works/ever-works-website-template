@@ -195,13 +195,15 @@ const getConfiguredProviders = (): CheckoutProvider[] => {
   }
 
   if (typeof window !== "undefined" &&
-      (process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_VARIANT_ID ||
+      (process.env.NEXT_PUBLIC_LEMONSQUEEZY_FREE_VARIANT_ID ||
+       process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_VARIANT_ID ||
        process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_VARIANT_ID)) {
     providers.push("lemonsqueezy");
   }
 
   if (typeof window !== "undefined" &&
-      (process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID ||
+      (process.env.NEXT_PUBLIC_POLAR_FREE_PLAN_ID ||
+       process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID ||
        process.env.NEXT_PUBLIC_POLAR_PREMIUM_PLAN_ID)) {
     providers.push("polar");
   }

@@ -33,7 +33,7 @@ const MODAL_CLASSES = cn(
 	"ring-1 ring-theme-primary-500/10 dark:ring-theme-primary-400/10",
 	"rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/60",
 	"z-[9999]",
-	"overflow-hidden",
+	"overflow-visible",
 	"transition-all duration-300 ease-out",
 	"animate-fade-in-up"
 );

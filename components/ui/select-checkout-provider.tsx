@@ -158,7 +158,7 @@ const SelectCheckoutProvider: React.FC<SelectCheckoutProviderProps> = ({
 				{/* Select dropdown */}
 				<div className="flex-shrink-0 min-w-[200px]">
 					<Select
-						value={checkoutProvider}
+						selectedKeys={[checkoutProvider]}
 						onChange={handleChange}
 						disabled={disabled}
 						variant="bordered"
@@ -175,11 +175,7 @@ const SelectCheckoutProvider: React.FC<SelectCheckoutProviderProps> = ({
 								key={provider.value}
 								value={provider.value}
 								disabled={!provider.configured}
-								description={
-									provider.configured
-										? provider.description
-										: t('PROVIDER_NOT_CONFIGURED')
-								}
+								description={!provider.configured ? t('PROVIDER_NOT_CONFIGURED') : undefined}
 							>
 								{provider.name}
 							</SelectItem>
