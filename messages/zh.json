@@ -132,6 +132,8 @@
     "MANAGE_TAGS_DESC": "Manage tags",
     "MANAGE_ITEMS_DESC": "Manage items",
     "MANAGE_COMMENTS_DESC": "Manage comments",
+    "REPORTS": "举报",
+    "MANAGE_REPORTS_DESC": "审核和处理被举报的内容",
     "COMPLETED": "已完成",
     "AVAILABLE": "可用",
     "QUESTIONS": "问题",

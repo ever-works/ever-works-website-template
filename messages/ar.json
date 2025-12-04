@@ -132,6 +132,8 @@
     "MANAGE_TAGS_DESC": "Manage tags",
     "MANAGE_ITEMS_DESC": "Manage items",
     "MANAGE_COMMENTS_DESC": "Manage comments",
+    "REPORTS": "البلاغات",
+    "MANAGE_REPORTS_DESC": "مراجعة المحتوى المبلغ عنه وحله",
     "COMPLETED": "مكتمل",
     "AVAILABLE": "متاح",
     "QUESTIONS": "أسئلة",

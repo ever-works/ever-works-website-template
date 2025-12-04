@@ -15,6 +15,7 @@ import {
   Building2,
   FileText,
   Sliders,
+  Flag,
   type LucideIcon
 } from "lucide-react";
 import type { ExtendedUser } from "@/types/profile-button.types";
@@ -181,6 +182,16 @@ function MenuItems({ user, profilePath, onItemClick, onNavigationStart, isNaviga
           gradientFrom="from-blue-100"
           gradientTo="to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30"
           iconColor="text-blue-600 dark:text-blue-400"
+        />
+
+        <MenuItem
+          href="/admin/reports"
+          icon={Flag}
+          title={t("common.REPORTS")}
+          description={t("common.MANAGE_REPORTS_DESC")}
+          gradientFrom="from-red-100"
+          gradientTo="to-orange-100 dark:from-red-900/30 dark:to-orange-900/30"
+          iconColor="text-red-600 dark:text-red-400"
         />
 
         <MenuItem

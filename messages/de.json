@@ -133,6 +133,8 @@
     "MANAGE_TAGS_DESC": "Manage tags",
     "MANAGE_ITEMS_DESC": "Manage items",
     "MANAGE_COMMENTS_DESC": "Manage comments",
+    "REPORTS": "Meldungen",
+    "MANAGE_REPORTS_DESC": "Gemeldete Inhalte überprüfen und bearbeiten",
     "COMPLETED": "Abgeschlossen",
     "AVAILABLE": "Verfügbar",
     "QUESTIONS": "Fragen",

@@ -132,6 +132,8 @@
     "MANAGE_TAGS_DESC": "Gestionar etiquetas",
     "MANAGE_ITEMS_DESC": "Gestionar elementos",
     "MANAGE_COMMENTS_DESC": "Gestionar comentarios",
+    "REPORTS": "Reportes",
+    "MANAGE_REPORTS_DESC": "Revisar y resolver contenido reportado",
     "COMPLETED": "Completado",
     "AVAILABLE": "Disponible",
     "QUESTIONS": "preguntas",
