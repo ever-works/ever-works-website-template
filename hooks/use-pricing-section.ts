@@ -258,7 +258,9 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 				} else if (paymentProvider === PaymentProvider.POLAR) {
 					// Check if the product ID is valid
 					if (!plan.polarProductId) {
-						toast.error('No product ID found for plan');
+						toast.error('No product ID found for plan', {
+							description: `Plan: ${plan.name}, ID: ${plan.id}`
+						});
 						currentProcessingPlanRef.current = null;
 						setProcessingPlan(null);
 						return;
@@ -273,7 +275,9 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 				} else if (paymentProvider === PaymentProvider.STRIPE) {
 					// Create checkout session for Stripe
 					if (!plan.stripeProductId) {
-						toast.error('No product ID found for plan');
+						toast.error('No product ID found for plan', {
+							description: `Plan: ${plan.name}, ID: ${plan.id}`
+						});
 						currentProcessingPlanRef.current = null;
 						setProcessingPlan(null);
 						return;

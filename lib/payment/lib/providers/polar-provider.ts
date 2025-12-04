@@ -21,6 +21,17 @@ import {
 	SubscriptionStatus
 } from '../../types/payment-types';
 import { paymentAccountClient } from '../client/payment-account-client';
+import {
+	getPolarSubscription,
+	cancelSubscriptionImmediately,
+	cancelSubscriptionAtPeriodEnd,
+	reactivatePolarSubscription,
+	validateReactivateInputs,
+	isScheduledForCancellation,
+	createUserFriendlyError,
+	type PolarCancelSubscriptionParams,
+	type PolarReactivateSubscriptionParams
+} from '../utils/polar-subscription-helpers';
 
 /**
  * Custom error class for fatal Polar API errors that should not trigger fallback
@@ -97,6 +108,7 @@ export class PolarProvider implements PaymentProviderInterface {
 	private organizationId?: string;
 	private appUrl?: string;
 	private apiKey: string;
+	private isSandbox: boolean = false;
 
 	constructor(config: PolarConfig) {
 		if (!config.apiKey) {
@@ -104,12 +116,16 @@ export class PolarProvider implements PaymentProviderInterface {
 		}
 
 		this.apiKey = config.apiKey;
+		const isSandbox = process.env.POLAR_SANDBOX === 'true';
+		this.isSandbox = isSandbox;
 		this.polar = new Polar({
-			accessToken: config.apiKey
+			accessToken: config.apiKey,
+			server: isSandbox ? 'sandbox' : 'production'
 		});
 		this.webhookSecret = config.webhookSecret || '';
 		this.organizationId = config.options?.organizationId;
 		this.appUrl = config.options?.appUrl || process.env.NEXT_PUBLIC_APP_URL || '';
+		this.isSandbox = isSandbox;
 
 		if (!this.organizationId) {
 			throw new Error('Polar organization ID is required');
@@ -615,26 +631,118 @@ export class PolarProvider implements PaymentProviderInterface {
 
 	async cancelSubscription(subscriptionId: string, cancelAtPeriodEnd: boolean = true): Promise<SubscriptionInfo> {
 		try {
-			// Note: Adjust API call based on actual Polar SDK documentation
-			const subscription = await (this.polar.subscriptions as any).cancel({
-				id: subscriptionId,
-				cancelAtPeriodEnd: cancelAtPeriodEnd
-			} as any);
+			const subscription = await getPolarSubscription(
+				subscriptionId,
+				this.polar,
+				{
+					formatErrorMessage: this.formatErrorMessage.bind(this),
+					logger: this.logger
+				}
+			);
 
-			return {
-				id: (subscription as any).id || subscriptionId,
-				customerId: (subscription as any).customerId || '',
-				status: this.mapSubscriptionStatus((subscription as any).status || 'canceled'),
-				currentPeriodEnd: (subscription as any).currentPeriodEnd ? new Date((subscription as any).currentPeriodEnd).getTime() / 1000 : undefined,
-				cancelAtPeriodEnd: (subscription as any).cancelAtPeriodEnd || false,
-				priceId: (subscription as any).priceId || ''
+			// Prepare common parameters for utility functions
+			const params: PolarCancelSubscriptionParams = {
+				subscriptionId,
+				apiKey: this.apiKey,
+				apiUrl: this.getPolarApiUrl(),
+				formatErrorMessage: this.formatErrorMessage.bind(this),
+				logger: this.logger
 			};
+
+			// Cancel immediately or at the end of the period
+			if (!cancelAtPeriodEnd) {
+				return await cancelSubscriptionImmediately(subscriptionId, subscription, params);
+			} else {
+				return await cancelSubscriptionAtPeriodEnd(subscriptionId, subscription, params);
+			}
 		} catch (error) {
 			this.logger.error('Failed to cancel Polar subscription', {
 				error: this.formatErrorMessage(error),
-				subscriptionId
+				subscriptionId,
+				cancelAtPeriodEnd
 			});
 			throw new Error(`Failed to cancel subscription: ${this.formatErrorMessage(error)}`);
+		}
+	}
+
+	/**
+	 * Reactivate a cancelled Polar subscription
+	 * Removes the cancellation flag so the subscription continues after the current period
+	 * @param subscriptionId - Polar subscription ID to reactivate
+	 * @returns SubscriptionInfo with updated subscription details
+	 * @throws Error if reactivation fails
+	 */
+	async reactivateSubscription(subscriptionId: string): Promise<SubscriptionInfo> {
+		// Validate inputs
+		validateReactivateInputs(subscriptionId, this.apiKey);
+
+		const normalizedSubscriptionId = subscriptionId.trim();
+
+		this.logger.info('Starting subscription reactivation', {
+			subscriptionId: normalizedSubscriptionId
+		});
+
+		try {
+			// Get the current subscription to validate it exists
+			const currentSubscription = await getPolarSubscription(
+				normalizedSubscriptionId,
+				this.polar,
+				{
+					formatErrorMessage: this.formatErrorMessage.bind(this),
+					logger: this.logger
+				},
+				'reactivation'
+			);
+
+			if (!currentSubscription) {
+				throw new Error(`Subscription not found: ${normalizedSubscriptionId}`);
+			}
+
+			// Check if subscription is actually scheduled for cancellation
+			const isScheduled = isScheduledForCancellation(currentSubscription);
+			if (!isScheduled) {
+				this.logger.warn('Attempted to reactivate subscription that is not scheduled for cancellation', {
+					subscriptionId: normalizedSubscriptionId,
+					status: (currentSubscription as any).status
+				});
+				// Still proceed, as the subscription might already be active
+			}
+
+			// Prepare parameters for reactivation
+			const params: PolarReactivateSubscriptionParams = {
+				subscriptionId: normalizedSubscriptionId,
+				apiKey: this.apiKey,
+				apiUrl: this.getPolarApiUrl(),
+				formatErrorMessage: this.formatErrorMessage.bind(this),
+				logger: this.logger,
+				timeout: 30000
+			};
+
+			// Reactivate the subscription
+			const result = await reactivatePolarSubscription(
+				normalizedSubscriptionId,
+				currentSubscription,
+				params
+			);
+
+			this.logger.info('Subscription reactivated successfully', {
+				subscriptionId: normalizedSubscriptionId,
+				resultStatus: result.status
+			});
+
+			return result;
+		} catch (error) {
+			const errorMessage = this.formatErrorMessage(error);
+			const errorContext = {
+				subscriptionId: normalizedSubscriptionId,
+				error: errorMessage,
+				timestamp: new Date().toISOString()
+			};
+
+			this.logger.error('Failed to reactivate Polar subscription', errorContext);
+
+			// Create user-friendly error message
+			throw createUserFriendlyError(errorMessage, normalizedSubscriptionId);
 		}
 	}
 
@@ -902,12 +1010,17 @@ export class PolarProvider implements PaymentProviderInterface {
 		}
 	}
 
-	/**
+/**
 	 * Gets the Polar API base URL from environment or defaults
+	 * Uses sandbox URL if in sandbox mode, otherwise production
 	 */
-	private getPolarApiUrl(): string {
-		return process.env.POLAR_API_URL || 'https://api.polar.sh';
+private getPolarApiUrl(): string {
+	if (process.env.POLAR_API_URL) {
+		return process.env.POLAR_API_URL;
 	}
+	// Use sandbox URL if sandbox mode is enabled
+	return this.isSandbox ? 'https://sandbox-api.polar.sh' : 'https://api.polar.sh';
+}
 
 	/**
 	 * Creates portal session using Polar REST API directly
