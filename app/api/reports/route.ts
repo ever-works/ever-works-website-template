@@ -124,7 +124,7 @@ export async function POST(request: Request) {
 			contentType: contentType as ReportContentTypeValues,
 			contentId: contentId.trim(),
 			reason: reason as ReportReasonValues,
-			details: details?.trim() || undefined,
+			details: typeof details === 'string' ? details.trim() || undefined : undefined,
 			reportedBy: clientProfile.id
 		});
 
