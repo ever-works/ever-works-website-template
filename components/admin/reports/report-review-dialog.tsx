@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/modal';
 import { Select, SelectItem } from '@/components/ui/select';
@@ -80,6 +80,13 @@ export default function ReportReviewDialog({ report, open, onOpenChange, onUpdat
 	const [status, setStatus] = useState<ReportStatusValues>(report.status);
 	const [resolution, setResolution] = useState<ReportResolutionValues | ''>(report.resolution || '');
 	const [reviewNote, setReviewNote] = useState(report.reviewNote || '');
+
+	// Sync local state when report prop changes (e.g., after update or selecting different report)
+	useEffect(() => {
+		setStatus(report.status);
+		setResolution(report.resolution || '');
+		setReviewNote(report.reviewNote || '');
+	}, [report.id, report.status, report.resolution, report.reviewNote]);
 
 	const handleSubmit = async () => {
 		setIsLoading(true);
