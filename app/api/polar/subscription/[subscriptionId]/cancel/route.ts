@@ -157,13 +157,39 @@ export async function POST(
 
 		// Parse request body for cancelAtPeriodEnd option (defaults to true)
 		let cancelAtPeriodEnd = true;
+		
+		// SECURITY: Check Content-Length to prevent body size limit errors
+		// This endpoint only expects a small JSON object (max 1KB is more than enough)
+		const contentLength = request.headers.get('content-length');
+		if (contentLength) {
+			const sizeInBytes = parseInt(contentLength, 10);
+			const maxSize = 1024; // 1KB limit for this endpoint
+			if (sizeInBytes > maxSize) {
+				return NextResponse.json(
+					{ error: `Request body too large. Maximum size is ${maxSize} bytes.` },
+					{ status: 413 }
+				);
+			}
+		}
+		
 		try {
 			const body = await request.json();
 			if (typeof body.cancelAtPeriodEnd === 'boolean') {
 				cancelAtPeriodEnd = body.cancelAtPeriodEnd;
 			}
-		} catch {
-			// No body provided, use default (cancelAtPeriodEnd = true)
+		} catch (error) {
+			// Handle body size limit errors specifically
+			if (error instanceof Error && (
+				error.message.includes('exceeded') || 
+				error.message.includes('too large') ||
+				error.message.includes('75000')
+			)) {
+				return NextResponse.json(
+					{ error: 'Request body too large' },
+					{ status: 413 }
+				);
+			}
+			// No body provided or invalid JSON, use default (cancelAtPeriodEnd = true)
 		}
 
 		const { subscriptionId } = await params;
