@@ -240,6 +240,10 @@ export async function getClientProfiles(params: {
       totalSubmissions: clientProfiles.totalSubmissions,
       notes: clientProfiles.notes,
       tags: clientProfiles.tags,
+      // Moderation fields
+      warningCount: clientProfiles.warningCount,
+      suspendedAt: clientProfiles.suspendedAt,
+      bannedAt: clientProfiles.bannedAt,
       createdAt: clientProfiles.createdAt,
       updatedAt: clientProfiles.updatedAt,
       // Account fields - use subquery to avoid duplicate rows from multiple accounts
@@ -787,6 +791,10 @@ export async function getAdminDashboardData(params: {
       totalSubmissions: clientProfiles.totalSubmissions,
       notes: clientProfiles.notes,
       tags: clientProfiles.tags,
+      // Moderation fields
+      warningCount: clientProfiles.warningCount,
+      suspendedAt: clientProfiles.suspendedAt,
+      bannedAt: clientProfiles.bannedAt,
       createdAt: clientProfiles.createdAt,
       updatedAt: clientProfiles.updatedAt,
       // Account fields - use subquery to avoid duplicate rows from multiple accounts
@@ -1131,6 +1139,10 @@ export async function advancedClientSearch(params: {
       totalSubmissions: clientProfiles.totalSubmissions,
       notes: clientProfiles.notes,
       tags: clientProfiles.tags,
+      // Moderation fields
+      warningCount: clientProfiles.warningCount,
+      suspendedAt: clientProfiles.suspendedAt,
+      bannedAt: clientProfiles.bannedAt,
       createdAt: clientProfiles.createdAt,
       updatedAt: clientProfiles.updatedAt,
       accountProvider: sql<string>`coalesce(

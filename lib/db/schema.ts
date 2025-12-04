@@ -149,7 +149,7 @@ export const clientProfiles = pgTable(
       enum: ["individual", "business", "enterprise"],
     }).default("individual"),
     status: text("status", {
-      enum: ["active", "inactive", "suspended", "trial"],
+      enum: ["active", "inactive", "suspended", "banned", "trial"],
     }).default("active"),
     plan: text("plan", {
       enum: ["free", "standard", "premium"],
@@ -161,6 +161,10 @@ export const clientProfiles = pgTable(
     totalSubmissions: integer("total_submissions").default(0),
     notes: text("notes"),
     tags: text("tags"),
+    // Moderation fields
+    warningCount: integer("warning_count").default(0),
+    suspendedAt: timestamp("suspended_at", { mode: "date", withTimezone: true }),
+    bannedAt: timestamp("banned_at", { mode: "date", withTimezone: true }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
@@ -767,6 +771,56 @@ export const reports = pgTable('reports', {
 // ######################### Report Types #########################
 export type Report = typeof reports.$inferSelect;
 export type NewReport = typeof reports.$inferInsert;
+
+// ######################### Moderation History Schema #########################
+export const ModerationAction = {
+	WARN: 'warn',
+	SUSPEND: 'suspend',
+	BAN: 'ban',
+	UNSUSPEND: 'unsuspend',
+	UNBAN: 'unban',
+	CONTENT_REMOVED: 'content_removed'
+} as const;
+
+export type ModerationActionValues = (typeof ModerationAction)[keyof typeof ModerationAction];
+
+export const moderationHistory = pgTable('moderation_history', {
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	userId: text('user_id')
+		.notNull()
+		.references(() => clientProfiles.id, { onDelete: 'cascade' }),
+	action: text('action', {
+		enum: [
+			ModerationAction.WARN,
+			ModerationAction.SUSPEND,
+			ModerationAction.BAN,
+			ModerationAction.UNSUSPEND,
+			ModerationAction.UNBAN,
+			ModerationAction.CONTENT_REMOVED
+		]
+	}).notNull(),
+	reason: text('reason'),
+	reportId: text('report_id')
+		.references(() => reports.id, { onDelete: 'set null' }),
+	performedBy: text('performed_by')
+		.references(() => users.id, { onDelete: 'set null' }),
+	contentType: text('content_type', { enum: [ReportContentType.ITEM, ReportContentType.COMMENT] }),
+	contentId: text('content_id'),
+	details: jsonb('details'),
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+}, (table) => ({
+	userIdIndex: index('moderation_history_user_id_idx').on(table.userId),
+	actionIndex: index('moderation_history_action_idx').on(table.action),
+	reportIdIndex: index('moderation_history_report_id_idx').on(table.reportId),
+	performedByIndex: index('moderation_history_performed_by_idx').on(table.performedBy),
+	createdAtIndex: index('moderation_history_created_at_idx').on(table.createdAt),
+}));
+
+// ######################### Moderation History Types #########################
+export type ModerationHistoryRecord = typeof moderationHistory.$inferSelect;
+export type NewModerationHistoryRecord = typeof moderationHistory.$inferInsert;
 
 // ######################### Survey Schema #########################
 

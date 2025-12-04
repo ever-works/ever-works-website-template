@@ -8,6 +8,13 @@ import {
 	type ReportStatusValues,
 	type ReportResolutionValues
 } from '@/lib/db/schema';
+import {
+	removeContent,
+	warnUser,
+	suspendUser,
+	banUser,
+	getContentOwner
+} from '@/lib/services/moderation.service';
 
 export const runtime = 'nodejs';
 
@@ -163,7 +170,7 @@ export async function PUT(
 		const updatedReport = await updateReport(id, {
 			status: status as ReportStatusValues | undefined,
 			resolution: resolution as ReportResolutionValues | undefined,
-			reviewNote: reviewNote?.trim(),
+			reviewNote: typeof reviewNote === 'string' ? reviewNote.trim() || undefined : undefined,
 			reviewedBy: session.user.id
 		});
 
@@ -171,13 +178,63 @@ export async function PUT(
 			return NextResponse.json({ success: false, error: 'Failed to update report' }, { status: 500 });
 		}
 
+		// Execute moderation action based on resolution
+		let moderationResult = null;
+		if (resolution && resolution !== ReportResolution.NO_ACTION) {
+			const adminId = session.user.id!; // Non-null assertion - validated by isAdmin check above
+
+			if (resolution === ReportResolution.CONTENT_REMOVED) {
+				// Remove the reported content
+				moderationResult = await removeContent(
+					existingReport.contentType,
+					existingReport.contentId,
+					id,
+					adminId
+				);
+			} else {
+				// For user actions (warn, suspend, ban), first get the content owner
+				const ownerResult = await getContentOwner(existingReport.contentType, existingReport.contentId);
+
+				if (!ownerResult.success || !ownerResult.userId) {
+					return NextResponse.json(
+						{
+							success: false,
+							error: ownerResult.error || 'Could not identify content owner for moderation action'
+						},
+						{ status: 400 }
+					);
+				}
+
+				const reason = typeof reviewNote === 'string' ? reviewNote.trim() : 'Report violation';
+
+				switch (resolution) {
+					case ReportResolution.USER_WARNED:
+						moderationResult = await warnUser(ownerResult.userId, reason, id, adminId);
+						break;
+					case ReportResolution.USER_SUSPENDED:
+						moderationResult = await suspendUser(ownerResult.userId, reason, id, adminId);
+						break;
+					case ReportResolution.USER_BANNED:
+						moderationResult = await banUser(ownerResult.userId, reason, id, adminId);
+						break;
+				}
+			}
+
+			// Check if moderation action failed
+			if (moderationResult && !moderationResult.success) {
+				// Log the error but don't fail the request since report was updated
+				console.error('Moderation action failed:', moderationResult.error);
+			}
+		}
+
 		// Fetch updated report with full details
 		const reportWithDetails = await getReportById(id);
 
 		return NextResponse.json({
 			success: true,
-			message: 'Report updated successfully',
-			data: reportWithDetails
+			message: moderationResult?.message || 'Report updated successfully',
+			data: reportWithDetails,
+			moderationResult
 		});
 	} catch (error) {
 		if (process.env.NODE_ENV === 'development') {

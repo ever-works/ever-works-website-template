@@ -311,4 +311,223 @@ import { EmailService } from "@/lib/mail";
         };
       }
     }
+
+    // ===================== Moderation Notification Emails =====================
+
+    /**
+     * Send warning notification email to user
+     */
+    static async sendUserWarningEmail(
+      userEmail: string,
+      reason: string,
+      warningCount: number
+    ) {
+      try {
+        const emailService = new EmailService({
+          provider: process.env.EMAIL_PROVIDER || "resend",
+          defaultFrom: process.env.EMAIL_FROM || "info@ever.works",
+          domain: process.env.NEXT_PUBLIC_APP_URL || "https://demo.ever.works",
+          apiKeys: {
+            resend: process.env.RESEND_API_KEY || "",
+            novu: process.env.NOVU_API_KEY || "",
+          },
+        });
+
+        if (!emailService.isServiceAvailable()) {
+          console.warn("[EmailNotification] Skipped - email service not configured");
+          return { success: false, skipped: true, error: "Email service not configured" };
+        }
+
+        const siteName = process.env.NEXT_PUBLIC_APP_NAME || "Ever Works";
+        const subject = `Warning Notice - ${siteName}`;
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #f59e0b;">Warning Notice</h2>
+            <p>You have received a warning on your account.</p>
+            <p><strong>Reason:</strong> ${reason}</p>
+            <p><strong>Total warnings:</strong> ${warningCount}</p>
+            <p style="margin-top: 20px;">Please review our community guidelines to avoid future violations. Repeated violations may result in account suspension or ban.</p>
+            <p style="color: #6b7280; font-size: 12px; margin-top: 30px;">
+              If you believe this was a mistake, please contact our support team.
+            </p>
+          </div>
+        `;
+
+        const result = await emailService.sendCustomEmail({
+          from: process.env.EMAIL_FROM || "info@ever.works",
+          to: userEmail,
+          subject,
+          html,
+          text: `Warning Notice\n\nYou have received a warning on your account.\n\nReason: ${reason}\nTotal warnings: ${warningCount}\n\nPlease review our community guidelines to avoid future violations.`,
+        });
+
+        return { success: true, messageId: result.messageId };
+      } catch (error) {
+        console.error("Error sending user warning email:", error);
+        return { success: false, error: "Failed to send email notification" };
+      }
+    }
+
+    /**
+     * Send suspension notification email to user
+     */
+    static async sendUserSuspensionEmail(
+      userEmail: string,
+      reason: string
+    ) {
+      try {
+        const emailService = new EmailService({
+          provider: process.env.EMAIL_PROVIDER || "resend",
+          defaultFrom: process.env.EMAIL_FROM || "info@ever.works",
+          domain: process.env.NEXT_PUBLIC_APP_URL || "https://demo.ever.works",
+          apiKeys: {
+            resend: process.env.RESEND_API_KEY || "",
+            novu: process.env.NOVU_API_KEY || "",
+          },
+        });
+
+        if (!emailService.isServiceAvailable()) {
+          console.warn("[EmailNotification] Skipped - email service not configured");
+          return { success: false, skipped: true, error: "Email service not configured" };
+        }
+
+        const siteName = process.env.NEXT_PUBLIC_APP_NAME || "Ever Works";
+        const subject = `Account Suspended - ${siteName}`;
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #ef4444;">Account Suspended</h2>
+            <p>Your account has been suspended due to a violation of our community guidelines.</p>
+            <p><strong>Reason:</strong> ${reason}</p>
+            <p style="margin-top: 20px;">While suspended, you will not be able to:</p>
+            <ul>
+              <li>Submit new items</li>
+              <li>Post comments</li>
+              <li>Vote on content</li>
+            </ul>
+            <p style="color: #6b7280; font-size: 12px; margin-top: 30px;">
+              If you believe this was a mistake, please contact our support team to appeal this decision.
+            </p>
+          </div>
+        `;
+
+        const result = await emailService.sendCustomEmail({
+          from: process.env.EMAIL_FROM || "info@ever.works",
+          to: userEmail,
+          subject,
+          html,
+          text: `Account Suspended\n\nYour account has been suspended due to a violation of our community guidelines.\n\nReason: ${reason}\n\nWhile suspended, you will not be able to submit new items, post comments, or vote on content.\n\nIf you believe this was a mistake, please contact our support team.`,
+        });
+
+        return { success: true, messageId: result.messageId };
+      } catch (error) {
+        console.error("Error sending user suspension email:", error);
+        return { success: false, error: "Failed to send email notification" };
+      }
+    }
+
+    /**
+     * Send ban notification email to user
+     */
+    static async sendUserBanEmail(
+      userEmail: string,
+      reason: string
+    ) {
+      try {
+        const emailService = new EmailService({
+          provider: process.env.EMAIL_PROVIDER || "resend",
+          defaultFrom: process.env.EMAIL_FROM || "info@ever.works",
+          domain: process.env.NEXT_PUBLIC_APP_URL || "https://demo.ever.works",
+          apiKeys: {
+            resend: process.env.RESEND_API_KEY || "",
+            novu: process.env.NOVU_API_KEY || "",
+          },
+        });
+
+        if (!emailService.isServiceAvailable()) {
+          console.warn("[EmailNotification] Skipped - email service not configured");
+          return { success: false, skipped: true, error: "Email service not configured" };
+        }
+
+        const siteName = process.env.NEXT_PUBLIC_APP_NAME || "Ever Works";
+        const subject = `Account Banned - ${siteName}`;
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #dc2626;">Account Banned</h2>
+            <p>Your account has been permanently banned due to serious violations of our community guidelines.</p>
+            <p><strong>Reason:</strong> ${reason}</p>
+            <p style="margin-top: 20px;">This action is permanent and you will no longer be able to access your account or participate in our community.</p>
+            <p style="color: #6b7280; font-size: 12px; margin-top: 30px;">
+              If you believe this was made in error, you may contact our support team, but reinstatement is not guaranteed.
+            </p>
+          </div>
+        `;
+
+        const result = await emailService.sendCustomEmail({
+          from: process.env.EMAIL_FROM || "info@ever.works",
+          to: userEmail,
+          subject,
+          html,
+          text: `Account Banned\n\nYour account has been permanently banned due to serious violations of our community guidelines.\n\nReason: ${reason}\n\nThis action is permanent and you will no longer be able to access your account.\n\nIf you believe this was made in error, you may contact our support team.`,
+        });
+
+        return { success: true, messageId: result.messageId };
+      } catch (error) {
+        console.error("Error sending user ban email:", error);
+        return { success: false, error: "Failed to send email notification" };
+      }
+    }
+
+    /**
+     * Send content removed notification email to user
+     */
+    static async sendContentRemovedEmail(
+      userEmail: string,
+      contentType: "item" | "comment",
+      reason: string
+    ) {
+      try {
+        const emailService = new EmailService({
+          provider: process.env.EMAIL_PROVIDER || "resend",
+          defaultFrom: process.env.EMAIL_FROM || "info@ever.works",
+          domain: process.env.NEXT_PUBLIC_APP_URL || "https://demo.ever.works",
+          apiKeys: {
+            resend: process.env.RESEND_API_KEY || "",
+            novu: process.env.NOVU_API_KEY || "",
+          },
+        });
+
+        if (!emailService.isServiceAvailable()) {
+          console.warn("[EmailNotification] Skipped - email service not configured");
+          return { success: false, skipped: true, error: "Email service not configured" };
+        }
+
+        const siteName = process.env.NEXT_PUBLIC_APP_NAME || "Ever Works";
+        const contentLabel = contentType === "item" ? "submission" : "comment";
+        const subject = `Content Removed - ${siteName}`;
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #6b7280;">Content Removed</h2>
+            <p>Your ${contentLabel} has been removed from our platform.</p>
+            <p><strong>Reason:</strong> ${reason}</p>
+            <p style="margin-top: 20px;">This action was taken because the content violated our community guidelines.</p>
+            <p style="color: #6b7280; font-size: 12px; margin-top: 30px;">
+              Please review our guidelines before posting again. Repeated violations may result in account restrictions.
+            </p>
+          </div>
+        `;
+
+        const result = await emailService.sendCustomEmail({
+          from: process.env.EMAIL_FROM || "info@ever.works",
+          to: userEmail,
+          subject,
+          html,
+          text: `Content Removed\n\nYour ${contentLabel} has been removed from our platform.\n\nReason: ${reason}\n\nPlease review our guidelines before posting again.`,
+        });
+
+        return { success: true, messageId: result.messageId };
+      } catch (error) {
+        console.error("Error sending content removed email:", error);
+        return { success: false, error: "Failed to send email notification" };
+      }
+    }
   }

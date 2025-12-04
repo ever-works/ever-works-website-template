@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getCommentsByItemId, createComment, getClientProfileByUserId } from "@/lib/db/queries";
+import { isUserBlocked, getBlockReasonMessage } from "@/lib/db/queries/moderation.queries";
 import { checkDatabaseAvailability } from "@/lib/utils/database-check";
 
 /**
@@ -376,6 +377,14 @@ export async function POST(
       return NextResponse.json(
         { success: false, error: "Client profile not found" },
         { status: 404 }
+      );
+    }
+
+    // Check if user is blocked (suspended or banned)
+    if (isUserBlocked(clientProfile.status)) {
+      return NextResponse.json(
+        { success: false, error: getBlockReasonMessage(clientProfile.status) },
+        { status: 403 }
       );
     }
 
