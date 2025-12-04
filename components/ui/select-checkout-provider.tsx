@@ -85,8 +85,8 @@ const SelectCheckoutProvider: React.FC<SelectCheckoutProviderProps> = ({
 
 	return (
 		<div className={cn(
-			// Structure
-			'group p-5 rounded-xl',
+			// Structure - relative z-10 to ensure dropdown appears above sibling sections
+			'group p-5 rounded-xl relative z-10',
 
 			// Purple/pink gradient - payment/checkout theme
 			'bg-gradient-to-br from-purple-50/80 via-pink-50/60 to-rose-50/40',
@@ -167,7 +167,7 @@ const SelectCheckoutProvider: React.FC<SelectCheckoutProviderProps> = ({
 						classNames={{
 							trigger: 'bg-white dark:bg-gray-800 border-purple-200 dark:border-purple-700',
 							value: 'text-gray-900 dark:text-gray-100',
-							popover: 'max-h-[200px]',
+							popover: 'z-[1000]',
 						}}
 					>
 						{allProviders.map((provider) => (
