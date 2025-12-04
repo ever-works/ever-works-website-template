@@ -167,6 +167,7 @@ const SelectCheckoutProvider: React.FC<SelectCheckoutProviderProps> = ({
 						classNames={{
 							trigger: 'bg-white dark:bg-gray-800 border-purple-200 dark:border-purple-700',
 							value: 'text-gray-900 dark:text-gray-100',
+							popover: 'max-h-[200px]',
 						}}
 					>
 						{allProviders.map((provider) => (
@@ -174,23 +175,13 @@ const SelectCheckoutProvider: React.FC<SelectCheckoutProviderProps> = ({
 								key={provider.value}
 								value={provider.value}
 								disabled={!provider.configured}
-								startContent={
-									<span className="text-lg">{provider.icon}</span>
-								}
 								description={
 									provider.configured
 										? provider.description
 										: t('PROVIDER_NOT_CONFIGURED')
 								}
 							>
-								<div className="flex items-center gap-2">
-									<span>{provider.name}</span>
-									{!provider.configured && (
-										<span className="text-xs text-gray-500 dark:text-gray-400">
-											({t('NOT_CONFIGURED')})
-										</span>
-									)}
-								</div>
+								{provider.name}
 							</SelectItem>
 						))}
 					</Select>
