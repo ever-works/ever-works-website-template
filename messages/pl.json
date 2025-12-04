@@ -466,6 +466,14 @@
     "DATABASE_MODE_ENABLED": "Database features enabled",
     "DATABASE_MODE_DISABLED": "Database features disabled",
     "SETTINGS_SAVED_AUTOMATICALLY": "Settings saved automatically",
+    "CHECKOUT_PROVIDER": "Dostawca płatności",
+    "CHECKOUT_PROVIDER_DESC": "Wybierz preferowane doświadczenie płatności dla subskrypcji",
+    "CHECKOUT_PROVIDER_CHANGED": "Dostawca płatności zmieniony na {provider}",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED": "{provider} nie jest skonfigurowany",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED_DESC": "Ten dostawca nie został skonfigurowany. Skontaktuj się z pomocą techniczną lub wybierz inną opcję.",
+    "NO_CHECKOUT_PROVIDERS_CONFIGURED": "Nie skonfigurowano żadnych dostawców płatności. Funkcje płatności będą niedostępne.",
+    "PROVIDER_NOT_CONFIGURED": "Nie skonfigurowano",
+    "NOT_CONFIGURED": "nie skonfigurowano",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Basic Information",

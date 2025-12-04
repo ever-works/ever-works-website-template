@@ -466,6 +466,14 @@
     "DATABASE_MODE_ENABLED": "Database features enabled",
     "DATABASE_MODE_DISABLED": "Database features disabled",
     "SETTINGS_SAVED_AUTOMATICALLY": "Settings saved automatically",
+    "CHECKOUT_PROVIDER": "決済プロバイダー",
+    "CHECKOUT_PROVIDER_DESC": "サブスクリプションのお好みの決済方法を選択してください",
+    "CHECKOUT_PROVIDER_CHANGED": "決済プロバイダーが{provider}に変更されました",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED": "{provider}は設定されていません",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED_DESC": "このプロバイダーは設定されていません。サポートに連絡するか、別のオプションを選択してください。",
+    "NO_CHECKOUT_PROVIDERS_CONFIGURED": "決済プロバイダーが設定されていません。決済機能は利用できません。",
+    "PROVIDER_NOT_CONFIGURED": "未設定",
+    "NOT_CONFIGURED": "未設定",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Basic Information",

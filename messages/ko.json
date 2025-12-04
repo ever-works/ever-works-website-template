@@ -466,6 +466,14 @@
     "DATABASE_MODE_ENABLED": "Database features enabled",
     "DATABASE_MODE_DISABLED": "Database features disabled",
     "SETTINGS_SAVED_AUTOMATICALLY": "Settings saved automatically",
+    "CHECKOUT_PROVIDER": "결제 제공업체",
+    "CHECKOUT_PROVIDER_DESC": "구독에 대한 선호하는 결제 경험을 선택하세요",
+    "CHECKOUT_PROVIDER_CHANGED": "결제 제공업체가 {provider}(으)로 변경되었습니다",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED": "{provider}이(가) 구성되지 않았습니다",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED_DESC": "이 제공업체는 설정되지 않았습니다. 지원팀에 문의하거나 다른 옵션을 선택하세요.",
+    "NO_CHECKOUT_PROVIDERS_CONFIGURED": "결제 제공업체가 구성되지 않았습니다. 결제 기능을 사용할 수 없습니다.",
+    "PROVIDER_NOT_CONFIGURED": "구성되지 않음",
+    "NOT_CONFIGURED": "구성되지 않음",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Basic Information",
