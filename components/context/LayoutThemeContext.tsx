@@ -24,7 +24,7 @@ export type PaginationType = "standard" | "infinite";
 
 export type ContainerWidth = "fixed" | "fluid";
 export type DatabaseSimulationMode = "enabled" | "disabled";
-export type CheckoutProvider = "stripe" | "lemonsqueezy" | "polar";
+export type CheckoutProvider = "stripe" | "lemonsqueezy" | "polar" | "solidgate";
 
 const DEFAULT_DATABASE_SIMULATION_MODE: DatabaseSimulationMode = "enabled";
 const DEFAULT_LAYOUT_HOME: LayoutHome = LayoutHome.HOME_ONE;
@@ -212,7 +212,7 @@ const getConfiguredProviders = (): CheckoutProvider[] => {
 };
 
 const isValidCheckoutProvider = (provider: string): provider is CheckoutProvider => {
-  return provider === "stripe" || provider === "lemonsqueezy" || provider === "polar";
+  return provider === "stripe" || provider === "lemonsqueezy" || provider === "polar" || provider === "solidgate";
 };
 
 // Context

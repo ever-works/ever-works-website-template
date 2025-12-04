@@ -33,6 +33,12 @@ const PROVIDER_INFO = {
 		color: 'from-cyan-500 to-blue-600',
 		description: 'Modern payment platform',
 	},
+	solidgate: {
+		name: 'Solidgate',
+		icon: '',
+		color: 'from-emerald-500 to-teal-600',
+		description: 'Secure payment gateway',
+	},
 } as const;
 
 const SelectCheckoutProvider: React.FC<SelectCheckoutProviderProps> = ({
@@ -47,7 +53,7 @@ const SelectCheckoutProvider: React.FC<SelectCheckoutProviderProps> = ({
 	};
 
 	const allProviders = useMemo(() => {
-		return (['stripe', 'lemonsqueezy', 'polar'] as CheckoutProvider[]).map(provider => ({
+		return (['stripe', 'lemonsqueezy', 'polar', 'solidgate'] as CheckoutProvider[]).map(provider => ({
 			value: provider,
 			...PROVIDER_INFO[provider],
 			configured: isProviderConfigured(provider),
