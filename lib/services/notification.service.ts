@@ -4,10 +4,10 @@ import { eq, and } from "drizzle-orm";
 
 export interface CreateNotificationData {
   userId: string;
-  type: "item_submission" | "comment_reported" | "user_registered" | "payment_failed" | "system_alert";
+  type: "item_submission" | "comment_reported" | "item_reported" | "user_registered" | "payment_failed" | "system_alert";
   title: string;
   message: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }
 
 export interface NotificationStats {
@@ -93,6 +93,33 @@ export class NotificationService {
   }
 
   /**
+   * Create notification for reported item
+   */
+  static async createItemReportedNotification(
+    adminUserId: string,
+    reportId: string,
+    itemId: string,
+    itemName: string,
+    reportedBy: string,
+    reason: string
+  ) {
+    return this.create({
+      userId: adminUserId,
+      type: "item_reported",
+      title: "Item Reported",
+      message: `The item "${itemName}" has been reported for ${reason} by ${reportedBy}.`,
+      data: {
+        reportId,
+        itemId,
+        itemName,
+        reportedBy,
+        reason,
+        actionUrl: `/admin/reports`,
+      },
+    });
+  }
+
+  /**
    * Create notification for new user registration
    */
   static async createUserRegisteredNotification(
@@ -145,7 +172,7 @@ export class NotificationService {
     adminUserId: string,
     title: string,
     message: string,
-    data?: Record<string, any>
+    data?: Record<string, unknown>
   ) {
     return this.create({
       userId: adminUserId,

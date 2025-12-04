@@ -26,6 +26,9 @@ export * from './newsletter.queries';
 // Payment queries
 export * from './payment.queries';
 
+// Report queries
+export * from './report.queries';
+
 // Subscription queries
 export * from './subscription.queries';
 

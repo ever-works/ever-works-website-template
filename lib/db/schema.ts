@@ -452,7 +452,7 @@ export const notifications = pgTable("notifications", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  type: text("type", { enum: ["item_submission", "comment_reported", "user_registered", "payment_failed", "system_alert"] }).notNull(),
+  type: text("type", { enum: ["item_submission", "comment_reported", "item_reported", "user_registered", "payment_failed", "system_alert"] }).notNull(),
   title: text("title").notNull(),
   message: text("message").notNull(),
   data: text("data"), 
@@ -696,6 +696,78 @@ export const itemsCompanies = pgTable("items_companies", {
 // ######################### Items Companies Types #########################
 export type ItemCompany = typeof itemsCompanies.$inferSelect;
 export type NewItemCompany = typeof itemsCompanies.$inferInsert;
+
+// ######################### Report Schema #########################
+export const ReportContentType = {
+	ITEM: 'item',
+	COMMENT: 'comment'
+} as const;
+
+export type ReportContentTypeValues = (typeof ReportContentType)[keyof typeof ReportContentType];
+
+export const ReportReason = {
+	SPAM: 'spam',
+	HARASSMENT: 'harassment',
+	INAPPROPRIATE: 'inappropriate',
+	OTHER: 'other'
+} as const;
+
+export type ReportReasonValues = (typeof ReportReason)[keyof typeof ReportReason];
+
+export const ReportStatus = {
+	PENDING: 'pending',
+	REVIEWED: 'reviewed',
+	RESOLVED: 'resolved',
+	DISMISSED: 'dismissed'
+} as const;
+
+export type ReportStatusValues = (typeof ReportStatus)[keyof typeof ReportStatus];
+
+export const ReportResolution = {
+	CONTENT_REMOVED: 'content_removed',
+	USER_WARNED: 'user_warned',
+	USER_SUSPENDED: 'user_suspended',
+	USER_BANNED: 'user_banned',
+	NO_ACTION: 'no_action'
+} as const;
+
+export type ReportResolutionValues = (typeof ReportResolution)[keyof typeof ReportResolution];
+
+export const reports = pgTable('reports', {
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	contentType: text('content_type', { enum: [ReportContentType.ITEM, ReportContentType.COMMENT] }).notNull(),
+	contentId: text('content_id').notNull(),
+	reason: text('reason', { enum: [ReportReason.SPAM, ReportReason.HARASSMENT, ReportReason.INAPPROPRIATE, ReportReason.OTHER] }).notNull(),
+	details: text('details'),
+	status: text('status', { enum: [ReportStatus.PENDING, ReportStatus.REVIEWED, ReportStatus.RESOLVED, ReportStatus.DISMISSED] })
+		.notNull()
+		.default(ReportStatus.PENDING),
+	resolution: text('resolution', { enum: [ReportResolution.CONTENT_REMOVED, ReportResolution.USER_WARNED, ReportResolution.USER_SUSPENDED, ReportResolution.USER_BANNED, ReportResolution.NO_ACTION] }),
+	reportedBy: text('reported_by')
+		.notNull()
+		.references(() => clientProfiles.id, { onDelete: 'cascade' }),
+	reviewedBy: text('reviewed_by')
+		.references(() => users.id, { onDelete: 'set null' }),
+	reviewNote: text('review_note'),
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+	updatedAt: timestamp('updated_at').notNull().defaultNow(),
+	reviewedAt: timestamp('reviewed_at'),
+	resolvedAt: timestamp('resolved_at')
+}, (table) => ({
+	contentTypeIndex: index('reports_content_type_idx').on(table.contentType),
+	contentIdIndex: index('reports_content_id_idx').on(table.contentId),
+	statusIndex: index('reports_status_idx').on(table.status),
+	reportedByIndex: index('reports_reported_by_idx').on(table.reportedBy),
+	createdAtIndex: index('reports_created_at_idx').on(table.createdAt),
+	contentTypeContentIdIndex: index('reports_content_type_content_id_idx').on(table.contentType, table.contentId)
+}));
+
+// ######################### Report Types #########################
+export type Report = typeof reports.$inferSelect;
+export type NewReport = typeof reports.$inferInsert;
+
 // ######################### Survey Schema #########################
 
 export const surveys = pgTable(

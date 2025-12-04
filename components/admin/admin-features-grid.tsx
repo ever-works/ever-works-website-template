@@ -1,4 +1,4 @@
-import { Users, FileText, BarChart3, FolderTree, Tag, Package, Shield, Building2, MessageSquare, Star } from "lucide-react";
+import { Users, FileText, BarChart3, FolderTree, Tag, Package, Shield, Building2, MessageSquare, Star, Flag } from "lucide-react";
 import { AdminFeatureCard } from "./admin-feature-card";
 import { AdminFeature } from "./types";
 
@@ -51,6 +51,13 @@ const ADMIN_FEATURES: AdminFeature[] = [
     description: "Review and delete user comments.",
     href: "/admin/comments",
     emoji: "💬"
+  },
+  {
+    icon: Flag,
+    title: "Manage Reports",
+    description: "Review and resolve reported content.",
+    href: "/admin/reports",
+    emoji: "🚩"
   },
   {
     icon: Building2,
