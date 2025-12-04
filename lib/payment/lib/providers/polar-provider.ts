@@ -125,7 +125,6 @@ export class PolarProvider implements PaymentProviderInterface {
 		this.webhookSecret = config.webhookSecret || '';
 		this.organizationId = config.options?.organizationId;
 		this.appUrl = config.options?.appUrl || process.env.NEXT_PUBLIC_APP_URL || '';
-		this.isSandbox = isSandbox;
 
 		if (!this.organizationId) {
 			throw new Error('Polar organization ID is required');
