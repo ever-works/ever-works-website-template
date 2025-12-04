@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/modal';
-import { Select, SelectItem, Textarea } from '@heroui/react';
+import { Textarea } from '@heroui/react';
+import { Select, SelectItem } from '@/components/ui/select';
 import { Flag, X, Loader2, User, Calendar, FileText, CheckCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { ReportStatus, ReportResolution } from '@/lib/db/schema';
@@ -194,13 +195,15 @@ export default function ReportReviewDialog({ report, open, onOpenChange, onUpdat
 								<Select
 									selectedKeys={[status]}
 									onSelectionChange={(keys) => {
-										const value = Array.from(keys)[0] as ReportStatusValues;
-										setStatus(value);
+										const value = keys[0] as ReportStatusValues;
+										if (value) setStatus(value);
 									}}
 									className="w-full"
 								>
 									{STATUS_OPTIONS.map((option) => (
-										<SelectItem key={option.value}>{option.label}</SelectItem>
+										<SelectItem key={option.value} value={option.value}>
+											{option.label}
+										</SelectItem>
 									))}
 								</Select>
 							</div>
@@ -212,17 +215,14 @@ export default function ReportReviewDialog({ report, open, onOpenChange, onUpdat
 									placeholder={t('SELECT_RESOLUTION')}
 									selectedKeys={resolution ? [resolution] : []}
 									onSelectionChange={(keys) => {
-										const value = Array.from(keys)[0] as ReportResolutionValues | undefined;
+										const value = keys[0] as ReportResolutionValues | undefined;
 										setResolution(value || '');
 									}}
 									className="w-full"
 								>
 									{RESOLUTION_OPTIONS.map((option) => (
-										<SelectItem key={option.value} textValue={option.label}>
-											<div className="flex flex-col">
-												<span className="font-medium">{option.label}</span>
-												<span className="text-xs text-gray-500">{option.description}</span>
-											</div>
+										<SelectItem key={option.value} value={option.value} description={option.description}>
+											{option.label}
 										</SelectItem>
 									))}
 								</Select>
