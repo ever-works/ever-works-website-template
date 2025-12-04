@@ -26451,20 +26451,20 @@
                         "id": {
                           "type": "string",
                           "description": "Customer portal session ID",
-                          "example": "session_1234567890abcdef"
+                          "example": "cs_1234567890abcdef"
                         },
                         "url": {
                           "type": "string",
                           "format": "uri",
                           "description": "Customer portal URL",
-                          "example": "https://polar.sh/customer-portal/session_1234567890abcdef"
+                          "example": "https://polar.sh/customer/session/abc123def456"
                         },
                         "customer": {
                           "type": "string",
                           "description": "Polar customer ID",
-                          "example": "customer_1234567890abcdef"
+                          "example": "cus_1234567890abcdef"
                         },
-                        "returnUrl": {
+                        "return_url": {
                           "type": "string",
                           "format": "uri",
                           "description": "Return URL after portal session",
@@ -26475,7 +26475,7 @@
                         "id",
                         "url",
                         "customer",
-                        "returnUrl"
+                        "return_url"
                       ]
                     },
                     "message": {

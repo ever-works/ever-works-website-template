@@ -160,7 +160,7 @@ const SelectCheckoutProvider: React.FC<SelectCheckoutProviderProps> = ({
 					<Select
 						value={checkoutProvider}
 						onChange={handleChange}
-						disabled={disabled || noProvidersConfigured}
+						disabled={disabled}
 						variant="bordered"
 						size="md"
 						className="w-full"
