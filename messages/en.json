@@ -466,6 +466,14 @@
     "DATABASE_MODE_ENABLED": "Database features enabled",
     "DATABASE_MODE_DISABLED": "Database features disabled",
     "SETTINGS_SAVED_AUTOMATICALLY": "Settings saved automatically",
+    "CHECKOUT_PROVIDER": "Payment Provider",
+    "CHECKOUT_PROVIDER_DESC": "Choose your preferred checkout experience for subscriptions",
+    "CHECKOUT_PROVIDER_CHANGED": "Payment provider changed to {provider}",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED": "{provider} is not configured",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED_DESC": "This provider hasn't been set up. Contact support or choose another option.",
+    "NO_CHECKOUT_PROVIDERS_CONFIGURED": "No payment providers are configured. Payment features will be unavailable.",
+    "PROVIDER_NOT_CONFIGURED": "Not configured",
+    "NOT_CONFIGURED": "not configured",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Basic Information",

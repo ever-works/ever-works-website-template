@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import SelectContainerWidth from "@/components/ui/select-container-width";
 import SelectPaginationType from "@/components/ui/select-pagination-type";
 import SelectDatabaseMode from "@/components/ui/select-database-mode";
+import SelectCheckoutProvider from "@/components/ui/select-checkout-provider";
 import { DatabaseStatusWarning } from "@/components/ui/database-status-warning";
 import { useFocusManagement } from "@/components/ui/accessibility";
 
@@ -125,6 +126,9 @@ export function SettingsModal() {
 
 					{/* Database Features Section */}
 					<SelectDatabaseMode />
+
+					{/* Checkout Provider Selection */}
+					<SelectCheckoutProvider />
 
 					{/* Database Status Warning - Only shows when DB not configured */}
 					<DatabaseStatusWarning className="mt-3" />
