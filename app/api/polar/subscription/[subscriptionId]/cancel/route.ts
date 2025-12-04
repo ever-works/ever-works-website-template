@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, getOrCreatePolarProvider } from '@/lib/auth';
+import { getPolarSubscription } from '@/lib/payment/lib/utils/polar-subscription-helpers';
 
 /**
  * @swagger
@@ -170,7 +171,71 @@ export async function POST(
 		// Get or create Polar provider
 		const polarProvider = getOrCreatePolarProvider();
 
-		// Cancel subscription via Polar API
+		// SECURITY: Verify subscription ownership before cancellation (IDOR protection)
+		// Get the user's Polar customer ID
+		const userPolarCustomerId = await polarProvider.getCustomerId(session.user as any);
+		if (!userPolarCustomerId) {
+			return NextResponse.json(
+				{ error: 'Unable to verify subscription ownership. Please contact support.' },
+				{ status: 403 }
+			);
+		}
+
+		// Get the subscription to verify ownership
+		// Access the internal polar client for direct subscription retrieval
+		const polarClient = (polarProvider as any).polar;
+		if (!polarClient) {
+			return NextResponse.json(
+				{ error: 'Internal error: Unable to verify subscription ownership' },
+				{ status: 500 }
+			);
+		}
+
+		try {
+			const subscription = await getPolarSubscription(
+				subscriptionId,
+				polarClient,
+				{
+					formatErrorMessage: (error: unknown) => {
+						if (error instanceof Error) return error.message;
+						return String(error);
+					},
+					logger: {
+						error: () => {},
+						warn: () => {},
+						info: () => {}
+					}
+				},
+				'ownership verification'
+			);
+			
+			// Extract customerId from subscription (handle different response formats)
+			const subscriptionCustomerId = 
+				(subscription as any)?.customer?.id || 
+				(subscription as any)?.customerId || 
+				'';
+			
+			// Verify that the subscription belongs to the authenticated user
+			if (!subscriptionCustomerId || subscriptionCustomerId !== userPolarCustomerId) {
+				return NextResponse.json(
+					{ error: 'Subscription not found or access denied' },
+					{ status: 404 }
+				);
+			}
+		} catch (error) {
+			// If subscription doesn't exist or can't be retrieved, return 404
+			const errorMessage = error instanceof Error ? error.message : String(error);
+			if (errorMessage.includes('not found') || errorMessage.includes('404')) {
+				return NextResponse.json(
+					{ error: 'Subscription not found or access denied' },
+					{ status: 404 }
+				);
+			}
+			// For other errors, rethrow to be handled by outer catch
+			throw error;
+		}
+
+		// Cancel subscription via Polar API (ownership verified)
 		const cancelledSubscription = await polarProvider.cancelSubscription(
 			subscriptionId,
 			cancelAtPeriodEnd
