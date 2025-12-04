@@ -149,6 +149,22 @@ export async function POST(
 	{ params }: { params: Promise<{ subscriptionId: string }> }
 ) {
 	try {
+		// SECURITY: Check Content-Length FIRST, before any other operations
+		// This endpoint only expects a small JSON object (max 1KB is more than enough)
+		// This prevents Next.js from trying to parse a body that exceeds the 75MB default limit
+		const contentLength = request.headers.get('content-length');
+		const maxSize = 1024; // 1KB limit for this endpoint
+		
+		if (contentLength) {
+			const sizeInBytes = parseInt(contentLength, 10);
+			if (!isNaN(sizeInBytes) && sizeInBytes > maxSize) {
+				return NextResponse.json(
+					{ error: `Request body too large. Maximum size is ${maxSize} bytes.` },
+					{ status: 413 }
+				);
+			}
+		}
+
 		const session = await auth();
 
 		if (!session?.user) {
@@ -158,24 +174,13 @@ export async function POST(
 		// Parse request body for cancelAtPeriodEnd option (defaults to true)
 		let cancelAtPeriodEnd = true;
 		
-		// SECURITY: Check Content-Length to prevent body size limit errors
-		// This endpoint only expects a small JSON object (max 1KB is more than enough)
-		const contentLength = request.headers.get('content-length');
-		if (contentLength) {
-			const sizeInBytes = parseInt(contentLength, 10);
-			const maxSize = 1024; // 1KB limit for this endpoint
-			if (sizeInBytes > maxSize) {
-				return NextResponse.json(
-					{ error: `Request body too large. Maximum size is ${maxSize} bytes.` },
-					{ status: 413 }
-				);
-			}
-		}
-		
 		try {
-			const body = await request.json();
-			if (typeof body.cancelAtPeriodEnd === 'boolean') {
-				cancelAtPeriodEnd = body.cancelAtPeriodEnd;
+			// Only try to parse body if Content-Length indicates there is one
+			if (contentLength && contentLength !== '0') {
+				const body = await request.json();
+				if (typeof body.cancelAtPeriodEnd === 'boolean') {
+					cancelAtPeriodEnd = body.cancelAtPeriodEnd;
+				}
 			}
 		} catch (error) {
 			// Handle body size limit errors specifically
@@ -185,11 +190,11 @@ export async function POST(
 				error.message.includes('75000')
 			)) {
 				return NextResponse.json(
-					{ error: 'Request body too large' },
+					{ error: 'Request body too large. Maximum size is 1024 bytes.' },
 					{ status: 413 }
 				);
 			}
-			// No body provided or invalid JSON, use default (cancelAtPeriodEnd = true)
+			// Invalid JSON or other parsing error, use default (cancelAtPeriodEnd = true)
 		}
 
 		const { subscriptionId } = await params;
