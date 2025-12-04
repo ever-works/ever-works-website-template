@@ -133,6 +133,8 @@
     "MANAGE_TAGS_DESC": "Manage tags",
     "MANAGE_ITEMS_DESC": "Manage items",
     "MANAGE_COMMENTS_DESC": "Manage comments",
+    "REPORTS": "Жалобы",
+    "MANAGE_REPORTS_DESC": "Просмотр и обработка жалоб на контент",
     "COMPLETED": "Completed",
     "AVAILABLE": "Available",
     "QUESTIONS": "Questions",
@@ -2179,6 +2181,52 @@
       "SHOWING_RANGE": "Showing {start} to {end} of {total} comments",
       "PAGE_OF": "Page {current} of {total}",
       "PER_PAGE": "per page"
+    },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "Управление жалобами",
+      "SUBTITLE": "Просмотр и обработка жалоб на контент",
+      "PENDING": "ожидает",
+      "TOTAL_REPORTS": "Всего жалоб",
+      "RESOLVED": "Решено",
+      "BY_ITEMS": "Жалобы на элементы",
+      "SEARCH_PLACEHOLDER": "Поиск жалоб...",
+      "FILTERS": "Фильтры",
+      "STATUS": "Статус",
+      "CONTENT_TYPE": "Тип",
+      "REASON": "Причина",
+      "CLEAR_ALL": "Очистить все",
+      "SHOWING_REPORTS": "Показано {count} из {total} жалоб",
+      "FILTERED": "• отфильтровано",
+      "REPORTS_TITLE": "Жалобы",
+      "REPORTS_TOTAL_COUNT": "всего",
+      "NO_REPORTS_FOUND": "Жалобы не найдены",
+      "NO_REPORTS_DESCRIPTION": "Жалобы появятся здесь, когда пользователи пожалуются на контент",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "Попробуйте изменить фильтры",
+      "CONTENT_ID": "ID контента",
+      "REPORTED_BY": "Отправил",
+      "DATE": "Дата",
+      "UNKNOWN": "Неизвестно",
+      "REVIEW": "Проверить",
+      "LOADING_REPORTS": "Загрузка жалоб...",
+      "SHOWING_RANGE": "Показано {start} - {end} из {total} жалоб",
+      "PAGE_OF": "Страница {current} из {total}",
+      "PER_PAGE": "на странице",
+      "STATUS_LABELS": {
+        "pending": "Ожидает",
+        "reviewed": "Проверено",
+        "resolved": "Решено",
+        "dismissed": "Отклонено"
+      },
+      "CONTENT_TYPES": {
+        "item": "Элемент",
+        "comment": "Комментарий"
+      },
+      "REASONS": {
+        "spam": "Спам",
+        "harassment": "Домогательство",
+        "inappropriate": "Неприемлемо",
+        "other": "Другое"
+      }
     },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Client Management",

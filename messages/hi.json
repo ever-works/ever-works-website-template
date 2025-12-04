@@ -133,6 +133,8 @@
     "MANAGE_TAGS_DESC": "Manage tags",
     "MANAGE_ITEMS_DESC": "Manage items",
     "MANAGE_COMMENTS_DESC": "Manage comments",
+    "REPORTS": "रिपोर्ट",
+    "MANAGE_REPORTS_DESC": "रिपोर्ट की गई सामग्री की समीक्षा करें और समाधान करें",
     "COMPLETED": "Completed",
     "AVAILABLE": "Available",
     "QUESTIONS": "Questions",
@@ -2179,6 +2181,52 @@
       "SHOWING_RANGE": "Showing {start} to {end} of {total} comments",
       "PAGE_OF": "Page {current} of {total}",
       "PER_PAGE": "per page"
+    },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "रिपोर्ट प्रबंधन",
+      "SUBTITLE": "रिपोर्ट की गई सामग्री की समीक्षा और समाधान करें",
+      "PENDING": "लंबित",
+      "TOTAL_REPORTS": "कुल रिपोर्ट",
+      "RESOLVED": "हल किया गया",
+      "BY_ITEMS": "आइटम रिपोर्ट",
+      "SEARCH_PLACEHOLDER": "रिपोर्ट खोजें...",
+      "FILTERS": "फ़िल्टर",
+      "STATUS": "स्थिति",
+      "CONTENT_TYPE": "प्रकार",
+      "REASON": "कारण",
+      "CLEAR_ALL": "सभी साफ़ करें",
+      "SHOWING_REPORTS": "{total} में से {count} रिपोर्ट दिखा रहा है",
+      "FILTERED": "• फ़िल्टर किया गया",
+      "REPORTS_TITLE": "रिपोर्ट",
+      "REPORTS_TOTAL_COUNT": "कुल",
+      "NO_REPORTS_FOUND": "कोई रिपोर्ट नहीं मिली",
+      "NO_REPORTS_DESCRIPTION": "जब उपयोगकर्ता सामग्री की रिपोर्ट करेंगे तो रिपोर्ट यहां दिखाई देंगी",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "अपने फ़िल्टर समायोजित करने का प्रयास करें",
+      "CONTENT_ID": "सामग्री ID",
+      "REPORTED_BY": "द्वारा रिपोर्ट किया गया",
+      "DATE": "तारीख",
+      "UNKNOWN": "अज्ञात",
+      "REVIEW": "समीक्षा",
+      "LOADING_REPORTS": "रिपोर्ट लोड हो रही है...",
+      "SHOWING_RANGE": "{total} में से {start} से {end} दिखा रहा है",
+      "PAGE_OF": "पृष्ठ {current} का {total}",
+      "PER_PAGE": "प्रति पृष्ठ",
+      "STATUS_LABELS": {
+        "pending": "लंबित",
+        "reviewed": "समीक्षा की गई",
+        "resolved": "हल किया गया",
+        "dismissed": "खारिज"
+      },
+      "CONTENT_TYPES": {
+        "item": "आइटम",
+        "comment": "टिप्पणी"
+      },
+      "REASONS": {
+        "spam": "स्पैम",
+        "harassment": "उत्पीड़न",
+        "inappropriate": "अनुचित",
+        "other": "अन्य"
+      }
     },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Client Management",

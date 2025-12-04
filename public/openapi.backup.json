@@ -26765,6 +26765,348 @@
           }
         }
       }
+    },
+    "/api/admin/reports/{id}": {
+      "get": {
+        "tags": [
+          "Admin - Reports"
+        ],
+        "summary": "Get report by ID",
+        "description": "Retrieves a specific report by ID with reporter and reviewer information. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Report ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report retrieved successfully"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          },
+          "404": {
+            "description": "Report not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admin - Reports"
+        ],
+        "summary": "Update report status and resolution",
+        "description": "Updates a report's status, resolution, and/or review note. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Report ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "reviewed",
+                      "resolved",
+                      "dismissed"
+                    ]
+                  },
+                  "resolution": {
+                    "type": "string",
+                    "enum": [
+                      "content_removed",
+                      "user_warned",
+                      "user_suspended",
+                      "user_banned",
+                      "no_action"
+                    ]
+                  },
+                  "reviewNote": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Report updated successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid input"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          },
+          "404": {
+            "description": "Report not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/admin/reports": {
+      "get": {
+        "tags": [
+          "Admin - Reports"
+        ],
+        "summary": "Get paginated reports list",
+        "description": "Returns a paginated list of content reports with reporter information. Supports filtering by status, content type, and reason. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search term for content ID, details, or reporter name/email"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "reviewed",
+                "resolved",
+                "dismissed"
+              ]
+            }
+          },
+          {
+            "name": "contentType",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "item",
+                "comment"
+              ]
+            }
+          },
+          {
+            "name": "reason",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "spam",
+                "harassment",
+                "inappropriate",
+                "other"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reports list retrieved successfully"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/admin/reports/stats": {
+      "get": {
+        "tags": [
+          "Admin - Reports"
+        ],
+        "summary": "Get report statistics",
+        "description": "Returns statistics about reports including counts by status, content type, and reason. Requires admin privileges.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "pendingCount": {
+                          "type": "integer"
+                        },
+                        "resolvedCount": {
+                          "type": "integer"
+                        },
+                        "byStatus": {
+                          "type": "object"
+                        },
+                        "byContentType": {
+                          "type": "object"
+                        },
+                        "byReason": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/reports": {
+      "post": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Submit a content report",
+        "description": "Submit a report for inappropriate content (items or comments). Requires authentication. Users can only report the same content once.",
+        "security": [
+          {
+            "sessionAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "contentType": {
+                    "type": "string",
+                    "enum": [
+                      "item",
+                      "comment"
+                    ],
+                    "description": "Type of content being reported",
+                    "example": "item"
+                  },
+                  "contentId": {
+                    "type": "string",
+                    "description": "ID or slug of the content being reported",
+                    "example": "awesome-productivity-tool"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "enum": [
+                      "spam",
+                      "harassment",
+                      "inappropriate",
+                      "other"
+                    ],
+                    "description": "Reason for the report",
+                    "example": "spam"
+                  },
+                  "details": {
+                    "type": "string",
+                    "description": "Additional details about the report (optional)",
+                    "example": "This tool is promoting malicious software"
+                  }
+                },
+                "required": [
+                  "contentType",
+                  "contentId",
+                  "reason"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Report submitted successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid input data"
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required"
+          },
+          "409": {
+            "description": "Conflict - Content already reported by this user"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
     }
   },
   "components": {

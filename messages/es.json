@@ -132,6 +132,8 @@
     "MANAGE_TAGS_DESC": "Gestionar etiquetas",
     "MANAGE_ITEMS_DESC": "Gestionar elementos",
     "MANAGE_COMMENTS_DESC": "Gestionar comentarios",
+    "REPORTS": "Reportes",
+    "MANAGE_REPORTS_DESC": "Revisar y resolver contenido reportado",
     "COMPLETED": "Completado",
     "AVAILABLE": "Disponible",
     "QUESTIONS": "preguntas",
@@ -2201,6 +2203,52 @@
       "SHOWING_RANGE": "Mostrando {start} a {end} de {total} comentarios",
       "PAGE_OF": "Página {current} de {total}",
       "PER_PAGE": "por página"
+    },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "Gestión de Reportes",
+      "SUBTITLE": "Revisar y resolver contenido reportado",
+      "PENDING": "pendiente",
+      "TOTAL_REPORTS": "Reportes Totales",
+      "RESOLVED": "Resueltos",
+      "BY_ITEMS": "Reportes de Elementos",
+      "SEARCH_PLACEHOLDER": "Buscar reportes...",
+      "FILTERS": "Filtros",
+      "STATUS": "Estado",
+      "CONTENT_TYPE": "Tipo",
+      "REASON": "Razón",
+      "CLEAR_ALL": "Limpiar todo",
+      "SHOWING_REPORTS": "Mostrando {count} de {total} reportes",
+      "FILTERED": "• filtrado",
+      "REPORTS_TITLE": "Reportes",
+      "REPORTS_TOTAL_COUNT": "total",
+      "NO_REPORTS_FOUND": "No se encontraron reportes",
+      "NO_REPORTS_DESCRIPTION": "Los reportes aparecerán aquí cuando los usuarios reporten contenido",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "Intenta ajustar tus filtros",
+      "CONTENT_ID": "ID del Contenido",
+      "REPORTED_BY": "Reportado por",
+      "DATE": "Fecha",
+      "UNKNOWN": "Desconocido",
+      "REVIEW": "Revisar",
+      "LOADING_REPORTS": "Cargando reportes...",
+      "SHOWING_RANGE": "Mostrando {start} a {end} de {total} reportes",
+      "PAGE_OF": "Página {current} de {total}",
+      "PER_PAGE": "por página",
+      "STATUS_LABELS": {
+        "pending": "Pendiente",
+        "reviewed": "Revisado",
+        "resolved": "Resuelto",
+        "dismissed": "Descartado"
+      },
+      "CONTENT_TYPES": {
+        "item": "Elemento",
+        "comment": "Comentario"
+      },
+      "REASONS": {
+        "spam": "Spam",
+        "harassment": "Acoso",
+        "inappropriate": "Inapropiado",
+        "other": "Otro"
+      }
     },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Gestión de Clientes",

@@ -132,6 +132,8 @@
     "MANAGE_TAGS_DESC": "Manage tags",
     "MANAGE_ITEMS_DESC": "Manage items",
     "MANAGE_COMMENTS_DESC": "Manage comments",
+    "REPORTS": "البلاغات",
+    "MANAGE_REPORTS_DESC": "مراجعة المحتوى المبلغ عنه وحله",
     "COMPLETED": "مكتمل",
     "AVAILABLE": "متاح",
     "QUESTIONS": "أسئلة",
@@ -2199,6 +2201,52 @@
       "SHOWING_RANGE": "عرض {start} إلى {end} من {total} تعليق",
       "PAGE_OF": "صفحة {current} من {total}",
       "PER_PAGE": "في الصفحة"
+    },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "إدارة التقارير",
+      "SUBTITLE": "مراجعة المحتوى المبلغ عنه وحله",
+      "PENDING": "قيد الانتظار",
+      "TOTAL_REPORTS": "إجمالي التقارير",
+      "RESOLVED": "تم الحل",
+      "BY_ITEMS": "تقارير العناصر",
+      "SEARCH_PLACEHOLDER": "البحث في التقارير...",
+      "FILTERS": "المرشحات",
+      "STATUS": "الحالة",
+      "CONTENT_TYPE": "النوع",
+      "REASON": "السبب",
+      "CLEAR_ALL": "مسح الكل",
+      "SHOWING_REPORTS": "عرض {count} من {total} تقرير",
+      "FILTERED": "• مصفى",
+      "REPORTS_TITLE": "التقارير",
+      "REPORTS_TOTAL_COUNT": "إجمالي",
+      "NO_REPORTS_FOUND": "لم يتم العثور على تقارير",
+      "NO_REPORTS_DESCRIPTION": "ستظهر التقارير هنا عندما يبلغ المستخدمون عن محتوى",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "حاول تعديل المرشحات",
+      "CONTENT_ID": "معرف المحتوى",
+      "REPORTED_BY": "أبلغ عنه",
+      "DATE": "التاريخ",
+      "UNKNOWN": "غير معروف",
+      "REVIEW": "مراجعة",
+      "LOADING_REPORTS": "جاري تحميل التقارير...",
+      "SHOWING_RANGE": "عرض {start} إلى {end} من {total} تقرير",
+      "PAGE_OF": "صفحة {current} من {total}",
+      "PER_PAGE": "في الصفحة",
+      "STATUS_LABELS": {
+        "pending": "قيد الانتظار",
+        "reviewed": "تمت المراجعة",
+        "resolved": "تم الحل",
+        "dismissed": "مرفوض"
+      },
+      "CONTENT_TYPES": {
+        "item": "عنصر",
+        "comment": "تعليق"
+      },
+      "REASONS": {
+        "spam": "بريد مزعج",
+        "harassment": "مضايقة",
+        "inappropriate": "غير لائق",
+        "other": "أخرى"
+      }
     },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "إدارة العملاء",

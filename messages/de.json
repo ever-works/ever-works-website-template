@@ -133,6 +133,8 @@
     "MANAGE_TAGS_DESC": "Manage tags",
     "MANAGE_ITEMS_DESC": "Manage items",
     "MANAGE_COMMENTS_DESC": "Manage comments",
+    "REPORTS": "Meldungen",
+    "MANAGE_REPORTS_DESC": "Gemeldete Inhalte überprüfen und bearbeiten",
     "COMPLETED": "Abgeschlossen",
     "AVAILABLE": "Verfügbar",
     "QUESTIONS": "Fragen",
@@ -2212,6 +2214,52 @@
       "SHOWING_RANGE": "Zeige {start} bis {end} von {total} Kommentaren",
       "PAGE_OF": "Seite {current} von {total}",
       "PER_PAGE": "pro Seite"
+    },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "Meldungsverwaltung",
+      "SUBTITLE": "Gemeldete Inhalte überprüfen und bearbeiten",
+      "PENDING": "ausstehend",
+      "TOTAL_REPORTS": "Gesamte Meldungen",
+      "RESOLVED": "Gelöst",
+      "BY_ITEMS": "Element-Meldungen",
+      "SEARCH_PLACEHOLDER": "Meldungen suchen...",
+      "FILTERS": "Filter",
+      "STATUS": "Status",
+      "CONTENT_TYPE": "Typ",
+      "REASON": "Grund",
+      "CLEAR_ALL": "Alle löschen",
+      "SHOWING_REPORTS": "Zeige {count} von {total} Meldungen",
+      "FILTERED": "• gefiltert",
+      "REPORTS_TITLE": "Meldungen",
+      "REPORTS_TOTAL_COUNT": "gesamt",
+      "NO_REPORTS_FOUND": "Keine Meldungen gefunden",
+      "NO_REPORTS_DESCRIPTION": "Meldungen erscheinen hier, wenn Benutzer Inhalte melden",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "Versuchen Sie, Ihre Filter anzupassen",
+      "CONTENT_ID": "Inhalts-ID",
+      "REPORTED_BY": "Gemeldet von",
+      "DATE": "Datum",
+      "UNKNOWN": "Unbekannt",
+      "REVIEW": "Überprüfen",
+      "LOADING_REPORTS": "Meldungen werden geladen...",
+      "SHOWING_RANGE": "Zeige {start} bis {end} von {total} Meldungen",
+      "PAGE_OF": "Seite {current} von {total}",
+      "PER_PAGE": "pro Seite",
+      "STATUS_LABELS": {
+        "pending": "Ausstehend",
+        "reviewed": "Überprüft",
+        "resolved": "Gelöst",
+        "dismissed": "Abgelehnt"
+      },
+      "CONTENT_TYPES": {
+        "item": "Element",
+        "comment": "Kommentar"
+      },
+      "REASONS": {
+        "spam": "Spam",
+        "harassment": "Belästigung",
+        "inappropriate": "Unangemessen",
+        "other": "Sonstiges"
+      }
     },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Kundenverwaltung",

@@ -132,6 +132,8 @@
     "MANAGE_TAGS_DESC": "Manage tags",
     "MANAGE_ITEMS_DESC": "Manage items",
     "MANAGE_COMMENTS_DESC": "Manage comments",
+    "REPORTS": "דיווחים",
+    "MANAGE_REPORTS_DESC": "בדיקה וטיפול בתוכן מדווח",
     "COMPLETED": "הושלם",
     "AVAILABLE": "זמין",
     "QUESTIONS": "שאלות",
@@ -2184,6 +2186,52 @@
       "SHOWING_RANGE": "Showing {start} to {end} of {total} comments",
       "PAGE_OF": "Page {current} of {total}",
       "PER_PAGE": "per page"
+    },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "ניהול דיווחים",
+      "SUBTITLE": "בדיקה וטיפול בתוכן מדווח",
+      "PENDING": "ממתין",
+      "TOTAL_REPORTS": "סך הדיווחים",
+      "RESOLVED": "נפתר",
+      "BY_ITEMS": "דיווחי פריטים",
+      "SEARCH_PLACEHOLDER": "חיפוש דיווחים...",
+      "FILTERS": "מסננים",
+      "STATUS": "סטטוס",
+      "CONTENT_TYPE": "סוג",
+      "REASON": "סיבה",
+      "CLEAR_ALL": "נקה הכל",
+      "SHOWING_REPORTS": "מציג {count} מתוך {total} דיווחים",
+      "FILTERED": "• מסונן",
+      "REPORTS_TITLE": "דיווחים",
+      "REPORTS_TOTAL_COUNT": "סה״כ",
+      "NO_REPORTS_FOUND": "לא נמצאו דיווחים",
+      "NO_REPORTS_DESCRIPTION": "דיווחים יופיעו כאן כאשר משתמשים ידווחו על תוכן",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "נסה להתאים את המסננים",
+      "CONTENT_ID": "מזהה תוכן",
+      "REPORTED_BY": "דווח על ידי",
+      "DATE": "תאריך",
+      "UNKNOWN": "לא ידוע",
+      "REVIEW": "בדיקה",
+      "LOADING_REPORTS": "טוען דיווחים...",
+      "SHOWING_RANGE": "מציג {start} עד {end} מתוך {total} דיווחים",
+      "PAGE_OF": "עמוד {current} מתוך {total}",
+      "PER_PAGE": "לעמוד",
+      "STATUS_LABELS": {
+        "pending": "ממתין",
+        "reviewed": "נבדק",
+        "resolved": "נפתר",
+        "dismissed": "נדחה"
+      },
+      "CONTENT_TYPES": {
+        "item": "פריט",
+        "comment": "תגובה"
+      },
+      "REASONS": {
+        "spam": "ספאם",
+        "harassment": "הטרדה",
+        "inappropriate": "לא הולם",
+        "other": "אחר"
+      }
     },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Client Management",

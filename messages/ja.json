@@ -133,6 +133,8 @@
     "MANAGE_TAGS_DESC": "Manage tags",
     "MANAGE_ITEMS_DESC": "Manage items",
     "MANAGE_COMMENTS_DESC": "Manage comments",
+    "REPORTS": "報告",
+    "MANAGE_REPORTS_DESC": "報告されたコンテンツの確認と対応",
     "COMPLETED": "Completed",
     "AVAILABLE": "Available",
     "QUESTIONS": "Questions",
@@ -2179,6 +2181,52 @@
       "SHOWING_RANGE": "Showing {start} to {end} of {total} comments",
       "PAGE_OF": "Page {current} of {total}",
       "PER_PAGE": "per page"
+    },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "通報管理",
+      "SUBTITLE": "通報されたコンテンツの確認と対応",
+      "PENDING": "保留中",
+      "TOTAL_REPORTS": "通報総数",
+      "RESOLVED": "解決済み",
+      "BY_ITEMS": "アイテム通報",
+      "SEARCH_PLACEHOLDER": "通報を検索...",
+      "FILTERS": "フィルター",
+      "STATUS": "ステータス",
+      "CONTENT_TYPE": "種類",
+      "REASON": "理由",
+      "CLEAR_ALL": "すべてクリア",
+      "SHOWING_REPORTS": "{total}件中{count}件を表示",
+      "FILTERED": "• フィルター済み",
+      "REPORTS_TITLE": "通報",
+      "REPORTS_TOTAL_COUNT": "合計",
+      "NO_REPORTS_FOUND": "通報が見つかりません",
+      "NO_REPORTS_DESCRIPTION": "ユーザーがコンテンツを通報すると、ここに表示されます",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "フィルターを調整してみてください",
+      "CONTENT_ID": "コンテンツID",
+      "REPORTED_BY": "通報者",
+      "DATE": "日付",
+      "UNKNOWN": "不明",
+      "REVIEW": "確認",
+      "LOADING_REPORTS": "通報を読み込み中...",
+      "SHOWING_RANGE": "{total}件中{start}〜{end}件を表示",
+      "PAGE_OF": "{total}ページ中{current}ページ",
+      "PER_PAGE": "件/ページ",
+      "STATUS_LABELS": {
+        "pending": "保留中",
+        "reviewed": "確認済み",
+        "resolved": "解決済み",
+        "dismissed": "却下"
+      },
+      "CONTENT_TYPES": {
+        "item": "アイテム",
+        "comment": "コメント"
+      },
+      "REASONS": {
+        "spam": "スパム",
+        "harassment": "嫌がらせ",
+        "inappropriate": "不適切",
+        "other": "その他"
+      }
     },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Client Management",

@@ -133,6 +133,8 @@
     "MANAGE_TAGS_DESC": "Manage tags",
     "MANAGE_ITEMS_DESC": "Manage items",
     "MANAGE_COMMENTS_DESC": "Manage comments",
+    "REPORTS": "Laporan",
+    "MANAGE_REPORTS_DESC": "Tinjau dan selesaikan konten yang dilaporkan",
     "COMPLETED": "Completed",
     "AVAILABLE": "Available",
     "QUESTIONS": "Questions",
@@ -2179,6 +2181,52 @@
       "SHOWING_RANGE": "Showing {start} to {end} of {total} comments",
       "PAGE_OF": "Page {current} of {total}",
       "PER_PAGE": "per page"
+    },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "Manajemen Laporan",
+      "SUBTITLE": "Tinjau dan selesaikan konten yang dilaporkan",
+      "PENDING": "tertunda",
+      "TOTAL_REPORTS": "Total Laporan",
+      "RESOLVED": "Diselesaikan",
+      "BY_ITEMS": "Laporan Item",
+      "SEARCH_PLACEHOLDER": "Cari laporan...",
+      "FILTERS": "Filter",
+      "STATUS": "Status",
+      "CONTENT_TYPE": "Tipe",
+      "REASON": "Alasan",
+      "CLEAR_ALL": "Hapus semua",
+      "SHOWING_REPORTS": "Menampilkan {count} dari {total} laporan",
+      "FILTERED": "• difilter",
+      "REPORTS_TITLE": "Laporan",
+      "REPORTS_TOTAL_COUNT": "total",
+      "NO_REPORTS_FOUND": "Tidak ada laporan ditemukan",
+      "NO_REPORTS_DESCRIPTION": "Laporan akan muncul di sini ketika pengguna melaporkan konten",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "Coba sesuaikan filter Anda",
+      "CONTENT_ID": "ID Konten",
+      "REPORTED_BY": "Dilaporkan oleh",
+      "DATE": "Tanggal",
+      "UNKNOWN": "Tidak diketahui",
+      "REVIEW": "Tinjau",
+      "LOADING_REPORTS": "Memuat laporan...",
+      "SHOWING_RANGE": "Menampilkan {start} sampai {end} dari {total} laporan",
+      "PAGE_OF": "Halaman {current} dari {total}",
+      "PER_PAGE": "per halaman",
+      "STATUS_LABELS": {
+        "pending": "Tertunda",
+        "reviewed": "Ditinjau",
+        "resolved": "Diselesaikan",
+        "dismissed": "Ditolak"
+      },
+      "CONTENT_TYPES": {
+        "item": "Item",
+        "comment": "Komentar"
+      },
+      "REASONS": {
+        "spam": "Spam",
+        "harassment": "Pelecehan",
+        "inappropriate": "Tidak pantas",
+        "other": "Lainnya"
+      }
     },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Client Management",
