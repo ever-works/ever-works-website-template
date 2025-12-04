@@ -50,50 +50,76 @@ const swaggerOptions = {
   ],
 };
 
+// Check if we're in CI or should suppress output
+const isCI = Boolean(
+  process.env.CI || 
+  process.env.GITHUB_ACTIONS || 
+  process.env.GITLAB_CI || 
+  process.env.CIRCLECI || 
+  process.env.JENKINS_URL ||
+  process.env.BUILDKITE ||
+  process.env.TF_BUILD ||
+  process.env.VERCEL
+);
+const isSilent = process.argv.includes('--silent') || isCI;
+
+function log(...args: any[]) {
+  if (!isSilent) {
+    console.log(...args);
+  }
+}
+
+function logError(...args: any[]) {
+  // Always log errors
+  console.error(...args);
+}
+
 async function generateOpenAPI() {
   try {
-    console.log('🚀 Starting OpenAPI generation...');
+    log('🚀 Starting OpenAPI generation...');
 
     // 1. Backup du fichier existant
     if (fs.existsSync(OPENAPI_FILE_PATH)) {
-      console.log('📋 Creating backup of existing openapi.json...');
+      log('📋 Creating backup of existing openapi.json...');
       fs.copyFileSync(OPENAPI_FILE_PATH, BACKUP_FILE_PATH);
     }
 
     // 2. Lire le fichier openapi.json existant
     let existingSpec = {};
     if (fs.existsSync(OPENAPI_FILE_PATH)) {
-      console.log('📖 Reading existing openapi.json...');
+      log('📖 Reading existing openapi.json...');
       const existingContent = fs.readFileSync(OPENAPI_FILE_PATH, 'utf8');
       existingSpec = JSON.parse(existingContent);
     }
 
     // 3. Generate documentation from annotations
-    console.log('🔍 Scanning route annotations...');
+    log('🔍 Scanning route annotations...');
     const generatedSpec = swaggerJSDoc(swaggerOptions);
 
     // 4. Merge both sources (existing + generated)
-    console.log('🔄 Merging existing and generated documentation...');
+    log('🔄 Merging existing and generated documentation...');
     const mergedSpec = mergeOpenAPISpecs(existingSpec, generatedSpec);
 
     // 5. Write the final file
-    console.log('💾 Writing merged openapi.json...');
+    log('💾 Writing merged openapi.json...');
     fs.writeFileSync(
       OPENAPI_FILE_PATH,
       JSON.stringify(mergedSpec, null, 2),
       'utf8'
     );
 
-    console.log('✅ OpenAPI documentation generated successfully!');
-    console.log(`📄 File: ${OPENAPI_FILE_PATH}`);
-    console.log(`📦 Backup: ${BACKUP_FILE_PATH}`);
+    log('✅ OpenAPI documentation generated successfully!');
+    if (!isSilent) {
+      log(`📄 File: ${OPENAPI_FILE_PATH}`);
+      log(`📦 Backup: ${BACKUP_FILE_PATH}`);
+    }
 
   } catch (error) {
-    console.error('❌ Error generating OpenAPI documentation:', error);
+    logError('❌ Error generating OpenAPI documentation:', error);
     
     // Restaurer le backup en cas d'erreur
     if (fs.existsSync(BACKUP_FILE_PATH)) {
-      console.log('🔄 Restoring backup...');
+      log('🔄 Restoring backup...');
       fs.copyFileSync(BACKUP_FILE_PATH, OPENAPI_FILE_PATH);
     }
     
@@ -135,17 +161,17 @@ function mergeOpenAPISpecs(existing: any, generated: any): any {
         if (generatedHasDetailedDocs && !existingHasDetailedDocs) {
           // Replace with generated version (more detailed)
           merged.paths[path] = generatedRoute;
-          console.log(`🔄 Updated route ${path} with detailed annotations`);
+          log(`🔄 Updated route ${path} with detailed annotations`);
         } else if (generatedHasDetailedDocs && existingHasDetailedDocs) {
           // Merge both versions (keep the best of both)
           merged.paths[path] = mergeRouteDetails(existingRoute, generatedRoute);
-          console.log(`🔀 Merged route ${path} with existing documentation`);
+          log(`🔀 Merged route ${path} with existing documentation`);
         }
         // Otherwise, keep existing (existingHasDetailedDocs && !generatedHasDetailedDocs)
       } else {
         // New route, add directly
         merged.paths[path] = generatedRoute;
-        console.log(`✨ Added new route ${path}`);
+        log(`✨ Added new route ${path}`);
       }
     });
   } else if (existing.paths) {

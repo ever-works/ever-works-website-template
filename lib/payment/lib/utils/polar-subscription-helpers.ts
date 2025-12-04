@@ -25,7 +25,9 @@ export interface PolarCancelSubscriptionParams {
  * @throws Error if the subscription ID is invalid or contains dangerous characters
  * 
  * @security This function prevents SSRF by ensuring subscription IDs cannot contain
- * URL manipulation characters such as '/', '?', '#', '&', etc.
+ * URL manipulation characters such as '/', '?', '#', '&', etc. This validation
+ * MUST be called before using subscriptionId in any URL construction to prevent
+ * server-side request forgery attacks.
  */
 export function validateSubscriptionId(subscriptionId: string): string {
 	if (!subscriptionId || typeof subscriptionId !== 'string') {
@@ -46,12 +48,74 @@ export function validateSubscriptionId(subscriptionId: string): string {
 	// Only allow alphanumeric characters, hyphens, and underscores
 	// This prevents SSRF attacks by blocking URL manipulation characters
 	// Pattern matches typical Polar subscription ID format: alphanumeric with dashes/underscores
+	// CRITICAL: This pattern prevents injection of path segments, query parameters, or fragments
 	const validIdPattern = /^[a-zA-Z0-9_-]+$/;
 	if (!validIdPattern.test(trimmed)) {
+		// Security: Reject invalid subscription IDs that could be used for SSRF
 		throw new Error('Subscription ID contains invalid characters. Only alphanumeric characters, hyphens, and underscores are allowed.');
 	}
 
 	return trimmed;
+}
+
+/**
+ * Allowed Polar API hostnames for SSRF protection
+ */
+const ALLOWED_POLAR_HOSTS = ['api.polar.sh', 'sandbox-api.polar.sh'];
+
+/**
+ * Validate and normalize API URL to prevent SSRF attacks.
+ * Ensures the URL points to a trusted Polar API endpoint.
+ * 
+ * @param apiUrl - The API URL to validate
+ * @returns The normalized API URL (with trailing slash removed)
+ * @throws Error if the URL is invalid or points to an untrusted host
+ * 
+ * @security This function prevents SSRF by ensuring apiUrl only points to
+ * trusted Polar API endpoints. It rejects local/private IPs, user-controlled
+ * domains, and non-HTTPS protocols.
+ */
+export function validateApiUrl(apiUrl: string): string {
+	if (!apiUrl || typeof apiUrl !== 'string') {
+		throw new Error('API URL is required and must be a string');
+	}
+
+	const trimmed = apiUrl.trim();
+	
+	if (trimmed.length === 0) {
+		throw new Error('API URL cannot be empty');
+	}
+
+	try {
+		const url = new URL(trimmed);
+
+		// Require HTTPS protocol
+		if (url.protocol !== 'https:') {
+			throw new Error(`Invalid API URL protocol: ${url.protocol}. Only HTTPS is allowed.`);
+		}
+
+		// Validate hostname against allowlist
+		if (!ALLOWED_POLAR_HOSTS.includes(url.hostname)) {
+			throw new Error(`Invalid Polar API URL: ${url.hostname}. Only trusted Polar API endpoints are allowed.`);
+		}
+
+		// Additional defense: reject localhost and private IP addresses
+		// (This is redundant with allowlist but provides defense in depth)
+		const isPrivateIP = /^(localhost|127\.0\.0\.1|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/.test(url.hostname);
+		if (isPrivateIP) {
+			throw new Error(`Invalid API URL: ${url.hostname}. Local and private IP addresses are not allowed.`);
+		}
+
+		// Normalize URL: remove trailing slash to avoid host overrides
+		const normalizedUrl = trimmed.replace(/\/+$/, '');
+		
+		return normalizedUrl;
+	} catch (error) {
+		if (error instanceof Error && error.message.includes('Invalid')) {
+			throw error;
+		}
+		throw new Error(`Invalid API URL format: ${trimmed}`);
+	}
 }
 
 /**
@@ -94,12 +158,26 @@ export async function cancelSubscriptionImmediately(
 ): Promise<SubscriptionInfo> {
 	const { apiUrl, apiKey, formatErrorMessage, logger } = params;
 
+	// Validate and sanitize API URL to prevent SSRF attacks
+	const validatedApiUrl = validateApiUrl(apiUrl);
+
 	// Validate and sanitize subscription ID to prevent SSRF attacks
 	// This sanitization ensures the ID cannot be used to manipulate the URL
-	const validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+	// CRITICAL: Must validate before using in URL construction to prevent SSRF
+	let validatedSubscriptionId: string;
+	try {
+		validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+	} catch (error) {
+		// Security: Log potential SSRF attempt
+		logger.error('Invalid subscription ID for cancellation (possible SSRF attempt)', {
+			subscriptionId,
+			error: error instanceof Error ? error.message : String(error)
+		});
+		throw error;
+	}
 
-	// Use validatedSubscriptionId (sanitized) instead of subscriptionId (user input) in URL
-	const response = await fetch(`${apiUrl}/v1/subscriptions/${validatedSubscriptionId}`, {
+	// Use validated values (sanitized) instead of user input in URL
+	const response = await fetch(`${validatedApiUrl}/v1/subscriptions/${validatedSubscriptionId}`, {
 		method: 'DELETE',
 		headers: {
 			'Authorization': `Bearer ${apiKey}`,
@@ -138,12 +216,26 @@ export async function cancelSubscriptionAtPeriodEnd(
 ): Promise<SubscriptionInfo> {
 	const { apiUrl, apiKey, formatErrorMessage, logger } = params;
 
+	// Validate and sanitize API URL to prevent SSRF attacks
+	const validatedApiUrl = validateApiUrl(apiUrl);
+
 	// Validate and sanitize subscription ID to prevent SSRF attacks
 	// This sanitization ensures the ID cannot be used to manipulate the URL
-	const validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+	// CRITICAL: Must validate before using in URL construction to prevent SSRF
+	let validatedSubscriptionId: string;
+	try {
+		validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+	} catch (error) {
+		// Security: Log potential SSRF attempt
+		logger.error('Invalid subscription ID for cancellation at period end (possible SSRF attempt)', {
+			subscriptionId,
+			error: error instanceof Error ? error.message : String(error)
+		});
+		throw error;
+	}
 
-	// Use validatedSubscriptionId (sanitized) instead of subscriptionId (user input) in URL
-	const updateResponse = await fetch(`${apiUrl}/v1/subscriptions/${validatedSubscriptionId}`, {
+	// Use validated values (sanitized) instead of user input in URL
+	const updateResponse = await fetch(`${validatedApiUrl}/v1/subscriptions/${validatedSubscriptionId}`, {
 		method: 'PATCH',
 		headers: {
 			'Authorization': `Bearer ${apiKey}`,
@@ -337,12 +429,26 @@ export async function reactivatePolarSubscription(
 ): Promise<SubscriptionInfo> {
 	const { apiUrl, apiKey, formatErrorMessage, logger, timeout = 30000 } = params;
 	
+	// Validate and sanitize API URL to prevent SSRF attacks
+	const validatedApiUrl = validateApiUrl(apiUrl);
+	
 	// Validate and sanitize subscription ID to prevent SSRF attacks
 	// This sanitization ensures the ID cannot be used to manipulate the URL
-	const validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+	// CRITICAL: Must validate before using in URL construction to prevent SSRF
+	let validatedSubscriptionId: string;
+	try {
+		validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+	} catch (error) {
+		// Security: Log potential SSRF attempt
+		logger.error('Invalid subscription ID for reactivation (possible SSRF attempt)', {
+			subscriptionId,
+			error: error instanceof Error ? error.message : String(error)
+		});
+		throw error;
+	}
 	
-	// Use validatedSubscriptionId (sanitized) instead of subscriptionId (user input) in URL
-	const endpoint = `${apiUrl}/v1/subscriptions/${validatedSubscriptionId}`;
+	// Use validated values (sanitized) instead of user input in URL
+	const endpoint = `${validatedApiUrl}/v1/subscriptions/${validatedSubscriptionId}`;
 
 	const controller = new AbortController();
 	const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -389,7 +495,8 @@ export async function reactivatePolarSubscription(
 		clearTimeout(timeoutId);
 
 		if (error instanceof Error && error.name === 'AbortError') {
-			throw new Error('Request timeout: Polar API did not respond within 30 seconds');
+			const timeoutSeconds = timeout / 1000;
+			throw new Error(`Request timeout: Polar API did not respond within ${timeoutSeconds} seconds`);
 		}
 
 		throw error;

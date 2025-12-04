@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
   generateEtags: false,
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
-  webpack: (config, { dev }) => {
+  webpack: (config, { dev, isServer }) => {
     config.ignoreWarnings = [
       { module: /@supabase\/realtime-js/ },
       { module: /@supabase\/supabase-js/ },
@@ -25,6 +25,13 @@ const nextConfig: NextConfig = {
       { module: /stripe/ },
       { message: /stripe/ }
     ];
+
+    // Suppress verbose output during build in CI
+    if (process.env.CI || process.env.VERCEL) {
+      config.infrastructureLogging = {
+        level: 'error',
+      };
+    }
 
     // Exclude .content/ directory from webpack watching in development
     // Prevents rebuilds when content files change (220+ markdown files)
