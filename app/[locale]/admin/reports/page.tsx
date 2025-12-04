@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectItem } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -161,6 +161,16 @@ export default function AdminReportsPage() {
 		setReviewDialogOpen(false);
 		setReportToReview(null);
 	};
+
+	// Sync reportToReview with fresh data from reports array after query refresh
+	useEffect(() => {
+		if (reportToReview) {
+			const freshReport = reports.find((r) => r.id === reportToReview.id);
+			if (freshReport && freshReport !== reportToReview) {
+				setReportToReview(freshReport);
+			}
+		}
+	}, [reports, reportToReview]);
 
 	const hasActiveFilters = searchTerm || statusFilter || contentTypeFilter || reasonFilter;
 
