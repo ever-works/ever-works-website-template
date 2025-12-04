@@ -16,11 +16,16 @@ export interface PolarCancelSubscriptionParams {
 }
 
 /**
- * Validate and sanitize subscription ID to prevent SSRF attacks
- * Only allows alphanumeric characters, hyphens, and underscores
- * @param subscriptionId - The subscription ID to validate
- * @returns The sanitized subscription ID
- * @throws Error if the subscription ID is invalid
+ * Validate and sanitize subscription ID to prevent SSRF attacks.
+ * Only allows alphanumeric characters, hyphens, and underscores.
+ * This function sanitizes user input before using it in URL construction.
+ * 
+ * @param subscriptionId - The subscription ID to validate (user-provided input)
+ * @returns The sanitized subscription ID safe for use in URL path segments
+ * @throws Error if the subscription ID is invalid or contains dangerous characters
+ * 
+ * @security This function prevents SSRF by ensuring subscription IDs cannot contain
+ * URL manipulation characters such as '/', '?', '#', '&', etc.
  */
 export function validateSubscriptionId(subscriptionId: string): string {
 	if (!subscriptionId || typeof subscriptionId !== 'string') {
@@ -40,6 +45,7 @@ export function validateSubscriptionId(subscriptionId: string): string {
 
 	// Only allow alphanumeric characters, hyphens, and underscores
 	// This prevents SSRF attacks by blocking URL manipulation characters
+	// Pattern matches typical Polar subscription ID format: alphanumeric with dashes/underscores
 	const validIdPattern = /^[a-zA-Z0-9_-]+$/;
 	if (!validIdPattern.test(trimmed)) {
 		throw new Error('Subscription ID contains invalid characters. Only alphanumeric characters, hyphens, and underscores are allowed.');
@@ -89,8 +95,10 @@ export async function cancelSubscriptionImmediately(
 	const { apiUrl, apiKey, formatErrorMessage, logger } = params;
 
 	// Validate and sanitize subscription ID to prevent SSRF attacks
+	// This sanitization ensures the ID cannot be used to manipulate the URL
 	const validatedSubscriptionId = validateSubscriptionId(subscriptionId);
 
+	// Use validatedSubscriptionId (sanitized) instead of subscriptionId (user input) in URL
 	const response = await fetch(`${apiUrl}/v1/subscriptions/${validatedSubscriptionId}`, {
 		method: 'DELETE',
 		headers: {
@@ -131,8 +139,10 @@ export async function cancelSubscriptionAtPeriodEnd(
 	const { apiUrl, apiKey, formatErrorMessage, logger } = params;
 
 	// Validate and sanitize subscription ID to prevent SSRF attacks
+	// This sanitization ensures the ID cannot be used to manipulate the URL
 	const validatedSubscriptionId = validateSubscriptionId(subscriptionId);
 
+	// Use validatedSubscriptionId (sanitized) instead of subscriptionId (user input) in URL
 	const updateResponse = await fetch(`${apiUrl}/v1/subscriptions/${validatedSubscriptionId}`, {
 		method: 'PATCH',
 		headers: {
@@ -328,7 +338,10 @@ export async function reactivatePolarSubscription(
 	const { apiUrl, apiKey, formatErrorMessage, logger, timeout = 30000 } = params;
 	
 	// Validate and sanitize subscription ID to prevent SSRF attacks
+	// This sanitization ensures the ID cannot be used to manipulate the URL
 	const validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+	
+	// Use validatedSubscriptionId (sanitized) instead of subscriptionId (user input) in URL
 	const endpoint = `${apiUrl}/v1/subscriptions/${validatedSubscriptionId}`;
 
 	const controller = new AbortController();
