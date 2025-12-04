@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/modal';
-import { Textarea } from '@heroui/react';
 import { Select, SelectItem } from '@/components/ui/select';
 import { Flag, X, Loader2, User, Calendar, FileText, CheckCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -36,6 +35,8 @@ const CLASSES = {
 	// Form styles
 	formSection: 'space-y-4',
 	label: 'block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2',
+	textarea:
+		'w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-theme-primary/20 focus:border-theme-primary resize-none',
 
 	// Footer styles
 	footerContainer: 'flex gap-3 w-full',
@@ -231,12 +232,12 @@ export default function ReportReviewDialog({ report, open, onOpenChange, onUpdat
 							{/* Review Note */}
 							<div>
 								<label className={CLASSES.label}>{t('REVIEW_NOTE')}</label>
-								<Textarea
+								<textarea
 									value={reviewNote}
-									onValueChange={setReviewNote}
+									onChange={(e) => setReviewNote(e.target.value)}
 									placeholder={t('REVIEW_NOTE_PLACEHOLDER')}
-									minRows={3}
-									className="w-full"
+									rows={3}
+									className={CLASSES.textarea}
 								/>
 							</div>
 						</div>
