@@ -157,7 +157,15 @@ export async function POST(
 		
 		if (contentLength) {
 			const sizeInBytes = parseInt(contentLength, 10);
-			if (!isNaN(sizeInBytes) && sizeInBytes > maxSize) {
+			// Validate that Content-Length is a valid number
+			if (isNaN(sizeInBytes) || sizeInBytes < 0) {
+				return NextResponse.json(
+					{ error: 'Invalid Content-Length header' },
+					{ status: 400 }
+				);
+			}
+			// Reject requests that exceed the size limit
+			if (sizeInBytes > maxSize) {
 				return NextResponse.json(
 					{ error: `Request body too large. Maximum size is ${maxSize} bytes.` },
 					{ status: 413 }
