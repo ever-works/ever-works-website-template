@@ -16,6 +16,39 @@ export interface PolarCancelSubscriptionParams {
 }
 
 /**
+ * Validate and sanitize subscription ID to prevent SSRF attacks
+ * Only allows alphanumeric characters, hyphens, and underscores
+ * @param subscriptionId - The subscription ID to validate
+ * @returns The sanitized subscription ID
+ * @throws Error if the subscription ID is invalid
+ */
+export function validateSubscriptionId(subscriptionId: string): string {
+	if (!subscriptionId || typeof subscriptionId !== 'string') {
+		throw new Error('Subscription ID is required and must be a string');
+	}
+
+	const trimmed = subscriptionId.trim();
+	
+	if (trimmed.length === 0) {
+		throw new Error('Subscription ID cannot be empty');
+	}
+
+	// Limit length to prevent extremely long IDs (reasonable limit: 255 characters)
+	if (trimmed.length > 255) {
+		throw new Error('Subscription ID is too long');
+	}
+
+	// Only allow alphanumeric characters, hyphens, and underscores
+	// This prevents SSRF attacks by blocking URL manipulation characters
+	const validIdPattern = /^[a-zA-Z0-9_-]+$/;
+	if (!validIdPattern.test(trimmed)) {
+		throw new Error('Subscription ID contains invalid characters. Only alphanumeric characters, hyphens, and underscores are allowed.');
+	}
+
+	return trimmed;
+}
+
+/**
  * Interface for the parameters needed for reactivation operations
  */
 export interface PolarReactivateSubscriptionParams extends PolarCancelSubscriptionParams {
@@ -31,12 +64,15 @@ export async function getPolarSubscription(
 	params: Pick<PolarCancelSubscriptionParams, 'formatErrorMessage' | 'logger'>,
 	operation: string = 'operation'
 ): Promise<any> {
+	// Validate and sanitize subscription ID to prevent SSRF attacks
+	const validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+	
 	try {
-		return await polarClient.subscriptions.get({ id: subscriptionId } as any);
+		return await polarClient.subscriptions.get({ id: validatedSubscriptionId } as any);
 	} catch (getError) {
 		params.logger.error(`Failed to get subscription before ${operation}`, {
 			error: params.formatErrorMessage(getError),
-			subscriptionId
+			subscriptionId: validatedSubscriptionId
 		});
 		throw new Error(`Failed to retrieve subscription: ${params.formatErrorMessage(getError)}`);
 	}
@@ -52,7 +88,10 @@ export async function cancelSubscriptionImmediately(
 ): Promise<SubscriptionInfo> {
 	const { apiUrl, apiKey, formatErrorMessage, logger } = params;
 
-	const response = await fetch(`${apiUrl}/v1/subscriptions/${subscriptionId}`, {
+	// Validate and sanitize subscription ID to prevent SSRF attacks
+	const validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+
+	const response = await fetch(`${apiUrl}/v1/subscriptions/${validatedSubscriptionId}`, {
 		method: 'DELETE',
 		headers: {
 			'Authorization': `Bearer ${apiKey}`,
@@ -65,7 +104,7 @@ export async function cancelSubscriptionImmediately(
 		logger.error('Failed to cancel subscription immediately', {
 			status: response.status,
 			error: errorText,
-			subscriptionId
+			subscriptionId: validatedSubscriptionId
 		});
 		throw new Error(`Failed to cancel subscription immediately: ${errorText}`);
 	}
@@ -74,7 +113,7 @@ export async function cancelSubscriptionImmediately(
 
 	return mapPolarSubscriptionToInfo(
 		cancelledSubscription,
-		subscriptionId,
+		validatedSubscriptionId,
 		existingSubscription,
 		'canceled',
 		false
@@ -91,7 +130,10 @@ export async function cancelSubscriptionAtPeriodEnd(
 ): Promise<SubscriptionInfo> {
 	const { apiUrl, apiKey, formatErrorMessage, logger } = params;
 
-	const updateResponse = await fetch(`${apiUrl}/v1/subscriptions/${subscriptionId}`, {
+	// Validate and sanitize subscription ID to prevent SSRF attacks
+	const validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+
+	const updateResponse = await fetch(`${apiUrl}/v1/subscriptions/${validatedSubscriptionId}`, {
 		method: 'PATCH',
 		headers: {
 			'Authorization': `Bearer ${apiKey}`,
@@ -107,7 +149,7 @@ export async function cancelSubscriptionAtPeriodEnd(
 		logger.error('Failed to update subscription', {
 			status: updateResponse.status,
 			error: errorText,
-			subscriptionId
+			subscriptionId: validatedSubscriptionId
 		});
 		throw new Error(`Failed to update subscription: ${errorText}`);
 	}
@@ -116,7 +158,7 @@ export async function cancelSubscriptionAtPeriodEnd(
 
 	return mapPolarSubscriptionToInfo(
 		updatedSubscription,
-		subscriptionId,
+		validatedSubscriptionId,
 		existingSubscription,
 		'active',
 		true
@@ -214,9 +256,8 @@ export function validateReactivateInputs(
 	subscriptionId: string,
 	apiKey: string
 ): void {
-	if (!subscriptionId || typeof subscriptionId !== 'string' || subscriptionId.trim().length === 0) {
-		throw new Error('Subscription ID is required and must be a non-empty string');
-	}
+	// Use the centralized validation function to prevent SSRF attacks
+	validateSubscriptionId(subscriptionId);
 
 	if (!apiKey || apiKey.trim().length === 0) {
 		throw new Error('Polar API key is not configured. Please set POLAR_ACCESS_TOKEN environment variable.');
@@ -285,8 +326,10 @@ export async function reactivatePolarSubscription(
 	params: PolarReactivateSubscriptionParams
 ): Promise<SubscriptionInfo> {
 	const { apiUrl, apiKey, formatErrorMessage, logger, timeout = 30000 } = params;
-	const normalizedSubscriptionId = subscriptionId.trim();
-	const endpoint = `${apiUrl}/v1/subscriptions/${normalizedSubscriptionId}`;
+	
+	// Validate and sanitize subscription ID to prevent SSRF attacks
+	const validatedSubscriptionId = validateSubscriptionId(subscriptionId);
+	const endpoint = `${apiUrl}/v1/subscriptions/${validatedSubscriptionId}`;
 
 	const controller = new AbortController();
 	const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -314,7 +357,7 @@ export async function reactivatePolarSubscription(
 			logger.error('Failed to reactivate subscription', {
 				status: response.status,
 				error: parsedError,
-				subscriptionId: normalizedSubscriptionId
+				subscriptionId: validatedSubscriptionId
 			});
 
 			throw new Error(errorMessage);
@@ -324,7 +367,7 @@ export async function reactivatePolarSubscription(
 
 		return mapPolarSubscriptionToInfo(
 			reactivatedSubscription,
-			normalizedSubscriptionId,
+			validatedSubscriptionId,
 			existingSubscription,
 			'active',
 			false
