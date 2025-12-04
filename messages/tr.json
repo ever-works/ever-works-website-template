@@ -2174,6 +2174,52 @@
       "PAGE_OF": "Page {current} of {total}",
       "PER_PAGE": "per page"
     },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "Rapor Yönetimi",
+      "SUBTITLE": "Raporlanan içerikleri incele ve çöz",
+      "PENDING": "beklemede",
+      "TOTAL_REPORTS": "Toplam Raporlar",
+      "RESOLVED": "Çözüldü",
+      "BY_ITEMS": "Öğe Raporları",
+      "SEARCH_PLACEHOLDER": "Raporları ara...",
+      "FILTERS": "Filtreler",
+      "STATUS": "Durum",
+      "CONTENT_TYPE": "Tür",
+      "REASON": "Sebep",
+      "CLEAR_ALL": "Tümünü temizle",
+      "SHOWING_REPORTS": "{total} rapordan {count} tanesi gösteriliyor",
+      "FILTERED": "• filtrelendi",
+      "REPORTS_TITLE": "Raporlar",
+      "REPORTS_TOTAL_COUNT": "toplam",
+      "NO_REPORTS_FOUND": "Rapor bulunamadı",
+      "NO_REPORTS_DESCRIPTION": "Kullanıcılar içerik raporladığında burada görünecek",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "Filtrelerinizi ayarlamayı deneyin",
+      "CONTENT_ID": "İçerik ID",
+      "REPORTED_BY": "Raporlayan",
+      "DATE": "Tarih",
+      "UNKNOWN": "Bilinmiyor",
+      "REVIEW": "İncele",
+      "LOADING_REPORTS": "Raporlar yükleniyor...",
+      "SHOWING_RANGE": "{total} rapordan {start} - {end} gösteriliyor",
+      "PAGE_OF": "Sayfa {current} / {total}",
+      "PER_PAGE": "sayfa başına",
+      "STATUS_LABELS": {
+        "pending": "Beklemede",
+        "reviewed": "İncelendi",
+        "resolved": "Çözüldü",
+        "dismissed": "Reddedildi"
+      },
+      "CONTENT_TYPES": {
+        "item": "Öğe",
+        "comment": "Yorum"
+      },
+      "REASONS": {
+        "spam": "Spam",
+        "harassment": "Taciz",
+        "inappropriate": "Uygunsuz",
+        "other": "Diğer"
+      }
+    },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Client Management",
       "SUBTITLE": "Manage your clients and their information",

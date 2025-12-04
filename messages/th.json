@@ -2174,6 +2174,52 @@
       "PAGE_OF": "Page {current} of {total}",
       "PER_PAGE": "per page"
     },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "การจัดการรายงาน",
+      "SUBTITLE": "ตรวจสอบและแก้ไขเนื้อหาที่ถูกรายงาน",
+      "PENDING": "รอดำเนินการ",
+      "TOTAL_REPORTS": "รายงานทั้งหมด",
+      "RESOLVED": "แก้ไขแล้ว",
+      "BY_ITEMS": "รายงานรายการ",
+      "SEARCH_PLACEHOLDER": "ค้นหารายงาน...",
+      "FILTERS": "ตัวกรอง",
+      "STATUS": "สถานะ",
+      "CONTENT_TYPE": "ประเภท",
+      "REASON": "เหตุผล",
+      "CLEAR_ALL": "ล้างทั้งหมด",
+      "SHOWING_REPORTS": "แสดง {count} จาก {total} รายงาน",
+      "FILTERED": "• กรองแล้ว",
+      "REPORTS_TITLE": "รายงาน",
+      "REPORTS_TOTAL_COUNT": "ทั้งหมด",
+      "NO_REPORTS_FOUND": "ไม่พบรายงาน",
+      "NO_REPORTS_DESCRIPTION": "รายงานจะปรากฏที่นี่เมื่อผู้ใช้รายงานเนื้อหา",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "ลองปรับตัวกรองของคุณ",
+      "CONTENT_ID": "รหัสเนื้อหา",
+      "REPORTED_BY": "รายงานโดย",
+      "DATE": "วันที่",
+      "UNKNOWN": "ไม่ทราบ",
+      "REVIEW": "ตรวจสอบ",
+      "LOADING_REPORTS": "กำลังโหลดรายงาน...",
+      "SHOWING_RANGE": "แสดง {start} ถึง {end} จาก {total} รายงาน",
+      "PAGE_OF": "หน้า {current} จาก {total}",
+      "PER_PAGE": "ต่อหน้า",
+      "STATUS_LABELS": {
+        "pending": "รอดำเนินการ",
+        "reviewed": "ตรวจสอบแล้ว",
+        "resolved": "แก้ไขแล้ว",
+        "dismissed": "ปฏิเสธ"
+      },
+      "CONTENT_TYPES": {
+        "item": "รายการ",
+        "comment": "ความคิดเห็น"
+      },
+      "REASONS": {
+        "spam": "สแปม",
+        "harassment": "การคุกคาม",
+        "inappropriate": "ไม่เหมาะสม",
+        "other": "อื่นๆ"
+      }
+    },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Client Management",
       "SUBTITLE": "Manage your clients and their information",

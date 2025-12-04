@@ -2174,6 +2174,52 @@
       "PAGE_OF": "Page {current} of {total}",
       "PER_PAGE": "per page"
     },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "Quản lý báo cáo",
+      "SUBTITLE": "Xem xét và xử lý nội dung bị báo cáo",
+      "PENDING": "đang chờ",
+      "TOTAL_REPORTS": "Tổng báo cáo",
+      "RESOLVED": "Đã giải quyết",
+      "BY_ITEMS": "Báo cáo mục",
+      "SEARCH_PLACEHOLDER": "Tìm kiếm báo cáo...",
+      "FILTERS": "Bộ lọc",
+      "STATUS": "Trạng thái",
+      "CONTENT_TYPE": "Loại",
+      "REASON": "Lý do",
+      "CLEAR_ALL": "Xóa tất cả",
+      "SHOWING_REPORTS": "Hiển thị {count} trong {total} báo cáo",
+      "FILTERED": "• đã lọc",
+      "REPORTS_TITLE": "Báo cáo",
+      "REPORTS_TOTAL_COUNT": "tổng",
+      "NO_REPORTS_FOUND": "Không tìm thấy báo cáo",
+      "NO_REPORTS_DESCRIPTION": "Báo cáo sẽ xuất hiện ở đây khi người dùng báo cáo nội dung",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "Thử điều chỉnh bộ lọc của bạn",
+      "CONTENT_ID": "ID Nội dung",
+      "REPORTED_BY": "Báo cáo bởi",
+      "DATE": "Ngày",
+      "UNKNOWN": "Không xác định",
+      "REVIEW": "Xem xét",
+      "LOADING_REPORTS": "Đang tải báo cáo...",
+      "SHOWING_RANGE": "Hiển thị {start} đến {end} trong {total} báo cáo",
+      "PAGE_OF": "Trang {current} / {total}",
+      "PER_PAGE": "mỗi trang",
+      "STATUS_LABELS": {
+        "pending": "Đang chờ",
+        "reviewed": "Đã xem xét",
+        "resolved": "Đã giải quyết",
+        "dismissed": "Đã từ chối"
+      },
+      "CONTENT_TYPES": {
+        "item": "Mục",
+        "comment": "Bình luận"
+      },
+      "REASONS": {
+        "spam": "Spam",
+        "harassment": "Quấy rối",
+        "inappropriate": "Không phù hợp",
+        "other": "Khác"
+      }
+    },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Client Management",
       "SUBTITLE": "Manage your clients and their information",

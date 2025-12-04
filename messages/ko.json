@@ -2174,6 +2174,52 @@
       "PAGE_OF": "Page {current} of {total}",
       "PER_PAGE": "per page"
     },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "신고 관리",
+      "SUBTITLE": "신고된 콘텐츠 검토 및 처리",
+      "PENDING": "대기 중",
+      "TOTAL_REPORTS": "총 신고 수",
+      "RESOLVED": "해결됨",
+      "BY_ITEMS": "항목 신고",
+      "SEARCH_PLACEHOLDER": "신고 검색...",
+      "FILTERS": "필터",
+      "STATUS": "상태",
+      "CONTENT_TYPE": "유형",
+      "REASON": "사유",
+      "CLEAR_ALL": "모두 지우기",
+      "SHOWING_REPORTS": "{total}개 중 {count}개 표시",
+      "FILTERED": "• 필터링됨",
+      "REPORTS_TITLE": "신고",
+      "REPORTS_TOTAL_COUNT": "총",
+      "NO_REPORTS_FOUND": "신고가 없습니다",
+      "NO_REPORTS_DESCRIPTION": "사용자가 콘텐츠를 신고하면 여기에 표시됩니다",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "필터를 조정해 보세요",
+      "CONTENT_ID": "콘텐츠 ID",
+      "REPORTED_BY": "신고자",
+      "DATE": "날짜",
+      "UNKNOWN": "알 수 없음",
+      "REVIEW": "검토",
+      "LOADING_REPORTS": "신고 로딩 중...",
+      "SHOWING_RANGE": "{total}개 중 {start}~{end}개 표시",
+      "PAGE_OF": "{total}페이지 중 {current}페이지",
+      "PER_PAGE": "개/페이지",
+      "STATUS_LABELS": {
+        "pending": "대기 중",
+        "reviewed": "검토됨",
+        "resolved": "해결됨",
+        "dismissed": "기각됨"
+      },
+      "CONTENT_TYPES": {
+        "item": "항목",
+        "comment": "댓글"
+      },
+      "REASONS": {
+        "spam": "스팸",
+        "harassment": "괴롭힘",
+        "inappropriate": "부적절",
+        "other": "기타"
+      }
+    },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Client Management",
       "SUBTITLE": "Manage your clients and their information",

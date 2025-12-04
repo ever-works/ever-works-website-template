@@ -2174,6 +2174,52 @@
       "PAGE_OF": "Page {current} of {total}",
       "PER_PAGE": "per page"
     },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "Rapportbeheer",
+      "SUBTITLE": "Gerapporteerde inhoud bekijken en oplossen",
+      "PENDING": "in behandeling",
+      "TOTAL_REPORTS": "Totaal Rapporten",
+      "RESOLVED": "Opgelost",
+      "BY_ITEMS": "Item Rapporten",
+      "SEARCH_PLACEHOLDER": "Rapporten zoeken...",
+      "FILTERS": "Filters",
+      "STATUS": "Status",
+      "CONTENT_TYPE": "Type",
+      "REASON": "Reden",
+      "CLEAR_ALL": "Alles wissen",
+      "SHOWING_REPORTS": "Toont {count} van {total} rapporten",
+      "FILTERED": "• gefilterd",
+      "REPORTS_TITLE": "Rapporten",
+      "REPORTS_TOTAL_COUNT": "totaal",
+      "NO_REPORTS_FOUND": "Geen rapporten gevonden",
+      "NO_REPORTS_DESCRIPTION": "Rapporten verschijnen hier wanneer gebruikers inhoud rapporteren",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "Probeer uw filters aan te passen",
+      "CONTENT_ID": "Inhoud ID",
+      "REPORTED_BY": "Gerapporteerd door",
+      "DATE": "Datum",
+      "UNKNOWN": "Onbekend",
+      "REVIEW": "Bekijken",
+      "LOADING_REPORTS": "Rapporten laden...",
+      "SHOWING_RANGE": "Toont {start} tot {end} van {total} rapporten",
+      "PAGE_OF": "Pagina {current} van {total}",
+      "PER_PAGE": "per pagina",
+      "STATUS_LABELS": {
+        "pending": "In Behandeling",
+        "reviewed": "Beoordeeld",
+        "resolved": "Opgelost",
+        "dismissed": "Afgewezen"
+      },
+      "CONTENT_TYPES": {
+        "item": "Item",
+        "comment": "Reactie"
+      },
+      "REASONS": {
+        "spam": "Spam",
+        "harassment": "Intimidatie",
+        "inappropriate": "Ongepast",
+        "other": "Anders"
+      }
+    },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Client Management",
       "SUBTITLE": "Manage your clients and their information",

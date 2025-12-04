@@ -2206,6 +2206,52 @@
       "PAGE_OF": "第 {current} 页，共 {total} 页",
       "PER_PAGE": "每页"
     },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "举报管理",
+      "SUBTITLE": "审查和处理被举报的内容",
+      "PENDING": "待处理",
+      "TOTAL_REPORTS": "总举报数",
+      "RESOLVED": "已解决",
+      "BY_ITEMS": "项目举报",
+      "SEARCH_PLACEHOLDER": "搜索举报...",
+      "FILTERS": "筛选",
+      "STATUS": "状态",
+      "CONTENT_TYPE": "类型",
+      "REASON": "原因",
+      "CLEAR_ALL": "清除全部",
+      "SHOWING_REPORTS": "显示 {count} 个，共 {total} 个举报",
+      "FILTERED": "• 已筛选",
+      "REPORTS_TITLE": "举报",
+      "REPORTS_TOTAL_COUNT": "总计",
+      "NO_REPORTS_FOUND": "未找到举报",
+      "NO_REPORTS_DESCRIPTION": "当用户举报内容时，举报将显示在这里",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "尝试调整您的筛选条件",
+      "CONTENT_ID": "内容ID",
+      "REPORTED_BY": "举报者",
+      "DATE": "日期",
+      "UNKNOWN": "未知",
+      "REVIEW": "审查",
+      "LOADING_REPORTS": "正在加载举报...",
+      "SHOWING_RANGE": "显示 {start} 到 {end}，共 {total} 个举报",
+      "PAGE_OF": "第 {current} 页，共 {total} 页",
+      "PER_PAGE": "每页",
+      "STATUS_LABELS": {
+        "pending": "待处理",
+        "reviewed": "已审查",
+        "resolved": "已解决",
+        "dismissed": "已驳回"
+      },
+      "CONTENT_TYPES": {
+        "item": "项目",
+        "comment": "评论"
+      },
+      "REASONS": {
+        "spam": "垃圾内容",
+        "harassment": "骚扰",
+        "inappropriate": "不当内容",
+        "other": "其他"
+      }
+    },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "客户管理",
       "SUBTITLE": "管理您的客户及其信息",

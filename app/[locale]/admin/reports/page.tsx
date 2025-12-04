@@ -106,20 +106,6 @@ const REASON_STYLES: Record<ReportReasonValues, { bg: string; text: string }> = 
 	other: { bg: 'bg-gray-100 dark:bg-gray-700', text: 'text-gray-700 dark:text-gray-300' }
 };
 
-// Content type labels
-const CONTENT_TYPE_LABELS: Record<ReportContentTypeValues, string> = {
-	item: 'Item',
-	comment: 'Comment'
-};
-
-// Reason labels
-const REASON_LABELS: Record<ReportReasonValues, string> = {
-	spam: 'Spam',
-	harassment: 'Harassment',
-	inappropriate: 'Inappropriate',
-	other: 'Other'
-};
-
 export default function AdminReportsPage() {
 	const t = useTranslations('admin.ADMIN_REPORTS_PAGE');
 
@@ -355,7 +341,7 @@ export default function AdminReportsPage() {
 					>
 						{Object.values(ReportStatus).map((status) => (
 							<SelectItem key={status} value={status}>
-								{status.charAt(0).toUpperCase() + status.slice(1)}
+								{t(`STATUS_LABELS.${status}`)}
 							</SelectItem>
 						))}
 					</Select>
@@ -371,7 +357,7 @@ export default function AdminReportsPage() {
 					>
 						{Object.values(ReportContentType).map((type) => (
 							<SelectItem key={type} value={type}>
-								{CONTENT_TYPE_LABELS[type]}
+								{t(`CONTENT_TYPES.${type}`)}
 							</SelectItem>
 						))}
 					</Select>
@@ -387,7 +373,7 @@ export default function AdminReportsPage() {
 					>
 						{Object.values(ReportReason).map((reason) => (
 							<SelectItem key={reason} value={reason}>
-								{REASON_LABELS[reason]}
+								{t(`REASONS.${reason}`)}
 							</SelectItem>
 						))}
 					</Select>
@@ -437,15 +423,15 @@ export default function AdminReportsPage() {
 											className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${statusStyle.bg} ${statusStyle.text}`}
 										>
 											<StatusIcon className="w-3 h-3" />
-											{report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+											{t(`STATUS_LABELS.${report.status}`)}
 										</span>
 										{/* Content Type Badge */}
 										<span className="px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
-											{CONTENT_TYPE_LABELS[report.contentType]}
+											{t(`CONTENT_TYPES.${report.contentType}`)}
 										</span>
 										{/* Reason Badge */}
 										<span className={`px-2.5 py-1 rounded-full text-xs font-medium ${reasonStyle.bg} ${reasonStyle.text}`}>
-											{REASON_LABELS[report.reason]}
+											{t(`REASONS.${report.reason}`)}
 										</span>
 									</div>
 									<div className={CLASSES.reportDate}>

@@ -2202,7 +2202,23 @@
       "LOADING_REPORTS": "Loading reports...",
       "SHOWING_RANGE": "Showing {start} to {end} of {total} reports",
       "PAGE_OF": "Page {current} of {total}",
-      "PER_PAGE": "per page"
+      "PER_PAGE": "per page",
+      "STATUS_LABELS": {
+        "pending": "Pending",
+        "reviewed": "Reviewed",
+        "resolved": "Resolved",
+        "dismissed": "Dismissed"
+      },
+      "CONTENT_TYPES": {
+        "item": "Item",
+        "comment": "Comment"
+      },
+      "REASONS": {
+        "spam": "Spam",
+        "harassment": "Harassment",
+        "inappropriate": "Inappropriate",
+        "other": "Other"
+      }
     },
     "REPORT_REVIEW_DIALOG": {
       "TITLE": "Review Report",

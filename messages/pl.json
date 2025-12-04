@@ -2174,6 +2174,52 @@
       "PAGE_OF": "Page {current} of {total}",
       "PER_PAGE": "per page"
     },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "Zarządzanie Zgłoszeniami",
+      "SUBTITLE": "Przeglądaj i rozwiązuj zgłoszone treści",
+      "PENDING": "oczekujące",
+      "TOTAL_REPORTS": "Łączna liczba zgłoszeń",
+      "RESOLVED": "Rozwiązane",
+      "BY_ITEMS": "Zgłoszenia elementów",
+      "SEARCH_PLACEHOLDER": "Szukaj zgłoszeń...",
+      "FILTERS": "Filtry",
+      "STATUS": "Status",
+      "CONTENT_TYPE": "Typ",
+      "REASON": "Powód",
+      "CLEAR_ALL": "Wyczyść wszystko",
+      "SHOWING_REPORTS": "Wyświetlanie {count} z {total} zgłoszeń",
+      "FILTERED": "• filtrowane",
+      "REPORTS_TITLE": "Zgłoszenia",
+      "REPORTS_TOTAL_COUNT": "łącznie",
+      "NO_REPORTS_FOUND": "Nie znaleziono zgłoszeń",
+      "NO_REPORTS_DESCRIPTION": "Zgłoszenia pojawią się tutaj, gdy użytkownicy zgłoszą treści",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "Spróbuj dostosować filtry",
+      "CONTENT_ID": "ID Treści",
+      "REPORTED_BY": "Zgłoszone przez",
+      "DATE": "Data",
+      "UNKNOWN": "Nieznany",
+      "REVIEW": "Przeglądaj",
+      "LOADING_REPORTS": "Ładowanie zgłoszeń...",
+      "SHOWING_RANGE": "Wyświetlanie {start} do {end} z {total} zgłoszeń",
+      "PAGE_OF": "Strona {current} z {total}",
+      "PER_PAGE": "na stronę",
+      "STATUS_LABELS": {
+        "pending": "Oczekujące",
+        "reviewed": "Przejrzane",
+        "resolved": "Rozwiązane",
+        "dismissed": "Odrzucone"
+      },
+      "CONTENT_TYPES": {
+        "item": "Element",
+        "comment": "Komentarz"
+      },
+      "REASONS": {
+        "spam": "Spam",
+        "harassment": "Nękanie",
+        "inappropriate": "Nieodpowiednie",
+        "other": "Inne"
+      }
+    },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Client Management",
       "SUBTITLE": "Manage your clients and their information",

@@ -2265,6 +2265,52 @@
       "PAGE_OF": "Page {current} sur {total}",
       "PER_PAGE": "par page"
     },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "Gestion des Signalements",
+      "SUBTITLE": "Examiner et résoudre le contenu signalé",
+      "PENDING": "en attente",
+      "TOTAL_REPORTS": "Total des Signalements",
+      "RESOLVED": "Résolus",
+      "BY_ITEMS": "Signalements d'Éléments",
+      "SEARCH_PLACEHOLDER": "Rechercher des signalements...",
+      "FILTERS": "Filtres",
+      "STATUS": "Statut",
+      "CONTENT_TYPE": "Type",
+      "REASON": "Raison",
+      "CLEAR_ALL": "Tout effacer",
+      "SHOWING_REPORTS": "Affichage de {count} sur {total} signalements",
+      "FILTERED": "• filtré",
+      "REPORTS_TITLE": "Signalements",
+      "REPORTS_TOTAL_COUNT": "total",
+      "NO_REPORTS_FOUND": "Aucun signalement trouvé",
+      "NO_REPORTS_DESCRIPTION": "Les signalements apparaîtront ici lorsque les utilisateurs signaleront du contenu",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "Essayez d'ajuster vos filtres",
+      "CONTENT_ID": "ID du Contenu",
+      "REPORTED_BY": "Signalé par",
+      "DATE": "Date",
+      "UNKNOWN": "Inconnu",
+      "REVIEW": "Examiner",
+      "LOADING_REPORTS": "Chargement des signalements...",
+      "SHOWING_RANGE": "Affichage de {start} à {end} sur {total} signalements",
+      "PAGE_OF": "Page {current} sur {total}",
+      "PER_PAGE": "par page",
+      "STATUS_LABELS": {
+        "pending": "En Attente",
+        "reviewed": "Examiné",
+        "resolved": "Résolu",
+        "dismissed": "Rejeté"
+      },
+      "CONTENT_TYPES": {
+        "item": "Élément",
+        "comment": "Commentaire"
+      },
+      "REASONS": {
+        "spam": "Spam",
+        "harassment": "Harcèlement",
+        "inappropriate": "Inapproprié",
+        "other": "Autre"
+      }
+    },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Gestion des Clients",
       "SUBTITLE": "Gérez vos clients et leurs informations",

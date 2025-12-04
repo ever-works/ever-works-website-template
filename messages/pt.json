@@ -2174,6 +2174,52 @@
       "PAGE_OF": "Page {current} of {total}",
       "PER_PAGE": "per page"
     },
+    "ADMIN_REPORTS_PAGE": {
+      "TITLE": "Gerenciamento de Denúncias",
+      "SUBTITLE": "Revisar e resolver conteúdo denunciado",
+      "PENDING": "pendente",
+      "TOTAL_REPORTS": "Total de Denúncias",
+      "RESOLVED": "Resolvidas",
+      "BY_ITEMS": "Denúncias de Itens",
+      "SEARCH_PLACEHOLDER": "Pesquisar denúncias...",
+      "FILTERS": "Filtros",
+      "STATUS": "Status",
+      "CONTENT_TYPE": "Tipo",
+      "REASON": "Motivo",
+      "CLEAR_ALL": "Limpar tudo",
+      "SHOWING_REPORTS": "Mostrando {count} de {total} denúncias",
+      "FILTERED": "• filtrado",
+      "REPORTS_TITLE": "Denúncias",
+      "REPORTS_TOTAL_COUNT": "total",
+      "NO_REPORTS_FOUND": "Nenhuma denúncia encontrada",
+      "NO_REPORTS_DESCRIPTION": "Denúncias aparecerão aqui quando usuários reportarem conteúdo",
+      "NO_REPORTS_SEARCH_DESCRIPTION": "Tente ajustar seus filtros",
+      "CONTENT_ID": "ID do Conteúdo",
+      "REPORTED_BY": "Denunciado por",
+      "DATE": "Data",
+      "UNKNOWN": "Desconhecido",
+      "REVIEW": "Revisar",
+      "LOADING_REPORTS": "Carregando denúncias...",
+      "SHOWING_RANGE": "Mostrando {start} a {end} de {total} denúncias",
+      "PAGE_OF": "Página {current} de {total}",
+      "PER_PAGE": "por página",
+      "STATUS_LABELS": {
+        "pending": "Pendente",
+        "reviewed": "Revisado",
+        "resolved": "Resolvido",
+        "dismissed": "Descartado"
+      },
+      "CONTENT_TYPES": {
+        "item": "Item",
+        "comment": "Comentário"
+      },
+      "REASONS": {
+        "spam": "Spam",
+        "harassment": "Assédio",
+        "inappropriate": "Inapropriado",
+        "other": "Outro"
+      }
+    },
     "ADMIN_CLIENTS_PAGE": {
       "TITLE": "Client Management",
       "SUBTITLE": "Manage your clients and their information",
