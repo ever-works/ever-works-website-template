@@ -2,7 +2,6 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiUtils, serverClient } from '@/lib/api/server-api-client';
-import { getQueryClient } from '@/lib/query-client';
 import { toast } from 'sonner';
 
 /**
@@ -51,14 +50,13 @@ export function usePolarSubscription() {
 	 * Invalidate relevant queries after subscription operations
 	 */
 	const invalidateQueries = async () => {
-		const queryClientInstance = getQueryClient();
-		await queryClientInstance.invalidateQueries({
+		await queryClient.invalidateQueries({
 			queryKey: ['subscriptions']
 		});
-		await queryClientInstance.invalidateQueries({
+		await queryClient.invalidateQueries({
 			queryKey: ['user-subscription']
 		});
-		await queryClientInstance.invalidateQueries({
+		await queryClient.invalidateQueries({
 			queryKey: ['billing']
 		});
 	};

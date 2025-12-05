@@ -268,6 +268,47 @@ export async function cancelSubscriptionAtPeriodEnd(
 }
 
 /**
+ * Safely convert a timestamp to Unix seconds (Unix epoch time).
+ * Handles multiple input formats:
+ * - ISO 8601 strings (from Polar API, e.g., "2023-11-07T05:31:56Z")
+ * - Numbers that are already Unix seconds (from previously mapped SubscriptionInfo)
+ * - Numbers that are milliseconds (edge case, converted to seconds)
+ * 
+ * @param value - The timestamp value (string or number)
+ * @returns Unix timestamp in seconds, or undefined if value is falsy
+ */
+function convertToUnixSeconds(value: string | number | null | undefined): number | undefined {
+	if (value === null || value === undefined) {
+		return undefined;
+	}
+
+	// If it's already a number, check if it's seconds or milliseconds
+	if (typeof value === 'number') {
+		// Numbers < 1e12 are likely Unix seconds (reasonable threshold: year 2286)
+		// Numbers >= 1e12 are likely milliseconds (year 2001+ in milliseconds)
+		if (value < 1e12) {
+			// Already in Unix seconds
+			return value;
+		} else {
+			// Treat as milliseconds, convert to seconds
+			return Math.floor(value / 1000);
+		}
+	}
+
+	// If it's a string, parse as ISO 8601 and convert to Unix seconds
+	if (typeof value === 'string') {
+		const date = new Date(value);
+		// Check if date is valid
+		if (isNaN(date.getTime())) {
+			return undefined;
+		}
+		return Math.floor(date.getTime() / 1000);
+	}
+
+	return undefined;
+}
+
+/**
  * Map the data of a Polar subscription to SubscriptionInfo
  */
 export function mapPolarSubscriptionToInfo(
@@ -305,16 +346,13 @@ export function mapPolarSubscriptionToInfo(
 
 	// Extract the currentPeriodEnd with management of formats (snake_case and camelCase)
 	// Try source first, then fallbackSubscription
+	// Use explicit timestamp format validation to prevent double-conversion errors
 	const currentPeriodEnd = 
-		source.current_period_end 
-			? new Date(source.current_period_end).getTime() / 1000
-			: source.currentPeriodEnd 
-				? new Date(source.currentPeriodEnd).getTime() / 1000 
-				: fallbackSubscription?.current_period_end
-					? new Date(fallbackSubscription.current_period_end).getTime() / 1000
-					: fallbackSubscription?.currentPeriodEnd
-						? new Date(fallbackSubscription.currentPeriodEnd).getTime() / 1000
-						: undefined;
+		convertToUnixSeconds(source.current_period_end) ??
+		convertToUnixSeconds(source.currentPeriodEnd) ??
+		convertToUnixSeconds(fallbackSubscription?.current_period_end) ??
+		convertToUnixSeconds(fallbackSubscription?.currentPeriodEnd) ??
+		undefined;
 
 	// Extract the cancelAtPeriodEnd with management of formats
 	const cancelAtPeriodEnd = 
