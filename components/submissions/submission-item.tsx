@@ -1,5 +1,8 @@
-import { FiActivity, FiClock, FiEye, FiEdit, FiTrash2, FiTrendingUp, FiCheck, FiX, FiAlertCircle } from "react-icons/fi";
+'use client';
+
+import { FiActivity, FiClock, FiEye, FiEdit, FiTrash2, FiTrendingUp, FiCheck, FiX, FiAlertCircle, FiLoader } from "react-icons/fi";
 import { IconType } from "react-icons";
+import { ClientSubmissionData } from "@/lib/types/client-item";
 
 export interface Submission {
   id: string;
@@ -62,11 +65,24 @@ export interface SubmissionItemProps {
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
   onView?: (id: string) => void;
+  isDeleting?: boolean;
+  isUpdating?: boolean;
+  disabled?: boolean;
 }
 
-export function SubmissionItem({ submission, onEdit, onDelete, onView }: SubmissionItemProps) {
+export function SubmissionItem({
+  submission,
+  onEdit,
+  onDelete,
+  onView,
+  isDeleting = false,
+  isUpdating = false,
+  disabled = false,
+}: SubmissionItemProps) {
   const status = statusConfig[submission.status];
   const StatusIcon = status.icon;
+  const isLoading = isDeleting || isUpdating;
+  const isDisabled = disabled || isLoading;
 
   const formatDate = (dateString: string) => {
     try {
@@ -86,7 +102,7 @@ export function SubmissionItem({ submission, onEdit, onDelete, onView }: Submiss
   };
 
   return (
-    <div className="group p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-theme-primary-300 dark:hover:border-theme-primary-600 hover:shadow-lg hover:shadow-theme-primary-500/10 transition-all duration-300 bg-white/50 dark:bg-gray-800/50 backdrop-blur-xs">
+    <div className={`group p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-theme-primary-300 dark:hover:border-theme-primary-600 hover:shadow-lg hover:shadow-theme-primary-500/10 transition-all duration-300 bg-white/50 dark:bg-gray-800/50 backdrop-blur-xs ${isDisabled ? 'opacity-60 pointer-events-none' : ''}`}>
       <div className="flex items-start gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between mb-3">
@@ -100,9 +116,9 @@ export function SubmissionItem({ submission, onEdit, onDelete, onView }: Submiss
                   {status.label}
                 </span>
               </div>
-              <p className="text-gray-600 dark:text-gray-300 text-sm mb-3 leading-relaxed">{submission.description}</p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mb-3 leading-relaxed line-clamp-2">{submission.description}</p>
               <div className="flex flex-wrap gap-2 mb-3">
-                {submission.tags.map((tag) => (
+                {submission.tags.slice(0, 5).map((tag) => (
                   <span
                     key={tag}
                     className="inline-flex items-center px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-xs font-medium border border-gray-200 dark:border-gray-700"
@@ -110,6 +126,11 @@ export function SubmissionItem({ submission, onEdit, onDelete, onView }: Submiss
                     {tag}
                   </span>
                 ))}
+                {submission.tags.length > 5 && (
+                  <span className="inline-flex items-center px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-full text-xs font-medium border border-gray-200 dark:border-gray-700">
+                    +{submission.tags.length - 5} more
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-6 text-xs text-gray-500 dark:text-gray-400">
                 <span className="flex items-center gap-1">
@@ -141,28 +162,39 @@ export function SubmissionItem({ submission, onEdit, onDelete, onView }: Submiss
                 </div>
               )}
             </div>
-            
+
             <div className="flex items-center gap-2 ml-4">
               <button
-                className="p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors rounded-lg hover:bg-theme-primary-50 dark:hover:bg-theme-primary-900/20"
+                className="p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors rounded-lg hover:bg-theme-primary-50 dark:hover:bg-theme-primary-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 title="View submission"
                 onClick={onView ? () => onView(submission.id) : undefined}
+                disabled={isDisabled}
               >
                 <FiEye className="w-4 h-4" />
               </button>
               <button
-                className="p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors rounded-lg hover:bg-theme-primary-50 dark:hover:bg-theme-primary-900/20"
+                className="p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors rounded-lg hover:bg-theme-primary-50 dark:hover:bg-theme-primary-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Edit submission"
                 onClick={onEdit ? () => onEdit(submission.id) : undefined}
+                disabled={isDisabled}
               >
-                <FiEdit className="w-4 h-4" />
+                {isUpdating ? (
+                  <FiLoader className="w-4 h-4 animate-spin" />
+                ) : (
+                  <FiEdit className="w-4 h-4" />
+                )}
               </button>
               <button
-                className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
+                className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Delete submission"
                 onClick={onDelete ? () => onDelete(submission.id) : undefined}
+                disabled={isDisabled}
               >
-                <FiTrash2 className="w-4 h-4" />
+                {isDeleting ? (
+                  <FiLoader className="w-4 h-4 animate-spin" />
+                ) : (
+                  <FiTrash2 className="w-4 h-4" />
+                )}
               </button>
             </div>
           </div>
@@ -170,4 +202,62 @@ export function SubmissionItem({ submission, onEdit, onDelete, onView }: Submiss
       </div>
     </div>
   );
-} 
+}
+
+// Helper function to convert ClientSubmissionData to Submission format
+export function toSubmission(item: ClientSubmissionData): Submission {
+  // Determine approved/rejected at based on status and reviewed_at
+  const approvedAt = item.status === 'approved' ? item.reviewed_at : undefined;
+  const rejectedAt = item.status === 'rejected' ? item.reviewed_at : undefined;
+
+  return {
+    id: item.id,
+    title: item.name,
+    description: item.description,
+    status: (item.status as Submission['status']) || 'draft',
+    submittedAt: item.submitted_at || item.updated_at || null,
+    approvedAt,
+    rejectedAt,
+    rejectionReason: item.review_notes,
+    category: Array.isArray(item.category) ? item.category[0] || 'Uncategorized' : item.category || 'Uncategorized',
+    tags: item.tags || [],
+    views: item.views || 0,
+    likes: item.likes || 0,
+  };
+}
+
+// Skeleton component for loading state
+export function SubmissionItemSkeleton() {
+  return (
+    <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-xs animate-pulse">
+      <div className="flex items-start gap-4">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between mb-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-6 w-48 bg-gray-200 dark:bg-gray-700 rounded" />
+                <div className="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded-full" />
+              </div>
+              <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded mb-2" />
+              <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded mb-3" />
+              <div className="flex gap-2 mb-3">
+                <div className="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded-full" />
+                <div className="h-6 w-20 bg-gray-200 dark:bg-gray-700 rounded-full" />
+                <div className="h-6 w-14 bg-gray-200 dark:bg-gray-700 rounded-full" />
+              </div>
+              <div className="flex gap-6">
+                <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
+                <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded" />
+              </div>
+            </div>
+            <div className="flex items-center gap-2 ml-4">
+              <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+              <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+              <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
