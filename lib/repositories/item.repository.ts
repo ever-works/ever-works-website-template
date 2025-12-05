@@ -39,15 +39,15 @@ export class ItemRepository {
 
   async findAll(options: ItemListOptions = {}): Promise<ItemData[]> {
     const gitService = await this.getGitService();
-    const items = await gitService.readItems();
-    
+    const items = await gitService.readItems(options.includeDeleted ?? false);
+
     // Apply filters if provided
     let filteredItems = items;
-    
+
     if (options.status) {
       filteredItems = filteredItems.filter(item => item.status === options.status);
     }
-    
+
     if (options.category) {
       filteredItems = filteredItems.filter(item => {
         if (Array.isArray(item.category)) {
@@ -56,13 +56,25 @@ export class ItemRepository {
         return item.category === options.category;
       });
     }
-    
+
     if (options.tag) {
       filteredItems = filteredItems.filter(item => {
         return item.tags.includes(options.tag!);
       });
     }
-    
+
+    if (options.submittedBy) {
+      filteredItems = filteredItems.filter(item => item.submitted_by === options.submittedBy);
+    }
+
+    if (options.search) {
+      const searchLower = options.search.toLowerCase();
+      filteredItems = filteredItems.filter(item =>
+        item.name.toLowerCase().includes(searchLower) ||
+        item.description.toLowerCase().includes(searchLower)
+      );
+    }
+
     return filteredItems;
   }
 
@@ -78,17 +90,20 @@ export class ItemRepository {
       status: options.status,
       category: options.category,
       tag: options.tag,
+      includeDeleted: options.includeDeleted,
+      submittedBy: options.submittedBy,
+      search: options.search,
     });
   }
 
-  async findById(id: string): Promise<ItemData | null> {
+  async findById(id: string, includeDeleted: boolean = false): Promise<ItemData | null> {
     const gitService = await this.getGitService();
-    return await gitService.findItemById(id);
+    return await gitService.findItemById(id, includeDeleted);
   }
 
-  async findBySlug(slug: string): Promise<ItemData | null> {
+  async findBySlug(slug: string, includeDeleted: boolean = false): Promise<ItemData | null> {
     const gitService = await this.getGitService();
-    return await gitService.findItemBySlug(slug);
+    return await gitService.findItemBySlug(slug, includeDeleted);
   }
 
   async create(data: CreateItemRequest): Promise<ItemData> {
@@ -117,6 +132,16 @@ export class ItemRepository {
     await gitService.deleteItem(id);
   }
 
+  async softDelete(id: string): Promise<ItemData> {
+    const gitService = await this.getGitService();
+    return await gitService.softDeleteItem(id);
+  }
+
+  async restore(id: string): Promise<ItemData> {
+    const gitService = await this.getGitService();
+    return await gitService.restoreItem(id);
+  }
+
   async checkDuplicateId(id: string): Promise<boolean> {
     const gitService = await this.getGitService();
     const items = await gitService.readItems();
@@ -129,22 +154,34 @@ export class ItemRepository {
     return items.some((item: ItemData) => item.slug === slug);
   }
 
-  async getStats(): Promise<{
+  async getStats(options: { submittedBy?: string; includeDeleted?: boolean } = {}): Promise<{
     total: number;
     draft: number;
     pending: number;
     approved: number;
     rejected: number;
+    deleted: number;
   }> {
     const gitService = await this.getGitService();
-    const items = await gitService.readItems();
-    
+    // Get all items including deleted to count deleted items
+    const allItems = await gitService.readItems(true);
+
+    // Filter by submittedBy if provided
+    let items = options.submittedBy
+      ? allItems.filter((item: ItemData) => item.submitted_by === options.submittedBy)
+      : allItems;
+
+    // Separate deleted and non-deleted items
+    const deletedItems = items.filter((item: ItemData) => item.deleted_at);
+    const activeItems = items.filter((item: ItemData) => !item.deleted_at);
+
     return {
-      total: items.length,
-      draft: items.filter((item: ItemData) => item.status === 'draft').length,
-      pending: items.filter((item: ItemData) => item.status === 'pending').length,
-      approved: items.filter((item: ItemData) => item.status === 'approved').length,
-      rejected: items.filter((item: ItemData) => item.status === 'rejected').length,
+      total: activeItems.length,
+      draft: activeItems.filter((item: ItemData) => item.status === 'draft').length,
+      pending: activeItems.filter((item: ItemData) => item.status === 'pending').length,
+      approved: activeItems.filter((item: ItemData) => item.status === 'approved').length,
+      rejected: activeItems.filter((item: ItemData) => item.status === 'rejected').length,
+      deleted: deletedItems.length,
     };
   }
 

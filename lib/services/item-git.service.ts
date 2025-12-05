@@ -111,10 +111,10 @@ export class ItemGitService {
     }
   }
 
-  async readItems(): Promise<ItemData[]> {
+  async readItems(includeDeleted: boolean = false): Promise<ItemData[]> {
     try {
       const dataDir = path.join(this.config.dataDir, 'data');
-      
+
       // Check if data directory exists before trying to read it
       try {
         await fs.access(dataDir);
@@ -122,22 +122,22 @@ export class ItemGitService {
         console.warn('📁 Data directory does not exist:', dataDir);
         return [];
       }
-      
+
       const itemDirs = await fs.readdir(dataDir);
-      
+
       const items: ItemData[] = [];
-      
+
       for (const itemDir of itemDirs) {
         const itemDirPath = path.join(dataDir, itemDir);
         const itemDirStat = await fs.stat(itemDirPath);
-        
+
         if (itemDirStat.isDirectory()) {
           const itemFile = path.join(itemDirPath, `${itemDir}.yml`);
-          
+
           try {
             const content = await fs.readFile(itemFile, 'utf-8');
             const item = yaml.parse(content) as any;
-            
+
             // Ensure required fields have defaults
             const normalizedItem: ItemData = {
               id: itemDir, // Use directory name as ID
@@ -156,8 +156,14 @@ export class ItemGitService {
               reviewed_by: item.reviewed_by || 'admin',
               reviewed_at: item.reviewed_at || item.updated_at || formatDateForYaml(),
               review_notes: item.review_notes,
+              deleted_at: item.deleted_at, // Include soft delete timestamp
             };
-            
+
+            // Filter out deleted items unless includeDeleted is true
+            if (!includeDeleted && normalizedItem.deleted_at) {
+              continue;
+            }
+
             items.push(normalizedItem);
           } catch (fileError) {
             console.warn(`⚠️ Could not read item file ${itemFile}:`, fileError);
@@ -165,7 +171,7 @@ export class ItemGitService {
           }
         }
       }
-      
+
       console.log(`📦 Loaded ${items.length} items from .content/data`);
       return items;
     } catch (error) {
@@ -179,12 +185,12 @@ export class ItemGitService {
       const dataDir = path.join(this.config.dataDir, 'data');
       const itemDir = path.join(dataDir, item.slug);
       const itemFile = path.join(itemDir, `${item.slug}.yml`);
-      
+
       // Ensure item directory exists
       await fs.mkdir(itemDir, { recursive: true });
-      
+
       // Prepare item data for writing (include status for admin management)
-      const itemData = {
+      const itemData: Record<string, unknown> = {
         name: item.name,
         description: item.description,
         source_url: item.source_url,
@@ -200,11 +206,16 @@ export class ItemGitService {
         reviewed_at: item.reviewed_at,
         review_notes: item.review_notes,
       };
-      
+
+      // Include deleted_at for soft delete (only if set)
+      if (item.deleted_at) {
+        itemData.deleted_at = item.deleted_at;
+      }
+
       // Write item data
       const content = yaml.stringify(itemData);
       await fs.writeFile(itemFile, content, 'utf-8');
-      
+
       // Commit and push changes
       await this.commitAndPush(`Update item: ${item.name}`);
     } catch (error) {
@@ -331,7 +342,7 @@ export class ItemGitService {
   async deleteItem(id: string): Promise<void> {
     const items = await this.readItems();
     const item = items.find(item => item.id === id);
-    
+
     if (!item) {
       throw new Error(`Item with ID '${id}' not found`);
     }
@@ -340,7 +351,7 @@ export class ItemGitService {
     const dataDir = path.join(this.config.dataDir, 'data');
     const itemDir = path.join(dataDir, item.slug);
     const itemFile = path.join(itemDir, `${item.slug}.yml`);
-    
+
     try {
       await fs.unlink(itemFile);
       // Try to remove directory if empty
@@ -348,7 +359,7 @@ export class ItemGitService {
       if (remainingFiles.length === 0) {
         await fs.rmdir(itemDir);
       }
-      
+
       await this.commitAndPush(`Delete item: ${item.name}`);
     } catch (error) {
       console.error('❌ Error deleting item:', error);
@@ -356,13 +367,57 @@ export class ItemGitService {
     }
   }
 
-  async findItemById(id: string): Promise<ItemData | null> {
-    const items = await this.readItems();
+  async softDeleteItem(id: string): Promise<ItemData> {
+    const items = await this.readItems(true); // Include already deleted items
+    const item = items.find(item => item.id === id);
+
+    if (!item) {
+      throw new Error(`Item with ID '${id}' not found`);
+    }
+
+    if (item.deleted_at) {
+      throw new Error(`Item with ID '${id}' is already deleted`);
+    }
+
+    const updatedItem: ItemData = {
+      ...item,
+      deleted_at: formatDateForYaml(),
+      updated_at: formatDateForYaml(),
+    };
+
+    await this.writeItem(updatedItem);
+    return updatedItem;
+  }
+
+  async restoreItem(id: string): Promise<ItemData> {
+    const items = await this.readItems(true); // Include deleted items
+    const item = items.find(item => item.id === id);
+
+    if (!item) {
+      throw new Error(`Item with ID '${id}' not found`);
+    }
+
+    if (!item.deleted_at) {
+      throw new Error(`Item with ID '${id}' is not deleted`);
+    }
+
+    const updatedItem: ItemData = {
+      ...item,
+      deleted_at: undefined,
+      updated_at: formatDateForYaml(),
+    };
+
+    await this.writeItem(updatedItem);
+    return updatedItem;
+  }
+
+  async findItemById(id: string, includeDeleted: boolean = false): Promise<ItemData | null> {
+    const items = await this.readItems(includeDeleted);
     return items.find(item => item.id === id) || null;
   }
 
-  async findItemBySlug(slug: string): Promise<ItemData | null> {
-    const items = await this.readItems();
+  async findItemBySlug(slug: string, includeDeleted: boolean = false): Promise<ItemData | null> {
+    const items = await this.readItems(includeDeleted);
     return items.find(item => item.slug === slug) || null;
   }
 
@@ -370,6 +425,9 @@ export class ItemGitService {
     status?: string;
     category?: string;
     tag?: string;
+    includeDeleted?: boolean;
+    submittedBy?: string;
+    search?: string;
   } = {}): Promise<{
     items: ItemData[];
     total: number;
@@ -377,13 +435,13 @@ export class ItemGitService {
     limit: number;
     totalPages: number;
   }> {
-    let allItems = await this.readItems();
-    
+    let allItems = await this.readItems(options.includeDeleted ?? false);
+
     // Apply filters
     if (options.status) {
       allItems = allItems.filter(item => item.status === options.status);
     }
-    
+
     if (options.category) {
       allItems = allItems.filter(item => {
         if (Array.isArray(item.category)) {
@@ -392,11 +450,25 @@ export class ItemGitService {
         return item.category === options.category;
       });
     }
-    
+
     if (options.tag) {
       allItems = allItems.filter(item => item.tags.includes(options.tag!));
     }
-    
+
+    // Filter by submitter (for client item management)
+    if (options.submittedBy) {
+      allItems = allItems.filter(item => item.submitted_by === options.submittedBy);
+    }
+
+    // Search by name or description
+    if (options.search) {
+      const searchLower = options.search.toLowerCase();
+      allItems = allItems.filter(item =>
+        item.name.toLowerCase().includes(searchLower) ||
+        item.description.toLowerCase().includes(searchLower)
+      );
+    }
+
     const total = allItems.length;
     const totalPages = Math.ceil(total / limit);
     const startIndex = (page - 1) * limit;

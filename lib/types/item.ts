@@ -15,6 +15,7 @@ export interface ItemData {
   reviewed_by?: string;
   reviewed_at?: string;
   review_notes?: string;
+  deleted_at?: string; // ISO timestamp for soft delete
   action?: 'visit-website' | 'start-survey' | 'buy'; // CTA action type
   showSurveys?: boolean; // Whether to show surveys section (default: true)
   publisher?: string; // Publisher name for display
@@ -39,6 +40,7 @@ export interface UpdateItemRequest extends Partial<CreateItemRequest> {
   id: string;
   status?: 'draft' | 'pending' | 'approved' | 'rejected';
   review_notes?: string;
+  deleted_at?: string; // For soft delete operations
 }
 
 export interface ItemListOptions {
@@ -49,6 +51,9 @@ export interface ItemListOptions {
   limit?: number;
   sortBy?: 'name' | 'updated_at' | 'status' | 'submitted_at';
   sortOrder?: 'asc' | 'desc';
+  includeDeleted?: boolean; // Include soft-deleted items (default: false)
+  submittedBy?: string; // Filter by user who submitted
+  search?: string; // Search by name or description
 }
 
 export interface ItemListResponse {
