@@ -284,7 +284,7 @@ function convertToUnixSeconds(value: string | number | null | undefined): number
 
 	// If it's already a number, check if it's seconds or milliseconds
 	if (typeof value === 'number') {
-		// Numbers < 1e12 are likely Unix seconds (reasonable threshold: year 2286)
+		// Numbers < 1e12 are likely Unix seconds (threshold allows dates through year ~33658)
 		// Numbers >= 1e12 are likely milliseconds (year 2001+ in milliseconds)
 		if (value < 1e12) {
 			// Already in Unix seconds
