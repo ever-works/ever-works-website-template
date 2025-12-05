@@ -24,6 +24,7 @@ export type PaginationType = "standard" | "infinite";
 
 export type ContainerWidth = "fixed" | "fluid";
 export type DatabaseSimulationMode = "enabled" | "disabled";
+export type CheckoutProvider = "stripe" | "lemonsqueezy" | "polar" | "solidgate";
 
 const DEFAULT_DATABASE_SIMULATION_MODE: DatabaseSimulationMode = "enabled";
 const DEFAULT_LAYOUT_HOME: LayoutHome = LayoutHome.HOME_ONE;
@@ -41,6 +42,7 @@ const STORAGE_KEYS = {
   ITEMS_PER_PAGE: "itemsPerPage",
   DATABASE_SIMULATION_MODE: "databaseSimulationMode",
   CONTAINER_WIDTH: "containerWidth",
+  CHECKOUT_PROVIDER: "checkoutProvider",
 } as const;
 
 // Types
@@ -72,6 +74,9 @@ interface LayoutThemeContextType {
   setDatabaseSimulationMode: (mode: DatabaseSimulationMode) => void;
   containerWidth: ContainerWidth;
   setContainerWidth: (width: ContainerWidth) => void;
+  checkoutProvider: CheckoutProvider;
+  setCheckoutProvider: (provider: CheckoutProvider) => void;
+  configuredProviders: CheckoutProvider[];
   isInitialized: boolean;
 }
 
@@ -177,6 +182,37 @@ const isValidItemsPerPage = (value: number): boolean => {
 
 const isValidDatabaseSimulationMode = (mode: string): mode is DatabaseSimulationMode => {
   return mode === "enabled" || mode === "disabled";
+};
+
+/**
+ * Detect which checkout providers are configured via environment variables
+ */
+const getConfiguredProviders = (): CheckoutProvider[] => {
+  const providers: CheckoutProvider[] = [];
+
+  if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+    providers.push("stripe");
+  }
+
+  if (typeof window !== "undefined" &&
+      (process.env.NEXT_PUBLIC_LEMONSQUEEZY_FREE_VARIANT_ID ||
+       process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_VARIANT_ID ||
+       process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_VARIANT_ID)) {
+    providers.push("lemonsqueezy");
+  }
+
+  if (typeof window !== "undefined" &&
+      (process.env.NEXT_PUBLIC_POLAR_FREE_PLAN_ID ||
+       process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID ||
+       process.env.NEXT_PUBLIC_POLAR_PREMIUM_PLAN_ID)) {
+    providers.push("polar");
+  }
+
+  return providers;
+};
+
+const isValidCheckoutProvider = (provider: string): provider is CheckoutProvider => {
+  return provider === "stripe" || provider === "lemonsqueezy" || provider === "polar" || provider === "solidgate";
 };
 
 // Context
@@ -400,6 +436,51 @@ const useContainerWidthManager = () => {
   };
 };
 
+// Custom hook for checkout provider management
+const useCheckoutProviderManager = () => {
+  const [configuredProviders] = useState<CheckoutProvider[]>(getConfiguredProviders());
+
+  const effectiveDefault = useMemo(() => {
+    const saved = safeLocalStorage.getItem(STORAGE_KEYS.CHECKOUT_PROVIDER);
+    if (saved && isValidCheckoutProvider(saved) && configuredProviders.includes(saved)) {
+      return saved;
+    }
+    return configuredProviders[0] || "stripe";
+  }, [configuredProviders]);
+
+  const [checkoutProvider, setCheckoutProviderState] = useState<CheckoutProvider>(effectiveDefault);
+
+  useEffect(() => {
+    const saved = safeLocalStorage.getItem(STORAGE_KEYS.CHECKOUT_PROVIDER);
+    if (saved && isValidCheckoutProvider(saved) && configuredProviders.includes(saved)) {
+      setCheckoutProviderState(saved);
+    } else {
+      setCheckoutProviderState(effectiveDefault);
+    }
+  }, [effectiveDefault, configuredProviders]);
+
+  const setCheckoutProvider = useCallback((provider: CheckoutProvider) => {
+    if (!isValidCheckoutProvider(provider)) {
+      console.warn(`Invalid checkout provider: ${provider}`);
+      return;
+    }
+
+    if (!configuredProviders.includes(provider)) {
+      console.warn(`Checkout provider ${provider} is not configured`);
+      return;
+    }
+
+    setCheckoutProviderState(provider);
+    safeLocalStorage.setItem(STORAGE_KEYS.CHECKOUT_PROVIDER, provider);
+  }, [configuredProviders]);
+
+  return {
+    checkoutProvider,
+    setCheckoutProvider,
+    configuredProviders,
+  };
+};
+
 // Custom hook for layout management
 const useLayoutManager = (configDefaults?: ConfigDefaults) => {
   // Determine the effective default from config or fallback
@@ -455,6 +536,7 @@ export const LayoutThemeProvider: React.FC<LayoutThemeProviderProps> = ({ childr
   const itemsPerPageManager = useItemsPerPageManager();
   const databaseSimulationModeManager = useDatabaseSimulationModeManager();
   const containerWidthManager = useContainerWidthManager();
+  const checkoutProviderManager = useCheckoutProviderManager();
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Mark as initialized after mount with delay to show skeleton and ensure stable hydration
@@ -483,6 +565,9 @@ export const LayoutThemeProvider: React.FC<LayoutThemeProviderProps> = ({ childr
         setDatabaseSimulationMode: databaseSimulationModeManager.setDatabaseSimulationMode,
         containerWidth: containerWidthManager.containerWidth,
         setContainerWidth: containerWidthManager.setContainerWidth,
+        checkoutProvider: checkoutProviderManager.checkoutProvider,
+        setCheckoutProvider: checkoutProviderManager.setCheckoutProvider,
+        configuredProviders: checkoutProviderManager.configuredProviders,
         isInitialized,
       }),
       [
@@ -501,6 +586,9 @@ export const LayoutThemeProvider: React.FC<LayoutThemeProviderProps> = ({ childr
         databaseSimulationModeManager.setDatabaseSimulationMode,
         containerWidthManager.containerWidth,
         containerWidthManager.setContainerWidth,
+        checkoutProviderManager.checkoutProvider,
+        checkoutProviderManager.setCheckoutProvider,
+        checkoutProviderManager.configuredProviders,
         isInitialized,
       ]
     );
@@ -558,6 +646,8 @@ export const resetToDefaults = (): void => {
     safeLocalStorage.setItem(STORAGE_KEYS.ITEMS_PER_PAGE, DEFAULT_ITEMS_PER_PAGE.toString());
     safeLocalStorage.setItem(STORAGE_KEYS.DATABASE_SIMULATION_MODE, DEFAULT_DATABASE_SIMULATION_MODE);
     safeLocalStorage.setItem(STORAGE_KEYS.CONTAINER_WIDTH, DEFAULT_CONTAINER_WIDTH);
+    const defaultProvider = getConfiguredProviders()[0] || "stripe";
+    safeLocalStorage.setItem(STORAGE_KEYS.CHECKOUT_PROVIDER, defaultProvider);
   } catch (error) {
     console.warn("Failed to reset to defaults:", error);
   }

@@ -467,6 +467,14 @@
     "DATABASE_MODE_ENABLED": "数据库功能已启用",
     "DATABASE_MODE_DISABLED": "数据库功能已禁用",
     "SETTINGS_SAVED_AUTOMATICALLY": "设置自动保存",
+    "CHECKOUT_PROVIDER": "支付提供商",
+    "CHECKOUT_PROVIDER_DESC": "选择您首选的订阅结账体验",
+    "CHECKOUT_PROVIDER_CHANGED": "支付提供商已更改为 {provider}",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED": "{provider} 未配置",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED_DESC": "此提供商尚未设置。请联系支持或选择其他选项。",
+    "NO_CHECKOUT_PROVIDERS_CONFIGURED": "未配置支付提供商。支付功能将不可用。",
+    "PROVIDER_NOT_CONFIGURED": "未配置",
+    "NOT_CONFIGURED": "未配置",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "基本信息",

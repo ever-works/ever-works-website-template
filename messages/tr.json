@@ -468,6 +468,14 @@
     "DATABASE_MODE_ENABLED": "Database features enabled",
     "DATABASE_MODE_DISABLED": "Database features disabled",
     "SETTINGS_SAVED_AUTOMATICALLY": "Settings saved automatically",
+    "CHECKOUT_PROVIDER": "Ödeme Sağlayıcısı",
+    "CHECKOUT_PROVIDER_DESC": "Abonelikler için tercih ettiğiniz ödeme deneyimini seçin",
+    "CHECKOUT_PROVIDER_CHANGED": "Ödeme sağlayıcısı {provider} olarak değiştirildi",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED": "{provider} yapılandırılmamış",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED_DESC": "Bu sağlayıcı kurulmamış. Destekle iletişime geçin veya başka bir seçenek belirleyin.",
+    "NO_CHECKOUT_PROVIDERS_CONFIGURED": "Hiçbir ödeme sağlayıcısı yapılandırılmamış. Ödeme özellikleri kullanılamayacak.",
+    "PROVIDER_NOT_CONFIGURED": "Yapılandırılmamış",
+    "NOT_CONFIGURED": "yapılandırılmamış",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Basic Information",

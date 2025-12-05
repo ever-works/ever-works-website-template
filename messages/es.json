@@ -470,6 +470,14 @@
     "DATABASE_MODE_ENABLED": "Funciones de base de datos habilitadas",
     "DATABASE_MODE_DISABLED": "Funciones de base de datos deshabilitadas",
     "SETTINGS_SAVED_AUTOMATICALLY": "Configuración guardada automáticamente",
+    "CHECKOUT_PROVIDER": "Proveedor de pago",
+    "CHECKOUT_PROVIDER_DESC": "Elige tu experiencia de pago preferida para las suscripciones",
+    "CHECKOUT_PROVIDER_CHANGED": "Proveedor de pago cambiado a {provider}",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED": "{provider} no está configurado",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED_DESC": "Este proveedor no ha sido configurado. Contacta con soporte o elige otra opción.",
+    "NO_CHECKOUT_PROVIDERS_CONFIGURED": "No hay proveedores de pago configurados. Las funciones de pago no estarán disponibles.",
+    "PROVIDER_NOT_CONFIGURED": "No configurado",
+    "NOT_CONFIGURED": "no configurado",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Información básica",

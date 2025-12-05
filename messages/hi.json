@@ -468,6 +468,14 @@
     "DATABASE_MODE_ENABLED": "Database features enabled",
     "DATABASE_MODE_DISABLED": "Database features disabled",
     "SETTINGS_SAVED_AUTOMATICALLY": "Settings saved automatically",
+    "CHECKOUT_PROVIDER": "भुगतान प्रदाता",
+    "CHECKOUT_PROVIDER_DESC": "सदस्यता के लिए अपना पसंदीदा चेकआउट अनुभव चुनें",
+    "CHECKOUT_PROVIDER_CHANGED": "भुगतान प्रदाता {provider} में बदल दिया गया",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED": "{provider} कॉन्फ़िगर नहीं है",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED_DESC": "यह प्रदाता सेट अप नहीं किया गया है। सहायता से संपर्क करें या कोई अन्य विकल्प चुनें।",
+    "NO_CHECKOUT_PROVIDERS_CONFIGURED": "कोई भुगतान प्रदाता कॉन्फ़िगर नहीं है। भुगतान सुविधाएं उपलब्ध नहीं होंगी।",
+    "PROVIDER_NOT_CONFIGURED": "कॉन्फ़िगर नहीं है",
+    "NOT_CONFIGURED": "कॉन्फ़िगर नहीं है",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Basic Information",

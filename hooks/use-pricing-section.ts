@@ -12,6 +12,7 @@ import { PricingConfig } from '@/lib/content';
 import { useLoginModal, type LoginModalStore } from './use-login-modal';
 import { useCheckoutButton } from './use-checkout-button';
 import { usePolarCheckout } from './use-polar-checkout';
+import { useSelectedCheckoutProvider } from './use-selected-checkout-provider';
 
 export interface UsePricingSectionParams {
 	onSelectPlan?: (plan: PaymentPlan) => void;
@@ -106,7 +107,23 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 	const currentProcessingPlanRef = useRef<string | null>(null);
 
 	const { FREE, STANDARD, PREMIUM } = config.pricing?.plans ?? {};
-	const paymentProvider = useMemo(() => config.pricing?.provider, [config.pricing?.provider]);
+
+	// Get user's selected checkout provider from Settings
+	const { getActiveProvider } = useSelectedCheckoutProvider();
+
+	// Determine payment provider: User selection takes precedence over config
+	const paymentProvider = useMemo(() => {
+		const userSelectedProvider = getActiveProvider();
+
+		// Map from CheckoutProvider type to PaymentProvider enum
+		if (userSelectedProvider === 'stripe') return PaymentProvider.STRIPE;
+		if (userSelectedProvider === 'lemonsqueezy') return PaymentProvider.LEMONSQUEEZY;
+		if (userSelectedProvider === 'polar') return PaymentProvider.POLAR;
+
+		// Fallback to config default if no user selection or provider not configured
+		return config.pricing?.provider || PaymentProvider.STRIPE;
+	}, [getActiveProvider, config.pricing?.provider]);
+
 	const paymentHook =
 		paymentProvider === PaymentProvider.LEMONSQUEEZY
 			? lemonsqueezyHook

@@ -468,6 +468,14 @@
     "DATABASE_MODE_ENABLED": "Database features enabled",
     "DATABASE_MODE_DISABLED": "Database features disabled",
     "SETTINGS_SAVED_AUTOMATICALLY": "Settings saved automatically",
+    "CHECKOUT_PROVIDER": "Betalingsprovider",
+    "CHECKOUT_PROVIDER_DESC": "Kies uw gewenste afrekenmethode voor abonnementen",
+    "CHECKOUT_PROVIDER_CHANGED": "Betalingsprovider gewijzigd naar {provider}",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED": "{provider} is niet geconfigureerd",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED_DESC": "Deze provider is niet ingesteld. Neem contact op met ondersteuning of kies een andere optie.",
+    "NO_CHECKOUT_PROVIDERS_CONFIGURED": "Geen betalingsproviders geconfigureerd. Betalingsfuncties zijn niet beschikbaar.",
+    "PROVIDER_NOT_CONFIGURED": "Niet geconfigureerd",
+    "NOT_CONFIGURED": "niet geconfigureerd",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Basic Information",

@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import SelectContainerWidth from "@/components/ui/select-container-width";
 import SelectPaginationType from "@/components/ui/select-pagination-type";
 import SelectDatabaseMode from "@/components/ui/select-database-mode";
+import SelectCheckoutProvider from "@/components/ui/select-checkout-provider";
 import { DatabaseStatusWarning } from "@/components/ui/database-status-warning";
 import { useFocusManagement } from "@/components/ui/accessibility";
 
@@ -32,7 +33,7 @@ const MODAL_CLASSES = cn(
 	"ring-1 ring-theme-primary-500/10 dark:ring-theme-primary-400/10",
 	"rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/60",
 	"z-[9999]",
-	"overflow-hidden",
+	"overflow-visible",
 	"transition-all duration-300 ease-out",
 	"animate-fade-in-up"
 );
@@ -125,6 +126,9 @@ export function SettingsModal() {
 
 					{/* Database Features Section */}
 					<SelectDatabaseMode />
+
+					{/* Checkout Provider Selection */}
+					<SelectCheckoutProvider />
 
 					{/* Database Status Warning - Only shows when DB not configured */}
 					<DatabaseStatusWarning className="mt-3" />

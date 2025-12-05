@@ -468,6 +468,14 @@
     "DATABASE_MODE_ENABLED": "Datenbankfunktionen aktiviert",
     "DATABASE_MODE_DISABLED": "Datenbankfunktionen deaktiviert",
     "SETTINGS_SAVED_AUTOMATICALLY": "Einstellungen automatisch gespeichert",
+    "CHECKOUT_PROVIDER": "Zahlungsanbieter",
+    "CHECKOUT_PROVIDER_DESC": "Wählen Sie Ihre bevorzugte Checkout-Erfahrung für Abonnements",
+    "CHECKOUT_PROVIDER_CHANGED": "Zahlungsanbieter zu {provider} geändert",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED": "{provider} ist nicht konfiguriert",
+    "CHECKOUT_PROVIDER_NOT_CONFIGURED_DESC": "Dieser Anbieter wurde nicht eingerichtet. Kontaktieren Sie den Support oder wählen Sie eine andere Option.",
+    "NO_CHECKOUT_PROVIDERS_CONFIGURED": "Keine Zahlungsanbieter konfiguriert. Zahlungsfunktionen sind nicht verfügbar.",
+    "PROVIDER_NOT_CONFIGURED": "Nicht konfiguriert",
+    "NOT_CONFIGURED": "nicht konfiguriert",
     "SETTINGS_CARDS": {
       "BASIC_INFO": {
         "TITLE": "Grundinformationen",
