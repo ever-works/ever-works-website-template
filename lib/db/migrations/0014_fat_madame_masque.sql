@@ -1,5 +1,45 @@
 -- Add moderation features (fixed migration)
 
+-- First, create the reports table (required for moderation_history foreign key)
+CREATE TABLE IF NOT EXISTS "reports" (
+	"id" text PRIMARY KEY NOT NULL,
+	"content_type" text NOT NULL,
+	"content_id" text NOT NULL,
+	"reason" text NOT NULL,
+	"details" text,
+	"status" text DEFAULT 'pending' NOT NULL,
+	"resolution" text,
+	"reported_by" text NOT NULL,
+	"reviewed_by" text,
+	"review_note" text,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"reviewed_at" timestamp,
+	"resolved_at" timestamp
+);
+--> statement-breakpoint
+
+-- Add foreign keys for reports table (if not exists)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'reports_reported_by_client_profiles_id_fk') THEN
+        ALTER TABLE "reports" ADD CONSTRAINT "reports_reported_by_client_profiles_id_fk" FOREIGN KEY ("reported_by") REFERENCES "public"."client_profiles"("id") ON DELETE cascade ON UPDATE no action;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'reports_reviewed_by_users_id_fk') THEN
+        ALTER TABLE "reports" ADD CONSTRAINT "reports_reviewed_by_users_id_fk" FOREIGN KEY ("reviewed_by") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;
+    END IF;
+END $$;
+--> statement-breakpoint
+
+-- Create indexes for reports table (if not exists)
+CREATE INDEX IF NOT EXISTS "reports_content_type_idx" ON "reports" USING btree ("content_type");
+CREATE INDEX IF NOT EXISTS "reports_content_id_idx" ON "reports" USING btree ("content_id");
+CREATE INDEX IF NOT EXISTS "reports_status_idx" ON "reports" USING btree ("status");
+CREATE INDEX IF NOT EXISTS "reports_reported_by_idx" ON "reports" USING btree ("reported_by");
+CREATE INDEX IF NOT EXISTS "reports_created_at_idx" ON "reports" USING btree ("created_at");
+CREATE INDEX IF NOT EXISTS "reports_content_type_content_id_idx" ON "reports" USING btree ("content_type", "content_id");
+--> statement-breakpoint
+
 -- Create moderation_history table
 CREATE TABLE IF NOT EXISTS "moderation_history" (
 	"id" text PRIMARY KEY NOT NULL,

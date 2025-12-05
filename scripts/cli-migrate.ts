@@ -13,6 +13,7 @@
  */
 
 import { config } from 'dotenv';
+import { sql } from 'drizzle-orm';
 
 // Load environment variables from .env files
 config({ path: '.env.local' });
@@ -43,9 +44,9 @@ async function main() {
 		const { db } = await import('../lib/db/drizzle');
 		
 		try {
-			const result = await db.execute(
-				`SELECT hash, created_at FROM drizzle.__drizzle_migrations ORDER BY created_at DESC`
-			);
+			const result = await db.execute(sql`
+				SELECT hash, created_at FROM drizzle.__drizzle_migrations ORDER BY created_at DESC
+			`);
 			const rows = (result as { rows?: unknown[] }).rows ?? (Array.isArray(result) ? result : []);
 			
 			if (rows.length === 0) {
@@ -77,11 +78,11 @@ async function main() {
 		console.log('Step 3: Verifying schema...');
 
 		// Verify critical columns exist
-		const verifyResult = await db.execute(
-			`SELECT column_name FROM information_schema.columns 
-			 WHERE table_name = 'client_profiles' 
-			 AND column_name IN ('warning_count', 'suspended_at', 'banned_at')`
-		);
+		const verifyResult = await db.execute(sql`
+			SELECT column_name FROM information_schema.columns 
+			WHERE table_name = 'client_profiles' 
+			AND column_name IN ('warning_count', 'suspended_at', 'banned_at')
+		`);
 
 		const verifyRows = (verifyResult as { rows?: unknown[] }).rows ?? (Array.isArray(verifyResult) ? verifyResult : []);
 		const columns = verifyRows.map((r) => (r as Record<string, unknown>).column_name);

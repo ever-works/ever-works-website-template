@@ -15,6 +15,7 @@
  */
 
 import { config } from 'dotenv';
+import { sql } from 'drizzle-orm';
 
 // Load environment variables from .env files
 config({ path: '.env.local' });
@@ -57,11 +58,11 @@ async function main() {
 		const { db } = await import('../lib/db/drizzle');
 		
 		// Quick verification query to ensure warning_count column exists
-		const result = await db.execute(
-			`SELECT column_name FROM information_schema.columns 
-			 WHERE table_name = 'client_profiles' 
-			 AND column_name IN ('warning_count', 'suspended_at', 'banned_at')`
-		);
+		const result = await db.execute(sql`
+			SELECT column_name FROM information_schema.columns 
+			WHERE table_name = 'client_profiles' 
+			AND column_name IN ('warning_count', 'suspended_at', 'banned_at')
+		`);
 
 		const rows = (result as { rows?: unknown[] }).rows ?? (Array.isArray(result) ? result : []);
 		const columns = rows.map((r) => (r as Record<string, unknown>).column_name);
