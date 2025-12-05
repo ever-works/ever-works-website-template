@@ -219,6 +219,7 @@
       "@opentelemetry/api": "1.9.0"
     },
     "onlyBuiltDependencies": [
+      "@vercel/speed-insights",
       "@heroui/shared-utils",
       "@parcel/watcher",
       "@scarf/scarf",
