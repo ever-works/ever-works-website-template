@@ -1,12 +1,16 @@
 import { getCachedItems } from "@/lib/content";
-import { LOCALES } from "@/lib/constants";
 import ListingCategories from "./listing-categories";
 import { notFound } from "next/navigation";
 import { getCategoriesEnabled } from "@/lib/utils/settings";
 
 export const revalidate = 10;
+
+// Allow non-English locales to be generated on-demand (ISR)
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  return LOCALES.map((locale) => ({ locale }));
+  // Only pre-build English locale for optimal build size
+  return [{ locale: 'en' }];
 }
 
 export default async function CategoriesPage({

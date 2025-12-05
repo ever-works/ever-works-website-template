@@ -1,33 +1,31 @@
 import { getCachedItemsByCategory, getCachedItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
-import { LOCALES } from "@/lib/constants";
 import Listing from "../../../(listing)/listing";
 
 export const revalidate = 10;
 
+// Allow non-English locales to be generated on-demand (ISR)
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  async function fetchItemsTags(locale: string) {
-    const { categories } = await getCachedItems({ lang: locale });
-    const paths = [];
+  // Only pre-build English locale for optimal build size
+  const locale = 'en';
+  const { categories } = await getCachedItems({ lang: locale });
+  const paths = [];
 
-    for (const category of categories) {
-      const pages = totalPages(category.count || 0);
+  for (const category of categories) {
+    const pages = totalPages(category.count || 0);
 
-      for (let i = 1; i <= pages; ++i) {
-        if (i === 1) {
-          paths.push({ categorie: [category.id], locale });
-        } else {
-          paths.push({ categorie: [category.id, i.toString()], locale });
-        }
+    for (let i = 1; i <= pages; ++i) {
+      if (i === 1) {
+        paths.push({ categorie: [category.id], locale });
+      } else {
+        paths.push({ categorie: [category.id, i.toString()], locale });
       }
     }
-
-    return paths;
   }
 
-  const params = LOCALES.map((locale) => fetchItemsTags(locale));
-
-  return (await Promise.all(params)).flat();
+  return paths;
 }
 
 export default async function CategoryListing({

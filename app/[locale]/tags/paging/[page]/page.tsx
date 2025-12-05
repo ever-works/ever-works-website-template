@@ -1,25 +1,24 @@
 import { getCachedItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
-import { LOCALES } from "@/lib/constants";
 import ListingTags from "../../listing-tags";
 
 export const revalidate = 10;
 
+// Allow non-English locales to be generated on-demand (ISR)
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  async function fetchItemsPages(locale: string) {
-    const { tags } = await getCachedItems({ lang: locale });
-    const paths = [];
-    const pages = totalPages(tags.length);
+  // Only pre-build English locale for optimal build size
+  const locale = 'en';
+  const { tags } = await getCachedItems({ lang: locale });
+  const paths = [];
+  const pages = totalPages(tags.length);
 
-    for (let i = 1; i <= pages; ++i) {
-      paths.push({ page: i.toString(), locale });
-    }
-
-    return paths;
+  for (let i = 1; i <= pages; ++i) {
+    paths.push({ page: i.toString(), locale });
   }
 
-  const params = LOCALES.map((locale) => fetchItemsPages(locale));
-  return (await Promise.all(params)).flat();
+  return paths;
 }
 
 // Set per page to 12 for tags (default from config)

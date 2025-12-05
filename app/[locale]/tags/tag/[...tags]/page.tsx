@@ -1,35 +1,34 @@
 import { getCachedItemsByTag, getCachedItems } from "@/lib/content";
 import { paginateMeta, totalPages } from "@/lib/paginate";
-import { LOCALES } from "@/lib/constants";
 import ListingTags from "../../listing-tags";
 import { getTagsEnabled } from "@/lib/utils/settings";
 import { notFound } from "next/navigation";
 
 export const revalidate = 10;
 
+// Allow non-English locales to be generated on-demand (ISR)
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  async function fetchItemsTags(locale: string) {
-    const { tags } = await getCachedItems({ lang: locale });
-    const paths = [];
+  // Only pre-build English locale for optimal build size
+  // Other locales will be generated on-demand and cached via ISR
+  const locale = 'en';
+  const { tags } = await getCachedItems({ lang: locale });
+  const paths = [];
 
-    for (const tag of tags) {
-      const pages = totalPages(tag.count || 0);
+  for (const tag of tags) {
+    const pages = totalPages(tag.count || 0);
 
-      for (let i = 1; i <= pages; ++i) {
-        if (i === 1) {
-          paths.push({ tags: [tag.id], locale });
-        } else {
-          paths.push({ tags: [tag.id, i.toString()], locale });
-        }
+    for (let i = 1; i <= pages; ++i) {
+      if (i === 1) {
+        paths.push({ tags: [tag.id], locale });
+      } else {
+        paths.push({ tags: [tag.id, i.toString()], locale });
       }
     }
-
-    return paths;
   }
 
-  const params = LOCALES.map((locale) => fetchItemsTags(locale));
-
-  return (await Promise.all(params)).flat();
+  return paths;
 }
 
 export default async function TagListing({
