@@ -170,9 +170,19 @@ export async function initializeDatabase(): Promise<void> {
 		const migrationSuccess = await runMigrations();
 
 		if (!migrationSuccess) {
-			// Migration failed - log error and skip seeding
-			console.warn('[DB Init] ⚠️  Auto-migration failed - skipping database initialization');
-			console.warn('[DB Init] ⚠️  Please run migrations manually: pnpm db:migrate');
+			// Migration failed - this is a critical error
+			const errorMsg = 'Database migrations failed - schema may be out of sync';
+			console.error('[DB Init] ❌ ' + errorMsg);
+			console.error('[DB Init] ❌ Please run migrations manually: pnpm db:migrate');
+			
+			// In production, throw to signal the error
+			// This allows monitoring systems to detect the failure
+			if (process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production') {
+				throw new Error(errorMsg);
+			}
+			
+			// In development/preview, warn but continue (allows debugging)
+			console.warn('[DB Init] ⚠️  Continuing despite migration failure (non-production)');
 			return;
 		}
 

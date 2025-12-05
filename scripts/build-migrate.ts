@@ -83,23 +83,66 @@ async function main() {
 	} catch (error) {
 		console.error('[Build Migration] ❌ Migration error:', error);
 		
-		// In CI/Vercel, a database connection error should not block build
-		// if the DB isn't available during build (some setups only have DB at runtime)
-		if (process.env.VERCEL && error instanceof Error) {
+		// Determine if this is a production deployment
+		// VERCEL_ENV: 'production', 'preview', or 'development'
+		const isProduction = process.env.VERCEL_ENV === 'production';
+		const isPreview = process.env.VERCEL_ENV === 'preview';
+		
+		// In production, ALL migration failures should fail the build
+		// We cannot safely deploy with an unknown schema state
+		if (isProduction) {
+			console.error('[Build Migration] ❌ PRODUCTION BUILD FAILED');
+			console.error('[Build Migration] ❌ Database must be accessible during production builds');
+			console.error('[Build Migration] ❌ Check DATABASE_URL and database connectivity');
+			process.exit(1);
+		}
+		
+		// Only for preview/development deployments on Vercel:
+		// Allow connection errors to pass (DB might not be provisioned for previews)
+		if ((isPreview || process.env.VERCEL) && error instanceof Error) {
 			const errorMsg = error.message.toLowerCase();
+			const errorCode = (error as NodeJS.ErrnoException).code?.toLowerCase() || '';
+			
+			// Comprehensive connection error detection
 			const isConnectionError = 
-				errorMsg.includes('connect') ||
+				// Network-level errors
 				errorMsg.includes('econnrefused') ||
 				errorMsg.includes('etimedout') ||
-				errorMsg.includes('timeout') ||
 				errorMsg.includes('enotfound') ||
 				errorMsg.includes('econnreset') ||
-				errorMsg.includes('connection');
+				errorMsg.includes('ehostunreach') ||
+				errorMsg.includes('enetunreach') ||
+				errorCode === 'econnrefused' ||
+				errorCode === 'etimedout' ||
+				errorCode === 'enotfound' ||
+				// Connection string/timeout issues
+				errorMsg.includes('timeout') ||
+				errorMsg.includes('connect') ||
+				errorMsg.includes('connection') ||
+				// SSL/TLS errors (often indicate network issues in preview)
+				errorMsg.includes('ssl') ||
+				errorMsg.includes('tls') ||
+				errorMsg.includes('certificate');
 			
-			if (isConnectionError) {
-				console.log('[Build Migration] ⚠️ Database not reachable during build');
-				console.log('[Build Migration] ⚠️ Migrations will run at startup via instrumentation hook');
+			// Auth/permission errors should FAIL - they indicate misconfiguration, not missing DB
+			const isAuthError = 
+				errorMsg.includes('password authentication failed') ||
+				errorMsg.includes('permission denied') ||
+				errorMsg.includes('authentication failed') ||
+				errorMsg.includes('access denied') ||
+				errorMsg.includes('unauthorized');
+			
+			if (isConnectionError && !isAuthError) {
+				console.log('[Build Migration] ⚠️ Preview deployment: Database not reachable during build');
+				console.log('[Build Migration] ⚠️ This is acceptable for preview deployments');
+				console.log('[Build Migration] ⚠️ Migrations will be attempted at runtime');
+				console.log('[Build Migration] ⚠️ NOTE: If runtime migrations also fail, the app will return 503 errors');
 				process.exit(0);
+			}
+			
+			if (isAuthError) {
+				console.error('[Build Migration] ❌ Authentication/permission error detected');
+				console.error('[Build Migration] ❌ Check DATABASE_URL credentials');
 			}
 		}
 
