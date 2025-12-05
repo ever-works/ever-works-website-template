@@ -144,43 +144,11 @@ import { getPolarSubscription } from '@/lib/payment/lib/utils/polar-subscription
  *         - currentPeriodEnd: "End of current period"
  *         - reactivateUrl: "URL to reactivate subscription"
  */
-
-// Configure runtime for Node.js (allows better control over body parsing)
-export const runtime = 'nodejs';
-
-// Disable body parsing to handle it manually with size limits
-// This prevents Next.js from parsing the body before we can check its size
-export const dynamic = 'force-dynamic';
-
 export async function POST(
 	request: NextRequest,
 	{ params }: { params: Promise<{ subscriptionId: string }> }
 ) {
 	try {
-		// SECURITY: Check Content-Length FIRST, before any other operations
-		// This endpoint only expects a small JSON object (max 1KB is more than enough)
-		// This prevents Next.js from trying to parse a body that exceeds the limit
-		const contentLength = request.headers.get('content-length');
-		const maxSize = 1024; // 1KB limit for this endpoint
-		
-		if (contentLength) {
-			const sizeInBytes = parseInt(contentLength, 10);
-			// Validate that Content-Length is a valid number
-			if (isNaN(sizeInBytes) || sizeInBytes < 0) {
-				return NextResponse.json(
-					{ error: 'Invalid Content-Length header' },
-					{ status: 400 }
-				);
-			}
-			// Reject requests that exceed the size limit
-			if (sizeInBytes > maxSize) {
-				return NextResponse.json(
-					{ error: `Request body too large. Maximum size is ${maxSize} bytes.` },
-					{ status: 413 }
-				);
-			}
-		}
-
 		const session = await auth();
 
 		if (!session?.user) {
@@ -188,78 +156,40 @@ export async function POST(
 		}
 
 		// Parse request body for cancelAtPeriodEnd option (defaults to true)
-		// Use request.body (ReadableStream) to read with size control and avoid Next.js body size limit
 		let cancelAtPeriodEnd = true;
 		
+		// SECURITY: Check Content-Length to prevent body size limit errors
+		// This endpoint only expects a small JSON object (max 1KB is more than enough)
+		const contentLength = request.headers.get('content-length');
+		if (contentLength) {
+			const sizeInBytes = parseInt(contentLength, 10);
+			const maxSize = 1024; // 1KB limit for this endpoint
+			if (sizeInBytes > maxSize) {
+				return NextResponse.json(
+					{ error: `Request body too large. Maximum size is ${maxSize} bytes.` },
+					{ status: 413 }
+				);
+			}
+		}
+		
 		try {
-			// Only try to parse body if Content-Length indicates there is one
-			if (contentLength && contentLength !== '0') {
-				// Read body using ReadableStream with size limit
-				// This approach avoids Next.js automatic body parsing which checks size limits
-				const body = request.body;
-				if (body) {
-					const reader = body.getReader();
-					const decoder = new TextDecoder();
-					let bodyText = '';
-					let totalBytes = 0;
-					
-					try {
-						while (true) {
-							const { done, value } = await reader.read();
-							if (done) break;
-							
-							totalBytes += value.length;
-							// Stop reading if we exceed the limit
-							if (totalBytes > maxSize) {
-								reader.cancel();
-								return NextResponse.json(
-									{ error: `Request body too large. Maximum size is ${maxSize} bytes.` },
-									{ status: 413 }
-								);
-							}
-							
-							bodyText += decoder.decode(value, { stream: true });
-						}
-						
-						// Decode any remaining bytes in the decoder's buffer
-						bodyText += decoder.decode();
-						
-						// Parse JSON from text
-						if (bodyText.trim()) {
-							const parsedBody = JSON.parse(bodyText);
-							if (typeof parsedBody.cancelAtPeriodEnd === 'boolean') {
-								cancelAtPeriodEnd = parsedBody.cancelAtPeriodEnd;
-							}
-						}
-					} catch (streamError) {
-						// Handle stream reading errors
-						if (streamError instanceof Error && streamError.message.includes('exceeded')) {
-							return NextResponse.json(
-								{ error: `Request body too large. Maximum size is ${maxSize} bytes.` },
-								{ status: 413 }
-							);
-						}
-						throw streamError;
-					} finally {
-						reader.releaseLock();
-					}
-				}
+			const body = await request.json();
+			if (typeof body.cancelAtPeriodEnd === 'boolean') {
+				cancelAtPeriodEnd = body.cancelAtPeriodEnd;
 			}
 		} catch (error) {
 			// Handle body size limit errors specifically
 			if (error instanceof Error && (
 				error.message.includes('exceeded') || 
 				error.message.includes('too large') ||
-				error.message.includes('75000') ||
-				error.message.includes('Body exceeded')
+				error.message.includes('75000')
 			)) {
 				return NextResponse.json(
-					{ error: 'Request body too large. Maximum size is 1024 bytes.' },
+					{ error: 'Request body too large' },
 					{ status: 413 }
 				);
 			}
-			// Invalid JSON or other parsing error, use default (cancelAtPeriodEnd = true)
-			// This is acceptable - the endpoint works without a body
+			// No body provided or invalid JSON, use default (cancelAtPeriodEnd = true)
 		}
 
 		const { subscriptionId } = await params;
