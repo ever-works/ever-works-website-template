@@ -94,7 +94,7 @@ const polarTranslations = {
 	},
 	fr: {
 		cardNumber: 'Numéro de carte',
-		cardExpiry: 'Date d\'expiration',
+		cardExpiry: "Date d'expiration",
 		cardCvc: 'CVC',
 		submit: 'Payer maintenant',
 		processingPayment: 'Traitement du paiement...',
@@ -103,7 +103,9 @@ const polarTranslations = {
 	}
 };
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const appUrl =
+	process.env.NEXT_PUBLIC_APP_URL ??
+	(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://demo.ever.works');
 
 export class PolarProvider implements PaymentProviderInterface {
 	private polar: Polar;
@@ -339,15 +341,17 @@ export class PolarProvider implements PaymentProviderInterface {
 		if (error instanceof Error) {
 			// Check if it's a Polar API error with validation details
 			const errorMessage = error.message;
-			
+
 			// Check for payment setup errors
-			if (errorMessage.includes('Payments are currently unavailable') || 
-			    errorMessage.includes('needs to complete their payment setup') ||
-			    errorMessage.includes('payment setup') ||
-			    errorMessage.includes('complete their payment')) {
+			if (
+				errorMessage.includes('Payments are currently unavailable') ||
+				errorMessage.includes('needs to complete their payment setup') ||
+				errorMessage.includes('payment setup') ||
+				errorMessage.includes('complete their payment')
+			) {
 				return 'Polar payment setup incomplete: The organization needs to complete payment configuration in the Polar dashboard before payments can be processed. Please contact the administrator or complete the payment setup in your Polar dashboard.';
 			}
-			
+
 			// Try to parse Polar API error response
 			try {
 				// Check if error message contains JSON
@@ -356,13 +360,13 @@ export class PolarProvider implements PaymentProviderInterface {
 					const jsonMatch = errorMessage.match(/\{[\s\S]*\}/);
 					if (jsonMatch) {
 						const errorData = JSON.parse(jsonMatch[0]);
-						
+
 						// Handle Polar validation errors
 						if (errorData.detail && Array.isArray(errorData.detail)) {
-							const emailError = errorData.detail.find((err: any) => 
-								err.loc && Array.isArray(err.loc) && err.loc.includes('email')
+							const emailError = errorData.detail.find(
+								(err: any) => err.loc && Array.isArray(err.loc) && err.loc.includes('email')
 							);
-							
+
 							if (emailError) {
 								// Check if it's an invalid email domain error
 								if (emailError.msg && emailError.msg.includes('does not accept email')) {
@@ -370,24 +374,27 @@ export class PolarProvider implements PaymentProviderInterface {
 								}
 								return emailError.msg || errorMessage;
 							}
-							
+
 							// Return first error message
 							const firstError = errorData.detail[0];
 							if (firstError && firstError.msg) {
 								// Check for payment setup errors in parsed response
-								if (firstError.msg.includes('Payments are currently unavailable') || 
-								    firstError.msg.includes('needs to complete their payment setup')) {
+								if (
+									firstError.msg.includes('Payments are currently unavailable') ||
+									firstError.msg.includes('needs to complete their payment setup')
+								) {
 									return 'Polar payment setup incomplete: The organization needs to complete payment configuration in the Polar dashboard before payments can be processed. Please contact the administrator or complete the payment setup in your Polar dashboard.';
 								}
 								return firstError.msg;
 							}
 						}
-						
+
 						// Check for payment setup errors in error message field
-						if (errorData.message && (
-							errorData.message.includes('Payments are currently unavailable') || 
-							errorData.message.includes('needs to complete their payment setup')
-						)) {
+						if (
+							errorData.message &&
+							(errorData.message.includes('Payments are currently unavailable') ||
+								errorData.message.includes('needs to complete their payment setup'))
+						) {
 							return 'Polar payment setup incomplete: The organization needs to complete payment configuration in the Polar dashboard before payments can be processed. Please contact the administrator or complete the payment setup in your Polar dashboard.';
 						}
 					}
@@ -395,13 +402,15 @@ export class PolarProvider implements PaymentProviderInterface {
 			} catch (parseError) {
 				// If parsing fails, return original message
 			}
-			
+
 			return errorMessage;
 		}
 		if (typeof error === 'string') {
 			// Check for payment setup errors in string errors
-			if (error.includes('Payments are currently unavailable') || 
-			    error.includes('needs to complete their payment setup')) {
+			if (
+				error.includes('Payments are currently unavailable') ||
+				error.includes('needs to complete their payment setup')
+			) {
 				return 'Polar payment setup incomplete: The organization needs to complete payment configuration in the Polar dashboard before payments can be processed. Please contact the administrator or complete the payment setup in your Polar dashboard.';
 			}
 			return error;
@@ -487,7 +496,7 @@ export class PolarProvider implements PaymentProviderInterface {
 		// This method is kept for interface compatibility
 		try {
 			const payment = await this.polar.payments.get({ id: paymentId } as any);
-			
+
 			return {
 				id: payment.id || paymentId,
 				amount: ((payment as any).amount || 0) / 100, // Convert from cents
@@ -535,17 +544,19 @@ export class PolarProvider implements PaymentProviderInterface {
 			if (!params.email || !this.isValidEmail(params.email)) {
 				throw new Error(`Invalid email address: ${params.email}. Please provide a valid email address.`);
 			}
-			
+
 			// Check for test domains that Polar rejects
 			const testDomains = ['example.com', 'test.com', 'invalid.com'];
 			const emailDomain = params.email.split('@')[1]?.toLowerCase();
 			if (emailDomain && testDomains.includes(emailDomain)) {
-				throw new Error(`Email domain '${emailDomain}' is not accepted by Polar. Please use a real email address with a valid domain.`);
+				throw new Error(
+					`Email domain '${emailDomain}' is not accepted by Polar. Please use a real email address with a valid domain.`
+				);
 			}
-			
+
 			// Sanitize metadata to remove undefined values
 			const sanitizedMetadata = params.metadata ? this.sanitizeMetadata(params.metadata) : {};
-			
+
 			const customer = await this.polar.customers.create({
 				email: params.email,
 				name: params.name,
@@ -614,7 +625,9 @@ export class PolarProvider implements PaymentProviderInterface {
 				id: (subscription as any)?.id || (checkout as any).id || '',
 				customerId: customerId,
 				status: this.mapSubscriptionStatus((subscription as any)?.status || 'incomplete'),
-				currentPeriodEnd: (subscription as any)?.currentPeriodEnd ? new Date((subscription as any).currentPeriodEnd).getTime() / 1000 : undefined,
+				currentPeriodEnd: (subscription as any)?.currentPeriodEnd
+					? new Date((subscription as any).currentPeriodEnd).getTime() / 1000
+					: undefined,
 				cancelAtPeriodEnd: (subscription as any)?.cancelAtPeriodEnd || false,
 				priceId: priceId,
 				checkoutData: {
@@ -633,14 +646,10 @@ export class PolarProvider implements PaymentProviderInterface {
 
 	async cancelSubscription(subscriptionId: string, cancelAtPeriodEnd: boolean = true): Promise<SubscriptionInfo> {
 		try {
-			const subscription = await getPolarSubscription(
-				subscriptionId,
-				this.polar,
-				{
-					formatErrorMessage: this.formatErrorMessage.bind(this),
-					logger: this.logger
-				}
-			);
+			const subscription = await getPolarSubscription(subscriptionId, this.polar, {
+				formatErrorMessage: this.formatErrorMessage.bind(this),
+				logger: this.logger
+			});
 
 			// Prepare common parameters for utility functions
 			const params: PolarCancelSubscriptionParams = {
@@ -721,11 +730,7 @@ export class PolarProvider implements PaymentProviderInterface {
 			};
 
 			// Reactivate the subscription
-			const result = await reactivatePolarSubscription(
-				normalizedSubscriptionId,
-				currentSubscription,
-				params
-			);
+			const result = await reactivatePolarSubscription(normalizedSubscriptionId, currentSubscription, params);
 
 			this.logger.info('Subscription reactivated successfully', {
 				subscriptionId: normalizedSubscriptionId,
@@ -772,7 +777,9 @@ export class PolarProvider implements PaymentProviderInterface {
 				id: (subscription as any).id || subscriptionId,
 				customerId: (subscription as any).customerId || '',
 				status: this.mapSubscriptionStatus((subscription as any).status || 'active'),
-				currentPeriodEnd: (subscription as any).currentPeriodEnd ? new Date((subscription as any).currentPeriodEnd).getTime() / 1000 : undefined,
+				currentPeriodEnd: (subscription as any).currentPeriodEnd
+					? new Date((subscription as any).currentPeriodEnd).getTime() / 1000
+					: undefined,
 				cancelAtPeriodEnd: (subscription as any).cancelAtPeriodEnd || false,
 				priceId: (subscription as any).priceId || priceId || ''
 			};
@@ -788,7 +795,7 @@ export class PolarProvider implements PaymentProviderInterface {
 	/**
 	 * Handles incoming Polar webhook events
 	 * Verifies webhook signature and maps event types to internal format
-	 * 
+	 *
 	 * @param payload - Parsed webhook payload
 	 * @param signature - Webhook signature from header (base64 encoded)
 	 * @param rawBody - Raw request body for signature verification
@@ -837,7 +844,7 @@ export class PolarProvider implements PaymentProviderInterface {
 	/**
 	 * Verifies webhook signature using Polar's signature format
 	 * Polar uses: HMAC SHA256 of `${webhookId}.${timestamp}.${body}`
-	 * 
+	 *
 	 * @param signature - Received signature from header
 	 * @param rawBody - Raw request body
 	 * @param payload - Parsed payload (fallback if rawBody not available)
@@ -853,7 +860,16 @@ export class PolarProvider implements PaymentProviderInterface {
 		webhookId: string | undefined
 	): void {
 		const bodyForSignature = rawBody ?? JSON.stringify(payload);
-
+		// Ensure a signature header was actually provided
+		if (!signature || typeof signature !== 'string') {
+			this.logger.error('Missing webhook signature header', {
+				hasSignature: !!signature,
+				bodyLength: bodyForSignature.length,
+				hasWebhookId: !!webhookId,
+				hasTimestamp: !!timestamp
+			});
+			throw new Error('Missing webhook-signature header required for signature verification');
+		}
 		// Polar requires webhook-id and timestamp for signature verification
 		if (!webhookId || !timestamp) {
 			this.logger.error('Missing required webhook headers for signature verification', {
@@ -900,10 +916,10 @@ export class PolarProvider implements PaymentProviderInterface {
 		// Convert base64 strings to buffers for timing-safe comparison
 		const signatureBuffer = Buffer.from(signature, 'base64');
 		const expectedSignatureBuffer = Buffer.from(expectedSignature, 'base64');
-		
+
 		// timingSafeEqual requires buffers of equal length
 		// If lengths differ, signatures don't match
-		const signaturesMatch = 
+		const signaturesMatch =
 			signatureBuffer.length === expectedSignatureBuffer.length &&
 			crypto.timingSafeEqual(signatureBuffer, expectedSignatureBuffer);
 
@@ -929,7 +945,7 @@ export class PolarProvider implements PaymentProviderInterface {
 
 	/**
 	 * Maps Polar webhook event types to internal event format
-	 * 
+	 *
 	 * @param event - Polar webhook event payload
 	 * @returns Normalized event type and data
 	 */
@@ -946,7 +962,7 @@ export class PolarProvider implements PaymentProviderInterface {
 			'invoice.paid': 'subscription_payment_succeeded',
 			'invoice.payment_failed': 'subscription_payment_failed',
 			'customer.state_changed': 'customer_state_changed',
-			'customer.created': 'customer_created',
+			'customer.created': 'customer_created'
 		};
 
 		const eventType = eventTypeMap[event.type] || event.type;
@@ -979,15 +995,15 @@ export class PolarProvider implements PaymentProviderInterface {
 
 	/**
 	 * Create a customer portal session for managing subscriptions and billing.
-	 * 
+	 *
 	 * This method creates a pre-authenticated session that allows customers to access
 	 * their Polar portal to manage subscriptions, payment methods, and billing history.
-	 * 
+	 *
 	 * @param customerId - Polar customer ID (required)
 	 * @param returnUrl - Optional absolute URL to redirect after portal session ends
 	 * @returns Promise resolving to session object with `id` and `url` properties
 	 * @throws {Error} If customer ID is invalid, API key is missing, or session creation fails
-	 * 
+	 *
 	 * @example
 	 * ```typescript
 	 * const session = await provider.createCustomerPortalSession(
@@ -997,30 +1013,20 @@ export class PolarProvider implements PaymentProviderInterface {
 	 * // Redirect user to session.url
 	 * ```
 	 */
-	async createCustomerPortalSession(
-		customerId: string,
-		returnUrl?: string
-	): Promise<{ url: string; id: string }> {
+	async createCustomerPortalSession(customerId: string, returnUrl?: string): Promise<{ url: string; id: string }> {
 		this.validateCustomerPortalSessionInputs(customerId);
 
 		const normalizedReturnUrl = this.normalizeReturnUrl(returnUrl);
 		const apiUrl = this.getPolarApiUrl();
 
 		// Primary approach: REST API (more reliable, better error handling)
-		const restApiResult = await this.createPortalSessionViaRestApi(
-			customerId,
-			normalizedReturnUrl,
-			apiUrl
-		);
+		const restApiResult = await this.createPortalSessionViaRestApi(customerId, normalizedReturnUrl, apiUrl);
 		if (restApiResult) {
 			return restApiResult;
 		}
 
 		// Fallback approach: SDK (if REST API fails)
-		const sdkResult = await this.createPortalSessionViaSdk(
-			customerId,
-			normalizedReturnUrl
-		);
+		const sdkResult = await this.createPortalSessionViaSdk(customerId, normalizedReturnUrl);
 		if (sdkResult) {
 			return sdkResult;
 		}
@@ -1028,7 +1034,7 @@ export class PolarProvider implements PaymentProviderInterface {
 		// Both approaches failed
 		throw new Error(
 			'Failed to create customer portal session: All methods exhausted. ' +
-			'Please verify your Polar API configuration and customer ID.'
+				'Please verify your Polar API configuration and customer ID.'
 		);
 	}
 
@@ -1060,14 +1066,13 @@ export class PolarProvider implements PaymentProviderInterface {
 		// Remove encoding artifacts (quotes, escaped characters)
 		// Use safe string methods instead of regex to prevent ReDoS attacks
 		url = url.trim();
-		
+
 		// Remove surrounding quotes (safe, bounded operations)
 		// Only remove one layer of quotes to avoid DoS on nested quotes
-		if ((url.startsWith('"') && url.endsWith('"')) || 
-		    (url.startsWith("'") && url.endsWith("'"))) {
+		if ((url.startsWith('"') && url.endsWith('"')) || (url.startsWith("'") && url.endsWith("'"))) {
 			url = url.slice(1, -1).trim();
 		}
-		
+
 		// Remove escaped quotes using simple string operations
 		// Split and join is safer than regex for escaping
 		url = url.split('\\"').join('').split("\\'").join('');
@@ -1098,12 +1103,12 @@ export class PolarProvider implements PaymentProviderInterface {
 		try {
 			const validatedUrl = new URL(absoluteUrl);
 			const appUrlObj = new URL(this.appUrl);
-			
+
 			// Double-check that the origin matches (defense in depth)
 			if (validatedUrl.origin !== appUrlObj.origin) {
 				throw new Error('URL origin mismatch');
 			}
-			
+
 			return absoluteUrl;
 		} catch (error) {
 			// Preserve specific error messages
@@ -1111,7 +1116,9 @@ export class PolarProvider implements PaymentProviderInterface {
 				throw error;
 			}
 			// Generic error for invalid URL format
-			throw new Error(`Invalid return URL format: ${absoluteUrl}. Must be a valid absolute URL from the same origin.`);
+			throw new Error(
+				`Invalid return URL format: ${absoluteUrl}. Must be a valid absolute URL from the same origin.`
+			);
 		}
 	}
 
@@ -1148,7 +1155,7 @@ export class PolarProvider implements PaymentProviderInterface {
 			const response = await fetch(`${apiUrl}/v1/customer-sessions`, {
 				method: 'POST',
 				headers: {
-					'Authorization': `Bearer ${this.apiKey}`,
+					Authorization: `Bearer ${this.apiKey}`,
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify(requestBody)
@@ -1178,7 +1185,6 @@ export class PolarProvider implements PaymentProviderInterface {
 				customerId
 			});
 			return null;
-
 		} catch (error) {
 			// Check if this is a fatal error (PolarFatalError)
 			// Fatal errors should be propagated immediately, not caught
@@ -1186,7 +1192,7 @@ export class PolarProvider implements PaymentProviderInterface {
 				// This is a fatal error - propagate it to the caller
 				throw error;
 			}
-			
+
 			// Otherwise, it's a recoverable error (network, etc.) - allow fallback
 			const errorMsg = this.formatErrorMessage(error);
 			this.logger.warn('REST API portal session creation failed, attempting SDK fallback', {
@@ -1221,10 +1227,7 @@ export class PolarProvider implements PaymentProviderInterface {
 	 * @returns false if error is fatal (should throw), true if recoverable (allow fallback)
 	 * @throws Error for fatal errors (401, 403, 404, 400, 429, 5xx)
 	 */
-	private async handleRestApiError(
-		response: Response,
-		customerId: string
-	): Promise<boolean> {
+	private async handleRestApiError(response: Response, customerId: string): Promise<boolean> {
 		const errorText = await response.text().catch(() => 'Unable to read error response');
 
 		this.logger.error('Polar REST API customer-sessions request failed', {
@@ -1238,7 +1241,9 @@ export class PolarProvider implements PaymentProviderInterface {
 		// Fatal errors (client errors and rate limits) should be thrown immediately
 		switch (response.status) {
 			case 404:
-				throw new PolarFatalError(`Customer not found: ${customerId}. Please verify the customer exists in Polar.`);
+				throw new PolarFatalError(
+					`Customer not found: ${customerId}. Please verify the customer exists in Polar.`
+				);
 			case 401:
 			case 403:
 				throw new PolarFatalError(
@@ -1273,21 +1278,19 @@ export class PolarProvider implements PaymentProviderInterface {
 	 * Extracts portal session data from API response
 	 * Handles various response formats from Polar API
 	 */
-	private extractPortalSessionFromResponse(
-		session: any
-	): { url: string; id: string } | null {
+	private extractPortalSessionFromResponse(session: any): { url: string; id: string } | null {
 		// Try multiple possible field names for portal URL
 		const portalUrlFields = [
 			'customer_portal_url', // Primary field (snake_case)
-			'customerPortalUrl',  // camelCase variant
+			'customerPortalUrl', // camelCase variant
 			'portal_url',
 			'portalUrl',
 			'url'
 		];
 
 		const sessionUrl = portalUrlFields
-			.map(field => session[field])
-			.find(url => url && typeof url === 'string' && url.length > 0);
+			.map((field) => session[field])
+			.find((url) => url && typeof url === 'string' && url.length > 0);
 
 		if (!sessionUrl) {
 			return null;
@@ -1337,7 +1340,6 @@ export class PolarProvider implements PaymentProviderInterface {
 				customerId
 			});
 			return null;
-
 		} catch (error) {
 			const errorMsg = this.formatErrorMessage(error);
 			this.logger.error('Polar SDK customerSessions.create failed', {
@@ -1357,19 +1359,13 @@ export class PolarProvider implements PaymentProviderInterface {
 	 * Checks if SDK customerSessions API is available
 	 */
 	private isSdkCustomerSessionsAvailable(): boolean {
-		return !!(
-			this.polar.customerSessions &&
-			typeof (this.polar.customerSessions as any).create === 'function'
-		);
+		return !!(this.polar.customerSessions && typeof (this.polar.customerSessions as any).create === 'function');
 	}
 
 	/**
 	 * Builds parameters for SDK customerSessions.create call
 	 */
-	private buildSdkSessionParams(
-		customerId: string,
-		returnUrl: string
-	): { customerId: string; returnUrl?: string } {
+	private buildSdkSessionParams(customerId: string, returnUrl: string): { customerId: string; returnUrl?: string } {
 		const params: { customerId: string; returnUrl?: string } = {
 			customerId
 		};
@@ -1440,4 +1436,3 @@ export class PolarProvider implements PaymentProviderInterface {
 		return PolarPaymentForm;
 	}
 }
-
