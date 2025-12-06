@@ -1,6 +1,7 @@
 import { User } from '@supabase/auth-js';
 import React from 'react';
 import { Polar } from '@polar-sh/sdk';
+import crypto from 'crypto';
 import {
 	PaymentProviderInterface,
 	PaymentIntent,
@@ -784,71 +785,143 @@ export class PolarProvider implements PaymentProviderInterface {
 		}
 	}
 
-	async handleWebhook(payload: any, signature: string): Promise<WebhookResult> {
+	/**
+	 * Handles incoming Polar webhook events
+	 * Verifies webhook signature and maps event types to internal format
+	 * 
+	 * @param payload - Parsed webhook payload
+	 * @param signature - Webhook signature from header (base64 encoded)
+	 * @param rawBody - Raw request body for signature verification
+	 * @param timestamp - Webhook timestamp from header
+	 * @param webhookId - Webhook ID from header
+	 * @returns WebhookResult with normalized event data
+	 * @throws Error if signature verification fails
+	 */
+	async handleWebhook(
+		payload: any,
+		signature: string,
+		rawBody?: string,
+		timestamp?: string,
+		webhookId?: string
+	): Promise<WebhookResult> {
 		try {
-			// Verify webhook signature
-			// Polar uses HMAC SHA256 for webhook verification
-			const crypto = await import('crypto');
-			const expectedSignature = crypto
-				.createHmac('sha256', this.webhookSecret)
-				.update(JSON.stringify(payload))
-				.digest('hex');
-
-			if (signature !== expectedSignature) {
-				throw new Error('Invalid webhook signature');
+			// Verify webhook signature if secret is configured
+			if (this.webhookSecret) {
+				this.verifyWebhookSignature(signature, rawBody, payload, timestamp, webhookId);
+			} else {
+				this.logger.warn('Webhook secret not configured, skipping signature verification');
 			}
 
-			const event = payload;
-			let eventType: string;
-			let eventData: any = {};
+			// Map Polar event type to internal format
+			const { eventType, eventData } = this.mapWebhookEventType(payload);
 
-			// Map Polar event types to generic types
-			switch (event.type) {
-				case 'checkout.succeeded':
-					eventType = 'payment_succeeded';
-					eventData = event.data;
-					break;
-				case 'checkout.failed':
-					eventType = 'payment_failed';
-					eventData = event.data;
-					break;
-				case 'subscription.created':
-					eventType = 'subscription_created';
-					eventData = event.data;
-					break;
-				case 'subscription.updated':
-					eventType = 'subscription_updated';
-					eventData = event.data;
-					break;
-				case 'subscription.canceled':
-					eventType = 'subscription_cancelled';
-					eventData = event.data;
-					break;
-				case 'invoice.paid':
-					eventType = 'subscription_payment_succeeded';
-					eventData = event.data;
-					break;
-				case 'invoice.payment_failed':
-					eventType = 'subscription_payment_failed';
-					eventData = event.data;
-					break;
-				default:
-					eventType = event.type;
-					eventData = event.data;
-			}
+			// Extract event ID from payload
+			const eventId = payload.id || payload.data?.id || '';
 
 			return {
 				received: true,
 				type: eventType,
-				id: event.id || event.data?.id || '',
+				id: eventId,
 				data: eventData
 			};
 		} catch (error) {
 			this.logger.error('Polar webhook handling error', {
-				error: this.formatErrorMessage(error)
+				error: this.formatErrorMessage(error),
+				eventId: payload?.id || payload?.data?.id || 'unknown',
+				eventType: payload?.type || 'unknown'
 			});
 			throw error;
 		}
+	}
+
+	/**
+	 * Verifies webhook signature using Polar's signature format
+	 * Polar uses: HMAC SHA256 of `${webhookId}.${timestamp}.${body}`
+	 * 
+	 * @param signature - Received signature from header
+	 * @param rawBody - Raw request body
+	 * @param payload - Parsed payload (fallback if rawBody not available)
+	 * @param timestamp - Webhook timestamp
+	 * @param webhookId - Webhook ID
+	 * @throws Error if signature verification fails
+	 */
+	private verifyWebhookSignature(
+		signature: string,
+		rawBody: string | undefined,
+		payload: any,
+		timestamp: string | undefined,
+		webhookId: string | undefined
+	): void {
+		const bodyForSignature = rawBody ?? JSON.stringify(payload);
+
+		// Polar requires webhook-id and timestamp for signature verification
+		if (!webhookId || !timestamp) {
+			this.logger.error('Missing required webhook headers for signature verification', {
+				hasWebhookId: !!webhookId,
+				hasTimestamp: !!timestamp,
+				bodyLength: bodyForSignature.length
+			});
+			throw new Error('Missing webhook-id or webhook-timestamp headers required for signature verification');
+		}
+
+		// Polar signature format: `${webhookId}.${timestamp}.${body}`
+		const signedPayload = `${webhookId}.${timestamp}.${bodyForSignature}`;
+		const expectedSignature = crypto
+			.createHmac('sha256', this.webhookSecret)
+			.update(signedPayload)
+			.digest('base64');
+
+		// Compare signatures (both are base64 encoded)
+		if (signature !== expectedSignature) {
+			this.logger.error('Invalid webhook signature', {
+				expectedLength: expectedSignature.length,
+				receivedLength: signature.length,
+				hasWebhookSecret: !!this.webhookSecret,
+				hasTimestamp: !!timestamp,
+				hasWebhookId: !!webhookId,
+				expectedPrefix: expectedSignature.substring(0, 10),
+				receivedPrefix: signature.substring(0, 10),
+				bodyLength: bodyForSignature.length,
+				timestamp,
+				webhookId,
+				bodyPreview: bodyForSignature.substring(0, 100)
+			});
+			throw new Error('Invalid webhook signature');
+		}
+
+		this.logger.debug('Webhook signature verified successfully', {
+			format: 'webhook-id.timestamp.body',
+			webhookId,
+			timestamp
+		});
+	}
+
+	/**
+	 * Maps Polar webhook event types to internal event format
+	 * 
+	 * @param event - Polar webhook event payload
+	 * @returns Normalized event type and data
+	 */
+	private mapWebhookEventType(event: any): { eventType: string; eventData: any } {
+		const eventTypeMap: Record<string, string> = {
+			'checkout.succeeded': 'payment_succeeded',
+			'checkout.failed': 'payment_failed',
+			'subscription.created': 'subscription_created',
+			'subscription.updated': 'subscription_updated',
+			'subscription.canceled': 'subscription_cancelled',
+			'subscription.trial_will_end': 'subscription_trial_ending',
+			'subscription.payment_succeeded': 'subscription_payment_succeeded',
+			'subscription.payment_failed': 'subscription_payment_failed',
+			'invoice.paid': 'subscription_payment_succeeded',
+			'invoice.payment_failed': 'subscription_payment_failed',
+			'customer.state_changed': 'customer_state_changed',
+			'customer.created': 'customer_created',
+		};
+
+		const eventType = eventTypeMap[event.type] || event.type;
+		const eventData = event.data || {};
+
+		return { eventType, eventData };
 	}
 
 	async refundPayment(paymentId: string, amount?: number): Promise<any> {

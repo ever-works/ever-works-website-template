@@ -134,7 +134,7 @@ export class SolidgateProvider implements PaymentProviderInterface {
     throw new Error('Solidgate subscription update not implemented yet');
   }
 
-  async handleWebhook(payload: any, signature: string): Promise<WebhookResult> {
+  async handleWebhook(payload: any, signature: string, rawBody?: string, timestamp?: string, webhookId?: string): Promise<WebhookResult> {
     // Implement Solidgate webhook handling
     throw new Error('Solidgate webhook handling not implemented yet');
   }

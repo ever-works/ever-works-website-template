@@ -2,23 +2,23 @@ import Stripe from 'stripe';
 import React from 'react';
 import { User } from '@supabase/supabase-js';
 import {
-    PaymentProviderInterface,
-    PaymentIntent,
-    PaymentVerificationResult,
-    WebhookResult,
-    CreatePaymentParams,
-    ClientConfig,
-    PaymentProviderConfig,
-    CreateCustomerParams,
-    CustomerResult,
-    CreateSubscriptionParams,
-    SubscriptionInfo,
-    SubscriptionStatus,
-    UpdateSubscriptionParams,
-    UIComponents,
-    CardBrandIcon,
-    PaymentFormProps,
-    SetupIntent
+	PaymentProviderInterface,
+	PaymentIntent,
+	PaymentVerificationResult,
+	WebhookResult,
+	CreatePaymentParams,
+	ClientConfig,
+	PaymentProviderConfig,
+	CreateCustomerParams,
+	CustomerResult,
+	CreateSubscriptionParams,
+	SubscriptionInfo,
+	SubscriptionStatus,
+	UpdateSubscriptionParams,
+	UIComponents,
+	CardBrandIcon,
+	PaymentFormProps,
+	SetupIntent
 } from '../../types/payment-types';
 import StripeElementsWrapper from '../../ui/stripe/stripe-elements';
 import { PRICES } from '../utils/prices';
@@ -575,7 +575,7 @@ export class StripeProvider implements PaymentProviderInterface {
 		}
 	}
 
-	async handleWebhook(payload: any, signature: string): Promise<WebhookResult> {
+	async handleWebhook(payload: any, signature: string, rawBody?: string, timestamp?: string, webhookId?: string): Promise<WebhookResult> {
 		try {
 			const event = this.stripe.webhooks.constructEvent(payload, signature, this.webhookSecret);
 
