@@ -16,10 +16,9 @@ const getSurvey = cache(async (slug: string) => {
 	return surveyService.getBySlug(slug);
 });
 
-const appUrl = cleanUrl(
-  process.env.NEXT_PUBLIC_APP_URL ??
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works")
-);
+const rawUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || 
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const appUrl = cleanUrl(rawUrl);
 
 export async function generateMetadata({ params }: SurveyLayoutProps): Promise<Metadata> {
 	const { slug } = await params;

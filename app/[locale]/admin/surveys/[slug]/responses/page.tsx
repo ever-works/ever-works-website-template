@@ -14,10 +14,9 @@ interface AdminSurveyResponsesPageProps {
 
 import { cleanUrl } from '@/lib/utils/url-cleaner';
 
-const appUrl = cleanUrl(
-  process.env.NEXT_PUBLIC_APP_URL ??
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works")
-);
+const rawUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || 
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const appUrl = cleanUrl(rawUrl);
 
 // Cached fetch to prevent duplicate queries
 const getSurvey = cache(async (slug: string) => {
