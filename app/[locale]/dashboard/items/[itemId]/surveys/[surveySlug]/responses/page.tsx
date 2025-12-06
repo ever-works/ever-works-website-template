@@ -5,6 +5,7 @@ import { SurveyResponsesClient } from '@/components/surveys/responses/survey-res
 import { cache } from 'react';
 import { getSurveysEnabled } from '@/lib/utils/settings';
 import { checkIsAdmin } from '@/lib/auth/guards';
+import { cleanUrl } from '@/lib/utils/url-cleaner';
 
 interface DashboardSurveyResponsesPageProps {
 	params: Promise<{
@@ -13,8 +14,6 @@ interface DashboardSurveyResponsesPageProps {
 		surveySlug: string;
 	}>;
 }
-
-import { cleanUrl } from '@/lib/utils/url-cleaner';
 
 const rawUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || 
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");

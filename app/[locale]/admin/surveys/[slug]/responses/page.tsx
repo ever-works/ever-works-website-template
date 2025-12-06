@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { surveyService } from '@/lib/services/survey.service';
 import { SurveyResponsesClient } from '@/components/surveys/responses/survey-responses-client';
 import { getSurveysEnabled } from '@/lib/utils/settings';
+import { cleanUrl } from '@/lib/utils/url-cleaner';
 
 interface AdminSurveyResponsesPageProps {
 	params: Promise<{
@@ -11,8 +12,6 @@ interface AdminSurveyResponsesPageProps {
 		slug: string;
 	}>;
 }
-
-import { cleanUrl } from '@/lib/utils/url-cleaner';
 
 const rawUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || 
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
