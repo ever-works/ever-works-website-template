@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { DashboardItemSurveysClient } from '@/components/surveys/lists/item-surveys-list';
 import { getSurveysEnabled } from '@/lib/utils/settings';
 import { checkIsAdmin } from '@/lib/auth/guards';
+import { cleanUrl } from '@/lib/utils/url-cleaner';
 
 interface DashboardItemSurveysPageProps {
 	params: Promise<{
@@ -11,9 +12,10 @@ interface DashboardItemSurveysPageProps {
 	}>;
 }
 
-const appUrl =
+const appUrl = cleanUrl(
   process.env.NEXT_PUBLIC_APP_URL ??
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works")
+);
 
 export function generateMetadata(): Metadata {	
 	return {

@@ -3,6 +3,7 @@ import { surveyService } from '@/lib/services/survey.service';
 import { Container } from '@/components/ui/container';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
+import { cleanUrl } from '@/lib/utils/url-cleaner';
 
 interface SurveyLayoutProps {
 	params: Promise<{
@@ -15,9 +16,10 @@ const getSurvey = cache(async (slug: string) => {
 	return surveyService.getBySlug(slug);
 });
 
-const appUrl =
+const appUrl = cleanUrl(
   process.env.NEXT_PUBLIC_APP_URL ??
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works")
+);
 
 export async function generateMetadata({ params }: SurveyLayoutProps): Promise<Metadata> {
 	const { slug } = await params;

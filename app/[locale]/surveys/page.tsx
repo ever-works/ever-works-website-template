@@ -8,12 +8,14 @@ import { Survey } from '@/lib/db/schema';
 import { Logger } from '@/lib/logger';
 import { SurveyTypeEnum, SurveyStatusEnum } from '@/lib/types/survey';
 import { getSurveysEnabled } from '@/lib/utils/settings';
+import { cleanUrl } from '@/lib/utils/url-cleaner';
 
 const logger = Logger.create('SurveysPage');
 
-const appUrl =
+const appUrl = cleanUrl(
   process.env.NEXT_PUBLIC_APP_URL ??
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works")
+);
 
 export const metadata: Metadata = {
     metadataBase: new URL(appUrl),

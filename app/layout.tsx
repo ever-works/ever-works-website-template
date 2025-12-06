@@ -4,8 +4,11 @@ import './[locale]/globals.scss';
 import { LayoutProvider, ThemeProvider } from '@/components/providers';
 import { siteConfig } from '@/lib/config';
 import { ensureBackgroundJobsInitialized } from '@/app/api/cron/jobs/background-jobs-init';
+import { cleanUrl } from '@/lib/utils/url-cleaner';
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const appUrl = cleanUrl(
+	process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works")
+);
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
