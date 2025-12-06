@@ -1115,17 +1115,17 @@ export class PolarProvider implements PaymentProviderInterface {
 		}
 	}
 
-/**
+	/**
 	 * Gets the Polar API base URL from environment or defaults
 	 * Uses sandbox URL if in sandbox mode, otherwise production
 	 */
-private getPolarApiUrl(): string {
-	if (process.env.POLAR_API_URL) {
-		return process.env.POLAR_API_URL;
+	private getPolarApiUrl(): string {
+		if (process.env.POLAR_API_URL) {
+			return process.env.POLAR_API_URL;
+		}
+		// Use sandbox URL if sandbox mode is enabled
+		return this.isSandbox ? 'https://sandbox-api.polar.sh' : 'https://api.polar.sh';
 	}
-	// Use sandbox URL if sandbox mode is enabled
-	return this.isSandbox ? 'https://sandbox-api.polar.sh' : 'https://api.polar.sh';
-}
 
 	/**
 	 * Creates portal session using Polar REST API directly
