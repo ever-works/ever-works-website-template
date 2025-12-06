@@ -864,6 +864,31 @@ export class PolarProvider implements PaymentProviderInterface {
 			throw new Error('Missing webhook-id or webhook-timestamp headers required for signature verification');
 		}
 
+		// Check timestamp to prevent replay attacks
+		// Validate timestamp is within acceptable window (5 minutes)
+		const webhookTime = parseInt(timestamp, 10);
+		const currentTime = Math.floor(Date.now() / 1000);
+		const tolerance = 300; // 5 minutes in seconds
+
+		if (isNaN(webhookTime)) {
+			this.logger.error('Invalid webhook timestamp format', {
+				timestamp,
+				bodyLength: bodyForSignature.length
+			});
+			throw new Error('Invalid webhook timestamp format');
+		}
+
+		if (Math.abs(currentTime - webhookTime) > tolerance) {
+			this.logger.error('Webhook timestamp is outside acceptable window', {
+				webhookTime,
+				currentTime,
+				timeDifference: Math.abs(currentTime - webhookTime),
+				tolerance,
+				bodyLength: bodyForSignature.length
+			});
+			throw new Error('Webhook timestamp is outside acceptable window');
+		}
+
 		// Polar signature format: `${webhookId}.${timestamp}.${body}`
 		const signedPayload = `${webhookId}.${timestamp}.${bodyForSignature}`;
 		const expectedSignature = crypto
@@ -871,20 +896,26 @@ export class PolarProvider implements PaymentProviderInterface {
 			.update(signedPayload)
 			.digest('base64');
 
-		// Compare signatures (both are base64 encoded)
-		if (signature !== expectedSignature) {
+		// Use constant-time comparison to prevent timing attacks
+		// Convert base64 strings to buffers for timing-safe comparison
+		const signatureBuffer = Buffer.from(signature, 'base64');
+		const expectedSignatureBuffer = Buffer.from(expectedSignature, 'base64');
+		
+		// timingSafeEqual requires buffers of equal length
+		// If lengths differ, signatures don't match
+		const signaturesMatch = 
+			signatureBuffer.length === expectedSignatureBuffer.length &&
+			crypto.timingSafeEqual(signatureBuffer, expectedSignatureBuffer);
+
+		if (!signaturesMatch) {
 			this.logger.error('Invalid webhook signature', {
 				expectedLength: expectedSignature.length,
 				receivedLength: signature.length,
 				hasWebhookSecret: !!this.webhookSecret,
 				hasTimestamp: !!timestamp,
 				hasWebhookId: !!webhookId,
-				expectedPrefix: expectedSignature.substring(0, 10),
-				receivedPrefix: signature.substring(0, 10),
-				bodyLength: bodyForSignature.length,
-				timestamp,
-				webhookId,
-				bodyPreview: bodyForSignature.substring(0, 100)
+				bodyLength: bodyForSignature.length
+				// Removed bodyPreview, timestamp, webhookId, and signature prefixes to avoid sensitive data exposure
 			});
 			throw new Error('Invalid webhook signature');
 		}

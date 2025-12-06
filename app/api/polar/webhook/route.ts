@@ -86,16 +86,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 		} catch (parseError) {
 			logger.error('Invalid JSON payload', {
 				error: parseError instanceof Error ? parseError.message : String(parseError),
-				bodyPreview: bodyText.substring(0, 200)
+				bodyLength: bodyText.length
 			});
 			return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
 		}
 		if (!validateWebhookPayload(body)) {
+			const bodyData = body as any;
 			logger.error('Invalid webhook payload structure', {
-				hasId: typeof (body as any)?.id === 'string',
-				hasType: typeof (body as any)?.type === 'string',
-				hasData: typeof (body as any)?.data === 'object',
-				bodyPreview: JSON.stringify(body).substring(0, 200)
+				hasId: typeof bodyData?.id === 'string',
+				hasType: typeof bodyData?.type === 'string',
+				hasData: typeof bodyData?.data === 'object',
+				eventId: bodyData?.id || 'unknown',
+				eventType: bodyData?.type || 'unknown'
 			});
 			return NextResponse.json({ error: 'Invalid webhook payload' }, { status: 400 });
 		}
@@ -108,7 +110,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
 		if (!signatureHeader) {
 			logger.warn('Webhook request missing signature', {
-				headers: Object.fromEntries(headersList.entries())
+				hasWebhookId: !!webhookIdHeader,
+				hasTimestamp: !!timestampHeader,
+				hasSignature: false
 			});
 			return NextResponse.json({ error: 'No signature provided' }, { status: 400 });
 		}
@@ -147,11 +151,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 		return NextResponse.json({ received: true });
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+		const isDevelopment = process.env.NODE_ENV === 'development';
+		
 		logger.error('Webhook processing failed', {
 			error: errorMessage,
 			stack: error instanceof Error ? error.stack : undefined
 		});
 
-		return NextResponse.json({ error: 'Webhook processing failed', details: errorMessage }, { status: 400 });
+		// Don't expose internal error details in production
+		return NextResponse.json(
+			{ 
+				error: 'Webhook processing failed',
+				...(isDevelopment && { details: errorMessage })
+			}, 
+			{ status: 400 }
+		);
 	}
 }
