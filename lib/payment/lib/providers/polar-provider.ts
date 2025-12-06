@@ -797,10 +797,10 @@ export class PolarProvider implements PaymentProviderInterface {
 	 * Verifies webhook signature and maps event types to internal format
 	 *
 	 * @param payload - Parsed webhook payload
-	 * @param signature - Webhook signature from header (base64 encoded)
-	 * @param rawBody - Raw request body for signature verification
-	 * @param timestamp - Webhook timestamp from header
-	 * @param webhookId - Webhook ID from header
+	 * @param signature - Webhook signature from header (hex encoded)
+	 * @param rawBody - Raw request body for signature verification (required for verification)
+	 * @param timestamp - Webhook timestamp from header (optional, used for replay protection)
+	 * @param webhookId - Webhook ID from header (optional, not used in signature)
 	 * @returns WebhookResult with normalized event data
 	 * @throws Error if signature verification fails
 	 */
@@ -842,14 +842,15 @@ export class PolarProvider implements PaymentProviderInterface {
 	}
 
 	/**
-	 * Verifies webhook signature using Polar's signature format
-	 * Polar uses: HMAC SHA256 of `${webhookId}.${timestamp}.${body}`
+	 * Verifies webhook signature using Polar's official signature format
+	 * Polar uses: HMAC SHA256 of raw request body only (hex digest)
+	 * The webhook secret must be base64-decoded before HMAC computation
 	 *
-	 * @param signature - Received signature from header
-	 * @param rawBody - Raw request body
-	 * @param payload - Parsed payload (fallback if rawBody not available)
-	 * @param timestamp - Webhook timestamp
-	 * @param webhookId - Webhook ID
+	 * @param signature - Received signature from header (hex format)
+	 * @param rawBody - Raw request body (required, no fallback)
+	 * @param payload - Parsed payload (unused, kept for compatibility)
+	 * @param timestamp - Webhook timestamp (optional, used for replay protection only)
+	 * @param webhookId - Webhook ID (optional, not used in signature)
 	 * @throws Error if signature verification fails
 	 */
 	private verifyWebhookSignature(
@@ -859,66 +860,79 @@ export class PolarProvider implements PaymentProviderInterface {
 		timestamp: string | undefined,
 		webhookId: string | undefined
 	): void {
-		const bodyForSignature = rawBody ?? JSON.stringify(payload);
+		// Require raw body - Polar calculates signature on raw body only
+		if (!rawBody || typeof rawBody !== 'string') {
+			this.logger.error('Missing raw request body for signature verification', {
+				hasRawBody: !!rawBody,
+				hasPayload: !!payload
+			});
+			throw new Error('Raw request body is required for signature verification');
+		}
+
 		// Ensure a signature header was actually provided
 		if (!signature || typeof signature !== 'string') {
 			this.logger.error('Missing webhook signature header', {
 				hasSignature: !!signature,
-				bodyLength: bodyForSignature.length,
-				hasWebhookId: !!webhookId,
-				hasTimestamp: !!timestamp
+				bodyLength: rawBody.length
 			});
 			throw new Error('Missing webhook-signature header required for signature verification');
 		}
-		// Polar requires webhook-id and timestamp for signature verification
-		if (!webhookId || !timestamp) {
-			this.logger.error('Missing required webhook headers for signature verification', {
-				hasWebhookId: !!webhookId,
-				hasTimestamp: !!timestamp,
-				bodyLength: bodyForSignature.length
-			});
-			throw new Error('Missing webhook-id or webhook-timestamp headers required for signature verification');
+
+		// Validate timestamp replay protection if provided (optional but recommended)
+		if (timestamp) {
+			const webhookTime = parseInt(timestamp, 10);
+			const currentTime = Math.floor(Date.now() / 1000);
+			const tolerance = 300; // 5 minutes in seconds
+
+			if (isNaN(webhookTime)) {
+				this.logger.error('Invalid webhook timestamp format', {
+					bodyLength: rawBody.length
+				});
+				throw new Error('Invalid webhook timestamp format');
+			}
+
+			if (Math.abs(currentTime - webhookTime) > tolerance) {
+				this.logger.error('Webhook timestamp is outside acceptable window', {
+					timeDifference: Math.abs(currentTime - webhookTime),
+					tolerance,
+					bodyLength: rawBody.length
+				});
+				throw new Error('Webhook timestamp is outside acceptable window');
+			}
 		}
 
-		// Check timestamp to prevent replay attacks
-		// Validate timestamp is within acceptable window (5 minutes)
-		const webhookTime = parseInt(timestamp, 10);
-		const currentTime = Math.floor(Date.now() / 1000);
-		const tolerance = 300; // 5 minutes in seconds
-
-		if (isNaN(webhookTime)) {
-			this.logger.error('Invalid webhook timestamp format', {
-				timestamp,
-				bodyLength: bodyForSignature.length
+		// Base64-decode the webhook secret before HMAC computation (per Polar docs)
+		let secretKey: Buffer;
+		try {
+			secretKey = Buffer.from(this.webhookSecret, 'base64');
+		} catch (error) {
+			this.logger.error('Failed to base64-decode webhook secret', {
+				error: error instanceof Error ? error.message : String(error)
 			});
-			throw new Error('Invalid webhook timestamp format');
+			throw new Error('Invalid webhook secret format (must be base64-encoded)');
 		}
 
-		if (Math.abs(currentTime - webhookTime) > tolerance) {
-			this.logger.error('Webhook timestamp is outside acceptable window', {
-				webhookTime,
-				currentTime,
-				timeDifference: Math.abs(currentTime - webhookTime),
-				tolerance,
-				bodyLength: bodyForSignature.length
-			});
-			throw new Error('Webhook timestamp is outside acceptable window');
-		}
-
-		// Polar signature format: `${webhookId}.${timestamp}.${body}`
-		const signedPayload = `${webhookId}.${timestamp}.${bodyForSignature}`;
+		// Compute HMAC-SHA256 over raw body only (no webhookId or timestamp)
 		const expectedSignature = crypto
-			.createHmac('sha256', this.webhookSecret)
-			.update(signedPayload)
-			.digest('base64');
+			.createHmac('sha256', secretKey)
+			.update(rawBody, 'utf8')
+			.digest('hex');
+
+		// Convert incoming signature from hex to buffer for timing-safe comparison
+		let signatureBuffer: Buffer;
+		try {
+			signatureBuffer = Buffer.from(signature, 'hex');
+		} catch (error) {
+			this.logger.error('Invalid signature format (expected hex)', {
+				error: error instanceof Error ? error.message : String(error)
+			});
+			throw new Error('Invalid webhook signature format (expected hexadecimal)');
+		}
+
+		const expectedSignatureBuffer = Buffer.from(expectedSignature, 'hex');
 
 		// Use constant-time comparison to prevent timing attacks
-		// Convert base64 strings to buffers for timing-safe comparison
-		const signatureBuffer = Buffer.from(signature, 'base64');
-		const expectedSignatureBuffer = Buffer.from(expectedSignature, 'base64');
-
 		// timingSafeEqual requires buffers of equal length
-		// If lengths differ, signatures don't match
 		const signaturesMatch =
 			signatureBuffer.length === expectedSignatureBuffer.length &&
 			crypto.timingSafeEqual(signatureBuffer, expectedSignatureBuffer);
@@ -927,19 +941,14 @@ export class PolarProvider implements PaymentProviderInterface {
 			this.logger.error('Invalid webhook signature', {
 				expectedLength: expectedSignature.length,
 				receivedLength: signature.length,
-				hasWebhookSecret: !!this.webhookSecret,
-				hasTimestamp: !!timestamp,
-				hasWebhookId: !!webhookId,
-				bodyLength: bodyForSignature.length
-				// Removed bodyPreview, timestamp, webhookId, and signature prefixes to avoid sensitive data exposure
+				bodyLength: rawBody.length
 			});
 			throw new Error('Invalid webhook signature');
 		}
 
 		this.logger.debug('Webhook signature verified successfully', {
-			format: 'webhook-id.timestamp.body',
-			webhookId,
-			timestamp
+			bodyLength: rawBody.length,
+			hasTimestamp: !!timestamp
 		});
 	}
 

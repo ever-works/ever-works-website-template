@@ -56,7 +56,7 @@ const WEBHOOK_ID_HEADER = 'webhook-id';
  *         required: true
  *         schema:
  *           type: string
- *         description: "Polar webhook signature for verification (HMAC SHA256, format: v1,<base64_signature>)"
+	 *         description: "Polar webhook signature for verification (HMAC SHA256, format: v1,<hex_signature>)"
  *       - name: "webhook-timestamp"
  *         in: "header"
  *         required: true
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 		}
 
 		// Extract signature from format "v1,<signature>"
-		// Polar uses format: v1,<base64_signature>
+		// Polar uses format: v1,<hex_signature>
 		const signatureParts = signatureHeader.split(',');
 		const signature = signatureParts.length > 1 ? signatureParts[1] : signatureHeader;
 
