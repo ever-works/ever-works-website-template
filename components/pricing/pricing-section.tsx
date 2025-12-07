@@ -32,7 +32,6 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 		t,
 		tBilling,
 		router,
-
 		billingInterval,
 		setBillingInterval,
 		processingPlan,
@@ -137,7 +136,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 
 					<div
 						className={cn(
-							'relative transition-all duration-500 ',
+							'relative transition-all duration-500',
 							selectedPlan === PaymentPlan.FREE &&
 								'ring-2 ring-theme-primary-500/50 dark:ring-theme-primary-400/50'
 						)}
