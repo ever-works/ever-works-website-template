@@ -131,13 +131,13 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-12 max-w-6xl mx-auto">
-				<div className="relative transition duration-700 ease-in-out hover:scale-105">
+				<div className="relative transition duration-700 ease-in-out">
 					{/* Card Glow Effect */}
 					<div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-600/20 dark:to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
 					<div
 						className={cn(
-							'relative transition-all duration-500 hover:scale-105 hover:-translate-y-2',
+							'relative transition-all duration-500 ',
 							selectedPlan === PaymentPlan.FREE &&
 								'ring-2 ring-theme-primary-500/50 dark:ring-theme-primary-400/50'
 						)}
