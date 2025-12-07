@@ -70,6 +70,10 @@ export const clientItemsListQuerySchema = z.object({
     .enum(['asc', 'desc'])
     .optional()
     .default('desc'),
+  deleted: z
+    .string()
+    .optional()
+    .transform(val => val === 'true'),
 });
 
 /**

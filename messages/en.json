@@ -2666,5 +2666,21 @@
     "TERMS_OF_SERVICE_DESCRIPTION": "Review our terms and conditions",
     "COOKIES_META_DESCRIPTION": "Information about how we use cookies and similar technologies on our website",
     "COOKIES_DESCRIPTION": "Learn about our cookie usage"
+  },
+  "client": {
+    "submissions": {
+      "TRASH_TITLE": "Trash",
+      "TRASH_DESCRIPTION": "Items you've deleted. You can restore them anytime.",
+      "TRASH_EMPTY": "Your trash is empty",
+      "TRASH_EMPTY_DESC": "Deleted submissions will appear here. When you delete a submission, it can be restored from this page.",
+      "DELETED_ITEMS": "Deleted Items",
+      "RESTORE": "Restore",
+      "RESTORING": "Restoring...",
+      "RESTORE_SUCCESS": "Submission restored successfully",
+      "DELETED_ON": "Deleted on {date}",
+      "BACK_TO_SUBMISSIONS": "Back to Submissions",
+      "UNKNOWN_DATE": "Unknown date",
+      "INVALID_DATE": "Invalid date"
+    }
   }
 }

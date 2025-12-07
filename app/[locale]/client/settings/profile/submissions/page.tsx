@@ -1,6 +1,6 @@
 import { Container } from "@/components/ui/container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FiFileText, FiArrowLeft, FiClock, FiCheck, FiX, FiPlus, FiBarChart } from "react-icons/fi";
+import { FiFileText, FiArrowLeft, FiClock, FiCheck, FiX, FiPlus, FiBarChart, FiTrash2 } from "react-icons/fi";
 import { Link } from "@/i18n/navigation";
 import { SubmissionItem } from "@/components/submissions/submission-item";
 import { dummySubmissions } from "@/lib/dummy-data";
@@ -196,13 +196,22 @@ export default async function SubmissionsPage() {
                   <FiFileText className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />
                   Your Submissions
                 </CardTitle>
-                <Link
-                  href="/submit"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 text-white rounded-lg transition-all duration-300 font-medium shadow-xs hover:shadow-md"
-                >
-                  <FiPlus className="w-4 h-4" />
-                  New Submission
-                </Link>
+                <div className="flex items-center gap-3">
+                  <Link
+                    href="/client/settings/profile/submissions/trash"
+                    className="inline-flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-300 font-medium"
+                  >
+                    <FiTrash2 className="w-4 h-4" />
+                    Trash
+                  </Link>
+                  <Link
+                    href="/submit"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 text-white rounded-lg transition-all duration-300 font-medium shadow-xs hover:shadow-md"
+                  >
+                    <FiPlus className="w-4 h-4" />
+                    New Submission
+                  </Link>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
