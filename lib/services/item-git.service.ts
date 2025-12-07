@@ -267,8 +267,8 @@ export class ItemGitService {
   }
 
   async createItem(data: CreateItemRequest): Promise<ItemData> {
-    const items = await this.readItems();
-    
+    const items = await this.readItems(true);
+
     // Check for duplicate ID
     if (items.some(item => item.id === data.id)) {
       throw new Error(`Item with ID '${data.id}' already exists`);
