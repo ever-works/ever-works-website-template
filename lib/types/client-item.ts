@@ -95,14 +95,16 @@ export interface ClientItemsListParams {
 }
 
 /**
- * Status filter options for UI
+ * Status filter values for UI
+ * Labels should be derived via useTranslations in the UI component
+ * using the 'admin.items.STATUS_OPTIONS' namespace
  */
 export const CLIENT_STATUS_FILTERS = [
-  { value: 'all', label: 'All' },
-  { value: 'approved', label: 'Approved' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'rejected', label: 'Rejected' },
-  { value: 'draft', label: 'Draft' },
+  { value: 'all', labelKey: 'ALL' },
+  { value: 'approved', labelKey: 'APPROVED' },
+  { value: 'pending', labelKey: 'PENDING' },
+  { value: 'rejected', labelKey: 'REJECTED' },
+  { value: 'draft', labelKey: 'DRAFT' },
 ] as const;
 
 export type ClientStatusFilter = typeof CLIENT_STATUS_FILTERS[number]['value'];
