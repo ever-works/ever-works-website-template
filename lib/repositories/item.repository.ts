@@ -93,6 +93,8 @@ export class ItemRepository {
       includeDeleted: options.includeDeleted,
       submittedBy: options.submittedBy,
       search: options.search,
+      sortBy: options.sortBy,
+      sortOrder: options.sortOrder,
     });
   }
 
