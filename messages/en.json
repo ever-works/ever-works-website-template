@@ -1695,6 +1695,7 @@
       "FEATURED_HELP": "Featured items appear prominently on the site",
       "STATUS_HELP": "Current status of the item",
       "STATUS_OPTIONS": {
+        "ALL": "All",
         "DRAFT": "Draft",
         "PENDING": "Pending Review",
         "APPROVED": "Approved",
