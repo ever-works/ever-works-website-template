@@ -59,6 +59,36 @@ export function isValidPathLength(path: string): boolean {
 }
 
 /**
+ * Gets the application base URL from environment variables
+ * 
+ * @returns Application base URL (absolute URI)
+ */
+export function getAppUrl(): string {
+	return (
+		process.env.NEXT_PUBLIC_APP_URL ??
+		(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://demo.ever.works')
+	);
+}
+
+/**
+ * Converts a relative path to an absolute URL
+ * 
+ * @param relativePath - Relative path (must start with '/')
+ * @returns Absolute URL
+ * 
+ * @example
+ * ```typescript
+ * const absoluteUrl = buildAbsoluteUrl('/settings/billing');
+ * // Returns: 'https://example.com/settings/billing'
+ * ```
+ */
+export function buildAbsoluteUrl(relativePath: string): string {
+	const appUrl = getAppUrl().trim().replace(/\/+$/, '');
+	const normalizedPath = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
+	return `${appUrl}${normalizedPath}`;
+}
+
+/**
  * Extracts and normalizes the return URL from the request body.
  * 
  * This function handles multiple input formats:

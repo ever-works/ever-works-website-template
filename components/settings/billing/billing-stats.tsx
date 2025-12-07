@@ -43,7 +43,8 @@ export function BillingStats({
 	lastMonthSpent,
 	growthRate,
 	nextBillingDate,
-	daysUntilRenewal
+	daysUntilRenewal,
+	currentPeriodEnd
 }: BillingStatsProps) {
 	const { createBillingPortalSession, isCreateBillingPortalSessionPending } = useSubscription();
 
@@ -311,6 +312,14 @@ export function BillingStats({
 										</span>
 									</div>
 								)}
+								{currentPeriodEnd && (
+									<div className="flex justify-between items-center">
+										<span className="text-slate-600 dark:text-slate-300">Period Ends:</span>
+										<span className="font-semibold text-slate-900 dark:text-slate-100">
+											{new Date(currentPeriodEnd).toLocaleDateString()}
+										</span>
+									</div>
+								)}
 								{daysUntilRenewal && (
 									<div className="pt-2 border-t border-slate-200 dark:border-slate-700">
 										<div className="flex justify-between items-center">
@@ -392,7 +401,8 @@ export function DetailedBillingStats({
 	lastMonthSpent,
 	growthRate,
 	nextBillingDate,
-	daysUntilRenewal
+	daysUntilRenewal,
+	currentPeriodEnd
 }: BillingStatsProps) {
 	return (
 		<div className="space-y-6">
@@ -409,6 +419,7 @@ export function DetailedBillingStats({
 				growthRate={growthRate}
 				nextBillingDate={nextBillingDate}
 				daysUntilRenewal={daysUntilRenewal}
+				currentPeriodEnd={currentPeriodEnd}
 			/>
 
 			{/* Additional Insights */}

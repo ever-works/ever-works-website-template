@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, getOrCreatePolarProvider } from '@/lib/auth';
-import { extractReturnUrl } from './utils';
+import { extractReturnUrl, buildAbsoluteUrl } from './utils';
 
 /**
  * @swagger
@@ -119,14 +119,14 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Extract return URL from request body (normalizeReturnUrl expects a relative path)
-		const returnUrl = await extractReturnUrl(request);
+		// Extract return URL from request body (returns relative path)
+		const returnUrlPath = await extractReturnUrl(request);
 
 		// Create customer portal session
 		// normalizeReturnUrl will construct the absolute URL from the relative path
 		const portalSession = await polarProvider.createCustomerPortalSession(
 			polarCustomerId,
-			returnUrl
+			returnUrlPath
 		);
 
 		if (!portalSession.url) {
@@ -139,6 +139,9 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
+		// Build absolute URL for API response (contract requires absolute URI)
+		const returnUrlAbsolute = buildAbsoluteUrl(returnUrlPath);
+
 		// Return response in the same format as Stripe for consistency
 		return NextResponse.json({
 			success: true,
@@ -146,7 +149,7 @@ export async function POST(request: NextRequest) {
 				id: portalSession.id,
 				url: portalSession.url,
 				customer: polarCustomerId,
-				return_url: returnUrl
+				return_url: returnUrlAbsolute
 			},
 			message: 'Customer portal session created'
 		});
