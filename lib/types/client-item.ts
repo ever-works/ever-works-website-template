@@ -1,4 +1,4 @@
-import { ItemData, ItemListOptions, ItemListResponse } from './item';
+import { ItemData, ItemListResponse } from './item';
 
 /**
  * Client submission data with engagement metrics
@@ -6,13 +6,6 @@ import { ItemData, ItemListOptions, ItemListResponse } from './item';
 export interface ClientSubmissionData extends ItemData {
   views?: number;
   likes?: number;
-}
-
-/**
- * Options for listing client items
- */
-export interface ClientItemListOptions extends Omit<ItemListOptions, 'submittedBy'> {
-  // submittedBy is automatically set to the current user
 }
 
 /**
@@ -66,19 +59,6 @@ export interface ClientUpdateItemResponse {
 export interface ClientDeleteItemResponse {
   success: boolean;
   message?: string;
-  error?: string;
-}
-
-/**
- * Response for getting a single client item
- */
-export interface ClientItemResponse {
-  success: boolean;
-  item?: ClientSubmissionData;
-  engagement?: {
-    views: number;
-    likes: number;
-  };
   error?: string;
 }
 
