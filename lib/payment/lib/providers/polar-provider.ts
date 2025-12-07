@@ -129,7 +129,9 @@ export class PolarProvider implements PaymentProviderInterface {
 		});
 		this.webhookSecret = config.webhookSecret || '';
 		this.organizationId = config.options?.organizationId;
-		this.appUrl = config.options?.appUrl || appUrl;
+		// Clean appUrl: remove quotes, trailing slashes, and whitespace
+		const rawAppUrl = config.options?.appUrl || appUrl;
+		this.appUrl = rawAppUrl.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
 
 		if (!this.organizationId) {
 			throw new Error('Polar organization ID is required');
@@ -1104,9 +1106,11 @@ export class PolarProvider implements PaymentProviderInterface {
 		}
 
 		// Build absolute URL from relative path
-		// Handle leading slash properly
+		// Handle leading slash properly and ensure appUrl doesn't have trailing slash
 		const relativePath = url.startsWith('/') ? url : `/${url}`;
-		const absoluteUrl = `${this.appUrl}${relativePath}`;
+		// Ensure appUrl doesn't have trailing slash to avoid double slashes
+		const cleanAppUrl = this.appUrl.replace(/\/+$/, '');
+		const absoluteUrl = `${cleanAppUrl}${relativePath}`;
 
 		// Validate the constructed URL format and origin
 		try {

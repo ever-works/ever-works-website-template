@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, getOrCreatePolarProvider } from '@/lib/auth';
+import { extractReturnUrl } from './utils';
 
 /**
  * @swagger
@@ -118,21 +119,11 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
-
-		// Get return URL from request body or use default
-		// Handle both cases: with body (optional) and without body (for compatibility with Stripe)
-		let returnUrl = `${appUrl || ''}/settings/billing`;
-		try {
-			const body = await request.json();
-			if (body?.returnUrl) {
-				returnUrl = body.returnUrl;
-			}
-		} catch {
-			// No body provided, use default return URL
-		}
+		// Extract return URL from request body (normalizeReturnUrl expects a relative path)
+		const returnUrl = await extractReturnUrl(request);
 
 		// Create customer portal session
+		// normalizeReturnUrl will construct the absolute URL from the relative path
 		const portalSession = await polarProvider.createCustomerPortalSession(
 			polarCustomerId,
 			returnUrl
@@ -161,11 +152,11 @@ export async function POST(request: NextRequest) {
 		});
 	} catch (error) {
 		console.error('Error creating Polar customer portal session:', error);
-		
+
 		// Extract detailed error information
 		let errorMessage = 'Unknown error';
 		let errorDetails: any = {};
-		
+
 		if (error instanceof Error) {
 			errorMessage = error.message;
 			errorDetails = {
@@ -179,12 +170,12 @@ export async function POST(request: NextRequest) {
 			errorMessage = String(error);
 			errorDetails = error;
 		}
-		
+
 		// Log full error for debugging
 		if (process.env.NODE_ENV === 'development') {
 			console.error('Full error object:', JSON.stringify(error, null, 2));
 		}
-		
+
 		return NextResponse.json(
 			{
 				error: 'Failed to create customer portal session',
