@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { FiSearch, FiX, FiLoader } from 'react-icons/fi';
 import { ClientStatusFilter, CLIENT_STATUS_FILTERS } from '@/lib/types/client-item';
 
@@ -28,6 +29,8 @@ export function SubmissionFilters({
   disabled = false,
   statusCounts,
 }: SubmissionFiltersProps) {
+  const t = useTranslations('admin.ITEM_FORM');
+
   const handleClearSearch = () => {
     onSearchChange('');
   };
@@ -54,7 +57,7 @@ export function SubmissionFilters({
                 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
               `}
             >
-              {filter.label}
+              {t(`STATUS_OPTIONS.${filter.labelKey}`)}
               {count !== undefined && (
                 <span
                   className={`
@@ -122,6 +125,8 @@ export function SubmissionFiltersCompact({
   isSearching = false,
   disabled = false,
 }: Omit<SubmissionFiltersProps, 'statusCounts'>) {
+  const t = useTranslations('admin.ITEM_FORM');
+
   return (
     <div className="flex flex-col sm:flex-row gap-3">
       {/* Status Select */}
@@ -142,7 +147,7 @@ export function SubmissionFiltersCompact({
       >
         {CLIENT_STATUS_FILTERS.map((filter) => (
           <option key={filter.value} value={filter.value}>
-            {filter.label}
+            {t(`STATUS_OPTIONS.${filter.labelKey}`)}
           </option>
         ))}
       </select>
