@@ -75,6 +75,16 @@ export interface ClientDeleteItemResponse {
 }
 
 /**
+ * Response after restoring a soft-deleted client item
+ */
+export interface ClientRestoreItemResponse {
+  success: boolean;
+  item?: ClientSubmissionData;
+  message?: string;
+  error?: string;
+}
+
+/**
  * Parameters for listing client items (used by hooks)
  */
 export interface ClientItemsListParams {

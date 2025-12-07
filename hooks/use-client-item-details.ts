@@ -8,6 +8,7 @@ import {
   ClientUpdateItemRequest,
   ClientUpdateItemResponse,
   ClientDeleteItemResponse,
+  ClientRestoreItemResponse,
 } from '@/lib/types/client-item';
 import { CLIENT_ITEMS_QUERY_KEYS } from './use-client-items';
 
@@ -42,15 +43,26 @@ const deleteClientItem = async (id: string): Promise<ClientDeleteItemResponse> =
   return response.data;
 };
 
+const restoreClientItem = async (id: string): Promise<ClientRestoreItemResponse> => {
+  const response = await serverClient.post<ClientRestoreItemResponse>(`/api/client/items/${id}/restore`);
+
+  if (!apiUtils.isSuccess(response)) {
+    throw new Error(apiUtils.getErrorMessage(response));
+  }
+
+  return response.data;
+};
+
 export interface UseClientItemDetailsOptions {
   enabled?: boolean;
   onUpdateSuccess?: (result: ClientUpdateItemResponse) => void;
   onDeleteSuccess?: () => void;
+  onRestoreSuccess?: (result: ClientRestoreItemResponse) => void;
 }
 
 // Hook
 export function useClientItemDetails(id: string | null | undefined, options: UseClientItemDetailsOptions = {}) {
-  const { enabled = true, onUpdateSuccess, onDeleteSuccess } = options;
+  const { enabled = true, onUpdateSuccess, onDeleteSuccess, onRestoreSuccess } = options;
   const queryClient = useQueryClient();
 
   // Fetch item details
@@ -101,6 +113,20 @@ export function useClientItemDetails(id: string | null | undefined, options: Use
     },
   });
 
+  // Restore item mutation
+  const restoreItemMutation = useMutation({
+    mutationFn: () => restoreClientItem(id!),
+    onSuccess: (result) => {
+      toast.success(result.message || 'Item restored successfully');
+      // Invalidate both detail and list queries
+      queryClient.invalidateQueries({ queryKey: CLIENT_ITEMS_QUERY_KEYS.clientItems });
+      onRestoreSuccess?.(result);
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to restore item');
+    },
+  });
+
   // Handlers
   const handleUpdateItem = useCallback(async (data: ClientUpdateItemRequest): Promise<boolean> => {
     if (!id) return false;
@@ -122,6 +148,16 @@ export function useClientItemDetails(id: string | null | undefined, options: Use
     }
   }, [id, deleteItemMutation]);
 
+  const handleRestoreItem = useCallback(async (): Promise<boolean> => {
+    if (!id) return false;
+    try {
+      await restoreItemMutation.mutateAsync();
+      return true;
+    } catch {
+      return false;
+    }
+  }, [id, restoreItemMutation]);
+
   // Extract item and engagement from response
   const item: ClientSubmissionData | null = itemData?.item || null;
   const engagement = itemData?.engagement || { views: 0, likes: 0 };
@@ -136,7 +172,8 @@ export function useClientItemDetails(id: string | null | undefined, options: Use
     isFetching,
     isUpdating: updateItemMutation.isPending,
     isDeleting: deleteItemMutation.isPending,
-    isSubmitting: updateItemMutation.isPending || deleteItemMutation.isPending,
+    isRestoring: restoreItemMutation.isPending,
+    isSubmitting: updateItemMutation.isPending || deleteItemMutation.isPending || restoreItemMutation.isPending,
 
     // Error
     error: error as Error | null,
@@ -145,6 +182,7 @@ export function useClientItemDetails(id: string | null | undefined, options: Use
     // Actions
     updateItem: handleUpdateItem,
     deleteItem: handleDeleteItem,
+    restoreItem: handleRestoreItem,
 
     // Utility
     refetch,
