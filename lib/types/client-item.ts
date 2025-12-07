@@ -9,6 +9,18 @@ export interface ClientSubmissionData extends ItemData {
 }
 
 /**
+ * Response from GET /api/client/items/:id endpoint
+ */
+export interface ClientItemResponse {
+  success: boolean;
+  item: ClientSubmissionData;
+  engagement: {
+    views: number;
+    likes: number;
+  };
+}
+
+/**
  * Response for client items list
  */
 export interface ClientItemListResponse extends ItemListResponse {
