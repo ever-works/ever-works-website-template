@@ -1728,6 +1728,7 @@
       "FEATURED_HELP": "Empfohlene Elemente erscheinen prominent auf der Website",
       "STATUS_HELP": "Aktueller Status des Elements",
       "STATUS_OPTIONS": {
+        "ALL": "All",
         "DRAFT": "Entwurf",
         "PENDING": "Ausstehende Überprüfung",
         "APPROVED": "Genehmigt",
@@ -1902,6 +1903,7 @@
       "CANCEL": "Abbrechen",
       "APPLY_FILTERS": "Filter anwenden",
       "STATUS_OPTIONS": {
+        "ALL": "All",
         "ACTIVE": "Aktiv",
         "INACTIVE": "Inaktiv",
         "SUSPENDED": "Gesperrt",

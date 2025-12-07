@@ -1,4 +1,4 @@
-import { ItemData, ItemListOptions, ItemListResponse } from './item';
+import { ItemData, ItemListResponse } from './item';
 
 /**
  * Client submission data with engagement metrics
@@ -9,10 +9,15 @@ export interface ClientSubmissionData extends ItemData {
 }
 
 /**
- * Options for listing client items
+ * Response from GET /api/client/items/:id endpoint
  */
-export interface ClientItemListOptions extends Omit<ItemListOptions, 'submittedBy'> {
-  // submittedBy is automatically set to the current user
+export interface ClientItemResponse {
+  success: boolean;
+  item: ClientSubmissionData;
+  engagement: {
+    views: number;
+    likes: number;
+  };
 }
 
 /**
@@ -70,15 +75,12 @@ export interface ClientDeleteItemResponse {
 }
 
 /**
- * Response for getting a single client item
+ * Response after restoring a soft-deleted client item
  */
-export interface ClientItemResponse {
+export interface ClientRestoreItemResponse {
   success: boolean;
   item?: ClientSubmissionData;
-  engagement?: {
-    views: number;
-    likes: number;
-  };
+  message?: string;
   error?: string;
 }
 
@@ -95,14 +97,16 @@ export interface ClientItemsListParams {
 }
 
 /**
- * Status filter options for UI
+ * Status filter values for UI
+ * Labels should be derived via useTranslations in the UI component
+ * using the 'admin.items.STATUS_OPTIONS' namespace
  */
 export const CLIENT_STATUS_FILTERS = [
-  { value: 'all', label: 'All' },
-  { value: 'approved', label: 'Approved' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'rejected', label: 'Rejected' },
-  { value: 'draft', label: 'Draft' },
+  { value: 'all', labelKey: 'ALL' },
+  { value: 'approved', labelKey: 'APPROVED' },
+  { value: 'pending', labelKey: 'PENDING' },
+  { value: 'rejected', labelKey: 'REJECTED' },
+  { value: 'draft', labelKey: 'DRAFT' },
 ] as const;
 
 export type ClientStatusFilter = typeof CLIENT_STATUS_FILTERS[number]['value'];

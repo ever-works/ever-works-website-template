@@ -267,8 +267,8 @@ export class ItemGitService {
   }
 
   async createItem(data: CreateItemRequest): Promise<ItemData> {
-    const items = await this.readItems();
-    
+    const items = await this.readItems(true);
+
     // Check for duplicate ID
     if (items.some(item => item.id === data.id)) {
       throw new Error(`Item with ID '${data.id}' already exists`);
@@ -300,7 +300,7 @@ export class ItemGitService {
   }
 
   async updateItem(id: string, data: UpdateItemRequest): Promise<ItemData> {
-    const items = await this.readItems();
+    const items = await this.readItems(true);
     const itemIndex = items.findIndex(item => item.id === id);
     
     if (itemIndex === -1) {
@@ -319,7 +319,7 @@ export class ItemGitService {
   }
 
   async reviewItem(id: string, reviewData: ReviewRequest): Promise<ItemData> {
-    const items = await this.readItems();
+    const items = await this.readItems(true);
     const itemIndex = items.findIndex(item => item.id === id);
     
     if (itemIndex === -1) {
@@ -340,7 +340,7 @@ export class ItemGitService {
   }
 
   async deleteItem(id: string): Promise<void> {
-    const items = await this.readItems();
+    const items = await this.readItems(true);
     const item = items.find(item => item.id === id);
 
     if (!item) {

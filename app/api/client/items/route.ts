@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireClientAuth, serverErrorResponse, badRequestResponse } from '@/lib/utils/client-auth';
 import { getClientItemRepository } from '@/lib/repositories/client-item.repository';
-import { validatePaginationParams } from '@/lib/utils/pagination-validation';
+import { clientItemsListQuerySchema } from '@/lib/validations/client-item';
 
 /**
  * @swagger
@@ -92,25 +92,17 @@ export async function GET(request: NextRequest) {
     }
     const { userId } = authResult;
 
-    // Parse query parameters
+    // Parse and validate query parameters
     const { searchParams } = new URL(request.url);
+    const queryParams = Object.fromEntries(searchParams.entries());
+    const validationResult = clientItemsListQuerySchema.safeParse(queryParams);
 
-    // Validate pagination parameters
-    const paginationResult = validatePaginationParams(searchParams);
-    if ('error' in paginationResult) {
-      return badRequestResponse(paginationResult.error);
+    if (!validationResult.success) {
+      const errorMessage = validationResult.error.issues.map((issue) => issue.message).join(', ');
+      return badRequestResponse(errorMessage);
     }
-    const { page, limit } = paginationResult;
 
-    // Get status filter
-    const statusParam = searchParams.get('status');
-    const validStatuses = ['all', 'draft', 'pending', 'approved', 'rejected'] as const;
-    const status = statusParam && validStatuses.includes(statusParam as any)
-      ? (statusParam as typeof validStatuses[number])
-      : 'all';
-
-    // Get search query
-    const search = searchParams.get('search') || undefined;
+    const { page, limit, status, search } = validationResult.data;
 
     // Get client item repository
     const clientItemRepository = getClientItemRepository();
