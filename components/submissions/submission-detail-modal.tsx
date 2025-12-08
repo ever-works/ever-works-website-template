@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import {
   Modal,
@@ -11,7 +12,6 @@ import {
 import {
   Eye,
   X,
-  ExternalLink,
   Calendar,
   Tag,
   Activity,
@@ -57,11 +57,11 @@ const statusIcons = {
   draft: AlertCircle,
 };
 
-const statusLabels = {
-  approved: 'Approved',
-  pending: 'Pending Review',
-  rejected: 'Rejected',
-  draft: 'Draft',
+const statusLabelKeys = {
+  approved: 'STATUS_APPROVED',
+  pending: 'STATUS_PENDING',
+  rejected: 'STATUS_REJECTED',
+  draft: 'STATUS_DRAFT',
 };
 
 export interface SubmissionDetailModalProps {
@@ -79,17 +79,19 @@ export function SubmissionDetailModal({
   onEdit,
   onDelete,
 }: SubmissionDetailModalProps) {
+  const t = useTranslations('client.submissions');
+
   if (!submission) return null;
 
   const StatusIcon = statusIcons[submission.status];
-  const statusLabel = statusLabels[submission.status];
+  const statusLabel = t(statusLabelKeys[submission.status]);
   const statusClass = CLASSES.statusBadge[submission.status];
 
   const formatDate = (dateString: string | null | undefined) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return t('NA');
     try {
       const date = new Date(dateString);
-      if (isNaN(date.getTime())) return 'Invalid date';
+      if (isNaN(date.getTime())) return t('INVALID_DATE');
       return date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -98,7 +100,7 @@ export function SubmissionDetailModal({
         minute: '2-digit',
       });
     } catch {
-      return 'Invalid date';
+      return t('INVALID_DATE');
     }
   };
 
@@ -116,8 +118,8 @@ export function SubmissionDetailModal({
                 <Eye className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h2 className={CLASSES.headerText}>Submission Details</h2>
-                <p className={CLASSES.headerSubtext}>View your submission information</p>
+                <h2 className={CLASSES.headerText}>{t('SUBMISSION_DETAILS')}</h2>
+                <p className={CLASSES.headerSubtext}>{t('VIEW_SUBMISSION_INFO')}</p>
               </div>
             </div>
             <Button
@@ -148,7 +150,7 @@ export function SubmissionDetailModal({
 
             {/* Description */}
             <div className={CLASSES.section}>
-              <h4 className={CLASSES.sectionTitle}>Description</h4>
+              <h4 className={CLASSES.sectionTitle}>{t('DESCRIPTION')}</h4>
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                 {submission.description}
               </p>
@@ -162,14 +164,14 @@ export function SubmissionDetailModal({
                     <Eye className="w-5 h-5 text-blue-500" />
                     <span className={CLASSES.statsValue}>{submission.views}</span>
                   </div>
-                  <span className={CLASSES.statsLabel}>Views</span>
+                  <span className={CLASSES.statsLabel}>{t('VIEWS')}</span>
                 </div>
                 <div className={CLASSES.statsCard}>
                   <div className="flex items-center justify-center gap-2 mb-1">
                     <TrendingUp className="w-5 h-5 text-green-500" />
                     <span className={CLASSES.statsValue}>{submission.likes}</span>
                   </div>
-                  <span className={CLASSES.statsLabel}>Likes</span>
+                  <span className={CLASSES.statsLabel}>{t('LIKES')}</span>
                 </div>
               </div>
             )}
@@ -177,7 +179,7 @@ export function SubmissionDetailModal({
             {/* Rejection Reason */}
             {submission.status === 'rejected' && submission.rejectionReason && (
               <div className={CLASSES.rejectionBox}>
-                <h4 className="font-medium text-red-800 dark:text-red-200 mb-2">Rejection Reason</h4>
+                <h4 className="font-medium text-red-800 dark:text-red-200 mb-2">{t('REJECTION_REASON')}</h4>
                 <p className="text-sm text-red-700 dark:text-red-300">{submission.rejectionReason}</p>
               </div>
             )}
@@ -186,24 +188,24 @@ export function SubmissionDetailModal({
             <div className="grid grid-cols-2 gap-4">
               <div className={CLASSES.metaItem}>
                 <Activity className="w-4 h-4 text-gray-400" />
-                <span>Category: <strong>{submission.category}</strong></span>
+                <span>{t('CATEGORY')}: <strong>{submission.category}</strong></span>
               </div>
               {submission.submittedAt && (
                 <div className={CLASSES.metaItem}>
                   <Calendar className="w-4 h-4 text-gray-400" />
-                  <span>Submitted: <strong>{formatDate(submission.submittedAt)}</strong></span>
+                  <span>{t('SUBMITTED')}: <strong>{formatDate(submission.submittedAt)}</strong></span>
                 </div>
               )}
               {submission.approvedAt && (
                 <div className={CLASSES.metaItem}>
                   <Check className="w-4 h-4 text-green-500" />
-                  <span>Approved: <strong>{formatDate(submission.approvedAt)}</strong></span>
+                  <span>{t('APPROVED_ON')}: <strong>{formatDate(submission.approvedAt)}</strong></span>
                 </div>
               )}
               {submission.rejectedAt && (
                 <div className={CLASSES.metaItem}>
                   <XCircle className="w-4 h-4 text-red-500" />
-                  <span>Rejected: <strong>{formatDate(submission.rejectedAt)}</strong></span>
+                  <span>{t('REJECTED_ON')}: <strong>{formatDate(submission.rejectedAt)}</strong></span>
                 </div>
               )}
             </div>
@@ -211,7 +213,7 @@ export function SubmissionDetailModal({
             {/* Tags */}
             {submission.tags.length > 0 && (
               <div className={CLASSES.section}>
-                <h4 className={CLASSES.sectionTitle}>Tags</h4>
+                <h4 className={CLASSES.sectionTitle}>{t('TAGS')}</h4>
                 <div className={CLASSES.tagsList}>
                   {submission.tags.map((tag) => (
                     <span key={tag} className={CLASSES.tag}>
@@ -232,7 +234,7 @@ export function SubmissionDetailModal({
               onClick={() => onOpenChange(false)}
               className="flex-1"
             >
-              Close
+              {t('CLOSE')}
             </Button>
             {onEdit && (
               <Button
@@ -244,7 +246,7 @@ export function SubmissionDetailModal({
                 className="flex-1"
               >
                 <Edit className="h-4 w-4 mr-2" />
-                Edit
+                {t('EDIT')}
               </Button>
             )}
             {onDelete && (
@@ -257,7 +259,7 @@ export function SubmissionDetailModal({
                 className="flex-1"
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Delete
+                {t('DELETE')}
               </Button>
             )}
           </div>

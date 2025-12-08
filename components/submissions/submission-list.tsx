@@ -1,8 +1,9 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { FiFileText, FiPlus } from 'react-icons/fi';
 import { Link } from '@/i18n/navigation';
-import { SubmissionItem, SubmissionItemSkeleton, Submission, toSubmission } from './submission-item';
+import { SubmissionItem, SubmissionItemSkeleton, toSubmission } from './submission-item';
 import { ClientSubmissionData } from '@/lib/types/client-item';
 
 export interface SubmissionListProps {
@@ -28,12 +29,18 @@ export function SubmissionList({
   onView,
   deletingId,
   updatingId,
-  emptyStateTitle = 'No submissions yet',
-  emptyStateDescription = 'Start building your portfolio by submitting your first project. Share your work with the community and get feedback from other developers.',
-  emptyStateActionLabel = 'Submit Your First Project',
+  emptyStateTitle,
+  emptyStateDescription,
+  emptyStateActionLabel,
   emptyStateActionHref = '/submit',
   skeletonCount = 3,
 }: SubmissionListProps) {
+  const t = useTranslations('client.submissions');
+
+  const title = emptyStateTitle || t('NO_SUBMISSIONS_TITLE');
+  const description = emptyStateDescription || t('NO_SUBMISSIONS_DESC');
+  const actionLabel = emptyStateActionLabel || t('SUBMIT_FIRST_PROJECT');
+
   // Show skeleton loading state
   if (isLoading) {
     return (
@@ -53,10 +60,10 @@ export function SubmissionList({
           <FiFileText className="w-8 h-8 text-gray-400" />
         </div>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-          {emptyStateTitle}
+          {title}
         </h3>
         <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-          {emptyStateDescription}
+          {description}
         </p>
         {emptyStateActionHref && (
           <Link
@@ -64,7 +71,7 @@ export function SubmissionList({
             className="inline-flex items-center gap-2 px-6 py-3 bg-theme-primary-600 hover:bg-theme-primary-700 text-white rounded-lg font-medium transition-colors"
           >
             <FiPlus className="w-4 h-4" />
-            {emptyStateActionLabel}
+            {actionLabel}
           </Link>
         )}
       </div>
@@ -109,6 +116,7 @@ export function SubmissionListWithInfo({
   limit,
   ...props
 }: SubmissionListWithPaginationProps) {
+  const t = useTranslations('client.submissions');
   const start = (page - 1) * limit + 1;
   const end = Math.min(page * limit, total);
 
@@ -118,11 +126,11 @@ export function SubmissionListWithInfo({
       {total > 0 && (
         <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
           <span>
-            Showing {start}-{end} of {total} submissions
+            {t('SHOWING_RESULTS', { start, end, total })}
           </span>
           {totalPages > 1 && (
             <span>
-              Page {page} of {totalPages}
+              {t('PAGE_INFO', { page, totalPages })}
             </span>
           )}
         </div>

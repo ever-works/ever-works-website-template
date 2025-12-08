@@ -93,6 +93,8 @@ export class ItemRepository {
       includeDeleted: options.includeDeleted,
       submittedBy: options.submittedBy,
       search: options.search,
+      sortBy: options.sortBy,
+      sortOrder: options.sortOrder,
     });
   }
 
@@ -144,13 +146,13 @@ export class ItemRepository {
 
   async checkDuplicateId(id: string): Promise<boolean> {
     const gitService = await this.getGitService();
-    const items = await gitService.readItems();
+    const items = await gitService.readItems(true);
     return items.some((item: ItemData) => item.id === id);
   }
 
   async checkDuplicateSlug(slug: string): Promise<boolean> {
     const gitService = await this.getGitService();
-    const items = await gitService.readItems();
+    const items = await gitService.readItems(true);
     return items.some((item: ItemData) => item.slug === slug);
   }
 

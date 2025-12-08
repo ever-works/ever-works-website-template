@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import {
   Modal,
@@ -45,6 +46,7 @@ export function DeleteSubmissionDialog({
   onOpenChange,
   onConfirm
 }: DeleteSubmissionDialogProps) {
+  const t = useTranslations('client.submissions');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleConfirm = async () => {
@@ -75,8 +77,8 @@ export function DeleteSubmissionDialog({
                 <AlertTriangle className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h2 className={CLASSES.headerText}>Delete Submission</h2>
-                <p className={CLASSES.headerSubtext}>This action can be undone later</p>
+                <h2 className={CLASSES.headerText}>{t('DELETE_SUBMISSION_TITLE')}</h2>
+                <p className={CLASSES.headerSubtext}>{t('DELETE_UNDONE_LATER')}</p>
               </div>
             </div>
             <Button
@@ -97,10 +99,9 @@ export function DeleteSubmissionDialog({
               <div className={CLASSES.warningContent}>
                 <RotateCcw className={CLASSES.warningIcon} />
                 <div>
-                  <p className={CLASSES.warningTitle}>Soft Delete</p>
+                  <p className={CLASSES.warningTitle}>{t('SOFT_DELETE')}</p>
                   <p className={CLASSES.warningText}>
-                    Your submission will be hidden from public view but not permanently deleted.
-                    You can restore it later by contacting support.
+                    {t('SOFT_DELETE_DESC')}
                   </p>
                 </div>
               </div>
@@ -122,7 +123,7 @@ export function DeleteSubmissionDialog({
               disabled={isLoading}
               className={CLASSES.cancelButton}
             >
-              Cancel
+              {t('CANCEL')}
             </Button>
             <Button
               variant="destructive"
@@ -133,12 +134,12 @@ export function DeleteSubmissionDialog({
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Deleting...
+                  {t('DELETING')}
                 </>
               ) : (
                 <>
                   <Trash2 className="h-4 w-4 mr-2" />
-                  Delete Submission
+                  {t('DELETE_SUBMISSION_TITLE')}
                 </>
               )}
             </Button>

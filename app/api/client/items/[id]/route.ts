@@ -7,7 +7,7 @@ import {
   badRequestResponse,
 } from '@/lib/utils/client-auth';
 import { getClientItemRepository } from '@/lib/repositories/client-item.repository';
-import { clientUpdateItemSchema } from '@/lib/validations/client-item';
+import { clientUpdateItemSchema, itemIdParamSchema } from '@/lib/validations/client-item';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -51,8 +51,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const { userId } = authResult;
 
     const { id } = await params;
-
-    if (!id) {
+    const paramResult = itemIdParamSchema.safeParse({ id });
+    if (!paramResult.success) {
       return badRequestResponse('Item ID is required');
     }
 
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const clientItemRepository = getClientItemRepository();
 
     // Fetch item for user (ownership check is done in repository)
-    const item = await clientItemRepository.findByIdForUser(id, userId);
+    const item = await clientItemRepository.findByIdForUser(paramResult.data.id, userId);
 
     if (!item) {
       return notFoundResponse('Item not found or you do not have permission to view it');
@@ -161,8 +161,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const { userId } = authResult;
 
     const { id } = await params;
-
-    if (!id) {
+    const paramResult = itemIdParamSchema.safeParse({ id });
+    if (!paramResult.success) {
       return badRequestResponse('Item ID is required');
     }
 
@@ -189,7 +189,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     try {
       // Update item (ownership check is done in repository)
-      const result = await clientItemRepository.updateAsClient(id, userId, updateData);
+      const result = await clientItemRepository.updateAsClient(paramResult.data.id, userId, updateData);
 
       let message = 'Item updated successfully';
       if (result.statusChanged) {
@@ -273,8 +273,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const { userId } = authResult;
 
     const { id } = await params;
-
-    if (!id) {
+    const paramResult = itemIdParamSchema.safeParse({ id });
+    if (!paramResult.success) {
       return badRequestResponse('Item ID is required');
     }
 
@@ -283,7 +283,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     try {
       // Soft delete item (ownership check is done in repository)
-      await clientItemRepository.softDeleteForUser(id, userId);
+      await clientItemRepository.softDeleteForUser(paramResult.data.id, userId);
 
       return NextResponse.json({
         success: true,

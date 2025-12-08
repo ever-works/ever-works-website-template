@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { FiSearch, FiX, FiLoader } from 'react-icons/fi';
 import { ClientStatusFilter, CLIENT_STATUS_FILTERS } from '@/lib/types/client-item';
 
@@ -28,6 +29,9 @@ export function SubmissionFilters({
   disabled = false,
   statusCounts,
 }: SubmissionFiltersProps) {
+  const t = useTranslations('client.submissions');
+  const tStatus = useTranslations('admin.ITEM_FORM');
+
   const handleClearSearch = () => {
     onSearchChange('');
   };
@@ -54,7 +58,7 @@ export function SubmissionFilters({
                 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
               `}
             >
-              {filter.label}
+              {tStatus(`STATUS_OPTIONS.${filter.labelKey}`)}
               {count !== undefined && (
                 <span
                   className={`
@@ -86,7 +90,7 @@ export function SubmissionFilters({
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search by title or description..."
+          placeholder={t('SEARCH_PLACEHOLDER')}
           disabled={disabled}
           className={`
             w-full pl-10 pr-10 py-3
@@ -122,6 +126,9 @@ export function SubmissionFiltersCompact({
   isSearching = false,
   disabled = false,
 }: Omit<SubmissionFiltersProps, 'statusCounts'>) {
+  const t = useTranslations('client.submissions');
+  const tStatus = useTranslations('admin.ITEM_FORM');
+
   return (
     <div className="flex flex-col sm:flex-row gap-3">
       {/* Status Select */}
@@ -142,7 +149,7 @@ export function SubmissionFiltersCompact({
       >
         {CLIENT_STATUS_FILTERS.map((filter) => (
           <option key={filter.value} value={filter.value}>
-            {filter.label}
+            {tStatus(`STATUS_OPTIONS.${filter.labelKey}`)}
           </option>
         ))}
       </select>
@@ -160,7 +167,7 @@ export function SubmissionFiltersCompact({
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search..."
+          placeholder={t('SEARCH_PLACEHOLDER_SHORT')}
           disabled={disabled}
           className={`
             w-full pl-9 pr-9 py-2.5

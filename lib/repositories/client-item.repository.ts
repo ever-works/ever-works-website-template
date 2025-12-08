@@ -178,6 +178,50 @@ export class ClientItemRepository {
   }
 
   /**
+   * Find all deleted items for a specific user with pagination
+   */
+  async findDeletedByUser(
+    userId: string,
+    params: ClientItemsListParams = {}
+  ): Promise<ClientItemListResponse> {
+    const { page = 1, limit = 10, sortBy, sortOrder } = params;
+
+    // Get all items including deleted for this user
+    const result = await this.itemRepository.findAllPaginated(page, limit, {
+      submittedBy: userId,
+      includeDeleted: true,
+      sortBy: sortBy || 'updated_at',
+      sortOrder: sortOrder || 'desc',
+    });
+
+    // Filter to only deleted items
+    const deletedItems = result.items.filter(item => item.deleted_at);
+
+    // Convert to ClientSubmissionData
+    const items: ClientSubmissionData[] = deletedItems.map(item => ({
+      ...item,
+      views: 0,
+      likes: 0,
+    }));
+
+    return {
+      items,
+      total: deletedItems.length,
+      page,
+      limit,
+      totalPages: Math.ceil(deletedItems.length / limit),
+      stats: {
+        total: deletedItems.length,
+        draft: 0,
+        pending: 0,
+        approved: 0,
+        rejected: 0,
+        deleted: deletedItems.length,
+      },
+    };
+  }
+
+  /**
    * Get statistics for a specific user
    */
   async getStatsByUser(userId: string): Promise<ClientItemStats> {

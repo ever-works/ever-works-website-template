@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -52,6 +53,7 @@ export function EditSubmissionModal({
   onSave,
   isLoading = false,
 }: EditSubmissionModalProps) {
+  const t = useTranslations('client.submissions');
   const {
     register,
     handleSubmit,
@@ -114,8 +116,8 @@ export function EditSubmissionModal({
                   <Edit3 className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h2 className={CLASSES.headerText}>Edit Submission</h2>
-                  <p className={CLASSES.headerSubtext}>Update your submission details</p>
+                  <h2 className={CLASSES.headerText}>{t('EDIT_SUBMISSION_TITLE')}</h2>
+                  <p className={CLASSES.headerSubtext}>{t('UPDATE_DETAILS')}</p>
                 </div>
               </div>
               <Button
@@ -139,10 +141,9 @@ export function EditSubmissionModal({
                   <div className={CLASSES.warningContent}>
                     <AlertTriangle className={CLASSES.warningIcon} />
                     <div>
-                      <p className={CLASSES.warningTitle}>Re-review Required</p>
+                      <p className={CLASSES.warningTitle}>{t('RE_REVIEW_REQUIRED')}</p>
                       <p className={CLASSES.warningText}>
-                        This submission is currently approved. Editing it will change its status
-                        to &quot;Pending&quot; and require re-approval from our team.
+                        {t('RE_REVIEW_WARNING')}
                       </p>
                     </div>
                   </div>
@@ -152,14 +153,14 @@ export function EditSubmissionModal({
               {/* Name */}
               <div className={CLASSES.formGroup}>
                 <label htmlFor="name" className={CLASSES.label}>
-                  Title <span className="text-red-500">*</span>
+                  {t('TITLE_LABEL')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="name"
                   type="text"
                   {...register('name')}
                   className={CLASSES.input}
-                  placeholder="Enter submission title"
+                  placeholder={t('TITLE_PLACEHOLDER')}
                   disabled={isLoading}
                 />
                 {errors.name && (
@@ -170,14 +171,14 @@ export function EditSubmissionModal({
               {/* Description */}
               <div className={CLASSES.formGroup}>
                 <label htmlFor="description" className={CLASSES.label}>
-                  Description <span className="text-red-500">*</span>
+                  {t('DESCRIPTION_LABEL')} <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   id="description"
                   {...register('description')}
                   rows={4}
                   className={CLASSES.textarea}
-                  placeholder="Describe your submission..."
+                  placeholder={t('DESCRIPTION_PLACEHOLDER')}
                   disabled={isLoading}
                 />
                 {errors.description && (
@@ -188,14 +189,14 @@ export function EditSubmissionModal({
               {/* Source URL */}
               <div className={CLASSES.formGroup}>
                 <label htmlFor="source_url" className={CLASSES.label}>
-                  Website / Source URL
+                  {t('URL_LABEL')}
                 </label>
                 <input
                   id="source_url"
                   type="url"
                   {...register('source_url')}
                   className={CLASSES.input}
-                  placeholder="https://example.com"
+                  placeholder={t('URL_PLACEHOLDER')}
                   disabled={isLoading}
                 />
                 {errors.source_url && (
@@ -205,7 +206,7 @@ export function EditSubmissionModal({
 
               {/* Tags (read-only display) */}
               <div className={CLASSES.formGroup}>
-                <label className={CLASSES.label}>Tags</label>
+                <label className={CLASSES.label}>{t('TAGS')}</label>
                 <div className="flex flex-wrap gap-2">
                   {submission.tags.length > 0 ? (
                     submission.tags.map((tag) => (
@@ -217,11 +218,11 @@ export function EditSubmissionModal({
                       </span>
                     ))
                   ) : (
-                    <span className="text-sm text-gray-500 dark:text-gray-400">No tags</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{t('NO_TAGS')}</span>
                   )}
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Tags cannot be edited at this time.
+                  {t('TAGS_CANNOT_EDIT')}
                 </p>
               </div>
             </div>
@@ -236,7 +237,7 @@ export function EditSubmissionModal({
                 disabled={isLoading}
                 className={CLASSES.cancelButton}
               >
-                Cancel
+                {t('CANCEL')}
               </Button>
               <Button
                 type="submit"
@@ -246,12 +247,12 @@ export function EditSubmissionModal({
                 {isLoading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Saving...
+                    {t('SAVING')}
                   </>
                 ) : (
                   <>
                     <Save className="h-4 w-4 mr-2" />
-                    Save Changes
+                    {t('SAVE_CHANGES')}
                   </>
                 )}
               </Button>

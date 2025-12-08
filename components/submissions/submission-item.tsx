@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { FiActivity, FiClock, FiEye, FiEdit, FiTrash2, FiTrendingUp, FiCheck, FiX, FiAlertCircle, FiLoader } from "react-icons/fi";
 import { IconType } from "react-icons";
 import { ClientSubmissionData } from "@/lib/types/client-item";
@@ -19,40 +20,38 @@ export interface Submission {
   likes: number;
 }
 
-interface StatusConfig {
-  [key: string]: {
-    label: string;
-    icon: IconType;
-    color: string;
-    bgColor: string;
-    borderColor: string;
-  };
+interface StatusConfigItem {
+  labelKey: string;
+  icon: IconType;
+  color: string;
+  bgColor: string;
+  borderColor: string;
 }
 
-const statusConfig: StatusConfig = {
+const statusConfig: Record<string, StatusConfigItem> = {
   approved: {
-    label: "Approved",
+    labelKey: "STATUS_APPROVED",
     icon: FiCheck,
     color: "text-green-600 dark:text-green-400",
     bgColor: "bg-green-100 dark:bg-green-900/30",
     borderColor: "border-green-200 dark:border-green-800",
   },
   pending: {
-    label: "Pending Review",
+    labelKey: "STATUS_PENDING",
     icon: FiClock,
     color: "text-yellow-600 dark:text-yellow-400",
     bgColor: "bg-yellow-100 dark:bg-yellow-900/30",
     borderColor: "border-yellow-200 dark:border-yellow-800",
   },
   rejected: {
-    label: "Rejected",
+    labelKey: "STATUS_REJECTED",
     icon: FiX,
     color: "text-red-600 dark:text-red-400",
     bgColor: "bg-red-100 dark:bg-red-900/30",
     borderColor: "border-red-200 dark:border-red-800",
   },
   draft: {
-    label: "Draft",
+    labelKey: "STATUS_DRAFT",
     icon: FiAlertCircle,
     color: "text-gray-600 dark:text-gray-400",
     bgColor: "bg-gray-100 dark:bg-gray-800",
@@ -79,6 +78,7 @@ export function SubmissionItem({
   isUpdating = false,
   disabled = false,
 }: SubmissionItemProps) {
+  const t = useTranslations('client.submissions');
   const status = statusConfig[submission.status];
   const StatusIcon = status.icon;
   const isLoading = isDeleting || isUpdating;
@@ -88,16 +88,15 @@ export function SubmissionItem({
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) {
-        return "Invalid date";
+        return t('INVALID_DATE');
       }
       return date.toLocaleDateString("en-US", {
         year: "numeric",
         month: "short",
         day: "numeric",
       });
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return "Invalid date";
+    } catch {
+      return t('INVALID_DATE');
     }
   };
 
@@ -113,7 +112,7 @@ export function SubmissionItem({
                 </h3>
                 <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${status.bgColor} ${status.color} ${status.borderColor} border`}>
                   <StatusIcon className="w-3 h-3" />
-                  {status.label}
+                  {t(status.labelKey)}
                 </span>
               </div>
               <p className="text-gray-600 dark:text-gray-300 text-sm mb-3 leading-relaxed line-clamp-2">{submission.description}</p>
@@ -128,7 +127,7 @@ export function SubmissionItem({
                 ))}
                 {submission.tags.length > 5 && (
                   <span className="inline-flex items-center px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-full text-xs font-medium border border-gray-200 dark:border-gray-700">
-                    +{submission.tags.length - 5} more
+                    {t('MORE_TAGS', { count: submission.tags.length - 5 })}
                   </span>
                 )}
               </div>
@@ -140,25 +139,25 @@ export function SubmissionItem({
                 {submission.submittedAt && (
                   <span className="flex items-center gap-1">
                     <FiClock className="w-3 h-3" />
-                    Submitted: {formatDate(submission.submittedAt)}
+                    {t('SUBMITTED')}: {formatDate(submission.submittedAt)}
                   </span>
                 )}
                 {submission.status === "approved" && submission.views > 0 && (
                   <>
                     <span className="flex items-center gap-1">
                       <FiEye className="w-3 h-3" />
-                      {submission.views} views
+                      {t('VIEWS_COUNT', { count: submission.views })}
                     </span>
                     <span className="flex items-center gap-1">
                       <FiTrendingUp className="w-3 h-3" />
-                      {submission.likes} likes
+                      {t('LIKES_COUNT', { count: submission.likes })}
                     </span>
                   </>
                 )}
               </div>
               {submission.status === "rejected" && submission.rejectionReason && (
                 <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-xs text-red-700 dark:text-red-300">
-                  <strong>Rejection Reason:</strong> {submission.rejectionReason}
+                  <strong>{t('REJECTION_REASON')}:</strong> {submission.rejectionReason}
                 </div>
               )}
             </div>
@@ -166,7 +165,7 @@ export function SubmissionItem({
             <div className="flex items-center gap-2 ml-4">
               <button
                 className="p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors rounded-lg hover:bg-theme-primary-50 dark:hover:bg-theme-primary-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                title="View submission"
+                title={t('VIEW_SUBMISSION')}
                 onClick={onView ? () => onView(submission.id) : undefined}
                 disabled={isDisabled}
               >
@@ -174,7 +173,7 @@ export function SubmissionItem({
               </button>
               <button
                 className="p-2 text-gray-400 hover:text-theme-primary-600 dark:hover:text-theme-primary-400 transition-colors rounded-lg hover:bg-theme-primary-50 dark:hover:bg-theme-primary-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Edit submission"
+                title={t('EDIT_SUBMISSION')}
                 onClick={onEdit ? () => onEdit(submission.id) : undefined}
                 disabled={isDisabled}
               >
@@ -186,7 +185,7 @@ export function SubmissionItem({
               </button>
               <button
                 className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Delete submission"
+                title={t('DELETE_SUBMISSION')}
                 onClick={onDelete ? () => onDelete(submission.id) : undefined}
                 disabled={isDisabled}
               >

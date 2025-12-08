@@ -9,6 +9,7 @@ import {
   ClientUpdateItemRequest,
   ClientUpdateItemResponse,
   ClientDeleteItemResponse,
+  ClientRestoreItemResponse,
 } from '@/lib/types/client-item';
 
 export interface ClientItemsListResponse {
@@ -89,6 +90,16 @@ const deleteClientItem = async (id: string): Promise<ClientDeleteItemResponse> =
   return response.data;
 };
 
+const restoreClientItem = async (id: string): Promise<ClientRestoreItemResponse> => {
+  const response = await serverClient.post<ClientRestoreItemResponse>(`/api/client/items/${id}/restore`);
+
+  if (!apiUtils.isSuccess(response)) {
+    throw new Error(apiUtils.getErrorMessage(response));
+  }
+
+  return response.data;
+};
+
 // Hook
 export function useClientItems(params: ClientItemsListParams = {}) {
   const queryClient = useQueryClient();
@@ -147,6 +158,18 @@ export function useClientItems(params: ClientItemsListParams = {}) {
     },
   });
 
+  // Restore item mutation
+  const restoreItemMutation = useMutation({
+    mutationFn: restoreClientItem,
+    onSuccess: (result) => {
+      toast.success(result.message || 'Item restored successfully');
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.clientItems });
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to restore item');
+    },
+  });
+
   // Handlers
   const handleUpdateItem = useCallback(async (id: string, data: ClientUpdateItemRequest): Promise<boolean> => {
     try {
@@ -165,6 +188,15 @@ export function useClientItems(params: ClientItemsListParams = {}) {
       return false;
     }
   }, [deleteItemMutation]);
+
+  const handleRestoreItem = useCallback(async (id: string): Promise<boolean> => {
+    try {
+      await restoreItemMutation.mutateAsync(id);
+      return true;
+    } catch {
+      return false;
+    }
+  }, [restoreItemMutation]);
 
   const refreshData = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.clientItems });
@@ -201,7 +233,8 @@ export function useClientItems(params: ClientItemsListParams = {}) {
     isStatsLoading,
     isUpdating: updateItemMutation.isPending,
     isDeleting: deleteItemMutation.isPending,
-    isSubmitting: updateItemMutation.isPending || deleteItemMutation.isPending,
+    isRestoring: restoreItemMutation.isPending,
+    isSubmitting: updateItemMutation.isPending || deleteItemMutation.isPending || restoreItemMutation.isPending,
 
     // Error
     error: error as Error | null,
@@ -209,6 +242,7 @@ export function useClientItems(params: ClientItemsListParams = {}) {
     // Actions
     updateItem: handleUpdateItem,
     deleteItem: handleDeleteItem,
+    restoreItem: handleRestoreItem,
 
     // Utility
     refetch,
