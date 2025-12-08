@@ -10,7 +10,7 @@ import { useTranslations } from 'next-intl';
 
 export default function TrashPage() {
   const t = useTranslations('client.submissions');
-  const { items, isLoading, restoreItem, isRestoring, total } = useDeletedClientItems();
+  const { items, isLoading, restoreItem, restoringItemId, total } = useDeletedClientItems();
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -64,7 +64,7 @@ export default function TrashPage() {
                       key={item.id}
                       item={item}
                       onRestore={restoreItem}
-                      isRestoring={isRestoring}
+                      restoringItemId={restoringItemId}
                     />
                   ))
                 ) : (

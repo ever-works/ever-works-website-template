@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
@@ -70,6 +70,7 @@ export interface UseDeletedClientItemsParams {
 export function useDeletedClientItems(params: UseDeletedClientItemsParams = {}) {
   const { page = 1, limit = 10 } = params;
   const queryClient = useQueryClient();
+  const [restoringItemId, setRestoringItemId] = useState<string | null>(null);
 
   // Fetch deleted items
   const {
@@ -111,10 +112,13 @@ export function useDeletedClientItems(params: UseDeletedClientItemsParams = {}) 
   // Handler for restore
   const handleRestoreItem = useCallback(async (id: string): Promise<boolean> => {
     try {
+      setRestoringItemId(id);
       await restoreItemMutation.mutateAsync(id);
       return true;
     } catch {
       return false;
+    } finally {
+      setRestoringItemId(null);
     }
   }, [restoreItemMutation]);
 
@@ -133,7 +137,7 @@ export function useDeletedClientItems(params: UseDeletedClientItemsParams = {}) 
     // Loading states
     isLoading,
     isFetching,
-    isRestoring: restoreItemMutation.isPending,
+    restoringItemId,
 
     // Error
     error: error as Error | null,
