@@ -2658,7 +2658,6 @@
       "FILTER_APPROVED": "승인됨",
       "FILTER_PENDING": "대기 중",
       "FILTER_REJECTED": "거부됨",
-      "FILTER_DRAFT": "초안",
       "SEARCH_PLACEHOLDER": "제목 또는 설명으로 검색...",
       "EMPTY_STATE_TITLE": "아직 제출이 없습니다",
       "EMPTY_STATE_DESC": "첫 번째 프로젝트를 제출하여 포트폴리오 구축을 시작하세요. 커뮤니티와 작업을 공유하고 다른 개발자로부터 피드백을 받으세요.",

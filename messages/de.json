@@ -2691,7 +2691,6 @@
       "FILTER_APPROVED": "Genehmigt",
       "FILTER_PENDING": "Ausstehend",
       "FILTER_REJECTED": "Abgelehnt",
-      "FILTER_DRAFT": "Entwurf",
       "SEARCH_PLACEHOLDER": "Nach Titel oder Beschreibung suchen...",
       "EMPTY_STATE_TITLE": "Noch keine Einreichungen",
       "EMPTY_STATE_DESC": "Beginnen Sie mit dem Aufbau Ihres Portfolios, indem Sie Ihr erstes Projekt einreichen. Teilen Sie Ihre Arbeit mit der Community und erhalten Sie Feedback von anderen Entwicklern.",

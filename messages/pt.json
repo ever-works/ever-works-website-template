@@ -2658,7 +2658,6 @@
       "FILTER_APPROVED": "Aprovado",
       "FILTER_PENDING": "Pendente",
       "FILTER_REJECTED": "Rejeitado",
-      "FILTER_DRAFT": "Rascunho",
       "SEARCH_PLACEHOLDER": "Pesquisar por título ou descrição...",
       "EMPTY_STATE_TITLE": "Ainda não há submissões",
       "EMPTY_STATE_DESC": "Comece a construir seu portfólio enviando seu primeiro projeto. Compartilhe seu trabalho com a comunidade e receba feedback de outros desenvolvedores.",

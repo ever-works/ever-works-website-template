@@ -2658,7 +2658,6 @@
       "FILTER_APPROVED": "承認済み",
       "FILTER_PENDING": "保留中",
       "FILTER_REJECTED": "却下",
-      "FILTER_DRAFT": "下書き",
       "SEARCH_PLACEHOLDER": "タイトルまたは説明で検索...",
       "EMPTY_STATE_TITLE": "まだ提出がありません",
       "EMPTY_STATE_DESC": "最初のプロジェクトを提出してポートフォリオの構築を始めましょう。コミュニティと作品を共有し、他の開発者からフィードバックを得ましょう。",

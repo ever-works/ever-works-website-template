@@ -2749,7 +2749,6 @@
       "FILTER_APPROVED": "Approuvé",
       "FILTER_PENDING": "En attente",
       "FILTER_REJECTED": "Rejeté",
-      "FILTER_DRAFT": "Brouillon",
       "SEARCH_PLACEHOLDER": "Rechercher par titre ou description...",
       "EMPTY_STATE_TITLE": "Pas encore de soumissions",
       "EMPTY_STATE_DESC": "Commencez à construire votre portfolio en soumettant votre premier projet. Partagez votre travail avec la communauté et obtenez des retours d'autres développeurs.",

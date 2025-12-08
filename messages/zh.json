@@ -2690,7 +2690,6 @@
       "FILTER_APPROVED": "已批准",
       "FILTER_PENDING": "待审核",
       "FILTER_REJECTED": "已拒绝",
-      "FILTER_DRAFT": "草稿",
       "SEARCH_PLACEHOLDER": "按标题或描述搜索...",
       "EMPTY_STATE_TITLE": "暂无提交",
       "EMPTY_STATE_DESC": "通过提交您的第一个项目开始建立您的作品集。与社区分享您的工作并获得其他开发者的反馈。",
