@@ -2747,7 +2747,7 @@
       "DELETE_SUBMISSION_TITLE": "Delete Submission",
       "DELETE_UNDONE_LATER": "This action can be undone later",
       "SOFT_DELETE": "Soft Delete",
-      "SOFT_DELETE_DESC": "Your submission will be hidden from public view but not permanently deleted. You can restore it later by contacting support.",
+      "SOFT_DELETE_DESC": "Your submission will be hidden from public view but not permanently deleted. You can restore it anytime from your Trash.",
 
       "BACK_TO_SETTINGS": "Back to Settings",
       "SUBMISSIONS_MANAGEMENT": "Submissions Management",
