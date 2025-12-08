@@ -9,6 +9,18 @@ export interface ClientSubmissionData extends ItemData {
 }
 
 /**
+ * Response from GET /api/client/items/:id endpoint
+ */
+export interface ClientItemResponse {
+  success: boolean;
+  item: ClientSubmissionData;
+  engagement: {
+    views: number;
+    likes: number;
+  };
+}
+
+/**
  * Response for client items list
  */
 export interface ClientItemListResponse extends ItemListResponse {
@@ -58,6 +70,16 @@ export interface ClientUpdateItemResponse {
  */
 export interface ClientDeleteItemResponse {
   success: boolean;
+  message?: string;
+  error?: string;
+}
+
+/**
+ * Response after restoring a soft-deleted client item
+ */
+export interface ClientRestoreItemResponse {
+  success: boolean;
+  item?: ClientSubmissionData;
   message?: string;
   error?: string;
 }

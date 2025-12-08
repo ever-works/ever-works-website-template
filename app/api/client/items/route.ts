@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
       status,
       search,
       sortBy,
-      sortOrder,
+      sortOrder
     });
 
     return NextResponse.json({

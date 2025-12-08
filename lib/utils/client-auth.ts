@@ -108,11 +108,10 @@ export function conflictResponse(message: string = 'Resource already exists'): N
  * Creates an internal server error response
  */
 export function serverErrorResponse(error: unknown, defaultMessage: string = 'Internal server error'): NextResponse {
-  // Always use generic message for client to avoid leaking sensitive details
-  // Actual error is logged server-side for debugging
+  const message = error instanceof Error ? error.message : defaultMessage;
   console.error('Server error:', error);
   return NextResponse.json(
-    { success: false, error: defaultMessage },
+    { success: false, error: message },
     { status: 500 }
   );
 }

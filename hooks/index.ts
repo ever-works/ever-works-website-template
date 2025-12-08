@@ -17,3 +17,8 @@ export * from '../lib/editor/hooks/use-editor-sync'
 
 // Payment provider hooks
 export { useProviderPayment } from './use-provider-payment';
+
+// Client item management hooks
+export * from './use-client-items';
+export * from './use-client-item-details';
+export * from './use-client-item-filters';
