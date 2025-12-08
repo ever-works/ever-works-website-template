@@ -10,21 +10,14 @@ import {
   ModalBody,
   ModalFooter
 } from '@/components/ui/modal';
-import { AlertTriangle, Trash2, X, Loader2, RotateCcw } from 'lucide-react';
+import { AlertTriangle, Trash2, Loader2 } from 'lucide-react';
 import { Submission } from './submission-item';
 
 const CLASSES = {
-  headerContainer: "flex items-center justify-between",
-  headerLeft: "flex items-center gap-3",
+  headerContainer: "flex items-center gap-3",
   alertIcon: "w-10 h-10 bg-linear-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg",
   headerText: "text-xl font-bold text-gray-900 dark:text-white",
   headerSubtext: "text-sm text-gray-600 dark:text-gray-400",
-  closeButton: "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1",
-  warningContainer: "bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/10 border border-amber-200 dark:border-amber-800 rounded-xl p-4",
-  warningContent: "flex items-start gap-3",
-  warningIcon: "h-5 w-5 text-amber-500 mt-0.5 shrink-0",
-  warningTitle: "font-medium text-amber-800 dark:text-amber-200 mb-1",
-  warningText: "text-sm text-amber-700 dark:text-amber-300",
   itemContainer: "bg-linear-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4",
   itemTitle: "font-semibold text-gray-900 dark:text-white mb-1",
   itemDescription: "text-sm text-gray-600 dark:text-gray-400 line-clamp-2",
@@ -72,46 +65,20 @@ export function DeleteSubmissionDialog({
       <ModalContent>
         <ModalHeader>
           <div className={CLASSES.headerContainer}>
-            <div className={CLASSES.headerLeft}>
-              <div className={CLASSES.alertIcon}>
-                <AlertTriangle className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <h2 className={CLASSES.headerText}>{t('DELETE_SUBMISSION_TITLE')}</h2>
-                <p className={CLASSES.headerSubtext}>{t('DELETE_UNDONE_LATER')}</p>
-              </div>
+            <div className={CLASSES.alertIcon}>
+              <AlertTriangle className="h-5 w-5 text-white" />
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onOpenChange(false)}
-              className={CLASSES.closeButton}
-            >
-              <X className="h-4 w-4" />
-            </Button>
+            <div>
+              <h2 className={CLASSES.headerText}>{t('DELETE_SUBMISSION_TITLE')}</h2>
+              <p className={CLASSES.headerSubtext}>{t('DELETE_CONFIRM_MESSAGE')}</p>
+            </div>
           </div>
         </ModalHeader>
 
         <ModalBody>
-          <div className="space-y-4">
-            {/* Soft Delete Info */}
-            <div className={CLASSES.warningContainer}>
-              <div className={CLASSES.warningContent}>
-                <RotateCcw className={CLASSES.warningIcon} />
-                <div>
-                  <p className={CLASSES.warningTitle}>{t('SOFT_DELETE')}</p>
-                  <p className={CLASSES.warningText}>
-                    {t('SOFT_DELETE_DESC')}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Submission Preview */}
-            <div className={CLASSES.itemContainer}>
-              <h3 className={CLASSES.itemTitle}>{submission.title}</h3>
-              <p className={CLASSES.itemDescription}>{submission.description}</p>
-            </div>
+          <div className={CLASSES.itemContainer}>
+            <h3 className={CLASSES.itemTitle}>{submission.title}</h3>
+            <p className={CLASSES.itemDescription}>{submission.description}</p>
           </div>
         </ModalBody>
 
