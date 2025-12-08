@@ -102,20 +102,27 @@ export async function GET(request: NextRequest) {
       return badRequestResponse(errorMessage);
     }
 
-    const { page, limit, status, search, sortBy, sortOrder } = validationResult.data;
+    const { page, limit, status, search, sortBy, sortOrder, deleted } = validationResult.data;
 
     // Get client item repository
     const clientItemRepository = getClientItemRepository();
 
-    // Fetch items for user
-    const result = await clientItemRepository.findByUserPaginated(userId, {
-      page,
-      limit,
-      status,
-      search,
-      sortBy,
-      sortOrder
-    });
+    // Fetch items for user (deleted items or active items)
+    const result = deleted
+      ? await clientItemRepository.findDeletedByUser(userId, {
+          page,
+          limit,
+          sortBy,
+          sortOrder,
+        })
+      : await clientItemRepository.findByUserPaginated(userId, {
+          page,
+          limit,
+          status,
+          search,
+          sortBy,
+          sortOrder,
+        });
 
     return NextResponse.json({
       success: true,
