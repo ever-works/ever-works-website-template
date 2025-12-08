@@ -19,7 +19,7 @@
   },
   "keywords": [],
   "scripts": {
-    "dev": "node scripts/check-env.js --quick && cross-env NODE_OPTIONS='--max-old-space-size=8192 pnpm generate-docs && cross-env NODE_OPTIONS='--max-old-space-size=8192' && next dev",
+    "dev": "node scripts/check-env.js --quick && cross-env NODE_OPTIONS='--max-old-space-size=8192' pnpm generate-docs && cross-env NODE_OPTIONS='--max-old-space-size=8192' && next dev",
     "predev": "node scripts/clone.cjs",
     "generate-docs": "tsx scripts/generate-openapi.ts",
     "docs:watch": "nodemon --watch 'app/api/**/*.ts' --exec 'pnpm generate-docs'",
