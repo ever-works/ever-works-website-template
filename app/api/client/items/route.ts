@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
       return badRequestResponse(errorMessage);
     }
 
-    const { page, limit, status, search } = validationResult.data;
+    const { page, limit, status, search, sortBy, sortOrder } = validationResult.data;
 
     // Get client item repository
     const clientItemRepository = getClientItemRepository();
@@ -113,6 +113,8 @@ export async function GET(request: NextRequest) {
       limit,
       status,
       search,
+      sortBy,
+      sortOrder
     });
 
     return NextResponse.json({
