@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Modal, ModalContent } from '@/components/ui/modal';
-import { Trash2, Loader2 } from 'lucide-react';
+import { AlertTriangle, Trash2, Loader2, Info } from 'lucide-react';
 import { Submission } from './submission-item';
 
 export interface DeleteSubmissionDialogProps {
@@ -45,21 +45,41 @@ export function DeleteSubmissionDialog({
       hideCloseButton
     >
       <ModalContent>
-        <div className="p-6 text-center">
-          {/* Icon */}
-          <div className="mx-auto w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mb-4">
-            <Trash2 className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+        <div className="p-5">
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+              <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              {t('DELETE_SUBMISSION_TITLE')}
+            </h2>
           </div>
 
-          {/* Title */}
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            {t('DELETE_SUBMISSION_TITLE')}
-          </h2>
-
-          {/* Message */}
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-            {t('DELETE_CONFIRM_ITEM', { title: submission.title })}
+          {/* Confirmation text */}
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            {t('DELETE_CONFIRM_MESSAGE')}
           </p>
+
+          {/* Item preview card */}
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-3 mb-4">
+            <p className="font-semibold text-gray-900 dark:text-white">
+              {submission.title}
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+              {submission.description}
+            </p>
+          </div>
+
+          {/* Info box */}
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mb-5">
+            <div className="flex items-start gap-2">
+              <Info className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-blue-700 dark:text-blue-300">
+                {t('RESTORE_INFO')}
+              </p>
+            </div>
+          </div>
 
           {/* Buttons */}
           <div className="flex gap-3">
@@ -75,7 +95,7 @@ export function DeleteSubmissionDialog({
               variant="destructive"
               onClick={handleConfirm}
               disabled={isLoading}
-              className="flex-1"
+              className="flex-1 bg-red-600 hover:bg-red-700 text-white"
             >
               {isLoading ? (
                 <>
@@ -83,7 +103,10 @@ export function DeleteSubmissionDialog({
                   {t('DELETING')}
                 </>
               ) : (
-                t('DELETE')
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  {t('DELETE')}
+                </>
               )}
             </Button>
           </div>

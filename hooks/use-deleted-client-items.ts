@@ -89,11 +89,19 @@ export function useDeletedClientItems(params: UseDeletedClientItemsParams = {}) 
   // Restore item mutation
   const restoreItemMutation = useMutation({
     mutationFn: restoreClientItem,
-    onSuccess: (result) => {
+    onSuccess: async (result) => {
       toast.success(result.message || 'Item restored successfully');
-      // Invalidate both deleted items and main items lists
-      queryClient.invalidateQueries({ queryKey: DELETED_QUERY_KEYS.deletedItems });
-      queryClient.invalidateQueries({ queryKey: CLIENT_ITEMS_QUERY_KEYS.clientItems });
+      // Invalidate and refetch both deleted items and main items lists
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: DELETED_QUERY_KEYS.deletedItems,
+          refetchType: 'active',
+        }),
+        queryClient.invalidateQueries({
+          queryKey: CLIENT_ITEMS_QUERY_KEYS.clientItems,
+          refetchType: 'active',
+        }),
+      ]);
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to restore item');
