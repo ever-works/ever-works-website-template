@@ -75,7 +75,7 @@ export function EditSubmissionModal({
       reset({
         name: submission.title,
         description: submission.description,
-        source_url: '',
+        source_url: submission.source_url || '',
         tags: submission.tags,
       });
     }

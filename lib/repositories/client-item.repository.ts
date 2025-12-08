@@ -186,8 +186,9 @@ export class ClientItemRepository {
   ): Promise<ClientItemListResponse> {
     const { page = 1, limit = 10, sortBy, sortOrder } = params;
 
-    // Get all items including deleted for this user
-    const result = await this.itemRepository.findAllPaginated(page, limit, {
+    // Fetch all items for this user (including deleted) to filter properly
+    // Note: We fetch all because filtering must happen before pagination
+    const allResult = await this.itemRepository.findAllPaginated(1, Number.MAX_SAFE_INTEGER, {
       submittedBy: userId,
       includeDeleted: true,
       sortBy: sortBy || 'updated_at',
@@ -195,10 +196,16 @@ export class ClientItemRepository {
     });
 
     // Filter to only deleted items
-    const deletedItems = result.items.filter(item => item.deleted_at);
+    const allDeletedItems = allResult.items.filter(item => item.deleted_at);
+
+    // Apply pagination to filtered results
+    const total = allDeletedItems.length;
+    const totalPages = Math.ceil(total / limit);
+    const startIndex = (page - 1) * limit;
+    const paginatedItems = allDeletedItems.slice(startIndex, startIndex + limit);
 
     // Convert to ClientSubmissionData
-    const items: ClientSubmissionData[] = deletedItems.map(item => ({
+    const items: ClientSubmissionData[] = paginatedItems.map(item => ({
       ...item,
       views: 0,
       likes: 0,
@@ -206,16 +213,16 @@ export class ClientItemRepository {
 
     return {
       items,
-      total: deletedItems.length,
+      total,
       page,
       limit,
-      totalPages: Math.ceil(deletedItems.length / limit),
+      totalPages,
       stats: {
-        total: deletedItems.length,
+        total,
         pending: 0,
         approved: 0,
         rejected: 0,
-        deleted: deletedItems.length,
+        deleted: total,
       },
     };
   }

@@ -2675,7 +2675,6 @@
       "FILTER_APPROVED": "Approved",
       "FILTER_PENDING": "Pending",
       "FILTER_REJECTED": "Rejected",
-      "FILTER_DRAFT": "Draft",
       "EMPTY_STATE_TITLE": "No submissions yet",
       "EMPTY_STATE_DESC": "Start building your portfolio by submitting your first project. Share your work with the community and get feedback from other developers.",
       "SHOWING_PAGE": "Page {page} of {totalPages}",

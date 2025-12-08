@@ -18,6 +18,7 @@ export interface Submission {
   tags: string[];
   views: number;
   likes: number;
+  source_url?: string;
 }
 
 interface StatusConfigItem {
@@ -215,6 +216,7 @@ export function toSubmission(item: ClientSubmissionData): Submission {
     tags: item.tags || [],
     views: item.views || 0,
     likes: item.likes || 0,
+    source_url: item.source_url,
   };
 }
 
