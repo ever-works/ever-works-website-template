@@ -242,7 +242,7 @@ function MenuItems({ user, profilePath, onItemClick, onNavigationStart, isNaviga
       />
 
       <MenuItem
-        href="/client/settings/profile/submissions"
+        href="/client/submissions"
         icon={FileText}
         title={t("settings.SETTINGS_CARDS.SUBMISSIONS.TITLE")}
         description={t("settings.SETTINGS_CARDS.SUBMISSIONS.DESCRIPTION")}

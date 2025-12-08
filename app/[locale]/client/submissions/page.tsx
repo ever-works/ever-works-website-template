@@ -146,7 +146,7 @@ export default function SubmissionsPage() {
                 </CardTitle>
                 <div className="flex items-center gap-3">
                   <Link
-                    href="/client/settings/profile/submissions/trash"
+                    href="/client/submissions/trash"
                     className="inline-flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-300 font-medium"
                   >
                     <FiTrash2 className="w-4 h-4" />

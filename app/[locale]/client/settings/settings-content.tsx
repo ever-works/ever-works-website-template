@@ -77,7 +77,7 @@ export function SettingsContent() {
       title: t('SETTINGS_CARDS.SUBMISSIONS.TITLE'),
       description: t('SETTINGS_CARDS.SUBMISSIONS.DESCRIPTION'),
       icon: <FiFileText className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />,
-      href: `/client/settings/profile/submissions`
+      href: `/client/submissions`
     },
     {
       id: "billing",
