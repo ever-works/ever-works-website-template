@@ -29,7 +29,8 @@ export function SubmissionFilters({
   disabled = false,
   statusCounts,
 }: SubmissionFiltersProps) {
-  const t = useTranslations('admin.ITEM_FORM');
+  const t = useTranslations('client.submissions');
+  const tStatus = useTranslations('admin.ITEM_FORM');
 
   const handleClearSearch = () => {
     onSearchChange('');
@@ -57,7 +58,7 @@ export function SubmissionFilters({
                 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
               `}
             >
-              {t(`STATUS_OPTIONS.${filter.labelKey}`)}
+              {tStatus(`STATUS_OPTIONS.${filter.labelKey}`)}
               {count !== undefined && (
                 <span
                   className={`
@@ -89,7 +90,7 @@ export function SubmissionFilters({
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search by title or description..."
+          placeholder={t('SEARCH_PLACEHOLDER')}
           disabled={disabled}
           className={`
             w-full pl-10 pr-10 py-3
@@ -125,7 +126,8 @@ export function SubmissionFiltersCompact({
   isSearching = false,
   disabled = false,
 }: Omit<SubmissionFiltersProps, 'statusCounts'>) {
-  const t = useTranslations('admin.ITEM_FORM');
+  const t = useTranslations('client.submissions');
+  const tStatus = useTranslations('admin.ITEM_FORM');
 
   return (
     <div className="flex flex-col sm:flex-row gap-3">
@@ -147,7 +149,7 @@ export function SubmissionFiltersCompact({
       >
         {CLIENT_STATUS_FILTERS.map((filter) => (
           <option key={filter.value} value={filter.value}>
-            {t(`STATUS_OPTIONS.${filter.labelKey}`)}
+            {tStatus(`STATUS_OPTIONS.${filter.labelKey}`)}
           </option>
         ))}
       </select>
@@ -165,7 +167,7 @@ export function SubmissionFiltersCompact({
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search..."
+          placeholder={t('SEARCH_PLACEHOLDER_SHORT')}
           disabled={disabled}
           className={`
             w-full pl-9 pr-9 py-2.5

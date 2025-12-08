@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { FiFileText, FiCheck, FiClock, FiX, FiAlertCircle } from 'react-icons/fi';
 import { Card, CardContent } from '@/components/ui/card';
 import { ClientItemStats } from '@/lib/types/client-item';
@@ -11,7 +12,7 @@ export interface SubmissionStatsCardsProps {
 
 interface StatCardConfig {
   key: keyof ClientItemStats;
-  label: string;
+  labelKey: string;
   icon: typeof FiFileText;
   colorClass: string;
   hoverShadow: string;
@@ -21,7 +22,7 @@ interface StatCardConfig {
 const statCardsConfig: StatCardConfig[] = [
   {
     key: 'total',
-    label: 'Total Submissions',
+    labelKey: 'TOTAL_SUBMISSIONS',
     icon: FiFileText,
     colorClass: 'text-blue-600 dark:text-blue-400',
     hoverShadow: 'hover:shadow-blue-500/10',
@@ -29,7 +30,7 @@ const statCardsConfig: StatCardConfig[] = [
   },
   {
     key: 'approved',
-    label: 'Approved',
+    labelKey: 'APPROVED',
     icon: FiCheck,
     colorClass: 'text-green-600 dark:text-green-400',
     hoverShadow: 'hover:shadow-green-500/10',
@@ -37,7 +38,7 @@ const statCardsConfig: StatCardConfig[] = [
   },
   {
     key: 'pending',
-    label: 'Pending',
+    labelKey: 'PENDING',
     icon: FiClock,
     colorClass: 'text-yellow-600 dark:text-yellow-400',
     hoverShadow: 'hover:shadow-yellow-500/10',
@@ -45,7 +46,7 @@ const statCardsConfig: StatCardConfig[] = [
   },
   {
     key: 'rejected',
-    label: 'Rejected',
+    labelKey: 'REJECTED',
     icon: FiX,
     colorClass: 'text-red-600 dark:text-red-400',
     hoverShadow: 'hover:shadow-red-500/10',
@@ -54,6 +55,8 @@ const statCardsConfig: StatCardConfig[] = [
 ];
 
 export function SubmissionStatsCards({ stats, isLoading = false }: SubmissionStatsCardsProps) {
+  const t = useTranslations('client.submissions');
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
       {statCardsConfig.map((config) => {
@@ -77,7 +80,7 @@ export function SubmissionStatsCards({ stats, isLoading = false }: SubmissionSta
                     {value}
                   </div>
                 )}
-                <div className="text-sm text-gray-600 dark:text-gray-400">{config.label}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">{t(config.labelKey)}</div>
               </div>
             </CardContent>
           </Card>
@@ -99,13 +102,15 @@ export function SubmissionStatsCardsExtended({
   isLoading = false,
   showDraft = true,
 }: SubmissionStatsCardsExtendedProps) {
+  const t = useTranslations('client.submissions');
+
   const extendedConfig: StatCardConfig[] = [
     ...statCardsConfig,
     ...(showDraft
       ? [
           {
             key: 'draft' as keyof ClientItemStats,
-            label: 'Drafts',
+            labelKey: 'DRAFTS',
             icon: FiAlertCircle,
             colorClass: 'text-gray-600 dark:text-gray-400',
             hoverShadow: 'hover:shadow-gray-500/10',
@@ -138,7 +143,7 @@ export function SubmissionStatsCardsExtended({
                     {value}
                   </div>
                 )}
-                <div className="text-xs text-gray-600 dark:text-gray-400">{config.label}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">{t(config.labelKey)}</div>
               </div>
             </CardContent>
           </Card>
