@@ -3,28 +3,9 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter
-} from '@/components/ui/modal';
-import { AlertTriangle, Trash2, Loader2 } from 'lucide-react';
+import { Modal, ModalContent } from '@/components/ui/modal';
+import { Trash2, Loader2 } from 'lucide-react';
 import { Submission } from './submission-item';
-
-const CLASSES = {
-  headerContainer: "flex items-center gap-3",
-  alertIcon: "w-10 h-10 bg-linear-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg",
-  headerText: "text-xl font-bold text-gray-900 dark:text-white",
-  headerSubtext: "text-sm text-gray-600 dark:text-gray-400",
-  itemContainer: "bg-linear-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4",
-  itemTitle: "font-semibold text-gray-900 dark:text-white mb-1",
-  itemDescription: "text-sm text-gray-600 dark:text-gray-400 line-clamp-2",
-  footerContainer: "flex gap-3 w-full",
-  cancelButton: "flex-1",
-  deleteButton: "flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200",
-} as const;
 
 export interface DeleteSubmissionDialogProps {
   submission: Submission | null;
@@ -60,35 +41,33 @@ export function DeleteSubmissionDialog({
     <Modal
       isOpen={open}
       onClose={() => onOpenChange(false)}
-      size="lg"
+      size="sm"
+      hideCloseButton
     >
       <ModalContent>
-        <ModalHeader>
-          <div className={CLASSES.headerContainer}>
-            <div className={CLASSES.alertIcon}>
-              <AlertTriangle className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <h2 className={CLASSES.headerText}>{t('DELETE_SUBMISSION_TITLE')}</h2>
-              <p className={CLASSES.headerSubtext}>{t('DELETE_CONFIRM_MESSAGE')}</p>
-            </div>
+        <div className="p-6 text-center">
+          {/* Icon */}
+          <div className="mx-auto w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mb-4">
+            <Trash2 className="w-6 h-6 text-amber-600 dark:text-amber-400" />
           </div>
-        </ModalHeader>
 
-        <ModalBody>
-          <div className={CLASSES.itemContainer}>
-            <h3 className={CLASSES.itemTitle}>{submission.title}</h3>
-            <p className={CLASSES.itemDescription}>{submission.description}</p>
-          </div>
-        </ModalBody>
+          {/* Title */}
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            {t('DELETE_SUBMISSION_TITLE')}
+          </h2>
 
-        <ModalFooter>
-          <div className={CLASSES.footerContainer}>
+          {/* Message */}
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+            {t('DELETE_CONFIRM_ITEM', { title: submission.title })}
+          </p>
+
+          {/* Buttons */}
+          <div className="flex gap-3">
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
-              className={CLASSES.cancelButton}
+              className="flex-1"
             >
               {t('CANCEL')}
             </Button>
@@ -96,7 +75,7 @@ export function DeleteSubmissionDialog({
               variant="destructive"
               onClick={handleConfirm}
               disabled={isLoading}
-              className={CLASSES.deleteButton}
+              className="flex-1"
             >
               {isLoading ? (
                 <>
@@ -104,14 +83,11 @@ export function DeleteSubmissionDialog({
                   {t('DELETING')}
                 </>
               ) : (
-                <>
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  {t('DELETE_SUBMISSION_TITLE')}
-                </>
+                t('DELETE')
               )}
             </Button>
           </div>
-        </ModalFooter>
+        </div>
       </ModalContent>
     </Modal>
   );
