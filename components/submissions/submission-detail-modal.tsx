@@ -19,7 +19,6 @@ import {
   Check,
   Clock,
   XCircle,
-  AlertCircle,
   Edit,
   Trash2,
 } from 'lucide-react';
@@ -38,7 +37,6 @@ const CLASSES = {
     approved: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800",
     pending: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800",
     rejected: "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800",
-    draft: "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700",
   },
   metaItem: "flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400",
   tagsList: "flex flex-wrap gap-2",
@@ -54,14 +52,12 @@ const statusIcons = {
   approved: Check,
   pending: Clock,
   rejected: XCircle,
-  draft: AlertCircle,
 };
 
 const statusLabelKeys = {
   approved: 'STATUS_APPROVED',
   pending: 'STATUS_PENDING',
   rejected: 'STATUS_REJECTED',
-  draft: 'STATUS_DRAFT',
 };
 
 export interface SubmissionDetailModalProps {

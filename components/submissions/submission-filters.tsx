@@ -16,7 +16,6 @@ export interface SubmissionFiltersProps {
     approved: number;
     pending: number;
     rejected: number;
-    draft: number;
   };
 }
 

@@ -2,7 +2,7 @@ export interface Submission {
   id: string;
   title: string;
   description: string;
-  status: "approved" | "pending" | "rejected" | "draft";
+  status: "approved" | "pending" | "rejected";
   submittedAt: string | null;
   approvedAt?: string;
   rejectedAt?: string;
@@ -78,9 +78,9 @@ export const dummySubmissions = [
     id: "6",
     title: "Blog Platform",
     category: "Web Development",
-    status: "draft" as const,
-    submittedAt: null,
-    updatedAt: null,
+    status: "pending" as const,
+    submittedAt: "2024-01-26T10:00:00Z",
+    updatedAt: "2024-01-26T10:00:00Z",
     views: 0,
     likes: 0,
     tags: ["Next.js", "Content Management", "Blog"],

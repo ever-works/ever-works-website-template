@@ -113,7 +113,6 @@ export default function SubmissionsPage() {
     approved: stats.approved,
     pending: stats.pending,
     rejected: stats.rejected,
-    draft: stats.draft,
   };
 
   return (

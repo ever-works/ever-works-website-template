@@ -212,7 +212,6 @@ export class ClientItemRepository {
       totalPages: Math.ceil(deletedItems.length / limit),
       stats: {
         total: deletedItems.length,
-        draft: 0,
         pending: 0,
         approved: 0,
         rejected: 0,

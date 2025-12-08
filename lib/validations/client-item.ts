@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { ITEM_VALIDATION } from '@/lib/types/item';
 
 // Item status options
-export const itemStatus = ['draft', 'pending', 'approved', 'rejected'] as const;
-export const clientStatusFilter = ['all', 'draft', 'pending', 'approved', 'rejected'] as const;
+export const itemStatus = ['pending', 'approved', 'rejected'] as const;
+export const clientStatusFilter = ['all', 'pending', 'approved', 'rejected'] as const;
 
 /**
  * Schema for updating a client item
