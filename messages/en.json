@@ -2670,7 +2670,7 @@
   "client": {
     "submissions": {
       "PAGE_TITLE": "Submissions Management",
-      "PAGE_DESCRIPTION": "Track and manage your directory submissions. Monitor their status and performance.",
+      "PAGE_DESCRIPTION": "Track and manage your directory submissions.",
       "FILTER_ALL": "All",
       "FILTER_APPROVED": "Approved",
       "FILTER_PENDING": "Pending",
@@ -2773,7 +2773,7 @@
 
       "BACK_TO_SETTINGS": "Back to Settings",
       "SUBMISSIONS_MANAGEMENT": "Submissions Management",
-      "SUBMISSIONS_MANAGEMENT_DESC": "Track and manage your directory submissions. Monitor their status and performance.",
+      "SUBMISSIONS_MANAGEMENT_DESC": "Track and manage your directory submissions.",
       "STATUS_OVERVIEW": "Submission Status Overview",
       "GET_STARTED": "Get Started with Submissions",
       "START_YOUR_JOURNEY": "Start Your Journey",

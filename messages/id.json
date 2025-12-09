@@ -2652,7 +2652,7 @@
   "client": {
     "submissions": {
       "PAGE_TITLE": "Submissions Management",
-      "PAGE_DESCRIPTION": "Track and manage your directory submissions. Monitor their status and performance.",
+      "PAGE_DESCRIPTION": "Track and manage your directory submissions.",
       "BACK_TO_SETTINGS": "Back to Settings",
       "FILTER_ALL": "All",
       "FILTER_APPROVED": "Approved",
