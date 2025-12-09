@@ -5,6 +5,7 @@ import { apiUtils, serverClient } from "@/lib/api/server-api-client";
 import { useConfig } from "@/app/[locale]/config";
 import { PaymentProvider } from "@/lib/constants";
 import { useMemo } from "react";
+import { useSelectedCheckoutProvider } from "./use-selected-checkout-provider";
 
 // Types
 export interface SubscriptionData {
@@ -72,29 +73,42 @@ export interface SubscriptionResponse {
 export function useSubscription() {
   const queryClient = useQueryClient();
   const config = useConfig();
-  
+
   // Get the current payment provider from config, default to Stripe
-  const currentProvider = useMemo(() => {
-    return config?.pricing?.provider || PaymentProvider.STRIPE;
-  }, [config?.pricing?.provider]);
+  // Get user's selected checkout provider from Settings
+  const { getActiveProvider } = useSelectedCheckoutProvider();
+
+  // Determine payment provider: User selection takes precedence over config
+  const paymentProvider = useMemo(() => {
+    const userSelectedProvider = getActiveProvider();
+
+    // Map from CheckoutProvider type to PaymentProvider enum
+    if (userSelectedProvider === 'stripe') return PaymentProvider.STRIPE;
+    if (userSelectedProvider === 'lemonsqueezy') return PaymentProvider.LEMONSQUEEZY;
+    if (userSelectedProvider === 'polar') return PaymentProvider.POLAR;
+
+    // Fallback to config default if no user selection or provider not configured
+    return config.pricing?.provider || PaymentProvider.STRIPE;
+  }, [ getActiveProvider, config.pricing?.provider ]);
+
 
   // Create subscription mutation
   const createSubscription = useMutation({
     mutationFn: async (data: CreateSubscriptionRequest): Promise<SubscriptionData> => {
       const response = await serverClient.post<SubscriptionData>('/api/stripe/subscription', data);
-      
+
       if (!apiUtils.isSuccess(response)) {
         throw new Error(apiUtils.getErrorMessage(response) || 'Failed to create subscription');
       }
-      
+
       return response.data;
     },
     onSuccess: (data) => {
       // Invalidate and refetch related queries
-      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
-      queryClient.invalidateQueries({ queryKey: ['user-subscription'] });
-      queryClient.invalidateQueries({ queryKey: ['billing'] });
-      
+      queryClient.invalidateQueries({ queryKey: [ 'subscriptions' ] });
+      queryClient.invalidateQueries({ queryKey: [ 'user-subscription' ] });
+      queryClient.invalidateQueries({ queryKey: [ 'billing' ] });
+
       console.log('Subscription created successfully:', data.id);
     },
     onError: (error) => {
@@ -106,19 +120,19 @@ export function useSubscription() {
   const updateSubscription = useMutation({
     mutationFn: async (data: UpdateSubscriptionRequest): Promise<SubscriptionData> => {
       const response = await serverClient.put<SubscriptionData>('/api/stripe/subscription', data);
-      
+
       if (!apiUtils.isSuccess(response)) {
         throw new Error(apiUtils.getErrorMessage(response) || 'Failed to update subscription');
       }
-      
+
       return response.data;
     },
     onSuccess: (data) => {
       // Invalidate and refetch related queries
-      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
-      queryClient.invalidateQueries({ queryKey: ['user-subscription'] });
-      queryClient.invalidateQueries({ queryKey: ['billing'] });
-      
+      queryClient.invalidateQueries({ queryKey: [ 'subscriptions' ] });
+      queryClient.invalidateQueries({ queryKey: [ 'user-subscription' ] });
+      queryClient.invalidateQueries({ queryKey: [ 'billing' ] });
+
       console.log('Subscription updated successfully:', data.id);
     },
     onError: (error) => {
@@ -130,19 +144,19 @@ export function useSubscription() {
   const updateSubscriptionById = useMutation({
     mutationFn: async (data: UpdateSubscriptionRequest): Promise<SubscriptionData> => {
       const response = await serverClient.post<SubscriptionData>(`/api/stripe/subscription/${data.subscriptionId}/update`);
-      
+
       if (!apiUtils.isSuccess(response)) {
         throw new Error(apiUtils.getErrorMessage(response) || 'Failed to update subscription');
       }
-      
+
       return response.data;
     },
     onSuccess: (data) => {
       // Invalidate and refetch related queries
-      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
-      queryClient.invalidateQueries({ queryKey: ['user-subscription'] });
-      queryClient.invalidateQueries({ queryKey: ['billing'] });
-      
+      queryClient.invalidateQueries({ queryKey: [ 'subscriptions' ] });
+      queryClient.invalidateQueries({ queryKey: [ 'user-subscription' ] });
+      queryClient.invalidateQueries({ queryKey: [ 'billing' ] });
+
       console.log('Subscription updated successfully:', data.id);
     },
     onError: (error) => {
@@ -154,19 +168,19 @@ export function useSubscription() {
   const cancelSubscription = useMutation({
     mutationFn: async (data: CancelSubscriptionRequest): Promise<SubscriptionData> => {
       const response = await serverClient.post<SubscriptionData>('/api/stripe/subscription', data, { method: 'DELETE' });
-      
+
       if (!apiUtils.isSuccess(response)) {
         throw new Error(apiUtils.getErrorMessage(response) || 'Failed to cancel subscription');
       }
-      
+
       return response.data;
     },
     onSuccess: (data) => {
       // Invalidate and refetch related queries
-      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
-      queryClient.invalidateQueries({ queryKey: ['user-subscription'] });
-      queryClient.invalidateQueries({ queryKey: ['billing'] });
-      
+      queryClient.invalidateQueries({ queryKey: [ 'subscriptions' ] });
+      queryClient.invalidateQueries({ queryKey: [ 'user-subscription' ] });
+      queryClient.invalidateQueries({ queryKey: [ 'billing' ] });
+
       console.log('Subscription cancelled successfully:', data.id);
     },
     onError: (error) => {
@@ -178,19 +192,19 @@ export function useSubscription() {
   const cancelSubscriptionById = useMutation({
     mutationFn: async (data: CancelSubscriptionRequest): Promise<SubscriptionData> => {
       const response = await serverClient.post<SubscriptionData>(`/api/stripe/subscription/${data.subscriptionId}/cancel`, data);
-      
+
       if (!apiUtils.isSuccess(response)) {
         throw new Error(apiUtils.getErrorMessage(response) || 'Failed to cancel subscription');
       }
-      
+
       return response.data;
     },
     onSuccess: (data) => {
       // Invalidate and refetch related queries
-      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
-      queryClient.invalidateQueries({ queryKey: ['user-subscription'] });
-      queryClient.invalidateQueries({ queryKey: ['billing'] });
-      
+      queryClient.invalidateQueries({ queryKey: [ 'subscriptions' ] });
+      queryClient.invalidateQueries({ queryKey: [ 'user-subscription' ] });
+      queryClient.invalidateQueries({ queryKey: [ 'billing' ] });
+
       console.log('Subscription cancelled successfully:', data.id);
     },
     onError: (error) => {
@@ -202,19 +216,19 @@ export function useSubscription() {
   const reactivateSubscription = useMutation({
     mutationFn: async (data: ReactivateSubscriptionRequest): Promise<SubscriptionData> => {
       const response = await serverClient.post<SubscriptionData>(`/api/stripe/subscription/${data.subscriptionId}/reactivate`, {});
-      
+
       if (!apiUtils.isSuccess(response)) {
         throw new Error(apiUtils.getErrorMessage(response) || 'Failed to reactivate subscription');
       }
-      
+
       return response.data;
     },
     onSuccess: (data) => {
       // Invalidate and refetch related queries
-      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
-      queryClient.invalidateQueries({ queryKey: ['user-subscription'] });
-      queryClient.invalidateQueries({ queryKey: ['billing'] });
-      
+      queryClient.invalidateQueries({ queryKey: [ 'subscriptions' ] });
+      queryClient.invalidateQueries({ queryKey: [ 'user-subscription' ] });
+      queryClient.invalidateQueries({ queryKey: [ 'billing' ] });
+
       console.log('Subscription reactivated successfully:', data.id);
     },
     onError: (error) => {
@@ -225,10 +239,10 @@ export function useSubscription() {
   const createBillingPortalSession = useMutation({
     mutationFn: async (): Promise<BillingPortalResponse> => {
       // Determine the API endpoint based on the current provider
-      const portalEndpoint = currentProvider === PaymentProvider.POLAR 
+      const portalEndpoint = paymentProvider === PaymentProvider.POLAR
         ? '/api/polar/subscription/portal'
         : '/api/stripe/subscription/portal';
-      
+
       const response = await serverClient.post<BillingPortalResponse>(portalEndpoint);
       if (!apiUtils.isSuccess(response)) {
         throw new Error(apiUtils.getErrorMessage(response) || 'Failed to create billing portal session');
@@ -236,7 +250,7 @@ export function useSubscription() {
       return response.data;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['billing'] });
+      queryClient.invalidateQueries({ queryKey: [ 'billing' ] });
       console.log('Billing portal session created successfully:', data.data.url);
     },
     onError: (error) => {
@@ -255,7 +269,7 @@ export function useSubscription() {
     cancelSubscriptionById,
     reactivateSubscription,
     createBillingPortalSession,
-    
+
     // Loading states
     isCreating: createSubscription.isPending,
     isUpdating: updateSubscription.isPending,
@@ -263,7 +277,7 @@ export function useSubscription() {
     isCancelling: cancelSubscription.isPending,
     isCancellingById: cancelSubscriptionById.isPending,
     isReactivating: reactivateSubscription.isPending,
-    
+
     // Error states
     createError: createSubscription.error,
     updateError: updateSubscription.error,
@@ -271,7 +285,7 @@ export function useSubscription() {
     cancelError: cancelSubscription.error,
     cancelByIdError: cancelSubscriptionById.error,
     reactivateError: reactivateSubscription.error,
-    
+
     // Success states
     isCreateSuccess: createSubscription.isSuccess,
     isUpdateSuccess: updateSubscription.isSuccess,
@@ -285,7 +299,7 @@ export function useSubscription() {
     isCreateBillingPortalSessionSuccess: createBillingPortalSession.isSuccess,
     isCreateBillingPortalSessionError: createBillingPortalSession.isError,
 
-    
+
     // Reset functions
     resetCreate: createSubscription.reset,
     resetUpdate: updateSubscription.reset,
@@ -301,15 +315,15 @@ export function useSubscription() {
  */
 export function useUserSubscription() {
   return useQuery({
-    queryKey: ['user-subscription'],
+    queryKey: [ 'user-subscription' ],
     queryFn: async (): Promise<SubscriptionData | null> => {
       try {
         const response = await serverClient.get<SubscriptionData>('/api/user/subscription');
-        
+
         if (apiUtils.isSuccess(response)) {
           return response.data;
         }
-        
+
         return null;
       } catch (error) {
         console.error('Failed to fetch user subscription:', error);
@@ -326,17 +340,17 @@ export function useUserSubscription() {
  */
 export function useSubscriptionById(subscriptionId: string) {
   return useQuery({
-    queryKey: ['subscription', subscriptionId],
+    queryKey: [ 'subscription', subscriptionId ],
     queryFn: async (): Promise<SubscriptionData | null> => {
       if (!subscriptionId) return null;
-      
+
       try {
         const response = await serverClient.get<SubscriptionData>(`/api/stripe/subscription/${subscriptionId}`);
-        
+
         if (apiUtils.isSuccess(response)) {
           return response.data;
         }
-        
+
         return null;
       } catch (error) {
         console.error('Failed to fetch subscription:', error);
@@ -354,7 +368,7 @@ export function useSubscriptionById(subscriptionId: string) {
  */
 export function useSubscriptionManager() {
   const queryClient = useQueryClient();
-  
+
   const { updateSubscription, cancelSubscription } = useSubscription();
 
   // Optimistic update for subscription creation
@@ -375,13 +389,13 @@ export function useSubscriptionManager() {
     },
     onMutate: async () => {
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['user-subscription'] });
+      await queryClient.cancelQueries({ queryKey: [ 'user-subscription' ] });
 
       // Snapshot the previous value
-      const previousSubscription = queryClient.getQueryData(['user-subscription']);
+      const previousSubscription = queryClient.getQueryData([ 'user-subscription' ]);
 
       // Optimistically update to the new value
-      queryClient.setQueryData(['user-subscription'], {
+      queryClient.setQueryData([ 'user-subscription' ], {
         id: 'temp-id',
         status: 'incomplete',
         currentPeriodStart: Date.now(),
@@ -395,12 +409,12 @@ export function useSubscriptionManager() {
     onError: (_, __, context) => {
       // If the mutation fails, use the context returned from onMutate to roll back
       if (context?.previousSubscription) {
-        queryClient.setQueryData(['user-subscription'], context.previousSubscription);
+        queryClient.setQueryData([ 'user-subscription' ], context.previousSubscription);
       }
     },
     onSettled: () => {
       // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: ['user-subscription'] });
+      queryClient.invalidateQueries({ queryKey: [ 'user-subscription' ] });
     },
   });
 
@@ -408,12 +422,12 @@ export function useSubscriptionManager() {
     createSubscription: createSubscriptionOptimistic,
     updateSubscription,
     cancelSubscription,
-    
+
     // Loading states
     isCreating: createSubscriptionOptimistic.isPending,
     isUpdating: updateSubscription.isPending,
     isCancelling: cancelSubscription.isPending,
-    
+
     // Error states
     createError: createSubscriptionOptimistic.error,
     updateError: updateSubscription.error,

@@ -14,6 +14,7 @@ import {
 import { PaymentPlan, PaymentProvider } from '@/lib/constants';
 import { convertCentsToDecimal, convertNumberToDate, WebhookEventType } from '@/lib/payment/types/payment-types';
 
+
 export interface WebhookSubscriptionData {
 	id: string;
 	userId: string;
@@ -49,11 +50,15 @@ export interface WebhookSubscriptionData {
 	invoicePdf?: string;
 }
 
-export const formatData = (data: any): WebhookSubscriptionData => {
+/**
+ * Format webhook data to WebhookSubscriptionData format
+ * This is a standalone utility function that can be used outside the class
+ */
+export const formatData = (data: any, paymentProvider: PaymentProvider = PaymentProvider.STRIPE): WebhookSubscriptionData => {
 	return {
 		id: data.id,
-		userId: data.metadata.userId,
-		planId: data.metadata.planId,
+		userId: data.metadata?.userId,
+		planId: data.metadata?.planId,
 		status: data.status,
 		startDate: data.start_date,
 		endDate: data.period_end,
@@ -80,7 +85,7 @@ export const formatData = (data: any): WebhookSubscriptionData => {
 		},
 		createdAt: new Date(),
 		updatedAt: new Date(),
-		paymentProvider: PaymentProvider.STRIPE,
+		paymentProvider,
 		customer_email: data.customer_email,
 		customer_name: data.customer_name,
 		periodEnd: data.period_end,
@@ -103,15 +108,27 @@ export interface WebhookProcessingResult {
 }
 
 export class WebhookSubscriptionService {
+	private readonly paymentProvider: PaymentProvider;
+
+	/**
+	 * Creates a new WebhookSubscriptionService instance
+	 * 
+	 * @param paymentProvider - The payment provider for this webhook service instance
+	 *                         Defaults to STRIPE if not provided
+	 */
+	constructor(paymentProvider: PaymentProvider = PaymentProvider.STRIPE) {
+		this.paymentProvider = paymentProvider;
+	}
+
 	/**
 	 * Process subscription created webhook
 	 * Creates new subscription record and logs history
 	 */
 	async handleSubscriptionCreated(data: any): Promise<WebhookProcessingResult> {
-		const response = formatData(data);
+		const response = formatData(data, this.paymentProvider);
 		try {
 			const existingSubscription = await queries.getSubscriptionByProviderSubscriptionId(
-				PaymentProvider.STRIPE,
+				this.paymentProvider,
 				response.subscriptionId
 			);
 
@@ -132,7 +149,7 @@ export class WebhookSubscriptionService {
 				status: this.mapProviderStatusToInternal(response.status),
 				startDate: new Date(),
 				endDate: new Date() || null,
-				paymentProvider: PaymentProvider.STRIPE,
+				paymentProvider: this.paymentProvider,
 				subscriptionId: response.subscriptionId,
 				priceId: response.priceId || null,
 				customerId: response.customerId,
@@ -188,11 +205,11 @@ export class WebhookSubscriptionService {
 	 * Updates existing subscription and logs changes
 	 */
 	async handleSubscriptionUpdated(data: any): Promise<WebhookProcessingResult> {
-		const response = formatData(data);
+		const response = formatData(data, this.paymentProvider);
 		try {
 			// Find existing subscription
 			const existingSubscription = await queries.getSubscriptionByProviderSubscriptionId(
-				PaymentProvider.STRIPE,
+				this.paymentProvider,
 				response.subscriptionId
 			);
 
@@ -279,13 +296,13 @@ export class WebhookSubscriptionService {
 	 * Marks subscription as cancelled and logs the cancellation
 	 */
 	async handleSubscriptionCancelled(data: any): Promise<WebhookProcessingResult> {
-		const response = formatData(data);
+		const response = formatData(data, this.paymentProvider);
 		try {
 			console.log(`🔄 Processing subscription cancelled: ${data.subscriptionId}`);
 
 			// Find existing subscription
 			const existingSubscription = await queries.getSubscriptionByProviderSubscriptionId(
-				PaymentProvider.STRIPE,
+				this.paymentProvider,
 				response.subscriptionId
 			);
 
@@ -351,10 +368,10 @@ export class WebhookSubscriptionService {
 	 * Updates subscription status and extends period if needed
 	 */
 	async handleSubscriptionPaymentSucceeded(data: any): Promise<WebhookProcessingResult> {
-		const response = formatData(data);
+		const response = formatData(data, this.paymentProvider);
 		try {
 			const existingSubscription = await queries.getSubscriptionByProviderSubscriptionId(
-				PaymentProvider.STRIPE,
+				this.paymentProvider,
 				response.subscription!
 			);
 
@@ -425,13 +442,13 @@ export class WebhookSubscriptionService {
 	 * Updates subscription status and handles retry logic
 	 */
 	async handleSubscriptionPaymentFailed(data: any): Promise<WebhookProcessingResult> {
-		const response = formatData(data);
+		const response = formatData(data, this.paymentProvider);
 		try {
 			console.log(`🔄 Processing subscription payment failed: ${data.subscriptionId}`);
 
 			// Find existing subscription
 			const existingSubscription = await queries.getSubscriptionByProviderSubscriptionId(
-				PaymentProvider.STRIPE,
+				this.paymentProvider,
 				response.subscriptionId
 			);
 
@@ -503,12 +520,12 @@ export class WebhookSubscriptionService {
 	 */
 	async handleSubscriptionTrialEnding(data: WebhookSubscriptionData): Promise<WebhookProcessingResult> {
 		try {
-			const response = formatData(data);
+			const response = formatData(data, this.paymentProvider);
 			console.log(`🔄 Processing subscription trial ending: ${data.subscriptionId}`);
 
 			// Find existing subscription
 			const existingSubscription = await queries.getSubscriptionByProviderSubscriptionId(
-				PaymentProvider.STRIPE,
+				this.paymentProvider,
 				response.subscriptionId
 			);
 
@@ -555,7 +572,7 @@ export class WebhookSubscriptionService {
 	 * Find user by customer data (customer ID or metadata)
 	 */
 	private async findUserByCustomerData(response: any): Promise<string | null> {
-		const data = formatData(response);
+		const data = formatData(response, this.paymentProvider);
 		try {
 			// First try to find by userId in metadata
 			if (data.userId) {

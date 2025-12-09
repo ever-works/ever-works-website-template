@@ -26,7 +26,7 @@ export function LoginModal({
       size="3xl"
       backdrop="blur-sm"
       isDismissable={true}
-      hideCloseButton={true}
+      hideCloseButton={false}
       className={cn(
         "bg-linear-to-br from-white to-gray-50",
         "dark:from-gray-900 dark:to-gray-950",
@@ -34,7 +34,7 @@ export function LoginModal({
         "dark:bg-opacity-95 dark:backdrop-blur-xl"
       )}
     >
-      <LoginContent variant="modal" message={message} type="login" />
+      <LoginContent variant="modal" message={message} type="login" onSuccess={onClose} />
     </Modal>
   );
 }

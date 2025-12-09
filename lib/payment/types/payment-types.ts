@@ -200,7 +200,7 @@ export interface PaymentProviderInterface {
   getCustomerId(user: User | null): Promise<string | null>;
 
   // Methods for webhooks
-  handleWebhook(payload: any, signature: string): Promise<WebhookResult>;
+  handleWebhook(payload: any, signature: string, rawBody?: string, timestamp?: string, webhookId?: string): Promise<WebhookResult>;
 
   // Methods for refunds
   refundPayment(paymentId: string, amount?: number): Promise<any>;
@@ -277,7 +277,8 @@ export enum WebhookEventType {
   PAYMENT_SUCCEEDED = "payment_succeeded",
   PAYMENT_FAILED = "payment_failed",
   REFUND_SUCCEEDED = "refund_succeeded",
-
+  CUSTOMER_STATE_CHANGED = "customer_state_changed",
+  CUSTOMER_CREATED = "customer_created",
   SUBSCRIPTION_CREATED = "subscription_created",
   SUBSCRIPTION_UPDATED = "subscription_updated",
   SUBSCRIPTION_CANCELLED = "subscription_cancelled",

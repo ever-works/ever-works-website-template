@@ -4,6 +4,7 @@ import { surveyService } from '@/lib/services/survey.service';
 import { SurveyPageClient } from '@/components/surveys/pages/public-survey-page';
 import { Container } from '@/components/ui/container';
 import { cache } from 'react';
+import { cleanUrl } from '@/lib/utils/url-cleaner';
 
 interface ItemSurveyPageProps {
 	params: Promise<{
@@ -13,9 +14,9 @@ interface ItemSurveyPageProps {
 	}>;
 }
 
-const appUrl =
-  process.env.NEXT_PUBLIC_APP_URL ??
+const rawUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || 
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const appUrl = cleanUrl(rawUrl);
 
 const getSurvey = cache((slug: string) => surveyService.getBySlug(slug));
 

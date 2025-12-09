@@ -120,8 +120,8 @@ export class PaymentService {
   /**
    * Handle a payment webhook
    */
-  async handleWebhook(payload: any, signature: string): Promise<WebhookResult> {
-    return this.provider.handleWebhook(payload, signature);
+  async handleWebhook(payload: any, signature: string, rawBody?: string, timestamp?: string, webhookId?: string): Promise<WebhookResult> {
+    return this.provider.handleWebhook(payload, signature, rawBody, timestamp, webhookId);
   }
 
   /**

@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { X, Settings } from "lucide-react";
 import { createPortal } from "react-dom";
-import { cn } from "@/lib/utils";
+import { cn, isDemoMode } from "@/lib/utils";
 import { useSettingsModal } from "@/hooks/use-settings-modal";
 import { useTranslations } from "next-intl";
 import SelectContainerWidth from "@/components/ui/select-container-width";
@@ -44,6 +44,7 @@ export function SettingsModal() {
 	const { isOpen, closeModal } = useSettingsModal();
 	const t = useTranslations("settings");
 	const { focusRef, setFocus, trapFocus } = useFocusManagement();
+	const isDemo = isDemoMode();
 
 	// Auto-focus the modal when it opens and setup focus trap
 	useEffect(() => {
@@ -118,20 +119,20 @@ export function SettingsModal() {
 
 				{/* Modal Content */}
 				<div className="px-6 py-8 space-y-5">
-					{/* Container Width Section */}
+					{/* Container Width Section - Always show */}
 					<SelectContainerWidth />
 
-					{/* Pagination Style Section */}
+					{/* Pagination Style Section - Always show */}
 					<SelectPaginationType />
 
-					{/* Database Features Section */}
-					<SelectDatabaseMode />
+					{/* Database Features Section - Demo only */}
+					{isDemo && <SelectDatabaseMode />}
 
-					{/* Checkout Provider Selection */}
-					<SelectCheckoutProvider />
+					{/* Checkout Provider Selection - Demo only */}
+					{isDemo && <SelectCheckoutProvider />}
 
-					{/* Database Status Warning - Only shows when DB not configured */}
-					<DatabaseStatusWarning className="mt-3" />
+					{/* Database Status Warning - Demo only */}
+					{isDemo && <DatabaseStatusWarning className="mt-3" />}
 				</div>
 			</div>
 		</>,

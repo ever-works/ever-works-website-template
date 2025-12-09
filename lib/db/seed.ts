@@ -29,6 +29,7 @@ import type { NewAccount, NewPaymentProvider, NewPaymentAccount } from './schema
 import { getAllPermissions } from '../permissions/definitions';
 import { PaymentProvider, PaymentPlan } from '../constants';
 import { SubscriptionStatus, VoteType } from './schema';
+import { isDemoMode } from '../utils';
 
 // Global database connection - will be initialized after environment loading
 let db: ReturnType<typeof import('./drizzle').getDrizzleInstance>;
@@ -90,9 +91,9 @@ export async function runSeed(): Promise<void> {
 	await ensureDb();
 
 	// Check if demo mode is enabled
-	const isDemoMode = process.env.NEXT_PUBLIC_DEMO === 'true';
+	const isDemo = isDemoMode();
 
-	if (isDemoMode) {
+	if (isDemo) {
 		console.log('[Seed] 🎭 Running in DEMO mode - will seed comprehensive test data');
 	} else {
 		console.log('[Seed] 🔒 Running in PRODUCTION mode - minimal essential seeding only');
@@ -433,7 +434,7 @@ export async function runSeed(): Promise<void> {
 		// ============================================
 		// DEMO MODE: Seed additional tables
 		// ============================================
-		if (isDemoMode) {
+		if (isDemo) {
 			console.log('[Seed] 🎭 Demo mode: seeding additional tables...');
 
 			// Import faker dynamically for demo mode

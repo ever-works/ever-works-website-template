@@ -6,6 +6,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Check if the application is running in demo mode.
+ * Demo mode enables additional settings and seeds comprehensive test data.
+ */
+export function isDemoMode(): boolean {
+  return process.env.NEXT_PUBLIC_DEMO === "true";
+}
+
 export function getItemPath(slug: string) {
   return `/items/${slug}`;
 }

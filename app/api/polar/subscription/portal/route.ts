@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, getOrCreatePolarProvider } from '@/lib/auth';
+import { extractReturnUrl, buildAbsoluteUrl } from './utils';
 
 /**
  * @swagger
@@ -118,24 +119,14 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
-
-		// Get return URL from request body or use default
-		// Handle both cases: with body (optional) and without body (for compatibility with Stripe)
-		let returnUrl = `${appUrl || ''}/settings/billing`;
-		try {
-			const body = await request.json();
-			if (body?.returnUrl) {
-				returnUrl = body.returnUrl;
-			}
-		} catch {
-			// No body provided, use default return URL
-		}
+		// Extract return URL from request body (returns relative path)
+		const returnUrlPath = await extractReturnUrl(request);
 
 		// Create customer portal session
+		// normalizeReturnUrl will construct the absolute URL from the relative path
 		const portalSession = await polarProvider.createCustomerPortalSession(
 			polarCustomerId,
-			returnUrl
+			returnUrlPath
 		);
 
 		if (!portalSession.url) {
@@ -148,6 +139,9 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
+		// Build absolute URL for API response (contract requires absolute URI)
+		const returnUrlAbsolute = buildAbsoluteUrl(returnUrlPath);
+
 		// Return response in the same format as Stripe for consistency
 		return NextResponse.json({
 			success: true,
@@ -155,17 +149,17 @@ export async function POST(request: NextRequest) {
 				id: portalSession.id,
 				url: portalSession.url,
 				customer: polarCustomerId,
-				return_url: returnUrl
+				return_url: returnUrlAbsolute
 			},
 			message: 'Customer portal session created'
 		});
 	} catch (error) {
 		console.error('Error creating Polar customer portal session:', error);
-		
+
 		// Extract detailed error information
 		let errorMessage = 'Unknown error';
 		let errorDetails: any = {};
-		
+
 		if (error instanceof Error) {
 			errorMessage = error.message;
 			errorDetails = {
@@ -179,12 +173,12 @@ export async function POST(request: NextRequest) {
 			errorMessage = String(error);
 			errorDetails = error;
 		}
-		
+
 		// Log full error for debugging
 		if (process.env.NODE_ENV === 'development') {
 			console.error('Full error object:', JSON.stringify(error, null, 2));
 		}
-		
+
 		return NextResponse.json(
 			{
 				error: 'Failed to create customer portal session',

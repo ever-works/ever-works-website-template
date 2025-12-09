@@ -683,12 +683,14 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 		}
 	}
 
-	async handleWebhook(payload: unknown, signature: string): Promise<WebhookResult> {
+	async handleWebhook(payload: unknown, signature: string, rawBody?: string, timestamp?: string, webhookId?: string): Promise<WebhookResult> {
 		try {
 			// Convert webhook secret to key for Web Crypto API
 			const encoder = new TextEncoder();
 			const keyData = encoder.encode(this.webhookSecret);
-			const messageData = encoder.encode(JSON.stringify(payload));
+			// Use rawBody when available to avoid signature verification failures
+			// caused by JSON re-serialization differences (whitespace, key order, etc.)
+			const messageData = encoder.encode(rawBody ?? JSON.stringify(payload));
 
 			// Import key for HMAC
 			const cryptoKey = await crypto.subtle.importKey(

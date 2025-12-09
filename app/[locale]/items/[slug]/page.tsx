@@ -7,13 +7,14 @@ import { ServerItemContent } from "@/components/item-detail/server-item-content"
 import { Container } from "@/components/ui/container";
 import { Metadata } from "next";
 import { siteConfig } from "@/lib/config";
+import { cleanUrl } from '@/lib/utils/url-cleaner';
 
 // Disable static generation to prevent MDX compilation errors during build
 export const dynamic = 'force-dynamic';
 
-const appUrl =
-  process.env.NEXT_PUBLIC_APP_URL ??
+const rawUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || 
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const appUrl = cleanUrl(rawUrl);
 
 /**
  * Generate metadata for item detail pages

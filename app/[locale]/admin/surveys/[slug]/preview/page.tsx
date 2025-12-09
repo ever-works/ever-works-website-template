@@ -4,6 +4,7 @@ import { SurveyPreviewClient } from '@/components/surveys/preview/preview-client
 import { surveyService } from '@/lib/services/survey.service';
 import { cache } from 'react';
 import { getSurveysEnabled } from '@/lib/utils/settings';
+import { cleanUrl } from '@/lib/utils/url-cleaner';
 
 interface AdminSurveyPreviewPageProps {
 	params: Promise<{
@@ -12,9 +13,9 @@ interface AdminSurveyPreviewPageProps {
 	}>;
 }
 
-const appUrl =
-  process.env.NEXT_PUBLIC_APP_URL ??
+const rawUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || 
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const appUrl = cleanUrl(rawUrl);
 
 const getSurvey = cache(async (slug: string) => {
 	return surveyService.getBySlug(slug);

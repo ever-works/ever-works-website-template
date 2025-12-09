@@ -104,7 +104,7 @@ export function Modal({
         onClick={(e) => e.stopPropagation()}
       >
         {(title || !hideCloseButton) && (
-          <div className="flex flex-col gap-2 p-4 border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col gap-2 p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               {title && (
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -118,7 +118,8 @@ export function Modal({
                     onClose();
                     onOpenChange?.(false);
                   }}
-                  className="p-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-sm transition-colors"
+                  className="p-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-sm transition-colors ml-auto"
+                  aria-label="Close modal"
                 >
                   <X size={20} className="text-gray-500 dark:text-gray-400" />
                 </button>

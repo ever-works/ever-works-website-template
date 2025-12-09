@@ -12,21 +12,28 @@ export function cleanUrl(url: string): string {
   // Remove any surrounding quotes or whitespace
   let cleaned = url.trim().replace(/^["']|["']$/g, '');
   
-  // Ensure it's a valid URL with protocol
-  if (!cleaned.startsWith('http://') && !cleaned.startsWith('https://')) {
-    cleaned = `http://${cleaned}`;
-  }
+  // Check for existing protocol (case-insensitive)
+  const protocolMatch = cleaned.match(/^([a-z]+):\/\//i);
   
-  return cleaned;
+  if (protocolMatch) {
+    // Protocol exists - normalize to lowercase
+    const protocol = protocolMatch[1].toLowerCase();
+    const rest = cleaned.substring(protocolMatch[0].length);
+    return `${protocol}://${rest}`;
+  } else {
+    // No protocol - add https:// as default for security
+    return `https://${cleaned}`;
+  }
 }
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || 
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
 
 /**
  * Get the base URL for API calls with proper cleaning
  */
 export function getBaseUrl(): string {  
-  return cleanUrl(appUrl);
+  return cleanUrl(rawAppUrl);
 }
 
 /**
