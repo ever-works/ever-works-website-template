@@ -191,7 +191,6 @@ export function TagsList({
     setHiddenTags([]);
     setCanScrollLeft(false);
     setCanScrollRight(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showAllTags]);
 
   // Handle click outside to close popover
