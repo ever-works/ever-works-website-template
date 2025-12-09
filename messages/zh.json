@@ -2776,7 +2776,7 @@
 
       "TRASH": "回收站",
       "DELETE_SUBMISSION_TITLE": "删除提交",
-      "DELETE_CONFIRM_ITEM": "这将把"{title}"移至回收站。您可以稍后恢复。",
+      "DELETE_CONFIRM_ITEM": "这将把「{title}」移至回收站。您可以稍后恢复。",
       "RESTORE_INFO": "您可以随时从回收站恢复此项目。",
 
       "SUBMISSION_DETAILS": "提交详情",
