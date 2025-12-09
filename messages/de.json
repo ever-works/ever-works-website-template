@@ -2720,7 +2720,73 @@
       "DELETE_CONFIRM_MESSAGE": "Dies wird Ihre Einreichung verbergen. Sie können sie später wiederherstellen.",
       "EDIT_STATUS_WARNING": "Das Bearbeiten genehmigter Elemente erfordert eine erneute Genehmigung",
       "SUCCESS_UPDATED": "Einreichung erfolgreich aktualisiert",
-      "SUCCESS_DELETED": "Einreichung erfolgreich gelöscht"
+      "SUCCESS_DELETED": "Einreichung gelöscht und in den Papierkorb verschoben",
+
+      "TRASH_TITLE": "Papierkorb",
+      "TRASH_DESCRIPTION": "Gelöschte Elemente. Sie können sie jederzeit wiederherstellen.",
+      "TRASH_EMPTY": "Papierkorb ist leer",
+      "TRASH_EMPTY_DESC": "Gelöschte Einreichungen erscheinen hier. Wenn Sie eine Einreichung löschen, können Sie sie von dieser Seite wiederherstellen.",
+      "DELETED_ITEMS": "Gelöschte Elemente",
+      "RESTORE": "Wiederherstellen",
+      "RESTORING": "Wird wiederhergestellt...",
+      "RESTORE_SUCCESS": "Einreichung erfolgreich wiederhergestellt",
+      "DELETED_ON": "Gelöscht am {date}",
+      "BACK_TO_SUBMISSIONS": "Zurück zu Einreichungen",
+      "UNKNOWN_DATE": "Unbekanntes Datum",
+      "INVALID_DATE": "Ungültiges Datum",
+
+      "STATUS_APPROVED": "Genehmigt",
+      "STATUS_PENDING": "In Prüfung",
+      "STATUS_REJECTED": "Abgelehnt",
+      "STATUS_DRAFT": "Entwurf",
+
+      "NA": "N/V",
+      "VIEWS": "Aufrufe",
+      "LIKES": "Gefällt mir",
+      "TAGS": "Tags",
+      "NO_TAGS": "Keine Tags",
+      "CATEGORY": "Kategorie",
+      "SUBMITTED": "Eingereicht",
+      "APPROVED_ON": "Genehmigt",
+      "REJECTED_ON": "Abgelehnt",
+      "MORE_TAGS": "+{count} mehr",
+      "VIEWS_COUNT": "{count} Aufrufe",
+      "LIKES_COUNT": "{count} Gefällt mir",
+
+      "CANCEL": "Abbrechen",
+      "CLOSE": "Schließen",
+      "EDIT": "Bearbeiten",
+      "DELETE": "Löschen",
+      "SAVE_CHANGES": "Änderungen speichern",
+      "SAVING": "Wird gespeichert...",
+      "DELETING": "Wird gelöscht...",
+      "VIEW_SUBMISSION": "Einreichung ansehen",
+      "EDIT_SUBMISSION": "Einreichung bearbeiten",
+      "DELETE_SUBMISSION": "Einreichung löschen",
+
+      "TOTAL_SUBMISSIONS": "Gesamte Einreichungen",
+      "APPROVED": "Genehmigt",
+      "PENDING": "Ausstehend",
+      "REJECTED": "Abgelehnt",
+      "DRAFTS": "Entwürfe",
+
+      "SEARCH_PLACEHOLDER_SHORT": "Suchen...",
+      "NO_SUBMISSIONS_TITLE": "Noch keine Einreichungen",
+      "NO_SUBMISSIONS_DESC": "Beginnen Sie mit dem Aufbau Ihres Portfolios, indem Sie Ihr erstes Projekt einreichen.",
+      "SHOWING_RESULTS": "Zeige {start}-{end} von {total} Einreichungen",
+
+      "TRASH": "Papierkorb",
+      "DELETE_SUBMISSION_TITLE": "Einreichung löschen",
+      "DELETE_CONFIRM_ITEM": "Dies verschiebt \"{title}\" in den Papierkorb. Sie können es später wiederherstellen.",
+      "RESTORE_INFO": "Sie können dieses Element jederzeit aus dem Papierkorb wiederherstellen.",
+
+      "SUBMISSION_DETAILS": "Einreichungsdetails",
+      "VIEW_SUBMISSION_INFO": "Einreichungsinformationen ansehen",
+      "REJECTION_REASON": "Ablehnungsgrund",
+      "DESCRIPTION": "Beschreibung",
+
+      "EDIT_SUBMISSION_TITLE": "Einreichung bearbeiten",
+      "EDIT_SUBMISSION_DESC": "Aktualisieren Sie die Details Ihrer Einreichung"
     }
   }
 }

@@ -2719,7 +2719,73 @@
       "DELETE_CONFIRM_MESSAGE": "这将隐藏您的提交。您可以稍后恢复它。",
       "EDIT_STATUS_WARNING": "编辑已批准的项目需要重新批准",
       "SUCCESS_UPDATED": "提交更新成功",
-      "SUCCESS_DELETED": "提交删除成功"
+      "SUCCESS_DELETED": "提交已删除并移至回收站",
+
+      "TRASH_TITLE": "回收站",
+      "TRASH_DESCRIPTION": "已删除的项目。您可以随时恢复它们。",
+      "TRASH_EMPTY": "回收站为空",
+      "TRASH_EMPTY_DESC": "已删除的提交将显示在这里。当您删除提交时，可以从此页面恢复。",
+      "DELETED_ITEMS": "已删除项目",
+      "RESTORE": "恢复",
+      "RESTORING": "恢复中...",
+      "RESTORE_SUCCESS": "提交恢复成功",
+      "DELETED_ON": "删除于 {date}",
+      "BACK_TO_SUBMISSIONS": "返回提交",
+      "UNKNOWN_DATE": "未知日期",
+      "INVALID_DATE": "无效日期",
+
+      "STATUS_APPROVED": "已批准",
+      "STATUS_PENDING": "审核中",
+      "STATUS_REJECTED": "已拒绝",
+      "STATUS_DRAFT": "草稿",
+
+      "NA": "不适用",
+      "VIEWS": "浏览量",
+      "LIKES": "点赞",
+      "TAGS": "标签",
+      "NO_TAGS": "无标签",
+      "CATEGORY": "分类",
+      "SUBMITTED": "提交于",
+      "APPROVED_ON": "批准于",
+      "REJECTED_ON": "拒绝于",
+      "MORE_TAGS": "+{count}个更多",
+      "VIEWS_COUNT": "{count}次浏览",
+      "LIKES_COUNT": "{count}个点赞",
+
+      "CANCEL": "取消",
+      "CLOSE": "关闭",
+      "EDIT": "编辑",
+      "DELETE": "删除",
+      "SAVE_CHANGES": "保存更改",
+      "SAVING": "保存中...",
+      "DELETING": "删除中...",
+      "VIEW_SUBMISSION": "查看提交",
+      "EDIT_SUBMISSION": "编辑提交",
+      "DELETE_SUBMISSION": "删除提交",
+
+      "TOTAL_SUBMISSIONS": "总提交数",
+      "APPROVED": "已批准",
+      "PENDING": "待处理",
+      "REJECTED": "已拒绝",
+      "DRAFTS": "草稿",
+
+      "SEARCH_PLACEHOLDER_SHORT": "搜索...",
+      "NO_SUBMISSIONS_TITLE": "暂无提交",
+      "NO_SUBMISSIONS_DESC": "通过提交您的第一个项目开始建立您的作品集。",
+      "SHOWING_RESULTS": "显示 {start}-{end}，共 {total} 个提交",
+
+      "TRASH": "回收站",
+      "DELETE_SUBMISSION_TITLE": "删除提交",
+      "DELETE_CONFIRM_ITEM": "这将把"{title}"移至回收站。您可以稍后恢复。",
+      "RESTORE_INFO": "您可以随时从回收站恢复此项目。",
+
+      "SUBMISSION_DETAILS": "提交详情",
+      "VIEW_SUBMISSION_INFO": "查看提交信息",
+      "REJECTION_REASON": "拒绝原因",
+      "DESCRIPTION": "描述",
+
+      "EDIT_SUBMISSION_TITLE": "编辑提交",
+      "EDIT_SUBMISSION_DESC": "更新您的提交详情"
     }
   }
 }

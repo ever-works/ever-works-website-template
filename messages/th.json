@@ -2686,8 +2686,74 @@
       "DELETE_CONFIRM_TITLE": "Delete Submission",
       "DELETE_CONFIRM_MESSAGE": "This will hide your submission. You can restore it later.",
       "EDIT_STATUS_WARNING": "Editing approved items requires re-approval",
-      "SUCCESS_UPDATED": "Submission updated successfully",
-      "SUCCESS_DELETED": "Submission deleted successfully"
+      "SUCCESS_UPDATED": "อัปเดตการส่งเรียบร้อยแล้ว",
+      "SUCCESS_DELETED": "ลบการส่งและย้ายไปถังขยะแล้ว",
+
+      "TRASH_TITLE": "ถังขยะ",
+      "TRASH_DESCRIPTION": "รายการที่ถูกลบ คุณสามารถกู้คืนได้ตลอดเวลา",
+      "TRASH_EMPTY": "ถังขยะว่างเปล่า",
+      "TRASH_EMPTY_DESC": "การส่งที่ถูกลบจะปรากฏที่นี่ เมื่อคุณลบการส่ง คุณสามารถกู้คืนจากหน้านี้",
+      "DELETED_ITEMS": "รายการที่ถูกลบ",
+      "RESTORE": "กู้คืน",
+      "RESTORING": "กำลังกู้คืน...",
+      "RESTORE_SUCCESS": "กู้คืนการส่งเรียบร้อยแล้ว",
+      "DELETED_ON": "ลบเมื่อ {date}",
+      "BACK_TO_SUBMISSIONS": "กลับไปที่การส่ง",
+      "UNKNOWN_DATE": "วันที่ไม่ทราบ",
+      "INVALID_DATE": "วันที่ไม่ถูกต้อง",
+
+      "STATUS_APPROVED": "อนุมัติแล้ว",
+      "STATUS_PENDING": "อยู่ระหว่างตรวจสอบ",
+      "STATUS_REJECTED": "ถูกปฏิเสธ",
+      "STATUS_DRAFT": "แบบร่าง",
+
+      "NA": "ไม่ระบุ",
+      "VIEWS": "การดู",
+      "LIKES": "ถูกใจ",
+      "TAGS": "แท็ก",
+      "NO_TAGS": "ไม่มีแท็ก",
+      "CATEGORY": "หมวดหมู่",
+      "SUBMITTED": "ส่งแล้ว",
+      "APPROVED_ON": "อนุมัติ",
+      "REJECTED_ON": "ปฏิเสธ",
+      "MORE_TAGS": "+{count} เพิ่มเติม",
+      "VIEWS_COUNT": "{count} การดู",
+      "LIKES_COUNT": "{count} ถูกใจ",
+
+      "CANCEL": "ยกเลิก",
+      "CLOSE": "ปิด",
+      "EDIT": "แก้ไข",
+      "DELETE": "ลบ",
+      "SAVE_CHANGES": "บันทึกการเปลี่ยนแปลง",
+      "SAVING": "กำลังบันทึก...",
+      "DELETING": "กำลังลบ...",
+      "VIEW_SUBMISSION": "ดูการส่ง",
+      "EDIT_SUBMISSION": "แก้ไขการส่ง",
+      "DELETE_SUBMISSION": "ลบการส่ง",
+
+      "TOTAL_SUBMISSIONS": "การส่งทั้งหมด",
+      "APPROVED": "อนุมัติแล้ว",
+      "PENDING": "รอดำเนินการ",
+      "REJECTED": "ถูกปฏิเสธ",
+      "DRAFTS": "แบบร่าง",
+
+      "SEARCH_PLACEHOLDER_SHORT": "ค้นหา...",
+      "NO_SUBMISSIONS_TITLE": "ยังไม่มีการส่ง",
+      "NO_SUBMISSIONS_DESC": "เริ่มสร้างพอร์ตโฟลิโอของคุณโดยส่งโปรเจกต์แรก",
+      "SHOWING_RESULTS": "แสดง {start}-{end} จาก {total} การส่ง",
+
+      "TRASH": "ถังขยะ",
+      "DELETE_SUBMISSION_TITLE": "ลบการส่ง",
+      "DELETE_CONFIRM_ITEM": "การดำเนินการนี้จะย้าย \"{title}\" ไปยังถังขยะ คุณสามารถกู้คืนได้ภายหลัง",
+      "RESTORE_INFO": "คุณสามารถกู้คืนรายการนี้จากถังขยะได้ตลอดเวลา",
+
+      "SUBMISSION_DETAILS": "รายละเอียดการส่ง",
+      "VIEW_SUBMISSION_INFO": "ดูข้อมูลการส่ง",
+      "REJECTION_REASON": "เหตุผลการปฏิเสธ",
+      "DESCRIPTION": "คำอธิบาย",
+
+      "EDIT_SUBMISSION_TITLE": "แก้ไขการส่ง",
+      "EDIT_SUBMISSION_DESC": "อัปเดตรายละเอียดการส่งของคุณ"
     }
   }
 }

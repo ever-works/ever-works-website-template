@@ -2778,7 +2778,73 @@
       "DELETE_CONFIRM_MESSAGE": "Cela masquera votre soumission. Vous pourrez la restaurer plus tard.",
       "EDIT_STATUS_WARNING": "La modification des éléments approuvés nécessite une nouvelle approbation",
       "SUCCESS_UPDATED": "Soumission mise à jour avec succès",
-      "SUCCESS_DELETED": "Soumission supprimée avec succès"
+      "SUCCESS_DELETED": "Soumission supprimée et déplacée vers la corbeille",
+
+      "TRASH_TITLE": "Corbeille",
+      "TRASH_DESCRIPTION": "Éléments supprimés. Vous pouvez les restaurer à tout moment.",
+      "TRASH_EMPTY": "La corbeille est vide",
+      "TRASH_EMPTY_DESC": "Les soumissions supprimées apparaîtront ici. Lorsque vous supprimez une soumission, vous pouvez la restaurer depuis cette page.",
+      "DELETED_ITEMS": "Éléments Supprimés",
+      "RESTORE": "Restaurer",
+      "RESTORING": "Restauration...",
+      "RESTORE_SUCCESS": "Soumission restaurée avec succès",
+      "DELETED_ON": "Supprimé le {date}",
+      "BACK_TO_SUBMISSIONS": "Retour aux Soumissions",
+      "UNKNOWN_DATE": "Date inconnue",
+      "INVALID_DATE": "Date invalide",
+
+      "STATUS_APPROVED": "Approuvé",
+      "STATUS_PENDING": "En Révision",
+      "STATUS_REJECTED": "Rejeté",
+      "STATUS_DRAFT": "Brouillon",
+
+      "NA": "N/D",
+      "VIEWS": "Vues",
+      "LIKES": "J'aime",
+      "TAGS": "Tags",
+      "NO_TAGS": "Aucun tag",
+      "CATEGORY": "Catégorie",
+      "SUBMITTED": "Soumis",
+      "APPROVED_ON": "Approuvé",
+      "REJECTED_ON": "Rejeté",
+      "MORE_TAGS": "+{count} de plus",
+      "VIEWS_COUNT": "{count} vues",
+      "LIKES_COUNT": "{count} j'aime",
+
+      "CANCEL": "Annuler",
+      "CLOSE": "Fermer",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "SAVE_CHANGES": "Enregistrer les Modifications",
+      "SAVING": "Enregistrement...",
+      "DELETING": "Suppression...",
+      "VIEW_SUBMISSION": "Voir la soumission",
+      "EDIT_SUBMISSION": "Modifier la soumission",
+      "DELETE_SUBMISSION": "Supprimer la soumission",
+
+      "TOTAL_SUBMISSIONS": "Total des Soumissions",
+      "APPROVED": "Approuvées",
+      "PENDING": "En Attente",
+      "REJECTED": "Rejetées",
+      "DRAFTS": "Brouillons",
+
+      "SEARCH_PLACEHOLDER_SHORT": "Rechercher...",
+      "NO_SUBMISSIONS_TITLE": "Pas encore de soumissions",
+      "NO_SUBMISSIONS_DESC": "Commencez à construire votre portfolio en soumettant votre premier projet.",
+      "SHOWING_RESULTS": "Affichage de {start}-{end} sur {total} soumissions",
+
+      "TRASH": "Corbeille",
+      "DELETE_SUBMISSION_TITLE": "Supprimer la Soumission",
+      "DELETE_CONFIRM_ITEM": "Cela déplacera \"{title}\" vers la corbeille. Vous pourrez le restaurer plus tard.",
+      "RESTORE_INFO": "Vous pouvez restaurer cet élément depuis la corbeille à tout moment.",
+
+      "SUBMISSION_DETAILS": "Détails de la Soumission",
+      "VIEW_SUBMISSION_INFO": "Voir les informations de la soumission",
+      "REJECTION_REASON": "Raison du Rejet",
+      "DESCRIPTION": "Description",
+
+      "EDIT_SUBMISSION_TITLE": "Modifier la Soumission",
+      "EDIT_SUBMISSION_DESC": "Mettre à jour les détails de votre soumission"
     }
   }
 }

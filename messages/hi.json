@@ -2686,8 +2686,74 @@
       "DELETE_CONFIRM_TITLE": "Delete Submission",
       "DELETE_CONFIRM_MESSAGE": "This will hide your submission. You can restore it later.",
       "EDIT_STATUS_WARNING": "Editing approved items requires re-approval",
-      "SUCCESS_UPDATED": "Submission updated successfully",
-      "SUCCESS_DELETED": "Submission deleted successfully"
+      "SUCCESS_UPDATED": "सबमिशन सफलतापूर्वक अपडेट किया गया",
+      "SUCCESS_DELETED": "सबमिशन हटा दिया गया और ट्रैश में ले जाया गया",
+
+      "TRASH_TITLE": "ट्रैश",
+      "TRASH_DESCRIPTION": "हटाए गए आइटम। आप इन्हें कभी भी पुनर्स्थापित कर सकते हैं।",
+      "TRASH_EMPTY": "ट्रैश खाली है",
+      "TRASH_EMPTY_DESC": "हटाए गए सबमिशन यहां दिखाई देंगे। जब आप कोई सबमिशन हटाते हैं, तो आप इसे इस पेज से पुनर्स्थापित कर सकते हैं।",
+      "DELETED_ITEMS": "हटाए गए आइटम",
+      "RESTORE": "पुनर्स्थापित करें",
+      "RESTORING": "पुनर्स्थापित हो रहा है...",
+      "RESTORE_SUCCESS": "सबमिशन सफलतापूर्वक पुनर्स्थापित किया गया",
+      "DELETED_ON": "{date} को हटाया गया",
+      "BACK_TO_SUBMISSIONS": "सबमिशन पर वापस जाएं",
+      "UNKNOWN_DATE": "अज्ञात तिथि",
+      "INVALID_DATE": "अमान्य तिथि",
+
+      "STATUS_APPROVED": "स्वीकृत",
+      "STATUS_PENDING": "समीक्षाधीन",
+      "STATUS_REJECTED": "अस्वीकृत",
+      "STATUS_DRAFT": "ड्राफ्ट",
+
+      "NA": "लागू नहीं",
+      "VIEWS": "व्यूज",
+      "LIKES": "लाइक्स",
+      "TAGS": "टैग्स",
+      "NO_TAGS": "कोई टैग नहीं",
+      "CATEGORY": "श्रेणी",
+      "SUBMITTED": "सबमिट किया गया",
+      "APPROVED_ON": "स्वीकृत",
+      "REJECTED_ON": "अस्वीकृत",
+      "MORE_TAGS": "+{count} और",
+      "VIEWS_COUNT": "{count} व्यूज",
+      "LIKES_COUNT": "{count} लाइक्स",
+
+      "CANCEL": "रद्द करें",
+      "CLOSE": "बंद करें",
+      "EDIT": "संपादित करें",
+      "DELETE": "हटाएं",
+      "SAVE_CHANGES": "परिवर्तन सहेजें",
+      "SAVING": "सहेजा जा रहा है...",
+      "DELETING": "हटाया जा रहा है...",
+      "VIEW_SUBMISSION": "सबमिशन देखें",
+      "EDIT_SUBMISSION": "सबमिशन संपादित करें",
+      "DELETE_SUBMISSION": "सबमिशन हटाएं",
+
+      "TOTAL_SUBMISSIONS": "कुल सबमिशन",
+      "APPROVED": "स्वीकृत",
+      "PENDING": "लंबित",
+      "REJECTED": "अस्वीकृत",
+      "DRAFTS": "ड्राफ्ट्स",
+
+      "SEARCH_PLACEHOLDER_SHORT": "खोजें...",
+      "NO_SUBMISSIONS_TITLE": "अभी तक कोई सबमिशन नहीं",
+      "NO_SUBMISSIONS_DESC": "अपना पहला प्रोजेक्ट सबमिट करके अपना पोर्टफोलियो बनाना शुरू करें।",
+      "SHOWING_RESULTS": "{total} में से {start}-{end} दिखा रहा है",
+
+      "TRASH": "ट्रैश",
+      "DELETE_SUBMISSION_TITLE": "सबमिशन हटाएं",
+      "DELETE_CONFIRM_ITEM": "यह \"{title}\" को ट्रैश में ले जाएगा। आप इसे बाद में पुनर्स्थापित कर सकते हैं।",
+      "RESTORE_INFO": "आप इस आइटम को ट्रैश से कभी भी पुनर्स्थापित कर सकते हैं।",
+
+      "SUBMISSION_DETAILS": "सबमिशन विवरण",
+      "VIEW_SUBMISSION_INFO": "सबमिशन जानकारी देखें",
+      "REJECTION_REASON": "अस्वीकृति का कारण",
+      "DESCRIPTION": "विवरण",
+
+      "EDIT_SUBMISSION_TITLE": "सबमिशन संपादित करें",
+      "EDIT_SUBMISSION_DESC": "अपने सबमिशन का विवरण अपडेट करें"
     }
   }
 }

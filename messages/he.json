@@ -2691,8 +2691,74 @@
       "DELETE_CONFIRM_TITLE": "Delete Submission",
       "DELETE_CONFIRM_MESSAGE": "This will hide your submission. You can restore it later.",
       "EDIT_STATUS_WARNING": "Editing approved items requires re-approval",
-      "SUCCESS_UPDATED": "Submission updated successfully",
-      "SUCCESS_DELETED": "Submission deleted successfully"
+      "SUCCESS_UPDATED": "ההגשה עודכנה בהצלחה",
+      "SUCCESS_DELETED": "ההגשה נמחקה והועברה לסל המיחזור",
+
+      "TRASH_TITLE": "סל מיחזור",
+      "TRASH_DESCRIPTION": "פריטים שנמחקו. תוכל לשחזר אותם בכל עת.",
+      "TRASH_EMPTY": "סל המיחזור ריק",
+      "TRASH_EMPTY_DESC": "הגשות שנמחקו יופיעו כאן. כאשר תמחק הגשה, תוכל לשחזר אותה מדף זה.",
+      "DELETED_ITEMS": "פריטים שנמחקו",
+      "RESTORE": "שחזר",
+      "RESTORING": "משחזר...",
+      "RESTORE_SUCCESS": "ההגשה שוחזרה בהצלחה",
+      "DELETED_ON": "נמחק ב-{date}",
+      "BACK_TO_SUBMISSIONS": "חזרה להגשות",
+      "UNKNOWN_DATE": "תאריך לא ידוע",
+      "INVALID_DATE": "תאריך לא חוקי",
+
+      "STATUS_APPROVED": "מאושר",
+      "STATUS_PENDING": "בבדיקה",
+      "STATUS_REJECTED": "נדחה",
+      "STATUS_DRAFT": "טיוטה",
+
+      "NA": "לא זמין",
+      "VIEWS": "צפיות",
+      "LIKES": "לייקים",
+      "TAGS": "תגיות",
+      "NO_TAGS": "אין תגיות",
+      "CATEGORY": "קטגוריה",
+      "SUBMITTED": "הוגש",
+      "APPROVED_ON": "אושר",
+      "REJECTED_ON": "נדחה",
+      "MORE_TAGS": "+{count} נוספים",
+      "VIEWS_COUNT": "{count} צפיות",
+      "LIKES_COUNT": "{count} לייקים",
+
+      "CANCEL": "ביטול",
+      "CLOSE": "סגור",
+      "EDIT": "ערוך",
+      "DELETE": "מחק",
+      "SAVE_CHANGES": "שמור שינויים",
+      "SAVING": "שומר...",
+      "DELETING": "מוחק...",
+      "VIEW_SUBMISSION": "צפה בהגשה",
+      "EDIT_SUBMISSION": "ערוך הגשה",
+      "DELETE_SUBMISSION": "מחק הגשה",
+
+      "TOTAL_SUBMISSIONS": "סה״כ הגשות",
+      "APPROVED": "מאושרות",
+      "PENDING": "ממתינות",
+      "REJECTED": "נדחו",
+      "DRAFTS": "טיוטות",
+
+      "SEARCH_PLACEHOLDER_SHORT": "חיפוש...",
+      "NO_SUBMISSIONS_TITLE": "אין עדיין הגשות",
+      "NO_SUBMISSIONS_DESC": "התחל לבנות את הפורטפוליו שלך על ידי הגשת הפרויקט הראשון שלך.",
+      "SHOWING_RESULTS": "מציג {start}-{end} מתוך {total} הגשות",
+
+      "TRASH": "סל מיחזור",
+      "DELETE_SUBMISSION_TITLE": "מחק הגשה",
+      "DELETE_CONFIRM_ITEM": "פעולה זו תעביר את \"{title}\" לסל המיחזור. תוכל לשחזר אותו מאוחר יותר.",
+      "RESTORE_INFO": "תוכל לשחזר פריט זה מסל המיחזור בכל עת.",
+
+      "SUBMISSION_DETAILS": "פרטי הגשה",
+      "VIEW_SUBMISSION_INFO": "צפה במידע על ההגשה",
+      "REJECTION_REASON": "סיבת הדחייה",
+      "DESCRIPTION": "תיאור",
+
+      "EDIT_SUBMISSION_TITLE": "ערוך הגשה",
+      "EDIT_SUBMISSION_DESC": "עדכן את פרטי ההגשה שלך"
     }
   }
 }

@@ -2686,8 +2686,74 @@
       "DELETE_CONFIRM_TITLE": "Delete Submission",
       "DELETE_CONFIRM_MESSAGE": "This will hide your submission. You can restore it later.",
       "EDIT_STATUS_WARNING": "Editing approved items requires re-approval",
-      "SUCCESS_UPDATED": "Submission updated successfully",
-      "SUCCESS_DELETED": "Submission deleted successfully"
+      "SUCCESS_UPDATED": "Pengajuan berhasil diperbarui",
+      "SUCCESS_DELETED": "Pengajuan dihapus dan dipindahkan ke tempat sampah",
+
+      "TRASH_TITLE": "Tempat Sampah",
+      "TRASH_DESCRIPTION": "Item yang dihapus. Anda dapat memulihkannya kapan saja.",
+      "TRASH_EMPTY": "Tempat sampah kosong",
+      "TRASH_EMPTY_DESC": "Pengajuan yang dihapus akan muncul di sini. Ketika Anda menghapus pengajuan, Anda dapat memulihkannya dari halaman ini.",
+      "DELETED_ITEMS": "Item yang Dihapus",
+      "RESTORE": "Pulihkan",
+      "RESTORING": "Memulihkan...",
+      "RESTORE_SUCCESS": "Pengajuan berhasil dipulihkan",
+      "DELETED_ON": "Dihapus pada {date}",
+      "BACK_TO_SUBMISSIONS": "Kembali ke Pengajuan",
+      "UNKNOWN_DATE": "Tanggal tidak diketahui",
+      "INVALID_DATE": "Tanggal tidak valid",
+
+      "STATUS_APPROVED": "Disetujui",
+      "STATUS_PENDING": "Dalam Peninjauan",
+      "STATUS_REJECTED": "Ditolak",
+      "STATUS_DRAFT": "Draf",
+
+      "NA": "T/A",
+      "VIEWS": "Tampilan",
+      "LIKES": "Suka",
+      "TAGS": "Tag",
+      "NO_TAGS": "Tidak ada tag",
+      "CATEGORY": "Kategori",
+      "SUBMITTED": "Diajukan",
+      "APPROVED_ON": "Disetujui",
+      "REJECTED_ON": "Ditolak",
+      "MORE_TAGS": "+{count} lainnya",
+      "VIEWS_COUNT": "{count} tampilan",
+      "LIKES_COUNT": "{count} suka",
+
+      "CANCEL": "Batal",
+      "CLOSE": "Tutup",
+      "EDIT": "Edit",
+      "DELETE": "Hapus",
+      "SAVE_CHANGES": "Simpan Perubahan",
+      "SAVING": "Menyimpan...",
+      "DELETING": "Menghapus...",
+      "VIEW_SUBMISSION": "Lihat pengajuan",
+      "EDIT_SUBMISSION": "Edit pengajuan",
+      "DELETE_SUBMISSION": "Hapus pengajuan",
+
+      "TOTAL_SUBMISSIONS": "Total Pengajuan",
+      "APPROVED": "Disetujui",
+      "PENDING": "Menunggu",
+      "REJECTED": "Ditolak",
+      "DRAFTS": "Draf",
+
+      "SEARCH_PLACEHOLDER_SHORT": "Cari...",
+      "NO_SUBMISSIONS_TITLE": "Belum ada pengajuan",
+      "NO_SUBMISSIONS_DESC": "Mulai bangun portofolio Anda dengan mengajukan proyek pertama Anda.",
+      "SHOWING_RESULTS": "Menampilkan {start}-{end} dari {total} pengajuan",
+
+      "TRASH": "Tempat Sampah",
+      "DELETE_SUBMISSION_TITLE": "Hapus Pengajuan",
+      "DELETE_CONFIRM_ITEM": "Ini akan memindahkan \"{title}\" ke tempat sampah. Anda dapat memulihkannya nanti.",
+      "RESTORE_INFO": "Anda dapat memulihkan item ini dari tempat sampah kapan saja.",
+
+      "SUBMISSION_DETAILS": "Detail Pengajuan",
+      "VIEW_SUBMISSION_INFO": "Lihat informasi pengajuan",
+      "REJECTION_REASON": "Alasan Penolakan",
+      "DESCRIPTION": "Deskripsi",
+
+      "EDIT_SUBMISSION_TITLE": "Edit Pengajuan",
+      "EDIT_SUBMISSION_DESC": "Perbarui detail pengajuan Anda"
     }
   }
 }

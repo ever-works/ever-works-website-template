@@ -2686,8 +2686,74 @@
       "DELETE_CONFIRM_TITLE": "Delete Submission",
       "DELETE_CONFIRM_MESSAGE": "This will hide your submission. You can restore it later.",
       "EDIT_STATUS_WARNING": "Editing approved items requires re-approval",
-      "SUCCESS_UPDATED": "Submission updated successfully",
-      "SUCCESS_DELETED": "Submission deleted successfully"
+      "SUCCESS_UPDATED": "Подаването е актуализирано успешно",
+      "SUCCESS_DELETED": "Подаването е изтрито и преместено в кошчето",
+
+      "TRASH_TITLE": "Кошче",
+      "TRASH_DESCRIPTION": "Изтрити елементи. Можете да ги възстановите по всяко време.",
+      "TRASH_EMPTY": "Кошчето е празно",
+      "TRASH_EMPTY_DESC": "Изтритите подавания ще се появят тук. Когато изтриете подаване, можете да го възстановите от тази страница.",
+      "DELETED_ITEMS": "Изтрити елементи",
+      "RESTORE": "Възстанови",
+      "RESTORING": "Възстановяване...",
+      "RESTORE_SUCCESS": "Подаването е възстановено успешно",
+      "DELETED_ON": "Изтрито на {date}",
+      "BACK_TO_SUBMISSIONS": "Обратно към подаванията",
+      "UNKNOWN_DATE": "Неизвестна дата",
+      "INVALID_DATE": "Невалидна дата",
+
+      "STATUS_APPROVED": "Одобрено",
+      "STATUS_PENDING": "В процес на преглед",
+      "STATUS_REJECTED": "Отхвърлено",
+      "STATUS_DRAFT": "Чернова",
+
+      "NA": "Н/Д",
+      "VIEWS": "Преглеждания",
+      "LIKES": "Харесвания",
+      "TAGS": "Тагове",
+      "NO_TAGS": "Няма тагове",
+      "CATEGORY": "Категория",
+      "SUBMITTED": "Подадено",
+      "APPROVED_ON": "Одобрено",
+      "REJECTED_ON": "Отхвърлено",
+      "MORE_TAGS": "+{count} още",
+      "VIEWS_COUNT": "{count} преглеждания",
+      "LIKES_COUNT": "{count} харесвания",
+
+      "CANCEL": "Отказ",
+      "CLOSE": "Затвори",
+      "EDIT": "Редактирай",
+      "DELETE": "Изтрий",
+      "SAVE_CHANGES": "Запази промените",
+      "SAVING": "Запазване...",
+      "DELETING": "Изтриване...",
+      "VIEW_SUBMISSION": "Виж подаването",
+      "EDIT_SUBMISSION": "Редактирай подаването",
+      "DELETE_SUBMISSION": "Изтрий подаването",
+
+      "TOTAL_SUBMISSIONS": "Общо подавания",
+      "APPROVED": "Одобрени",
+      "PENDING": "В изчакване",
+      "REJECTED": "Отхвърлени",
+      "DRAFTS": "Чернови",
+
+      "SEARCH_PLACEHOLDER_SHORT": "Търсене...",
+      "NO_SUBMISSIONS_TITLE": "Все още няма подавания",
+      "NO_SUBMISSIONS_DESC": "Започнете да изграждате портфолиото си като подадете първия си проект.",
+      "SHOWING_RESULTS": "Показване на {start}-{end} от {total} подавания",
+
+      "TRASH": "Кошче",
+      "DELETE_SUBMISSION_TITLE": "Изтриване на подаване",
+      "DELETE_CONFIRM_ITEM": "Това ще премести \"{title}\" в кошчето. Можете да го възстановите по-късно.",
+      "RESTORE_INFO": "Можете да възстановите този елемент от кошчето по всяко време.",
+
+      "SUBMISSION_DETAILS": "Детайли на подаването",
+      "VIEW_SUBMISSION_INFO": "Виж информация за подаването",
+      "REJECTION_REASON": "Причина за отхвърляне",
+      "DESCRIPTION": "Описание",
+
+      "EDIT_SUBMISSION_TITLE": "Редактирай подаване",
+      "EDIT_SUBMISSION_DESC": "Актуализирай детайлите на подаването си"
     }
   }
 }

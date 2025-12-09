@@ -2687,7 +2687,73 @@
       "DELETE_CONFIRM_MESSAGE": "Это скроет вашу заявку. Вы сможете восстановить её позже.",
       "EDIT_STATUS_WARNING": "Редактирование одобренных элементов требует повторного одобрения",
       "SUCCESS_UPDATED": "Заявка успешно обновлена",
-      "SUCCESS_DELETED": "Заявка успешно удалена"
+      "SUCCESS_DELETED": "Заявка удалена и перемещена в корзину",
+
+      "TRASH_TITLE": "Корзина",
+      "TRASH_DESCRIPTION": "Удалённые элементы. Вы можете восстановить их в любое время.",
+      "TRASH_EMPTY": "Корзина пуста",
+      "TRASH_EMPTY_DESC": "Удалённые заявки появятся здесь. Когда вы удаляете заявку, вы можете восстановить её с этой страницы.",
+      "DELETED_ITEMS": "Удалённые Элементы",
+      "RESTORE": "Восстановить",
+      "RESTORING": "Восстановление...",
+      "RESTORE_SUCCESS": "Заявка успешно восстановлена",
+      "DELETED_ON": "Удалено {date}",
+      "BACK_TO_SUBMISSIONS": "Назад к Заявкам",
+      "UNKNOWN_DATE": "Неизвестная дата",
+      "INVALID_DATE": "Недействительная дата",
+
+      "STATUS_APPROVED": "Одобрено",
+      "STATUS_PENDING": "На рассмотрении",
+      "STATUS_REJECTED": "Отклонено",
+      "STATUS_DRAFT": "Черновик",
+
+      "NA": "Н/Д",
+      "VIEWS": "Просмотры",
+      "LIKES": "Лайки",
+      "TAGS": "Теги",
+      "NO_TAGS": "Нет тегов",
+      "CATEGORY": "Категория",
+      "SUBMITTED": "Отправлено",
+      "APPROVED_ON": "Одобрено",
+      "REJECTED_ON": "Отклонено",
+      "MORE_TAGS": "+{count} ещё",
+      "VIEWS_COUNT": "{count} просмотров",
+      "LIKES_COUNT": "{count} лайков",
+
+      "CANCEL": "Отмена",
+      "CLOSE": "Закрыть",
+      "EDIT": "Редактировать",
+      "DELETE": "Удалить",
+      "SAVE_CHANGES": "Сохранить Изменения",
+      "SAVING": "Сохранение...",
+      "DELETING": "Удаление...",
+      "VIEW_SUBMISSION": "Посмотреть заявку",
+      "EDIT_SUBMISSION": "Редактировать заявку",
+      "DELETE_SUBMISSION": "Удалить заявку",
+
+      "TOTAL_SUBMISSIONS": "Всего Заявок",
+      "APPROVED": "Одобрено",
+      "PENDING": "В ожидании",
+      "REJECTED": "Отклонено",
+      "DRAFTS": "Черновики",
+
+      "SEARCH_PLACEHOLDER_SHORT": "Поиск...",
+      "NO_SUBMISSIONS_TITLE": "Пока нет заявок",
+      "NO_SUBMISSIONS_DESC": "Начните создавать своё портфолио, отправив свой первый проект.",
+      "SHOWING_RESULTS": "Показано {start}-{end} из {total} заявок",
+
+      "TRASH": "Корзина",
+      "DELETE_SUBMISSION_TITLE": "Удалить Заявку",
+      "DELETE_CONFIRM_ITEM": "Это переместит \"{title}\" в корзину. Вы сможете восстановить его позже.",
+      "RESTORE_INFO": "Вы можете восстановить этот элемент из корзины в любое время.",
+
+      "SUBMISSION_DETAILS": "Детали Заявки",
+      "VIEW_SUBMISSION_INFO": "Посмотреть информацию о заявке",
+      "REJECTION_REASON": "Причина Отклонения",
+      "DESCRIPTION": "Описание",
+
+      "EDIT_SUBMISSION_TITLE": "Редактировать Заявку",
+      "EDIT_SUBMISSION_DESC": "Обновите детали вашей заявки"
     }
   }
 }
