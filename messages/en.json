@@ -2686,7 +2686,6 @@
       "DELETE_CONFIRM_TITLE": "Delete Submission",
       "DELETE_CONFIRM_MESSAGE": "Are you sure you want to delete this submission?",
       "DELETE_CONFIRM_ITEM": "This will move \"{title}\" to trash. You can restore it later.",
-      "DELETE": "Delete",
       "RESTORE_INFO": "You can restore this item from your Trash at any time.",
       "EDIT_STATUS_WARNING": "Editing approved items requires re-approval",
       "SUCCESS_UPDATED": "Submission updated successfully",
