@@ -207,7 +207,8 @@ export function toSubmission(item: ClientSubmissionData): Submission {
     id: item.id,
     title: item.name,
     description: item.description,
-    status: (item.status as Submission['status']) || 'pending',
+    status: (['approved', 'pending', 'rejected'].includes(item.status)
+      ? item.status : 'pending') as Submission['status'],
     submittedAt: item.submitted_at || item.updated_at || null,
     approvedAt,
     rejectedAt,
