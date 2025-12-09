@@ -31,6 +31,7 @@ import {
   updateUserVerification,
   getClientAccountByEmail,
   updateClientProfileName,
+  verifyClientPassword,
 } from "@/lib/db/queries";
 import { signIn } from "@/lib/auth";
 import { generatePasswordResetToken } from "@/lib/db/tokens";
@@ -81,29 +82,53 @@ const signInSchema = z.object({
 
 export const signInAction = validatedAction(signInSchema, async (data) => {
   try {
-    const authService = authServiceFactory(data.authProvider);
-    const { error } = await authService.signIn(data.email, data.password);
-    if (error) {
-      throw error;
+    const { email, password } = data;
+
+    // Step 1: Validate credentials FIRST to get specific error messages
+    // (NextAuth returns generic "CredentialsSignin" which loses the specific error code)
+    const foundUser = await getUserByEmail(email);
+    const clientAccount = await getClientAccountByEmail(email);
+
+    // No account found with this email
+    if (!foundUser && !clientAccount) {
+      return { error: AuthErrorCode.ACCOUNT_NOT_FOUND, ...data };
     }
 
-    // Check if user is admin (has passwordHash in users table) or client (has account in accounts table)
-    const foundUser = await getUserByEmail(data.email);
-    const clientAccount = await getClientAccountByEmail(data.email);
-
+    // Check password for admin user (has passwordHash in users table)
     if (foundUser && foundUser.passwordHash) {
-      // Admin user - has passwordHash stored in users table
-      return { success: true, redirect: "/admin", preserveLocale: true };
-    } else if (clientAccount) {
-      // Client user - has passwordHash stored in accounts table
-      return { success: true, redirect: "/client/dashboard", preserveLocale: true };
+      const isValid = await comparePasswords(password, foundUser.passwordHash);
+      if (!isValid) {
+        return { error: AuthErrorCode.INVALID_PASSWORD, ...data };
+      }
+    }
+    // Check password for client user (has passwordHash in accounts table)
+    else if (clientAccount) {
+      const isValid = await verifyClientPassword(email, password);
+      if (!isValid) {
+        return { error: AuthErrorCode.INVALID_PASSWORD, ...data };
+      }
     }
 
-    // Fallback to client dashboard
+    // Step 2: Credentials validated - now call NextAuth signIn to create session
+    const authService = authServiceFactory(data.authProvider);
+    const { error } = await authService.signIn(email, password);
+    if (error) {
+      // If NextAuth fails for some other reason, return generic error
+      console.error("NextAuth signIn error:", error);
+      return { error: AuthErrorCode.GENERIC_ERROR, ...data };
+    }
+
+    // Step 3: Determine redirect based on user type
+    if (foundUser && foundUser.passwordHash) {
+      // Admin user
+      return { success: true, redirect: "/admin", preserveLocale: true };
+    }
+    // Client user
     return { success: true, redirect: "/client/dashboard", preserveLocale: true };
+
   } catch (error) {
     console.error("SignIn error:", error);
-    return getAuthErrorResponse(error, data);
+    return { error: AuthErrorCode.GENERIC_ERROR, ...data };
   }
 });
 
