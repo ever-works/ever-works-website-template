@@ -19,7 +19,7 @@ export default function TrashPage() {
           {/* Header */}
           <div className="flex items-center gap-4">
             <Link
-              href="/client/settings/profile/submissions"
+              href="/client/submissions"
               className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
             >
               <FiArrowLeft className="w-4 h-4" />
@@ -80,7 +80,7 @@ export default function TrashPage() {
                       {t('TRASH_EMPTY_DESC')}
                     </p>
                     <Link
-                      href="/client/settings/profile/submissions"
+                      href="/client/submissions"
                       className="inline-flex items-center gap-2 px-6 py-3 bg-theme-primary-600 hover:bg-theme-primary-700 text-white rounded-lg font-medium transition-colors"
                     >
                       <FiArrowLeft className="w-4 h-4" />

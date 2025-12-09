@@ -219,7 +219,6 @@ export class ClientItemRepository {
       totalPages,
       stats: {
         total,
-        draft: 0,
         pending: 0,
         approved: 0,
         rejected: 0,

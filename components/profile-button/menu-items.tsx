@@ -230,7 +230,7 @@ function MenuItems({ user, profilePath, onItemClick, onNavigationStart, isNaviga
   }
 
   return (
-    <div className="py-1 max-h-48 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+    <div className="py-1 max-h-64 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
       <MenuItem
         href={profilePath}
         icon={User}
@@ -239,6 +239,17 @@ function MenuItems({ user, profilePath, onItemClick, onNavigationStart, isNaviga
         gradientFrom="from-blue-100"
         gradientTo="to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30"
         iconColor="text-theme-primary-600 dark:text-theme-primary-400"
+      />
+
+      <MenuItem
+        href="/client/submissions"
+        icon={FileText}
+        title={t("settings.SETTINGS_CARDS.SUBMISSIONS.TITLE")}
+        description={t("settings.SETTINGS_CARDS.SUBMISSIONS.DESCRIPTION")}
+        gradientFrom="from-purple-100"
+        gradientTo="to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30"
+        iconColor="text-purple-600 dark:text-purple-400"
+        endIcon={Activity}
       />
 
       <MenuItem

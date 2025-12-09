@@ -495,7 +495,7 @@
       },
       "SUBMISSIONS": {
         "TITLE": "Submissions",
-        "DESCRIPTION": "Manage your directory submissions and track their approval status"
+        "DESCRIPTION": "View and manage your submissions"
       },
       "BILLING": {
         "TITLE": "Billing",
@@ -2674,6 +2674,28 @@
   },
   "client": {
     "submissions": {
+      "PAGE_TITLE": "Submissions Management",
+      "PAGE_DESCRIPTION": "Track and manage your directory submissions.",
+      "FILTER_ALL": "All",
+      "FILTER_APPROVED": "Approved",
+      "FILTER_PENDING": "Pending",
+      "FILTER_REJECTED": "Rejected",
+      "EMPTY_STATE_TITLE": "No submissions yet",
+      "EMPTY_STATE_DESC": "Start building your portfolio by submitting your first project. Share your work with the community and get feedback from other developers.",
+      "SHOWING_PAGE": "Page {page} of {totalPages}",
+      "PREVIOUS": "Previous",
+      "NEXT": "Next",
+      "ERROR_TITLE": "Something went wrong",
+      "ERROR_DESC": "We encountered an error while loading your submissions. Please try again.",
+      "TRY_AGAIN": "Try Again",
+      "DELETE_CONFIRM_TITLE": "Delete Submission",
+      "DELETE_CONFIRM_MESSAGE": "Are you sure you want to delete this submission?",
+      "DELETE_CONFIRM_ITEM": "This will move \"{title}\" to trash. You can restore it later.",
+      "RESTORE_INFO": "You can restore this item from your Trash at any time.",
+      "EDIT_STATUS_WARNING": "Editing approved items requires re-approval",
+      "SUCCESS_UPDATED": "Submission updated successfully",
+      "SUCCESS_DELETED": "Submission deleted and moved to trash",
+
       "TRASH_TITLE": "Trash",
       "TRASH_DESCRIPTION": "Items you've deleted. You can restore them anytime.",
       "TRASH_EMPTY": "Your trash is empty",
@@ -2756,7 +2778,7 @@
 
       "BACK_TO_SETTINGS": "Back to Settings",
       "SUBMISSIONS_MANAGEMENT": "Submissions Management",
-      "SUBMISSIONS_MANAGEMENT_DESC": "Track and manage your directory submissions. Monitor their status and performance.",
+      "SUBMISSIONS_MANAGEMENT_DESC": "Track and manage your directory submissions.",
       "STATUS_OVERVIEW": "Submission Status Overview",
       "GET_STARTED": "Get Started with Submissions",
       "START_YOUR_JOURNEY": "Start Your Journey",

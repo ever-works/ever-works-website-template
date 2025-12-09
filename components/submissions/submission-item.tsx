@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { FiActivity, FiClock, FiEye, FiEdit, FiTrash2, FiTrendingUp, FiCheck, FiX, FiAlertCircle, FiLoader } from "react-icons/fi";
+import { FiActivity, FiClock, FiEye, FiEdit, FiTrash2, FiTrendingUp, FiCheck, FiX, FiLoader } from "react-icons/fi";
 import { IconType } from "react-icons";
 import { ClientSubmissionData } from "@/lib/types/client-item";
 
@@ -9,7 +9,7 @@ export interface Submission {
   id: string;
   title: string;
   description: string;
-  status: "approved" | "pending" | "rejected" | "draft";
+  status: "approved" | "pending" | "rejected";
   submittedAt: string | null;
   approvedAt?: string;
   rejectedAt?: string;
@@ -50,13 +50,6 @@ const statusConfig: Record<string, StatusConfigItem> = {
     color: "text-red-600 dark:text-red-400",
     bgColor: "bg-red-100 dark:bg-red-900/30",
     borderColor: "border-red-200 dark:border-red-800",
-  },
-  draft: {
-    labelKey: "STATUS_DRAFT",
-    icon: FiAlertCircle,
-    color: "text-gray-600 dark:text-gray-400",
-    bgColor: "bg-gray-100 dark:bg-gray-800",
-    borderColor: "border-gray-200 dark:border-gray-700",
   },
 };
 
@@ -214,7 +207,8 @@ export function toSubmission(item: ClientSubmissionData): Submission {
     id: item.id,
     title: item.name,
     description: item.description,
-    status: (item.status as Submission['status']) || 'draft',
+    status: (['approved', 'pending', 'rejected'].includes(item.status)
+      ? item.status : 'pending') as Submission['status'],
     submittedAt: item.submitted_at || item.updated_at || null,
     approvedAt,
     rejectedAt,

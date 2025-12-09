@@ -33,7 +33,6 @@ export interface ClientItemListResponse extends ItemListResponse {
  */
 export interface ClientItemStats {
   total: number;
-  draft: number;
   pending: number;
   approved: number;
   rejected: number;
@@ -90,7 +89,7 @@ export interface ClientRestoreItemResponse {
 export interface ClientItemsListParams {
   page?: number;
   limit?: number;
-  status?: 'draft' | 'pending' | 'approved' | 'rejected' | 'all';
+  status?: 'pending' | 'approved' | 'rejected' | 'all';
   search?: string;
   sortBy?: 'name' | 'updated_at' | 'status' | 'submitted_at';
   sortOrder?: 'asc' | 'desc';
@@ -106,7 +105,6 @@ export const CLIENT_STATUS_FILTERS = [
   { value: 'approved', labelKey: 'APPROVED' },
   { value: 'pending', labelKey: 'PENDING' },
   { value: 'rejected', labelKey: 'REJECTED' },
-  { value: 'draft', labelKey: 'DRAFT' },
 ] as const;
 
 export type ClientStatusFilter = typeof CLIENT_STATUS_FILTERS[number]['value'];

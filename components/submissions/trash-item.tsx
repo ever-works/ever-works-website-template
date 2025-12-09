@@ -7,17 +7,18 @@ import { useTranslations } from 'next-intl';
 export interface TrashItemProps {
   item: ClientSubmissionData;
   onRestore: (id: string) => void;
-  isRestoring?: boolean;
+  restoringItemId?: string | null;
   disabled?: boolean;
 }
 
 export function TrashItem({
   item,
   onRestore,
-  isRestoring = false,
+  restoringItemId = null,
   disabled = false,
 }: TrashItemProps) {
   const t = useTranslations('client.submissions');
+  const isRestoring = restoringItemId === item.id;
   const isDisabled = disabled || isRestoring;
 
   const formatDate = (dateString: string | undefined) => {

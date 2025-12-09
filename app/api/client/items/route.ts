@@ -35,7 +35,7 @@ import { clientItemsListQuerySchema } from '@/lib/validations/client-item';
  *         required: false
  *         schema:
  *           type: string
- *           enum: ["all", "draft", "pending", "approved", "rejected"]
+ *           enum: ["all", "pending", "approved", "rejected"]
  *         description: "Filter by item status"
  *       - name: "search"
  *         in: "query"
@@ -67,8 +67,6 @@ import { clientItemsListQuerySchema } from '@/lib/validations/client-item';
  *                   type: object
  *                   properties:
  *                     total:
- *                       type: integer
- *                     draft:
  *                       type: integer
  *                     pending:
  *                       type: integer
