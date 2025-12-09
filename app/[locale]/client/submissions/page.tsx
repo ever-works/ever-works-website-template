@@ -95,16 +95,20 @@ export default function SubmissionsPage() {
 
   const handleSaveEdit = useCallback(async (data: ClientUpdateItemInput) => {
     if (!actionItemId) return;
-    await updateItem(actionItemId, data);
-    setEditModalOpen(false);
-    setActionItemId(null);
+    const success = await updateItem(actionItemId, data);
+    if (success) {
+      setEditModalOpen(false);
+      setActionItemId(null);
+    }
   }, [actionItemId, updateItem]);
 
   const handleConfirmDelete = useCallback(async () => {
     if (!actionItemId) return;
-    await deleteItem(actionItemId);
-    setDeleteDialogOpen(false);
-    setActionItemId(null);
+    const success = await deleteItem(actionItemId);
+    if (success) {
+      setDeleteDialogOpen(false);
+      setActionItemId(null);
+    }
   }, [actionItemId, deleteItem]);
 
   // Status counts for filters
