@@ -87,19 +87,19 @@ export const signInAction = validatedAction(signInSchema, async (data) => {
       throw error;
     }
 
-    // Check if user exists in users table (admin) or client_profiles table (client)
+    // Check if user is admin (has passwordHash in users table) or client (has account in accounts table)
     const foundUser = await getUserByEmail(data.email);
     const clientAccount = await getClientAccountByEmail(data.email);
 
-    if (foundUser) {
-      // User exists in users table = admin
+    if (foundUser && foundUser.passwordHash) {
+      // Admin user - has passwordHash stored in users table
       return { success: true, redirect: "/admin", preserveLocale: true };
     } else if (clientAccount) {
-      // User exists in client_profiles table = client
+      // Client user - has passwordHash stored in accounts table
       return { success: true, redirect: "/client/dashboard", preserveLocale: true };
     }
 
-    // Fallback to client dashboard for new users
+    // Fallback to client dashboard
     return { success: true, redirect: "/client/dashboard", preserveLocale: true };
   } catch (error) {
     console.error("SignIn error:", error);
