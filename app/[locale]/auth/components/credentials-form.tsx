@@ -13,6 +13,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { RECAPTCHA_SITE_KEY } from "@/lib/constants";
 import { useAutoRecaptchaVerification } from '../hooks/useRecaptchaVerification';
 import { useUserCache } from '@/hooks/use-current-user';
+import { AuthErrorCode } from '@/lib/auth/auth-error-codes';
 
 
 export function CredentialsForm({
@@ -48,6 +49,24 @@ export function CredentialsForm({
   const [clientPending, setClientPending] = useState(false);
   const [clientError, setClientError] = useState<string | null>(null);
   const [clientSuccess, setClientSuccess] = useState(false);
+
+  // Helper to get translated error message based on error code
+  const getTranslatedErrorMessage = (errorCode: string | undefined): string => {
+    if (!errorCode) return tCred("GENERIC_ERROR_MESSAGE");
+
+    switch (errorCode) {
+      case AuthErrorCode.ACCOUNT_NOT_FOUND:
+        return tCred("ACCOUNT_NOT_FOUND");
+      case AuthErrorCode.INVALID_PASSWORD:
+        return tCred("INVALID_PASSWORD");
+      case AuthErrorCode.PROFILE_NOT_FOUND:
+        return tCred("PROFILE_NOT_FOUND");
+      case AuthErrorCode.GENERIC_ERROR:
+      default:
+        return tCred("GENERIC_ERROR_MESSAGE");
+    }
+  };
+
   useEffect(() => {
     if (state.success) {
       if (onSuccess) {
@@ -308,10 +327,10 @@ export function CredentialsForm({
           </div>
           <div className="flex-1">
             <h4 className="text-sm font-semibold text-red-800 dark:text-red-200 mb-1">
-              {tCred("CONNECTION_ERROR")}
+              {tCred("LOGIN_FAILED")}
             </h4>
             <p className="text-sm text-red-700 dark:text-red-300">
-              {state?.error || clientError}
+              {clientError || getTranslatedErrorMessage(state?.error)}
             </p>
           </div>
         </div>

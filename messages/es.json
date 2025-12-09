@@ -2538,7 +2538,12 @@
       "FAILED_TO_LOAD_VERIFICATION": "Error al cargar la verificación de seguridad. Por favor, actualiza la página.",
       "VERIFICATION_EXPIRED": "La verificación de seguridad expiró. Por favor, complétala de nuevo.",
       "VERIFYING": "Verificando...",
-      "PLEASE_COMPLETE_VERIFICATION": "Por favor, completa la verificación de seguridad"
+      "PLEASE_COMPLETE_VERIFICATION": "Por favor, completa la verificación de seguridad",
+      "LOGIN_FAILED": "Error de inicio de sesión",
+      "ACCOUNT_NOT_FOUND": "No se encontró ninguna cuenta con esta dirección de correo electrónico. Por favor, verifica tu correo o crea una nueva cuenta.",
+      "INVALID_PASSWORD": "Contraseña incorrecta. Por favor, verifica tu contraseña e inténtalo de nuevo.",
+      "PROFILE_NOT_FOUND": "Perfil de cuenta no encontrado. Por favor, contacta al soporte.",
+      "GENERIC_ERROR_MESSAGE": "Ocurrió un error. Por favor, inténtalo de nuevo."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "¿Olvidaste tu Contraseña?",

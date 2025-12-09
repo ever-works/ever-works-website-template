@@ -15,6 +15,7 @@ import {
   comparePasswords,
   hashPassword,
   AuthProviders,
+  AuthErrorCode,
 } from "@/lib/auth/credentials";
 import {
   deletePasswordResetToken,
@@ -42,6 +43,35 @@ const authProviderTypes = ['supabase', 'next-auth', 'both'] as const;
 // ReCAPTCHA verification is now handled client-side with React Query
 // See /api/verify-recaptcha route and useRecaptchaVerification hook
 
+// Map auth error codes to error response with code
+function getAuthErrorResponse(error: unknown, data: Record<string, unknown>) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+
+  // Return error code along with message for UI to handle
+  switch (errorMessage) {
+    case AuthErrorCode.ACCOUNT_NOT_FOUND:
+      return {
+        error: AuthErrorCode.ACCOUNT_NOT_FOUND,
+        ...data,
+      };
+    case AuthErrorCode.INVALID_PASSWORD:
+      return {
+        error: AuthErrorCode.INVALID_PASSWORD,
+        ...data,
+      };
+    case AuthErrorCode.PROFILE_NOT_FOUND:
+      return {
+        error: AuthErrorCode.PROFILE_NOT_FOUND,
+        ...data,
+      };
+    default:
+      return {
+        error: AuthErrorCode.GENERIC_ERROR,
+        ...data,
+      };
+  }
+}
+
 const signInSchema = z.object({
   email: z.string().email().min(3).max(255),
   password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
@@ -56,11 +86,11 @@ export const signInAction = validatedAction(signInSchema, async (data) => {
     if (error) {
       throw error;
     }
-    
+
     // Check if user exists in users table (admin) or client_profiles table (client)
     const foundUser = await getUserByEmail(data.email);
     const clientAccount = await getClientAccountByEmail(data.email);
-    
+
     if (foundUser) {
       // User exists in users table = admin
       return { success: true, redirect: "/admin", preserveLocale: true };
@@ -68,16 +98,12 @@ export const signInAction = validatedAction(signInSchema, async (data) => {
       // User exists in client_profiles table = client
       return { success: true, redirect: "/client/dashboard", preserveLocale: true };
     }
-    
+
     // Fallback to client dashboard for new users
     return { success: true, redirect: "/client/dashboard", preserveLocale: true };
   } catch (error) {
-    console.error(error);
-    return {
-      error:
-        "Invalid email or password. Please check your credentials and try again.",
-      ...data,
-    };
+    console.error("SignIn error:", error);
+    return getAuthErrorResponse(error, data);
   }
 });
 
