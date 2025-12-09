@@ -27,7 +27,7 @@ export function DeleteSubmissionDialog({
     setIsLoading(true);
     try {
       await onConfirm();
-      onOpenChange(false);
+      // Parent handles closing via setDeleteDialogOpen on success
     } catch (error) {
       console.error('Error deleting submission:', error);
     } finally {
