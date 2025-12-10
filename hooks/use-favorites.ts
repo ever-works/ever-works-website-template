@@ -114,8 +114,15 @@ export function useFavorites() {
 						fav.id.startsWith('temp-') && fav.itemSlug === newFavorite.itemSlug ? newFavorite : fav
 					);
 				} else {
-					// If temp favorite not found (shouldn't happen), just add the new one
-					return [...old, newFavorite];
+					// If temp favorite not found, check if favorite already exists to prevent duplicates
+					const existingFavorite = old.find((fav) => fav.itemSlug === newFavorite.itemSlug);
+					if (existingFavorite) {
+						// Replace existing favorite with the new one (in case cache was updated between onMutate and onSuccess)
+						return old.map((fav) => (fav.itemSlug === newFavorite.itemSlug ? newFavorite : fav));
+					} else {
+						// Add new favorite if it doesn't exist
+						return [...old, newFavorite];
+					}
 				}
 			});
 			toast.success('Added to favorites!');
