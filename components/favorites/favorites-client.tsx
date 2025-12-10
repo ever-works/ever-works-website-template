@@ -187,41 +187,43 @@ export function FavoritesClient(props: ListingProps) {
 				</div>
 
 				{/* Popular items section */}
-				<div className="space-y-6">
-					{/* Section header with sort */}
-					<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-						<h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-							{t('OUR_MOST_POPULAR_ITEMS', {
-								defaultValue: 'Our most popular items'
-							})}
-						</h2>
-						<SortMenu
-							options={translatedSortOptions}
-							value={popularSortBy}
-							onSortChange={(value) => setPopularSortBy(value as SortOption)}
-							ariaLabel="Sort popular items"
-							className="w-full sm:w-auto sm:min-w-[180px]"
-						/>
-					</div>
-
-					{/* Items grid */}
-					<LayoutClassic>
-						{paginatedPopularItems.map((item) => (
-							<Item key={item.slug} {...item} />
-						))}
-					</LayoutClassic>
-
-					{/* Pagination */}
-					{popularTotalPages > 1 && (
-						<div className="flex justify-center mt-8">
-							<UniversalPagination
-								page={popularPage}
-								totalPages={popularTotalPages}
-								onPageChange={handlePopularPageChange}
+				{props.items.length > 0 && (
+					<div className="space-y-6">
+						{/* Section header with sort */}
+						<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+							<h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+								{t('OUR_MOST_POPULAR_ITEMS', {
+									defaultValue: 'Our most popular items'
+								})}
+							</h2>
+							<SortMenu
+								options={translatedSortOptions}
+								value={popularSortBy}
+								onSortChange={(value) => setPopularSortBy(value as SortOption)}
+								ariaLabel={t('SORT_POPULAR_ITEMS', { defaultValue: 'Sort popular items' })}
+								className="w-full sm:w-auto sm:min-w-[180px]"
 							/>
 						</div>
-					)}
-				</div>
+
+						{/* Items grid */}
+						<LayoutClassic>
+							{paginatedPopularItems.map((item) => (
+								<Item key={item.slug} {...item} />
+							))}
+						</LayoutClassic>
+
+						{/* Pagination */}
+						{popularTotalPages > 1 && (
+							<div className="flex justify-center mt-8">
+								<UniversalPagination
+									page={popularPage}
+									totalPages={popularTotalPages}
+									onPageChange={handlePopularPageChange}
+								/>
+							</div>
+						)}
+					</div>
+				)}
 			</div>
 		);
 	}

@@ -2884,7 +2884,8 @@
 		"EXPLORE_ITEMS": "Explore Items",
 		"VIEW_DETAILS": "View Details",
 		"ADDED_ON": "Added",
-		"OUR_MOST_POPULAR_ITEMS": "Our most popular items"
+		"OUR_MOST_POPULAR_ITEMS": "Our most popular items",
+		"SORT_POPULAR_ITEMS": "Sort popular items"
 	},
 	"survey": {
 		"SURVEYS": "Surveys",
