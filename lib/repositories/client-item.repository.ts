@@ -186,14 +186,20 @@ export class ClientItemRepository {
   ): Promise<ClientItemListResponse> {
     const { page = 1, limit = 10, sortBy, sortOrder } = params;
 
-    // Fetch all items for this user (including deleted) to filter properly
-    // Note: We fetch all because filtering must happen before pagination
-    const allResult = await this.itemRepository.findAllPaginated(1, Number.MAX_SAFE_INTEGER, {
+    // Fetch items for this user (including deleted) to filter properly
+    // Using a reasonable max limit to prevent memory exhaustion
+    const MAX_ITEMS_LIMIT = 10000;
+    const allResult = await this.itemRepository.findAllPaginated(1, MAX_ITEMS_LIMIT, {
       submittedBy: userId,
       includeDeleted: true,
       sortBy: sortBy || 'updated_at',
       sortOrder: sortOrder || 'desc',
     });
+
+    // Warn if limit is reached (indicates need for proper query-level filtering)
+    if (allResult.items.length >= MAX_ITEMS_LIMIT) {
+      console.warn(`[ClientItemRepository] User ${userId} has reached the deleted items query limit (${MAX_ITEMS_LIMIT}). Consider implementing deletedOnly filter at repository level.`);
+    }
 
     // Filter to only deleted items
     const allDeletedItems = allResult.items.filter(item => item.deleted_at);
