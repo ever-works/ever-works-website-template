@@ -4,9 +4,11 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button, Input, Select, SelectItem } from '@heroui/react';
-import { X, Building2, Globe, Link as LinkIcon, Hash, Trash2 } from 'lucide-react';
+import { Button, Input } from '@heroui/react';
+import * as Select from '@radix-ui/react-select';
+import { X, Building2, Globe, Link as LinkIcon, Hash, Trash2, ChevronDown, Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { cn } from '@/lib/utils';
 import type { CreateCompanyInput, UpdateCompanyInput } from '@/lib/validations/company';
 import type { Company } from '@/types/company';
 
@@ -221,23 +223,53 @@ export function CompanyModal({ isOpen, mode, company, isSubmitting, onSubmit, on
 
 					{/* Status */}
 					<div>
-						<Select
-							label={t('COMPANY_STATUS')}
-							placeholder={t('SELECT_STATUS')}
-							selectedKeys={statusValue ? [statusValue] : []}
-							onSelectionChange={(keys) => {
-								const value = Array.from(keys)[0] as 'active' | 'inactive';
-								setValue('status', value);
-							}}
-							classNames={{
-								trigger: 'h-12',
-								label: 'font-medium',
-							}}
-							isDisabled={isSubmitting}
+						<label className="block text-sm font-medium mb-2">{t('COMPANY_STATUS')}</label>
+						<Select.Root
+							value={statusValue}
+							onValueChange={(value) => setValue('status', value as 'active' | 'inactive')}
+							disabled={isSubmitting}
 						>
-							<SelectItem key="active">{t('STATUS_ACTIVE')}</SelectItem>
-							<SelectItem key="inactive">{t('STATUS_INACTIVE')}</SelectItem>
-						</Select>
+							<Select.Trigger
+								className={cn(
+									"flex h-12 w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm",
+									"focus:outline-none focus:ring-2 focus:ring-theme-primary-500",
+									"disabled:cursor-not-allowed disabled:opacity-50"
+								)}
+							>
+								<Select.Value placeholder={t('SELECT_STATUS')} />
+								<Select.Icon>
+									<ChevronDown className="h-4 w-4 opacity-50" />
+								</Select.Icon>
+							</Select.Trigger>
+							<Select.Portal>
+								<Select.Content
+									className="overflow-hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+									position="popper"
+									sideOffset={4}
+								>
+									<Select.Viewport className="p-1">
+										<Select.Item
+											value="active"
+											className="relative flex items-center px-8 py-2 text-sm rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 outline-none data-[highlighted]:bg-gray-100 dark:data-[highlighted]:bg-gray-700"
+										>
+											<Select.ItemIndicator className="absolute left-2 inline-flex items-center">
+												<Check className="h-4 w-4" />
+											</Select.ItemIndicator>
+											<Select.ItemText>{t('STATUS_ACTIVE')}</Select.ItemText>
+										</Select.Item>
+										<Select.Item
+											value="inactive"
+											className="relative flex items-center px-8 py-2 text-sm rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 outline-none data-[highlighted]:bg-gray-100 dark:data-[highlighted]:bg-gray-700"
+										>
+											<Select.ItemIndicator className="absolute left-2 inline-flex items-center">
+												<Check className="h-4 w-4" />
+											</Select.ItemIndicator>
+											<Select.ItemText>{t('STATUS_INACTIVE')}</Select.ItemText>
+										</Select.Item>
+									</Select.Viewport>
+								</Select.Content>
+							</Select.Portal>
+						</Select.Root>
 					</div>
 
 					{/* Form Actions */}
