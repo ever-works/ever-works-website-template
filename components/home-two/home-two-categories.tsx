@@ -21,7 +21,7 @@ import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 
 // Style constants
 const SCROLL_CONTAINER_STYLES = clsx(
-  "relative flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-none pb-4 pr-8 scroll-smooth",
+  "relative flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-none pr-8 py-1 scroll-smooth",
   "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
   "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-1",
   "after:bg-linear-to-r after:from-transparent after:via-blue-100/20 after:to-transparent",
@@ -42,8 +42,8 @@ const SCROLL_FADE_RIGHT = clsx(
 const STICKY_LEFT_STYLES = clsx(
   "sticky left-0 shrink-0 z-10 pr-0 py-0",
   "bg-gradient-to-r from-white/20 via-white/10 to-transparent",
-  "dark:from-[#172030]/20 dark:via-[#192232]/10 to-transparent",
-  "backdrop-blur-sm rounded-xl"
+  "dark:from-[#172030]/30 dark:via-[#192232]/10 to-transparent",
+  "backdrop-blur-sm rounded-r-full"
 );
 
 const CATEGORIES_WRAPPER_BASE = "flex items-center gap-2 sm:gap-3 transition-all duration-500";
@@ -112,15 +112,18 @@ const ScrollButton = memo(React.forwardRef<HTMLButtonElement, {
   disabled: boolean;
   visible: boolean;
 }>(({ direction, onClick, disabled, visible }, ref) => {
+  // Hide button when disabled or not visible
+  if (disabled || !visible) {
+    return null;
+  }
+
   return (
     <button
       ref={ref}
       onClick={onClick}
-      disabled={disabled}
       className={cn(
         NAV_BUTTON_STYLES,
-        "transition-opacity duration-300",
-        visible ? "opacity-100" : "opacity-0 pointer-events-none"
+        "transition-opacity duration-300"
       )}
       aria-label={`Scroll ${direction}`}
     >
@@ -629,7 +632,7 @@ export function HomeTwoCategories({
 
       {/* Desktop Categories - Carousel Approach */}
       <div className="hidden md:block">
-        <div className="relative">
+        <div className="relative rounded-xl overflow-hidden py-2">
           <div
             ref={scrollContainerRef}
             className={showAllCategories ? "relative pb-4 pr-8 transition-all duration-500" : SCROLL_CONTAINER_STYLES}
@@ -661,20 +664,20 @@ export function HomeTwoCategories({
             >
               {/* Left Navigation Button placed as first element */}
               {!showAllCategories && (
-                <div className={cn(STICKY_LEFT_STYLES, "flex items-center gap-2")}>
-                  <ScrollButton
-                    ref={leftButtonRef}
-                    direction="left"
-                    onClick={scrollLeft}
-                    disabled={!canScrollLeft}
-                    visible={canScrollLeft && !showAllCategories}
-                  />
+                <div className={cn(STICKY_LEFT_STYLES, "flex items-center gap-1")}>
                   <CategoryButton
                     href={mode === "filter" ? "#" : (resetPath || "/")}
                     isActive={mode === "filter" ? selectedCategories.length === 0 : isHomeActive}
                     displayName={t("ALL_CATEGORIES")}
                     count={allCategoriesCount}
                     onClick={mode === "filter" ? () => onCategoryToggle?.("clear-all") : undefined}
+                  />
+                  <ScrollButton
+                    ref={leftButtonRef}
+                    direction="left"
+                    onClick={scrollLeft}
+                    disabled={!canScrollLeft}
+                    visible={canScrollLeft && !showAllCategories}
                   />
                 </div>
               )}
@@ -703,8 +706,8 @@ export function HomeTwoCategories({
             {/* More Categories Button with Right Navigation Button */}
             {!showAllCategories && hiddenCategories.length > 0 && (
               <div className="sticky -right-8 shrink-0  pl-2">
-                <div className="flex items-center gap-1 bg-white/10 dark:bg-[#172030]/10 backdrop-blur-sm rounded-xl">
-                  <ScrollButton
+                <div className="flex items-center gap-1 rounded-l-full py-0.5 bg-white/10 dark:bg-[#172030]/10 backdrop-blur-sm ">
+                <ScrollButton
                     ref={rightButtonRef}
                     direction="right"
                     onClick={scrollRight}
@@ -716,7 +719,7 @@ export function HomeTwoCategories({
                     <div className="relative">
                       <Button
                         ref={triggerButtonRef}
-                        className="h-8 py-2 text-xs flex items-center gap-1.5 dark:bg-[#21304a] bg-[#ebf0fd] text-theme-primary-700 dark:text-theme-primary-300 border border-theme-primary-200 dark:border-theme-primary-800 shadow-xs hover:shadow-sm transition-all rounded-md relative z-10 focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 focus-visible:ring-offset-0 active:outline-none active:ring-0"
+                        className="h-8 py-2.5 text-xs flex items-center gap-1.5 bg-theme-primary-500 hover:bg-theme-primary-600 dark:bg-theme-primary-600 dark:hover:bg-theme-primary-500 text-white border border-theme-primary-600 shadow-xs hover:shadow-sm transition-all rounded-xl relative z-10 focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 focus-visible:ring-offset-0 active:outline-none active:ring-0"
                         onPress={() => setIsMorePopoverOpen(!isMorePopoverOpen)}
                         aria-label={`Show ${hiddenCategories.length} more ${hiddenCategories.length === 1 ? 'category' : 'categories'}`}
                       >

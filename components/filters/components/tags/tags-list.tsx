@@ -20,7 +20,6 @@ const SCROLL_CONTAINER_STYLES = clsx(
 
 const SCROLL_FADE_LEFT = clsx(
   "absolute left-0 top-0 bottom-2 w-12 pointer-events-none z-5",
-  "bg-linear-to-r from-white via-white/80 to-transparent",
   "dark:from-gray-900 dark:via-gray-900/80",
   "opacity-0 transition-opacity duration-300"
 );
@@ -32,7 +31,7 @@ const SCROLL_FADE_RIGHT = clsx(
 // Sticky left styles for "All Tags" button (similar to home-two-categories)
 const STICKY_LEFT_STYLES = clsx(
   "sticky left-0 shrink-0 z-10 pr-0",
-  "backdrop-blur-sm rounded-xl"
+  "backdrop-blur-sm rounded-r-full",
 );
 
 // Navigation button styles for scroll buttons
@@ -56,6 +55,9 @@ const ScrollButton = React.memo(React.forwardRef<HTMLButtonElement, {
   disabled: boolean;
   visible: boolean;
 }>(({ direction, onClick, disabled, visible }, ref) => {
+  if (disabled || !visible) {
+    return null;
+  }
   return (
     <button
       ref={ref}
@@ -442,7 +444,7 @@ export function TagsList({
   }, [basePath, setSelectedTags, selectedTags, handleTagClick]);
 
   return (
-    <div className="relative">
+    <div className="relative ">
       {!showAllTags && (
         <div className="relative">
           {/* Scroll fade indicators */}
@@ -470,14 +472,7 @@ export function TagsList({
             {/* Tags wrapper with data attribute for measurement */}
             <div data-tags-wrapper className="flex items-center gap-2">
               {/* Left Navigation Button + All Tags Button - Sticky */}
-              <div className={cn(STICKY_LEFT_STYLES, "flex items-center gap-2")}>
-                <ScrollButton
-                  ref={leftButtonRef}
-                  direction="left"
-                  onClick={scrollLeft}
-                  disabled={!canScrollLeft}
-                  visible={canScrollLeft && !showAllTags}
-                />
+              <div className={cn(STICKY_LEFT_STYLES, "flex items-center gap-1")}> 
                 {/* All Tags Button */}
                 {setSelectedTags ? (
                   <Button
@@ -564,6 +559,13 @@ export function TagsList({
                   </span>
                 </Button>
               )}
+              <ScrollButton
+                  ref={leftButtonRef}
+                  direction="left"
+                  onClick={scrollLeft}
+                  disabled={!canScrollLeft}
+                  visible={canScrollLeft && !showAllTags}
+                />
               </div>
             
             {/* Tag buttons */}
@@ -578,7 +580,7 @@ export function TagsList({
             
             {/* "+N more" button with Right Navigation Button */}
             {hiddenTags.length > 0 && (
-              <div className="sticky right-0 shrink-0 pl-0 flex items-center gap-1 bg-white/10 dark:bg-[#172030]/10 backdrop-blur-sm rounded-l-xl">
+              <div className="sticky right-0 shrink-0 pl-0 py-[3px] flex items-center gap-1 bg-white/10 dark:bg-[#172030]/10 backdrop-blur-sm rounded-l-xl">
                 <ScrollButton
                   ref={rightButtonRef}
                   direction="right"
@@ -588,7 +590,7 @@ export function TagsList({
                 />
                 <Button
                   ref={triggerButtonRef}
-                  className="h-8 py-1.5 px-3 text-xs flex items-center gap-1.5 bg-theme-primary-500 hover:bg-theme-primary-600 dark:bg-theme-primary-500 dark:hover:bg-theme-primary-600 text-white border border-theme-primary-600 shadow-xs hover:shadow-sm transition-all rounded-full focus-visible:ring-2 focus-visible:ring-theme-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900"
+                  className="h-8 py-2 px-3 text-xs flex items-center gap-1.5 bg-theme-primary-500 hover:bg-theme-primary-600 dark:bg-theme-primary-500 dark:hover:bg-theme-primary-600 text-white border border-theme-primary-600 shadow-xs hover:shadow-sm transition-all rounded-full focus-visible:ring-2 focus-visible:ring-theme-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900"
                   onPress={() => setIsMorePopoverOpen(!isMorePopoverOpen)}
                   aria-label={`Show ${hiddenTags.length} more ${hiddenTags.length === 1 ? 'tag' : 'tags'}`}
                 >
