@@ -586,8 +586,8 @@ export function TagsList({
                   ref={rightButtonRef}
                   direction="right"
                   onClick={scrollRight}
-                  disabled={!canScrollRight && hiddenTags.length === 0}
-                  visible={(canScrollRight || hiddenTags.length > 0) && !showAllTags}
+                  disabled={!canScrollRight}
+                  visible={canScrollRight && !showAllTags}
                 />
                 <Button
                   ref={triggerButtonRef}
