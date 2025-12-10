@@ -9,6 +9,7 @@ import { db, getDrizzleInstance } from '../db/drizzle';
 import { users, accounts, sessions, verificationTokens } from '../db/schema';
 import authConfig from '../../auth.config';
 import { invalidateSessionCache } from './cached-session';
+import { getClientProfileByUserId, createClientProfile } from '../db/queries/client.queries';
 export * from '../payment/config/payment-provider-manager';
 
 // Define proper interface for user objects with admin/client properties
@@ -96,7 +97,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
     jwt: async ({ token, user, account }) => {
 
       const extendedUser = user as ExtendedUser;
-      
+
       if (extendedUser?.id && typeof extendedUser.id === "string") {
         token.userId = extendedUser.id;
       }
@@ -108,6 +109,37 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       }
       if (account?.provider) {
         token.provider = account.provider;
+      }
+
+      // For OAuth users: ensure client profile exists and populate clientProfileId
+      const isOAuthProvider = token.provider && token.provider !== 'credentials';
+      if (isOAuthProvider && !token.clientProfileId && token.userId && isDatabaseAvailable) {
+        try {
+          // Check if client profile already exists
+          let clientProfile = await getClientProfileByUserId(token.userId);
+
+          if (!clientProfile) {
+            // Create client profile for OAuth user
+            const userEmail = token.email || extendedUser?.email || '';
+            const userName = token.name || extendedUser?.email?.split('@')[0] || 'User';
+
+            if (userEmail) {
+              clientProfile = await createClientProfile({
+                userId: token.userId,
+                email: userEmail,
+                name: userName,
+                displayName: userName,
+              });
+              console.log(`[auth][jwt] Created client profile for OAuth user: ${userEmail}`);
+            }
+          }
+
+          if (clientProfile) {
+            token.clientProfileId = clientProfile.id;
+          }
+        } catch (error) {
+          console.error('[auth][jwt] Error creating/fetching client profile for OAuth user:', error);
+        }
       }
 
       if (user) {
@@ -129,10 +161,11 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
             isAdmin: token.isAdmin,
             hasUser: !!user,
             accountProvider: account?.provider,
+            hasClientProfileId: !!token.clientProfileId,
           });
         } catch {}
       }
-      
+
       return token;
     },
     session: async ({ session, token }) => {
