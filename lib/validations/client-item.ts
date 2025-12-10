@@ -48,11 +48,13 @@ export const clientItemsListQuerySchema = z.object({
     .string()
     .optional()
     .transform(val => (val ? parseInt(val, 10) : 1))
+    .refine(val => !Number.isNaN(val), { message: 'Page must be a valid number' })
     .refine(val => val >= 1, { message: 'Page must be at least 1' }),
   limit: z
     .string()
     .optional()
     .transform(val => (val ? parseInt(val, 10) : 10))
+    .refine(val => !Number.isNaN(val), { message: 'Limit must be a valid number' })
     .refine(val => val >= 1 && val <= 100, { message: 'Limit must be between 1 and 100' }),
   status: z
     .enum(clientStatusFilter)
