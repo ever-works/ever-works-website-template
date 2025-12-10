@@ -212,17 +212,18 @@ export function TagsList({
   const measureTags = useCallback(() => {
     if (!scrollContainerRef.current || showAllTags) return;
     const container = scrollContainerRef.current;
-    const children = Array.from(
-      container.querySelector('[data-tags-wrapper]')?.children || []
-    ) as HTMLElement[];
+    const wrapper = container.querySelector('[data-tags-wrapper]');
+    if (!wrapper) return;
+    
+    const children = Array.from(wrapper.children) as HTMLElement[];
     if (!children.length) return;
     
-    // Measure widths including computed margin-right for accurate gap spacing
-    itemWidthsRef.current = children.map((child) => {
-      const style = getComputedStyle(child);
-      const marginRight = parseFloat(style.marginRight || '0');
-      return child.offsetWidth + marginRight;
-    });
+    // Get actual gap from container's computed styles
+    const computedStyle = window.getComputedStyle(wrapper);
+    const gap = parseFloat(computedStyle.gap) || 8;
+    
+    // Measure widths
+    itemWidthsRef.current = children.map((child) => child.offsetWidth);
     
     let totalWidth = 0;
     let startIndex = 0;
@@ -241,7 +242,7 @@ export function TagsList({
     let totalOffset = 0;
     endIndex = children.length - 1; // default to last
     for (let i = 0; i < itemWidthsRef.current.length; i++) {
-      totalOffset += itemWidthsRef.current[i];
+      totalOffset += itemWidthsRef.current[i] + gap;
       if (totalOffset > container.scrollLeft + container.clientWidth - 1) {
         endIndex = i - 1 >= 0 ? i - 1 : 0;
         break;

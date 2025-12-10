@@ -21,7 +21,7 @@ import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 
 // Style constants
 const SCROLL_CONTAINER_STYLES = clsx(
-  "relative flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-none pr-8 py-1 scroll-smooth",
+  "relative flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-none py-1 scroll-smooth",
   "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
   "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-1",
   "after:bg-linear-to-r after:from-transparent after:via-blue-100/20 after:to-transparent",
@@ -256,12 +256,18 @@ const useCarouselVisibility = (
   const measureItems = useCallback(() => {
     if (!containerRef.current || showAllCategories) return;
     const container = containerRef.current;
-    const children = Array.from(
-      container.querySelector('[data-categories-wrapper]')?.children || []
-    ) as HTMLElement[];
+    const wrapper = container.querySelector('[data-categories-wrapper]');
+    if (!wrapper) return;
+    
+    const children = Array.from(wrapper.children) as HTMLElement[];
     if (!children.length) return;
+    
+    // Get actual gap from computed styles
+    const computedStyle = window.getComputedStyle(wrapper);
+    const gap = parseFloat(computedStyle.gap) || 8;
+    
     // measure widths
-    itemWidthsRef.current = children.map((child) => child.offsetWidth); // include gap
+    itemWidthsRef.current = children.map((child) => child.offsetWidth);
     let totalWidth = 0;
     let startIndex = 0;
     let endIndex = children.length - 1;
@@ -277,7 +283,7 @@ const useCarouselVisibility = (
     let totalOffset = 0;
     endIndex = children.length - 1; // default to last
     for (let i = 0; i < itemWidthsRef.current.length; i++) {
-      totalOffset += itemWidthsRef.current[i] + 8; // include gap if needed
+      totalOffset += itemWidthsRef.current[i] + gap;
       if (totalOffset > container.scrollLeft + container.clientWidth) {
         endIndex = i - 1 >= 0 ? i - 1 : 0; // last fully visible
         break;
@@ -705,7 +711,7 @@ export function HomeTwoCategories({
 
             {/* More Categories Button with Right Navigation Button */}
             {!showAllCategories && hiddenCategories.length > 0 && (
-              <div className="sticky -right-8 shrink-0  pl-2">
+              <div className="sticky right-0 shrink-0 pl-2">
                 <div className="flex items-center gap-1 rounded-l-full py-0.5 bg-white/10 dark:bg-[#172030]/10 backdrop-blur-sm ">
                 <ScrollButton
                     ref={rightButtonRef}
