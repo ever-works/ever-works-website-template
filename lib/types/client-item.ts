@@ -89,7 +89,7 @@ export interface ClientRestoreItemResponse {
 export interface ClientItemsListParams {
   page?: number;
   limit?: number;
-  status?: 'pending' | 'approved' | 'rejected' | 'all';
+  status?: ClientStatusFilter;
   search?: string;
   sortBy?: 'name' | 'updated_at' | 'status' | 'submitted_at';
   sortOrder?: 'asc' | 'desc';
