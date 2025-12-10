@@ -156,7 +156,7 @@ export class ItemRepository {
     return items.some((item: ItemData) => item.slug === slug);
   }
 
-  async getStats(options: { submittedBy?: string; includeDeleted?: boolean } = {}): Promise<{
+  async getStats(options: { submittedBy?: string } = {}): Promise<{
     total: number;
     draft: number;
     pending: number;
