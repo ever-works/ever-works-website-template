@@ -2,7 +2,7 @@
 
 import { FiRefreshCw, FiClock, FiLoader, FiTrash2 } from 'react-icons/fi';
 import { ClientSubmissionData } from '@/lib/types/client-item';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 export interface TrashItemProps {
   item: ClientSubmissionData;
@@ -18,6 +18,7 @@ export function TrashItem({
   disabled = false,
 }: TrashItemProps) {
   const t = useTranslations('client.submissions');
+  const locale = useLocale();
   const isRestoring = restoringItemId === item.id;
   const isDisabled = disabled || isRestoring;
 
@@ -28,7 +29,7 @@ export function TrashItem({
       if (isNaN(date.getTime())) {
         return t('INVALID_DATE');
       }
-      return date.toLocaleDateString('en-US', {
+      return date.toLocaleDateString(locale, {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
