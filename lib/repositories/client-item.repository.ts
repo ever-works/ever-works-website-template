@@ -137,8 +137,8 @@ export class ClientItemRepository {
    * Soft delete an item (ownership validation)
    */
   async softDeleteForUser(id: string, userId: string): Promise<ItemData> {
-    // First, verify ownership
-    const existingItem = await this.itemRepository.findById(id);
+    // First, verify ownership (include deleted items to show proper error message)
+    const existingItem = await this.itemRepository.findById(id, true);
 
     if (!existingItem) {
       throw new Error('Item not found');
