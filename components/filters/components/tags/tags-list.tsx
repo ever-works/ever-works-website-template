@@ -580,7 +580,7 @@ export function TagsList({
             
             {/* "+N more" button with Right Navigation Button */}
             {hiddenTags.length > 0 && (
-              <div className="sticky right-0 shrink-0 pl-0 py-[3px] flex items-center gap-1 bg-white/10 dark:bg-[#172030]/10 backdrop-blur-sm rounded-l-xl">
+              <div className="sticky right-0 shrink-0 pl-0 flex items-center gap-1 bg-white/10 dark:bg-[#172030]/10 backdrop-blur-sm rounded-l-full">
                 <ScrollButton
                   ref={rightButtonRef}
                   direction="right"
