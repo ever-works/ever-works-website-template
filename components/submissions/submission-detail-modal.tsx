@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import {
   Modal,
@@ -76,6 +76,7 @@ export function SubmissionDetailModal({
   onDelete,
 }: SubmissionDetailModalProps) {
   const t = useTranslations('client.submissions');
+  const locale = useLocale();
 
   if (!submission) return null;
 
@@ -88,7 +89,7 @@ export function SubmissionDetailModal({
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return t('INVALID_DATE');
-      return date.toLocaleDateString('en-US', {
+      return date.toLocaleDateString(locale, {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
