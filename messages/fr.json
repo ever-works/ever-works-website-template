@@ -1786,7 +1786,7 @@
       "FEATURED_HELP": "Les éléments en vedette apparaissent de manière proéminente sur le site",
       "STATUS_HELP": "Statut actuel de l'élément",
       "STATUS_OPTIONS": {
-        "ALL": "All",
+        "ALL": "Tout",
         "DRAFT": "Brouillon",
         "PENDING": "En Attente de Révision",
         "APPROVED": "Approuvé",
@@ -1961,7 +1961,7 @@
       "CANCEL": "Annuler",
       "APPLY_FILTERS": "Appliquer les Filtres",
       "STATUS_OPTIONS": {
-        "ALL": "All",
+        "ALL": "Tout",
         "ACTIVE": "Actif",
         "INACTIVE": "Inactif",
         "SUSPENDED": "Suspendu",

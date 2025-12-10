@@ -1727,7 +1727,7 @@
       "FEATURED_HELP": "推荐项目在网站上突出显示",
       "STATUS_HELP": "项目的当前状态",
       "STATUS_OPTIONS": {
-        "ALL": "All",
+        "ALL": "全部",
         "DRAFT": "草稿",
         "PENDING": "待审核",
         "APPROVED": "已批准",
@@ -1902,7 +1902,7 @@
       "CANCEL": "取消",
       "APPLY_FILTERS": "应用筛选器",
       "STATUS_OPTIONS": {
-        "ALL": "All",
+        "ALL": "全部",
         "ACTIVE": "活跃",
         "INACTIVE": "非活跃",
         "SUSPENDED": "已暂停",

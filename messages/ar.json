@@ -1715,7 +1715,7 @@
       "FEATURED_HELP": "العناصر المميزة تظهر بشكل بارز على الموقع",
       "STATUS_HELP": "الحالة الحالية للعنصر",
       "STATUS_OPTIONS": {
-        "ALL": "All",
+        "ALL": "الكل",
         "DRAFT": "مسودة",
         "PENDING": "في انتظار المراجعة",
         "APPROVED": "موافق عليه",
@@ -1890,7 +1890,7 @@
       "CANCEL": "إلغاء",
       "APPLY_FILTERS": "تطبيق المرشحات",
       "STATUS_OPTIONS": {
-        "ALL": "All",
+        "ALL": "الكل",
         "ACTIVE": "نشط",
         "INACTIVE": "غير نشط",
         "SUSPENDED": "معلق",

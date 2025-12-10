@@ -1695,7 +1695,7 @@
       "FEATURED_HELP": "Featured items appear prominently on the site",
       "STATUS_HELP": "Current status of the item",
       "STATUS_OPTIONS": {
-        "ALL": "All",
+        "ALL": "Все",
         "DRAFT": "Draft",
         "PENDING": "Pending Review",
         "APPROVED": "Approved",
@@ -1870,7 +1870,7 @@
       "CANCEL": "Cancel",
       "APPLY_FILTERS": "Apply Filters",
       "STATUS_OPTIONS": {
-        "ALL": "All",
+        "ALL": "Все",
         "ACTIVE": "Active",
         "INACTIVE": "Inactive",
         "SUSPENDED": "Suspended",
