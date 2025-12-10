@@ -144,8 +144,15 @@ export async function extractReturnUrl(request: NextRequest): Promise<string> {
 			return pathname;
 		}
 
+		// Security: Strip protocol-relative URLs (//evil.com/path) to prevent open redirects
+		// These bypass the absolute URL check but browsers interpret // as protocol-relative
+		let sanitizedUrl = trimmedUrl;
+		while (sanitizedUrl.startsWith('//')) {
+			sanitizedUrl = sanitizedUrl.slice(1);
+		}
+
 		// Handle relative paths
-		const normalizedPath = normalizeRelativePath(trimmedUrl);
+		const normalizedPath = normalizeRelativePath(sanitizedUrl);
 
 		// Validate path length
 		if (!isValidPathLength(normalizedPath)) {
