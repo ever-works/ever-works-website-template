@@ -1,9 +1,26 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
+
+// Share icon component
+const ShareIcon = () => (
+    <svg
+      className="w-5 h-5"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
+      />
+    </svg>
+);
 
 export const ShareButton = ({ url, title }: { url: string; title: string }) => {
     const [isCopying, setIsCopying] = useState(false);
@@ -58,22 +75,20 @@ export const ShareButton = ({ url, title }: { url: string; title: string }) => {
     return (
       <Dropdown>
         <DropdownTrigger>
-          <button className={cn("group inline-flex items-center px-6 py-3 bg-white/90 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-semibold transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600 shadow-md hover:shadow-lg transform hover:-translate-y-0.5")}>
-            <svg
-              className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:rotate-12"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
-              />
-            </svg>
+          <Button
+            variant="bordered"
+            startContent={<ShareIcon />}
+            className={cn(
+              "group inline-flex items-center px-6 py-3 h-auto",
+              "bg-white/90 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700",
+              "text-gray-700 dark:text-gray-200 rounded-xl font-semibold",
+              "border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600",
+              "shadow-md hover:shadow-lg",
+              "transition-colors transition-shadow duration-300"
+            )}
+          >
             {t("SHARE")}
-          </button>
+          </Button>
         </DropdownTrigger>
         <DropdownMenu
           aria-label="Share options"
