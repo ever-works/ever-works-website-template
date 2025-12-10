@@ -334,7 +334,7 @@ export function CredentialsForm({
               {tCred("LOGIN_FAILED")}
             </h4>
             <p className="text-sm text-red-700 dark:text-red-300">
-              {clientError || getTranslatedErrorMessage(state?.error)}
+              {getTranslatedErrorMessage(clientError || state?.error)}
             </p>
           </div>
         </div>
