@@ -84,8 +84,9 @@ export function EditSubmissionModal({
   const handleFormSubmit = async (data: ClientUpdateItemInput) => {
     try {
       await onSave(data);
-      onOpenChange(false);
+      // Parent handles closing the modal on success
     } catch (error) {
+      // onSave may throw - parent mutation shows toast via onError callback
       console.error('Error updating submission:', error);
     }
   };
