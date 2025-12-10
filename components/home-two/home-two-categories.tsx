@@ -555,8 +555,7 @@ export function HomeTwoCategories({
       categoryElementsRef.current.clear();
     } else {
       // Re-measure when switching back to carousel view
-      const timeoutId = setTimeout(measureItems, 100);
-      return () => clearTimeout(timeoutId);
+      setTimeout(measureItems, 100);
     }
   }, [showAllCategories, measureItems]);
 
@@ -718,8 +717,8 @@ export function HomeTwoCategories({
                     ref={rightButtonRef}
                     direction="right"
                     onClick={scrollRight}
-                    disabled={!canScrollRight}
-                    visible={canScrollRight && !showAllCategories}
+                    disabled={!canScrollRight && hiddenCategories.length === 0}
+                    visible={(canScrollRight || hiddenCategories.length > 0) && !showAllCategories}
                   />
                   <div className="relative">
                     <div className="absolute w-20 -inset-0.5 dark:bg-[#1e2939] rounded-lg blur-xl"></div>
