@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { FiActivity, FiClock, FiEye, FiEdit, FiTrash2, FiTrendingUp, FiCheck, FiX, FiLoader } from "react-icons/fi";
 import { IconType } from "react-icons";
 import { ClientSubmissionData } from "@/lib/types/client-item";
@@ -73,6 +73,7 @@ export function SubmissionItem({
   disabled = false,
 }: SubmissionItemProps) {
   const t = useTranslations('client.submissions');
+  const locale = useLocale();
   const status = statusConfig[submission.status];
   const StatusIcon = status.icon;
   const isLoading = isDeleting || isUpdating;
@@ -84,7 +85,7 @@ export function SubmissionItem({
       if (isNaN(date.getTime())) {
         return t('INVALID_DATE');
       }
-      return date.toLocaleDateString("en-US", {
+      return date.toLocaleDateString(locale, {
         year: "numeric",
         month: "short",
         day: "numeric",
