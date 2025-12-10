@@ -17,6 +17,7 @@ interface ExtendedUser {
 	email?: string;
 	isAdmin?: boolean;
 	isClient?: boolean;
+	clientProfileId?: string;
 }
 
 // Check if DATABASE_URL is set and database is properly initialized
@@ -102,6 +103,9 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       if (!token.userId && typeof token.sub === "string") {
         token.userId = token.sub;
       }
+      if (extendedUser?.clientProfileId && typeof extendedUser.clientProfileId === "string") {
+        token.clientProfileId = extendedUser.clientProfileId;
+      }
       if (account?.provider) {
         token.provider = account.provider;
       }
@@ -135,6 +139,9 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       if (token && session.user) {
         if (typeof token.userId === "string") {
           session.user.id = token.userId;
+        }
+        if (typeof token.clientProfileId === "string") {
+          session.user.clientProfileId = token.clientProfileId;
         }
         session.user.provider = typeof token.provider === "string" ? token.provider : "credentials";
         if (typeof token.isAdmin === "boolean") {

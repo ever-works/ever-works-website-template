@@ -75,7 +75,8 @@ export const credentialsProvider = Credentials({
             throw new Error("Invalid email or password. Please try again.");
           }
           const clientUser = {
-            id: clientProfile.id,
+            id: clientAccount.userId,
+            clientProfileId: clientProfile.id,
             name: clientProfile.name || clientProfile.displayName,
             email: clientProfile.email,
             image: null,

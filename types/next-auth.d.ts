@@ -6,6 +6,7 @@ declare module "next-auth" {
   interface Session {
     user: {
       id?: string;
+      clientProfileId?: string;
       provider?: string;
       isAdmin?: boolean;
       customerId?: string;
@@ -13,6 +14,7 @@ declare module "next-auth" {
   }
   interface User extends DefaultUser {
     isAdmin?: boolean;
+    clientProfileId?: string;
     customerId?: string;
   }
 }
@@ -20,6 +22,7 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     userId?: string;
+    clientProfileId?: string;
     provider?: string;
     isAdmin?: boolean;
     customerId?: string;
