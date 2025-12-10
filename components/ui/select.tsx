@@ -81,47 +81,37 @@ export function Select({
     setInternalSelectedKeys(selectedKeys || []);
   }, [selectedKeys]);
 
-  // Handle click outside to close dropdown
+  // Handle click outside to close dropdown with deferred listener pattern
+  // This prevents the opening click from triggering the close handler
   React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (event: PointerEvent) => {
       if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
+    // Defer listener attachment to next tick to prevent opening click from triggering close
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('pointerdown', handleClickOutside, { capture: true });
+    }, 0);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      clearTimeout(timeoutId);
+      document.removeEventListener('pointerdown', handleClickOutside, { capture: true });
     };
   }, [isOpen]);
 
   const handleSelectionChange = (keys: string[]) => {
     setInternalSelectedKeys(keys);
     onSelectionChange?.(keys);
-    
+
     // For backward compatibility with onChange
     if (onChange && keys.length > 0) {
       onChange({ target: { value: keys[0] } });
     }
   };
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
-      setIsOpen(false);
-    }
-  };
-
-  React.useEffect(() => {
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen]);
 
   const sizeClasses = {
     sm: "h-8 text-sm",

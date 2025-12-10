@@ -2,15 +2,17 @@
 import { cn } from "@/lib/utils";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
 export const ShareButton = ({ url, title }: { url: string; title: string }) => {
-    const [isOpen, setIsOpen] = useState(false);
     const [isCopying, setIsCopying] = useState(false);
     const t = useTranslations("common");
-  
-    const handleShare = async (type: string) => {
+
+    // Use onAction handler for HeroUI's native event handling pattern
+    // This prevents flickering by letting HeroUI manage dropdown state internally
+    const handleShare = useCallback(async (key: React.Key) => {
+      const type = key as string;
       try {
         switch (type) {
           case "copy":
@@ -51,11 +53,10 @@ export const ShareButton = ({ url, title }: { url: string; title: string }) => {
         });
         setIsCopying(false);
       }
-      setIsOpen(false);
-    };
-  
+    }, [url, title, t]);
+
     return (
-      <Dropdown isOpen={isOpen} onOpenChange={setIsOpen}>
+      <Dropdown>
         <DropdownTrigger>
           <button className={cn("group inline-flex items-center px-6 py-3 bg-white/90 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-semibold transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600 shadow-md hover:shadow-lg transform hover:-translate-y-0.5")}>
             <svg
@@ -77,11 +78,11 @@ export const ShareButton = ({ url, title }: { url: string; title: string }) => {
         <DropdownMenu
           aria-label="Share options"
           className="w-56 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
+          onAction={handleShare}
         >
           <DropdownItem
             key="copy"
             className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-            onClick={() => handleShare("copy")}
           >
             <div className="flex items-center">
               {isCopying ? (
@@ -107,7 +108,6 @@ export const ShareButton = ({ url, title }: { url: string; title: string }) => {
           <DropdownItem
             key="twitter"
             className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-            onClick={() => handleShare("twitter")}
           >
             <div className="flex items-center">
               <svg
@@ -123,7 +123,6 @@ export const ShareButton = ({ url, title }: { url: string; title: string }) => {
           <DropdownItem
             key="facebook"
             className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-            onClick={() => handleShare("facebook")}
           >
             <div className="flex items-center">
               <svg
@@ -139,7 +138,6 @@ export const ShareButton = ({ url, title }: { url: string; title: string }) => {
           <DropdownItem
             key="linkedin"
             className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-            onClick={() => handleShare("linkedin")}
           >
             <div className="flex items-center">
               <svg
