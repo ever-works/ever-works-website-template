@@ -73,8 +73,8 @@ export function useFavorites() {
 			// Cancel any outgoing refetches
 			await queryClient.cancelQueries({ queryKey: ['favorites'] });
 
-			// Snapshot the previous value
-			const previousFavorites = queryClient.getQueryData<Favorite[]>(['favorites']);
+			// Snapshot the previous value (default to empty array if cache is undefined)
+			const previousFavorites = queryClient.getQueryData<Favorite[]>(['favorites']) ?? [];
 
 			// Optimistically update to the new value
 			queryClient.setQueryData<Favorite[]>(['favorites'], (old = []) => {
@@ -96,7 +96,7 @@ export function useFavorites() {
 		},
 		onError: (err, newFavorite, context) => {
 			// If the mutation fails, use the context returned from onMutate to roll back
-			if (context?.previousFavorites) {
+			if (context) {
 				queryClient.setQueryData(['favorites'], context.previousFavorites);
 			}
 			toast.error(err.message || 'Failed to add to favorites');
@@ -131,8 +131,8 @@ export function useFavorites() {
 			// Cancel any outgoing refetches
 			await queryClient.cancelQueries({ queryKey: ['favorites'] });
 
-			// Snapshot the previous value
-			const previousFavorites = queryClient.getQueryData<Favorite[]>(['favorites']);
+			// Snapshot the previous value (default to empty array if cache is undefined)
+			const previousFavorites = queryClient.getQueryData<Favorite[]>(['favorites']) ?? [];
 
 			// Optimistically update to the new value
 			queryClient.setQueryData<Favorite[]>(['favorites'], (old = []) => {
@@ -144,7 +144,7 @@ export function useFavorites() {
 		},
 		onError: (err, itemSlug, context) => {
 			// If the mutation fails, use the context returned from onMutate to roll back
-			if (context?.previousFavorites) {
+			if (context) {
 				queryClient.setQueryData(['favorites'], context.previousFavorites);
 			}
 			toast.error(err.message || 'Failed to remove from favorites');
