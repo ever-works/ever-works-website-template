@@ -2613,7 +2613,8 @@
       "INVALID_PASSWORD": "Mot de passe incorrect. Veuillez vérifier votre mot de passe et réessayer.",
       "PROFILE_NOT_FOUND": "Profil de compte non trouvé. Veuillez contacter le support.",
       "GENERIC_ERROR_MESSAGE": "Une erreur s'est produite. Veuillez réessayer.",
-      "RATE_LIMITED": "Trop de tentatives. Veuillez patienter quelques minutes avant de réessayer."
+      "RATE_LIMITED": "Trop de tentatives. Veuillez patienter quelques minutes avant de réessayer.",
+      "USE_OAUTH_PROVIDER": "Ce compte utilise la connexion sociale. Veuillez vous connecter avec Google ou GitHub."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "Mot de Passe Oublié ?",

@@ -2522,7 +2522,8 @@
       "INVALID_PASSWORD": "Kata sandi tidak valid. Silakan periksa kata sandi Anda dan coba lagi.",
       "PROFILE_NOT_FOUND": "Profil akun tidak ditemukan. Silakan hubungi dukungan.",
       "GENERIC_ERROR_MESSAGE": "Terjadi kesalahan. Silakan coba lagi.",
-      "RATE_LIMITED": "Terlalu banyak percobaan. Silakan tunggu beberapa menit sebelum mencoba lagi."
+      "RATE_LIMITED": "Terlalu banyak percobaan. Silakan tunggu beberapa menit sebelum mencoba lagi.",
+      "USE_OAUTH_PROVIDER": "Akun ini menggunakan login sosial. Silakan masuk dengan Google atau GitHub."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "Lupa Kata Sandi?",

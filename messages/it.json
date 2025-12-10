@@ -2522,7 +2522,8 @@
       "INVALID_PASSWORD": "Password non valida. Si prega di verificare la password e riprovare.",
       "PROFILE_NOT_FOUND": "Profilo account non trovato. Si prega di contattare il supporto.",
       "GENERIC_ERROR_MESSAGE": "Si è verificato un errore. Si prega di riprovare.",
-      "RATE_LIMITED": "Troppi tentativi. Si prega di attendere qualche minuto prima di riprovare."
+      "RATE_LIMITED": "Troppi tentativi. Si prega di attendere qualche minuto prima di riprovare.",
+      "USE_OAUTH_PROVIDER": "Questo account usa il login social. Accedi con Google o GitHub."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "Password Dimenticata?",

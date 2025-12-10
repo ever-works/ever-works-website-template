@@ -2522,7 +2522,8 @@
       "INVALID_PASSWORD": "Ongeldig wachtwoord. Controleer uw wachtwoord en probeer het opnieuw.",
       "PROFILE_NOT_FOUND": "Accountprofiel niet gevonden. Neem contact op met ondersteuning.",
       "GENERIC_ERROR_MESSAGE": "Er is een fout opgetreden. Probeer het opnieuw.",
-      "RATE_LIMITED": "Te veel pogingen. Wacht enkele minuten voordat u het opnieuw probeert."
+      "RATE_LIMITED": "Te veel pogingen. Wacht enkele minuten voordat u het opnieuw probeert.",
+      "USE_OAUTH_PROVIDER": "Dit account gebruikt sociale login. Log in met Google of GitHub."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "Wachtwoord vergeten?",

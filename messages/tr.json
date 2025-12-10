@@ -2522,7 +2522,8 @@
       "INVALID_PASSWORD": "Geçersiz şifre. Lütfen şifrenizi kontrol edip tekrar deneyin.",
       "PROFILE_NOT_FOUND": "Hesap profili bulunamadı. Lütfen destek ile iletişime geçin.",
       "GENERIC_ERROR_MESSAGE": "Bir hata oluştu. Lütfen tekrar deneyin.",
-      "RATE_LIMITED": "Çok fazla deneme. Lütfen birkaç dakika bekleyip tekrar deneyin."
+      "RATE_LIMITED": "Çok fazla deneme. Lütfen birkaç dakika bekleyip tekrar deneyin.",
+      "USE_OAUTH_PROVIDER": "Bu hesap sosyal giriş kullanıyor. Lütfen Google veya GitHub ile giriş yapın."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "Şifrenizi mi Unuttunuz?",

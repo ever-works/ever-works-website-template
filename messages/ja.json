@@ -2522,7 +2522,8 @@
       "INVALID_PASSWORD": "パスワードが無効です。パスワードを確認してもう一度お試しください。",
       "PROFILE_NOT_FOUND": "アカウントプロファイルが見つかりません。サポートにお問い合わせください。",
       "GENERIC_ERROR_MESSAGE": "エラーが発生しました。もう一度お試しください。",
-      "RATE_LIMITED": "試行回数が多すぎます。数分待ってから再度お試しください。"
+      "RATE_LIMITED": "試行回数が多すぎます。数分待ってから再度お試しください。",
+      "USE_OAUTH_PROVIDER": "このアカウントはソーシャルログインを使用しています。GoogleまたはGitHubでログインしてください。"
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "パスワードをお忘れですか？",

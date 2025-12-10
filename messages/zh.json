@@ -2554,7 +2554,8 @@
       "INVALID_PASSWORD": "密码错误。请检查您的密码并重试。",
       "PROFILE_NOT_FOUND": "未找到账户资料。请联系支持。",
       "GENERIC_ERROR_MESSAGE": "发生错误。请重试。",
-      "RATE_LIMITED": "尝试次数过多。请等待几分钟后再试。"
+      "RATE_LIMITED": "尝试次数过多。请等待几分钟后再试。",
+      "USE_OAUTH_PROVIDER": "此账户使用社交登录。请使用 Google 或 GitHub 登录。"
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "忘记密码？",

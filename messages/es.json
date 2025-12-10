@@ -2544,7 +2544,8 @@
       "INVALID_PASSWORD": "Contraseña incorrecta. Por favor, verifica tu contraseña e inténtalo de nuevo.",
       "PROFILE_NOT_FOUND": "Perfil de cuenta no encontrado. Por favor, contacta al soporte.",
       "GENERIC_ERROR_MESSAGE": "Ocurrió un error. Por favor, inténtalo de nuevo.",
-      "RATE_LIMITED": "Demasiados intentos. Por favor, espera unos minutos antes de intentarlo de nuevo."
+      "RATE_LIMITED": "Demasiados intentos. Por favor, espera unos minutos antes de intentarlo de nuevo.",
+      "USE_OAUTH_PROVIDER": "Esta cuenta usa inicio de sesión social. Por favor, inicia sesión con Google o GitHub."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "¿Olvidaste tu Contraseña?",

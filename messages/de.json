@@ -2555,7 +2555,8 @@
       "INVALID_PASSWORD": "Ungültiges Passwort. Bitte überprüfen Sie Ihr Passwort und versuchen Sie es erneut.",
       "PROFILE_NOT_FOUND": "Kontoprofil nicht gefunden. Bitte kontaktieren Sie den Support.",
       "GENERIC_ERROR_MESSAGE": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
-      "RATE_LIMITED": "Zu viele Versuche. Bitte warten Sie einige Minuten, bevor Sie es erneut versuchen."
+      "RATE_LIMITED": "Zu viele Versuche. Bitte warten Sie einige Minuten, bevor Sie es erneut versuchen.",
+      "USE_OAUTH_PROVIDER": "Dieses Konto verwendet Social Login. Bitte melden Sie sich mit Google oder GitHub an."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "Passwort vergessen?",

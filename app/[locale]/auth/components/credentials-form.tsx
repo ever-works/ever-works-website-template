@@ -63,6 +63,8 @@ export function CredentialsForm({
         return tCred("PROFILE_NOT_FOUND");
       case AuthErrorCode.RATE_LIMITED:
         return tCred("RATE_LIMITED");
+      case AuthErrorCode.USE_OAUTH_PROVIDER:
+        return tCred("USE_OAUTH_PROVIDER");
       case AuthErrorCode.GENERIC_ERROR:
       default:
         return tCred("GENERIC_ERROR_MESSAGE");

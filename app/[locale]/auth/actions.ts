@@ -89,7 +89,7 @@ export const signInAction = validatedAction(signInSchema, async (data) => {
     }
     // OAuth-only user trying to use credentials form
     else {
-      return { error: AuthErrorCode.ACCOUNT_NOT_FOUND, ...data };
+      return { error: AuthErrorCode.USE_OAUTH_PROVIDER, ...data };
     }
 
     // Step 2: Credentials validated - now call NextAuth signIn to create session
