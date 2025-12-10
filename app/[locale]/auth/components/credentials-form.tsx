@@ -61,6 +61,8 @@ export function CredentialsForm({
         return tCred("INVALID_PASSWORD");
       case AuthErrorCode.PROFILE_NOT_FOUND:
         return tCred("PROFILE_NOT_FOUND");
+      case AuthErrorCode.RATE_LIMITED:
+        return tCred("RATE_LIMITED");
       case AuthErrorCode.GENERIC_ERROR:
       default:
         return tCred("GENERIC_ERROR_MESSAGE");

@@ -2521,7 +2521,8 @@
       "ACCOUNT_NOT_FOUND": "Bu e-posta adresiyle kayıtlı hesap bulunamadı. Lütfen e-postanızı kontrol edin veya yeni hesap oluşturun.",
       "INVALID_PASSWORD": "Geçersiz şifre. Lütfen şifrenizi kontrol edip tekrar deneyin.",
       "PROFILE_NOT_FOUND": "Hesap profili bulunamadı. Lütfen destek ile iletişime geçin.",
-      "GENERIC_ERROR_MESSAGE": "Bir hata oluştu. Lütfen tekrar deneyin."
+      "GENERIC_ERROR_MESSAGE": "Bir hata oluştu. Lütfen tekrar deneyin.",
+      "RATE_LIMITED": "Çok fazla deneme. Lütfen birkaç dakika bekleyip tekrar deneyin."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "Şifrenizi mi Unuttunuz?",

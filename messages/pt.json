@@ -2521,7 +2521,8 @@
       "ACCOUNT_NOT_FOUND": "Nenhuma conta encontrada com este endereço de e-mail. Por favor, verifique seu e-mail ou crie uma nova conta.",
       "INVALID_PASSWORD": "Senha inválida. Por favor, verifique sua senha e tente novamente.",
       "PROFILE_NOT_FOUND": "Perfil da conta não encontrado. Por favor, entre em contato com o suporte.",
-      "GENERIC_ERROR_MESSAGE": "Ocorreu um erro. Por favor, tente novamente."
+      "GENERIC_ERROR_MESSAGE": "Ocorreu um erro. Por favor, tente novamente.",
+      "RATE_LIMITED": "Muitas tentativas. Por favor, aguarde alguns minutos antes de tentar novamente."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "Esqueceu a Senha?",

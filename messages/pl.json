@@ -2521,7 +2521,8 @@
       "ACCOUNT_NOT_FOUND": "Nie znaleziono konta z tym adresem e-mail. Proszę sprawdzić adres e-mail lub utworzyć nowe konto.",
       "INVALID_PASSWORD": "Nieprawidłowe hasło. Proszę sprawdzić hasło i spróbować ponownie.",
       "PROFILE_NOT_FOUND": "Nie znaleziono profilu konta. Proszę skontaktować się z pomocą techniczną.",
-      "GENERIC_ERROR_MESSAGE": "Wystąpił błąd. Proszę spróbować ponownie."
+      "GENERIC_ERROR_MESSAGE": "Wystąpił błąd. Proszę spróbować ponownie.",
+      "RATE_LIMITED": "Zbyt wiele prób. Proszę poczekać kilka minut i spróbować ponownie."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "Zapomniałeś hasła?",

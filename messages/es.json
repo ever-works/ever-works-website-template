@@ -2543,7 +2543,8 @@
       "ACCOUNT_NOT_FOUND": "No se encontró ninguna cuenta con esta dirección de correo electrónico. Por favor, verifica tu correo o crea una nueva cuenta.",
       "INVALID_PASSWORD": "Contraseña incorrecta. Por favor, verifica tu contraseña e inténtalo de nuevo.",
       "PROFILE_NOT_FOUND": "Perfil de cuenta no encontrado. Por favor, contacta al soporte.",
-      "GENERIC_ERROR_MESSAGE": "Ocurrió un error. Por favor, inténtalo de nuevo."
+      "GENERIC_ERROR_MESSAGE": "Ocurrió un error. Por favor, inténtalo de nuevo.",
+      "RATE_LIMITED": "Demasiados intentos. Por favor, espera unos minutos antes de intentarlo de nuevo."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "¿Olvidaste tu Contraseña?",

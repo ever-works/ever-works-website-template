@@ -2521,7 +2521,8 @@
       "ACCOUNT_NOT_FOUND": "Tidak ada akun yang ditemukan dengan alamat email ini. Silakan periksa email Anda atau buat akun baru.",
       "INVALID_PASSWORD": "Kata sandi tidak valid. Silakan periksa kata sandi Anda dan coba lagi.",
       "PROFILE_NOT_FOUND": "Profil akun tidak ditemukan. Silakan hubungi dukungan.",
-      "GENERIC_ERROR_MESSAGE": "Terjadi kesalahan. Silakan coba lagi."
+      "GENERIC_ERROR_MESSAGE": "Terjadi kesalahan. Silakan coba lagi.",
+      "RATE_LIMITED": "Terlalu banyak percobaan. Silakan tunggu beberapa menit sebelum mencoba lagi."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "Lupa Kata Sandi?",

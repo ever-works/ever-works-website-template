@@ -2539,7 +2539,8 @@
       "ACCOUNT_NOT_FOUND": "No account found with this email address. Please check your email or create a new account.",
       "INVALID_PASSWORD": "Invalid password. Please check your password and try again.",
       "PROFILE_NOT_FOUND": "Account profile not found. Please contact support.",
-      "GENERIC_ERROR_MESSAGE": "An error occurred. Please try again."
+      "GENERIC_ERROR_MESSAGE": "An error occurred. Please try again.",
+      "RATE_LIMITED": "Too many attempts. Please wait a few minutes before trying again."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "Forgot Password?",

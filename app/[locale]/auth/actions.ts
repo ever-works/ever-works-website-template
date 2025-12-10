@@ -37,8 +37,12 @@ import { signIn } from "@/lib/auth";
 import { generatePasswordResetToken } from "@/lib/db/tokens";
 import { sendPasswordResetEmail, sendVerificationEmailWithTemplate } from "@/lib/mail";
 import { authServiceFactory } from "@/lib/auth/services";
+import { ratelimit } from "@/lib/utils/rate-limit";
 
 const PASSWORD_MIN_LENGTH = 8;
+// Rate limiting: 5 attempts per 15 minutes per email
+const AUTH_RATE_LIMIT = 5;
+const AUTH_RATE_WINDOW_MS = 15 * 60 * 1000;
 const authProviderTypes = ['supabase', 'next-auth', 'both'] as const;
 
 const signInSchema = z.object({
@@ -51,6 +55,13 @@ const signInSchema = z.object({
 export const signInAction = validatedAction(signInSchema, async (data) => {
   try {
     const { email, password } = data;
+
+    // Rate limiting check (by email to prevent brute force on specific accounts)
+    const rateLimitKey = `signin:${email.toLowerCase()}`;
+    const rateLimitResult = await ratelimit(rateLimitKey, AUTH_RATE_LIMIT, AUTH_RATE_WINDOW_MS);
+    if (!rateLimitResult.success) {
+      return { error: AuthErrorCode.RATE_LIMITED, ...data };
+    }
 
     // Step 1: Validate credentials FIRST to get specific error messages
     // (NextAuth returns generic "CredentialsSignin" which loses the specific error code)
@@ -160,6 +171,13 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
   try {
     const { name, email, password } = data;
     const normalizedEmail = email.toLowerCase().trim();
+
+    // Rate limiting check (by email to prevent spam registrations)
+    const rateLimitKey = `signup:${normalizedEmail}`;
+    const rateLimitResult = await ratelimit(rateLimitKey, AUTH_RATE_LIMIT, AUTH_RATE_WINDOW_MS);
+    if (!rateLimitResult.success) {
+      return { error: AuthErrorCode.RATE_LIMITED, ...data };
+    }
 
     // OPTIMIZATION 1: Parallelize password hashing with duplicate email check
     // hashPassword is CPU-bound (~100ms), checking for existing user is I/O-bound
