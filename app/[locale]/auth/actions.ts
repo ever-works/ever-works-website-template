@@ -41,38 +41,6 @@ import { authServiceFactory } from "@/lib/auth/services";
 const PASSWORD_MIN_LENGTH = 8;
 const authProviderTypes = ['supabase', 'next-auth', 'both'] as const;
 
-// ReCAPTCHA verification is now handled client-side with React Query
-// See /api/verify-recaptcha route and useRecaptchaVerification hook
-
-// Map auth error codes to error response with code
-function getAuthErrorResponse(error: unknown, data: Record<string, unknown>) {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-
-  // Return error code along with message for UI to handle
-  switch (errorMessage) {
-    case AuthErrorCode.ACCOUNT_NOT_FOUND:
-      return {
-        error: AuthErrorCode.ACCOUNT_NOT_FOUND,
-        ...data,
-      };
-    case AuthErrorCode.INVALID_PASSWORD:
-      return {
-        error: AuthErrorCode.INVALID_PASSWORD,
-        ...data,
-      };
-    case AuthErrorCode.PROFILE_NOT_FOUND:
-      return {
-        error: AuthErrorCode.PROFILE_NOT_FOUND,
-        ...data,
-      };
-    default:
-      return {
-        error: AuthErrorCode.GENERIC_ERROR,
-        ...data,
-      };
-  }
-}
-
 const signInSchema = z.object({
   email: z.string().email().min(3).max(255),
   password: z.string().min(PASSWORD_MIN_LENGTH).max(100),
@@ -107,6 +75,10 @@ export const signInAction = validatedAction(signInSchema, async (data) => {
       if (!isValid) {
         return { error: AuthErrorCode.INVALID_PASSWORD, ...data };
       }
+    }
+    // OAuth-only user trying to use credentials form
+    else {
+      return { error: AuthErrorCode.ACCOUNT_NOT_FOUND, ...data };
     }
 
     // Step 2: Credentials validated - now call NextAuth signIn to create session
