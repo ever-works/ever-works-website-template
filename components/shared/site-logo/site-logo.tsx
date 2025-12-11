@@ -18,13 +18,13 @@ const SIZE_CONFIGS = {
 	sm: {
 		icon: "w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11",
 		text: "text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl",
-		image: { width: 100, height: 36 },
+		image: { width: 140, height: 50 },
 		iconMargin: "mr-2 sm:mr-3 md:mr-4 lg:mr-5",
 	},
 	md: {
 		icon: "w-8 h-8 md:w-10 md:h-10",
 		text: "text-sm md:text-base lg:text-lg",
-		image: { width: 120, height: 43 },
+		image: { width: 140, height: 50 },
 		iconMargin: "mr-3",
 	},
 	lg: {
