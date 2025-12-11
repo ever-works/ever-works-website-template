@@ -1,8 +1,7 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { PlanCard } from './plan-card';
-import { Check, ArrowRight, Zap, Shield } from 'lucide-react';
+import { Check, Zap, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PaymentInterval, PaymentPlan } from '@/lib/constants';
 import { PaymentFlowSelectorModal } from '../payment';
@@ -310,37 +309,6 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 					</div>
 				</div>
 			</div>
-
-			{/* Enhanced Continue Section */}
-			{selectedPlan && (
-				<div className="text-center animate-fade-in-up">
-					<div className="inline-flex flex-col items-center gap-6 p-8 rounded-3xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-200/30 dark:border-gray-700/30 shadow-xl">
-						<div className="flex items-center gap-3">
-							<div className="w-12 h-12 rounded-full bg-linear-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 flex items-center justify-center">
-								<Check className="w-6 h-6 text-white" />
-							</div>
-							<div className="text-left">
-								<p className="text-lg font-semibold text-gray-900 dark:text-white">
-									{t('GREAT_CHOICE')} {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)}{' '}
-									{t('PLAN')}
-								</p>
-								<p className="text-sm text-gray-600 dark:text-gray-300">{t('READY_TO_GET_STARTED')}</p>
-							</div>
-						</div>
-
-						<Button
-							size="lg"
-							onClick={() => router.push('/submit')}
-							className="h-14 px-12 rounded-xl font-semibold bg-linear-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 hover:from-theme-primary-600 hover:via-purple-600 hover:to-theme-primary-700 text-white transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
-						>
-							<div className="flex items-center gap-3">
-								<span className="text-lg">{t('CONTINUE_TO_NEXT_STEP')}</span>
-								<ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-							</div>
-						</Button>
-					</div>
-				</div>
-			)}
 
 			{/* Trust Section */}
 			<div className="mt-16 text-center animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
