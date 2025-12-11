@@ -89,18 +89,21 @@ export interface PricingConfig {
 	isFeatured?: boolean;
 	envKey?: string;
 	disabled?: boolean;
-	
+
+	// Trial configuration
+	trialAmountId?: string;
+	trialAmount?: number;
+	isAuthorizedTrialAmount?: boolean;
+
 	// Polar configuration
 	polarFreePlanId?: string;
 	polarStandardPlanId?: string;
 	polarPremiumPlanId?: string;
-	polarProductId?:string;
+	polarProductId?: string;
 
 	// LemonSqueezy configuration
 	lemonVariantId?: string;
 	lemonCheckoutUrl?: string;
-
-
 }
 
 export interface PricingPlans {
@@ -438,7 +441,7 @@ export async function fetchItems(options: FetchOptions = {}): Promise<FetchItems
 
 	// Repository sync now handled by background sync manager (lib/services/sync-service.ts)
 	const dest = path.join(getContentPath(), 'data');
-	
+
 	// Check if data directory exists before trying to read it
 	// This prevents ENOENT errors when DATA_REPOSITORY is not configured
 	if (!(await dirExists(dest))) {
@@ -450,7 +453,7 @@ export async function fetchItems(options: FetchOptions = {}): Promise<FetchItems
 			tags: []
 		};
 	}
-	
+
 	const files = await fs.promises.readdir(dest);
 	const categories = await readCategories(options);
 	const tags = await readTags(options);
@@ -564,12 +567,13 @@ export async function fetchSimilarItems(
 	useCache: boolean = true
 ): Promise<SimilarItem[]> {
 	const startTime = performance.now();
-	
+
 	// Clean expired cache entries periodically
-	if (Math.random() < 0.1) { // 10% chance to clean cache
+	if (Math.random() < 0.1) {
+		// 10% chance to clean cache
 		cleanExpiredCache();
 	}
-	
+
 	if (!currentItem.tags?.length && !currentItem.category) {
 		return [];
 	}
@@ -587,7 +591,7 @@ export async function fetchSimilarItems(
 	if (useCache) {
 		const cacheKey = generateCacheKey(currentItem, maxResults, options);
 		const cached = similarityCache.get(cacheKey);
-		
+
 		if (cached && isCacheValid(cached.timestamp, cached.ttl)) {
 			const cacheDuration = performance.now() - startTime;
 			updatePerformanceMetrics(cacheDuration, true);
@@ -599,7 +603,6 @@ export async function fetchSimilarItems(
 	try {
 		const result = await fetchItems(options);
 		items = result.items;
-		
 	} catch {
 		const errorDuration = performance.now() - startTime;
 		updatePerformanceMetrics(errorDuration, false);
@@ -614,21 +617,26 @@ export async function fetchSimilarItems(
 
 	const currentTags = normalizeTags(currentItem.tags);
 	const currentCategories = normalizeCategories(currentItem.category);
-	
+
 	// Calculate similarity scores efficiently with performance monitoring
 	const similarItems = items
-		.filter(item => {
+		.filter((item) => {
 			// Filter out current item and invalid slugs
 			return item.slug && item.slug !== currentItem.slug;
 		})
-		.map(item => {
+		.map((item) => {
 			const itemTags = normalizeTags(item.tags);
 			const itemCategories = normalizeCategories(item.category);
 
 			const commonTags = calculateCommonElements(currentTags, itemTags);
 			const commonCategories = calculateCommonElements(currentCategories, itemCategories);
 
-			const score = calculateSimilarityScore(commonTags, commonCategories, currentTags.length, currentCategories.length);
+			const score = calculateSimilarityScore(
+				commonTags,
+				commonCategories,
+				currentTags.length,
+				currentCategories.length
+			);
 
 			return {
 				item,
@@ -644,7 +652,7 @@ export async function fetchSimilarItems(
 				}
 			};
 		})
-		.filter(result => result.score > 0) // Only include items with positive similarity
+		.filter((result) => result.score > 0) // Only include items with positive similarity
 		.sort((a, b) => {
 			// Primary sort by score, secondary by common elements count
 			if (Math.abs(a.score - b.score) < 0.001) {
@@ -657,7 +665,6 @@ export async function fetchSimilarItems(
 		.slice(0, maxResults); // Limit results
 
 	const totalDuration = performance.now() - startTime;
-	
 
 	// Cache the results if caching is enabled
 	if (useCache && similarItems.length > 0) {
@@ -682,15 +689,15 @@ export async function fetchSimilarItems(
  */
 function normalizeTags(tags: any): string[] {
 	if (!tags) return [];
-	
+
 	if (Array.isArray(tags)) {
 		return tags
-			.filter(tag => tag) // Remove null/undefined
-			.map(tag => typeof tag === 'string' ? tag : tag?.name)
+			.filter((tag) => tag) // Remove null/undefined
+			.map((tag) => (typeof tag === 'string' ? tag : tag?.name))
 			.filter(Boolean) // Remove empty strings
-			.map(tag => tag.toLowerCase().trim()); // Normalize case and trim
+			.map((tag) => tag.toLowerCase().trim()); // Normalize case and trim
 	}
-	
+
 	// Single tag
 	const tagName = typeof tags === 'string' ? tags : tags?.name;
 	return tagName ? [tagName.toLowerCase().trim()] : [];
@@ -703,15 +710,15 @@ function normalizeTags(tags: any): string[] {
  */
 function normalizeCategories(category: any): string[] {
 	if (!category) return [];
-	
+
 	if (Array.isArray(category)) {
 		return category
-			.filter(cat => cat) // Remove null/undefined
-			.map(cat => typeof cat === 'string' ? cat : cat?.name)
+			.filter((cat) => cat) // Remove null/undefined
+			.map((cat) => (typeof cat === 'string' ? cat : cat?.name))
 			.filter(Boolean) // Remove empty strings
-			.map(cat => cat.toLowerCase().trim()); // Normalize case and trim
+			.map((cat) => cat.toLowerCase().trim()); // Normalize case and trim
 	}
-	
+
 	// Single category
 	const catName = typeof category === 'string' ? category : category?.name;
 	return catName ? [catName.toLowerCase().trim()] : [];
@@ -726,10 +733,10 @@ function normalizeCategories(category: any): string[] {
  */
 function calculateCommonElements(array1: string[], array2: string[]): number {
 	if (!array1.length || !array2.length) return 0;
-	
+
 	// Use Set for O(1) lookup performance
 	const set1 = new Set(array1);
-	return array2.filter(item => set1.has(item)).length;
+	return array2.filter((item) => set1.has(item)).length;
 }
 
 /**
@@ -748,20 +755,20 @@ function calculateSimilarityScore(
 ): number {
 	const tagWeight = 0.6;
 	const categoryWeight = 0.4;
-	
+
 	// Normalize by the maximum of tags or categories to avoid division by zero
 	const maxTotal = Math.max(totalTags, totalCategories, 1);
-	
+
 	// Calculate individual scores
 	const tagScore = (commonTags * tagWeight) / maxTotal;
 	const categoryScore = (commonCategories * categoryWeight) / maxTotal;
-	
+
 	// Combine scores and ensure they don't exceed 1
 	const combinedScore = tagScore + categoryScore;
-	
+
 	// Apply logarithmic scaling for better distribution of scores
 	const scaledScore = Math.log1p(combinedScore * 9) / Math.log(10);
-	
+
 	return Math.min(scaledScore, 1);
 }
 
@@ -853,13 +860,13 @@ export async function fetchItem(slug: string, options: FetchOptions = {}) {
 			return { meta, content };
 		} catch (contentError) {
 			console.warn(`Failed to load content file for ${sanitizedSlug}:`, contentError);
-			
+
 			// Fallback: try to use markdown field from YAML if available
 			if (meta.markdown) {
 				console.log(`Using markdown field from YAML for ${sanitizedSlug}`);
 				return { meta, content: meta.markdown };
 			}
-			
+
 			// Return item with meta but no content, so the page can still render
 			return { meta, content: null };
 		}
@@ -980,7 +987,7 @@ function updatePerformanceMetrics(responseTime: number, isCacheHit: boolean = fa
 	performanceMetrics.totalResponseTime += responseTime;
 	performanceMetrics.averageResponseTime = performanceMetrics.totalResponseTime / performanceMetrics.totalCalls;
 	performanceMetrics.lastCallTime = Date.now();
-	
+
 	if (isCacheHit) {
 		performanceMetrics.cacheHits++;
 	}
@@ -991,10 +998,9 @@ function updatePerformanceMetrics(responseTime: number, isCacheHit: boolean = fa
  * @returns Promise<object> - Performance statistics
  */
 export async function getSimilarityPerformanceMetrics() {
-	const cacheHitRate = performanceMetrics.totalCalls > 0 
-		? (performanceMetrics.cacheHits / performanceMetrics.totalCalls) * 100 
-		: 0;
-	
+	const cacheHitRate =
+		performanceMetrics.totalCalls > 0 ? (performanceMetrics.cacheHits / performanceMetrics.totalCalls) * 100 : 0;
+
 	return {
 		totalCalls: performanceMetrics.totalCalls,
 		cacheHits: performanceMetrics.cacheHits,
@@ -1032,7 +1038,7 @@ export async function clearSimilarityCache(): Promise<void> {
 export async function getSimilarityCacheStats() {
 	let validEntries = 0;
 	let expiredEntries = 0;
-	
+
 	for (const [, value] of similarityCache.entries()) {
 		if (isCacheValid(value.timestamp, value.ttl)) {
 			validEntries++;
@@ -1040,7 +1046,7 @@ export async function getSimilarityCacheStats() {
 			expiredEntries++;
 		}
 	}
-	
+
 	return {
 		totalEntries: similarityCache.size,
 		validEntries,
@@ -1149,7 +1155,13 @@ export const getCachedItems = async (options: FetchOptions = {}) => {
 		['items', locale],
 		{
 			revalidate: CONTENT_CACHE_TTL.CONTENT,
-			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.CATEGORIES, CACHE_TAGS.TAGS, CACHE_TAGS.ITEMS_LOCALE(locale)],
+			tags: [
+				CACHE_TAGS.CONTENT,
+				CACHE_TAGS.ITEMS,
+				CACHE_TAGS.CATEGORIES,
+				CACHE_TAGS.TAGS,
+				CACHE_TAGS.ITEMS_LOCALE(locale)
+			]
 		}
 	)();
 };
@@ -1168,7 +1180,7 @@ export const getCachedItem = async (slug: string, options: FetchOptions = {}) =>
 		['item', slug, locale],
 		{
 			revalidate: CONTENT_CACHE_TTL.ITEM,
-			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.ITEM(slug)],
+			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.ITEM(slug)]
 		}
 	)();
 };
@@ -1186,7 +1198,7 @@ export const getCachedPageContent = async (slug: string, locale: string = 'en') 
 		['page', slug, locale],
 		{
 			revalidate: CONTENT_CACHE_TTL.PAGES,
-			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.PAGES, CACHE_TAGS.PAGE(slug)],
+			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.PAGES, CACHE_TAGS.PAGE(slug)]
 		}
 	)();
 };
@@ -1205,7 +1217,7 @@ export const getCachedItemsByCategory = async (raw: string, options: FetchOption
 		['items-by-category', raw, locale],
 		{
 			revalidate: CONTENT_CACHE_TTL.CONTENT,
-			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.CATEGORIES],
+			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.CATEGORIES]
 		}
 	)();
 };
@@ -1224,7 +1236,7 @@ export const getCachedItemsByTag = async (raw: string, options: FetchOptions = {
 		['items-by-tag', raw, locale],
 		{
 			revalidate: CONTENT_CACHE_TTL.CONTENT,
-			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.TAGS],
+			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.TAGS]
 		}
 	)();
 };
@@ -1234,11 +1246,7 @@ export const getCachedItemsByTag = async (raw: string, options: FetchOptions = {
  * Delegates to fetchItems internally, so benefits from its caching
  * Additional caching layer for double-filtered results
  */
-export const getCachedItemsByCategoryAndTag = async (
-	category: string,
-	tag: string,
-	options: FetchOptions = {}
-) => {
+export const getCachedItemsByCategoryAndTag = async (category: string, tag: string, options: FetchOptions = {}) => {
 	const locale = options.lang || 'en';
 	return unstable_cache(
 		async () => {
@@ -1247,8 +1255,7 @@ export const getCachedItemsByCategoryAndTag = async (
 		['items-by-category-tag', category, tag, locale],
 		{
 			revalidate: CONTENT_CACHE_TTL.CONTENT,
-			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.CATEGORIES, CACHE_TAGS.TAGS],
+			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.CATEGORIES, CACHE_TAGS.TAGS]
 		}
 	)();
 };
-
