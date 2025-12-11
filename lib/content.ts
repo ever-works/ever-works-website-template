@@ -80,7 +80,6 @@ export interface PricingConfig {
 	lemonProductId?: string;
 	features?: string[];
 	popular?: boolean;
-	trialDays?: number;
 	annualDiscount: number;
 	isPremium?: boolean;
 	interval?: PaymentInterval;
