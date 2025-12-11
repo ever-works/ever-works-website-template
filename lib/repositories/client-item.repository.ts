@@ -34,10 +34,19 @@ export class ClientItemRepository {
     // Generate slug from name
     const baseSlug = slugify(data.name);
 
+    // Guard against empty slugs (e.g., name with only special characters)
+    if (!baseSlug) {
+      throw new Error('Item name must produce a valid slug');
+    }
+
     // Ensure unique slug by checking for duplicates
     let slug = baseSlug;
     let counter = 1;
+    const MAX_SLUG_ATTEMPTS = 100;
     while (await this.itemRepository.checkDuplicateSlug(slug)) {
+      if (counter > MAX_SLUG_ATTEMPTS) {
+        throw new Error('Unable to generate unique slug after maximum attempts');
+      }
       slug = `${baseSlug}-${counter}`;
       counter++;
     }
