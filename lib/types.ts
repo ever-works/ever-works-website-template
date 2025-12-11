@@ -8,12 +8,12 @@ export type SessionProps = {
 export const defaultPricingConfig: PricingPlanConfig = {
 	// Default provider
 	provider: PaymentProvider.STRIPE,
-	
+
 	// Used, if Lemon provider is enabled. Ignored by other providers.
 	lemonCheckoutUrl: '',
-	
+
 	currency: '$',
-	
+
 	plans: {
 		FREE: {
 			id: PaymentPlan.FREE,
@@ -36,16 +36,16 @@ export const defaultPricingConfig: PricingPlanConfig = {
 
 			// LemonSqueezy configuration
 			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_FREE_VARIANT_ID,
-			
+
 			lemonCheckoutUrl: '',
-			
-			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_FREE_PRODUCT_ID,			
+
+			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_FREE_PRODUCT_ID,
 
 			// Polar configuration
 			polarFreePlanId: process.env.NEXT_PUBLIC_POLAR_FREE_PLAN_ID,
 			polarProductId: process.env.NEXT_PUBLIC_POLAR_FREE_PLAN_ID,
 
-			envKey: 'FREE_PLAN',
+			envKey: 'FREE_PLAN'
 		},
 
 		STANDARD: {
@@ -71,14 +71,17 @@ export const defaultPricingConfig: PricingPlanConfig = {
 
 			// LemonSqueezy configuration
 			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_VARIANT_ID,
-			
+
 			lemonCheckoutUrl: '',
-			
+
 			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_PRODUCT_ID,
 
 			// Polar configuration
 			polarStandardPlanId: process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID,
 			polarProductId: process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID,
+			// Polar trial configuration (can use Polar-specific env vars or fallback to Stripe ones)
+			trialAmountId: process.env.NEXT_PUBLIC_POLAR_PREMIUM_TRIAL_AMOUNT_ID,
+			isAuthorizedTrialAmount: process.env.NEXT_PUBLIC_AUTHORIZED_TRIAL_AMOUNT === 'true'
 		},
 		PREMIUM: {
 			id: PaymentPlan.PREMIUM,
@@ -91,27 +94,30 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			isFeatured: true,
 
 			// Stripe configuration
-			stripeProductId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRODUCT_ID ,
-			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID ,
-			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID ,
+			stripeProductId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRODUCT_ID,
+			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID,
+			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID,
 			annualDiscount: 10,
 			disabled: true,
 			trialPeriodDays: 0,
 			popular: false,
-			
+
 			trialDays: 0,
 			envKey: 'PREMIUM_PLAN',
 
 			// LemonSqueezy configuration
 			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_VARIANT_ID,
-			
+
 			lemonCheckoutUrl: '',
-			
+
 			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_PRODUCT_ID,
 
 			// Polar configuration
 			polarPremiumPlanId: process.env.NEXT_PUBLIC_POLAR_PREMIUM_PLAN_ID,
-			polarProductId:process.env.NEXT_PUBLIC_POLAR_PREMIUM_PLAN_ID
+			polarProductId: process.env.NEXT_PUBLIC_POLAR_PREMIUM_PLAN_ID,
+			// Polar trial configuration (can use Polar-specific env vars or fallback to Stripe ones)
+			trialAmountId: process.env.NEXT_PUBLIC_POLAR_PREMIUM_TRIAL_AMOUNT_ID,
+			isAuthorizedTrialAmount: process.env.NEXT_PUBLIC_AUTHORIZED_TRIAL_AMOUNT === 'true'
 		}
 	}
 };
