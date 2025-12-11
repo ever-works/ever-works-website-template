@@ -19,18 +19,21 @@ const SIZE_CONFIGS = {
 		icon: "w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11",
 		text: "text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl",
 		image: { width: 140, height: 50 },
+		imageClass: "h-8 sm:h-9 md:h-10 w-auto",
 		iconMargin: "mr-2 sm:mr-3 md:mr-4 lg:mr-5",
 	},
 	md: {
 		icon: "w-8 h-8 md:w-10 md:h-10",
 		text: "text-sm md:text-base lg:text-lg",
 		image: { width: 140, height: 50 },
+		imageClass: "h-10 md:h-11 w-auto",
 		iconMargin: "mr-3",
 	},
 	lg: {
 		icon: "w-10 h-10 md:w-12 md:h-12",
 		text: "text-base md:text-lg lg:text-xl",
 		image: { width: 140, height: 50 },
+		imageClass: "h-11 md:h-12 w-auto",
 		iconMargin: "mr-4",
 	},
 };
@@ -42,7 +45,7 @@ export function SiteLogo({
 	linkToHome = true,
 }: SiteLogoProps) {
 	const config = useConfig();
-	const { theme } = useTheme();
+	const { resolvedTheme } = useTheme();
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
@@ -58,7 +61,7 @@ export function SiteLogo({
 		if (!logoSettings?.logo_image) return null;
 
 		// Use dark variant if available and theme is dark
-		if (theme === "dark" && logoSettings.logo_image_dark) {
+		if (resolvedTheme === "dark" && logoSettings.logo_image_dark) {
 			return logoSettings.logo_image_dark;
 		}
 
@@ -84,7 +87,7 @@ export function SiteLogo({
 					alt={config.company_name || "Logo"}
 					width={sizeConfig.image.width}
 					height={sizeConfig.image.height}
-					style={{ width: "auto", height: "auto" }}
+					className={sizeConfig.imageClass}
 					priority
 				/>
 			);
