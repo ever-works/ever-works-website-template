@@ -78,6 +78,12 @@ const NAVIGATION_CONFIG: Array<{
   //   staticLabel: "GitHub",
   // },
   {
+    key: "favorites",
+    href: "/favorites",
+    translationKey: "FAVORITES",
+    translationNamespace: "common",
+  },
+  {
     key: "categories",
     href: "/categories",
     translationKey: "CATEGORY",
@@ -87,12 +93,6 @@ const NAVIGATION_CONFIG: Array<{
     key: "tags",
     href: "/tags",
     translationKey: "TAG",
-    translationNamespace: "common",
-  },
-  {
-    key: "favorites",
-    href: "/favorites",
-    translationKey: "FAVORITES",
     translationNamespace: "common",
   },
   {
