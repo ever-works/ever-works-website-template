@@ -187,6 +187,18 @@ export async function POST(request: NextRequest) {
 
 		// Build line items with optional trial period
 		const hasTrial = trialPeriodDays > 0 && isAuthorizedTrialAmount;
+
+		// Validate trial configuration: if trial is enabled, trialAmountId must be provided
+		if (hasTrial && !trialAmountId) {
+			return NextResponse.json(
+				{
+					error: 'Invalid trial configuration',
+					message: 'trialAmountId is required when trial is enabled'
+				},
+				{ status: 400 }
+			);
+		}
+
 		const lineItems = buildCheckoutLineItems(priceId, trialAmountId, hasTrial);
 
 		// Create base checkout parameters

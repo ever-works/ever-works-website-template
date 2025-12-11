@@ -32,7 +32,6 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			stripeProductId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID,
 			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
 			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
-			trialDays: 0,
 
 			// LemonSqueezy configuration
 			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_FREE_VARIANT_ID,
@@ -72,7 +71,6 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			popular: true,
 			envKey: 'STANDARD_PLAN',
 			trialPeriodDays: 4,
-			trialDays: 0,
 
 			// LemonSqueezy configuration
 			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_VARIANT_ID,
@@ -109,7 +107,6 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			isAuthorizedTrialAmount: process.env.NEXT_PUBLIC_AUTHORIZED_TRIAL_AMOUNT === 'true',
 			trialAmountId: process.env.NEXT_PUBLIC_PREMIUM_TRIAL_AMOUNT_ID,
 
-			trialDays: 0,
 			envKey: 'PREMIUM_PLAN',
 
 			// LemonSqueezy configuration
