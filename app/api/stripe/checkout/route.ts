@@ -222,7 +222,7 @@ export async function POST(request: NextRequest) {
 				planId: metadata.planId,
 				planName: metadata.planName,
 				billingInterval,
-				trialPeriodDays
+				trialPeriodDays: hasTrial ? trialPeriodDays : 0
 			});
 		}
 
