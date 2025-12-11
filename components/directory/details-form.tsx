@@ -142,7 +142,12 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }
 						)}
 
 						{/* Step 2: Payment */}
-						{currentStep === 2 && <PaymentStep onSelectPlan={handlePlanSelect} />}
+						{currentStep === 2 && (
+							<PaymentStep
+								onSelectPlan={handlePlanSelect}
+								selectedPlan={formData.selectedPlan}
+							/>
+						)}
 
 						{/* Step 3: Review */}
 						{currentStep === 3 && (

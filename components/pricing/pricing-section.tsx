@@ -13,9 +13,10 @@ import { useDisclosure } from '@heroui/react';
 interface PricingSectionProps {
 	onSelectPlan?: (plan: PaymentPlan) => void;
 	isReview?: boolean;
+	initialSelectedPlan?: PaymentPlan | null;
 }
 
-export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) {
+export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: PricingSectionProps) {
 	const { isOpen: isModalOpen, onOpen: onOpenSelectorModal, onClose: onCloseSelectorModal } = useDisclosure();
 
 	const {
@@ -48,7 +49,8 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 		premiumPlanFeatures,
 		loginModal
 	} = usePricingSection({
-		onSelectPlan: onSelectPlan
+		onSelectPlan: onSelectPlan,
+		initialSelectedPlan: initialSelectedPlan
 	});
 
 	return (
@@ -186,8 +188,8 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 
 					<div
 						className={cn(
-							'relative transition-all scale-105',
-							selectedPlan === PaymentPlan.STANDARD && 'ring-2 ring-purple-500/50 dark:ring-purple-400/50'
+							'relative transition-all',
+							selectedPlan === PaymentPlan.STANDARD && 'scale-105 ring-2 ring-purple-500/50 dark:ring-purple-400/50'
 						)}
 					>
 						<PlanCard
@@ -197,7 +199,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							priceUnit={billingInterval === PaymentInterval.YEARLY ? '/year' : '/month'}
 							features={standardPlanFeatures}
 							isPopular={true}
-							isSelected={selectedPlan === STANDARD?.id}
+							isSelected={selectedPlan === PaymentPlan.STANDARD}
 							onSelect={handleSelectPlan}
 							actionText={
 								error
@@ -250,7 +252,7 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							price={`${config.pricing?.currency}${PREMIUM ? calculatePrice(PREMIUM) : 0}`}
 							priceUnit={billingInterval === PaymentInterval.YEARLY ? '/year' : '/month'}
 							features={premiumPlanFeatures}
-							isSelected={selectedPlan === PREMIUM?.id}
+							isSelected={selectedPlan === PaymentPlan.PREMIUM}
 							onSelect={handleSelectPlan}
 							actionText={
 								error

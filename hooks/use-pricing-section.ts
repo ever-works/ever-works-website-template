@@ -16,6 +16,7 @@ import { useSelectedCheckoutProvider } from './use-selected-checkout-provider';
 
 export interface UsePricingSectionParams {
 	onSelectPlan?: (plan: PaymentPlan) => void;
+	initialSelectedPlan?: PaymentPlan | null;
 }
 
 export interface UsePricingSectionState {
@@ -67,7 +68,7 @@ export interface UsePricingSectionReturn extends UsePricingSectionState, UsePric
  * Custom hook that encapsulates all PricingSection logic
  */
 export function usePricingSection(params: UsePricingSectionParams = {}): UsePricingSectionReturn {
-	const { onSelectPlan } = params;
+	const { onSelectPlan, initialSelectedPlan } = params;
 	// Hooks
 	const searchParams = useSearchParams();
 	const router = useRouter();
@@ -100,7 +101,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 	const [showSelector, setShowSelector] = useState<boolean>(false);
 	const [billingInterval, setBillingInterval] = useState<PaymentInterval>(PaymentInterval.MONTHLY);
 	const [processingPlan, setProcessingPlan] = useState<string | null>(null);
-	const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(null);
+	const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(initialSelectedPlan ?? null);
 	const loginModal = useLoginModal();
 
 	// Ref for current processing plan

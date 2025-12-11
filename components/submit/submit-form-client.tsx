@@ -62,7 +62,7 @@ export function SubmitFormClient({ initialData, locale }: SubmitFormClientProps)
       toast.success(result.message || 'Item submitted successfully!');
 
       // Redirect to submissions page
-      router.push(`/${locale}/client/settings/profile/submissions`);
+      router.push(`/${locale}/client/submissions`);
 
     } catch (error) {
       console.error('Error submitting form:', error);
