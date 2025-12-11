@@ -152,13 +152,15 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 							isSelected={selectedPlan === PaymentPlan.FREE}
 							onSelect={handleSelectPlan}
 							actionText={
-								error
-									? tBilling('ERROR_TRY_AGAIN')
-									: !user
-										? getNotLoggedInActionText(PaymentPlan.FREE)
-										: processingPlan === FREE?.id && isLoading
-											? tBilling('PROCESSING')
-											: getActionText(PaymentPlan.FREE)
+								isReview
+									? t('SELECT_FREE')
+									: error
+										? tBilling('ERROR_TRY_AGAIN')
+										: !user
+											? getNotLoggedInActionText(PaymentPlan.FREE)
+											: processingPlan === FREE?.id && isLoading
+												? tBilling('PROCESSING')
+												: getActionText(PaymentPlan.FREE)
 							}
 							actionHref={isReview ? undefined : '/submit'}
 							isLoading={processingPlan === FREE?.id && isLoading}
@@ -176,7 +178,7 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 								handleCheckout(FREE as PricingConfig);
 							}}
 							selectedFlow={selectedFlow}
-							onFlowChange={handleFlowSelect}
+							onFlowChange={isReview ? undefined : handleFlowSelect}
 						>
 							{FREE && getSavingsText(FREE) && (
 								<div className="text-green-600 dark:text-green-400 text-sm font-medium">
@@ -207,13 +209,15 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 							isSelected={selectedPlan === PaymentPlan.STANDARD}
 							onSelect={handleSelectPlan}
 							actionText={
-								error
-									? tBilling('ERROR_TRY_AGAIN')
-									: !user
-										? getNotLoggedInActionText(PaymentPlan.STANDARD)
-										: processingPlan === STANDARD?.id && isLoading
-											? tBilling('PROCESSING')
-											: getActionText(PaymentPlan.STANDARD)
+								isReview
+									? t('SELECT_STANDARD')
+									: error
+										? tBilling('ERROR_TRY_AGAIN')
+										: !user
+											? getNotLoggedInActionText(PaymentPlan.STANDARD)
+											: processingPlan === STANDARD?.id && isLoading
+												? tBilling('PROCESSING')
+												: getActionText(PaymentPlan.STANDARD)
 							}
 							actionVariant="default"
 							actionHref={isReview ? undefined : '/submit'}
@@ -232,8 +236,8 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 								handleCheckout(STANDARD as PricingConfig);
 							}}
 							selectedFlow={selectedFlow}
-							onFlowChange={handleFlowSelect}
-							onOpenModal={onOpenSelectorModal}
+							onFlowChange={isReview ? undefined : handleFlowSelect}
+							onOpenModal={isReview ? undefined : onOpenSelectorModal}
 						>
 							{getSavingsText(STANDARD as PricingConfig) && (
 								<div className="text-center">
@@ -265,13 +269,15 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 							isSelected={selectedPlan === PaymentPlan.PREMIUM}
 							onSelect={handleSelectPlan}
 							actionText={
-								error
-									? tBilling('ERROR_TRY_AGAIN')
-									: !user
-										? getNotLoggedInActionText(PaymentPlan.PREMIUM)
-										: processingPlan === PREMIUM?.id && isLoading
-											? tBilling('PROCESSING')
-											: getActionText(PaymentPlan.PREMIUM)
+								isReview
+									? t('SELECT_PREMIUM')
+									: error
+										? tBilling('ERROR_TRY_AGAIN')
+										: !user
+											? getNotLoggedInActionText(PaymentPlan.PREMIUM)
+											: processingPlan === PREMIUM?.id && isLoading
+												? tBilling('PROCESSING')
+												: getActionText(PaymentPlan.PREMIUM)
 							}
 							actionVariant="default"
 							actionHref={isReview ? undefined : '/submit'}
@@ -290,8 +296,8 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 								handleCheckout(PREMIUM as PricingConfig);
 							}}
 							selectedFlow={selectedFlow}
-							onFlowChange={handleFlowSelect}
-							onOpenModal={onOpenSelectorModal}
+							onFlowChange={isReview ? undefined : handleFlowSelect}
+							onOpenModal={isReview ? undefined : onOpenSelectorModal}
 						>
 							{getSavingsText(PREMIUM as PricingConfig) && (
 								<div className="text-center">

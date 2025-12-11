@@ -101,7 +101,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 	const [showSelector, setShowSelector] = useState<boolean>(false);
 	const [billingInterval, setBillingInterval] = useState<PaymentInterval>(PaymentInterval.MONTHLY);
 	const [processingPlan, setProcessingPlan] = useState<string | null>(null);
-	const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(initialSelectedPlan ?? null);
+	const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(initialSelectedPlan ?? PaymentPlan.STANDARD);
 	const loginModal = useLoginModal();
 
 	// Ref for current processing plan
