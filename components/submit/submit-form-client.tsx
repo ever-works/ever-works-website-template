@@ -82,6 +82,7 @@ export function SubmitFormClient({ initialData, locale }: SubmitFormClientProps)
       onSubmit={handleFormSubmit}
       onBack={handleBack}
       listingProps={initialData}
+      isSubmitting={isSubmitting}
     />
   );
 }
