@@ -10,6 +10,10 @@ import Item from '../item';
 import { useSession } from 'next-auth/react';
 import { LayoutClassic } from '../layouts';
 import { UniversalPagination } from '../universal-pagination';
+import SortMenu from '../sort-menu';
+import { sortItems } from '../shared-card/utils/sort-utils';
+import type { SortOption } from '../filters/types';
+
 type ListingProps = {
 	total: number;
 	basePath: string;
@@ -17,30 +21,64 @@ type ListingProps = {
 	tags: Tag[];
 	items: ItemData[];
 };
+
+// Sort options for the popular items section
+const POPULAR_ITEMS_SORT_OPTIONS = [
+	{ value: 'popularity', label: 'POPULARITY' },
+	{ value: 'name-asc', label: 'NAME_A_Z' },
+	{ value: 'name-desc', label: 'NAME_Z_A' },
+	{ value: 'date-asc', label: 'OLDEST' }
+];
+
 export function FavoritesClient(props: ListingProps) {
 	const { data: session } = useSession();
 	const { favorites, isLoading, error } = useFavorites();
 	const t = useTranslations('common');
-	
-	// Pagination state
+	const tListing = useTranslations('listing');
+
+	// Pagination state for favorites
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 12;
-	
+
+	// Sort state for popular items (when no favorites)
+	const [popularSortBy, setPopularSortBy] = useState<SortOption>('popularity');
+	const [popularPage, setPopularPage] = useState(1);
+	const popularItemsPerPage = 12;
+
 	// Filter items to only show favorites
-	const favoriteItems = useMemo(() => 
-		props.items.filter((item) => favorites.some((fav) => fav.itemSlug === item.slug)),
+	const favoriteItems = useMemo(
+		() => props.items.filter((item) => favorites.some((fav) => fav.itemSlug === item.slug)),
 		[props.items, favorites]
 	);
-	
-	// Calculate pagination
+
+	// Calculate pagination for favorites
 	const totalPages = Math.ceil(favoriteItems.length / itemsPerPage);
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = startIndex + itemsPerPage;
 	const paginatedItems = favoriteItems.slice(startIndex, endIndex);
-	
-	// Handle page change
+
+	// Sort and paginate all items for popular items section
+	const sortedPopularItems = useMemo(() => sortItems(props.items, popularSortBy), [props.items, popularSortBy]);
+	const popularTotalPages = Math.ceil(sortedPopularItems.length / popularItemsPerPage);
+	const popularStartIndex = (popularPage - 1) * popularItemsPerPage;
+	const popularEndIndex = popularStartIndex + popularItemsPerPage;
+	const paginatedPopularItems = sortedPopularItems.slice(popularStartIndex, popularEndIndex);
+
+	// Translated sort options
+	const translatedSortOptions = POPULAR_ITEMS_SORT_OPTIONS.map((opt) => ({
+		value: opt.value,
+		label: tListing(opt.label)
+	}));
+
+	// Handle page change for favorites
 	const handlePageChange = (page: number) => {
 		setCurrentPage(page);
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	};
+
+	// Handle page change for popular items
+	const handlePopularPageChange = (page: number) => {
+		setPopularPage(page);
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
@@ -125,33 +163,67 @@ export function FavoritesClient(props: ListingProps) {
 		);
 	}
 
-	// Empty state
+	// Empty state - show message and popular items
 	if (favoriteItems.length === 0) {
 		return (
-			<div className="text-center py-12">
-				<div className="max-w-md mx-auto">
-					<div className="w-16 h-16 mx-auto mb-4 bg-linear-to-br from-gray-100 to-blue-100 dark:from-gray-900/30 dark:to-blue-900/30 rounded-full flex items-center justify-center">
-						<Star className="w-8 h-8 text-gray-500 dark:text-gray-400" />
+			<div className="space-y-12">
+				{/* Empty state message */}
+				<div className="text-center py-8">
+					<div className="max-w-md mx-auto">
+						<div className="w-16 h-16 mx-auto mb-4 bg-linear-to-br from-gray-100 to-blue-100 dark:from-gray-900/30 dark:to-blue-900/30 rounded-full flex items-center justify-center">
+							<Star className="w-8 h-8 text-gray-500 dark:text-gray-400" />
+						</div>
+						<h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+							{t('NO_FAVORITES_YET', {
+								defaultValue: 'No favorites yet'
+							})}
+						</h3>
+						<p className="text-gray-600 dark:text-gray-300">
+							{t('FAVORITES_EMPTY_DESCRIPTION', {
+								defaultValue: 'Start exploring and add items to your favorites to see them here.'
+							})}
+						</p>
 					</div>
-					<h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-						{t('NO_FAVORITES_YET', {
-							defaultValue: 'No favorites yet'
-						})}
-					</h3>
-					<p className="text-gray-600 dark:text-gray-300 mb-6">
-						{t('FAVORITES_EMPTY_DESCRIPTION', {
-							defaultValue: 'Start exploring and add items to your favorites to see them here.'
-						})}
-					</p>
-					<Link
-						href={`/`}
-						className="inline-flex items-center px-6 py-3 bg-linear-to-r from-theme-primary-600 to-theme-primary-700 hover:from-theme-primary-700 hover:to-theme-primary-800 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-					>
-						{t('EXPLORE_ITEMS', {
-							defaultValue: 'Explore Items'
-						})}
-					</Link>
 				</div>
+
+				{/* Popular items section */}
+				{props.items.length > 0 && (
+					<div className="space-y-6">
+						{/* Section header with sort */}
+						<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+							<h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+								{t('OUR_MOST_POPULAR_ITEMS', {
+									defaultValue: 'Our most popular items'
+								})}
+							</h2>
+							<SortMenu
+								options={translatedSortOptions}
+								value={popularSortBy}
+								onSortChange={(value) => setPopularSortBy(value as SortOption)}
+								ariaLabel={t('SORT_POPULAR_ITEMS', { defaultValue: 'Sort popular items' })}
+								className="w-full sm:w-auto sm:min-w-[180px]"
+							/>
+						</div>
+
+						{/* Items grid */}
+						<LayoutClassic>
+							{paginatedPopularItems.map((item) => (
+								<Item key={item.slug} {...item} />
+							))}
+						</LayoutClassic>
+
+						{/* Pagination */}
+						{popularTotalPages > 1 && (
+							<div className="flex justify-center mt-8">
+								<UniversalPagination
+									page={popularPage}
+									totalPages={popularTotalPages}
+									onPageChange={handlePopularPageChange}
+								/>
+							</div>
+						)}
+					</div>
+				)}
 			</div>
 		);
 	}
@@ -175,11 +247,7 @@ export function FavoritesClient(props: ListingProps) {
 			</LayoutClassic>
 			{totalPages > 1 && (
 				<div className="flex justify-center mt-8">
-					<UniversalPagination
-						page={currentPage}
-						totalPages={totalPages}
-						onPageChange={handlePageChange}
-					/>
+					<UniversalPagination page={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
 				</div>
 			)}
 		</div>

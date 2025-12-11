@@ -9,6 +9,7 @@ import { db, getDrizzleInstance } from '../db/drizzle';
 import { users, accounts, sessions, verificationTokens } from '../db/schema';
 import authConfig from '../../auth.config';
 import { invalidateSessionCache } from './cached-session';
+import { getClientProfileByUserId, createClientProfile } from '../db/queries/client.queries';
 export * from '../payment/config/payment-provider-manager';
 
 // Define proper interface for user objects with admin/client properties
@@ -17,6 +18,7 @@ interface ExtendedUser {
 	email?: string;
 	isAdmin?: boolean;
 	isClient?: boolean;
+	clientProfileId?: string;
 }
 
 // Check if DATABASE_URL is set and database is properly initialized
@@ -95,15 +97,49 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
     jwt: async ({ token, user, account }) => {
 
       const extendedUser = user as ExtendedUser;
-      
+
       if (extendedUser?.id && typeof extendedUser.id === "string") {
         token.userId = extendedUser.id;
       }
       if (!token.userId && typeof token.sub === "string") {
         token.userId = token.sub;
       }
+      if (extendedUser?.clientProfileId && typeof extendedUser.clientProfileId === "string") {
+        token.clientProfileId = extendedUser.clientProfileId;
+      }
       if (account?.provider) {
         token.provider = account.provider;
+      }
+
+      // For OAuth users: ensure client profile exists and populate clientProfileId
+      const isOAuthProvider = token.provider && token.provider !== 'credentials';
+      if (isOAuthProvider && !token.clientProfileId && token.userId && isDatabaseAvailable) {
+        try {
+          // Check if client profile already exists
+          let clientProfile = await getClientProfileByUserId(token.userId);
+
+          if (!clientProfile) {
+            // Create client profile for OAuth user
+            const userEmail = token.email || extendedUser?.email || '';
+            const userName = token.name || extendedUser?.email?.split('@')[0] || 'User';
+
+            if (userEmail) {
+              clientProfile = await createClientProfile({
+                userId: token.userId,
+                email: userEmail,
+                name: userName,
+                displayName: userName,
+              });
+              console.log(`[auth][jwt] Created client profile for OAuth user: ${userEmail}`);
+            }
+          }
+
+          if (clientProfile) {
+            token.clientProfileId = clientProfile.id;
+          }
+        } catch (error) {
+          console.error('[auth][jwt] Error creating/fetching client profile for OAuth user:', error);
+        }
       }
 
       if (user) {
@@ -125,16 +161,20 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
             isAdmin: token.isAdmin,
             hasUser: !!user,
             accountProvider: account?.provider,
+            hasClientProfileId: !!token.clientProfileId,
           });
         } catch {}
       }
-      
+
       return token;
     },
     session: async ({ session, token }) => {
       if (token && session.user) {
         if (typeof token.userId === "string") {
           session.user.id = token.userId;
+        }
+        if (typeof token.clientProfileId === "string") {
+          session.user.clientProfileId = token.clientProfileId;
         }
         session.user.provider = typeof token.provider === "string" ? token.provider : "credentials";
         if (typeof token.isAdmin === "boolean") {

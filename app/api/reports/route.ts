@@ -75,8 +75,16 @@ export async function POST(request: Request) {
 			return NextResponse.json({ success: false, error: 'Authentication required' }, { status: 401 });
 		}
 
-		// Get client profile (session.user.id is clientProfile.id for client users)
-		const clientProfile = await getClientProfileById(session.user.id!);
+		// Check if user has a client profile (required to submit reports)
+		if (!session.user.clientProfileId) {
+			return NextResponse.json(
+				{ success: false, error: 'Client profile required to submit reports' },
+				{ status: 403 }
+			);
+		}
+
+		// Get client profile using clientProfileId
+		const clientProfile = await getClientProfileById(session.user.clientProfileId);
 		if (!clientProfile) {
 			return NextResponse.json({ success: false, error: 'Client profile not found' }, { status: 404 });
 		}

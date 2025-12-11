@@ -2610,7 +2610,14 @@
       "FAILED_TO_LOAD_VERIFICATION": "Échec du chargement de la vérification de sécurité. Veuillez actualiser la page.",
       "VERIFICATION_EXPIRED": "La vérification de sécurité a expiré. Veuillez la compléter à nouveau.",
       "VERIFYING": "Vérification...",
-      "PLEASE_COMPLETE_VERIFICATION": "Veuillez compléter la vérification de sécurité"
+      "PLEASE_COMPLETE_VERIFICATION": "Veuillez compléter la vérification de sécurité",
+      "LOGIN_FAILED": "Échec de la connexion",
+      "ACCOUNT_NOT_FOUND": "Aucun compte trouvé avec cette adresse e-mail. Veuillez vérifier votre e-mail ou créer un nouveau compte.",
+      "INVALID_PASSWORD": "Mot de passe incorrect. Veuillez vérifier votre mot de passe et réessayer.",
+      "PROFILE_NOT_FOUND": "Profil de compte non trouvé. Veuillez contacter le support.",
+      "GENERIC_ERROR_MESSAGE": "Une erreur s'est produite. Veuillez réessayer.",
+      "RATE_LIMITED": "Trop de tentatives. Veuillez patienter quelques minutes avant de réessayer.",
+      "USE_OAUTH_PROVIDER": "Ce compte utilise la connexion sociale. Veuillez vous connecter avec Google ou GitHub."
     },
     "FORGOT_PASSWORD_PAGE": {
       "TITLE": "Mot de Passe Oublié ?",

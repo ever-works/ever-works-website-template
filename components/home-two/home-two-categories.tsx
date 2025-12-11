@@ -331,11 +331,12 @@ export function HomeTwoCategories({
     }
   }, [categories, pathname, isHomeActive, basePath]);
 
-  // Handle click outside to close popover
+  // Handle click outside to close popover with deferred listener pattern
+  // This prevents the opening click from triggering the close handler
   useEffect(() => {
     if (!isMorePopoverOpen) return;
 
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: PointerEvent) => {
       if (
         morePopoverRef.current &&
         !morePopoverRef.current.contains(event.target as Node) &&
@@ -346,8 +347,15 @@ export function HomeTwoCategories({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    // Defer listener attachment to next tick to prevent opening click from triggering close
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('pointerdown', handleClickOutside, { capture: true });
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('pointerdown', handleClickOutside, { capture: true });
+    };
   }, [isMorePopoverOpen]);
 
   // Calculate popover position when opened and on scroll/resize

@@ -15,6 +15,7 @@ import {
   comparePasswords,
   hashPassword,
   AuthProviders,
+  AuthErrorCode,
 } from "@/lib/auth/credentials";
 import {
   deletePasswordResetToken,
@@ -30,17 +31,19 @@ import {
   updateUserVerification,
   getClientAccountByEmail,
   updateClientProfileName,
+  verifyClientPassword,
 } from "@/lib/db/queries";
 import { signIn } from "@/lib/auth";
 import { generatePasswordResetToken } from "@/lib/db/tokens";
 import { sendPasswordResetEmail, sendVerificationEmailWithTemplate } from "@/lib/mail";
 import { authServiceFactory } from "@/lib/auth/services";
+import { ratelimit } from "@/lib/utils/rate-limit";
 
 const PASSWORD_MIN_LENGTH = 8;
+// Rate limiting: 5 attempts per 15 minutes per email
+const AUTH_RATE_LIMIT = 5;
+const AUTH_RATE_WINDOW_MS = 15 * 60 * 1000;
 const authProviderTypes = ['supabase', 'next-auth', 'both'] as const;
-
-// ReCAPTCHA verification is now handled client-side with React Query
-// See /api/verify-recaptcha route and useRecaptchaVerification hook
 
 const signInSchema = z.object({
   email: z.string().email().min(3).max(255),
@@ -51,33 +54,64 @@ const signInSchema = z.object({
 
 export const signInAction = validatedAction(signInSchema, async (data) => {
   try {
+    const { email, password } = data;
+
+    // Rate limiting check (by email to prevent brute force on specific accounts)
+    const rateLimitKey = `signin:${email.toLowerCase()}`;
+    const rateLimitResult = await ratelimit(rateLimitKey, AUTH_RATE_LIMIT, AUTH_RATE_WINDOW_MS);
+    if (!rateLimitResult.success) {
+      return { error: AuthErrorCode.RATE_LIMITED, ...data };
+    }
+
+    // Step 1: Validate credentials FIRST to get specific error messages
+    // (NextAuth returns generic "CredentialsSignin" which loses the specific error code)
+    const foundUser = await getUserByEmail(email);
+    const clientAccount = await getClientAccountByEmail(email);
+
+    // No account found with this email
+    if (!foundUser && !clientAccount) {
+      return { error: AuthErrorCode.ACCOUNT_NOT_FOUND, ...data };
+    }
+
+    // Check password for admin user (has passwordHash in users table)
+    if (foundUser && foundUser.passwordHash) {
+      const isValid = await comparePasswords(password, foundUser.passwordHash);
+      if (!isValid) {
+        return { error: AuthErrorCode.INVALID_PASSWORD, ...data };
+      }
+    }
+    // Check password for client user (has passwordHash in accounts table)
+    else if (clientAccount) {
+      const isValid = await verifyClientPassword(email, password);
+      if (!isValid) {
+        return { error: AuthErrorCode.INVALID_PASSWORD, ...data };
+      }
+    }
+    // OAuth-only user trying to use credentials form
+    else {
+      return { error: AuthErrorCode.USE_OAUTH_PROVIDER, ...data };
+    }
+
+    // Step 2: Credentials validated - now call NextAuth signIn to create session
     const authService = authServiceFactory(data.authProvider);
-    const { error } = await authService.signIn(data.email, data.password);
+    const { error } = await authService.signIn(email, password);
     if (error) {
-      throw error;
+      // If NextAuth fails for some other reason, return generic error
+      console.error("NextAuth signIn error:", error);
+      return { error: AuthErrorCode.GENERIC_ERROR, ...data };
     }
-    
-    // Check if user exists in users table (admin) or client_profiles table (client)
-    const foundUser = await getUserByEmail(data.email);
-    const clientAccount = await getClientAccountByEmail(data.email);
-    
-    if (foundUser) {
-      // User exists in users table = admin
+
+    // Step 3: Determine redirect based on user type
+    if (foundUser && foundUser.passwordHash) {
+      // Admin user
       return { success: true, redirect: "/admin", preserveLocale: true };
-    } else if (clientAccount) {
-      // User exists in client_profiles table = client
-      return { success: true, redirect: "/client/dashboard", preserveLocale: true };
     }
-    
-    // Fallback to client dashboard for new users
+    // Client user
     return { success: true, redirect: "/client/dashboard", preserveLocale: true };
+
   } catch (error) {
-    console.error(error);
-    return {
-      error:
-        "Invalid email or password. Please check your credentials and try again.",
-      ...data,
-    };
+    console.error("SignIn error:", error);
+    return { error: AuthErrorCode.GENERIC_ERROR, ...data };
   }
 });
 
@@ -137,6 +171,13 @@ export const signUp = validatedAction(signUpSchema, async (data) => {
   try {
     const { name, email, password } = data;
     const normalizedEmail = email.toLowerCase().trim();
+
+    // Rate limiting check (by email to prevent spam registrations)
+    const rateLimitKey = `signup:${normalizedEmail}`;
+    const rateLimitResult = await ratelimit(rateLimitKey, AUTH_RATE_LIMIT, AUTH_RATE_WINDOW_MS);
+    if (!rateLimitResult.success) {
+      return { error: AuthErrorCode.RATE_LIMITED, ...data };
+    }
 
     // OPTIMIZATION 1: Parallelize password hashing with duplicate email check
     // hashPassword is CPU-bound (~100ms), checking for existing user is I/O-bound

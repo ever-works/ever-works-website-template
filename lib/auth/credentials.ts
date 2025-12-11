@@ -1,6 +1,10 @@
 import Credentials from "next-auth/providers/credentials";
 import { getUserByEmail, logActivity, getClientAccountByEmail, verifyClientPassword, getClientProfileByUserId } from "../db/queries";
 import { ActivityType } from "../db/schema";
+import { AuthErrorCode } from "./auth-error-codes";
+
+// Re-export AuthErrorCode for backwards compatibility
+export { AuthErrorCode } from "./auth-error-codes";
 
 const SALT_ROUNDS = 10;
 
@@ -47,10 +51,10 @@ export const credentialsProvider = Credentials({
       const email = credentials.email as string;
       const password = credentials.password as string;
 
+      // Check admin user first
       const foundUser = await getUserByEmail(email);
-      
+
       if (foundUser && foundUser.passwordHash) {
-        
         const isPasswordValid = await comparePasswords(password, foundUser.passwordHash);
 
         if (isPasswordValid) {
@@ -62,20 +66,24 @@ export const credentialsProvider = Credentials({
             isAdmin: true,
           };
         }
+        // Admin user found but password is invalid
+        throw new Error(AuthErrorCode.INVALID_PASSWORD);
       }
 
+      // Check client account
       const clientAccount = await getClientAccountByEmail(email);
-      
+
       if (clientAccount) {
         const isClientPasswordValid = await verifyClientPassword(email, password);
-        
+
         if (isClientPasswordValid) {
           const clientProfile = await getClientProfileByUserId(clientAccount.userId);
           if (!clientProfile) {
-            throw new Error("Invalid email or password. Please try again.");
+            throw new Error(AuthErrorCode.PROFILE_NOT_FOUND);
           }
           const clientUser = {
-            id: clientProfile.id,
+            id: clientProfile.userId,
+            clientProfileId: clientProfile.id,
             name: clientProfile.name || clientProfile.displayName,
             email: clientProfile.email,
             image: null,
@@ -85,12 +93,16 @@ export const credentialsProvider = Credentials({
           void logActivity(ActivityType.SIGN_IN, clientProfile.id, 'client').catch(() => {});
           return clientUser;
         }
+        // Client account found but password is invalid
+        throw new Error(AuthErrorCode.INVALID_PASSWORD);
       }
 
-      throw new Error("Invalid email or password. Please try again.");
-    } catch (error: any) {
-      console.error("Authentication error:", error);
-      throw new Error(error.message || "Invalid email or password. Please try again.");
+      // No account found with this email
+      throw new Error(AuthErrorCode.ACCOUNT_NOT_FOUND);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : AuthErrorCode.GENERIC_ERROR;
+      console.error("Authentication error:", errorMessage);
+      throw new Error(errorMessage);
     }
   },
 });

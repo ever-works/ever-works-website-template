@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react';
 import { useCreateUser, useUpdateUser, useCheckUsername, useCheckEmail } from '@/hooks/use-users';
 import { useActiveRoles } from '@/hooks/use-active-roles';
 import { UserData, CreateUserRequest, UpdateUserRequest } from '@/lib/types/user';
-import { Button, Input, Select, SelectItem } from '@heroui/react';
+import { Button, Input } from '@heroui/react';
+import * as Select from '@radix-ui/react-select';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, ChevronDown, Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { cn } from '@/lib/utils';
 
 interface UserFormProps {
   user?: UserData;
@@ -366,47 +368,99 @@ export default function UserForm({ user, onSuccess, isSubmitting = false, onCanc
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-2">{t('ROLE')} *</label>
-          <Select
-            selectedKeys={formData.role ? [formData.role] : []}
-            onSelectionChange={(keys) => {
-              const selectedKey = Array.from(keys)[0] as string;
-              handleInputChange('role', selectedKey || '');
-            }}
-            placeholder={rolesLoading ? t('LOADING_ROLES') : t('SELECT_ROLE')}
+          <Select.Root
+            value={formData.role}
+            onValueChange={(value) => handleInputChange('role', value)}
             disabled={rolesLoading || isSubmittingForm}
-            isRequired
-            variant="bordered"
           >
-            {roles
-              .filter(role => role.status === 'active')
-              .map(role => (
-                <SelectItem key={role.id}>
-                  {role.name}
-                </SelectItem>
-              ))}
-          </Select>
+            <Select.Trigger
+              className={cn(
+                "flex h-10 w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm",
+                "focus:outline-none focus:ring-2 focus:ring-theme-primary-500",
+                "disabled:cursor-not-allowed disabled:opacity-50"
+              )}
+            >
+              <Select.Value placeholder={rolesLoading ? t('LOADING_ROLES') : t('SELECT_ROLE')} />
+              <Select.Icon>
+                <ChevronDown className="h-4 w-4 opacity-50" />
+              </Select.Icon>
+            </Select.Trigger>
+            <Select.Portal>
+              <Select.Content
+                className="overflow-hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+                position="popper"
+                sideOffset={4}
+              >
+                <Select.Viewport className="p-1">
+                  {roles
+                    .filter(role => role.status === 'active')
+                    .map(role => (
+                      <Select.Item
+                        key={role.id}
+                        value={role.id}
+                        className="relative flex items-center px-8 py-2 text-sm rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 outline-none data-[highlighted]:bg-gray-100 dark:data-[highlighted]:bg-gray-700"
+                      >
+                        <Select.ItemIndicator className="absolute left-2 inline-flex items-center">
+                          <Check className="h-4 w-4" />
+                        </Select.ItemIndicator>
+                        <Select.ItemText>{role.name}</Select.ItemText>
+                      </Select.Item>
+                    ))}
+                </Select.Viewport>
+              </Select.Content>
+            </Select.Portal>
+          </Select.Root>
         </div>
 
         {isEditing && (
           <div>
             <label className="block text-sm font-medium mb-2">{t('STATUS')} *</label>
-            <Select
-              selectedKeys={[formData.status]}
-              onSelectionChange={(keys) => {
-                const selectedKey = Array.from(keys)[0] as string;
-                handleInputChange('status', selectedKey);
-              }}
-              placeholder={t('SELECT_ROLE')}
+            <Select.Root
+              value={formData.status}
+              onValueChange={(value) => handleInputChange('status', value)}
               disabled={isSubmittingForm}
-              variant="bordered"
             >
-              <SelectItem key="active">
-                {t('ACTIVE')}
-              </SelectItem>
-              <SelectItem key="inactive">
-                {t('INACTIVE')}
-              </SelectItem>
-            </Select>
+              <Select.Trigger
+                className={cn(
+                  "flex h-10 w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm",
+                  "focus:outline-none focus:ring-2 focus:ring-theme-primary-500",
+                  "disabled:cursor-not-allowed disabled:opacity-50"
+                )}
+              >
+                <Select.Value placeholder={t('SELECT_STATUS')} />
+                <Select.Icon>
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </Select.Icon>
+              </Select.Trigger>
+              <Select.Portal>
+                <Select.Content
+                  className="overflow-hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+                  position="popper"
+                  sideOffset={4}
+                >
+                  <Select.Viewport className="p-1">
+                    <Select.Item
+                      value="active"
+                      className="relative flex items-center px-8 py-2 text-sm rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 outline-none data-[highlighted]:bg-gray-100 dark:data-[highlighted]:bg-gray-700"
+                    >
+                      <Select.ItemIndicator className="absolute left-2 inline-flex items-center">
+                        <Check className="h-4 w-4" />
+                      </Select.ItemIndicator>
+                      <Select.ItemText>{t('ACTIVE')}</Select.ItemText>
+                    </Select.Item>
+                    <Select.Item
+                      value="inactive"
+                      className="relative flex items-center px-8 py-2 text-sm rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 outline-none data-[highlighted]:bg-gray-100 dark:data-[highlighted]:bg-gray-700"
+                    >
+                      <Select.ItemIndicator className="absolute left-2 inline-flex items-center">
+                        <Check className="h-4 w-4" />
+                      </Select.ItemIndicator>
+                      <Select.ItemText>{t('INACTIVE')}</Select.ItemText>
+                    </Select.Item>
+                  </Select.Viewport>
+                </Select.Content>
+              </Select.Portal>
+            </Select.Root>
           </div>
         )}
       </div>
