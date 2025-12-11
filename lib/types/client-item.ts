@@ -40,6 +40,19 @@ export interface ClientItemStats {
 }
 
 /**
+ * Request to create a client item submission
+ * Required fields: name, description, source_url
+ */
+export interface ClientCreateItemRequest {
+  name: string;
+  description: string;
+  source_url: string;
+  category?: string | string[] | null;
+  tags?: string[];
+  icon_url?: string;
+}
+
+/**
  * Request to update a client item
  * Limited fields that clients can modify (excludes admin-only fields)
  */
@@ -50,6 +63,16 @@ export interface ClientUpdateItemRequest {
   category?: string | string[];
   tags?: string[];
   icon_url?: string;
+}
+
+/**
+ * Response after creating a client item
+ */
+export interface ClientCreateItemResponse {
+  success: boolean;
+  item?: ClientSubmissionData;
+  error?: string;
+  message?: string;
 }
 
 /**
