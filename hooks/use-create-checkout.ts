@@ -114,7 +114,8 @@ export const useCreateCheckoutSession = () => {
 					planId: plan.id,
 					planName: plan.name,
 					billingInterval,
-					userId: user.id
+					userId: user.id,
+					trialAmount: plan.trialAmount
 				}
 			};
 
