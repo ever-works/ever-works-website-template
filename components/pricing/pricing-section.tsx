@@ -160,12 +160,17 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 											? tBilling('PROCESSING')
 											: getActionText(PaymentPlan.FREE)
 							}
-							actionHref="/submit"
+							actionHref={isReview ? undefined : '/submit'}
 							isLoading={processingPlan === FREE?.id && isLoading}
-							isButton={isButton}
+							isButton={isReview ? false : isButton}
 							onClick={() => {
 								if (!user?.id) {
 									loginModal?.onOpen('Please sign in to continue with your purchase.');
+									return;
+								}
+								// In review mode (submit form), just select the plan
+								if (isReview) {
+									handleSelectPlan(PaymentPlan.FREE);
 									return;
 								}
 								handleCheckout(FREE as PricingConfig);
@@ -211,12 +216,17 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 											: getActionText(PaymentPlan.STANDARD)
 							}
 							actionVariant="default"
-							actionHref="/submit"
+							actionHref={isReview ? undefined : '/submit'}
 							isLoading={processingPlan === STANDARD?.id && isLoading}
-							isButton={isButton}
+							isButton={isReview ? false : isButton}
 							onClick={() => {
 								if (!user?.id) {
 									loginModal.onOpen('Please sign in to continue with your purchase.');
+									return;
+								}
+								// In review mode (submit form), just select the plan
+								if (isReview) {
+									handleSelectPlan(PaymentPlan.STANDARD);
 									return;
 								}
 								handleCheckout(STANDARD as PricingConfig);
@@ -264,12 +274,17 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 											: getActionText(PaymentPlan.PREMIUM)
 							}
 							actionVariant="default"
-							actionHref="/submit"
-							isButton={isButton}
+							actionHref={isReview ? undefined : '/submit'}
+							isButton={isReview ? false : isButton}
 							isLoading={processingPlan === PREMIUM?.id && isLoading}
 							onClick={() => {
 								if (!user?.id) {
 									loginModal.onOpen('Please sign in to continue with your purchase.');
+									return;
+								}
+								// In review mode (submit form), just select the plan
+								if (isReview) {
+									handleSelectPlan(PaymentPlan.PREMIUM);
 									return;
 								}
 								handleCheckout(PREMIUM as PricingConfig);
