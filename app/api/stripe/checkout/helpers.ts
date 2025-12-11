@@ -50,12 +50,13 @@ export function applySubscriptionConfig(
 		trialPeriodDays: number;
 	}
 ): void {
+	// Ensure all metadata values are strings (Stripe requirement)
 	params.subscription_data = {
 		metadata: {
-			userId: options.userId,
-			planId: options.planId || '',
-			planName: options.planName || '',
-			billingInterval: options.billingInterval
+			userId: String(options.userId),
+			planId: String(options.planId || ''),
+			planName: String(options.planName || ''),
+			billingInterval: String(options.billingInterval)
 		}
 	};
 
@@ -69,6 +70,23 @@ export function applySubscriptionConfig(
 		name: 'auto'
 	};
 	params.allow_promotion_codes = true;
+}
+
+/**
+ * Converts metadata values to strings as required by Stripe API.
+ * Stripe metadata only accepts string values.
+ *
+ * @param metadata - Metadata object with potentially non-string values
+ * @returns Metadata object with all values converted to strings
+ */
+function sanitizeMetadata(metadata: Record<string, any>): Record<string, string> {
+	const sanitized: Record<string, string> = {};
+	for (const [key, value] of Object.entries(metadata)) {
+		if (value !== null && value !== undefined) {
+			sanitized[key] = String(value);
+		}
+	}
+	return sanitized;
 }
 
 /**
@@ -86,6 +104,12 @@ export function createBaseCheckoutParams(options: {
 	metadata: Record<string, any>;
 	billingInterval: string;
 }): CheckoutSessionParams {
+	// Sanitize metadata to ensure all values are strings (Stripe requirement)
+	const sanitizedMetadata = sanitizeMetadata({
+		...options.metadata,
+		billingInterval: options.billingInterval
+	});
+
 	return {
 		customer: options.customerId,
 		mode: options.mode,
@@ -93,10 +117,7 @@ export function createBaseCheckoutParams(options: {
 		success_url: options.successUrl,
 		cancel_url: options.cancelUrl,
 		billing_address_collection: 'auto',
-		metadata: {
-			...options.metadata,
-			billingInterval: options.billingInterval
-		},
+		metadata: sanitizedMetadata,
 		ui_mode: 'hosted',
 		custom_text: {
 			submit: {
