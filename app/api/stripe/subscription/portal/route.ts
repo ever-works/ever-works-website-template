@@ -1,6 +1,9 @@
 import { auth, initializeStripeProvider } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import { buildUrl } from '@/lib/utils/url-cleaner';
+import { Logger } from '@/lib/logger';
+
+const logger = Logger.create('StripePortal');
 
 /**
  * @swagger
@@ -150,13 +153,11 @@ export async function POST() {
 			const errorCode = stripeError?.code || 'unknown';
 			const errorType = stripeError?.type || 'unknown';
 
-			console.error('Stripe billing portal error:', {
+			logger.error('Stripe billing portal error:', {
 				message: errorMessage,
 				code: errorCode,
 				type: errorType,
-				customerId: stripeCustomerId,
-				returnUrl: returnUrl,
-				fullError: stripeError
+				requestId: stripeError?.requestId
 			});
 
 			// Return the actual Stripe error message

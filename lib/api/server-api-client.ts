@@ -34,8 +34,7 @@ export interface FetchOptions extends RequestInit {
 
 // Optimized default configuration with pre-allocated objects
 const DEFAULT_HEADERS = {
-	'Content-Type': 'application/json',
-	'User-Agent': 'EverWorks-Server/1.0'
+	'Content-Type': 'application/json'
 } as const;
 
 const DEFAULT_CONFIG = {
@@ -69,8 +68,34 @@ async function fetchWithTimeout(url: string, options: FetchOptions = {}): Promis
 		const signal = fetchOptions.signal || timeoutController.signal;
 
 		try {
-			// Pre-merge headers for better performance
-			const headers = fetchOptions.headers ? { ...DEFAULT_HEADERS, ...fetchOptions.headers } : DEFAULT_HEADERS;
+			// Pre-merge headers and remove Content-Type for FormData
+			// Convert Headers object to plain object if needed
+			let normalizedHeaders: Record<string, string> = { ...DEFAULT_HEADERS };
+			if (fetchOptions.headers) {
+				if (fetchOptions.headers instanceof Headers) {
+					fetchOptions.headers.forEach((value, key) => {
+						normalizedHeaders[key] = value;
+					});
+				} else if (Array.isArray(fetchOptions.headers)) {
+					fetchOptions.headers.forEach(([key, value]) => {
+						normalizedHeaders[key] = value;
+					});
+				} else {
+					normalizedHeaders = { ...normalizedHeaders, ...fetchOptions.headers };
+				}
+			}
+
+			// Remove Content-Type for FormData (case-insensitive check)
+			if (fetchOptions.body instanceof FormData) {
+				const contentTypeKey = Object.keys(normalizedHeaders).find(
+					(key) => key.toLowerCase() === 'content-type'
+				);
+				if (contentTypeKey) {
+					delete normalizedHeaders[contentTypeKey];
+				}
+			}
+
+			const headers = normalizedHeaders;
 
 			const response = await fetch(url, {
 				...fetchOptions,

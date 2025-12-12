@@ -168,8 +168,8 @@ export function useSubscription() {
 	// Cancel subscription mutation
 	const cancelSubscription = useMutation({
 		mutationFn: async (data: CancelSubscriptionRequest): Promise<SubscriptionData> => {
-			const response = await serverClient.post<SubscriptionData>('/api/stripe/subscription', data, {
-				method: 'DELETE'
+			const response = await serverClient.delete<SubscriptionData>('/api/stripe/subscription', {
+				body: JSON.stringify(data)
 			});
 
 			if (!apiUtils.isSuccess(response)) {
