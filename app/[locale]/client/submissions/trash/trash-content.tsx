@@ -1,16 +1,43 @@
 'use client';
 
+import { useState, useCallback } from 'react';
 import { Container } from '@/components/ui/container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FiTrash2, FiArrowLeft, FiInbox } from 'react-icons/fi';
+import { FiTrash2, FiArrowLeft, FiInbox, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { Link } from '@/i18n/navigation';
 import { TrashItem, TrashItemSkeleton } from '@/components/submissions/trash-item';
 import { useDeletedClientItems } from '@/hooks/use-deleted-client-items';
 import { useTranslations } from 'next-intl';
+import { Button } from '@/components/ui/button';
 
 export function TrashContent() {
   const t = useTranslations('client.submissions');
-  const { items, isLoading, restoreItem, restoringItemId, total } = useDeletedClientItems();
+
+  // Pagination state
+  const [page, setPage] = useState(1);
+
+  const {
+    items,
+    isLoading,
+    isFetching,
+    restoreItem,
+    restoringItemId,
+    total,
+    totalPages,
+  } = useDeletedClientItems({ page });
+
+  // Pagination handlers
+  const nextPage = useCallback(() => {
+    if (page < totalPages) {
+      setPage(page + 1);
+    }
+  }, [page, totalPages]);
+
+  const prevPage = useCallback(() => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  }, [page]);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -89,6 +116,35 @@ export function TrashContent() {
                   </div>
                 )}
               </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    {t('SHOWING_PAGE', { page, totalPages })}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={prevPage}
+                      disabled={page === 1 || isFetching}
+                    >
+                      <FiChevronLeft className="w-4 h-4" />
+                      {t('PREVIOUS')}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={nextPage}
+                      disabled={page >= totalPages || isFetching}
+                    >
+                      {t('NEXT')}
+                      <FiChevronRight className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
