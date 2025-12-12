@@ -111,7 +111,7 @@ export function useItemVote(itemId: string) {
 			}
 
 			// Don't show error toast if user is not logged in (handled by login modal)
-			if (!error.message.includes('sign in')) {
+			if (!error.message.includes('sign in') && !error.message.includes('Authentication required')) {
 				toast.error(error.message || 'An error occurred while voting');
 			}
 		}
@@ -183,7 +183,7 @@ export function useItemVote(itemId: string) {
 
 		if (!user) {
 			loginModal.onOpen('Please sign in to vote on this item');
-			return;
+			throw new Error('Authentication required');
 		}
 
 		if (voteData?.userVote === type) {
