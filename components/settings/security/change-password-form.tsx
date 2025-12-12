@@ -103,7 +103,7 @@ function PasswordInput({ id, label, placeholder, error, register, showStrength, 
       </label>
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Lock className="h-5 w-5 text-gray-400" />
+          <Lock className="h-5 w-5 text-gray-400 dark:text-gray-500" />
         </div>
         <input
           {...register(id)}
@@ -113,7 +113,7 @@ function PasswordInput({ id, label, placeholder, error, register, showStrength, 
           aria-describedby={error ? `${id}-error` : showStrength ? `${id}-strength` : undefined}
           aria-invalid={error ? "true" : "false"}
           className={cn(
-            "block w-full pl-10 pr-10 py-3 border rounded-lg shadow-xs placeholder-gray-400 focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 transition-colors",
+            "block w-full pl-10 pr-10 py-3 border rounded-lg shadow-xs placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 transition-colors text-gray-900 dark:text-gray-100",
             error
               ? "border-red-300 dark:border-red-600 bg-red-50 dark:bg-red-900/20"
               : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
@@ -121,21 +121,22 @@ function PasswordInput({ id, label, placeholder, error, register, showStrength, 
         />
         <button
           type="button"
-          className="absolute inset-y-0 right-0 pr-3 flex items-center"
+          className="absolute inset-y-0 right-0 pr-3 flex items-center hover:opacity-70 transition-opacity"
           onClick={() => setShowPassword(!showPassword)}
           aria-label={showPassword ? "Hide password" : "Show password"}
+          tabIndex={0}
         >
           {showPassword ? (
-            <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+            <EyeOff className="h-5 w-5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300" />
           ) : (
-            <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+            <Eye className="h-5 w-5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300" />
           )}
         </button>
       </div>
       {error && (
         <div id={`${id}-error`} className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400" role="alert">
-          <AlertCircle className="w-4 h-4" />
-          {error}
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          <span>{error}</span>
         </div>
       )}
       {showStrength && value && (
@@ -211,7 +212,7 @@ export function ChangePasswordForm() {
     <Card className="border border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xs shadow-lg">
       <CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-800">
         <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-          <Shield className="w-5 h-5 text-theme-primary-500" />
+          <Shield className="w-5 h-5 text-theme-primary-500 flex-shrink-0" />
           Change Password
         </CardTitle>
         <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
@@ -246,11 +247,11 @@ export function ChangePasswordForm() {
             register={register}
           />
 
-          <div className="flex gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <Button
               type="submit"
               disabled={!isValid || isLoading}
-              className="flex-1 bg-theme-primary-600 hover:bg-theme-primary-700 text-white font-medium py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 bg-theme-primary-600 hover:bg-theme-primary-700 text-white font-medium py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:ring-offset-2"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">
@@ -265,7 +266,7 @@ export function ChangePasswordForm() {
               type="button"
               variant="outline"
               onClick={() => reset()}
-              className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              className="sm:flex-shrink-0 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
             >
               Cancel
             </Button>
