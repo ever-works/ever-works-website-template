@@ -163,7 +163,7 @@ export default function BillingPage() {
 					{activeTab === 'overview' && (
 						<div className="space-y-8">
 							{/* Current Subscription Section */}
-							<div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-3 shadow-xs">
+							<div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
 								<div className="flex items-center justify-between mb-3">
 									<h2 className="text-base font-semibold text-gray-900 dark:text-slate-100">
 										{t('CURRENT_SUBSCRIPTION')}
@@ -196,7 +196,7 @@ export default function BillingPage() {
 								)}
 							</div>
 							{/* Recent Activity */}
-							<div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-xs">
+							<div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
 								<h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-6">
 									{t('RECENT_ACTIVITY')}
 								</h2>
@@ -208,7 +208,7 @@ export default function BillingPage() {
 										{payments.slice(0, 3).map((payment) => (
 											<div
 												key={payment.id}
-												className="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-800 rounded-lg hover:bg-gray-100 transition-colors shadow-xs border border-gray-200 dark:border-slate-700"
+												className="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-800 rounded-lg hover:bg-gray-100 transition-colors shadow-sm border border-gray-200 dark:border-slate-700"
 											>
 												<div className="flex items-center gap-4">
 													<div className="w-10 h-10 bg-theme-primary-100 dark:bg-theme-primary-10 rounded-lg flex items-center justify-center">
@@ -278,7 +278,7 @@ export default function BillingPage() {
 							{filteredPayments.length === 0 ? (
 								<PaymentsEmptyState />
 							) : (
-								<div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-xs">
+								<div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
 									<div className="space-y-4">
 										{filteredPayments.map((payment) => (
 											<PaymentCard key={payment.id} payment={payment} />
@@ -290,7 +290,7 @@ export default function BillingPage() {
 					)}
 
 					{activeTab === 'subscriptions' && (
-						<div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-xs">
+						<div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
 							<div className="flex items-center justify-between mb-6">
 								<h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100">
 									{t('SUBSCRIPTION_HISTORY')}
