@@ -6,6 +6,7 @@ export const mockStats: UserStats = {
   totalViews: 1247,
   totalVotesReceived: 156,
   totalCommentsReceived: 89,
+  viewsAvailable: true, // Mock data has views available for demo
   recentActivity: {
     newSubmissions: 3,
     newViews: 234,
