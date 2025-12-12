@@ -31,13 +31,15 @@ interface SponsorAdResponse {
 	message?: string;
 }
 
+type SponsorAdSortBy = "createdAt" | "updatedAt" | "startDate" | "endDate" | "status";
+
 interface UseAdminSponsorAdsOptions {
 	page?: number;
 	limit?: number;
 	status?: SponsorAdStatus;
 	interval?: SponsorAdIntervalType;
 	search?: string;
-	sortBy?: "createdAt" | "updatedAt" | "startDate" | "endDate" | "status";
+	sortBy?: SponsorAdSortBy;
 	sortOrder?: "asc" | "desc";
 }
 
@@ -59,7 +61,7 @@ interface UseAdminSponsorAdsReturn {
 	statusFilter: SponsorAdStatus | undefined;
 	intervalFilter: SponsorAdIntervalType | undefined;
 	searchTerm: string;
-	sortBy: string;
+	sortBy: SponsorAdSortBy;
 	sortOrder: "asc" | "desc";
 
 	// Actions
@@ -72,7 +74,7 @@ interface UseAdminSponsorAdsReturn {
 	setStatusFilter: (status: SponsorAdStatus | undefined) => void;
 	setIntervalFilter: (interval: SponsorAdIntervalType | undefined) => void;
 	setSearchTerm: (term: string) => void;
-	setSortBy: (sortBy: string) => void;
+	setSortBy: (sortBy: SponsorAdSortBy) => void;
 	setSortOrder: (order: "asc" | "desc") => void;
 	setCurrentPage: (page: number) => void;
 
@@ -203,7 +205,7 @@ export function useAdminSponsorAds(
 		SponsorAdIntervalType | undefined
 	>(initialInterval);
 	const [searchTerm, setSearchTerm] = useState(initialSearch);
-	const [sortBy, setSortBy] = useState(initialSortBy);
+	const [sortBy, setSortBy] = useState<SponsorAdSortBy>(initialSortBy);
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">(initialSortOrder);
 
 	// Query client for cache management
