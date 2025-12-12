@@ -9,6 +9,7 @@ import { dirExists, fsExists, getContentPath } from './lib';
 import { unstable_cache } from 'next/cache';
 import { PaymentInterval, PaymentProvider } from './constants';
 import { CACHE_TAGS, CACHE_TTL as CONTENT_CACHE_TTL } from './cache-config';
+import { Collection } from '@/types/collection';
 
 // Security utility functions
 function validateLanguageCode(lang: string): boolean {
@@ -141,6 +142,7 @@ export interface ItemData {
 	source_url: string;
 	category: string | Category | Category[] | string[];
 	tags: string[] | Tag[];
+	collections?: string[] | Collection[];
 	featured?: boolean;
 	icon_url?: string;
 	updated_at: string; // raw string timestamp
@@ -348,7 +350,7 @@ async function parseTranslation(base: string, filename: string) {
 }
 
 async function readCollection<T extends Identifiable>(
-	type: 'categories' | 'tags',
+	type: 'categories' | 'tags' | 'collections',
 	options: FetchOptions = {}
 ): Promise<Map<string, T>> {
 	try {
@@ -399,6 +401,10 @@ async function readTags(options: FetchOptions): Promise<Map<string, Tag>> {
 	return readCollection<Tag>('tags', options);
 }
 
+async function readCollections(options: FetchOptions): Promise<Map<string, Collection>> {
+	return readCollection<Collection>('collections', options);
+}
+
 function populate<T extends Identifiable>(item: string | T, collection: Map<string, T & { count?: number }>): T {
 	const id = typeof item === 'string' ? item : item.id;
 	const name = typeof item === 'string' ? item : item.name;
@@ -423,12 +429,37 @@ function populateTag(tag: string | Tag, tags: Map<string, Tag>) {
 	return populate<Tag>(tag, tags);
 }
 
+function populateCollection(collection: string | Collection, collections: Map<string, Collection>): Collection {
+	const id = typeof collection === 'string' ? collection : collection.id;
+	const name = typeof collection === 'string' ? collection : collection.name;
+	
+	const populated = collections.get(id);
+	if (populated) {
+		// Increment item_count for the collection
+		populated.item_count = (populated.item_count || 0) + 1;
+		return populated;
+	} else {
+		// Create minimal collection with required fields
+		const newCollection: Collection = {
+			id,
+			name,
+			slug: id, // Use id as slug fallback
+			description: '',
+			item_count: 1,
+			isActive: true
+		};
+		collections.set(id, newCollection);
+		return newCollection;
+	}
+}
+
 // Return type for fetchItems function
 interface FetchItemsResult {
 	total: number;
 	items: ItemData[];
 	categories: Category[];
 	tags: Tag[];
+	collections: Collection[];
 }
 
 export async function fetchItems(options: FetchOptions = {}): Promise<FetchItemsResult> {
@@ -447,13 +478,15 @@ export async function fetchItems(options: FetchOptions = {}): Promise<FetchItems
 			total: 0,
 			items: [],
 			categories: [],
-			tags: []
+			tags: [],
+			collections: []
 		};
 	}
 	
 	const files = await fs.promises.readdir(dest);
 	const categories = await readCategories(options);
 	const tags = await readTags(options);
+	const collections = await readCollections(options);
 
 	const itemsPromises = files.map(async (slug) => {
 		try {
@@ -476,6 +509,10 @@ export async function fetchItems(options: FetchOptions = {}): Promise<FetchItems
 
 			if (Array.isArray(item.tags)) {
 				item.tags = item.tags.map((tag) => populateTag(tag, tags));
+			}
+			
+			if (Array.isArray(item.collections)) {
+				item.collections = item.collections.map((collection) => populateCollection(collection, collections));
 			}
 
 			if (Array.isArray(item.category)) {
@@ -506,7 +543,8 @@ export async function fetchItems(options: FetchOptions = {}): Promise<FetchItems
 			return b.updatedAt.getDate() - a.updatedAt.getDate();
 		}),
 		categories: Array.from(categories.values()),
-		tags: sortedTags
+		tags: sortedTags,
+		collections: Array.from(collections.values())
 	};
 }
 
@@ -1149,7 +1187,7 @@ export const getCachedItems = async (options: FetchOptions = {}) => {
 		['items', locale],
 		{
 			revalidate: CONTENT_CACHE_TTL.CONTENT,
-			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.CATEGORIES, CACHE_TAGS.TAGS, CACHE_TAGS.ITEMS_LOCALE(locale)],
+			tags: [CACHE_TAGS.CONTENT, CACHE_TAGS.ITEMS, CACHE_TAGS.CATEGORIES, CACHE_TAGS.TAGS, CACHE_TAGS.COLLECTIONS, CACHE_TAGS.ITEMS_LOCALE(locale)],
 		}
 	)();
 };
