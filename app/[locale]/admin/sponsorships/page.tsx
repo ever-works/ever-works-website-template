@@ -14,13 +14,7 @@ import {
 	ModalBody,
 	ModalFooter,
 } from "@heroui/react";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectItem } from "@/components/ui/select";
 import {
 	CheckCircle,
 	XCircle,
@@ -213,23 +207,20 @@ export default function AdminSponsorshipsPage() {
 						</div>
 						<div className="w-full md:w-48">
 							<Select
-								value={statusFilter || "all"}
-								onValueChange={(value) =>
-									setStatusFilter(value === "all" ? undefined : (value as SponsorAdStatus))
-								}
+								selectedKeys={statusFilter ? [statusFilter] : ["all"]}
+								onSelectionChange={(keys) => {
+									const value = keys[0];
+									setStatusFilter(value === "all" ? undefined : (value as SponsorAdStatus));
+								}}
+								placeholder={t("FILTER_BY_STATUS")}
 							>
-								<SelectTrigger>
-									<SelectValue placeholder={t("FILTER_BY_STATUS")} />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="all">{t("ALL_STATUSES")}</SelectItem>
-									<SelectItem value="pending">{t("STATUS_PENDING")}</SelectItem>
-									<SelectItem value="approved">{t("STATUS_APPROVED")}</SelectItem>
-									<SelectItem value="active">{t("STATUS_ACTIVE")}</SelectItem>
-									<SelectItem value="rejected">{t("STATUS_REJECTED")}</SelectItem>
-									<SelectItem value="expired">{t("STATUS_EXPIRED")}</SelectItem>
-									<SelectItem value="cancelled">{t("STATUS_CANCELLED")}</SelectItem>
-								</SelectContent>
+								<SelectItem value="all">{t("ALL_STATUSES")}</SelectItem>
+								<SelectItem value="pending">{t("STATUS_PENDING")}</SelectItem>
+								<SelectItem value="approved">{t("STATUS_APPROVED")}</SelectItem>
+								<SelectItem value="active">{t("STATUS_ACTIVE")}</SelectItem>
+								<SelectItem value="rejected">{t("STATUS_REJECTED")}</SelectItem>
+								<SelectItem value="expired">{t("STATUS_EXPIRED")}</SelectItem>
+								<SelectItem value="cancelled">{t("STATUS_CANCELLED")}</SelectItem>
 							</Select>
 						</div>
 					</div>
