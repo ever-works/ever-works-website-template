@@ -15,18 +15,17 @@ import React, {
   useState,
 } from "react";
 import ReactDOM from "react-dom";
-import Image from "next/image";
 import clsx from "clsx";
 import { usePortal } from "@/hooks/use-portal";
 import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
 
 // Style constants
 const SCROLL_CONTAINER_STYLES = clsx(
-  "relative flex items-center gap-2 sm:gap-3 overflow-x-auto pb-4 pr-8 scroll-smooth",
+  "relative flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-none py-1 scroll-smooth",
   "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
   "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-1",
   "after:bg-linear-to-r after:from-transparent after:via-blue-100/20 after:to-transparent",
-  "dark:after:via-blue-900/10"
+  "dark:after:via-blue-900/10",
 );
 
 const SCROLL_FADE_LEFT = clsx(
@@ -37,21 +36,31 @@ const SCROLL_FADE_LEFT = clsx(
 );
 
 const SCROLL_FADE_RIGHT = clsx(
-  "absolute right-0 top-0 bottom-4 w-16 pointer-events-none z-5",
-  "bg-linear-to-l from-white via-white/80 to-transparent",
-  "dark:from-gray-900 dark:via-gray-900/80",
-  "opacity-0 transition-opacity duration-300"
+  "absolute right-0 top-0 bottom-4 w-16 pointer-events-none",
 );
 
 const STICKY_LEFT_STYLES = clsx(
-  "sticky left-0 shrink-0 z-10 pr-7",
-  "bg-linear-to-r from-white via-white to-transparent",
-  "dark:from-gray-900 dark:via-gray-900"
+  "sticky left-0 shrink-0 z-10 pr-0 py-0",
+  "bg-gradient-to-r from-white/20 via-white/10 to-transparent",
+  "dark:from-[#172030]/30 dark:via-[#192232]/10 to-transparent",
+  "backdrop-blur-sm rounded-r-full"
 );
 
 const CATEGORIES_WRAPPER_BASE = "flex items-center gap-2 sm:gap-3 transition-all duration-500";
 const CATEGORIES_WRAPPER_COLLAPSED = clsx(CATEGORIES_WRAPPER_BASE, "flex-nowrap");
 const CATEGORIES_WRAPPER_EXPANDED = clsx(CATEGORIES_WRAPPER_BASE, "flex-wrap");
+
+const NAV_BUTTON_STYLES = clsx(
+  "h-8 w-8 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center",
+  "border border-gray-200 dark:border-gray-700 shadow-md hover:shadow-lg",
+  "hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200",
+  "focus:outline-none focus:ring-0 focus:ring-offset-0",
+  "focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0",
+  "active:outline-none active:ring-0",
+  "disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none",
+  "shrink-0 flex-shrink-0"
+);
+const NAV_BUTTON_ICON = "w-4 h-4 text-gray-600 dark:text-gray-400";
 
 type Home2CategoriesProps = {
   categories: Category[];
@@ -96,6 +105,43 @@ const useCategoryState = (categories: Category[]) => {
   };
 };
 
+// Navigation Button Component
+const ScrollButton = memo(React.forwardRef<HTMLButtonElement, {
+  direction: 'left' | 'right';
+  onClick: () => void;
+  disabled: boolean;
+  visible: boolean;
+}>(({ direction, onClick, disabled, visible }, ref) => {
+  // Hide button when disabled or not visible
+  if (disabled || !visible) {
+    return null;
+  }
+
+  return (
+    <button
+      ref={ref}
+      onClick={onClick}
+      className={cn(
+        NAV_BUTTON_STYLES,
+        "transition-opacity duration-300"
+      )}
+      aria-label={`Scroll ${direction}`}
+    >
+      <svg
+        className={NAV_BUTTON_ICON}
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        style={direction === 'left' ? {} : { transform: 'rotate(180deg)' }}
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+  );
+}));
+
+ScrollButton.displayName = "ScrollButton";
+
 // Memoized components
 const CategoryButton = memo(
   React.forwardRef<HTMLDivElement, CategoryButtonProps>(
@@ -138,13 +184,13 @@ const CategoryButton = memo(
       const button = useMemo(
         () => (
           onClick ? (
-            // Filter mode: Plain button with onClick, no navigation
+            // Filter mode: Plain button with onClick - NO NAVIGATION
             <Button
-              onPress={onClick}
+              onPress={() => onClick()}
               className={cn(
-                "group h-7 sm:h-9 whitespace-nowrap py-1 sm:py-1.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-300 ease-in-out hover:scale-105",
+                "group h-7 sm:h-9 whitespace-nowrap py-1 sm:py-1.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-300 ease-in-out focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0",
                 {
-                  "bg-linear-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20 ring-2 ring-white/20 dark:ring-blue-500/30":
+                  "bg-linear-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20":
                     isActive,
                   "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700/70 bg-white dark:bg-gray-800/90 border border-gray-100 dark:border-gray-700 shadow-xs hover:shadow-md":
                     !isActive,
@@ -154,14 +200,14 @@ const CategoryButton = memo(
               {buttonContent}
             </Button>
           ) : (
-            // Navigation mode: Button as Link with href
+            // Navigation mode: Button as Link - CLIENT-SIDE NAVIGATION
             <Button
               as={Link}
               href={href}
               className={cn(
-                "group h-7 sm:h-9 whitespace-nowrap py-1 sm:py-1.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-300 ease-in-out hover:scale-105",
+                "group h-7 sm:h-9 whitespace-nowrap py-1 sm:py-1.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-300 ease-in-out focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0",
                 {
-                  "bg-linear-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20 ring-2 ring-white/20 dark:ring-blue-500/30":
+                  "bg-linear-to-r from-theme-primary-500 to-theme-primary-600 dark:from-theme-primary-600 dark:to-theme-primary-700 text-white border-none shadow-md shadow-blue-500/20 dark:shadow-theme-primary-700/20":
                     isActive,
                   "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700/70 bg-white dark:bg-gray-800/90 border border-gray-100 dark:border-gray-700 shadow-xs hover:shadow-md":
                     !isActive,
@@ -196,6 +242,96 @@ const CategoryButton = memo(
 
 CategoryButton.displayName = "CategoryButton";
 
+// Custom hook for carousel visibility detection
+const useCarouselVisibility = (
+  containerRef: React.RefObject<HTMLDivElement>,
+  itemCount: number,
+  showAllCategories: boolean
+) => {
+  const [visibleRange, setVisibleRange] = useState({ start: 0, end: 0 });
+  const [hiddenIndices, setHiddenIndices] = useState<number[]>([]);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const itemWidthsRef = useRef<number[]>([]);
+  const measureItems = useCallback(() => {
+    if (!containerRef.current || showAllCategories) return;
+    const container = containerRef.current;
+    const wrapper = container.querySelector('[data-categories-wrapper]');
+    if (!wrapper) return;
+    
+    const children = Array.from(wrapper.children) as HTMLElement[];
+    if (!children.length) return;
+    
+    // Get actual gap from computed styles
+    const computedStyle = window.getComputedStyle(wrapper);
+    const gap = parseFloat(computedStyle.gap) || 8;
+    
+    // measure widths
+    itemWidthsRef.current = children.map((child) => child.offsetWidth);
+    let totalWidth = 0;
+    let startIndex = 0;
+    let endIndex = children.length - 1;
+    // start index
+    for (let i = 0; i < itemWidthsRef.current.length; i++) {
+      totalWidth += itemWidthsRef.current[i];
+      if (totalWidth > container.scrollLeft) {
+        startIndex = i;
+        break;
+      }
+    }
+    // end index
+    let totalOffset = 0;
+    endIndex = children.length - 1; // default to last
+    for (let i = 0; i < itemWidthsRef.current.length; i++) {
+      totalOffset += itemWidthsRef.current[i] + gap;
+      if (totalOffset > container.scrollLeft + container.clientWidth) {
+        endIndex = i - 1 >= 0 ? i - 1 : 0; // last fully visible
+        break;
+      }
+    }
+
+    setVisibleRange({ start: startIndex, end: endIndex });
+
+    const hidden = [];
+    for (let i = endIndex + 1; i < itemCount; i++) {
+      hidden.push(i);
+    }
+    setHiddenIndices(hidden);
+
+    setCanScrollLeft(container.scrollLeft > 5);
+    setCanScrollRight(container.scrollLeft < container.scrollWidth - container.clientWidth - 5);
+  }, [containerRef, itemCount, showAllCategories]);
+
+  useEffect(() => {
+    if (!containerRef.current || showAllCategories) return;
+
+    const container = containerRef.current;
+    const handleScroll = () => measureItems();
+
+    container.addEventListener("scroll", handleScroll);
+
+    const resizeObserver = new ResizeObserver(measureItems);
+    resizeObserver.observe(container);
+
+    // initial measurement
+    measureItems();
+
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+      resizeObserver.disconnect();
+    };
+  }, [containerRef, measureItems, showAllCategories]);
+
+  return {
+    visibleRange,
+    hiddenIndices,
+    canScrollLeft,
+    canScrollRight,
+    measureItems,
+  };
+};
+
+
 export function HomeTwoCategories({
   categories,
   basePath,
@@ -206,34 +342,92 @@ export function HomeTwoCategories({
   totalItems,
   showAllCategories = false,
 }: Home2CategoriesProps) {
-
   const { categoriesEnabled } = useCategoriesEnabled();
   const t = useTranslations("listing");
   const tCommon = useTranslations("common");
   const router = useRouter();
-
   // Use totalItems prop for All Categories button, fallback to calculated value
   const { totalItems: calculatedTotalItems, isHomeActive, pathname } = useCategoryState(categories);
   const allCategoriesCount = totalItems ?? calculatedTotalItems;
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [hiddenCategories, setHiddenCategories] = useState<Category[]>([]);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
   const [isMorePopoverOpen, setIsMorePopoverOpen] = useState(false);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const categoriesRef = useRef<(HTMLDivElement | null)[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
   const morePopoverRef = useRef<HTMLDivElement>(null);
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
-  const rafId = useRef<number | null>(null);
   const portalTarget = usePortal('category-popover-portal');
+  const rafId = useRef<number | null>(null);
+  // Track all category elements
+  const categoryElementsRef = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  // Navigation button refs
+  const leftButtonRef = useRef<HTMLButtonElement>(null);
+  const rightButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Use carousel visibility detection
+  const {
+    visibleRange,
+    hiddenIndices,
+    canScrollLeft,
+    canScrollRight,
+    measureItems,
+  } = useCarouselVisibility(
+    scrollContainerRef,
+    categories.length + 1, // +1 for "All Categories" button
+    showAllCategories
+  );
+
+  // Scroll functions
+  const scrollLeft = useCallback(() => {
+    if (!scrollContainerRef.current) return;
+
+    const container = scrollContainerRef.current;
+    const scrollAmount = container.clientWidth * 0.75;
+
+    container.scrollBy({
+      left: -scrollAmount,
+      behavior: 'smooth'
+    });
+  }, []);
+
+  const scrollRight = useCallback(() => {
+    if (!scrollContainerRef.current) return;
+
+    const container = scrollContainerRef.current;
+    const scrollAmount = container.clientWidth * 0.75;
+
+    container.scrollBy({
+      left: scrollAmount,
+      behavior: 'smooth'
+    });
+  }, []);
+
+  // Wheel scrolling for horizontal scroll
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const onWheel = (e: WheelEvent) => {
+      // Only apply horizontal scroll for vertical wheel
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault(); // Stop vertical scrolling
+        container.scrollBy({
+          left: e.deltaY, // scroll horizontally
+          behavior: 'smooth', // smooth scrolling
+        });
+      }
+    };
+
+    container.addEventListener('wheel', onWheel, { passive: false });
+
+    return () => container.removeEventListener('wheel', onWheel);
+  }, [scrollContainerRef]);
 
   const renderCategory = useCallback(
     (category: Category, index?: number) => {
       if (mode === "filter") {
         const isActive = selectedCategories.includes(category.id);
         const displayName = category.name;
-
         return (
           <CategoryButton
             key={category.id}
@@ -244,11 +438,11 @@ export function HomeTwoCategories({
             isTextTruncated
             fullName={category.name}
             onClick={() => onCategoryToggle?.(category.id)}
-            ref={
-              index !== undefined
-                ? (el) => { categoriesRef.current[index] = el; }
-                : undefined
-            }
+            ref={(el) => {
+              if (el && index !== undefined) {
+                categoryElementsRef.current.set(category.id, el);
+              }
+            }}
           />
         );
       } else {
@@ -267,11 +461,11 @@ export function HomeTwoCategories({
             count={category.count || 0}
             isTextTruncated
             fullName={category.name}
-            ref={
-              index !== undefined
-                ? (el) => { categoriesRef.current[index] = el; }
-                : undefined
-            }
+            ref={(el) => {
+              if (el && index !== undefined) {
+                categoryElementsRef.current.set(category.id, el);
+              }
+            }}
           />
         );
       }
@@ -279,57 +473,19 @@ export function HomeTwoCategories({
     [basePath, pathname, mode, selectedCategories, onCategoryToggle]
   );
 
-  const categoriesList = useMemo(
-    () => categories.map((category, index) => renderCategory(category, index)),
-    [categories, renderCategory]
-  );
+  // Get hidden categories based on hidden indices
+  const hiddenCategories = useMemo(() => {
+    return hiddenIndices
+      .map(index => categories[index])
+      .filter(Boolean);
+  }, [categories, hiddenIndices]);
 
-  // Update scroll indicators
-  const updateScrollIndicators = useCallback(() => {
-    if (scrollContainerRef.current && !showAllCategories) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-      setCanScrollLeft(scrollLeft > 10);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-    } else {
-      setCanScrollLeft(false);
-      setCanScrollRight(false);
-    }
-  }, [showAllCategories]);
-
-  // Initialize and update scroll indicators
-  useEffect(() => {
-    updateScrollIndicators();
-    const container = scrollContainerRef.current;
-    if (container) {
-      const resizeObserver = new ResizeObserver(updateScrollIndicators);
-      resizeObserver.observe(container);
-      return () => resizeObserver.disconnect();
-    }
-  }, [updateScrollIndicators, categories]);
-
-  // Fix flickering: Reset hiddenCategories when toggling between collapsed/expanded views
-  useEffect(() => {
-    setHiddenCategories([]);
-    setCanScrollLeft(false);
-    setCanScrollRight(false);
-  }, [showAllCategories]);
-
-  useEffect(() => {
-    if (isHomeActive) {
-      setSelectedCategory("all");
-    } else {
-      const currentCategory = categories.find((category) => {
-        const href = basePath
-          ? `${basePath}/${category.id}`
-          : `/categories/${category.id}`;
-        return pathname === encodeURI(href) || pathname.startsWith(encodeURI(href) + '/');
-      });
-
-      if (currentCategory) {
-        setSelectedCategory(currentCategory.id);
-      }
-    }
-  }, [categories, pathname, isHomeActive, basePath]);
+  // Calculate which categories to show (visible range)
+  const visibleCategories = useMemo(() => {
+    if (showAllCategories) return categories;
+    // Show all items up to visibleRange.end (including those that might be partially visible)
+    return categories.slice(0, Math.min(categories.length, visibleRange.end + 1));
+  }, [categories, showAllCategories, visibleRange.end]);
 
   // Handle click outside to close popover with deferred listener pattern
   // This prevents the opening click from triggering the close handler
@@ -341,7 +497,11 @@ export function HomeTwoCategories({
         morePopoverRef.current &&
         !morePopoverRef.current.contains(event.target as Node) &&
         triggerButtonRef.current &&
-        !triggerButtonRef.current.contains(event.target as Node)
+        !triggerButtonRef.current.contains(event.target as Node) &&
+        leftButtonRef.current &&
+        !leftButtonRef.current.contains(event.target as Node) &&
+        rightButtonRef.current &&
+        !rightButtonRef.current.contains(event.target as Node)
       ) {
         setIsMorePopoverOpen(false);
       }
@@ -358,7 +518,7 @@ export function HomeTwoCategories({
     };
   }, [isMorePopoverOpen]);
 
-  // Calculate popover position when opened and on scroll/resize
+  // Calculate popover position - SIMPLIFIED FIX
   useEffect(() => {
     if (!isMorePopoverOpen || !triggerButtonRef.current) return;
 
@@ -379,10 +539,8 @@ export function HomeTwoCategories({
         }
       });
     };
-
     // Calculate initial position
     updatePosition();
-
     // Update position on scroll and resize
     window.addEventListener('scroll', updatePosition, true); // true = capture phase
     window.addEventListener('resize', updatePosition);
@@ -391,13 +549,41 @@ export function HomeTwoCategories({
       // Clean up event listeners
       window.removeEventListener('scroll', updatePosition, true);
       window.removeEventListener('resize', updatePosition);
-
       // Cancel any pending animation frame
       if (rafId.current !== null) {
         cancelAnimationFrame(rafId.current);
       }
     };
   }, [isMorePopoverOpen]);
+
+  // Reset when showAllCategories changes
+  useEffect(() => {
+    if (showAllCategories) {
+      // Clear measurements when switching to expanded view
+      categoryElementsRef.current.clear();
+    } else {
+      // Re-measure when switching back to carousel view
+      setTimeout(measureItems, 100);
+    }
+  }, [showAllCategories, measureItems]);
+
+  // Update selected category based on pathname
+  useEffect(() => {
+    if (isHomeActive) {
+      setSelectedCategory("all");
+    } else {
+      const currentCategory = categories.find((category) => {
+        const href = basePath
+          ? `${basePath}/${category.id}`
+          : `/categories/${category.id}`;
+        return pathname === encodeURI(href) || pathname.startsWith(encodeURI(href) + '/');
+      });
+
+      if (currentCategory) {
+        setSelectedCategory(currentCategory.id);
+      }
+    }
+  }, [categories, pathname, isHomeActive, basePath]);
 
   // Don't render if categories are disabled
   if (!categoriesEnabled) {
@@ -430,11 +616,9 @@ export function HomeTwoCategories({
     }
   };
 
-
-
   return (
     <div className="space-y-3 sm:space-y-5">
-      {/* Mobile Select Dropdown - Enhanced */}
+      {/* Mobile Select Dropdown */}
       <div className="md:hidden w-full px-1">
         <div className="relative">
           <select
@@ -460,43 +644,11 @@ export function HomeTwoCategories({
         </div>
       </div>
 
-      {/* Desktop Categories - Enhanced */}
+      {/* Desktop Categories - Carousel Approach */}
       <div className="hidden md:block">
-        <div
+        <div className="relative rounded-xl overflow-hidden py-2">
+          <div
             ref={scrollContainerRef}
-            onScroll={(e) => {
-              // Only track scroll when in collapsed mode
-              if (scrollContainerRef.current && !showAllCategories) {
-                const container = e.currentTarget;
-                const containerRect = container.getBoundingClientRect();
-                // Add threshold to detect categories earlier (50px before they're fully hidden)
-                const visibilityThreshold = 50;
-
-                const visible: string[] = [];
-                const hidden: Category[] = [];
-
-                categories.forEach((category, index) => {
-                  const el = categoriesRef.current[index];
-                  if (el) {
-                    const rect = el.getBoundingClientRect();
-
-                    // Check if element is visible within container bounds with threshold
-                    const isVisible =
-                      rect.left >= containerRect.left - visibilityThreshold &&
-                      rect.right <= containerRect.right + visibilityThreshold;
-
-                    if (isVisible) {
-                      visible.push(category.id);
-                    } else {
-                      hidden.push(category);
-                    }
-                  }
-                });
-
-                setHiddenCategories(hidden);
-                updateScrollIndicators();
-              }
-            }}
             className={showAllCategories ? "relative pb-4 pr-8 transition-all duration-500" : SCROLL_CONTAINER_STYLES}
             role="region"
             aria-label="Categories filter"
@@ -509,97 +661,138 @@ export function HomeTwoCategories({
                 aria-hidden="true"
               />
             )}
-            {!showAllCategories && canScrollRight && (
+            {!showAllCategories && (canScrollRight || hiddenCategories.length > 0) && (
               <div
                 className={SCROLL_FADE_RIGHT}
-                style={{ opacity: canScrollRight ? 1 : 0 }}
+                style={{ opacity: (canScrollRight || hiddenCategories.length > 0) ? 1 : 0 }}
                 aria-hidden="true"
               />
             )}
 
-            <div className={showAllCategories ? CATEGORIES_WRAPPER_EXPANDED : CATEGORIES_WRAPPER_COLLAPSED}>
-              <div className={showAllCategories ? "" : STICKY_LEFT_STYLES}>
-                <style jsx global>{`
-                  .hover-lift {
-                    transition: transform 0.2s ease;
-                  }
-                  .hover-lift:hover {
-                    transform: translateY(-1px);
-                  }
-                `}</style>
-                <CategoryButton
-                  href={mode === "filter" ? "#" : (resetPath || "/")}
-                  isActive={mode === "filter" ? selectedCategories.length === 0 : isHomeActive}
-                  displayName={t("ALL_CATEGORIES")}
-                  count={allCategoriesCount}
-                  onClick={mode === "filter" ? () => onCategoryToggle?.("clear-all") : undefined}
-                />
-              </div>
-              {categoriesList}
-            </div>
-            <div className="sticky right-0 shrink-0 bg-linear-to-l">
-              {hiddenCategories.length > 0 && (
-                <div className="relative">
-                  {/* Trigger Button */}
-                  <Button
-                    ref={triggerButtonRef}
-                    className="h-8 py-1.5 text-xs flex items-center gap-1.5 bg-theme-primary-10 hover:bg-theme-primary-10 dark:bg-theme-primary-10 dark:hover:bg-theme-primary-10 text-theme-primary-700 dark:text-theme-primary-300 border border-theme-primary-200 dark:border-theme-primary-800 shadow-xs hover:shadow-sm transition-all rounded-md"
-                    onPress={() => setIsMorePopoverOpen(!isMorePopoverOpen)}
-                    aria-label={`Show ${hiddenCategories.length} more ${hiddenCategories.length === 1 ? 'category' : 'categories'}`}
-                  >
-                    <span className="font-medium">
-                      +{hiddenCategories.length}
-                    </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="w-3.5 h-3.5"
-                    >
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
-                  </Button>
-
-                  {/* Popover Content - Portal Rendered */}
-                  {isMorePopoverOpen && portalTarget && ReactDOM.createPortal(
-                    <div
-                      ref={morePopoverRef}
-                      className="fixed w-64 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 z-50"
-                      style={{
-                        top: `${popoverPosition.top}px`,
-                        left: `${popoverPosition.left}px`,
-                      }}
-                    >
-                      <div className="space-y-2">
-                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 pb-1.5 border-b border-gray-100 dark:border-gray-700 flex items-center gap-1.5 uppercase">
-                          {tCommon("MORE")} {t("CATEGORIES")}
-                          <span className="text-xs bg-gray-100 dark:bg-gray-700 rounded-sm px-1.5 py-0.5">
-                            {hiddenCategories.length}
-                          </span>
-                        </h3>
-                        <div className="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto w-full pr-1 overflow-hidden scrollbar-none">
-                          {hiddenCategories.map((category) => renderCategory(category))}
-                        </div>
-                      </div>
-                    </div>,
-                    portalTarget
-                  )}
+            <div
+              data-categories-wrapper
+              className={cn(
+                showAllCategories ? CATEGORIES_WRAPPER_EXPANDED : CATEGORIES_WRAPPER_COLLAPSED,
+                "relative" // Add relative positioning
+              )}
+            >
+              {/* Left Navigation Button placed as first element */}
+              {!showAllCategories && (
+                <div className={cn(STICKY_LEFT_STYLES, "flex items-center gap-1")}>
+                  <CategoryButton
+                    href={mode === "filter" ? "#" : (resetPath || "/")}
+                    isActive={mode === "filter" ? selectedCategories.length === 0 : isHomeActive}
+                    displayName={t("ALL_CATEGORIES")}
+                    count={allCategoriesCount}
+                    onClick={mode === "filter" ? () => onCategoryToggle?.("clear-all") : undefined}
+                  />
+                  <ScrollButton
+                    ref={leftButtonRef}
+                    direction="left"
+                    onClick={scrollLeft}
+                    disabled={!canScrollLeft}
+                    visible={canScrollLeft && !showAllCategories}
+                  />
                 </div>
               )}
+
+              {/* Show All Categories without button when showAllCategories is true */}
+              {showAllCategories && (
+                <div className="">
+                  <CategoryButton
+                    href={mode === "filter" ? "#" : (resetPath || "/")}
+                    isActive={mode === "filter" ? selectedCategories.length === 0 : isHomeActive}
+                    displayName={t("ALL_CATEGORIES")}
+                    count={allCategoriesCount}
+                    onClick={mode === "filter" ? () => onCategoryToggle?.("clear-all") : undefined}
+                  />
+                </div>
+              )}
+
+              {/* Render visible categories only */}
+              {visibleCategories.map((category, index) => (
+                <React.Fragment key={category.id}>
+                  {renderCategory(category, index)}
+                </React.Fragment>
+              ))}
             </div>
+
+            {/* More Categories Button with Right Navigation Button */}
+            {!showAllCategories && hiddenCategories.length > 0 && (
+              <div className="sticky right-0 shrink-0 pl-2">
+                <div className="flex items-center gap-1 rounded-l-full py-0.5 bg-white/10 dark:bg-[#172030]/10 backdrop-blur-sm ">
+                <ScrollButton
+                    ref={rightButtonRef}
+                    direction="right"
+                    onClick={scrollRight}
+                    disabled={!canScrollRight && hiddenCategories.length === 0}
+                    visible={(canScrollRight || hiddenCategories.length > 0) && !showAllCategories}
+                  />
+                  <div className="relative">
+                    <div className="absolute w-20 -inset-0.5 dark:bg-[#1e2939] rounded-lg blur-xl"></div>
+                    <div className="relative">
+                      <Button
+                        ref={triggerButtonRef}
+                        className="h-8 py-2.5 text-xs flex items-center gap-1.5 bg-theme-primary-500 hover:bg-theme-primary-600 dark:bg-theme-primary-600 dark:hover:bg-theme-primary-500 text-white border border-theme-primary-600 shadow-xs hover:shadow-sm transition-all rounded-xl relative z-10 focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:ring-offset-0 focus-visible:ring-offset-0 active:outline-none active:ring-0"
+                        onPress={() => setIsMorePopoverOpen(!isMorePopoverOpen)}
+                        aria-label={`Show ${hiddenCategories.length} more ${hiddenCategories.length === 1 ? 'category' : 'categories'}`}
+                      >
+                        <span className="font-medium">
+                          +{hiddenCategories.length}
+                        </span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="w-3.5 h-3.5"
+                        >
+                          <path d="M6 9l6 6 6-6" />
+                        </svg>
+                      </Button>
+                    </div>
+
+                    {/* Popover Content - Portal Rendered */}
+                    {isMorePopoverOpen && portalTarget && ReactDOM.createPortal(
+                      <div
+                        ref={morePopoverRef}
+                        className="fixed w-64 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 z-50"
+                        style={{
+                          top: `${popoverPosition.top}px`,
+                          left: `${popoverPosition.left}px`,
+                        }}
+                      >
+                        <div className="space-y-2">
+                          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 pb-1.5 border-b border-gray-100 dark:border-gray-700 flex items-center gap-1.5 uppercase">
+                            {tCommon("MORE")} {t("CATEGORIES")}
+                            <span className="text-xs bg-gray-100 dark:bg-gray-700 rounded-sm px-1.5 py-0.5">
+                              {hiddenCategories.length}
+                            </span>
+                          </h3>
+                          <div className="grid grid-cols-1 gap-1.5 max-h-64 overflow-y-auto overflow-x-hidden w-full pr-1 scrollbar scrollbar-w-2 scrollbar-track-transparent scrollbar-thumb-theme-primary-500/40 dark:scrollbar-thumb-theme-primary-600/40 scrollbar-thumb-rounded-full -mr-2">
+                            {hiddenCategories.map((category) => renderCategory(category))}
+                          </div>
+                        </div>
+                      </div>,
+                      portalTarget
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
+        </div>
       </div>
     </div>
   );
 }
 
-
+// Export the second component as is - FIXED
 export function Categories(props: {
   categories: Category[];
   basePath?: string;
@@ -634,80 +827,72 @@ export function Categories(props: {
   const MAX_VISIBLE_CATEGORIES = props.maxVisibleTags || 8;
   const hasMoreTags = props.categories.length > MAX_VISIBLE_CATEGORIES;
 
-  const renderCategory = (category: Category, index: number) => {
-    const basePath = props.basePath
-      ? `${props.basePath}/${category.id}`
-      : `/categories/${category.id}`;
+  const renderCategory = useCallback(
+    (category: Category, index: number) => {
+      const basePath = props.basePath
+        ? `${props.basePath}/${category.id}`
+        : `/categories/${category.id}`;
 
-    const isActive = pathname === encodeURI(basePath) || pathname.startsWith(encodeURI(basePath) + '/');
-    return (
-      <Button
-        key={category.id || index}
-        variant={isActive ? "solid" : "bordered"}
-        radius="full"
-        size="sm"
-        as={Link}
-        prefetch={false}
-        href={basePath}
-        className={cn(
-          "px-1.5 py-1 h-8 font-medium transition-all duration-200",
-          isActive
-            ? "bg-theme-primary text-white border-theme-primary shadow-xs"
-            : "border border-dark--theme-200 dark:border-dark--theme-800",
-          "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800",
-          !showAllCategories && "shrink-0"
-        )}
-      >
-        {isActive && (
-          <svg
-            className="w-3 h-3 mr-1.5 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="3"
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        )}
-        {category.icon_url && (
-          <Image
-            width={20}
-            height={20}
-            src={category.icon_url}
-            className={cn(
-              "w-4 h-4 mr-1.5 transition-transform",
-              isActive ? "brightness-200" : ""
-            )}
-            alt={category.name}
-          />
-        )}
-        <span
+      const isActive = pathname === encodeURI(basePath) || pathname.startsWith(encodeURI(basePath) + '/');
+
+      return (
+        <Button
+          key={category.id || index}
+          variant={isActive ? "solid" : "bordered"}
+          radius="full"
+          size="sm"
+          as={Link}
+          prefetch={false}
+          href={basePath}
           className={cn(
-            "text-sm font-medium transition-all duration-300",
+            "px-1.5 py-1 h-8 font-medium transition-all duration-200",
             isActive
-              ? "text-white tracking-wide"
-              : "text-gray-700 dark:text-gray-300 group-hover:text-theme-primary dark:group-hover:text-theme-primary capitalize"
+              ? "bg-theme-primary text-white border-theme-primary shadow-xs"
+              : "border border-dark--theme-200 dark:border-dark--theme-800",
+            "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800",
+            !showAllCategories && "shrink-0"
           )}
         >
-          {category.name}
-        </span>
-        {category.count && (
+          {isActive && (
+            <svg
+              className="w-3 h-3 mr-1.5 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="3"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          )}
           <span
             className={cn(
-              "ml-1.5 text-xs font-normal",
-              isActive ? "text-white" : "text-dark-500 dark:text-dark-400"
+              "text-sm font-medium transition-all duration-300",
+              isActive
+                ? "text-white tracking-wide"
+                : "text-gray-700 dark:text-gray-300 group-hover:text-theme-primary dark:group-hover:text-theme-primary capitalize"
             )}
           >
-            ({category.count})
+            {category.name}
           </span>
-        )}
-      </Button>
-    );
-  };
+          {category.count && (
+            <span
+              className={cn(
+                "ml-1.5 text-xs font-normal",
+                isActive ? "text-white" : "text-dark-500 dark:text-dark-400"
+              )}
+            >
+              ({category.count})
+            </span>
+          )}
+        </Button>
+      );
+    },
+    [props.basePath, pathname, showAllCategories]
+  );
 
   const visibleCategories = showAllCategories
     ? props.categories
@@ -726,11 +911,11 @@ export function Categories(props: {
         "p-4 transition-all duration-300",
         props.enableSticky
           ? cn(
-              "sticky top-4 z-10",
-              isSticky
-                ? "bg-white/95 dark:bg-gray-800/95 shadow-md backdrop-blur-xs"
-                : "bg-transparent"
-            )
+            "sticky top-4 z-10",
+            isSticky
+              ? "bg-white/95 dark:bg-gray-800/95 shadow-md backdrop-blur-xs"
+              : "bg-transparent"
+          )
           : "bg-inherit"
       )}
     >
@@ -749,7 +934,6 @@ export function Categories(props: {
           {hasMoreTags && (
             <Button
               variant="flat"
-              // color="primary"
               radius="full"
               size="sm"
               className={cn(
@@ -865,9 +1049,9 @@ export function Categories(props: {
                 className={cn(
                   "px-3 py-1 h-8 font-medium transition-all duration-200",
                   !isAnyTagActive
-                    ? "bg-primary-500 text-white border-primary-500 shadow-xs"
+                    ? "bg-theme-primary text-white border-theme-primary shadow-xs"
                     : "border border-dark--theme-200 dark:border-dark--theme-800",
-                  "hover:shadow-md hover:border-primary-200 dark:hover:border-primary-800"
+                  "hover:shadow-md hover:border-theme-primary dark:hover:border-theme-primary"
                 )}
               >
                 {!isAnyTagActive && (

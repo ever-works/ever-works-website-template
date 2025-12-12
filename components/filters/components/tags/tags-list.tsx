@@ -20,24 +20,70 @@ const SCROLL_CONTAINER_STYLES = clsx(
 
 const SCROLL_FADE_LEFT = clsx(
   "absolute left-0 top-0 bottom-2 w-12 pointer-events-none z-5",
-  "bg-linear-to-r from-white via-white/80 to-transparent",
   "dark:from-gray-900 dark:via-gray-900/80",
   "opacity-0 transition-opacity duration-300"
 );
 
 const SCROLL_FADE_RIGHT = clsx(
-  "absolute right-0 top-0 bottom-2 w-16 pointer-events-none z-5",
-  "bg-linear-to-l from-white via-white/80 to-transparent",
-  "dark:from-gray-900 dark:via-gray-900/80",
-  "opacity-0 transition-opacity duration-300"
+  "pointer-events-none z-5",
 );
 
 // Sticky left styles for "All Tags" button (similar to home-two-categories)
 const STICKY_LEFT_STYLES = clsx(
-  "sticky left-0 shrink-0 z-10 pr-4",
-  "bg-linear-to-r from-white via-white to-transparent",
-  "dark:from-gray-900 dark:via-gray-900"
+  "sticky left-0 shrink-0 z-10 pr-0",
+  "backdrop-blur-sm rounded-r-full",
 );
+
+// Navigation button styles for scroll buttons
+const NAV_BUTTON_STYLES = clsx(
+  "h-8 w-8 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center",
+  "border border-gray-200 dark:border-gray-700 shadow-md hover:shadow-lg",
+  "hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200",
+  "focus:outline-none focus:ring-0 focus:ring-offset-0",
+  "focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0",
+  "active:outline-none active:ring-0",
+  "disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none",
+  "shrink-0 flex-shrink-0"
+);
+
+const NAV_BUTTON_ICON = "w-4 h-4 text-gray-600 dark:text-gray-400";
+
+// Scroll Button Component
+const ScrollButton = React.memo(React.forwardRef<HTMLButtonElement, {
+  direction: 'left' | 'right';
+  onClick: () => void;
+  disabled: boolean;
+  visible: boolean;
+}>(({ direction, onClick, disabled, visible }, ref) => {
+  if (disabled || !visible) {
+    return null;
+  }
+  return (
+    <button
+      ref={ref}
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        NAV_BUTTON_STYLES,
+        "transition-opacity duration-300",
+        visible ? "opacity-100" : "opacity-0 pointer-events-none"
+      )}
+      aria-label={`Scroll ${direction}`}
+    >
+      <svg
+        className={NAV_BUTTON_ICON}
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        style={direction === 'left' ? {} : { transform: 'rotate(180deg)' }}
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+  );
+}));
+
+ScrollButton.displayName = "ScrollButton";
 
 interface TagsListProps {
   tags: Tag[];
@@ -69,6 +115,8 @@ export function TagsList({
 }: TagsListProps) {
   const t = useTranslations("listing");
   const tCommon = useTranslations("common");
+  const leftButtonRef = useRef<HTMLButtonElement>(null);
+  const rightButtonRef = useRef<HTMLButtonElement>(null);
   
   // State for scroll indicators and hidden tags
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -84,6 +132,8 @@ export function TagsList({
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
   const rafId = useRef<number | null>(null);
   const portalTarget = usePortal('tag-popover-portal');
+  const itemWidthsRef = useRef<number[]>([]);
+  const [visibleRange, setVisibleRange] = useState({ start: 0, end: 0 });
   
   // 'All Tags' is active when no tags are selected
   const isAllTagsActive = setSelectedTags ? selectedTags.length === 0 : !isAnyTagActive;
@@ -106,6 +156,48 @@ export function TagsList({
     }
   }, [setSelectedTags, selectedTags]);
 
+  // Scroll functions for left/right navigation buttons
+  const scrollLeft = useCallback(() => {
+    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+    const scrollAmount = container.clientWidth * 0.5; // half viewport per click
+    container.scrollBy({
+      left: -scrollAmount,
+      behavior: 'smooth'
+    });
+  }, []);
+
+  const scrollRight = useCallback(() => {
+    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+    const scrollAmount = container.clientWidth * 0.5; // half viewport per click
+    container.scrollBy({
+      left: scrollAmount,
+      behavior: 'smooth'
+    });
+  }, []);
+
+  // Wheel scrolling for horizontal scroll
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container || showAllTags) return;
+
+    const onWheel = (e: WheelEvent) => {
+      // Only apply horizontal scroll for vertical wheel
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault(); // Stop vertical scrolling
+        container.scrollBy({
+          left: e.deltaY * 1.5, // boost speed a bit for faster feel
+          behavior: 'smooth', // smooth scrolling
+        });
+      }
+    };
+
+    container.addEventListener('wheel', onWheel, { passive: false });
+
+    return () => container.removeEventListener('wheel', onWheel);
+  }, [showAllTags]);
+
   // In filter mode, ensure all selected tags are visible and order them properly
   // Memoize to prevent infinite re-renders
   const orderedVisibleTags = useMemo(() => {
@@ -116,82 +208,92 @@ export function TagsList({
     return visibleTags;
   }, [visibleTags, tags, selectedTags, setSelectedTags]);
 
-  // Update scroll indicators
-  const updateScrollIndicators = useCallback(() => {
-    if (scrollContainerRef.current && !showAllTags) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-      setCanScrollLeft(scrollLeft > 10);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-    } else {
-      setCanScrollLeft(false);
-      setCanScrollRight(false);
-    }
-  }, [showAllTags]);
-
-  // Detect hidden tags based on visibility in the container
-  const detectHiddenTags = useCallback(() => {
-    if (scrollContainerRef.current && !showAllTags) {
-      const container = scrollContainerRef.current;
-      const containerRect = container.getBoundingClientRect();
-      const visibilityThreshold = 30;
-
-      const hidden: Tag[] = [];
-
-      orderedVisibleTags.forEach((tag, index) => {
-        const el = tagsRef.current[index];
-        if (el) {
-          const rect = el.getBoundingClientRect();
-
-          // Check if element is visible within container bounds with threshold
-          const isVisible =
-            rect.left >= containerRect.left - visibilityThreshold &&
-            rect.right <= containerRect.right + visibilityThreshold;
-
-          if (!isVisible) {
-            hidden.push(tag);
-          }
-        }
-      });
-
-      setHiddenTags(hidden);
-      updateScrollIndicators();
-    }
-  }, [orderedVisibleTags, showAllTags, updateScrollIndicators]);
-
-  // Initialize and update scroll indicators + hidden tags detection
-  useEffect(() => {
-    if (showAllTags) return; // Skip in expanded mode
+  // Measure tags dynamically - similar to categories
+  const measureTags = useCallback(() => {
+    if (!scrollContainerRef.current || showAllTags) return;
+    const container = scrollContainerRef.current;
+    const children = Array.from(
+      container.querySelector('[data-tags-wrapper]')?.children || []
+    ) as HTMLElement[];
+    if (!children.length) return;
     
-    // Use requestAnimationFrame to ensure DOM is ready for initial detection
-    const initRafId = requestAnimationFrame(() => {
-      updateScrollIndicators();
-      detectHiddenTags();
+    // Measure widths including computed margin-right for accurate gap spacing
+    itemWidthsRef.current = children.map((child) => {
+      const style = getComputedStyle(child);
+      const marginRight = parseFloat(style.marginRight || '0');
+      return child.offsetWidth + marginRight;
     });
     
-    const container = scrollContainerRef.current;
-    let resizeObserver: ResizeObserver | null = null;
+    let totalWidth = 0;
+    let startIndex = 0;
+    let endIndex = children.length - 1;
     
-    if (container) {
-      resizeObserver = new ResizeObserver(() => {
-        updateScrollIndicators();
-        detectHiddenTags();
-      });
-      resizeObserver.observe(container);
+    // Calculate start index
+    for (let i = 0; i < itemWidthsRef.current.length; i++) {
+      totalWidth += itemWidthsRef.current[i];
+      if (totalWidth > container.scrollLeft) {
+        startIndex = i;
+        break;
+      }
     }
     
+    // Calculate end index more precisely
+    let totalOffset = 0;
+    endIndex = children.length - 1; // default to last
+    for (let i = 0; i < itemWidthsRef.current.length; i++) {
+      totalOffset += itemWidthsRef.current[i];
+      if (totalOffset > container.scrollLeft + container.clientWidth - 1) {
+        endIndex = i - 1 >= 0 ? i - 1 : 0;
+        break;
+      }
+    }
+
+    setVisibleRange({ start: startIndex, end: endIndex });
+    
+    // Calculate hidden tags based on visible range
+    const hidden: Tag[] = [];
+    for (let i = endIndex + 1; i < orderedVisibleTags.length; i++) {
+      hidden.push(orderedVisibleTags[i]);
+    }
+    setHiddenTags(hidden);
+
+    setCanScrollLeft(container.scrollLeft > 5);
+    setCanScrollRight(container.scrollLeft + container.clientWidth < container.scrollWidth - 5);
+  }, [scrollContainerRef, showAllTags, orderedVisibleTags]);
+
+  // Initialize and update measurements with delayed initial measurement
+  useEffect(() => {
+    if (!scrollContainerRef.current || showAllTags) return;
+
+    const container = scrollContainerRef.current;
+    const handleScroll = () => measureTags();
+
+    container.addEventListener("scroll", handleScroll);
+
+    const resizeObserver = new ResizeObserver(measureTags);
+    resizeObserver.observe(container);
+
+    // Delay initial measurement to allow layout/fonts/images to settle
+    const timeoutId = window.setTimeout(() => {
+      requestAnimationFrame(measureTags);
+    }, 100);
+    
+    // Also measure on window load for late-loading assets
+    window.addEventListener('load', measureTags);
+
     return () => {
-      cancelAnimationFrame(initRafId);
-      resizeObserver?.disconnect();
+      container.removeEventListener("scroll", handleScroll);
+      resizeObserver.disconnect();
+      clearTimeout(timeoutId);
+      window.removeEventListener('load', measureTags);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showAllTags, tags.length]);
+  }, [scrollContainerRef, measureTags, showAllTags]);
 
   // Reset hidden tags when toggling between collapsed/expanded views
   useEffect(() => {
     setHiddenTags([]);
     setCanScrollLeft(false);
     setCanScrollRight(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showAllTags]);
 
   // Handle click outside to close popover with deferred listener pattern
@@ -349,13 +451,8 @@ export function TagsList({
     );
   }, [basePath, setSelectedTags, selectedTags, handleTagClick]);
 
-  // Handle scroll and track hidden tags
-  const handleScroll = useCallback(() => {
-    detectHiddenTags();
-  }, [detectHiddenTags]);
-
   return (
-    <div className="relative">
+    <div className="relative ">
       {!showAllTags && (
         <div className="relative">
           {/* Scroll fade indicators */}
@@ -376,24 +473,29 @@ export function TagsList({
           
           <div 
             ref={scrollContainerRef}
-            onScroll={handleScroll}
             className={SCROLL_CONTAINER_STYLES}
             role="region"
             aria-label="Tags filter"
           >
-            {/* All Tags Button - Sticky */}
-            <div className={STICKY_LEFT_STYLES}>
-              {setSelectedTags ? (
-                <Button
-                  variant={isAllTagsActive ? "solid" : "bordered"}
-                  radius="full"
-                  size="sm"
-                  className={getButtonVariantStyles(
-                    isAllTagsActive,
-                    "px-3 py-1 h-8 font-medium transition-all duration-300 shrink-0 group capitalize"
-                  )}
-                  onClick={() => setSelectedTags([])}
-                >
+            {/* Tags wrapper with data attribute for measurement */}
+            <div data-tags-wrapper className="flex items-center gap-2">
+              {/* Left Navigation Button + All Tags Button - Sticky */}
+              <div className={cn(STICKY_LEFT_STYLES, "flex items-center gap-1")}> 
+                {/* All Tags Button */}
+                {setSelectedTags ? (
+                  <Button
+                    variant={isAllTagsActive ? "solid" : "bordered"}
+                    radius="full"
+                    size="sm"
+                    className={getButtonVariantStyles(
+                      isAllTagsActive,
+                      cn(
+                        "px-3 py-1 h-8 font-medium transition-all duration-300 shrink-0 group capitalize focus-visible:ring-2 focus-visible:ring-theme-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900 dark:bg-[#182131] bg-white",
+                        isAllTagsActive && "bg-theme-primary-500! text-white! border-theme-primary-500!"
+                      )
+                    )}
+                    onClick={() => setSelectedTags([])}
+                  >
                   {isAllTagsActive && (
                     <svg
                       className="w-3 h-3 mr-1.5 text-white"
@@ -431,7 +533,10 @@ export function TagsList({
                   href={resetPath || basePath || "/"}
                   className={getButtonVariantStyles(
                     isAllTagsActive,
-                    "px-3 py-1 h-8 font-medium transition-all duration-300 shrink-0 group capitalize"
+                    cn(
+                      "px-3 py-1 h-8 font-medium transition-all duration-300 shrink-0 group capitalize focus-visible:ring-2 focus-visible:ring-theme-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900",
+                      isAllTagsActive && "bg-theme-primary-500! text-white! border-theme-primary-500!"
+                    )
                   )}
                 >
                   {isAllTagsActive && (
@@ -462,25 +567,38 @@ export function TagsList({
                   </span>
                 </Button>
               )}
-            </div>
+              <ScrollButton
+                  ref={leftButtonRef}
+                  direction="left"
+                  onClick={scrollLeft}
+                  disabled={!canScrollLeft}
+                  visible={canScrollLeft && !showAllTags}
+                />
+              </div>
             
             {/* Tag buttons */}
             {orderedVisibleTags.map((tag, idx) => (
               <div 
                 key={tag.id || idx} 
-                ref={(el) => { tagsRef.current[idx] = el; }}
                 className="shrink-0"
               >
                 {renderTag(tag, idx)}
               </div>
             ))}
             
-            {/* "+N more" button - sticky at right */}
+            {/* "+N more" button with Right Navigation Button */}
             {hiddenTags.length > 0 && (
-              <div className="sticky right-0 shrink-0 pl-1 bg-linear-to-l from-white via-white/90 to-transparent dark:from-gray-900 dark:via-gray-900/90">
+              <div className="sticky right-0 shrink-0 pl-0 flex items-center gap-1 bg-white/10 dark:bg-[#172030]/10 backdrop-blur-sm rounded-l-full">
+                <ScrollButton
+                  ref={rightButtonRef}
+                  direction="right"
+                  onClick={scrollRight}
+                  disabled={!canScrollRight && hiddenTags.length === 0}
+                  visible={(canScrollRight || hiddenTags.length > 0) && !showAllTags}
+                />
                 <Button
                   ref={triggerButtonRef}
-                  className="h-8 py-1.5 px-3 text-xs flex items-center gap-1.5 bg-theme-primary-10 hover:bg-theme-primary-20 dark:bg-theme-primary-10 dark:hover:bg-theme-primary-20 text-theme-primary-700 dark:text-theme-primary-300 border border-theme-primary-200 dark:border-theme-primary-800 shadow-xs hover:shadow-sm transition-all rounded-full"
+                  className="h-8 py-2 px-3 text-xs flex items-center gap-1.5 bg-theme-primary-500 hover:bg-theme-primary-600 dark:bg-theme-primary-500 dark:hover:bg-theme-primary-600 text-white border border-theme-primary-600 shadow-xs hover:shadow-sm transition-all rounded-full focus-visible:ring-2 focus-visible:ring-theme-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900"
                   onPress={() => setIsMorePopoverOpen(!isMorePopoverOpen)}
                   aria-label={`Show ${hiddenTags.length} more ${hiddenTags.length === 1 ? 'tag' : 'tags'}`}
                 >
@@ -507,6 +625,7 @@ export function TagsList({
                 </Button>
               </div>
             )}
+            </div>
           </div>
           
           {/* Popover Content - Portal Rendered */}
@@ -546,7 +665,10 @@ export function TagsList({
               size="sm"
               className={getButtonVariantStyles(
                 isAllTagsActive,
-                "px-3 py-1 h-8 font-medium transition-all duration-200"
+                cn(
+                  "px-3 py-1 h-8 font-medium transition-all duration-200 focus-visible:ring-2 focus-visible:ring-theme-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900",
+                  isAllTagsActive && "bg-theme-primary-500! text-white! border-theme-primary-500!"
+                )
               )}
               onClick={() => setSelectedTags([])}
             >
@@ -587,7 +709,10 @@ export function TagsList({
               href={resetPath || basePath || "/"}
               className={getButtonVariantStyles(
                 isAllTagsActive,
-                "px-3 py-1 h-8 font-medium transition-all duration-200"
+                cn(
+                  "px-3 py-1 h-8 font-medium transition-all duration-200 focus-visible:ring-2 focus-visible:ring-theme-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900",
+                  isAllTagsActive && "bg-theme-primary-500! text-white! border-theme-primary-500!"
+                )
               )}
             >
               {isAllTagsActive && (
