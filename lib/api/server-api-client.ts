@@ -64,8 +64,19 @@ async function fetchWithTimeout(url: string, options: FetchOptions = {}): Promis
 		const timeoutController = new AbortController();
 		const timeoutId = setTimeout(() => timeoutController.abort(), timeout);
 
-		// Simplified signal handling - use existing signal if provided, otherwise use timeout signal
-		const signal = fetchOptions.signal || timeoutController.signal;
+		// Ensure timeout always applies, even when a caller passes a signal
+		const signal = timeoutController.signal;
+		if (fetchOptions.signal) {
+			if (fetchOptions.signal.aborted) {
+				timeoutController.abort(fetchOptions.signal.reason);
+			} else {
+				fetchOptions.signal.addEventListener(
+					'abort',
+					() => timeoutController.abort(fetchOptions.signal?.reason),
+					{ once: true }
+				);
+			}
+		}
 
 		try {
 			// Pre-merge headers and remove Content-Type for FormData
