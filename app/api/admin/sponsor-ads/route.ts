@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
 			return NextResponse.json(
 				{
 					success: false,
-					error: validationResult.error.errors[0]?.message || "Invalid query parameters",
+					error: validationResult.error.issues[0]?.message || "Invalid query parameters",
 				},
 				{ status: 400 }
 			);

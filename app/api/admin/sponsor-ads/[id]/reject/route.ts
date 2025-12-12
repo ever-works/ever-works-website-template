@@ -86,7 +86,7 @@ export async function POST(
 				{
 					success: false,
 					error:
-						validationResult.error.errors[0]?.message ||
+						validationResult.error.issues[0]?.message ||
 						"Invalid request body",
 				},
 				{ status: 400 }
