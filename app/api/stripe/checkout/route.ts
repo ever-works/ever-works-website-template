@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, getOrCreateStripeProvider } from '@/lib/auth';
-import { CheckoutSessionParams } from '@/lib/payment/types/payment-types';
+import { buildCheckoutLineItems, createBaseCheckoutParams, applySubscriptionConfig } from './helpers';
 
 /**
  * @swagger
@@ -163,19 +163,16 @@ export async function POST(request: NextRequest) {
 			mode = 'one_time',
 			trialPeriodDays = 0,
 			billingInterval = 'month',
+			trialAmountId,
+			isAuthorizedTrialAmount = false,
 			successUrl,
 			cancelUrl,
 			metadata = {}
 		} = await request.json();
 
 		// Map the incoming mode to Stripe's expected Mode type
-		const stripeMode: 
-		|'payment' 
-		| 'setup' 
-		| 'subscription' = mode === 'one_time' ? 'payment' : mode === 'subscription' ? 'subscription' : 'setup';
-
-
-	
+		const stripeMode: 'payment' | 'setup' | 'subscription' =
+			mode === 'one_time' ? 'payment' : mode === 'subscription' ? 'subscription' : 'setup';
 
 		const stripeCustomerId = await stripeProvider.getCustomerId(session.user as any);
 		if (!stripeCustomerId) {
@@ -188,63 +185,48 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		const checkoutParams: CheckoutSessionParams = {
-			customer: stripeCustomerId,
-			mode: stripeMode,
-			line_items: [
+		// Build line items with optional trial period
+		const hasTrial = trialPeriodDays > 0 && isAuthorizedTrialAmount;
+
+		// Validate trial configuration: if trial is enabled, trialAmountId must be provided
+		if (hasTrial && !trialAmountId) {
+			return NextResponse.json(
 				{
-					price: priceId,
-					quantity: 1
-				}
-			],
-			success_url: successUrl,
-			cancel_url: cancelUrl,
-			billing_address_collection: 'auto',
-			metadata: {
-				...metadata,
-				...session.user,
-				billingInterval
-			},
-			ui_mode: 'hosted',
-			custom_text: {
-				submit: {
-					message: 'Your subscription will be activated immediately after payment.'
-				}
-			}
-		};
-
-		// Add subscription-specific configuration
-		if (stripeMode === 'subscription') {
-			checkoutParams.subscription_data = {
-				metadata: {
-					userId: session.user.id || '',
-					planId: metadata.planId || '',
-					planName: metadata.planName || '',
-					billingInterval
-				}
-			};
-
-			// Add trial period if specified
-			if (trialPeriodDays > 0) {
-				checkoutParams.subscription_data!.trial_period_days = trialPeriodDays;
-			}
-
-			// Configure billing address collection
-			checkoutParams.billing_address_collection = 'auto';
-
-			// Configure customer details
-			checkoutParams.customer_update = {
-				address: 'auto',
-				name: 'auto'
-			};
-
-			// Allow promotion codes
-			checkoutParams.allow_promotion_codes = true;
+					error: 'Invalid trial configuration',
+					message: 'trialAmountId is required when trial is enabled'
+				},
+				{ status: 400 }
+			);
 		}
 
-	
-		const checkoutSession = await stripe.checkout.sessions.create(checkoutParams );
+		const lineItems = buildCheckoutLineItems(priceId, trialAmountId, hasTrial);
 
+		// Create base checkout parameters
+		const checkoutParams = createBaseCheckoutParams({
+			customerId: stripeCustomerId,
+			mode: stripeMode,
+			lineItems,
+			successUrl,
+			cancelUrl,
+			metadata: {
+				...metadata,
+				...session.user
+			},
+			billingInterval
+		});
+
+		// Apply subscription-specific configuration
+		if (stripeMode === 'subscription') {
+			applySubscriptionConfig(checkoutParams, {
+				userId: session.user.id || '',
+				planId: metadata.planId,
+				planName: metadata.planName,
+				billingInterval,
+				trialPeriodDays: hasTrial ? trialPeriodDays : 0
+			});
+		}
+
+		const checkoutSession = await stripe.checkout.sessions.create(checkoutParams);
 
 		return NextResponse.json({
 			data: {
