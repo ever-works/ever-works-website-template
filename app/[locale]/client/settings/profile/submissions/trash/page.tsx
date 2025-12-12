@@ -39,7 +39,7 @@ export default function TrashPage() {
 					</div>
 
 					{/* Trash Items List */}
-					<Card className="border border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xs">
+					<Card className="border border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
 						<CardHeader>
 							<CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
 								<FiTrash2 className="w-5 h-5 text-gray-500 dark:text-gray-400" />

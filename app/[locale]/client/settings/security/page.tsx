@@ -9,13 +9,13 @@ export default async function SecuritySettingsPage() {
 	const t = await getTranslations('settings.SECURITY_PAGE');
 
 	return (
-		<div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+		<div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
 			<Container maxWidth="7xl" padding="default" useGlobalWidth>
 				<div className="space-y-8 py-8">
 					{/* Header */}
 					<div className="flex items-center gap-4">
 						<Link
-							href="/client/settings"
+							href="/client/settingsg/profile"
 							className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
 						>
 							<FiArrowLeft className="w-4 h-4" />
