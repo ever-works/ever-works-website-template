@@ -51,6 +51,10 @@ export function useItemVote(itemId: string) {
 
 	const { mutate: vote, isPending: isVoting } = useMutation({
 		mutationFn: async (type: 'up' | 'down') => {
+			if (!itemId) {
+				throw new Error('Missing itemId');
+			}
+
 			if (!user) {
 				loginModal.onOpen('Please sign in to vote on this item');
 				return;
@@ -115,6 +119,10 @@ export function useItemVote(itemId: string) {
 
 	const { mutate: unvote, isPending: isUnvoting } = useMutation({
 		mutationFn: async () => {
+			if (!itemId) {
+				throw new Error('Missing itemId');
+			}
+
 			if (!user) {
 				loginModal.onOpen('Please sign in to vote on this item');
 				return;
@@ -170,6 +178,7 @@ export function useItemVote(itemId: string) {
 	});
 
 	const handleVote = (type: 'up' | 'down') => {
+		if (!itemId) return;
 		if (isVoting || isUnvoting) return;
 
 		if (!user) {
@@ -192,7 +201,7 @@ export function useItemVote(itemId: string) {
 	return {
 		voteCount: voteData?.count || 0,
 		userVote: voteData?.userVote || null,
-		isLoading: isLoading || isVoting || isUnvoting,
+		isLoading: isLoading || isVoting || isUnvoting || !itemId,
 		handleVote,
 		refreshVotes
 	};
