@@ -234,6 +234,12 @@ export interface FooterConfigSettings {
 	theme_selector_enabled?: boolean;
 }
 
+export interface LogoSettings {
+	logo_image?: string;        // Path to logo image (e.g., "/logo.png")
+	logo_image_dark?: string;   // Optional dark mode variant
+	favicon?: string;           // Path to favicon/icon (e.g., "/favicon.svg")
+}
+
 export interface Settings {
 	categories_enabled?: boolean;
 	companies_enabled?: boolean;
@@ -268,6 +274,7 @@ export interface Config {
 	headerSettings?: HeaderSettings;
 	categoriesEnabled?: boolean;
 	settings?: Settings;
+	logo?: LogoSettings;
 }
 
 interface FetchOptions {
