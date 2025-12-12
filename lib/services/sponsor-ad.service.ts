@@ -47,8 +47,8 @@ export class SponsorAdService {
 	/**
 	 * Get active sponsor ads for display
 	 */
-	async getActiveSponsorAds(): Promise<SponsorAd[]> {
-		return await sponsorAdRepo.getActiveSponsorAds();
+	async getActiveSponsorAds(limit?: number): Promise<SponsorAd[]> {
+		return await sponsorAdRepo.getActiveSponsorAds(limit);
 	}
 
 	/**

@@ -81,12 +81,18 @@ export async function getSponsorAdsByUserId(userId: string): Promise<SponsorAd[]
 /**
  * Get active sponsor ads (for display)
  */
-export async function getActiveSponsorAds(): Promise<SponsorAd[]> {
-	return await db
+export async function getActiveSponsorAds(limit?: number): Promise<SponsorAd[]> {
+	const query = db
 		.select()
 		.from(sponsorAds)
 		.where(eq(sponsorAds.status, SponsorAdStatus.ACTIVE))
 		.orderBy(desc(sponsorAds.createdAt));
+
+	if (limit && limit > 0) {
+		return await query.limit(limit);
+	}
+
+	return await query;
 }
 
 /**
