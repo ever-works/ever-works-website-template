@@ -69,11 +69,9 @@ export function useItemVote(itemId: string) {
 			}
 
 			// Extract count and userVote from the API response
-			// response.data contains { success: true, count, userVote }
-			const apiData = response.data as { success: boolean; count: number; userVote: 'up' | 'down' | null };
 			return {
-				count: apiData.count,
-				userVote: apiData.userVote
+				count: response.data.count,
+				userVote: response.data.userVote
 			};
 		},
 		onMutate: async (type) => {
@@ -133,11 +131,9 @@ export function useItemVote(itemId: string) {
 			}
 
 			// Extract count and userVote from the API response
-			// response.data contains { success: true, count, userVote }
-			const apiData = response.data as { success: boolean; count: number; userVote: 'up' | 'down' | null };
 			return {
-				count: apiData.count,
-				userVote: apiData.userVote
+				count: response.data.count,
+				userVote: response.data.userVote
 			};
 		},
 		onMutate: async () => {
@@ -235,11 +231,9 @@ export function useVoteCache() {
 				}
 
 				// Extract count and userVote from the API response
-				// response.data contains { success: true, count, userVote }
-				const apiData = response.data as { success: boolean; count: number; userVote: 'up' | 'down' | null };
 				return {
-					count: apiData.count,
-					userVote: apiData.userVote
+					count: response.data.count,
+					userVote: response.data.userVote
 				};
 			},
 			staleTime: 1000 * 60 * 5
