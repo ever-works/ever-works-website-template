@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { sponsorAdService } from "@/lib/services/sponsor-ad.service";
 import { createSponsorAdSchema, querySponsorAdsSchema } from "@/lib/validations/sponsor-ad";
-import { getPaymentProvider } from "@/lib/payment/config/payment-provider-manager";
+import { PaymentProvider } from "@/lib/constants";
 import type { SponsorAdStatus } from "@/lib/types/sponsor-ad";
+
+// Determine which payment provider to use
+const ACTIVE_PAYMENT_PROVIDER = process.env.NEXT_PUBLIC_PAYMENT_PROVIDER || PaymentProvider.STRIPE;
 
 /**
  * @swagger
@@ -160,13 +163,10 @@ export async function POST(request: NextRequest) {
 
 		const body = await request.json();
 
-		// Get payment provider
-		const paymentProvider = getPaymentProvider();
-
 		// Validate request body
 		const validationResult = createSponsorAdSchema.safeParse({
 			...body,
-			paymentProvider,
+			paymentProvider: ACTIVE_PAYMENT_PROVIDER,
 		});
 
 		if (!validationResult.success) {
