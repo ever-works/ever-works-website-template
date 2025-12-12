@@ -20,7 +20,7 @@ function SettingsCard({ title, description, icon, href }: SettingsCardProps) {
 				<CardContent className="p-6">
 					<div className="flex items-start justify-between">
 						<div className="flex items-start gap-4 flex-1">
-							<div className="shrink-0 w-12 h-12 bg-linear-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-xl flex items-center justify-center group-hover:from-theme-primary-200 group-hover:to-theme-primary-300 dark:group-hover:from-theme-primary-800/60 dark:group-hover:to-theme-primary-700/60 transition-all duration-300 shadow-sm">
+							<div className="shrink-0 w-12 h-12 bg-gradient-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-xl flex items-center justify-center group-hover:from-theme-primary-200 group-hover:to-theme-primary-300 dark:group-hover:from-theme-primary-800/60 dark:group-hover:to-theme-primary-700/60 transition-all duration-300 shadow-sm">
 								{icon}
 							</div>
 							<div className="flex-1 min-w-0">
@@ -103,12 +103,12 @@ export function SettingsContent() {
 	];
 
 	return (
-		<div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+		<div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
 			<Container maxWidth="7xl" padding="default" useGlobalWidth>
 				<div className="space-y-12 py-8">
 					{/* Section Header */}
 					<div className="text-center space-y-4">
-						<div className="inline-flex items-center justify-center w-16 h-16 bg-linear-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-2xl mb-4">
+						<div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-2xl mb-4">
 							<FiUser className="w-8 h-8 text-theme-primary-600 dark:text-theme-primary-400" />
 						</div>
 						<h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">
