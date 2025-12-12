@@ -77,6 +77,12 @@ const NAVIGATION_CONFIG: Array<{
   //   href: "#",
   //   staticLabel: "GitHub",
   // },
+    {
+    key: "collections",
+    href: "/collections",
+    translationKey: "COLLECTION",
+    translationNamespace: "common",
+  },
   {
     key: "categories",
     href: "/categories",
@@ -118,13 +124,13 @@ const NAVIGATION_CONFIG: Array<{
 const STYLES = {
   navbar: "bg-white/75 dark:bg-gray-900/75 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 sticky top-0 z-50",
   container: "flex items-center justify-between w-full min-h-[60px] sm:min-h-[64px] md:min-h-[68px] lg:min-h-[72px]",
-  navContent: "hidden lg:flex gap-4 xl:gap-6 2xl:gap-8 mr-6 xl:mr-8 2xl:mr-10",
+  navContent: "hidden lg:flex gap-5 xl:gap-6 2xl:gap-6 mr-6 xl:mr-8 2xl:mr-10",
   navbarMenuToggle: "lg:hidden transition-transform duration-200 hover:scale-105",
   brand: "flex items-center group transition-transform duration-200 hover:scale-105",
   brandIcon: "relative font-bold mr-2 sm:mr-3 md:mr-4 lg:mr-5",
   brandIconSvg: "w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11 transition-all duration-300 group-hover:scale-110",
   brandText: "font-bold text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl transition-colors duration-200 group-hover:text-theme-primary",
-  linkBase: "transition-all duration-200 font-medium whitespace-nowrap text-sm lg:text-base xl:text-lg",
+  linkBase: "transition-all duration-200 font-medium whitespace-nowrap text-sm lg:text-sm xl:text-base",
   linkActive: "text-theme-primary border-b-2 border-theme-primary pb-1 font-semibold",
   linkInactive: "text-gray-700 dark:text-gray-300 hover:text-theme-primary hover:scale-105",
   rightSection: "flex items-center gap-1 sm:gap-2 md:gap-3 lg:gap-4 xl:gap-5",

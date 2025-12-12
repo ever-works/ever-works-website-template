@@ -34,13 +34,14 @@ export const CACHE_TAGS = {
   /** All categories */
   CATEGORIES: 'categories',
 
-  /** All tags */
-  TAGS: 'tags',
+	/** All tags */
+	TAGS: 'tags',
 
-  /** Site configuration */
-  CONFIG: 'config',
+	/** All collections */
+	COLLECTIONS: 'collections',
 
-  /** All static pages */
+	/** Site configuration */
+	CONFIG: 'config',  /** All static pages */
   PAGES: 'pages',
 
   /** Specific page by slug */
@@ -52,6 +53,9 @@ export const CACHE_TAGS = {
   /** Categories by locale */
   CATEGORIES_LOCALE: (locale: string) => `categories:${locale}`,
 
-  /** Tags by locale */
-  TAGS_LOCALE: (locale: string) => `tags:${locale}`,
+	/** Tags by locale */
+	TAGS_LOCALE: (locale: string) => `tags:${locale}`,
+
+	/** Collections by locale */
+	COLLECTIONS_LOCALE: (locale: string) => `collections:${locale}`,
 } as const;

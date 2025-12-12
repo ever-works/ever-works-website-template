@@ -53,6 +53,7 @@ export const socialLinks = [
 
 export function footerNavigation(t: (key: string) => string, categoriesEnabled = true, tagsEnabled = true) {
   const productLinks = [
+    { label: t("common.COLLECTION"), href: "/collections" },
     { label: t("common.CATEGORY"), href: "/categories" },
     { label: t("common.TAG"), href: "/tags" },
     { label: t("common.PRICING"), href: "/pricing" },
