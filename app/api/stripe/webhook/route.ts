@@ -14,6 +14,7 @@ import {
 // Import server configuration utility
 import { getEmailConfig } from '@/lib/config/server-config';
 import { WebhookSubscriptionService } from '@/lib/services/webhook-subscription.service';
+import { sponsorAdService } from '@/lib/services/sponsor-ad.service';
 import { getOrCreateStripeProvider } from '@/lib/auth';
 const webhookSubscriptionService = new WebhookSubscriptionService();
 
@@ -299,6 +300,13 @@ async function handlePaymentFailed(data: any) {
 async function handleSubscriptionCreated(data: any) {
 	console.log('Subscription created:', data.id);
 
+	// Check if this is a sponsor ad subscription
+	if (isSponsorAdSubscription(data)) {
+		console.log('📢 Sponsor ad subscription detected');
+		await handleSponsorAdActivation(data);
+		return;
+	}
+
 	try {
 		await webhookSubscriptionService.handleSubscriptionCreated(data);
 
@@ -389,6 +397,13 @@ async function handleSubscriptionUpdated(data: any) {
 async function handleSubscriptionCancelled(data: any) {
 	console.log('Subscription cancelled:', data.id);
 
+	// Check if this is a sponsor ad subscription
+	if (isSponsorAdSubscription(data)) {
+		console.log('📢 Sponsor ad subscription cancellation detected');
+		await handleSponsorAdCancellation(data);
+		return;
+	}
+
 	try {
 		await webhookSubscriptionService.handleSubscriptionCancelled(data);
 		const customerInfo = extractCustomerInfo(data);
@@ -429,6 +444,13 @@ async function handleSubscriptionCancelled(data: any) {
 
 async function handleSubscriptionPaymentSucceeded(data: any) {
 	console.log('Subscription payment succeeded:', data.id);
+
+	// Check if this is a sponsor ad subscription (for renewals)
+	if (isSponsorAdSubscription(data)) {
+		console.log('📢 Sponsor ad payment succeeded (renewal)');
+		await handleSponsorAdRenewal(data);
+		return;
+	}
 
 	try {
 		await webhookSubscriptionService.handleSubscriptionPaymentSucceeded(data);
@@ -588,4 +610,117 @@ function getSubscriptionFeatures(planName: string): string[] {
 	};
 
 	return features[planName] || features['Standard Plan'];
+}
+
+// ######################### Sponsor Ad Webhook Handlers #########################
+
+/**
+ * Check if subscription metadata indicates a sponsor ad
+ */
+function isSponsorAdSubscription(data: Record<string, unknown>): boolean {
+	const metadata = data.metadata as Record<string, string> | undefined;
+	const subscriptionMetadata = (data.subscription_data as Record<string, unknown>)?.metadata as Record<string, string> | undefined;
+
+	return metadata?.type === 'sponsor_ad' || subscriptionMetadata?.type === 'sponsor_ad';
+}
+
+/**
+ * Get sponsor ad ID from subscription metadata
+ */
+function getSponsorAdId(data: Record<string, unknown>): string | null {
+	const metadata = data.metadata as Record<string, string> | undefined;
+	const subscriptionMetadata = (data.subscription_data as Record<string, unknown>)?.metadata as Record<string, string> | undefined;
+
+	return metadata?.sponsorAdId || subscriptionMetadata?.sponsorAdId || null;
+}
+
+/**
+ * Handle sponsor ad subscription created/payment succeeded
+ * Activates the sponsor ad after successful payment
+ */
+async function handleSponsorAdActivation(data: Record<string, unknown>): Promise<void> {
+	const sponsorAdId = getSponsorAdId(data);
+
+	if (!sponsorAdId) {
+		console.error('❌ Sponsor ad ID not found in subscription metadata');
+		return;
+	}
+
+	try {
+		const subscriptionId = data.id as string;
+		const customerId = data.customer as string;
+
+		console.log(`🔄 Activating sponsor ad: ${sponsorAdId}`);
+
+		const activatedAd = await sponsorAdService.activateSponsorAd(
+			sponsorAdId,
+			subscriptionId,
+			customerId
+		);
+
+		if (activatedAd) {
+			console.log(`✅ Sponsor ad activated successfully: ${sponsorAdId}`);
+		} else {
+			console.error(`❌ Failed to activate sponsor ad: ${sponsorAdId}`);
+		}
+	} catch (error) {
+		console.error('❌ Error activating sponsor ad:', error);
+	}
+}
+
+/**
+ * Handle sponsor ad subscription cancelled
+ * Cancels the sponsor ad
+ */
+async function handleSponsorAdCancellation(data: Record<string, unknown>): Promise<void> {
+	const sponsorAdId = getSponsorAdId(data);
+
+	if (!sponsorAdId) {
+		console.error('❌ Sponsor ad ID not found in subscription metadata');
+		return;
+	}
+
+	try {
+		console.log(`🔄 Cancelling sponsor ad: ${sponsorAdId}`);
+
+		const cancelledAd = await sponsorAdService.cancelSponsorAd(
+			sponsorAdId,
+			'Subscription cancelled'
+		);
+
+		if (cancelledAd) {
+			console.log(`✅ Sponsor ad cancelled successfully: ${sponsorAdId}`);
+		} else {
+			console.error(`❌ Failed to cancel sponsor ad: ${sponsorAdId}`);
+		}
+	} catch (error) {
+		console.error('❌ Error cancelling sponsor ad:', error);
+	}
+}
+
+/**
+ * Handle sponsor ad subscription renewal
+ * Extends the sponsor ad end date
+ */
+async function handleSponsorAdRenewal(data: Record<string, unknown>): Promise<void> {
+	const sponsorAdId = getSponsorAdId(data);
+
+	if (!sponsorAdId) {
+		console.error('❌ Sponsor ad ID not found in subscription metadata');
+		return;
+	}
+
+	try {
+		console.log(`🔄 Renewing sponsor ad: ${sponsorAdId}`);
+
+		const renewedAd = await sponsorAdService.renewSponsorAd(sponsorAdId);
+
+		if (renewedAd) {
+			console.log(`✅ Sponsor ad renewed successfully: ${sponsorAdId}`);
+		} else {
+			console.error(`❌ Failed to renew sponsor ad: ${sponsorAdId}`);
+		}
+	} catch (error) {
+		console.error('❌ Error renewing sponsor ad:', error);
+	}
 }
