@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { NAVIGATION_CLASSES, STEP_DEFINITIONS } from '../validation/form-validators';
@@ -13,6 +13,7 @@ interface FormNavigationProps {
 	onPrevious: () => void;
 	onNext: () => void;
 	onBack: () => void;
+	isSubmitting?: boolean;
 }
 
 export function FormNavigation({
@@ -22,7 +23,8 @@ export function FormNavigation({
 	requiredFieldsCount,
 	onPrevious,
 	onNext,
-	onBack
+	onBack,
+	isSubmitting = false
 }: FormNavigationProps) {
 	const isLastStep = currentStep === STEP_DEFINITIONS.length;
 
@@ -78,16 +80,25 @@ export function FormNavigation({
 				) : (
 					<Button
 						type="submit"
-						disabled={completedRequiredFields < requiredFieldsCount}
+						disabled={completedRequiredFields < requiredFieldsCount || isSubmitting}
 						className={cn(
-							completedRequiredFields < requiredFieldsCount
+							completedRequiredFields < requiredFieldsCount || isSubmitting
 								? NAVIGATION_CLASSES.button.submit.disabled
 								: NAVIGATION_CLASSES.button.submit.enabled
 						)}
 					>
 						<div className="flex items-center gap-3">
-							<span>Submit Product</span>
-							<Check className="w-5 h-5" />
+							{isSubmitting ? (
+								<>
+									<Loader2 className="w-5 h-5 animate-spin" />
+									<span>Submitting...</span>
+								</>
+							) : (
+								<>
+									<span>Submit Product</span>
+									<Check className="w-5 h-5" />
+								</>
+							)}
 						</div>
 					</Button>
 				)}
