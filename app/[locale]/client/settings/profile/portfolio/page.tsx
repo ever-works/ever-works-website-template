@@ -81,7 +81,7 @@ export default function PortfolioPage() {
 					</div>
 
 					{/* Add New Project */}
-					<Card className="border border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xs shadow-lg">
+					<Card className="border border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-lg">
 						<CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-800">
 							<CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
 								<FiPlus className="w-5 h-5 text-theme-primary-500 shrink-0" />
@@ -247,7 +247,7 @@ export default function PortfolioPage() {
 					</Card>
 
 					{/* Existing Projects */}
-					<Card className="border border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xs shadow-lg">
+					<Card className="border border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-lg">
 						<CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-800">
 							<CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
 								<FiBriefcase className="w-5 h-5 text-theme-primary-500 shrink-0" />
