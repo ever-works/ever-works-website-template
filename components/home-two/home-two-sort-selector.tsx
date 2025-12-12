@@ -37,7 +37,7 @@ export function HomeTwoSortSelector({ sortBy = "popularity", setSortBy, classNam
         >
           <span className="truncate">{currentOption?.label}</span>
           <ChevronDown className={`h-3 w-3 sm:h-3.5 sm:w-3.5 text-theme-primary-500 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
-          <span className="absolute inset-0 bg-linear-to-r from-theme-primary/5 via-transparent to-theme-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
+          
         </button>
       </DropdownMenu.Trigger>
 
@@ -66,7 +66,7 @@ export function HomeTwoSortSelector({ sortBy = "popularity", setSortBy, classNam
                     <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-theme-primary-500 dark:text-theme-primary-400 animate-in zoom-in-50 duration-200 ml-2" />
                   </div>
                 )}
-                <span className="absolute inset-0 bg-linear-to-r from-theme-primary/10 via-transparent to-theme-primary/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 rounded-md" />
+                
               </DropdownMenu.Item>
             ))}
           </div>

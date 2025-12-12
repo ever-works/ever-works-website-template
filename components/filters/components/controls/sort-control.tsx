@@ -37,7 +37,7 @@ export function SortControl({ sortBy, setSortBy, className = "" }: SortControlPr
             <span className="font-medium text-sm truncate pr-2">{currentOption?.label}</span>
             <ChevronDown className={`h-4 w-4 text-gray-400 dark:text-gray-500 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
           </div>
-          <span className="absolute inset-0 bg-linear-to-r from-theme-primary/5 via-transparent to-theme-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
+          
         </button>
       </DropdownMenu.Trigger>
 
@@ -56,7 +56,7 @@ export function SortControl({ sortBy, setSortBy, className = "" }: SortControlPr
               >
                 <span className="font-medium text-sm">{option.label}</span>
                 {sortBy === option.value && <Check className="h-4 w-4 text-theme-primary-500 dark:text-theme-primary-400 animate-in zoom-in-50 duration-200" />}
-                <span className="absolute inset-0 bg-linear-to-r from-theme-primary/10 via-transparent to-theme-primary/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 rounded-md" />
+                
               </DropdownMenu.Item>
             ))}
           </div>
