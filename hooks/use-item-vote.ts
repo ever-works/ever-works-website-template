@@ -87,7 +87,7 @@ export function useItemVote(itemId: string) {
 			const previousVotes = queryClient.getQueryData<ItemVoteResponse>(['item-votes', itemId]);
 
 			queryClient.setQueryData<ItemVoteResponse>(['item-votes', itemId], (old) => {
-				if (!old) return { count: 1, userVote: type };
+				if (!old) return { count: type === 'up' ? 1 : -1, userVote: type };
 
 				const countDiff = old.userVote === type ? -1 : old.userVote === null ? 1 : 2;
 				return {
