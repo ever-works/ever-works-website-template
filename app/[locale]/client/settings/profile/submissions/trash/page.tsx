@@ -13,7 +13,7 @@ export default function TrashPage() {
 	const { items, isLoading, restoreItem, restoringItemId, total } = useDeletedClientItems();
 
 	return (
-		<div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+		<div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
 			<Container maxWidth="7xl" padding="default">
 				<div className="space-y-8 py-8">
 					{/* Header */}
@@ -29,7 +29,7 @@ export default function TrashPage() {
 
 					{/* Page Header */}
 					<div className="text-center space-y-4">
-						<div className="inline-flex items-center justify-center w-16 h-16 bg-linear-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-2xl mb-4">
+						<div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-2xl mb-4">
 							<FiTrash2 className="w-8 h-8 text-gray-500 dark:text-gray-400" />
 						</div>
 						<h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">{t('TRASH_TITLE')}</h1>

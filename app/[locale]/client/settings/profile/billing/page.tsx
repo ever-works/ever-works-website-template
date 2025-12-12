@@ -51,7 +51,7 @@ export default function BillingPage() {
 			<Container maxWidth="7xl" padding="default">
 				<div className="text-center py-16">
 					<div className="max-w-md mx-auto">
-						<div className="w-24 h-24 bg-linear-to-br from-theme-primary-100 to-theme-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+						<div className="w-24 h-24 bg-gradient-to-br from-theme-primary-100 to-theme-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
 							<CreditCard className="w-12 h-12 text-theme-primary-600" />
 						</div>
 						<h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
