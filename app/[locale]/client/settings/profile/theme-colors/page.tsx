@@ -33,7 +33,7 @@ export default function ThemeColorsPage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+		<div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
 			<Container maxWidth="7xl" padding="default">
 				<div className="space-y-12 py-8">
 					{/* Header */}

@@ -9,13 +9,13 @@ export default async function SecuritySettingsPage() {
 	const t = await getTranslations('settings.SECURITY_PAGE');
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+		<div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
 			<Container maxWidth="7xl" padding="default" useGlobalWidth>
 				<div className="space-y-8 py-8">
 					{/* Header */}
 					<div className="flex items-center gap-4">
 						<Link
-							href="/client/settingsg/profile"
+							href="/client/settings"
 							className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
 						>
 							<FiArrowLeft className="w-4 h-4" />
@@ -40,7 +40,7 @@ export default async function SecuritySettingsPage() {
 						<Card className="border border-theme-primary-200 dark:border-theme-primary-800 bg-theme-primary-50 dark:bg-theme-primary-900/20 shadow-lg">
 							<CardContent className="p-6">
 								<h3 className="text-lg font-semibold text-theme-primary-900 dark:text-theme-primary-100 mb-4 flex items-center gap-2">
-									<FiShield className="w-5 h-5 text-theme-primary-500 flex-shrink-0" />
+									<FiShield className="w-5 h-5 text-theme-primary-500 shrink-0" />
 									{t('SECURITY_TIPS.TITLE')}
 								</h3>
 								<ul className="space-y-3 text-theme-primary-800 dark:text-theme-primary-200 text-sm">
