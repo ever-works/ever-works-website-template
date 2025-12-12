@@ -1,19 +1,20 @@
-import { getCachedItem, fetchSimilarItems } from "@/lib/content";
-import { notFound } from "next/navigation";
-import { getCategoriesName } from "@/lib/utils";
-import { getTranslations } from "next-intl/server";
-import { ItemDetail } from "@/components/item-detail";
-import { ServerItemContent } from "@/components/item-detail/server-item-content";
-import { Container } from "@/components/ui/container";
-import { Metadata } from "next";
-import { siteConfig } from "@/lib/config";
+import { getCachedItem, fetchSimilarItems } from '@/lib/content';
+import { notFound } from 'next/navigation';
+import { getCategoriesName } from '@/lib/utils';
+import { getTranslations } from 'next-intl/server';
+import { ItemDetail } from '@/components/item-detail';
+import { ServerItemContent } from '@/components/item-detail/server-item-content';
+import { Container } from '@/components/ui/container';
+import { Metadata } from 'next';
+import { siteConfig } from '@/lib/config';
 import { cleanUrl } from '@/lib/utils/url-cleaner';
 
 // Disable static generation to prevent MDX compilation errors during build
 export const dynamic = 'force-dynamic';
 
-const rawUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || 
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const rawUrl =
+	process.env.NEXT_PUBLIC_APP_URL?.trim() ||
+	(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://demo.ever.works');
 const appUrl = cleanUrl(rawUrl);
 
 /**
@@ -58,8 +59,8 @@ export async function generateMetadata({
 			: `Discover ${meta.name} on ${siteConfig.name}`;
 
 		// Use dynamic OG image endpoint, with fallback to icon or logo
-		const ogImageUrl = new URL(`/${locale}/items/${slug}/opengraph-image`, siteConfig.url).toString();
-		const fallbackImageUrl = new URL(meta.icon_url ?? siteConfig.logo, siteConfig.url).toString();
+		const ogImageUrl = new URL(`/${locale}/items/${slug}/opengraph-image`, appUrl).toString();
+		const fallbackImageUrl = new URL(meta.icon_url ?? siteConfig.logo, appUrl).toString();
 
 		return {
 			metadataBase: new URL(appUrl),
@@ -83,7 +84,7 @@ export async function generateMetadata({
 				],
 				type: 'website',
 				siteName: siteConfig.name,
-				url: `${siteConfig.url}/${locale}/items/${slug}`
+				url: `${appUrl}/${locale}/items/${slug}`
 			},
 			twitter: {
 				card: 'summary_large_image',
@@ -92,7 +93,7 @@ export async function generateMetadata({
 				images: [ogImageUrl, fallbackImageUrl]
 			},
 			alternates: {
-				canonical: `${siteConfig.url}/${locale}/items/${slug}`
+				canonical: `${appUrl}/${locale}/items/${slug}`
 			}
 		};
 	} catch (error) {
@@ -124,52 +125,40 @@ export async function generateMetadata({
 //   return (await Promise.all(params)).flat();
 // }
 
-export default async function ItemDetails({
-  params,
-}: {
-  params: Promise<{ slug: string; locale: string }>;
-}) {
-  const { slug, locale } = await params;
+export default async function ItemDetails({ params }: { params: Promise<{ slug: string; locale: string }> }) {
+	const { slug, locale } = await params;
 
-  try {
-    const item = await getCachedItem(slug, { lang: locale });
+	try {
+		const item = await getCachedItem(slug, { lang: locale });
 
-    if (!item) {
-      return notFound();
-    }
+		if (!item) {
+			return notFound();
+		}
 
-    const t = await getTranslations("common");
+		const t = await getTranslations('common');
 
-    const { meta, content } = item;
-    const categoryName = getCategoriesName(meta.category);
-    const similarItems = await fetchSimilarItems(meta, 6, { lang: locale }).then((items) => items.flatMap((item) => item.item));
+		const { meta, content } = item;
+		const categoryName = getCategoriesName(meta.category);
+		const similarItems = await fetchSimilarItems(meta, 6, { lang: locale }).then((items) =>
+			items.flatMap((item) => item.item)
+		);
 
+		const metaWithVideo = {
+			...meta,
+			video_url: '', // e.g. https://www.youtube.com/watch?v=eDqfg_LexCQ,
+			allItems: similarItems
+		};
 
-    const metaWithVideo = {
-      ...meta,
-      video_url: "", // e.g. https://www.youtube.com/watch?v=eDqfg_LexCQ,
-      allItems: similarItems,
-    };
+		// Render the MDX content on the server
+		const renderedContent = <ServerItemContent content={content} noContentMessage={t('NO_CONTENT_PROVIDED')} />;
 
-    // Render the MDX content on the server
-    const renderedContent = (
-      <ServerItemContent 
-        content={content} 
-        noContentMessage={t("NO_CONTENT_PROVIDED")} 
-      />
-    );
-
-    return (
-      <Container maxWidth="7xl" padding="default" useGlobalWidth>
-        <ItemDetail
-          meta={metaWithVideo}
-          renderedContent={renderedContent}
-          categoryName={categoryName}
-        />
-      </Container>
-    );
-  } catch (error) {
-    console.error(`Failed to load item ${slug} for locale ${locale}:`, error);
-    return notFound();
-  }
+		return (
+			<Container maxWidth="7xl" padding="default" useGlobalWidth>
+				<ItemDetail meta={metaWithVideo} renderedContent={renderedContent} categoryName={categoryName} />
+			</Container>
+		);
+	} catch (error) {
+		console.error(`Failed to load item ${slug} for locale ${locale}:`, error);
+		return notFound();
+	}
 }
