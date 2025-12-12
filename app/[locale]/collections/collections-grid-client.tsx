@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Collection } from "@/types/collection";
 import { CollectionsGrid } from "@/components/collections/collections-grid";
 import { Paginate } from "@/components/filters/components/pagination/paginate";
@@ -15,13 +15,27 @@ interface CollectionsGridClientProps {
 }
 
 export default function CollectionsGridClient({ collections, locale }: CollectionsGridClientProps) {
-  const COLLECTIONS_PER_PAGE = 6;
-  const [currentPage, setCurrentPage] = useState(1);
+  const COLLECTIONS_PER_PAGE = 9;
   const t = useTranslations();
 
   // Calculate pagination
-  const totalPagesCount = totalPages(collections.length, COLLECTIONS_PER_PAGE);
-  const startIndex = (currentPage - 1) * COLLECTIONS_PER_PAGE;
+  const totalPagesCount = Math.max(1, totalPages(collections.length, COLLECTIONS_PER_PAGE));
+  
+  // Initialize with safe clamped value
+  const [currentPage, setCurrentPage] = useState(() => {
+    return Math.max(1, Math.min(1, totalPagesCount));
+  });
+
+  // Reset currentPage if it falls outside valid range when collections change
+  useEffect(() => {
+    if (currentPage < 1 || currentPage > totalPagesCount) {
+      setCurrentPage(Math.max(1, Math.min(currentPage, totalPagesCount)));
+    }
+  }, [totalPagesCount, currentPage]);
+
+  // Clamp currentPage to valid range for calculations
+  const safePage = Math.max(1, Math.min(currentPage, totalPagesCount));
+  const startIndex = (safePage - 1) * COLLECTIONS_PER_PAGE;
   const endIndex = startIndex + COLLECTIONS_PER_PAGE;
 
   // Get current page collections
@@ -30,7 +44,10 @@ export default function CollectionsGridClient({ collections, locale }: Collectio
   }, [collections, startIndex, endIndex]);
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    // Coerce to number and clamp to valid range
+    const numPage = Number(page);
+    const clampedPage = Math.max(1, Math.min(isNaN(numPage) ? 1 : numPage, totalPagesCount));
+    setCurrentPage(clampedPage);
     // Scroll to top smoothly
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -95,7 +112,7 @@ export default function CollectionsGridClient({ collections, locale }: Collectio
         <footer className="flex items-center justify-center mt-8">
           <Paginate
             basePath=""
-            initialPage={currentPage}
+            initialPage={safePage}
             total={totalPagesCount}
             onPageChange={handlePageChange}
           />
