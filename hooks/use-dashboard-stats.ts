@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { mockStats } from './mock-dashboard-stats';
 
 interface ActivityData {
   date: string;
@@ -39,6 +38,7 @@ export interface UserStats {
   totalViews: number;
   totalVotesReceived: number;
   totalCommentsReceived: number;
+  viewsAvailable: boolean;
   recentActivity: {
     newSubmissions: number;
     newViews: number;
@@ -47,7 +47,6 @@ export interface UserStats {
   totalActivity: number;
   activityChartData: ActivityData[];
   engagementChartData: { name: string; value: number; color: string }[];
-  // New for suggestions:
   submissionTimeline: SubmissionTimelineData[];
   engagementOverview: EngagementOverviewData[];
   statusBreakdown: StatusBreakdownData[];
@@ -58,9 +57,21 @@ export function useDashboardStats() {
   return useQuery<UserStats>({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return mockStats;
+      const response = await fetch('/api/client/dashboard/stats');
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch dashboard stats');
+      }
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to fetch dashboard stats');
+      }
+
+      // Extract stats from response (remove success field)
+      const { success: _success, ...stats } = data;
+      return stats as UserStats;
     },
     staleTime: 5 * 60 * 1000,
   });
