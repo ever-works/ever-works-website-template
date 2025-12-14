@@ -120,7 +120,7 @@ const signInWithProviderSchema = z.object({
   redirect: z.union([z.boolean(), z.string()]).transform(val => 
     typeof val === 'string' ? val === 'true' : val
   ).default(true),
-  callbackUrl: z.string().default('/dashboard'),
+  callbackUrl: z.string().default('/client/dashboard'),
   provider: z.enum([
     AuthProviders.GOOGLE,
     AuthProviders.FACEBOOK,

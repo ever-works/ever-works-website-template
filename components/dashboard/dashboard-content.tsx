@@ -48,7 +48,7 @@ export function DashboardContent({ session }: DashboardContentProps) {
     }
   };
 
-  // Auth check intentionally skipped: This dashboard is designed for demo/public view or authentication is handled at a higher level (e.g., route protection). If sensitive data is exposed, implement proper authentication checks here.
+  // Auth handled at route level - all dashboard pages require authentication
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
