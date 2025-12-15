@@ -41,7 +41,6 @@ export interface CheckoutSessionPayload {
 		billingInterval: PaymentInterval;
 		userId: string;
 		email?: string;
-		trialAmount?: number;
 	};
 }
 
@@ -114,8 +113,7 @@ export const useCreateCheckoutSession = () => {
 					planId: plan.id,
 					planName: plan.name,
 					billingInterval,
-					userId: user.id,
-					trialAmount: plan.trialAmount
+					userId: user.id
 				}
 			};
 

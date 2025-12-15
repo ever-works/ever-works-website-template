@@ -121,6 +121,13 @@ async function fetchWithTimeout(url: string, options: FetchOptions = {}): Promis
 
 			// Handle AbortError specifically
 			if (error instanceof Error && (error.name === 'AbortError' || (error as any).code === 'ETIMEDOUT')) {
+				// Check if the abort was caused by the caller's signal (external cancellation)
+				// vs the timeout controller (actual timeout)
+				if (fetchOptions.signal?.aborted) {
+					// External cancellation - preserve the original abort error
+					throw error;
+				}
+				// Actual timeout - convert to TimeoutError
 				const err = new Error(`Request timeout after ${timeout}ms`, { cause: error as any });
 				(err as any).name = 'TimeoutError';
 				(err as any).code = 'ETIMEDOUT';

@@ -160,6 +160,20 @@ export async function POST(request: NextRequest) {
 		// Get or create Polar provider (singleton)
 		const polarProvider = getOrCreatePolarProvider();
 
+		// Parse request body with proper error handling for malformed JSON
+		let body;
+		try {
+			body = await request.json();
+		} catch {
+			return NextResponse.json(
+				{
+					error: 'Invalid JSON in request body',
+					message: 'Invalid JSON in request body'
+				},
+				{ status: 400 }
+			);
+		}
+
 		const {
 			productId,
 			mode = 'subscription',
@@ -169,7 +183,7 @@ export async function POST(request: NextRequest) {
 			successUrl,
 			cancelUrl,
 			metadata = {}
-		} = await request.json();
+		} = body;
 
 		if (!productId) {
 			return NextResponse.json(
@@ -212,6 +226,9 @@ export async function POST(request: NextRequest) {
 		// Create checkout session based on mode
 		if (mode === 'subscription') {
 			// Create base metadata using helper function
+			// Note: Polar handles trial periods via trial products (trialAmountId).
+			// The trialPeriodDays is stored in metadata for reference, but the actual
+			// trial duration may be configured at the product level in Polar's dashboard.
 			const sanitizedMetadata = createBaseCheckoutMetadata({
 				userId: session.user.id || '',
 				planId: metadata.planId,
@@ -219,6 +236,7 @@ export async function POST(request: NextRequest) {
 				billingInterval: metadata.billingInterval,
 				successUrl,
 				cancelUrl,
+				trialPeriodDays: hasTrial ? trialPeriodDays : undefined,
 				additionalMetadata: metadata
 			});
 
@@ -237,7 +255,9 @@ export async function POST(request: NextRequest) {
 					{ status: 500 }
 				);
 			}
-			console.log('sanitizedMetadata', products);
+			if (process.env.NODE_ENV === 'development') {
+				console.log('sanitizedMetadata', products);
+			}
 			// Create checkout with products array (trial product first, then main product)
 			const checkout = await polar.checkouts.create({
 				products: products,

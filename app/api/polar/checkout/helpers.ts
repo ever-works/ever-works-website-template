@@ -50,6 +50,7 @@ export function createBaseCheckoutMetadata(options: {
 	billingInterval?: string;
 	successUrl?: string;
 	cancelUrl?: string;
+	trialPeriodDays?: number;
 	additionalMetadata?: Record<string, any>;
 }): Record<string, any> {
 	const metadata: Record<string, any> = {
@@ -70,6 +71,9 @@ export function createBaseCheckoutMetadata(options: {
 	}
 	if (options.cancelUrl) {
 		metadata.cancelUrl = options.cancelUrl;
+	}
+	if (options.trialPeriodDays !== undefined && options.trialPeriodDays > 0) {
+		metadata.trialPeriodDays = String(options.trialPeriodDays);
 	}
 
 	// Add any additional metadata

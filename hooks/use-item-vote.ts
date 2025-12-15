@@ -183,7 +183,7 @@ export function useItemVote(itemId: string) {
 
 		if (!user) {
 			loginModal.onOpen('Please sign in to vote on this item');
-			throw new Error('Authentication required');
+			return;
 		}
 
 		if (voteData?.userVote === type) {

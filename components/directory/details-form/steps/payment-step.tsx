@@ -9,8 +9,8 @@ interface PaymentStepProps {
 }
 
 export function PaymentStep({ onSelectPlan, selectedPlan }: PaymentStepProps) {
-	// Convert string to PaymentPlan enum if provided
-	const initialPlan = selectedPlan as PaymentPlan | null;
+	// Convert string to PaymentPlan enum if provided, or undefined if null
+	const initialPlan = selectedPlan ? (selectedPlan as PaymentPlan) : undefined;
 
 	return (
 		<PricingSection

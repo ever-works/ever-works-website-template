@@ -12,7 +12,7 @@ import { useDisclosure } from '@heroui/react';
 interface PricingSectionProps {
 	onSelectPlan?: (plan: PaymentPlan) => void;
 	isReview?: boolean;
-	initialSelectedPlan?: PaymentPlan | null;
+	initialSelectedPlan?: PaymentPlan;
 }
 
 export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: PricingSectionProps) {

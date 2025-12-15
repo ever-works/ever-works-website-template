@@ -91,7 +91,6 @@ export interface PricingConfig {
 
 	// Trial configuration
 	trialAmountId?: string;
-	trialAmount?: number;
 	isAuthorizedTrialAmount?: boolean;
 
 	// Polar configuration
