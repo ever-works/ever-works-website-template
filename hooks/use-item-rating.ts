@@ -1,36 +1,40 @@
 "use client";
 import { apiUtils, serverClient } from "@/lib/api/server-api-client";
 import { useQuery } from "@tanstack/react-query";
-import { useFeatureFlagsWithSimulation } from "@/hooks/use-feature-flags-with-simulation";
 
 interface RatingData {
   averageRating: number;
   totalRatings: number;
 }
 
-export function useItemRating(itemId: string) {
-  const { features } = useFeatureFlagsWithSimulation();
-
+export function useItemRating(itemId: string, enabled: boolean = true) {
   const {
     data: rating = { averageRating: 0, totalRatings: 0 },
     isLoading,
     error,
+    refetch,
   } = useQuery<RatingData>({
     queryKey: ["item-rating", itemId],
-    enabled: features.ratings, // Only fetch when ratings feature is enabled
     queryFn: async () => {
       const encodedItemId = encodeURIComponent(itemId);
-      const response = await serverClient.get<RatingData>(`/api/items/${encodedItemId}/comments/rating`);
+      // Cache-bust to ensure we always get fresh data after mutations
+      const response = await serverClient.get<RatingData>(`/api/items/${encodedItemId}/comments/rating?ts=${Date.now()}`);
       if (!apiUtils.isSuccess(response)) {
         throw new Error(apiUtils.getErrorMessage(response) || "Failed to fetch rating");
       }
       return response.data;
     },
+    enabled,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
 
   return {
     rating,
     isLoading,
     error,
+    refetch,
   };
 } 
