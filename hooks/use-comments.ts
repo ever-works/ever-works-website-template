@@ -53,7 +53,7 @@ export function useComments(itemId: string) {
       // response.data contains the API response: { success: true, comment: CommentWithUser }
       return response.data.comment;
     },
-    onSuccess: (newComment) => {
+    onSuccess: async (newComment) => {
       if (newComment) {
         // Optimistically update cache with server-returned comment data
         queryClient.setQueryData<CommentWithUser[]>(["comments", itemId], (old = []) => {
@@ -65,9 +65,10 @@ export function useComments(itemId: string) {
           // Add new comment at the beginning
           return [newComment, ...old];
         });
-        // Update rating caches to reflect new rating immediately
-        queryClient.setQueryData(["commentRating", itemId], newComment.rating);
-        queryClient.invalidateQueries({ queryKey: ["itemRating", itemId], exact: true });
+        
+        await queryClient.invalidateQueries({ 
+          queryKey: ["item-rating", itemId]
+        });
       }
     },
   });
@@ -87,6 +88,11 @@ export function useComments(itemId: string) {
       await queryClient.refetchQueries({
         queryKey: ["comments", itemId],
         exact: true
+      });
+      
+      // Force immediate rating update
+      await queryClient.invalidateQueries({ 
+        queryKey: ["item-rating", itemId]
       });
     },
   });
@@ -108,7 +114,7 @@ export function useComments(itemId: string) {
 
       return response.data;
     },
-    onSuccess: (updatedComment) => {
+    onSuccess: async (updatedComment) => {
       if (updatedComment) {
         // Optimistically update cache with server-returned comment data
         queryClient.setQueryData<CommentWithUser[]>(["comments", itemId], (old = []) => {
@@ -116,8 +122,11 @@ export function useComments(itemId: string) {
             comment.id === updatedComment.id ? updatedComment : comment
           );
         });
-        // Invalidate rating caches to reflect updated rating
-        queryClient.invalidateQueries({ queryKey: ["itemRating", itemId], exact: true });
+        
+        // Force immediate rating update
+        await queryClient.invalidateQueries({ 
+          queryKey: ["item-rating", itemId]
+        });
       }
     },
   });
@@ -139,7 +148,7 @@ export function useComments(itemId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
-      queryClient.invalidateQueries({ queryKey: ["itemRating", itemId] });
+      queryClient.invalidateQueries({ queryKey: ["item-rating", itemId] });
     },
   });
 
@@ -160,7 +169,7 @@ export function useComments(itemId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
-      queryClient.invalidateQueries({ queryKey: ["itemRating", itemId] });
+      queryClient.invalidateQueries({ queryKey: ["item-rating", itemId] });
     },
   });
 
