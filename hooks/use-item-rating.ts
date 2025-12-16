@@ -9,7 +9,7 @@ interface RatingData {
 
 export function useItemRating(itemId: string, enabled: boolean = true) {
   const {
-    data: rating = { averageRating: 0, totalRatings: 0 },
+    data: rating,
     isLoading,
     error,
     refetch,
@@ -29,10 +29,13 @@ export function useItemRating(itemId: string, enabled: boolean = true) {
       return response.data;
     },
     enabled,
-    staleTime: 0,
-    refetchOnMount: 'always',
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
+    // Provide defined initial data so consumers always have a RatingData shape
+    initialData: { averageRating: 0, totalRatings: 0 },
+    // Use moderate defaults; mutations and explicit refetch handle immediates
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   return {

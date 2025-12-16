@@ -40,7 +40,7 @@ export function RatingDisplay({ itemId }: RatingDisplayProps) {
       </span>
       <div className="flex items-center gap-2">
         {isLoading ? (
-          <span className="text-sm text-gray-400">Loading...</span>
+          <span className="text-sm text-gray-400">{t("common.LOADING")}</span>
         ) : (
           <>
             <Rating 
