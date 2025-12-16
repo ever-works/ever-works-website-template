@@ -15,10 +15,14 @@ export function useItemRating(itemId: string, enabled: boolean = true) {
     refetch,
   } = useQuery<RatingData>({
     queryKey: ["item-rating", itemId],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       const encodedItemId = encodeURIComponent(itemId);
-      // Cache-bust to ensure we always get fresh data after mutations
-      const response = await serverClient.get<RatingData>(`/api/items/${encodedItemId}/comments/rating?ts=${Date.now()}`);
+      // Avoid HTTP cache; rely on React Query invalidation for freshness
+      const response = await serverClient.get<RatingData>(`/api/items/${encodedItemId}/comments/rating`, {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-store" },
+        signal,
+      });
       if (!apiUtils.isSuccess(response)) {
         throw new Error(apiUtils.getErrorMessage(response) || "Failed to fetch rating");
       }
