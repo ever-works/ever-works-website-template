@@ -24,12 +24,12 @@ export default function PortfolioPage() {
 
 	const validate = () => {
 		const newErrors: { [key: string]: string } = {};
-		if (!title.trim()) newErrors.title = 'Project title is required.';
-		if (!imageUrl.trim()) newErrors.imageUrl = 'Image URL is required.';
-		else if (!isValidUrl(imageUrl.trim())) newErrors.imageUrl = 'Please enter a valid image URL.';
-		if (!description.trim()) newErrors.description = 'Description is required.';
-		if (!externalUrl.trim()) newErrors.externalUrl = 'Project URL is required.';
-		else if (!isValidUrl(externalUrl.trim())) newErrors.externalUrl = 'Please enter a valid project URL.';
+		if (!title.trim()) newErrors.title = t('VALIDATION.TITLE_REQUIRED');
+		if (!imageUrl.trim()) newErrors.imageUrl = t('VALIDATION.IMAGE_URL_REQUIRED');
+		else if (!isValidUrl(imageUrl.trim())) newErrors.imageUrl = t('VALIDATION.IMAGE_URL_INVALID');
+		if (!description.trim()) newErrors.description = t('VALIDATION.DESCRIPTION_REQUIRED');
+		if (!externalUrl.trim()) newErrors.externalUrl = t('VALIDATION.PROJECT_URL_REQUIRED');
+		else if (!isValidUrl(externalUrl.trim())) newErrors.externalUrl = t('VALIDATION.PROJECT_URL_INVALID');
 		return newErrors;
 	};
 
@@ -48,7 +48,7 @@ export default function PortfolioPage() {
 		const validationErrors = validate();
 		setErrors(validationErrors);
 		if (Object.keys(validationErrors).length > 0) return;
-		setSuccess('Project added');
+		setSuccess(t('SUCCESS.PROJECT_ADDED'));
 		setTitle('');
 		setImageUrl('');
 		setDescription('');
@@ -58,7 +58,7 @@ export default function PortfolioPage() {
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+		<div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
 			<Container maxWidth="7xl" padding="default" useGlobalWidth>
 				<div className="space-y-8 py-8">
 					{/* Header */}
@@ -82,7 +82,7 @@ export default function PortfolioPage() {
 						<CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-800">
 							<CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
 								<FiPlus className="w-5 h-5 text-theme-primary-500 shrink-0" />
-								Add New Project
+								{t('ADD_NEW_PROJECT')}
 							</CardTitle>
 						</CardHeader>
 						<CardContent className="p-6">
@@ -93,12 +93,12 @@ export default function PortfolioPage() {
 											htmlFor="title"
 											className="text-sm font-medium text-gray-700 dark:text-gray-300"
 										>
-											Project Title
+											{t('PROJECT_TITLE')}
 										</label>
 										<input
 											id="title"
 											name="title"
-											placeholder="Enter project title"
+											placeholder={t('PROJECT_TITLE_PLACEHOLDER')}
 											className="w-full h-14 px-6 text-lg bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 hover:border-gray-400 dark:hover:border-gray-500 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
 											value={title}
 											onChange={(e) => setTitle(e.target.value)}
@@ -117,13 +117,13 @@ export default function PortfolioPage() {
 											htmlFor="imageUrl"
 											className="text-sm font-medium text-gray-700 dark:text-gray-300"
 										>
-											Image URL
+											{t('IMAGE_URL')}
 										</label>
 										<input
 											id="imageUrl"
 											name="imageUrl"
 											type="url"
-											placeholder="https://example.com/image.jpg"
+											placeholder={t('IMAGE_URL_PLACEHOLDER')}
 											className="w-full h-14 px-6 text-lg bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 hover:border-gray-400 dark:hover:border-gray-500 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
 											value={imageUrl}
 											onChange={(e) => setImageUrl(e.target.value)}
@@ -143,13 +143,13 @@ export default function PortfolioPage() {
 										htmlFor="description"
 										className="text-sm font-medium text-gray-700 dark:text-gray-300"
 									>
-										Description
+										{t('DESCRIPTION')}
 									</label>
 									<textarea
 										id="description"
 										name="description"
 										rows={3}
-										placeholder="Describe your project..."
+										placeholder={t('DESCRIPTION_PLACEHOLDER')}
 										className="w-full px-6 py-4 text-lg bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 hover:border-gray-400 dark:hover:border-gray-500 resize-none text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
 										value={description}
 										onChange={(e) => setDescription(e.target.value)}
@@ -169,13 +169,13 @@ export default function PortfolioPage() {
 											htmlFor="externalUrl"
 											className="text-sm font-medium text-gray-700 dark:text-gray-300"
 										>
-											Project URL
+											{t('PROJECT_URL')}
 										</label>
 										<input
 											id="externalUrl"
 											name="externalUrl"
 											type="url"
-											placeholder="https://yourproject.com"
+											placeholder={t('PROJECT_URL_PLACEHOLDER')}
 											className="w-full h-14 px-6 text-lg bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 hover:border-gray-400 dark:hover:border-gray-500 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
 											value={externalUrl}
 											onChange={(e) => setExternalUrl(e.target.value)}
@@ -194,12 +194,12 @@ export default function PortfolioPage() {
 											htmlFor="tags"
 											className="text-sm font-medium text-gray-700 dark:text-gray-300"
 										>
-											Tags (comma separated)
+											{t('TAGS')}
 										</label>
 										<input
 											id="tags"
 											name="tags"
-											placeholder="React, TypeScript, Next.js"
+											placeholder={t('TAGS_PLACEHOLDER')}
 											className="w-full h-14 px-6 text-lg bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 hover:border-gray-400 dark:hover:border-gray-500 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
 											value={tags}
 											onChange={(e) => setTags(e.target.value)}
@@ -217,7 +217,7 @@ export default function PortfolioPage() {
 											onChange={(e) => setIsFeatured(e.target.checked)}
 										/>
 										<span className="text-sm text-gray-700 dark:text-gray-300">
-											Featured Project
+											{t('FEATURED_PROJECT')}
 										</span>
 									</label>
 								</div>
@@ -236,7 +236,7 @@ export default function PortfolioPage() {
 										className="inline-flex items-center gap-2 bg-theme-primary-600 hover:bg-theme-primary-700 text-white font-medium py-3 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:ring-offset-2"
 									>
 										<FiPlus className="w-4 h-4" />
-										Add Project
+										{t('ADD_PROJECT')}
 									</Button>
 								</div>
 							</form>
@@ -248,7 +248,7 @@ export default function PortfolioPage() {
 						<CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-800">
 							<CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
 								<FiBriefcase className="w-5 h-5 text-theme-primary-500 shrink-0" />
-								Your Projects
+								{t('YOUR_PROJECTS')}
 							</CardTitle>
 						</CardHeader>
 						<CardContent className="p-6">
