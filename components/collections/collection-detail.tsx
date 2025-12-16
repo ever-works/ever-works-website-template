@@ -3,20 +3,23 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Collection } from "@/types/collection";
-import { Category, ItemData, Tag } from "@/lib/content";
+import { ItemData, Tag } from "@/lib/content";
 import { Container, useContainerWidth } from "@/components/ui/container";
 import { ListingClient } from "@/components/shared-card/listing-client";
 import { FilterProvider } from "@/components/filters/context/filter-context";
-import { Categories } from "@/components/filters/components/categories/categories-section";
 import { Tags } from "@/components/filters/components/tags/tags-section";
 import { sortByNumericProperty, filterItems } from "@/lib/utils";
 import { useFilters } from "@/hooks/use-filters";
 import { TopLoadingBar } from "@/components/ui/top-loading-bar";
 import Hero from "@/components/hero";
+import { LayoutHome, useLayoutTheme } from "@/components/context";
+import { HomeTwoLayout } from "@/components/home-two";
+import { sortItemsWithFeatured } from "@/lib/utils/featured-items";
+import { useFeaturedItemsSection } from "@/hooks/use-feature-items-section";
+import { SortControl } from "@/components/filters/components/controls/sort-control";
 
 interface CollectionDetailProps {
   collection: Collection;
-  categories: Category[];
   tags: Tag[];
   items: ItemData[];
   total: number;
@@ -38,22 +41,28 @@ const LAYOUT_STYLES = {
 };
 
 function CollectionDetailContent(props: CollectionDetailProps) {
-  const { collection, categories, tags, items } = props;
+  const { collection, tags, items } = props;
   const t = useTranslations();
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-  const { selectedCategories, searchTerm, selectedTags, isFiltersLoading } = useFilters();
+  const { layoutHome = LayoutHome.HOME_ONE } = useLayoutTheme();
+  const { searchTerm, selectedTags, isFiltersLoading, sortBy, setSortBy } = useFilters();
   
   const sortedTags = sortByNumericProperty(tags);
-  const sortedCategories = sortByNumericProperty(categories);
+
+  // Use the featured items hook
+  const { featuredItems } = useFeaturedItemsSection({
+    limit: 6,
+    enabled: false // Disable featured items for collection pages
+  });
 
   // Filtering logic using shared utility
   const filteredItems = useMemo(() => {
-    return filterItems(items, {
+    const filtered = filterItems(items, {
       searchTerm,
-      selectedTags,
-      selectedCategories
+      selectedTags
     });
-  }, [items, searchTerm, selectedTags, selectedCategories]);
+    return sortItemsWithFeatured(filtered, featuredItems);
+  }, [items, searchTerm, selectedTags, featuredItems]);
 
   // Get container width to conditionally apply styles
   const containerWidth = useContainerWidth();
@@ -65,6 +74,55 @@ function CollectionDetailContent(props: CollectionDetailProps) {
     ? collection.description 
     : collection.description.slice(0, 200) + '...';
 
+  // Render HOME_TWO layout if selected
+  if (layoutHome === LayoutHome.HOME_TWO) {
+    return (
+      <>
+        <TopLoadingBar isLoading={isFiltersLoading} />
+        <Hero
+          badgeText={t("common.COLLECTION")}
+          title={
+            <div className="flex flex-col items-center gap-4">
+              {collection.icon_url && (
+                <div className="text-4xl text-gray-900 dark:text-white">{collection.icon_url}</div>
+              )}
+              <span className="bg-linear-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent inline-block leading-tight">
+                {collection.name}
+              </span>
+            </div>
+          }
+          description={
+            <div className="max-w-3xl mx-auto">
+              <p className="text-gray-600 dark:text-gray-400 text-lg">
+                {displayDescription}
+              </p>
+              {isLongDescription && (
+                <button
+                  onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                  className="mt-2 text-theme-primary hover:text-theme-primary/80 text-sm font-medium transition-colors duration-200"
+                >
+                  {isDescriptionExpanded ? t("common.SHOW_LESS") : t("common.SHOW_MORE", { count: "" })}
+                </button>
+              )}
+            </div>
+          }
+          className="min-h-screen text-center"
+        >
+          <div className="pb-8 sm:pb-10 md:pb-12 lg:pb-16 xl:pb-20">
+            <HomeTwoLayout
+              {...props}
+              categories={[]}
+              tags={sortedTags}
+              filteredAndSortedItems={filteredItems}
+              searchEnabled={true}
+            />
+          </div>
+        </Hero>
+      </>
+    );
+  }
+
+  // HOME_ONE layout (default)
   return (
     <>
       <TopLoadingBar isLoading={isFiltersLoading} />
@@ -73,9 +131,9 @@ function CollectionDetailContent(props: CollectionDetailProps) {
         title={
           <div className="flex flex-col items-center gap-4">
              {collection.icon_url && (
-              <div className="text-5xl">{collection.icon_url}</div>
+              <div className="text-5xl text-gray-900 dark:text-white">{collection.icon_url}</div>
             )}
-            <span className="bg-linear-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent inline-block leading-tight">
               {collection.name}
             </span>
           </div>
@@ -104,7 +162,7 @@ function CollectionDetailContent(props: CollectionDetailProps) {
               <li className="inline-flex items-center text-black dark:text-white">
                 <Link
                   href="/"
-                  className="inline-flex items-center text-sm font-medium text-black dark:text-white hover:text-white dark:hover:text-white transition-colors duration-300"
+                  className="inline-flex items-center text-sm font-medium hover:text-theme-primary transition-colors duration-300"
                 >
                   <svg
                     className="w-4 h-4 mr-2"
@@ -133,7 +191,7 @@ function CollectionDetailContent(props: CollectionDetailProps) {
                   </svg>
                   <Link
                     href="/collections"
-                    className="ml-1 text-sm font-medium md:ml-2 hover:text-theme-primary transition-colors duration-200"
+                    className="ml-1 text-sm font-medium md:ml-2 hover:text-theme-primary transition-colors duration-300"
                   >
                     {t("common.COLLECTION")}
                   </Link>
@@ -162,47 +220,48 @@ function CollectionDetailContent(props: CollectionDetailProps) {
           </nav>
 
           <div className={LAYOUT_STYLES.mainContainer}>
-            <div className={isFluid ? LAYOUT_STYLES.contentWrapperFluid : LAYOUT_STYLES.contentWrapper}>
-              {/* Sidebar - Categories */}
-              {sortedCategories.length > 0 && (
-                <div className={`${isFluid ? LAYOUT_STYLES.sidebarFluid : LAYOUT_STYLES.sidebar} ${LAYOUT_STYLES.sidebarMobile}`}>
-                  <Categories total={props.total} categories={sortedCategories} tags={sortedTags} />
+            <div className="w-full">
+              {/* Tags Section - Mobile version */}
+              {sortedTags.length > 0 && (
+                <div className={`lg:sticky lg:top-4 mb-4 sm:mb-6 md:mb-8 ${LAYOUT_STYLES.mobileOnly}`}>
+                  <Tags tags={sortedTags} enableSticky={false} maxVisibleTags={3} allItems={props.items} />
+                </div>
+              )}
+              {/* Tags Section - Desktop version */}
+              {sortedTags.length > 0 && (
+                <div className={`lg:sticky lg:top-4 mb-4 sm:mb-6 md:mb-8 ${LAYOUT_STYLES.desktopOnly}`}>
+                  <Tags tags={sortedTags} enableSticky={true} maxVisibleTags={isFluid ? 8 : 5} allItems={props.items} />
                 </div>
               )}
 
-              {/* Main Content */}
-              <div className={LAYOUT_STYLES.mainContent}>
-                {/* Tags Section - Mobile version */}
-                {sortedTags.length > 0 && (
-                  <div className={`lg:sticky lg:top-4 mb-4 sm:mb-6 md:mb-8 ${LAYOUT_STYLES.mobileOnly}`}>
-                    <Tags tags={sortedTags} enableSticky={false} maxVisibleTags={3} allItems={props.items} />
-                  </div>
-                )}
-                {/* Tags Section - Desktop version */}
-                {sortedTags.length > 0 && (
-                  <div className={`lg:sticky lg:top-4 mb-4 sm:mb-6 md:mb-8 ${LAYOUT_STYLES.desktopOnly}`}>
-                    <Tags tags={sortedTags} enableSticky={true} maxVisibleTags={isFluid ? 8 : 5} allItems={props.items} />
-                  </div>
-                )}
-
-                {/* Listing Content */}
-                <div className="mb-6 sm:mb-8 md:mb-10">
-                  <ListingClient
-                    {...props}
-                    items={filteredItems}
-                    totalCount={props.items.length}
-                    config={{
-                      showStats: false,
-                      showViewToggle: true,
-                      showFilters: false,
-                      showPagination: true,
-                      showEmptyState: true,
-                      enableSearch: false,
-                      enableTagFilter: false,
-                      enableSorting: true,
-                    }}
+              {/* Listing Content */}
+              <div className="mb-6 sm:mb-8 md:mb-10 space-y-10">
+                <div className="flex w-full flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4 md:-mb-8">
+                  <SortControl
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    className="w-full sm:w-auto max-w-full sm:max-w-40"
                   />
+                  <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">
+                   Showing {filteredItems.length} items
+                  </span>
                 </div>
+                <ListingClient
+                  {...props}
+                  categories={[]}
+                  items={filteredItems}
+                  totalCount={props.items.length}
+                  config={{
+                    showStats: false,
+                    showViewToggle: true,
+                    showFilters: false,
+                    showPagination: true,
+                    showEmptyState: true,
+                    enableSearch: true,
+                    enableTagFilter: false,
+                    enableSorting: true,
+                  }}
+                />
               </div>
             </div>
           </div>
