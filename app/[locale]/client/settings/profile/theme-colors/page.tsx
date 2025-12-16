@@ -6,7 +6,7 @@ import { FiArrowLeft, FiCheck, FiDroplet } from 'react-icons/fi';
 import Link from 'next/link';
 import { useTheme } from '@/hooks/use-theme';
 import { cn } from '@/lib/utils';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 const getThemeButtonClasses = (isSelected: boolean) =>
 	cn(
@@ -19,6 +19,7 @@ const getThemeButtonClasses = (isSelected: boolean) =>
 
 export default function ThemeColorsPage() {
 	const locale = useLocale();
+	const t = useTranslations('settings.THEME_COLORS_PAGE');
 	const { themeKey, availableThemes, changeTheme } = useTheme();
 
 	if (!availableThemes || availableThemes.length === 0) {
@@ -42,7 +43,7 @@ export default function ThemeColorsPage() {
 							className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
 						>
 							<FiArrowLeft className="w-4 h-4" />
-							Back to Settings
+							{t('BACK_TO_SETTINGS')}
 						</Link>
 					</div>
 
@@ -51,10 +52,9 @@ export default function ThemeColorsPage() {
 						<div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-2xl mb-4">
 							<FiDroplet className="w-8 h-8 text-theme-primary-600 dark:text-theme-primary-400" />
 						</div>
-						<h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">Theme & Appearance</h1>
+						<h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">{t('TITLE')}</h1>
 						<p className="text-gray-600 dark:text-gray-300 text-lg max-w-3xl mx-auto leading-relaxed">
-							Choose a visual theme for your profile. Each theme comes with its own color palette and
-							style to make your profile uniquely yours.
+							{t('DESCRIPTION')}
 						</p>
 					</div>
 
@@ -63,11 +63,9 @@ export default function ThemeColorsPage() {
 						<CardHeader className="pb-6">
 							<CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
 								<FiDroplet className="w-5 h-5 text-theme-primary-600 dark:text-theme-primary-400" />
-								Choose Visual Theme
+								{t('CHOOSE_THEME')}
 							</CardTitle>
-							<p className="text-gray-500 dark:text-gray-400 text-sm">
-								Select a theme that best represents your style and brand
-							</p>
+							<p className="text-gray-500 dark:text-gray-400 text-sm">{t('CHOOSE_THEME_DESC')}</p>
 						</CardHeader>
 						<CardContent>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
