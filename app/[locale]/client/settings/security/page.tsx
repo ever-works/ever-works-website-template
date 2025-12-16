@@ -35,28 +35,28 @@ export default async function SecuritySettingsPage() {
 					</div>
 					{/* Security Tips */}
 					<div className="max-w-3xl mx-auto mt-12">
-						<Card className="border border-theme-primary-200 dark:border-theme-primary-800 bg-theme-primary-50 dark:bg-theme-primary-900/20 shadow-lg">
+						<Card className="border border-theme-primary-200 dark:border-theme-primary-800 bg-theme-primary-50 dark:bg-theme-primary-10">
 							<CardContent className="p-6">
-								<h3 className="text-lg font-semibold text-theme-primary-900 dark:text-theme-primary-100 mb-4 flex items-center gap-2">
-									<FiShield className="w-5 h-5 text-theme-primary-500 flex-shrink-0" />
+								<h3 className="text-lg font-semibold text-theme-primary-900 dark:text-theme-primary-100 mb-3 flex items-center gap-2">
+									<FiShield className="w-5 h-5" />
 									{t('SECURITY_TIPS.TITLE')}
 								</h3>
-								<ul className="space-y-3 text-theme-primary-800 dark:text-theme-primary-200 text-sm">
-									<li className="flex items-start gap-3">
+								<ul className="space-y-2 text-theme-primary-800 dark:text-theme-primary-200 text-sm">
+									<li className="flex items-start gap-2">
 										<span className="w-1.5 h-1.5 bg-theme-primary-500 rounded-full mt-2 shrink-0"></span>
-										<span>{t('SECURITY_TIPS.TIP_1')}</span>
+										{t('SECURITY_TIPS.TIP_1')}
 									</li>
-									<li className="flex items-start gap-3">
+									<li className="flex items-start gap-2">
 										<span className="w-1.5 h-1.5 bg-theme-primary-500 rounded-full mt-2 shrink-0"></span>
-										<span>{t('SECURITY_TIPS.TIP_2')}</span>
+										{t('SECURITY_TIPS.TIP_2')}
 									</li>
-									<li className="flex items-start gap-3">
+									<li className="flex items-start gap-2">
 										<span className="w-1.5 h-1.5 bg-theme-primary-500 rounded-full mt-2 shrink-0"></span>
-										<span>{t('SECURITY_TIPS.TIP_3')}</span>
+										{t('SECURITY_TIPS.TIP_3')}
 									</li>
-									<li className="flex items-start gap-3">
+									<li className="flex items-start gap-2">
 										<span className="w-1.5 h-1.5 bg-theme-primary-500 rounded-full mt-2 shrink-0"></span>
-										<span>{t('SECURITY_TIPS.TIP_4')}</span>
+										{t('SECURITY_TIPS.TIP_4')}
 									</li>
 								</ul>
 							</CardContent>

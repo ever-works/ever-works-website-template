@@ -106,6 +106,7 @@ export const defaultPricingConfig: PricingPlanConfig = {
 
 			isAuthorizedTrialAmount: process.env.NEXT_PUBLIC_AUTHORIZED_TRIAL_AMOUNT === 'true',
 			trialAmountId: process.env.NEXT_PUBLIC_PREMIUM_TRIAL_AMOUNT_ID,
+
 			envKey: 'PREMIUM_PLAN',
 
 			// LemonSqueezy configuration

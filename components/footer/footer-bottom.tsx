@@ -1,10 +1,20 @@
 import Link from "next/link";
+import { Divider } from "@heroui/react";
 import { ThemeToggler } from "../theme-toggler";
 import { Container } from "../ui/container";
+import Image from "next/image";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import { VersionDisplay, VersionTooltip } from "../version";
-import { SiteLogo } from "../shared/site-logo";
 
 export function FooterBottom({ config, t }: { config: any; t: any }) {
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <div className="relative backdrop-blur-xl bg-white/5 dark:bg-black/5 border-t border-white/10 dark:border-gray-700/20">
       {/* Subtle animated background */}
@@ -15,7 +25,17 @@ export function FooterBottom({ config, t }: { config: any; t: any }) {
           {/* Top row: Logo and disclaimer */}
           <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
             <div className="shrink-0">
-              <SiteLogo size="lg" showText={true} />
+              {mounted && (
+                <Link href="/" className="block transition-transform duration-200 hover:scale-105">
+                  <Image 
+                    src={theme !== 'dark' ? "/logo-light.png" : "/logo-dark.png"} 
+                    alt="Everworks" 
+                    width={140} 
+                    height={50}
+                    style={{ width: 'auto', height: 'auto' }}
+                  />
+                </Link>
+              )}
             </div>
             
             {/* Disclaimer - smaller text, can be wider now */}

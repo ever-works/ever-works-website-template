@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, getOrCreatePolarProvider } from '@/lib/auth';
-import { buildCheckoutProducts, createBaseCheckoutMetadata } from './helpers';
 
 /**
  * @swagger
@@ -38,21 +37,6 @@ import { buildCheckoutProducts, createBaseCheckoutMetadata } from './helpers';
  *                 format: uri
  *                 description: "URL to redirect after cancelled payment"
  *                 example: "https://example.com/cancel"
- *               trialPeriodDays:
- *                 type: integer
- *                 minimum: 0
- *                 default: 0
- *                 description: "Trial period in days (subscription mode only)"
- *                 example: 14
- *               trialAmountId:
- *                 type: string
- *                 description: "Trial period product ID (optional)"
- *                 example: "prod_trial_1234567890abcdef"
- *               isAuthorizedTrialAmount:
- *                 type: boolean
- *                 default: false
- *                 description: "Whether trial amount is authorized"
- *                 example: true
  *               metadata:
  *                 type: object
  *                 description: "Additional metadata for the checkout session"
@@ -160,30 +144,13 @@ export async function POST(request: NextRequest) {
 		// Get or create Polar provider (singleton)
 		const polarProvider = getOrCreatePolarProvider();
 
-		// Parse request body with proper error handling for malformed JSON
-		let body;
-		try {
-			body = await request.json();
-		} catch {
-			return NextResponse.json(
-				{
-					error: 'Invalid JSON in request body',
-					message: 'Invalid JSON in request body'
-				},
-				{ status: 400 }
-			);
-		}
-
 		const {
 			productId,
 			mode = 'subscription',
-			trialPeriodDays = 0,
-			trialAmountId,
-			isAuthorizedTrialAmount = false,
 			successUrl,
 			cancelUrl,
 			metadata = {}
-		} = body;
+		} = await request.json();
 
 		if (!productId) {
 			return NextResponse.json(
@@ -207,68 +174,40 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Build products array with optional trial period
-		const hasTrial = trialPeriodDays > 0 && isAuthorizedTrialAmount;
-
-		// Validate trial configuration: if trial is enabled, trialAmountId must be provided
-		if (hasTrial && !trialAmountId) {
-			return NextResponse.json(
-				{
-					error: 'Invalid trial configuration',
-					message: 'trialAmountId is required when trial is enabled'
-				},
-				{ status: 400 }
-			);
-		}
-
-		const products = buildCheckoutProducts(productId, trialAmountId, hasTrial);
-
 		// Create checkout session based on mode
 		if (mode === 'subscription') {
-			// Create base metadata using helper function
-			// Note: Polar handles trial periods via trial products (trialAmountId).
-			// The trialPeriodDays is stored in metadata for reference, but the actual
-			// trial duration may be configured at the product level in Polar's dashboard.
-			const sanitizedMetadata = createBaseCheckoutMetadata({
+			// Sanitize metadata to remove undefined values (Polar doesn't accept undefined)
+			const sanitizedMetadata: Record<string, any> = {
 				userId: session.user.id || '',
-				planId: metadata.planId,
-				planName: metadata.planName,
-				billingInterval: metadata.billingInterval,
 				successUrl,
-				cancelUrl,
-				trialPeriodDays: hasTrial ? trialPeriodDays : undefined,
-				additionalMetadata: metadata
+				cancelUrl
+			};
+			
+			if (metadata.planId) {
+				sanitizedMetadata.planId = metadata.planId;
+			}
+			if (metadata.planName) {
+				sanitizedMetadata.planName = metadata.planName;
+			}
+			if (metadata.billingInterval) {
+				sanitizedMetadata.billingInterval = metadata.billingInterval;
+			}
+			
+			// Add any other metadata that's not undefined
+			Object.entries(metadata).forEach(([key, value]) => {
+				if (value !== undefined && value !== null && !['planId', 'planName', 'billingInterval', 'userId', 'successUrl', 'cancelUrl'].includes(key)) {
+					sanitizedMetadata[key] = value;
+				}
 			});
 
-			// For subscriptions with trial, we need to create checkout directly
-			// to support multiple products (trial + main product)
-			// Access private properties via type assertion
-			const polar = (polarProvider as any).polar;
-			const organizationId = (polarProvider as any).organizationId;
-
-			if (!polar || !organizationId) {
-				return NextResponse.json(
-					{
-						error: 'Configuration error',
-						message: 'Polar provider not properly configured'
-					},
-					{ status: 500 }
-				);
-			}
-			if (process.env.NODE_ENV === 'development') {
-				console.log('sanitizedMetadata', products);
-			}
-			// Create checkout with products array (trial product first, then main product)
-			const checkout = await polar.checkouts.create({
-				products: products,
-				organizationId: organizationId,
+			// For subscriptions, use createSubscription which creates a checkout
+			const subscriptionResult = await polarProvider.createSubscription({
 				customerId: polarCustomerId,
-				successUrl: successUrl,
-				cancelUrl: cancelUrl,
+				priceId: productId, // Polar uses productId for subscriptions
 				metadata: sanitizedMetadata
-			} as any);
+			});
 
-			if (!(checkout as any).url) {
+			if (!subscriptionResult.checkoutData?.url) {
 				return NextResponse.json(
 					{
 						error: 'Failed to create checkout',
@@ -280,8 +219,8 @@ export async function POST(request: NextRequest) {
 
 			return NextResponse.json({
 				data: {
-					id: (checkout as any).id || '',
-					url: (checkout as any).url
+					id: subscriptionResult.checkoutData.checkoutId || subscriptionResult.id,
+					url: subscriptionResult.checkoutData.url
 				},
 				status: 200,
 				message: 'Checkout session created successfully'
@@ -302,17 +241,30 @@ export async function POST(request: NextRequest) {
 				);
 			}
 
-			// Create base metadata using helper function
-			const sanitizedMetadata = createBaseCheckoutMetadata({
-				userId: session.user.id || '',
-				planId: metadata.planId,
-				planName: metadata.planName,
-				billingInterval: metadata.billingInterval,
-				additionalMetadata: metadata
+			// Sanitize metadata to remove undefined values (Polar doesn't accept undefined)
+			const sanitizedMetadata: Record<string, any> = {
+				userId: session.user.id || ''
+			};
+			
+			if (metadata.planId) {
+				sanitizedMetadata.planId = metadata.planId;
+			}
+			if (metadata.planName) {
+				sanitizedMetadata.planName = metadata.planName;
+			}
+			if (metadata.billingInterval) {
+				sanitizedMetadata.billingInterval = metadata.billingInterval;
+			}
+			
+			// Add any other metadata that's not undefined
+			Object.entries(metadata).forEach(([key, value]) => {
+				if (value !== undefined && value !== null && !['planId', 'planName', 'billingInterval', 'userId'].includes(key)) {
+					sanitizedMetadata[key] = value;
+				}
 			});
 
 			const checkout = await polar.checkouts.create({
-				products: products,
+				products: [productId],
 				organizationId: organizationId,
 				customerId: polarCustomerId,
 				successUrl: successUrl,
@@ -345,19 +297,16 @@ export async function POST(request: NextRequest) {
 		// Use PolarProvider's error formatting for better error messages
 		let errorMessage = 'Failed to create checkout session';
 		let statusCode = 500;
-
+		
 		if (error instanceof Error) {
 			errorMessage = error.message;
-
+			
 			// Check for payment setup errors
-			if (
-				errorMessage.includes('Payments are currently unavailable') ||
-				errorMessage.includes('needs to complete their payment setup') ||
-				errorMessage.includes('payment setup incomplete')
-			) {
+			if (errorMessage.includes('Payments are currently unavailable') || 
+			    errorMessage.includes('needs to complete their payment setup') ||
+			    errorMessage.includes('payment setup incomplete')) {
 				statusCode = 503; // Service Unavailable
-				errorMessage =
-					'Polar payment setup incomplete: The organization needs to complete payment configuration in the Polar dashboard before payments can be processed. Please contact the administrator or complete the payment setup in your Polar dashboard.';
+				errorMessage = 'Polar payment setup incomplete: The organization needs to complete payment configuration in the Polar dashboard before payments can be processed. Please contact the administrator or complete the payment setup in your Polar dashboard.';
 			}
 		}
 
@@ -517,3 +466,4 @@ export async function GET(request: NextRequest) {
 		);
 	}
 }
+

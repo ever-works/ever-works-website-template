@@ -31,10 +31,9 @@ interface DetailsFormProps {
 	onSubmit: (data: FormData) => void;
 	onBack: () => void;
 	listingProps?: ListingProps;
-	isSubmitting?: boolean;
 }
 
-export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps, isSubmitting = false }: DetailsFormProps) {
+export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps }: DetailsFormProps) {
 	const t = useTranslations();
 	const editor = useEditor();
 
@@ -143,12 +142,7 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps, 
 						)}
 
 						{/* Step 2: Payment */}
-						{currentStep === 2 && (
-							<PaymentStep
-								onSelectPlan={handlePlanSelect}
-								selectedPlan={formData.selectedPlan}
-							/>
-						)}
+						{currentStep === 2 && <PaymentStep onSelectPlan={handlePlanSelect} />}
 
 						{/* Step 3: Review */}
 						{currentStep === 3 && (
@@ -167,7 +161,6 @@ export function DetailsForm({ initialData = {}, onSubmit, onBack, listingProps, 
 							onPrevious={prevStep}
 							onNext={nextStep}
 							onBack={onBack}
-							isSubmitting={isSubmitting}
 						/>
 					</form>
 				</div>

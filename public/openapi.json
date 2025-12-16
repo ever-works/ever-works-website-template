@@ -26117,24 +26117,6 @@
                     "description": "URL to redirect after cancelled payment",
                     "example": "https://example.com/cancel"
                   },
-                  "trialPeriodDays": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "default": 0,
-                    "description": "Trial period in days (subscription mode only)",
-                    "example": 14
-                  },
-                  "trialAmountId": {
-                    "type": "string",
-                    "description": "Trial period product ID (optional)",
-                    "example": "prod_trial_1234567890abcdef"
-                  },
-                  "isAuthorizedTrialAmount": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Whether trial amount is authorized",
-                    "example": true
-                  },
                   "metadata": {
                     "type": "object",
                     "description": "Additional metadata for the checkout session",

@@ -1,9 +1,5 @@
-import { auth, initializeStripeProvider } from '@/lib/auth';
-import { NextResponse } from 'next/server';
-import { buildUrl } from '@/lib/utils/url-cleaner';
-import { Logger } from '@/lib/logger';
-
-const logger = Logger.create('StripePortal');
+import { auth, initializeStripeProvider } from "@/lib/auth";
+import { NextResponse } from "next/server";
 
 /**
  * @swagger
@@ -111,81 +107,35 @@ const logger = Logger.create('StripePortal');
  *         - "Manage tax information"
  */
 export async function POST() {
-	try {
-		const session = await auth();
-		if (!session?.user) {
-			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-		}
+    try {
+        const session = await auth();
+        if (!session?.user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
-		const stripe = initializeStripeProvider();
-		const stripeInstance = stripe.getStripeInstance();
-		const stripeCustomerId = await stripe.getCustomerId(session.user as any);
-		if (!stripeCustomerId) {
-			return NextResponse.json({ error: 'Stripe customer ID not found' }, { status: 404 });
-		}
+        const stripe = initializeStripeProvider();
+        const stripeInstance = stripe.getStripeInstance();
+        const stripeCustomerId = await stripe.getCustomerId(session.user as any);
+        if (!stripeCustomerId) {
+            return NextResponse.json({ error: 'Stripe customer ID not found' }, { status: 404 });
+        }
 
-		// Build a valid absolute URL for the return URL
-		const returnUrl = buildUrl('/settings/billing');
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+        
+        const response = await stripeInstance.billingPortal.sessions.create({
+                customer: stripeCustomerId!,
+                return_url: `${appUrl || ''}/settings/billing`
+        });
 
-		// Validate the URL before sending to Stripe
-		try {
-			new URL(returnUrl);
-		} catch {
-			console.error('Invalid return URL constructed:', returnUrl);
-			return NextResponse.json(
-				{
-					error: 'Invalid return URL configuration',
-					message: 'The application URL is not properly configured'
-				},
-				{ status: 500 }
-			);
-		}
+        console.log('response', response);
 
-		let response;
-		try {
-			response = await stripeInstance.billingPortal.sessions.create({
-				customer: stripeCustomerId!,
-				return_url: returnUrl
-			});
-		} catch (stripeError: any) {
-			// Log detailed Stripe error
-			const errorMessage = stripeError?.message || 'Unknown Stripe error';
-			const errorCode = stripeError?.code || 'unknown';
-			const errorType = stripeError?.type || 'unknown';
-
-			logger.error('Stripe billing portal error:', {
-				message: errorMessage,
-				code: errorCode,
-				type: errorType,
-				requestId: stripeError?.requestId
-			});
-
-			// Return the actual Stripe error message
-			return NextResponse.json(
-				{
-					error: 'Invalid request to Stripe',
-					message: errorMessage,
-					code: errorCode,
-					type: errorType
-				},
-				{ status: 400 }
-			);
-		}
-
-		return NextResponse.json({
-			success: true,
-			data: response,
-			message: 'Billing portal session created'
-		});
-	} catch (error) {
-		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-		console.error('Error creating billing portal session:', errorMessage, error);
-		return NextResponse.json(
-			{
-				error: 'Failed to create billing portal session',
-				message: errorMessage
-			},
-			{ status: 500 }
-		);
-	}
+        return NextResponse.json({
+            success: true,
+            data: response,
+            message: 'Billing portal session created'
+        });
+    } catch (error) {
+        console.error('Error creating billing portal session:', error);
+        return NextResponse.json({ error: 'Failed to create billing portal session' }, { status: 500 });
+    }
 }

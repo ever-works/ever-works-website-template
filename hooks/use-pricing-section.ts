@@ -16,7 +16,6 @@ import { useSelectedCheckoutProvider } from './use-selected-checkout-provider';
 
 export interface UsePricingSectionParams {
 	onSelectPlan?: (plan: PaymentPlan) => void;
-	initialSelectedPlan?: PaymentPlan;
 }
 
 export interface UsePricingSectionState {
@@ -68,7 +67,7 @@ export interface UsePricingSectionReturn extends UsePricingSectionState, UsePric
  * Custom hook that encapsulates all PricingSection logic
  */
 export function usePricingSection(params: UsePricingSectionParams = {}): UsePricingSectionReturn {
-	const { onSelectPlan, initialSelectedPlan } = params;
+	const { onSelectPlan } = params;
 	// Hooks
 	const searchParams = useSearchParams();
 	const router = useRouter();
@@ -101,9 +100,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 	const [showSelector, setShowSelector] = useState<boolean>(false);
 	const [billingInterval, setBillingInterval] = useState<PaymentInterval>(PaymentInterval.MONTHLY);
 	const [processingPlan, setProcessingPlan] = useState<string | null>(null);
-	const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(
-		initialSelectedPlan === undefined ? PaymentPlan.STANDARD : initialSelectedPlan
-	);
+	const [selectedPlan, setSelectedPlan] = useState<PaymentPlan | null>(null);
 	const loginModal = useLoginModal();
 
 	// Ref for current processing plan
@@ -287,7 +284,7 @@ export function usePricingSection(params: UsePricingSectionParams = {}): UsePric
 					}
 					await stripeHook.createCheckoutSession(plan, user as any, billingInterval);
 				}
-			} catch (checkoutError) {
+				} catch (checkoutError) {
 				// Log error if checkout fails
 				console.error('Checkout error:', checkoutError);
 				toast.error('Failed to create checkout session. Please try again.');

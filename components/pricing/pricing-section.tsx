@@ -1,7 +1,8 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { PlanCard } from './plan-card';
-import { Check, Zap, Shield } from 'lucide-react';
+import { Check, ArrowRight, Zap, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PaymentInterval, PaymentPlan } from '@/lib/constants';
 import { PaymentFlowSelectorModal } from '../payment';
@@ -12,10 +13,9 @@ import { useDisclosure } from '@heroui/react';
 interface PricingSectionProps {
 	onSelectPlan?: (plan: PaymentPlan) => void;
 	isReview?: boolean;
-	initialSelectedPlan?: PaymentPlan;
 }
 
-export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: PricingSectionProps) {
+export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) {
 	const { isOpen: isModalOpen, onOpen: onOpenSelectorModal, onClose: onCloseSelectorModal } = useDisclosure();
 
 	const {
@@ -48,8 +48,7 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 		premiumPlanFeatures,
 		loginModal
 	} = usePricingSection({
-		onSelectPlan: onSelectPlan,
-		initialSelectedPlan: initialSelectedPlan
+		onSelectPlan: onSelectPlan
 	});
 
 	return (
@@ -151,33 +150,26 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 							isSelected={selectedPlan === PaymentPlan.FREE}
 							onSelect={handleSelectPlan}
 							actionText={
-								isReview
-									? t('SELECT_FREE')
-									: error
-										? tBilling('ERROR_TRY_AGAIN')
-										: !user
-											? getNotLoggedInActionText(PaymentPlan.FREE)
-											: processingPlan === FREE?.id && isLoading
-												? tBilling('PROCESSING')
-												: getActionText(PaymentPlan.FREE)
+								error
+									? tBilling('ERROR_TRY_AGAIN')
+									: !user
+										? getNotLoggedInActionText(PaymentPlan.FREE)
+										: processingPlan === FREE?.id && isLoading
+											? tBilling('PROCESSING')
+											: getActionText(PaymentPlan.FREE)
 							}
-							actionHref={isReview ? undefined : '/submit'}
+							actionHref="/submit"
 							isLoading={processingPlan === FREE?.id && isLoading}
-							isButton={isReview ? false : isButton}
+							isButton={isButton}
 							onClick={() => {
 								if (!user?.id) {
 									loginModal?.onOpen('Please sign in to continue with your purchase.');
 									return;
 								}
-								// In review mode (submit form), just select the plan
-								if (isReview) {
-									handleSelectPlan(PaymentPlan.FREE);
-									return;
-								}
 								handleCheckout(FREE as PricingConfig);
 							}}
 							selectedFlow={selectedFlow}
-							onFlowChange={isReview ? undefined : handleFlowSelect}
+							onFlowChange={handleFlowSelect}
 						>
 							{FREE && getSavingsText(FREE) && (
 								<div className="text-green-600 dark:text-green-400 text-sm font-medium">
@@ -194,8 +186,8 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 
 					<div
 						className={cn(
-							'relative transition-all',
-							selectedPlan === PaymentPlan.STANDARD && 'scale-105 ring-2 ring-purple-500/50 dark:ring-purple-400/50'
+							'relative transition-all scale-105',
+							selectedPlan === PaymentPlan.STANDARD && 'ring-2 ring-purple-500/50 dark:ring-purple-400/50'
 						)}
 					>
 						<PlanCard
@@ -205,38 +197,31 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 							priceUnit={billingInterval === PaymentInterval.YEARLY ? '/year' : '/month'}
 							features={standardPlanFeatures}
 							isPopular={true}
-							isSelected={selectedPlan === PaymentPlan.STANDARD}
+							isSelected={selectedPlan === STANDARD?.id}
 							onSelect={handleSelectPlan}
 							actionText={
-								isReview
-									? t('SELECT_STANDARD')
-									: error
-										? tBilling('ERROR_TRY_AGAIN')
-										: !user
-											? getNotLoggedInActionText(PaymentPlan.STANDARD)
-											: processingPlan === STANDARD?.id && isLoading
-												? tBilling('PROCESSING')
-												: getActionText(PaymentPlan.STANDARD)
+								error
+									? tBilling('ERROR_TRY_AGAIN')
+									: !user
+										? getNotLoggedInActionText(PaymentPlan.STANDARD)
+										: processingPlan === STANDARD?.id && isLoading
+											? tBilling('PROCESSING')
+											: getActionText(PaymentPlan.STANDARD)
 							}
 							actionVariant="default"
-							actionHref={isReview ? undefined : '/submit'}
+							actionHref="/submit"
 							isLoading={processingPlan === STANDARD?.id && isLoading}
-							isButton={isReview ? false : isButton}
+							isButton={isButton}
 							onClick={() => {
 								if (!user?.id) {
 									loginModal.onOpen('Please sign in to continue with your purchase.');
 									return;
 								}
-								// In review mode (submit form), just select the plan
-								if (isReview) {
-									handleSelectPlan(PaymentPlan.STANDARD);
-									return;
-								}
 								handleCheckout(STANDARD as PricingConfig);
 							}}
 							selectedFlow={selectedFlow}
-							onFlowChange={isReview ? undefined : handleFlowSelect}
-							onOpenModal={isReview ? undefined : onOpenSelectorModal}
+							onFlowChange={handleFlowSelect}
+							onOpenModal={onOpenSelectorModal}
 						>
 							{getSavingsText(STANDARD as PricingConfig) && (
 								<div className="text-center">
@@ -265,38 +250,31 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 							price={`${config.pricing?.currency}${PREMIUM ? calculatePrice(PREMIUM) : 0}`}
 							priceUnit={billingInterval === PaymentInterval.YEARLY ? '/year' : '/month'}
 							features={premiumPlanFeatures}
-							isSelected={selectedPlan === PaymentPlan.PREMIUM}
+							isSelected={selectedPlan === PREMIUM?.id}
 							onSelect={handleSelectPlan}
 							actionText={
-								isReview
-									? t('SELECT_PREMIUM')
-									: error
-										? tBilling('ERROR_TRY_AGAIN')
-										: !user
-											? getNotLoggedInActionText(PaymentPlan.PREMIUM)
-											: processingPlan === PREMIUM?.id && isLoading
-												? tBilling('PROCESSING')
-												: getActionText(PaymentPlan.PREMIUM)
+								error
+									? tBilling('ERROR_TRY_AGAIN')
+									: !user
+										? getNotLoggedInActionText(PaymentPlan.PREMIUM)
+										: processingPlan === PREMIUM?.id && isLoading
+											? tBilling('PROCESSING')
+											: getActionText(PaymentPlan.PREMIUM)
 							}
 							actionVariant="default"
-							actionHref={isReview ? undefined : '/submit'}
-							isButton={isReview ? false : isButton}
+							actionHref="/submit"
+							isButton={isButton}
 							isLoading={processingPlan === PREMIUM?.id && isLoading}
 							onClick={() => {
 								if (!user?.id) {
 									loginModal.onOpen('Please sign in to continue with your purchase.');
 									return;
 								}
-								// In review mode (submit form), just select the plan
-								if (isReview) {
-									handleSelectPlan(PaymentPlan.PREMIUM);
-									return;
-								}
 								handleCheckout(PREMIUM as PricingConfig);
 							}}
 							selectedFlow={selectedFlow}
-							onFlowChange={isReview ? undefined : handleFlowSelect}
-							onOpenModal={isReview ? undefined : onOpenSelectorModal}
+							onFlowChange={handleFlowSelect}
+							onOpenModal={onOpenSelectorModal}
 						>
 							{getSavingsText(PREMIUM as PricingConfig) && (
 								<div className="text-center">
@@ -309,6 +287,37 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 					</div>
 				</div>
 			</div>
+
+			{/* Enhanced Continue Section */}
+			{selectedPlan && (
+				<div className="text-center animate-fade-in-up">
+					<div className="inline-flex flex-col items-center gap-6 p-8 rounded-3xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-200/30 dark:border-gray-700/30 shadow-xl">
+						<div className="flex items-center gap-3">
+							<div className="w-12 h-12 rounded-full bg-linear-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 flex items-center justify-center">
+								<Check className="w-6 h-6 text-white" />
+							</div>
+							<div className="text-left">
+								<p className="text-lg font-semibold text-gray-900 dark:text-white">
+									{t('GREAT_CHOICE')} {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)}{' '}
+									{t('PLAN')}
+								</p>
+								<p className="text-sm text-gray-600 dark:text-gray-300">{t('READY_TO_GET_STARTED')}</p>
+							</div>
+						</div>
+
+						<Button
+							size="lg"
+							onClick={() => router.push('/submit')}
+							className="h-14 px-12 rounded-xl font-semibold bg-linear-to-r from-theme-primary-500 via-purple-500 to-theme-primary-600 hover:from-theme-primary-600 hover:via-purple-600 hover:to-theme-primary-700 text-white transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
+						>
+							<div className="flex items-center gap-3">
+								<span className="text-lg">{t('CONTINUE_TO_NEXT_STEP')}</span>
+								<ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+							</div>
+						</Button>
+					</div>
+				</div>
+			)}
 
 			{/* Trust Section */}
 			<div className="mt-16 text-center animate-fade-in-up" style={{ animationDelay: '0.4s' }}>

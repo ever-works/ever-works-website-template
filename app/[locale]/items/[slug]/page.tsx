@@ -1,78 +1,20 @@
-import { getCachedItem, fetchSimilarItems } from '@/lib/content';
-import { notFound } from 'next/navigation';
-import { getCategoriesName } from '@/lib/utils';
-import { getTranslations } from 'next-intl/server';
-import { ItemDetail } from '@/components/item-detail';
-import { ServerItemContent } from '@/components/item-detail/server-item-content';
-import { Container } from '@/components/ui/container';
-import { Metadata } from 'next';
-import { siteConfig } from '@/lib/config';
+import { getCachedItem, fetchSimilarItems } from "@/lib/content";
+import { notFound } from "next/navigation";
+import { getCategoriesName } from "@/lib/utils";
+import { getTranslations } from "next-intl/server";
+import { ItemDetail } from "@/components/item-detail";
+import { ServerItemContent } from "@/components/item-detail/server-item-content";
+import { Container } from "@/components/ui/container";
+import { Metadata } from "next";
+import { siteConfig } from "@/lib/config";
 import { cleanUrl } from '@/lib/utils/url-cleaner';
 
 // Disable static generation to prevent MDX compilation errors during build
 export const dynamic = 'force-dynamic';
 
-/**
- * Normalize and validate the base URL from environment variables
- * Handles NEXT_PUBLIC_APP_URL and VERCEL_URL with proper scheme detection
- * and validation to prevent URL constructor errors
- */
-function getNormalizedAppUrl(): string {
-	const FALLBACK_URL = 'https://demo.ever.works';
-
-	// Extract and trim environment variables
-	const envAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
-	const envVercelUrl = process.env.VERCEL_URL?.trim();
-
-	// Prefer NEXT_PUBLIC_APP_URL if present and non-empty
-	if (envAppUrl) {
-		const cleaned = cleanUrl(envAppUrl);
-		if (cleaned && isValidAbsoluteUrl(cleaned)) {
-			return cleaned;
-		}
-		console.warn(`Invalid NEXT_PUBLIC_APP_URL: "${envAppUrl}" (cleaned: "${cleaned}"). Using fallback.`);
-	}
-
-	// Fallback to VERCEL_URL if available
-	if (envVercelUrl) {
-		// Strip any existing scheme (http:// or https://)
-		let vercelUrl = envVercelUrl.replace(/^https?:\/\//i, '');
-		// Strip trailing slashes
-		vercelUrl = vercelUrl.replace(/\/+$/, '');
-		// Add https:// if no scheme exists (shouldn't happen after strip, but safe)
-		const rawUrl =
-			vercelUrl.startsWith('http://') || vercelUrl.startsWith('https://') ? vercelUrl : `https://${vercelUrl}`;
-
-		const cleaned = cleanUrl(rawUrl);
-		if (cleaned && isValidAbsoluteUrl(cleaned)) {
-			return cleaned;
-		}
-		console.warn(`Invalid VERCEL_URL: "${envVercelUrl}" (cleaned: "${cleaned}"). Using fallback.`);
-	}
-
-	// Use hardcoded fallback
-	return FALLBACK_URL;
-}
-
-/**
- * Validate that a URL string is an absolute URL
- * Attempts to construct a URL object to verify validity
- */
-function isValidAbsoluteUrl(url: string): boolean {
-	if (!url || typeof url !== 'string') {
-		return false;
-	}
-
-	try {
-		const urlObj = new URL(url);
-		// Must have a protocol and hostname
-		return !!urlObj.protocol && !!urlObj.hostname;
-	} catch {
-		return false;
-	}
-}
-
-const appUrl = getNormalizedAppUrl();
+const rawUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || 
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const appUrl = cleanUrl(rawUrl);
 
 /**
  * Generate metadata for item detail pages
@@ -116,8 +58,8 @@ export async function generateMetadata({
 			: `Discover ${meta.name} on ${siteConfig.name}`;
 
 		// Use dynamic OG image endpoint, with fallback to icon or logo
-		const ogImageUrl = new URL(`/${locale}/items/${slug}/opengraph-image`, appUrl).toString();
-		const fallbackImageUrl = new URL(meta.icon_url ?? siteConfig.logo, appUrl).toString();
+		const ogImageUrl = new URL(`/${locale}/items/${slug}/opengraph-image`, siteConfig.url).toString();
+		const fallbackImageUrl = new URL(meta.icon_url ?? siteConfig.logo, siteConfig.url).toString();
 
 		return {
 			metadataBase: new URL(appUrl),
@@ -141,7 +83,7 @@ export async function generateMetadata({
 				],
 				type: 'website',
 				siteName: siteConfig.name,
-				url: `${appUrl}/${locale}/items/${slug}`
+				url: `${siteConfig.url}/${locale}/items/${slug}`
 			},
 			twitter: {
 				card: 'summary_large_image',
@@ -150,7 +92,7 @@ export async function generateMetadata({
 				images: [ogImageUrl, fallbackImageUrl]
 			},
 			alternates: {
-				canonical: `${appUrl}/${locale}/items/${slug}`
+				canonical: `${siteConfig.url}/${locale}/items/${slug}`
 			}
 		};
 	} catch (error) {
@@ -182,40 +124,52 @@ export async function generateMetadata({
 //   return (await Promise.all(params)).flat();
 // }
 
-export default async function ItemDetails({ params }: { params: Promise<{ slug: string; locale: string }> }) {
-	const { slug, locale } = await params;
+export default async function ItemDetails({
+  params,
+}: {
+  params: Promise<{ slug: string; locale: string }>;
+}) {
+  const { slug, locale } = await params;
 
-	try {
-		const item = await getCachedItem(slug, { lang: locale });
+  try {
+    const item = await getCachedItem(slug, { lang: locale });
 
-		if (!item) {
-			return notFound();
-		}
+    if (!item) {
+      return notFound();
+    }
 
-		const t = await getTranslations('common');
+    const t = await getTranslations("common");
 
-		const { meta, content } = item;
-		const categoryName = getCategoriesName(meta.category);
-		const similarItems = await fetchSimilarItems(meta, 6, { lang: locale }).then((items) =>
-			items.flatMap((item) => item.item)
-		);
+    const { meta, content } = item;
+    const categoryName = getCategoriesName(meta.category);
+    const similarItems = await fetchSimilarItems(meta, 6, { lang: locale }).then((items) => items.flatMap((item) => item.item));
 
-		const metaWithVideo = {
-			...meta,
-			video_url: '', // e.g. https://www.youtube.com/watch?v=eDqfg_LexCQ,
-			allItems: similarItems
-		};
 
-		// Render the MDX content on the server
-		const renderedContent = <ServerItemContent content={content} noContentMessage={t('NO_CONTENT_PROVIDED')} />;
+    const metaWithVideo = {
+      ...meta,
+      video_url: "", // e.g. https://www.youtube.com/watch?v=eDqfg_LexCQ,
+      allItems: similarItems,
+    };
 
-		return (
-			<Container maxWidth="7xl" padding="default" useGlobalWidth>
-				<ItemDetail meta={metaWithVideo} renderedContent={renderedContent} categoryName={categoryName} />
-			</Container>
-		);
-	} catch (error) {
-		console.error(`Failed to load item ${slug} for locale ${locale}:`, error);
-		return notFound();
-	}
+    // Render the MDX content on the server
+    const renderedContent = (
+      <ServerItemContent 
+        content={content} 
+        noContentMessage={t("NO_CONTENT_PROVIDED")} 
+      />
+    );
+
+    return (
+      <Container maxWidth="7xl" padding="default" useGlobalWidth>
+        <ItemDetail
+          meta={metaWithVideo}
+          renderedContent={renderedContent}
+          categoryName={categoryName}
+        />
+      </Container>
+    );
+  } catch (error) {
+    console.error(`Failed to load item ${slug} for locale ${locale}:`, error);
+    return notFound();
+  }
 }

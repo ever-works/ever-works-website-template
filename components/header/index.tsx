@@ -20,8 +20,8 @@ import { NavigationControls } from "../navigation-controls";
 import { ProfileButton } from "./profile-button";
 import { MoreMenu } from "./more-menu";
 import { SettingsButton } from "../settings-button";
+import { IconEverworksSimple } from "../icons/Icons";
 import { Container } from "../ui/container";
-import { SiteLogo } from "../shared/site-logo";
 import { useFeatureFlagsWithSimulation } from "@/hooks/use-feature-flags-with-simulation";
 import { useHasGlobalSurveys } from "@/hooks/use-has-global-surveys";
 import { useCategoriesEnabled } from "@/hooks/use-categories-enabled";
@@ -78,12 +78,6 @@ const NAVIGATION_CONFIG: Array<{
   //   staticLabel: "GitHub",
   // },
   {
-    key: "favorites",
-    href: "/favorites",
-    translationKey: "FAVORITES",
-    translationNamespace: "common",
-  },
-  {
     key: "categories",
     href: "/categories",
     translationKey: "CATEGORY",
@@ -93,6 +87,12 @@ const NAVIGATION_CONFIG: Array<{
     key: "tags",
     href: "/tags",
     translationKey: "TAG",
+    translationNamespace: "common",
+  },
+  {
+    key: "favorites",
+    href: "/favorites",
+    translationKey: "FAVORITES",
     translationNamespace: "common",
   },
   {
@@ -247,10 +247,15 @@ export default function Header() {
   const renderBrand = useCallback(
     () => (
       <NavbarBrand>
-        <SiteLogo size="sm" showText={true} />
+        <Link href="/" className={STYLES.brand}>
+          <div className={STYLES.brandIcon}>
+            <IconEverworksSimple className={STYLES.brandIconSvg} />
+          </div>
+          <p className={STYLES.brandText}>{config.company_name}</p>
+        </Link>
       </NavbarBrand>
     ),
-    []
+    [config.company_name]
   );
 
   const renderNavigationItem = useCallback(
