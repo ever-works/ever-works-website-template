@@ -1,6 +1,5 @@
 export { DashboardContent } from "./dashboard-content";
 export { StatsCard } from "./stats-card";
-export { ActivityItem } from "./activity-item";
 export { ActivityChart } from "./activity-chart";
 export { EngagementChart } from "./engagement-chart";
 export { SubmissionTimeline } from "./submission-timeline";
