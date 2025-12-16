@@ -2,7 +2,8 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Spinner } from "@heroui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Collection } from "@/types/collection";
 
 interface CollectionCardProps {
@@ -12,6 +13,12 @@ interface CollectionCardProps {
 export function CollectionCard({ collection }: CollectionCardProps) {
   const t = useTranslations("common");
   const [isNavigating, setIsNavigating] = useState(false);
+  const pathname = usePathname();
+
+  // Reset spinner when route changes (e.g., back navigation)
+  useEffect(() => {
+    setIsNavigating(false);
+  }, [pathname]);
   
 return (
   <Link
