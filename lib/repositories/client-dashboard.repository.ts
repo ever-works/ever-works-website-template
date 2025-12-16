@@ -8,6 +8,8 @@ import {
     getWeeklyEngagementData,
     getDailyActivityData,
     getTopItemsEngagement,
+    getUserActivityPaginated,
+    type UserActivityItem,
 } from '@/lib/db/queries/dashboard.queries';
 import type { ItemData } from '@/lib/types/item';
 
@@ -63,6 +65,22 @@ export interface DashboardStats {
     engagementOverview: EngagementOverviewData[];
     statusBreakdown: StatusBreakdownData[];
     topItems: TopItem[];
+}
+
+export interface UserActivityResponse {
+    activities: UserActivityItem[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    };
+}
+
+export interface GetUserActivityOptions {
+    page?: number;
+    limit?: number;
+    type?: 'all' | 'comment' | 'vote';
 }
 
 // ===================== Constants =====================
@@ -171,6 +189,53 @@ export class ClientDashboardRepository {
             engagementOverview,
             statusBreakdown,
             topItems,
+        };
+    }
+
+    /**
+     * Get paginated user activity (votes and comments made by user)
+     * @param userId - User ID (from session)
+     * @param options - Pagination and filter options
+     * @returns Paginated activity list
+     */
+    async getUserActivity(
+        userId: string,
+        options: GetUserActivityOptions = {}
+    ): Promise<UserActivityResponse> {
+        const { page = 1, limit = 10, type = 'all' } = options;
+
+        // Get client profile to get the clientProfileId for DB queries
+        const clientProfile = await getClientProfileByUserId(userId);
+
+        if (!clientProfile) {
+            // Return empty activity for users without a client profile
+            return {
+                activities: [],
+                pagination: {
+                    page,
+                    limit,
+                    total: 0,
+                    totalPages: 0,
+                },
+            };
+        }
+
+        // Fetch user activity from database
+        const { activities, total } = await getUserActivityPaginated(
+            clientProfile.id,
+            page,
+            limit,
+            type
+        );
+
+        return {
+            activities,
+            pagination: {
+                page,
+                limit,
+                total,
+                totalPages: Math.ceil(total / limit),
+            },
         };
     }
 
