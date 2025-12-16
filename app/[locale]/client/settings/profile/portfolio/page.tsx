@@ -93,12 +93,12 @@ export default function PortfolioPage() {
 											htmlFor="title"
 											className="text-sm font-medium text-gray-700 dark:text-gray-300"
 										>
-											{t('PROJECT_TITLE')}
+											{t('FORM.PROJECT_TITLE')}
 										</label>
 										<input
 											id="title"
 											name="title"
-											placeholder={t('PROJECT_TITLE_PLACEHOLDER')}
+											placeholder={t('FORM.PROJECT_TITLE_PLACEHOLDER')}
 											className="w-full h-14 px-6 text-lg bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 hover:border-gray-400 dark:hover:border-gray-500 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
 											value={title}
 											onChange={(e) => setTitle(e.target.value)}
@@ -117,13 +117,13 @@ export default function PortfolioPage() {
 											htmlFor="imageUrl"
 											className="text-sm font-medium text-gray-700 dark:text-gray-300"
 										>
-											{t('IMAGE_URL')}
+											{t('FORM.IMAGE_URL')}
 										</label>
 										<input
 											id="imageUrl"
 											name="imageUrl"
 											type="url"
-											placeholder={t('IMAGE_URL_PLACEHOLDER')}
+											placeholder={t('FORM.IMAGE_URL_PLACEHOLDER')}
 											className="w-full h-14 px-6 text-lg bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 hover:border-gray-400 dark:hover:border-gray-500 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
 											value={imageUrl}
 											onChange={(e) => setImageUrl(e.target.value)}
@@ -143,13 +143,13 @@ export default function PortfolioPage() {
 										htmlFor="description"
 										className="text-sm font-medium text-gray-700 dark:text-gray-300"
 									>
-										{t('DESCRIPTION')}
+										{t('FORM.DESCRIPTION')}
 									</label>
 									<textarea
 										id="description"
 										name="description"
 										rows={3}
-										placeholder={t('DESCRIPTION_PLACEHOLDER')}
+										placeholder={t('FORM.DESCRIPTION_PLACEHOLDER')}
 										className="w-full px-6 py-4 text-lg bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 hover:border-gray-400 dark:hover:border-gray-500 resize-none text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
 										value={description}
 										onChange={(e) => setDescription(e.target.value)}
@@ -169,13 +169,13 @@ export default function PortfolioPage() {
 											htmlFor="externalUrl"
 											className="text-sm font-medium text-gray-700 dark:text-gray-300"
 										>
-											{t('PROJECT_URL')}
+											{t('FORM.PROJECT_URL')}
 										</label>
 										<input
 											id="externalUrl"
 											name="externalUrl"
 											type="url"
-											placeholder={t('PROJECT_URL_PLACEHOLDER')}
+											placeholder={t('FORM.PROJECT_URL_PLACEHOLDER')}
 											className="w-full h-14 px-6 text-lg bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 hover:border-gray-400 dark:hover:border-gray-500 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
 											value={externalUrl}
 											onChange={(e) => setExternalUrl(e.target.value)}
@@ -194,12 +194,12 @@ export default function PortfolioPage() {
 											htmlFor="tags"
 											className="text-sm font-medium text-gray-700 dark:text-gray-300"
 										>
-											{t('TAGS')}
+											{t('FORM.TAGS')}
 										</label>
 										<input
 											id="tags"
 											name="tags"
-											placeholder={t('TAGS_PLACEHOLDER')}
+											placeholder={t('FORM.TAGS_PLACEHOLDER')}
 											className="w-full h-14 px-6 text-lg bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500 hover:border-gray-400 dark:hover:border-gray-500 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
 											value={tags}
 											onChange={(e) => setTags(e.target.value)}
@@ -217,7 +217,7 @@ export default function PortfolioPage() {
 											onChange={(e) => setIsFeatured(e.target.checked)}
 										/>
 										<span className="text-sm text-gray-700 dark:text-gray-300">
-											{t('FEATURED_PROJECT')}
+											{t('FORM.FEATURED_PROJECT')}
 										</span>
 									</label>
 								</div>
@@ -236,7 +236,7 @@ export default function PortfolioPage() {
 										className="inline-flex items-center gap-2 bg-theme-primary-600 hover:bg-theme-primary-700 text-white font-medium py-3 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-theme-primary-500 focus:ring-offset-2"
 									>
 										<FiPlus className="w-4 h-4" />
-										{t('ADD_PROJECT')}
+										{t('FORM.ADD_PROJECT')}
 									</Button>
 								</div>
 							</form>

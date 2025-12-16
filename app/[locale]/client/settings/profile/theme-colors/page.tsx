@@ -13,7 +13,7 @@ const getThemeButtonClasses = (isSelected: boolean) =>
 		'group relative p-6 rounded-xl border-2 transition-all duration-300 text-left',
 		'focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500 hover:shadow-lg',
 		isSelected
-			? 'border-theme-primary-500 bg-linear-to-br from-theme-primary-50 to-theme-primary-100 dark:from-theme-primary-900/30 dark:to-theme-primary-800/20 shadow-lg shadow-theme-primary-500/20'
+			? 'border-theme-primary-500 bg-gradient-to-br from-theme-primary-50 to-theme-primary-100 dark:from-theme-primary-900/30 dark:to-theme-primary-800/20 shadow-lg shadow-theme-primary-500/20'
 			: 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 hover:border-theme-primary-300 dark:hover:border-theme-primary-600 hover:bg-gray-50 dark:hover:bg-gray-800'
 	);
 
