@@ -73,17 +73,8 @@ export default function PortfolioPage() {
 					</div>
 
 					<div className="text-center">
-<<<<<<< HEAD
 						<h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">{t('TITLE')}</h1>
 						<p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">{t('DESCRIPTION')}</p>
-=======
-						<h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-							{t('TITLE')}
-						</h1>
-						<p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
-							{t('DESCRIPTION')}
-						</p>
->>>>>>> dea9400 (fix(i18n): use translations instead of hard-coded strings in settings pages)
 					</div>
 
 					{/* Add New Project */}

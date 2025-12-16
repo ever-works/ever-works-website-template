@@ -13,7 +13,7 @@ const getThemeButtonClasses = (isSelected: boolean) =>
 		'group relative p-6 rounded-xl border-2 transition-all duration-300 text-left',
 		'focus:outline-hidden focus:ring-2 focus:ring-theme-primary-500 hover:shadow-lg',
 		isSelected
-			? 'border-theme-primary-500 bg-gradient-to-br from-theme-primary-50 to-theme-primary-100 dark:from-theme-primary-900/30 dark:to-theme-primary-800/20 shadow-lg shadow-theme-primary-500/20'
+			? 'border-theme-primary-500 bg-linear-to-br from-theme-primary-50 to-theme-primary-100 dark:from-theme-primary-900/30 dark:to-theme-primary-800/20 shadow-lg shadow-theme-primary-500/20'
 			: 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 hover:border-theme-primary-300 dark:hover:border-theme-primary-600 hover:bg-gray-50 dark:hover:bg-gray-800'
 	);
 
@@ -26,14 +26,14 @@ export default function ThemeColorsPage() {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
 				<div className="text-center">
-					<p className="text-gray-500 dark:text-gray-400">Unable to load themes</p>
+					<p className="text-gray-500 dark:text-gray-400">{t('UNABLE_TO_LOAD_THEMES')}</p>
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+		<div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
 			<Container maxWidth="7xl" padding="default">
 				<div className="space-y-12 py-8">
 					{/* Header */}
@@ -49,7 +49,7 @@ export default function ThemeColorsPage() {
 
 					{/* Page Header */}
 					<div className="text-center space-y-4">
-						<div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-2xl mb-4">
+						<div className="inline-flex items-center justify-center w-16 h-16 bg-linear-to-br from-theme-primary-100 to-theme-primary-200 dark:from-theme-primary-900/40 dark:to-theme-primary-800/40 rounded-2xl mb-4">
 							<FiDroplet className="w-8 h-8 text-theme-primary-600 dark:text-theme-primary-400" />
 						</div>
 						<h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">{t('TITLE')}</h1>

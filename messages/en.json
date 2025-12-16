@@ -552,6 +552,54 @@
 					"GENERIC_ERROR": "An error occurred while updating your password. Please try again."
 				}
 			}
+		},
+		"THEME_COLORS_PAGE": {
+			"TITLE": "Theme & Appearance",
+			"BACK_TO_SETTINGS": "Back to Settings",
+			"DESCRIPTION": "Choose a visual theme for your profile. Each theme comes with its own color palette and style to make your profile uniquely yours.",
+			"CHOOSE_THEME": "Choose Visual Theme",
+			"CHOOSE_THEME_DESC": "Select a theme that best represents your style and brand",
+			"UNABLE_TO_LOAD_THEMES": "Unable to load themes"
+		},
+		"PORTFOLIO_PAGE": {
+			"TITLE": "Portfolio Management",
+			"BACK_TO_SETTINGS": "Back to Settings",
+			"DESCRIPTION": "Add, edit, and organize your portfolio projects. Showcase your best work to potential clients and collaborators.",
+			"ADD_NEW_PROJECT": "Add New Project",
+			"YOUR_PROJECTS": "Your Projects",
+			"FORM": {
+				"PROJECT_TITLE": "Project Title",
+				"PROJECT_TITLE_PLACEHOLDER": "Enter project title",
+				"IMAGE_URL": "Image URL",
+				"IMAGE_URL_PLACEHOLDER": "https://example.com/image.jpg",
+				"DESCRIPTION": "Description",
+				"DESCRIPTION_PLACEHOLDER": "Describe your project...",
+				"PROJECT_URL": "Project URL",
+				"PROJECT_URL_PLACEHOLDER": "https://yourproject.com",
+				"TAGS": "Tags (comma separated)",
+				"TAGS_PLACEHOLDER": "React, TypeScript, Next.js",
+				"FEATURED_PROJECT": "Featured Project",
+				"ADD_PROJECT": "Add Project"
+			},
+			"VALIDATION": {
+				"TITLE_REQUIRED": "Project title is required.",
+				"IMAGE_URL_REQUIRED": "Image URL is required.",
+				"IMAGE_URL_INVALID": "Please enter a valid image URL.",
+				"DESCRIPTION_REQUIRED": "Description is required.",
+				"PROJECT_URL_REQUIRED": "Project URL is required.",
+				"PROJECT_URL_INVALID": "Please enter a valid project URL."
+			},
+			"SUCCESS": {
+				"PROJECT_ADDED": "Project added"
+			},
+			"PROJECT_ITEM": {
+				"FEATURED": "Featured",
+				"VIEW_PROJECT": "View project",
+				"EDIT_PROJECT": "Edit project",
+				"EDIT_PROJECT_ALERT": "Edit project: {title}",
+				"DELETE_PROJECT": "Delete project"
+			},
+			"DELETE_CONFIRM": "Are you sure you want to delete \"{title}\"?"
 		}
 	},
 	"newsletter": {
