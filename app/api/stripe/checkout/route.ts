@@ -158,6 +158,20 @@ export async function POST(request: NextRequest) {
 		const stripeProvider = getOrCreateStripeProvider();
 		const stripe = stripeProvider.getStripeInstance();
 
+		// Parse request body with proper error handling for malformed JSON
+		let body;
+		try {
+			body = await request.json();
+		} catch {
+			return NextResponse.json(
+				{
+					error: 'Invalid JSON in request body',
+					message: 'Invalid JSON in request body'
+				},
+				{ status: 400 }
+			);
+		}
+
 		const {
 			priceId,
 			mode = 'one_time',
@@ -168,7 +182,7 @@ export async function POST(request: NextRequest) {
 			successUrl,
 			cancelUrl,
 			metadata = {}
-		} = await request.json();
+		} = body;
 
 		// Map the incoming mode to Stripe's expected Mode type
 		const stripeMode: 'payment' | 'setup' | 'subscription' =

@@ -1,12 +1,14 @@
-import { ItemData, UpdateItemRequest } from '@/lib/types/item';
+import { ItemData, UpdateItemRequest, CreateItemRequest } from '@/lib/types/item';
 import {
   ClientSubmissionData,
   ClientItemListResponse,
   ClientItemStats,
   ClientUpdateItemRequest,
+  ClientCreateItemRequest,
   ClientItemsListParams,
 } from '@/lib/types/client-item';
 import { ItemRepository } from './item.repository';
+import { slugify } from '@/lib/utils/slug';
 
 /**
  * Repository for client-side item management operations.
@@ -17,6 +19,69 @@ export class ClientItemRepository {
 
   constructor() {
     this.itemRepository = new ItemRepository();
+  }
+
+  /**
+   * Create a new item as a client
+   * - Generates unique slug from name
+   * - Sets status to 'pending' (requires admin review)
+   * - Associates item with the submitting user
+   */
+  async createAsClient(
+    userId: string,
+    data: ClientCreateItemRequest
+  ): Promise<ClientSubmissionData> {
+    // Generate slug from name
+    const baseSlug = slugify(data.name);
+
+    // Guard against empty slugs (e.g., name with only special characters)
+    if (!baseSlug) {
+      throw new Error('Item name must produce a valid slug');
+    }
+
+    // Ensure unique slug by checking for duplicates
+    let slug = baseSlug;
+    let counter = 1;
+    const MAX_SLUG_ATTEMPTS = 100;
+    while (await this.itemRepository.checkDuplicateSlug(slug)) {
+      if (counter > MAX_SLUG_ATTEMPTS) {
+        throw new Error('Unable to generate unique slug after maximum attempts');
+      }
+      slug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+
+    // Use slug as ID for consistency with git-based storage
+    const id = slug;
+
+    // Normalize category to array or empty array
+    const category = data.category
+      ? Array.isArray(data.category)
+        ? data.category
+        : [data.category]
+      : [];
+
+    // Create the item with pending status
+    const createRequest: CreateItemRequest = {
+      id,
+      name: data.name,
+      slug,
+      description: data.description,
+      source_url: data.source_url,
+      category,
+      tags: data.tags || [],
+      icon_url: data.icon_url,
+      status: 'pending', // Always pending for client submissions
+      submitted_by: userId,
+    };
+
+    const item = await this.itemRepository.create(createRequest);
+
+    return {
+      ...item,
+      views: 0,
+      likes: 0,
+    };
   }
 
   /**

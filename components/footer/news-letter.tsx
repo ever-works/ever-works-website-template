@@ -46,17 +46,16 @@ export function Newsletter({ t }: { t: any }) {
             name="email"
             placeholder={t("footer.ENTER_EMAIL")}
             disabled={pending}
-            className="flex-1 px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-lg border border-white/30 dark:border-gray-700/40 focus:border-theme-primary dark:focus:border-theme-primary/30 focus:outline-hidden transition-all duration-300 text-sm placeholder-gray-500 dark:placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-3 rounded-xl border border-gray-200/60 bg-white dark:bg-gray-800/50 backdrop-blur-lg dark:border-gray-700/40 focus:border-theme-primary dark:focus:border-theme-primary/30 focus:outline-hidden transition-all duration-300 text-sm placeholder-gray-500 dark:placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
             required
           />
           <button
             type="submit"
             disabled={pending}
-            className="mt-2 sm:mt-0 w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-linear-to-r from-theme-primary via-purple-500 to-purple-500 hover:from-theme-primary hover:to-purple-600 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-theme-primary/25 hover:scale-105 text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="mt-2 sm:mt-0 w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-purple-600 bg-[length:200%_200%] bg-left hover:bg-right
+             transition-[background-position] duration-500 ease-in-out text-white font-medium hover:shadow-lg hover:shadow-blue-500/25 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {pending
-              ? t("footer.SUBMITTING") || "Submitting..."
-              : t("footer.SUBSCRIBE")}
+            {pending ? t('footer.SUBMITTING') || 'Submitting...' : t('footer.SUBSCRIBE')}
           </button>
         </div>
         {state?.error && (

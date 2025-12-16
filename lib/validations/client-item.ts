@@ -85,7 +85,42 @@ export const itemIdParamSchema = z.object({
   id: z.string().min(1, 'Item ID is required'),
 });
 
+/**
+ * Schema for creating a client item submission
+ * Required fields: name, description, source_url
+ */
+export const clientCreateItemSchema = z.object({
+  name: z
+    .string()
+    .min(ITEM_VALIDATION.NAME_MIN_LENGTH, `Name must be at least ${ITEM_VALIDATION.NAME_MIN_LENGTH} characters`)
+    .max(ITEM_VALIDATION.NAME_MAX_LENGTH, `Name must be at most ${ITEM_VALIDATION.NAME_MAX_LENGTH} characters`),
+  description: z
+    .string()
+    .min(ITEM_VALIDATION.DESCRIPTION_MIN_LENGTH, `Description must be at least ${ITEM_VALIDATION.DESCRIPTION_MIN_LENGTH} characters`)
+    .max(ITEM_VALIDATION.DESCRIPTION_MAX_LENGTH, `Description must be at most ${ITEM_VALIDATION.DESCRIPTION_MAX_LENGTH} characters`),
+  source_url: z
+    .string()
+    .url('Invalid URL format'),
+  category: z
+    .union([
+      z.string().min(1, 'Category is required'),
+      z.array(z.string().min(1)).min(1, 'At least one category is required'),
+    ])
+    .optional()
+    .nullable(),
+  tags: z
+    .array(z.string().min(1))
+    .optional()
+    .default([]),
+  icon_url: z
+    .string()
+    .url('Invalid icon URL format')
+    .optional()
+    .or(z.literal('')),
+});
+
 // Inferred types
 export type ClientUpdateItemInput = z.infer<typeof clientUpdateItemSchema>;
+export type ClientCreateItemInput = z.infer<typeof clientCreateItemSchema>;
 export type ClientItemsListQueryInput = z.infer<typeof clientItemsListQuerySchema>;
 export type ItemIdParamInput = z.infer<typeof itemIdParamSchema>;
