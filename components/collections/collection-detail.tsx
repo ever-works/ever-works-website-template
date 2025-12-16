@@ -91,19 +91,19 @@ function CollectionDetailContent(props: CollectionDetailProps) {
             </div>
           }
           description={
-            <div className="max-w-3xl mx-auto">
-              <p className="text-gray-600 dark:text-gray-400 text-lg">
+            <>
+              <span className="text-gray-600 dark:text-gray-400 text-lg block">
                 {displayDescription}
-              </p>
+              </span>
               {isLongDescription && (
                 <button
                   onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                  className="mt-2 text-theme-primary hover:text-theme-primary/80 text-sm font-medium transition-colors duration-200"
+                  className="mt-2 inline-flex text-theme-primary hover:text-theme-primary/80 text-sm font-medium transition-colors duration-200"
                 >
                   {isDescriptionExpanded ? t("common.SHOW_LESS") : t("common.SHOW_MORE", { count: "" })}
                 </button>
               )}
-            </div>
+            </>
           }
           className="min-h-screen text-center"
         >
@@ -138,19 +138,19 @@ function CollectionDetailContent(props: CollectionDetailProps) {
           </div>
         }
         description={
-          <div className="max-w-3xl mx-auto">
-            <p className="text-gray-600 dark:text-gray-400 text-lg">
+          <>
+            <span className="text-gray-600 dark:text-gray-400 text-lg block">
               {displayDescription}
-            </p>
+            </span>
             {isLongDescription && (
               <button
                 onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                className="mt-2 text-theme-primary hover:text-theme-primary/80 text-sm font-medium transition-colors duration-200"
+                className="mt-2 inline-flex text-theme-primary hover:text-theme-primary/80 text-sm font-medium transition-colors duration-200"
               >
                 {isDescriptionExpanded ? t("common.SHOW_LESS") : t("common.SHOW_MORE", { count: "" })}
               </button>
             )}
-          </div>
+          </>
         }
         className="min-h-screen text-center"
       >
