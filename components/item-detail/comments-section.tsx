@@ -108,7 +108,7 @@ const CommentForm = memo(
 						placeholder="Share your thoughts..."
 						value={content}
 						onChange={(e) => setContent(e.target.value)}
-						className="w-full min-h-[100px] rounded-xl border border-gray-200/70 dark:border-gray-700/70 bg-white/90 dark:bg-gray-900/80 shadow-inner resize-none focus:ring-1 focus:ring-theme-primary-500 focus:border-theme-primary-500"
+						className="w-full min-h-[100px] rounded-xl border border-gray-200/70 dark:border-gray-700/70 bg-white/90 dark:bg-gray-900/80 shadow-inner resize-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500"
 						maxLength={1000}
 						required
 					/>
