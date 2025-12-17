@@ -464,8 +464,8 @@ export async function handleSubscriptionPaymentFailed(data: PolarWebhookData): P
  * Polar uses metadata field for custom data
  */
 function isSponsorAdSubscription(data: PolarWebhookData): boolean {
-	const metadata = data.metadata as Record<string, string> | undefined;
-	const subscriptionMetadata = (data.subscription as Record<string, unknown>)?.metadata as Record<string, string> | undefined;
+	const metadata = data.metadata;
+	const subscriptionMetadata = data.subscription?.metadata;
 
 	return metadata?.type === 'sponsor_ad' || subscriptionMetadata?.type === 'sponsor_ad';
 }
@@ -474,8 +474,8 @@ function isSponsorAdSubscription(data: PolarWebhookData): boolean {
  * Get sponsor ad ID from subscription metadata
  */
 function getSponsorAdId(data: PolarWebhookData): string | null {
-	const metadata = data.metadata as Record<string, string> | undefined;
-	const subscriptionMetadata = (data.subscription as Record<string, unknown>)?.metadata as Record<string, string> | undefined;
+	const metadata = data.metadata;
+	const subscriptionMetadata = data.subscription?.metadata;
 
 	return metadata?.sponsorAdId || subscriptionMetadata?.sponsorAdId || null;
 }
