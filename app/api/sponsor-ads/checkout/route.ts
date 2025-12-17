@@ -298,7 +298,7 @@ async function createLemonSqueezyCheckout(
 	const lemonProvider = getOrCreateLemonsqueezyProvider();
 
 	const result = await lemonProvider.createSubscription({
-		variantId: variantId,
+		variantId: Number(variantId),
 		email: user.email || undefined,
 		metadata: {
 			userId: user.id || "",
