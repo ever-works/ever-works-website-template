@@ -13,6 +13,7 @@ import { TopLoadingBar } from "@/components/ui/top-loading-bar";
 import Hero from "@/components/hero";
 import { LayoutHome, useLayoutTheme } from "@/components/context";
 import { HomeTwoLayout } from "@/components/home-two";
+import { SORT_OPTIONS } from "@/components/filters/constants";
 import { sortItemsWithFeatured } from "@/lib/utils/featured-items";
 import { useFeaturedItemsSection } from "@/hooks/use-feature-items-section";
 import { SortControl } from "@/components/filters/components/controls/sort-control";
@@ -60,8 +61,31 @@ function CollectionDetailContent(props: CollectionDetailProps) {
       searchTerm,
       selectedTags
     });
-    return sortItemsWithFeatured(filtered, featuredItems);
-  }, [items, searchTerm, selectedTags, featuredItems]);
+    const getTime = (date: Date | string) => {
+      const timestamp = date instanceof Date ? date.getTime() : new Date(date).getTime();
+      return Number.isNaN(timestamp) ? 0 : timestamp;
+    };
+
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case SORT_OPTIONS.NAME_ASC:
+          return a.name.localeCompare(b.name);
+        case SORT_OPTIONS.NAME_DESC:
+          return b.name.localeCompare(a.name);
+        case SORT_OPTIONS.DATE_ASC:
+          return getTime(a.updatedAt) - getTime(b.updatedAt);
+        case SORT_OPTIONS.DATE_DESC:
+          return getTime(b.updatedAt) - getTime(a.updatedAt);
+        case SORT_OPTIONS.POPULARITY:
+        default:
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return getTime(b.updatedAt) - getTime(a.updatedAt);
+      }
+    });
+
+    return sortItemsWithFeatured(sorted, featuredItems);
+  }, [items, searchTerm, selectedTags, featuredItems, sortBy]);
 
   // Get container width to conditionally apply styles
   const containerWidth = useContainerWidth();
@@ -176,10 +200,10 @@ function CollectionDetailContent(props: CollectionDetailProps) {
                   <SortControl
                     sortBy={sortBy}
                     setSortBy={setSortBy}
-                    className="w-full sm:w-auto max-w-full sm:max-w-40"
+                    className="w-full md:w-32 sm:w-auto max-w-full sm:max-w-40"
                   />
                   <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">
-                   Showing {filteredItems.length} items
+                    Showing {filteredItems.length} items
                   </span>
                 </div>
                 <ListingClient
