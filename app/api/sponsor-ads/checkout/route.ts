@@ -334,7 +334,7 @@ async function createPolarCheckout(
 	const customerId = await polarProvider.getCustomerId(user as Parameters<typeof polarProvider.getCustomerId>[0]);
 
 	const result = await polarProvider.createSubscription({
-		customerId: customerId || undefined,
+		customerId: customerId || "",
 		priceId: priceId,
 		metadata: {
 			userId: user.id || "",
