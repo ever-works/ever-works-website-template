@@ -12,6 +12,7 @@ import { sortItemsWithFeatured } from '@/lib/utils/featured-items';
 import { useFeaturedItemsSection } from '@/hooks/use-feature-items-section';
 import { TopLoadingBar } from '@/components/ui/top-loading-bar';
 import { Container, useContainerWidth } from '@/components/ui/container';
+import { SponsorAdsProvider } from '@/components/sponsor-ads';
 
 type ListingProps = {
 	total: number;
@@ -79,7 +80,7 @@ export default function GlobalsClient(props: ListingProps) {
 
 	if (layoutHome === LayoutHome.HOME_ONE) {
 		return (
-			<>
+			<SponsorAdsProvider limit={10}>
 				<TopLoadingBar isLoading={isFiltersLoading} />
 				<Container maxWidth="7xl" padding="default" useGlobalWidth className={LAYOUT_STYLES.mainContainer}>
 				{/* Featured Items Section - Only show on first page and desktop */}
@@ -139,12 +140,12 @@ export default function GlobalsClient(props: ListingProps) {
 					</div>
 				</div>
 			</Container>
-			</>
+			</SponsorAdsProvider>
 		);
 	}
 
 	return (
-		<>
+		<SponsorAdsProvider limit={10}>
 			<TopLoadingBar isLoading={isFiltersLoading} />
 			<div className={LAYOUT_STYLES.mainContainer}>
 				<HomeTwoLayout
@@ -155,6 +156,6 @@ export default function GlobalsClient(props: ListingProps) {
 					searchEnabled={props.searchEnabled}
 				/>
 			</div>
-		</>
+		</SponsorAdsProvider>
 	);
 }
