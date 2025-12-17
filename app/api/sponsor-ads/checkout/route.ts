@@ -297,26 +297,24 @@ async function createLemonSqueezyCheckout(
 ): Promise<{ id: string; url: string | null }> {
 	const lemonProvider = getOrCreateLemonsqueezyProvider();
 
-	const checkoutData = {
-		variantId,
-		customData: {
+	const result = await lemonProvider.createSubscription({
+		variantId: variantId,
+		email: user.email || undefined,
+		metadata: {
 			userId: user.id || "",
 			sponsorAdId: sponsorAd.id,
 			itemSlug: sponsorAd.itemSlug,
 			itemName: sponsorAd.itemName,
 			type: "sponsor_ad",
+			successUrl: successUrl,
+			name: sponsorAd.itemName,
+			description: `Sponsor ad for ${sponsorAd.itemName}`,
 		},
-		customerEmail: user.email || undefined,
-		customerName: user.name || undefined,
-		successUrl,
-		cancelUrl,
-	};
-
-	const checkout = await lemonProvider.createCheckout(checkoutData);
+	});
 
 	return {
-		id: checkout.id || "",
-		url: checkout.url || null,
+		id: result.id || "",
+		url: result.checkoutData?.url || null,
 	};
 }
 
@@ -332,24 +330,25 @@ async function createPolarCheckout(
 ): Promise<{ id: string; url: string | null }> {
 	const polarProvider = getOrCreatePolarProvider();
 
-	const checkoutData = {
-		priceId,
+	// Get or create customer ID
+	const customerId = await polarProvider.getCustomerId(user as Parameters<typeof polarProvider.getCustomerId>[0]);
+
+	const result = await polarProvider.createSubscription({
+		customerId: customerId || undefined,
+		priceId: priceId,
 		metadata: {
 			userId: user.id || "",
 			sponsorAdId: sponsorAd.id,
 			itemSlug: sponsorAd.itemSlug,
 			itemName: sponsorAd.itemName,
 			type: "sponsor_ad",
+			successUrl: successUrl,
+			cancelUrl: cancelUrl,
 		},
-		customerEmail: user.email || undefined,
-		successUrl,
-		cancelUrl,
-	};
-
-	const checkout = await polarProvider.createCheckout(checkoutData);
+	});
 
 	return {
-		id: checkout.id || "",
-		url: checkout.url || null,
+		id: result.id || "",
+		url: result.checkoutData?.url || null,
 	};
 }
