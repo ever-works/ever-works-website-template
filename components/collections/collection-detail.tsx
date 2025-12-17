@@ -13,10 +13,8 @@ import { TopLoadingBar } from "@/components/ui/top-loading-bar";
 import Hero from "@/components/hero";
 import { LayoutHome, useLayoutTheme } from "@/components/context";
 import { HomeTwoLayout } from "@/components/home-two";
-import { SORT_OPTIONS } from "@/components/filters/constants";
-import { sortItemsWithFeatured } from "@/lib/utils/featured-items";
-import { useFeaturedItemsSection } from "@/hooks/use-feature-items-section";
 import { SortControl } from "@/components/filters/components/controls/sort-control";
+import { sortItems } from "@/components/shared-card/utils/sort-utils";
 
 interface CollectionDetailProps {
   collection: Collection;
@@ -49,43 +47,16 @@ function CollectionDetailContent(props: CollectionDetailProps) {
   
   const sortedTags = sortByNumericProperty(tags);
 
-  // Use the featured items hook
-  const { featuredItems } = useFeaturedItemsSection({
-    limit: 6,
-    enabled: false // Disable featured items for collection pages
-  });
-
   // Filtering logic using shared utility
   const filteredItems = useMemo(() => {
     const filtered = filterItems(items, {
       searchTerm,
       selectedTags
     });
-    const getTime = (date: Date | string) => {
-      const timestamp = date instanceof Date ? date.getTime() : new Date(date).getTime();
-      return Number.isNaN(timestamp) ? 0 : timestamp;
-    };
+    const sorted = sortItems(filtered, sortBy);
 
-    const sorted = [...filtered].sort((a, b) => {
-      switch (sortBy) {
-        case SORT_OPTIONS.NAME_ASC:
-          return a.name.localeCompare(b.name);
-        case SORT_OPTIONS.NAME_DESC:
-          return b.name.localeCompare(a.name);
-        case SORT_OPTIONS.DATE_ASC:
-          return getTime(a.updatedAt) - getTime(b.updatedAt);
-        case SORT_OPTIONS.DATE_DESC:
-          return getTime(b.updatedAt) - getTime(a.updatedAt);
-        case SORT_OPTIONS.POPULARITY:
-        default:
-          if (a.featured && !b.featured) return -1;
-          if (!a.featured && b.featured) return 1;
-          return getTime(b.updatedAt) - getTime(a.updatedAt);
-      }
-    });
-
-    return sortItemsWithFeatured(sorted, featuredItems);
-  }, [items, searchTerm, selectedTags, featuredItems, sortBy]);
+    return sorted;
+  }, [items, searchTerm, selectedTags, sortBy]);
 
   // Get container width to conditionally apply styles
   const containerWidth = useContainerWidth();
