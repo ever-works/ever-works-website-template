@@ -787,6 +787,17 @@
       "PHONE_SUPPORT": "Dedizierter Telefonsupport",
       "UNLIMITED_SUBMISSIONS": "Unbegrenzte Einreichungen enthalten"
     },
+    "SPONSOR_BADGE": "Premium-Werbung",
+    "SPONSOR_TITLE": "Maximale Sichtbarkeit gewünscht?",
+    "SPONSOR_DESCRIPTION": "Präsentieren Sie Ihr Produkt auf allen Seiten mit einer Premium-Sponsor-Platzierung. Perfekt für Launches und Aktionen.",
+    "SPONSOR_FEATURE_1": "Globale Platzierung",
+    "SPONSOR_FEATURE_2": "[ANZEIGE] Badge",
+    "SPONSOR_FEATURE_3": "Zeitbasierte Rotation",
+    "SPONSOR_STARTING_FROM": "Ab",
+    "SPONSOR_WEEK": "Woche",
+    "SPONSOR_OR": "oder",
+    "SPONSOR_MONTH": "Monat",
+    "SPONSOR_CTA": "Sponsor werden",
     "UPGRADE_TO_PRO": "Auf Pro upgraden",
     "GO_ENTERPRISE": "Enterprise wählen"
   },
@@ -2716,7 +2727,10 @@
     "SUBMIT_FOR_REVIEW": "Zur Überprüfung einreichen",
     "SELECT_ITEM_TO_CONTINUE": "Wählen Sie einen Artikel und eine Dauer, um fortzufahren.",
     "SUBMIT_SUCCESS": "Sponsoring erfolgreich eingereicht! Sie werden benachrichtigt, sobald es genehmigt wurde.",
-    "SUBMIT_ERROR": "Sponsoring konnte nicht eingereicht werden. Bitte versuchen Sie es erneut."
+    "SUBMIT_ERROR": "Sponsoring konnte nicht eingereicht werden. Bitte versuchen Sie es erneut.",
+    "AD_LABEL": "ANZEIGE",
+    "SPONSORED": "Gesponsert",
+    "LEARN_MORE": "Mehr erfahren"
   },
   "client": {
     "submissions": {

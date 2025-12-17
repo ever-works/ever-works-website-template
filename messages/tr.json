@@ -771,7 +771,18 @@
       "DETAILED_ANALYTICS": "Detailed statistics + advanced analytics",
       "PHONE_SUPPORT": "Dedicated phone support",
       "UNLIMITED_SUBMISSIONS": "Unlimited submissions included"
-    }
+    },
+    "SPONSOR_BADGE": "Premium Advertising",
+    "SPONSOR_TITLE": "Want Maximum Visibility?",
+    "SPONSOR_DESCRIPTION": "Get your product featured across all pages with a premium sponsor placement. Perfect for launches and promotions.",
+    "SPONSOR_FEATURE_1": "Global placement",
+    "SPONSOR_FEATURE_2": "[AD] badge",
+    "SPONSOR_FEATURE_3": "Time-based rotation",
+    "SPONSOR_STARTING_FROM": "Starting from",
+    "SPONSOR_WEEK": "week",
+    "SPONSOR_OR": "or",
+    "SPONSOR_MONTH": "month",
+    "SPONSOR_CTA": "Become a Sponsor"
   },
   "payment": {
     "title": "Complete Your Order",
@@ -2683,7 +2694,10 @@
     "SUBMIT_FOR_REVIEW": "Submit for Review",
     "SELECT_ITEM_TO_CONTINUE": "Select an item and duration to continue.",
     "SUBMIT_SUCCESS": "Sponsorship submitted successfully! You will be notified once approved.",
-    "SUBMIT_ERROR": "Failed to submit sponsorship. Please try again."
+    "SUBMIT_ERROR": "Failed to submit sponsorship. Please try again.",
+    "AD_LABEL": "AD",
+    "SPONSORED": "Sponsored",
+    "LEARN_MORE": "Learn more"
   },
   "client": {
     "submissions": {

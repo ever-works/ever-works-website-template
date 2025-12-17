@@ -772,7 +772,18 @@
       "DETAILED_ANALYTICS": "Statistiques détaillées + analytics avancées",
       "PHONE_SUPPORT": "Support téléphonique dédié",
       "UNLIMITED_SUBMISSIONS": "Soumissions illimitées incluses"
-    }
+    },
+    "SPONSOR_BADGE": "Publicité Premium",
+    "SPONSOR_TITLE": "Vous voulez une visibilité maximale ?",
+    "SPONSOR_DESCRIPTION": "Mettez votre produit en avant sur toutes les pages avec un emplacement sponsor premium. Parfait pour les lancements et promotions.",
+    "SPONSOR_FEATURE_1": "Placement global",
+    "SPONSOR_FEATURE_2": "Badge [PUB]",
+    "SPONSOR_FEATURE_3": "Rotation temporelle",
+    "SPONSOR_STARTING_FROM": "À partir de",
+    "SPONSOR_WEEK": "semaine",
+    "SPONSOR_OR": "ou",
+    "SPONSOR_MONTH": "mois",
+    "SPONSOR_CTA": "Devenir sponsor"
   },
   "payment": {
     "title": "Finalisez votre commande",
@@ -2774,7 +2785,10 @@
     "SUBMIT_FOR_REVIEW": "Soumettre pour Examen",
     "SELECT_ITEM_TO_CONTINUE": "Sélectionnez un article et une durée pour continuer.",
     "SUBMIT_SUCCESS": "Sponsoring soumis avec succès ! Vous serez notifié une fois approuvé.",
-    "SUBMIT_ERROR": "Échec de la soumission du sponsoring. Veuillez réessayer."
+    "SUBMIT_ERROR": "Échec de la soumission du sponsoring. Veuillez réessayer.",
+    "AD_LABEL": "PUB",
+    "SPONSORED": "Sponsorisé",
+    "LEARN_MORE": "En savoir plus"
   },
   "client": {
     "submissions": {

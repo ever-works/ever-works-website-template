@@ -776,6 +776,17 @@
       "PHONE_SUPPORT": "Soporte telefónico dedicado",
       "UNLIMITED_SUBMISSIONS": "Envíos ilimitados incluidos"
     },
+    "SPONSOR_BADGE": "Publicidad Premium",
+    "SPONSOR_TITLE": "¿Quieres máxima visibilidad?",
+    "SPONSOR_DESCRIPTION": "Destaca tu producto en todas las páginas con una ubicación de patrocinador premium. Perfecto para lanzamientos y promociones.",
+    "SPONSOR_FEATURE_1": "Ubicación global",
+    "SPONSOR_FEATURE_2": "Insignia [ANUNCIO]",
+    "SPONSOR_FEATURE_3": "Rotación temporal",
+    "SPONSOR_STARTING_FROM": "Desde",
+    "SPONSOR_WEEK": "semana",
+    "SPONSOR_OR": "o",
+    "SPONSOR_MONTH": "mes",
+    "SPONSOR_CTA": "Ser patrocinador",
     "UPGRADE_TO_PRO": "Actualizar a Pro",
     "GO_ENTERPRISE": "Ir a Empresa"
   },
@@ -2705,7 +2716,10 @@
     "SUBMIT_FOR_REVIEW": "Enviar para Revisión",
     "SELECT_ITEM_TO_CONTINUE": "Selecciona un artículo y duración para continuar.",
     "SUBMIT_SUCCESS": "¡Patrocinio enviado exitosamente! Se te notificará una vez aprobado.",
-    "SUBMIT_ERROR": "Error al enviar el patrocinio. Por favor intenta de nuevo."
+    "SUBMIT_ERROR": "Error al enviar el patrocinio. Por favor intenta de nuevo.",
+    "AD_LABEL": "ANUNCIO",
+    "SPONSORED": "Patrocinado",
+    "LEARN_MORE": "Saber más"
   },
   "client": {
     "submissions": {

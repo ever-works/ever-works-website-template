@@ -786,6 +786,17 @@
       "PHONE_SUPPORT": "专用电话支持",
       "UNLIMITED_SUBMISSIONS": "包含无限提交"
     },
+    "SPONSOR_BADGE": "高级广告",
+    "SPONSOR_TITLE": "想要最大曝光度？",
+    "SPONSOR_DESCRIPTION": "通过高级赞助位置在所有页面展示您的产品。非常适合产品发布和促销活动。",
+    "SPONSOR_FEATURE_1": "全站展示",
+    "SPONSOR_FEATURE_2": "[广告]标签",
+    "SPONSOR_FEATURE_3": "定时轮播",
+    "SPONSOR_STARTING_FROM": "起价",
+    "SPONSOR_WEEK": "周",
+    "SPONSOR_OR": "或",
+    "SPONSOR_MONTH": "月",
+    "SPONSOR_CTA": "成为赞助商",
     "UPGRADE_TO_PRO": "升级到专业版",
     "GO_ENTERPRISE": "选择企业版"
   },
@@ -2715,7 +2726,10 @@
     "SUBMIT_FOR_REVIEW": "提交审核",
     "SELECT_ITEM_TO_CONTINUE": "选择一个项目和时长以继续。",
     "SUBMIT_SUCCESS": "赞助提交成功！审批通过后会通知您。",
-    "SUBMIT_ERROR": "提交赞助失败。请重试。"
+    "SUBMIT_ERROR": "提交赞助失败。请重试.",
+    "AD_LABEL": "广告",
+    "SPONSORED": "赞助",
+    "LEARN_MORE": "了解更多"
   },
   "client": {
     "submissions": {
