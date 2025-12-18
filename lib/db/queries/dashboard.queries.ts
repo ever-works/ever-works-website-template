@@ -169,21 +169,22 @@ export async function getDailyActivityData(
     startDate.setHours(0, 0, 0, 0);
 
     // Get daily engagement (votes + comments received on user's items)
-    let dailyEngagement: Array<{ day: string; count: number }> = [];
+    // Using EXTRACT(DOW FROM date) for locale-independent day-of-week (0=Sunday, 6=Saturday)
+    let dailyEngagement: Array<{ dayOfWeek: number; count: number }> = [];
 
     if (itemSlugs.length > 0) {
         const votesEngagement = await db
             .select({
-                day: sql<string>`to_char(${votes.createdAt}, 'Dy')`.as('day'),
+                dayOfWeek: sql<number>`EXTRACT(DOW FROM ${votes.createdAt})`.as('day_of_week'),
                 count: count(),
             })
             .from(votes)
             .where(and(inArray(votes.itemId, itemSlugs), gte(votes.createdAt, startDate)))
-            .groupBy(sql`to_char(${votes.createdAt}, 'Dy')`);
+            .groupBy(sql`EXTRACT(DOW FROM ${votes.createdAt})`);
 
         const commentsEngagement = await db
             .select({
-                day: sql<string>`to_char(${comments.createdAt}, 'Dy')`.as('day'),
+                dayOfWeek: sql<number>`EXTRACT(DOW FROM ${comments.createdAt})`.as('day_of_week'),
                 count: count(),
             })
             .from(comments)
@@ -194,37 +195,39 @@ export async function getDailyActivityData(
                     isNull(comments.deletedAt)
                 )
             )
-            .groupBy(sql`to_char(${comments.createdAt}, 'Dy')`);
+            .groupBy(sql`EXTRACT(DOW FROM ${comments.createdAt})`);
 
-        // Merge votes and comments engagement
-        const engagementMap = new Map<string, number>();
+        // Merge votes and comments engagement using numeric day-of-week
+        const engagementMap = new Map<number, number>();
         votesEngagement.forEach(v => {
-            engagementMap.set(v.day, (engagementMap.get(v.day) ?? 0) + Number(v.count));
+            const dow = Number(v.dayOfWeek);
+            engagementMap.set(dow, (engagementMap.get(dow) ?? 0) + Number(v.count));
         });
         commentsEngagement.forEach(c => {
-            engagementMap.set(c.day, (engagementMap.get(c.day) ?? 0) + Number(c.count));
+            const dow = Number(c.dayOfWeek);
+            engagementMap.set(dow, (engagementMap.get(dow) ?? 0) + Number(c.count));
         });
 
-        dailyEngagement = Array.from(engagementMap.entries()).map(([day, count]) => ({
-            day,
+        dailyEngagement = Array.from(engagementMap.entries()).map(([dayOfWeek, count]) => ({
+            dayOfWeek,
             count,
         }));
     }
 
-    // Generate day labels
+    // Generate day labels (0=Sunday, 1=Monday, ..., 6=Saturday)
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const engagementMap = new Map(dailyEngagement.map(d => [d.day, d.count]));
+    const engagementMap = new Map(dailyEngagement.map(d => [d.dayOfWeek, d.count]));
 
     const result: Array<{ date: string; submissions: number; views: number; engagement: number }> = [];
     for (let i = 0; i < days; i++) {
         const date = new Date();
         date.setDate(date.getDate() - (days - 1 - i));
-        const dayName = dayNames[date.getDay()];
+        const dayOfWeek = date.getDay(); // 0=Sunday, 6=Saturday
         result.push({
-            date: dayName,
+            date: dayNames[dayOfWeek],
             submissions: 0, // Will be populated from Git repository in the repository layer
             views: 0, // Views not tracked yet
-            engagement: engagementMap.get(dayName) ?? 0,
+            engagement: engagementMap.get(dayOfWeek) ?? 0,
         });
     }
 
@@ -296,13 +299,18 @@ export async function getRecentSubmissionsCount(_days: number = 7): Promise<numb
 // ===================== Helper Functions =====================
 
 /**
- * Get ISO week string (YYYY-WW format)
+ * Get ISO week string (IYYY-IW format) matching PostgreSQL's to_char(date, 'IYYY-IW')
+ * Uses ISO week year (the year containing the Thursday of the week),
+ * which may differ from calendar year at year boundaries.
  */
 function getISOWeekString(date: Date): string {
     const d = new Date(date);
     d.setHours(0, 0, 0, 0);
+    // Set to nearest Thursday (ISO weeks start on Monday, Thursday determines the year)
     d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
-    const week1 = new Date(d.getFullYear(), 0, 4);
+    // ISO week year is the year of the Thursday
+    const isoWeekYear = d.getFullYear();
+    const week1 = new Date(isoWeekYear, 0, 4);
     const weekNum = 1 + Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
-    return `${d.getFullYear()}-${weekNum.toString().padStart(2, '0')}`;
+    return `${isoWeekYear}-${weekNum.toString().padStart(2, '0')}`;
 }
