@@ -250,7 +250,7 @@ export class WebhookSubscriptionService {
 				interval: response.interval || existingSubscription.interval,
 				intervalCount: response.intervalCount || existingSubscription.intervalCount,
 				trialStart: trialStart !== undefined ? trialStart : existingSubscription.trialStart,
-				trialEnd: trialEnd !== undefined ? trialStart : existingSubscription.trialEnd,
+				trialEnd: trialEnd !== undefined ? trialEnd : existingSubscription.trialEnd,
 				cancelAtPeriodEnd: cancelAtPeriodEndValue,
 				autoRenewal: autoRenewalValue,
 				metadata: response.metadata ? JSON.stringify(response.metadata) : existingSubscription.metadata,

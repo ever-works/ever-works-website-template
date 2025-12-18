@@ -952,7 +952,7 @@ export class PolarProvider implements PaymentProviderInterface {
 				error: errorText,
 				subscriptionId: validatedSubscriptionId
 			});
-			// Don't throw - metadata update failure shouldn't break the flow
+			// If fallback exists, return it gracefully; otherwise propagate the error
 			if (fallbackSubscription) {
 				return fallbackSubscription;
 			}

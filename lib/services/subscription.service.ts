@@ -43,7 +43,7 @@ export class SubscriptionService {
 	async createSubscription(data: CreateSubscriptionData): Promise<Subscription> {
 		const newSubscription: NewSubscription = {
 			userId: data.userId,
-			planId: PaymentPlan.STANDARD,
+			planId: data.planId || PaymentPlan.STANDARD,
 			status: SubscriptionStatus.PENDING,
 			startDate: data.startDate,
 			endDate: data.endDate,
@@ -312,10 +312,16 @@ export class SubscriptionService {
 	 * Increments failure counter and logs the event
 	 * @param subscriptionId - Subscription ID
 	 * @returns Current failed payment count
+	 * @throws Error if subscription is not found
 	 */
 	async handleFailedPayment(subscriptionId: string): Promise<number> {
 		const updated = await queries.incrementFailedPaymentCount(subscriptionId);
-		const failedCount = updated?.failedPaymentCount || 0;
+
+		if (!updated) {
+			throw new Error(`Subscription not found: ${subscriptionId}`);
+		}
+
+		const failedCount = updated.failedPaymentCount ?? 0;
 
 		await queries.logSubscriptionChange(
 			subscriptionId,

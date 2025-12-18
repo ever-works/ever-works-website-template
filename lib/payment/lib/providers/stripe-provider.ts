@@ -557,7 +557,17 @@ export class StripeProvider implements PaymentProviderInterface {
 			}
 
 			const subscription = await this.stripe.subscriptions.update(subscriptionId, updateParams);
-			console.log('Stripe updateSubscription subscription:', subscription);
+			// Log only non-sensitive subscription fields
+			if (process.env.NODE_ENV === 'development') {
+				console.log('Stripe updateSubscription:', {
+					id: subscription.id,
+					status: subscription.status,
+					cancelAtPeriodEnd: subscription.cancel_at_period_end,
+					cancelAt: subscription.cancel_at,
+					trialEnd: subscription.trial_end,
+					priceId: subscription.items.data[0]?.price?.id
+				});
+			}
 			return {
 				id: subscription.id,
 				customerId: subscription.customer as string,

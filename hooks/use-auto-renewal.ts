@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
 
@@ -95,7 +95,7 @@ export interface UseAutoRenewalOptions {
 export interface UseAutoRenewalReturn {
 	// Data
 	autoRenewalStatus: AutoRenewalStatus | undefined;
-	autoRenewal: boolean;
+	autoRenewal: boolean | undefined;
 	cancelAtPeriodEnd: boolean;
 	endDate: string | null;
 
@@ -142,24 +142,47 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 		}
 	});
 
-	// Handle onSuccess and onError callbacks
+	// Track previous states to detect transitions
+	const prevIsSuccessRef = useRef(false);
+	const prevIsErrorRef = useRef(false);
+	const lastSubscriptionIdRef = useRef<string | null>(null);
+
+	// Reset refs when subscriptionId changes
 	useEffect(() => {
-		if (isSuccess && data && onSuccess) {
+		if (lastSubscriptionIdRef.current !== subscriptionId) {
+			prevIsSuccessRef.current = false;
+			prevIsErrorRef.current = false;
+			lastSubscriptionIdRef.current = subscriptionId;
+		}
+	}, [subscriptionId]);
+
+	// Handle onSuccess callback - only call on transition to success
+	useEffect(() => {
+		const isTransitioningToSuccess = !prevIsSuccessRef.current && isSuccess;
+
+		if (isTransitioningToSuccess && data && onSuccess) {
 			onSuccess(data);
 		}
+
+		prevIsSuccessRef.current = isSuccess;
 	}, [isSuccess, data, onSuccess]);
 
+	// Handle onError callback - only call on transition to error
 	useEffect(() => {
-		if (isError && error && onError) {
+		const isTransitioningToError = !prevIsErrorRef.current && isError;
+
+		if (isTransitioningToError && error && onError) {
 			onError(error);
 		}
+
+		prevIsErrorRef.current = isError;
 	}, [isError, error, onError]);
 
 	// Mutation for updating auto-renewal status
 	const updateMutation = useMutation<UpdateAutoRenewalResponse, AutoRenewalError, UpdateAutoRenewalRequest>({
 		mutationFn: updateAutoRenewal,
 		onSuccess: (response, variables) => {
-			// Optimistically update the cache
+			// Update the cache with the new status after successful mutation
 			queryClient.setQueryData<AutoRenewalStatus>(
 				AUTO_RENEWAL_QUERY_KEY(subscriptionId),
 				(oldData): AutoRenewalStatus => {
@@ -201,25 +224,28 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 		}
 	});
 
+	// Extract stable mutate functions for use in callbacks
+	const { mutate, mutateAsync } = updateMutation;
+
 	// Derived values
 	const autoRenewalStatus = data;
-	const autoRenewal = data?.autoRenewal ?? true;
+	const autoRenewal = data?.autoRenewal;
 	const cancelAtPeriodEnd = data?.cancelAtPeriodEnd ?? false;
 	const endDate = data?.endDate ?? null;
 
 	// Actions
 	const updateAutoRenewalAction = useCallback(
 		(enabled: boolean, paymentProvider?: string) => {
-			updateMutation.mutate({ subscriptionId, enabled, paymentProvider });
+			mutate({ subscriptionId, enabled, paymentProvider });
 		},
-		[subscriptionId, updateMutation]
+		[subscriptionId, mutate]
 	);
 
 	const updateAutoRenewalAsyncAction = useCallback(
 		async (enabled: boolean, paymentProvider?: string) => {
-			return updateMutation.mutateAsync({ subscriptionId, enabled, paymentProvider });
+			return mutateAsync({ subscriptionId, enabled, paymentProvider });
 		},
-		[subscriptionId, updateMutation]
+		[subscriptionId, mutateAsync]
 	);
 
 	const enableAutoRenewalAction = useCallback(() => {

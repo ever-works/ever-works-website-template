@@ -1,4 +1,4 @@
-import { and, eq, desc, asc, lte, count, gte } from 'drizzle-orm';
+import { and, eq, desc, asc, lte, count, gte, sql } from 'drizzle-orm';
 import { db } from '../drizzle';
 import {
 	subscriptions,
@@ -470,13 +470,10 @@ export async function markRenewalReminderSent(subscriptionId: string): Promise<S
  * @returns Updated subscription or null if not found
  */
 export async function incrementFailedPaymentCount(subscriptionId: string): Promise<Subscription | null> {
-	const subscription = await getSubscriptionWithUser(subscriptionId);
-	if (!subscription) return null;
-
 	const result = await db
 		.update(subscriptions)
 		.set({
-			failedPaymentCount: (subscription.failedPaymentCount || 0) + 1,
+			failedPaymentCount: sql`COALESCE(${subscriptions.failedPaymentCount}, 0) + 1`,
 			lastRenewalAttempt: new Date(),
 			updatedAt: new Date()
 		})
