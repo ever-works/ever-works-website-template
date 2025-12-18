@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, Check, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -37,7 +38,7 @@ const TRIGGER_BASE = cn(
 );
 
 const DROPDOWN_BASE = cn(
-	"absolute z-50 w-full mt-1",
+	"z-[9999]",
 	"bg-white dark:bg-gray-800",
 	"border border-gray-200 dark:border-gray-700",
 	"rounded-xl shadow-lg overflow-hidden"
@@ -73,7 +74,9 @@ export function SearchableSelect({
 }: SearchableSelectProps) {
 	const [isOpen, setIsOpen] = React.useState(false);
 	const [search, setSearch] = React.useState("");
-	const containerRef = React.useRef<HTMLDivElement>(null);
+	const [dropdownPosition, setDropdownPosition] = React.useState({ top: 0, left: 0, width: 0 });
+	const triggerRef = React.useRef<HTMLButtonElement>(null);
+	const dropdownRef = React.useRef<HTMLDivElement>(null);
 	const searchInputRef = React.useRef<HTMLInputElement>(null);
 
 	// Filter items based on search
@@ -92,12 +95,28 @@ export function SearchableSelect({
 		return items.find((item) => item.value === value);
 	}, [items, value]);
 
+	// Update dropdown position when opened
+	React.useEffect(() => {
+		if (isOpen && triggerRef.current) {
+			const rect = triggerRef.current.getBoundingClientRect();
+			setDropdownPosition({
+				top: rect.bottom + window.scrollY + 4,
+				left: rect.left + window.scrollX,
+				width: rect.width,
+			});
+		}
+	}, [isOpen]);
+
 	// Handle click outside
 	React.useEffect(() => {
 		if (!isOpen) return;
 
 		const handleClickOutside = (event: PointerEvent) => {
-			if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+			const target = event.target as Node;
+			const isOutsideTrigger = triggerRef.current && !triggerRef.current.contains(target);
+			const isOutsideDropdown = dropdownRef.current && !dropdownRef.current.contains(target);
+
+			if (isOutsideTrigger && isOutsideDropdown) {
 				setIsOpen(false);
 				setSearch("");
 			}
@@ -116,7 +135,7 @@ export function SearchableSelect({
 	// Focus search input when dropdown opens
 	React.useEffect(() => {
 		if (isOpen && searchInputRef.current) {
-			searchInputRef.current.focus();
+			setTimeout(() => searchInputRef.current?.focus(), 0);
 		}
 	}, [isOpen]);
 
@@ -134,8 +153,74 @@ export function SearchableSelect({
 		}
 	};
 
+	// Dropdown content rendered via portal
+	const dropdownContent = isOpen && typeof document !== "undefined" ? createPortal(
+		<div
+			ref={dropdownRef}
+			className={DROPDOWN_BASE}
+			style={{
+				position: "absolute",
+				top: dropdownPosition.top,
+				left: dropdownPosition.left,
+				width: dropdownPosition.width,
+			}}
+		>
+			{/* Search Input */}
+			<div className="relative">
+				<Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+				<input
+					ref={searchInputRef}
+					type="text"
+					value={search}
+					onChange={(e) => setSearch(e.target.value)}
+					placeholder={searchPlaceholder}
+					className={cn(SEARCH_INPUT, "pl-10")}
+				/>
+			</div>
+
+			{/* Items List */}
+			<div className="max-h-[240px] overflow-y-auto">
+				{filteredItems.length === 0 ? (
+					<div className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+						{emptyMessage}
+					</div>
+				) : (
+					filteredItems.map((item) => {
+						const isSelected = item.value === value;
+						return (
+							<button
+								key={item.value}
+								type="button"
+								onClick={() => handleSelect(item.value)}
+								className={cn(ITEM_BASE, isSelected && ITEM_SELECTED)}
+							>
+								{item.icon && (
+									<div className="shrink-0">{item.icon}</div>
+								)}
+								<div className="flex-1 min-w-0">
+									<div className="text-sm font-medium text-gray-900 dark:text-white truncate">
+										{item.label}
+									</div>
+									{item.description && (
+										<div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+											{item.description}
+										</div>
+									)}
+								</div>
+								{isSelected && (
+									<Check size={16} className="text-blue-500 shrink-0" />
+								)}
+							</button>
+						);
+					})
+				)}
+			</div>
+		</div>,
+		document.body
+	) : null;
+
 	return (
-		<div className={cn("relative", className)} ref={containerRef}>
+		<div className={cn("relative", className)}>
 			{label && (
 				<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
 					{label}
@@ -144,6 +229,7 @@ export function SearchableSelect({
 
 			{/* Trigger Button */}
 			<button
+				ref={triggerRef}
 				type="button"
 				onClick={handleToggle}
 				disabled={disabled}
@@ -164,61 +250,8 @@ export function SearchableSelect({
 				/>
 			</button>
 
-			{/* Dropdown */}
-			{isOpen && (
-				<div className={DROPDOWN_BASE}>
-					{/* Search Input */}
-					<div className="relative">
-						<Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-						<input
-							ref={searchInputRef}
-							type="text"
-							value={search}
-							onChange={(e) => setSearch(e.target.value)}
-							placeholder={searchPlaceholder}
-							className={cn(SEARCH_INPUT, "pl-10")}
-						/>
-					</div>
-
-					{/* Items List */}
-					<div className="max-h-[240px] overflow-y-auto">
-						{filteredItems.length === 0 ? (
-							<div className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-								{emptyMessage}
-							</div>
-						) : (
-							filteredItems.map((item) => {
-								const isSelected = item.value === value;
-								return (
-									<button
-										key={item.value}
-										type="button"
-										onClick={() => handleSelect(item.value)}
-										className={cn(ITEM_BASE, isSelected && ITEM_SELECTED)}
-									>
-										{item.icon && (
-											<div className="shrink-0">{item.icon}</div>
-										)}
-										<div className="flex-1 min-w-0">
-											<div className="text-sm font-medium text-gray-900 dark:text-white truncate">
-												{item.label}
-											</div>
-											{item.description && (
-												<div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-													{item.description}
-												</div>
-											)}
-										</div>
-										{isSelected && (
-											<Check size={16} className="text-blue-500 shrink-0" />
-										)}
-									</button>
-								);
-							})
-						)}
-					</div>
-				</div>
-			)}
+			{/* Dropdown via Portal */}
+			{dropdownContent}
 		</div>
 	);
 }
