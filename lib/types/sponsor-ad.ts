@@ -11,9 +11,9 @@ export type SponsorAdIntervalType = 'weekly' | 'monthly';
 export interface CreateSponsorAdRequest {
 	itemSlug: string;
 	itemName: string;
-	itemIconUrl?: string;
-	itemCategory?: string;
-	itemDescription?: string;
+	itemIconUrl?: string | null;
+	itemCategory?: string | null;
+	itemDescription?: string | null;
 	interval: SponsorAdIntervalType;
 	paymentProvider: string;
 }

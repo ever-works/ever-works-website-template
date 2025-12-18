@@ -16,9 +16,9 @@ export const sponsorAdIntervals = ["weekly", "monthly"] as const;
 export const createSponsorAdSchema = z.object({
 	itemSlug: z.string().min(1, "Item slug is required"),
 	itemName: z.string().min(1, "Item name is required"),
-	itemIconUrl: z.string().url("Invalid URL format").optional().or(z.literal("")),
-	itemCategory: z.string().optional(),
-	itemDescription: z.string().max(500).optional(),
+	itemIconUrl: z.string().url("Invalid URL format").nullish().or(z.literal("")),
+	itemCategory: z.string().nullish(),
+	itemDescription: z.string().max(500).nullish(),
 	interval: z.enum(sponsorAdIntervals),
 	paymentProvider: z.string().min(1, "Payment provider is required"),
 });
