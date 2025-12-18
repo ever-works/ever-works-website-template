@@ -36,8 +36,6 @@ const CARD_WRAPPER = "border-0 shadow-lg bg-white dark:bg-gray-900";
 const CARD_HEADER = "px-6 py-4 border-b border-gray-100 dark:border-gray-800";
 const CARD_BODY = "p-6";
 const STEP_BADGE = "flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-indigo-600 text-sm font-semibold text-white shadow-lg";
-const ITEM_PREVIEW = "flex items-center gap-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-4";
-const ITEM_ICON_PLACEHOLDER = "flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-indigo-500 text-white";
 const PRICING_CARD_BASE = "relative flex flex-col items-start rounded-xl border-2 p-5 text-left transition-all duration-300 cursor-pointer";
 const PRICING_CARD_SELECTED = "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg shadow-blue-500/10";
 const PRICING_CARD_UNSELECTED = "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md";
@@ -203,36 +201,6 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 							/>
 						) : (
 							<p className="text-sm text-gray-500 dark:text-gray-400">{t("NO_ITEMS_FOUND")}</p>
-						)}
-
-						{/* Selected Item Preview */}
-						{selectedItem && (
-							<div className={ITEM_PREVIEW}>
-								{selectedItem.icon_url ? (
-									<Image
-										src={selectedItem.icon_url}
-										alt={selectedItem.name}
-										width={48}
-										height={48}
-										className="h-12 w-12 rounded-xl object-cover"
-									/>
-								) : (
-									<div className={ITEM_ICON_PLACEHOLDER}>
-										<Megaphone className="h-6 w-6" />
-									</div>
-								)}
-								<div className="flex-1 min-w-0">
-									<p className="font-medium text-gray-900 dark:text-white truncate">
-										{selectedItem.name}
-									</p>
-									<p className="text-sm text-gray-500 dark:text-gray-400">
-										{getCategoryName(selectedItem.category)}
-									</p>
-								</div>
-								<div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-									<CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-								</div>
-							</div>
 						)}
 					</div>
 				</CardBody>
