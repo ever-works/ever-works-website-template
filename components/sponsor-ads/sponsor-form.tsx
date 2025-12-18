@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Card, CardBody, Button } from "@heroui/react";
-import { Megaphone, Calendar, CheckCircle, AlertCircle } from "lucide-react";
+import { Megaphone, Calendar, CheckCircle, AlertCircle, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -326,7 +326,7 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 								isLoading={isSubmitting}
 								size="lg"
 								className={SUBMIT_BUTTON}
-								startContent={!isSubmitting && <Megaphone className="h-4 w-4" />}
+								endContent={!isSubmitting && <Send className="h-4 w-4" />}
 							>
 								{isSubmitting ? t("SUBMITTING") : t("SUBMIT_FOR_REVIEW")}
 							</Button>
