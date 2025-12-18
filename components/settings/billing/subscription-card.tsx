@@ -76,36 +76,12 @@ export function SubscriptionCard({ subscription }: { subscription: SubscriptionI
 	const statusConfig = getStatusConfig(subscription.status);
 	const StatusIcon = statusConfig.icon;
 
-	const subscriptionId = subscription.id;
+	// Use provider's subscription ID (e.g., Stripe's sub_xxx) for API lookup
+	const subscriptionId = subscription.subscriptionId;
 
-	const {
-		autoRenewalStatus,
-		autoRenewal,
-		cancelAtPeriodEnd,
-		endDate,
-		isLoading,
-		isError,
-		isSuccess,
-		error,
-		isUpdating,
-		updateError,
-		isUpdateSuccess,
-		refetch,
-		updateAutoRenewal,
-		updateAutoRenewalAsync,
-		enableAutoRenewal,
-		disableAutoRenewal,
-		invalidateCache,
-		clearCache
-	} = useAutoRenewal({
+	const { autoRenewal, isLoading, isUpdating, enableAutoRenewal, disableAutoRenewal } = useAutoRenewal({
 		subscriptionId,
-		enabled: !!subscriptionId,
-		onSuccess: (data) => {
-			console.log('Auto-renewal status loaded:', data);
-		},
-		onError: (error) => {
-			console.error('Error loading auto-renewal status:', error);
-		}
+		enabled: !!subscriptionId
 	});
 
 	const handleToggleAutoRenewal = () => {

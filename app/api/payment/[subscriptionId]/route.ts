@@ -26,6 +26,15 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 			return NextResponse.json({ error: 'Invalid request body. "enabled" must be a boolean.' }, { status: 400 });
 		}
 
+		// Validate payment provider
+		const validProviders = Object.values(PaymentProvider) as string[];
+		if (!validProviders.includes(provider)) {
+			return NextResponse.json(
+				{ error: `Invalid payment provider. Must be one of: ${validProviders.join(', ')}` },
+				{ status: 400 }
+			);
+		}
+
 		// Verify the subscription belongs to the user
 		const subscription = await subscriptionService.getSubscriptionByProviderSubscriptionId(
 			provider,

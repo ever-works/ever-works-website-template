@@ -289,11 +289,17 @@ export class SubscriptionService {
 	/**
 	 * Reset renewal state after successful payment
 	 * Called when payment succeeds to reset reminder and failure counters
+	 * Uses atomic update to ensure data consistency
 	 * @param subscriptionId - Subscription ID
 	 */
 	async handleSuccessfulRenewal(subscriptionId: string): Promise<void> {
-		await queries.resetRenewalReminderSent(subscriptionId);
-		await queries.resetFailedPaymentCount(subscriptionId);
+		// Use atomic reset to ensure both fields are updated together
+		const updated = await queries.resetRenewalStateAtomic(subscriptionId);
+
+		if (!updated) {
+			console.warn(`handleSuccessfulRenewal: Subscription ${subscriptionId} not found`);
+			return;
+		}
 
 		await queries.logSubscriptionChange(
 			subscriptionId,

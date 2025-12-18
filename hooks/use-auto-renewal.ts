@@ -42,9 +42,11 @@ interface AutoRenewalError extends Error {
 /**
  * Query key factory for auto-renewal status
  * @param subscriptionId - The subscription ID
+ * @param paymentProvider - The payment provider (e.g., 'stripe', 'lemonsqueezy', 'polar')
  * @returns Query key tuple
  */
-export const AUTO_RENEWAL_QUERY_KEY = (subscriptionId: string) => ['auto-renewal', subscriptionId] as const;
+export const AUTO_RENEWAL_QUERY_KEY = (subscriptionId: string, paymentProvider?: string) =>
+	['auto-renewal', subscriptionId, paymentProvider ?? 'stripe'] as const;
 
 const CACHE_CONFIG = {
 	STALE_TIME: 2 * 60 * 1000, // 2 minutes
@@ -227,7 +229,7 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 	// ===================== Query =====================
 
 	const { data, isLoading, isError, error, refetch, isSuccess } = useQuery<AutoRenewalStatus, AutoRenewalError>({
-		queryKey: AUTO_RENEWAL_QUERY_KEY(subscriptionId),
+		queryKey: AUTO_RENEWAL_QUERY_KEY(subscriptionId, paymentProvider),
 		queryFn: () => fetchAutoRenewalStatus(subscriptionId, paymentProvider),
 		enabled: enabled && !!subscriptionId,
 		staleTime: CACHE_CONFIG.STALE_TIME,

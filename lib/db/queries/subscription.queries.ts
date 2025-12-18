@@ -515,3 +515,26 @@ export async function getSubscriptionsWithFailedPayments(threshold: number = 3):
 			and(eq(subscriptions.status, SubscriptionStatus.ACTIVE), gte(subscriptions.failedPaymentCount, threshold))
 		);
 }
+
+/**
+ * Atomically reset renewal state after successful payment
+ * Resets both renewalReminderSent and failedPaymentCount in a single transaction
+ * to ensure data consistency
+ * @param subscriptionId - Subscription ID
+ * @returns Updated subscription or null if not found
+ */
+export async function resetRenewalStateAtomic(subscriptionId: string): Promise<Subscription | null> {
+	// Use a single update with both fields to ensure atomicity
+	const result = await db
+		.update(subscriptions)
+		.set({
+			renewalReminderSent: false,
+			failedPaymentCount: 0,
+			lastRenewalAttempt: new Date(),
+			updatedAt: new Date()
+		})
+		.where(eq(subscriptions.id, subscriptionId))
+		.returning();
+
+	return result[0] || null;
+}

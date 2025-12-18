@@ -3,6 +3,26 @@
  * Sent to users before their subscription renews (typically 7 days before)
  */
 
+// Security: HTML escape function to prevent XSS
+function escapeHtml(unsafe: string): string {
+	return unsafe
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#039;');
+}
+
+// Security: URL validation function
+function isValidUrl(url: string): boolean {
+	try {
+		const parsedUrl = new URL(url);
+		return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+	} catch {
+		return false;
+	}
+}
+
 interface RenewalReminderData {
 	customerName: string;
 	customerEmail: string;
@@ -35,9 +55,27 @@ export const getRenewalReminderTemplate = (data: RenewalReminderData) => {
 		disableAutoRenewalUrl
 	} = data;
 
-	const currencySymbol = currency === 'eur' ? '€' : currency === 'usd' ? '$' : currency.toUpperCase();
+	// Security: Escape all user-provided data
+	const safeCustomerName = escapeHtml(customerName);
+	const safePlanName = escapeHtml(planName);
+	const safeAmount = escapeHtml(amount);
+	const safeCurrency = escapeHtml(currency);
+	const safeBillingPeriod = escapeHtml(billingPeriod);
+	const safeRenewalDate = escapeHtml(renewalDate);
+	const safeSubscriptionId = escapeHtml(subscriptionId);
+	const safeCompanyName = escapeHtml(companyName);
+	const safeSupportEmail = escapeHtml(supportEmail);
 
-	const subject = `Your ${planName} subscription renews on ${renewalDate}`;
+	// Security: Validate URLs
+	const safeCompanyUrl = isValidUrl(companyUrl) ? companyUrl : 'https://ever.works';
+	const safeManageSubscriptionUrl =
+		manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl) ? manageSubscriptionUrl : null;
+	const safeDisableAutoRenewalUrl =
+		disableAutoRenewalUrl && isValidUrl(disableAutoRenewalUrl) ? disableAutoRenewalUrl : null;
+
+	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
+
+	const subject = `Your ${safePlanName} subscription renews on ${safeRenewalDate}`;
 
 	const html = `
     <!DOCTYPE html>
@@ -197,27 +235,27 @@ export const getRenewalReminderTemplate = (data: RenewalReminderData) => {
         </div>
         
         <div class="content">
-          <p>Hello <strong>${customerName}</strong>,</p>
+          <p>Hello <strong>${safeCustomerName}</strong>,</p>
           
-          <p>This is a friendly reminder that your <strong>${planName}</strong> subscription will automatically renew on <strong>${renewalDate}</strong>.</p>
+          <p>This is a friendly reminder that your <strong>${safePlanName}</strong> subscription will automatically renew on <strong>${safeRenewalDate}</strong>.</p>
           
           <div class="renewal-details">
             <h2>Renewal Details</h2>
             <div class="detail-row">
               <span class="detail-label">Plan:</span>
-              <span class="detail-value">${planName}</span>
+              <span class="detail-value">${safePlanName}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Renewal Amount:</span>
-              <span class="detail-value">${currencySymbol}${amount}/${billingPeriod}</span>
+              <span class="detail-value">${currencySymbol}${safeAmount}/${safeBillingPeriod}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Renewal Date:</span>
-              <span class="detail-value">${renewalDate}</span>
+              <span class="detail-value">${safeRenewalDate}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Subscription ID:</span>
-              <span class="detail-value">${subscriptionId}</span>
+              <span class="detail-value">${safeSubscriptionId}</span>
             </div>
           </div>
           
@@ -226,25 +264,25 @@ export const getRenewalReminderTemplate = (data: RenewalReminderData) => {
           </div>
           
           <div class="button-group">
-            ${manageSubscriptionUrl ? `<a href="${manageSubscriptionUrl}" class="cta-button">Manage Subscription</a>` : ''}
-            ${disableAutoRenewalUrl ? `<a href="${disableAutoRenewalUrl}" class="secondary-button">Cancel Auto-Renewal</a>` : ''}
+            ${safeManageSubscriptionUrl ? `<a href="${safeManageSubscriptionUrl}" class="cta-button">Manage Subscription</a>` : ''}
+            ${safeDisableAutoRenewalUrl ? `<a href="${safeDisableAutoRenewalUrl}" class="secondary-button">Cancel Auto-Renewal</a>` : ''}
           </div>
           
           <p>If you have any questions or need to update your payment method, please contact our support team.</p>
           
           <p>Thank you for being a valued customer!<br>
-          The ${companyName} Team</p>
+          The ${safeCompanyName} Team</p>
         </div>
         
         <div class="footer">
-          <p><strong>${companyName}</strong></p>
+          <p><strong>${safeCompanyName}</strong></p>
           <p>
-            <a href="${companyUrl}">Website</a> | 
-            <a href="mailto:${supportEmail}">Support</a> | 
-            <a href="${companyUrl}/privacy">Privacy Policy</a>
+            <a href="${safeCompanyUrl}">Website</a> | 
+            <a href="mailto:${safeSupportEmail}">Support</a> | 
+            <a href="${safeCompanyUrl}/privacy">Privacy Policy</a>
           </p>
           <p style="margin-top: 15px;">
-            © ${new Date().getFullYear()} ${companyName}. All rights reserved.
+            © ${new Date().getFullYear()} ${safeCompanyName}. All rights reserved.
           </p>
         </div>
       </div>
@@ -253,29 +291,29 @@ export const getRenewalReminderTemplate = (data: RenewalReminderData) => {
   `;
 
 	const text = `
-Subscription Renewal Reminder - ${companyName}
+Subscription Renewal Reminder - ${safeCompanyName}
 
-Hello ${customerName},
+Hello ${safeCustomerName},
 
-This is a friendly reminder that your ${planName} subscription will automatically renew on ${renewalDate}.
+This is a friendly reminder that your ${safePlanName} subscription will automatically renew on ${safeRenewalDate}.
 
 Renewal Details:
-- Plan: ${planName}
-- Renewal Amount: ${currencySymbol}${amount}/${billingPeriod}
-- Renewal Date: ${renewalDate}
-- Subscription ID: ${subscriptionId}
+- Plan: ${safePlanName}
+- Renewal Amount: ${currencySymbol}${safeAmount}/${safeBillingPeriod}
+- Renewal Date: ${safeRenewalDate}
+- Subscription ID: ${safeSubscriptionId}
 
 No action is needed if you'd like to continue your subscription. Your payment method on file will be charged automatically.
 
-${manageSubscriptionUrl ? `Manage Subscription: ${manageSubscriptionUrl}` : ''}
-${disableAutoRenewalUrl ? `Cancel Auto-Renewal: ${disableAutoRenewalUrl}` : ''}
+${safeManageSubscriptionUrl ? `Manage Subscription: ${safeManageSubscriptionUrl}` : ''}
+${safeDisableAutoRenewalUrl ? `Cancel Auto-Renewal: ${safeDisableAutoRenewalUrl}` : ''}
 
 If you have any questions, please contact our support team.
 
 Thank you for being a valued customer!
-The ${companyName} Team
+The ${safeCompanyName} Team
 
-${companyUrl}
+${safeCompanyUrl}
   `;
 
 	return {
@@ -313,9 +351,25 @@ export const getRenewalSuccessTemplate = (data: {
 		manageSubscriptionUrl
 	} = data;
 
-	const currencySymbol = currency === 'eur' ? '€' : currency === 'usd' ? '$' : currency.toUpperCase();
+	// Security: Escape all user-provided data
+	const safeCustomerName = escapeHtml(customerName);
+	const safePlanName = escapeHtml(planName);
+	const safeAmount = escapeHtml(amount);
+	const safeCurrency = escapeHtml(currency);
+	const safeBillingPeriod = escapeHtml(billingPeriod);
+	const safeNextRenewalDate = escapeHtml(nextRenewalDate);
+	const safeCompanyName = escapeHtml(companyName);
+	const safeSupportEmail = escapeHtml(supportEmail);
 
-	const subject = `Your ${planName} subscription has been renewed`;
+	// Security: Validate URLs
+	const safeCompanyUrl = isValidUrl(companyUrl) ? companyUrl : 'https://ever.works';
+	const safeInvoiceUrl = invoiceUrl && isValidUrl(invoiceUrl) ? invoiceUrl : null;
+	const safeManageSubscriptionUrl =
+		manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl) ? manageSubscriptionUrl : null;
+
+	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
+
+	const subject = `Your ${safePlanName} subscription has been renewed`;
 
 	const html = `
     <!DOCTYPE html>
@@ -428,47 +482,47 @@ export const getRenewalSuccessTemplate = (data: {
         </div>
         
         <div class="content">
-          <p>Hello <strong>${customerName}</strong>,</p>
+          <p>Hello <strong>${safeCustomerName}</strong>,</p>
           
-          <p>Your <strong>${planName}</strong> subscription has been successfully renewed.</p>
+          <p>Your <strong>${safePlanName}</strong> subscription has been successfully renewed.</p>
           
           <div class="payment-details">
             <h2>Payment Confirmation</h2>
             <div class="detail-row">
               <span class="detail-label">Plan:</span>
-              <span class="detail-value">${planName}</span>
+              <span class="detail-value">${safePlanName}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Amount Charged:</span>
-              <span class="detail-value">${currencySymbol}${amount}</span>
+              <span class="detail-value">${currencySymbol}${safeAmount}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Billing Period:</span>
-              <span class="detail-value">${billingPeriod}</span>
+              <span class="detail-value">${safeBillingPeriod}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Next Renewal:</span>
-              <span class="detail-value">${nextRenewalDate}</span>
+              <span class="detail-value">${safeNextRenewalDate}</span>
             </div>
           </div>
           
           <div class="button-group">
-            ${invoiceUrl ? `<a href="${invoiceUrl}" class="cta-button">View Invoice</a>` : ''}
-            ${manageSubscriptionUrl ? `<a href="${manageSubscriptionUrl}" class="cta-button">Manage Subscription</a>` : ''}
+            ${safeInvoiceUrl ? `<a href="${safeInvoiceUrl}" class="cta-button">View Invoice</a>` : ''}
+            ${safeManageSubscriptionUrl ? `<a href="${safeManageSubscriptionUrl}" class="cta-button">Manage Subscription</a>` : ''}
           </div>
           
           <p>Thank you for your continued support!<br>
-          The ${companyName} Team</p>
+          The ${safeCompanyName} Team</p>
         </div>
         
         <div class="footer">
-          <p><strong>${companyName}</strong></p>
+          <p><strong>${safeCompanyName}</strong></p>
           <p>
-            <a href="${companyUrl}">Website</a> | 
-            <a href="mailto:${supportEmail}">Support</a>
+            <a href="${safeCompanyUrl}">Website</a> | 
+            <a href="mailto:${safeSupportEmail}">Support</a>
           </p>
           <p style="margin-top: 15px;">
-            © ${new Date().getFullYear()} ${companyName}. All rights reserved.
+            © ${new Date().getFullYear()} ${safeCompanyName}. All rights reserved.
           </p>
         </div>
       </div>
@@ -477,25 +531,25 @@ export const getRenewalSuccessTemplate = (data: {
   `;
 
 	const text = `
-Subscription Renewed - ${companyName}
+Subscription Renewed - ${safeCompanyName}
 
-Hello ${customerName},
+Hello ${safeCustomerName},
 
-Your ${planName} subscription has been successfully renewed.
+Your ${safePlanName} subscription has been successfully renewed.
 
 Payment Confirmation:
-- Plan: ${planName}
-- Amount Charged: ${currencySymbol}${amount}
-- Billing Period: ${billingPeriod}
-- Next Renewal: ${nextRenewalDate}
+- Plan: ${safePlanName}
+- Amount Charged: ${currencySymbol}${safeAmount}
+- Billing Period: ${safeBillingPeriod}
+- Next Renewal: ${safeNextRenewalDate}
 
-${invoiceUrl ? `View Invoice: ${invoiceUrl}` : ''}
-${manageSubscriptionUrl ? `Manage Subscription: ${manageSubscriptionUrl}` : ''}
+${safeInvoiceUrl ? `View Invoice: ${safeInvoiceUrl}` : ''}
+${safeManageSubscriptionUrl ? `Manage Subscription: ${safeManageSubscriptionUrl}` : ''}
 
 Thank you for your continued support!
-The ${companyName} Team
+The ${safeCompanyName} Team
 
-${companyUrl}
+${safeCompanyUrl}
   `;
 
 	return {

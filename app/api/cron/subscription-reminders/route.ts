@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { subscriptionRenewalReminderJob } from '@/lib/services/subscription-jobs';
+import crypto from 'crypto';
 
-// Verify cron secret to prevent unauthorized access
+// Verify cron secret to prevent unauthorized access (timing-safe comparison)
 function verifyCronSecret(request: NextRequest): boolean {
 	const authHeader = request.headers.get('authorization');
 	const cronSecret = process.env.CRON_SECRET;
@@ -11,12 +12,20 @@ function verifyCronSecret(request: NextRequest): boolean {
 		return true;
 	}
 
-	if (!cronSecret) {
-		console.warn('CRON_SECRET not configured');
+	if (!cronSecret || !authHeader) {
+		if (!cronSecret) console.warn('CRON_SECRET not configured');
 		return false;
 	}
 
-	return authHeader === `Bearer ${cronSecret}`;
+	const expectedValue = `Bearer ${cronSecret}`;
+
+	// Use timing-safe comparison to prevent timing attacks
+	// Both buffers must have the same length for timingSafeEqual
+	if (authHeader.length !== expectedValue.length) {
+		return false;
+	}
+
+	return crypto.timingSafeEqual(Buffer.from(authHeader, 'utf8'), Buffer.from(expectedValue, 'utf8'));
 }
 
 /**
