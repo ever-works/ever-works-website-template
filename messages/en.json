@@ -2722,8 +2722,12 @@
 		"COOKIES_DESCRIPTION": "Learn about our cookie usage"
 	},
 	"sponsor": {
-		"PAGE_TITLE": "Become a Sponsor",
-		"PAGE_DESCRIPTION": "Get premium visibility for your product with a sponsored placement.",
+		"BADGE_TEXT": "Premium Sponsorship",
+		"PAGE_TITLE_PART1": "Boost Your Visibility",
+		"PAGE_TITLE_PART2": "Become a Sponsor",
+		"PAGE_DESCRIPTION": "Get premium visibility for your product with a sponsored placement across our entire platform.",
+		"TRUST_SECURE": "Secure Payment",
+		"TRUST_INSTANT": "Instant Activation",
 		"BENEFIT_VISIBILITY_TITLE": "Global Visibility",
 		"BENEFIT_VISIBILITY_DESCRIPTION": "Your product appears across all pages with an [AD] badge.",
 		"BENEFIT_TRAFFIC_TITLE": "Increased Traffic",
