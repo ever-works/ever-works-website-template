@@ -1,15 +1,15 @@
-import { and, eq, desc, asc, lte, count } from 'drizzle-orm';
+import { and, eq, desc, asc, lte, count, gte } from 'drizzle-orm';
 import { db } from '../drizzle';
 import {
-  subscriptions,
-  subscriptionHistory,
-  users,
-  SubscriptionStatus,
-  type Subscription,
-  type NewSubscription,
-  type SubscriptionHistory as SubscriptionHistoryType,
-  type NewSubscriptionHistory,
-  type SubscriptionWithUser
+	subscriptions,
+	subscriptionHistory,
+	users,
+	SubscriptionStatus,
+	type Subscription,
+	type NewSubscription,
+	type SubscriptionHistory as SubscriptionHistoryType,
+	type NewSubscriptionHistory,
+	type SubscriptionWithUser
 } from '../schema';
 import { PaymentPlan } from '@/lib/constants';
 
@@ -19,13 +19,13 @@ import { PaymentPlan } from '@/lib/constants';
  * @returns Active subscription or null if not found
  */
 export async function getUserActiveSubscription(userId: string): Promise<Subscription | null> {
-  const result = await db
-    .select()
-    .from(subscriptions)
-    .where(and(eq(subscriptions.userId, userId), eq(subscriptions.status, SubscriptionStatus.ACTIVE)))
-    .limit(1);
+	const result = await db
+		.select()
+		.from(subscriptions)
+		.where(and(eq(subscriptions.userId, userId), eq(subscriptions.status, SubscriptionStatus.ACTIVE)))
+		.limit(1);
 
-  return result[0] || null;
+	return result[0] || null;
 }
 
 /**
@@ -34,11 +34,11 @@ export async function getUserActiveSubscription(userId: string): Promise<Subscri
  * @returns Array of user subscriptions ordered by creation date
  */
 export async function getUserSubscriptions(userId: string): Promise<Subscription[]> {
-  return await db
-    .select()
-    .from(subscriptions)
-    .where(eq(subscriptions.userId, userId))
-    .orderBy(desc(subscriptions.createdAt));
+	return await db
+		.select()
+		.from(subscriptions)
+		.where(eq(subscriptions.userId, userId))
+		.orderBy(desc(subscriptions.createdAt));
 }
 
 /**
@@ -48,18 +48,18 @@ export async function getUserSubscriptions(userId: string): Promise<Subscription
  * @returns Subscription or null if not found
  */
 export async function getSubscriptionByProviderSubscriptionId(
-  paymentProvider: string,
-  subscriptionId: string
+	paymentProvider: string,
+	subscriptionId: string
 ): Promise<Subscription | null> {
-  const result = await db
-    .select()
-    .from(subscriptions)
-    .where(
-      and(eq(subscriptions.paymentProvider, paymentProvider), eq(subscriptions.subscriptionId, subscriptionId))
-    )
-    .limit(1);
+	const result = await db
+		.select()
+		.from(subscriptions)
+		.where(
+			and(eq(subscriptions.paymentProvider, paymentProvider), eq(subscriptions.subscriptionId, subscriptionId))
+		)
+		.limit(1);
 
-  return result[0] || null;
+	return result[0] || null;
 }
 
 /**
@@ -69,15 +69,15 @@ export async function getSubscriptionByProviderSubscriptionId(
  * @returns Subscription or null if not found
  */
 export async function getSubscriptionByUserIdAndSubscriptionId(
-  userId: string,
-  subscriptionId: string
+	userId: string,
+	subscriptionId: string
 ): Promise<Subscription | null> {
-  const [subscription] = await db
-    .select()
-    .from(subscriptions)
-    .where(and(eq(subscriptions.userId, userId), eq(subscriptions.subscriptionId, subscriptionId)));
+	const [subscription] = await db
+		.select()
+		.from(subscriptions)
+		.where(and(eq(subscriptions.userId, userId), eq(subscriptions.subscriptionId, subscriptionId)));
 
-  return subscription || null;
+	return subscription || null;
 }
 
 /**
@@ -86,15 +86,15 @@ export async function getSubscriptionByUserIdAndSubscriptionId(
  * @returns Updated subscription or null if not found
  */
 export async function updateSubscriptionBySubscriptionId(
-  updateData: Partial<NewSubscription>
+	updateData: Partial<NewSubscription>
 ): Promise<Subscription | null> {
-  const result = await db
-    .update(subscriptions)
-    .set({ ...updateData, updatedAt: new Date() })
-    .where(eq(subscriptions.subscriptionId, updateData.subscriptionId!))
-    .returning();
+	const result = await db
+		.update(subscriptions)
+		.set({ ...updateData, updatedAt: new Date() })
+		.where(eq(subscriptions.subscriptionId, updateData.subscriptionId!))
+		.returning();
 
-  return result[0] || null;
+	return result[0] || null;
 }
 
 /**
@@ -103,16 +103,16 @@ export async function updateSubscriptionBySubscriptionId(
  * @returns Created subscription
  */
 export async function createSubscription(data: NewSubscription): Promise<Subscription> {
-  const result = await db
-    .insert(subscriptions)
-    .values({
-      ...data,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    })
-    .returning();
+	const result = await db
+		.insert(subscriptions)
+		.values({
+			...data,
+			createdAt: new Date(),
+			updatedAt: new Date()
+		})
+		.returning();
 
-  return result[0];
+	return result[0];
 }
 
 /**
@@ -122,19 +122,19 @@ export async function createSubscription(data: NewSubscription): Promise<Subscri
  * @returns Updated subscription or null if not found
  */
 export async function updateSubscription(
-  subscriptionId: string,
-  data: Partial<NewSubscription>
+	subscriptionId: string,
+	data: Partial<NewSubscription>
 ): Promise<Subscription | null> {
-  const result = await db
-    .update(subscriptions)
-    .set({
-      ...data,
-      updatedAt: new Date()
-    })
-    .where(eq(subscriptions.id, subscriptionId))
-    .returning();
+	const result = await db
+		.update(subscriptions)
+		.set({
+			...data,
+			updatedAt: new Date()
+		})
+		.where(eq(subscriptions.id, subscriptionId))
+		.returning();
 
-  return result[0] || null;
+	return result[0] || null;
 }
 
 /**
@@ -145,29 +145,29 @@ export async function updateSubscription(
  * @returns Updated subscription or null if not found
  */
 export async function updateSubscriptionStatus(
-  subscriptionId: string,
-  status: string,
-  reason?: string
+	subscriptionId: string,
+	status: string,
+	reason?: string
 ): Promise<Subscription | null> {
-  const updateData: Partial<NewSubscription> & { cancelledAt?: Date; cancelReason?: string } = {
-    status,
-    updatedAt: new Date()
-  };
+	const updateData: Partial<NewSubscription> & { cancelledAt?: Date; cancelReason?: string } = {
+		status,
+		updatedAt: new Date()
+	};
 
-  if (status === SubscriptionStatus.CANCELLED) {
-    updateData.cancelledAt = new Date();
-    if (reason) {
-      updateData.cancelReason = reason;
-    }
-  }
+	if (status === SubscriptionStatus.CANCELLED) {
+		updateData.cancelledAt = new Date();
+		if (reason) {
+			updateData.cancelReason = reason;
+		}
+	}
 
-  const result = await db
-    .update(subscriptions)
-    .set(updateData)
-    .where(eq(subscriptions.id, subscriptionId))
-    .returning();
+	const result = await db
+		.update(subscriptions)
+		.set(updateData)
+		.where(eq(subscriptions.id, subscriptionId))
+		.returning();
 
-  return result[0] || null;
+	return result[0] || null;
 }
 
 /**
@@ -178,23 +178,23 @@ export async function updateSubscriptionStatus(
  * @returns Updated subscription or null if not found
  */
 export async function cancelSubscription(
-  subscriptionId: string,
-  reason?: string,
-  cancelAtPeriodEnd: boolean = false
+	subscriptionId: string,
+	reason?: string,
+	cancelAtPeriodEnd: boolean = false
 ): Promise<Subscription | null> {
-  const result = await db
-    .update(subscriptions)
-    .set({
-      status: cancelAtPeriodEnd ? SubscriptionStatus.ACTIVE : SubscriptionStatus.CANCELLED,
-      cancelledAt: new Date(),
-      cancelReason: reason,
-      cancelAtPeriodEnd,
-      updatedAt: new Date()
-    })
-    .where(eq(subscriptions.id, subscriptionId))
-    .returning();
+	const result = await db
+		.update(subscriptions)
+		.set({
+			status: cancelAtPeriodEnd ? SubscriptionStatus.ACTIVE : SubscriptionStatus.CANCELLED,
+			cancelledAt: new Date(),
+			cancelReason: reason,
+			cancelAtPeriodEnd,
+			updatedAt: new Date()
+		})
+		.where(eq(subscriptions.id, subscriptionId))
+		.returning();
 
-  return result[0] || null;
+	return result[0] || null;
 }
 
 /**
@@ -203,19 +203,19 @@ export async function cancelSubscription(
  * @returns Subscription with user details or null if not found
  */
 export async function getSubscriptionWithUser(subscriptionId: string): Promise<SubscriptionWithUser | null> {
-  const result = await db
-    .select()
-    .from(subscriptions)
-    .leftJoin(users, eq(subscriptions.userId, users.id))
-    .where(eq(subscriptions.id, subscriptionId))
-    .limit(1);
+	const result = await db
+		.select()
+		.from(subscriptions)
+		.leftJoin(users, eq(subscriptions.userId, users.id))
+		.where(eq(subscriptions.id, subscriptionId))
+		.limit(1);
 
-  if (!result[0]) return null;
+	if (!result[0]) return null;
 
-  return {
-    ...result[0].subscriptions,
-    user: result[0].users!
-  };
+	return {
+		...result[0].subscriptions,
+		user: result[0].users!
+	};
 }
 
 /**
@@ -224,14 +224,14 @@ export async function getSubscriptionWithUser(subscriptionId: string): Promise<S
  * @returns Array of subscriptions expiring within the specified days
  */
 export async function getSubscriptionsExpiringSoon(days: number = 7): Promise<Subscription[]> {
-  const expirationDate = new Date();
-  expirationDate.setDate(expirationDate.getDate() + days);
+	const expirationDate = new Date();
+	expirationDate.setDate(expirationDate.getDate() + days);
 
-  return await db
-    .select()
-    .from(subscriptions)
-    .where(and(eq(subscriptions.status, SubscriptionStatus.ACTIVE), lte(subscriptions.endDate, expirationDate)))
-    .orderBy(asc(subscriptions.endDate));
+	return await db
+		.select()
+		.from(subscriptions)
+		.where(and(eq(subscriptions.status, SubscriptionStatus.ACTIVE), lte(subscriptions.endDate, expirationDate)))
+		.orderBy(asc(subscriptions.endDate));
 }
 
 /**
@@ -240,12 +240,12 @@ export async function getSubscriptionsExpiringSoon(days: number = 7): Promise<Su
  * @returns True if user has active subscription, false otherwise
  */
 export async function hasActiveSubscription(userId: string): Promise<boolean> {
-  const result = await db
-    .select({ count: count() })
-    .from(subscriptions)
-    .where(and(eq(subscriptions.userId, userId), eq(subscriptions.status, SubscriptionStatus.ACTIVE)));
+	const result = await db
+		.select({ count: count() })
+		.from(subscriptions)
+		.where(and(eq(subscriptions.userId, userId), eq(subscriptions.status, SubscriptionStatus.ACTIVE)));
 
-  return result[0].count > 0;
+	return result[0].count > 0;
 }
 
 /**
@@ -254,8 +254,8 @@ export async function hasActiveSubscription(userId: string): Promise<boolean> {
  * @returns Plan ID (defaults to FREE if no active subscription)
  */
 export async function getUserPlan(userId: string): Promise<string> {
-  const subscription = await getUserActiveSubscription(userId);
-  return subscription?.planId || PaymentPlan.FREE;
+	const subscription = await getUserActiveSubscription(userId);
+	return subscription?.planId || PaymentPlan.FREE;
 }
 
 // ===================== Subscription History Queries =====================
@@ -266,15 +266,15 @@ export async function getUserPlan(userId: string): Promise<string> {
  * @returns Created history entry
  */
 export async function createSubscriptionHistory(data: NewSubscriptionHistory): Promise<SubscriptionHistoryType> {
-  const result = await db
-    .insert(subscriptionHistory)
-    .values({
-      ...data,
-      createdAt: new Date()
-    })
-    .returning();
+	const result = await db
+		.insert(subscriptionHistory)
+		.values({
+			...data,
+			createdAt: new Date()
+		})
+		.returning();
 
-  return result[0];
+	return result[0];
 }
 
 /**
@@ -283,11 +283,11 @@ export async function createSubscriptionHistory(data: NewSubscriptionHistory): P
  * @returns Array of subscription history entries ordered by creation date
  */
 export async function getSubscriptionHistory(subscriptionId: string): Promise<SubscriptionHistoryType[]> {
-  return await db
-    .select()
-    .from(subscriptionHistory)
-    .where(eq(subscriptionHistory.subscriptionId, subscriptionId))
-    .orderBy(desc(subscriptionHistory.createdAt));
+	return await db
+		.select()
+		.from(subscriptionHistory)
+		.where(eq(subscriptionHistory.subscriptionId, subscriptionId))
+		.orderBy(desc(subscriptionHistory.createdAt));
 }
 
 /**
@@ -303,25 +303,25 @@ export async function getSubscriptionHistory(subscriptionId: string): Promise<Su
  * @returns Created history entry
  */
 export async function logSubscriptionChange(
-  subscriptionId: string,
-  action: string,
-  previousStatus?: string,
-  newStatus?: string,
-  previousPlan?: string,
-  newPlan?: string,
-  reason?: string,
-  metadata?: Record<string, unknown>
+	subscriptionId: string,
+	action: string,
+	previousStatus?: string,
+	newStatus?: string,
+	previousPlan?: string,
+	newPlan?: string,
+	reason?: string,
+	metadata?: Record<string, unknown>
 ): Promise<SubscriptionHistoryType> {
-  return await createSubscriptionHistory({
-    subscriptionId,
-    action,
-    previousStatus,
-    newStatus,
-    previousPlan,
-    newPlan,
-    reason,
-    metadata: metadata ? JSON.stringify(metadata) : null
-  });
+	return await createSubscriptionHistory({
+		subscriptionId,
+		action,
+		previousStatus,
+		newStatus,
+		previousPlan,
+		newPlan,
+		reason,
+		metadata: metadata ? JSON.stringify(metadata) : null
+	});
 }
 
 /**
@@ -329,31 +329,192 @@ export async function logSubscriptionChange(
  * @returns Subscription statistics including total, active, cancelled, and plan distribution
  */
 export async function getSubscriptionStats() {
-  const totalSubscriptions = await db.select({ count: count() }).from(subscriptions);
+	const totalSubscriptions = await db.select({ count: count() }).from(subscriptions);
 
-  const activeSubscriptions = await db
-    .select({ count: count() })
-    .from(subscriptions)
-    .where(eq(subscriptions.status, SubscriptionStatus.ACTIVE));
+	const activeSubscriptions = await db
+		.select({ count: count() })
+		.from(subscriptions)
+		.where(eq(subscriptions.status, SubscriptionStatus.ACTIVE));
 
-  const cancelledSubscriptions = await db
-    .select({ count: count() })
-    .from(subscriptions)
-    .where(eq(subscriptions.status, SubscriptionStatus.CANCELLED));
+	const cancelledSubscriptions = await db
+		.select({ count: count() })
+		.from(subscriptions)
+		.where(eq(subscriptions.status, SubscriptionStatus.CANCELLED));
 
-  const planDistribution = await db
-    .select({
-      planId: subscriptions.planId,
-      count: count()
-    })
-    .from(subscriptions)
-    .where(eq(subscriptions.status, SubscriptionStatus.ACTIVE))
-    .groupBy(subscriptions.planId);
+	const planDistribution = await db
+		.select({
+			planId: subscriptions.planId,
+			count: count()
+		})
+		.from(subscriptions)
+		.where(eq(subscriptions.status, SubscriptionStatus.ACTIVE))
+		.groupBy(subscriptions.planId);
 
-  return {
-    total: totalSubscriptions[0].count,
-    active: activeSubscriptions[0].count,
-    cancelled: cancelledSubscriptions[0].count,
-    planDistribution
-  };
+	return {
+		total: totalSubscriptions[0].count,
+		active: activeSubscriptions[0].count,
+		cancelled: cancelledSubscriptions[0].count,
+		planDistribution
+	};
+}
+
+// ===================== Auto-Renewal Queries =====================
+
+/**
+ * Get subscriptions due for renewal reminder
+ * Returns active subscriptions with auto-renewal enabled that expire within the specified days
+ * and haven't received a reminder yet
+ * @param days - Number of days before expiration to send reminder (default: 7)
+ * @returns Array of subscriptions needing renewal reminders
+ */
+export async function getSubscriptionsDueForRenewalReminder(days: number = 7): Promise<Subscription[]> {
+	const now = new Date();
+	const futureDate = new Date();
+	futureDate.setDate(futureDate.getDate() + days);
+
+	return await db
+		.select()
+		.from(subscriptions)
+		.where(
+			and(
+				eq(subscriptions.status, SubscriptionStatus.ACTIVE),
+				eq(subscriptions.autoRenewal, true),
+				eq(subscriptions.renewalReminderSent, false),
+				gte(subscriptions.endDate, now),
+				lte(subscriptions.endDate, futureDate)
+			)
+		)
+		.orderBy(asc(subscriptions.endDate));
+}
+
+/**
+ * Get subscriptions with auto-renewal disabled at period end
+ * These subscriptions should be cancelled when their period ends
+ * @returns Array of subscriptions to cancel
+ */
+export async function getSubscriptionsToCancel(): Promise<Subscription[]> {
+	const now = new Date();
+
+	return await db
+		.select()
+		.from(subscriptions)
+		.where(
+			and(
+				eq(subscriptions.status, SubscriptionStatus.ACTIVE),
+				eq(subscriptions.autoRenewal, false),
+				lte(subscriptions.endDate, now)
+			)
+		);
+}
+
+/**
+ * Update auto-renewal status for a subscription
+ * @param subscriptionId - Subscription ID
+ * @param enabled - Whether auto-renewal should be enabled
+ * @returns Updated subscription or null if not found
+ */
+export async function setAutoRenewal(subscriptionId: string, enabled: boolean): Promise<Subscription | null> {
+	const result = await db
+		.update(subscriptions)
+		.set({
+			autoRenewal: enabled,
+			cancelAtPeriodEnd: !enabled,
+			updatedAt: new Date()
+		})
+		.where(eq(subscriptions.id, subscriptionId))
+		.returning();
+
+	return result[0] || null;
+}
+
+/**
+ * Reset renewal reminder flag after billing cycle
+ * Should be called after successful payment to allow future reminders
+ * @param subscriptionId - Subscription ID
+ * @returns Updated subscription or null if not found
+ */
+export async function resetRenewalReminderSent(subscriptionId: string): Promise<Subscription | null> {
+	const result = await db
+		.update(subscriptions)
+		.set({
+			renewalReminderSent: false,
+			updatedAt: new Date()
+		})
+		.where(eq(subscriptions.id, subscriptionId))
+		.returning();
+
+	return result[0] || null;
+}
+
+/**
+ * Mark renewal reminder as sent for a subscription
+ * @param subscriptionId - Subscription ID
+ * @returns Updated subscription or null if not found
+ */
+export async function markRenewalReminderSent(subscriptionId: string): Promise<Subscription | null> {
+	const result = await db
+		.update(subscriptions)
+		.set({
+			renewalReminderSent: true,
+			updatedAt: new Date()
+		})
+		.where(eq(subscriptions.id, subscriptionId))
+		.returning();
+
+	return result[0] || null;
+}
+
+/**
+ * Increment failed payment count for a subscription
+ * @param subscriptionId - Subscription ID
+ * @returns Updated subscription or null if not found
+ */
+export async function incrementFailedPaymentCount(subscriptionId: string): Promise<Subscription | null> {
+	const subscription = await getSubscriptionWithUser(subscriptionId);
+	if (!subscription) return null;
+
+	const result = await db
+		.update(subscriptions)
+		.set({
+			failedPaymentCount: (subscription.failedPaymentCount || 0) + 1,
+			lastRenewalAttempt: new Date(),
+			updatedAt: new Date()
+		})
+		.where(eq(subscriptions.id, subscriptionId))
+		.returning();
+
+	return result[0] || null;
+}
+
+/**
+ * Reset failed payment count after successful payment
+ * @param subscriptionId - Subscription ID
+ * @returns Updated subscription or null if not found
+ */
+export async function resetFailedPaymentCount(subscriptionId: string): Promise<Subscription | null> {
+	const result = await db
+		.update(subscriptions)
+		.set({
+			failedPaymentCount: 0,
+			lastRenewalAttempt: new Date(),
+			updatedAt: new Date()
+		})
+		.where(eq(subscriptions.id, subscriptionId))
+		.returning();
+
+	return result[0] || null;
+}
+
+/**
+ * Get subscriptions with failed payment counts exceeding threshold
+ * @param threshold - Minimum failed payment count (default: 3)
+ * @returns Array of subscriptions with too many failed payments
+ */
+export async function getSubscriptionsWithFailedPayments(threshold: number = 3): Promise<Subscription[]> {
+	return await db
+		.select()
+		.from(subscriptions)
+		.where(
+			and(eq(subscriptions.status, SubscriptionStatus.ACTIVE), gte(subscriptions.failedPaymentCount, threshold))
+		);
 }

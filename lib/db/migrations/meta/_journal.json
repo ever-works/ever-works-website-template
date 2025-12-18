@@ -1,139 +1,139 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1757489070311,
-      "tag": "0000_burly_darkstar",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1757489200000,
-      "tag": "0001_add_image_to_users",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1757694521166,
-      "tag": "0002_silly_victor_mancha",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1758217839943,
-      "tag": "0003_gigantic_thunderbolts",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1758978903174,
-      "tag": "0004_big_marrow",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1760370120589,
-      "tag": "0005_sharp_malcolm_colcord",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1760371657963,
-      "tag": "0006_giant_the_phantom",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1761210905153,
-      "tag": "0007_tiresome_true_believers",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1761211200000,
-      "tag": "0008_add_twenty_crm_singleton_constraint",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1730563200000,
-      "tag": "0009_add_integration_mappings",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1730563260000,
-      "tag": "0010_convert_comments_timestamps_to_timestamptz",
-      "breakpoints": true
-    },
-    {
-      "idx": 11,
-      "version": "7",
-      "when": 1763463442163,
-      "tag": "0011_quiet_gravity",
-      "breakpoints": true
-    },
-    {
-      "idx": 12,
-      "version": "7",
-      "when": 1764122065014,
-      "tag": "0012_purple_vindicator",
-      "breakpoints": true
-    },
-    {
-      "idx": 13,
-      "version": "7",
-      "when": 1764500000000,
-      "tag": "0013_add_surveys_table",
-      "breakpoints": true
-    },
-    {
-      "idx": 14,
-      "version": "7",
-      "when": 1764874463902,
-      "tag": "0014_fat_madame_masque",
-      "breakpoints": true
-    },
-    {
-      "idx": 15,
-      "version": "7",
-      "when": 1766076466949,
-      "tag": "0015_previous_jack_flag",
-      "breakpoints": true
-    },
-    {
-      "idx": 16,
-      "version": "7",
-      "when": 1766107355533,
-      "tag": "0016_solid_stellaris",
-      "breakpoints": true
-    },
-    {
-      "idx": 17,
-      "version": "7",
-      "when": 1766141969286,
-      "tag": "0017_whole_supreme_intelligence",
-      "breakpoints": true
-    },
-    {
-      "idx": 18,
-      "version": "7",
-      "when": 1766159999320,
-      "tag": "0018_wooden_electro",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "7",
+			"when": 1757489070311,
+			"tag": "0000_burly_darkstar",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1757489200000,
+			"tag": "0001_add_image_to_users",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1757694521166,
+			"tag": "0002_silly_victor_mancha",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1758217839943,
+			"tag": "0003_gigantic_thunderbolts",
+			"breakpoints": true
+		},
+		{
+			"idx": 4,
+			"version": "7",
+			"when": 1758978903174,
+			"tag": "0004_big_marrow",
+			"breakpoints": true
+		},
+		{
+			"idx": 5,
+			"version": "7",
+			"when": 1760370120589,
+			"tag": "0005_sharp_malcolm_colcord",
+			"breakpoints": true
+		},
+		{
+			"idx": 6,
+			"version": "7",
+			"when": 1760371657963,
+			"tag": "0006_giant_the_phantom",
+			"breakpoints": true
+		},
+		{
+			"idx": 7,
+			"version": "7",
+			"when": 1761210905153,
+			"tag": "0007_tiresome_true_believers",
+			"breakpoints": true
+		},
+		{
+			"idx": 8,
+			"version": "7",
+			"when": 1761211200000,
+			"tag": "0008_add_twenty_crm_singleton_constraint",
+			"breakpoints": true
+		},
+		{
+			"idx": 9,
+			"version": "7",
+			"when": 1730563200000,
+			"tag": "0009_add_integration_mappings",
+			"breakpoints": true
+		},
+		{
+			"idx": 10,
+			"version": "7",
+			"when": 1730563260000,
+			"tag": "0010_convert_comments_timestamps_to_timestamptz",
+			"breakpoints": true
+		},
+		{
+			"idx": 11,
+			"version": "7",
+			"when": 1763463442163,
+			"tag": "0011_quiet_gravity",
+			"breakpoints": true
+		},
+		{
+			"idx": 12,
+			"version": "7",
+			"when": 1764122065014,
+			"tag": "0012_purple_vindicator",
+			"breakpoints": true
+		},
+		{
+			"idx": 13,
+			"version": "7",
+			"when": 1764500000000,
+			"tag": "0013_add_surveys_table",
+			"breakpoints": true
+		},
+		{
+			"idx": 14,
+			"version": "7",
+			"when": 1764874463902,
+			"tag": "0014_fat_madame_masque",
+			"breakpoints": true
+		},
+		{
+			"idx": 15,
+			"version": "7",
+			"when": 1766076466949,
+			"tag": "0015_previous_jack_flag",
+			"breakpoints": true
+		},
+		{
+			"idx": 16,
+			"version": "7",
+			"when": 1766107355533,
+			"tag": "0016_solid_stellaris",
+			"breakpoints": true
+		},
+		{
+			"idx": 17,
+			"version": "7",
+			"when": 1766141969286,
+			"tag": "0017_whole_supreme_intelligence",
+			"breakpoints": true
+		},
+		{
+			"idx": 18,
+			"version": "7",
+			"when": 1766159999320,
+			"tag": "0018_wooden_electro",
+			"breakpoints": true
+		}
+	]
 }

@@ -1,4 +1,5 @@
 import { LemonSqueezyProvider, StripeProvider, PolarProvider } from '..';
+import { PaymentProviderInterface } from '../types/payment-types';
 
 // Centralized configuration for all providers
 interface ProviderConfig {
@@ -33,7 +34,9 @@ interface ProviderConfig {
 	};
 }
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works");
+const appUrl =
+	process.env.NEXT_PUBLIC_APP_URL ??
+	(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://demo.ever.works');
 
 // Environment variables validation and configuration
 class ConfigManager {
@@ -181,9 +184,7 @@ class ConfigManager {
 		const polarAppUrl = this.polarAppUrl;
 
 		if (!polarApiKey || !polarOrganizationId) {
-			throw new Error(
-				'Polar configuration is incomplete. Required: POLAR_ACCESS_TOKEN, POLAR_ORGANIZATION_ID'
-			);
+			throw new Error('Polar configuration is incomplete. Required: POLAR_ACCESS_TOKEN, POLAR_ORGANIZATION_ID');
 		}
 
 		this.ensureConfig().polar = {
@@ -295,4 +296,26 @@ export function getPolarProvider(): PolarProvider | null {
 
 export function getOrCreatePolarProvider(): PolarProvider {
 	return getPolarProvider() || initializePolarProvider();
+}
+
+/**
+ * Generic function to get or create a payment provider instance by provider name
+ * Supports all payment providers: stripe, lemonsqueezy, polar
+ * @param providerName - The name of the payment provider (e.g., 'stripe', 'lemonsqueezy', 'polar')
+ * @returns The payment provider instance
+ * @throws Error if the provider is not supported
+ */
+export function getOrCreateProvider(providerName: string): PaymentProviderInterface {
+	const normalizedName = providerName.toLowerCase();
+
+	switch (normalizedName) {
+		case 'stripe':
+			return getOrCreateStripeProvider();
+		case 'lemonsqueezy':
+			return getOrCreateLemonsqueezyProvider();
+		case 'polar':
+			return getOrCreatePolarProvider();
+		default:
+			throw new Error(`Unsupported payment provider: ${providerName}`);
+	}
 }
