@@ -3,10 +3,8 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Card, CardBody, Button, Input } from "@heroui/react";
-import { Loader2, Megaphone, Calendar, DollarSign, CheckCircle, Search, AlertCircle } from "lucide-react";
-import * as Select from "@radix-ui/react-select";
-import { ChevronDown, Check } from "lucide-react";
+import { Card, CardBody, Button, Autocomplete, AutocompleteItem } from "@heroui/react";
+import { Megaphone, Calendar, CheckCircle, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -45,13 +43,6 @@ const PRICING_CARD_UNSELECTED = "border-gray-200 dark:border-gray-700 hover:bord
 const SUMMARY_BOX = "rounded-xl bg-gray-50 dark:bg-gray-800/50 p-5";
 const NOTICE_BOX = "rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-900/20";
 const SUBMIT_BUTTON = "w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white font-medium shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30";
-const SELECT_TRIGGER = cn(
-	"flex h-12 w-full items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm",
-	"focus:outline-none focus:ring-2 focus:ring-blue-500",
-	"disabled:cursor-not-allowed disabled:opacity-50"
-);
-const SELECT_CONTENT = "overflow-hidden bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50";
-const SELECT_ITEM = "relative flex items-center px-8 py-3 text-sm rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 outline-none data-[highlighted]:bg-gray-100 dark:data-[highlighted]:bg-gray-700";
 
 // ######################### Constants #########################
 
@@ -98,18 +89,6 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 	const [selectedItemSlug, setSelectedItemSlug] = useState<string>("");
 	const [selectedInterval, setSelectedInterval] = useState<IntervalType>("monthly");
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [searchQuery, setSearchQuery] = useState("");
-
-	// Filtered items based on search
-	const filteredItems = useMemo(() => {
-		if (!searchQuery.trim()) return items;
-		const query = searchQuery.toLowerCase();
-		return items.filter(
-			(item) =>
-				item.name.toLowerCase().includes(query) ||
-				item.slug.toLowerCase().includes(query)
-		);
-	}, [items, searchQuery]);
 
 	// Selected item details
 	const selectedItem = useMemo(() => {
@@ -189,55 +168,56 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 				</div>
 				<CardBody className={CARD_BODY}>
 					<div className="space-y-4">
-						{/* Search */}
-						<Input
-							placeholder={t("SEARCH_PLACEHOLDER")}
-							value={searchQuery}
-							onValueChange={setSearchQuery}
-							startContent={<Search className="w-4 h-4 text-gray-400" />}
-							isClearable
-							onClear={() => setSearchQuery("")}
-							classNames={{
-								input: "text-sm",
-								inputWrapper: "h-12 rounded-xl",
-							}}
-						/>
-
-						{/* Item Select */}
-						{filteredItems.length > 0 ? (
-							<Select.Root
-								value={selectedItemSlug}
-								onValueChange={setSelectedItemSlug}
+						{/* Searchable Item Select */}
+						{items.length > 0 ? (
+							<Autocomplete
+								label={t("SELECT_ITEM_PLACEHOLDER")}
+								placeholder={t("SEARCH_PLACEHOLDER")}
+								selectedKey={selectedItemSlug}
+								onSelectionChange={(key) => setSelectedItemSlug(key as string)}
+								classNames={{
+									base: "w-full",
+									listboxWrapper: "max-h-[300px]",
+								}}
+								inputProps={{
+									classNames: {
+										input: "text-sm",
+										inputWrapper: "h-12 rounded-xl",
+									},
+								}}
+								listboxProps={{
+									emptyContent: t("NO_ITEMS_FOUND"),
+								}}
 							>
-								<Select.Trigger className={SELECT_TRIGGER}>
-									<Select.Value placeholder={t("SELECT_ITEM_PLACEHOLDER")} />
-									<Select.Icon>
-										<ChevronDown className="h-4 w-4 opacity-50" />
-									</Select.Icon>
-								</Select.Trigger>
-								<Select.Portal>
-									<Select.Content
-										className={SELECT_CONTENT}
-										position="popper"
-										sideOffset={4}
+								{items.map((item) => (
+									<AutocompleteItem
+										key={item.slug}
+										textValue={item.name}
+										startContent={
+											item.icon_url ? (
+												<Image
+													src={item.icon_url}
+													alt={item.name}
+													width={32}
+													height={32}
+													className="h-8 w-8 rounded-lg object-cover"
+												/>
+											) : (
+												<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-blue-500 to-indigo-500">
+													<Megaphone className="h-4 w-4 text-white" />
+												</div>
+											)
+										}
 									>
-										<Select.Viewport className="p-1 max-h-[300px]">
-											{filteredItems.map((item) => (
-												<Select.Item
-													key={item.slug}
-													value={item.slug}
-													className={SELECT_ITEM}
-												>
-													<Select.ItemIndicator className="absolute left-2 inline-flex items-center">
-														<Check className="h-4 w-4 text-blue-500" />
-													</Select.ItemIndicator>
-													<Select.ItemText>{item.name}</Select.ItemText>
-												</Select.Item>
-											))}
-										</Select.Viewport>
-									</Select.Content>
-								</Select.Portal>
-							</Select.Root>
+										<div className="flex flex-col">
+											<span className="text-sm font-medium">{item.name}</span>
+											<span className="text-xs text-gray-500 dark:text-gray-400">
+												{getCategoryName(item.category)}
+											</span>
+										</div>
+									</AutocompleteItem>
+								))}
+							</Autocomplete>
 						) : (
 							<p className="text-sm text-gray-500 dark:text-gray-400">{t("NO_ITEMS_FOUND")}</p>
 						)}
