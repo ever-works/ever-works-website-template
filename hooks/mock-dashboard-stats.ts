@@ -6,7 +6,7 @@ export const mockStats: UserStats = {
   totalViews: 1247,
   totalVotesReceived: 156,
   totalCommentsReceived: 89,
-  viewsAvailable: true, // Mock data has views available for demo
+  viewsAvailable: false, // Views tracking not implemented yet (matches real API)
   recentActivity: {
     newSubmissions: 3,
     newViews: 234,
