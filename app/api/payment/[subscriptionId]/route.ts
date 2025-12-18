@@ -19,14 +19,18 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
 		const { subscriptionId } = await params;
 		const body = await request.json();
-		const { enabled } = body;
+		const { enabled, paymentProvider } = body;
+		const provider = paymentProvider || 'stripe';
 
 		if (typeof enabled !== 'boolean') {
 			return NextResponse.json({ error: 'Invalid request body. "enabled" must be a boolean.' }, { status: 400 });
 		}
 
 		// Verify the subscription belongs to the user
-		const subscription = await subscriptionService.getSubscriptionById(subscriptionId);
+		const subscription = await subscriptionService.getSubscriptionByProviderSubscriptionId(
+			provider,
+			subscriptionId
+		);
 		if (!subscription) {
 			return NextResponse.json({ error: 'Subscription not found' }, { status: 404 });
 		}
@@ -35,30 +39,30 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 			return NextResponse.json({ error: 'Forbidden: You do not own this subscription' }, { status: 403 });
 		}
 
-		// Update auto-renewal status in local database
-		const updatedSubscription = await subscriptionService.setAutoRenewal(subscriptionId, enabled);
+		// Update auto-renewal status in local database (use internal ID)
+		const updatedSubscription = await subscriptionService.setAutoRenewal(subscription.id, enabled);
 		if (!updatedSubscription) {
 			return NextResponse.json({ error: 'Failed to update subscription' }, { status: 500 });
 		}
 
 		// Sync with payment provider if subscription has a provider subscription ID
-		if (subscription.subscriptionId && subscription.paymentProvider) {
+		if (subscriptionId && provider) {
 			try {
-				const paymentProvider = subscription.paymentProvider as PaymentProvider;
+				const paymentProvider = provider as PaymentProvider;
 
 				// Get the appropriate payment provider instance
 				const paymentProviderInstance = getOrCreateProvider(paymentProvider);
 
 				// Update subscription with the provider
 				await paymentProviderInstance.updateSubscription({
-					subscriptionId: subscription.subscriptionId,
+					subscriptionId,
 					cancelAtPeriodEnd: !enabled,
 					metadata: {
 						autoRenewal: enabled.toString()
 					}
 				});
 			} catch (providerError) {
-				console.error(`Failed to sync with ${subscription.paymentProvider}:`, providerError);
+				console.error(`Failed to sync with ${provider}:`, providerError);
 				// Continue anyway - local DB is updated
 				// The webhook will eventually sync the state
 			}
@@ -91,7 +95,15 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
 		const { subscriptionId } = await params;
 
-		const subscription = await subscriptionService.getSubscriptionById(subscriptionId);
+		// Get provider from query parameters
+		const { searchParams } = new URL(request.url);
+		const provider = searchParams.get('provider') || 'stripe';
+
+		const subscription = await subscriptionService.getSubscriptionByProviderSubscriptionId(
+			provider,
+			subscriptionId
+		);
+
 		if (!subscription) {
 			return NextResponse.json({ error: 'Subscription not found' }, { status: 404 });
 		}

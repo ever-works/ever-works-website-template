@@ -1,21 +1,25 @@
 'use client';
 
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useMemo } from 'react';
 import { toast } from 'sonner';
 import { serverClient, apiUtils } from '@/lib/api/server-api-client';
+import { useConfig } from '@/app/[locale]/config';
+import { PaymentProvider } from '@/lib/constants';
+import { useSelectedCheckoutProvider } from './use-selected-checkout-provider';
 
 export interface AutoRenewalStatus {
 	subscriptionId: string;
 	autoRenewal: boolean;
 	cancelAtPeriodEnd: boolean;
 	endDate: string | null;
+	paymentProvider?: string;
 }
 
 export interface UpdateAutoRenewalRequest {
 	subscriptionId: string;
 	enabled: boolean;
-	paymentProvider?: string;
+	paymentProvider: PaymentProvider;
 }
 
 export interface UpdateAutoRenewalResponse {
@@ -35,24 +39,27 @@ interface AutoRenewalError extends Error {
 	code?: string;
 }
 
-/*
-Query key for auto-renewal status
-*/
+/**
+ * Query key factory for auto-renewal status
+ * @param subscriptionId - The subscription ID
+ * @returns Query key tuple
+ */
 export const AUTO_RENEWAL_QUERY_KEY = (subscriptionId: string) => ['auto-renewal', subscriptionId] as const;
 
-/*
-Cache configuration
-*/
 const CACHE_CONFIG = {
 	STALE_TIME: 2 * 60 * 1000, // 2 minutes
 	GC_TIME: 10 * 60 * 1000 // 10 minutes
 } as const;
 
-/*
-Fetch auto-renewal status
-*/
-const fetchAutoRenewalStatus = async (subscriptionId: string): Promise<AutoRenewalStatus> => {
-	const response = await serverClient.get<AutoRenewalStatus>(`/api/payment/${subscriptionId}`);
+/**
+ * Fetch auto-renewal status from the API
+ * @param subscriptionId - The subscription ID
+ * @returns Promise with auto-renewal status
+ */
+const fetchAutoRenewalStatus = async (subscriptionId: string, provider: string): Promise<AutoRenewalStatus> => {
+	const response = await serverClient.get<AutoRenewalStatus>(
+		`/api/payment/${subscriptionId}?provider=${encodeURIComponent(provider)}`
+	);
 
 	if (!apiUtils.isSuccess(response)) {
 		const error = new Error(apiUtils.getErrorMessage(response)) as AutoRenewalError;
@@ -63,14 +70,19 @@ const fetchAutoRenewalStatus = async (subscriptionId: string): Promise<AutoRenew
 	return response.data;
 };
 
-const updateAutoRenewal = async ({
+/**
+ * Update auto-renewal status via the API
+ * @param request - Update request with subscriptionId, enabled flag, and payment provider
+ * @returns Promise with update response
+ */
+const updateAutoRenewalApi = async ({
 	subscriptionId,
 	enabled,
 	paymentProvider
 }: UpdateAutoRenewalRequest): Promise<UpdateAutoRenewalResponse> => {
 	const response = await serverClient.patch<UpdateAutoRenewalResponse>(`/api/payment/${subscriptionId}`, {
 		enabled,
-		...(paymentProvider && { paymentProvider })
+		paymentProvider
 	});
 
 	if (!apiUtils.isSuccess(response)) {
@@ -82,54 +94,141 @@ const updateAutoRenewal = async ({
 	return response.data;
 };
 
-/*
-Main Hook
-*/
 export interface UseAutoRenewalOptions {
+	/** The subscription ID to manage auto-renewal for */
 	subscriptionId: string;
-	enabled?: boolean; // Whether to enable the query
+	/** Whether to enable the query (defaults to true) */
+	enabled?: boolean;
+	/** Callback when auto-renewal status is successfully loaded */
 	onSuccess?: (data: AutoRenewalStatus) => void;
+	/** Callback when loading auto-renewal status fails */
 	onError?: (error: AutoRenewalError) => void;
+	/** Callback when auto-renewal is successfully updated */
+	onUpdateSuccess?: (data: UpdateAutoRenewalResponse) => void;
+	/** Callback when updating auto-renewal fails */
+	onUpdateError?: (error: AutoRenewalError) => void;
 }
 
 export interface UseAutoRenewalReturn {
 	// Data
+	/** Full auto-renewal status object */
 	autoRenewalStatus: AutoRenewalStatus | undefined;
+	/** Whether auto-renewal is enabled */
 	autoRenewal: boolean | undefined;
+	/** Whether subscription will cancel at period end */
 	cancelAtPeriodEnd: boolean;
+	/** Subscription end date */
 	endDate: string | null;
+	/** Current payment provider */
+	paymentProvider: PaymentProvider;
 
-	// Status
+	// Query Status
+	/** Whether the query is loading */
 	isLoading: boolean;
+	/** Whether the query errored */
 	isError: boolean;
+	/** Whether the query succeeded */
 	isSuccess: boolean;
+	/** Query error if any */
 	error: AutoRenewalError | null;
 
-	// Update status
+	// Mutation Status
+	/** Whether an update is in progress */
 	isUpdating: boolean;
+	/** Update error if any */
 	updateError: AutoRenewalError | null;
+	/** Whether the last update succeeded */
 	isUpdateSuccess: boolean;
 
 	// Actions
+	/** Refetch the auto-renewal status */
 	refetch: () => void;
-	updateAutoRenewal: (enabled: boolean, paymentProvider?: string) => void;
-	updateAutoRenewalAsync: (enabled: boolean, paymentProvider?: string) => Promise<UpdateAutoRenewalResponse>;
+	/** Update auto-renewal status (fire-and-forget) */
+	updateAutoRenewal: (enabled: boolean) => void;
+	/** Update auto-renewal status (async, returns promise) */
+	updateAutoRenewalAsync: (enabled: boolean) => Promise<UpdateAutoRenewalResponse>;
+	/** Enable auto-renewal */
 	enableAutoRenewal: () => void;
+	/** Disable auto-renewal */
 	disableAutoRenewal: () => void;
+	/** Toggle auto-renewal (convenience method) */
+	toggleAutoRenewal: () => void;
 
-	// Cache management
+	// Cache Management
+	/** Invalidate the auto-renewal cache */
 	invalidateCache: () => void;
+	/** Clear the auto-renewal cache */
 	clearCache: () => void;
 }
 
+/**
+ * Hook for managing subscription auto-renewal status
+ *
+ * Features:
+ * - Automatic payment provider detection (Stripe, LemonSqueezy, Polar)
+ * - User provider selection takes precedence over config defaults
+ * - Optimistic updates with rollback on error
+ * - Smart caching with stale time management
+ * - Toast notifications for success/error states
+ * - Related query invalidation for data consistency
+ *
+ * @example
+ * ```tsx
+ * const {
+ *   autoRenewal,
+ *   isLoading,
+ *   isUpdating,
+ *   enableAutoRenewal,
+ *   disableAutoRenewal,
+ *   toggleAutoRenewal
+ * } = useAutoRenewal({
+ *   subscriptionId: 'sub_123',
+ *   onSuccess: (data) => console.log('Loaded:', data),
+ *   onUpdateSuccess: (data) => console.log('Updated:', data)
+ * });
+ *
+ * return (
+ *   <Switch
+ *     checked={autoRenewal}
+ *     disabled={isLoading || isUpdating}
+ *     onCheckedChange={toggleAutoRenewal}
+ *   />
+ * );
+ * ```
+ */
 export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalReturn {
-	const { subscriptionId, enabled = true, onSuccess, onError } = options;
-	const queryClient = useQueryClient();
+	const { subscriptionId, enabled = true, onSuccess, onError, onUpdateSuccess, onUpdateError } = options;
 
-	// Query for fetching auto-renewal status
+	const queryClient = useQueryClient();
+	const config = useConfig();
+
+	// ===================== Payment Provider Detection =====================
+
+	const { getActiveProvider } = useSelectedCheckoutProvider();
+
+	/**
+	 * Determine payment provider with priority:
+	 * 1. User's selected provider from Settings
+	 * 2. Config default provider
+	 * 3. Fallback to Stripe
+	 */
+	const paymentProvider = useMemo(() => {
+		const userSelectedProvider = getActiveProvider();
+
+		// Map from CheckoutProvider type to PaymentProvider enum
+		if (userSelectedProvider === 'stripe') return PaymentProvider.STRIPE;
+		if (userSelectedProvider === 'lemonsqueezy') return PaymentProvider.LEMONSQUEEZY;
+		if (userSelectedProvider === 'polar') return PaymentProvider.POLAR;
+
+		// Fallback to config default if no user selection or provider not configured
+		return config.pricing?.provider || PaymentProvider.STRIPE;
+	}, [getActiveProvider, config.pricing?.provider]);
+
+	// ===================== Query =====================
+
 	const { data, isLoading, isError, error, refetch, isSuccess } = useQuery<AutoRenewalStatus, AutoRenewalError>({
 		queryKey: AUTO_RENEWAL_QUERY_KEY(subscriptionId),
-		queryFn: () => fetchAutoRenewalStatus(subscriptionId),
+		queryFn: () => fetchAutoRenewalStatus(subscriptionId, paymentProvider),
 		enabled: enabled && !!subscriptionId,
 		staleTime: CACHE_CONFIG.STALE_TIME,
 		gcTime: CACHE_CONFIG.GC_TIME,
@@ -138,11 +237,16 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 			if (error.status === 401 || error.status === 403) {
 				return false;
 			}
+			// Don't retry not found errors
+			if (error.status === 404) {
+				return false;
+			}
 			return failureCount < 3;
 		}
 	});
 
-	// Track previous states to detect transitions
+	// ===================== Callback Refs for Transition Detection =====================
+
 	const prevIsSuccessRef = useRef(false);
 	const prevIsErrorRef = useRef(false);
 	const lastSubscriptionIdRef = useRef<string | null>(null);
@@ -178,11 +282,25 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 		prevIsErrorRef.current = isError;
 	}, [isError, error, onError]);
 
-	// Mutation for updating auto-renewal status
-	const updateMutation = useMutation<UpdateAutoRenewalResponse, AutoRenewalError, UpdateAutoRenewalRequest>({
-		mutationFn: updateAutoRenewal,
-		onSuccess: (response, variables) => {
-			// Update the cache with the new status after successful mutation
+	// ===================== Mutation =====================
+
+	const updateMutation = useMutation<
+		UpdateAutoRenewalResponse,
+		AutoRenewalError,
+		UpdateAutoRenewalRequest,
+		{ previousStatus: AutoRenewalStatus | undefined }
+	>({
+		mutationFn: updateAutoRenewalApi,
+		onMutate: async (variables) => {
+			// Cancel any outgoing refetches to prevent race conditions
+			await queryClient.cancelQueries({
+				queryKey: AUTO_RENEWAL_QUERY_KEY(subscriptionId)
+			});
+
+			// Snapshot the previous value for rollback
+			const previousStatus = queryClient.getQueryData<AutoRenewalStatus>(AUTO_RENEWAL_QUERY_KEY(subscriptionId));
+
+			// Optimistically update to the new value
 			queryClient.setQueryData<AutoRenewalStatus>(
 				AUTO_RENEWAL_QUERY_KEY(subscriptionId),
 				(oldData): AutoRenewalStatus => {
@@ -202,7 +320,22 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 				}
 			);
 
-			// Invalidate related queries
+			return { previousStatus };
+		},
+		onSuccess: (response, variables) => {
+			// Update the cache with the server response
+			queryClient.setQueryData<AutoRenewalStatus>(
+				AUTO_RENEWAL_QUERY_KEY(subscriptionId),
+				(oldData): AutoRenewalStatus => ({
+					subscriptionId,
+					autoRenewal: response.subscription.autoRenewal,
+					cancelAtPeriodEnd: response.subscription.cancelAtPeriodEnd,
+					endDate: response.subscription.endDate,
+					...(oldData && { paymentProvider: oldData.paymentProvider })
+				})
+			);
+
+			// Invalidate related queries for data consistency
 			queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
 			queryClient.invalidateQueries({ queryKey: ['user-subscription'] });
 			queryClient.invalidateQueries({ queryKey: ['billing'] });
@@ -214,38 +347,60 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 						? 'Auto-renewal has been enabled successfully'
 						: 'Auto-renewal has been disabled successfully')
 			);
+
+			// Call user callback if provided
+			onUpdateSuccess?.(response);
 		},
-		onError: (error) => {
+		onError: (error, _, context) => {
 			console.error('Error updating auto-renewal:', error);
+
+			// Rollback to previous value on error
+			if (context?.previousStatus) {
+				queryClient.setQueryData(AUTO_RENEWAL_QUERY_KEY(subscriptionId), context.previousStatus);
+			}
+
+			// Show error toast
 			toast.error(error.message || 'Failed to update auto-renewal status');
+
+			// Call user callback if provided
+			onUpdateError?.(error);
 
 			// Refetch to ensure data consistency
 			refetch();
 		}
 	});
 
-	// Extract stable mutate functions for use in callbacks
-	const { mutate, mutateAsync } = updateMutation;
+	// ===================== Derived Values =====================
 
-	// Derived values
 	const autoRenewalStatus = data;
 	const autoRenewal = data?.autoRenewal;
 	const cancelAtPeriodEnd = data?.cancelAtPeriodEnd ?? false;
 	const endDate = data?.endDate ?? null;
 
-	// Actions
+	// ===================== Actions =====================
+
+	const { mutate, mutateAsync } = updateMutation;
+
 	const updateAutoRenewalAction = useCallback(
-		(enabled: boolean, paymentProvider?: string) => {
-			mutate({ subscriptionId, enabled, paymentProvider });
+		(enabled: boolean) => {
+			mutate({
+				subscriptionId,
+				enabled,
+				paymentProvider
+			});
 		},
-		[subscriptionId, mutate]
+		[subscriptionId, paymentProvider, mutate]
 	);
 
 	const updateAutoRenewalAsyncAction = useCallback(
-		async (enabled: boolean, paymentProvider?: string) => {
-			return mutateAsync({ subscriptionId, enabled, paymentProvider });
+		async (enabled: boolean) => {
+			return mutateAsync({
+				subscriptionId,
+				enabled,
+				paymentProvider
+			});
 		},
-		[subscriptionId, mutateAsync]
+		[subscriptionId, paymentProvider, mutateAsync]
 	);
 
 	const enableAutoRenewalAction = useCallback(() => {
@@ -256,13 +411,27 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 		updateAutoRenewalAction(false);
 	}, [updateAutoRenewalAction]);
 
+	const toggleAutoRenewalAction = useCallback(() => {
+		if (autoRenewal !== undefined) {
+			updateAutoRenewalAction(!autoRenewal);
+		}
+	}, [autoRenewal, updateAutoRenewalAction]);
+
+	// ===================== Cache Management =====================
+
 	const invalidateCache = useCallback(() => {
-		queryClient.invalidateQueries({ queryKey: AUTO_RENEWAL_QUERY_KEY(subscriptionId) });
+		queryClient.invalidateQueries({
+			queryKey: AUTO_RENEWAL_QUERY_KEY(subscriptionId)
+		});
 	}, [queryClient, subscriptionId]);
 
 	const clearCache = useCallback(() => {
-		queryClient.removeQueries({ queryKey: AUTO_RENEWAL_QUERY_KEY(subscriptionId) });
+		queryClient.removeQueries({
+			queryKey: AUTO_RENEWAL_QUERY_KEY(subscriptionId)
+		});
 	}, [queryClient, subscriptionId]);
+
+	// ===================== Return =====================
 
 	return {
 		// Data
@@ -270,14 +439,15 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 		autoRenewal,
 		cancelAtPeriodEnd,
 		endDate,
+		paymentProvider,
 
-		// Status
+		// Query Status
 		isLoading,
 		isError,
 		isSuccess,
 		error: error || null,
 
-		// Update status
+		// Mutation Status
 		isUpdating: updateMutation.isPending,
 		updateError: updateMutation.error || null,
 		isUpdateSuccess: updateMutation.isSuccess,
@@ -288,8 +458,9 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 		updateAutoRenewalAsync: updateAutoRenewalAsyncAction,
 		enableAutoRenewal: enableAutoRenewalAction,
 		disableAutoRenewal: disableAutoRenewalAction,
+		toggleAutoRenewal: toggleAutoRenewalAction,
 
-		// Cache management
+		// Cache Management
 		invalidateCache,
 		clearCache
 	};
