@@ -3,12 +3,13 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Card, CardBody, Button, Autocomplete, AutocompleteItem } from "@heroui/react";
+import { Card, CardBody, Button } from "@heroui/react";
 import { Megaphone, Calendar, CheckCircle, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { SponsorAdPricing } from "@/lib/constants";
+import { SearchableSelect, type SearchableSelectItem } from "@/components/ui/searchable-select";
 import type { ItemData } from "@/lib/content";
 
 // ######################### Types #########################
@@ -90,6 +91,28 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 	const [selectedInterval, setSelectedInterval] = useState<IntervalType>("monthly");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
+	// Transform items for SearchableSelect
+	const selectItems: SearchableSelectItem[] = useMemo(() => {
+		return items.map((item) => ({
+			value: item.slug,
+			label: item.name,
+			description: getCategoryName(item.category),
+			icon: item.icon_url ? (
+				<Image
+					src={item.icon_url}
+					alt={item.name}
+					width={32}
+					height={32}
+					className="h-8 w-8 rounded-lg object-cover"
+				/>
+			) : (
+				<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-blue-500 to-indigo-500">
+					<Megaphone className="h-4 w-4 text-white" />
+				</div>
+			),
+		}));
+	}, [items]);
+
 	// Selected item details
 	const selectedItem = useMemo(() => {
 		return items.find((item) => item.slug === selectedItemSlug);
@@ -170,54 +193,14 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 					<div className="space-y-4">
 						{/* Searchable Item Select */}
 						{items.length > 0 ? (
-							<Autocomplete
-								label={t("SELECT_ITEM_PLACEHOLDER")}
-								placeholder={t("SEARCH_PLACEHOLDER")}
-								selectedKey={selectedItemSlug}
-								onSelectionChange={(key) => setSelectedItemSlug(key as string)}
-								classNames={{
-									base: "w-full",
-									listboxWrapper: "max-h-[300px]",
-								}}
-								inputProps={{
-									classNames: {
-										input: "text-sm",
-										inputWrapper: "h-12 rounded-xl",
-									},
-								}}
-								listboxProps={{
-									emptyContent: t("NO_ITEMS_FOUND"),
-								}}
-							>
-								{items.map((item) => (
-									<AutocompleteItem
-										key={item.slug}
-										textValue={item.name}
-										startContent={
-											item.icon_url ? (
-												<Image
-													src={item.icon_url}
-													alt={item.name}
-													width={32}
-													height={32}
-													className="h-8 w-8 rounded-lg object-cover"
-												/>
-											) : (
-												<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-blue-500 to-indigo-500">
-													<Megaphone className="h-4 w-4 text-white" />
-												</div>
-											)
-										}
-									>
-										<div className="flex flex-col">
-											<span className="text-sm font-medium">{item.name}</span>
-											<span className="text-xs text-gray-500 dark:text-gray-400">
-												{getCategoryName(item.category)}
-											</span>
-										</div>
-									</AutocompleteItem>
-								))}
-							</Autocomplete>
+							<SearchableSelect
+								items={selectItems}
+								value={selectedItemSlug}
+								onValueChange={setSelectedItemSlug}
+								placeholder={t("SELECT_ITEM_PLACEHOLDER")}
+								searchPlaceholder={t("SEARCH_PLACEHOLDER")}
+								emptyMessage={t("NO_ITEMS_FOUND")}
+							/>
 						) : (
 							<p className="text-sm text-gray-500 dark:text-gray-400">{t("NO_ITEMS_FOUND")}</p>
 						)}
