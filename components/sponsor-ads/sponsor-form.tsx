@@ -314,20 +314,20 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 				</CardBody>
 			</Card>
 
-			{/* Step 3: Summary & Submit */}
-			<Card className={CARD_WRAPPER}>
-				<div className={CARD_HEADER}>
-					<div className="flex items-center gap-3">
-						<div className={STEP_BADGE}>3</div>
-						<div>
-							<h3 className="font-semibold text-gray-900 dark:text-white">
-								{t("SUMMARY_TITLE")}
-							</h3>
+			{/* Step 3: Summary & Submit - Only shown when item is selected */}
+			{selectedItem && selectedPricing && (
+				<Card className={CARD_WRAPPER}>
+					<div className={CARD_HEADER}>
+						<div className="flex items-center gap-3">
+							<div className={STEP_BADGE}>3</div>
+							<div>
+								<h3 className="font-semibold text-gray-900 dark:text-white">
+									{t("SUMMARY_TITLE")}
+								</h3>
+							</div>
 						</div>
 					</div>
-				</div>
-				<CardBody className={CARD_BODY}>
-					{selectedItem && selectedPricing ? (
+					<CardBody className={CARD_BODY}>
 						<div className="space-y-4">
 							<div className={SUMMARY_BOX}>
 								<div className="flex items-center justify-between">
@@ -380,18 +380,9 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 								{isSubmitting ? t("SUBMITTING") : t("SUBMIT_FOR_REVIEW")}
 							</Button>
 						</div>
-					) : (
-						<div className="py-8 text-center">
-							<div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-								<Megaphone className="h-6 w-6 text-gray-400" />
-							</div>
-							<p className="text-gray-500 dark:text-gray-400">
-								{t("SELECT_ITEM_TO_CONTINUE")}
-							</p>
-						</div>
-					)}
-				</CardBody>
-			</Card>
+					</CardBody>
+				</Card>
+			)}
 		</div>
 	);
 }
