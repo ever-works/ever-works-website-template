@@ -2190,6 +2190,8 @@
 			"STATUS_CANCELLED": "Cancelled",
 			"SPONSOR_ADS_TITLE": "Sponsor Ads",
 			"NO_SPONSOR_ADS_FOUND": "No sponsor ads found",
+			"NO_SPONSOR_ADS_DESCRIPTION": "Sponsor ads will appear here when users submit them.",
+			"TOTAL_COUNT": "total",
 			"REJECTION_REASON": "Rejection reason",
 			"APPROVE": "Approve",
 			"REJECT": "Reject",
