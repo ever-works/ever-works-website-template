@@ -157,8 +157,8 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 			if (onSuccess) {
 				onSuccess(result.data.id);
 			} else {
-				// Redirect to user's sponsor ads page
-				router.push(`/${locale}/account/sponsorships`);
+				// Redirect to user's sponsorships page
+				router.push(`/${locale}/client/sponsorships`);
 			}
 		} catch (error) {
 			console.error("Error creating sponsor ad:", error);
