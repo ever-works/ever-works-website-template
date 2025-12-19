@@ -148,10 +148,7 @@ export async function getSponsorAdsPaginated(
 
 	if (search) {
 		conditions.push(
-			or(
-				like(sponsorAds.itemName, `%${search}%`),
-				like(sponsorAds.itemSlug, `%${search}%`)
-			)
+			like(sponsorAds.itemSlug, `%${search}%`)
 		);
 	}
 

@@ -610,13 +610,8 @@ export const sponsorAds = pgTable("sponsor_ads", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
 
-  // Item being sponsored
+  // Item being sponsored (only store identifier, fetch details from content)
   itemSlug: text("item_slug").notNull(),
-  itemName: text("item_name").notNull(),
-  itemIconUrl: text("item_icon_url"),
-  itemCategory: text("item_category"),
-  itemDescription: text("item_description"),
-  itemTags: jsonb("item_tags").$type<string[]>(),
 
   // Sponsorship details
   status: text("status", {

@@ -234,7 +234,7 @@ function getPriceId(interval: string, provider: string): string | null {
  */
 async function createStripeCheckout(
 	user: { id?: string; email?: string | null; name?: string | null },
-	sponsorAd: { id: string; itemSlug: string; itemName: string; interval: string; amount: number },
+	sponsorAd: { id: string; itemSlug: string; interval: string; amount: number },
 	priceId: string,
 	successUrl: string,
 	cancelUrl: string
@@ -264,7 +264,6 @@ async function createStripeCheckout(
 		metadata: {
 			sponsorAdId: sponsorAd.id,
 			itemSlug: sponsorAd.itemSlug,
-			itemName: sponsorAd.itemName,
 			type: "sponsor_ad",
 		},
 		subscription_data: {
@@ -290,7 +289,7 @@ async function createStripeCheckout(
  */
 async function createLemonSqueezyCheckout(
 	user: { id?: string; email?: string | null; name?: string | null },
-	sponsorAd: { id: string; itemSlug: string; itemName: string; interval: string; amount: number },
+	sponsorAd: { id: string; itemSlug: string; interval: string; amount: number },
 	variantId: string,
 	successUrl: string,
 	cancelUrl: string
@@ -304,11 +303,10 @@ async function createLemonSqueezyCheckout(
 			userId: user.id || "",
 			sponsorAdId: sponsorAd.id,
 			itemSlug: sponsorAd.itemSlug,
-			itemName: sponsorAd.itemName,
 			type: "sponsor_ad",
 			successUrl: successUrl,
-			name: sponsorAd.itemName,
-			description: `Sponsor ad for ${sponsorAd.itemName}`,
+			name: sponsorAd.itemSlug,
+			description: `Sponsor ad for ${sponsorAd.itemSlug}`,
 		},
 	});
 
@@ -323,7 +321,7 @@ async function createLemonSqueezyCheckout(
  */
 async function createPolarCheckout(
 	user: { id?: string; email?: string | null; name?: string | null },
-	sponsorAd: { id: string; itemSlug: string; itemName: string; interval: string; amount: number },
+	sponsorAd: { id: string; itemSlug: string; interval: string; amount: number },
 	priceId: string,
 	successUrl: string,
 	cancelUrl: string
@@ -340,7 +338,6 @@ async function createPolarCheckout(
 			userId: user.id || "",
 			sponsorAdId: sponsorAd.id,
 			itemSlug: sponsorAd.itemSlug,
-			itemName: sponsorAd.itemName,
 			type: "sponsor_ad",
 			successUrl: successUrl,
 			cancelUrl: cancelUrl,

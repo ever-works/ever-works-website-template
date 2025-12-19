@@ -115,10 +115,6 @@ export class SponsorAdService {
 		const newSponsorAd: NewSponsorAd = {
 			userId,
 			itemSlug: data.itemSlug,
-			itemName: data.itemName,
-			itemIconUrl: data.itemIconUrl || null,
-			itemCategory: data.itemCategory || null,
-			itemDescription: data.itemDescription || null,
 			interval: data.interval,
 			amount,
 			currency: "usd",

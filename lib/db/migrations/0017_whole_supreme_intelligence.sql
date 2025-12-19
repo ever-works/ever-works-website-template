@@ -1,1 +1,3 @@
-ALTER TABLE "sponsor_ads" ADD COLUMN "item_tags" jsonb;
+-- Empty migration (originally added itemTags but reverted)
+-- Kept for migration journal consistency
+SELECT 1;

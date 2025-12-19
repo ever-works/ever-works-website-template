@@ -351,10 +351,11 @@ function ItemDetailContent({ meta, renderedContent, categoryName }: ItemDetailPr
 							</div>
 						)}
 
-						{/* Sponsor Ads Section - Only show if sponsors exist */}
+						{/* Sponsor Ads Section - Disabled until we have items context
 						{sponsors.length > 0 && (
 							<SidebarSponsor sponsors={sponsors} rotationInterval={5000} />
 						)}
+						*/}
 
 						{/* Categories - Only show if categories enabled and category exists */}
 						{categoriesEnabled && categoryName && (

@@ -10,13 +10,23 @@ import { cn } from '@/lib/utils';
 import { SponsorBadge } from './sponsor-badge';
 import { shouldShowFallback, isProblematicUrl } from '@/lib/utils/image-domains';
 import { useTranslations } from 'next-intl';
-import type { SponsorAd } from '@/lib/db/schema';
+import type { SponsorWithItem } from './sponsor-ads-context';
 
 interface SidebarSponsorProps {
-	sponsors: SponsorAd[];
+	sponsors: SponsorWithItem[];
 	rotationInterval?: number; // in milliseconds, default 5000 (5 seconds)
 	className?: string;
 	title?: string;
+}
+
+// Helper to get category name from item
+function getCategoryName(category: unknown): string {
+	if (!category) return '';
+	if (Array.isArray(category)) {
+		const first = category[0];
+		return typeof first === 'string' ? first : (first as { name?: string })?.name || '';
+	}
+	return typeof category === 'string' ? category : (category as { name?: string })?.name || '';
 }
 
 export function SidebarSponsor({
@@ -30,29 +40,34 @@ export function SidebarSponsor({
 	const t = useTranslations('sponsor');
 	const [currentIndex, setCurrentIndex] = useState(0);
 
+	// Filter out sponsors without valid items
+	const validSponsors = sponsors.filter((s) => s.item !== null);
+
 	// Time-based rotation
 	useEffect(() => {
-		if (sponsors.length <= 1) return;
+		if (validSponsors.length <= 1) return;
 
 		const interval = setInterval(() => {
-			setCurrentIndex((prev) => (prev + 1) % sponsors.length);
+			setCurrentIndex((prev) => (prev + 1) % validSponsors.length);
 		}, rotationInterval);
 
 		return () => clearInterval(interval);
-	}, [sponsors.length, rotationInterval]);
+	}, [validSponsors.length, rotationInterval]);
 
 	// Reset index if sponsors change
 	useEffect(() => {
 		setCurrentIndex(0);
-	}, [sponsors]);
+	}, [validSponsors.length]);
 
-	if (!sponsors || sponsors.length === 0) {
+	if (validSponsors.length === 0) {
 		return null;
 	}
 
-	const currentSponsor = sponsors[currentIndex];
-	const shouldShowFallbackIcon = shouldShowFallback(currentSponsor.itemIconUrl || '');
-	const detailPath = `${locale ? `/${locale}` : ''}/items/${currentSponsor.itemSlug}`;
+	const current = validSponsors[currentIndex];
+	const item = current.item!;
+	const shouldShowFallbackIcon = shouldShowFallback(item.icon_url || '');
+	const detailPath = `${locale ? `/${locale}` : ''}/items/${item.slug}`;
+	const categoryName = getCategoryName(item.category);
 
 	return (
 		<div
@@ -85,12 +100,12 @@ export function SidebarSponsor({
 									<FiFolder className="w-6 h-6 text-blue-600 dark:text-blue-400" />
 								) : (
 									<Image
-										src={currentSponsor.itemIconUrl!}
-										alt={`${currentSponsor.itemName} icon`}
+										src={item.icon_url!}
+										alt={`${item.name} icon`}
 										className="w-6 h-6 object-contain"
 										width={24}
 										height={24}
-										unoptimized={isProblematicUrl(currentSponsor.itemIconUrl!)}
+										unoptimized={isProblematicUrl(item.icon_url!)}
 									/>
 								)}
 							</div>
@@ -100,20 +115,20 @@ export function SidebarSponsor({
 						<div className="flex-1 min-w-0">
 							<div className="flex items-center gap-2 mb-1">
 								<span className="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-									{currentSponsor.itemName}
+									{item.name}
 								</span>
 								<FiExternalLink className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors shrink-0" />
 							</div>
 
-							{currentSponsor.itemCategory && (
+							{categoryName && (
 								<span className="inline-block text-xs text-blue-600 dark:text-blue-400 font-medium mb-2">
-									{currentSponsor.itemCategory}
+									{categoryName}
 								</span>
 							)}
 
-							{currentSponsor.itemDescription && (
+							{item.description && (
 								<p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-3">
-									{currentSponsor.itemDescription}
+									{item.description}
 								</p>
 							)}
 
@@ -127,9 +142,9 @@ export function SidebarSponsor({
 			</Link>
 
 			{/* Rotation indicator */}
-			{sponsors.length > 1 && (
+			{validSponsors.length > 1 && (
 				<div className="flex items-center justify-center gap-1.5 mt-4">
-					{sponsors.map((_, idx) => (
+					{validSponsors.map((_, idx) => (
 						<button
 							key={idx}
 							onClick={() => setCurrentIndex(idx)}

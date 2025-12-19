@@ -1,7 +1,6 @@
 import { Card, CardBody, Chip, Button } from '@heroui/react';
 import { Megaphone, CheckCircle, XCircle, Ban, Trash2, Calendar } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import type { SponsorAd } from '@/lib/db/schema';
 import type { SponsorAdStatus } from '@/lib/types/sponsor-ad';
 
@@ -164,29 +163,22 @@ function SponsorRow({
 			<div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
 				{/* Item Info */}
 				<div className="flex items-center space-x-4 flex-1 min-w-0">
-					{sponsorAd.itemIconUrl ? (
-						<Image
-							src={sponsorAd.itemIconUrl}
-							alt={sponsorAd.itemName}
-							width={48}
-							height={48}
-							className="w-12 h-12 rounded-lg object-cover"
-						/>
-					) : (
-						<div className={ICON_PLACEHOLDER}>
-							<Megaphone className="w-6 h-6" />
-						</div>
-					)}
+					<div className={ICON_PLACEHOLDER}>
+						<Megaphone className="w-6 h-6" />
+					</div>
 					<div className="flex-1 min-w-0">
-						<h4 className="font-medium text-gray-900 dark:text-white truncate">{sponsorAd.itemName}</h4>
+						<h4 className="font-medium text-gray-900 dark:text-white truncate">
+							<a
+								href={`/items/${sponsorAd.itemSlug}`}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+							>
+								{sponsorAd.itemSlug}
+							</a>
+						</h4>
 						<div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
 							<span className="truncate">/{sponsorAd.itemSlug}</span>
-							{sponsorAd.itemCategory && (
-								<>
-									<span>•</span>
-									<span>{sponsorAd.itemCategory}</span>
-								</>
-							)}
 						</div>
 						<div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mt-1">
 							<span className="capitalize">{sponsorAd.interval}</span>

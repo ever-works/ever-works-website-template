@@ -78,11 +78,6 @@ function getCategoryName(category: ItemData["category"]): string {
 	return typeof category === "string" ? category : category?.name || "";
 }
 
-function getTagNames(tags: ItemData["tags"]): string[] {
-	if (!tags || !Array.isArray(tags)) return [];
-	return tags.map((tag) => (typeof tag === "string" ? tag : tag?.name || "")).filter(Boolean);
-}
-
 // ######################### Component #########################
 
 export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
@@ -143,11 +138,6 @@ export function SponsorForm({ items, locale, onSuccess }: SponsorFormProps) {
 				},
 				body: JSON.stringify({
 					itemSlug: selectedItem.slug,
-					itemName: selectedItem.name,
-					itemIconUrl: selectedItem.icon_url || null,
-					itemCategory: getCategoryName(selectedItem.category),
-					itemDescription: selectedItem.description?.slice(0, 500) || null,
-					itemTags: getTagNames(selectedItem.tags),
 					interval: selectedInterval,
 				}),
 			});

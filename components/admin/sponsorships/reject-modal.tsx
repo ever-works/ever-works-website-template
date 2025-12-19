@@ -60,7 +60,7 @@ export function RejectModal({
 					{/* Item Preview */}
 					{sponsorAd && (
 						<div className={ITEM_PREVIEW}>
-							<p className="font-medium text-gray-900 dark:text-white">{sponsorAd.itemName}</p>
+							<p className="font-medium text-gray-900 dark:text-white">{sponsorAd.itemSlug}</p>
 							<p className="text-sm text-gray-500 dark:text-gray-400">/{sponsorAd.itemSlug}</p>
 						</div>
 					)}
