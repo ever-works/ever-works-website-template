@@ -2184,6 +2184,7 @@
 			"ALL_STATUSES": "All Statuses",
 			"STATUS_PENDING_PAYMENT": "Awaiting Payment",
 			"STATUS_PENDING": "Pending Review",
+			"STATUS_APPROVED": "Approved",
 			"STATUS_ACTIVE": "Active",
 			"STATUS_REJECTED": "Rejected",
 			"STATUS_EXPIRED": "Expired",

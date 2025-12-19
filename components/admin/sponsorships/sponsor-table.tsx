@@ -22,13 +22,18 @@ const TABLE_HEADER = 'px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg
 const TABLE_ROW = 'px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors';
 const ICON_PLACEHOLDER = 'w-12 h-12 bg-linear-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center text-white';
 
-const STATUS_CHIP_COLORS: Record<SponsorAdStatus, 'warning' | 'primary' | 'success' | 'danger' | 'default'> = {
-	pending_payment: 'default',
-	pending: 'warning',
-	active: 'success',
-	rejected: 'danger',
-	expired: 'default',
-	cancelled: 'default',
+type ChipColor = 'warning' | 'primary' | 'success' | 'danger' | 'default';
+type ChipVariant = 'flat' | 'solid' | 'bordered';
+
+const STATUS_CHIP_CONFIG: Record<string, { color: ChipColor; variant: ChipVariant }> = {
+	pending_payment: { color: 'warning', variant: 'bordered' },
+	pending: { color: 'warning', variant: 'flat' },
+	active: { color: 'success', variant: 'solid' },
+	rejected: { color: 'danger', variant: 'flat' },
+	expired: { color: 'default', variant: 'bordered' },
+	cancelled: { color: 'default', variant: 'flat' },
+	// Legacy status (for backwards compatibility with old data)
+	approved: { color: 'primary', variant: 'flat' },
 };
 
 /**
@@ -138,17 +143,19 @@ function SponsorRow({
 	const canCancel = status === 'pending_payment' || status === 'pending' || status === 'active';
 	const canDelete = status === 'rejected' || status === 'expired' || status === 'cancelled';
 
-	// Format status for display
-	const getStatusLabel = (s: SponsorAdStatus) => {
-		const labels: Record<SponsorAdStatus, string> = {
-			pending_payment: 'Awaiting Payment',
-			pending: 'Pending Review',
-			active: 'Active',
-			rejected: 'Rejected',
-			expired: 'Expired',
-			cancelled: 'Cancelled',
+	// Format status for display using translations
+	const getStatusLabel = (s: string) => {
+		const translationKeys: Record<string, string> = {
+			pending_payment: 'STATUS_PENDING_PAYMENT',
+			pending: 'STATUS_PENDING',
+			active: 'STATUS_ACTIVE',
+			rejected: 'STATUS_REJECTED',
+			expired: 'STATUS_EXPIRED',
+			cancelled: 'STATUS_CANCELLED',
+			// Legacy status
+			approved: 'STATUS_APPROVED',
 		};
-		return labels[s] || s;
+		return t(translationKeys[s] || s);
 	};
 
 	return (
@@ -206,9 +213,13 @@ function SponsorRow({
 				{/* Status & Actions */}
 				<div className="flex items-center gap-2 flex-wrap shrink-0">
 					<Chip
-						color={STATUS_CHIP_COLORS[status]}
-						variant="flat"
+						color={STATUS_CHIP_CONFIG[status]?.color || 'default'}
+						variant={STATUS_CHIP_CONFIG[status]?.variant || 'flat'}
 						size="sm"
+						classNames={{
+							base: 'px-3 py-1',
+							content: 'font-medium text-xs',
+						}}
 					>
 						{getStatusLabel(status)}
 					</Chip>

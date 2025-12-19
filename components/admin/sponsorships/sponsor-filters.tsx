@@ -42,8 +42,8 @@ export function SponsorFilters({
 
 	const statuses: Array<{ key: string; label: string }> = [
 		{ key: 'all', label: t('ALL_STATUSES') },
+		{ key: 'pending_payment', label: t('STATUS_PENDING_PAYMENT') },
 		{ key: 'pending', label: t('STATUS_PENDING') },
-		{ key: 'approved', label: t('STATUS_APPROVED') },
 		{ key: 'active', label: t('STATUS_ACTIVE') },
 		{ key: 'rejected', label: t('STATUS_REJECTED') },
 		{ key: 'expired', label: t('STATUS_EXPIRED') },

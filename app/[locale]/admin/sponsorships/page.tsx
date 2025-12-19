@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useDebounceSearch } from '@/hooks/use-debounced-search';
+import { useState, useCallback, useEffect } from 'react';
+import { useDebounceValue } from '@/hooks/use-debounced-value';
 import { useAdminSponsorAds } from '@/hooks/use-admin-sponsor-ads';
 import { UniversalPagination } from '@/components/universal-pagination';
 import { useTranslations } from 'next-intl';
@@ -35,14 +35,9 @@ export default function AdminSponsorshipsPage() {
 	const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 	const [pendingApproveId, setPendingApproveId] = useState<string | null>(null);
 
-	// Debounced search
-	const { debouncedValue: debouncedSearchTerm, isSearching } = useDebounceSearch({
-		searchValue: searchTerm,
-		delay: 300,
-		onSearch: () => {
-			// Reset to page 1 when search changes
-		},
-	});
+	// Debounced search - only triggers API call after user stops typing
+	const debouncedSearchTerm = useDebounceValue(searchTerm, 400);
+	const isSearching = searchTerm !== debouncedSearchTerm && searchTerm.trim() !== '';
 
 	// Data fetching hook
 	const {
@@ -65,11 +60,18 @@ export default function AdminSponsorshipsPage() {
 	// Calculate active filters
 	const activeFilterCount = [searchTerm, localStatusFilter].filter(Boolean).length;
 
+	// Sync debounced search term to hook (only when debounced value changes)
+	useEffect(() => {
+		setHookSearchTerm(debouncedSearchTerm);
+		if (debouncedSearchTerm !== '') {
+			setCurrentPage(1); // Reset to page 1 when search changes
+		}
+	}, [debouncedSearchTerm, setHookSearchTerm, setCurrentPage]);
+
 	// Handlers
 	const handleSearchChange = useCallback((value: string) => {
 		setSearchTerm(value);
-		setHookSearchTerm(value);
-	}, [setHookSearchTerm]);
+	}, []);
 
 	const handleStatusChange = useCallback((value: SponsorAdStatus | undefined) => {
 		setLocalStatusFilter(value);
