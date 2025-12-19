@@ -94,7 +94,7 @@ export function SponsorCard({
 								<SponsorBadge variant="compact" size="sm" showIcon={false} />
 							</div>
 							{currentSponsor.itemCategory && (
-								<span className="text-xs text-gray-500 dark:text-gray-400">
+								<span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium rounded-full bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300 capitalize">
 									{currentSponsor.itemCategory}
 								</span>
 							)}
@@ -162,11 +162,13 @@ export function SponsorCard({
 					</CardHeader>
 
 					<CardBody className="pt-0 pb-4">
-						{/* Category */}
+						{/* Category - styled to match regular Item cards */}
 						{currentSponsor.itemCategory && (
-							<span className="inline-block text-xs text-blue-600 dark:text-blue-400 font-medium mb-2">
-								{currentSponsor.itemCategory}
-							</span>
+							<div className="mb-2">
+								<span className="inline-block bg-blue-50 px-3 py-1.5 text-xs font-semibold rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 dark:from-blue-900/30 dark:to-indigo-900/30 dark:text-blue-300 border border-blue-200/50 dark:border-blue-700/30 capitalize shadow-sm">
+									{currentSponsor.itemCategory}
+								</span>
+							</div>
 						)}
 
 						{/* Description */}
