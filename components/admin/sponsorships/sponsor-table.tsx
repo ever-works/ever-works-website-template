@@ -141,7 +141,8 @@ function SponsorRow({
 	// pending_payment -> pending (after payment) -> active (after admin approval)
 	const canApproveReject = status === 'pending_payment' || status === 'pending';
 	const canCancel = status === 'pending_payment' || status === 'pending' || status === 'active';
-	const canDelete = status === 'rejected' || status === 'expired' || status === 'cancelled';
+	// Allow delete for all statuses - admin should be able to remove any sponsor ad
+	const canDelete = true;
 
 	// Format status for display using translations
 	const getStatusLabel = (s: string) => {
