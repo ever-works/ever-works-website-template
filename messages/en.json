@@ -2182,8 +2182,8 @@
 			"SEARCH_PLACEHOLDER": "Search by item name...",
 			"FILTER_BY_STATUS": "Filter by status",
 			"ALL_STATUSES": "All Statuses",
-			"STATUS_PENDING": "Pending",
-			"STATUS_APPROVED": "Approved",
+			"STATUS_PENDING_PAYMENT": "Awaiting Payment",
+			"STATUS_PENDING": "Pending Review",
 			"STATUS_ACTIVE": "Active",
 			"STATUS_REJECTED": "Rejected",
 			"STATUS_EXPIRED": "Expired",
@@ -2204,7 +2204,12 @@
 			"REJECTION_REASON_PLACEHOLDER": "Explain why this sponsorship is being rejected...",
 			"REJECTION_REASON_MIN_LENGTH": "Reason must be at least 10 characters",
 			"CANCEL_BUTTON": "Cancel",
-			"REJECT_BUTTON": "Reject Submission"
+			"REJECT_BUTTON": "Reject Submission",
+			"FORCE_APPROVE_TITLE": "Payment Not Received",
+			"FORCE_APPROVE_MESSAGE": "This sponsor ad hasn't received payment yet. Are you sure you want to approve and activate it anyway? The sponsor will be displayed on the site without payment.",
+			"FORCE_APPROVE": "Approve Anyway",
+			"ACTIVATE": "Activate",
+			"PENDING_PAYMENT_STAT": "Awaiting Payment"
 		},
 		"ADMIN_COMMENTS_PAGE": {
 			"TITLE": "Comment Management",

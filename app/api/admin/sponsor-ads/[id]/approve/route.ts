@@ -7,8 +7,8 @@ import { sponsorAdService } from "@/lib/services/sponsor-ad.service";
  * /api/admin/sponsor-ads/{id}/approve:
  *   post:
  *     tags: ["Admin - Sponsor Ads"]
- *     summary: "Approve sponsor ad"
- *     description: "Approves a pending sponsor ad submission. Only pending ads can be approved. Requires admin authentication."
+ *     summary: "Approve and activate sponsor ad"
+ *     description: "Approves and activates a sponsor ad. For pending_payment status, use forceApprove=true. Requires admin authentication."
  *     security:
  *       - sessionAuth: []
  *     parameters:
@@ -18,24 +18,20 @@ import { sponsorAdService } from "@/lib/services/sponsor-ad.service";
  *         schema:
  *           type: string
  *         description: "Sponsor ad ID to approve"
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               forceApprove:
+ *                 type: boolean
+ *                 description: "Set to true to approve without payment"
  *     responses:
  *       200:
- *         description: "Sponsor ad approved successfully"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 data:
- *                   type: object
- *                 message:
- *                   type: string
- *                   example: "Sponsor ad approved successfully"
+ *         description: "Sponsor ad approved and activated successfully"
  *       400:
- *         description: "Bad request - Cannot approve ad with current status"
+ *         description: "Bad request - Payment not received (use forceApprove)"
  *       401:
  *         description: "Unauthorized"
  *       404:
@@ -59,9 +55,19 @@ export async function POST(
 
 		const { id } = await params;
 
+		// Parse request body for forceApprove flag
+		let forceApprove = false;
+		try {
+			const body = await request.json();
+			forceApprove = body.forceApprove === true;
+		} catch {
+			// No body or invalid JSON, proceed without force approve
+		}
+
 		const sponsorAd = await sponsorAdService.approveSponsorAd(
 			id,
-			session.user.id
+			session.user.id,
+			forceApprove
 		);
 
 		if (!sponsorAd) {
@@ -74,7 +80,7 @@ export async function POST(
 		return NextResponse.json({
 			success: true,
 			data: sponsorAd,
-			message: "Sponsor ad approved successfully",
+			message: "Sponsor ad approved and activated successfully",
 		});
 	} catch (error) {
 		console.error("Error approving sponsor ad:", error);
@@ -86,6 +92,14 @@ export async function POST(
 			return NextResponse.json(
 				{ success: false, error: errorMessage },
 				{ status: 404 }
+			);
+		}
+
+		// Special case for payment not received - return specific error code
+		if (errorMessage === "PAYMENT_NOT_RECEIVED") {
+			return NextResponse.json(
+				{ success: false, error: "PAYMENT_NOT_RECEIVED" },
+				{ status: 400 }
 			);
 		}
 

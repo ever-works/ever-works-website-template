@@ -5,6 +5,8 @@ import { useDebounceSearch } from '@/hooks/use-debounced-search';
 import { useAdminSponsorAds } from '@/hooks/use-admin-sponsor-ads';
 import { UniversalPagination } from '@/components/universal-pagination';
 import { useTranslations } from 'next-intl';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from '@heroui/react';
+import { AlertTriangle } from 'lucide-react';
 import type { SponsorAd } from '@/lib/db/schema';
 import type { SponsorAdStatus } from '@/lib/types/sponsor-ad';
 
@@ -27,9 +29,11 @@ export default function AdminSponsorshipsPage() {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [localStatusFilter, setLocalStatusFilter] = useState<SponsorAdStatus | undefined>(undefined);
 	const [rejectModalOpen, setRejectModalOpen] = useState(false);
+	const [forceApproveModalOpen, setForceApproveModalOpen] = useState(false);
 	const [selectedSponsorAd, setSelectedSponsorAd] = useState<SponsorAd | null>(null);
 	const [rejectionReason, setRejectionReason] = useState('');
 	const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+	const [pendingApproveId, setPendingApproveId] = useState<string | null>(null);
 
 	// Debounced search
 	const { debouncedValue: debouncedSearchTerm, isSearching } = useDebounceSearch({
@@ -81,8 +85,25 @@ export default function AdminSponsorshipsPage() {
 	}, [setHookSearchTerm, setStatusFilter, setCurrentPage]);
 
 	const handleApprove = useCallback(async (id: string) => {
-		await approveSponsorAd(id);
+		const result = await approveSponsorAd(id);
+		if (result.requiresForceApprove) {
+			// Show confirmation modal for force approve
+			setPendingApproveId(id);
+			setForceApproveModalOpen(true);
+		}
 	}, [approveSponsorAd]);
+
+	const handleForceApprove = useCallback(async () => {
+		if (!pendingApproveId) return;
+		await approveSponsorAd(pendingApproveId, true);
+		setForceApproveModalOpen(false);
+		setPendingApproveId(null);
+	}, [pendingApproveId, approveSponsorAd]);
+
+	const handleCloseForceApproveModal = useCallback(() => {
+		setForceApproveModalOpen(false);
+		setPendingApproveId(null);
+	}, []);
 
 	const handleOpenRejectModal = useCallback((sponsorAd: SponsorAd) => {
 		setSelectedSponsorAd(sponsorAd);
@@ -180,6 +201,40 @@ export default function AdminSponsorshipsPage() {
 				onConfirm={handleRejectConfirm}
 				onClose={handleCloseRejectModal}
 			/>
+
+			{/* Force Approve Modal */}
+			<Modal
+				isOpen={forceApproveModalOpen}
+				onClose={handleCloseForceApproveModal}
+				size="md"
+			>
+				<ModalContent>
+					<ModalHeader className="flex items-center gap-2">
+						<AlertTriangle className="w-5 h-5 text-amber-500" />
+						{t('FORCE_APPROVE_TITLE')}
+					</ModalHeader>
+					<ModalBody>
+						<p className="text-gray-600 dark:text-gray-400">
+							{t('FORCE_APPROVE_MESSAGE')}
+						</p>
+					</ModalBody>
+					<ModalFooter>
+						<Button
+							variant="light"
+							onPress={handleCloseForceApproveModal}
+						>
+							{t('CANCEL')}
+						</Button>
+						<Button
+							color="warning"
+							onPress={handleForceApprove}
+							isLoading={isSubmitting}
+						>
+							{t('FORCE_APPROVE')}
+						</Button>
+					</ModalFooter>
+				</ModalContent>
+			</Modal>
 		</div>
 	);
 }

@@ -23,8 +23,8 @@ const TABLE_ROW = 'px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transiti
 const ICON_PLACEHOLDER = 'w-12 h-12 bg-linear-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center text-white';
 
 const STATUS_CHIP_COLORS: Record<SponsorAdStatus, 'warning' | 'primary' | 'success' | 'danger' | 'default'> = {
+	pending_payment: 'default',
 	pending: 'warning',
-	approved: 'primary',
 	active: 'success',
 	rejected: 'danger',
 	expired: 'default',
@@ -131,8 +131,25 @@ function SponsorRow({
 	};
 
 	const status = sponsorAd.status as SponsorAdStatus;
-	const canApproveReject = status === 'pending';
-	const canCancel = status === 'pending' || status === 'approved' || status === 'active';
+
+	// Button visibility logic based on new flow:
+	// pending_payment -> pending (after payment) -> active (after admin approval)
+	const canApproveReject = status === 'pending_payment' || status === 'pending';
+	const canCancel = status === 'pending_payment' || status === 'pending' || status === 'active';
+	const canDelete = status === 'rejected' || status === 'expired' || status === 'cancelled';
+
+	// Format status for display
+	const getStatusLabel = (s: SponsorAdStatus) => {
+		const labels: Record<SponsorAdStatus, string> = {
+			pending_payment: 'Awaiting Payment',
+			pending: 'Pending Review',
+			active: 'Active',
+			rejected: 'Rejected',
+			expired: 'Expired',
+			cancelled: 'Cancelled',
+		};
+		return labels[s] || s;
+	};
 
 	return (
 		<div className={TABLE_ROW}>
@@ -193,10 +210,10 @@ function SponsorRow({
 						variant="flat"
 						size="sm"
 					>
-						{status.charAt(0).toUpperCase() + status.slice(1)}
+						{getStatusLabel(status)}
 					</Chip>
 
-					{/* Approve/Reject buttons for pending */}
+					{/* Approve/Reject buttons for pending_payment and pending */}
 					{canApproveReject && (
 						<>
 							<Button
@@ -236,17 +253,19 @@ function SponsorRow({
 						</Button>
 					)}
 
-					{/* Delete button */}
-					<Button
-						size="sm"
-						color={isConfirmingDelete ? 'danger' : 'default'}
-						variant="light"
-						onPress={() => onDelete(sponsorAd.id)}
-						isDisabled={isSubmitting}
-						startContent={<Trash2 className="w-4 h-4" />}
-					>
-						{isConfirmingDelete ? t('CONFIRM_DELETE') : ''}
-					</Button>
+					{/* Delete button only for terminal states */}
+					{canDelete && (
+						<Button
+							size="sm"
+							color={isConfirmingDelete ? 'danger' : 'default'}
+							variant="light"
+							onPress={() => onDelete(sponsorAd.id)}
+							isDisabled={isSubmitting}
+							startContent={<Trash2 className="w-4 h-4" />}
+						>
+							{isConfirmingDelete ? t('CONFIRM_DELETE') : ''}
+						</Button>
+					)}
 				</div>
 			</div>
 		</div>

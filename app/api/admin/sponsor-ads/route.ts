@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
 		const intervalParam = searchParams.get("interval");
 
 		// Only include status/interval if they are valid values (not empty string or "all")
-		const validStatuses = ["pending", "approved", "rejected", "active", "expired", "cancelled"];
+		const validStatuses = ["pending_payment", "pending", "rejected", "active", "expired", "cancelled"];
 		const validIntervals = ["weekly", "monthly"];
 
 		const queryParams = {

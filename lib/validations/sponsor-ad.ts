@@ -2,8 +2,8 @@ import { z } from "zod";
 
 // ######################### Sponsor Ad Status & Interval #########################
 export const sponsorAdStatuses = [
+	"pending_payment",
 	"pending",
-	"approved",
 	"rejected",
 	"active",
 	"expired",

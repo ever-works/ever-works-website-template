@@ -3,7 +3,7 @@
 import type { SponsorAd } from '@/lib/db/schema';
 
 // Status and Interval types
-export type SponsorAdStatus = 'pending' | 'approved' | 'rejected' | 'active' | 'expired' | 'cancelled';
+export type SponsorAdStatus = 'pending_payment' | 'pending' | 'rejected' | 'active' | 'expired' | 'cancelled';
 export type SponsorAdIntervalType = 'weekly' | 'monthly';
 
 // ######################### Request Types #########################
@@ -82,8 +82,8 @@ export interface SponsorAdListOptions {
 export interface SponsorAdStats {
 	overview: {
 		total: number;
+		pendingPayment: number;
 		pending: number;
-		approved: number;
 		active: number;
 		rejected: number;
 		expired: number;

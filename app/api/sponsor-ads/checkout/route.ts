@@ -104,12 +104,12 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Check if sponsor ad is approved
-		if (sponsorAd.status !== SponsorAdStatus.APPROVED) {
+		// Check if sponsor ad is awaiting payment
+		if (sponsorAd.status !== SponsorAdStatus.PENDING_PAYMENT) {
 			return NextResponse.json(
 				{
 					success: false,
-					error: `Sponsor ad must be approved before payment. Current status: ${sponsorAd.status}`
+					error: `Sponsor ad is not awaiting payment. Current status: ${sponsorAd.status}`
 				},
 				{ status: 400 }
 			);
