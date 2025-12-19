@@ -94,7 +94,7 @@ export function SponsorCard({
 								<SponsorBadge variant="compact" size="sm" showIcon={false} />
 							</div>
 							{currentSponsor.itemCategory && (
-								<span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium rounded-full bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300 capitalize">
+								<span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium rounded-full bg-theme-primary-10 text-theme-primary dark:bg-theme-primary-900/30 dark:text-theme-primary capitalize">
 									{currentSponsor.itemCategory}
 								</span>
 							)}
@@ -162,10 +162,10 @@ export function SponsorCard({
 					</CardHeader>
 
 					<CardBody className="pt-0 pb-4">
-						{/* Category - styled to match regular Item cards */}
+						{/* Category - styled to match regular Item cards using theme colors */}
 						{currentSponsor.itemCategory && (
 							<div className="mb-2">
-								<span className="inline-block bg-blue-50 px-3 py-1.5 text-xs font-semibold rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 dark:from-blue-900/30 dark:to-indigo-900/30 dark:text-blue-300 border border-blue-200/50 dark:border-blue-700/30 capitalize shadow-sm">
+								<span className="inline-block bg-theme-primary-10 px-3 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-theme-primary-100 to-theme-primary-100 text-theme-primary dark:from-theme-primary-900/30 dark:to-theme-primary-900/30 dark:text-theme-primary border border-theme-primary-10 dark:border-gray-600/30 capitalize shadow-sm">
 									{currentSponsor.itemCategory}
 								</span>
 							</div>
@@ -176,6 +176,20 @@ export function SponsorCard({
 							<p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300 transition-colors duration-300 group-hover:text-gray-700 dark:group-hover:text-gray-200 font-medium line-clamp-2">
 								{currentSponsor.itemDescription}
 							</p>
+						)}
+
+						{/* Tags - styled to match regular Item cards */}
+						{currentSponsor.itemTags && Array.isArray(currentSponsor.itemTags) && currentSponsor.itemTags.length > 0 && (
+							<div className="flex flex-wrap gap-0.5 mt-2">
+								{currentSponsor.itemTags.slice(0, 4).map((tag, index) => (
+									<span
+										key={`tag-${index}`}
+										className="text-xs text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 font-medium px-1 py-0.5 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300"
+									>
+										#{tag}
+									</span>
+								))}
+							</div>
 						)}
 
 						{/* Rotation indicator */}

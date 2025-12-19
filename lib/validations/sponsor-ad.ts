@@ -19,6 +19,7 @@ export const createSponsorAdSchema = z.object({
 	itemIconUrl: z.string().url("Invalid URL format").nullish().or(z.literal("")),
 	itemCategory: z.string().nullish(),
 	itemDescription: z.string().max(500).nullish(),
+	itemTags: z.array(z.string()).nullish(),
 	interval: z.enum(sponsorAdIntervals),
 	paymentProvider: z.string().min(1, "Payment provider is required"),
 });

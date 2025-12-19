@@ -1,0 +1,1 @@
+ALTER TABLE "sponsor_ads" ADD COLUMN "item_tags" jsonb;

@@ -616,6 +616,7 @@ export const sponsorAds = pgTable("sponsor_ads", {
   itemIconUrl: text("item_icon_url"),
   itemCategory: text("item_category"),
   itemDescription: text("item_description"),
+  itemTags: jsonb("item_tags").$type<string[]>(),
 
   // Sponsorship details
   status: text("status", {
