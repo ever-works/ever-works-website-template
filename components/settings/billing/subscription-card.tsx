@@ -62,6 +62,13 @@ const getStatusConfig = (status: string) => {
 				icon: AlertCircle,
 				label: 'Cancelled'
 			};
+		case 'expired':
+			return {
+				color: 'text-red-600 dark:text-red-400',
+				bgColor: 'bg-red-50 dark:bg-red-900/20',
+				icon: AlertCircle,
+				label: 'Expired'
+			};
 		default:
 			return {
 				color: 'text-slate-600 dark:text-slate-400',

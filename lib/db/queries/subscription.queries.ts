@@ -1,4 +1,4 @@
-import { and, eq, desc, asc, lte, count, gte, sql } from 'drizzle-orm';
+import { and, eq, desc, asc, lte, count, gte, sql, lt } from 'drizzle-orm';
 import { db } from '../drizzle';
 import {
 	subscriptions,
@@ -12,6 +12,7 @@ import {
 	type SubscriptionWithUser
 } from '../schema';
 import { PaymentPlan } from '@/lib/constants';
+import { getEffectivePlan } from '@/lib/utils/plan-expiration.utils';
 
 /**
  * Get active subscription for a user
@@ -249,13 +250,88 @@ export async function hasActiveSubscription(userId: string): Promise<boolean> {
 }
 
 /**
- * Get user's current plan
+ * Get user's current plan (checks expiration)
  * @param userId - User ID
- * @returns Plan ID (defaults to FREE if no active subscription)
+ * @returns Effective plan ID (defaults to FREE if no active subscription or expired)
  */
 export async function getUserPlan(userId: string): Promise<string> {
 	const subscription = await getUserActiveSubscription(userId);
-	return subscription?.planId || PaymentPlan.FREE;
+	if (!subscription) return PaymentPlan.FREE;
+
+	// Use expiration utility to get effective plan
+	return getEffectivePlan(subscription.planId, subscription.endDate, subscription.status);
+}
+
+/**
+ * Get user's current plan with full expiration details
+ * @param userId - User ID
+ * @returns Object with plan ID, effective plan, and expiration info
+ */
+export async function getUserPlanWithExpiration(userId: string): Promise<{
+	planId: string;
+	effectivePlan: string;
+	isExpired: boolean;
+	expiresAt: Date | null;
+	status: string | null;
+	subscriptionId: string | null;
+}> {
+	const subscription = await getUserActiveSubscription(userId);
+
+	if (!subscription) {
+		return {
+			planId: PaymentPlan.FREE,
+			effectivePlan: PaymentPlan.FREE,
+			isExpired: false,
+			expiresAt: null,
+			status: null,
+			subscriptionId: null
+		};
+	}
+
+	const effectivePlan = getEffectivePlan(subscription.planId, subscription.endDate, subscription.status);
+	const isExpired = effectivePlan !== subscription.planId && subscription.planId !== PaymentPlan.FREE;
+
+	return {
+		planId: subscription.planId,
+		effectivePlan,
+		isExpired,
+		expiresAt: subscription.endDate || null,
+		status: subscription.status,
+		subscriptionId: subscription.id
+	};
+}
+
+/**
+ * Get subscriptions that have expired (past endDate but still marked as active)
+ * @returns Array of subscriptions that need to be marked as expired
+ */
+export async function getExpiredActiveSubscriptions(): Promise<Subscription[]> {
+	const now = new Date();
+
+	return await db
+		.select()
+		.from(subscriptions)
+		.where(and(eq(subscriptions.status, SubscriptionStatus.ACTIVE), lt(subscriptions.endDate, now)))
+		.orderBy(asc(subscriptions.endDate));
+}
+
+/**
+ * Update expired subscriptions to expired status
+ * @returns Number of subscriptions updated
+ */
+export async function updateExpiredSubscriptionsStatus(): Promise<number> {
+	const now = new Date();
+
+	const result = await db
+		.update(subscriptions)
+		.set({
+			status: SubscriptionStatus.EXPIRED,
+			updatedAt: now
+		})
+		.where(and(eq(subscriptions.status, SubscriptionStatus.ACTIVE), lt(subscriptions.endDate, now)))
+		.returning();
+
+	return result.length;
 }
 
 // ===================== Subscription History Queries =====================

@@ -1,11 +1,11 @@
-/**
- * Subscription Service
- * Handles all subscription-related business logic
- */
-
 import * as queries from '@/lib/db/queries';
 import { SubscriptionStatus, type Subscription, type NewSubscription } from '@/lib/db/schema';
 import { PaymentPlan, PaymentProvider } from '../constants';
+import {
+	getDaysUntilExpiration,
+	isInExpirationWarningPeriod,
+	formatExpirationMessage
+} from '@/lib/utils/plan-expiration.utils';
 
 export interface CreateSubscriptionData {
 	userId: string;
@@ -37,6 +37,9 @@ export interface UpdateSubscriptionData {
 }
 
 export class SubscriptionService {
+	/**
+	 * Create a new subscription
+	 */
 	/**
 	 * Create a new subscription
 	 */
@@ -121,7 +124,88 @@ export class SubscriptionService {
 	async getUserPlan(userId: string): Promise<string> {
 		return await queries.getUserPlan(userId);
 	}
+	/**
+	 * Get user's current plan with full expiration details
+	 */
+	async getUserPlanWithExpiration(userId: string): Promise<{
+		planId: string;
+		effectivePlan: string;
+		isExpired: boolean;
+		expiresAt: Date | null;
+		daysUntilExpiration: number | null;
+		isInWarningPeriod: boolean;
+		canAccessPlanFeatures: boolean;
+		warningMessage: string | null;
+		status: string | null;
+	}> {
+		const planData = await queries.getUserPlanWithExpiration(userId);
+		const daysUntil = getDaysUntilExpiration(planData.expiresAt);
+		const isInWarningPeriod = isInExpirationWarningPeriod(planData.expiresAt);
+		const planName = this.getPlanDisplayName(planData.planId);
 
+		return {
+			planId: planData.planId,
+			effectivePlan: planData.effectivePlan,
+			isExpired: planData.isExpired,
+			expiresAt: planData.expiresAt,
+			daysUntilExpiration: daysUntil,
+			isInWarningPeriod,
+			canAccessPlanFeatures: !planData.isExpired,
+			warningMessage: formatExpirationMessage(planName, daysUntil, planData.isExpired),
+			status: planData.status
+		};
+	}
+
+	/**
+	 * Process expired subscriptions - update status and prepare for notifications
+	 * Returns list of subscriptions that were updated
+	 */
+	async processExpiredSubscriptions(): Promise<{
+		processed: number;
+		subscriptions: Subscription[];
+		errors: string[];
+	}> {
+		const errors: string[] = [];
+
+		try {
+			// Get all subscriptions that are active but past their end date
+			const expiredSubscriptions = await queries.getExpiredActiveSubscriptions();
+
+			if (expiredSubscriptions.length === 0) {
+				return { processed: 0, subscriptions: [], errors: [] };
+			}
+
+			// Update their status to expired
+			const updatedCount = await queries.updateExpiredSubscriptionsStatus();
+
+			// Log the changes for each subscription
+			for (const subscription of expiredSubscriptions) {
+				try {
+					await queries.logSubscriptionChange(
+						subscription.id,
+						'subscription_expired',
+						SubscriptionStatus.ACTIVE,
+						SubscriptionStatus.EXPIRED,
+						subscription.planId,
+						PaymentPlan.FREE,
+						'Subscription expired - end date passed',
+						{ source: 'expiration_cron', endDate: subscription.endDate }
+					);
+				} catch (error) {
+					errors.push(`Failed to log change for subscription ${subscription.id}: ${error}`);
+				}
+			}
+
+			return {
+				processed: updatedCount,
+				subscriptions: expiredSubscriptions,
+				errors
+			};
+		} catch (error) {
+			errors.push(`Failed to process expired subscriptions: ${error}`);
+			return { processed: 0, subscriptions: [], errors };
+		}
+	}
 	/**
 	 * Get subscription history
 	 */
@@ -343,6 +427,5 @@ export class SubscriptionService {
 		return failedCount;
 	}
 }
-
 // Export singleton instance
 export const subscriptionService = new SubscriptionService();
