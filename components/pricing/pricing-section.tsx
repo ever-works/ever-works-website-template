@@ -9,6 +9,7 @@ import { PricingConfig } from '@/lib/content';
 import { usePricingSection } from '@/hooks/use-pricing-section';
 import { useDisclosure } from '@heroui/react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 interface PricingSectionProps {
 	onSelectPlan?: (plan: PaymentPlan) => void;
@@ -189,14 +190,15 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 					</div>
 				</div>
 
-					<div className="relative group">
+				<div className="relative group">
 					{/* Card Glow Effect */}
 					<div className="absolute inset-0 bg-linear-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-600/20 dark:to-pink-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
 
 					<div
 						className={cn(
 							'relative transition-all',
-							selectedPlan === PaymentPlan.STANDARD && 'scale-105 ring-2 ring-purple-500/50 dark:ring-purple-400/50'
+							selectedPlan === PaymentPlan.STANDARD &&
+								'scale-105 ring-2 ring-purple-500/50 dark:ring-purple-400/50'
 						)}
 					>
 						<PlanCard
@@ -315,9 +317,13 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 			<div className="mt-16 mb-12 max-w-4xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
 				<div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/40 dark:via-indigo-950/40 dark:to-purple-950/40 border border-blue-200/50 dark:border-blue-800/50 p-8 md:p-10">
 					{/* Background pattern */}
-					<div className="absolute inset-0 opacity-5 dark:opacity-10" style={{
-						backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"
-					}} />
+					<div
+						className="absolute inset-0 opacity-5 dark:opacity-10"
+						style={{
+							backgroundImage:
+								"url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"
+						}}
+					/>
 
 					<div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
 						{/* Icon */}
@@ -336,9 +342,7 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 							<h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3">
 								{t('SPONSOR_TITLE')}
 							</h3>
-							<p className="text-gray-600 dark:text-gray-300 mb-4 max-w-xl">
-								{t('SPONSOR_DESCRIPTION')}
-							</p>
+							<p className="text-gray-600 dark:text-gray-300 mb-4 max-w-xl">{t('SPONSOR_DESCRIPTION')}</p>
 							<div className="flex flex-wrap items-center gap-4 justify-center md:justify-start">
 								<div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
 									<Check className="w-4 h-4 text-green-500" />
@@ -358,10 +362,14 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 						{/* Pricing & CTA */}
 						<div className="shrink-0 text-center">
 							<div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl border border-gray-200/50 dark:border-gray-700/50">
-								<div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('SPONSOR_STARTING_FROM')}</div>
+								<div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+									{t('SPONSOR_STARTING_FROM')}
+								</div>
 								<div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
 									${SponsorAdPricing.WEEKLY / 100}
-									<span className="text-base font-normal text-gray-500 dark:text-gray-400">/{t('SPONSOR_WEEK')}</span>
+									<span className="text-base font-normal text-gray-500 dark:text-gray-400">
+										/{t('SPONSOR_WEEK')}
+									</span>
 								</div>
 								<div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
 									{t('SPONSOR_OR')} ${SponsorAdPricing.MONTHLY / 100}/{t('SPONSOR_MONTH')}
@@ -429,8 +437,8 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 						}
 					].map((item, index) => (
 						<div
-						key={`trust-item-${item.title}-${index}`}
-						className="flex flex-col items-center gap-3 p-6 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-xs border border-gray-200/30 dark:border-gray-700/30 hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 hover:scale-105"
+							key={`trust-item-${item.title}-${index}`}
+							className="flex flex-col items-center gap-3 p-6 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-xs border border-gray-200/30 dark:border-gray-700/30 hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 hover:scale-105"
 						>
 							<div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
 								<item.icon className="w-6 h-6 text-gray-600 dark:text-gray-400" />
@@ -441,8 +449,8 @@ export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: 
 					))}
 				</div>
 			</div>
-			<PaymentFlowSelectorModal 
-				selectedFlow={selectedFlow} 
+			<PaymentFlowSelectorModal
+				selectedFlow={selectedFlow}
 				isOpen={isModalOpen}
 				onClose={onCloseSelectorModal}
 				onSelect={handleFlowSelect}
