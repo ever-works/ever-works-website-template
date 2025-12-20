@@ -80,6 +80,7 @@
 		"SHOW_MORE": "Show {count} more",
 		"MORE": "More",
 		"CATEGORY": "Categories",
+		"COLLECTION": "Collections",
 		"ITEM": "Item",
 		"ITEMS": "Items",
 		"SUBMIT": "Submit",
@@ -87,8 +88,12 @@
 		"TAG": "Tags",
 		"BROWSE_CATEGORIES": "Browse Categories",
 		"BROWSE_TAGS": "Browse Tags",
+		"BROWSE_COLLECTIONS": "Browse Collections",
 		"CATEGORIES_DESCRIPTION": "Explore our collection of categories to find what you're looking for.",
 		"TAGS_DESCRIPTION": "Explore our collection of tags to find what you're looking for.",
+		"COLLECTIONS_DESCRIPTION": "Explore our curated collections to discover items organized by theme.",
+		"EXPLORE_BY_COLLECTIONS": "Explore by Collections",
+		"COLLECTION_ITEMS": "{count, plural, one {# item} other {# items}}",
 		"PRICING": "Pricing",
 		"BLOG": "Blog",
 		"HELP": "Help",
@@ -183,9 +188,7 @@
 		"FAVORITE_ITEMS": "favorite items",
 		"EXPLORE_ITEMS": "Explore Items",
 		"VIEW_DETAILS": "View Details",
-		"ADDED_ON": "Added",
-		"OUR_MOST_POPULAR_ITEMS": "Our most popular items",
-		"SORT_POPULAR_ITEMS": "Sort popular items"
+		"ADDED_ON": "Added"
 	},
 	"survey": {
 		"SURVEYS": "Surveys",
@@ -549,6 +552,54 @@
 					"GENERIC_ERROR": "An error occurred while updating your password. Please try again."
 				}
 			}
+		},
+		"THEME_COLORS_PAGE": {
+			"TITLE": "Theme & Appearance",
+			"BACK_TO_SETTINGS": "Back to Settings",
+			"DESCRIPTION": "Choose a visual theme for your profile. Each theme comes with its own color palette and style to make your profile uniquely yours.",
+			"CHOOSE_THEME": "Choose Visual Theme",
+			"CHOOSE_THEME_DESC": "Select a theme that best represents your style and brand",
+			"UNABLE_TO_LOAD_THEMES": "Unable to load themes"
+		},
+		"PORTFOLIO_PAGE": {
+			"TITLE": "Portfolio Management",
+			"BACK_TO_SETTINGS": "Back to Settings",
+			"DESCRIPTION": "Add, edit, and organize your portfolio projects. Showcase your best work to potential clients and collaborators.",
+			"ADD_NEW_PROJECT": "Add New Project",
+			"YOUR_PROJECTS": "Your Projects",
+			"FORM": {
+				"PROJECT_TITLE": "Project Title",
+				"PROJECT_TITLE_PLACEHOLDER": "Enter project title",
+				"IMAGE_URL": "Image URL",
+				"IMAGE_URL_PLACEHOLDER": "https://example.com/image.jpg",
+				"DESCRIPTION": "Description",
+				"DESCRIPTION_PLACEHOLDER": "Describe your project...",
+				"PROJECT_URL": "Project URL",
+				"PROJECT_URL_PLACEHOLDER": "https://yourproject.com",
+				"TAGS": "Tags (comma separated)",
+				"TAGS_PLACEHOLDER": "React, TypeScript, Next.js",
+				"FEATURED_PROJECT": "Featured Project",
+				"ADD_PROJECT": "Add Project"
+			},
+			"VALIDATION": {
+				"TITLE_REQUIRED": "Project title is required.",
+				"IMAGE_URL_REQUIRED": "Image URL is required.",
+				"IMAGE_URL_INVALID": "Please enter a valid image URL.",
+				"DESCRIPTION_REQUIRED": "Description is required.",
+				"PROJECT_URL_REQUIRED": "Project URL is required.",
+				"PROJECT_URL_INVALID": "Please enter a valid project URL."
+			},
+			"SUCCESS": {
+				"PROJECT_ADDED": "Project added"
+			},
+			"PROJECT_ITEM": {
+				"FEATURED": "Featured",
+				"VIEW_PROJECT": "View project",
+				"EDIT_PROJECT": "Edit project",
+				"EDIT_PROJECT_ALERT": "Edit project: {title}",
+				"DELETE_PROJECT": "Delete project"
+			},
+			"DELETE_CONFIRM": "Are you sure you want to delete \"{title}\"?"
 		}
 	},
 	"newsletter": {
@@ -714,6 +765,9 @@
 		"GO_PREMIUM": "Subscribe",
 		"SUBMIT_FOR_FREE": "Submit for Free",
 		"SUBSCRIBE_NOW": "Subscribe Now",
+		"SELECT_FREE": "Select Free",
+		"SELECT_STANDARD": "Select Standard",
+		"SELECT_PREMIUM": "Select Premium",
 		"SELECTED": "Selected",
 		"GREAT_CHOICE": "Great choice! You selected the",
 		"PLAN": "plan",
@@ -2587,14 +2641,7 @@
 			"FAILED_TO_LOAD_VERIFICATION": "Failed to load security verification. Please refresh the page.",
 			"VERIFICATION_EXPIRED": "Security verification expired. Please complete it again.",
 			"VERIFYING": "Verifying...",
-			"PLEASE_COMPLETE_VERIFICATION": "Please complete the security verification",
-			"LOGIN_FAILED": "Login Failed",
-			"ACCOUNT_NOT_FOUND": "No account found with this email address. Please check your email or create a new account.",
-			"INVALID_PASSWORD": "Invalid password. Please check your password and try again.",
-			"PROFILE_NOT_FOUND": "Account profile not found. Please contact support.",
-			"GENERIC_ERROR_MESSAGE": "An error occurred. Please try again.",
-			"RATE_LIMITED": "Too many attempts. Please wait a few minutes before trying again.",
-			"USE_OAUTH_PROVIDER": "This account uses social login. Please sign in with Google or GitHub."
+			"PLEASE_COMPLETE_VERIFICATION": "Please complete the security verification"
 		},
 		"FORGOT_PASSWORD_PAGE": {
 			"TITLE": "Forgot Password?",

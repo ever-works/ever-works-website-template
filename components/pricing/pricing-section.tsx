@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { PlanCard } from './plan-card';
 import { Check, ArrowRight, Zap, Shield, Megaphone } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -14,9 +13,10 @@ import Link from 'next/link';
 interface PricingSectionProps {
 	onSelectPlan?: (plan: PaymentPlan) => void;
 	isReview?: boolean;
+	initialSelectedPlan?: PaymentPlan | null;
 }
 
-export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) {
+export function PricingSection({ onSelectPlan, isReview, initialSelectedPlan }: PricingSectionProps) {
 	const { isOpen: isModalOpen, onOpen: onOpenSelectorModal, onClose: onCloseSelectorModal } = useDisclosure();
 
 	const {
@@ -49,7 +49,8 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 		premiumPlanFeatures,
 		loginModal
 	} = usePricingSection({
-		onSelectPlan: onSelectPlan
+		onSelectPlan: onSelectPlan,
+		initialSelectedPlan: initialSelectedPlan
 	});
 
 	return (
@@ -151,26 +152,33 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							isSelected={selectedPlan === PaymentPlan.FREE}
 							onSelect={handleSelectPlan}
 							actionText={
-								error
-									? tBilling('ERROR_TRY_AGAIN')
-									: !user
-										? getNotLoggedInActionText(PaymentPlan.FREE)
-										: processingPlan === FREE?.id && isLoading
-											? tBilling('PROCESSING')
-											: getActionText(PaymentPlan.FREE)
+								isReview
+									? t('SELECT_FREE')
+									: error
+										? tBilling('ERROR_TRY_AGAIN')
+										: !user
+											? getNotLoggedInActionText(PaymentPlan.FREE)
+											: processingPlan === FREE?.id && isLoading
+												? tBilling('PROCESSING')
+												: getActionText(PaymentPlan.FREE)
 							}
-							actionHref="/submit"
+							actionHref={isReview ? undefined : '/submit'}
 							isLoading={processingPlan === FREE?.id && isLoading}
-							isButton={isButton}
+							isButton={isReview ? false : isButton}
 							onClick={() => {
 								if (!user?.id) {
 									loginModal?.onOpen('Please sign in to continue with your purchase.');
 									return;
 								}
+								// In review mode (submit form), just select the plan
+								if (isReview) {
+									handleSelectPlan(PaymentPlan.FREE);
+									return;
+								}
 								handleCheckout(FREE as PricingConfig);
 							}}
 							selectedFlow={selectedFlow}
-							onFlowChange={handleFlowSelect}
+							onFlowChange={isReview ? undefined : handleFlowSelect}
 						>
 							{FREE && getSavingsText(FREE) && (
 								<div className="text-green-600 dark:text-green-400 text-sm font-medium">
@@ -187,8 +195,8 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 
 					<div
 						className={cn(
-							'relative transition-all scale-105',
-							selectedPlan === PaymentPlan.STANDARD && 'ring-2 ring-purple-500/50 dark:ring-purple-400/50'
+							'relative transition-all',
+							selectedPlan === PaymentPlan.STANDARD && 'scale-105 ring-2 ring-purple-500/50 dark:ring-purple-400/50'
 						)}
 					>
 						<PlanCard
@@ -198,31 +206,38 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							priceUnit={billingInterval === PaymentInterval.YEARLY ? '/year' : '/month'}
 							features={standardPlanFeatures}
 							isPopular={true}
-							isSelected={selectedPlan === STANDARD?.id}
+							isSelected={selectedPlan === PaymentPlan.STANDARD}
 							onSelect={handleSelectPlan}
 							actionText={
-								error
-									? tBilling('ERROR_TRY_AGAIN')
-									: !user
-										? getNotLoggedInActionText(PaymentPlan.STANDARD)
-										: processingPlan === STANDARD?.id && isLoading
-											? tBilling('PROCESSING')
-											: getActionText(PaymentPlan.STANDARD)
+								isReview
+									? t('SELECT_STANDARD')
+									: error
+										? tBilling('ERROR_TRY_AGAIN')
+										: !user
+											? getNotLoggedInActionText(PaymentPlan.STANDARD)
+											: processingPlan === STANDARD?.id && isLoading
+												? tBilling('PROCESSING')
+												: getActionText(PaymentPlan.STANDARD)
 							}
 							actionVariant="default"
-							actionHref="/submit"
+							actionHref={isReview ? undefined : '/submit'}
 							isLoading={processingPlan === STANDARD?.id && isLoading}
-							isButton={isButton}
+							isButton={isReview ? false : isButton}
 							onClick={() => {
 								if (!user?.id) {
 									loginModal.onOpen('Please sign in to continue with your purchase.');
 									return;
 								}
+								// In review mode (submit form), just select the plan
+								if (isReview) {
+									handleSelectPlan(PaymentPlan.STANDARD);
+									return;
+								}
 								handleCheckout(STANDARD as PricingConfig);
 							}}
 							selectedFlow={selectedFlow}
-							onFlowChange={handleFlowSelect}
-							onOpenModal={onOpenSelectorModal}
+							onFlowChange={isReview ? undefined : handleFlowSelect}
+							onOpenModal={isReview ? undefined : onOpenSelectorModal}
 						>
 							{getSavingsText(STANDARD as PricingConfig) && (
 								<div className="text-center">
@@ -251,31 +266,38 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 							price={`${config.pricing?.currency}${PREMIUM ? calculatePrice(PREMIUM) : 0}`}
 							priceUnit={billingInterval === PaymentInterval.YEARLY ? '/year' : '/month'}
 							features={premiumPlanFeatures}
-							isSelected={selectedPlan === PREMIUM?.id}
+							isSelected={selectedPlan === PaymentPlan.PREMIUM}
 							onSelect={handleSelectPlan}
 							actionText={
-								error
-									? tBilling('ERROR_TRY_AGAIN')
-									: !user
-										? getNotLoggedInActionText(PaymentPlan.PREMIUM)
-										: processingPlan === PREMIUM?.id && isLoading
-											? tBilling('PROCESSING')
-											: getActionText(PaymentPlan.PREMIUM)
+								isReview
+									? t('SELECT_PREMIUM')
+									: error
+										? tBilling('ERROR_TRY_AGAIN')
+										: !user
+											? getNotLoggedInActionText(PaymentPlan.PREMIUM)
+											: processingPlan === PREMIUM?.id && isLoading
+												? tBilling('PROCESSING')
+												: getActionText(PaymentPlan.PREMIUM)
 							}
 							actionVariant="default"
-							actionHref="/submit"
-							isButton={isButton}
+							actionHref={isReview ? undefined : '/submit'}
+							isButton={isReview ? false : isButton}
 							isLoading={processingPlan === PREMIUM?.id && isLoading}
 							onClick={() => {
 								if (!user?.id) {
 									loginModal.onOpen('Please sign in to continue with your purchase.');
 									return;
 								}
+								// In review mode (submit form), just select the plan
+								if (isReview) {
+									handleSelectPlan(PaymentPlan.PREMIUM);
+									return;
+								}
 								handleCheckout(PREMIUM as PricingConfig);
 							}}
 							selectedFlow={selectedFlow}
-							onFlowChange={handleFlowSelect}
-							onOpenModal={onOpenSelectorModal}
+							onFlowChange={isReview ? undefined : handleFlowSelect}
+							onOpenModal={isReview ? undefined : onOpenSelectorModal}
 						>
 							{getSavingsText(PREMIUM as PricingConfig) && (
 								<div className="text-center">

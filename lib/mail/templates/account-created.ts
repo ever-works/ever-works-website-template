@@ -18,7 +18,7 @@ export const getAccountCreatedTemplate = (data: AccountCreatedData) => {
     companyUrl = "https://ever.works",
     supportEmail = "support@ever.works",
     loginUrl = `${appUrl || ''}/auth/signin`,
-    dashboardUrl = `${appUrl || ''}/dashboard`
+    dashboardUrl = `${appUrl || ''}/client/dashboard`
   } = data;
 
   const subject = `🎉 Welcome to ${companyName}! Your account has been created`;
