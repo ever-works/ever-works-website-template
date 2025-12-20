@@ -129,3 +129,11 @@ export enum SubmissionStatus {
 	PUBLISHED = 'published',
 	ARCHIVED = 'archived'
 }
+
+// ============================================
+// SPONSOR ADS PRICING (in cents)
+// ============================================
+export enum SponsorAdPricing {
+	WEEKLY = 10000,   // $100.00
+	MONTHLY = 30000   // $300.00
+}
