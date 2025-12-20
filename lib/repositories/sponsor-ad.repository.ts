@@ -81,12 +81,18 @@ export async function getSponsorAdsByUserId(userId: string): Promise<SponsorAd[]
 /**
  * Get active sponsor ads (for display)
  */
-export async function getActiveSponsorAds(): Promise<SponsorAd[]> {
-	return await db
+export async function getActiveSponsorAds(limit?: number): Promise<SponsorAd[]> {
+	const query = db
 		.select()
 		.from(sponsorAds)
 		.where(eq(sponsorAds.status, SponsorAdStatus.ACTIVE))
 		.orderBy(desc(sponsorAds.createdAt));
+
+	if (limit && limit > 0) {
+		return await query.limit(limit);
+	}
+
+	return await query;
 }
 
 /**
@@ -142,10 +148,7 @@ export async function getSponsorAdsPaginated(
 
 	if (search) {
 		conditions.push(
-			or(
-				like(sponsorAds.itemName, `%${search}%`),
-				like(sponsorAds.itemSlug, `%${search}%`)
-			)
+			like(sponsorAds.itemSlug, `%${search}%`)
 		);
 	}
 
@@ -218,27 +221,6 @@ export async function updateSponsorAd(
 		.update(sponsorAds)
 		.set({
 			...data,
-			updatedAt: new Date(),
-		})
-		.where(eq(sponsorAds.id, id))
-		.returning();
-
-	return result[0] || null;
-}
-
-/**
- * Approve sponsor ad
- */
-export async function approveSponsorAd(
-	id: string,
-	reviewedBy: string
-): Promise<SponsorAd | null> {
-	const result = await db
-		.update(sponsorAds)
-		.set({
-			status: SponsorAdStatus.APPROVED,
-			reviewedBy,
-			reviewedAt: new Date(),
 			updatedAt: new Date(),
 		})
 		.where(eq(sponsorAds.id, id))
@@ -371,18 +353,28 @@ export async function getSponsorAdStats(): Promise<SponsorAdStats> {
 	// Build stats object
 	const overview = {
 		total: 0,
+		pendingPayment: 0,
 		pending: 0,
-		approved: 0,
 		active: 0,
 		rejected: 0,
 		expired: 0,
 		cancelled: 0,
 	};
 
+	// Map status to overview keys
+	const statusMap: Record<string, keyof typeof overview> = {
+		pending_payment: 'pendingPayment',
+		pending: 'pending',
+		active: 'active',
+		rejected: 'rejected',
+		expired: 'expired',
+		cancelled: 'cancelled',
+	};
+
 	for (const row of statusCounts) {
 		overview.total += row.count;
-		if (row.status && row.status in overview) {
-			overview[row.status as keyof typeof overview] = row.count;
+		if (row.status && statusMap[row.status]) {
+			overview[statusMap[row.status]] = row.count;
 		}
 	}
 
@@ -412,6 +404,7 @@ export async function getSponsorAdStats(): Promise<SponsorAdStats> {
 
 /**
  * Check if user has pending sponsor ad for an item
+ * Checks both PENDING_PAYMENT and PENDING statuses
  */
 export async function hasPendingSponsorAdForItem(
 	userId: string,
@@ -424,7 +417,10 @@ export async function hasPendingSponsorAdForItem(
 			and(
 				eq(sponsorAds.userId, userId),
 				eq(sponsorAds.itemSlug, itemSlug),
-				eq(sponsorAds.status, SponsorAdStatus.PENDING)
+				or(
+					eq(sponsorAds.status, SponsorAdStatus.PENDING_PAYMENT),
+					eq(sponsorAds.status, SponsorAdStatus.PENDING)
+				)
 			)
 		);
 

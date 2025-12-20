@@ -2,8 +2,8 @@ import { z } from "zod";
 
 // ######################### Sponsor Ad Status & Interval #########################
 export const sponsorAdStatuses = [
+	"pending_payment",
 	"pending",
-	"approved",
 	"rejected",
 	"active",
 	"expired",
@@ -15,10 +15,6 @@ export const sponsorAdIntervals = ["weekly", "monthly"] as const;
 // ######################### Create Sponsor Ad Schema #########################
 export const createSponsorAdSchema = z.object({
 	itemSlug: z.string().min(1, "Item slug is required"),
-	itemName: z.string().min(1, "Item name is required"),
-	itemIconUrl: z.string().url("Invalid URL format").optional().or(z.literal("")),
-	itemCategory: z.string().optional(),
-	itemDescription: z.string().max(500).optional(),
 	interval: z.enum(sponsorAdIntervals),
 	paymentProvider: z.string().min(1, "Payment provider is required"),
 });

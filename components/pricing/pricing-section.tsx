@@ -2,13 +2,14 @@
 
 import { Button } from '@/components/ui/button';
 import { PlanCard } from './plan-card';
-import { Check, ArrowRight, Zap, Shield } from 'lucide-react';
+import { Check, ArrowRight, Zap, Shield, Megaphone } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { PaymentInterval, PaymentPlan } from '@/lib/constants';
+import { PaymentInterval, PaymentPlan, SponsorAdPricing } from '@/lib/constants';
 import { PaymentFlowSelectorModal } from '../payment';
 import { PricingConfig } from '@/lib/content';
 import { usePricingSection } from '@/hooks/use-pricing-section';
 import { useDisclosure } from '@heroui/react';
+import Link from 'next/link';
 
 interface PricingSectionProps {
 	onSelectPlan?: (plan: PaymentPlan) => void;
@@ -284,6 +285,72 @@ export function PricingSection({ onSelectPlan, isReview }: PricingSectionProps) 
 								</div>
 							)}
 						</PlanCard>
+					</div>
+				</div>
+			</div>
+
+			{/* Sponsor Ads Block */}
+			<div className="mt-16 mb-12 max-w-4xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+				<div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/40 dark:via-indigo-950/40 dark:to-purple-950/40 border border-blue-200/50 dark:border-blue-800/50 p-8 md:p-10">
+					{/* Background pattern */}
+					<div className="absolute inset-0 opacity-5 dark:opacity-10" style={{
+						backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"
+					}} />
+
+					<div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+						{/* Icon */}
+						<div className="shrink-0">
+							<div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
+								<Megaphone className="w-10 h-10 text-white" />
+							</div>
+						</div>
+
+						{/* Content */}
+						<div className="flex-1 text-center md:text-left">
+							<div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-sm font-medium mb-3">
+								<span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+								{t('SPONSOR_BADGE')}
+							</div>
+							<h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3">
+								{t('SPONSOR_TITLE')}
+							</h3>
+							<p className="text-gray-600 dark:text-gray-300 mb-4 max-w-xl">
+								{t('SPONSOR_DESCRIPTION')}
+							</p>
+							<div className="flex flex-wrap items-center gap-4 justify-center md:justify-start">
+								<div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+									<Check className="w-4 h-4 text-green-500" />
+									<span>{t('SPONSOR_FEATURE_1')}</span>
+								</div>
+								<div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+									<Check className="w-4 h-4 text-green-500" />
+									<span>{t('SPONSOR_FEATURE_2')}</span>
+								</div>
+								<div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+									<Check className="w-4 h-4 text-green-500" />
+									<span>{t('SPONSOR_FEATURE_3')}</span>
+								</div>
+							</div>
+						</div>
+
+						{/* Pricing & CTA */}
+						<div className="shrink-0 text-center">
+							<div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl border border-gray-200/50 dark:border-gray-700/50">
+								<div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('SPONSOR_STARTING_FROM')}</div>
+								<div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+									${SponsorAdPricing.WEEKLY / 100}
+									<span className="text-base font-normal text-gray-500 dark:text-gray-400">/{t('SPONSOR_WEEK')}</span>
+								</div>
+								<div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+									{t('SPONSOR_OR')} ${SponsorAdPricing.MONTHLY / 100}/{t('SPONSOR_MONTH')}
+								</div>
+								<Link href="/sponsor">
+									<Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-2.5 px-6 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg">
+										{t('SPONSOR_CTA')}
+									</Button>
+								</Link>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

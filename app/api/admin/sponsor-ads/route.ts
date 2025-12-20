@@ -82,11 +82,18 @@ export async function GET(request: NextRequest) {
 		}
 
 		// Parse query parameters
+		const statusParam = searchParams.get("status");
+		const intervalParam = searchParams.get("interval");
+
+		// Only include status/interval if they are valid values (not empty string or "all")
+		const validStatuses = ["pending_payment", "pending", "rejected", "active", "expired", "cancelled"];
+		const validIntervals = ["weekly", "monthly"];
+
 		const queryParams = {
 			page: paginationResult.page,
 			limit: paginationResult.limit,
-			status: searchParams.get("status") as SponsorAdStatus | undefined,
-			interval: searchParams.get("interval") as SponsorAdIntervalType | undefined,
+			status: statusParam && validStatuses.includes(statusParam) ? statusParam as SponsorAdStatus : undefined,
+			interval: intervalParam && validIntervals.includes(intervalParam) ? intervalParam as SponsorAdIntervalType : undefined,
 			search: searchParams.get("search") || undefined,
 			sortBy: (searchParams.get("sortBy") || "createdAt") as
 				| "createdAt"
@@ -111,9 +118,11 @@ export async function GET(request: NextRequest) {
 
 		// Get paginated sponsor ads
 		const result = await sponsorAdService.getSponsorAdsPaginated(validationResult.data);
+		console.log("[Admin Sponsor Ads] Query result:", JSON.stringify(result, null, 2));
 
 		// Get stats for dashboard
 		const stats = await sponsorAdService.getSponsorAdStats();
+		console.log("[Admin Sponsor Ads] Stats:", JSON.stringify(stats, null, 2));
 
 		return NextResponse.json({
 			success: true,
