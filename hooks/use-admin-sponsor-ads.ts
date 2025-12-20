@@ -65,7 +65,7 @@ interface UseAdminSponsorAdsReturn {
 	sortOrder: "asc" | "desc";
 
 	// Actions
-	approveSponsorAd: (id: string) => Promise<boolean>;
+	approveSponsorAd: (id: string, forceApprove?: boolean) => Promise<{ success: boolean; requiresForceApprove?: boolean }>;
 	rejectSponsorAd: (id: string, reason: string) => Promise<boolean>;
 	cancelSponsorAd: (id: string, reason?: string) => Promise<boolean>;
 	deleteSponsorAd: (id: string) => Promise<boolean>;
@@ -120,11 +120,12 @@ const fetchSponsorAds = async (
 };
 
 const approveSponsorAdApi = async (
-	id: string
+	id: string,
+	forceApprove: boolean = false
 ): Promise<SponsorAdResponse> => {
 	const response = await serverClient.post<SponsorAdResponse>(
 		`/api/admin/sponsor-ads/${id}/approve`,
-		{}
+		{ forceApprove }
 	);
 
 	if (!apiUtils.isSuccess(response)) {
@@ -233,23 +234,27 @@ export function useAdminSponsorAds(
 		gcTime: 5 * 60 * 1000, // 5 minutes
 	});
 
-	// Mutations
+	// Mutations - use refetchQueries for immediate UI update
 	const approveMutation = useMutation({
-		mutationFn: approveSponsorAdApi,
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: sponsorAdsQueryKeys.all });
-			toast.success("Sponsor ad approved successfully");
+		mutationFn: ({ id, forceApprove }: { id: string; forceApprove: boolean }) =>
+			approveSponsorAdApi(id, forceApprove),
+		onSuccess: async () => {
+			await queryClient.refetchQueries({ queryKey: sponsorAdsQueryKeys.all });
+			toast.success("Sponsor ad approved and activated");
 		},
 		onError: (error: Error) => {
-			toast.error(`Failed to approve: ${error.message}`);
+			// Don't show toast for PAYMENT_NOT_RECEIVED - handled by UI
+			if (error.message !== "PAYMENT_NOT_RECEIVED") {
+				toast.error(`Failed to approve: ${error.message}`);
+			}
 		},
 	});
 
 	const rejectMutation = useMutation({
 		mutationFn: ({ id, reason }: { id: string; reason: string }) =>
 			rejectSponsorAdApi(id, reason),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: sponsorAdsQueryKeys.all });
+		onSuccess: async () => {
+			await queryClient.refetchQueries({ queryKey: sponsorAdsQueryKeys.all });
 			toast.success("Sponsor ad rejected");
 		},
 		onError: (error: Error) => {
@@ -260,8 +265,8 @@ export function useAdminSponsorAds(
 	const cancelMutation = useMutation({
 		mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
 			cancelSponsorAdApi(id, reason),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: sponsorAdsQueryKeys.all });
+		onSuccess: async () => {
+			await queryClient.refetchQueries({ queryKey: sponsorAdsQueryKeys.all });
 			toast.success("Sponsor ad cancelled");
 		},
 		onError: (error: Error) => {
@@ -271,8 +276,8 @@ export function useAdminSponsorAds(
 
 	const deleteMutation = useMutation({
 		mutationFn: deleteSponsorAdApi,
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: sponsorAdsQueryKeys.all });
+		onSuccess: async () => {
+			await queryClient.refetchQueries({ queryKey: sponsorAdsQueryKeys.all });
 			toast.success("Sponsor ad deleted");
 		},
 		onError: (error: Error) => {
@@ -298,12 +303,16 @@ export function useAdminSponsorAds(
 
 	// Action handlers
 	const handleApprove = useCallback(
-		async (id: string): Promise<boolean> => {
+		async (id: string, forceApprove: boolean = false): Promise<{ success: boolean; requiresForceApprove?: boolean }> => {
 			try {
-				await approveMutation.mutateAsync(id);
-				return true;
-			} catch {
-				return false;
+				await approveMutation.mutateAsync({ id, forceApprove });
+				return { success: true };
+			} catch (error) {
+				// Check if it's a payment not received error
+				if (error instanceof Error && error.message === "PAYMENT_NOT_RECEIVED") {
+					return { success: false, requiresForceApprove: true };
+				}
+				return { success: false };
 			}
 		},
 		[approveMutation]

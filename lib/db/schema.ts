@@ -583,12 +583,12 @@ export type NewFeaturedItem = typeof featuredItems.$inferInsert;
 
 // ######################### Sponsor Ads Schema #########################
 export const SponsorAdStatus = {
-  PENDING: 'pending',
-  APPROVED: 'approved',
-  REJECTED: 'rejected',
-  ACTIVE: 'active',
-  EXPIRED: 'expired',
-  CANCELLED: 'cancelled'
+  PENDING_PAYMENT: 'pending_payment', // User submitted, waiting for payment
+  PENDING: 'pending',                  // User paid, waiting for admin review
+  REJECTED: 'rejected',                // Admin rejected
+  ACTIVE: 'active',                    // Admin approved, displaying on site
+  EXPIRED: 'expired',                  // Subscription period ended
+  CANCELLED: 'cancelled'               // Cancelled by user or admin
 } as const;
 
 export type SponsorAdStatusValues = (typeof SponsorAdStatus)[keyof typeof SponsorAdStatus];
@@ -610,24 +610,20 @@ export const sponsorAds = pgTable("sponsor_ads", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
 
-  // Item being sponsored
+  // Item being sponsored (only store identifier, fetch details from content)
   itemSlug: text("item_slug").notNull(),
-  itemName: text("item_name").notNull(),
-  itemIconUrl: text("item_icon_url"),
-  itemCategory: text("item_category"),
-  itemDescription: text("item_description"),
 
   // Sponsorship details
   status: text("status", {
     enum: [
+      SponsorAdStatus.PENDING_PAYMENT,
       SponsorAdStatus.PENDING,
-      SponsorAdStatus.APPROVED,
       SponsorAdStatus.REJECTED,
       SponsorAdStatus.ACTIVE,
       SponsorAdStatus.EXPIRED,
       SponsorAdStatus.CANCELLED
     ]
-  }).notNull().default(SponsorAdStatus.PENDING),
+  }).notNull().default(SponsorAdStatus.PENDING_PAYMENT),
   interval: text("interval", {
     enum: [SponsorAdInterval.WEEKLY, SponsorAdInterval.MONTHLY]
   }).notNull(),

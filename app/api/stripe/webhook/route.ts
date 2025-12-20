@@ -650,18 +650,18 @@ async function handleSponsorAdActivation(data: Record<string, unknown>): Promise
 		const subscriptionId = data.id as string;
 		const customerId = data.customer as string;
 
-		console.log(`🔄 Activating sponsor ad: ${sponsorAdId}`);
+		console.log(`🔄 Confirming payment for sponsor ad: ${sponsorAdId}`);
 
-		const activatedAd = await sponsorAdService.activateSponsorAd(
+		const confirmedAd = await sponsorAdService.confirmPayment(
 			sponsorAdId,
 			subscriptionId,
 			customerId
 		);
 
-		if (activatedAd) {
-			console.log(`✅ Sponsor ad activated successfully: ${sponsorAdId}`);
+		if (confirmedAd) {
+			console.log(`✅ Sponsor ad payment confirmed, now pending admin review: ${sponsorAdId}`);
 		} else {
-			console.error(`❌ Failed to activate sponsor ad: ${sponsorAdId}`);
+			console.error(`❌ Failed to confirm sponsor ad payment: ${sponsorAdId}`);
 		}
 	} catch (error) {
 		console.error('❌ Error activating sponsor ad:', error);
