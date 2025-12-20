@@ -136,12 +136,13 @@ function SponsorRow({
 
 	const status = sponsorAd.status as SponsorAdStatus;
 
-	// Button visibility logic based on new flow:
-	// pending_payment -> pending (after payment) -> active (after admin approval)
+	// Button visibility logic:
+	// - Approve/Reject: for pending_payment and pending statuses
+	// - Cancel: only for active status (to stop the sponsorship)
+	// - Delete: only for non-active statuses (to remove the record)
 	const canApproveReject = status === 'pending_payment' || status === 'pending';
-	const canCancel = status === 'pending_payment' || status === 'pending' || status === 'active';
-	// Allow delete for all statuses - admin should be able to remove any sponsor ad
-	const canDelete = true;
+	const canCancel = status === 'active';
+	const canDelete = status !== 'active';
 
 	// Format status for display using translations
 	const getStatusLabel = (s: string) => {
