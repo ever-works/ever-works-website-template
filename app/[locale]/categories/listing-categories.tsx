@@ -37,23 +37,18 @@ function ListingCategoriesContent(props: ListingCategoriesProps) {
 				description={t('common.CATEGORIES_DESCRIPTION', {
 					defaultValue: 'Browse top categories to find your best Open Source software options.'
 				})}
-				className="min-h-screen text-center"
+				className="min-h-screen text-center pb-24"
 			>
 				{layoutHome === LayoutHome.HOME_ONE && <HomeOneLayout categories={props.categories} />}
 				{layoutHome === LayoutHome.HOME_TWO && <HomeTwoLayout categories={props.categories} />}
-				{paginationType === 'standard' && (
-					totalPages(props.categories.length) > 1 ? (
-						<footer className="flex items-center justify-center">
-							<Paginate
-								basePath={props.basePath}
-								initialPage={props.page}
-								total={totalPages(props.categories.length)}
-							/>
-						</footer>
-					) : (
-						/* Bottom spacer when single page (no pagination needed) */
-						<div className="mt-16 mb-12" />
-					)
+				{paginationType === 'standard' && totalPages(props.categories.length) > 1 && (
+					<footer className="flex items-center justify-center">
+						<Paginate
+							basePath={props.basePath}
+							initialPage={props.page}
+							total={totalPages(props.categories.length)}
+						/>
+					</footer>
 				)}
 			</Hero>
 		</>
