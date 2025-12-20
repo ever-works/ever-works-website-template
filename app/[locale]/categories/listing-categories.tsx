@@ -42,7 +42,7 @@ function ListingCategoriesContent(props: ListingCategoriesProps) {
 				{layoutHome === LayoutHome.HOME_ONE && <HomeOneLayout categories={props.categories} />}
 				{layoutHome === LayoutHome.HOME_TWO && <HomeTwoLayout categories={props.categories} />}
 				{paginationType === 'standard' && (
-					<footer className="flex items-center justify-center">
+					<footer className="flex items-center justify-center mt-16 mb-12">
 						<Paginate
 							basePath={props.basePath}
 							initialPage={props.page}
