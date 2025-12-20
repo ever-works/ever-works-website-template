@@ -495,21 +495,21 @@ async function handleSponsorAdActivation(data: PolarWebhookData): Promise<void> 
 		const subscriptionId = data.id || '';
 		const customerId = data.customer_id || data.customer?.id || '';
 
-		logger.info('Activating sponsor ad via Polar', { sponsorAdId });
+		logger.info('Confirming payment for sponsor ad via Polar', { sponsorAdId });
 
-		const activatedAd = await sponsorAdService.activateSponsorAd(
+		const confirmedAd = await sponsorAdService.confirmPayment(
 			sponsorAdId,
 			subscriptionId,
 			customerId
 		);
 
-		if (activatedAd) {
-			logger.info('Sponsor ad activated successfully', { sponsorAdId });
+		if (confirmedAd) {
+			logger.info('Sponsor ad payment confirmed, now pending admin review', { sponsorAdId });
 		} else {
-			logger.error('Failed to activate sponsor ad', { sponsorAdId });
+			logger.error('Failed to confirm sponsor ad payment', { sponsorAdId });
 		}
 	} catch (error) {
-		logger.error('Error activating sponsor ad', {
+		logger.error('Error confirming sponsor ad payment', {
 			sponsorAdId,
 			error: error instanceof Error ? error.message : 'Unknown error'
 		});
