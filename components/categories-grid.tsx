@@ -25,6 +25,19 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
 		setLoadingCategory(null);
 	}, [pathname, searchParams]);
 
+	// Sync page state with URL searchParams when using standard pagination
+	useEffect(() => {
+		if (paginationType === 'standard') {
+			const pageParam = searchParams.get('page');
+			const parsedPage = pageParam ? parseInt(pageParam, 10) : 1;
+			// Validate parsed page is a valid number and within bounds
+			const validPage = !isNaN(parsedPage) && parsedPage >= 1 ? parsedPage : 1;
+			if (validPage !== page) {
+				setPage(validPage);
+			}
+		}
+	}, [searchParams, paginationType, page]);
+
 	const sortedCategories = useMemo(
 		() =>
 			categories && categories.length > 0 ? [...categories].sort((a, b) => (b.count ?? 0) - (a.count ?? 0)) : [],
@@ -66,8 +79,6 @@ export default function CategoriesGrid({ categories }: { categories: Category[] 
 		threshold: 0.5,
 		rootMargin: '100px'
 	});
-
-	const totalPages = useMemo(() => Math.ceil(sortedCategories.length / PAGE_SIZE), [sortedCategories.length]);
 
 	const pagedCategories = useMemo(
 		() => sortedCategories.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
