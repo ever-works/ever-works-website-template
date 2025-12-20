@@ -73,7 +73,9 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			trialPeriodDays: 4,
 
 			// LemonSqueezy configuration
-			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_VARIANT_ID,
+			lemonVariantId: process.env.NEXT_PUBLIC_STANDARD_TRIAL_AMOUNT_ID
+				? process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_WITH_SETUP_VARIANT_ID
+				: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_VARIANT_ID,
 
 			lemonCheckoutUrl: '',
 
@@ -110,7 +112,9 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			envKey: 'PREMIUM_PLAN',
 
 			// LemonSqueezy configuration
-			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_VARIANT_ID,
+			lemonVariantId: process.env.NEXT_PUBLIC_PREMIUM_TRIAL_AMOUNT_ID
+				? process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_WITH_SETUP_VARIANT_ID
+				: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_VARIANT_ID,
 
 			lemonCheckoutUrl: '',
 
