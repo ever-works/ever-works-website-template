@@ -41,6 +41,13 @@ export async function GET(
 			);
 		}
 
+		if (!session.user.isAdmin) {
+			return NextResponse.json(
+				{ success: false, error: "Forbidden" },
+				{ status: 403 }
+			);
+		}
+
 		const { id } = await params;
 		const sponsorAd = await sponsorAdService.getSponsorAdWithUser(id);
 
@@ -100,6 +107,13 @@ export async function DELETE(
 			return NextResponse.json(
 				{ success: false, error: "Unauthorized" },
 				{ status: 401 }
+			);
+		}
+
+		if (!session.user.isAdmin) {
+			return NextResponse.json(
+				{ success: false, error: "Forbidden" },
+				{ status: 403 }
 			);
 		}
 
