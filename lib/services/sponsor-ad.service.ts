@@ -9,6 +9,7 @@ import {
 	SponsorAdInterval,
 	type SponsorAd,
 	type NewSponsorAd,
+	type SponsorAdStatusValues,
 } from "@/lib/db/schema";
 import { SponsorAdPricing } from "@/lib/constants";
 import type {
@@ -230,7 +231,7 @@ export class SponsorAdService {
 			SponsorAdStatus.PENDING,
 		];
 
-		if (!rejectableStatuses.includes(sponsorAd.status as typeof SponsorAdStatus.PENDING)) {
+		if (!rejectableStatuses.includes(sponsorAd.status as SponsorAdStatusValues)) {
 			throw new Error(
 				`Cannot reject sponsor ad with status: ${sponsorAd.status}`
 			);
@@ -259,7 +260,7 @@ export class SponsorAdService {
 			SponsorAdStatus.ACTIVE,
 		];
 
-		if (!cancellableStatuses.includes(sponsorAd.status as typeof SponsorAdStatus.PENDING)) {
+		if (!cancellableStatuses.includes(sponsorAd.status as SponsorAdStatusValues)) {
 			throw new Error(
 				`Cannot cancel sponsor ad with status: ${sponsorAd.status}`
 			);
@@ -415,7 +416,7 @@ export class SponsorAdService {
 			SponsorAdStatus.PENDING_PAYMENT,
 			SponsorAdStatus.PENDING,
 			SponsorAdStatus.ACTIVE,
-		].includes(sponsorAd.status as typeof SponsorAdStatus.PENDING);
+		].includes(sponsorAd.status as SponsorAdStatusValues);
 	}
 
 	/**
