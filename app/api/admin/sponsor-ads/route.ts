@@ -63,9 +63,9 @@ export async function GET(request: NextRequest) {
 	try {
 		const session = await auth();
 
-		if (!session?.user?.id) {
+		if (!session?.user?.isAdmin) {
 			return NextResponse.json(
-				{ success: false, error: "Unauthorized" },
+				{ success: false, error: "Unauthorized. Admin access required." },
 				{ status: 401 }
 			);
 		}

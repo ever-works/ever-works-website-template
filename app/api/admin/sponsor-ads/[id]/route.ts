@@ -34,9 +34,9 @@ export async function GET(
 	try {
 		const session = await auth();
 
-		if (!session?.user?.id) {
+		if (!session?.user?.isAdmin) {
 			return NextResponse.json(
-				{ success: false, error: "Unauthorized" },
+				{ success: false, error: "Unauthorized. Admin access required." },
 				{ status: 401 }
 			);
 		}
@@ -96,9 +96,9 @@ export async function DELETE(
 	try {
 		const session = await auth();
 
-		if (!session?.user?.id) {
+		if (!session?.user?.isAdmin) {
 			return NextResponse.json(
-				{ success: false, error: "Unauthorized" },
+				{ success: false, error: "Unauthorized. Admin access required." },
 				{ status: 401 }
 			);
 		}
