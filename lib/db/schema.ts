@@ -380,7 +380,7 @@ export const subscriptions = pgTable(
 
 		autoRenewal: boolean('auto_renewal').default(true),
 		renewalReminderSent: boolean('renewal_reminder_sent').default(false),
-		lastRenewalAttempt: timestamp('last_renewal_attempt', { mode: 'date' }),
+		lastRenewalAttempt: timestamp('last_renewal_attempt', { mode: 'string', withTimezone: true }),
 		failedPaymentCount: integer('failed_payment_count').default(0),
 
 		cancelledAt: timestamp('cancelled_at', { mode: 'date' }),
@@ -627,90 +627,95 @@ export type NewFeaturedItem = typeof featuredItems.$inferInsert;
 
 // ######################### Sponsor Ads Schema #########################
 export const SponsorAdStatus = {
-  PENDING_PAYMENT: 'pending_payment', // User submitted, waiting for payment
-  PENDING: 'pending',                  // User paid, waiting for admin review
-  REJECTED: 'rejected',                // Admin rejected
-  ACTIVE: 'active',                    // Admin approved, displaying on site
-  EXPIRED: 'expired',                  // Subscription period ended
-  CANCELLED: 'cancelled'               // Cancelled by user or admin
+	PENDING_PAYMENT: 'pending_payment', // User submitted, waiting for payment
+	PENDING: 'pending', // User paid, waiting for admin review
+	REJECTED: 'rejected', // Admin rejected
+	ACTIVE: 'active', // Admin approved, displaying on site
+	EXPIRED: 'expired', // Subscription period ended
+	CANCELLED: 'cancelled' // Cancelled by user or admin
 } as const;
 
 export type SponsorAdStatusValues = (typeof SponsorAdStatus)[keyof typeof SponsorAdStatus];
 
 export const SponsorAdInterval = {
-  WEEKLY: 'weekly',
-  MONTHLY: 'monthly'
+	WEEKLY: 'weekly',
+	MONTHLY: 'monthly'
 } as const;
 
 export type SponsorAdIntervalValues = (typeof SponsorAdInterval)[keyof typeof SponsorAdInterval];
 
-export const sponsorAds = pgTable("sponsor_ads", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+export const sponsorAds = pgTable(
+	'sponsor_ads',
+	{
+		id: text('id')
+			.primaryKey()
+			.$defaultFn(() => crypto.randomUUID()),
 
-  // User/Submitter info
-  userId: text("user_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+		// User/Submitter info
+		userId: text('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
 
-  // Item being sponsored (only store identifier, fetch details from content)
-  itemSlug: text("item_slug").notNull(),
+		// Item being sponsored (only store identifier, fetch details from content)
+		itemSlug: text('item_slug').notNull(),
 
-  // Sponsorship details
-  status: text("status", {
-    enum: [
-      SponsorAdStatus.PENDING_PAYMENT,
-      SponsorAdStatus.PENDING,
-      SponsorAdStatus.REJECTED,
-      SponsorAdStatus.ACTIVE,
-      SponsorAdStatus.EXPIRED,
-      SponsorAdStatus.CANCELLED
-    ]
-  }).notNull().default(SponsorAdStatus.PENDING_PAYMENT),
-  interval: text("interval", {
-    enum: [SponsorAdInterval.WEEKLY, SponsorAdInterval.MONTHLY]
-  }).notNull(),
+		// Sponsorship details
+		status: text('status', {
+			enum: [
+				SponsorAdStatus.PENDING_PAYMENT,
+				SponsorAdStatus.PENDING,
+				SponsorAdStatus.REJECTED,
+				SponsorAdStatus.ACTIVE,
+				SponsorAdStatus.EXPIRED,
+				SponsorAdStatus.CANCELLED
+			]
+		})
+			.notNull()
+			.default(SponsorAdStatus.PENDING_PAYMENT),
+		interval: text('interval', {
+			enum: [SponsorAdInterval.WEEKLY, SponsorAdInterval.MONTHLY]
+		}).notNull(),
 
-  // Pricing (in cents)
-  amount: integer("amount").notNull(),
-  currency: text("currency").notNull().default("usd"),
+		// Pricing (in cents)
+		amount: integer('amount').notNull(),
+		currency: text('currency').notNull().default('usd'),
 
-  // Payment info
-  paymentProvider: text("payment_provider").notNull(),
-  subscriptionId: text("subscription_id"),
-  customerId: text("customer_id"),
+		// Payment info
+		paymentProvider: text('payment_provider').notNull(),
+		subscriptionId: text('subscription_id'),
+		customerId: text('customer_id'),
 
-  // Subscription period
-  startDate: timestamp("start_date", { mode: "date" }),
-  endDate: timestamp("end_date", { mode: "date" }),
+		// Subscription period
+		startDate: timestamp('start_date', { mode: 'date' }),
+		endDate: timestamp('end_date', { mode: 'date' }),
 
-  // Admin review
-  reviewedBy: text("reviewed_by")
-    .references(() => users.id, { onDelete: "set null" }),
-  reviewedAt: timestamp("reviewed_at", { mode: "date" }),
-  rejectionReason: text("rejection_reason"),
+		// Admin review
+		reviewedBy: text('reviewed_by').references(() => users.id, { onDelete: 'set null' }),
+		reviewedAt: timestamp('reviewed_at', { mode: 'date' }),
+		rejectionReason: text('rejection_reason'),
 
-  // Cancellation
-  cancelledAt: timestamp("cancelled_at", { mode: "date" }),
-  cancelReason: text("cancel_reason"),
+		// Cancellation
+		cancelledAt: timestamp('cancelled_at', { mode: 'date' }),
+		cancelReason: text('cancel_reason'),
 
-  // Timestamps
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-}, (table) => ({
-  userIdIndex: index("sponsor_ads_user_id_idx").on(table.userId),
-  itemSlugIndex: index("sponsor_ads_item_slug_idx").on(table.itemSlug),
-  statusIndex: index("sponsor_ads_status_idx").on(table.status),
-  intervalIndex: index("sponsor_ads_interval_idx").on(table.interval),
-  providerSubscriptionIndex: uniqueIndex("sponsor_ads_provider_subscription_idx").on(
-    table.paymentProvider,
-    table.subscriptionId
-  ),
-  startDateIndex: index("sponsor_ads_start_date_idx").on(table.startDate),
-  endDateIndex: index("sponsor_ads_end_date_idx").on(table.endDate),
-  createdAtIndex: index("sponsor_ads_created_at_idx").on(table.createdAt),
-}));
+		// Timestamps
+		createdAt: timestamp('created_at').notNull().defaultNow(),
+		updatedAt: timestamp('updated_at').notNull().defaultNow()
+	},
+	(table) => ({
+		userIdIndex: index('sponsor_ads_user_id_idx').on(table.userId),
+		itemSlugIndex: index('sponsor_ads_item_slug_idx').on(table.itemSlug),
+		statusIndex: index('sponsor_ads_status_idx').on(table.status),
+		intervalIndex: index('sponsor_ads_interval_idx').on(table.interval),
+		providerSubscriptionIndex: uniqueIndex('sponsor_ads_provider_subscription_idx').on(
+			table.paymentProvider,
+			table.subscriptionId
+		),
+		startDateIndex: index('sponsor_ads_start_date_idx').on(table.startDate),
+		endDateIndex: index('sponsor_ads_end_date_idx').on(table.endDate),
+		createdAtIndex: index('sponsor_ads_created_at_idx').on(table.createdAt)
+	})
+);
 
 // ######################### Sponsor Ads Types #########################
 export type SponsorAd = typeof sponsorAds.$inferSelect;

@@ -474,7 +474,7 @@ export async function incrementFailedPaymentCount(subscriptionId: string): Promi
 		.update(subscriptions)
 		.set({
 			failedPaymentCount: sql`COALESCE(${subscriptions.failedPaymentCount}, 0) + 1`,
-			lastRenewalAttempt: new Date(),
+			lastRenewalAttempt: new Date().toISOString(),
 			updatedAt: new Date()
 		})
 		.where(eq(subscriptions.id, subscriptionId))
@@ -493,7 +493,7 @@ export async function resetFailedPaymentCount(subscriptionId: string): Promise<S
 		.update(subscriptions)
 		.set({
 			failedPaymentCount: 0,
-			lastRenewalAttempt: new Date(),
+			lastRenewalAttempt: new Date().toISOString(),
 			updatedAt: new Date()
 		})
 		.where(eq(subscriptions.id, subscriptionId))
@@ -530,7 +530,7 @@ export async function resetRenewalStateAtomic(subscriptionId: string): Promise<S
 		.set({
 			renewalReminderSent: false,
 			failedPaymentCount: 0,
-			lastRenewalAttempt: new Date(),
+			lastRenewalAttempt: new Date().toISOString(),
 			updatedAt: new Date()
 		})
 		.where(eq(subscriptions.id, subscriptionId))

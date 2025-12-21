@@ -296,22 +296,25 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 		onMutate: async (variables) => {
 			// Cancel any outgoing refetches to prevent race conditions
 			await queryClient.cancelQueries({
-				queryKey: AUTO_RENEWAL_QUERY_KEY(subscriptionId)
+				queryKey: AUTO_RENEWAL_QUERY_KEY(subscriptionId, paymentProvider)
 			});
 
 			// Snapshot the previous value for rollback
-			const previousStatus = queryClient.getQueryData<AutoRenewalStatus>(AUTO_RENEWAL_QUERY_KEY(subscriptionId));
+			const previousStatus = queryClient.getQueryData<AutoRenewalStatus>(
+				AUTO_RENEWAL_QUERY_KEY(subscriptionId, paymentProvider)
+			);
 
 			// Optimistically update to the new value
 			queryClient.setQueryData<AutoRenewalStatus>(
-				AUTO_RENEWAL_QUERY_KEY(subscriptionId),
+				AUTO_RENEWAL_QUERY_KEY(subscriptionId, paymentProvider),
 				(oldData): AutoRenewalStatus => {
 					if (!oldData) {
 						return {
 							subscriptionId,
 							autoRenewal: variables.enabled,
 							cancelAtPeriodEnd: !variables.enabled,
-							endDate: null
+							endDate: null,
+							paymentProvider
 						};
 					}
 					return {
@@ -327,13 +330,13 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 		onSuccess: (response, variables) => {
 			// Update the cache with the server response
 			queryClient.setQueryData<AutoRenewalStatus>(
-				AUTO_RENEWAL_QUERY_KEY(subscriptionId),
+				AUTO_RENEWAL_QUERY_KEY(subscriptionId, paymentProvider),
 				(oldData): AutoRenewalStatus => ({
 					subscriptionId,
 					autoRenewal: response.subscription.autoRenewal,
 					cancelAtPeriodEnd: response.subscription.cancelAtPeriodEnd,
 					endDate: response.subscription.endDate,
-					...(oldData && { paymentProvider: oldData.paymentProvider })
+					paymentProvider: oldData?.paymentProvider || paymentProvider
 				})
 			);
 
@@ -358,7 +361,10 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 
 			// Rollback to previous value on error
 			if (context?.previousStatus) {
-				queryClient.setQueryData(AUTO_RENEWAL_QUERY_KEY(subscriptionId), context.previousStatus);
+				queryClient.setQueryData(
+					AUTO_RENEWAL_QUERY_KEY(subscriptionId, paymentProvider),
+					context.previousStatus
+				);
 			}
 
 			// Show error toast
@@ -423,15 +429,15 @@ export function useAutoRenewal(options: UseAutoRenewalOptions): UseAutoRenewalRe
 
 	const invalidateCache = useCallback(() => {
 		queryClient.invalidateQueries({
-			queryKey: AUTO_RENEWAL_QUERY_KEY(subscriptionId)
+			queryKey: AUTO_RENEWAL_QUERY_KEY(subscriptionId, paymentProvider)
 		});
-	}, [queryClient, subscriptionId]);
+	}, [queryClient, subscriptionId, paymentProvider]);
 
 	const clearCache = useCallback(() => {
 		queryClient.removeQueries({
-			queryKey: AUTO_RENEWAL_QUERY_KEY(subscriptionId)
+			queryKey: AUTO_RENEWAL_QUERY_KEY(subscriptionId, paymentProvider)
 		});
-	}, [queryClient, subscriptionId]);
+	}, [queryClient, subscriptionId, paymentProvider]);
 
 	// ===================== Return =====================
 

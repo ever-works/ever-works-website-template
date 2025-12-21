@@ -134,7 +134,10 @@ export function SubscriptionCard({ subscription }: { subscription: SubscriptionI
 						<Clock className="w-3.5 h-3.5 text-white" />
 					</div>
 					<div className="text-sm text-slate-700 dark:text-slate-300 font-medium">
-						Next: {formatDate(subscription.currentPeriodEnd || subscription.endDate)}
+						Next:{' '}
+						{subscription.currentPeriodEnd || subscription.endDate
+							? formatDate(subscription.currentPeriodEnd || subscription.endDate)
+							: '—'}
 					</div>
 				</div>
 			</div>
@@ -146,7 +149,10 @@ export function SubscriptionCard({ subscription }: { subscription: SubscriptionI
 						<CreditCard className="w-3 h-3 text-white" />
 					</div>
 					<span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-						{subscription.paymentProvider} • {subscription.subscriptionId.slice(-8)}
+						{subscription.paymentProvider} •{' '}
+						{subscription.subscriptionId && typeof subscription.subscriptionId === 'string'
+							? subscription.subscriptionId.slice(-8)
+							: '—'}
 					</span>
 				</div>
 

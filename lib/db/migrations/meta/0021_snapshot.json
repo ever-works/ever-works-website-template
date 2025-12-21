@@ -1,6 +1,6 @@
 {
-  "id": "23a0c29f-a397-4589-af67-7b4874e1def9",
-  "prevId": "c6bbcaf0-7573-4d25-8b45-4a1984961a58",
+  "id": "90e5cc85-60f6-4f8f-9b4b-2eab07a86657",
+  "prevId": "23a0c29f-a397-4589-af67-7b4874e1def9",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -3328,7 +3328,7 @@
         },
         "last_renewal_attempt": {
           "name": "last_renewal_attempt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },

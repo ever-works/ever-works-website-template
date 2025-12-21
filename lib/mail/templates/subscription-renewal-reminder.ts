@@ -67,11 +67,11 @@ export const getRenewalReminderTemplate = (data: RenewalReminderData) => {
 	const safeSupportEmail = escapeHtml(supportEmail);
 
 	// Security: Validate URLs
-	const safeCompanyUrl = isValidUrl(companyUrl) ? companyUrl : 'https://ever.works';
+	const safeCompanyUrl = isValidUrl(companyUrl) ? escapeHtml(companyUrl) : 'https://ever.works';
 	const safeManageSubscriptionUrl =
-		manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl) ? manageSubscriptionUrl : null;
+		manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl) ? escapeHtml(manageSubscriptionUrl) : null;
 	const safeDisableAutoRenewalUrl =
-		disableAutoRenewalUrl && isValidUrl(disableAutoRenewalUrl) ? disableAutoRenewalUrl : null;
+		disableAutoRenewalUrl && isValidUrl(disableAutoRenewalUrl) ? escapeHtml(disableAutoRenewalUrl) : null;
 
 	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 
@@ -362,10 +362,10 @@ export const getRenewalSuccessTemplate = (data: {
 	const safeSupportEmail = escapeHtml(supportEmail);
 
 	// Security: Validate URLs
-	const safeCompanyUrl = isValidUrl(companyUrl) ? companyUrl : 'https://ever.works';
-	const safeInvoiceUrl = invoiceUrl && isValidUrl(invoiceUrl) ? invoiceUrl : null;
+	const safeCompanyUrl = isValidUrl(companyUrl) ? escapeHtml(companyUrl) : 'https://ever.works';
+	const safeInvoiceUrl = invoiceUrl && isValidUrl(invoiceUrl) ? escapeHtml(invoiceUrl) : null;
 	const safeManageSubscriptionUrl =
-		manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl) ? manageSubscriptionUrl : null;
+		manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl) ? escapeHtml(manageSubscriptionUrl) : null;
 
 	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 
