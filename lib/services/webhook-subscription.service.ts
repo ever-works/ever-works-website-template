@@ -242,7 +242,7 @@ export class WebhookSubscriptionService {
 				interval: response.interval || existingSubscription.interval,
 				intervalCount: response.intervalCount || existingSubscription.intervalCount,
 				trialStart: trialStart !== undefined ? trialStart : existingSubscription.trialStart,
-				trialEnd: trialEnd !== undefined ? trialStart : existingSubscription.trialEnd,
+				trialEnd: trialEnd !== undefined ? trialEnd : existingSubscription.trialEnd,
 				cancelAtPeriodEnd:
 					response.cancelAtPeriodEnd !== undefined
 						? response.cancelAtPeriodEnd
