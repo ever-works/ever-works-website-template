@@ -108,6 +108,15 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 		const { searchParams } = new URL(request.url);
 		const provider = searchParams.get('provider') || 'stripe';
 
+		// Validate payment provider
+		const validProviders = Object.values(PaymentProvider) as string[];
+		if (!validProviders.includes(provider)) {
+			return NextResponse.json(
+				{ error: `Invalid payment provider. Must be one of: ${validProviders.join(', ')}` },
+				{ status: 400 }
+			);
+		}
+
 		const subscription = await subscriptionService.getSubscriptionByProviderSubscriptionId(
 			provider,
 			subscriptionId
