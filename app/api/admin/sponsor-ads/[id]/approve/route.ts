@@ -53,6 +53,13 @@ export async function POST(
 			);
 		}
 
+		if (!session.user.isAdmin) {
+			return NextResponse.json(
+				{ success: false, error: "Forbidden" },
+				{ status: 403 }
+			);
+		}
+
 		const { id } = await params;
 
 		// Parse request body for forceApprove flag
