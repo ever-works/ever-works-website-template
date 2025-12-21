@@ -73,7 +73,7 @@ export async function POST(
 		}
 
 		const { id } = await params;
-		const body = await request.json();
+		const body = await request.json().catch(() => ({}));
 
 		// Validate request body
 		const validationResult = rejectSponsorAdSchema.safeParse({
