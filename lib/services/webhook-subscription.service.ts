@@ -399,12 +399,6 @@ export class WebhookSubscriptionService {
 			if (!updatedSubscription) {
 				throw new Error('Failed to update subscription after payment success');
 			}
-
-			// Reset auto-renewal tracking after successful payment
-			// This allows future renewal reminders and resets failed payment counter
-			await queries.resetRenewalReminderSent(existingSubscription.id);
-			await queries.resetFailedPaymentCount(existingSubscription.id);
-
 			// Log payment success
 			await queries.logSubscriptionChange(
 				existingSubscription.id,
@@ -485,9 +479,6 @@ export class WebhookSubscriptionService {
 			if (!updatedSubscription) {
 				throw new Error('Failed to update subscription after payment failure');
 			}
-
-			// Increment failed payment counter for auto-renewal tracking
-			await queries.incrementFailedPaymentCount(existingSubscription.id);
 
 			// Log payment failure
 			await queries.logSubscriptionChange(
