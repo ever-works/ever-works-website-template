@@ -3,6 +3,8 @@
  *
  * This file provides a single entry point for importing query functions
  * organized by domain following Single Responsibility Principle (SRP)
+ *
+ * Updated: 2025-12-21
  */
 
 // Activity queries

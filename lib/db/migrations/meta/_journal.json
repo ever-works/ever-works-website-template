@@ -134,6 +134,27 @@
       "when": 1766159999320,
       "tag": "0018_wooden_electro",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1766268000000,
+      "tag": "0019_add_subscription_renewal_fields",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1766315948112,
+      "tag": "0020_chunky_naoko",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1766434909606,
+      "tag": "0021_redundant_dragon_lord",
+      "breakpoints": true
     }
   ]
 }
