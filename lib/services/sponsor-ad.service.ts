@@ -226,7 +226,7 @@ export class SponsorAdService {
 		}
 
 		// Can reject from pending_payment or pending status
-		const rejectableStatuses = [
+		const rejectableStatuses: SponsorAdStatusValues[] = [
 			SponsorAdStatus.PENDING_PAYMENT,
 			SponsorAdStatus.PENDING,
 		];
@@ -254,7 +254,7 @@ export class SponsorAdService {
 		}
 
 		// Can cancel pending_payment, pending, or active sponsor ads
-		const cancellableStatuses = [
+		const cancellableStatuses: SponsorAdStatusValues[] = [
 			SponsorAdStatus.PENDING_PAYMENT,
 			SponsorAdStatus.PENDING,
 			SponsorAdStatus.ACTIVE,
@@ -412,11 +412,11 @@ export class SponsorAdService {
 	 * Check if sponsor ad can be cancelled
 	 */
 	canCancel(sponsorAd: SponsorAd): boolean {
-		return [
+		return ([
 			SponsorAdStatus.PENDING_PAYMENT,
 			SponsorAdStatus.PENDING,
 			SponsorAdStatus.ACTIVE,
-		].includes(sponsorAd.status as SponsorAdStatusValues);
+		] as SponsorAdStatusValues[]).includes(sponsorAd.status as SponsorAdStatusValues);
 	}
 
 	/**

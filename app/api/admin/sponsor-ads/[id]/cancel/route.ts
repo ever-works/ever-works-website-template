@@ -68,13 +68,6 @@ export async function POST(
 			);
 		}
 
-		if (!session.user.isAdmin) {
-			return NextResponse.json(
-				{ success: false, error: "Forbidden" },
-				{ status: 403 }
-			);
-		}
-
 		const { id } = await params;
 		const body = await request.json().catch(() => ({}));
 

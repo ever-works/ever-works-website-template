@@ -70,13 +70,6 @@ export async function GET(request: NextRequest) {
 			);
 		}
 
-		if (!session.user.isAdmin) {
-			return NextResponse.json(
-				{ success: false, error: "Forbidden" },
-				{ status: 403 }
-			);
-		}
-
 		const { searchParams } = new URL(request.url);
 
 		// Validate pagination parameters
