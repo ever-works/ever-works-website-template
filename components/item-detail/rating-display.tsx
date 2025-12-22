@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useItemRating } from "@/hooks/use-item-rating";
 import { Rating } from "@/components/ui/rating";
-import { useFeatureFlags } from "@/hooks/use-feature-flags";
+import { useFeatureFlagsWithSimulation } from "@/hooks/use-feature-flags-with-simulation";
 
 interface RatingDisplayProps {
   itemId: string;
@@ -11,12 +11,16 @@ interface RatingDisplayProps {
 
 export function RatingDisplay({ itemId }: RatingDisplayProps) {
   const t = useTranslations();
-  const { features, isPending } = useFeatureFlags();
-  const isRatingsEnabled = !isPending && features.ratings;
-  const { rating, isLoading } = useItemRating(itemId, isRatingsEnabled);
+  const { features, isPending, isSimulationActive } = useFeatureFlagsWithSimulation();
+  const { rating } = useItemRating(itemId);
 
-  // Hide when database is not configured
-  if (!isRatingsEnabled) {
+  // Hide when feature is disabled due to simulation
+  if (!isPending && !features.ratings && isSimulationActive) {
+    return null;
+  }
+
+  // Hide rating display when feature is disabled (database not configured)
+  if (isPending || !features.ratings) {
     return null;
   }
 
@@ -39,21 +43,10 @@ export function RatingDisplay({ itemId }: RatingDisplayProps) {
         {t("itemDetail.RATING")}
       </span>
       <div className="flex items-center gap-2">
-        {isLoading ? (
-          <span className="text-sm text-gray-400">{t("common.LOADING")}</span>
-        ) : (
-          <>
-            <Rating 
-              key={`rating-${rating.averageRating}-${rating.totalRatings}`}
-              value={rating.averageRating} 
-              readOnly 
-              size="sm" 
-            />
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              ({rating.totalRatings})
-            </span>
-          </>
-        )}
+        <Rating value={rating.averageRating} readOnly size="sm" />
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          ({rating.totalRatings})
+        </span>
       </div>
     </div>
   );

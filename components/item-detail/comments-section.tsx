@@ -10,7 +10,7 @@ import { Rating } from '@/components/ui/rating';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import type { CommentWithUser } from '@/lib/types/comment';
 import { toast } from 'sonner';
-import { useFeatureFlags } from '@/hooks/use-feature-flags';
+import { useFeatureFlagsWithSimulation } from '@/hooks/use-feature-flags-with-simulation';
 import { useLoginModal } from '@/hooks/use-login-modal';
 import {
 	Modal,
@@ -108,7 +108,7 @@ const CommentForm = memo(
 						placeholder="Share your thoughts..."
 						value={content}
 						onChange={(e) => setContent(e.target.value)}
-						className="w-full min-h-[100px] rounded-xl border border-gray-200/70 dark:border-gray-700/70 bg-white/90 dark:bg-gray-900/80 shadow-inner resize-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500"
+						className="min-h-[100px] bg-white dark:bg-gray-900 resize-none focus:ring-theme-primary-500"
 						maxLength={1000}
 						required
 					/>
@@ -249,7 +249,7 @@ const Comment = memo(
 							<Textarea
 								value={editContent}
 								onChange={(e) => setEditContent(e.target.value)}
-								className="w-full min-h-[80px] rounded-xl border border-gray-200/70 dark:border-gray-700/70 bg-white/90 dark:bg-gray-900/80 shadow-inner resize-none focus:ring-2 focus:ring-theme-primary-500 focus:border-theme-primary-500"
+								className="min-h-[80px] bg-white dark:bg-gray-900 resize-none focus:ring-theme-primary-500"
 								maxLength={1000}
 								required
 							/>
@@ -399,7 +399,7 @@ interface CommentsSectionProps {
 
 export function CommentsSection({ itemId }: CommentsSectionProps) {
 	// All hooks must be called before any early returns
-	const { features, isPending: isFeaturesPending } = useFeatureFlags();
+	const { features, isPending: isFeaturesPending, isSimulationActive } = useFeatureFlagsWithSimulation();
 	const { comments, isPending: isCommentsPending, createComment, isCreating, updateComment, isUpdating, deleteComment, isDeleting } = useComments(itemId);
 	const { user } = useCurrentUser();
 	const loginModal = useLoginModal();
@@ -446,6 +446,13 @@ export function CommentsSection({ itemId }: CommentsSectionProps) {
 	// Show skeleton during loading (single coordinated check)
 	if (isLoading) {
 		return <CommentSkeleton />;
+	}
+
+	// Feature flags error handling removed - simulation mode doesn't expose error
+
+	// Hide when feature is disabled due to simulation
+	if (!isFeaturesPending && !features.comments && isSimulationActive) {
+		return null;
 	}
 
 	// Hide comments section when feature is disabled (database not configured)
