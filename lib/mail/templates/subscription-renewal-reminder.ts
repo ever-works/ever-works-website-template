@@ -14,12 +14,13 @@ function escapeHtml(unsafe: string): string {
 }
 
 // Security: URL validation function
-function isValidUrl(url: string): boolean {
+// Security: URL validation function (returns normalized URL or null)
+function isValidUrl(url: string): string | null {
 	try {
 		const parsedUrl = new URL(url);
-		return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+		return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:' ? parsedUrl.href : null;
 	} catch {
-		return false;
+		return null;
 	}
 }
 
@@ -67,11 +68,9 @@ export const getRenewalReminderTemplate = (data: RenewalReminderData) => {
 	const safeSupportEmail = escapeHtml(supportEmail);
 
 	// Security: Validate URLs
-	const safeCompanyUrl = isValidUrl(companyUrl) ? escapeHtml(companyUrl) : 'https://ever.works';
-	const safeManageSubscriptionUrl =
-		manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl) ? escapeHtml(manageSubscriptionUrl) : null;
-	const safeDisableAutoRenewalUrl =
-		disableAutoRenewalUrl && isValidUrl(disableAutoRenewalUrl) ? escapeHtml(disableAutoRenewalUrl) : null;
+	const safeCompanyUrl = isValidUrl(companyUrl) || 'https://ever.works';
+	const safeManageSubscriptionUrl = manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl);
+	const safeDisableAutoRenewalUrl = disableAutoRenewalUrl && isValidUrl(disableAutoRenewalUrl);
 
 	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 
@@ -362,10 +361,9 @@ export const getRenewalSuccessTemplate = (data: {
 	const safeSupportEmail = escapeHtml(supportEmail);
 
 	// Security: Validate URLs
-	const safeCompanyUrl = isValidUrl(companyUrl) ? escapeHtml(companyUrl) : 'https://ever.works';
-	const safeInvoiceUrl = invoiceUrl && isValidUrl(invoiceUrl) ? escapeHtml(invoiceUrl) : null;
-	const safeManageSubscriptionUrl =
-		manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl) ? escapeHtml(manageSubscriptionUrl) : null;
+	const safeCompanyUrl = isValidUrl(companyUrl) || 'https://ever.works';
+	const safeInvoiceUrl = invoiceUrl && isValidUrl(invoiceUrl);
+	const safeManageSubscriptionUrl = manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl);
 
 	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 

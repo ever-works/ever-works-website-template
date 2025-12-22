@@ -159,7 +159,7 @@ export async function GET(request: NextRequest) {
 							customerName: 'Valued Customer',
 							customerEmail: user.email,
 							planName: planNames[subscription.planId] || subscription.planId,
-							amount: subscription.amount?.toString() || '0',
+							amount: subscription.amount ? (subscription.amount / 100).toFixed(2) : '0.00',
 							currency: subscription.currency || 'usd',
 							billingPeriod: subscription.interval || 'month',
 							subscriptionId: subscription.id,

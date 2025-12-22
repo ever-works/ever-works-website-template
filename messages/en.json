@@ -440,21 +440,7 @@
 		"REGISTER": "Register",
 		"ADMIN": "Admin"
 	},
-	"billing": {
-		"EXPIRED_MESSAGE": "Your {planName} has expired. Please renew to restore full access.",
-		"EXPIRES_TODAY": "Your {planName} expires today.",
-		"EXPIRES_TOMORROW": "Your {planName} expires tomorrow.",
-		"EXPIRES_IN_DAYS": "Your {planName} expires in {days} days.",
-		"RENEW": "Renew",
-		"RENEW_SUBSCRIPTION": "Renew Subscription",
-		"MANAGE_SUBSCRIPTION": "Manage Subscription",
-		"SUBSCRIPTION_EXPIRED": "Subscription Expired",
-		"SUBSCRIPTION_EXPIRING_SOON": "Subscription Expiring Soon",
-		"EXPIRED_ON": "Expired on",
-		"EXPIRES": "Expires",
-		"EXPIRED_LABEL": "Expired",
-		"EXPIRES_IN_DAYS_LABEL": "Expires in {days}d"
-	},
+
 	"settings": {
 		"PROFILE": "Your Profile",
 		"PAYMENT": "Payment",
@@ -1174,6 +1160,17 @@
 		"STATUS_PUBLISHED": "Published"
 	},
 	"billing": {
+		"EXPIRED_MESSAGE": "Your {planName} has expired. Please renew to restore full access.",
+		"EXPIRES_TODAY": "Your {planName} expires today.",
+		"EXPIRES_TOMORROW": "Your {planName} expires tomorrow.",
+		"EXPIRES_IN_DAYS": "Your {planName} expires in {days} days.",
+		"RENEW": "Renew",
+		"RENEW_SUBSCRIPTION": "Renew Subscription",
+		"SUBSCRIPTION_EXPIRED": "Subscription Expired",
+		"SUBSCRIPTION_EXPIRING_SOON": "Subscription Expiring Soon",
+		"EXPIRED_ON": "Expired on",
+		"EXPIRED_LABEL": "Expired",
+		"EXPIRES_IN_DAYS_LABEL": "Expires in {days}d",
 		"MONTHLY": "Monthly",
 		"YEARLY": "Yearly",
 		"SAVE_UP_TO": "Save up to 25%",
@@ -1245,7 +1242,7 @@
 		"ERROR_LOADING_PAYMENT_METHODS": "Error loading payment methods",
 		"DEFAULT": "Default",
 		"SET_AS_DEFAULT": "Set as default",
-		"EXPIRES": "Expires {date}",
+		"EXPIRES": "Expires",
 		"ADDED_ON": "Added on {date}",
 		"EDIT": "Edit",
 		"DELETE": "Delete",

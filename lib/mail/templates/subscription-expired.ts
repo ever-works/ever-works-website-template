@@ -13,13 +13,13 @@ function escapeHtml(unsafe: string): string {
 		.replace(/'/g, '&#039;');
 }
 
-// Security: URL validation function
-function isValidUrl(url: string): boolean {
+// Security: URL validation function (returns normalized URL or null)
+function isValidUrl(url: string): string | null {
 	try {
 		const parsedUrl = new URL(url);
-		return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+		return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:' ? parsedUrl.href : null;
 	} catch {
-		return false;
+		return null;
 	}
 }
 
@@ -71,8 +71,8 @@ export const getSubscriptionExpiredTemplate = (data: SubscriptionExpiredData) =>
 	const safeFeatures = features.map((feature) => escapeHtml(feature));
 
 	// Security: Validate URLs
-	const safeCompanyUrl = isValidUrl(companyUrl) ? companyUrl : 'https://ever.works';
-	const safeRenewUrl = renewUrl && isValidUrl(renewUrl) ? renewUrl : null;
+	const safeCompanyUrl = isValidUrl(companyUrl) || 'https://ever.works';
+	const safeRenewUrl = renewUrl ? isValidUrl(renewUrl) : null;
 
 	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 
@@ -443,8 +443,8 @@ export const getSubscriptionExpiringWarningTemplate = (
 	const safeSupportEmail = escapeHtml(supportEmail);
 
 	// Security: Validate URLs
-	const safeCompanyUrl = isValidUrl(companyUrl) ? companyUrl : 'https://ever.works';
-	const safeRenewUrl = renewUrl && isValidUrl(renewUrl) ? renewUrl : null;
+	const safeCompanyUrl = isValidUrl(companyUrl) || 'https://ever.works';
+	const safeRenewUrl = renewUrl ? isValidUrl(renewUrl) : null;
 
 	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 	const urgencyText =
