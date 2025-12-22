@@ -2237,6 +2237,8 @@
 			"REVENUE_STAT": "Total Revenue",
 			"SEARCH_PLACEHOLDER": "Search by item name...",
 			"FILTER_BY_STATUS": "Filter by status",
+			"FILTERS": "Filters",
+			"CLEAR_ALL": "Clear All",
 			"ALL_STATUSES": "All Statuses",
 			"STATUS_PENDING_PAYMENT": "Awaiting Payment",
 			"STATUS_PENDING": "Pending Review",
