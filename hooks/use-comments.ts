@@ -65,10 +65,10 @@ export function useComments(itemId: string) {
           // Add new comment at the beginning
           return [newComment, ...old];
         });
-        
-        await queryClient.invalidateQueries({ 
-          queryKey: ["item-rating", itemId]
-        });
+        // Update rating caches to reflect new rating immediately
+        queryClient.setQueryData(["commentRating", itemId], newComment.rating);
+        // Force refetch rating query to show updated data immediately
+        await queryClient.refetchQueries({ queryKey: ["item-rating", itemId] });
       }
     },
   });
@@ -88,11 +88,6 @@ export function useComments(itemId: string) {
       await queryClient.refetchQueries({
         queryKey: ["comments", itemId],
         exact: true
-      });
-      
-      // Force immediate rating update
-      await queryClient.invalidateQueries({ 
-        queryKey: ["item-rating", itemId]
       });
     },
   });
@@ -122,11 +117,8 @@ export function useComments(itemId: string) {
             comment.id === updatedComment.id ? updatedComment : comment
           );
         });
-        
-        // Force immediate rating update
-        await queryClient.invalidateQueries({ 
-          queryKey: ["item-rating", itemId]
-        });
+        // Force refetch rating to reflect updated rating immediately
+        await queryClient.refetchQueries({ queryKey: ["item-rating", itemId] });
       }
     },
   });
@@ -146,9 +138,9 @@ export function useComments(itemId: string) {
 
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
-      queryClient.invalidateQueries({ queryKey: ["item-rating", itemId] });
+      await queryClient.refetchQueries({ queryKey: ["item-rating", itemId] });
     },
   });
 
@@ -167,9 +159,9 @@ export function useComments(itemId: string) {
 
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
-      queryClient.invalidateQueries({ queryKey: ["item-rating", itemId] });
+      await queryClient.refetchQueries({ queryKey: ["item-rating", itemId] });
     },
   });
 
