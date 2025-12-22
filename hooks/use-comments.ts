@@ -19,6 +19,7 @@ interface UpdateCommentData {
 const COMMENT_MUTATION_EVENT = "comment:mutated";
 
 const dispatchCommentEvent = (comment: CommentWithUser) => {
+  if (typeof window === "undefined") return;
   window.dispatchEvent(new CustomEvent(COMMENT_MUTATION_EVENT, { detail: comment }));
 };
 
