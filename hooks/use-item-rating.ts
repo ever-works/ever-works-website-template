@@ -32,8 +32,6 @@ export function useItemRating(itemId: string, enabled: boolean = true) {
       }
       return response.data;
     },
-    // Provide defined initial data so consumers always have a RatingData shape
-    initialData: { averageRating: 0, totalRatings: 0 },
     // Use moderate defaults; mutations and explicit refetch handle immediates
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnMount: false,

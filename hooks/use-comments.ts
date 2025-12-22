@@ -16,6 +16,12 @@ interface UpdateCommentData {
   rating?: number;
 }
 
+const COMMENT_MUTATION_EVENT = "comment:mutated";
+
+const dispatchCommentEvent = (comment: CommentWithUser) => {
+  window.dispatchEvent(new CustomEvent(COMMENT_MUTATION_EVENT, { detail: comment }));
+};
+
 export function useComments(itemId: string) {
   const queryClient = useQueryClient();
   const loginModal = useLoginModal();
@@ -65,8 +71,7 @@ export function useComments(itemId: string) {
           // Add new comment at the beginning
           return [newComment, ...old];
         });
-        // Update rating caches to reflect new rating immediately
-        queryClient.setQueryData(["commentRating", itemId], newComment.rating);
+        dispatchCommentEvent(newComment);
         // Force refetch rating query to show updated data immediately
         await queryClient.refetchQueries({ queryKey: ["item-rating", itemId] });
       }
@@ -117,6 +122,7 @@ export function useComments(itemId: string) {
             comment.id === updatedComment.id ? updatedComment : comment
           );
         });
+        dispatchCommentEvent(updatedComment);
         // Force refetch rating to reflect updated rating immediately
         await queryClient.refetchQueries({ queryKey: ["item-rating", itemId] });
       }
