@@ -76,18 +76,19 @@ type CollectionHeroProps = {
   children: ReactNode;
 };
 
-function CollectionHero({
-  badgeText,
-  collection,
-  description,
-  isLongDescription,
-  isDescriptionExpanded,
-  onToggleDescription,
-  iconClassName,
-  showMoreLabel,
-  showLessLabel,
-  children,
-}: CollectionHeroProps) {
+function CollectionHero(props: CollectionHeroProps) {
+  const {
+    badgeText,
+    collection,
+    description,
+    isLongDescription,
+    isDescriptionExpanded,
+    onToggleDescription,
+    iconClassName,
+    showMoreLabel,
+    showLessLabel,
+    children,
+  } = props;
   return (
     <Hero
       badgeText={badgeText}
@@ -310,11 +311,11 @@ function CollectionDetailContent(props: CollectionDetailProps) {
   const containerWidth = useContainerWidth();
   const isFluid = containerWidth === 'fluid';
 
-  // Check if description is long (more than 200 characters)
-  const isLongDescription = collection.description.length > 200;
-  const displayDescription = isDescriptionExpanded || !isLongDescription 
-    ? collection.description 
-    : collection.description.slice(0, 200) + '...';
+  const descriptionText = collection.description ?? "";
+  const isLongDescription = descriptionText.length > 200;
+  const displayDescription = isDescriptionExpanded || !isLongDescription
+    ? descriptionText
+    : descriptionText.slice(0, 200) + "...";
 
   // Render HOME_TWO layout if selected
   if (layoutHome === LayoutHome.HOME_TWO) {
@@ -385,7 +386,9 @@ function CollectionDetailContent(props: CollectionDetailProps) {
                     className="w-full md:w-32 sm:w-auto max-w-full sm:max-w-40"
                   />
                   <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">
-                    Showing {filteredItems.length} items
+                    {filteredItems.length === props.items.length
+                      ? `Showing ${props.items.length} items`
+                      : `Showing ${filteredItems.length} of ${props.items.length} items`}
                   </span>
                 </div>
                 <ListingClient
