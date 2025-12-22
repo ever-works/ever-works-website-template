@@ -2183,6 +2183,8 @@
       "REVENUE_STAT": "Toplam Gelir",
       "SEARCH_PLACEHOLDER": "Öğe adına göre ara...",
       "FILTER_BY_STATUS": "Duruma göre filtrele",
+      "FILTERS": "Filtreler",
+      "CLEAR_ALL": "Tümünü Temizle",
       "ALL_STATUSES": "Tüm Durumlar",
       "STATUS_PENDING": "Beklemede",
       "STATUS_APPROVED": "Onaylandı",

@@ -2183,6 +2183,8 @@
       "REVENUE_STAT": "Totale Inkomsten",
       "SEARCH_PLACEHOLDER": "Zoeken op itemnaam...",
       "FILTER_BY_STATUS": "Filteren op status",
+      "FILTERS": "Filters",
+      "CLEAR_ALL": "Alles wissen",
       "ALL_STATUSES": "Alle Statussen",
       "STATUS_PENDING": "In Afwachting",
       "STATUS_APPROVED": "Goedgekeurd",

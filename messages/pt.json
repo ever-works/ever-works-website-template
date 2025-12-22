@@ -2183,6 +2183,8 @@
       "REVENUE_STAT": "Receita Total",
       "SEARCH_PLACEHOLDER": "Pesquisar por nome do item...",
       "FILTER_BY_STATUS": "Filtrar por status",
+      "FILTERS": "Filtros",
+      "CLEAR_ALL": "Limpar tudo",
       "ALL_STATUSES": "Todos os Status",
       "STATUS_PENDING": "Pendente",
       "STATUS_APPROVED": "Aprovado",

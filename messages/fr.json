@@ -2274,6 +2274,8 @@
       "REVENUE_STAT": "Revenus Totaux",
       "SEARCH_PLACEHOLDER": "Rechercher par nom d'élément...",
       "FILTER_BY_STATUS": "Filtrer par statut",
+      "FILTERS": "Filtres",
+      "CLEAR_ALL": "Tout effacer",
       "ALL_STATUSES": "Tous les Statuts",
       "STATUS_PENDING": "En Attente",
       "STATUS_APPROVED": "Approuvé",

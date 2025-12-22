@@ -2183,6 +2183,8 @@
       "REVENUE_STAT": "Łączny przychód",
       "SEARCH_PLACEHOLDER": "Szukaj po nazwie elementu...",
       "FILTER_BY_STATUS": "Filtruj według statusu",
+      "FILTERS": "Filtry",
+      "CLEAR_ALL": "Wyczyść wszystko",
       "ALL_STATUSES": "Wszystkie statusy",
       "STATUS_PENDING": "Oczekujące",
       "STATUS_APPROVED": "Zatwierdzone",

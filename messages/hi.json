@@ -2183,6 +2183,8 @@
       "REVENUE_STAT": "कुल राजस्व",
       "SEARCH_PLACEHOLDER": "आइटम नाम से खोजें...",
       "FILTER_BY_STATUS": "स्थिति के अनुसार फ़िल्टर करें",
+      "FILTERS": "फ़िल्टर",
+      "CLEAR_ALL": "सभी साफ़ करें",
       "ALL_STATUSES": "सभी स्थितियां",
       "STATUS_PENDING": "लंबित",
       "STATUS_APPROVED": "स्वीकृत",

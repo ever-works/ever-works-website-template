@@ -2183,6 +2183,8 @@
       "REVENUE_STAT": "総収益",
       "SEARCH_PLACEHOLDER": "アイテム名で検索...",
       "FILTER_BY_STATUS": "ステータスでフィルター",
+      "FILTERS": "フィルター",
+      "CLEAR_ALL": "すべてクリア",
       "ALL_STATUSES": "全てのステータス",
       "STATUS_PENDING": "保留中",
       "STATUS_APPROVED": "承認済み",

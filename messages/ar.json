@@ -2203,6 +2203,8 @@
       "REVENUE_STAT": "إجمالي الإيرادات",
       "SEARCH_PLACEHOLDER": "البحث حسب اسم العنصر...",
       "FILTER_BY_STATUS": "تصفية حسب الحالة",
+      "FILTERS": "فلاتر",
+      "CLEAR_ALL": "مسح الكل",
       "ALL_STATUSES": "جميع الحالات",
       "STATUS_PENDING": "قيد الانتظار",
       "STATUS_APPROVED": "موافق عليه",

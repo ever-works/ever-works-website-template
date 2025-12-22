@@ -2183,6 +2183,8 @@
       "REVENUE_STAT": "รายได้ทั้งหมด",
       "SEARCH_PLACEHOLDER": "ค้นหาตามชื่อรายการ...",
       "FILTER_BY_STATUS": "กรองตามสถานะ",
+      "FILTERS": "ตัวกรอง",
+      "CLEAR_ALL": "ล้างทั้งหมด",
       "ALL_STATUSES": "สถานะทั้งหมด",
       "STATUS_PENDING": "รอดำเนินการ",
       "STATUS_APPROVED": "อนุมัติแล้ว",
