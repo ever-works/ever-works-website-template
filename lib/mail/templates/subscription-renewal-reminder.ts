@@ -66,12 +66,17 @@ export const getRenewalReminderTemplate = (data: RenewalReminderData) => {
 	const safeCompanyName = escapeHtml(companyName);
 	const safeSupportEmail = escapeHtml(supportEmail);
 
-	// Security: Validate URLs
-	const safeCompanyUrl = isValidUrl(companyUrl) ? escapeHtml(companyUrl) : 'https://ever.works';
-	const safeManageSubscriptionUrl =
-		manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl) ? escapeHtml(manageSubscriptionUrl) : null;
-	const safeDisableAutoRenewalUrl =
-		disableAutoRenewalUrl && isValidUrl(disableAutoRenewalUrl) ? escapeHtml(disableAutoRenewalUrl) : null;
+	// Security: Validate URLs (Raw versions for text email)
+	const rawCompanyUrl = isValidUrl(companyUrl) ? companyUrl : 'https://ever.works';
+	const rawManageSubscriptionUrl =
+		manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl) ? manageSubscriptionUrl : null;
+	const rawDisableAutoRenewalUrl =
+		disableAutoRenewalUrl && isValidUrl(disableAutoRenewalUrl) ? disableAutoRenewalUrl : null;
+
+	// Security: Escape URLs for HTML email
+	const safeCompanyUrl = escapeHtml(rawCompanyUrl);
+	const safeManageSubscriptionUrl = rawManageSubscriptionUrl ? escapeHtml(rawManageSubscriptionUrl) : null;
+	const safeDisableAutoRenewalUrl = rawDisableAutoRenewalUrl ? escapeHtml(rawDisableAutoRenewalUrl) : null;
 
 	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 
@@ -305,15 +310,15 @@ Renewal Details:
 
 No action is needed if you'd like to continue your subscription. Your payment method on file will be charged automatically.
 
-${safeManageSubscriptionUrl ? `Manage Subscription: ${safeManageSubscriptionUrl}` : ''}
-${safeDisableAutoRenewalUrl ? `Cancel Auto-Renewal: ${safeDisableAutoRenewalUrl}` : ''}
+${rawManageSubscriptionUrl ? `Manage Subscription: ${rawManageSubscriptionUrl}` : ''}
+${rawDisableAutoRenewalUrl ? `Cancel Auto-Renewal: ${rawDisableAutoRenewalUrl}` : ''}
 
 If you have any questions, please contact our support team.
 
 Thank you for being a valued customer!
 The ${safeCompanyName} Team
 
-${safeCompanyUrl}
+${rawCompanyUrl}
   `;
 
 	return {
@@ -361,11 +366,16 @@ export const getRenewalSuccessTemplate = (data: {
 	const safeCompanyName = escapeHtml(companyName);
 	const safeSupportEmail = escapeHtml(supportEmail);
 
-	// Security: Validate URLs
-	const safeCompanyUrl = isValidUrl(companyUrl) ? escapeHtml(companyUrl) : 'https://ever.works';
-	const safeInvoiceUrl = invoiceUrl && isValidUrl(invoiceUrl) ? escapeHtml(invoiceUrl) : null;
-	const safeManageSubscriptionUrl =
-		manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl) ? escapeHtml(manageSubscriptionUrl) : null;
+	// Security: Validate URLs (Raw versions for text email)
+	const rawCompanyUrl = isValidUrl(companyUrl) ? companyUrl : 'https://ever.works';
+	const rawInvoiceUrl = invoiceUrl && isValidUrl(invoiceUrl) ? invoiceUrl : null;
+	const rawManageSubscriptionUrl =
+		manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl) ? manageSubscriptionUrl : null;
+
+	// Security: Escape URLs for HTML email
+	const safeCompanyUrl = escapeHtml(rawCompanyUrl);
+	const safeInvoiceUrl = rawInvoiceUrl ? escapeHtml(rawInvoiceUrl) : null;
+	const safeManageSubscriptionUrl = rawManageSubscriptionUrl ? escapeHtml(rawManageSubscriptionUrl) : null;
 
 	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 
@@ -543,13 +553,13 @@ Payment Confirmation:
 - Billing Period: ${safeBillingPeriod}
 - Next Renewal: ${safeNextRenewalDate}
 
-${safeInvoiceUrl ? `View Invoice: ${safeInvoiceUrl}` : ''}
-${safeManageSubscriptionUrl ? `Manage Subscription: ${safeManageSubscriptionUrl}` : ''}
+${rawInvoiceUrl ? `View Invoice: ${rawInvoiceUrl}` : ''}
+${rawManageSubscriptionUrl ? `Manage Subscription: ${rawManageSubscriptionUrl}` : ''}
 
 Thank you for your continued support!
 The ${safeCompanyName} Team
 
-${safeCompanyUrl}
+${rawCompanyUrl}
   `;
 
 	return {
