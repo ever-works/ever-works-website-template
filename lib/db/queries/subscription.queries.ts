@@ -317,9 +317,9 @@ export async function getExpiredActiveSubscriptions(): Promise<Subscription[]> {
 
 /**
  * Update expired subscriptions to expired status
- * @returns Number of subscriptions updated
+ * @returns Array of subscriptions that were updated
  */
-export async function updateExpiredSubscriptionsStatus(): Promise<number> {
+export async function updateExpiredSubscriptionsStatus(): Promise<Subscription[]> {
 	const now = new Date();
 
 	const result = await db
@@ -331,7 +331,7 @@ export async function updateExpiredSubscriptionsStatus(): Promise<number> {
 		.where(and(eq(subscriptions.status, SubscriptionStatus.ACTIVE), lt(subscriptions.endDate, now)))
 		.returning();
 
-	return result.length;
+	return result;
 }
 
 // ===================== Subscription History Queries =====================
@@ -550,7 +550,7 @@ export async function incrementFailedPaymentCount(subscriptionId: string): Promi
 		.update(subscriptions)
 		.set({
 			failedPaymentCount: sql`COALESCE(${subscriptions.failedPaymentCount}, 0) + 1`,
-			lastRenewalAttempt: new Date().toISOString(),
+			lastRenewalAttempt: new Date(),
 			updatedAt: new Date()
 		})
 		.where(eq(subscriptions.id, subscriptionId))
@@ -569,7 +569,7 @@ export async function resetFailedPaymentCount(subscriptionId: string): Promise<S
 		.update(subscriptions)
 		.set({
 			failedPaymentCount: 0,
-			lastRenewalAttempt: new Date().toISOString(),
+			lastRenewalAttempt: new Date(),
 			updatedAt: new Date()
 		})
 		.where(eq(subscriptions.id, subscriptionId))
@@ -606,7 +606,7 @@ export async function resetRenewalStateAtomic(subscriptionId: string): Promise<S
 		.set({
 			renewalReminderSent: false,
 			failedPaymentCount: 0,
-			lastRenewalAttempt: new Date().toISOString(),
+			lastRenewalAttempt: new Date(),
 			updatedAt: new Date()
 		})
 		.where(eq(subscriptions.id, subscriptionId))

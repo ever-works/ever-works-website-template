@@ -174,7 +174,8 @@ export function usePlanAccess(requiredPlan: string): {
 		};
 
 		const effectiveLevel = planLevels[effectivePlan] || 0;
-		const requiredLevel = planLevels[requiredPlan] || 0;
+		// Default to a high number to fail-safe by denying access for unknown plans
+		const requiredLevel = planLevels[requiredPlan] || 999;
 		const hasAccess = effectiveLevel >= requiredLevel;
 
 		let reason: 'allowed' | 'insufficient_plan' | 'expired' = 'allowed';

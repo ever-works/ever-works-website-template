@@ -12,7 +12,10 @@
 import { useState, useMemo } from 'react';
 import { AlertTriangle, Clock, X, CreditCard, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PaymentPlan, PAYMENT_PLAN_NAMES } from '@/lib/constants';
 import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
+import { usePlanStatus } from '@/hooks/use-plan-status';
 
 export interface ExpiredPlanBannerProps {
 	/** Display name of the plan (e.g., "Premium Plan") */
@@ -71,6 +74,7 @@ export function ExpiredPlanBanner({
 	className,
 	compact = false
 }: ExpiredPlanBannerProps) {
+	const t = useTranslations('billing');
 	const [isDismissed, setIsDismissed] = useState(false);
 
 	const urgency = useMemo(() => getUrgencyLevel(daysUntilExpiration, isExpired), [daysUntilExpiration, isExpired]);
@@ -84,12 +88,12 @@ export function ExpiredPlanBanner({
 	const message =
 		warningMessage ||
 		(isExpired
-			? `Your ${planName} has expired. Please renew to restore full access.`
+			? t('EXPIRED_MESSAGE', { planName })
 			: daysUntilExpiration === 0
-				? `Your ${planName} expires today.`
+				? t('EXPIRES_TODAY', { planName })
 				: daysUntilExpiration === 1
-					? `Your ${planName} expires tomorrow.`
-					: `Your ${planName} expires in ${daysUntilExpiration} days.`);
+					? t('EXPIRES_TOMORROW', { planName })
+					: t('EXPIRES_IN_DAYS', { planName, days: daysUntilExpiration ?? 0 }));
 
 	// Styling based on urgency
 	const urgencyStyles = {
@@ -133,14 +137,14 @@ export function ExpiredPlanBanner({
 			>
 				<Icon className={cn('w-4 h-4 shrink-0', styles.icon)} />
 				<span className={cn('font-medium', styles.text)}>
-					{isExpired ? 'Expired' : `Expires in ${daysUntilExpiration}d`}
+					{isExpired ? t('EXPIRED_LABEL') : t('EXPIRES_IN_DAYS_LABEL', { days: daysUntilExpiration ?? 0 })}
 				</span>
 				{onRenewClick && (
 					<button
 						onClick={onRenewClick}
 						className={cn('px-2 py-0.5 rounded text-xs font-medium transition-colors', styles.button)}
 					>
-						Renew
+						{t('RENEW')}
 					</button>
 				)}
 			</div>
@@ -167,14 +171,14 @@ export function ExpiredPlanBanner({
 				{/* Content */}
 				<div className="flex-1 min-w-0">
 					<h4 className={cn('font-semibold', styles.text)}>
-						{isExpired ? 'Subscription Expired' : 'Subscription Expiring Soon'}
+						{isExpired ? t('SUBSCRIPTION_EXPIRED') : t('SUBSCRIPTION_EXPIRING_SOON')}
 					</h4>
 					<p className={cn('mt-1 text-sm', styles.text, 'opacity-90')}>{message}</p>
 
 					{/* Expiration date */}
 					{expiresAt && (
 						<p className={cn('mt-1 text-xs', styles.text, 'opacity-70')}>
-							{isExpired ? 'Expired on' : 'Expires'}: {formatExpirationDate(expiresAt)}
+							{isExpired ? t('EXPIRED_ON') : t('EXPIRES')}: {formatExpirationDate(expiresAt)}
 						</p>
 					)}
 
@@ -191,12 +195,12 @@ export function ExpiredPlanBanner({
 								{isExpired ? (
 									<>
 										<RefreshCw className="w-4 h-4" />
-										Renew Subscription
+										{t('RENEW_SUBSCRIPTION')}
 									</>
 								) : (
 									<>
 										<CreditCard className="w-4 h-4" />
-										Manage Subscription
+										{t('MANAGE_SUBSCRIPTION')}
 									</>
 								)}
 							</button>
@@ -211,12 +215,12 @@ export function ExpiredPlanBanner({
 								{isExpired ? (
 									<>
 										<RefreshCw className="w-4 h-4" />
-										Renew Subscription
+										{t('RENEW_SUBSCRIPTION')}
 									</>
 								) : (
 									<>
 										<CreditCard className="w-4 h-4" />
-										Manage Subscription
+										{t('MANAGE_SUBSCRIPTION')}
 									</>
 								)}
 							</Link>
@@ -251,10 +255,6 @@ export function AutoExpiredPlanBanner({
 	compact,
 	onRenewClick
 }: Pick<ExpiredPlanBannerProps, 'className' | 'compact' | 'onRenewClick'>) {
-	// Import hook inline to avoid circular dependencies
-	const { usePlanStatus } = require('@/hooks/use-plan-status');
-	const { subscriptionService } = require('@/lib/services/subscription.service');
-
 	const planStatus = usePlanStatus();
 
 	// Don't render if no warning needed
@@ -263,12 +263,7 @@ export function AutoExpiredPlanBanner({
 	}
 
 	// Get plan display name
-	const planNames: Record<string, string> = {
-		free: 'Free Plan',
-		standard: 'Standard Plan',
-		premium: 'Premium Plan'
-	};
-	const planName = planNames[planStatus.planId] || 'Subscription';
+	const planName = PAYMENT_PLAN_NAMES[planStatus.planId as PaymentPlan] || 'Subscription';
 
 	return (
 		<ExpiredPlanBanner

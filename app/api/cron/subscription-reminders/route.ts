@@ -8,7 +8,9 @@ function verifyCronSecret(request: NextRequest): boolean {
 	const cronSecret = process.env.CRON_SECRET;
 
 	// If no CRON_SECRET is set, allow in development
+	// FIXME: This allows unauthenticated access in dev. Consider adding a DEV_SECRET or removing this bypass.
 	if (!cronSecret && process.env.NODE_ENV === 'development') {
+		console.warn('CRON_SECRET not configured - allowing in development mode only');
 		return true;
 	}
 

@@ -1,6 +1,6 @@
 {
-  "id": "90e5cc85-60f6-4f8f-9b4b-2eab07a86657",
-  "prevId": "23a0c29f-a397-4589-af67-7b4874e1def9",
+  "id": "e8d0d731-ca24-4221-89fe-0cd3607c173f",
+  "prevId": "90e5cc85-60f6-4f8f-9b4b-2eab07a86657",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -3492,7 +3492,12 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "auto_renewal_check": {
+          "name": "auto_renewal_check",
+          "value": "\"subscriptions\".\"auto_renewal\" != \"subscriptions\".\"cancel_at_period_end\""
+        }
+      },
       "isRLSEnabled": false
     },
     "public.survey_responses": {

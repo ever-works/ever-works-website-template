@@ -3,6 +3,26 @@
  * Sent when a user's paid subscription expires
  */
 
+// Security: HTML escape function to prevent XSS
+function escapeHtml(unsafe: string): string {
+	return unsafe
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#039;');
+}
+
+// Security: URL validation function
+function isValidUrl(url: string): boolean {
+	try {
+		const parsedUrl = new URL(url);
+		return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+	} catch {
+		return false;
+	}
+}
+
 interface SubscriptionExpiredData {
 	customerName: string;
 	customerEmail: string;
@@ -38,9 +58,25 @@ export const getSubscriptionExpiredTemplate = (data: SubscriptionExpiredData) =>
 		features = []
 	} = data;
 
-	const currencySymbol = currency === 'eur' ? '€' : currency === 'usd' ? '$' : currency.toUpperCase();
+	// Security: Escape all user-provided data
+	const safeCustomerName = escapeHtml(customerName);
+	const safePlanName = escapeHtml(planName);
+	const safeAmount = escapeHtml(amount);
+	const safeCurrency = escapeHtml(currency);
+	const safeBillingPeriod = escapeHtml(billingPeriod);
+	const safeSubscriptionId = escapeHtml(subscriptionId);
+	const safeExpirationDate = escapeHtml(expirationDate);
+	const safeCompanyName = escapeHtml(companyName);
+	const safeSupportEmail = escapeHtml(supportEmail);
+	const safeFeatures = features.map((feature) => escapeHtml(feature));
 
-	const subject = `⚠️ Your ${planName} subscription has expired`;
+	// Security: Validate URLs
+	const safeCompanyUrl = isValidUrl(companyUrl) ? companyUrl : 'https://ever.works';
+	const safeRenewUrl = renewUrl && isValidUrl(renewUrl) ? renewUrl : null;
+
+	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
+
+	const subject = `⚠️ Your ${safePlanName} subscription has expired`;
 
 	const html = `
     <!DOCTYPE html>
@@ -247,46 +283,46 @@ export const getSubscriptionExpiredTemplate = (data: SubscriptionExpiredData) =>
         <div class="header">
           <div class="expired-icon">⚠️</div>
           <h1>Subscription Expired</h1>
-          <p>Your ${planName} subscription has ended</p>
+          <p>Your ${safePlanName} subscription has ended</p>
         </div>
         
         <div class="content">
-          <p>Hello <strong>${customerName}</strong>,</p>
+          <p>Hello <strong>${safeCustomerName}</strong>,</p>
           
           <div class="alert-box">
             <h2>Your Subscription Has Expired</h2>
-            <p>Your access to ${planName} features has ended on ${expirationDate}.</p>
+            <p>Your access to ${safePlanName} features has ended on ${safeExpirationDate}.</p>
           </div>
           
-          <p>Your <strong>${planName}</strong> subscription has expired. You have been moved to the <strong>Free</strong> plan with limited features.</p>
+          <p>Your <strong>${safePlanName}</strong> subscription has expired. You have been moved to the <strong>Free</strong> plan with limited features.</p>
           
           <div class="subscription-details">
             <h2>📋 Expired Subscription Details</h2>
             <div class="detail-row">
               <span class="detail-label">Plan:</span>
-              <span class="detail-value">${planName}</span>
+              <span class="detail-value">${safePlanName}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Previous Price:</span>
-              <span class="detail-value">${currencySymbol}${amount}/${billingPeriod}</span>
+              <span class="detail-value">${currencySymbol}${safeAmount}/${safeBillingPeriod}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Expiration Date:</span>
-              <span class="detail-value">${expirationDate}</span>
+              <span class="detail-value">${safeExpirationDate}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Subscription ID:</span>
-              <span class="detail-value">${subscriptionId}</span>
+              <span class="detail-value">${safeSubscriptionId}</span>
             </div>
           </div>
           
           ${
-				features.length > 0
+				safeFeatures.length > 0
 					? `
           <div class="features-lost">
             <h3>Features No Longer Available</h3>
             <ul class="features-list">
-              ${features.map((feature) => `<li>${feature}</li>`).join('')}
+              ${safeFeatures.map((feature) => `<li>${feature}</li>`).join('')}
             </ul>
           </div>
           `
@@ -297,12 +333,12 @@ export const getSubscriptionExpiredTemplate = (data: SubscriptionExpiredData) =>
             <h3>🚀 Ready to Get Back on Track?</h3>
             <p>Renew your subscription now to restore access to all your premium features.</p>
             ${
-				renewUrl
+				safeRenewUrl
 					? `
-            <a href="${renewUrl}" class="cta-button">💳 Renew Subscription</a>
+            <a href="${safeRenewUrl}" class="cta-button">💳 Renew Subscription</a>
             `
 					: `
-            <a href="${companyUrl}/pricing" class="cta-button">💳 View Plans</a>
+            <a href="${safeCompanyUrl}/pricing" class="cta-button">💳 View Plans</a>
             `
 			}
           </div>
@@ -310,18 +346,18 @@ export const getSubscriptionExpiredTemplate = (data: SubscriptionExpiredData) =>
           <p>If you have any questions or need assistance, our support team is here to help.</p>
           
           <p>Best regards,<br>
-          The ${companyName} Team</p>
+          The ${safeCompanyName} Team</p>
         </div>
         
         <div class="footer">
-          <p><strong>${companyName}</strong></p>
+          <p><strong>${safeCompanyName}</strong></p>
           <p>
-            <a href="${companyUrl}">Website</a> | 
-            <a href="mailto:${supportEmail}">Support</a> | 
-            <a href="${companyUrl}/privacy">Privacy Policy</a>
+            <a href="${safeCompanyUrl}">Website</a> | 
+            <a href="mailto:${safeSupportEmail}">Support</a> | 
+            <a href="${safeCompanyUrl}/privacy">Privacy Policy</a>
           </p>
           <p style="margin-top: 20px;">
-            © ${new Date().getFullYear()} ${companyName}. All rights reserved.
+            © ${new Date().getFullYear()} ${safeCompanyName}. All rights reserved.
           </p>
         </div>
       </div>
@@ -330,26 +366,26 @@ export const getSubscriptionExpiredTemplate = (data: SubscriptionExpiredData) =>
   `;
 
 	const text = `
-    Subscription Expired - ${companyName}
+    Subscription Expired - ${safeCompanyName}
     
-    Hello ${customerName},
+    Hello ${safeCustomerName},
     
-    Your ${planName} subscription has expired.
+    Your ${safePlanName} subscription has expired.
     
-    Your access to ${planName} features has ended on ${expirationDate}.
+    Your access to ${safePlanName} features has ended on ${safeExpirationDate}.
     You have been moved to the Free plan with limited features.
     
     Expired Subscription Details:
-    - Plan: ${planName}
-    - Previous Price: ${currencySymbol}${amount}/${billingPeriod}
-    - Expiration Date: ${expirationDate}
-    - Subscription ID: ${subscriptionId}
+    - Plan: ${safePlanName}
+    - Previous Price: ${currencySymbol}${safeAmount}/${safeBillingPeriod}
+    - Expiration Date: ${safeExpirationDate}
+    - Subscription ID: ${safeSubscriptionId}
     
     ${
-		features.length > 0
+		safeFeatures.length > 0
 			? `
     Features No Longer Available:
-    ${features.map((feature) => `- ${feature}`).join('\n')}
+    ${safeFeatures.map((feature) => `- ${feature}`).join('\n')}
     `
 			: ''
 	}
@@ -357,14 +393,14 @@ export const getSubscriptionExpiredTemplate = (data: SubscriptionExpiredData) =>
     Ready to Get Back on Track?
     Renew your subscription now to restore access to all your premium features.
     
-    ${renewUrl ? `Renew Subscription: ${renewUrl}` : `View Plans: ${companyUrl}/pricing`}
+    ${safeRenewUrl ? `Renew Subscription: ${safeRenewUrl}` : `View Plans: ${safeCompanyUrl}/pricing`}
     
     If you have any questions or need assistance, our support team is here to help.
     
     Best regards,
-    The ${companyName} Team
+    The ${safeCompanyName} Team
     
-    ${companyUrl}
+    ${safeCompanyUrl}
   `;
 
 	return {
@@ -395,15 +431,30 @@ export const getSubscriptionExpiringWarningTemplate = (
 		renewUrl
 	} = data;
 
-	const currencySymbol = currency === 'eur' ? '€' : currency === 'usd' ? '$' : currency.toUpperCase();
+	// Security: Escape all user-provided data
+	const safeCustomerName = escapeHtml(customerName);
+	const safePlanName = escapeHtml(planName);
+	const safeAmount = escapeHtml(amount);
+	const safeCurrency = escapeHtml(currency);
+	const safeBillingPeriod = escapeHtml(billingPeriod);
+	const safeSubscriptionId = escapeHtml(subscriptionId);
+	const safeExpirationDate = escapeHtml(expirationDate);
+	const safeCompanyName = escapeHtml(companyName);
+	const safeSupportEmail = escapeHtml(supportEmail);
+
+	// Security: Validate URLs
+	const safeCompanyUrl = isValidUrl(companyUrl) ? companyUrl : 'https://ever.works';
+	const safeRenewUrl = renewUrl && isValidUrl(renewUrl) ? renewUrl : null;
+
+	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 	const urgencyText =
 		daysUntilExpiration <= 1
 			? 'expires today'
 			: daysUntilExpiration <= 3
-				? `expires in ${daysUntilExpiration} days`
+				? 'expires soon'
 				: `expires in ${daysUntilExpiration} days`;
 
-	const subject = `⏰ Your ${planName} subscription ${urgencyText}`;
+	const subject = `⏰ Your ${safePlanName} subscription ${urgencyText}`;
 
 	const html = `
     <!DOCTYPE html>
@@ -511,38 +562,38 @@ export const getSubscriptionExpiringWarningTemplate = (
         </div>
         
         <div class="content">
-          <p>Hello <strong>${customerName}</strong>,</p>
+          <p>Hello <strong>${safeCustomerName}</strong>,</p>
           
           <div class="countdown-box">
             <span class="countdown-number">${daysUntilExpiration}</span>
             <span class="countdown-label">${daysUntilExpiration === 1 ? 'day' : 'days'} remaining</span>
           </div>
           
-          <p>Your <strong>${planName}</strong> subscription will expire on <strong>${expirationDate}</strong>.</p>
+          <p>Your <strong>${safePlanName}</strong> subscription will expire on <strong>${safeExpirationDate}</strong>.</p>
           
           <p>To continue enjoying your premium features without interruption, please renew your subscription before it expires.</p>
           
           <div style="text-align: center; margin: 30px 0;">
             ${
-				renewUrl
+				safeRenewUrl
 					? `
-            <a href="${renewUrl}" class="cta-button">🔄 Renew Now</a>
+            <a href="${safeRenewUrl}" class="cta-button">🔄 Renew Now</a>
             `
 					: `
-            <a href="${companyUrl}/pricing" class="cta-button">🔄 Renew Now</a>
+            <a href="${safeCompanyUrl}/pricing" class="cta-button">🔄 Renew Now</a>
             `
 			}
           </div>
           
           <p>Best regards,<br>
-          The ${companyName} Team</p>
+          The ${safeCompanyName} Team</p>
         </div>
         
         <div class="footer">
-          <p><strong>${companyName}</strong></p>
+          <p><strong>${safeCompanyName}</strong></p>
           <p>
-            <a href="${companyUrl}">Website</a> | 
-            <a href="mailto:${supportEmail}">Support</a>
+            <a href="${safeCompanyUrl}">Website</a> | 
+            <a href="mailto:${safeSupportEmail}">Support</a>
           </p>
         </div>
       </div>
@@ -551,20 +602,20 @@ export const getSubscriptionExpiringWarningTemplate = (
   `;
 
 	const text = `
-    Subscription Expiring Soon - ${companyName}
+    Subscription Expiring Soon - ${safeCompanyName}
     
-    Hello ${customerName},
+    Hello ${safeCustomerName},
     
-    Your ${planName} subscription will expire in ${daysUntilExpiration} ${daysUntilExpiration === 1 ? 'day' : 'days'} on ${expirationDate}.
+    Your ${safePlanName} subscription will expire in ${daysUntilExpiration} ${daysUntilExpiration === 1 ? 'day' : 'days'} on ${safeExpirationDate}.
     
     To continue enjoying your premium features without interruption, please renew your subscription before it expires.
     
-    ${renewUrl ? `Renew Now: ${renewUrl}` : `Renew Now: ${companyUrl}/pricing`}
+    ${safeRenewUrl ? `Renew Now: ${safeRenewUrl}` : `Renew Now: ${safeCompanyUrl}/pricing`}
     
     Best regards,
-    The ${companyName} Team
+    The ${safeCompanyName} Team
     
-    ${companyUrl}
+    ${safeCompanyUrl}
   `;
 
 	return {

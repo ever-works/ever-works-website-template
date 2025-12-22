@@ -77,6 +77,7 @@ export function getEffectivePlan(planId: string, endDate: Date | string | null |
  * @param endDate - The subscription end date
  * @returns Number of days until expiration, or null if no end date
  *          Negative values indicate the plan has already expired
+ *          Uses Math.floor to count full days remaining (e.g., 1 hour = 0 days = "expires today")
  */
 export function getDaysUntilExpiration(endDate: Date | string | null | undefined): number | null {
 	if (!endDate) return null;
@@ -88,7 +89,7 @@ export function getDaysUntilExpiration(endDate: Date | string | null | undefined
 
 	const now = new Date();
 	const diffTime = expirationDate.getTime() - now.getTime();
-	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+	const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
 	return diffDays;
 }
@@ -204,7 +205,9 @@ export function formatExpirationMessage(planName: string, daysUntil: number | nu
 		return `Your ${planName} subscription expires tomorrow.`;
 	}
 
-	if (daysUntil <= EXPIRATION_CONFIG.WARNING_DAYS) {
+	// Only show warning message for positive days (not expired)
+	// This prevents nonsensical messages like "expires in -5 days"
+	if (daysUntil > 0 && daysUntil <= EXPIRATION_CONFIG.WARNING_DAYS) {
 		return `Your ${planName} subscription expires in ${daysUntil} days.`;
 	}
 

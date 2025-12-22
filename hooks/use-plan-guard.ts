@@ -31,7 +31,7 @@ import {
 	Feature,
 	canAccessFeature,
 	getFeatureLimit,
-	isWithinLimit,
+	isWithinLimit as isWithinLimitHelper,
 	getAccessibleFeatures,
 	getMinimumPlanForFeature,
 	PLAN_LIMITS
@@ -102,7 +102,7 @@ export function usePlanGuard(): UsePlanGuardResult {
 		};
 
 		const checkWithinLimit = (limitName: keyof FeatureLimits, value: number): boolean => {
-			return isWithinLimit(limitName, value, effectivePlan);
+			return isWithinLimitHelper(limitName, value, effectivePlan);
 		};
 
 		const requireUpgrade = (feature: Feature): PaymentPlan | null => {
@@ -176,10 +176,10 @@ export function useFeatureLimit(
 	isWithinLimit: boolean;
 	isLoading: boolean;
 } {
-	const { getLimit, isWithinLimit, isLoading } = usePlanGuard();
+	const { effectivePlan, isLoading } = usePlanStatus();
 
 	return useMemo(() => {
-		const limit = getLimit(limitName);
+		const limit = getFeatureLimit(limitName, effectivePlan);
 		const isUnlimited = limit === null;
 		const remaining = isUnlimited ? null : Math.max(0, (limit as number) - currentValue);
 
@@ -187,8 +187,8 @@ export function useFeatureLimit(
 			limit,
 			isUnlimited,
 			remaining,
-			isWithinLimit: isWithinLimit(limitName, currentValue),
+			isWithinLimit: isWithinLimitHelper(limitName, currentValue, effectivePlan),
 			isLoading
 		};
-	}, [getLimit, isWithinLimit, limitName, currentValue, isLoading]);
+	}, [limitName, currentValue, effectivePlan, isLoading]);
 }

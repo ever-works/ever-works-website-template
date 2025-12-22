@@ -440,6 +440,21 @@
 		"REGISTER": "Register",
 		"ADMIN": "Admin"
 	},
+	"billing": {
+		"EXPIRED_MESSAGE": "Your {planName} has expired. Please renew to restore full access.",
+		"EXPIRES_TODAY": "Your {planName} expires today.",
+		"EXPIRES_TOMORROW": "Your {planName} expires tomorrow.",
+		"EXPIRES_IN_DAYS": "Your {planName} expires in {days} days.",
+		"RENEW": "Renew",
+		"RENEW_SUBSCRIPTION": "Renew Subscription",
+		"MANAGE_SUBSCRIPTION": "Manage Subscription",
+		"SUBSCRIPTION_EXPIRED": "Subscription Expired",
+		"SUBSCRIPTION_EXPIRING_SOON": "Subscription Expiring Soon",
+		"EXPIRED_ON": "Expired on",
+		"EXPIRES": "Expires",
+		"EXPIRED_LABEL": "Expired",
+		"EXPIRES_IN_DAYS_LABEL": "Expires in {days}d"
+	},
 	"settings": {
 		"PROFILE": "Your Profile",
 		"PAYMENT": "Payment",

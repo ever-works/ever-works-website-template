@@ -25,7 +25,7 @@ function isValidUrl(url: string): boolean {
 
 interface RenewalReminderData {
 	customerName: string;
-	customerEmail: string;
+	customerEmail?: string; // Optional: not used in template, but may be useful for logging or future use
 	planName: string;
 	amount: string;
 	currency: string;

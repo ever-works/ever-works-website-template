@@ -10,8 +10,10 @@ import {
 	serial,
 	varchar,
 	uniqueIndex,
-	primaryKey
+	primaryKey,
+	check
 } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 
 export const newsletterSubscriptions = pgTable(
 	'newsletterSubscriptions',
@@ -38,12 +40,16 @@ export const passwordResetTokens = pgTable(
 	(table) => [unique('passwordResetTokens_token_unique').on(table.token)]
 );
 
-export const verificationTokens = pgTable('verificationTokens', {
-	identifier: text().notNull(),
-	email: text().notNull(),
-	token: text().notNull(),
-	expires: timestamp({ mode: 'string' }).notNull()
-});
+export const verificationTokens = pgTable(
+	'verificationTokens',
+	{
+		identifier: text().notNull(),
+		email: text().notNull(),
+		token: text().notNull(),
+		expires: timestamp({ mode: 'string' }).notNull()
+	},
+	(table) => [primaryKey({ columns: [table.identifier, table.token] })]
+);
 
 export const accounts = pgTable(
 	'accounts',
@@ -127,6 +133,9 @@ export const clientProfiles = pgTable(
 		totalSubmissions: integer('total_submissions').default(0),
 		notes: text(),
 		tags: text(),
+		warningCount: integer('warning_count').default(0),
+		suspendedAt: timestamp('suspended_at', { mode: 'string' }),
+		bannedAt: timestamp('banned_at', { mode: 'string' }),
 		createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
 		updatedAt: timestamp('updated_at', { mode: 'string' }).defaultNow().notNull()
 	},
@@ -394,7 +403,7 @@ export const subscriptions = pgTable(
 		trialEnd: timestamp('trial_end', { mode: 'string' }),
 		autoRenewal: boolean('auto_renewal').default(true),
 		renewalReminderSent: boolean('renewal_reminder_sent').default(false),
-		lastRenewalAttempt: timestamp('last_renewal_attempt', { mode: 'date' }),
+		lastRenewalAttempt: timestamp('last_renewal_attempt', { mode: 'string' }),
 		failedPaymentCount: integer('failed_payment_count').default(0),
 		cancelledAt: timestamp('cancelled_at', { mode: 'string' }),
 		cancelAtPeriodEnd: boolean('cancel_at_period_end').default(false),
@@ -419,7 +428,8 @@ export const subscriptions = pgTable(
 			columns: [table.userId],
 			foreignColumns: [users.id],
 			name: 'subscriptions_userId_users_id_fk'
-		}).onDelete('cascade')
+		}).onDelete('cascade'),
+		check('auto_renewal_check', sql`NOT (${table.autoRenewal} AND ${table.cancelAtPeriodEnd})`)
 	]
 );
 

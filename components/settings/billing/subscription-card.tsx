@@ -172,7 +172,13 @@ export function SubscriptionCard({ subscription }: { subscription: SubscriptionI
 							: 'bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600'
 					}`}
 				>
-					{isUpdating ? 'Updating...' : autoRenewal ? 'Disable Auto-Renewal' : 'Enable Auto-Renewal'}
+					{isLoading
+						? 'Loading...'
+						: isUpdating
+							? 'Updating...'
+							: autoRenewal
+								? 'Disable Auto-Renewal'
+								: 'Enable Auto-Renewal'}
 				</button>
 			</div>
 		</div>

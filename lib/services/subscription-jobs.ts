@@ -115,7 +115,7 @@ export async function subscriptionRenewalReminderJob(): Promise<JobResult> {
 				const amount = subscription.amount ? (subscription.amount / 100).toFixed(2) : '0.00';
 
 				const emailTemplate = getRenewalReminderTemplate({
-					customerName: user.email?.split('@')[0] || 'Valued Customer',
+					customerName: 'Valued Customer',
 					customerEmail: userEmail,
 					planName: subscriptionService.getPlanDisplayName(subscription.planId),
 					amount,
@@ -136,12 +136,22 @@ export async function subscriptionRenewalReminderJob(): Promise<JobResult> {
 					text: emailTemplate.text
 				});
 
-				// Mark reminder as sent
-				await subscriptionService.markRenewalReminderSent(subscription.id);
+				try {
+					// Mark reminder as sent
+					await subscriptionService.markRenewalReminderSent(subscription.id);
+					console.log(
+						`[SubscriptionJob] Sent renewal reminder to ${userEmail} for subscription ${subscription.id}`
+					);
+				} catch (markError) {
+					console.error(
+						`[SubscriptionJob] Failed to mark reminder as sent for subscription ${subscription.id}:`,
+						markError
+					);
+					results.errors.push(
+						`Email sent but failed to mark for ${subscription.id}: ${markError instanceof Error ? markError.message : 'Unknown error'}`
+					);
+				}
 
-				console.log(
-					`[SubscriptionJob] Sent renewal reminder to ${userEmail} for subscription ${subscription.id}`
-				);
 				results.successful++;
 			} catch (emailError) {
 				console.error(

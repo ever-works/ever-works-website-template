@@ -4,7 +4,29 @@ import { getNextPublicEnv } from '@/env-config';
 // LOCALIZATION
 // ============================================
 export const DEFAULT_LOCALE = 'en';
-export const LOCALES = ['en', 'fr', 'es', 'zh', 'de', 'ar', 'he', 'ru', 'uk', 'pt', 'it', 'ja', 'ko', 'nl', 'pl', 'tr', 'vi', 'th', 'hi', 'id', 'bg'] as const;
+export const LOCALES = [
+	'en',
+	'fr',
+	'es',
+	'zh',
+	'de',
+	'ar',
+	'he',
+	'ru',
+	'uk',
+	'pt',
+	'it',
+	'ja',
+	'ko',
+	'nl',
+	'pl',
+	'tr',
+	'vi',
+	'th',
+	'hi',
+	'id',
+	'bg'
+] as const;
 export type Locale = (typeof LOCALES)[number];
 
 // ============================================
@@ -83,22 +105,28 @@ export enum PaymentStatus {
 }
 
 export enum PaymentInterval {
-  DAILY = 'daily',
-  WEEKLY = 'weekly',
-  MONTHLY = 'monthly',
-  YEARLY = 'yearly',
-  ONE_TIME = 'one-time',
-  PER_SUBMISSION = 'per-submission'
+	DAILY = 'daily',
+	WEEKLY = 'weekly',
+	MONTHLY = 'monthly',
+	YEARLY = 'yearly',
+	ONE_TIME = 'one-time',
+	PER_SUBMISSION = 'per-submission'
 }
 
 // ============================================
 // PAYMENT PLANS
 // ============================================
 export enum PaymentPlan {
-  FREE = 'free',
-  STANDARD = 'standard',
-  PREMIUM = 'premium'
+	FREE = 'free',
+	STANDARD = 'standard',
+	PREMIUM = 'premium'
 }
+
+export const PAYMENT_PLAN_NAMES: Record<PaymentPlan, string> = {
+	[PaymentPlan.FREE]: 'Free Plan',
+	[PaymentPlan.STANDARD]: 'Standard Plan',
+	[PaymentPlan.PREMIUM]: 'Premium Plan'
+};
 
 export enum PaymentMethod {
 	CREDIT_CARD = 'credit_card',
@@ -134,6 +162,6 @@ export enum SubmissionStatus {
 // SPONSOR ADS PRICING (in cents)
 // ============================================
 export enum SponsorAdPricing {
-	WEEKLY = 10000,   // $100.00
-	MONTHLY = 30000   // $300.00
+	WEEKLY = 10000, // $100.00
+	MONTHLY = 30000 // $300.00
 }

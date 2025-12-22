@@ -9,8 +9,10 @@ import {
 	varchar,
 	uniqueIndex,
 	index,
-	jsonb
+	jsonb,
+	check
 } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 import type { AdapterAccountType } from 'next-auth/adapters';
 import { PaymentPlan, PaymentProvider } from '../constants';
 
@@ -380,7 +382,7 @@ export const subscriptions = pgTable(
 
 		autoRenewal: boolean('auto_renewal').default(true),
 		renewalReminderSent: boolean('renewal_reminder_sent').default(false),
-		lastRenewalAttempt: timestamp('last_renewal_attempt', { mode: 'string', withTimezone: true }),
+		lastRenewalAttempt: timestamp('last_renewal_attempt', { mode: 'date', withTimezone: true }),
 		failedPaymentCount: integer('failed_payment_count').default(0),
 
 		cancelledAt: timestamp('cancelled_at', { mode: 'date' }),
@@ -399,6 +401,7 @@ export const subscriptions = pgTable(
 			table.paymentProvider,
 			table.subscriptionId
 		),
+		autoRenewalCheck: check('auto_renewal_check', sql`NOT (${table.autoRenewal} AND ${table.cancelAtPeriodEnd})`),
 		planIndex: index('subscription_plan_idx').on(table.planId),
 		createdAtIndex: index('subscription_created_at_idx').on(table.createdAt)
 	})

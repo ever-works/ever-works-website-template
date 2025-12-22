@@ -1,6 +1,6 @@
 import * as queries from '@/lib/db/queries';
 import { SubscriptionStatus, type Subscription, type NewSubscription } from '@/lib/db/schema';
-import { PaymentPlan, PaymentProvider } from '../constants';
+import { PaymentPlan, PaymentProvider, PAYMENT_PLAN_NAMES } from '../constants';
 import {
 	getDaysUntilExpiration,
 	isInExpirationWarningPeriod,
@@ -40,13 +40,10 @@ export class SubscriptionService {
 	/**
 	 * Create a new subscription
 	 */
-	/**
-	 * Create a new subscription
-	 */
 	async createSubscription(data: CreateSubscriptionData): Promise<Subscription> {
 		const newSubscription: NewSubscription = {
 			userId: data.userId,
-			planId: data.planId || PaymentPlan.STANDARD,
+			planId: data.planId,
 			status: SubscriptionStatus.PENDING,
 			startDate: data.startDate,
 			endDate: data.endDate,
@@ -159,6 +156,8 @@ export class SubscriptionService {
 	/**
 	 * Process expired subscriptions - update status and prepare for notifications
 	 * Returns list of subscriptions that were updated
+	 * Uses the result from updateExpiredSubscriptionsStatus() to ensure consistency
+	 * and prevent race conditions between query and update operations
 	 */
 	async processExpiredSubscriptions(): Promise<{
 		processed: number;
@@ -168,18 +167,17 @@ export class SubscriptionService {
 		const errors: string[] = [];
 
 		try {
-			// Get all subscriptions that are active but past their end date
-			const expiredSubscriptions = await queries.getExpiredActiveSubscriptions();
+			// Update expired subscriptions and get the actual updated records
+			// This is atomic - we get exactly the subscriptions that were updated,
+			// preventing race conditions where subscriptions expire between separate query and update
+			const updatedSubscriptions = await queries.updateExpiredSubscriptionsStatus();
 
-			if (expiredSubscriptions.length === 0) {
+			if (updatedSubscriptions.length === 0) {
 				return { processed: 0, subscriptions: [], errors: [] };
 			}
 
-			// Update their status to expired
-			const updatedCount = await queries.updateExpiredSubscriptionsStatus();
-
-			// Log the changes for each subscription
-			for (const subscription of expiredSubscriptions) {
+			// Log the changes for each subscription that was actually updated
+			for (const subscription of updatedSubscriptions) {
 				try {
 					await queries.logSubscriptionChange(
 						subscription.id,
@@ -197,8 +195,8 @@ export class SubscriptionService {
 			}
 
 			return {
-				processed: updatedCount,
-				subscriptions: expiredSubscriptions,
+				processed: updatedSubscriptions.length,
+				subscriptions: updatedSubscriptions,
 				errors
 			};
 		} catch (error) {
@@ -284,13 +282,7 @@ export class SubscriptionService {
 	 * Get plan display name
 	 */
 	getPlanDisplayName(planId: string): string {
-		const planNames: Record<string, string> = {
-			[PaymentPlan.FREE]: 'Free Plan',
-			[PaymentPlan.STANDARD]: 'Standard Plan',
-			[PaymentPlan.PREMIUM]: 'Premium Plan'
-		};
-
-		return planNames[planId] || 'Unknown Plan';
+		return PAYMENT_PLAN_NAMES[planId as PaymentPlan] || 'Unknown Plan';
 	}
 
 	/**
@@ -375,14 +367,14 @@ export class SubscriptionService {
 	 * Called when payment succeeds to reset reminder and failure counters
 	 * Uses atomic update to ensure data consistency
 	 * @param subscriptionId - Subscription ID
+	 * @throws Error if subscription is not found
 	 */
 	async handleSuccessfulRenewal(subscriptionId: string): Promise<void> {
 		// Use atomic reset to ensure both fields are updated together
 		const updated = await queries.resetRenewalStateAtomic(subscriptionId);
 
 		if (!updated) {
-			console.warn(`handleSuccessfulRenewal: Subscription ${subscriptionId} not found`);
-			return;
+			throw new Error(`Subscription not found: ${subscriptionId}`);
 		}
 
 		await queries.logSubscriptionChange(
