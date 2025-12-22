@@ -16,6 +16,13 @@ interface UpdateCommentData {
   rating?: number;
 }
 
+const COMMENT_MUTATION_EVENT = "comment:mutated";
+
+const dispatchCommentEvent = (comment: CommentWithUser) => {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent(COMMENT_MUTATION_EVENT, { detail: comment }));
+};
+
 export function useComments(itemId: string) {
   const queryClient = useQueryClient();
   const loginModal = useLoginModal();
@@ -53,7 +60,7 @@ export function useComments(itemId: string) {
       // response.data contains the API response: { success: true, comment: CommentWithUser }
       return response.data.comment;
     },
-    onSuccess: (newComment) => {
+    onSuccess: async (newComment) => {
       if (newComment) {
         // Optimistically update cache with server-returned comment data
         queryClient.setQueryData<CommentWithUser[]>(["comments", itemId], (old = []) => {
@@ -65,9 +72,9 @@ export function useComments(itemId: string) {
           // Add new comment at the beginning
           return [newComment, ...old];
         });
-        // Update rating caches to reflect new rating immediately
-        queryClient.setQueryData(["commentRating", itemId], newComment.rating);
-        queryClient.invalidateQueries({ queryKey: ["itemRating", itemId], exact: true });
+        dispatchCommentEvent(newComment);
+        // Force refetch rating query to show updated data immediately
+        await queryClient.refetchQueries({ queryKey: ["item-rating", itemId] });
       }
     },
   });
@@ -108,7 +115,7 @@ export function useComments(itemId: string) {
 
       return response.data;
     },
-    onSuccess: (updatedComment) => {
+    onSuccess: async (updatedComment) => {
       if (updatedComment) {
         // Optimistically update cache with server-returned comment data
         queryClient.setQueryData<CommentWithUser[]>(["comments", itemId], (old = []) => {
@@ -116,8 +123,9 @@ export function useComments(itemId: string) {
             comment.id === updatedComment.id ? updatedComment : comment
           );
         });
-        // Invalidate rating caches to reflect updated rating
-        queryClient.invalidateQueries({ queryKey: ["itemRating", itemId], exact: true });
+        dispatchCommentEvent(updatedComment);
+        // Force refetch rating to reflect updated rating immediately
+        await queryClient.refetchQueries({ queryKey: ["item-rating", itemId] });
       }
     },
   });
@@ -137,9 +145,9 @@ export function useComments(itemId: string) {
 
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
-      queryClient.invalidateQueries({ queryKey: ["itemRating", itemId] });
+      await queryClient.refetchQueries({ queryKey: ["item-rating", itemId] });
     },
   });
 
@@ -158,9 +166,9 @@ export function useComments(itemId: string) {
 
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["comments", itemId] });
-      queryClient.invalidateQueries({ queryKey: ["itemRating", itemId] });
+      await queryClient.refetchQueries({ queryKey: ["item-rating", itemId] });
     },
   });
 
