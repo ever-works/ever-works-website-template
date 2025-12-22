@@ -71,8 +71,10 @@ export const getSubscriptionExpiredTemplate = (data: SubscriptionExpiredData) =>
 	const safeFeatures = features.map((feature) => escapeHtml(feature));
 
 	// Security: Validate URLs
-	const safeCompanyUrl = isValidUrl(companyUrl) || 'https://ever.works';
-	const safeRenewUrl = renewUrl ? isValidUrl(renewUrl) : null;
+	const validCompanyUrl = isValidUrl(companyUrl) || 'https://ever.works';
+	const safeCompanyUrl = escapeHtml(validCompanyUrl);
+	const validRenewUrl = renewUrl ? isValidUrl(renewUrl) : null;
+	const safeRenewUrl = validRenewUrl ? escapeHtml(validRenewUrl) : null;
 
 	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 
@@ -443,8 +445,10 @@ export const getSubscriptionExpiringWarningTemplate = (
 	const safeSupportEmail = escapeHtml(supportEmail);
 
 	// Security: Validate URLs
-	const safeCompanyUrl = isValidUrl(companyUrl) || 'https://ever.works';
-	const safeRenewUrl = renewUrl ? isValidUrl(renewUrl) : null;
+	const validCompanyUrl = isValidUrl(companyUrl) || 'https://ever.works';
+	const safeCompanyUrl = escapeHtml(validCompanyUrl);
+	const validRenewUrl = renewUrl ? isValidUrl(renewUrl) : null;
+	const safeRenewUrl = validRenewUrl ? escapeHtml(validRenewUrl) : null;
 
 	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 	const urgencyText =

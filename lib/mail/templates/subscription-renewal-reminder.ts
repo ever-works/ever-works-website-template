@@ -68,9 +68,12 @@ export const getRenewalReminderTemplate = (data: RenewalReminderData) => {
 	const safeSupportEmail = escapeHtml(supportEmail);
 
 	// Security: Validate URLs
-	const safeCompanyUrl = isValidUrl(companyUrl) || 'https://ever.works';
-	const safeManageSubscriptionUrl = manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl);
-	const safeDisableAutoRenewalUrl = disableAutoRenewalUrl && isValidUrl(disableAutoRenewalUrl);
+	const validCompanyUrl = isValidUrl(companyUrl) || 'https://ever.works';
+	const safeCompanyUrl = escapeHtml(validCompanyUrl);
+	const validManageSubscriptionUrl = manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl);
+	const safeManageSubscriptionUrl = validManageSubscriptionUrl ? escapeHtml(validManageSubscriptionUrl) : null;
+	const validDisableAutoRenewalUrl = disableAutoRenewalUrl && isValidUrl(disableAutoRenewalUrl);
+	const safeDisableAutoRenewalUrl = validDisableAutoRenewalUrl ? escapeHtml(validDisableAutoRenewalUrl) : null;
 
 	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 
@@ -361,9 +364,12 @@ export const getRenewalSuccessTemplate = (data: {
 	const safeSupportEmail = escapeHtml(supportEmail);
 
 	// Security: Validate URLs
-	const safeCompanyUrl = isValidUrl(companyUrl) || 'https://ever.works';
-	const safeInvoiceUrl = invoiceUrl && isValidUrl(invoiceUrl);
-	const safeManageSubscriptionUrl = manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl);
+	const validCompanyUrl = isValidUrl(companyUrl) || 'https://ever.works';
+	const safeCompanyUrl = escapeHtml(validCompanyUrl);
+	const validInvoiceUrl = invoiceUrl && isValidUrl(invoiceUrl);
+	const safeInvoiceUrl = validInvoiceUrl ? escapeHtml(validInvoiceUrl) : null;
+	const validManageSubscriptionUrl = manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl);
+	const safeManageSubscriptionUrl = validManageSubscriptionUrl ? escapeHtml(validManageSubscriptionUrl) : null;
 
 	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 
