@@ -53,6 +53,9 @@ export default {
           },
         },
       },
+      backdropBlur: {
+        xs: '2px',
+      },
       zIndex: {
         nav: '20', // semantic token for navigation
       },

@@ -9,40 +9,53 @@
 let isInitialized = false;
 
 export async function initializeBackgroundJobs(): Promise<void> {
-  // Skip during build time
-  if (process.env.NEXT_PHASE === 'phase-production-build') {
-    return;
-  }
+	// Skip during build time
+	if (process.env.NEXT_PHASE === 'phase-production-build') {
+		return;
+	}
 
-  // Singleton guard - only initialize once per process
-  if (isInitialized) {
-    return;
-  }
+	// Singleton guard - only initialize once per process
+	if (isInitialized) {
+		return;
+	}
 
-  isInitialized = true;
-  // Lazy-load BackgroundJobManager to avoid static analysis issues
-  const { getJobManager } = await import('@/lib/background-jobs');
-  const manager = getJobManager();
+	isInitialized = true;
+	// Lazy-load BackgroundJobManager to avoid static analysis issues
+	const { getJobManager } = await import('@/lib/background-jobs');
+	const manager = getJobManager();
 
-  // Register repository sync job
-  // Note: Uses dynamic import inside callback to prevent webpack from analyzing
-  // the sync-service -> repository -> isomorphic-git chain at build time
-  manager.scheduleJob(
-    'repository-sync',
-    'Repository Synchronization',
-    async () => {
-      // Dynamic import prevents webpack bundling of Node.js modules
-      const { syncManager } = await import('@/lib/services/sync-service');
+	// Register repository sync job
+	// Note: Uses dynamic import inside callback to prevent webpack from analyzing
+	// the sync-service -> repository -> isomorphic-git chain at build time
+	manager.scheduleJob(
+		'repository-sync',
+		'Repository Synchronization',
+		async () => {
+			// Dynamic import prevents webpack bundling of Node.js modules
+			const { syncManager } = await import('@/lib/services/sync-service');
 
-      // SyncManager handles:
-      // - Timeout wrapper
-      // - Retry logic
-      // - Mutex lock
-      // - Status tracking
-      await syncManager.performSync();
-    },
-    5 * 60 * 1000 // 5 minutes interval
-  );
+			// SyncManager handles:
+			// - Timeout wrapper
+			// - Retry logic
+			// - Mutex lock
+			// - Status tracking
+			await syncManager.performSync();
+		},
+		5 * 60 * 1000 // 5 minutes interval
+	);
 
-  console.log('[BACKGROUND_JOBS] Repository sync job registered with BackgroundJobManager');
+	// Register subscription renewal reminder job
+	// Runs daily to send renewal reminders to users with subscriptions expiring in 7 days
+	manager.scheduleCronJob(
+		'subscription-renewal-reminder',
+		'Subscription Renewal Reminder',
+		async () => {
+			// Dynamic import to prevent bundling issues
+			const { subscriptionRenewalReminderJob } = await import('@/lib/services/subscription-jobs');
+			await subscriptionRenewalReminderJob();
+		},
+		'0 9 * * *' // Daily at 9:00 AM
+	);
+
+	console.log('[BACKGROUND_JOBS] Repository sync job registered with BackgroundJobManager');
 }
