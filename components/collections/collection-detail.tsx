@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Collection } from "@/types/collection";
 import { ItemData, Tag } from "@/lib/content";
@@ -12,9 +12,22 @@ import { useFilters } from "@/hooks/use-filters";
 import { TopLoadingBar } from "@/components/ui/top-loading-bar";
 import Hero from "@/components/hero";
 import { LayoutHome, useLayoutTheme } from "@/components/context";
-import { HomeTwoLayout } from "@/components/home-two";
+import { HomeTwoSortSelector, HomeTwoTagsSelector } from "@/components/home-two";
 import { SortControl } from "@/components/filters/components/controls/sort-control";
+import { SortOption } from "@/components/filters/types";
+import { LayoutSettings } from "@/components/layout-settings";
+import { CardPresets } from "@/components/shared-card";
 import { sortItems } from "@/components/shared-card/utils/sort-utils";
+import { SearchInput } from "@/components/ui/search-input";
+import { useStickyState } from "@/hooks/use-sticky-state";
+
+const COLLECTION_SORT_OPTIONS: SortOption[] = [
+  "popularity",
+  "name-asc",
+  "name-desc",
+  "date-desc",
+  "date-asc",
+];
 
 interface CollectionDetailProps {
   collection: Collection;
@@ -37,6 +50,241 @@ const LAYOUT_STYLES = {
   sidebarMobile: 'mb-3 sm:mb-4 md:mb-5 lg:mb-0',
   mainContent: 'w-full flex-1 min-w-0',
 };
+
+// Sticky container styles reused from the default Home Two layout
+const STICKY_CONTAINER_BASE = "sticky top-12 z-20 transition-all duration-300 ease-in-out rounded-lg";
+const STICKY_CONTAINER_ACTIVE = `${STICKY_CONTAINER_BASE} bg-white/95 dark:bg-gray-800/95 shadow-md backdrop-blur-xs border border-gray-100 dark:border-gray-700/50 px-4 py-3`;
+const STICKY_CONTAINER_INACTIVE = `${STICKY_CONTAINER_BASE} bg-transparent`;
+
+// Filter layout styles adapted from HomeTwoFilters without categories
+const FILTERS_CONTAINER = "space-y-3 sm:space-y-4";
+const MOBILE_FILTERS = "block sm:hidden space-y-3";
+const TABLET_FILTERS = "hidden sm:block md:hidden";
+const DESKTOP_FILTERS = "hidden md:flex justify-between items-center gap-4";
+const FILTERS_GROUP = "flex items-center gap-3";
+
+type CollectionHeroProps = {
+  badgeText: string;
+  collection: Collection;
+  description: string;
+  isLongDescription: boolean;
+  isDescriptionExpanded: boolean;
+  onToggleDescription: () => void;
+  iconClassName: string;
+  showMoreLabel: string;
+  showLessLabel: string;
+  children: ReactNode;
+};
+
+function CollectionHero({
+  badgeText,
+  collection,
+  description,
+  isLongDescription,
+  isDescriptionExpanded,
+  onToggleDescription,
+  iconClassName,
+  showMoreLabel,
+  showLessLabel,
+  children,
+}: CollectionHeroProps) {
+  return (
+    <Hero
+      badgeText={badgeText}
+      title={
+        <div className="flex flex-col items-center gap-4">
+          {collection.icon_url && (
+            <div className={iconClassName}>{collection.icon_url}</div>
+          )}
+          <span className="bg-linear-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent inline-block leading-tight">
+            {collection.name}
+          </span>
+        </div>
+      }
+      description={
+        <>
+          <span className="text-gray-600 dark:text-gray-400 text-lg block">
+            {description}
+          </span>
+          {isLongDescription && (
+            <button
+              onClick={onToggleDescription}
+              className="mt-2 inline-flex text-theme-primary hover:text-theme-primary/80 text-sm font-medium transition-colors duration-200"
+            >
+              {isDescriptionExpanded ? showLessLabel : showMoreLabel}
+            </button>
+          )}
+        </>
+      }
+      className="min-h-screen text-center"
+    >
+      {children}
+    </Hero>
+  );
+}
+
+type CollectionHomeTwoFiltersProps = {
+  tags: Tag[];
+  totalCount?: number;
+  filteredCount?: number;
+  searchEnabled?: boolean;
+};
+
+function CollectionHomeTwoFilters({ tags, totalCount, filteredCount, searchEnabled = true }: CollectionHomeTwoFiltersProps) {
+  const {
+    searchTerm,
+    setSearchTerm,
+    setSortBy,
+    sortBy,
+    selectedTags,
+    toggleSelectedTag,
+  } = useFilters();
+
+  const handleTagToggle = (tagId: string) => {
+    toggleSelectedTag(tagId);
+  };
+
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+  };
+
+  const handleSortChange = (sort: string) => {
+    if (COLLECTION_SORT_OPTIONS.includes(sort as SortOption)) {
+      setSortBy(sort as SortOption);
+    }
+  };
+
+  const renderSortAndTags = () => (
+    <div className={FILTERS_GROUP}>
+      <HomeTwoSortSelector setSortBy={handleSortChange} sortBy={sortBy} />
+      <HomeTwoTagsSelector
+        tags={tags}
+        selectedTags={selectedTags}
+        onTagToggle={handleTagToggle}
+      />
+    </div>
+  );
+
+  return (
+    <div className={FILTERS_CONTAINER}>
+      <div className={MOBILE_FILTERS}>
+        {searchEnabled && (
+          <div className="w-full">
+            <SearchInput
+              searchTerm={searchTerm}
+              setSearchTerm={handleSearchChange}
+              className="w-full"
+            />
+          </div>
+        )}
+
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 flex-1">{renderSortAndTags()}</div>
+          <LayoutSettings />
+        </div>
+      </div>
+
+      <div className={TABLET_FILTERS}>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-3">
+            {renderSortAndTags()}
+            <LayoutSettings />
+          </div>
+
+          {searchEnabled && (
+            <div className="w-full">
+              <SearchInput
+                searchTerm={searchTerm}
+                setSearchTerm={handleSearchChange}
+                className="w-full"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className={DESKTOP_FILTERS}>
+        {renderSortAndTags()}
+
+        <div className={FILTERS_GROUP}>
+          {searchEnabled && (
+            <div className="w-64 lg:w-80 xl:w-96">
+              <SearchInput
+                searchTerm={searchTerm}
+                setSearchTerm={handleSearchChange}
+              />
+            </div>
+          )}
+          <LayoutSettings />
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-gray-800">
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          {filteredCount !== undefined && totalCount !== undefined ? (
+            filteredCount === totalCount ? (
+              <span>Showing {totalCount} items</span>
+            ) : (
+              <span>Showing {filteredCount} of {totalCount} items</span>
+            )
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type CollectionHomeTwoLayoutProps = CollectionDetailProps & {
+  tags: Tag[];
+  filteredItems: ItemData[];
+  searchEnabled?: boolean;
+};
+
+function CollectionHomeTwoLayout({
+  total,
+  start,
+  page,
+  basePath,
+  tags,
+  items,
+  filteredItems,
+  searchEnabled = true,
+}: CollectionHomeTwoLayoutProps) {
+  const { itemsPerPage } = useLayoutTheme();
+  const { isSticky, sentinelRef, targetRef } = useStickyState({
+    threshold: 0,
+    rootMargin: "-20px 0px 0px 0px",
+  });
+
+  return (
+    <div className="min-h-screen transition-colors duration-300">
+      <Container maxWidth="7xl" padding="default" useGlobalWidth className="flex flex-col gap-4 py-8">
+        <div ref={sentinelRef} className="md:h-4 md:w-full" />
+        <div
+          ref={targetRef}
+          className={isSticky ? STICKY_CONTAINER_ACTIVE : STICKY_CONTAINER_INACTIVE}
+        >
+          <CollectionHomeTwoFilters
+            tags={tags}
+            totalCount={items.length}
+            filteredCount={filteredItems.length}
+            searchEnabled={searchEnabled}
+          />
+        </div>
+        <ListingClient
+          total={total}
+          start={start}
+          page={page}
+          basePath={basePath}
+          categories={[]}
+          tags={tags}
+          items={filteredItems}
+          config={{ ...CardPresets.homeTwoListing, perPage: itemsPerPage }}
+        />
+      </Container>
+    </div>
+  );
+}
 
 function CollectionDetailContent(props: CollectionDetailProps) {
   const { collection, tags, items } = props;
@@ -73,45 +321,26 @@ function CollectionDetailContent(props: CollectionDetailProps) {
     return (
       <>
         <TopLoadingBar isLoading={isFiltersLoading} />
-        <Hero
+        <CollectionHero
           badgeText={t("common.COLLECTION")}
-          title={
-            <div className="flex flex-col items-center gap-4">
-              {collection.icon_url && (
-                <div className="text-4xl text-gray-900 dark:text-white">{collection.icon_url}</div>
-              )}
-              <span className="bg-linear-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent inline-block leading-tight">
-                {collection.name}
-              </span>
-            </div>
-          }
-          description={
-            <>
-              <span className="text-gray-600 dark:text-gray-400 text-lg block">
-                {displayDescription}
-              </span>
-              {isLongDescription && (
-                <button
-                  onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                  className="mt-2 inline-flex text-theme-primary hover:text-theme-primary/80 text-sm font-medium transition-colors duration-200"
-                >
-                  {isDescriptionExpanded ? t("common.SHOW_LESS") : t("common.SHOW_MORE", { count: "" })}
-                </button>
-              )}
-            </>
-          }
-          className="min-h-screen text-center"
+          collection={collection}
+          description={displayDescription}
+          isLongDescription={isLongDescription}
+          isDescriptionExpanded={isDescriptionExpanded}
+          onToggleDescription={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+          iconClassName="text-4xl text-gray-900 dark:text-white"
+          showMoreLabel={t("common.SHOW_MORE", { count: "" })}
+          showLessLabel={t("common.SHOW_LESS")}
         >
           <div className="pb-8 sm:pb-10 md:pb-12 lg:pb-16 xl:pb-20">
-            <HomeTwoLayout
+            <CollectionHomeTwoLayout
               {...props}
-              categories={[]}
               tags={sortedTags}
-              filteredAndSortedItems={filteredItems}
+              filteredItems={filteredItems}
               searchEnabled={true}
             />
           </div>
-        </Hero>
+        </CollectionHero>
       </>
     );
   }
@@ -120,34 +349,16 @@ function CollectionDetailContent(props: CollectionDetailProps) {
   return (
     <>
       <TopLoadingBar isLoading={isFiltersLoading} />
-      <Hero
+      <CollectionHero
         badgeText={t("common.COLLECTION")}
-        title={
-          <div className="flex flex-col items-center gap-4">
-             {collection.icon_url && (
-              <div className="text-5xl text-gray-900 dark:text-white">{collection.icon_url}</div>
-            )}
-            <span className="bg-linear-to-r from-theme-primary via-purple-500 to-theme-primary bg-clip-text text-transparent inline-block leading-tight">
-              {collection.name}
-            </span>
-          </div>
-        }
-        description={
-          <>
-            <span className="text-gray-600 dark:text-gray-400 text-lg block">
-              {displayDescription}
-            </span>
-            {isLongDescription && (
-              <button
-                onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                className="mt-2 inline-flex text-theme-primary hover:text-theme-primary/80 text-sm font-medium transition-colors duration-200"
-              >
-                {isDescriptionExpanded ? t("common.SHOW_LESS") : t("common.SHOW_MORE", { count: "" })}
-              </button>
-            )}
-          </>
-        }
-        className="min-h-screen text-center"
+        collection={collection}
+        description={displayDescription}
+        isLongDescription={isLongDescription}
+        isDescriptionExpanded={isDescriptionExpanded}
+        onToggleDescription={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+        iconClassName="text-5xl text-gray-900 dark:text-white"
+        showMoreLabel={t("common.SHOW_MORE", { count: "" })}
+        showLessLabel={t("common.SHOW_LESS")}
       >
         <Container maxWidth="7xl" padding="default" useGlobalWidth className="py-0 mt-0">
           <div className={LAYOUT_STYLES.mainContainer}>
@@ -197,7 +408,7 @@ function CollectionDetailContent(props: CollectionDetailProps) {
             </div>
           </div>
         </Container>
-      </Hero>
+      </CollectionHero>
     </>
   );
 }
