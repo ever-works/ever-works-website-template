@@ -1,6 +1,7 @@
 "use client";
 import { apiUtils, serverClient } from "@/lib/api/server-api-client";
 import { useQuery } from "@tanstack/react-query";
+import { useFeatureFlagsWithSimulation } from "@/hooks/use-feature-flags-with-simulation";
 
 interface RatingData {
   averageRating: number;
@@ -8,13 +9,16 @@ interface RatingData {
 }
 
 export function useItemRating(itemId: string, enabled: boolean = true) {
+  const { features } = useFeatureFlagsWithSimulation();
+
   const {
-    data: rating,
+    data: rating = { averageRating: 0, totalRatings: 0 },
     isLoading,
     error,
     refetch,
   } = useQuery<RatingData>({
     queryKey: ["item-rating", itemId],
+    enabled: features.ratings && enabled, // Only fetch when ratings feature is enabled
     queryFn: async ({ signal }) => {
       const encodedItemId = encodeURIComponent(itemId);
       // Avoid HTTP cache; rely on React Query invalidation for freshness
@@ -28,7 +32,6 @@ export function useItemRating(itemId: string, enabled: boolean = true) {
       }
       return response.data;
     },
-    enabled,
     // Provide defined initial data so consumers always have a RatingData shape
     initialData: { averageRating: 0, totalRatings: 0 },
     // Use moderate defaults; mutations and explicit refetch handle immediates
