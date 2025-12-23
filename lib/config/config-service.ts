@@ -80,29 +80,22 @@ class ConfigService {
 
 	/**
 	 * Loads and validates all configuration
+	 *
+	 * With .catch() handlers on URL/email/enum fields, most validation errors
+	 * are auto-recovered with default values. Any remaining errors are truly
+	 * unrecoverable and will cause startup failure.
 	 */
 	private loadAndValidate(): AppConfigSchema {
 		const rawConfig = this.collectEnvVars();
 		const result = appConfigSchema.safeParse(rawConfig);
 
 		if (!result.success) {
+			// With .catch() handlers, remaining errors are unrecoverable
 			this.validationIssues = convertZodError(result.error);
-
-			// Check for critical errors
-			const criticalIssues = this.validationIssues.filter((i) => i.severity === 'critical');
-
-			if (criticalIssues.length > 0) {
-				logValidationResults(this.validationIssues);
-				throw new Error(
-					`[ConfigService] Critical configuration errors:\n${criticalIssues.map((i) => `  - ${i.path}: ${i.message}`).join('\n')}`
-				);
-			}
-
-			// Log warnings and continue
 			logValidationResults(this.validationIssues);
-
-			// Parse with defaults for non-critical issues
-			return appConfigSchema.parse(rawConfig);
+			throw new Error(
+				`[ConfigService] Configuration errors:\n${this.validationIssues.map((i) => `  - ${i.path}: ${i.message}`).join('\n')}`
+			);
 		}
 
 		logValidationResults([]);

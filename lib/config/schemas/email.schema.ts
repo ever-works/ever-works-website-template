@@ -52,8 +52,8 @@ export const emailConfigSchema = z.object({
 	COMPANY_NAME: z.string().default('Ever Works'),
 
 	// Email addresses
-	EMAIL_FROM: z.string().email().optional(),
-	EMAIL_SUPPORT: z.string().email().optional(),
+	EMAIL_FROM: z.string().email().optional().catch(undefined),
+	EMAIL_SUPPORT: z.string().email().optional().catch(undefined),
 
 	// Email providers
 	smtp: smtpConfigSchema.optional().default({ enabled: false, port: 587 }),

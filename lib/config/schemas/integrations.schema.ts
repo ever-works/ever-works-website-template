@@ -10,7 +10,8 @@ import { z } from 'zod';
  */
 export const triggerDevEnvironmentSchema = z
 	.enum(['development', 'staging', 'production'])
-	.default('development');
+	.default('development')
+	.catch('development');
 
 /**
  * Trigger.dev configuration schema
@@ -19,7 +20,7 @@ export const triggerDevConfigSchema = z
 	.object({
 		enabled: z.boolean().default(false),
 		apiKey: z.string().optional(),
-		apiUrl: z.string().url().optional(),
+		apiUrl: z.string().url().optional().catch(undefined),
 		environment: triggerDevEnvironmentSchema,
 	})
 	.transform((data) => ({
@@ -33,14 +34,15 @@ export const triggerDevConfigSchema = z
  */
 export const twentyCrmSyncModeSchema = z
 	.enum(['disabled', 'manual', 'automatic'])
-	.default('disabled');
+	.default('disabled')
+	.catch('disabled');
 
 /**
  * Twenty CRM configuration schema
  */
 export const twentyCrmConfigSchema = z
 	.object({
-		baseUrl: z.string().url().optional(),
+		baseUrl: z.string().url().optional().catch(undefined),
 		apiKey: z.string().optional(),
 		enabled: z.boolean().default(false),
 		syncMode: twentyCrmSyncModeSchema,
