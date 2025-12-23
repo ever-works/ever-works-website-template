@@ -1,5 +1,4 @@
 import { User } from '@supabase/auth-js';
-import { paymentConfig, coreConfig } from '@/lib/config';
 import {
 	PaymentProviderInterface,
 	PaymentIntent,
@@ -410,7 +409,7 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 					]
 				},
 				preview: false,
-				testMode: coreConfig.NODE_ENV === 'development',
+				testMode: process.env.NODE_ENV === 'development',
 				expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString() // 30 days
 			});
 
@@ -433,7 +432,7 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 		try {
 			const { variantId, email, customPrice, metadata } = params;
 
-			const finalProductId = variantId ?? Number(paymentConfig.lemonSqueezy.variantId);
+			const finalProductId = variantId;
 			if (!finalProductId) {
 				throw new Error('Product ID is required');
 			}
@@ -634,7 +633,7 @@ export class LemonSqueezyProvider implements PaymentProviderInterface {
 			if (params.metadata?.trialEndsAt !== undefined) {
 				updatePayload.trialEndsAt = params.metadata.trialEndsAt;
 			}
-			if (coreConfig.NODE_ENV === 'development') {
+			if (process.env.NODE_ENV === 'development') {
 				updatePayload.trialEndsAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString();
 				console.log('LemonSqueezy update payload:', {
 					subscriptionId: params.subscriptionId,
