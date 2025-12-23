@@ -94,7 +94,7 @@ export interface ValidationIssue {
  * Paths that are considered critical (fail-fast in production)
  */
 const CRITICAL_PATHS_PRODUCTION = [
-	'core.AUTH_SECRET',
+	'auth.AUTH_SECRET',
 	'core.DATABASE_URL',
 ];
 
