@@ -19,6 +19,601 @@
       "description": "Production server"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "sessionAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Bearer token"
+      },
+      "session": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "session_token",
+        "description": "Session cookie"
+      },
+      "cronSecret": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Secret",
+        "description": "Cron Job Secret Key"
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "string",
+            "example": "Error message"
+          }
+        },
+        "required": [
+          "success",
+          "error"
+        ]
+      },
+      "PaginationMeta": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Number of items per page",
+            "example": 20
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of responses",
+            "example": 150
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "Total number of pages",
+            "example": 8
+          }
+        },
+        "required": [
+          "page",
+          "pageSize",
+          "total",
+          "totalPages"
+        ]
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {},
+            "description": "List of items on the current page"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        },
+        "required": [
+          "items",
+          "pagination"
+        ]
+      },
+      "ClientProfile": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique client profile identifier",
+            "example": "client_123abc"
+          },
+          "userId": {
+            "type": "string",
+            "description": "Associated user ID",
+            "example": "user_456def"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Client email address",
+            "example": "john.doe@example.com"
+          },
+          "name": {
+            "type": "string",
+            "description": "Client full name",
+            "example": "John Doe"
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Display name for the client",
+            "example": "John Doe"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique username",
+            "example": "johndoe"
+          },
+          "bio": {
+            "type": "string",
+            "nullable": true,
+            "description": "Client biography",
+            "example": "Software engineer with 5+ years experience"
+          },
+          "jobTitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "Job title",
+            "example": "Senior Software Engineer"
+          },
+          "company": {
+            "type": "string",
+            "nullable": true,
+            "description": "Company name",
+            "example": "Tech Corp Inc"
+          },
+          "industry": {
+            "type": "string",
+            "nullable": true,
+            "description": "Industry sector",
+            "example": "Technology"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "description": "Phone number",
+            "example": "+1-555-123-4567"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Personal or company website",
+            "example": "https://johndoe.com"
+          },
+          "location": {
+            "type": "string",
+            "nullable": true,
+            "description": "Geographic location",
+            "example": "San Francisco, CA"
+          },
+          "avatar": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Avatar image URL",
+            "example": "https://example.com/avatars/johndoe.jpg"
+          },
+          "accountType": {
+            "type": "string",
+            "enum": [
+              "individual",
+              "business",
+              "enterprise"
+            ],
+            "description": "Type of account",
+            "example": "business"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "suspended",
+              "trial"
+            ],
+            "description": "Account status",
+            "example": "active"
+          },
+          "plan": {
+            "type": "string",
+            "enum": [
+              "free",
+              "standard",
+              "premium"
+            ],
+            "description": "Subscription plan",
+            "example": "premium"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Client timezone",
+            "example": "America/New_York"
+          },
+          "language": {
+            "type": "string",
+            "description": "Preferred language",
+            "example": "en"
+          },
+          "twoFactorEnabled": {
+            "type": "boolean",
+            "description": "Whether two-factor authentication is enabled",
+            "example": true
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "description": "Whether email is verified",
+            "example": true
+          },
+          "totalSubmissions": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total number of submissions",
+            "example": 25
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true,
+            "description": "Admin notes about the client",
+            "example": "VIP client, priority support"
+          },
+          "tags": {
+            "type": "string",
+            "nullable": true,
+            "description": "Client tags (comma-separated)",
+            "example": "vip,enterprise,priority"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Profile creation timestamp",
+            "example": "2024-01-15T10:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Profile last update timestamp",
+            "example": "2024-01-20T14:45:00.000Z"
+          },
+          "accountProvider": {
+            "type": "string",
+            "description": "Authentication provider",
+            "example": "google"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the account is currently active",
+            "example": true
+          },
+          "lastActiveAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Last activity timestamp",
+            "example": "2024-01-20T14:45:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "email",
+          "name",
+          "accountType",
+          "status",
+          "plan",
+          "timezone",
+          "language",
+          "twoFactorEnabled",
+          "emailVerified",
+          "totalSubmissions",
+          "createdAt",
+          "updatedAt",
+          "accountProvider",
+          "isActive"
+        ]
+      },
+      "Company": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique company identifier (UUID)",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "name": {
+            "type": "string",
+            "description": "Company name",
+            "example": "Acme Corporation"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Company website URL",
+            "example": "https://acme.com"
+          },
+          "domain": {
+            "type": "string",
+            "nullable": true,
+            "description": "Company domain (normalized, without www.)",
+            "example": "acme.com"
+          },
+          "slug": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL-friendly company identifier",
+            "example": "acme-corporation"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive"
+            ],
+            "description": "Company status",
+            "example": "active"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Company creation timestamp",
+            "example": "2024-01-15T10:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp",
+            "example": "2024-01-20T14:45:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "Survey": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique survey identifier",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL-friendly survey identifier",
+            "example": "customer-satisfaction-2024"
+          },
+          "title": {
+            "type": "string",
+            "description": "Survey title",
+            "example": "Customer Satisfaction Survey"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Survey description",
+            "example": "Help us improve our services"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "global",
+              "item"
+            ],
+            "description": "Survey type - global or item-specific",
+            "example": "global"
+          },
+          "itemId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Associated item ID for item-specific surveys",
+            "example": "item-123"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published",
+              "closed"
+            ],
+            "description": "Survey status",
+            "example": "published"
+          },
+          "surveyJson": {
+            "type": "object",
+            "description": "SurveyJS JSON definition containing questions and configuration",
+            "example": {
+              "pages": [
+                {
+                  "elements": [
+                    {
+                      "type": "text",
+                      "name": "question1",
+                      "title": "What is your name?"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Survey creation timestamp",
+            "example": "2024-01-15T10:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp",
+            "example": "2024-01-20T14:45:00.000Z"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Survey publication timestamp",
+            "example": "2024-01-16T09:00:00.000Z"
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Survey closure timestamp",
+            "example": null
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Soft deletion timestamp",
+            "example": null
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "type",
+          "status",
+          "surveyJson",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "SurveyResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique response identifier",
+            "example": "660e8400-e29b-41d4-a716-446655440000"
+          },
+          "surveyId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Survey identifier",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true,
+            "description": "User ID if authenticated",
+            "example": "user-123"
+          },
+          "itemId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Associated item ID for item-specific surveys",
+            "example": "item-123"
+          },
+          "data": {
+            "type": "object",
+            "description": "Survey response data containing answers to all questions",
+            "example": {
+              "question1": "John Doe",
+              "question2": 5,
+              "question3": [
+                "option1",
+                "option2"
+              ]
+            }
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Response completion timestamp",
+            "example": "2024-01-18T15:30:00.000Z"
+          },
+          "ipAddress": {
+            "type": "string",
+            "nullable": true,
+            "description": "Respondent IP address",
+            "example": "192.168.1.1"
+          },
+          "userAgent": {
+            "type": "string",
+            "nullable": true,
+            "description": "Respondent user agent string",
+            "example": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Response creation timestamp",
+            "example": "2024-01-18T15:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp",
+            "example": "2024-01-18T15:30:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "surveyId",
+          "data",
+          "completedAt",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PaginatedSurveyResponses": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SurveyResponse"
+            },
+            "description": "Array of survey responses"
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer",
+                "description": "Current page number",
+                "example": 1
+              },
+              "pageSize": {
+                "type": "integer",
+                "description": "Number of items per page",
+                "example": 20
+              },
+              "total": {
+                "type": "integer",
+                "description": "Total number of responses",
+                "example": 150
+              },
+              "totalPages": {
+                "type": "integer",
+                "description": "Total number of pages",
+                "example": 8
+              }
+            },
+            "required": [
+              "page",
+              "pageSize",
+              "total",
+              "totalPages"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "pagination"
+        ]
+      }
+    },
+    "responses": {}
+  },
   "paths": {
     "/api/admin/categories/{id}": {
       "get": {
@@ -28737,518 +29332,409 @@
           }
         }
       }
-    }
-  },
-  "components": {
-    "schemas": {
-      "ClientProfile": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique client profile identifier",
-            "example": "client_123abc"
-          },
-          "userId": {
-            "type": "string",
-            "description": "Associated user ID",
-            "example": "user_456def"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "Client email address",
-            "example": "john.doe@example.com"
-          },
-          "name": {
-            "type": "string",
-            "description": "Client full name",
-            "example": "John Doe"
-          },
-          "displayName": {
-            "type": "string",
-            "nullable": true,
-            "description": "Display name for the client",
-            "example": "John Doe"
-          },
-          "username": {
-            "type": "string",
-            "nullable": true,
-            "description": "Unique username",
-            "example": "johndoe"
-          },
-          "bio": {
-            "type": "string",
-            "nullable": true,
-            "description": "Client biography",
-            "example": "Software engineer with 5+ years experience"
-          },
-          "jobTitle": {
-            "type": "string",
-            "nullable": true,
-            "description": "Job title",
-            "example": "Senior Software Engineer"
-          },
-          "company": {
-            "type": "string",
-            "nullable": true,
-            "description": "Company name",
-            "example": "Tech Corp Inc"
-          },
-          "industry": {
-            "type": "string",
-            "nullable": true,
-            "description": "Industry sector",
-            "example": "Technology"
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true,
-            "description": "Phone number",
-            "example": "+1-555-123-4567"
-          },
-          "website": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true,
-            "description": "Personal or company website",
-            "example": "https://johndoe.com"
-          },
-          "location": {
-            "type": "string",
-            "nullable": true,
-            "description": "Geographic location",
-            "example": "San Francisco, CA"
-          },
-          "avatar": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true,
-            "description": "Avatar image URL",
-            "example": "https://example.com/avatars/johndoe.jpg"
-          },
-          "accountType": {
-            "type": "string",
-            "enum": [
-              "individual",
-              "business",
-              "enterprise"
-            ],
-            "description": "Type of account",
-            "example": "business"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "active",
-              "inactive",
-              "suspended",
-              "trial"
-            ],
-            "description": "Account status",
-            "example": "active"
-          },
-          "plan": {
-            "type": "string",
-            "enum": [
-              "free",
-              "standard",
-              "premium"
-            ],
-            "description": "Subscription plan",
-            "example": "premium"
-          },
-          "timezone": {
-            "type": "string",
-            "description": "Client timezone",
-            "example": "America/New_York"
-          },
-          "language": {
-            "type": "string",
-            "description": "Preferred language",
-            "example": "en"
-          },
-          "twoFactorEnabled": {
-            "type": "boolean",
-            "description": "Whether two-factor authentication is enabled",
-            "example": true
-          },
-          "emailVerified": {
-            "type": "boolean",
-            "description": "Whether email is verified",
-            "example": true
-          },
-          "totalSubmissions": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Total number of submissions",
-            "example": 25
-          },
-          "notes": {
-            "type": "string",
-            "nullable": true,
-            "description": "Admin notes about the client",
-            "example": "VIP client, priority support"
-          },
-          "tags": {
-            "type": "string",
-            "nullable": true,
-            "description": "Client tags (comma-separated)",
-            "example": "vip,enterprise,priority"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Profile creation timestamp",
-            "example": "2024-01-15T10:30:00.000Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Profile last update timestamp",
-            "example": "2024-01-20T14:45:00.000Z"
-          },
-          "accountProvider": {
-            "type": "string",
-            "description": "Authentication provider",
-            "example": "google"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "Whether the account is currently active",
-            "example": true
-          },
-          "lastActiveAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "description": "Last activity timestamp",
-            "example": "2024-01-20T14:45:00.000Z"
+    },
+    "/api/client/dashboard/stats": {
+      "get": {
+        "tags": [
+          "Client - Dashboard"
+        ],
+        "summary": "Get user dashboard statistics",
+        "description": "Returns comprehensive dashboard statistics for the authenticated user including submission counts, engagement metrics, charts data, and top performing items.",
+        "security": [
+          {
+            "sessionAuth": []
           }
-        },
-        "required": [
-          "id",
-          "userId",
-          "email",
-          "name",
-          "accountType",
-          "status",
-          "plan",
-          "timezone",
-          "language",
-          "twoFactorEnabled",
-          "emailVerified",
-          "totalSubmissions",
-          "createdAt",
-          "updatedAt",
-          "accountProvider",
-          "isActive"
-        ]
-      },
-      "Company": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique company identifier (UUID)",
-            "example": "550e8400-e29b-41d4-a716-446655440000"
-          },
-          "name": {
-            "type": "string",
-            "description": "Company name",
-            "example": "Acme Corporation"
-          },
-          "website": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true,
-            "description": "Company website URL",
-            "example": "https://acme.com"
-          },
-          "domain": {
-            "type": "string",
-            "nullable": true,
-            "description": "Company domain (normalized, without www.)",
-            "example": "acme.com"
-          },
-          "slug": {
-            "type": "string",
-            "nullable": true,
-            "description": "URL-friendly company identifier",
-            "example": "acme-corporation"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "active",
-              "inactive"
-            ],
-            "description": "Company status",
-            "example": "active"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Company creation timestamp",
-            "example": "2024-01-15T10:30:00.000Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last update timestamp",
-            "example": "2024-01-20T14:45:00.000Z"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "status",
-          "createdAt",
-          "updatedAt"
-        ]
-      },
-      "Survey": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique survey identifier",
-            "example": "550e8400-e29b-41d4-a716-446655440000"
-          },
-          "slug": {
-            "type": "string",
-            "description": "URL-friendly survey identifier",
-            "example": "customer-satisfaction-2024"
-          },
-          "title": {
-            "type": "string",
-            "description": "Survey title",
-            "example": "Customer Satisfaction Survey"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true,
-            "description": "Survey description",
-            "example": "Help us improve our services"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "global",
-              "item"
-            ],
-            "description": "Survey type - global or item-specific",
-            "example": "global"
-          },
-          "itemId": {
-            "type": "string",
-            "nullable": true,
-            "description": "Associated item ID for item-specific surveys",
-            "example": "item-123"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "draft",
-              "published",
-              "closed"
-            ],
-            "description": "Survey status",
-            "example": "published"
-          },
-          "surveyJson": {
-            "type": "object",
-            "description": "SurveyJS JSON definition containing questions and configuration",
-            "example": {
-              "pages": [
-                {
-                  "elements": [
-                    {
-                      "type": "text",
-                      "name": "question1",
-                      "title": "What is your name?"
+        ],
+        "responses": {
+          "200": {
+            "description": "Statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "totalSubmissions": {
+                      "type": "integer",
+                      "description": "Total number of items submitted by user",
+                      "example": 23
+                    },
+                    "totalViews": {
+                      "type": "integer",
+                      "description": "Total views on user's items (0 if not tracked)",
+                      "example": 0
+                    },
+                    "totalVotesReceived": {
+                      "type": "integer",
+                      "description": "Total votes received on user's items",
+                      "example": 156
+                    },
+                    "totalCommentsReceived": {
+                      "type": "integer",
+                      "description": "Total comments received on user's items",
+                      "example": 89
+                    },
+                    "viewsAvailable": {
+                      "type": "boolean",
+                      "description": "Whether views tracking is available",
+                      "example": false
+                    },
+                    "recentActivity": {
+                      "type": "object",
+                      "properties": {
+                        "newSubmissions": {
+                          "type": "integer",
+                          "example": 3
+                        },
+                        "newViews": {
+                          "type": "integer",
+                          "example": 0
+                        }
+                      }
+                    },
+                    "uniqueItemsInteracted": {
+                      "type": "integer",
+                      "description": "Number of unique items user has interacted with",
+                      "example": 45
+                    },
+                    "totalActivity": {
+                      "type": "integer",
+                      "description": "Total activity count (votes + comments made)",
+                      "example": 237
+                    },
+                    "activityChartData": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "date": {
+                            "type": "string",
+                            "example": "Mon"
+                          },
+                          "submissions": {
+                            "type": "integer"
+                          },
+                          "views": {
+                            "type": "integer"
+                          },
+                          "engagement": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "engagementChartData": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "integer"
+                          },
+                          "color": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "submissionTimeline": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "month": {
+                            "type": "string",
+                            "example": "Mar"
+                          },
+                          "submissions": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "engagementOverview": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "week": {
+                            "type": "string",
+                            "example": "W1"
+                          },
+                          "votes": {
+                            "type": "integer"
+                          },
+                          "comments": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "statusBreakdown": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "Approved",
+                              "Pending",
+                              "Rejected"
+                            ]
+                          },
+                          "value": {
+                            "type": "integer"
+                          },
+                          "color": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "topItems": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "views": {
+                            "type": "integer"
+                          },
+                          "votes": {
+                            "type": "integer"
+                          },
+                          "comments": {
+                            "type": "integer"
+                          }
+                        }
+                      }
                     }
-                  ]
+                  }
                 }
-              ]
-            }
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Survey creation timestamp",
-            "example": "2024-01-15T10:30:00.000Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last update timestamp",
-            "example": "2024-01-20T14:45:00.000Z"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "description": "Survey publication timestamp",
-            "example": "2024-01-16T09:00:00.000Z"
-          },
-          "closedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "description": "Survey closure timestamp",
-            "example": null
-          },
-          "deletedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "description": "Soft deletion timestamp",
-            "example": null
-          }
-        },
-        "required": [
-          "id",
-          "slug",
-          "title",
-          "type",
-          "status",
-          "surveyJson",
-          "createdAt",
-          "updatedAt"
-        ]
-      },
-      "SurveyResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Unique response identifier",
-            "example": "660e8400-e29b-41d4-a716-446655440000"
-          },
-          "surveyId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Survey identifier",
-            "example": "550e8400-e29b-41d4-a716-446655440000"
-          },
-          "userId": {
-            "type": "string",
-            "nullable": true,
-            "description": "User ID if authenticated",
-            "example": "user-123"
-          },
-          "itemId": {
-            "type": "string",
-            "nullable": true,
-            "description": "Associated item ID for item-specific surveys",
-            "example": "item-123"
-          },
-          "data": {
-            "type": "object",
-            "description": "Survey response data containing answers to all questions",
-            "example": {
-              "question1": "John Doe",
-              "question2": 5,
-              "question3": [
-                "option1",
-                "option2"
-              ]
-            }
-          },
-          "completedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Response completion timestamp",
-            "example": "2024-01-18T15:30:00.000Z"
-          },
-          "ipAddress": {
-            "type": "string",
-            "nullable": true,
-            "description": "Respondent IP address",
-            "example": "192.168.1.1"
-          },
-          "userAgent": {
-            "type": "string",
-            "nullable": true,
-            "description": "Respondent user agent string",
-            "example": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Response creation timestamp",
-            "example": "2024-01-18T15:30:00.000Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last update timestamp",
-            "example": "2024-01-18T15:30:00.000Z"
-          }
-        },
-        "required": [
-          "id",
-          "surveyId",
-          "data",
-          "completedAt",
-          "createdAt",
-          "updatedAt"
-        ]
-      },
-      "PaginatedSurveyResponses": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SurveyResponse"
-            },
-            "description": "Array of survey responses"
-          },
-          "pagination": {
-            "type": "object",
-            "properties": {
-              "page": {
-                "type": "integer",
-                "description": "Current page number",
-                "example": 1
-              },
-              "pageSize": {
-                "type": "integer",
-                "description": "Number of items per page",
-                "example": 20
-              },
-              "total": {
-                "type": "integer",
-                "description": "Total number of responses",
-                "example": 150
-              },
-              "totalPages": {
-                "type": "integer",
-                "description": "Total number of pages",
-                "example": 8
               }
-            },
-            "required": [
-              "page",
-              "pageSize",
-              "total",
-              "totalPages"
-            ]
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized. Please sign in to continue."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Failed to fetch dashboard statistics"
+                    }
+                  }
+                }
+              }
+            }
           }
-        },
-        "required": [
-          "items",
-          "pagination"
-        ]
+        }
       }
     },
-    "responses": {},
-    "securitySchemes": {}
+    "/api/cron/subscription-expiration": {
+      "get": {
+        "summary": "Process expired subscriptions",
+        "description": "Cron job endpoint that finds and processes expired subscriptions.\nUpdates status from 'active' to 'expired' for subscriptions past their end date.\nShould be called daily.\n",
+        "tags": [
+          "Cron Jobs"
+        ],
+        "security": [
+          {
+            "cronSecret": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully processed expired subscriptions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "processed": {
+                          "type": "integer",
+                          "description": "Number of subscriptions updated"
+                        },
+                        "affectedUsers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "subscriptionId": {
+                                "type": "string"
+                              },
+                              "userId": {
+                                "type": "string"
+                              },
+                              "planId": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing cron secret"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/user/plan-status": {
+      "get": {
+        "summary": "Get user's plan status with expiration info",
+        "description": "Returns the user's current plan with full expiration details.\nIncludes effective plan (what the user can actually access),\nexpiration warnings, and feature access status.\n",
+        "tags": [
+          "User",
+          "Subscription"
+        ],
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved plan status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "planId": {
+                          "type": "string",
+                          "description": "The user's subscribed plan ID",
+                          "enum": [
+                            "free",
+                            "standard",
+                            "premium"
+                          ]
+                        },
+                        "effectivePlan": {
+                          "type": "string",
+                          "description": "The plan the user can actually access (may differ if expired)",
+                          "enum": [
+                            "free",
+                            "standard",
+                            "premium"
+                          ]
+                        },
+                        "isExpired": {
+                          "type": "boolean",
+                          "description": "Whether the subscription has expired"
+                        },
+                        "expiresAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true,
+                          "description": "Subscription expiration date"
+                        },
+                        "daysUntilExpiration": {
+                          "type": "integer",
+                          "nullable": true,
+                          "description": "Days until expiration (negative if already expired)"
+                        },
+                        "isInWarningPeriod": {
+                          "type": "boolean",
+                          "description": "Whether subscription expires within 7 days"
+                        },
+                        "canAccessPlanFeatures": {
+                          "type": "boolean",
+                          "description": "Whether user can access their plan's features"
+                        },
+                        "warningMessage": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "User-facing warning message if applicable"
+                        },
+                        "status": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "Raw subscription status"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - User not authenticated"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
   },
   "tags": []
 }
