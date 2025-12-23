@@ -94,7 +94,7 @@ export async function getEmailConfig() {
 	const config = await getConfigFromFile();
 
 	// Get values from config file first, then fallback to ConfigService
-	const supportEmail =
+	let supportEmail =
 		typeof config.mail === 'object' && 'from' in config.mail
 			? config.mail.from
 			: configService.email.EMAIL_SUPPORT;
@@ -106,10 +106,10 @@ export async function getEmailConfig() {
 		configService.core.APP_URL ||
 		'https://demo.ever.works';
 
-	// Validate required values
+	// Use default if supportEmail is not configured
 	if (!supportEmail) {
-		console.error('EMAIL_SUPPORT not found in config file or environment variables');
-		throw new Error('Email configuration is incomplete');
+		console.warn('[Config] EMAIL_SUPPORT not set, using default: support@ever.works');
+		supportEmail = 'support@ever.works';
 	}
 
 	if (!appUrl) {
