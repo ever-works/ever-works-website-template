@@ -1,6 +1,7 @@
 import { eq, sql } from 'drizzle-orm';
 import { seedStatus } from './schema';
 import type { SeedStatus } from './schema';
+import { coreConfig } from '@/lib/config';
 
 /** How long to wait for another instance to complete seeding (ms) */
 const SEED_WAIT_TIMEOUT = 60000; // 60 seconds
@@ -75,12 +76,12 @@ export async function isDatabaseSeeded(): Promise<boolean> {
 	// Database is seeded if status is 'completed'
 	const isSeeded = status.status === 'completed';
 
-	if (process.env.NODE_ENV === 'development') {
+	if (coreConfig.NODE_ENV === 'development') {
 		console.log('[DB Init] Seed status:', {
 			status: status.status,
 			startedAt: status.startedAt,
 			completedAt: status.completedAt,
-			isSeeded
+			isSeeded,
 		});
 	}
 
@@ -153,8 +154,8 @@ async function seedDatabase(): Promise<void> {
  */
 export async function initializeDatabase(): Promise<void> {
 	// Silent skip if DATABASE_URL not configured (DB is optional)
-	if (!process.env.DATABASE_URL) {
-		if (process.env.NODE_ENV === 'development') {
+	if (!coreConfig.DATABASE_URL) {
+		if (coreConfig.NODE_ENV === 'development') {
 			console.log('[DB Init] DATABASE_URL not configured - skipping database initialization');
 		}
 		return;
@@ -162,7 +163,7 @@ export async function initializeDatabase(): Promise<void> {
 
 	try {
 		console.log('[DB Init] Starting database initialization...');
-		console.log('[DB Init] DATABASE_URL is configured (length:', process.env.DATABASE_URL.length, ')');
+		console.log('[DB Init] DATABASE_URL is configured (length:', coreConfig.DATABASE_URL.length, ')');
 
 		// STEP 1: Always run migrations first (Drizzle handles idempotency - only runs new ones)
 		console.log('[DB Init] Running migrations (Drizzle will skip already-applied)...');
@@ -174,10 +175,10 @@ export async function initializeDatabase(): Promise<void> {
 			const errorMsg = 'Database migrations failed - schema may be out of sync';
 			console.error('[DB Init] ❌ ' + errorMsg);
 			console.error('[DB Init] ❌ Please run migrations manually: pnpm db:migrate');
-			
+
 			// In production, throw to signal the error
 			// This allows monitoring systems to detect the failure
-			if (process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production') {
+			if (coreConfig.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production') {
 				throw new Error(errorMsg);
 			}
 			

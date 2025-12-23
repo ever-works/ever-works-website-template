@@ -30,9 +30,10 @@ export const triggerDevConfigSchema = z
 
 /**
  * Twenty CRM sync mode type
+ * Matches TwentyCrmSyncMode from lib/types/twenty-crm-config.types.ts
  */
 export const twentyCrmSyncModeSchema = z
-	.enum(['disabled', 'manual', 'automatic'])
+	.enum(['disabled', 'platform', 'direct_crm'])
 	.default('disabled');
 
 /**
@@ -96,7 +97,7 @@ export function collectIntegrationsConfig(): z.input<typeof integrationsConfigSc
 			baseUrl: process.env.TWENTY_CRM_BASE_URL,
 			apiKey: process.env.TWENTY_CRM_API_KEY,
 			enabled: process.env.TWENTY_CRM_ENABLED === 'true',
-			syncMode: process.env.TWENTY_CRM_SYNC_MODE as 'disabled' | 'manual' | 'automatic' | undefined,
+			syncMode: process.env.TWENTY_CRM_SYNC_MODE as 'disabled' | 'platform' | 'direct_crm' | undefined,
 		},
 		cron: {
 			secret: process.env.CRON_SECRET,
