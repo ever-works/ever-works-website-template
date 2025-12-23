@@ -5,6 +5,7 @@ import * as http from "isomorphic-git/http/node";
 import * as path from "node:path";
 import * as fs from "node:fs";
 import { fsExists } from "./lib";
+import { coreConfig } from "@/lib/config";
 
 function getGitAuth(token?: string): GitAuth {
   if (!token) {
@@ -191,8 +192,8 @@ export async function pullChanges(url: string, dest: string, auth: GitAuth) {
 }
 
 export async function trySyncRepository() {
-  const token = process.env.GH_TOKEN;
-  const url = process.env.DATA_REPOSITORY;
+  const token = coreConfig.content.ghToken;
+  const url = coreConfig.content.dataRepository;
   const DEFAULT_CONFIG = `site_name: Website
 item_name: Item
 items_name: Items

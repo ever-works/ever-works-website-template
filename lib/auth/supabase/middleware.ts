@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { authConfig } from '@/lib/config';
 
 type CookieToSet = {
   name: string;
@@ -11,14 +12,17 @@ export async function updateSession(request: NextRequest) {
   const supabaseResponse = NextResponse.next({
     request,
   })
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  const supabaseUrl = authConfig.supabase.url;
+  const supabaseAnonKey = authConfig.supabase.anonKey;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error(
       'Missing required Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY'
     );
   }
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         getAll() {

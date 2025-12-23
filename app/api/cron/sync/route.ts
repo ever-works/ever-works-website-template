@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { triggerManualSync } from "@/lib/services/sync-service";
+import { integrationsConfig } from "@/lib/config";
 
 /**
  * Vercel Cron endpoint for automatic content synchronization.
@@ -26,7 +27,7 @@ export async function GET(request: Request): Promise<NextResponse<CronSyncRespon
 
     // Verify cron secret for authentication
     const authHeader = request.headers.get("authorization");
-    const cronSecret = process.env.CRON_SECRET;
+    const cronSecret = integrationsConfig.cron.secret;
 
     if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
         console.warn("[CRON_SYNC] Unauthorized request - invalid or missing CRON_SECRET");
