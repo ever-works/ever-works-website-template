@@ -10,7 +10,8 @@ import { z } from 'zod';
  */
 export const triggerDevEnvironmentSchema = z
 	.enum(['development', 'staging', 'production'])
-	.default('development');
+	.default('development')
+	.catch('development');
 
 /**
  * Trigger.dev configuration schema
@@ -19,7 +20,7 @@ export const triggerDevConfigSchema = z
 	.object({
 		enabled: z.boolean().default(false),
 		apiKey: z.string().optional(),
-		apiUrl: z.string().url().optional(),
+		apiUrl: z.string().url().optional().catch(undefined),
 		environment: triggerDevEnvironmentSchema,
 	})
 	.transform((data) => ({
@@ -33,15 +34,16 @@ export const triggerDevConfigSchema = z
  * Matches TwentyCrmSyncMode from lib/types/twenty-crm-config.types.ts
  */
 export const twentyCrmSyncModeSchema = z
-	.enum(['disabled', 'platform', 'direct_crm'])
-	.default('disabled');
+	.enum(['disabled', 'manual', 'automatic'])
+	.default('disabled')
+	.catch('disabled');
 
 /**
  * Twenty CRM configuration schema
  */
 export const twentyCrmConfigSchema = z
 	.object({
-		baseUrl: z.string().url().optional(),
+		baseUrl: z.string().url().optional().catch(undefined),
 		apiKey: z.string().optional(),
 		enabled: z.boolean().default(false),
 		syncMode: twentyCrmSyncModeSchema,
@@ -97,7 +99,7 @@ export function collectIntegrationsConfig(): z.input<typeof integrationsConfigSc
 			baseUrl: process.env.TWENTY_CRM_BASE_URL,
 			apiKey: process.env.TWENTY_CRM_API_KEY,
 			enabled: process.env.TWENTY_CRM_ENABLED === 'true',
-			syncMode: process.env.TWENTY_CRM_SYNC_MODE as 'disabled' | 'platform' | 'direct_crm' | undefined,
+			syncMode: process.env.TWENTY_CRM_SYNC_MODE as 'disabled' | 'manual' | 'automatic' | undefined,
 		},
 		cron: {
 			secret: process.env.CRON_SECRET,

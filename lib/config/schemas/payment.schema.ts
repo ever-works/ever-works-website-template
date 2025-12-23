@@ -49,7 +49,7 @@ export const lemonSqueezyConfigSchema = z
 		apiKey: z.string().optional(),
 		storeId: z.string().optional(),
 		webhookSecret: z.string().optional(),
-		webhookUrl: z.string().url().optional(),
+		webhookUrl: z.string().url().optional().catch(undefined),
 		testMode: z.boolean().default(false),
 		variantId: z.string().optional(),
 		// Variant IDs
@@ -71,7 +71,7 @@ export const polarConfigSchema = z
 		webhookSecret: z.string().optional(),
 		organizationId: z.string().optional(),
 		sandbox: z.boolean().default(true),
-		apiUrl: z.string().url().optional(),
+		apiUrl: z.string().url().optional().catch(undefined),
 		// Plan IDs
 		freePlanId: z.string().optional(),
 		standardPlanId: z.string().optional(),

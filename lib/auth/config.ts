@@ -3,9 +3,12 @@
  * Allows choosing between Supabase Auth, Next-Auth, or both
  */
 
-import { authConfig as configServiceAuth } from '@/lib/config';
-
 export type AuthProviderType = 'supabase' | 'next-auth' | 'both';
+
+// Client-safe auth configuration using NEXT_PUBLIC_ environment variables
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseEnabled = !!(supabaseUrl && supabaseAnonKey);
 
 export interface AuthConfig {
 	/**
@@ -63,10 +66,10 @@ export interface AuthConfig {
  */
 export const defaultAuthConfig: AuthConfig = {
 	provider: 'next-auth',
-	supabase: configServiceAuth.supabase.enabled
+	supabase: supabaseEnabled
 		? {
-				url: configServiceAuth.supabase.url!,
-				anonKey: configServiceAuth.supabase.anonKey!,
+				url: supabaseUrl!,
+				anonKey: supabaseAnonKey!,
 			}
 		: undefined,
 	nextAuth: {
@@ -107,15 +110,15 @@ export function getAuthConfig(): AuthConfig {
  * @returns {AuthConfig | null} ConfigService-based auth config or null if not available
  */
 function getEnvironmentBasedConfig(): AuthConfig | null {
-	// If Supabase is enabled in ConfigService, create a Supabase-enabled config
-	if (configServiceAuth.supabase.enabled) {
+	// If Supabase is enabled, create a Supabase-enabled config
+	if (supabaseEnabled) {
 		return {
 			...defaultAuthConfig,
 			// Determine the appropriate provider based on default config
 			provider: determineProviderType(defaultAuthConfig.provider),
 			supabase: {
-				url: configServiceAuth.supabase.url!,
-				anonKey: configServiceAuth.supabase.anonKey!,
+				url: supabaseUrl!,
+				anonKey: supabaseAnonKey!,
 			},
 		};
 	}

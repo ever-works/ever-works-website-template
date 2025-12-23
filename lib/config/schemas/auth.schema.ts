@@ -24,7 +24,7 @@ export const oauthProviderSchema = z
  */
 export const supabaseConfigSchema = z
 	.object({
-		url: z.string().url().optional(),
+		url: z.string().url().optional().catch(undefined),
 		anonKey: z.string().optional(),
 	})
 	.transform((data) => ({
@@ -53,7 +53,7 @@ export const cookieConfigSchema = z.object({
  * Seed user configuration (for development/demo)
  */
 export const seedUserSchema = z.object({
-	adminEmail: z.string().email().optional(),
+	adminEmail: z.string().email().optional().catch(undefined),
 	adminPassword: z.string().optional(),
 	fakeUserCount: z.number().int().min(0).default(10),
 });

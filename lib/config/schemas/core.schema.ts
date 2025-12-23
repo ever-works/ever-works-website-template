@@ -15,19 +15,19 @@ export const nodeEnvSchema = z.enum(['development', 'production', 'test']).defau
  * Social media links configuration
  */
 export const socialLinksSchema = z.object({
-	github: z.string().url().optional(),
-	x: z.string().url().optional(),
-	linkedin: z.string().url().optional(),
-	facebook: z.string().url().optional(),
-	blog: z.string().url().optional(),
-	email: z.string().email().optional(),
+	github: z.string().url().optional().catch(undefined),
+	x: z.string().url().optional().catch(undefined),
+	linkedin: z.string().url().optional().catch(undefined),
+	facebook: z.string().url().optional().catch(undefined),
+	blog: z.string().url().optional().catch(undefined),
+	email: z.string().email().optional().catch(undefined),
 });
 
 /**
  * Attribution configuration
  */
 export const attributionSchema = z.object({
-	url: z.string().url().optional(),
+	url: z.string().url().optional().catch(undefined),
 	name: z.string().optional(),
 });
 
@@ -43,7 +43,7 @@ export const ogThemeSchema = z.object({
  * Content repository configuration
  */
 export const contentSchema = z.object({
-	dataRepository: z.string().url().optional(),
+	dataRepository: z.string().url().optional().catch(undefined),
 	ghToken: z.string().optional(),
 	githubToken: z.string().optional(),
 	githubBranch: z.string().default('master'),
@@ -60,9 +60,9 @@ export const coreConfigSchema = z.object({
 	DATABASE_URL: z.string().optional(),
 
 	// URLs
-	APP_URL: z.string().url().default('http://localhost:3000'),
-	SITE_URL: z.string().url().optional(),
-	API_BASE_URL: z.string().url().optional(),
+	APP_URL: z.string().url().catch('http://localhost:3000'),
+	SITE_URL: z.string().url().optional().catch(undefined),
+	API_BASE_URL: z.string().url().optional().catch(undefined),
 
 	// Site information
 	SITE_NAME: z.string().default('Ever Works'),
