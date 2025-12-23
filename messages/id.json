@@ -2183,6 +2183,8 @@
       "REVENUE_STAT": "Total Pendapatan",
       "SEARCH_PLACEHOLDER": "Cari berdasarkan nama item...",
       "FILTER_BY_STATUS": "Filter berdasarkan status",
+      "FILTERS": "Filter",
+      "CLEAR_ALL": "Hapus Semua",
       "ALL_STATUSES": "Semua Status",
       "STATUS_PENDING": "Menunggu",
       "STATUS_APPROVED": "Disetujui",

@@ -2183,6 +2183,8 @@
       "REVENUE_STAT": "Entrate Totali",
       "SEARCH_PLACEHOLDER": "Cerca per nome elemento...",
       "FILTER_BY_STATUS": "Filtra per stato",
+      "FILTERS": "Filtri",
+      "CLEAR_ALL": "Cancella tutto",
       "ALL_STATUSES": "Tutti gli Stati",
       "STATUS_PENDING": "In Attesa",
       "STATUS_APPROVED": "Approvato",

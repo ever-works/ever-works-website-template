@@ -46,17 +46,10 @@ export async function POST(
 	try {
 		const session = await auth();
 
-		if (!session?.user?.id) {
+		if (!session?.user?.isAdmin || !session.user.id) {
 			return NextResponse.json(
-				{ success: false, error: "Unauthorized" },
+				{ success: false, error: "Unauthorized. Admin access required." },
 				{ status: 401 }
-			);
-		}
-
-		if (!session.user.isAdmin) {
-			return NextResponse.json(
-				{ success: false, error: "Forbidden" },
-				{ status: 403 }
 			);
 		}
 

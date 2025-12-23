@@ -2183,6 +2183,8 @@
       "REVENUE_STAT": "총 수익",
       "SEARCH_PLACEHOLDER": "항목 이름으로 검색...",
       "FILTER_BY_STATUS": "상태별 필터",
+      "FILTERS": "필터",
+      "CLEAR_ALL": "모두 지우기",
       "ALL_STATUSES": "모든 상태",
       "STATUS_PENDING": "대기 중",
       "STATUS_APPROVED": "승인됨",

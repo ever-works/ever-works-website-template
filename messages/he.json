@@ -2177,6 +2177,8 @@
       "REVENUE_STAT": "סה\"כ הכנסות",
       "SEARCH_PLACEHOLDER": "חיפוש לפי שם פריט...",
       "FILTER_BY_STATUS": "סינון לפי סטטוס",
+      "FILTERS": "מסננים",
+      "CLEAR_ALL": "נקה הכל",
       "ALL_STATUSES": "כל הסטטוסים",
       "STATUS_PENDING": "ממתין",
       "STATUS_APPROVED": "אושר",

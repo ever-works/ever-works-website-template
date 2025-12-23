@@ -2172,6 +2172,8 @@
       "REVENUE_STAT": "Tổng doanh thu",
       "SEARCH_PLACEHOLDER": "Tìm kiếm theo tên mục...",
       "FILTER_BY_STATUS": "Lọc theo trạng thái",
+      "FILTERS": "Bộ lọc",
+      "CLEAR_ALL": "Xóa tất cả",
       "ALL_STATUSES": "Tất cả trạng thái",
       "STATUS_PENDING": "Đang chờ",
       "STATUS_APPROVED": "Đã phê duyệt",

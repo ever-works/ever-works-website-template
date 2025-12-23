@@ -2172,6 +2172,8 @@
       "REVENUE_STAT": "Общи приходи",
       "SEARCH_PLACEHOLDER": "Търсене по име на елемент...",
       "FILTER_BY_STATUS": "Филтриране по статус",
+      "FILTERS": "Филтри",
+      "CLEAR_ALL": "Изчисти всички",
       "ALL_STATUSES": "Всички статуси",
       "STATUS_PENDING": "Чакащо",
       "STATUS_APPROVED": "Одобрено",

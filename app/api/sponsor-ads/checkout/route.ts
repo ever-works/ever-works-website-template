@@ -119,10 +119,11 @@ export async function POST(request: NextRequest) {
 		const priceId = getPriceId(sponsorAd.interval, ACTIVE_PAYMENT_PROVIDER);
 
 		if (!priceId) {
+			console.error(`Price not configured for ${sponsorAd.interval} interval with ${ACTIVE_PAYMENT_PROVIDER} provider`);
 			return NextResponse.json(
 				{
 					success: false,
-					error: `Price not configured for ${sponsorAd.interval} interval with ${ACTIVE_PAYMENT_PROVIDER} provider`
+					error: "Payment configuration is incomplete. Please contact support."
 				},
 				{ status: 400 }
 			);
@@ -167,8 +168,9 @@ export async function POST(request: NextRequest) {
 				break;
 
 			default:
+				console.error(`Unsupported payment provider: ${ACTIVE_PAYMENT_PROVIDER}`);
 				return NextResponse.json(
-					{ success: false, error: `Unsupported payment provider: ${ACTIVE_PAYMENT_PROVIDER}` },
+					{ success: false, error: "Payment configuration is incomplete. Please contact support." },
 					{ status: 400 }
 				);
 		}

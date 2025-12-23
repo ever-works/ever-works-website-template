@@ -2183,6 +2183,8 @@
       "REVENUE_STAT": "Загальний Дохід",
       "SEARCH_PLACEHOLDER": "Пошук за назвою елемента...",
       "FILTER_BY_STATUS": "Фільтр за статусом",
+      "FILTERS": "Фільтри",
+      "CLEAR_ALL": "Очистити все",
       "ALL_STATUSES": "Всі Статуси",
       "STATUS_PENDING": "Очікує",
       "STATUS_APPROVED": "Затверджено",

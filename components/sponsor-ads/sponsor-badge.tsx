@@ -44,6 +44,7 @@ export function SponsorBadge({
 					sizeClasses[size],
 					className
 				)}
+				aria-label={!showText ? label : undefined}
 			>
 				{showIcon && <Megaphone className={cn(iconSizes[size])} />}
 				{showText && <span className="font-medium">{label}</span>}
@@ -59,6 +60,7 @@ export function SponsorBadge({
 					sizeClasses[size],
 					className
 				)}
+				aria-label={!showText ? label : undefined}
 			>
 				{showIcon && <Megaphone className={cn(iconSizes[size])} />}
 				{showText && <span className="font-medium">{label}</span>}
@@ -75,6 +77,7 @@ export function SponsorBadge({
 				sizeClasses[size],
 				className
 			)}
+			aria-label={!showText ? label : undefined}
 		>
 			{showIcon && <Megaphone className={cn(iconSizes[size], 'mr-1')} />}
 			{showText && label}

@@ -2215,6 +2215,8 @@
       "REVENUE_STAT": "总收入",
       "SEARCH_PLACEHOLDER": "按项目名称搜索...",
       "FILTER_BY_STATUS": "按状态筛选",
+      "FILTERS": "筛选",
+      "CLEAR_ALL": "清除全部",
       "ALL_STATUSES": "所有状态",
       "STATUS_PENDING": "待处理",
       "STATUS_APPROVED": "已批准",

@@ -2216,6 +2216,8 @@
       "REVENUE_STAT": "Gesamtumsatz",
       "SEARCH_PLACEHOLDER": "Nach Elementname suchen...",
       "FILTER_BY_STATUS": "Nach Status filtern",
+      "FILTERS": "Filter",
+      "CLEAR_ALL": "Alle löschen",
       "ALL_STATUSES": "Alle Status",
       "STATUS_PENDING": "Ausstehend",
       "STATUS_APPROVED": "Genehmigt",

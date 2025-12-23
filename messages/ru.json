@@ -2183,6 +2183,8 @@
       "REVENUE_STAT": "Общий Доход",
       "SEARCH_PLACEHOLDER": "Поиск по названию элемента...",
       "FILTER_BY_STATUS": "Фильтр по статусу",
+      "FILTERS": "Фильтры",
+      "CLEAR_ALL": "Очистить все",
       "ALL_STATUSES": "Все Статусы",
       "STATUS_PENDING": "Ожидает",
       "STATUS_APPROVED": "Одобрено",
