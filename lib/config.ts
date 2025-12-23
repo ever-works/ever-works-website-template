@@ -7,6 +7,34 @@
  * All values can be overridden via environment variables in .env.local
  */
 
+// Re-export ConfigService for typed configuration access
+export {
+	configService,
+	coreConfig,
+	authConfig,
+	emailConfig,
+	paymentConfig,
+	analyticsConfig,
+	integrationsConfig,
+} from './config/config-service';
+export type {
+	AppConfigSchema,
+	ConfigValidationResult,
+	ConfigValidationError,
+	ConfigValidationWarning,
+	ConfigSection,
+	ConfigSectionType,
+	Environment,
+	CoreConfig,
+	AuthConfig,
+	OAuthProvider,
+	EmailConfig,
+	PaymentConfig,
+	AnalyticsConfig,
+	IntegrationsConfig,
+} from './config/types';
+export { isDevelopment, isProduction, isTest, getEnvironment } from './config/types';
+
 export const siteConfig = {
 	/**
 	 * Site name displayed in metadata, OG images, and schemas

@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import React from 'react';
 import { User } from '@supabase/supabase-js';
+import { paymentConfig } from '@/lib/config';
 import {
 	PaymentProviderInterface,
 	PaymentIntent,
@@ -430,7 +431,7 @@ export class StripeProvider implements PaymentProviderInterface {
 		try {
 			const { customerId, paymentMethodId, priceId, trialPeriodDays, metadata } = params;
 
-			const subscription_price_id = process.env.NEXT_PUBLIC_STRIPE_SUBSCRIPTION_PRICE_ID;
+			const subscription_price_id = paymentConfig.stripe.standardPriceId;
 
 			// If a paymentMethodId is provided, we need to first attach it to the client
 			if (paymentMethodId) {

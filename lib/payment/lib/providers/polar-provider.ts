@@ -2,6 +2,7 @@ import { User } from '@supabase/auth-js';
 import React from 'react';
 import { Polar } from '@polar-sh/sdk';
 import crypto from 'crypto';
+import { paymentConfig, coreConfig } from '@/lib/config';
 import {
 	PaymentProviderInterface,
 	PaymentIntent,
@@ -103,9 +104,7 @@ const polarTranslations = {
 	}
 };
 
-const appUrl =
-	process.env.NEXT_PUBLIC_APP_URL ??
-	(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://demo.ever.works');
+const appUrl = coreConfig.APP_URL || 'https://demo.ever.works';
 
 export class PolarProvider implements PaymentProviderInterface {
 	private polar: Polar;
@@ -121,7 +120,7 @@ export class PolarProvider implements PaymentProviderInterface {
 		}
 
 		this.apiKey = config.apiKey;
-		const isSandbox = process.env.POLAR_SANDBOX === 'true';
+		const isSandbox = paymentConfig.polar.sandbox;
 		this.isSandbox = isSandbox;
 		this.polar = new Polar({
 			accessToken: config.apiKey,
@@ -1140,8 +1139,8 @@ export class PolarProvider implements PaymentProviderInterface {
 	 * Uses sandbox URL if in sandbox mode, otherwise production
 	 */
 	private getPolarApiUrl(): string {
-		if (process.env.POLAR_API_URL) {
-			return process.env.POLAR_API_URL;
+		if (paymentConfig.polar.apiUrl) {
+			return paymentConfig.polar.apiUrl;
 		}
 		// Use sandbox URL if sandbox mode is enabled
 		return this.isSandbox ? 'https://sandbox-api.polar.sh' : 'https://api.polar.sh';

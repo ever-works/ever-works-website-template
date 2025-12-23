@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, getOrCreatePolarProvider } from '@/lib/auth';
+import { coreConfig } from '@/lib/config';
 import { getPolarSubscription } from '@/lib/payment/lib/utils/polar-subscription-helpers';
 
 /**
@@ -302,7 +303,7 @@ export async function POST(
 		return NextResponse.json(
 			{
 				error: errorMessage,
-				...(process.env.NODE_ENV === 'development' && {
+				...(coreConfig.NODE_ENV === 'development' && {
 					details: error instanceof Error ? error.stack : String(error)
 				})
 			},

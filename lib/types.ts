@@ -1,6 +1,7 @@
 import { Session } from 'next-auth';
 import { PricingPlanConfig } from './content';
 import { PaymentInterval, PaymentPlan, PaymentProvider } from './constants';
+import { paymentConfig } from '@/lib/config';
 
 export type SessionProps = {
 	session: Session | null;
@@ -30,21 +31,21 @@ export const defaultPricingConfig: PricingPlanConfig = {
 
 			// Stripe configuration
 			stripeProductId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID,
-			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
-			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
+			stripePriceId: paymentConfig.stripe.freePriceId,
+			annualPriceId: paymentConfig.stripe.freePriceId,
 
 			// LemonSqueezy configuration
-			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_FREE_VARIANT_ID,
+			lemonVariantId: paymentConfig.lemonSqueezy.freeVariantId,
 
 			lemonCheckoutUrl: '',
 
 			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_FREE_PRODUCT_ID,
 
 			// Polar configuration
-			polarFreePlanId: process.env.NEXT_PUBLIC_POLAR_FREE_PLAN_ID,
-			polarProductId: process.env.NEXT_PUBLIC_POLAR_FREE_PLAN_ID,
+			polarFreePlanId: paymentConfig.polar.freePlanId,
+			polarProductId: paymentConfig.polar.freePlanId,
 
-			envKey: 'FREE_PLAN'
+			envKey: 'FREE_PLAN',
 		},
 
 		STANDARD: {
@@ -59,12 +60,12 @@ export const defaultPricingConfig: PricingPlanConfig = {
 
 			// Stripe configuration
 			stripeProductId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRODUCT_ID,
-			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRICE_ID,
-			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_STANDARD_PRICE_ID,
+			stripePriceId: paymentConfig.stripe.standardPriceId,
+			annualPriceId: paymentConfig.stripe.standardPriceId,
 
 			// Trial configuration
-			trialAmountId: process.env.NEXT_PUBLIC_STANDARD_TRIAL_AMOUNT_ID,
-			isAuthorizedTrialAmount: process.env.NEXT_PUBLIC_AUTHORIZED_TRIAL_AMOUNT === 'true',
+			trialAmountId: paymentConfig.trial.standardTrialAmountId,
+			isAuthorizedTrialAmount: paymentConfig.trial.authorized,
 
 			annualDiscount: 10,
 			disabled: false,
@@ -73,15 +74,15 @@ export const defaultPricingConfig: PricingPlanConfig = {
 			trialPeriodDays: 4,
 
 			// LemonSqueezy configuration
-			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_VARIANT_ID,
+			lemonVariantId: paymentConfig.lemonSqueezy.standardVariantId,
 
 			lemonCheckoutUrl: '',
 
 			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STANDARD_PRODUCT_ID,
 
 			// Polar configuration
-			polarStandardPlanId: process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID,
-			polarProductId: process.env.NEXT_PUBLIC_POLAR_STANDARD_PLAN_ID
+			polarStandardPlanId: paymentConfig.polar.standardPlanId,
+			polarProductId: paymentConfig.polar.standardPlanId,
 		},
 		PREMIUM: {
 			id: PaymentPlan.PREMIUM,
@@ -95,30 +96,29 @@ export const defaultPricingConfig: PricingPlanConfig = {
 
 			// Stripe configuration
 			stripeProductId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRODUCT_ID,
-			stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID,
-			annualPriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_PRICE_ID,
+			stripePriceId: paymentConfig.stripe.premiumPriceId,
+			annualPriceId: paymentConfig.stripe.premiumPriceId,
 			annualDiscount: 10,
 			disabled: true,
 			trialPeriodDays: 4,
 			popular: false,
 
 			// Trial configuration
-
-			isAuthorizedTrialAmount: process.env.NEXT_PUBLIC_AUTHORIZED_TRIAL_AMOUNT === 'true',
-			trialAmountId: process.env.NEXT_PUBLIC_PREMIUM_TRIAL_AMOUNT_ID,
+			isAuthorizedTrialAmount: paymentConfig.trial.authorized,
+			trialAmountId: paymentConfig.trial.premiumTrialAmountId,
 
 			envKey: 'PREMIUM_PLAN',
 
 			// LemonSqueezy configuration
-			lemonVariantId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_VARIANT_ID,
+			lemonVariantId: paymentConfig.lemonSqueezy.premiumVariantId,
 
 			lemonCheckoutUrl: '',
 
 			lemonProductId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PREMIUM_PRODUCT_ID,
 
 			// Polar configuration
-			polarPremiumPlanId: process.env.NEXT_PUBLIC_POLAR_PREMIUM_PLAN_ID,
-			polarProductId: process.env.NEXT_PUBLIC_POLAR_PREMIUM_PLAN_ID
-		}
+			polarPremiumPlanId: paymentConfig.polar.premiumPlanId,
+			polarProductId: paymentConfig.polar.premiumPlanId,
+		},
 	}
 };
