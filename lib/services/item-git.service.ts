@@ -180,7 +180,68 @@ export class ItemGitService {
     }
   }
 
-  async writeItem(item: ItemData): Promise<void> {
+  // Read only the specified item slugs to avoid full directory scans
+  async readItemsBySlugs(slugs: string[], includeDeleted: boolean = false): Promise<ItemData[]> {
+    if (!slugs.length) return [];
+
+    const uniqueSlugs = Array.from(new Set(slugs));
+    const dataDir = path.join(this.config.dataDir, 'data');
+    const results: ItemData[] = [];
+
+    // Check data directory exists
+    try {
+      await fs.access(dataDir);
+    } catch {
+      console.warn('📁 Data directory does not exist:', dataDir);
+      return [];
+    }
+
+    for (const slug of uniqueSlugs) {
+      const itemDir = path.join(dataDir, slug);
+      const itemFile = path.join(itemDir, `${slug}.yml`);
+
+      try {
+        const stat = await fs.stat(itemDir);
+        if (!stat.isDirectory()) continue;
+
+        const content = await fs.readFile(itemFile, 'utf-8');
+        const item = yaml.parse(content) as any;
+
+        const normalized: ItemData = {
+          id: slug,
+          name: item.name || '',
+          slug,
+          description: item.description || '',
+          source_url: item.source_url || '',
+          category: Array.isArray(item.category) ? item.category : [item.category].filter(Boolean),
+          tags: Array.isArray(item.tags) ? item.tags : [],
+          featured: item.featured || false,
+          icon_url: item.icon_url,
+          updated_at: item.updated_at || formatDateForYaml(),
+          status: item.status || 'approved',
+          submitted_by: item.submitted_by,
+          submitted_at: item.submitted_at || item.updated_at || formatDateForYaml(),
+          reviewed_by: item.reviewed_by || 'admin',
+          reviewed_at: item.reviewed_at || item.updated_at || formatDateForYaml(),
+          review_notes: item.review_notes,
+          deleted_at: item.deleted_at,
+          collections: Array.isArray(item.collections) ? item.collections : (item.collections ? [item.collections] : []),
+        };
+
+        if (includeDeleted || !normalized.deleted_at) {
+          results.push(normalized);
+        }
+      } catch (error) {
+        // Skip missing or unreadable items, but log for visibility
+        const message = (error as any)?.message ?? String(error);
+        console.warn(`⚠️ Unable to read item '${slug}':`, message);
+      }
+    }
+
+    return results;
+  }
+
+  private async writeItemFile(item: ItemData): Promise<void> {
     try {
       const dataDir = path.join(this.config.dataDir, 'data');
       const itemDir = path.join(dataDir, item.slug);
@@ -196,6 +257,7 @@ export class ItemGitService {
         source_url: item.source_url,
         category: item.category,
         tags: item.tags,
+        collections: item.collections || [],
         featured: item.featured,
         icon_url: item.icon_url,
         updated_at: item.updated_at,
@@ -215,13 +277,15 @@ export class ItemGitService {
       // Write item data
       const content = yaml.stringify(itemData);
       await fs.writeFile(itemFile, content, 'utf-8');
-
-      // Commit and push changes
-      await this.commitAndPush(`Update item: ${item.name}`);
     } catch (error) {
-      console.error('❌ Error writing item:', error);
+      console.error('❌ Error writing item file:', error);
       throw error;
     }
+  }
+
+  async writeItem(item: ItemData): Promise<void> {
+    await this.writeItemFile(item);
+    await this.commitAndPush(`Update item: ${item.name}`);
   }
 
   private async commitAndPush(message: string): Promise<void> {
@@ -287,6 +351,7 @@ export class ItemGitService {
       source_url: data.source_url,
       category: data.category,
       tags: data.tags,
+      collections: data.collections || [],
       featured: data.featured || false,
       icon_url: data.icon_url,
       updated_at: formatDateForYaml(),
@@ -316,6 +381,29 @@ export class ItemGitService {
 
     await this.writeItem(updatedItem);
     return updatedItem;
+  }
+
+  async updateItemWithoutCommit(id: string, data: UpdateItemRequest): Promise<ItemData> {
+    const items = await this.readItems(true);
+    const itemIndex = items.findIndex(item => item.id === id);
+    
+    if (itemIndex === -1) {
+      throw new Error(`Item with ID '${id}' not found`);
+    }
+
+    const updatedItem: ItemData = {
+      ...items[itemIndex],
+      ...data,
+      id,
+      updated_at: formatDateForYaml(),
+    };
+
+    await this.writeItemFile(updatedItem);
+    return updatedItem;
+  }
+
+  async commitAndPushBatch(message: string): Promise<void> {
+    await this.commitAndPush(message);
   }
 
   async reviewItem(id: string, reviewData: ReviewRequest): Promise<ItemData> {

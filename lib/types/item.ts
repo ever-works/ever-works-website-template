@@ -6,6 +6,7 @@ export interface ItemData {
   source_url: string;
   category: string | string[];
   tags: string[];
+  collections?: string[];
   featured?: boolean;
   icon_url?: string;
   updated_at: string;
@@ -29,6 +30,7 @@ export interface CreateItemRequest {
   source_url: string;
   category: string | string[];
   tags: string[];
+  collections?: string[];
   brand?: string;
   featured?: boolean;
   icon_url?: string;
