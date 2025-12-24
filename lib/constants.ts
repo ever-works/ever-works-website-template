@@ -68,65 +68,16 @@ export const RECAPTCHA_SITE_KEY = getNextPublicEnv('NEXT_PUBLIC_RECAPTCHA_SITE_K
 export const RECAPTCHA_SECRET_KEY = getNextPublicEnv('RECAPTCHA_SECRET_KEY');
 
 // ============================================
-// PAYMENT FLOW
+// PAYMENT & SUBMISSION (re-exported from constants/payment for backwards compatibility)
 // ============================================
-export type ExceptionTrackingProvider = 'sentry' | 'posthog' | 'both' | 'none';
-
-export enum PaymentFlow {
-	PAY_AT_START = 'pay_at_start',
-	PAY_AT_END = 'pay_at_end'
-}
-
-export enum PaymentStatus {
-	PENDING = 'pending',
-	PAID = 'paid',
-	FAILED = 'failed'
-}
-
-export enum PaymentInterval {
-  DAILY = 'daily',
-  WEEKLY = 'weekly',
-  MONTHLY = 'monthly',
-  YEARLY = 'yearly',
-  ONE_TIME = 'one-time',
-  PER_SUBMISSION = 'per-submission'
-}
-
-// ============================================
-// PAYMENT PLANS
-// ============================================
-export enum PaymentPlan {
-  FREE = 'free',
-  STANDARD = 'standard',
-  PREMIUM = 'premium'
-}
-
-export enum PaymentMethod {
-	CREDIT_CARD = 'credit_card',
-	PAYPAL = 'paypal'
-}
-
-export enum PaymentCurrency {
-	USD = 'USD',
-	EUR = 'EUR',
-	GBP = 'GBP',
-	CAD = 'CAD',
-	AUD = 'AUD',
-	ETH = 'ETH'
-}
-
-export enum PaymentProvider {
-	STRIPE = 'stripe',
-	SOLIDGATE = 'solidgate',
-	LEMONSQUEEZY = 'lemonsqueezy',
-	POLAR = 'polar'
-}
-
-export enum SubmissionStatus {
-	DRAFT = 'draft',
-	PENDING = 'pending',
-	APPROVED = 'approved',
-	REJECTED = 'rejected',
-	PUBLISHED = 'published',
-	ARCHIVED = 'archived'
-}
+export {
+	PaymentFlow,
+	PaymentStatus,
+	PaymentInterval,
+	PaymentPlan,
+	PaymentMethod,
+	PaymentCurrency,
+	PaymentProvider,
+	SubmissionStatus,
+	type ExceptionTrackingProvider,
+} from './constants/payment';
