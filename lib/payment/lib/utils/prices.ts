@@ -1,10 +1,15 @@
 import { CountryPricing } from "../../types/payment-types";
-import { paymentConfig } from "@/lib/config";
 
-// Get prices from ConfigService
-const standardPrice = paymentConfig.pricing.standard;
-const premiumPrice = paymentConfig.pricing.premium;
-const freePrice = paymentConfig.pricing.free;
+// Get prices from environment variables (client-safe NEXT_PUBLIC_* vars)
+const standardPrice = process.env.NEXT_PUBLIC_PRODUCT_PRICE_STANDARD
+	? parseFloat(process.env.NEXT_PUBLIC_PRODUCT_PRICE_STANDARD)
+	: 10;
+const premiumPrice = process.env.NEXT_PUBLIC_PRODUCT_PRICE_PREMIUM
+	? parseFloat(process.env.NEXT_PUBLIC_PRODUCT_PRICE_PREMIUM)
+	: 20;
+const freePrice = process.env.NEXT_PUBLIC_PRODUCT_PRICE_FREE
+	? parseFloat(process.env.NEXT_PUBLIC_PRODUCT_PRICE_FREE)
+	: 0;
 
 export const PRICES: Record<string, CountryPricing> = {
     us: {
