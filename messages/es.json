@@ -613,7 +613,9 @@
       "PRIMARY_BADGE": "Principal",
       "LINKS_ADDED": "enlaces agregados",
       "REMOVE_LINK": "Eliminar enlace",
-      "REVIEW_AND_SUBMIT": "Revisar y Enviar"
+      "REVIEW_AND_SUBMIT": "Revisar y Enviar",
+      "EXTRACT": "Extract",
+      "EXTRACTING": "Extracting..."
     },
     "PAYMENT": {
       "TITLE": "Completa tu pedido",
@@ -2799,7 +2801,6 @@
       "EDIT_STATUS_WARNING": "Editar elementos aprobados requiere re-aprobación",
       "SUCCESS_UPDATED": "Envío actualizado exitosamente",
       "SUCCESS_DELETED": "Envío eliminado y movido a la papelera",
-
       "TRASH_TITLE": "Papelera",
       "TRASH_DESCRIPTION": "Elementos eliminados. Puedes restaurarlos en cualquier momento.",
       "TRASH_EMPTY": "La papelera está vacía",
@@ -2812,12 +2813,10 @@
       "BACK_TO_SUBMISSIONS": "Volver a Envíos",
       "UNKNOWN_DATE": "Fecha desconocida",
       "INVALID_DATE": "Fecha inválida",
-
       "STATUS_APPROVED": "Aprobado",
       "STATUS_PENDING": "En Revisión",
       "STATUS_REJECTED": "Rechazado",
       "STATUS_DRAFT": "Borrador",
-
       "NA": "N/D",
       "VIEWS": "Vistas",
       "LIKES": "Me gusta",
@@ -2830,7 +2829,6 @@
       "MORE_TAGS": "+{count} más",
       "VIEWS_COUNT": "{count} vistas",
       "LIKES_COUNT": "{count} me gusta",
-
       "CANCEL": "Cancelar",
       "CLOSE": "Cerrar",
       "EDIT": "Editar",
@@ -2841,28 +2839,23 @@
       "VIEW_SUBMISSION": "Ver envío",
       "EDIT_SUBMISSION": "Editar envío",
       "DELETE_SUBMISSION": "Eliminar envío",
-
       "TOTAL_SUBMISSIONS": "Total de Envíos",
       "APPROVED": "Aprobados",
       "PENDING": "Pendientes",
       "REJECTED": "Rechazados",
       "DRAFTS": "Borradores",
-
       "SEARCH_PLACEHOLDER_SHORT": "Buscar...",
       "NO_SUBMISSIONS_TITLE": "Aún no hay envíos",
       "NO_SUBMISSIONS_DESC": "Comienza a construir tu portafolio enviando tu primer proyecto.",
       "SHOWING_RESULTS": "Mostrando {start}-{end} de {total} envíos",
-
       "TRASH": "Papelera",
       "DELETE_SUBMISSION_TITLE": "Eliminar Envío",
       "DELETE_CONFIRM_ITEM": "Esto moverá \"{title}\" a la papelera. Puedes restaurarlo después.",
       "RESTORE_INFO": "Puedes restaurar este elemento desde la papelera en cualquier momento.",
-
       "SUBMISSION_DETAILS": "Detalles del Envío",
       "VIEW_SUBMISSION_INFO": "Ver información del envío",
       "REJECTION_REASON": "Razón del Rechazo",
       "DESCRIPTION": "Descripción",
-
       "EDIT_SUBMISSION_TITLE": "Editar Envío",
       "EDIT_SUBMISSION_DESC": "Actualiza los detalles de tu envío"
     }

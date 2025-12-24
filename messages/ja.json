@@ -611,7 +611,9 @@
       "PRIMARY_BADGE": "Primary",
       "LINKS_ADDED": "links added",
       "REMOVE_LINK": "Remove link",
-      "REVIEW_AND_SUBMIT": "Review & Submit"
+      "REVIEW_AND_SUBMIT": "Review & Submit",
+      "EXTRACT": "Extract",
+      "EXTRACTING": "Extracting..."
     },
     "PAYMENT": {
       "TITLE": "Complete Your Order",
@@ -2777,7 +2779,6 @@
       "EDIT_STATUS_WARNING": "承認済みアイテムの編集には再承認が必要です",
       "SUCCESS_UPDATED": "提出が正常に更新されました",
       "SUCCESS_DELETED": "提出が削除され、ゴミ箱に移動しました",
-
       "TRASH_TITLE": "ゴミ箱",
       "TRASH_DESCRIPTION": "削除したアイテム。いつでも復元できます。",
       "TRASH_EMPTY": "ゴミ箱は空です",
@@ -2790,12 +2791,10 @@
       "BACK_TO_SUBMISSIONS": "提出に戻る",
       "UNKNOWN_DATE": "不明な日付",
       "INVALID_DATE": "無効な日付",
-
       "STATUS_APPROVED": "承認済み",
       "STATUS_PENDING": "審査中",
       "STATUS_REJECTED": "却下",
       "STATUS_DRAFT": "下書き",
-
       "NA": "N/A",
       "VIEWS": "閲覧数",
       "LIKES": "いいね",
@@ -2808,7 +2807,6 @@
       "MORE_TAGS": "+{count}件",
       "VIEWS_COUNT": "{count}回閲覧",
       "LIKES_COUNT": "{count}いいね",
-
       "CANCEL": "キャンセル",
       "CLOSE": "閉じる",
       "EDIT": "編集",
@@ -2819,28 +2817,23 @@
       "VIEW_SUBMISSION": "提出を表示",
       "EDIT_SUBMISSION": "提出を編集",
       "DELETE_SUBMISSION": "提出を削除",
-
       "TOTAL_SUBMISSIONS": "総提出数",
       "APPROVED": "承認済み",
       "PENDING": "保留中",
       "REJECTED": "却下",
       "DRAFTS": "下書き",
-
       "SEARCH_PLACEHOLDER_SHORT": "検索...",
       "NO_SUBMISSIONS_TITLE": "提出がありません",
       "NO_SUBMISSIONS_DESC": "最初のプロジェクトを提出してポートフォリオを構築しましょう。",
       "SHOWING_RESULTS": "{total}件中{start}-{end}件を表示",
-
       "TRASH": "ゴミ箱",
       "DELETE_SUBMISSION_TITLE": "提出を削除",
       "DELETE_CONFIRM_ITEM": "\"{title}\"をゴミ箱に移動します。後で復元できます。",
       "RESTORE_INFO": "このアイテムはゴミ箱からいつでも復元できます。",
-
       "SUBMISSION_DETAILS": "提出の詳細",
       "VIEW_SUBMISSION_INFO": "提出情報を表示",
       "REJECTION_REASON": "却下理由",
       "DESCRIPTION": "説明",
-
       "EDIT_SUBMISSION_TITLE": "提出を編集",
       "EDIT_SUBMISSION_DESC": "提出の詳細を更新"
     }

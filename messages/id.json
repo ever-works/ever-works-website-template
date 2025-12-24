@@ -611,7 +611,9 @@
       "PRIMARY_BADGE": "Primary",
       "LINKS_ADDED": "links added",
       "REMOVE_LINK": "Remove link",
-      "REVIEW_AND_SUBMIT": "Review & Submit"
+      "REVIEW_AND_SUBMIT": "Review & Submit",
+      "EXTRACT": "Extract",
+      "EXTRACTING": "Extracting..."
     },
     "PAYMENT": {
       "TITLE": "Complete Your Order",
@@ -2777,7 +2779,6 @@
       "EDIT_STATUS_WARNING": "Editing approved items requires re-approval",
       "SUCCESS_UPDATED": "Pengajuan berhasil diperbarui",
       "SUCCESS_DELETED": "Pengajuan dihapus dan dipindahkan ke tempat sampah",
-
       "TRASH_TITLE": "Tempat Sampah",
       "TRASH_DESCRIPTION": "Item yang dihapus. Anda dapat memulihkannya kapan saja.",
       "TRASH_EMPTY": "Tempat sampah kosong",
@@ -2790,12 +2791,10 @@
       "BACK_TO_SUBMISSIONS": "Kembali ke Pengajuan",
       "UNKNOWN_DATE": "Tanggal tidak diketahui",
       "INVALID_DATE": "Tanggal tidak valid",
-
       "STATUS_APPROVED": "Disetujui",
       "STATUS_PENDING": "Dalam Peninjauan",
       "STATUS_REJECTED": "Ditolak",
       "STATUS_DRAFT": "Draf",
-
       "NA": "T/A",
       "VIEWS": "Tampilan",
       "LIKES": "Suka",
@@ -2808,7 +2807,6 @@
       "MORE_TAGS": "+{count} lainnya",
       "VIEWS_COUNT": "{count} tampilan",
       "LIKES_COUNT": "{count} suka",
-
       "CANCEL": "Batal",
       "CLOSE": "Tutup",
       "EDIT": "Edit",
@@ -2819,28 +2817,23 @@
       "VIEW_SUBMISSION": "Lihat pengajuan",
       "EDIT_SUBMISSION": "Edit pengajuan",
       "DELETE_SUBMISSION": "Hapus pengajuan",
-
       "TOTAL_SUBMISSIONS": "Total Pengajuan",
       "APPROVED": "Disetujui",
       "PENDING": "Menunggu",
       "REJECTED": "Ditolak",
       "DRAFTS": "Draf",
-
       "SEARCH_PLACEHOLDER_SHORT": "Cari...",
       "NO_SUBMISSIONS_TITLE": "Belum ada pengajuan",
       "NO_SUBMISSIONS_DESC": "Mulai bangun portofolio Anda dengan mengajukan proyek pertama Anda.",
       "SHOWING_RESULTS": "Menampilkan {start}-{end} dari {total} pengajuan",
-
       "TRASH": "Tempat Sampah",
       "DELETE_SUBMISSION_TITLE": "Hapus Pengajuan",
       "DELETE_CONFIRM_ITEM": "Ini akan memindahkan \"{title}\" ke tempat sampah. Anda dapat memulihkannya nanti.",
       "RESTORE_INFO": "Anda dapat memulihkan item ini dari tempat sampah kapan saja.",
-
       "SUBMISSION_DETAILS": "Detail Pengajuan",
       "VIEW_SUBMISSION_INFO": "Lihat informasi pengajuan",
       "REJECTION_REASON": "Alasan Penolakan",
       "DESCRIPTION": "Deskripsi",
-
       "EDIT_SUBMISSION_TITLE": "Edit Pengajuan",
       "EDIT_SUBMISSION_DESC": "Perbarui detail pengajuan Anda"
     }

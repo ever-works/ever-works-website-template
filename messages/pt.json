@@ -611,7 +611,9 @@
       "PRIMARY_BADGE": "Primary",
       "LINKS_ADDED": "links added",
       "REMOVE_LINK": "Remove link",
-      "REVIEW_AND_SUBMIT": "Review & Submit"
+      "REVIEW_AND_SUBMIT": "Review & Submit",
+      "EXTRACT": "Extract",
+      "EXTRACTING": "Extracting..."
     },
     "PAYMENT": {
       "TITLE": "Complete Your Order",
@@ -2777,7 +2779,6 @@
       "EDIT_STATUS_WARNING": "Editar itens aprovados requer nova aprovação",
       "SUCCESS_UPDATED": "Submissão atualizada com sucesso",
       "SUCCESS_DELETED": "Submissão excluída e movida para a lixeira",
-
       "TRASH_TITLE": "Lixeira",
       "TRASH_DESCRIPTION": "Itens excluídos. Você pode restaurá-los a qualquer momento.",
       "TRASH_EMPTY": "A lixeira está vazia",
@@ -2790,12 +2791,10 @@
       "BACK_TO_SUBMISSIONS": "Voltar para Submissões",
       "UNKNOWN_DATE": "Data desconhecida",
       "INVALID_DATE": "Data inválida",
-
       "STATUS_APPROVED": "Aprovado",
       "STATUS_PENDING": "Em Revisão",
       "STATUS_REJECTED": "Rejeitado",
       "STATUS_DRAFT": "Rascunho",
-
       "NA": "N/D",
       "VIEWS": "Visualizações",
       "LIKES": "Curtidas",
@@ -2808,7 +2807,6 @@
       "MORE_TAGS": "+{count} mais",
       "VIEWS_COUNT": "{count} visualizações",
       "LIKES_COUNT": "{count} curtidas",
-
       "CANCEL": "Cancelar",
       "CLOSE": "Fechar",
       "EDIT": "Editar",
@@ -2819,28 +2817,23 @@
       "VIEW_SUBMISSION": "Ver submissão",
       "EDIT_SUBMISSION": "Editar submissão",
       "DELETE_SUBMISSION": "Excluir submissão",
-
       "TOTAL_SUBMISSIONS": "Total de Submissões",
       "APPROVED": "Aprovadas",
       "PENDING": "Pendentes",
       "REJECTED": "Rejeitadas",
       "DRAFTS": "Rascunhos",
-
       "SEARCH_PLACEHOLDER_SHORT": "Pesquisar...",
       "NO_SUBMISSIONS_TITLE": "Nenhuma submissão ainda",
       "NO_SUBMISSIONS_DESC": "Comece a construir seu portfólio enviando seu primeiro projeto.",
       "SHOWING_RESULTS": "Mostrando {start}-{end} de {total} submissões",
-
       "TRASH": "Lixeira",
       "DELETE_SUBMISSION_TITLE": "Excluir Submissão",
       "DELETE_CONFIRM_ITEM": "Isso moverá \"{title}\" para a lixeira. Você pode restaurá-lo depois.",
       "RESTORE_INFO": "Você pode restaurar este item da lixeira a qualquer momento.",
-
       "SUBMISSION_DETAILS": "Detalhes da Submissão",
       "VIEW_SUBMISSION_INFO": "Ver informações da submissão",
       "REJECTION_REASON": "Motivo da Rejeição",
       "DESCRIPTION": "Descrição",
-
       "EDIT_SUBMISSION_TITLE": "Editar Submissão",
       "EDIT_SUBMISSION_DESC": "Atualize os detalhes da sua submissão"
     }

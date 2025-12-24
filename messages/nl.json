@@ -611,7 +611,9 @@
       "PRIMARY_BADGE": "Primary",
       "LINKS_ADDED": "links added",
       "REMOVE_LINK": "Remove link",
-      "REVIEW_AND_SUBMIT": "Review & Submit"
+      "REVIEW_AND_SUBMIT": "Review & Submit",
+      "EXTRACT": "Extract",
+      "EXTRACTING": "Extracting..."
     },
     "PAYMENT": {
       "TITLE": "Complete Your Order",
@@ -2777,7 +2779,6 @@
       "EDIT_STATUS_WARNING": "Editing approved items requires re-approval",
       "SUCCESS_UPDATED": "Inzending succesvol bijgewerkt",
       "SUCCESS_DELETED": "Inzending verwijderd en verplaatst naar prullenbak",
-
       "TRASH_TITLE": "Prullenbak",
       "TRASH_DESCRIPTION": "Verwijderde items. U kunt ze op elk moment herstellen.",
       "TRASH_EMPTY": "Prullenbak is leeg",
@@ -2790,12 +2791,10 @@
       "BACK_TO_SUBMISSIONS": "Terug naar Inzendingen",
       "UNKNOWN_DATE": "Onbekende datum",
       "INVALID_DATE": "Ongeldige datum",
-
       "STATUS_APPROVED": "Goedgekeurd",
       "STATUS_PENDING": "In Beoordeling",
       "STATUS_REJECTED": "Afgewezen",
       "STATUS_DRAFT": "Concept",
-
       "NA": "N.v.t.",
       "VIEWS": "Weergaven",
       "LIKES": "Likes",
@@ -2808,7 +2807,6 @@
       "MORE_TAGS": "+{count} meer",
       "VIEWS_COUNT": "{count} weergaven",
       "LIKES_COUNT": "{count} likes",
-
       "CANCEL": "Annuleren",
       "CLOSE": "Sluiten",
       "EDIT": "Bewerken",
@@ -2819,28 +2817,23 @@
       "VIEW_SUBMISSION": "Inzending bekijken",
       "EDIT_SUBMISSION": "Inzending bewerken",
       "DELETE_SUBMISSION": "Inzending verwijderen",
-
       "TOTAL_SUBMISSIONS": "Totaal Inzendingen",
       "APPROVED": "Goedgekeurd",
       "PENDING": "In Afwachting",
       "REJECTED": "Afgewezen",
       "DRAFTS": "Concepten",
-
       "SEARCH_PLACEHOLDER_SHORT": "Zoeken...",
       "NO_SUBMISSIONS_TITLE": "Nog geen inzendingen",
       "NO_SUBMISSIONS_DESC": "Begin met het opbouwen van uw portfolio door uw eerste project in te dienen.",
       "SHOWING_RESULTS": "Toont {start}-{end} van {total} inzendingen",
-
       "TRASH": "Prullenbak",
       "DELETE_SUBMISSION_TITLE": "Inzending Verwijderen",
       "DELETE_CONFIRM_ITEM": "Dit verplaatst \"{title}\" naar de prullenbak. U kunt het later herstellen.",
       "RESTORE_INFO": "U kunt dit item op elk moment herstellen vanuit de prullenbak.",
-
       "SUBMISSION_DETAILS": "Inzendingsdetails",
       "VIEW_SUBMISSION_INFO": "Inzendingsinformatie bekijken",
       "REJECTION_REASON": "Reden voor Afwijzing",
       "DESCRIPTION": "Beschrijving",
-
       "EDIT_SUBMISSION_TITLE": "Inzending Bewerken",
       "EDIT_SUBMISSION_DESC": "Werk de details van uw inzending bij"
     }

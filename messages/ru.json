@@ -611,7 +611,9 @@
       "PRIMARY_BADGE": "Primary",
       "LINKS_ADDED": "links added",
       "REMOVE_LINK": "Remove link",
-      "REVIEW_AND_SUBMIT": "Review & Submit"
+      "REVIEW_AND_SUBMIT": "Review & Submit",
+      "EXTRACT": "Extract",
+      "EXTRACTING": "Extracting..."
     },
     "PAYMENT": {
       "TITLE": "Complete Your Order",
@@ -2777,7 +2779,6 @@
       "EDIT_STATUS_WARNING": "Редактирование одобренных элементов требует повторного одобрения",
       "SUCCESS_UPDATED": "Заявка успешно обновлена",
       "SUCCESS_DELETED": "Заявка удалена и перемещена в корзину",
-
       "TRASH_TITLE": "Корзина",
       "TRASH_DESCRIPTION": "Удалённые элементы. Вы можете восстановить их в любое время.",
       "TRASH_EMPTY": "Корзина пуста",
@@ -2790,12 +2791,10 @@
       "BACK_TO_SUBMISSIONS": "Назад к Заявкам",
       "UNKNOWN_DATE": "Неизвестная дата",
       "INVALID_DATE": "Недействительная дата",
-
       "STATUS_APPROVED": "Одобрено",
       "STATUS_PENDING": "На рассмотрении",
       "STATUS_REJECTED": "Отклонено",
       "STATUS_DRAFT": "Черновик",
-
       "NA": "Н/Д",
       "VIEWS": "Просмотры",
       "LIKES": "Лайки",
@@ -2808,7 +2807,6 @@
       "MORE_TAGS": "+{count} ещё",
       "VIEWS_COUNT": "{count} просмотров",
       "LIKES_COUNT": "{count} лайков",
-
       "CANCEL": "Отмена",
       "CLOSE": "Закрыть",
       "EDIT": "Редактировать",
@@ -2819,28 +2817,23 @@
       "VIEW_SUBMISSION": "Посмотреть заявку",
       "EDIT_SUBMISSION": "Редактировать заявку",
       "DELETE_SUBMISSION": "Удалить заявку",
-
       "TOTAL_SUBMISSIONS": "Всего Заявок",
       "APPROVED": "Одобрено",
       "PENDING": "В ожидании",
       "REJECTED": "Отклонено",
       "DRAFTS": "Черновики",
-
       "SEARCH_PLACEHOLDER_SHORT": "Поиск...",
       "NO_SUBMISSIONS_TITLE": "Пока нет заявок",
       "NO_SUBMISSIONS_DESC": "Начните создавать своё портфолио, отправив свой первый проект.",
       "SHOWING_RESULTS": "Показано {start}-{end} из {total} заявок",
-
       "TRASH": "Корзина",
       "DELETE_SUBMISSION_TITLE": "Удалить Заявку",
       "DELETE_CONFIRM_ITEM": "Это переместит \"{title}\" в корзину. Вы сможете восстановить его позже.",
       "RESTORE_INFO": "Вы можете восстановить этот элемент из корзины в любое время.",
-
       "SUBMISSION_DETAILS": "Детали Заявки",
       "VIEW_SUBMISSION_INFO": "Посмотреть информацию о заявке",
       "REJECTION_REASON": "Причина Отклонения",
       "DESCRIPTION": "Описание",
-
       "EDIT_SUBMISSION_TITLE": "Редактировать Заявку",
       "EDIT_SUBMISSION_DESC": "Обновите детали вашей заявки"
     }

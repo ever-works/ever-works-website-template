@@ -156,12 +156,12 @@ export function LinkInput({
 																	size="sm"
 																	className="border-gray-400 dark:border-gray-500"
 																/>
-																<span>Extracting...</span>
+																<span>{t('directory.DETAILS_FORM.EXTRACTING')}</span>
 															</>
 														) : (
 															<>
 																<Sparkles className="w-3 h-3" />
-																<span>Extract</span>
+																<span>{t('directory.DETAILS_FORM.EXTRACT')}</span>
 															</>
 														)}
 													</button>

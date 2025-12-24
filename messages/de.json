@@ -623,7 +623,9 @@
       "PRIMARY_BADGE": "Primär",
       "LINKS_ADDED": "Links hinzugefügt",
       "REMOVE_LINK": "Link entfernen",
-      "REVIEW_AND_SUBMIT": "Überprüfen & Absenden"
+      "REVIEW_AND_SUBMIT": "Überprüfen & Absenden",
+      "EXTRACT": "Extract",
+      "EXTRACTING": "Extracting..."
     },
     "PAYMENT": {
       "TITLE": "Bestellung abschließen",
@@ -2810,7 +2812,6 @@
       "EDIT_STATUS_WARNING": "Das Bearbeiten genehmigter Elemente erfordert eine erneute Genehmigung",
       "SUCCESS_UPDATED": "Einreichung erfolgreich aktualisiert",
       "SUCCESS_DELETED": "Einreichung gelöscht und in den Papierkorb verschoben",
-
       "TRASH_TITLE": "Papierkorb",
       "TRASH_DESCRIPTION": "Gelöschte Elemente. Sie können sie jederzeit wiederherstellen.",
       "TRASH_EMPTY": "Papierkorb ist leer",
@@ -2823,12 +2824,10 @@
       "BACK_TO_SUBMISSIONS": "Zurück zu Einreichungen",
       "UNKNOWN_DATE": "Unbekanntes Datum",
       "INVALID_DATE": "Ungültiges Datum",
-
       "STATUS_APPROVED": "Genehmigt",
       "STATUS_PENDING": "In Prüfung",
       "STATUS_REJECTED": "Abgelehnt",
       "STATUS_DRAFT": "Entwurf",
-
       "NA": "N/V",
       "VIEWS": "Aufrufe",
       "LIKES": "Gefällt mir",
@@ -2841,7 +2840,6 @@
       "MORE_TAGS": "+{count} mehr",
       "VIEWS_COUNT": "{count} Aufrufe",
       "LIKES_COUNT": "{count} Gefällt mir",
-
       "CANCEL": "Abbrechen",
       "CLOSE": "Schließen",
       "EDIT": "Bearbeiten",
@@ -2852,28 +2850,23 @@
       "VIEW_SUBMISSION": "Einreichung ansehen",
       "EDIT_SUBMISSION": "Einreichung bearbeiten",
       "DELETE_SUBMISSION": "Einreichung löschen",
-
       "TOTAL_SUBMISSIONS": "Gesamte Einreichungen",
       "APPROVED": "Genehmigt",
       "PENDING": "Ausstehend",
       "REJECTED": "Abgelehnt",
       "DRAFTS": "Entwürfe",
-
       "SEARCH_PLACEHOLDER_SHORT": "Suchen...",
       "NO_SUBMISSIONS_TITLE": "Noch keine Einreichungen",
       "NO_SUBMISSIONS_DESC": "Beginnen Sie mit dem Aufbau Ihres Portfolios, indem Sie Ihr erstes Projekt einreichen.",
       "SHOWING_RESULTS": "Zeige {start}-{end} von {total} Einreichungen",
-
       "TRASH": "Papierkorb",
       "DELETE_SUBMISSION_TITLE": "Einreichung löschen",
       "DELETE_CONFIRM_ITEM": "Dies verschiebt \"{title}\" in den Papierkorb. Sie können es später wiederherstellen.",
       "RESTORE_INFO": "Sie können dieses Element jederzeit aus dem Papierkorb wiederherstellen.",
-
       "SUBMISSION_DETAILS": "Einreichungsdetails",
       "VIEW_SUBMISSION_INFO": "Einreichungsinformationen ansehen",
       "REJECTION_REASON": "Ablehnungsgrund",
       "DESCRIPTION": "Beschreibung",
-
       "EDIT_SUBMISSION_TITLE": "Einreichung bearbeiten",
       "EDIT_SUBMISSION_DESC": "Aktualisieren Sie die Details Ihrer Einreichung"
     }

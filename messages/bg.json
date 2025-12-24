@@ -611,7 +611,9 @@
       "PRIMARY_BADGE": "Primary",
       "LINKS_ADDED": "links added",
       "REMOVE_LINK": "Remove link",
-      "REVIEW_AND_SUBMIT": "Review & Submit"
+      "REVIEW_AND_SUBMIT": "Review & Submit",
+      "EXTRACT": "Extract",
+      "EXTRACTING": "Extracting..."
     },
     "PAYMENT": {
       "TITLE": "Complete Your Order",
@@ -2763,7 +2765,6 @@
       "EDIT_STATUS_WARNING": "Editing approved items requires re-approval",
       "SUCCESS_UPDATED": "Подаването е актуализирано успешно",
       "SUCCESS_DELETED": "Подаването е изтрито и преместено в кошчето",
-
       "TRASH_TITLE": "Кошче",
       "TRASH_DESCRIPTION": "Изтрити елементи. Можете да ги възстановите по всяко време.",
       "TRASH_EMPTY": "Кошчето е празно",
@@ -2776,12 +2777,10 @@
       "BACK_TO_SUBMISSIONS": "Обратно към подаванията",
       "UNKNOWN_DATE": "Неизвестна дата",
       "INVALID_DATE": "Невалидна дата",
-
       "STATUS_APPROVED": "Одобрено",
       "STATUS_PENDING": "В процес на преглед",
       "STATUS_REJECTED": "Отхвърлено",
       "STATUS_DRAFT": "Чернова",
-
       "NA": "Н/Д",
       "VIEWS": "Преглеждания",
       "LIKES": "Харесвания",
@@ -2794,7 +2793,6 @@
       "MORE_TAGS": "+{count} още",
       "VIEWS_COUNT": "{count} преглеждания",
       "LIKES_COUNT": "{count} харесвания",
-
       "CANCEL": "Отказ",
       "CLOSE": "Затвори",
       "EDIT": "Редактирай",
@@ -2805,28 +2803,23 @@
       "VIEW_SUBMISSION": "Виж подаването",
       "EDIT_SUBMISSION": "Редактирай подаването",
       "DELETE_SUBMISSION": "Изтрий подаването",
-
       "TOTAL_SUBMISSIONS": "Общо подавания",
       "APPROVED": "Одобрени",
       "PENDING": "В изчакване",
       "REJECTED": "Отхвърлени",
       "DRAFTS": "Чернови",
-
       "SEARCH_PLACEHOLDER_SHORT": "Търсене...",
       "NO_SUBMISSIONS_TITLE": "Все още няма подавания",
       "NO_SUBMISSIONS_DESC": "Започнете да изграждате портфолиото си като подадете първия си проект.",
       "SHOWING_RESULTS": "Показване на {start}-{end} от {total} подавания",
-
       "TRASH": "Кошче",
       "DELETE_SUBMISSION_TITLE": "Изтриване на подаване",
       "DELETE_CONFIRM_ITEM": "Това ще премести \"{title}\" в кошчето. Можете да го възстановите по-късно.",
       "RESTORE_INFO": "Можете да възстановите този елемент от кошчето по всяко време.",
-
       "SUBMISSION_DETAILS": "Детайли на подаването",
       "VIEW_SUBMISSION_INFO": "Виж информация за подаването",
       "REJECTION_REASON": "Причина за отхвърляне",
       "DESCRIPTION": "Описание",
-
       "EDIT_SUBMISSION_TITLE": "Редактирай подаване",
       "EDIT_SUBMISSION_DESC": "Актуализирай детайлите на подаването си"
     }

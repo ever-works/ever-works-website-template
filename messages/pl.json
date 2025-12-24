@@ -611,7 +611,9 @@
       "PRIMARY_BADGE": "Primary",
       "LINKS_ADDED": "links added",
       "REMOVE_LINK": "Remove link",
-      "REVIEW_AND_SUBMIT": "Review & Submit"
+      "REVIEW_AND_SUBMIT": "Review & Submit",
+      "EXTRACT": "Extract",
+      "EXTRACTING": "Extracting..."
     },
     "PAYMENT": {
       "TITLE": "Complete Your Order",
@@ -2777,7 +2779,6 @@
       "EDIT_STATUS_WARNING": "Editing approved items requires re-approval",
       "SUCCESS_UPDATED": "Zgłoszenie zostało pomyślnie zaktualizowane",
       "SUCCESS_DELETED": "Zgłoszenie usunięte i przeniesione do kosza",
-
       "TRASH_TITLE": "Kosz",
       "TRASH_DESCRIPTION": "Usunięte elementy. Możesz je przywrócić w dowolnym momencie.",
       "TRASH_EMPTY": "Kosz jest pusty",
@@ -2790,12 +2791,10 @@
       "BACK_TO_SUBMISSIONS": "Powrót do Zgłoszeń",
       "UNKNOWN_DATE": "Nieznana data",
       "INVALID_DATE": "Nieprawidłowa data",
-
       "STATUS_APPROVED": "Zatwierdzone",
       "STATUS_PENDING": "W trakcie przeglądu",
       "STATUS_REJECTED": "Odrzucone",
       "STATUS_DRAFT": "Wersja robocza",
-
       "NA": "Nie dotyczy",
       "VIEWS": "Wyświetlenia",
       "LIKES": "Polubienia",
@@ -2808,7 +2807,6 @@
       "MORE_TAGS": "+{count} więcej",
       "VIEWS_COUNT": "{count} wyświetleń",
       "LIKES_COUNT": "{count} polubień",
-
       "CANCEL": "Anuluj",
       "CLOSE": "Zamknij",
       "EDIT": "Edytuj",
@@ -2819,28 +2817,23 @@
       "VIEW_SUBMISSION": "Zobacz zgłoszenie",
       "EDIT_SUBMISSION": "Edytuj zgłoszenie",
       "DELETE_SUBMISSION": "Usuń zgłoszenie",
-
       "TOTAL_SUBMISSIONS": "Łączna liczba zgłoszeń",
       "APPROVED": "Zatwierdzone",
       "PENDING": "Oczekujące",
       "REJECTED": "Odrzucone",
       "DRAFTS": "Wersje robocze",
-
       "SEARCH_PLACEHOLDER_SHORT": "Szukaj...",
       "NO_SUBMISSIONS_TITLE": "Brak zgłoszeń",
       "NO_SUBMISSIONS_DESC": "Zacznij budować swoje portfolio, zgłaszając swój pierwszy projekt.",
       "SHOWING_RESULTS": "Wyświetlanie {start}-{end} z {total} zgłoszeń",
-
       "TRASH": "Kosz",
       "DELETE_SUBMISSION_TITLE": "Usuń Zgłoszenie",
       "DELETE_CONFIRM_ITEM": "To przeniesie \"{title}\" do kosza. Możesz je później przywrócić.",
       "RESTORE_INFO": "Możesz przywrócić ten element z kosza w dowolnym momencie.",
-
       "SUBMISSION_DETAILS": "Szczegóły Zgłoszenia",
       "VIEW_SUBMISSION_INFO": "Zobacz informacje o zgłoszeniu",
       "REJECTION_REASON": "Powód Odrzucenia",
       "DESCRIPTION": "Opis",
-
       "EDIT_SUBMISSION_TITLE": "Edytuj Zgłoszenie",
       "EDIT_SUBMISSION_DESC": "Zaktualizuj szczegóły swojego zgłoszenia"
     }

@@ -610,7 +610,9 @@
       "PRIMARY_BADGE": "أساسي",
       "LINKS_ADDED": "تمت إضافة روابط",
       "REMOVE_LINK": "إزالة الرابط",
-      "REVIEW_AND_SUBMIT": "مراجعة وإرسال"
+      "REVIEW_AND_SUBMIT": "مراجعة وإرسال",
+      "EXTRACT": "Extract",
+      "EXTRACTING": "Extracting..."
     },
     "PAYMENT": {
       "TITLE": "إتمام طلبك",
@@ -2797,7 +2799,6 @@
       "EDIT_STATUS_WARNING": "تحرير العناصر الموافق عليها يتطلب إعادة الموافقة",
       "SUCCESS_UPDATED": "تم تحديث التقديم بنجاح",
       "SUCCESS_DELETED": "تم حذف التقديم ونقله إلى سلة المهملات",
-
       "TRASH_TITLE": "سلة المهملات",
       "TRASH_DESCRIPTION": "العناصر التي حذفتها. يمكنك استعادتها في أي وقت.",
       "TRASH_EMPTY": "سلة المهملات فارغة",
@@ -2810,12 +2811,10 @@
       "BACK_TO_SUBMISSIONS": "العودة إلى التقديمات",
       "UNKNOWN_DATE": "تاريخ غير معروف",
       "INVALID_DATE": "تاريخ غير صالح",
-
       "STATUS_APPROVED": "موافق عليه",
       "STATUS_PENDING": "قيد المراجعة",
       "STATUS_REJECTED": "مرفوض",
       "STATUS_DRAFT": "مسودة",
-
       "NA": "غير متوفر",
       "VIEWS": "المشاهدات",
       "LIKES": "الإعجابات",
@@ -2828,7 +2827,6 @@
       "MORE_TAGS": "+{count} المزيد",
       "VIEWS_COUNT": "{count} مشاهدة",
       "LIKES_COUNT": "{count} إعجاب",
-
       "CANCEL": "إلغاء",
       "CLOSE": "إغلاق",
       "EDIT": "تعديل",
@@ -2839,28 +2837,23 @@
       "VIEW_SUBMISSION": "عرض التقديم",
       "EDIT_SUBMISSION": "تعديل التقديم",
       "DELETE_SUBMISSION": "حذف التقديم",
-
       "TOTAL_SUBMISSIONS": "إجمالي التقديمات",
       "APPROVED": "موافق عليه",
       "PENDING": "قيد الانتظار",
       "REJECTED": "مرفوض",
       "DRAFTS": "المسودات",
-
       "SEARCH_PLACEHOLDER_SHORT": "بحث...",
       "NO_SUBMISSIONS_TITLE": "لا توجد تقديمات بعد",
       "NO_SUBMISSIONS_DESC": "ابدأ ببناء ملفك الشخصي عن طريق تقديم مشروعك الأول.",
       "SHOWING_RESULTS": "عرض {start}-{end} من {total} تقديم",
-
       "TRASH": "سلة المهملات",
       "DELETE_SUBMISSION_TITLE": "حذف التقديم",
       "DELETE_CONFIRM_ITEM": "سيتم نقل \"{title}\" إلى سلة المهملات. يمكنك استعادته لاحقاً.",
       "RESTORE_INFO": "يمكنك استعادة هذا العنصر من سلة المهملات في أي وقت.",
-
       "SUBMISSION_DETAILS": "تفاصيل التقديم",
       "VIEW_SUBMISSION_INFO": "عرض معلومات التقديم",
       "REJECTION_REASON": "سبب الرفض",
       "DESCRIPTION": "الوصف",
-
       "EDIT_SUBMISSION_TITLE": "تعديل التقديم",
       "EDIT_SUBMISSION_DESC": "تحديث تفاصيل تقديمك"
     }

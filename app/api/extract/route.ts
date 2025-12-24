@@ -1,4 +1,10 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
+
+const extractSchema = z.object({
+	url: z.string().url('Invalid URL format'),
+	existingCategories: z.array(z.string()).optional()
+});
 
 /**
  * Secure proxy route for URL extraction
@@ -7,11 +13,14 @@ import { NextResponse } from 'next/server';
  */
 export async function POST(request: Request) {
 	try {
-		const { url, existingCategories } = await request.json();
+		const body = await request.json();
+		const result = extractSchema.safeParse(body);
 
-		if (!url) {
-			return NextResponse.json({ success: false, error: 'URL is required' }, { status: 400 });
+		if (!result.success) {
+			return NextResponse.json({ success: false, error: result.error.issues[0].message }, { status: 400 });
 		}
+
+		const { url, existingCategories } = result.data;
 
 		// Use the private API_TOKEN from environment variables
 		const apiToken = process.env.API_TOKEN;
