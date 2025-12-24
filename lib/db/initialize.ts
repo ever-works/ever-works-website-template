@@ -1,7 +1,7 @@
 import { eq, sql } from 'drizzle-orm';
 import { seedStatus } from './schema';
 import type { SeedStatus } from './schema';
-import { coreConfig } from '@/lib/config';
+import { getDatabaseUrl, getNodeEnv } from './config';
 
 /** How long to wait for another instance to complete seeding (ms) */
 const SEED_WAIT_TIMEOUT = 60000; // 60 seconds
@@ -76,7 +76,7 @@ export async function isDatabaseSeeded(): Promise<boolean> {
 	// Database is seeded if status is 'completed'
 	const isSeeded = status.status === 'completed';
 
-	if (coreConfig.NODE_ENV === 'development') {
+	if (getNodeEnv() === 'development') {
 		console.log('[DB Init] Seed status:', {
 			status: status.status,
 			startedAt: status.startedAt,
@@ -154,8 +154,8 @@ async function seedDatabase(): Promise<void> {
  */
 export async function initializeDatabase(): Promise<void> {
 	// Silent skip if DATABASE_URL not configured (DB is optional)
-	if (!coreConfig.DATABASE_URL) {
-		if (coreConfig.NODE_ENV === 'development') {
+	if (!getDatabaseUrl()) {
+		if (getNodeEnv() === 'development') {
 			console.log('[DB Init] DATABASE_URL not configured - skipping database initialization');
 		}
 		return;
@@ -163,7 +163,7 @@ export async function initializeDatabase(): Promise<void> {
 
 	try {
 		console.log('[DB Init] Starting database initialization...');
-		console.log('[DB Init] DATABASE_URL is configured (length:', coreConfig.DATABASE_URL.length, ')');
+		console.log('[DB Init] DATABASE_URL is configured (length:', getDatabaseUrl()!.length, ')');
 
 		// STEP 1: Always run migrations first (Drizzle handles idempotency - only runs new ones)
 		console.log('[DB Init] Running migrations (Drizzle will skip already-applied)...');
@@ -178,7 +178,7 @@ export async function initializeDatabase(): Promise<void> {
 
 			// In production, throw to signal the error
 			// This allows monitoring systems to detect the failure
-			if (coreConfig.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production') {
+			if (getNodeEnv() === 'production' || process.env.VERCEL_ENV === 'production') {
 				throw new Error(errorMsg);
 			}
 			
