@@ -11,7 +11,7 @@ import { z } from 'zod';
 export const posthogConfigSchema = z
 	.object({
 		key: z.string().optional(),
-		host: z.string().url().default('https://us.i.posthog.com'),
+		host: z.string().url().default('https://us.i.posthog.com').catch('https://us.i.posthog.com'),
 		debug: z.boolean().default(false),
 		sessionRecordingEnabled: z.boolean().default(true),
 		autoCapture: z.boolean().default(false),
@@ -59,7 +59,7 @@ export const recaptchaConfigSchema = z
 /**
  * Exception tracking provider type
  */
-export const exceptionTrackingProviderSchema = z.enum(['posthog', 'sentry', 'none']).default('posthog');
+export const exceptionTrackingProviderSchema = z.enum(['posthog', 'sentry', 'none']).default('posthog').catch('posthog');
 
 /**
  * Vercel analytics configuration

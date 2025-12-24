@@ -3,7 +3,7 @@
  * Generates JSON-LD schemas for various content types
  */
 
-import { siteConfig } from '@/lib/config';
+import { siteConfig } from '@/lib/config/client';
 
 export interface ProductSchemaInput {
 	name: string;
