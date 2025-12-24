@@ -14,13 +14,12 @@ function escapeHtml(unsafe: string): string {
 }
 
 // Security: URL validation function
-// Security: URL validation function (returns normalized URL or null)
-function isValidUrl(url: string): string | null {
+function isValidUrl(url: string): boolean {
 	try {
 		const parsedUrl = new URL(url);
-		return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:' ? parsedUrl.href : null;
+		return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
 	} catch {
-		return null;
+		return false;
 	}
 }
 
@@ -68,12 +67,11 @@ export const getRenewalReminderTemplate = (data: RenewalReminderData) => {
 	const safeSupportEmail = escapeHtml(supportEmail);
 
 	// Security: Validate URLs
-	const validCompanyUrl = isValidUrl(companyUrl) || 'https://ever.works';
-	const safeCompanyUrl = escapeHtml(validCompanyUrl);
-	const validManageSubscriptionUrl = manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl);
-	const safeManageSubscriptionUrl = validManageSubscriptionUrl ? escapeHtml(validManageSubscriptionUrl) : null;
-	const validDisableAutoRenewalUrl = disableAutoRenewalUrl && isValidUrl(disableAutoRenewalUrl);
-	const safeDisableAutoRenewalUrl = validDisableAutoRenewalUrl ? escapeHtml(validDisableAutoRenewalUrl) : null;
+	const safeCompanyUrl = isValidUrl(companyUrl) ? escapeHtml(companyUrl) : 'https://ever.works';
+	const safeManageSubscriptionUrl =
+		manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl) ? escapeHtml(manageSubscriptionUrl) : null;
+	const safeDisableAutoRenewalUrl =
+		disableAutoRenewalUrl && isValidUrl(disableAutoRenewalUrl) ? escapeHtml(disableAutoRenewalUrl) : null;
 
 	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 
@@ -364,12 +362,10 @@ export const getRenewalSuccessTemplate = (data: {
 	const safeSupportEmail = escapeHtml(supportEmail);
 
 	// Security: Validate URLs
-	const validCompanyUrl = isValidUrl(companyUrl) || 'https://ever.works';
-	const safeCompanyUrl = escapeHtml(validCompanyUrl);
-	const validInvoiceUrl = invoiceUrl && isValidUrl(invoiceUrl);
-	const safeInvoiceUrl = validInvoiceUrl ? escapeHtml(validInvoiceUrl) : null;
-	const validManageSubscriptionUrl = manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl);
-	const safeManageSubscriptionUrl = validManageSubscriptionUrl ? escapeHtml(validManageSubscriptionUrl) : null;
+	const safeCompanyUrl = isValidUrl(companyUrl) ? escapeHtml(companyUrl) : 'https://ever.works';
+	const safeInvoiceUrl = invoiceUrl && isValidUrl(invoiceUrl) ? escapeHtml(invoiceUrl) : null;
+	const safeManageSubscriptionUrl =
+		manageSubscriptionUrl && isValidUrl(manageSubscriptionUrl) ? escapeHtml(manageSubscriptionUrl) : null;
 
 	const currencySymbol = safeCurrency === 'eur' ? '€' : safeCurrency === 'usd' ? '$' : safeCurrency.toUpperCase();
 

@@ -10,10 +10,8 @@ import {
 	serial,
 	varchar,
 	uniqueIndex,
-	primaryKey,
-	check
+	primaryKey
 } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm';
 
 export const newsletterSubscriptions = pgTable(
 	'newsletterSubscriptions',
@@ -40,16 +38,12 @@ export const passwordResetTokens = pgTable(
 	(table) => [unique('passwordResetTokens_token_unique').on(table.token)]
 );
 
-export const verificationTokens = pgTable(
-	'verificationTokens',
-	{
-		identifier: text().notNull(),
-		email: text().notNull(),
-		token: text().notNull(),
-		expires: timestamp({ mode: 'string' }).notNull()
-	},
-	(table) => [primaryKey({ columns: [table.identifier, table.token] })]
-);
+export const verificationTokens = pgTable('verificationTokens', {
+	identifier: text().notNull(),
+	email: text().notNull(),
+	token: text().notNull(),
+	expires: timestamp({ mode: 'string' }).notNull()
+});
 
 export const accounts = pgTable(
 	'accounts',
@@ -133,9 +127,6 @@ export const clientProfiles = pgTable(
 		totalSubmissions: integer('total_submissions').default(0),
 		notes: text(),
 		tags: text(),
-		warningCount: integer('warning_count').default(0),
-		suspendedAt: timestamp('suspended_at', { mode: 'string' }),
-		bannedAt: timestamp('banned_at', { mode: 'string' }),
 		createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
 		updatedAt: timestamp('updated_at', { mode: 'string' }).defaultNow().notNull()
 	},
@@ -428,8 +419,7 @@ export const subscriptions = pgTable(
 			columns: [table.userId],
 			foreignColumns: [users.id],
 			name: 'subscriptions_userId_users_id_fk'
-		}).onDelete('cascade'),
-		check('auto_renewal_check', sql`NOT (${table.autoRenewal} AND ${table.cancelAtPeriodEnd})`)
+		}).onDelete('cascade')
 	]
 );
 

@@ -156,10 +156,10 @@ export async function GET(request: NextRequest) {
 						};
 
 						const emailTemplate = getSubscriptionExpiredTemplate({
-							customerName: 'Valued Customer',
+							customerName: user.email.split('@')[0] || 'Customer',
 							customerEmail: user.email,
 							planName: planNames[subscription.planId] || subscription.planId,
-							amount: subscription.amount ? (subscription.amount / 100).toFixed(2) : '0.00',
+							amount: subscription.amount?.toString() || '0',
 							currency: subscription.currency || 'usd',
 							billingPeriod: subscription.interval || 'month',
 							subscriptionId: subscription.id,

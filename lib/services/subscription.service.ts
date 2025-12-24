@@ -1,6 +1,6 @@
 import * as queries from '@/lib/db/queries';
 import { SubscriptionStatus, type Subscription, type NewSubscription } from '@/lib/db/schema';
-import { PaymentPlan, PaymentProvider, PAYMENT_PLAN_NAMES } from '../constants';
+import { PaymentPlan, PaymentProvider } from '../constants';
 import {
 	getDaysUntilExpiration,
 	isInExpirationWarningPeriod,
@@ -37,6 +37,9 @@ export interface UpdateSubscriptionData {
 }
 
 export class SubscriptionService {
+	/**
+	 * Create a new subscription
+	 */
 	/**
 	 * Create a new subscription
 	 */
@@ -263,9 +266,9 @@ export class SubscriptionService {
 	 */
 	private getPlanFeatures(planId: string): string[] {
 		const features: Record<string, string[]> = {
-			[PaymentPlan.FREE]: ['basic_access'],
-			[PaymentPlan.STANDARD]: ['basic_access', 'advanced_features', 'pro_features', 'priority_support'],
-			[PaymentPlan.PREMIUM]: [
+			[ PaymentPlan.FREE ]: [ 'basic_access' ],
+			[ PaymentPlan.STANDARD ]: [ 'basic_access', 'advanced_features', 'pro_features', 'priority_support' ],
+			[ PaymentPlan.PREMIUM ]: [
 				'basic_access',
 				'advanced_features',
 				'pro_features',
@@ -275,14 +278,20 @@ export class SubscriptionService {
 			]
 		};
 
-		return features[planId] || features[PaymentPlan.FREE];
+		return features[ planId ] || features[ PaymentPlan.FREE ];
 	}
 
 	/**
 	 * Get plan display name
 	 */
 	getPlanDisplayName(planId: string): string {
-		return PAYMENT_PLAN_NAMES[planId as PaymentPlan] || 'Unknown Plan';
+		const planNames: Record<string, string> = {
+			[ PaymentPlan.FREE ]: 'Free Plan',
+			[ PaymentPlan.STANDARD ]: 'Standard Plan',
+			[ PaymentPlan.PREMIUM ]: 'Premium Plan'
+		};
+
+		return planNames[ planId ] || 'Unknown Plan';
 	}
 
 	/**
@@ -290,19 +299,19 @@ export class SubscriptionService {
 	 */
 	getPlanLimits(planId: string): Record<string, number> {
 		const limits: Record<string, Record<string, number>> = {
-			[PaymentPlan.FREE]: {
+			[ PaymentPlan.FREE ]: {
 				projects: 1,
 				storage: 100, // MB
 				users: 1,
 				apiCalls: 1000
 			},
-			[PaymentPlan.STANDARD]: {
+			[ PaymentPlan.STANDARD ]: {
 				projects: 5,
 				storage: 1000, // MB
 				users: 5,
 				apiCalls: 10000
 			},
-			[PaymentPlan.PREMIUM]: {
+			[ PaymentPlan.PREMIUM ]: {
 				projects: 100,
 				storage: 50000, // MB
 				users: 100,
@@ -310,7 +319,7 @@ export class SubscriptionService {
 			}
 		};
 
-		return limits[planId] || limits[PaymentPlan.FREE];
+		return limits[ planId ] || limits[ PaymentPlan.FREE ];
 	}
 
 	// ===================== Auto-Renewal Methods =====================
