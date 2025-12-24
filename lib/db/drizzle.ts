@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
-import { coreConfig } from '@/lib/config';
+import { getDatabaseUrl, getNodeEnv } from './config';
 
 const globalForDb = globalThis as unknown as {
 	conn: postgres.Sql | undefined;
@@ -14,12 +14,12 @@ const getPoolSize = (): number => {
 		const parsed = parseInt(envPoolSize, 10);
 		return isNaN(parsed) ? 20 : Math.max(1, Math.min(parsed, 50)); // Clamp between 1-50
 	}
-	return coreConfig.NODE_ENV === 'production' ? 20 : 10;
+	return getNodeEnv() === 'production' ? 20 : 10;
 };
 
 // Lazy database initialization
 function initializeDatabase(): ReturnType<typeof drizzle> {
-	if (!coreConfig.DATABASE_URL) {
+	if (!getDatabaseUrl()) {
 		throw new Error('DATABASE_URL environment variable is required');
 	}
 
@@ -32,17 +32,17 @@ function initializeDatabase(): ReturnType<typeof drizzle> {
 		const reusing = Boolean(globalForDb.conn);
 		const conn = reusing
 			? globalForDb.conn!
-			: postgres(coreConfig.DATABASE_URL, {
+			: postgres(getDatabaseUrl()!, {
 					max: poolSize,
 					idle_timeout: 20,
 					connect_timeout: 30, // Increased from 10 to 30 seconds
 					prepare: false,
-					onnotice: coreConfig.NODE_ENV === 'development' ? console.log : undefined,
+					onnotice: getNodeEnv() === 'development' ? console.log : undefined,
 				});
 		globalForDb.conn = conn;
 		globalForDb.db = drizzle(conn, { schema });
 
-		if (coreConfig.NODE_ENV === 'development') {
+		if (getNodeEnv() === 'development') {
 			console.log(
 				reusing
 					? 'Reusing existing database connection; pool size is unchanged from the initial value (restart to apply DB_POOL_SIZE changes).'
