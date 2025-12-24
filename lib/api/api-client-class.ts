@@ -15,12 +15,10 @@ import type {
 
 export class ApiClient {
 	private readonly client: AxiosInstance;
-	private frontendUrl: string = '';
 	private accessToken?: string;
 
 	constructor(config: ApiClientConfig = {}) {
 		this.accessToken = config.accessToken;
-		this.frontendUrl = config.frontendUrl || '';
 		this.client = axios.create({
 			baseURL: config.baseURL,
 			// timeout: config.timeout || env.API_TIMEOUT,
@@ -29,7 +27,6 @@ export class ApiClient {
 				'Content-Type': API_CONSTANTS.HEADERS.CONTENT_TYPE,
 				Accept: API_CONSTANTS.HEADERS.ACCEPT,
 				Authorization: `Bearer ${config.accessToken}`,
-				'X-Frontend-URL': this.frontendUrl,
 				...config.headers
 			},
 			withCredentials: true,
@@ -37,34 +34,11 @@ export class ApiClient {
 		});
 
 		this.setupInterceptors();
-		this.setupRequestInterceptors();
 		this.tokenInterceptor();
 	}
 
 	private setupInterceptors(): void {
 		this.client.interceptors.response.use((response) => response, this.handleResponseError);
-	}
-
-	private setupRequestInterceptors(): void {
-		this.client.interceptors.request.use(async (config) => {
-			if (!this.frontendUrl) {
-				if (typeof window !== 'undefined') {
-					this.frontendUrl = window.location.origin;
-				} else {
-					try {
-						const { getFrontendUrl } = await import('../utils/server-url');
-						this.frontendUrl = await getFrontendUrl();
-					} catch (e) {
-						console.warn('Failed to get frontend URL on server:', e);
-					}
-				}
-			}
-
-			if (this.frontendUrl) {
-				config.headers['X-Frontend-URL'] = this.frontendUrl;
-			}
-			return config;
-		});
 	}
 
 	private tokenInterceptor(): void {

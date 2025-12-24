@@ -1,10 +1,8 @@
-import { useQueryClient, useMutation } from '@tanstack/react-query';
+'use client';
+
+import { serverClient, apiUtils } from '@/lib/api/server-api-client';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
-
-import { apiClient } from '@/lib/api/api-client';
-
-// Endpoint for the Ever-Works API
-const EXTRACTION_API_ENDPOINT = 'http://localhost:3100/api/extract-item-details';
 
 interface ExtractionResult {
 	name: string;
@@ -16,65 +14,60 @@ interface ExtractionResult {
 	images?: string[];
 }
 
+interface ExtractItemDetailsResponse {
+	data: ExtractionResult;
+	success: boolean;
+}
+
 interface UseUrlExtractionReturn {
 	isLoading: boolean;
-	extractFromUrl: (url: string, existingCategories?: string[], token?: string) => Promise<ExtractionResult | null>;
+	extractFromUrl: (url: string, existingCategories?: string[]) => Promise<ExtractionResult | null>;
 }
 
 interface ExtractionParams {
 	url: string;
 	existingCategories?: string[];
-	token?: string;
 }
 
 export function useUrlExtraction(): UseUrlExtractionReturn {
-	const queryClient = useQueryClient();
-
 	const mutation = useMutation({
-		mutationFn: async ({ url, existingCategories, token }: ExtractionParams) => {
+		mutationFn: async ({ url, existingCategories }: ExtractionParams) => {
 			if (!url) throw new Error('No URL provided');
 
-			const headers: Record<string, string> = {};
-
-			if (token) {
-				headers['Authorization'] = `Bearer ${token}`;
-			}
-			return queryClient.fetchQuery({
-				queryKey: ['extract-metadata', url],
-				queryFn: async () => {
-					const response = await apiClient.post<{ success: boolean; data: ExtractionResult }>(
-						EXTRACTION_API_ENDPOINT,
-						{
-							source_url: url,
-							existing_data:
-								existingCategories && existingCategories.length > 0 ? existingCategories : undefined
-						},
-						{ headers }
-					);
-
-					if (!response.success) {
-						throw new Error('Failed to extract data');
-					}
-
-					return response.data;
+			console.debug('Extracting metadata for', url);
+			const response = await serverClient.post<ExtractItemDetailsResponse>(
+				'/extract-item-details',
+				{
+					source_url: url,
+					existing_data: existingCategories && existingCategories.length > 0 ? existingCategories : undefined
 				},
-				staleTime: 1000 * 60 * 60 // Cache for 1 hour
-			});
+				{ isApiCall: true }
+			);
+
+			if (!apiUtils.isSuccess(response)) {
+				console.error('HTTP request failed for URL extraction', response);
+				throw new Error(apiUtils.getErrorMessage(response));
+			}
+
+			if (!response.data.success) {
+				console.error('API-level error during extraction', response.data);
+				throw new Error('Failed to extract data: API reported failure');
+			}
+
+			return response.data.data;
 		},
 		onError: (error) => {
 			console.error('Extraction error:', error);
-			toast.error('Failed to extract data from URL');
+			toast.error(error instanceof Error ? error.message : 'Failed to extract data from URL');
 		}
 	});
 
-	const extractFromUrl = async (
-		url: string,
-		existingCategories?: string[],
-		token?: string
-	): Promise<ExtractionResult | null> => {
+	const extractFromUrl = async (url: string, existingCategories?: string[]): Promise<ExtractionResult | null> => {
 		try {
-			return await mutation.mutateAsync({ url, existingCategories, token });
+			return await mutation.mutateAsync({ url, existingCategories });
 		} catch {
+			console.error('Failed to extract data from URL');
+			toast.error('Failed to extract data from URL');
 			return null;
 		}
 	};

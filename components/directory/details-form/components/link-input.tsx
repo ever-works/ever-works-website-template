@@ -144,7 +144,7 @@ export function LinkInput({
 														onClick={() => onExtract(link.url)}
 														disabled={isExtracting}
 														className={cn(
-															'px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 flex items-center gap-2',
+															'px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 flex items-center gap-2 cursor-pointer',
 															isExtracting
 																? 'bg-gray-100 text-gray-400 cursor-wait dark:bg-gray-700'
 																: 'bg-theme-primary-50 text-theme-primary-600 hover:bg-theme-primary-100 dark:bg-theme-primary-900/30 dark:text-theme-primary-400 dark:hover:bg-theme-primary-900/50'

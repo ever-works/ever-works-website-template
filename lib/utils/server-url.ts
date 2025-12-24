@@ -14,7 +14,21 @@ export async function getFrontendUrl(): Promise<string> {
 		const protocol = headersList.get('x-forwarded-proto') || 'https';
 
 		if (host) {
-			return `${protocol}://${host}`;
+			// Extract expected hostname from WEB_URL
+			let expectedHost = '';
+			try {
+				expectedHost = new URL(WEB_URL).host;
+			} catch (e) {
+				expectedHost = WEB_URL.replace(/https?:\/\//, '').split('/')[0];
+			}
+
+			// Simple validation: only trust headers if they match our config or if in development
+			const isDev = process.env.NODE_ENV === 'development';
+			const isTrusted = host === expectedHost || (isDev && host.includes('localhost'));
+
+			if (isTrusted) {
+				return `${protocol}://${host}`;
+			}
 		}
 	} catch (e) {
 		// This can happen in some edge cases during build/prerender
