@@ -108,6 +108,12 @@ export class ItemRepository {
     return await gitService.findItemBySlug(slug, includeDeleted);
   }
 
+  async findManyBySlugs(slugs: string[], includeDeleted: boolean = false): Promise<ItemData[]> {
+    if (!slugs.length) return [];
+    const gitService = await this.getGitService();
+    return await gitService.readItemsBySlugs(slugs, includeDeleted);
+  }
+
   async create(data: CreateItemRequest): Promise<ItemData> {
     this.validateCreateData(data);
     
@@ -120,6 +126,21 @@ export class ItemRepository {
     
     const gitService = await this.getGitService();
     return await gitService.updateItem(id, data);
+  }
+
+  async batchUpdate(updates: Array<{ id: string; data: UpdateItemRequest }>): Promise<ItemData[]> {
+    const gitService = await this.getGitService();
+    const results: ItemData[] = [];
+
+    for (const { id, data } of updates) {
+      this.validateUpdateData(id, data);
+      const updated = await gitService.updateItemWithoutCommit(id, data);
+      results.push(updated);
+    }
+
+    // Single commit for all updates
+    await gitService.commitAndPushBatch(`Batch update ${updates.length} items for collection assignment`);
+    return results;
   }
 
   async review(id: string, reviewData: ReviewRequest): Promise<ItemData> {
