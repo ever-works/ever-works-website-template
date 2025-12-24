@@ -1,9 +1,11 @@
 import { CollectionsList } from "@/components/collections";
 import { getCachedItems } from "@/lib/content";
 import { paginateMeta } from "@/lib/paginate";
-import { MOCK_COLLECTIONS } from "@/lib/mock/collections";
+import { Collection } from "@/types/collection";
 
-export const revalidate = 10;
+// Keep paging view fresh immediately after admin changes
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 // Allow non-English locales to be generated on-demand (ISR)
 export const dynamicParams = true;
@@ -25,19 +27,19 @@ export default async function CollectionsPagingPage({
   // Fetch collections from content
   const { collections } = await getCachedItems({ lang: locale });
 
-  // Fallback to mock data if no collections.yml exists yet
-  const allCollections = collections.length > 0 ? collections : MOCK_COLLECTIONS;
+  // Filter active collections only
+  const activeCollections = collections.filter((c) => c.isActive !== false);
 
   // Sort and paginate collections
   const collator = new Intl.Collator(locale);
-  const sortedCollections = allCollections.slice().sort((a, b) => collator.compare(a.name, b.name));
+  const sortedCollections = activeCollections.slice().sort((a: Collection, b: Collection) => collator.compare(a.name, b.name));
   const paginatedCollections = sortedCollections.slice(start, start + COLLECTIONS_PER_PAGE);
 
   return (
     <CollectionsList
       collections={paginatedCollections}
       locale={locale}
-      total={allCollections.length}
+      total={activeCollections.length}
       page={page}
       basePath="/collections/paging"
     />
