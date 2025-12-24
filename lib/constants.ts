@@ -38,6 +38,7 @@ export const LOGO_URL = '/logo-ever-work-3.png';
 // API & BACKEND
 // ============================================
 export const API_BASE_URL = getNextPublicEnv('NEXT_PUBLIC_API_BASE_URL');
+export const API_URL = getNextPublicEnv('API_URL');
 
 // ============================================
 // AUTHENTICATION & SECURITY

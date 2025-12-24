@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Type, FileText, Star, MoreHorizontal, ChevronUp } from 'lucide-react';
 import { cn, getVideoEmbedUrl } from '@/lib/utils';
+import { useUrlExtraction } from '@/hooks/use-url-extraction';
 import type { Editor } from '@tiptap/react';
 import { EditorContent, Toolbar, ToolbarContent, useEditorToolbar } from '@/lib/editor';
 import { LinkInput } from '../components/link-input';
@@ -36,6 +37,7 @@ interface BasicInfoStepProps {
 	t: (key: string, values?: Record<string, unknown>) => string;
 	addLink: () => void;
 	removeLink: (id: string) => void;
+	setFormData?: React.Dispatch<React.SetStateAction<FormData>>;
 }
 
 export function BasicInfoStep({
@@ -53,29 +55,41 @@ export function BasicInfoStep({
 	editor,
 	t,
 	addLink,
-	removeLink
+	removeLink,
+	setFormData
 }: BasicInfoStepProps) {
 	const { categoriesEnabled } = useCategoriesEnabled();
 	const { tagsEnabled } = useTagsEnabled();
+	const { extractFromUrl, isLoading: isExtracting } = useUrlExtraction();
 	const [showAllTags, setShowAllTags] = useState(false);
 	const [tagsToShow] = useState(DEFAULT_TAGS_TO_SHOW);
 	const { toolbarRef } = useEditorToolbar(editor);
 
+	const handleExtraction = async (url: string) => {
+		if (!setFormData) return;
+
+		const data = await extractFromUrl(url);
+		if (data) {
+			setFormData((prev) => ({
+				...prev,
+				name: data.name || prev.name,
+				description: data.description ? data.description.substring(0, MAX_DESCRIPTION_LENGTH) : prev.description
+			}));
+
+			// If we have an editor instance and description, we might want to update introduction too if empty
+			// But for now let's just update the basic fields
+		}
+	};
+
 	return (
 		<div className={STEP_CARD_CLASSES.wrapper}>
-			<div 
-			className={STEP_CARD_CLASSES.background}
-			 />
-			<div 
-			className={STEP_CARD_CLASSES.content}
-			>
+			<div className={STEP_CARD_CLASSES.background} />
+			<div className={STEP_CARD_CLASSES.content}>
 				<div className={STEP_CARD_CLASSES.header.wrapper}>
 					<div className={STEP_CARD_CLASSES.header.icon}>
 						<Type className={STEP_CARD_CLASSES.header.iconInner} />
 					</div>
-					<h3 className={STEP_CARD_CLASSES.header.title}>
-						{t('directory.DETAILS_FORM.BASIC_INFORMATION')}
-					</h3>
+					<h3 className={STEP_CARD_CLASSES.header.title}>{t('directory.DETAILS_FORM.BASIC_INFORMATION')}</h3>
 				</div>
 
 				<div className="grid gap-8">
@@ -90,6 +104,8 @@ export function BasicInfoStep({
 						t={t}
 						addLink={addLink}
 						removeLink={removeLink}
+						onExtract={handleExtraction}
+						isExtracting={isExtracting}
 					/>
 
 					{/* Product Name */}
@@ -129,10 +145,7 @@ export function BasicInfoStep({
 								value={formData.video_url || ''}
 								onChange={handleInputChange}
 								placeholder="https://www.youtube.com/watch?v=..."
-								className={cn(
-									FORM_FIELD_CLASSES.videoInput.base,
-									FORM_FIELD_CLASSES.videoInput.focus
-								)}
+								className={cn(FORM_FIELD_CLASSES.videoInput.base, FORM_FIELD_CLASSES.videoInput.focus)}
 							/>
 						</div>
 						{/* Video Preview - only for whitelisted hosts */}
@@ -155,115 +168,115 @@ export function BasicInfoStep({
 					{/* Category - Only show if categories enabled */}
 					{categoriesEnabled && (
 						<div className="space-y-3">
-						<label htmlFor="category" className={FORM_FIELD_CLASSES.label}>
-							{t('directory.DETAILS_FORM.CATEGORY')} *
-						</label>
-						<div className="relative">
-							<select
-								id="category"
-								name="category"
-								value={formData.category ?? ''}
-								onChange={handleInputChange}
-								onFocus={() => setFocusedField('category')}
-								onBlur={() => setFocusedField(null)}
-								required
-								className={cn(
-									FORM_FIELD_CLASSES.select.base,
-									focusedField === 'category' && FORM_FIELD_CLASSES.select.focused
-								)}
-							>
-								<option value="" disabled className="text-gray-500">
-									{t('directory.DETAILS_FORM.CATEGORY_PLACEHOLDER')}
-								</option>
-								{categories?.map((category) => (
-									<option
-										key={category.id}
-										value={category.id}
-										className="py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-									>
-										{category.name}
+							<label htmlFor="category" className={FORM_FIELD_CLASSES.label}>
+								{t('directory.DETAILS_FORM.CATEGORY')} *
+							</label>
+							<div className="relative">
+								<select
+									id="category"
+									name="category"
+									value={formData.category ?? ''}
+									onChange={handleInputChange}
+									onFocus={() => setFocusedField('category')}
+									onBlur={() => setFocusedField(null)}
+									required
+									className={cn(
+										FORM_FIELD_CLASSES.select.base,
+										focusedField === 'category' && FORM_FIELD_CLASSES.select.focused
+									)}
+								>
+									<option value="" disabled className="text-gray-500">
+										{t('directory.DETAILS_FORM.CATEGORY_PLACEHOLDER')}
 									</option>
-								))}
-							</select>
+									{categories?.map((category) => (
+										<option
+											key={category.id}
+											value={category.id}
+											className="py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+										>
+											{category.name}
+										</option>
+									))}
+								</select>
+							</div>
 						</div>
-					</div>
 					)}
 
 					{/* Tags - Only show if tags enabled */}
 					{tagsEnabled && (
-					<div className="space-y-6">
-						<div>
-							<h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-								{t('directory.DETAILS_FORM.TAGS_LABELS')}
-							</h4>
-							<p className="text-sm text-gray-600 dark:text-gray-400">
-								{t('directory.DETAILS_FORM.TAGS_DESCRIPTION')}
-							</p>
-						</div>
-
-						<div className={TAG_CLASSES.container}>
-							{tags?.slice(0, showAllTags ? undefined : tagsToShow).map((tag) => (
-								<button
-									key={tag.id}
-									type="button"
-									onClick={() => handleTagToggle(tag.id)}
-									className={cn(
-										TAG_CLASSES.button.base,
-										formData.tags.includes(tag.id)
-											? TAG_CLASSES.button.selected
-											: TAG_CLASSES.button.unselected
-									)}
-								>
-									{tag.name}
-								</button>
-							))}
-
-							{tags && tags.length > tagsToShow && !showAllTags && (
-								<button
-									type="button"
-									onClick={() => setShowAllTags(true)}
-									className={TAG_CLASSES.showMore}
-								>
-									<MoreHorizontal className="w-4 h-4" />
-									{t('common.SHOW_MORE', { count: tags.length - tagsToShow })}
-								</button>
-							)}
-
-							{showAllTags && tags && tags.length > tagsToShow && (
-								<button
-									type="button"
-									onClick={() => setShowAllTags(false)}
-									className={TAG_CLASSES.showMore}
-								>
-									<ChevronUp className="w-4 h-4" />
-									{t('common.SHOW_LESS')}
-								</button>
-							)}
-						</div>
-
-						{formData.tags.length > 0 && (
-							<div className={TAG_CLASSES.selectedSummary.container}>
-								<div className={TAG_CLASSES.selectedSummary.header}>
-									<Star className={TAG_CLASSES.selectedSummary.icon} />
-									<span className={TAG_CLASSES.selectedSummary.label}>
-										{t('directory.DETAILS_FORM.SELECTED_TAGS', {
-											count: formData.tags.length
-										})}
-									</span>
-								</div>
-								<div className={TAG_CLASSES.selectedSummary.tags}>
-									{formData.tags.map((tagId) => {
-										const tag = tags?.find((t) => t.id === tagId);
-										return (
-											<span key={tagId} className={TAG_CLASSES.selectedSummary.tag}>
-												{tag?.name || tagId}
-											</span>
-										);
-									})}
-								</div>
+						<div className="space-y-6">
+							<div>
+								<h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+									{t('directory.DETAILS_FORM.TAGS_LABELS')}
+								</h4>
+								<p className="text-sm text-gray-600 dark:text-gray-400">
+									{t('directory.DETAILS_FORM.TAGS_DESCRIPTION')}
+								</p>
 							</div>
-						)}
-					</div>
+
+							<div className={TAG_CLASSES.container}>
+								{tags?.slice(0, showAllTags ? undefined : tagsToShow).map((tag) => (
+									<button
+										key={tag.id}
+										type="button"
+										onClick={() => handleTagToggle(tag.id)}
+										className={cn(
+											TAG_CLASSES.button.base,
+											formData.tags.includes(tag.id)
+												? TAG_CLASSES.button.selected
+												: TAG_CLASSES.button.unselected
+										)}
+									>
+										{tag.name}
+									</button>
+								))}
+
+								{tags && tags.length > tagsToShow && !showAllTags && (
+									<button
+										type="button"
+										onClick={() => setShowAllTags(true)}
+										className={TAG_CLASSES.showMore}
+									>
+										<MoreHorizontal className="w-4 h-4" />
+										{t('common.SHOW_MORE', { count: tags.length - tagsToShow })}
+									</button>
+								)}
+
+								{showAllTags && tags && tags.length > tagsToShow && (
+									<button
+										type="button"
+										onClick={() => setShowAllTags(false)}
+										className={TAG_CLASSES.showMore}
+									>
+										<ChevronUp className="w-4 h-4" />
+										{t('common.SHOW_LESS')}
+									</button>
+								)}
+							</div>
+
+							{formData.tags.length > 0 && (
+								<div className={TAG_CLASSES.selectedSummary.container}>
+									<div className={TAG_CLASSES.selectedSummary.header}>
+										<Star className={TAG_CLASSES.selectedSummary.icon} />
+										<span className={TAG_CLASSES.selectedSummary.label}>
+											{t('directory.DETAILS_FORM.SELECTED_TAGS', {
+												count: formData.tags.length
+											})}
+										</span>
+									</div>
+									<div className={TAG_CLASSES.selectedSummary.tags}>
+										{formData.tags.map((tagId) => {
+											const tag = tags?.find((t) => t.id === tagId);
+											return (
+												<span key={tagId} className={TAG_CLASSES.selectedSummary.tag}>
+													{tag?.name || tagId}
+												</span>
+											);
+										})}
+									</div>
+								</div>
+							)}
+						</div>
 					)}
 
 					{/* Short Description */}
@@ -308,7 +321,10 @@ export function BasicInfoStep({
 										'[&_.ProseMirror]:min-h-[5rem] [&_.ProseMirror]:break-words [&_.ProseMirror]:whitespace-pre-wrap [&_.ProseMirror]:overflow-wrap-[anywhere]'
 									)}
 									toolbar={
-										<Toolbar className="bg-white/75 dark:bg-gray-900/75 backdrop-blur-md" ref={toolbarRef}>
+										<Toolbar
+											className="bg-white/75 dark:bg-gray-900/75 backdrop-blur-md"
+											ref={toolbarRef}
+										>
 											<ToolbarContent editor={editor} />
 										</Toolbar>
 									}
