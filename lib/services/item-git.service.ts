@@ -234,7 +234,7 @@ export class ItemGitService {
       } catch (error) {
         // Skip missing or unreadable items, but log for visibility
         const message = (error as any)?.message ?? String(error);
-        console.warn(`⚠️ Unable to read item '${slug}':`, message);
+        console.warn("⚠️ Unable to read item '%s': %s", slug, message);
       }
     }
 
