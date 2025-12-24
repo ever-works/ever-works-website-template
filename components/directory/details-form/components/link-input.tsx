@@ -167,7 +167,7 @@ export function LinkInput({
 													</button>
 												</div>
 											)}
-											{isMain && completedFields.has('mainLink') && !onExtract && (
+											{isMain && completedFields.has('mainLink') && !isExtracting && (
 												<div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center animate-scale-in">
 													<Check className="h-3 w-3 text-white" />
 												</div>

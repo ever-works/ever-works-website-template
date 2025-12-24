@@ -61,7 +61,7 @@ async function fetchWithTimeout(url: string, options: FetchOptions = {}): Promis
 		timeout = DEFAULT_CONFIG.timeout,
 		retries = DEFAULT_CONFIG.retries,
 		retryDelay = DEFAULT_CONFIG.retryDelay,
-		token = process.env.NEXT_PUBLIC_API_TOKEN,
+		token = process.env.API_TOKEN,
 		isApiCall = false,
 		...fetchOptions
 	} = options;

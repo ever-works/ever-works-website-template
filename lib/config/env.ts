@@ -13,7 +13,7 @@ const envSchema = z.object({
 	AUTH_ENDPOINT_REFRESH: z.string().url().optional(),
 	AUTH_ENDPOINT_LOGOUT: z.string().url().optional(),
 	AUTH_ENDPOINT_CHECK: z.string().url().optional(),
-	NEXT_PUBLIC_TOKEN_API: z.string().optional(),
+	API_TOKEN: z.string().optional(),
 	NODE_ENV: z.enum(['development', 'production', 'test']).default('development')
 });
 
@@ -35,5 +35,5 @@ export const env = envSchema.parse({
 	AUTH_ENDPOINT_REFRESH: process.env.AUTH_ENDPOINT_REFRESH,
 	AUTH_ENDPOINT_LOGOUT: process.env.AUTH_ENDPOINT_LOGOUT,
 	AUTH_ENDPOINT_CHECK: process.env.AUTH_ENDPOINT_CHECK,
-	NEXT_PUBLIC_API_TOKEN: process.env.NEXT_PUBLIC_API_TOKEN
+	API_TOKEN: process.env.API_TOKEN
 });

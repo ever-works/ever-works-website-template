@@ -34,15 +34,10 @@ export function useUrlExtraction(): UseUrlExtractionReturn {
 		mutationFn: async ({ url, existingCategories }: ExtractionParams) => {
 			if (!url) throw new Error('No URL provided');
 
-			console.debug('Extracting metadata for', url);
-			const response = await serverClient.post<ExtractItemDetailsResponse>(
-				'/extract-item-details',
-				{
-					source_url: url,
-					existing_data: existingCategories && existingCategories.length > 0 ? existingCategories : undefined
-				},
-				{ isApiCall: true }
-			);
+			const response = await serverClient.post<ExtractItemDetailsResponse>('/api/extract', {
+				url,
+				existingCategories
+			});
 
 			if (!apiUtils.isSuccess(response)) {
 				console.error('HTTP request failed for URL extraction', response);
