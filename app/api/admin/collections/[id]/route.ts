@@ -297,6 +297,11 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ success: true, message: "Collection deleted successfully" });
   } catch (error) {
     console.error("Failed to delete collection:", error);
+
+    if (error instanceof Error && error.message.includes("not found")) {
+      return NextResponse.json({ success: false, error: error.message }, { status: 404 });
+    }
+
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Failed to delete collection" },
       { status: 500 }
