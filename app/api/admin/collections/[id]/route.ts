@@ -9,6 +9,73 @@ interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
+/**
+ * @swagger
+ * /api/admin/collections/{id}:
+ *   get:
+ *     summary: Get a single collection
+ *     description: Retrieves detailed information about a specific collection by ID. Admin access required.
+ *     tags:
+ *       - Admin - Collections
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Collection ID
+ *         example: productivity-tools
+ *     responses:
+ *       200:
+ *         description: Collection retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     slug:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *                     icon_url:
+ *                       type: string
+ *                     isActive:
+ *                       type: boolean
+ *                     item_count:
+ *                       type: integer
+ *                     created_at:
+ *                       type: string
+ *                       format: date-time
+ *       401:
+ *         description: Unauthorized - Admin access required
+ *       404:
+ *         description: Collection not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Collection not found
+ *       500:
+ *         description: Server error
+ */
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const session = await auth();
@@ -36,6 +103,93 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   }
 }
 
+/**
+ * @swagger
+ * /api/admin/collections/{id}:
+ *   put:
+ *     summary: Update a collection
+ *     description: Updates an existing collection with the provided details. Admin access required.
+ *     tags:
+ *       - Admin - Collections
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Collection ID
+ *         example: productivity-tools
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Display name of the collection
+ *                 example: Productivity Tools
+ *               slug:
+ *                 type: string
+ *                 description: URL-friendly slug
+ *                 example: productivity-tools
+ *               description:
+ *                 type: string
+ *                 description: Detailed description of the collection
+ *                 example: Essential tools to boost your productivity
+ *               icon_url:
+ *                 type: string
+ *                 description: URL to the collection icon
+ *                 example: /icons/productivity.svg
+ *               isActive:
+ *                 type: boolean
+ *                 description: Whether the collection is active and visible
+ *     responses:
+ *       200:
+ *         description: Collection updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     slug:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *                     icon_url:
+ *                       type: string
+ *                     isActive:
+ *                       type: boolean
+ *                     item_count:
+ *                       type: integer
+ *                     created_at:
+ *                       type: string
+ *                       format: date-time
+ *                 message:
+ *                   type: string
+ *                   example: Collection updated successfully
+ *       400:
+ *         description: Bad request - Validation error
+ *       401:
+ *         description: Unauthorized - Admin access required
+ *       409:
+ *         description: Conflict - Slug already exists
+ *       500:
+ *         description: Server error
+ */
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const session = await auth();
@@ -85,6 +239,43 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
+/**
+ * @swagger
+ * /api/admin/collections/{id}:
+ *   delete:
+ *     summary: Delete a collection
+ *     description: Permanently deletes a collection by ID. Admin access required.
+ *     tags:
+ *       - Admin - Collections
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Collection ID
+ *         example: productivity-tools
+ *     responses:
+ *       200:
+ *         description: Collection deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Collection deleted successfully
+ *       401:
+ *         description: Unauthorized - Admin access required
+ *       500:
+ *         description: Server error
+ */
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     const session = await auth();
