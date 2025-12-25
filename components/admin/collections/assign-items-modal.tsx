@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Input, Checkbox } from "@heroui/react";
 import { Search, Save, X } from "lucide-react";
+import { toast } from "sonner";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@/components/ui/modal";
 import { UniversalPagination } from "@/components/universal-pagination";
 import { useAdminItems } from "@/hooks/use-admin-items";
@@ -56,6 +57,9 @@ export function AssignItemsModal({ isOpen, onClose, collectionName, initialSelec
       setSaving(true);
       await onSave(Array.from(selectedIds));
       onClose();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to save items";
+      toast.error(message);
     } finally {
       setSaving(false);
     }
