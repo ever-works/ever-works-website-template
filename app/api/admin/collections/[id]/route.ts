@@ -1,13 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { collectionRepository } from "@/lib/repositories/collection.repository";
-import { UpdateCollectionRequest } from "@/types/collection";
+import { COLLECTION_VALIDATION, UpdateCollectionRequest } from "@/types/collection";
 import { auth } from "@/lib/auth";
 import { invalidateContentCaches } from "@/lib/cache-invalidation";
+import { z } from "zod";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
+
+const updateCollectionSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(COLLECTION_VALIDATION.NAME_MIN_LENGTH)
+    .max(COLLECTION_VALIDATION.NAME_MAX_LENGTH)
+    .optional(),
+  slug: z
+    .string()
+    .trim()
+    .min(COLLECTION_VALIDATION.ID_MIN_LENGTH)
+    .max(COLLECTION_VALIDATION.ID_MAX_LENGTH)
+    .optional(),
+  description: z
+    .string()
+    .trim()
+    .max(COLLECTION_VALIDATION.DESCRIPTION_MAX_LENGTH)
+    .optional(),
+  icon_url: z.string().trim().optional(),
+  isActive: z.boolean().optional()
+});
 
 /**
  * @swagger
@@ -202,14 +225,18 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     const { id } = await params;
     const body = await request.json();
+    const parsed = updateCollectionSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: "Invalid collection payload", details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
 
     const updateData: UpdateCollectionRequest = {
       id,
-      name: body.name,
-      slug: body.slug,
-      description: body.description,
-      icon_url: body.icon_url,
-      isActive: body.isActive,
+      ...parsed.data,
     };
 
     const updated = await collectionRepository.update(updateData);
