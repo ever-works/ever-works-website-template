@@ -1,6 +1,7 @@
 import { ItemData, CreateItemRequest, UpdateItemRequest, ReviewRequest, ItemListOptions } from '@/lib/types/item';
 import { createItemGitService, ItemGitServiceConfig, ItemGitService } from '@/lib/services/item-git.service';
 import { getContentPath } from '@/lib/lib';
+import { coreConfig } from '@/lib/config';
 
 export class ItemRepository {
   private gitService: ItemGitService | null = null;
@@ -9,9 +10,9 @@ export class ItemRepository {
 
   private async getGitService(): Promise<ItemGitService> {
     if (!this.gitService) {
-      const dataRepo = process.env.DATA_REPOSITORY;
-      const token = process.env.GH_TOKEN;
-      
+      const dataRepo = coreConfig.content.dataRepository;
+      const token = coreConfig.content.ghToken;
+
       if (!dataRepo || !token) {
         throw new Error('DATA_REPOSITORY and GH_TOKEN environment variables are required');
       }
@@ -27,7 +28,7 @@ export class ItemRepository {
         owner,
         repo,
         token,
-        branch: process.env.GITHUB_BRANCH || 'main',
+        branch: coreConfig.content.githubBranch || 'main',
         dataDir: getContentPath(), // Use dynamic path (local: .content, Vercel: /tmp/.content)
         itemsDir: 'data',
       };

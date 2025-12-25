@@ -6,6 +6,7 @@
 import { NextRequest } from 'next/server';
 import { Session } from 'next-auth';
 import { sessionCache, createSessionIdentifier, logCacheStats } from './session-cache';
+import { coreConfig } from '@/lib/config';
 
 // Dynamic import to avoid bundling database driver in Edge Runtime
 async function getAuth() {
@@ -28,7 +29,7 @@ export async function getCachedSession(request?: Request): Promise<Session | nul
       const cachedSession = await sessionCache.get(identifier);
 
       if (cachedSession) {
-        if (process.env.NODE_ENV === 'development') {
+        if (coreConfig.NODE_ENV === 'development') {
           console.log('[SessionCache] Cache HIT for token:', sessionToken.substring(0, 8) + '...');
         }
         return cachedSession;
@@ -36,7 +37,7 @@ export async function getCachedSession(request?: Request): Promise<Session | nul
     }
 
     // Cache miss - fetch from NextAuth
-    if (process.env.NODE_ENV === 'development') {
+    if (coreConfig.NODE_ENV === 'development') {
       console.log('[SessionCache] Cache MISS - fetching from NextAuth');
     }
 
@@ -48,13 +49,13 @@ export async function getCachedSession(request?: Request): Promise<Session | nul
       const identifier = createSessionIdentifier(sessionToken);
       await sessionCache.set(identifier, session);
 
-      if (process.env.NODE_ENV === 'development') {
+      if (coreConfig.NODE_ENV === 'development') {
         console.log('[SessionCache] Cached new session for token:', sessionToken.substring(0, 8) + '...');
       }
     }
 
     // Log stats periodically in development
-    if (process.env.NODE_ENV === 'development' && Math.random() < 0.1) {
+    if (coreConfig.NODE_ENV === 'development' && Math.random() < 0.1) {
       logCacheStats();
     }
 
@@ -83,7 +84,7 @@ export async function invalidateSessionCache(sessionToken?: string, userId?: str
       const identifier = createSessionIdentifier(sessionToken);
       await sessionCache.delete(identifier);
 
-      if (process.env.NODE_ENV === 'development') {
+      if (coreConfig.NODE_ENV === 'development') {
         console.log('[SessionCache] Invalidated session cache for token:', sessionToken.substring(0, 8) + '...');
       }
     }
@@ -92,7 +93,7 @@ export async function invalidateSessionCache(sessionToken?: string, userId?: str
       const identifier = createSessionIdentifier(undefined, userId);
       await sessionCache.delete(identifier);
 
-      if (process.env.NODE_ENV === 'development') {
+      if (coreConfig.NODE_ENV === 'development') {
         console.log('[SessionCache] Invalidated session cache for user:', userId);
       }
     }
@@ -107,7 +108,7 @@ export async function invalidateSessionCache(sessionToken?: string, userId?: str
 export function clearSessionCache(): void {
   sessionCache.clear();
 
-  if (process.env.NODE_ENV === 'development') {
+  if (coreConfig.NODE_ENV === 'development') {
     console.log('[SessionCache] Cleared all cached sessions');
   }
 }

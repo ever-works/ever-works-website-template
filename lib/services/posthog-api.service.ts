@@ -1,4 +1,5 @@
-import { POSTHOG_PERSONAL_API_KEY, POSTHOG_PROJECT_ID, POSTHOG_HOST } from '@/lib/constants';
+import { POSTHOG_HOST } from '@/lib/constants';
+import { analyticsConfig } from '@/lib/config';
 
 export interface PostHogInsightResponse {
   results: Array<{
@@ -23,8 +24,8 @@ export class PostHogApiService {
   private readonly baseUrl: string;
 
   constructor() {
-    this.apiKey = POSTHOG_PERSONAL_API_KEY;
-    this.projectId = POSTHOG_PROJECT_ID;
+    this.apiKey = analyticsConfig.posthog.personalApiKey;
+    this.projectId = analyticsConfig.posthog.projectId;
     this.baseUrl = POSTHOG_HOST?.value?.replace('/js', '') || 'https://us.i.posthog.com';
   }
 

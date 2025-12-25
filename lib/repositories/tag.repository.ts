@@ -1,6 +1,7 @@
 import { TagData, CreateTagRequest, UpdateTagRequest, TagListResponse } from '@/lib/types/tag';
 import { createTagGitService } from '@/lib/services/tag-git.service';
 import { getContentPath } from '@/lib/lib';
+import { coreConfig } from '@/lib/config';
 
 export class TagRepository {
   private gitService: any = null;
@@ -8,7 +9,7 @@ export class TagRepository {
   private async getGitService() {
     if (!this.gitService) {
       // Parse DATA_REPOSITORY URL to extract owner and repo
-      const dataRepo = process.env.DATA_REPOSITORY;
+      const dataRepo = coreConfig.content.dataRepository;
       if (!dataRepo) {
         throw new Error('DATA_REPOSITORY not configured. Please set DATA_REPOSITORY environment variable.');
       }
@@ -23,8 +24,8 @@ export class TagRepository {
       const gitConfig = {
         owner,
         repo,
-        token: process.env.GH_TOKEN || '',
-        branch: process.env.GITHUB_BRANCH || 'main',
+        token: coreConfig.content.ghToken || '',
+        branch: coreConfig.content.githubBranch || 'main',
         dataDir: getContentPath(), // Use dynamic path (local: .content, Vercel: /tmp/.content)
         tagsFile: 'tags.yml',
       };

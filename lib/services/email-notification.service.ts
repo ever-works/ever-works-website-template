@@ -1,6 +1,22 @@
-import { AdminNotificationEmailHtml } from "@/lib/mail/templates/admin-notification";
-import { getSubmissionDecisionTemplate } from "@/lib/mail/templates/submission-decision";
-import { EmailService } from "@/lib/mail";
+import { AdminNotificationEmailHtml } from '@/lib/mail/templates/admin-notification';
+import { getSubmissionDecisionTemplate } from '@/lib/mail/templates/submission-decision';
+import { EmailService } from '@/lib/mail';
+import { coreConfig, emailConfig } from '@/lib/config';
+
+/**
+ * Helper to create email service config from ConfigService
+ */
+function getEmailServiceConfig() {
+	return {
+		provider: 'resend' as const,
+		defaultFrom: emailConfig.EMAIL_FROM || 'info@ever.works',
+		domain: coreConfig.APP_URL || 'https://demo.ever.works',
+		apiKeys: {
+			resend: emailConfig.resend.apiKey || '',
+			novu: emailConfig.novu.apiKey || '',
+		},
+	};
+}
 
   export interface EmailNotificationData {
     to: string;
@@ -19,15 +35,7 @@ import { EmailService } from "@/lib/mail";
     static async sendAdminNotification(data: EmailNotificationData) {
       try {
         // Create a simple email service instance for notifications
-        const emailService = new EmailService({
-          provider: process.env.EMAIL_PROVIDER || "resend",
-          defaultFrom: process.env.EMAIL_FROM || "info@ever.works",
-          domain: process.env.NEXT_PUBLIC_APP_URL || 'https://demo.ever.works',
-          apiKeys: {
-            resend: process.env.RESEND_API_KEY || "",
-            novu: process.env.NOVU_API_KEY || "",
-          },
-        });
+        const emailService = new EmailService(getEmailServiceConfig());
 
         // Check if email service is available
         if (!emailService.isServiceAvailable()) {
@@ -49,7 +57,7 @@ import { EmailService } from "@/lib/mail";
         });
 
         const result = await emailService.sendCustomEmail({
-          from: process.env.EMAIL_FROM || "info@ever.works",
+          from: emailConfig.EMAIL_FROM || 'info@ever.works',
           to: data.to,
           subject: template.subject,
           html: template.html,
@@ -223,15 +231,7 @@ import { EmailService } from "@/lib/mail";
       console.log('[EmailNotification] Starting sendSubmissionDecisionEmail');
 
       try {
-        const emailService = new EmailService({
-          provider: process.env.EMAIL_PROVIDER || "resend",
-          defaultFrom: process.env.EMAIL_FROM || "info@ever.works",
-          domain: process.env.NEXT_PUBLIC_APP_URL || "https://demo.ever.works",
-          apiKeys: {
-            resend: process.env.RESEND_API_KEY || "",
-            novu: process.env.NOVU_API_KEY || "",
-          },
-        });
+        const emailService = new EmailService(getEmailServiceConfig());
 
         console.log('[EmailNotification] Email service initialized, checking availability...');
         const isAvailable = emailService.isServiceAvailable();
@@ -260,7 +260,7 @@ import { EmailService } from "@/lib/mail";
 
         console.log('[EmailNotification] Calling sendCustomEmail...');
         const result = await emailService.sendCustomEmail({
-          from: process.env.EMAIL_FROM || "info@ever.works",
+          from: emailConfig.EMAIL_FROM || 'info@ever.works',
           to: userEmail,
           subject: template.subject,
           html: template.html,
@@ -323,22 +323,14 @@ import { EmailService } from "@/lib/mail";
       warningCount: number
     ) {
       try {
-        const emailService = new EmailService({
-          provider: process.env.EMAIL_PROVIDER || "resend",
-          defaultFrom: process.env.EMAIL_FROM || "info@ever.works",
-          domain: process.env.NEXT_PUBLIC_APP_URL || "https://demo.ever.works",
-          apiKeys: {
-            resend: process.env.RESEND_API_KEY || "",
-            novu: process.env.NOVU_API_KEY || "",
-          },
-        });
+        const emailService = new EmailService(getEmailServiceConfig());
 
         if (!emailService.isServiceAvailable()) {
           console.warn("[EmailNotification] Skipped - email service not configured");
           return { success: false, skipped: true, error: "Email service not configured" };
         }
 
-        const siteName = process.env.NEXT_PUBLIC_APP_NAME || "Ever Works";
+        const siteName = coreConfig.SITE_NAME || 'Ever Works';
         const subject = `Warning Notice - ${siteName}`;
         const html = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -354,7 +346,7 @@ import { EmailService } from "@/lib/mail";
         `;
 
         const result = await emailService.sendCustomEmail({
-          from: process.env.EMAIL_FROM || "info@ever.works",
+          from: emailConfig.EMAIL_FROM || 'info@ever.works',
           to: userEmail,
           subject,
           html,
@@ -376,22 +368,14 @@ import { EmailService } from "@/lib/mail";
       reason: string
     ) {
       try {
-        const emailService = new EmailService({
-          provider: process.env.EMAIL_PROVIDER || "resend",
-          defaultFrom: process.env.EMAIL_FROM || "info@ever.works",
-          domain: process.env.NEXT_PUBLIC_APP_URL || "https://demo.ever.works",
-          apiKeys: {
-            resend: process.env.RESEND_API_KEY || "",
-            novu: process.env.NOVU_API_KEY || "",
-          },
-        });
+        const emailService = new EmailService(getEmailServiceConfig());
 
         if (!emailService.isServiceAvailable()) {
           console.warn("[EmailNotification] Skipped - email service not configured");
           return { success: false, skipped: true, error: "Email service not configured" };
         }
 
-        const siteName = process.env.NEXT_PUBLIC_APP_NAME || "Ever Works";
+        const siteName = coreConfig.SITE_NAME || 'Ever Works';
         const subject = `Account Suspended - ${siteName}`;
         const html = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -411,7 +395,7 @@ import { EmailService } from "@/lib/mail";
         `;
 
         const result = await emailService.sendCustomEmail({
-          from: process.env.EMAIL_FROM || "info@ever.works",
+          from: emailConfig.EMAIL_FROM || 'info@ever.works',
           to: userEmail,
           subject,
           html,
@@ -433,22 +417,14 @@ import { EmailService } from "@/lib/mail";
       reason: string
     ) {
       try {
-        const emailService = new EmailService({
-          provider: process.env.EMAIL_PROVIDER || "resend",
-          defaultFrom: process.env.EMAIL_FROM || "info@ever.works",
-          domain: process.env.NEXT_PUBLIC_APP_URL || "https://demo.ever.works",
-          apiKeys: {
-            resend: process.env.RESEND_API_KEY || "",
-            novu: process.env.NOVU_API_KEY || "",
-          },
-        });
+        const emailService = new EmailService(getEmailServiceConfig());
 
         if (!emailService.isServiceAvailable()) {
           console.warn("[EmailNotification] Skipped - email service not configured");
           return { success: false, skipped: true, error: "Email service not configured" };
         }
 
-        const siteName = process.env.NEXT_PUBLIC_APP_NAME || "Ever Works";
+        const siteName = coreConfig.SITE_NAME || 'Ever Works';
         const subject = `Account Banned - ${siteName}`;
         const html = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -463,7 +439,7 @@ import { EmailService } from "@/lib/mail";
         `;
 
         const result = await emailService.sendCustomEmail({
-          from: process.env.EMAIL_FROM || "info@ever.works",
+          from: emailConfig.EMAIL_FROM || 'info@ever.works',
           to: userEmail,
           subject,
           html,
@@ -486,22 +462,14 @@ import { EmailService } from "@/lib/mail";
       reason: string
     ) {
       try {
-        const emailService = new EmailService({
-          provider: process.env.EMAIL_PROVIDER || "resend",
-          defaultFrom: process.env.EMAIL_FROM || "info@ever.works",
-          domain: process.env.NEXT_PUBLIC_APP_URL || "https://demo.ever.works",
-          apiKeys: {
-            resend: process.env.RESEND_API_KEY || "",
-            novu: process.env.NOVU_API_KEY || "",
-          },
-        });
+        const emailService = new EmailService(getEmailServiceConfig());
 
         if (!emailService.isServiceAvailable()) {
           console.warn("[EmailNotification] Skipped - email service not configured");
           return { success: false, skipped: true, error: "Email service not configured" };
         }
 
-        const siteName = process.env.NEXT_PUBLIC_APP_NAME || "Ever Works";
+        const siteName = coreConfig.SITE_NAME || 'Ever Works';
         const contentLabel = contentType === "item" ? "submission" : "comment";
         const subject = `Content Removed - ${siteName}`;
         const html = `
@@ -517,7 +485,7 @@ import { EmailService } from "@/lib/mail";
         `;
 
         const result = await emailService.sendCustomEmail({
-          from: process.env.EMAIL_FROM || "info@ever.works",
+          from: emailConfig.EMAIL_FROM || 'info@ever.works',
           to: userEmail,
           subject,
           html,
