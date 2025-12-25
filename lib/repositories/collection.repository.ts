@@ -34,9 +34,8 @@ export class CollectionRepository {
         branch: process.env.GITHUB_BRANCH || 'main',
       };
 
-      // Token is optional for public repositories
       if (!gitConfig.token) {
-        console.warn('⚠️ GitHub token not configured. Some operations may be rate-limited for public repositories.');
+        throw new Error('GitHub token not configured. Please set GH_TOKEN (or GITHUB_TOKEN) for collection sync.');
       }
 
       this.gitService = await createCollectionGitService(gitConfig);

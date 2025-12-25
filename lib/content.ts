@@ -3,6 +3,7 @@
 import 'server-only';
 import yaml from 'yaml';
 import * as fs from 'fs';
+import * as fsp from 'fs/promises';
 import * as path from 'path';
 import { parse } from 'date-fns';
 import { dirExists, fsExists, getContentPath } from './lib';
@@ -396,6 +397,22 @@ async function readCollection<T extends Identifiable>(
 		return collection;
 	} catch (err) {
 		if (err instanceof Error && 'code' in err && err.code === 'ENOENT') {
+			// Bootstrap missing collection files so first read creates the YAML on disk
+			try {
+				const contentPath = getContentPath();
+				const collectionDir = path.join(contentPath, type);
+				const useDir = await dirExists(collectionDir);
+
+				const collectionPath = useDir
+					? path.join(collectionDir, `${type}.yml`)
+					: path.join(contentPath, `${type}.yml`);
+
+				await fsp.mkdir(path.dirname(collectionPath), { recursive: true });
+				await fsp.writeFile(collectionPath, '[]\n', 'utf-8');
+			} catch (createErr) {
+				console.error(`[CONTENT] Failed to bootstrap missing ${type}.yml:`, createErr);
+			}
+
 			return new Map();
 		}
 		throw err;

@@ -9,7 +9,7 @@ export interface Collection {
   icon_url?: string;
   item_count: number;
   items?: string[]; // Array of item IDs assigned to this collection
-  isActive: boolean;
+  isActive?: boolean;
   created_at?: string;
   updated_at?: string;
 }

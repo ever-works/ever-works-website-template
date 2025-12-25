@@ -184,7 +184,7 @@ export class ItemGitService {
   async readItemsBySlugs(slugs: string[], includeDeleted: boolean = false): Promise<ItemData[]> {
     if (!slugs.length) return [];
 
-    const uniqueSlugs = Array.from(new Set(slugs));
+    const uniqueSlugs = Array.from(new Set(slugs)).filter((slug) => /^[a-z0-9-]+$/.test(slug));
     const dataDir = path.join(this.config.dataDir, 'data');
     const results: ItemData[] = [];
 
