@@ -161,9 +161,12 @@ export function createSessionIdentifier(sessionToken?: string, userId?: string):
   throw new Error('Either sessionToken or userId must be provided for cache identifier');
 }
 
+// Import coreConfig for NODE_ENV checks
+import { coreConfig } from '@/lib/config';
+
 // Development helper for monitoring cache performance
 export function logCacheStats(): void {
-  if (process.env.NODE_ENV === 'development') {
+  if (coreConfig.NODE_ENV === 'development') {
     const stats = sessionCache.getStats();
     console.log(`[SessionCache] Stats:`, {
       hits: stats.hits,

@@ -12,7 +12,7 @@ import {
   jsonb
 } from 'drizzle-orm/pg-core';
 import type { AdapterAccountType } from 'next-auth/adapters';
-import { PaymentPlan, PaymentProvider } from '../constants';
+import { PaymentPlan, PaymentProvider } from '../constants/payment';
 
 export const users = pgTable("users", {
   id: text("id")

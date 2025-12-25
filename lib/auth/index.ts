@@ -10,6 +10,7 @@ import { users, accounts, sessions, verificationTokens } from '../db/schema';
 import authConfig from '../../auth.config';
 import { invalidateSessionCache } from './cached-session';
 import { getClientProfileByUserId, createClientProfile } from '../db/queries/client.queries';
+import { coreConfig } from '@/lib/config';
 export * from '../payment/config/payment-provider-manager';
 
 // Define proper interface for user objects with admin/client properties
@@ -22,7 +23,7 @@ interface ExtendedUser {
 }
 
 // Check if DATABASE_URL is set and database is properly initialized
-const isDatabaseAvailable = !!process.env.DATABASE_URL && typeof db !== 'undefined';
+const isDatabaseAvailable = !!coreConfig.DATABASE_URL && typeof db !== 'undefined';
 
 // Only create the Drizzle adapter if we have a real database connection
 const drizzle = isDatabaseAvailable
@@ -154,7 +155,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       }
 
       // Debug (dev only): trace non-PII auth token composition
-      if (process.env.NODE_ENV === 'development') {
+      if (coreConfig.NODE_ENV === 'development') {
         try {
           console.debug('[auth][jwt] token composed', {
             provider: token.provider,
@@ -183,7 +184,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       }
 
       // Debug (dev only): trace session payload without PII
-      if (process.env.NODE_ENV === 'development') {
+      if (coreConfig.NODE_ENV === 'development') {
         try {
           console.debug('[auth][session] session built', {
             isAdmin: (session.user as any)?.isAdmin,
@@ -203,7 +204,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         try {
           await invalidateSessionCache(undefined, token.userId);
 
-          if (process.env.NODE_ENV === 'development') {
+          if (coreConfig.NODE_ENV === 'development') {
             console.log('[SessionCache] Invalidated cache on sign-out for user:', token.userId);
           }
         } catch (error) {
@@ -217,7 +218,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         try {
           await invalidateSessionCache(undefined, user.id);
 
-          if (process.env.NODE_ENV === 'development') {
+          if (coreConfig.NODE_ENV === 'development') {
             console.log('[SessionCache] Invalidated cache on user update for user:', user.id);
           }
         } catch (error) {
