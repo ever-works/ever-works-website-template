@@ -14,6 +14,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
   const t = useTranslations("common");
   const [isNavigating, setIsNavigating] = useState(false);
   const pathname = usePathname();
+  const itemCount = collection.items?.length ?? collection.item_count ?? 0;
 
   // Reset spinner when route changes (e.g., back navigation)
   useEffect(() => {
@@ -54,7 +55,7 @@ return (
         group-hover:border-theme-primary/30 dark:group-hover:border-theme-primary/40
         transition-all duration-300">
         <span>
-          {collection.items?.length || 0} items
+          {t("COLLECTION_ITEMS", { count: itemCount })}
         </span>
       </div>
     </div>
