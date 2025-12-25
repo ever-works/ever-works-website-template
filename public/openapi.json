@@ -29734,6 +29734,139 @@
           }
         }
       }
+    },
+    "/api/extract": {
+      "post": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Extract item metadata from URL",
+        "description": "Secure proxy route that extracts item metadata (name, description, etc.) from a given URL using the Ever Works Platform API. This endpoint requires PLATFORM_API_URL to be configured. If not configured, returns a 503 error indicating the service is unavailable.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL to extract metadata from",
+                    "example": "https://example.com/product"
+                  },
+                  "existingCategories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Optional array of existing category names to help with categorization",
+                    "example": [
+                      "Productivity",
+                      "Developer Tools"
+                    ]
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully extracted metadata from URL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "Extracted item metadata (name, description, etc.)",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "Awesome Product"
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": "A great product description"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid URL format or validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid URL format"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error during extraction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error during extraction"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable - Platform API not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "URL extraction service is not configured. Please set PLATFORM_API_URL environment variable."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "tags": []

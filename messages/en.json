@@ -667,7 +667,9 @@
 			"PRIMARY_BADGE": "Primary",
 			"LINKS_ADDED": "links added",
 			"REMOVE_LINK": "Remove link",
-			"REVIEW_AND_SUBMIT": "Review & Submit"
+			"REVIEW_AND_SUBMIT": "Review & Submit",
+			"EXTRACT": "Extract",
+			"EXTRACTING": "Extracting..."
 		},
 		"PAYMENT": {
 			"TITLE": "Complete Your Order",
