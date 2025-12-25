@@ -120,7 +120,8 @@ async function fetchWithTimeout(url: string, options: FetchOptions = {}): Promis
 
 			// Resolve final URL with robust joining
 			// Use PLATFORM_API_URL for calls to the Ever Works Platform API
-			const apiBase = isApiCall ? process.env.PLATFORM_API_URL || 'http://localhost:3100/api' : '';
+			// Use 'http://localhost:3100/api' for local development
+			const apiBase = isApiCall ? process.env.PLATFORM_API_URL || 'https://api.ever.works/api' : '';
 
 			const finalUrl =
 				apiBase && !url.startsWith('http') ? `${apiBase.replace(/\/+$/, '')}/${url.replace(/^\/+/, '')}` : url;
