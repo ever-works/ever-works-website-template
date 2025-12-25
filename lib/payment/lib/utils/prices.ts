@@ -1,15 +1,15 @@
 import { CountryPricing } from "../../types/payment-types";
 
+// Helper to parse price with proper NaN fallback
+const parsePrice = (envVar: string | undefined, defaultValue: number): number => {
+	const parsed = parseFloat(envVar ?? '');
+	return Number.isNaN(parsed) ? defaultValue : parsed;
+};
+
 // Get prices from environment variables (client-safe NEXT_PUBLIC_* vars)
-const standardPrice = process.env.NEXT_PUBLIC_PRODUCT_PRICE_STANDARD
-	? parseFloat(process.env.NEXT_PUBLIC_PRODUCT_PRICE_STANDARD)
-	: 10;
-const premiumPrice = process.env.NEXT_PUBLIC_PRODUCT_PRICE_PREMIUM
-	? parseFloat(process.env.NEXT_PUBLIC_PRODUCT_PRICE_PREMIUM)
-	: 20;
-const freePrice = process.env.NEXT_PUBLIC_PRODUCT_PRICE_FREE
-	? parseFloat(process.env.NEXT_PUBLIC_PRODUCT_PRICE_FREE)
-	: 0;
+const standardPrice = parsePrice(process.env.NEXT_PUBLIC_PRODUCT_PRICE_STANDARD, 10);
+const premiumPrice = parsePrice(process.env.NEXT_PUBLIC_PRODUCT_PRICE_PREMIUM, 20);
+const freePrice = parsePrice(process.env.NEXT_PUBLIC_PRODUCT_PRICE_FREE, 0);
 
 export const PRICES: Record<string, CountryPricing> = {
     us: {
