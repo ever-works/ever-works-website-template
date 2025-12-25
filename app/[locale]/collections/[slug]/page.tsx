@@ -2,6 +2,7 @@ import { getCachedItems } from "@/lib/content";
 import { notFound } from "next/navigation";
 import { CollectionDetail } from "@/components/collections";
 import { collectionRepository } from "@/lib/repositories/collection.repository";
+import { logger } from "@/lib/logger";
 
 export const revalidate = 10;
 
@@ -26,7 +27,7 @@ export default async function CollectionPage({
     const allCollections = await collectionRepository.findAll({ includeInactive: false });
     collection = allCollections.find(c => c.slug === slug);
   } catch (error) {
-    console.error('Error fetching collections:', error);
+    logger.error('Error fetching collections', { error });
     // If Git repo not set up, show not found
     notFound();
   }
