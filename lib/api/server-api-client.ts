@@ -61,7 +61,7 @@ async function fetchWithTimeout(url: string, options: FetchOptions = {}): Promis
 		timeout = DEFAULT_CONFIG.timeout,
 		retries = DEFAULT_CONFIG.retries,
 		retryDelay = DEFAULT_CONFIG.retryDelay,
-		token = process.env.API_TOKEN,
+		token = process.env.PLATFORM_API_SECRET_TOKEN,
 		isApiCall = false,
 		...fetchOptions
 	} = options;
@@ -119,7 +119,8 @@ async function fetchWithTimeout(url: string, options: FetchOptions = {}): Promis
 			}
 
 			// Resolve final URL with robust joining
-			const apiBase = isApiCall ? process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3100/api' : '';
+			// Use PLATFORM_API_URL for calls to the Ever Works Platform API
+			const apiBase = isApiCall ? process.env.PLATFORM_API_URL || 'http://localhost:3100/api' : '';
 
 			const finalUrl =
 				apiBase && !url.startsWith('http') ? `${apiBase.replace(/\/+$/, '')}/${url.replace(/^\/+/, '')}` : url;

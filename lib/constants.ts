@@ -37,8 +37,10 @@ export const LOGO_URL = '/logo-ever-work-3.png';
 // ============================================
 // API & BACKEND
 // ============================================
+// API_BASE_URL: Base URL for internal website API (Next.js API routes)
+// Note: For Ever Works Platform API integration, use PLATFORM_API_URL and PLATFORM_API_SECRET_TOKEN
+// environment variables (see app/api/extract/route.ts and lib/api/server-api-client.ts)
 export const API_BASE_URL = getNextPublicEnv('NEXT_PUBLIC_API_BASE_URL');
-export const API_URL = getNextPublicEnv('API_URL');
 
 // ============================================
 // AUTHENTICATION & SECURITY

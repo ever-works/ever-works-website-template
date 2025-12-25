@@ -34,7 +34,7 @@ export function useUrlExtraction(): UseUrlExtractionReturn {
 		mutationFn: async ({ url, existingCategories }: ExtractionParams) => {
 			if (!url) throw new Error('No URL provided');
 
-			const response = await serverClient.post<ExtractItemDetailsResponse>('/api/extract', {
+			const response = await serverClient.post<ExtractItemDetailsResponse & { featureDisabled?: boolean; message?: string }>('/api/extract', {
 				url,
 				existingCategories
 			});
@@ -42,6 +42,12 @@ export function useUrlExtraction(): UseUrlExtractionReturn {
 			if (!apiUtils.isSuccess(response)) {
 				console.error('HTTP request failed for URL extraction', response);
 				throw new Error(apiUtils.getErrorMessage(response));
+			}
+
+			// Check if feature is disabled (graceful degradation)
+			if (response.data.featureDisabled) {
+				// Feature is not available, return null silently without error
+				return null;
 			}
 
 			if (!response.data.success) {
