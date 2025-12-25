@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Input, Checkbox } from "@heroui/react";
 import { Search, Save, X } from "lucide-react";
 import { toast } from "sonner";
@@ -23,6 +23,7 @@ export function AssignItemsModal({ isOpen, onClose, collectionName, initialSelec
   const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(initialSelected));
   const [saving, setSaving] = useState(false);
+  const listRef = useRef<HTMLDivElement | null>(null);
 
   const { items, total, totalPages, isLoading, isSubmitting, refetch } = useAdminItems({ page, limit: PageSize, search });
 
@@ -98,7 +99,10 @@ export function AssignItemsModal({ isOpen, onClose, collectionName, initialSelec
               </div>
             </div>
 
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg divide-y divide-gray-100 dark:divide-gray-800 max-h-[420px] overflow-auto">
+            <div
+              ref={listRef}
+              className="border border-gray-200 dark:border-gray-700 rounded-lg divide-y divide-gray-100 dark:divide-gray-800 max-h-[420px] overflow-auto"
+            >
               {isLoading ? (
                 <div className="p-6 text-center text-sm text-gray-500">Loading items…</div>
               ) : items.length === 0 ? (
@@ -132,7 +136,10 @@ export function AssignItemsModal({ isOpen, onClose, collectionName, initialSelec
                   totalPages={totalPages}
                   onPageChange={(next) => {
                     setPage(next);
-                    window.scrollTo({ top: 0, behavior: "smooth" });
+                    const target = listRef.current;
+                    if (target) {
+                      target.scrollTo({ top: 0, behavior: "smooth" });
+                    }
                   }}
                 />
               </div>
