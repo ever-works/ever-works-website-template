@@ -29963,7 +29963,7 @@
       },
       "delete": {
         "summary": "Delete a collection",
-        "description": "Permanently deletes a collection by ID. Admin access required.",
+        "description": "Deletes a collection by ID. Admin access required. Defaults to soft delete; pass permanent=true to permanently remove the collection.",
         "tags": [
           "Admin - Collections"
         ],
@@ -29982,11 +29982,21 @@
             },
             "description": "Collection ID",
             "example": "productivity-tools"
+          },
+          {
+            "in": "query",
+            "name": "permanent",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "If true, permanently deletes the collection; otherwise performs a soft delete"
           }
         ],
         "responses": {
           "200": {
-            "description": "Collection deleted successfully",
+            "description": "Collection deleted successfully (soft or permanent based on 'permanent' flag)",
             "content": {
               "application/json": {
                 "schema": {
@@ -30007,6 +30017,9 @@
           },
           "401": {
             "description": "Unauthorized - Admin access required"
+          },
+          "404": {
+            "description": "Collection not found"
           },
           "500": {
             "description": "Server error"
