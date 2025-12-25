@@ -29982,21 +29982,11 @@
             },
             "description": "Collection ID",
             "example": "productivity-tools"
-          },
-          {
-            "in": "query",
-            "name": "permanent",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            },
-            "description": "If true, permanently deletes the collection; otherwise performs a soft delete"
           }
         ],
         "responses": {
           "200": {
-            "description": "Collection deleted successfully (soft or permanent based on 'permanent' flag)",
+            "description": "Collection deleted successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -30221,8 +30211,9 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "description": "Unique identifier for the collection",
-                    "example": "productivity-tools"
+                    "description": "Immutable primary identifier used in URL paths; cannot be changed via PUT after creation",
+                    "pattern": "^[a-z0-9-]+$",
+                    "example": "col_123abc"
                   },
                   "name": {
                     "type": "string",
@@ -30231,7 +30222,7 @@
                   },
                   "slug": {
                     "type": "string",
-                    "description": "URL-friendly slug (auto-generated from name if not provided)",
+                    "description": "Mutable secondary identifier; optional and auto-generated from name if omitted; can be updated via PUT",
                     "example": "productivity-tools"
                   },
                   "description": {
@@ -30333,6 +30324,143 @@
           },
           "500": {
             "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/extract": {
+      "post": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Extract item metadata from URL",
+        "description": "Secure proxy route that extracts item metadata (name, description, etc.) from a given URL using the Ever Works Platform API. This endpoint requires PLATFORM_API_URL to be configured. If not configured, returns a graceful response indicating the feature is disabled (featureDisabled: true).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL to extract metadata from",
+                    "example": "https://example.com/product"
+                  },
+                  "existingCategories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Optional array of existing category names to help with categorization",
+                    "example": [
+                      "Productivity",
+                      "Developer Tools"
+                    ]
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response from extraction endpoint - can be success, feature disabled, or error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "description": "Successfully extracted metadata",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "data": {
+                          "type": "object",
+                          "description": "Extracted item metadata (name, description, etc.)",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "Awesome Product"
+                            },
+                            "description": {
+                              "type": "string",
+                              "example": "A great product description"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "description": "Feature disabled - Platform API not configured",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "featureDisabled": {
+                          "type": "boolean",
+                          "example": true,
+                          "description": "Indicates that the extraction feature is not available"
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "URL extraction feature is not available. This feature requires PLATFORM_API_URL to be configured."
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid URL format or validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid URL format"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error during extraction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error during extraction"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

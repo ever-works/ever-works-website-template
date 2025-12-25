@@ -182,15 +182,31 @@ export class CollectionGitService {
         console.log(`[WRITE COLLECTIONS] Git push successful`);
       } catch (gitError) {
         console.error('⚠️ [WRITE COLLECTIONS] Git operations failed, but local file was saved:', gitError);
-        // pendingChanges holds the latest full state (overwrites prior pending) because the file is already persisted locally;
-        // syncInProgress prevents concurrent syncs, but a failure mid-sync can still replace pendingChanges with this newest state
-        this.pendingChanges = collections;
-        this.scheduleBackgroundSync();
+        this.mergePendingChanges(collections);
+        if (!this.syncInProgress) {
+          this.scheduleBackgroundSync();
+        }
       }
     } catch (error) {
       console.error('❌ Failed to write collections:', error);
       throw error;
     }
+  }
+
+  /**
+   * Merge new pending state into existing pending changes by collection id to avoid overwriting.
+   */
+  private mergePendingChanges(next: Collection[]): void {
+    if (!this.pendingChanges) {
+      this.pendingChanges = next;
+      return;
+    }
+
+    const byId = new Map(this.pendingChanges.map((c) => [c.id, c] as const));
+    for (const col of next) {
+      byId.set(col.id, col);
+    }
+    this.pendingChanges = Array.from(byId.values());
   }
 
   async createCollection(data: CreateCollectionRequest): Promise<Collection> {
@@ -310,7 +326,6 @@ export class CollectionGitService {
         }
 
         this.retryTimeout = setTimeout(() => {
-          this.syncInProgress = false;
           this.performBackgroundSync();
         }, delay);
       } else {
