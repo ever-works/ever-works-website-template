@@ -26,7 +26,9 @@ export const siteConfig = {
 	 * Should NOT include trailing slash
 	 * @example "https://mydirectory.com"
 	 */
-	url: process.env.NEXT_PUBLIC_APP_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://demo.ever.works"),
+	url:
+		process.env.NEXT_PUBLIC_APP_URL ??
+		(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://demo.ever.works'),
 
 	/**
 	 * Site logo path (used as fallback for OG images)

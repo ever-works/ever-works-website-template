@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Button, Textarea } from '@heroui/react';
 import { XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -34,13 +35,30 @@ export function RejectModal({
 }: RejectModalProps) {
 	const t = useTranslations('admin.SPONSORSHIPS');
 
+	// Handle Escape key to close modal
+	useEffect(() => {
+		const handleEscape = (e: KeyboardEvent) => {
+			if (e.key === 'Escape' && !isSubmitting) {
+				onClose();
+			}
+		};
+
+		if (isOpen) {
+			document.addEventListener('keydown', handleEscape);
+		}
+
+		return () => {
+			document.removeEventListener('keydown', handleEscape);
+		};
+	}, [isOpen, isSubmitting, onClose]);
+
 	if (!isOpen) return null;
 
 	const isReasonValid = rejectionReason.length >= 10;
 
 	return (
 		<div className={MODAL_OVERLAY}>
-			<div className={MODAL_CONTAINER}>
+			<div className={MODAL_CONTAINER} role="dialog" aria-modal="true">
 				{/* Header */}
 				<div className={MODAL_HEADER}>
 					<div className="flex items-center space-x-3">

@@ -209,6 +209,32 @@ export function useAdminSponsorAds(
 	const [sortBy, setSortBy] = useState<SponsorAdSortBy>(initialSortBy);
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">(initialSortOrder);
 
+	// Wrapped filter setters that reset pagination
+	const handleSetStatusFilter = useCallback((status: SponsorAdStatus | undefined) => {
+		setStatusFilter(status);
+		setCurrentPage(1);
+	}, []);
+
+	const handleSetIntervalFilter = useCallback((interval: SponsorAdIntervalType | undefined) => {
+		setIntervalFilter(interval);
+		setCurrentPage(1);
+	}, []);
+
+	const handleSetSearchTerm = useCallback((term: string) => {
+		setSearchTerm(term);
+		setCurrentPage(1);
+	}, []);
+
+	const handleSetSortBy = useCallback((newSortBy: SponsorAdSortBy) => {
+		setSortBy(newSortBy);
+		setCurrentPage(1);
+	}, []);
+
+	const handleSetSortOrder = useCallback((order: "asc" | "desc") => {
+		setSortOrder(order);
+		setCurrentPage(1);
+	}, []);
+
 	// Query client for cache management
 	const queryClient = useQueryClient();
 
@@ -382,11 +408,11 @@ export function useAdminSponsorAds(
 		deleteSponsorAd: handleDelete,
 
 		// Filter actions
-		setStatusFilter,
-		setIntervalFilter,
-		setSearchTerm,
-		setSortBy,
-		setSortOrder,
+		setStatusFilter: handleSetStatusFilter,
+		setIntervalFilter: handleSetIntervalFilter,
+		setSearchTerm: handleSetSearchTerm,
+		setSortBy: handleSetSortBy,
+		setSortOrder: handleSetSortOrder,
 		setCurrentPage,
 
 		// Utility

@@ -9,6 +9,7 @@ import {
 	SponsorAdInterval,
 	type SponsorAd,
 	type NewSponsorAd,
+	type SponsorAdStatusValues,
 } from "@/lib/db/schema";
 import { SponsorAdPricing } from "@/lib/constants";
 import type {
@@ -225,12 +226,12 @@ export class SponsorAdService {
 		}
 
 		// Can reject from pending_payment or pending status
-		const rejectableStatuses = [
+		const rejectableStatuses: SponsorAdStatusValues[] = [
 			SponsorAdStatus.PENDING_PAYMENT,
 			SponsorAdStatus.PENDING,
 		];
 
-		if (!rejectableStatuses.includes(sponsorAd.status as typeof SponsorAdStatus.PENDING)) {
+		if (!rejectableStatuses.includes(sponsorAd.status as SponsorAdStatusValues)) {
 			throw new Error(
 				`Cannot reject sponsor ad with status: ${sponsorAd.status}`
 			);
@@ -253,13 +254,13 @@ export class SponsorAdService {
 		}
 
 		// Can cancel pending_payment, pending, or active sponsor ads
-		const cancellableStatuses = [
+		const cancellableStatuses: SponsorAdStatusValues[] = [
 			SponsorAdStatus.PENDING_PAYMENT,
 			SponsorAdStatus.PENDING,
 			SponsorAdStatus.ACTIVE,
 		];
 
-		if (!cancellableStatuses.includes(sponsorAd.status as typeof SponsorAdStatus.PENDING)) {
+		if (!cancellableStatuses.includes(sponsorAd.status as SponsorAdStatusValues)) {
 			throw new Error(
 				`Cannot cancel sponsor ad with status: ${sponsorAd.status}`
 			);
@@ -411,11 +412,11 @@ export class SponsorAdService {
 	 * Check if sponsor ad can be cancelled
 	 */
 	canCancel(sponsorAd: SponsorAd): boolean {
-		return [
+		return ([
 			SponsorAdStatus.PENDING_PAYMENT,
 			SponsorAdStatus.PENDING,
 			SponsorAdStatus.ACTIVE,
-		].includes(sponsorAd.status as typeof SponsorAdStatus.PENDING);
+		] as SponsorAdStatusValues[]).includes(sponsorAd.status as SponsorAdStatusValues);
 	}
 
 	/**

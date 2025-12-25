@@ -1,7 +1,8 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Check, X, Plus } from 'lucide-react';
+import { Check, X, Plus, Sparkles } from 'lucide-react';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import type { FormData } from '../validation/form-validators';
 
 interface InputLinkProps {
@@ -15,6 +16,8 @@ interface InputLinkProps {
 	t: (key: string, values?: Record<string, unknown>) => string;
 	addLink: () => void;
 	removeLink: (id: string) => void;
+	onExtract?: (url: string) => void;
+	isExtracting?: boolean;
 }
 
 export function LinkInput({
@@ -27,7 +30,9 @@ export function LinkInput({
 	getIconComponent,
 	t,
 	addLink,
-	removeLink
+	removeLink,
+	onExtract,
+	isExtracting
 }: InputLinkProps) {
 	return (
 		<div>
@@ -120,6 +125,7 @@ export function LinkInput({
 											required={isMain}
 											className={cn(
 												'w-full h-12 px-4 pr-12 text-base bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl transition-all duration-300 outline-hidden text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400',
+												isMain && onExtract && 'pr-28', // Make room for extract button
 												focusedField === `link-${link.id}` &&
 													'border-theme-primary-500 dark:border-theme-primary-400 ring-4 ring-theme-primary-500/20 scale-[1.01]',
 												completedFields.has('mainLink') &&
@@ -129,8 +135,39 @@ export function LinkInput({
 										/>
 
 										{/* Validation Icon */}
-										<div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-											{isMain && completedFields.has('mainLink') && (
+										<div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2 z-10">
+											{/* Extract Button - Only for main link */}
+											{isMain && onExtract && link.url && link.url.match(/^https?:\/\//) && (
+												<div className="flex items-center">
+													<button
+														type="button"
+														onClick={() => onExtract(link.url)}
+														disabled={isExtracting}
+														className={cn(
+															'px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 flex items-center gap-2 cursor-pointer',
+															isExtracting
+																? 'bg-gray-100 text-gray-400 cursor-wait dark:bg-gray-700'
+																: 'bg-theme-primary-50 text-theme-primary-600 hover:bg-theme-primary-100 dark:bg-theme-primary-900/30 dark:text-theme-primary-400 dark:hover:bg-theme-primary-900/50'
+														)}
+													>
+														{isExtracting ? (
+															<>
+																<LoadingSpinner
+																	size="sm"
+																	className="border-gray-400 dark:border-gray-500"
+																/>
+																<span>{t('directory.DETAILS_FORM.EXTRACTING')}</span>
+															</>
+														) : (
+															<>
+																<Sparkles className="w-3 h-3" />
+																<span>{t('directory.DETAILS_FORM.EXTRACT')}</span>
+															</>
+														)}
+													</button>
+												</div>
+											)}
+											{isMain && completedFields.has('mainLink') && !isExtracting && (
 												<div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center animate-scale-in">
 													<Check className="h-3 w-3 text-white" />
 												</div>
